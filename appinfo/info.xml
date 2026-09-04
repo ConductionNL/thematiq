@@ -64,7 +64,7 @@ Gratis en open source onder de EUPL-1.2 licentie.
 		which quoted the grep command in order to WARN about the problem —
 		made it read ")[^". The warning reproduced the bug it described.
 	-->
-	<version>1.1.12-unstable.20260831125624</version>
+	<version>1.1.13-unstable.20260904075000</version>
 	<licence>EUPL-1.2</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
 	<namespace>Thematiq</namespace>
