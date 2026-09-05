@@ -8,9 +8,6 @@
  */
 
 :root {
-	/* Logo image */
-	--nldesign-logo-url: url('../../img/logos/nijmegen.svg');
-
 	/* NL Design tokens */
 	--nldesign-color-green-20: #17564a;
 	--nldesign-color-green-22: #006f5a;

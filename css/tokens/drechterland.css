@@ -8,9 +8,6 @@
  */
 
 :root {
-	/* Logo image */
-	--nldesign-logo-url: url('../../img/logos/drechterland.svg');
-
 	/* NL Design tokens */
 	--nldesign-color-blue-40: hsl(198 70% 35%);
 	--nldesign-color-grey-0: hsl(0 0% 0%);
