@@ -1,452 +1,225 @@
 [
 	{
-		"id": "nextcloud",
-		"name": "Nextcloud (default)",
-		"description": "Stock Nextcloud appearance — system fonts, rounded corners, Nextcloud blue (#0082c9)",
-		"design_system": "none",
-		"theming": {
-			"primary_color": "#0082c9",
-			"background_color": "#FFFFFF"
-		}
-	},
-	{
-		"id": "summer-breeze",
-		"name": "Summer Breeze",
-		"description": "Soft, airy light-blue theme — Inter, rounded surfaces, soft shadows, pastel status colours and a pale-blue gradient navigation. Gentle on the eyes.",
-		"design_system": "summer-breeze",
-		"theming": {
-			"primary_color": "#2874D1",
-			"background_color": "#EAF2FB"
-		}
-	},
-	{
-		"id": "rijkshuisstijl",
-		"name": "Rijkshuisstijl",
-		"description": "Official Dutch national government design system (Rijksoverheid)",
-		"theming": {
-			"primary_color": "#154273",
-			"background_color": "#F5F6F7",
-			"logo": "img/logos/rijkshuisstijl.svg"
-		}
-	},
-	{
-		"id": "amsterdam",
-		"name": "Gemeente Amsterdam",
-		"description": "Design tokens for Gemeente Amsterdam",
-		"theming": {
-			"primary_color": "#004699",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/amsterdam.svg"
-		}
-	},
-	{
 		"id": "bodegraven-reeuwijk",
 		"name": "Gemeente Bodegraven-Reeuwijk",
 		"description": "Design tokens for Gemeente Bodegraven-Reeuwijk",
-		"theming": {
-			"primary_color": "#0066CC",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "borne",
 		"name": "Gemeente Borne",
 		"description": "Design tokens for Gemeente Borne",
-		"theming": {
-			"primary_color": "#003352",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "buren",
 		"name": "Gemeente Buren",
 		"description": "Design tokens for Gemeente Buren",
-		"theming": {
-			"primary_color": "#D41422",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "demodam",
 		"name": "Demodam",
 		"description": "Design tokens for Demodam",
-		"theming": {
-			"primary_color": "#03A9F4",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "dinkelland",
 		"name": "Gemeente Dinkelland",
 		"description": "Design tokens for Gemeente Dinkelland",
-		"theming": {
-			"primary_color": "#006CB9",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "drechterland",
 		"name": "Gemeente Drechterland",
 		"description": "Design tokens for Gemeente Drechterland",
-		"theming": {
-			"primary_color": "#1B6E8C",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/drechterland.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "duiven",
 		"name": "Gemeente Duiven",
 		"description": "Design tokens for Gemeente Duiven",
-		"theming": {
-			"primary_color": "#1D5B8F",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "duo",
 		"name": "Duo",
 		"description": "Design tokens for Duo",
-		"theming": {
-			"primary_color": "#004FA3",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "enkhuizen",
 		"name": "Gemeente Enkhuizen",
 		"description": "Design tokens for Gemeente Enkhuizen",
-		"theming": {
-			"primary_color": "#0055AD",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "epe",
 		"name": "Gemeente Epe",
 		"description": "Design tokens for Gemeente Epe",
-		"theming": {
-			"primary_color": "#00549E",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/epe.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.3"
 	},
 	{
 		"id": "groningen",
 		"name": "Gemeente Groningen",
 		"description": "Design tokens for Gemeente Groningen",
-		"theming": {
-			"primary_color": "#154273",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "3.3.1"
 	},
 	{
 		"id": "haarlem",
 		"name": "Gemeente Haarlem",
 		"description": "Design tokens for Gemeente Haarlem",
-		"theming": {
-			"primary_color": "#1457A3",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "haarlemmermeer",
 		"name": "Gemeente Haarlemmermeer",
 		"description": "Design tokens for Gemeente Haarlemmermeer",
-		"theming": {
-			"primary_color": "#068E8C",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "hoorn",
 		"name": "Gemeente Hoorn",
 		"description": "Design tokens for Gemeente Hoorn",
-		"theming": {
-			"primary_color": "#09366C",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/hoorn.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "horstaandemaas",
 		"name": "Gemeente Horst aan de Maas",
 		"description": "Design tokens for Gemeente Horst aan de Maas",
-		"theming": {
-			"primary_color": "#125EA4",
-			"background_color": "#FFFFFF"
-		}
-	},
-	{
-		"id": "leiden",
-		"name": "Gemeente Leiden",
-		"description": "Design tokens for Gemeente Leiden",
-		"theming": {
-			"primary_color": "#d62410",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/leiden.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "leidschendam-voorburg",
 		"name": "Gemeente Leidschendam Voorburg",
 		"description": "Design tokens for Gemeente Leidschendam Voorburg",
-		"theming": {
-			"primary_color": "#1E1B54",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "nijmegen",
 		"name": "Gemeente Nijmegen",
 		"description": "Design tokens for Gemeente Nijmegen",
-		"theming": {
-			"primary_color": "#157C68",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/nijmegen.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "noaberkracht",
 		"name": "Noaberkracht",
 		"description": "Design tokens for Noaberkracht",
-		"theming": {
-			"primary_color": "#4376fc",
-			"background_color": "#FFFFFF"
-		},
-		"note": "primary_color #4376fc is legacy Conduction cobalt (retired 2026-05-13) — verify with municipality upstream"
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "noordoostpolder",
 		"name": "Gemeente Noordoostpolder",
 		"description": "Design tokens for Gemeente Noordoostpolder",
-		"theming": {
-			"primary_color": "#389003",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "noordwijk",
 		"name": "Gemeente Noordwijk",
 		"description": "Design tokens for Gemeente Noordwijk",
-		"theming": {
-			"primary_color": "#2C2276",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/noordwijk.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "provincie-zuid-holland",
 		"name": "Provincie Zuid-Holland",
 		"description": "Design tokens for Provincie Zuid-Holland",
-		"theming": {
-			"primary_color": "#C42035",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/provincie-zuid-holland.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "riddeliemers",
 		"name": "Riddeliemers",
 		"description": "Design tokens for Riddeliemers",
-		"theming": {
-			"primary_color": "#154273",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0"
 	},
 	{
 		"id": "ridderkerk",
 		"name": "Ridderkerk",
 		"description": "Design tokens for Ridderkerk",
-		"theming": {
-			"primary_color": "#008937",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "stedebroec",
 		"name": "Gemeente Stede Broec",
 		"description": "Design tokens for Gemeente Stede Broec",
-		"theming": {
-			"primary_color": "#035935",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "tilburg",
 		"name": "Gemeente Tilburg",
 		"description": "Design tokens for Gemeente Tilburg",
-		"theming": {
-			"primary_color": "#003366",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/tilburg.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "tubbergen",
 		"name": "Gemeente Tubbergen",
 		"description": "Design tokens for Gemeente Tubbergen",
-		"theming": {
-			"primary_color": "#067432",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "venray",
 		"name": "Gemeente Venray",
 		"description": "Design tokens for Gemeente Venray",
-		"theming": {
-			"primary_color": "#2A8113",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "vught",
 		"name": "Gemeente Vught",
 		"description": "Design tokens for Gemeente Vught",
-		"theming": {
-			"primary_color": "#0088AD",
-			"background_color": "#FFFFFF"
-		}
-	},
-	{
-		"id": "vng",
-		"name": "VNG Vereniging Nederlandse Gemeenten",
-		"description": "Design tokens for VNG (Vereniging Nederlandse Gemeenten), the association of Dutch municipalities",
-		"theming": {
-			"primary_color": "#003865",
-			"background_color": "#0277BD",
-			"logo": "img/logos/vng.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "westervoort",
 		"name": "Gemeente Westervoort",
 		"description": "Design tokens for Gemeente Westervoort",
-		"theming": {
-			"primary_color": "#003C6B",
-			"background_color": "#FFFFFF"
-		}
-	},
-	{
-		"id": "utrecht",
-		"name": "Gemeente Utrecht",
-		"description": "Design tokens for Gemeente Utrecht",
-		"theming": {
-			"primary_color": "#24578F",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/utrecht.svg"
-		}
-	},
-	{
-		"id": "denhaag",
-		"name": "Gemeente Den Haag",
-		"description": "Design tokens for Gemeente Den Haag",
-		"theming": {
-			"primary_color": "#1a7a3e",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/denhaag.svg"
-		}
-	},
-	{
-		"id": "rotterdam",
-		"name": "Gemeente Rotterdam",
-		"description": "Design tokens for Gemeente Rotterdam, composed from the Rotterdam Design System (RODS)",
-		"theming": {
-			"primary_color": "#00811F",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/rotterdam.svg"
-		},
-		"upstreamPackage": "@gemeente-rotterdam/design-tokens",
-		"upstreamVersion": "1.1.0"
-	},
-	{
-		"id": "opencatalogi",
-		"name": "OpenCatalogi",
-		"description": "Design tokens for OpenCatalogi, transcribed from the tokens opencatalogi.nl ships",
-		"theming": {
-			"primary_color": "#00811f",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/opencatalogi.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "xxllnc",
 		"name": "xxllnc",
 		"description": "Design tokens for xxllnc",
-		"theming": {
-			"primary_color": "#333333",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/xxllnc.svg"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "zevenaar",
 		"name": "Gemeente Zevenaar",
 		"description": "Design tokens for Gemeente Zevenaar",
-		"theming": {
-			"primary_color": "#596E28",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "zwolle",
 		"name": "Gemeente Zwolle",
 		"description": "Design tokens for Gemeente Zwolle",
-		"theming": {
-			"primary_color": "#3A4F93",
-			"background_color": "#FFFFFF"
-		}
-	},
-	{
-		"id": "hoog-contrast",
-		"name": "Hoog contrast (WCAG AAA)",
-		"description": "Maximaal contrast — zwart op wit voor optimale leesbaarheid. Voldoet aan WCAG 2.2 AAA (>= 7:1) en werkt samen met OS hoog-contrast (prefers-contrast / forced-colors, EN 301 549).",
-		"design_system": "high-contrast",
-		"theming": {
-			"primary_color": "#000000",
-			"background_color": "#FFFFFF"
-		}
-	},
-	{
-		"id": "lasuite",
-		"name": "La Suite numérique",
-		"description": "European sovereign-workplace theme (MinBZK/mijn-bureau EDIC bundle) — Cunningham design tokens (MIT), self-hosted Inter, brand blue-violet #4844AD. No La Suite/state logo bundled (trademark).",
-		"design_system": "lasuite",
-		"theming": {
-			"primary_color": "#4844AD",
-			"background_color": "#FFFFFF"
-		}
-	},
-	{
-		"id": "frankendesk",
-		"name": "La Frankendesk",
-		"description": "Conduction's own branded riff on the lasuite bundle. EXTENDS `lasuite`: the renderer loads the parent set first and this one after, so this file is the DELTA — the logo and anything Conduction deliberately changes — instead of a copy that drifts. Same violet Cunningham design tokens (MIT), self-hosted Inter, brand blue-violet #4844AD, with the original \"La Frankendesk\" mark as logo.",
-		"design_system": "lasuite",
-		"theming": {
-			"primary_color": "#4844AD",
-			"background_color": "#FFFFFF",
-			"logo": "img/logos/frankendesk.svg"
-		},
-		"extends": "lasuite"
-	},
-	{
-		"id": "cunningham",
-		"name": "Cunningham (blue base)",
-		"description": "The published Cunningham design system (MIT, @openfun/cunningham-tokens) as distributed — blue base (brand-650 #1A509F, the same scale step the shared bridge/element-overrides derive --color-primary from for lasuite's violet #4844AD), self-hosted Inter. Secondary/optional sibling of lasuite: same generated token base, without the deployed violet La Suite brand override. No logo bundled.",
-		"design_system": "cunningham",
-		"theming": {
-			"primary_color": "#1A509F",
-			"background_color": "#FFFFFF"
-		}
-	},
-	{
-		"id": "conduction-new",
-		"name": "Conduction 2026",
-		"description": "Conduction house style as published at identity.conduction.nl (theme-conduction-2026): cobalt #21468B, KNVB orange accent, Figtree. Independent of the older vendored conduction theme.",
-		"theming": {
-			"primary_color": "#21468B",
-			"background_color": "#FFFFFF"
-		}
+		"upstreamRef": "5f03cd8ebef037418e3118d9701d00c95c25eeb0",
+		"upstreamVersion": "1.0.0"
 	}
 ]

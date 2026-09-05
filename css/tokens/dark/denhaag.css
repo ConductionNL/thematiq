@@ -7,7 +7,6 @@
 		--denhaag-color-orange: #d4611d;
 		--denhaag-color-red: #ca3232;
 		--denhaag-color-yellow: #dfb715;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #282828;
 		--nldesign-color-background-darker: #393939;
 		--nldesign-color-background-hover: #1d1d1d;
@@ -105,7 +104,6 @@ body[data-themes*=dark] {
 	--denhaag-color-orange: #d4611d;
 	--denhaag-color-red: #ca3232;
 	--denhaag-color-yellow: #dfb715;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #282828;
 	--nldesign-color-background-darker: #393939;
 	--nldesign-color-background-hover: #1d1d1d;

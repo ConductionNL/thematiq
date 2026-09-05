@@ -9,22 +9,17 @@
 
 :root {
 	/* NL Design tokens */
-	/* NOTE: upstream xxllnc source used translucent #000000ad/#00000080; replaced with
-	 * solid equivalents to comply with Conduction brand rules (solid colours only) and
-	 * ensure WCAG AA contrast on any background. File upstream bug with xxllnc token
-	 * maintainers requesting solid-colour values. */
-	--nldesign-color-primary: #000000;
-	--nldesign-color-primary-hover: #333333;
-	--nldesign-logo-url: url('../../img/logos/xxllnc.svg');
+	--nldesign-color-primary: #000000ad;
+	--nldesign-color-primary-hover: #00000080;
 	--nldesign-color-error: #dc3545;
 	--nldesign-color-alert-error: #721c24;
 	--nldesign-color-alert-error-background: #f8d7da;
 	--nldesign-color-warning: #ffc107;
 	--nldesign-color-alert-warning: #856404;
 	--nldesign-color-alert-warning-background: #fff3cd;
-	--nldesign-color-success: #28a745;
-	--nldesign-color-alert-success: #155724;
-	--nldesign-color-alert-success-background: #d4edda;
+	--nldesign-color-succes: #28a745;
+	--nldesign-color-alert-succes: #155724;
+	--nldesign-color-alert-succes-background: #d4edda;
 	--nldesign-color-white-95: #f1f1f1;
 	--nldesign-color-white-100: #ffffff;
 	--nldesign-color-white-100-0t: #ffffff;
@@ -118,7 +113,7 @@
 	--nldesign-conduction-primary-top-nav-padding-block-start: 16px;
 	--nldesign-conduction-secondary-top-nav-background-color: transparent;
 	--nldesign-conduction-secondary-top-nav-current-background-color: unset;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-secondary-top-nav-current-box-shadow: inset 0 -4px {xxllnc.color.primary}; */
+	--nldesign-conduction-secondary-top-nav-current-box-shadow: inset 0 -4px {xxllnc.color.primary};
 	--nldesign-conduction-secondary-top-nav-font-weight: 400;
 	--nldesign-conduction-secondary-top-nav-item-padding: 18px;
 	--nldesign-conduction-secondary-top-nav-padding-inline-end: 16px;
@@ -141,7 +136,7 @@
 	--nldesign-conduction-pagination-current-page-text-decoration: unset;
 	--nldesign-conduction-pagination-page-hover-text-decoration: unset;
 	--nldesign-conduction-pagination-page-hover-text-decoration-thickness: 0px;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-input-select-border: 1px solid {xxllnc.color.grey.92}; */
+	--nldesign-conduction-input-select-border: 1px solid {xxllnc.color.grey.92};
 	--nldesign-conduction-input-select-border-focus: unset;
 	--nldesign-conduction-table-wrapper-scroll-button-border-style: solid;
 	--nldesign-conduction-tabs-tab-background-color: transparent;
@@ -160,9 +155,9 @@
 	--nldesign-conduction-tooltip-border-radius: 0px;
 	--nldesign-conduction-tooltip-z-index: 9999;
 	--nldesign-component-badge-counter-border-radius: 50%;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-component-badge-background-color: {xxllnc.color.black.16}; */
+	--nldesign-component-badge-background-color: {xxllnc.color.black.16} ;
 	--nldesign-component-badge-border-radius: 10000px;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-component-badge-color: {xxllnc.color.white.95}; */
+	--nldesign-component-badge-color: {xxllnc.color.white.95} ;
 	--nldesign-component-button-border-radius: 16px;
 	--nldesign-component-button-font-size: inherit;
 	--nldesign-component-button-font-weight: inherit;
@@ -202,18 +197,17 @@
 	--nldesign-component-textbox-font-size: 15px;
 
 	/* xxllnc palette */
-	/* NOTE: upstream used translucent values; replaced with solid equivalents (brand rules). */
-	--xxllnc-color-primary: #000000;
-	--xxllnc-color-primary-hover: #333333;
+	--xxllnc-color-primary: #000000ad;
+	--xxllnc-color-primary-hover: #00000080;
 	--xxllnc-color-error: #dc3545;
 	--xxllnc-color-alert-error: #721c24;
 	--xxllnc-color-alert-error-background: #f8d7da;
 	--xxllnc-color-warning: #ffc107;
 	--xxllnc-color-alert-warning: #856404;
 	--xxllnc-color-alert-warning-background: #fff3cd;
-	--xxllnc-color-success: #28a745;
-	--xxllnc-color-alert-success: #155724;
-	--xxllnc-color-alert-success-background: #d4edda;
+	--xxllnc-color-succes: #28a745;
+	--xxllnc-color-alert-succes: #155724;
+	--xxllnc-color-alert-succes-background: #d4edda;
 	--xxllnc-color-white-95: #f1f1f1;
 	--xxllnc-color-white-100: #ffffff;
 	--xxllnc-color-white-100-0t: #ffffff;

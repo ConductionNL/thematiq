@@ -8,9 +8,6 @@
  */
 
 :root {
-	/* Logo image */
-	--nldesign-logo-url: url('../../img/logos/tilburg.svg');
-
 	/* NL Design tokens */
 	--nldesign-color-blue-20: hsl(207 100% 20%);
 	--nldesign-color-blue-30: hsl(203 99% 32%);
