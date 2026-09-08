@@ -467,6 +467,28 @@ All notable changes to this project will be documented in this file.
 - Hardened `CustomTokenSetValidator::isForbiddenValue()` to reject declaration values containing a semicolon (`;`) or a CSS comment marker (`/*`, `*/`), closing a CSS-injection gap where a single accepted `--nldesign-*`/`--{slug}-*` declaration's value could smuggle an arbitrary extra declaration (e.g. `background: url(...)`) past the name whitelist into the `:root {}` block served to every anonymous visitor (login page, share links). Applies to both the CSS upload path and the W3C Design Tokens JSON path (`CustomTokenSetController::mapFromJson()`), which shares the same gate. Only new uploads are affected — a custom token set uploaded before this fix is not retroactively re-validated; the served `custom-*.css` file for an existing set is unchanged until it is re-uploaded. See `openspec/changes/harden-custom-token-set-value-validation/`.
 
 ### Fixed
+- **Every themed page sat ~56px too low, with the page background showing as a band between
+  the header and the content container.** `#header` carried a
+  `position: relative !important`, which put Nextcloud's out-of-flow (`absolute`) header back
+  into normal flow. `#content` is `position: fixed` with `top: auto`, so its offset resolves
+  against its static position — which then started *below* the 50px flowed header, and its own
+  `margin-top: var(--header-height)` stacked on top of that (measured: `contentTop` 106.5px
+  themed vs 50px stock). The override also bought nothing: `#header::before`/`::after` are
+  disabled in the adjacent rule, the lint/ribbon is `#nextcloud::before` with its own
+  positioning, and an `absolute` element is already a containing block for absolute
+  descendants.
+- **A blue strip appeared between the navigation and the content pane.**
+  `margin-right: 30px !important` on `#app-navigation` opened 30px of empty flex space inside
+  `#content`, which carries no background of its own, so `--color-background-plain` showed
+  straight through. Removed, along with its `.app-navigation--close` counterpart and the
+  per-panel `border-radius` on the navigation and content (`#content` already rounds both
+  panels together via `overflow: clip`; the container radius stays themed once, through
+  `--body-container-radius`).
+- **The theming dialogs' sticky action bar let table rows scroll through the strip beneath the
+  buttons**, and a wide token table gave the whole dialog a horizontal scrollbar the sticky bar
+  could not follow, so cells drifted out beside the buttons. The bar now bleeds into the
+  dialog's padding, the dialog no longer scrolls sideways, and wide token tables scroll inside
+  their own container.
 - Corrected the declared licence in `appinfo/info.xml` from `agpl` to `eupl` (EUPL-1.2) to match the bundled `LICENSE`, the SPDX headers, and the rest of the Conduction fleet. Adopters may key compliance on the declared licence, so the App Store listing now states the correct EUPL-1.2 licence.
 - Documentation corrected to describe the real bundled, self-hosted Fira Sans delivery (no external CDN) and the true token-set count derived from `token-sets.json`.
 - `docs/reference/token-audit.md` scoped its "production-ready" verdict to the five manually-reviewed sets; contrast for all sets is now verified by the automated contrast audit.

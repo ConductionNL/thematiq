@@ -34,19 +34,30 @@ label {
 	background-color: transparent !important;
 }
 
-/* App navigation as card with margin */
+/* App navigation — opaque surface, Nextcloud's own layout.
+ *
+ * This deliberately sets NO margin and NO border-radius. Nextcloud's `#content`
+ * is `display: flex` with `border-radius: var(--body-container-radius)` and
+ * `overflow: clip`, and carries no background of its own: the navigation and
+ * the app content sit flush inside it as two panels that the container clips
+ * into one rounded rectangle.
+ *
+ * A `margin-right: 30px !important` here used to open 30px of empty flex space
+ * inside that container. Because `#content` has no background, the page
+ * background (`--color-background-plain`) showed straight through it as a blue
+ * vertical strip between the menu and the detail pane — which is not the
+ * Nextcloud layout, and is not a look any brand asked for. A per-panel
+ * `border-radius` had the same class of problem: the container already rounds
+ * both panels together, so rounding each child again cut notches at the seam.
+ * The container radius IS themed, once, in overrides.css
+ * (`--body-container-radius: var(--nldesign-border-radius)`), which is the
+ * supported hook for it.
+ */
 #app-navigation,
 .app-navigation,
 #app-navigation-vue {
 	background: var(--color-main-background) !important;
 	background-color: var(--color-main-background) !important;
-	margin-right: 30px !important;
-	border-radius: var(--nldesign-border-radius) !important;
-}
-
-#app-navigation.app-navigation--close,
-.app-navigation.app-navigation--close {
-	margin-right: 0 !important;
 }
 
 /* Navigation toggle button */
@@ -60,14 +71,14 @@ button.app-navigation-toggle {
 	min-height: var(--default-clickable-area) !important;
 }
 
-/* App content as card */
+/* App content — opaque surface, no own radius (see the navigation rule above:
+ * `#content` clips both panels into one rounded container). */
 #app-content,
 .app-content,
 #app-content-vue,
 .app-content-wrapper {
 	background: var(--color-main-background) !important;
 	background-color: var(--color-main-background) !important;
-	border-radius: var(--nldesign-border-radius) !important;
 }
 
 /* Dashboard apps — transparent background */
@@ -489,13 +500,33 @@ body {
 	padding-top: 0 !important;
 }
 
-/* Header background and border from tokens */
+/* Header background and border from tokens.
+ *
+ * Deliberately does NOT set `position`. Nextcloud's own `#header` is
+ * `position: absolute`, i.e. out of normal flow, and `#content` is
+ * `position: fixed` with `top: auto` — so `#content`'s offset resolves against
+ * its STATIC position, which starts at the top of the viewport, and its
+ * `margin-top: var(--header-height)` (50px) then lands it exactly under the
+ * header.
+ *
+ * A `position: relative !important` here put the header back INTO flow, so it
+ * occupied its 50px and `#content`'s static position started below it — 50px of
+ * flowed header plus the 50px margin, measured as `contentTop: 106.5px` against
+ * stock's 50px. The whole settings page (and every app page) sat ~56px too low,
+ * with the page background showing as a band between the header and the
+ * container.
+ *
+ * It also bought nothing: `#header::before`/`::after` are disabled in the next
+ * rule, the lint/ribbon is `#nextcloud::before` and `#nextcloud` carries its own
+ * `position: relative`, and an `absolute` element is already a containing block
+ * for absolutely positioned descendants. `overflow: visible` stays — the ribbon
+ * is allowed to hang below the header when its height exceeds the header's.
+ */
 #header {
 	background-color: var(--nldesign-color-header-background, #ffffff) !important;
 	background-image: none !important;
 	background: var(--nldesign-color-header-background, #ffffff) !important;
 	border-bottom: var(--nldesign-header-border-bottom, 0) !important;
-	position: relative !important;
 	overflow: visible !important;
 }
 

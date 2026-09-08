@@ -207,7 +207,30 @@
 	width: 100%;
 	max-height: 80vh;
 	overflow-y: auto;
+	/* Never scroll the DIALOG sideways. With only `overflow-y: auto` the
+	   x-axis computes to `auto` as well, so a wide token table gave the whole
+	   dialog a horizontal scrollbar — and then the sticky action bar (whose
+	   width is the content box, not the scroll width) scrolled away from the
+	   rows, letting table cells appear beside the buttons. Wide content scrolls
+	   inside its own container instead (see .nldesign-apply-dialog-table). */
+	overflow-x: hidden;
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* The token tables inside the theming-sync and apply dialogs. A token name is
+   long and unbreakable (`--nldesign-component-form-fieldset-legend-margin-block-end`),
+   and there are four columns, so the table is routinely wider than the 700px
+   dialog. It gets its own horizontal scroll container rather than making the
+   dialog scroll sideways — the dialog's sticky action bar cannot follow a
+   horizontal scroll, which is what let cells appear beside the buttons. */
+.nldesign-dialog-table,
+.nldesign-apply-dialog-table {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
+	/* Keep the cells from collapsing to unreadable widths once the table is a
+	   block: the columns size to their content and the container scrolls. */
+	white-space: nowrap;
 }
 
 /* Dark-logo informational row in the theming-sync dialog (openspec/specs/dark-mode/spec.md) */
@@ -241,10 +264,18 @@
 	position: sticky;
 	bottom: 0;
 	background: var(--color-main-background);
-	padding-top: 8px;
+	/* The bar sticks to the bottom of the dialog's CONTENT box, which sits 24px
+	   (the dialog's own padding) above its visible bottom edge. With only a
+	   padding-top the bar's background stopped there, so table rows scrolled
+	   through the 24px strip underneath it and appeared below the buttons.
+	   Bleeding the bar into that padding with a negative margin, and paying it
+	   back as padding, makes the background cover the full strip while the
+	   buttons stay where they were. The inline bleed does the same for the left
+	   and right padding, so nothing scrolls past the bar's edges either. */
+	margin: 16px -24px -24px;
+	padding: 8px 24px 24px;
 	display: flex;
 	gap: 8px;
-	margin-top: 16px;
 	justify-content: flex-end;
 }
 
