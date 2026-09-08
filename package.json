@@ -43,6 +43,8 @@
 		"test:coverage-ratchet": "npm run test:coverage && bash tests/coverage-ratchet.sh vitest coverage-vitest/coverage-summary.json",
 		"test:unit:watch": "vitest",
 		"check:manifest": "node tests/validate-manifest.js",
+		"audit:token-sets": "node scripts/audit-token-sets.mjs",
+		"audit:token-sets:check": "node scripts/audit-token-sets.mjs --check",
 		"format": "prettier --check \"**/*.{js,ts,vue,css,scss}\"",
 		"format:fix": "prettier --write \"**/*.{js,ts,vue,css,scss}\"",
 		"prepare": "git config core.hooksPath .githooks || true",

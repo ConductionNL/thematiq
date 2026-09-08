@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -84,7 +85,14 @@ class LasuiteDesignStackTest extends TestCase {
 		$cacheFactory = $this->createMock(ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
 
-		return new TokenSetService($appManager, $config, $this->createMock(LoggerInterface::class), $audit, $cacheFactory);
+		return new TokenSetService(
+			$appManager,
+			$config,
+			$this->createMock(LoggerInterface::class),
+			$audit,
+			$cacheFactory,
+			new TokenSetVocabularyAuditService(new CssParserService())
+		);
 	}//end tokenSetService()
 
 	/**

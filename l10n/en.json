@@ -208,7 +208,12 @@
         "Source: admin override (occ config:app:set nldesign icon_pack)": "Source: admin override (occ config:app:set nldesign icon_pack)",
         "Source: the active design system": "Source: the active design system",
         "This only switches the icon assets nldesign itself serves through imagePath. It does not replace Nextcloud's built-in core icons beyond what the active theme's CSS already restyles.": "This only switches the icon assets nldesign itself serves through imagePath. It does not replace Nextcloud's built-in core icons beyond what the active theme's CSS already restyles.",
-        "Saved. Reload to see the change.": "Saved. Reload to see the change."
+        "Saved. Reload to see the change.": "Saved. Reload to see the change.",
+        "Declares {count} --nldesign-* name(s) no stylesheet reads: {tokens}": "Declares {count} --nldesign-* name(s) no stylesheet reads: {tokens}",
+        "Does not define {count} required token(s): {tokens}": "Does not define {count} required token(s): {tokens}",
+        "Incomplete set": "Incomplete set",
+        "Primary colour {css} in the token CSS disagrees with {manifest} in the token set manifest.": "Primary colour {css} in the token CSS disagrees with {manifest} in the token set manifest.",
+        "This set does not define every token the design system reads, so the missing ones fall back to the Rijkshuisstijl defaults instead of this brand.": "This set does not define every token the design system reads, so the missing ones fall back to the Rijkshuisstijl defaults instead of this brand."
     },
     "plurals": {}
 }

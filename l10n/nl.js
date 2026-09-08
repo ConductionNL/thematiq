@@ -209,7 +209,12 @@ OC.L10N.register(
         "Source: admin override (occ config:app:set nldesign icon_pack)": "Bron: beheerdersoverschrijving (occ config:app:set nldesign icon_pack)",
         "Source: the active design system": "Bron: het actieve designsysteem",
         "This only switches the icon assets nldesign itself serves through imagePath. It does not replace Nextcloud's built-in core icons beyond what the active theme's CSS already restyles.": "Dit wijzigt alleen de iconenassets die nldesign zelf levert via imagePath. Het vervangt niet de ingebouwde kern-iconen van Nextcloud, afgezien van wat de CSS van het actieve thema al herstylet.",
-        "Saved. Reload to see the change.": "Opgeslagen. Herlaad de pagina om de wijziging te zien."
+        "Saved. Reload to see the change.": "Opgeslagen. Herlaad de pagina om de wijziging te zien.",
+        "Declares {count} --nldesign-* name(s) no stylesheet reads: {tokens}": "Declareert {count} --nldesign-*-naam(en) die geen enkele stylesheet leest: {tokens}",
+        "Does not define {count} required token(s): {tokens}": "Definieert {count} vereiste token(s) niet: {tokens}",
+        "Incomplete set": "Onvolledige set",
+        "Primary colour {css} in the token CSS disagrees with {manifest} in the token set manifest.": "Primaire kleur {css} in de token-CSS wijkt af van {manifest} in het tokenset-manifest.",
+        "This set does not define every token the design system reads, so the missing ones fall back to the Rijkshuisstijl defaults instead of this brand.": "Deze set definieert niet elk token dat het ontwerpsysteem leest; de ontbrekende tokens vallen terug op de Rijkshuisstijl-standaarden in plaats van op dit merk."
     },
     "nplurals=2; plural=(n != 1);"
 )

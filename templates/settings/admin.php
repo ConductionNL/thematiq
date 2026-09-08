@@ -49,6 +49,13 @@ style('thematiq', 'admin');
 			<?php endforeach; ?>
 		</select>
 		<span id="nldesign-design-system-badge" class="nldesign-badge"></span>
+		<!-- Vocabulary-completeness badge (openspec/specs/token-sets/spec.md's
+		     "Incomplete sets are surfaced in the admin dropdown"). Empty and
+		     hidden until admin.js reads the selected set's `warnings` — the same
+		     channel the WCAG contrast warning already travels on — so a set that
+		     never declares the tokens the design system reads is not silently
+		     presented as its own brand. -->
+		<span id="nldesign-token-set-completeness-badge" class="nldesign-badge" hidden></span>
 		<button type="button" id="nldesign-preview-btn" class="button">
 			<?php p($l->t('Preview in my session')); ?>
 		</button>

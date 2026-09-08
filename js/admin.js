@@ -294,6 +294,104 @@
 					: ' nldesign-badge--system')
 		}
 
+		// The vocabulary-completeness warning carried on a token set's
+		// `warnings` array, or null when the set is complete. Emitted by
+		// TokenSetVocabularyAuditService::warningsFor() on the SAME channel as
+		// the WCAG contrast warnings, so the two are distinguished by `kind`.
+		function incompleteWarningFor(tokenSetId) {
+			var ts = tokenSetsData[tokenSetId]
+			if (!ts || !ts.warnings) {
+				return null
+			}
+			for (var i = 0; i < ts.warnings.length; i++) {
+				if (ts.warnings[i] && ts.warnings[i].kind === 'incomplete') {
+					return ts.warnings[i]
+				}
+			}
+			return null
+		}
+
+		// How many token names a warning line enumerates before it stops. The
+		// counts already carry the magnitude, and a set like `tilburg` declares
+		// 119 unread names — enumerating them all turned the apply dialog into a
+		// wall of text that pushed the actual token list off screen. The full
+		// enumeration lives in `npm run audit:token-sets --verbose`, which is
+		// where someone who intends to FIX a set is working anyway; an admin
+		// choosing a theme only needs to know that it is incomplete and roughly
+		// in what way.
+		var INCOMPLETE_SAMPLE_LIMIT = 6
+
+		// Comma-joined sample of a token-name list, ellipsised when truncated.
+		// No new translatable string: the "{count}" in the surrounding sentence
+		// is the authoritative total, and the ellipsis reads the same in every
+		// locale.
+		function sampleTokenNames(names) {
+			if (names.length <= INCOMPLETE_SAMPLE_LIMIT) {
+				return names.join(', ')
+			}
+			return names.slice(0, INCOMPLETE_SAMPLE_LIMIT).join(', ') + ', …'
+		}
+
+		// Human-readable lines describing what an "incomplete" warning found.
+		// Shared by the dropdown badge's tooltip and the apply dialog's banner.
+		function incompleteWarningLines(warning) {
+			var lines = []
+			if (warning.missing && warning.missing.length > 0) {
+				lines.push(
+					t(
+						'thematiq',
+						'Does not define {count} required token(s): {tokens}',
+					)
+						.replace('{count}', warning.missing.length)
+						.replace('{tokens}', sampleTokenNames(warning.missing)),
+				)
+			}
+			if (warning.foreign && warning.foreign.length > 0) {
+				lines.push(
+					t(
+						'thematiq',
+						'Declares {count} --nldesign-* name(s) no stylesheet reads: {tokens}',
+					)
+						.replace('{count}', warning.foreign.length)
+						.replace('{tokens}', sampleTokenNames(warning.foreign)),
+				)
+			}
+			if (warning.primaryMismatch === true) {
+				lines.push(
+					t(
+						'thematiq',
+						'Primary colour {css} in the token CSS disagrees with {manifest} in the token set manifest.',
+					)
+						.replace('{css}', warning.cssPrimary || '?')
+						.replace('{manifest}', warning.declaredPrimary || '?'),
+				)
+			}
+			return lines
+		}
+
+		// Update the "Incomplete set" badge for the selected token set — the
+		// third badge state next to the design-system and WCAG badges. Hidden
+		// entirely for a complete set, so a clean catalogue stays quiet.
+		function updateCompletenessBadge(tokenSetId) {
+			var badge = document.getElementById(
+				'nldesign-token-set-completeness-badge',
+			)
+			if (!badge) return
+
+			var warning = incompleteWarningFor(tokenSetId)
+			if (warning === null) {
+				badge.hidden = true
+				badge.textContent = ''
+				badge.removeAttribute('title')
+				return
+			}
+
+			badge.hidden = false
+			badge.className = 'nldesign-badge nldesign-badge--warning'
+			badge.textContent = t('thematiq', 'Incomplete set')
+			badge.setAttribute('title', incompleteWarningLines(warning).join('\n'))
+		}
+
 		// Icon-pack indicator (theme-switchable iconography,
 		// openspec/specs/icon-packs/spec.md): mirrors design-systems.json's
 		// `icon_pack` field for a design system, kept in sync manually (same
@@ -366,6 +464,7 @@
 				// Update preview and design system badge optimistically
 				updatePreview(newTokenSet)
 				updateDesignSystemBadge(newTokenSet)
+				updateCompletenessBadge(newTokenSet)
 				updateIconPackIndicator(newTokenSet)
 				updateMarianneVisibility(newTokenSet)
 
@@ -376,6 +475,7 @@
 			// Set initial preview for selected item and remember initial value.
 			updatePreview(tokenSetSelect.value)
 			updateDesignSystemBadge(tokenSetSelect.value)
+			updateCompletenessBadge(tokenSetSelect.value)
 			updateIconPackIndicator(tokenSetSelect.value)
 			updateMarianneVisibility(tokenSetSelect.value)
 			tokenSetSelect.dataset.previousValue = tokenSetSelect.value
@@ -1795,7 +1895,7 @@
 					),
 				)
 				+ '</h3>'
-				+ buildContrastWarningHtml(newTokenSetId)
+				+ buildTokenSetWarningsHtml(newTokenSetId)
 				+ '<p class="settings-hint">'
 				+ escapeHtml(
 					t(
@@ -2556,6 +2656,49 @@
 		 * CUSTOM TOKEN SETS — upload / list / download / delete (eigen huisstijl)
 		 * ========================================================================== */
 
+		// Build the non-blocking warning banners for a token set, from the
+		// warnings carried on the `tokenSets` initial-state payload: the WCAG
+		// contrast findings and (a separate block, distinguished by
+		// `kind === 'incomplete'`) the vocabulary-completeness finding.
+		function buildTokenSetWarningsHtml(tokenSetId) {
+			return (
+				buildContrastWarningHtml(tokenSetId)
+				+ buildIncompleteWarningHtml(tokenSetId)
+			)
+		}
+
+		// Build the "set does not define the vocabulary the theme reads" banner.
+		// Empty string for a complete set.
+		function buildIncompleteWarningHtml(tokenSetId) {
+			var warning = incompleteWarningFor(tokenSetId)
+			if (warning === null) {
+				return ''
+			}
+			var items = incompleteWarningLines(warning)
+				.map(function (line) {
+					return '<li>' + escapeHtml(line) + '</li>'
+				})
+				.join('')
+			return (
+				'<div class="nldesign-contrast-warning" role="alert">'
+				+ '<strong>'
+				+ escapeHtml(t('thematiq', 'Incomplete set'))
+				+ '</strong>'
+				+ '<p>'
+				+ escapeHtml(
+					t(
+						'thematiq',
+						'This set does not define every token the design system reads, so the missing ones fall back to the Rijkshuisstijl defaults instead of this brand.',
+					),
+				)
+				+ '</p>'
+				+ '<ul>'
+				+ items
+				+ '</ul>'
+				+ '</div>'
+			)
+		}
+
 		// Build the non-blocking contrast-warning banner for a token set, from the
 		// warnings carried on the `tokenSets` initial-state payload.
 		function buildContrastWarningHtml(tokenSetId) {
@@ -2564,6 +2707,11 @@
 				return ''
 			}
 			var items = ts.warnings
+				.filter(function (w) {
+					// The vocabulary finding travels on the same channel but has
+					// no contrast pair; it gets its own banner above.
+					return w && w.kind !== 'incomplete'
+				})
 				.map(function (w) {
 					if (w.unevaluated === true) {
 						return (
@@ -2592,6 +2740,9 @@
 					)
 				})
 				.join('')
+			if (items === '') {
+				return ''
+			}
 			return (
 				'<div class="nldesign-contrast-warning" role="alert">'
 				+ '<strong>'
@@ -2868,9 +3019,28 @@
 					row.appendChild(versionSpan)
 				}
 
+				// Three states, in order of what the admin most needs to know:
+				// a set that never defines the vocabulary is broken in a way no
+				// contrast ratio can reveal, so "Incomplete set" wins over
+				// "Contrast warning".
+				var warnings = set.warnings || []
+				var incomplete = warnings.filter(function (w) {
+					return w && w.kind === 'incomplete'
+				})
+				var contrast = warnings.filter(function (w) {
+					return w && w.kind !== 'incomplete'
+				})
+
 				var badge = document.createElement('span')
 				badge.className = 'nldesign-badge'
-				if (set.warnings && set.warnings.length > 0) {
+				if (incomplete.length > 0) {
+					badge.classList.add('nldesign-badge--warning')
+					badge.textContent = t('thematiq', 'Incomplete set')
+					badge.setAttribute(
+						'title',
+						incompleteWarningLines(incomplete[0]).join('\n'),
+					)
+				} else if (contrast.length > 0) {
 					badge.classList.add('nldesign-badge--warning')
 					badge.textContent = t('thematiq', 'Contrast warning')
 				} else {

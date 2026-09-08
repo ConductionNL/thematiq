@@ -390,6 +390,34 @@ All notable changes to this project will be documented in this file.
   redistribution, and `scripts/build-icons.js` no longer touches that directory at all.
 
 ### Added
+- **Token-set vocabulary audit — "the examples look correct" is now a test, not an opinion.**
+  A new `TokenSetVocabularyAuditService` answers the question no existing gate could:
+  does a shipped token set actually declare the `--nldesign-*` tokens its design system
+  reads? Three mechanical rules per set — the 26 required semantic tokens it must declare
+  itself, `--nldesign-*` names it declares that no stylesheet reads, and disagreement
+  between its `--nldesign-color-primary` and `token-sets.json`'s `theming.primary_color`.
+  Sets whose design system reads no `--nldesign-*` name at all (`none`, `summer-breeze`)
+  are reported as not auditable rather than as failing.
+
+  The measured baseline: of 48 shipped sets, **5 are complete** (`amsterdam`,
+  `conduction`, `denhaag`, `utrecht`, `vng`), 2 are not auditable, and **41 are
+  incomplete** — they fall through to `css/systems/nldesign/defaults.css` and therefore
+  render as Rijkshuisstijl rather than as their own brand. Those 41 are recorded in
+  `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` so CI stays green; the new
+  `tests/Unit/TokenSetVocabularyTest.php` fails both on a set that is incomplete and
+  unlisted AND on a listed set that has started passing, so the list can only shrink. No
+  token set file is changed by this release — regenerating them is the next step.
+- **`npm run audit:token-sets`** — a dependency-free Node mirror of the same three rules
+  (`scripts/audit-token-sets.mjs`), so a token-set author can see the verdict without a
+  PHP runtime or a `composer install`. Prints a per-set table; `--verbose` names every
+  offending token, `--json` emits machine-readable results, and
+  `npm run audit:token-sets:check` exits non-zero on a regression.
+- **"Incomplete set" badge in the admin settings page.** A third badge state next to the
+  design-system and WCAG badges, hidden for a complete set, with a tooltip listing exactly
+  which required tokens are missing, which declared names nothing reads, and any
+  primary-colour disagreement. The apply dialog gains a matching non-blocking banner
+  stating that the missing tokens fall back to the Rijkshuisstijl defaults. Carried on the
+  existing `warnings` channel, distinguished by `kind: 'incomplete'`.
 - **Theme-switchable iconography — new `dsfr` icon pack + resolver.** The bundled icon
   set an app resolves through nldesign now travels with the active **design system**, so
   a French-government (`lasuite`) instance serves French-government icons and a

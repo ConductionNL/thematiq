@@ -92,6 +92,16 @@ class TokenSetService {
 	private ShippedTokenSetAuditService $audit;
 
 	/**
+	 * The vocabulary-completeness audit service — the second, independent
+	 * warning source: whether a shipped set defines the `--nldesign-*`
+	 * vocabulary the design system reads at all (as opposed to whether its
+	 * colours are legible, which is `$audit`'s job).
+	 *
+	 * @var TokenSetVocabularyAuditService
+	 */
+	private TokenSetVocabularyAuditService $vocabularyAudit;
+
+	/**
 	 * Distributed cache for the resolved WCAG level, keyed by set id.
 	 * Deliberately the same `ICache` prefix (`thematiq_wcag_level`)
 	 * `Capabilities` uses, so the public catalogue and the active-theme
@@ -112,6 +122,7 @@ class TokenSetService {
 	 * @param LoggerInterface $logger The logger.
 	 * @param ShippedTokenSetAuditService $audit The shipped-set contrast audit service.
 	 * @param ICacheFactory $cacheFactory Creates the distributed WCAG-level cache.
+	 * @param TokenSetVocabularyAuditService $vocabularyAudit The vocabulary-completeness audit service.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -119,12 +130,14 @@ class TokenSetService {
 		LoggerInterface $logger,
 		ShippedTokenSetAuditService $audit,
 		ICacheFactory $cacheFactory,
+		TokenSetVocabularyAuditService $vocabularyAudit,
 	) {
 		$this->appManager = $appManager;
 		$this->config = $config;
 		$this->logger = $logger;
 		$this->audit = $audit;
 		$this->wcagCache = $cacheFactory->createDistributed(prefix: 'thematiq_wcag_level');
+		$this->vocabularyAudit = $vocabularyAudit;
 	}//end __construct()
 
 	/**
@@ -319,6 +332,7 @@ class TokenSetService {
 	 * @return array<string, mixed> The token set entry with warnings applied, if any.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
 	 */
 	private function applyWarnings(array $tokenSet, array $meta, string $appPath, string $id, bool $isCustom): array {
 		if ($isCustom === true) {
@@ -339,6 +353,17 @@ class TokenSetService {
 			designSystem: $tokenSet['design_system'],
 			theming: ($tokenSet['theming'] ?? [])
 		);
+
+		// ...and the vocabulary verdict on the same channel: a set that never
+		// declares the tokens the design system reads renders as the
+		// defaults.css brand (Rijkshuisstijl), not as its own, which no
+		// contrast ratio can reveal. Appended after the contrast warnings so
+		// the existing ones keep their position in the list.
+		$warnings = array_merge(
+			$warnings,
+			$this->vocabularyAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
+		);
+
 		if (empty($warnings) === false) {
 			$tokenSet['warnings'] = $warnings;
 		}
