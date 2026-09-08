@@ -24,6 +24,15 @@
 # whole instance the moment the app is activated).
 /css/custom-overrides.css
 
+# Runtime theme state — written by the freeform custom-CSS editor at runtime
+# (CustomCssService::write(), atomic temp-file + rename). Unlike
+# custom-overrides.css nothing recreates it on boot: CssInjectionService only
+# emits the stylesheet when the feature is enabled AND the file has content, so
+# its absence is the correct default state. It is admin-generated data, never
+# source — a stray token dump committed here restyles every instance that
+# enables the feature.
+/css/custom-css.css
+
 # Scratch input for scripts/build-icons.js's DSFR pack — the pre-fetched
 # @gouvfr/dsfr dist/icons/**/*.svg tree (that package cannot be npm-installed:
 # broken optional deps upstream). The build script materializes it into the

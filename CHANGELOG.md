@@ -461,6 +461,7 @@ All notable changes to this project will be documented in this file.
     (extended) for the full contract.
 
 ### Changed
+- `css/custom-css.css` is now gitignored, next to `css/custom-overrides.css`. It is admin-authored runtime data written on demand by `CustomCssService::write()`, never app source — `CssInjectionService` only emits the stylesheet when the freeform-CSS feature is enabled and the file has content, so its absence is the correct default state.
 - Style injection moved from `Application::boot()` (every request) to a `ThemeInjectionListener` on `BeforeTemplateRenderedEvent`/`BeforeLoginTemplateRenderedEvent` (only actual template renders) — same stylesheets, same cascade order, same excluded-app behavior by default. Adds an occ-only `themed_contexts` appconfig key to selectively unthemed a render context (`user`/`login`/`guest`/`public`/`error`); absent (the default) themes every context exactly as before. See `openspec/changes/render-event-injection/`.
 
 ### Security
