@@ -52,7 +52,9 @@
 		"check:l10n-js": "node scripts/build-l10n-js.js --check"
 	},
 	"dependencies": {
-		"@fontsource/fira-sans": "^5.0.0"
+		"@fontsource/fira-sans": "^5.0.0",
+		"@gemeente-rotterdam/design-tokens": "^1.1.0",
+		"@nl-design-system-unstable/zwolle-design-tokens": "^1.0.0"
 	},
 	"optionalDependencies": {
 		"@gouvfr/dsfr": "^1.15.1"

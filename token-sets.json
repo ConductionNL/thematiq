@@ -392,11 +392,13 @@
 	{
 		"id": "zwolle",
 		"name": "Gemeente Zwolle",
-		"description": "Design tokens for Gemeente Zwolle",
+		"description": "Design tokens for Gemeente Zwolle, resolved from the @nl-design-system-unstable/zwolle-design-tokens package",
 		"theming": {
-			"primary_color": "#3A4F93",
+			"primary_color": "#476DB8",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamPackage": "@nl-design-system-unstable/zwolle-design-tokens",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "hoog-contrast",

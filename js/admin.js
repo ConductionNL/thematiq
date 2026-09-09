@@ -234,6 +234,44 @@
 				),
 			)
 			s.setProperty('--prev-radius', readVar('--border-radius-element', '8px'))
+			// The rounded container Nextcloud clips the navigation and the app
+			// content into, and the pill radius of a navigation entry.
+			s.setProperty(
+				'--prev-radius-container',
+				readVar('--body-container-radius', readVar('--border-radius-large', '12px')),
+			)
+			s.setProperty(
+				'--prev-radius-pill',
+				readVar('--border-radius-pill', '999px'),
+			)
+			// The page background BEHIND the content container — visible in the
+			// gap around it, which is where a themed instance shows its plain
+			// colour or background image.
+			s.setProperty(
+				'--prev-plain',
+				readVar(
+					'--color-background-plain',
+					readVar('--color-background-dark', '#f2f4f7'),
+				),
+			)
+			// The header is its own role: a set may paint it differently from the
+			// primary (OpenWOO: ice blue on navy, Cunningham: white). Fall back to
+			// the primary only when the page carries no header token.
+			s.setProperty(
+				'--prev-header-bg',
+				readVar('--nldesign-color-header-background', colors.primary),
+			)
+			s.setProperty(
+				'--prev-header-text',
+				readVar(
+					'--nldesign-color-header-text',
+					colors.primaryText || readVar('--color-primary-text', '#ffffff'),
+				),
+			)
+			s.setProperty(
+				'--prev-header-border',
+				readVar('--nldesign-header-border-bottom', '0'),
+			)
 			s.setProperty('--prev-login-bg', colors.primary)
 		}
 

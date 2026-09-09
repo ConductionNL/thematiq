@@ -356,7 +356,23 @@ style('thematiq', 'admin');
 			</div>
 		</div>
 
-		<!-- App-shell preview: navbar, menu, content + table widget, sidebar, open modal -->
+		<!-- App-shell preview: it mirrors the REAL Nextcloud shell, because that is
+		     what an admin compares it against.
+		       - the header bar spans the full width and sits on the page
+		         background, with the app menu on the left and the account
+		         glyphs on the right;
+		       - the content CONTAINER is inset from the page background and
+		         clips the navigation and the app content into one rounded
+		         rectangle (Nextcloud's `#content`, `--body-container-radius`);
+		       - navigation entries are full-width pills carrying an icon and a
+		         label, grouped under captions, and the selected one is FILLED
+		         with the primary colour and labelled in its paired text colour
+		         (`--border-radius-pill`, `--color-primary-element`);
+		       - the app sidebar is a real panel with a heading and a close
+		         control, not a second strip of grey lines.
+		     Captions and body text are drawn as bars rather than words on
+		     purpose: the shell is a scale model, and only the roles that carry a
+		     token need to be legible. -->
 		<div class="nldesign-preview-stage" data-view="app">
 			<div class="nl-mini">
 				<div class="nl-mini__navbar">
@@ -365,14 +381,18 @@ style('thematiq', 'admin');
 					<span class="nl-mini__navitem"></span>
 					<span class="nl-mini__navitem"></span>
 					<span class="nl-mini__navspacer"></span>
+					<span class="nl-mini__navglyph"></span>
+					<span class="nl-mini__navglyph"></span>
 					<span class="nl-mini__avatar"></span>
 				</div>
 				<div class="nl-mini__body">
 					<nav class="nl-mini__menu">
-						<span class="nl-mini__menuitem nl-mini__menuitem--active"><?php p($l->t('Dashboard')); ?></span>
-						<span class="nl-mini__menuitem"><?php p($l->t('Orders')); ?></span>
-						<span class="nl-mini__menuitem"><?php p($l->t('Reports')); ?></span>
-						<span class="nl-mini__menuitem"><?php p($l->t('Settings')); ?></span>
+						<span class="nl-mini__caption"></span>
+						<span class="nl-mini__menuitem nl-mini__menuitem--active"><i class="nl-mini__menuicon"></i><?php p($l->t('Dashboard')); ?></span>
+						<span class="nl-mini__menuitem"><i class="nl-mini__menuicon"></i><?php p($l->t('Orders')); ?></span>
+						<span class="nl-mini__menuitem"><i class="nl-mini__menuicon"></i><?php p($l->t('Reports')); ?></span>
+						<span class="nl-mini__caption"></span>
+						<span class="nl-mini__menuitem"><i class="nl-mini__menuicon"></i><?php p($l->t('Settings')); ?></span>
 					</nav>
 					<main class="nl-mini__content">
 						<div class="nl-mini__widget">
@@ -388,7 +408,7 @@ style('thematiq', 'admin');
 						</div>
 					</main>
 					<aside class="nl-mini__sidebar">
-						<div class="nl-mini__sidebar-head"><?php p($l->t('Details')); ?></div>
+						<div class="nl-mini__sidebar-head"><?php p($l->t('Details')); ?><span class="nl-mini__sidebar-close"></span></div>
 						<span class="nl-mini__line"></span>
 						<span class="nl-mini__line nl-mini__line--short"></span>
 						<span class="nl-mini__line"></span>

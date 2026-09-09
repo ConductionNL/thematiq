@@ -63,10 +63,24 @@
 	/* Header & Navigation — white header by default */
 	--nldesign-color-header-background: #ffffff;
 	--nldesign-color-header-text: #333333;
+	/* How the header's app-menu IMAGES (Nextcloud ships them white) are painted
+	 * for this header: black on the white default. A set with a dark header
+	 * declares `none` so they stay white; `color` cannot tint an <img>. */
+	--nldesign-header-icon-filter: invert(1) brightness(0) contrast(100);
 	--nldesign-header-border-bottom: 0;
 	--nldesign-color-nav-background: #ffffff;
 
-	/* Logo & Lint — no lint by default, logo shows in natural colors */
+	/* Logo & Lint — no lint by default, logo shows in natural colors.
+	 *
+	 * `--nldesign-logo-url` is deliberately absent here: it is declared per set
+	 * (a set that ships `img/logos/<id>.svg`). A set that ships none does not
+	 * fall through to an empty header — CssInjectionService::injectLogoUrl()
+	 * supplies Nextcloud's own logo instead, either the admin-uploaded one as
+	 * it is, or core's white `logo.svg` masked to
+	 * `--nldesign-color-header-text`. Which branch runs is decided by the FILE,
+	 * not by the token file: a set that declares a logo url with no matching
+	 * file was requesting a 404 (a relative url() in a custom property resolves
+	 * against the stylesheet that USES it), so it gets the fallback too. */
 	--nldesign-color-logo-background: transparent;
 	--nldesign-size-lint: 0px;
 	--nldesign-size-lint-height: 0px;

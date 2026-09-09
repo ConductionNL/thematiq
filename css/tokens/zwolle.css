@@ -1,144 +1,121 @@
 /**
- * Gemeente Zwolle Design Tokens
+ * Gemeente Zwolle — Token Set
  *
- * Auto-generated from nl-design-system/themes repository.
- * Do not edit manually — changes will be overwritten by the sync workflow.
+ * Standard Layer-3 `--nldesign-*` semantic layer for the `zwolle` token set,
+ * hand-authored the way css/tokens/cunningham.css is: one flat :root that pins
+ * the values Nextcloud's chrome reads and lets everything else fall through to
+ * css/systems/nldesign/defaults.css.
  *
- * Source: https://github.com/nl-design-system/themes
+ * Source: @nl-design-system-unstable/zwolle-design-tokens 1.0.0 —
+ * dist/design-tokens.css (base block `.zwolle-theme`). The previous file was
+ * the nightly importer's raw dump (palette steps, spacing and heading sizes
+ * under the --nldesign-* prefix, no semantic roles), which rendered as
+ * Rijkshuisstijl; this file resolves the theme's aliases by hand, which is
+ * what the MAKEOVER-PLAN v2 stage 2 converter will do mechanically. When that
+ * lands, this file is regenerated, not edited — and the nightly sync
+ * (scripts/generate-tokens.mjs) must go through the converter too, or it
+ * overwrites this file with the raw dump again.
+ *
+ *   --utrecht-button-background-color → --zwolle-color-blue-50
+ *                                        → hsl(220 44% 50%) → #476db8
+ *     The theme's only button colour (no primary-action token), so it is the
+ *     primary by plan Rule P step 2. The palette also names blue-45
+ *     "Primary-Darkblue" (#347ab7) — kept as the hover/dark step.
+ *   --utrecht-document-color          → --zwolle-color-black → #000000
+ *   --utrecht-document-font-family    → DIN, Arial, Helvetica, sans-serif
+ *                                        (DIN is not bundled; Arial renders)
+ *   --utrecht-textbox-border-color    → --utrecht-form-input-border-color
+ *                                        → --zwolle-color-black
+ *   --utrecht-textbox-border-radius   → 2px · --utrecht-button-border-radius → 0
+ *   --zwolle-color-grey               → hsl(0 0% 92%) → #ebebeb
+ *   --zwolle-color-pink-50            → hsl(322 100% 45%) → #e60091 (accent)
+ *
+ * No header, link or status tokens exist in the theme, so those roles are
+ * "the Nextcloud way" (plan Rule N): header = the primary with its contrast
+ * text, links follow the primary, status colours are the nldesign defaults.
+ *
+ * ONE FLAT :root BLOCK, deliberately (see cunningham.css).
  */
 
 :root {
-	/* NL Design tokens */
-	--nldesign-color-blue-40: hsl(220 44% 40%);
-	--nldesign-color-blue-45: hsl(208 56% 46%);
-	--nldesign-color-blue-50: hsl(220 44% 50%);
-	--nldesign-color-grey: hsl(0 0% 92%);
-	--nldesign-color-white: hsl(0 0% 100%);
-	--nldesign-color-black: hsl(0 0% 0%);
-	--nldesign-color-pink-50: hsl(322 100% 45%);
-	--nldesign-typography-sans-serif-font-family: DIN, Arial, Helvetica, sans-serif;
-	--nldesign-typography-scale-md-font-size: 16px;
-	--nldesign-typography-scale-md-line-height: 22px;
-	--nldesign-typography-scale-sm-font-size: 14px;
-	--nldesign-typography-scale-sm-line-height: 18px;
-	--nldesign-typography-weight-scale-bold-font-weight: 700;
-	--nldesign-typography-weight-scale-semi-bold-font-weight: 500;
-	--nldesign-typography-weight-scale-normal-font-weight: 400;
-	--nldesign-space-block-3xs: 0;
-	--nldesign-space-block-2xs: 4px;
-	--nldesign-space-block-xs: 8px;
-	--nldesign-space-block-sm: 12px;
-	--nldesign-space-block-md: 16px;
-	--nldesign-space-block-lg: 20px;
-	--nldesign-space-block-xl: 24px;
-	--nldesign-space-block-2xl: 28px;
-	--nldesign-space-block-3xl: 32px;
-	--nldesign-space-block-4xl: 36px;
-	--nldesign-space-block-5xl: 40px;
-	--nldesign-space-inline-3xs: 0.125ch;
-	--nldesign-space-inline-2xs: 0.25ch;
-	--nldesign-space-inline-xs: 0.5ch;
-	--nldesign-space-inline-sm: 0.75ch;
-	--nldesign-space-inline-md: 1ch;
-	--nldesign-space-inline-lg: 1.5ch;
-	--nldesign-space-inline-xl: 1.75ch;
-	--nldesign-space-inline-2xl: 2ch;
-	--nldesign-space-inline-3xl: 3ch;
-	--nldesign-space-row-3xs: 0;
-	--nldesign-space-row-2xs: 4px;
-	--nldesign-space-row-xs: 8px;
-	--nldesign-space-row-sm: 12px;
-	--nldesign-space-row-md: 16px;
-	--nldesign-space-row-lg: 20px;
-	--nldesign-space-row-xl: 24px;
-	--nldesign-space-row-2xl: 28px;
-	--nldesign-space-row-3xl: 32px;
-	--nldesign-space-row-4xl: 36px;
-	--nldesign-space-row-5xl: 40px;
-	--nldesign-space-column-3xs: 0;
-	--nldesign-space-column-2xs: 4px;
-	--nldesign-space-column-xs: 8px;
-	--nldesign-space-column-sm: 12px;
-	--nldesign-space-column-md: 16px;
-	--nldesign-space-column-lg: 20px;
-	--nldesign-space-column-xl: 24px;
-	--nldesign-space-column-2xl: 28px;
-	--nldesign-space-column-3xl: 32px;
-	--nldesign-space-column-4xl: 36px;
-	--nldesign-space-column-5xl: 40px;
-	--nldesign-component-badge-counter-border-radius: 3ex;
-	--nldesign-component-badge-counter-padding-block: 1ex;
-	--nldesign-component-badge-counter-padding-inline: 1ex;
-	--nldesign-component-badge-border-radius: 0;
-	--nldesign-component-badge-font-weight: 700;
-	--nldesign-component-badge-padding-block: 6px;
-	--nldesign-component-button-border-radius: 0;
-	--nldesign-component-button-border-width: 0;
-	--nldesign-component-button-margin-inline-end: 0;
-	--nldesign-component-button-margin-inline-start: 0;
-	--nldesign-component-document-font-size: 16px;
-	--nldesign-component-document-line-height: 22px;
-	--nldesign-component-form-input-block-size: 44px;
-	--nldesign-component-form-input-line-height: 18px;
-	--nldesign-component-form-select-border-width: 1px;
-	--nldesign-component-form-select-font-size: 1rem;
-	--nldesign-component-form-select-max-inline-size: 100%;
-	--nldesign-component-heading-1-font-size: 31px;
-	--nldesign-component-heading-1-line-height: 30px;
-	--nldesign-component-heading-1-margin-block-end: 0;
-	--nldesign-component-heading-1-margin-block-start: 0;
-	--nldesign-component-heading-2-font-size: 24px;
-	--nldesign-component-heading-2-line-height: 28px;
-	--nldesign-component-heading-2-margin-block-end: 8px;
-	--nldesign-component-heading-2-margin-block-start: 0;
-	--nldesign-component-heading-3-font-size: 20px;
-	--nldesign-component-heading-3-line-height: 28px;
-	--nldesign-component-heading-3-margin-block-end: 8px;
-	--nldesign-component-heading-3-margin-block-start: 0;
-	--nldesign-component-heading-4-font-size: 18px;
-	--nldesign-component-heading-4-line-height: 25px;
-	--nldesign-component-heading-4-margin-block-end: 8px;
-	--nldesign-component-heading-4-margin-block-start: 0;
-	--nldesign-component-heading-5-font-size: 18px;
-	--nldesign-component-heading-5-line-height: 25px;
-	--nldesign-component-heading-5-margin-block-end: 8px;
-	--nldesign-component-heading-5-margin-block-start: 0;
-	--nldesign-component-heading-6-font-size: 16px;
-	--nldesign-component-heading-6-letter-spacing: 0.72px;
-	--nldesign-component-heading-6-line-height: 20px;
-	--nldesign-component-heading-6-margin-block-end: 0;
-	--nldesign-component-heading-6-margin-block-start: 0;
-	--nldesign-component-paragraph-line-height: 22px;
-	--nldesign-component-table-header-font-weight: bold;
-	--nldesign-component-table-header-border-block-end-width: 0.5px;
-	--nldesign-component-table-cell-padding-block-end: 15px;
-	--nldesign-component-table-cell-padding-block-start: 15px;
-	--nldesign-component-table-cell-padding-inline-end: 6px;
-	--nldesign-component-table-cell-padding-inline-start: 6px;
-	--nldesign-component-table-cell-border-color: hsl(0deg 0% 71%);
-	--nldesign-component-table-row-alternate-odd-background-color: hsl(0deg 0% 90%);
-	--nldesign-component-table-row-alternate-even-background-color: hsl(0deg 0% 100%);
-	--nldesign-component-textarea-min-block-size: 95px;
-	--nldesign-component-textbox-border-bottom-width: 1px;
-	--nldesign-component-textbox-border-radius: 2px;
-	--nldesign-component-textbox-border-width: 1px;
-	--nldesign-component-textbox-min-inline-size: 70px;
-	--nldesign-component-textbox-max-inline-size: 620px;
+	/* Brand palette — --zwolle-*, literal values (hsl resolved to hex) */
+	--zwolle-color-blue-40: #395793;
+	--zwolle-color-blue-45: #347ab7;
+	--zwolle-color-blue-50: #476db8;
+	--zwolle-color-grey: #ebebeb;
+	--zwolle-color-white: #ffffff;
+	--zwolle-color-black: #000000;
+	--zwolle-color-pink-50: #e60091;
 
-	/* Gemeente Zwolle palette */
-	--zwolle-color-blue-40: hsl(220 44% 40%);
-	--zwolle-color-blue-45: hsl(208 56% 46%);
-	--zwolle-color-blue-50: hsl(220 44% 50%);
-	--zwolle-color-grey: hsl(0 0% 92%);
-	--zwolle-color-white: hsl(0 0% 100%);
-	--zwolle-color-black: hsl(0 0% 0%);
-	--zwolle-color-pink-50: hsl(322 100% 45%);
-	--zwolle-typography-sans-serif-font-family: DIN, Arial, Helvetica, sans-serif;
-	--zwolle-typography-scale-md-font-size: 16px;
-	--zwolle-typography-scale-md-line-height: 22px;
-	--zwolle-typography-scale-sm-font-size: 14px;
-	--zwolle-typography-scale-sm-line-height: 18px;
-	--zwolle-typography-weight-scale-bold-font-weight: 700;
-	--zwolle-typography-weight-scale-semi-bold-font-weight: 500;
-	--zwolle-typography-weight-scale-normal-font-weight: 400;
+	/* Primary — the theme's button colour, blue-50 (Rule P, step 2) */
+	--nldesign-color-primary: #476db8;
+	--nldesign-color-primary-text: #ffffff;
+	--nldesign-color-primary-hover: #395793;
+	--nldesign-color-primary-light: #e3e9f5;
+	--nldesign-color-primary-light-hover: #c7d3eb;
+
+	/* Header — no header token in the theme: the primary, the Nextcloud way */
+	--nldesign-color-header-background: #476db8;
+	--nldesign-color-header-text: #ffffff;
+	/* Dark header: keep Nextcloud's white app-menu icons white */
+	--nldesign-header-icon-filter: none;
+	--nldesign-color-nav-background: #ffffff;
+
+	/* Text — document colour black; muted is Nextcloud's own step */
+	--nldesign-color-text: #000000;
+	--nldesign-color-text-muted: #6b6b6b;
+	--nldesign-color-text-light: #ffffff;
+
+	/* Border — the theme's grey; the dark step is Nextcloud's own */
+	--nldesign-color-border: #ebebeb;
+	--nldesign-color-border-dark: #767676;
+
+	/* Focus — the theme's button focus border colour, black */
+	--nldesign-color-focus: rgba(0, 0, 0, 0.5);
+	--nldesign-color-focus-rgb: 0, 0, 0;
+
+	/* Links — no link token: follow the primary */
+	--nldesign-color-link: #476db8;
+	--nldesign-color-link-hover: #395793;
+	--nldesign-color-link-visited: #347ab7;
+
+	/* Status — no tokens in the theme: the nldesign defaults */
+	--nldesign-color-error: #d52b1e;
+	--nldesign-color-error-rgb: 213, 43, 30;
+	--nldesign-color-error-hover: #8b1a15;
+	--nldesign-color-warning: #e17000;
+	--nldesign-color-warning-rgb: 225, 112, 0;
+	--nldesign-color-success: #39870c;
+	--nldesign-color-success-rgb: 57, 135, 12;
+	--nldesign-color-info: #347ab7;
+	--nldesign-color-info-rgb: 52, 122, 183;
+
+	/* Background tones — from the theme's grey */
+	--nldesign-color-background-hover: #f5f5f5;
+	--nldesign-color-background-dark: #ebebeb;
+	--nldesign-color-background-darker: #d6d6d6;
+
+	/* Buttons — the same blue (one colour) */
+	--nldesign-color-button-primary-background: #476db8;
+	--nldesign-color-button-primary-text: #ffffff;
+	--nldesign-color-button-primary-border: #476db8;
+	--nldesign-color-button-primary-hover: #395793;
+
+	/* Typography — DIN is not bundled, so Arial renders */
+	--nldesign-font-family: DIN, Arial, Helvetica, sans-serif;
+
+	/* Border radius — 2px inputs, square buttons; large/rounded/pill are
+	 * Nextcloud's */
+	--nldesign-border-radius: 2px;
+	--nldesign-border-radius-small: 0;
+	--nldesign-border-radius-large: 10px;
+	--nldesign-border-radius-rounded: 28px;
+	--nldesign-border-radius-pill: 100px;
+
+	/* Nextcloud-way defaults for roles the theme has no token for */
+	--nldesign-color-placeholder-light: #ebebeb;
+	--nldesign-color-placeholder-dark: #d6d6d6;
+	--nldesign-color-favorite: #e60091;
+	--nldesign-animation-quick: 100ms;
+	--nldesign-animation-slow: 300ms;
 }

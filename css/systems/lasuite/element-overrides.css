@@ -110,17 +110,29 @@ header#header {
    photo. It must inherit nothing from the tinting above — La Suite's own
    avatar is a coloured disc with near-white initials, never a monochrome
    glyph. `color` is scoped back to the initials so they stay legible on that
-   generated background. */
+   generated background.
+
+   The user-status badge is EXCLUDED from the initials colour. It sits on the
+   avatar and its class is `avatardiv__user-status`, so `[class*='avatar' i] *`
+   reaches it, but it is a status indicator on its own light disc, not text on
+   the portrait — its own markup asks for
+   `fill="var(--user-status-color-online, var(--color-success, #2d7b41))"`, and
+   white is the one colour it must not be forced to. (Nothing here forces `fill`
+   or `stop-color`, which is why this bundle never turned that badge black the
+   way the nldesign one did: `fill: unset` resolves to `inherit` and walks up to
+   the initial value.) */
 #header .avatardiv,
-#header .avatardiv *,
+#header .avatardiv *:not([class*='user-status' i]):not([class*='user-status' i] *),
 #header [class*='avatar' i],
-#header [class*='avatar' i] * {
+#header [class*='avatar' i]
+	*:not([class*='user-status' i]):not([class*='user-status' i] *) {
 	filter: none !important;
 	-webkit-filter: none !important;
 	color: var(--lasuite-color-gray-000) !important;
 }
 
-/* User-status emoji/icon keeps its own colours. */
+/* User-status emoji/icon keeps its own colours, and its own filter — the
+   avatar rule above no longer covers it. */
 #header .user-status-icon,
 #header .user-status-icon * {
 	filter: none !important;
@@ -288,45 +300,48 @@ header#header {
  * Generated content cannot alter the accessible name here — `aria-label` wins
  * over contents in the name computation — so this is decorative only, and the
  * control keeps a 34px hit box (above the 24x24 WCAG 2.5.8 minimum, and the
- * same height NC 34's pill already uses). */
+ * same height NC 34's pill already uses).
+ *
+ * ⚠️ WITHDRAWN — MEASURED ON A RUNNING NC 32, IT DID NOT FIT.
+ *
+ * Everything above is the design intent; what it produced on the server is a
+ * control that OVERFLOWS ITS OWN SLOT. `inline-size: auto` grows the trigger to
+ * fit `attr(aria-label)` on one nowrap line (~130px against the ~50px the bar
+ * reserves for an icon-only trigger), but only the BUTTON grows — the
+ * `.header-menu` element around it does not, so the flex row keeps laying the
+ * next controls out over the top of it. Screenshotted on NC 32.0.x with
+ * `cunningham` active: the pill ran from the app menu to the avatar with the
+ * Notifications bell and the Contacts icon drawn ON it, and the label read
+ * "Unified se[bell]rch".
+ *
+ * Growing the container instead was not attempted blind: `.unified-search-menu`
+ * exists on NC 34 as well, so widening it needs a `:has(.header-menu__trigger)`
+ * guard to stay off 34, and it only works at all if the trigger is in flow —
+ * neither of which can be verified from this repository, whose bundled
+ * Nextcloud is 30.0.0-dev and ships no NcHeaderMenu stylesheet to read. So the
+ * treatment is withdrawn rather than tuned in the dark: on NC 32 the control
+ * goes back to what Nextcloud renders, an icon-only trigger, tinted like the
+ * Notifications and Contacts glyphs beside it. No chip, no generated label,
+ * nothing to overflow.
+ *
+ * The NC 34 pill above is untouched — it is a real input Nextcloud sizes
+ * itself, and none of the removed rules ever matched it.
+ *
+ * To bring the NC 32 pill back, the container has to reserve the width first:
+ * `#header .unified-search-menu:has(.header-menu__trigger)` and its
+ * `.header-menu` child sized to content, verified on a running 32 and asserted
+ * byte-identical on 34, before the trigger is allowed to grow again. */
 #header .unified-search-menu .header-menu__trigger {
-	background-color: var(
-		--lasuite--contextuals--background--surface--tertiary,
-		var(--lasuite-color-gray-025)
-	) !important;
-	border: 1px solid
-		var(
-			--lasuite--contextuals--border--surface--primary,
-			var(--lasuite-color-gray-100)
-		) !important;
-	border-radius: var(--lasuite-border-radius) !important;
-	block-size: 34px !important;
-	min-block-size: 0 !important;
-	min-inline-size: 0 !important;
-	inline-size: auto !important;
-	padding: 0 10px !important;
-	justify-content: flex-start !important;
-}
-
-#header .unified-search-menu .header-menu__trigger .button-vue__wrapper {
-	gap: 8px !important;
+	background: none !important;
+	background-color: transparent !important;
+	border: none !important;
+	inline-size: var(--default-clickable-area, 44px) !important;
+	justify-content: center !important;
+	padding: 0 !important;
 }
 
 #header .unified-search-menu .header-menu__trigger::after {
-	content: attr(aria-label);
-	color: var(--lasuite-content-muted, var(--lasuite-color-gray-500)) !important;
-	font-size: 14px !important;
-	font-weight: 500 !important;
-	white-space: nowrap;
-}
-
-/* Same reasoning as the NC 34 magnifier above: neutral affordance, not a
-   brand-tinted action. This has to out-specify the `.header-end svg` brand tint
-   earlier in the file, and it does — (1 id, 2 classes, 1 type) against
-   (1 id, 1 class, 1 type) — so the ordering here is not load-bearing. */
-#header .unified-search-menu .header-menu__trigger .icon-vue,
-#header .unified-search-menu .header-menu__trigger svg {
-	color: var(--lasuite-content-muted, var(--lasuite-color-gray-500)) !important;
+	content: none !important;
 }
 
 /* App menu — dark on white, brand-650 active indicator (Cunningham accent).

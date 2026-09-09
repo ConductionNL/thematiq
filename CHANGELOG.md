@@ -468,6 +468,124 @@ All notable changes to this project will be documented in this file.
 - Hardened `CustomTokenSetValidator::isForbiddenValue()` to reject declaration values containing a semicolon (`;`) or a CSS comment marker (`/*`, `*/`), closing a CSS-injection gap where a single accepted `--nldesign-*`/`--{slug}-*` declaration's value could smuggle an arbitrary extra declaration (e.g. `background: url(...)`) past the name whitelist into the `:root {}` block served to every anonymous visitor (login page, share links). Applies to both the CSS upload path and the W3C Design Tokens JSON path (`CustomTokenSetController::mapFromJson()`), which shares the same gate. Only new uploads are affected — a custom token set uploaded before this fix is not retroactively re-validated; the served `custom-*.css` file for an existing set is unchanged until it is re-uploaded. See `openspec/changes/harden-custom-token-set-value-validation/`.
 
 ### Fixed
+- **On Nextcloud 32, the La Suite / Cunningham search control overflowed its slot and the
+  rest of the header-end was drawn on top of it.** The bundle turns NC 32's icon-only search
+  trigger into a labelled pill so the control matches what NC 34 renders, but `inline-size:
+  auto` grows only the BUTTON to fit its `attr(aria-label)` label — about 130px against the
+  ~50px the bar reserves — while the `.header-menu` element around it keeps the icon-only
+  width. The flex row therefore laid the next controls over the top: screenshotted on
+  Cunningham with the pill running from the app menu to the avatar, the Notifications bell
+  and Contacts icon sitting on it, and the label reading "Unified se[bell]rch". Growing the
+  container instead needs a `:has()` guard to stay off NC 34 and only works if the trigger is
+  in flow, neither of which can be checked against a repository whose bundled Nextcloud is
+  30.0.0-dev, so the treatment is withdrawn rather than tuned blind: on NC 32 the control is
+  an icon-only trigger again, tinted like the Notifications and Contacts glyphs next to it.
+  The NC 34 pill is untouched — none of the removed rules ever matched it — and the block
+  records what has to be verified before the pill comes back.
+- **The user-status badge was excluded from the forced avatar colour in the La Suite bundle
+  too**, for the same reason as in the nldesign one: `avatardiv__user-status` matches
+  `[class*='avatar' i] *`, and a status indicator on its own light disc is not text on the
+  portrait. That bundle never forced `fill`, which is why its badge stayed green.
+- **Every item in the header-end carried an opaque white plate.** `.header-menu` is the class
+  on each header-end ITEM — `#unified-search`, `#notifications`, `#contactsmenu` and
+  `#user-menu` all have it — and the panel that drops out of one is a child,
+  `.header-menu__wrapper` > `.header-menu__content`. A rule written for the panel addressed
+  the item instead, so `--color-main-background` was painted behind the account glyphs: a
+  white block across the right of OpenWOO's ice-blue header, the same block on Rotterdam's
+  green, with the body text colour handed to the glyphs on top of it. The rule now addresses
+  the panel; the trigger is transparent, as Nextcloud draws it, and the header colour runs
+  edge to edge.
+- **The user-status badge on the avatar rendered as a black disc instead of the green
+  check.** The avatar's protection rule forced `fill: unset`, and because `fill` is an
+  inherited property that resolves to `inherit` and walks up to the initial value — black.
+  The badge's own markup asks for `fill="var(--user-status-color-online, var(--color-success,
+  #2d7b41))"`. The rule no longer touches `fill` or `stop-color` at all: the header-glyph
+  rules now exclude the avatar subtree, so there is nothing left for it to undo. It keeps
+  `filter: none`, which is load-bearing — core inverts the avatar photo whenever the PAGE
+  background is bright, regardless of the header the photo sits on.
+- **The account glyphs on the right of the header were painted with the BODY text colour,
+  and on a saturated header that made them unfindable.** Search, notifications, contacts and
+  the user menu sit on the header, so they take the header's foreground, but the rules
+  covering them used `--nldesign-color-text`: Rotterdam drew `#404b4f` glyphs on its
+  `#00811f` green at **1.78:1** (its header text is white, 5.05:1), and OpenWOO drew pure
+  black where its header text is the navy `#11304e`. Those glyphs were additionally dimmed
+  to `opacity: 0.8`, which spends contrast exactly where a saturated header has none to
+  spare — Rotterdam's composited glyph measured 1.05:1. They now take
+  `--nldesign-color-header-text` at full strength, with `fill: currentColor` so the SVGs
+  follow. The block is named `.header-end` on Nextcloud 32 and `.header-right` in the 30-era
+  layout, and only the `.header-end` half had been fixed, so on an installation serving the
+  older markup those glyphs were still painted by the legacy rules. Both halves now agree,
+  and the `.header-end` rule that forces `fill` on header SVGs no longer reaches into the
+  avatar and the status badge either.
+- **The avatar and its user-status badge were squares.** `.header-menu *` forced the brand
+  radius onto every element in the user menu, including the avatar and the status badge that
+  sits on it, which Nextcloud draws as circles (`border-radius: 50%`). A brand radius belongs
+  to boxes, not to a portrait; the avatar subtree is excluded and keeps its own shape. The
+  badge is also excluded from the two rules that force white onto the avatar's contents —
+  those exist to keep the INITIALS legible on the plate, and a status indicator carries its
+  own colours on its own light disc.
+- **The header logo slot was empty on every token set that ships no logo.** `theme.css`
+  blanks Nextcloud's own logo (`background-image: var(--nldesign-logo-url, none)`) so a
+  set's artwork can take its place, but roughly twenty shipped sets have no
+  `img/logos/<id>.svg` — for those the declaration resolved to `none` and the header simply
+  had a 56px hole where a stock installation shows the Nextcloud logo. CSS alone cannot
+  recover it: an `!important` declaration whose `var()` chain ends unresolved is still the
+  winning declaration and computes to `unset`, so Nextcloud's own rule never returns, and
+  its fallback URL is relative to `core/css/server.css`. `CssInjectionService::injectLogoUrl()`
+  now supplies the fallback itself, where the webroot is known. An admin-uploaded logo is
+  brand artwork and is shown as it is, through the theming app's own `--image-logoheader` /
+  `--image-logo` with no filter. With no uploaded logo, core's `logo.svg` is used and
+  **masked** to `--nldesign-color-header-text` rather than filtered: the shipped sets paint
+  headers from white through ice blue to saturated blue, so no single filter is right for
+  all of them, while the header text colour is by definition the one the set says is legible
+  on its own header. That is the technique `systems/lasuite/element-overrides.css` already
+  documents for the same image. A set that ships artwork is unaffected. The one behaviour
+  change beyond the empty slot: `conduction` declared `img/logos/vng.svg` through a relative
+  url that resolved to a 404, and now shows the Nextcloud logo instead of a broken image.
+- **Every avatar on a themed instance was a rounded square.** The "remove all rounded
+  corners" rule in `theme.css` listed `img`, so the brand radius was forced onto every
+  image on the page — including the user-menu avatar in the header, the contacts menu,
+  share recipients and file previews, all of which Nextcloud draws as circles
+  (`.avatardiv { border-radius: 50% }`). `img` is not a component and is no longer in that
+  list; the components that take the brand radius stay listed by name.
+- **The settings sidebar rendered as a column of underlined brand-coloured links, with the
+  selected entry a pale tint instead of Nextcloud's solid selection.** Three shared rules
+  fought Nextcloud's own navigation: the blanket link rule handed every `<a>` the link
+  colour, the typography section underlined every `<a>`, and `theme.css` repainted the
+  active entry with `--nldesign-color-primary-light` plus a 4px left border and brand-
+  coloured bold text — which also pushed the selected row 4px out of line with the others
+  and put brand text on a brand tint. Navigation entries now take the body text colour
+  through the inherited `--nldesign-color-on-surface` opt-out, carry no underline, and the
+  selected entry is left to Nextcloud: `--color-primary-element` filled,
+  `--color-primary-element-text` labelled, both already mapped to the active set. The
+  active app-menu entry in the header keeps its brand accent.
+- **The admin preview's app shell did not represent the page it previews.** It drew the app
+  navigation as a strip of muted mini-labels and the app sidebar as a second such strip, so
+  the panel an admin checks first showed nothing that is actually on screen. The shell now
+  mirrors Nextcloud's real geometry: the header spans the page background, the navigation
+  and the app content are clipped into one inset rounded container
+  (`--body-container-radius`), navigation entries are full-width pills
+  (`--border-radius-pill`) with an icon and a body-coloured label of which the selected one
+  is filled with `--color-primary-element`, and the sidebar is a panel with a heading and a
+  close control. The header bar also reads `--nldesign-header-border-bottom`, and the gap
+  around the container reads `--color-background-plain`.
+- **Header glyphs were forced to pure black and the avatar to a black square on themed
+  pages.** `element-overrides.css` applied `filter: invert(1) brightness(0) contrast(100)` to
+  every header-end svg, icon and image: `brightness(0)` ignores the set's header-text token,
+  and a filter on an ancestor rasterises its whole subtree, so the user-menu trigger's
+  avatar was flattened to a black block that no descendant `filter: none` could rescue. The
+  glyphs are now coloured through `color: var(--nldesign-color-header-text)` (they are
+  `currentColor` SVGs), the avatar and user-status icon are excluded — the technique the
+  lasuite bundle already used, which is why Cunningham rendered correctly. The app menu's
+  icons are images and cannot be coloured, so their filter now follows the set through
+  `--nldesign-header-icon-filter` (black on the white default header in `defaults.css`;
+  `none` on dark headers, where the previous hard-coded black made them vanish), and
+  `theme.css` no longer applies that filter to the user-menu trigger or every header svg.
+  App-menu labels follow the header text colour instead of the body text colour.
+- **The admin preview painted its header bar with the primary colour** even when the set
+  defines a separate header (OpenWOO's ice blue on navy). The mini app shell now reads
+  `--nldesign-color-header-background` / `-text`, falling back to the primary only when the
+  page carries no header token.
 - **Every themed page sat ~56px too low, with the page background showing as a band between
   the header and the content container.** `#header` carried a
   `position: relative !important`, which put Nextcloud's out-of-flow (`absolute`) header back

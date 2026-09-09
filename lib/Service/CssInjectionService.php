@@ -451,6 +451,38 @@ class CssInjectionService {
 	 * `linkTo()` resolves the install root, so this works under `custom_apps`
 	 * and under `apps` without either being hard-coded.
 	 *
+	 * A SET THAT SHIPS NO LOGO GETS NEXTCLOUD'S OWN. `theme.css` blanks the
+	 * stock logo (`background-image: var(--nldesign-logo-url, none)`) so a set's
+	 * artwork can take its place; for the ~20 shipped sets with no
+	 * `img/logos/<id>.svg` that resolved to `none`, and the header simply had a
+	 * 56px hole where every stock installation shows the Nextcloud logo. There
+	 * is no CSS-only fix: a `!important` declaration whose `var()` chain ends
+	 * unresolved is still the winning declaration and computes to `unset`, so
+	 * Nextcloud's own rule never comes back — and its fallback URL is relative
+	 * to `core/css/server.css`, a depth this app cannot spell. So the fallback
+	 * chain is emitted here, where the webroot is known: the theming app's own
+	 * `--image-logoheader` / `--image-logo` first (an admin-uploaded logo is
+	 * still an admin-uploaded logo), then core's `logo.svg`.
+	 *
+	 * WHICH fallback depends on whether the ADMIN uploaded a logo, which is why
+	 * the branch is taken here and not in CSS:
+	 *
+	 *  - Uploaded logo → it is brand artwork and is shown as it is, through the
+	 *    theming app's own `--image-logoheader` / `--image-logo`, with no filter.
+	 *  - No uploaded logo → core's `logo.svg`, which is WHITE, drawn for
+	 *    Nextcloud's dark-blue header. A `filter` cannot tint an image to an
+	 *    arbitrary colour, and this app's shipped sets paint headers from white
+	 *    (OpenWOO's ice blue, Rijkshuisstijl's white) to saturated (Zwolle's
+	 *    blue), so no single filter is right for all of them. It is MASKED
+	 *    instead — the SVG becomes the alpha channel and the background paints
+	 *    `--nldesign-color-header-text`, which is by definition the colour this
+	 *    set says is legible on its own header. That is the technique
+	 *    `css/systems/lasuite/element-overrides.css` already documents for the
+	 *    same image.
+	 *
+	 * A set that ships its own artwork is not touched here at all and keeps
+	 * whatever `--nldesign-logo-filter` its token file declares.
+	 *
 	 * @param string $tokenSet The selected token set id.
 	 *
 	 * @return void
@@ -459,18 +491,58 @@ class CssInjectionService {
 	 */
 	private function injectLogoUrl(string $tokenSet): void {
 		$relative = 'img/logos/' . $tokenSet . '.svg';
-		if (is_file($this->appPath() . '/' . $relative) === false) {
+
+		// UNQUOTED on purpose, here and below. `Util::addHeader()` HTML-escapes
+		// its text, so a quoted `url("…")` reaches the page as
+		// `url(&quot;…&quot;)` and the declaration is invalid — measured in the
+		// browser. An app path carries no spaces, parentheses or quotes, so
+		// unquoted is both valid and safe.
+		if (is_file($this->appPath() . '/' . $relative) === true) {
+			$this->emitInlineStyle(
+				css: ':root{--nldesign-logo-url:url('
+					. $this->urlGenerator->linkTo(appName: Application::APP_ID, file: $relative)
+					. ')}'
+			);
 			return;
 		}
 
-		// UNQUOTED on purpose. `Util::addHeader()` HTML-escapes its text, so a
-		// quoted `url("…")` reaches the page as `url(&quot;…&quot;)` and the
-		// declaration is invalid — measured in the browser. An app path carries
-		// no spaces, parentheses or quotes, so unquoted is both valid and safe.
+		// The same appconfig keys `ThemingDefaults` reads to decide whether a
+		// custom logo exists at all.
+		$hasUploadedLogo = ($this->config->getAppValue('theming', 'logoheaderMime', '') !== ''
+			|| $this->config->getAppValue('theming', 'logoMime', '') !== '');
+		if ($hasUploadedLogo === true) {
+			$this->emitInlineStyle(
+				css: ':root{--nldesign-logo-url:var(--image-logoheader,var(--image-logo));'
+					. '--nldesign-logo-filter:none}'
+			);
+			return;
+		}
+
+		// `imagePath()` THROWS when it cannot resolve the file, and this method
+		// runs inside the design-system layer, so an unhandled throw here would
+		// also cancel the dark-variant and contrast stylesheets emitted after
+		// it. Without the URL there is nothing to mask, so the header keeps the
+		// pre-existing empty slot rather than gaining a coloured block.
+		try {
+			$logo = $this->urlGenerator->imagePath(appName: 'core', file: 'logo/logo.svg');
+		} catch (Throwable $e) {
+			$this->logger->debug(
+				'nldesign: core logo.svg could not be resolved, so the header keeps the active set\'s own (absent) logo.',
+				[
+					'app' => Application::APP_ID,
+					'exception' => $e,
+				]
+			);
+			return;
+		}
+
+		$mask = 'url(' . $logo . ') no-repeat center / contain!important';
 		$this->emitInlineStyle(
-			css: ':root{--nldesign-logo-url:url('
-				. $this->urlGenerator->linkTo(appName: Application::APP_ID, file: $relative)
-				. ')}'
+			css: '#nextcloud .logo{background-image:none!important;'
+				. 'background-color:var(--nldesign-color-header-text,#333333)!important;'
+				. 'filter:none!important;'
+				. '-webkit-mask:' . $mask . ';'
+				. 'mask:' . $mask . '}'
 		);
 	}//end injectLogoUrl()
 

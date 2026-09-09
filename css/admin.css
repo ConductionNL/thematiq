@@ -137,6 +137,16 @@
 	--prev-error: #c0392b;
 	--prev-info: #1f6fd0;
 	--prev-radius: 8px;
+	--prev-radius-container: 12px;
+	--prev-radius-pill: 999px;
+	/* The page background BEHIND Nextcloud's content container, and the header
+	   bar's own colours. Separate roles: a set may paint the header unlike the
+	   primary (OpenWOO's ice blue on navy), and the plain background is what
+	   shows in the gap around the container. */
+	--prev-plain: #f2f4f7;
+	--prev-header-bg: var(--prev-primary);
+	--prev-header-text: var(--prev-primary-text);
+	--prev-header-border: 0;
 	--prev-login-bg: var(--prev-primary);
 }
 
@@ -598,14 +608,32 @@
 	display: none;
 }
 
-/* --- mini app shell --- */
+/* --- mini app shell ---
+ *
+ * A scale model of the REAL Nextcloud shell, because that is what an admin
+ * holds it against. The three structural facts it has to get right:
+ *
+ *   1. The header spans the full width and sits on the PAGE background
+ *      (`--color-background-plain`), which stays visible in the gap around the
+ *      content container.
+ *   2. `#content` is one rounded container (`--body-container-radius`) with
+ *      `overflow: clip`, inset by `--body-container-margin`. The navigation and
+ *      the app content are two panels flush inside it — not two cards.
+ *   3. A navigation entry is a FULL-WIDTH pill (`--border-radius-pill`) with an
+ *      icon and a label in the body text colour, and the selected one is filled
+ *      solid with `--color-primary-element` and labelled in
+ *      `--color-primary-element-text`.
+ *
+ * Before this, the shell drew the navigation as a strip of muted mini-labels
+ * and the app sidebar as a second such strip, so the one panel an admin looks
+ * at first — the sidebar — represented nothing that is actually on screen. */
 .nl-mini {
 	position: relative;
 	height: 300px;
 	overflow: hidden;
 	border-radius: var(--border-radius-large);
 	border: 1px solid var(--prev-border);
-	background: var(--prev-bg);
+	background: var(--prev-plain);
 	display: flex;
 	flex-direction: column;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -615,67 +643,126 @@
 	flex: 0 0 30px;
 	display: flex;
 	align-items: center;
-	gap: 14px;
-	padding: 0 12px;
-	background: var(--prev-primary);
+	gap: 10px;
+	padding: 0 10px;
+	background: var(--prev-header-bg);
+	border-bottom: var(--prev-header-border);
 }
 .nl-mini__logo {
-	width: 16px;
-	height: 16px;
-	border-radius: 50%;
-	background: var(--prev-primary-text);
+	width: 22px;
+	height: 11px;
+	border-radius: 2px;
+	background: var(--prev-header-text);
 	opacity: 0.9;
+	flex: none;
 }
 .nl-mini__navitem {
-	width: 26px;
+	position: relative;
+	width: 24px;
 	height: 6px;
 	border-radius: 3px;
-	background: var(--prev-primary-text);
+	background: var(--prev-header-text);
 	opacity: 0.45;
+	flex: none;
 }
+/* Nextcloud marks the open app with a bar under its icon, not with opacity
+   alone — see the app-menu rules in systems/nldesign/element-overrides.css. */
 .nl-mini__navitem--active {
-	opacity: 0.9;
+	opacity: 0.95;
+}
+.nl-mini__navitem--active::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -9px;
+	height: 3px;
+	border-radius: 2px;
+	background: var(--prev-header-text);
 }
 .nl-mini__navspacer {
 	flex: 1;
 }
-.nl-mini__avatar {
-	width: 16px;
-	height: 16px;
+.nl-mini__navglyph {
+	width: 9px;
+	height: 9px;
 	border-radius: 50%;
-	background: var(--prev-primary-text);
-	opacity: 0.9;
+	background: var(--prev-header-text);
+	opacity: 0.7;
+	flex: none;
 }
+.nl-mini__avatar {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--prev-header-text);
+	opacity: 0.9;
+	flex: none;
+}
+/* The content container: inset from the page background, both panels clipped
+   into one rounded rectangle. */
 .nl-mini__body {
 	flex: 1;
 	display: flex;
 	min-height: 0;
+	margin: 5px;
+	border-radius: var(--prev-radius-container);
+	overflow: hidden;
+	background: var(--prev-surface);
 }
 .nl-mini__menu {
-	flex: 0 0 78px;
+	flex: 0 0 84px;
 	background: var(--prev-surface);
-	border-right: 1px solid var(--prev-border);
-	padding: 8px 6px;
+	padding: 6px 5px;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 2px;
+	min-width: 0;
+}
+/* An app-navigation caption ("Personal", "Administration") — a bar, like every
+   other run of text in this model. */
+.nl-mini__caption {
+	width: 32px;
+	height: 4px;
+	margin: 5px 0 3px 7px;
+	border-radius: 2px;
+	background: var(--prev-border);
+}
+.nl-mini__caption:first-child {
+	margin-top: 1px;
 }
 .nl-mini__menuitem {
+	display: flex;
+	align-items: center;
+	gap: 5px;
 	font-size: 8px;
-	color: var(--prev-muted);
-	padding: 5px 7px;
-	border-radius: 999px;
+	color: var(--prev-text);
+	padding: 4px 7px;
+	border-radius: var(--prev-radius-pill);
 	white-space: nowrap;
 	overflow: hidden;
+}
+.nl-mini__menuicon {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: currentColor;
+	opacity: 0.55;
+	flex: none;
 }
 .nl-mini__menuitem--active {
 	background: var(--prev-primary);
 	color: var(--prev-primary-text);
+	font-weight: 700;
+}
+.nl-mini__menuitem--active .nl-mini__menuicon {
+	opacity: 0.9;
 }
 .nl-mini__content {
 	flex: 1;
-	padding: 10px;
+	padding: 8px;
 	min-width: 0;
+	background: var(--prev-surface);
 }
 .nl-mini__widget {
 	background: var(--prev-surface);
@@ -732,19 +819,33 @@
 	background: color-mix(in srgb, var(--prev-info) 22%, white);
 	border: 1px solid var(--prev-info);
 }
+/* The app sidebar: a panel with a heading and a close control, the way
+   Nextcloud's own sidebar opens beside the content. */
 .nl-mini__sidebar {
-	flex: 0 0 78px;
+	flex: 0 0 88px;
 	background: var(--prev-surface);
 	border-left: 1px solid var(--prev-border);
-	padding: 10px 8px;
+	padding: 8px;
 	display: flex;
 	flex-direction: column;
 	gap: 7px;
 }
 .nl-mini__sidebar-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
 	font-size: 8px;
 	font-weight: 700;
 	color: var(--prev-text);
+}
+.nl-mini__sidebar-close {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--prev-bg);
+	border: 1px solid var(--prev-border);
+	flex: none;
 }
 .nl-mini__line {
 	display: block;
