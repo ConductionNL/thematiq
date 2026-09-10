@@ -49,9 +49,11 @@ label {
  * Nextcloud layout, and is not a look any brand asked for. A per-panel
  * `border-radius` had the same class of problem: the container already rounds
  * both panels together, so rounding each child again cut notches at the seam.
- * The container radius IS themed, once, in overrides.css
- * (`--body-container-radius: var(--nldesign-border-radius)`), which is the
- * supported hook for it.
+ * The container's own radius is left to Nextcloud (see overrides.css, where
+ * `--body-container-radius` is deliberately NOT overridden): stock rounds only
+ * the two TOP corners, from the themed `--border-radius-large`, so the brand
+ * still decides how round the shell reads without a control radius squaring it
+ * off.
  */
 #app-navigation,
 .app-navigation,
@@ -88,9 +90,22 @@ button.app-navigation-toggle {
 	background-color: var(--color-main-background) !important;
 }
 
-/* Dashboard apps — transparent background */
-body #content #app-content-vue.app-content,
-body #content main.app-content {
+/* The DASHBOARD's content panel is transparent, so the instance's background
+ * image shows through it — and ONLY the dashboard's. `#content` carries the
+ * current app as a class (`class="app-<appid>"`,
+ * core/templates/layout.user.php), so the rule is scoped with it.
+ *
+ * Unscoped, `body #content main.app-content` matched every Vue app's main
+ * element, the Files app included, whose panel is exactly `<main
+ * id="app-content-vue" class="app-content">`. That panel was therefore
+ * transparent while `#content` above is transparent too, so the PAGE background
+ * showed through everywhere the file list did not paint: as a coloured line
+ * down the seam between the navigation and the content, as a wedge in the notch
+ * of the container's rounded top corner, and as a frame along the right and
+ * bottom edges. The two panels are meant to read as one sheet clipped by
+ * `#content`; that is only true while both of them are opaque. */
+body #content.app-dashboard #app-content-vue.app-content,
+body #content.app-dashboard main.app-content {
 	background: transparent !important;
 	background-color: transparent !important;
 }
@@ -117,8 +132,8 @@ header#header .header-menu__trigger {
    ============================================ */
 
 /* Nextcloud ships every header glyph WHITE, because its own header is a dark
-   brand colour. On a light header (OpenWOO ice blue, Rijkshuisstijl white) they
-   would be white-on-white, so they are recoloured here. These glyphs are
+   brand colour. On a light header (Rijkshuisstijl, Amsterdam and Cunningham all
+   paint it #ffffff) they would be white-on-white, so they are recoloured here. These glyphs are
    Material SVGs whose `fill` resolves to `currentColor`, so setting `color`
    recolours them exactly to the set's header text — and colour INHERITS, so
    a descendant can opt back out.
@@ -688,17 +703,24 @@ body {
 	position: relative !important;
 }
 
-/* Blue indicator bar for active item */
-#header nav.app-menu .app-menu-entry--active a::after,
-#header nav.app-menu .app-menu-entry--active .app-menu-entry__link::after {
-	content: '' !important;
-	position: absolute !important;
-	bottom: 0 !important;
-	left: 0 !important;
-	right: 0 !important;
-	height: 5px !important;
-	background: var(--color-primary) !important;
-	display: block !important;
+/* The active app is marked ONCE, the way Nextcloud marks it.
+ *
+ * Nextcloud already draws that mark: `.app-menu-entry--active::before` is a
+ * 10x5 rounded pill under the icon, painted with
+ * `--color-background-plain-text` — the colour core computes to contrast the
+ * PAGE background, because on a stock instance the header is transparent and
+ * the pill sits on that background. Our header is painted, so on a light header
+ * (Rijkshuisstijl, Amsterdam and Cunningham all paint it #ffffff) core's pill
+ * came out white on white — invisible, or a stray dot on an off-white header.
+ * This block then drew a SECOND mark, a full-width
+ * 5px bar in the primary colour, which no stock instance has.
+ *
+ * So: core's pill keeps its geometry and takes the header's own foreground,
+ * which is by definition the colour the set says is legible on its own header,
+ * and the extra bar is gone. */
+#header nav.app-menu .app-menu-entry--active::before,
+#header nav.app-menu .app-menu-entry--active a::before {
+	background-color: var(--nldesign-color-header-text) !important;
 }
 
 #header nav.app-menu .app-menu-entry {
@@ -739,8 +761,8 @@ body {
  * is the BODY text colour and is a different role in every set whose header is
  * not the page background:
  *
- *   OpenWOO    #000000 glyphs on the ice-blue header, where the set's header
- *              text is the navy #11304e
+ *   Zwolle     #000000 glyphs on the #476db8 blue header, where the set's
+ *              header text is #ffffff
  *   Rotterdam  #404b4f glyphs on the #00811f green header — 1.7:1, a glyph you
  *              cannot find, while the set's header text is #ffffff
  *
@@ -785,7 +807,7 @@ body {
  * that drops out of one is a CHILD, `.header-menu__wrapper` >
  * `.header-menu__content`. Painting `.header-menu` therefore put an opaque
  * `--color-main-background` plate behind the account glyphs — a white block
- * across the right of OpenWOO's ice-blue header, the same block on Rotterdam's
+ * across the right of Zwolle's blue header, the same block on Rotterdam's
  * green — and handed those glyphs the body text colour on top of it.
  *
  * The panel keeps the treatment. The trigger stays transparent, which is how

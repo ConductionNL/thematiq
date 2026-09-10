@@ -33,6 +33,22 @@
 # enables the feature.
 /css/custom-css.css
 
+# Local presentation mock — a visual shell of screens that do not exist yet,
+# drawn over the admin panel and loaded only with `?mock=1`. It is scaffolding
+# for screenshots and demos, not product: nothing it draws persists, none of it
+# is translated, and it must never reach an instance. Kept out of the repo but
+# usable in a working tree, so js/admin-mock.js and css/admin-mock.css can sit
+# here without ever being committed (js/admin-mock.js is already covered by the
+# /js/* rule below — the point is that it is NOT un-ignored there).
+/css/admin-mock.css
+
+# Talking points for a slide deck that lives outside the repo, alongside the
+# local presentation mock above. It names a .pptx on one machine's disk and
+# nothing in the app refers to it, so it is personal working material rather
+# than project documentation. NOTE: MAKEOVER-PLAN.md is deliberately NOT
+# ignored — committed code, tests and a test fixture cite it by name.
+/PRESENTATION-SCRIPT.md
+
 # Scratch input for scripts/build-icons.js's DSFR pack — the pre-fetched
 # @gouvfr/dsfr dist/icons/**/*.svg tree (that package cannot be npm-installed:
 # broken optional deps upstream). The build script materializes it into the

@@ -468,6 +468,64 @@ All notable changes to this project will be documented in this file.
 - Hardened `CustomTokenSetValidator::isForbiddenValue()` to reject declaration values containing a semicolon (`;`) or a CSS comment marker (`/*`, `*/`), closing a CSS-injection gap where a single accepted `--nldesign-*`/`--{slug}-*` declaration's value could smuggle an arbitrary extra declaration (e.g. `background: url(...)`) past the name whitelist into the `:root {}` block served to every anonymous visitor (login page, share links). Applies to both the CSS upload path and the W3C Design Tokens JSON path (`CustomTokenSetController::mapFromJson()`), which shares the same gate. Only new uploads are affected — a custom token set uploaded before this fix is not retroactively re-validated; the served `custom-*.css` file for an existing set is unchanged until it is re-uploaded. See `openspec/changes/harden-custom-token-set-value-validation/`.
 
 ### Fixed
+- **The token tables in the apply and theming-sync dialogs hid the column an admin is there
+  to read.** Every column was `white-space: nowrap`, so each one sized to its content — and
+  one value, the font stack (`-apple-system, BlinkMacSystemFont, 'Segoe UI', …`), is wider
+  than the 700px dialog by itself. That pushed the **New** column behind a horizontal
+  scrollbar, so the dialog appeared to list only the values already applied and none of the
+  ones being offered. The two value columns now cap at 230px and wrap; the checkbox and
+  token-name columns still do not.
+- **Both dialogs listed bare hex strings with no colour next to them.** `js/admin.js` has
+  always emitted a `.nldesign-dialog-swatch` / `.nldesign-apply-swatch` span and set its
+  colour inline, but the rules giving those spans a box were lost in a stylesheet
+  reorganisation, and a span with no `display`, width or height is zero pixels wide. They
+  are sized again, so a colour change is judged by the colour rather than by reading hex.
+- **Rows kept rendering below the action buttons in any dialog carrying a token table.** The
+  button bar used `position: sticky; bottom: 0`, which pins to the bottom of the
+  SCROLLPORT, not of the dialog. A dialog with a table is now a flex column — heading, hint
+  and select-all row fixed, the table the only scrolling child (`min-height: 0`, or it
+  refuses to shrink below its content and pushes the bar out again), the bar the last flex
+  item, so it cannot be anywhere but the bottom. Scoped with `:has()`, because the dialogs
+  without a table are short and should keep growing with their content.
+- **On every themed Vue app — the Files app included — the page background showed through the
+  content panel.** The rule making the dashboard's panel transparent, so the instance's
+  background image can show through it, was unscoped: `body #content main.app-content`
+  matches every Vue app's main element, and the Files panel is exactly
+  `<main id="app-content-vue" class="app-content">`. With `#content` above it transparent
+  too, the page background appeared as a coloured line down the seam between navigation and
+  content, a wedge in the notch of the container's rounded top corner, and a frame along the
+  right and bottom edges. The rule is now scoped with the app class `#content` already
+  carries (`.app-dashboard`), so the two panels read as one sheet clipped by `#content`,
+  which is only true while both are opaque.
+- **The active app was marked twice in the header, once invisibly.** Nextcloud already draws
+  that mark: `.app-menu-entry--active::before`, a 10×5 rounded pill under the icon, painted
+  with `--color-background-plain-text` — the colour core computes against the PAGE
+  background, because a stock header is transparent and the pill sits on that background.
+  These bundles paint the header, so on a set that paints it white (Rijkshuisstijl,
+  Amsterdam, Cunningham) core's pill came out white on white. Both bundles then drew a
+  SECOND mark no stock instance has: a full-width bar under the entry, 5px in the nldesign
+  bundle and 3px in La Suite. Core's pill now keeps its geometry and takes a colour it is
+  legible against — the header's own foreground in the nldesign bundle, the brand colour in
+  La Suite — and the extra bar is gone.
+- **A brand with square controls squared off the entire app shell.** `--body-container-radius`
+  is a CONTAINER radius, like `--border-radius-container` next to it, but it was mapped to
+  the brand's CONTROL radius, and `#content` draws its `border-radius` from it. On a set
+  whose controls are near-square (Zwolle: 2px) the whole shell lost its rounding. It is left
+  to Nextcloud now: the base value is 0 and only the two top corners round, from
+  `--border-radius-large`, which IS themed — so the brand still decides how round the shell
+  reads, without a control radius deciding it.
+- **The Cunningham set applied its flat 4px radius to the Nextcloud chrome, and painted every
+  table header.** Cunningham is a 4px system, and taking that literally squared off the app
+  shell, navigation entries, search field, buttons and modals where a stock instance rounds
+  them. This set is Nextcloud with Cunningham's COLOURS, so its radius tokens now carry
+  Nextcloud 32's own scale (4 / 8 / 8 / 28 / 100) while the brand's 4px stays available to
+  NL Design System components through the `--utrecht-*` bridge. Its table headers are
+  Nextcloud's too — transparent, muted, weight 400 — where the shared theme painted every
+  `th` with the NL Design System table-header colour and a stock Files list shows none.
+- **The Cunningham set's `theming.background_color` was pure white**, which is not a colour
+  the set uses anywhere: it is now `#E1E2E5`, the set's own
+  `--nldesign-color-background-dark`, so Nextcloud's core theming (login page, plain
+  background) matches the background the stylesheet actually paints.
 - **On Nextcloud 32, the La Suite / Cunningham search control overflowed its slot and the
   rest of the header-end was drawn on top of it.** The bundle turns NC 32's icon-only search
   trigger into a labelled pill so the control matches what NC 34 renders, but `inline-size:
@@ -491,7 +549,7 @@ All notable changes to this project will be documented in this file.
   `#user-menu` all have it — and the panel that drops out of one is a child,
   `.header-menu__wrapper` > `.header-menu__content`. A rule written for the panel addressed
   the item instead, so `--color-main-background` was painted behind the account glyphs: a
-  white block across the right of OpenWOO's ice-blue header, the same block on Rotterdam's
+  white block across the right of Zwolle's blue header, the same block on Rotterdam's
   green, with the body text colour handed to the glyphs on top of it. The rule now addresses
   the panel; the trigger is transparent, as Nextcloud draws it, and the header colour runs
   edge to edge.
@@ -507,8 +565,8 @@ All notable changes to this project will be documented in this file.
   and on a saturated header that made them unfindable.** Search, notifications, contacts and
   the user menu sit on the header, so they take the header's foreground, but the rules
   covering them used `--nldesign-color-text`: Rotterdam drew `#404b4f` glyphs on its
-  `#00811f` green at **1.78:1** (its header text is white, 5.05:1), and OpenWOO drew pure
-  black where its header text is the navy `#11304e`. Those glyphs were additionally dimmed
+  `#00811f` green at **1.78:1** (its header text is white, 5.05:1), and Zwolle drew pure
+  black on its `#476db8` blue where its header text is white. Those glyphs were additionally dimmed
   to `opacity: 0.8`, which spends contrast exactly where a saturated header has none to
   spare — Rotterdam's composited glyph measured 1.05:1. They now take
   `--nldesign-color-header-text` at full strength, with `fill: currentColor` so the SVGs
@@ -583,7 +641,7 @@ All notable changes to this project will be documented in this file.
   `theme.css` no longer applies that filter to the user-menu trigger or every header svg.
   App-menu labels follow the header text colour instead of the body text colour.
 - **The admin preview painted its header bar with the primary colour** even when the set
-  defines a separate header (OpenWOO's ice blue on navy). The mini app shell now reads
+  defines a separate header (Cunningham's white over a blue primary). The mini app shell now reads
   `--nldesign-color-header-background` / `-text`, falling back to the primary only when the
   page carries no header token.
 - **Every themed page sat ~56px too low, with the page background showing as a band between

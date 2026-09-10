@@ -367,16 +367,17 @@ header#header {
 	font-weight: 600 !important;
 }
 
-#header nav.app-menu .app-menu-entry--active a::after,
-#header nav.app-menu .app-menu-entry--active .app-menu-entry__link::after {
-	content: '' !important;
-	position: absolute !important;
-	bottom: 0 !important;
-	left: 0 !important;
-	right: 0 !important;
-	height: 3px !important;
-	background: var(--lasuite-color-brand-650) !important;
-	display: block !important;
+/* The active app is marked ONCE, the way Nextcloud marks it — same reasoning as
+ * the nldesign bundle. Core already draws `.app-menu-entry--active::before` as a
+ * 10x5 rounded pill under the icon, painted with `--color-background-plain-text`
+ * because a stock header is transparent and the pill sits on the PAGE
+ * background. This bundle paints the header white, so core's pill lands
+ * white-on-white and reads as a stray dot, while this block drew a second,
+ * full-width bar that no stock instance has. Core's pill takes the brand colour
+ * it is legible against instead, and the bar is gone. */
+#header nav.app-menu .app-menu-entry--active::before,
+#header nav.app-menu .app-menu-entry--active a::before {
+	background-color: var(--lasuite-content-brand, var(--lasuite-color-brand-650)) !important;
 }
 
 #header nav.app-menu a:hover,

@@ -255,8 +255,9 @@
 				),
 			)
 			// The header is its own role: a set may paint it differently from the
-			// primary (OpenWOO: ice blue on navy, Cunningham: white). Fall back to
-			// the primary only when the page carries no header token.
+			// primary (Cunningham and Amsterdam both paint it white, over a blue
+			// primary). Fall back to the primary only when the page carries no
+			// header token.
 			s.setProperty(
 				'--prev-header-bg',
 				readVar('--nldesign-color-header-background', colors.primary),

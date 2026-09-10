@@ -141,8 +141,8 @@
 	--prev-radius-pill: 999px;
 	/* The page background BEHIND Nextcloud's content container, and the header
 	   bar's own colours. Separate roles: a set may paint the header unlike the
-	   primary (OpenWOO's ice blue on navy), and the plain background is what
-	   shows in the gap around the container. */
+	   primary (Cunningham: a white header over a blue primary), and the plain
+	   background is what shows in the gap around the container. */
 	--prev-plain: #f2f4f7;
 	--prev-header-bg: var(--prev-primary);
 	--prev-header-text: var(--prev-primary-text);
@@ -243,6 +243,21 @@
 	white-space: nowrap;
 }
 
+/* The VALUE columns wrap; the checkbox and token-name columns do not.
+   `white-space: nowrap` sizes every column to its content, and one long value
+   — the font stack, `-apple-system, BlinkMacSystemFont, 'Segoe UI', …` — is
+   wider than the 700px dialog on its own. That pushed the New column out of
+   sight behind a horizontal scrollbar, so the dialog appeared to list only the
+   values already applied and none of the ones being offered. Capping and
+   wrapping the two value columns keeps all four visible without a sideways
+   scroll. */
+.nldesign-dialog-table td:nth-child(n + 3),
+.nldesign-apply-dialog-table td:nth-child(n + 3) {
+	max-width: 230px;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
 /* Dark-logo informational row in the theming-sync dialog (openspec/specs/dark-mode/spec.md) */
 .nldesign-dialog-dark-logo-row {
 	margin-top: 12px;
@@ -268,6 +283,68 @@
 		0 8px,
 		8px -8px,
 		-8px 0;
+}
+
+/* Colour chips in front of a hex value, in the theming-sync dialog
+   (`.nldesign-dialog-swatch`, js/admin.js) and the apply dialog
+   (`.nldesign-apply-swatch`). js/admin.js has emitted both spans all along and
+   sets their colour inline, but the rules that give them a box were lost in a
+   stylesheet reorganisation: a span with no width, height or display is zero
+   pixels wide, so both dialogs listed hex strings with no colour next to them.
+   Only css/admin-mock.css still carried a size for them, which is why the
+   colours were visible on the presentation mock and nowhere else. */
+.nldesign-dialog-swatch,
+.nldesign-apply-swatch {
+	display: inline-block;
+	border-radius: 3px;
+	vertical-align: middle;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.nldesign-dialog-swatch {
+	width: 16px;
+	height: 16px;
+	margin-right: 6px;
+}
+
+.nldesign-apply-swatch {
+	width: 14px;
+	height: 14px;
+	margin-right: 5px;
+}
+
+/* A dialog that carries a token table lays out as a column: heading, hint and
+   the select-all row stay put, the table is the only child that scrolls, and
+   the action bar is the last flex item — so it cannot be anywhere but the
+   bottom. The bar used to rely on `position: sticky; bottom: 0` inside the
+   scrolling dialog, which pins it to the bottom of the SCROLLPORT rather than
+   the dialog, so rows kept rendering below the buttons. Scoped with `:has()`
+   because the dialogs without a table (reset, config bundle) are short and
+   should keep growing with their content. */
+.nldesign-dialog:has(.nldesign-dialog-table),
+.nldesign-dialog:has(.nldesign-apply-dialog-table) {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.nldesign-dialog:has(.nldesign-dialog-table) .nldesign-dialog-table,
+.nldesign-dialog:has(.nldesign-apply-dialog-table) .nldesign-apply-dialog-table {
+	/* `min-height: 0` is what allows a flex item to shrink below its content
+	   height; without it the table keeps its full height and pushes the action
+	   bar out of the dialog again. */
+	flex: 0 1 auto;
+	min-height: 0;
+	overflow: auto;
+}
+
+.nldesign-dialog:has(.nldesign-dialog-table) .nldesign-dialog-actions,
+.nldesign-dialog:has(.nldesign-apply-dialog-table) .nldesign-dialog-actions {
+	position: static;
+	flex: 0 0 auto;
+	margin: 0 -24px -24px;
+	padding: 12px 24px 24px;
+	border-top: 1px solid var(--color-border);
 }
 
 .nldesign-dialog-actions {

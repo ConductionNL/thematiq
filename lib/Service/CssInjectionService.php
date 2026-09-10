@@ -472,11 +472,12 @@ class CssInjectionService {
 	 *  - No uploaded logo → core's `logo.svg`, which is WHITE, drawn for
 	 *    Nextcloud's dark-blue header. A `filter` cannot tint an image to an
 	 *    arbitrary colour, and this app's shipped sets paint headers from white
-	 *    (OpenWOO's ice blue, Rijkshuisstijl's white) to saturated (Zwolle's
-	 *    blue), so no single filter is right for all of them. It is MASKED
-	 *    instead — the SVG becomes the alpha channel and the background paints
-	 *    `--nldesign-color-header-text`, which is by definition the colour this
-	 *    set says is legible on its own header. That is the technique
+	 *    (Rijkshuisstijl, Amsterdam, Cunningham) to saturated (Zwolle's blue,
+	 *    Rotterdam's green), so no single filter is right for all of them. It
+	 *    is MASKED instead — the SVG becomes the alpha channel and the
+	 *    background paints `--nldesign-color-header-text`, which is by
+	 *    definition the colour this set says is legible on its own header.
+	 *    That is the technique
 	 *    `css/systems/lasuite/element-overrides.css` already documents for the
 	 *    same image.
 	 *
