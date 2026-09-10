@@ -201,11 +201,21 @@ class ThemingService {
 	/**
 	 * Apply image changes to the theming image manager.
 	 *
+	 * `ImageManager::updateImage()` only stores the FILE and hands back the
+	 * mime type it detected; the `{key}Mime` app value is the caller's job, and
+	 * it is what `ThemingDefaults::getLogo()` reads to decide whether a custom
+	 * image exists at all. Dropping the return value therefore looked like a
+	 * successful sync — `applyImages()` reported `["logo"]`, the file was
+	 * written, `ImageManager::hasImage()` said true — while every page kept
+	 * rendering the stock Nextcloud logo. Core's own
+	 * `ThemingController::uploadImage()` pairs the two calls the same way.
+	 *
 	 * @param array $params The request parameters.
 	 *
 	 * @return array The list of updated image keys.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function applyImages(array $params): array {
 		$updated = [];
@@ -214,7 +224,8 @@ class ThemingService {
 			if (isset($params[$imageKey]) === true && $params[$imageKey] !== '') {
 				$appPath = $this->appManager->getAppPath(appId: 'thematiq');
 				$fullPath = $appPath . '/' . $params[$imageKey];
-				$this->imageManager->updateImage(key: $imageKey, tmpFile: $fullPath);
+				$mime = $this->imageManager->updateImage(key: $imageKey, tmpFile: $fullPath);
+				$this->themingDefaults->set(setting: $imageKey . 'Mime', value: $mime);
 				$updated[] = $imageKey;
 			}
 		}

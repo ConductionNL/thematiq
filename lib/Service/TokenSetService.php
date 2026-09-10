@@ -63,6 +63,30 @@ use Psr\Log\LoggerInterface;
 class TokenSetService {
 
 	/**
+	 * The shipped sets an admin may CHOOSE, as opposed to the ones the app
+	 * ships.
+	 *
+	 * `css/tokens/` holds 47 files and all but a handful fail
+	 * `TokenSetVocabularyAuditService`: they carry a brand palette under names
+	 * nothing reads and declare none of the semantic vocabulary the theme
+	 * consumes, so picking one silently renders Rijkshuisstijl with, at best,
+	 * the wrong header. Offering those is offering a theme that does not work.
+	 * Until stage 2 of `MAKEOVER-PLAN.md` has regenerated them, the dropdown
+	 * offers `nextcloud` — stock, correct by definition, and the baseline every
+	 * conversion is compared against — plus whatever the admin has imported
+	 * themselves, which is the whole point of the converter.
+	 *
+	 * Widening this list is one line. Nothing else needs to change, because
+	 * DISCOVERY is deliberately untouched: `getAvailableTokenSets()`, the
+	 * public catalogue, the capabilities, the metrics and both audits still see
+	 * every file on disk, because they answer what the app ships, not what may
+	 * be chosen.
+	 *
+	 * @var array<int, string>
+	 */
+	public const SELECTABLE_SHIPPED_SETS = ['nextcloud'];
+
+	/**
 	 * The app manager for resolving paths.
 	 *
 	 * @var IAppManager
@@ -216,6 +240,66 @@ class TokenSetService {
 
 		return $tokenSets;
 	}//end getAvailableTokenSets()
+
+	/**
+	 * Get the token sets an admin may select: `SELECTABLE_SHIPPED_SETS` plus
+	 * every admin-imported `custom-*` set.
+	 *
+	 * Three ids are never filtered out, whatever the list says, because
+	 * narrowing a picker must not be able to change what an instance is doing:
+	 *
+	 *  1. The set the instance is CURRENTLY running. Dropping it would render
+	 *     the panel with no option selected, and the first save would silently
+	 *     re-theme the instance to whatever happened to be first.
+	 *  2. Any set a per-group mapping points at, for the same reason — the
+	 *     group picker is fed from this list too, and a group's theme would
+	 *     disappear from the UI while still applying.
+	 *  3. Every `custom-*` set, unconditionally. The converter tells the admin
+	 *     their upload was "added and selectable"; a filter that then hid it
+	 *     would make the converter a liar.
+	 *
+	 * Read straight from `IConfig` rather than through `GroupThemingService`,
+	 * which depends on this service — the group key is a plain JSON array of
+	 * `{group, tokenSet}` and re-reading it here avoids a circular dependency.
+	 *
+	 * @return array<int, TokenSetEntry> The selectable token sets, same shape and order as `getAvailableTokenSets()`.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	public function getSelectableTokenSets(): array {
+		$all = $this->getAvailableTokenSets();
+
+		$keep = array_fill_keys(self::SELECTABLE_SHIPPED_SETS, true);
+
+		// (1) Whatever the instance is running right now.
+		$active = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
+		if ($active !== '') {
+			$keep[$active] = true;
+		}
+
+		// (2) Every set a group mapping points at.
+		$rawMapping = $this->config->getAppValue(Application::APP_ID, 'group_token_sets', '[]');
+		$decodedMapping = json_decode($rawMapping, true);
+		if (is_array($decodedMapping) === true) {
+			foreach ($decodedMapping as $entry) {
+				if (is_array($entry) === true && is_string($entry['tokenSet'] ?? null) === true) {
+					$keep[$entry['tokenSet']] = true;
+				}
+			}
+		}
+
+		$selectable = [];
+		foreach ($all as $tokenSet) {
+			$id = $tokenSet['id'];
+
+			// (3) An imported set is always selectable.
+			if (isset($keep[$id]) === true || str_starts_with($id, 'custom-') === true) {
+				$selectable[] = $tokenSet;
+			}
+		}
+
+		return $selectable;
+	}//end getSelectableTokenSets()
 
 	/**
 	 * Project the catalogue to the closed, non-admin, 5-field public shape:

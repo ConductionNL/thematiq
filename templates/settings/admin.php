@@ -12,6 +12,7 @@
  * @var array{tokenSet: string, name: string}|null $activePreview
  * @var string[] $activeIconPacks
  * @var 'design-system'|'override' $iconPackSource
+ * @var bool $mockUi
  */
 
 // Load the pure token/colour transforms first so admin.js can consume them via
@@ -19,6 +20,11 @@
 script('thematiq', 'lib/tokenTransforms');
 script('thematiq', 'admin');
 style('thematiq', 'admin');
+if ($_['mockUi'] === true) {
+	// Presentation mock — only with `?mock=1` (lib/Settings/Admin.php).
+	script('thematiq', 'admin-mock');
+	style('thematiq', 'admin-mock');
+}
 ?>
 
 <!-- Server state for js/admin.js (tokenSets, currentTokenSet, activePreview,

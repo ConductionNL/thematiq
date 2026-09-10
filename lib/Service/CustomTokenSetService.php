@@ -160,6 +160,19 @@ class CustomTokenSetService {
 	 * @param array<string, string> $declarations The whitelisted declarations.
 	 * @param string|null $version The declared DTCG package version, verbatim (never fabricated).
 	 * @param array<int, array{path: string, message: string|null}> $importWarnings DTCG `$deprecated` import warnings, if any.
+	 * @param string|null $css Canonical file text to write verbatim instead of re-serialising `$declarations`. The
+	 *                         converter path passes its own emitted file, whose four commented sections and
+	 *                         provenance block are the point of it — `serialize()` would flatten both away. The
+	 *                         caller MUST have validated these exact bytes; this parameter never bypasses a gate,
+	 *                         it only chooses which already-validated text is stored.
+	 * @param array<string, string> $theming Theming values to merge OVER the derived ones. The converter routes a
+	 *                                       theme's page background to `theming.background_color` on purpose (so
+	 *                                       Nextcloud keeps owning `--color-main-background` and dark mode), and
+	 *                                       `deriveTheming()` cannot see that decision from the declarations alone.
+	 * @param array{path: string, contents: string}|null $logoAsset A logo the converter decoded out of the theme,
+	 *                                       to be written under `img/logos/`. Nextcloud's core theming takes a
+	 *                                       logo as a FILE (`ImageManager::updateImage()`), so a theme's inline
+	 *                                       `data:` URI has to become one before `theming.logo` can mean anything.
 	 *
 	 * @return array{id: string, warnings: array<int, array<string, mixed>>} The result.
 	 *
@@ -176,6 +189,9 @@ class CustomTokenSetService {
 		array $declarations,
 		?string $version = null,
 		array $importWarnings = [],
+		?string $css = null,
+		array $theming = [],
+		?array $logoAsset = null,
 	): array {
 		$slug = $this->slugify(name: $displayName);
 		if ($slug === '') {
@@ -189,7 +205,23 @@ class CustomTokenSetService {
 			throw new RuntimeException(message: 'A custom token set named "' . $displayName . '" already exists. Delete or rename it first.', code: 409);
 		}
 
-		$this->writeFile(path: $path, contents: $this->validator->serialize(declarations: $declarations));
+		$this->writeFile(
+			path: $path,
+			contents: ($css ?? $this->validator->serialize(declarations: $declarations))
+		);
+
+		// Written before the manifest entry that points at it: `theming.logo`
+		// is validated by ThemingService against the file EXISTING, so a
+		// manifest entry naming a file that was never written would fail the
+		// sync with "Image file not found" instead of updating the logo.
+		if ($logoAsset !== null) {
+			$logoPath = $this->writeLogoAsset(id: $id, asset: $logoAsset);
+			if ($logoPath !== null) {
+				$theming['logo'] = $logoPath;
+			} else {
+				unset($theming['logo']);
+			}
+		}
 
 		$warnings = $this->contrast->check(declarations: $declarations);
 
@@ -201,7 +233,7 @@ class CustomTokenSetService {
 		$entry = [
 			'name' => $displayName,
 			'description' => $resolvedDescription,
-			'theming' => $this->deriveTheming(declarations: $declarations),
+			'theming' => array_merge($this->deriveTheming(declarations: $declarations), $theming),
 			'warnings' => $warnings,
 		];
 
@@ -266,8 +298,8 @@ class CustomTokenSetService {
 	}//end replace()
 
 	/**
-	 * Delete a custom token set: its CSS file, manifest entry, and any
-	 * generated dark variant.
+	 * Delete a custom token set: its CSS file, manifest entry, any generated
+	 * dark variant, and any logo the converter extracted for it.
 	 *
 	 * When the deleted set is the active token set, the active set is reset to
 	 * `nextcloud` in the same operation.
@@ -300,6 +332,7 @@ class CustomTokenSetService {
 		}
 
 		$this->darkPalette->deleteDarkVariant(setId: $id);
+		$this->deleteLogoAsset(id: $id);
 
 		$active = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
 		if ($active === $id) {
@@ -423,6 +456,61 @@ class CustomTokenSetService {
 
 		return $theming;
 	}//end deriveTheming()
+
+	/**
+	 * Write a converter-extracted logo under `img/logos/`.
+	 *
+	 * The accepted name is pinned to the set's own id — `img/logos/{id}.{ext}`
+	 * and nothing else — so an uploaded theme can neither escape the directory
+	 * nor overwrite a shipped municipality logo, whatever path the converter
+	 * put in the asset. A write failure is not fatal: the token set itself is
+	 * already on disk and only the Nextcloud logo sync is lost, so the caller
+	 * drops `theming.logo` rather than failing the whole upload.
+	 *
+	 * @param string                              $id    The custom set id.
+	 * @param array{path: string, contents: string} $asset The decoded logo.
+	 *
+	 * @return string|null The app-relative path that was written, or null on refusal/failure.
+	 *
+	 * @spec openspec/specs/theming-sync/spec.md
+	 */
+	private function writeLogoAsset(string $id, array $asset): ?string {
+		$extension = strtolower(pathinfo((string)($asset['path'] ?? ''), PATHINFO_EXTENSION));
+		if (in_array($extension, ['svg', 'png', 'jpg', 'gif', 'webp'], true) === false) {
+			return null;
+		}
+
+		$relative = 'img/logos/' . $id . '.' . $extension;
+		$directory = $this->appManager->getAppPath('thematiq') . '/img/logos';
+
+		if (is_dir($directory) === false && mkdir($directory, 0755, true) === false && is_dir($directory) === false) {
+			return null;
+		}
+
+		if (file_put_contents($directory . '/' . $id . '.' . $extension, (string)$asset['contents']) === false) {
+			return null;
+		}
+
+		return $relative;
+	}//end writeLogoAsset()
+
+	/**
+	 * Remove any logo written for a custom set by {@see self::writeLogoAsset()}.
+	 *
+	 * @param string $id The custom set id.
+	 *
+	 * @return void
+	 */
+	private function deleteLogoAsset(string $id): void {
+		$directory = $this->appManager->getAppPath('thematiq') . '/img/logos';
+
+		foreach (['svg', 'png', 'jpg', 'gif', 'webp'] as $extension) {
+			$path = $directory . '/' . $id . '.' . $extension;
+			if (is_file($path) === true) {
+				unlink($path);
+			}
+		}
+	}//end deleteLogoAsset()
 
 	/**
 	 * Resolve the absolute CSS path for a custom set id.

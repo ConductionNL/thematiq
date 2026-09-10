@@ -257,7 +257,10 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getAvailableTokenSets(): JSONResponse {
-		$tokenSets = $this->tokenSetService->getAvailableTokenSets();
+		// Feeds the admin dropdown, so it is the SELECTABLE list, not the full
+		// catalogue — see TokenSetService::SELECTABLE_SHIPPED_SETS. The public
+		// catalogue (CatalogController) still answers with everything shipped.
+		$tokenSets = $this->tokenSetService->getSelectableTokenSets();
 
 		return new JSONResponse(['tokenSets' => $tokenSets]);
 	}//end getAvailableTokenSets()
@@ -768,7 +771,10 @@ class SettingsController extends Controller {
 			[
 				'mapping' => $this->groupThemingService->getMapping(),
 				'groups' => $this->groupThemingService->getAvailableGroups(),
-				'tokenSets' => $this->tokenSetService->getAvailableTokenSets(),
+				// Also a picker. `getSelectableTokenSets()` keeps any set an
+				// existing mapping already points at, so narrowing this list
+				// can never hide a group's current theme.
+				'tokenSets' => $this->tokenSetService->getSelectableTokenSets(),
 			]
 		);
 	}//end getGroupTheming()

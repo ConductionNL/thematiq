@@ -33,6 +33,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Settings\IDelegatedSettings;
 
@@ -114,6 +115,14 @@ class Admin implements IDelegatedSettings {
 	private IInitialState $initialState;
 
 	/**
+	 * The current request — read only for the `?mock=1` switch that layers the
+	 * presentation mock (js/admin-mock.js) over the panel.
+	 *
+	 * @var IRequest
+	 */
+	private IRequest $request;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -124,6 +133,7 @@ class Admin implements IDelegatedSettings {
 	 * @param IUserSession $userSession The user session.
 	 * @param DesignSystemService $designSystemService Resolves the active icon pack.
 	 * @param IInitialState $initialState Carries server state to admin.js.
+	 * @param IRequest $request The current request (presentation-mock switch).
 	 */
 	public function __construct(
 		IConfig $config,
@@ -134,6 +144,7 @@ class Admin implements IDelegatedSettings {
 		IUserSession $userSession,
 		DesignSystemService $designSystemService,
 		IInitialState $initialState,
+		IRequest $request,
 	) {
 		$this->config = $config;
 		$this->l = $l;
@@ -143,6 +154,7 @@ class Admin implements IDelegatedSettings {
 		$this->userSession = $userSession;
 		$this->designSystemService = $designSystemService;
 		$this->initialState = $initialState;
+		$this->request = $request;
 	}//end __construct()
 
 	/**
@@ -155,7 +167,9 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function getForm(): TemplateResponse {
-		$tokenSets = $this->tokenSetService->getAvailableTokenSets();
+		// The PICKER, not the catalogue: only stock plus the admin's own
+		// imports. See TokenSetService::SELECTABLE_SHIPPED_SETS.
+		$tokenSets = $this->tokenSetService->getSelectableTokenSets();
 
 		$currentTokenSet = $this->config->getAppValue(
 			Application::APP_ID,
@@ -246,6 +260,10 @@ class Admin implements IDelegatedSettings {
 				'activePreview' => $activePreview,
 				'activeIconPacks' => $activeIconPacks,
 				'iconPackSource' => $iconPackSource,
+				// Presentation mock: `?mock=1` layers the stage 2–5 visual shells
+				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
+				// can be screenshotted from a running instance. Nothing else changes.
+				'mockUi' => ($this->request->getParam('mock') === '1'),
 			]
 		);
 	}//end getForm()
