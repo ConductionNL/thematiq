@@ -82,6 +82,18 @@ use OCP\IRequest;
 class SettingsController extends Controller {
 
 	/**
+	 * Appconfig key prefix recording which image file the theming sync last
+	 * applied to a core image slot (`synced_logo`, `synced_background`).
+	 *
+	 * Core stores only THAT a custom image exists (`{key}Mime`), never which
+	 * file it came from, so this is the only way the sync dialog can tell an
+	 * already-applied logo from one that would change.
+	 *
+	 * @var string
+	 */
+	public const SYNCED_IMAGE_PREFIX = 'synced_';
+
+	/**
 	 * The application configuration service.
 	 *
 	 * @var IConfig
@@ -350,6 +362,14 @@ class SettingsController extends Controller {
 	public function updateThemingValues(): JSONResponse {
 		$params = $this->request->getParams();
 
+		// `reset=1` means stock Nextcloud: undo everything the sync ever
+		// applied. It shares this endpoint rather than taking a path or verb
+		// of its own because Nextcloud caches the route collection per host
+		// for an hour — a new route 404s on every warm instance until then.
+		if (($params['reset'] ?? '') !== '' && ($params['reset'] ?? '') !== '0') {
+			return $this->resetThemingValues();
+		}
+
 		$colorError = $this->themingService->validateColors(params: $params);
 		if ($colorError !== null) {
 			return new JSONResponse(['error' => $colorError], 400);
@@ -365,6 +385,19 @@ class SettingsController extends Controller {
 		$updatedColors = $this->themingService->applyColors(params: $params);
 		$updatedImages = $this->themingService->applyImages(params: $params);
 		$updated = array_merge($updatedColors, $updatedImages);
+
+		// Remember WHICH image was synced. Core stores only that a custom
+		// image exists (`{key}Mime`), never which file it came from, so
+		// without this the sync dialog cannot tell "this set's logo is
+		// already the one in place" from "this set has a logo" — and it
+		// offered the same unchanged logo on every single apply.
+		foreach ($updatedImages as $imageKey) {
+			$this->config->setAppValue(
+				Application::APP_ID,
+				self::SYNCED_IMAGE_PREFIX . $imageKey,
+				(string)$params[$imageKey]
+			);
+		}
 
 		// Increment the theming sync counter exposed by MetricsController as
 		// nldesign_theming_syncs_total. Only counted on success (after both
@@ -382,6 +415,45 @@ class SettingsController extends Controller {
 
 		return new JSONResponse(['status' => 'ok', 'updated' => $updated]);
 	}//end updateThemingValues()
+
+	/**
+	 * Reset Nextcloud theming to its defaults — what selecting the stock
+	 * `nextcloud` set means for core's colours and logo.
+	 *
+	 * The sync used to "match" the stock set's manifest values (a stale
+	 * primary and no logo), which kept the previous set's logo in place after
+	 * switching back to stock. Stock is the ABSENCE of a synced theme, so this
+	 * undoes every setting the sync can write, through the same
+	 * `ThemingDefaults::undo()` core's own panel uses.
+	 *
+	 * Reached through `POST /settings/theming` with `reset=1` rather than a
+	 * route of its own — see the caller for why — so it is admin-gated by that
+	 * endpoint's own `AuthorizedAdminSetting` and needs no second attribute.
+	 *
+	 * @return JSONResponse `{status: "ok", reset: string[]}`.
+	 *
+	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function resetThemingValues(): JSONResponse {
+		$before = $this->buildThemingSnapshot();
+		$reset = $this->themingService->resetToDefaults();
+
+		// Nothing is synced any more, so nothing is remembered as synced.
+		foreach (['logo', 'background'] as $imageKey) {
+			$this->config->deleteAppValue(Application::APP_ID, self::SYNCED_IMAGE_PREFIX . $imageKey);
+		}
+
+		$this->auditService->log(
+			action: 'theming_sync_reset',
+			context: [
+				'old' => $before,
+				'new' => $reset,
+			]
+		);
+
+		return new JSONResponse(['status' => 'ok', 'reset' => $reset]);
+	}//end resetThemingValues()
 
 	/**
 	 * Get current Nextcloud theming values for comparison.
@@ -407,6 +479,8 @@ class SettingsController extends Controller {
 	private function buildThemingSnapshot(): array {
 		$imgManager = $this->themingService->getImageManager();
 
+		$defaults = $this->themingService->getDefaultColors();
+
 		return [
 			'primary_color' => $this->config->getAppValue('theming', 'primary_color', ''),
 			'background_color' => $this->config->getAppValue('theming', 'background_color', ''),
@@ -414,6 +488,22 @@ class SettingsController extends Controller {
 			'background_url' => $imgManager->getImageUrl('background'),
 			'has_custom_logo' => $imgManager->hasImage('logo'),
 			'has_custom_background' => $imgManager->hasImage('background'),
+			// What a reset lands on, so the stock set's dialog can show it
+			// before it is applied rather than guess.
+			'default_primary_color' => $defaults['primary_color'],
+			'default_background_color' => $defaults['background_color'],
+			// Which file the sync last put in each image slot, so the dialog
+			// can leave out a logo that is already the one in place.
+			'synced_logo' => $this->config->getAppValue(
+				Application::APP_ID,
+				self::SYNCED_IMAGE_PREFIX . 'logo',
+				''
+			),
+			'synced_background' => $this->config->getAppValue(
+				Application::APP_ID,
+				self::SYNCED_IMAGE_PREFIX . 'background',
+				''
+			),
 		];
 	}//end buildThemingSnapshot()
 

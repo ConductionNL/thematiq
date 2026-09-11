@@ -102,6 +102,15 @@
 	--nldesign-size-lint: 48px;
 	--nldesign-size-lint-height: 96px;
 	--nldesign-logo-center: 32px;
+	/* Ribbon geometry: the wordmark sits at the foot of the 96px lint, not in
+	 * the header band. These were theme.css's hard-coded numbers for EVERY set
+	 * until the header rule took stock Nextcloud's geometry as its default;
+	 * they now live with the one set that wants them. */
+	--nldesign-logo-width: 40px;
+	--nldesign-logo-height: 32px;
+	--nldesign-logo-inset: 12px;
+	--nldesign-logo-top: calc(var(--nldesign-size-lint-height) - 32px - 4px);
+	--nldesign-logo-bottom: auto;
 	--nldesign-logo-filter: brightness(0) invert(1);
 
 	/* Heading sizes — scaled to fit Nextcloud's compact UI */

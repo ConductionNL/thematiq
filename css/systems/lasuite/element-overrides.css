@@ -720,18 +720,33 @@ button[class*='primary'] {
 	border-radius: var(--lasuite-border-radius) !important;
 }
 
-.button-vue--vue-primary,
-.button-vue--vue-primary *,
-.button-vue--vue-primary span,
+/* `:not([data-admin-theming-setting-color-picker])`: Nextcloud's own colour
+   pickers paint their button with the colour being chosen and compute a
+   readable text colour for it, so brand-050 lettering would vanish on a pale
+   swatch. See the longer note in css/systems/nldesign/theme.css. */
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) span,
 button.primary,
 button.primary *,
 input.primary,
-button[class*='primary'] {
+button[class*='primary']:not([data-admin-theming-setting-color-picker]) {
 	/* La Suite's on-brand button text is brand-050 (#eef1fa), a pale violet-white,
 	   not pure white — matched to the shipped Cunningham CSS (2026-07-26).
 	   Selector kept symmetric with the fill rule above so any primary-classed
 	   button gets both the brand-550 fill AND the brand-050 text. */
 	color: var(--lasuite-color-brand-050) !important;
+}
+
+/* …except Nextcloud's own colour pickers, whose button background IS the colour
+   being chosen and whose text colour core computes for legibility. The `*`
+   selectors above would otherwise paint the hex label and icon brand-050 —
+   invisible on a pale swatch. Same fix as the nldesign layer; see the longer
+   note in css/systems/nldesign/element-overrides.css. */
+[data-admin-theming-setting-color-picker] *,
+[data-admin-theming-setting-color-reset] * {
+	color: inherit !important;
+	fill: currentcolor !important;
 }
 
 .button-vue--vue-primary:hover,

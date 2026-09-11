@@ -34,6 +34,13 @@ return [
 		['name' => 'settings#setMenuLabelsSetting', 'url' => '/settings/menulabels', 'verb' => 'POST'],
 		['name' => 'settings#getThemingValues', 'url' => '/settings/theming', 'verb' => 'GET'],
 		['name' => 'settings#updateThemingValues', 'url' => '/settings/theming', 'verb' => 'POST'],
+		// Resetting core theming to stock deliberately has NO route of its own:
+		// it is `POST /settings/theming` with `reset=1`. Nextcloud caches the
+		// route collection per host for an hour, so a brand-new path or verb
+		// 404s/405s on every already-warm instance until that expires — measured
+		// here as a "failed to apply" toast on a switch that had in fact
+		// succeeded. Riding the URL that has existed for releases means the
+		// reset works the moment the code lands.
 		// Per-app theming exclusion list.
 		['name' => 'settings#getAppTheming', 'url' => '/settings/app-theming', 'verb' => 'GET'],
 		['name' => 'settings#setAppTheming', 'url' => '/settings/app-theming', 'verb' => 'POST'],
@@ -53,6 +60,10 @@ return [
 		['name' => 'overrides#importOverrides', 'url' => '/settings/overrides/import', 'verb' => 'POST'],
 		// Token set preview for apply dialog.
 		['name' => 'settings#getTokenSetPreview', 'url' => '/settings/tokenset-preview/{tokenSetId}', 'verb' => 'GET'],
+		// Stylesheet layer manifest — which <link>/<style> elements a set puts
+		// on a page, in cascade order, so the admin panel can swap sets on the
+		// page it is on without a reload (apply-without-reload).
+		['name' => 'layer#getStylesheets', 'url' => '/settings/tokenset-stylesheets/{tokenSetId}', 'verb' => 'GET'],
 		// Custom token set upload lifecycle.
 		['name' => 'customTokenSet#upload', 'url' => '/settings/tokensets/upload', 'verb' => 'POST'],
 		['name' => 'customTokenSet#list', 'url' => '/settings/tokensets/custom', 'verb' => 'GET'],

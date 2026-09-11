@@ -86,6 +86,15 @@
 	--nldesign-size-lint-height: 0px;
 	--nldesign-logo-center: 50%;
 	--nldesign-logo-filter: none;
+	/* Header logo geometry — stock Nextcloud's own numbers (core's
+	 * `#header #nextcloud .logo`: 62px wide, 12px from the start edge, 1px
+	 * from top and bottom, so the artwork gets the full header height). A set
+	 * that hangs a ribbon overrides these four; see css/tokens/rijkshuisstijl.css. */
+	--nldesign-logo-width: 62px;
+	--nldesign-logo-height: auto;
+	--nldesign-logo-inset: 12px;
+	--nldesign-logo-top: 1px;
+	--nldesign-logo-bottom: 1px;
 
 	/* ===================================================================
 	 * TEXT COLORS

@@ -263,6 +263,36 @@
 	margin-top: 12px;
 }
 
+/* Core theming as a section of the apply dialog (one confirm, no second
+   modal). The table reuses the sync dialog's row styling. */
+.nldesign-apply-theming {
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid var(--color-border, #ddd);
+}
+
+.nldesign-apply-theming__label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 600;
+	margin-bottom: 8px;
+	cursor: pointer;
+}
+
+/* The preview logo is whatever the set or core serves — an SVG with a
+   1369×436 viewBox renders at that size unless told otherwise, which is how a
+   synced wordmark once filled the whole dialog. Fit it to the box. */
+.nldesign-dialog-preview-logo {
+	display: block;
+	max-width: 70%;
+	max-height: 56px;
+	width: auto;
+	height: auto;
+	margin: 0 auto;
+	object-fit: contain;
+}
+
 .nldesign-dialog-preview-box--dark {
 	width: 100%;
 	max-width: 200px;

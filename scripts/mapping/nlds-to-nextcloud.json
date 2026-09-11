@@ -484,10 +484,22 @@
 			"transform": "copy"
 		},
 		{
+			"$comment": [
+				"NO FALLBACK, DELIBERATELY. A theming value is written into Nextcloud's own",
+				"settings, where it overrides core's default for good — so it must be a colour the",
+				"theme actually declares, never one the converter invented. This rule used to fall",
+				"back to the literal #ffffff, so every theme that says nothing about its page",
+				"background still pinned white into core theming: OpenWOO declares no page",
+				"background at all and was handed one anyway.",
+				"",
+				"With no fallback the target is not emitted, `theming.background_color` is absent",
+				"from the manifest, the sync offers no background row, and Nextcloud keeps its own",
+				"default — which is what 'the theme does not set this' has to mean. Compare",
+				"theming.primary_color, whose fallback derives from a token the theme does declare."
+			],
 			"target": "manifest:theming.background_color",
 			"nextcloud": ["theming app background colour"],
 			"sources": ["--utrecht-page-background-color", "--utrecht-surface-background-color"],
-			"fallback": { "kind": "literal", "value": "#ffffff" },
 			"transform": "copy",
 			"reason": "routed-to-core-theming"
 		}

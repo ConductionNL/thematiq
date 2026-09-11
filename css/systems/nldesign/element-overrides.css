@@ -497,11 +497,23 @@ a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
    BUTTON TEXT COLOR FIXES
    ============================================ */
 
-.button-vue--vue-primary,
-.button-vue--vue-primary *,
-.button-vue--vue-primary span,
-.button-vue--vue-primary .button-vue__text,
-.button-vue--vue-primary .button-vue__wrapper,
+/* `:not([data-admin-theming-setting-color-picker])` throughout: Nextcloud's own
+ * colour pickers (Settings › Theming) are NcButtons of type primary whose
+ * background IS the colour being chosen, with a text colour core computes for
+ * legibility. Painting them — or their children — the theme's primary text
+ * colour makes the hex label vanish on a pale swatch. See the longer note on
+ * the matching rule in theme.css. */
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) span,
+.button-vue--vue-primary:not(
+		[data-admin-theming-setting-color-picker]
+	)
+	.button-vue__text,
+.button-vue--vue-primary:not(
+		[data-admin-theming-setting-color-picker]
+	)
+	.button-vue__wrapper,
 button.primary,
 button.primary *,
 button.primary span,
@@ -510,12 +522,17 @@ a.primary,
 a.primary *,
 .button.primary,
 .button.primary *,
-.button-vue.button-vue--vue-primary,
-.button-vue.button-vue--vue-primary *,
-button[class*='primary'],
-button[class*='primary'] *,
-.button-vue[class*='primary'],
-.button-vue[class*='primary'] * {
+.button-vue.button-vue--vue-primary:not(
+		[data-admin-theming-setting-color-picker]
+	),
+.button-vue.button-vue--vue-primary:not(
+		[data-admin-theming-setting-color-picker]
+	)
+	*,
+button[class*='primary']:not([data-admin-theming-setting-color-picker]),
+button[class*='primary']:not([data-admin-theming-setting-color-picker]) *,
+.button-vue[class*='primary']:not([data-admin-theming-setting-color-picker]),
+.button-vue[class*='primary']:not([data-admin-theming-setting-color-picker]) * {
 	color: var(--nldesign-color-primary-text) !important;
 }
 

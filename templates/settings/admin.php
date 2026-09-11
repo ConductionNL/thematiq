@@ -18,6 +18,11 @@
 // Load the pure token/colour transforms first so admin.js can consume them via
 // window.NldesignTokenTransforms (admin.js falls back to inline copies if absent).
 script('thematiq', 'lib/tokenTransforms');
+// The stylesheet layer swap (window.NldesignLayerSwap): applies a token set to
+// the page the admin is on by replacing Thematiq's <link>/<style> elements with
+// the ones the server would emit for the new set — no reload. admin.js falls
+// back to its old reload-asking toasts when the module is absent.
+script('thematiq', 'lib/layerSwap');
 script('thematiq', 'admin');
 style('thematiq', 'admin');
 if ($_['mockUi'] === true) {

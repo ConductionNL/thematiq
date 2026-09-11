@@ -976,4 +976,97 @@ class CssInjectionServiceTest extends TestCase {
 		$this->assertContains('tokens/rijkshuisstijl', $emitted);
 		$this->assertNotContains('token-overrides/rijkshuisstijl', $emitted);
 	}//end testASetWithoutElementOverridesLoadsNothingExtra()
+	/**
+	 * The stylesheet manifest is the SAME list `inject()` emits for the
+	 * set-dependent layers — one owner for the cascade. Every file the page
+	 * render adds for a set appears in the manifest, in the same order, as a
+	 * URL under the app's `css/`; the set-independent layers (custom overrides,
+	 * freeform CSS, the toggles) are not in it.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 */
+	public function testStylesheetManifestMatchesInjectedSetLayers(): void {
+		$this->configureAppValues(['token_set' => 'rijkshuisstijl', 'installed_version' => '9.9.9']);
+		$this->designSystemService->method('getTokenSetMeta')->with('rijkshuisstijl')
+			->willReturn(['design_system' => 'nldesign']);
+		$this->designSystemService->method('getDesignSystem')->with('nldesign')->willReturn(
+			[
+				'id' => 'nldesign',
+				'name' => 'NL Design System',
+				'description' => '',
+				'stylesheets' => [
+					'systems/nldesign/fonts',
+					'systems/nldesign/defaults',
+					'systems/nldesign/utrecht-bridge',
+					'systems/nldesign/theme',
+					'systems/nldesign/overrides',
+					'systems/nldesign/element-overrides',
+				],
+			]
+		);
+		$this->urlGenerator->method('linkTo')->willReturnCallback(
+			fn (string $appName, string $file) => '/custom_apps/' . $appName . '/' . $file
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$service->inject('user');
+		$manifest = $service->getStylesheetManifest('rijkshuisstijl');
+
+		$setIndependent = ['custom-overrides', 'custom-css', 'hide-slogan', 'show-menu-labels'];
+		$injectedSetFiles = array_values(
+			array_filter($styleLog, fn (string $file) => in_array($file, $setIndependent, true) === false)
+		);
+
+		$manifestFiles = [];
+		foreach ($manifest['layers'] as $layer) {
+			if ($layer['kind'] === 'file') {
+				$this->assertStringEndsWith('?v=9.9.9', $layer['href'], 'a manifest href carries the installed version as cache-buster');
+				$manifestFiles[] = preg_replace('#^/custom_apps/thematiq/css/(.*)\.css\?v=.*$#', '$1', $layer['href']);
+			} else {
+				$this->assertSame('inline', $layer['kind']);
+				$this->assertSame(CssInjectionService::LOGO_STYLE_ID, $layer['id'], 'the inline logo layer carries the id the client replaces it by');
+				$this->assertStringContainsString('--nldesign-logo-url', $layer['css']);
+			}
+		}
+
+		$this->assertSame($injectedSetFiles, $manifestFiles, 'manifest files equal the injected set layers, in order');
+		$this->assertSame('rijkshuisstijl', $manifest['tokenSet']);
+		$this->assertSame('nldesign', $manifest['designSystem']);
+		$this->assertNotContains('custom-overrides', $manifestFiles);
+	}//end testStylesheetManifestMatchesInjectedSetLayers()
+
+	/**
+	 * Stock Nextcloud (design system `none`) has no set layers, so its manifest
+	 * is empty — which is what lets the client remove every Thematiq layer when
+	 * an admin switches back to stock without a reload.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 */
+	public function testStylesheetManifestIsEmptyForStockNextcloud(): void {
+		$this->configureAppValues();
+		$this->designSystemService->method('getTokenSetMeta')->with('nextcloud')
+			->willReturn(['design_system' => 'none']);
+		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
+			[
+				'id' => 'none',
+				'name' => 'Nextcloud',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$manifest = $service->getStylesheetManifest('nextcloud');
+
+		$this->assertSame('none', $manifest['designSystem']);
+		$this->assertSame([], $manifest['layers']);
+	}//end testStylesheetManifestIsEmptyForStockNextcloud()
 }//end class
