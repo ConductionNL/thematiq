@@ -1,6 +1,6 @@
 # Design: apply and upload without a reload
 
-Stage 2 of `MAKEOVER-PLAN.md`. The proposal says what changes; this records the decisions and the
+The proposal says what changes; this records the decisions and the
 measurements behind them, so the next reader does not re-derive them.
 
 ## Measured baseline (2026-09-10, `js/admin.js` before this change)

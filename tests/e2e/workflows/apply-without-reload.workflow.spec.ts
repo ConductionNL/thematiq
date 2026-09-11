@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  * SPDX-License-Identifier: EUPL-1.2
  *
- * Apply without a reload (MAKEOVER-PLAN.md stage 2, task 2.11).
+ * Apply without a reload: see openspec/changes/apply-without-reload.
  *
  * The whole flow — select a set, confirm, sync core theming, switch back to
  * stock — happens on ONE page load. The spec counts navigations and asserts

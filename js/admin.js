@@ -3092,8 +3092,8 @@
 							}
 
 							// Core theming rides on the same confirm. The sync used to
-							// be unreachable from this path (baseline item 3 of
-							// MAKEOVER-PLAN.md) and, once reachable, was a second modal;
+							// be unreachable from this path and, once reachable, was a
+							// second modal;
 							// it is now the checked section above, applied on this same
 							// confirm while the dialog is still up.
 							if (plan.mode !== 'none' && syncChecked === true) {

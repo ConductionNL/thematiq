@@ -22,7 +22,7 @@ Nothing detects this today. `tests/Unit/TokenCssShapeTest.php` checks the file's
 the colours a set does define — but a set that defines nothing at all passes both: it is
 structurally perfect and its (inherited Rijkshuisstijl) colours are WCAG-compliant. This change
 makes "correct" a mechanical statement, enforced by a test, before any file is regenerated. It is
-stage 1 of `MAKEOVER-PLAN.md`, and stage 2 (the NLDS→Nextcloud converter) has no definition of done
+the first step of the theming makeover, and the NLDS→Nextcloud converter has no definition of done
 without it.
 
 ## What Changes
@@ -72,7 +72,7 @@ without it.
 
 ## Impact
 
-- **Measured baseline diverges from `MAKEOVER-PLAN.md` Appendix B (31 sets) — 41 sets fail, and
+- **Measured baseline diverges from the planning estimate (31 sets) — 41 sets fail, and
   `summer-breeze` is not auditable at all.** Appendix B counted the sets that define *none* of the
   vocabulary; the plan's own stage-1 definition is stricter than that, and 11 further sets
   (`conduction-new`, `cunningham`, `frankendesk`, `hoog-contrast`, `lasuite`, `leiden`,

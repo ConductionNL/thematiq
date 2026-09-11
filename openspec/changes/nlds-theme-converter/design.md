@@ -1,6 +1,6 @@
 # Design: NLDS theme to Nextcloud token set converter
 
-Stage 4 of `MAKEOVER-PLAN.md` (stage 2 until the 2026-09-10 reorder). Stage 1 defined *correct* and measured who fails; this change is the
+The vocabulary audit defined *correct* and measured who fails; this change is the
 machine that makes them correct, and the admin-facing path that does the same for a theme nobody has
 seen before.
 

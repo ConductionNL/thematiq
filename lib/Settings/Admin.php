@@ -260,7 +260,7 @@ class Admin implements IDelegatedSettings {
 				'activePreview' => $activePreview,
 				'activeIconPacks' => $activeIconPacks,
 				'iconPackSource' => $iconPackSource,
-				// Presentation mock: `?mock=1` layers the stage 2–5 visual shells
+				// Presentation mock: `?mock=1` layers the theming-makeover visual shells
 				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
 				// can be screenshotted from a running instance. Nothing else changes.
 				'mockUi' => ($this->request->getParam('mock') === '1'),

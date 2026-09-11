@@ -45,8 +45,7 @@
 # Talking points for a slide deck that lives outside the repo, alongside the
 # local presentation mock above. It names a .pptx on one machine's disk and
 # nothing in the app refers to it, so it is personal working material rather
-# than project documentation. NOTE: MAKEOVER-PLAN.md is deliberately NOT
-# ignored — committed code, tests and a test fixture cite it by name.
+# than project documentation.
 /PRESENTATION-SCRIPT.md
 
 # Scratch input for scripts/build-icons.js's DSFR pack — the pre-fetched
@@ -118,5 +117,8 @@ tests/e2e/.auth/
 /.lasuite-src/
 
 
-# Planning
+# Working plans. These are deleted once the work they describe has landed, so
+# nothing that stays in the repository may cite one — not by filename and not by
+# its stage numbering. Write the condition instead ("until the converter has
+# regenerated them"), or cite the openspec change the plan produced.
 /MAKEOVER-PLAN.md

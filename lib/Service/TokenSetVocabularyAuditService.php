@@ -309,8 +309,8 @@ class TokenSetVocabularyAuditService {
 	 * The declared `--nldesign-*` vocabulary: every name any non-token-set CSS
 	 * layer in the app declares a default for or reads.
 	 *
-	 * Wider than the two files MAKEOVER-PLAN.md stage 1 names
-	 * (`css/systems/nldesign/defaults.css` and `utrecht-bridge.css`) on purpose:
+	 * Wider than `css/systems/nldesign/defaults.css` and `utrecht-bridge.css`
+	 * on purpose:
 	 * `theme.css`, `overrides.css`, `element-overrides.css`, `public-bridge.css`
 	 * and the non-nldesign systems' own layers read names those two files never
 	 * mention (`--nldesign-logo-url`, `--nldesign-color-background`,

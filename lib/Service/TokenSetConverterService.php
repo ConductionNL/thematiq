@@ -27,7 +27,7 @@ use RuntimeException;
 /**
  * Turn a published design-system theme into a Nextcloud token set.
  *
- * Stage 2 of `MAKEOVER-PLAN.md`. The whole mapping lives in
+ * The whole mapping lives in
  * `scripts/mapping/nlds-to-nextcloud.json` as DATA, and this service is one of
  * two thin runtimes over it (the other being `js/lib/tokenConverter.js`), so
  * the admin upload path and the CLI cannot drift apart. The table's SHA-256 is
@@ -1610,7 +1610,7 @@ class TokenSetConverterService {
 	 * The ramp is every near-grey colour the theme declares (channels within 12
 	 * of each other). Using the brand's own greys rather than a fixed set is
 	 * what keeps a converted set looking like its brand instead of like
-	 * Rijkshuisstijl, which is the whole defect stage 2 exists to fix.
+	 * Rijkshuisstijl, which is the whole defect this converter exists to fix.
 	 *
 	 * @param array<string, mixed>  $spec         The ramp spec.
 	 * @param array<string, string> $declarations The resolved input.

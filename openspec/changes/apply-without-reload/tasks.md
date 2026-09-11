@@ -1,6 +1,6 @@
 # Tasks: apply and upload without a reload
 
-Stage 2 of `MAKEOVER-PLAN.md`. Numbers in brackets are the plan's own task numbers. Tick a box when
+Numbers in brackets were the planning task numbers. Tick a box when
 the work is merged to `development`, not when it is started.
 
 ## State on 2026-09-10

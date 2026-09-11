@@ -71,7 +71,7 @@ class TokenSetService {
 	 * nothing reads and declare none of the semantic vocabulary the theme
 	 * consumes, so picking one silently renders Rijkshuisstijl with, at best,
 	 * the wrong header. Offering those is offering a theme that does not work.
-	 * Until stage 2 of `MAKEOVER-PLAN.md` has regenerated them, the dropdown
+	 * Until the converter has regenerated them, the dropdown
 	 * offers `nextcloud` — stock, correct by definition, and the baseline every
 	 * conversion is compared against — plus whatever the admin has imported
 	 * themselves, which is the whole point of the converter.

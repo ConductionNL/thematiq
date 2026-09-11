@@ -17,7 +17,7 @@ The missing guard is the one about **vocabulary**: does the set declare the name
 system's own stylesheets read? `css/systems/nldesign/theme.css`, `overrides.css` and
 `element-overrides.css` read a fixed `--nldesign-*` set. When a token set declares none of it, the
 cascade falls through to `defaults.css` and Zwolle renders as Rijkshuisstijl. That is invisible to
-every existing gate, which is why the makeover plan puts this first.
+every existing gate, which is why this audit comes before the converter.
 
 ## Goals / Non-Goals
 
@@ -266,7 +266,7 @@ Reading the table:
 ## Risks / Trade-offs
 
 - **The allow-list is 41 entries, not the plan's 31.** Stage 2's scope is larger than
-  `MAKEOVER-PLAN.md` assumed. The alternative — narrowing the required list until exactly Appendix B
+  the planning notes assumed. The alternative — narrowing the required list until exactly Appendix B
   failed — would have meant dropping links, status colours, `-rgb` triplets, `font-family` and every
   `border-radius` from the definition, which is most of what makes a brand look like itself. The
   measurement stands and the plan's Appendix B line is corrected here.

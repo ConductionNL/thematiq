@@ -34,8 +34,8 @@
  * The known-incomplete allow-list is read from
  * `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` — the SAME file the
  * PHPUnit gate reads, so the two can never disagree about what is
- * known-broken. Entries are deleted as stage 2 of MAKEOVER-PLAN.md regenerates
- * the sets; the file must hold an empty `sets` array when stage 2 closes.
+ * known-broken. Entries are deleted as the converter regenerates the sets; the
+ * file must hold an empty `sets` array once every shipped set is complete.
  *
  * Usage:
  *   node scripts/audit-token-sets.mjs            # table, always exits 0
@@ -439,7 +439,7 @@ function main() {
 			`[${LABEL}] ${results.length} shipped sets, ${audited.length} audited, ${incomplete.length} incomplete, ${audited.length - incomplete.length} complete.`,
 		)
 		console.log(
-			`[${LABEL}] allow-list: ${allowlist.length} known-incomplete set(s) — must be empty when MAKEOVER-PLAN.md stage 2 closes.`,
+			`[${LABEL}] allow-list: ${allowlist.length} known-incomplete set(s) — must be empty once every shipped set is complete.`,
 		)
 		if (unexpected.length > 0) {
 			console.log(`[${LABEL}] NOT allow-listed: ${unexpected.join(', ')}`)

@@ -3,7 +3,7 @@ Note: no OpenRegister schemas are involved in this change — the audit is pure 
 section and no seed task. There is no lifecycle/aggregation/notification behaviour either, so the
 ADR-031 declarative-vs-imperative notification-dialect distinction does not apply.
 
-Task numbering follows `MAKEOVER-PLAN.md` stage 1 (1.1–1.7) so the plan's checkboxes map one-to-one.
+Task numbering (1.1–1.7) follows the planning notes this change was written from.
 
 ## 1. Spec and Design (plan task 1.1, 1.7)
 
@@ -12,7 +12,7 @@ Task numbering follows `MAKEOVER-PLAN.md` stage 1 (1.1–1.7) so the plan's chec
       admin-dropdown surface; no MODIFIED requirement, the existing "Token Set CSS Structure"
       requirement stays true as written).
 - [x] 1.7 Record the measured baseline table (48 sets, per-set missing/foreign/primary/verdict) in
-      `design.md`, alongside the reconciliation against `MAKEOVER-PLAN.md` Appendix B — 41 sets fail,
+      `design.md`, alongside the reconciliation against the planning estimate — 41 sets fail,
       not 31, and `summer-breeze` is not auditable. Regeneratable with
       `node scripts/audit-token-sets.mjs --json`.
 

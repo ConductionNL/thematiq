@@ -17,10 +17,10 @@
  *
  * The 41 sets that fail today are allow-listed in
  * `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` so CI stays green
- * while MAKEOVER-PLAN.md stage 2 regenerates them; the gate fails BOTH on a set
+ * while the converter regenerates them; the gate fails BOTH on a set
  * that is incomplete and not listed AND on a listed set that has since started
- * passing (so the list can only shrink). The allow-list must be empty when
- * stage 2 closes.
+ * passing (so the list can only shrink). The allow-list must be empty once
+ * every shipped set is complete.
  *
  * No Nextcloud runtime required — pure filesystem work over the repo's own
  * `css/`, `token-sets.json` and `design-systems.json`, mirroring the
@@ -118,7 +118,7 @@ class TokenSetVocabularyTest extends TestCase {
 			[],
 			$offenders,
 			"These shipped token sets are vocabulary-incomplete and NOT allow-listed.\n"
-			. "Fix the set, or (only for a set MAKEOVER-PLAN.md stage 2 has yet to regenerate)\n"
+			. "Fix the set, or (only for a set the converter has yet to regenerate)\n"
 			. "add its id to tests/Unit/fixtures/token-set-vocabulary-allowlist.json:\n  - "
 			. implode("\n  - ", $offenders)
 		);
@@ -126,7 +126,7 @@ class TokenSetVocabularyTest extends TestCase {
 
 	/**
 	 * The allow-list can only shrink: an id that has started passing MUST be
-	 * deleted from it, so stage 2's progress is recorded rather than hidden.
+	 * deleted from it, so progress is recorded rather than hidden.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
 	 */
@@ -182,7 +182,7 @@ class TokenSetVocabularyTest extends TestCase {
 		);
 		$this->assertNotEmpty(
 			$incomplete,
-			'Every shipped set passes — either stage 2 is complete (then empty the allow-list '
+			'Every shipped set passes — either every set has been regenerated (then empty the allow-list '
 			. 'and delete this assertion) or the audit has stopped auditing anything.'
 		);
 		$this->assertContains(

@@ -11,7 +11,7 @@
  * the nightly importer's raw dump (palette steps, spacing and heading sizes
  * under the --nldesign-* prefix, no semantic roles), which rendered as
  * Rijkshuisstijl; this file resolves the theme's aliases by hand, which is
- * what the MAKEOVER-PLAN v2 stage 2 converter will do mechanically. When that
+ * what `TokenSetConverterService` will do mechanically. When that
  * lands, this file is regenerated, not edited — and the nightly sync
  * (scripts/generate-tokens.mjs) must go through the converter too, or it
  * overwrites this file with the raw dump again.

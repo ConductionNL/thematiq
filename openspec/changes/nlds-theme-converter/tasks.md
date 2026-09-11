@@ -1,6 +1,6 @@
 # Tasks: NLDS theme to Nextcloud token set converter
 
-Stage 4 of `MAKEOVER-PLAN.md` (stage 2 until the 2026-09-10 reorder). Section numbers in brackets are the plan's own task numbers.
+Section numbers in brackets were the planning task numbers.
 Tick a box when the work is merged to `development`, not when it is started.
 
 ## State on 2026-09-10

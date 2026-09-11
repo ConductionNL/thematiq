@@ -26,7 +26,7 @@ actually publishes — `dist/design-tokens.css` from a Style Dictionary theme pa
 class-scoped block such as `.openwoo-theme { }` with 697 declarations and `var()` chains — and the
 upload has nothing to do with it. The admin's real input is a theme, not a token set.
 
-This change is stage 4 of `MAKEOVER-PLAN.md` (stage 2 until the 2026-09-10 reorder): one mapping
+This change is the theme converter: one mapping
 table, one conversion, four accepted inputs, and a report that names every token that was applied,
 adapted or skipped, and why.
 

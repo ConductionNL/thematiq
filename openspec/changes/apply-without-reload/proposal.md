@@ -16,11 +16,10 @@ Worse, the one path an admin actually takes skips the theming sync entirely. The
 confirm calls `commitTokenSetChange()` and stops; `checkAndShowThemingDialog()` is only reached
 from `saveTokenSet()`, which runs only when the apply dialog had nothing to show. So the header,
 login page and e-mails kept the previous instance colour however often a set was applied — baseline
-item 3 of `MAKEOVER-PLAN.md`, and the reason the Theming panel in the screenshot that opened this
+item 3 of the measured baseline, and the reason the Theming panel in the screenshot that opened this
 work still showed Nextcloud's own blue and logo after a conversion.
 
-This change is stage 2 of `MAKEOVER-PLAN.md` (reordered 2026-09-10 to come before the playground
-and the converter): after it, selecting a set and confirming changes the page you are looking at —
+This change comes before the playground and the converter: after it, selecting a set and confirming changes the page you are looking at —
 Thematiq's stylesheets, Nextcloud's own colours and logo, and the core Theming panel's fields
 further up the same page — and a set you just uploaded is in the dropdown the moment the upload
 returns. No reload anywhere in the flow.
