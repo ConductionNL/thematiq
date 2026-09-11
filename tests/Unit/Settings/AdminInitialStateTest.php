@@ -23,6 +23,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
@@ -126,7 +127,8 @@ class AdminInitialStateTest extends TestCase {
 			$previewService,
 			$userSession,
 			$designSystemService,
-			$initialState
+			$initialState,
+			$this->createMock(IRequest::class)
 		);
 	}//end buildAdmin()
 
