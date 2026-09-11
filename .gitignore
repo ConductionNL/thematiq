@@ -116,3 +116,7 @@ tests/e2e/.auth/
 # facts about the LIVE docs.numerique.gouv.fr bundle, not app source. The
 # authoritative, committed output is css/systems/lasuite/brand-override.css.
 /.lasuite-src/
+
+
+# Planning
+/MAKEOVER-PLAN.md
