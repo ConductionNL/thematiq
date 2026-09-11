@@ -428,7 +428,11 @@ class CssInjectionService {
 	 *
 	 * @param string $tokenSet The token set id (validated by the caller).
 	 *
-	 * @return array{tokenSet: string, designSystem: string, layers: array<int, array{layer: string, kind: string, href?: string, css?: string, id?: string}>}
+	 * @return array{
+	 *     tokenSet: string,
+	 *     designSystem: string,
+	 *     layers: array<int, array{layer: string, kind: string, href?: string, css?: string, id?: string}>
+	 * }
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
 	 */
@@ -717,7 +721,9 @@ class CssInjectionService {
 	 * Indirected for the same reason as `emitStyle()`: it is a side effect on a
 	 * Nextcloud static, and a test can capture it only if it is overridable.
 	 *
-	 * @param string $css The stylesheet body.
+	 * @param string      $css The stylesheet body.
+	 * @param string|null $id  Element id, so the client can find and replace this
+	 *                         exact block when a set is applied without a reload.
 	 *
 	 * @return void
 	 *

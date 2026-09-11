@@ -246,10 +246,13 @@ class CustomTokenSetController extends Controller {
 			}
 
 			$fileName = trim((string)($file['name'] ?? ''));
+			if ($fileName === '') {
+				$fileName = null;
+			}
 
 			return [
 				'content' => $content,
-				'sourceName' => ($fileName === '' ? null : $fileName),
+				'sourceName' => $fileName,
 			];
 		}
 
@@ -266,10 +269,13 @@ class CustomTokenSetController extends Controller {
 		}
 
 		$sourceName = trim((string)($this->request->getParam('sourceName', '')));
+		if ($sourceName === '') {
+			$sourceName = null;
+		}
 
 		return [
 			'content' => $pasted,
-			'sourceName' => ($sourceName === '' ? null : $sourceName),
+			'sourceName' => $sourceName,
 		];
 	}//end readInput()
 

@@ -213,7 +213,16 @@ class TokenSetConverterService {
 	 *                                 the slug; the admin upload path passes `custom-{slug}` so an
 	 *                                 uploaded theme can never overwrite a shipped `img/logos/{slug}.svg`.
 	 *
-	 * @return array{css: string, manifestEntry: array<string, mixed>, report: array<int, ReportEntry>, inputKind: string, counts: array<string, int>, logoAsset: array{path: string, contents: string}|null, importWarnings: array<int, array{path: string, message: string|null}>, errors: array<int, array{path: string, reason: string, detail?: string}>}
+	 * @return array{
+	 *     css: string,
+	 *     manifestEntry: array<string, mixed>,
+	 *     report: array<int, ReportEntry>,
+	 *     inputKind: string,
+	 *     counts: array<string, int>,
+	 *     logoAsset: array{path: string, contents: string}|null,
+	 *     importWarnings: array<int, array{path: string, message: string|null}>,
+	 *     errors: array<int, array{path: string, reason: string, detail?: string}>
+	 * }
 	 *
 	 * @throws RuntimeException When the content matches none of the four accepted shapes (code 422).
 	 *
@@ -316,6 +325,14 @@ class TokenSetConverterService {
 			counts: $counts
 		);
 
+		// Only set when the logo was DECODED out of the theme, so the caller has
+		// bytes to write. A theme that already pointed at a file on disk yields
+		// a `theming.logo` with no asset to create.
+		$logoAsset = null;
+		if ($logo !== null && $logo['contents'] !== null) {
+			$logoAsset = ['path' => $logo['path'], 'contents' => $logo['contents']];
+		}
+
 		return [
 			'css' => $css,
 			'manifestEntry' => $this->buildManifestEntry(
@@ -330,12 +347,7 @@ class TokenSetConverterService {
 			'report' => $report,
 			'inputKind' => $inputKind,
 			'counts' => $counts,
-			// Only set when the logo was DECODED out of the theme, so the caller
-			// has bytes to write. A theme that already pointed at a file on disk
-			// yields a `theming.logo` with no asset to create.
-			'logoAsset' => ($logo === null || $logo['contents'] === null)
-				? null
-				: ['path' => $logo['path'], 'contents' => $logo['contents']],
+			'logoAsset' => $logoAsset,
 			'importWarnings' => $this->importWarnings,
 			'errors' => $this->mapperErrors,
 		];

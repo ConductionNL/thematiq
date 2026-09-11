@@ -286,6 +286,11 @@ class ThemingService {
 	 * value a reset removes.
 	 *
 	 * @return array{primary_color: string, background_color: string} The stock colours.
+	 *
+	 * @psalm-suppress UndefinedClass OCA\Theming is a first-party Nextcloud app,
+	 *                 present at runtime but not a composer dependency, so it is
+	 *                 absent during analysis — the same rationale this file
+	 *                 already carries for ThemingDefaults.
 	 */
 	public function getDefaultColors(): array {
 		return [
