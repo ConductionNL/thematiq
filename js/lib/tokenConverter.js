@@ -64,7 +64,14 @@
 
 	/** Font families this app bundles itself. Mirrors `fontIsAvailable()`. */
 	var BUNDLED_FONTS = ['marianne', 'inter']
-	var GENERIC_FONTS = ['sans-serif', 'serif', 'monospace', 'system-ui', 'cursive', 'fantasy']
+	var GENERIC_FONTS = [
+		'sans-serif',
+		'serif',
+		'monospace',
+		'system-ui',
+		'cursive',
+		'fantasy',
+	]
 
 	// ---------------------------------------------------------------- parsing
 
@@ -93,7 +100,7 @@
 
 			if (quote !== null) {
 				buffer += char
-				if (char === '\\' && (i + 1) < content.length) {
+				if (char === '\\' && i + 1 < content.length) {
 					buffer += content.charAt(i + 1)
 					i++
 					continue
@@ -113,7 +120,7 @@
 				continue
 			}
 
-			if (char === '"' || char === '\'') {
+			if (char === '"' || char === "'") {
 				quote = char
 				buffer += char
 				continue
@@ -165,7 +172,10 @@
 			return
 		}
 
-		var value = match[2].trim().replace(/\s*!\s*important\s*$/i, '').trim()
+		var value = match[2]
+			.trim()
+			.replace(/\s*!\s*important\s*$/i, '')
+			.trim()
 		if (value === '') {
 			return
 		}
@@ -244,8 +254,11 @@
 
 			var isKnown = hasKnownPrefix(name)
 
-			if (Object.prototype.hasOwnProperty.call(byRole, role)
-				&& (isKnown === false || Object.prototype.hasOwnProperty.call(fromKnown, role))) {
+			if (
+				Object.prototype.hasOwnProperty.call(byRole, role)
+				&& (isKnown === false
+					|| Object.prototype.hasOwnProperty.call(fromKnown, role))
+			) {
 				return
 			}
 
@@ -274,9 +287,13 @@
 		if (hex !== null) {
 			var digits = hex[1]
 			if (digits.length === 3) {
-				digits = digits.charAt(0) + digits.charAt(0)
-					+ digits.charAt(1) + digits.charAt(1)
-					+ digits.charAt(2) + digits.charAt(2)
+				digits =
+					digits.charAt(0)
+					+ digits.charAt(0)
+					+ digits.charAt(1)
+					+ digits.charAt(1)
+					+ digits.charAt(2)
+					+ digits.charAt(2)
 			}
 
 			return [
@@ -286,7 +303,10 @@
 			]
 		}
 
-		var rgb = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*[\d.]+\s*)?\)$/.exec(trimmed)
+		var rgb =
+			/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*[\d.]+\s*)?\)$/.exec(
+				trimmed,
+			)
 		if (rgb !== null) {
 			return [
 				Math.min(255, parseInt(rgb[1], 10)),
@@ -314,7 +334,7 @@
 			return Math.pow((srgb + 0.055) / 1.055, 2.4)
 		})
 
-		return (0.2126 * channels[0]) + (0.7152 * channels[1]) + (0.0722 * channels[2])
+		return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
 	}
 
 	/**
@@ -338,11 +358,16 @@
 	 * @return {string} Hex string.
 	 */
 	function toHex(rgb) {
-		return '#' + rgb.map(function (value) {
-			var clamped = Math.max(0, Math.min(255, value))
+		return (
+			'#'
+			+ rgb
+				.map(function (value) {
+					var clamped = Math.max(0, Math.min(255, value))
 
-			return ('0' + clamped.toString(16)).slice(-2)
-		}).join('')
+					return ('0' + clamped.toString(16)).slice(-2)
+				})
+				.join('')
+		)
 	}
 
 	/**
@@ -360,9 +385,11 @@
 
 		var factor = 1 - Math.min(1, Math.max(0, fraction))
 
-		return toHex(rgb.map(function (channel) {
-			return Math.max(0, Math.round(channel * factor))
-		}))
+		return toHex(
+			rgb.map(function (channel) {
+				return Math.max(0, Math.round(channel * factor))
+			}),
+		)
 	}
 
 	/**
@@ -382,9 +409,11 @@
 
 		var share = Math.min(1, Math.max(0, weight))
 
-		return toHex([0, 1, 2].map(function (index) {
-			return Math.round((base[index] * share) + (other[index] * (1 - share)))
-		}))
+		return toHex(
+			[0, 1, 2].map(function (index) {
+				return Math.round(base[index] * share + other[index] * (1 - share))
+			}),
+		)
 	}
 
 	/**
@@ -428,7 +457,17 @@
 
 		var clamped = Math.min(1, Math.max(0, fraction))
 
-		return 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + trimNumber(clamped) + ')'
+		return (
+			'rgba('
+			+ rgb[0]
+			+ ', '
+			+ rgb[1]
+			+ ', '
+			+ rgb[2]
+			+ ', '
+			+ trimNumber(clamped)
+			+ ')'
+		)
 	}
 
 	/**
@@ -484,16 +523,20 @@
 	 * @return {string} The transformed value.
 	 */
 	function applyTransform(kind, value, args, semantic) {
-		var options = (args || {})
+		var options = args || {}
 
 		switch (kind) {
 			case 'darken':
 				return darken(value, numberOr(options.fraction, 0.1))
 
 			case 'mix':
-				var withValue = (options.with === undefined ? '#ffffff' : String(options.with))
+				var withValue =
+					options.with === undefined ? '#ffffff' : String(options.with)
 				if (withValue.indexOf('--') === 0) {
-					withValue = (semantic[withValue] === undefined ? '#ffffff' : semantic[withValue])
+					withValue =
+						semantic[withValue] === undefined
+							? '#ffffff'
+							: semantic[withValue]
 				}
 
 				return mix(value, withValue, numberOr(options.weight, 0.5))
@@ -505,17 +548,24 @@
 				return alpha(value, numberOr(options.fraction, 0.5))
 
 			case 'radiusScale':
-				return radiusScale(value, numberOr(options.factor, 2), numberOr(options.clampPx, 16))
+				return radiusScale(
+					value,
+					numberOr(options.factor, 2),
+					numberOr(options.clampPx, 16),
+				)
 
 			case 'onColor':
 				return onColor(
 					value,
-					(options.light === undefined ? '#ffffff' : String(options.light)),
-					(options.dark === undefined ? '#000000' : String(options.dark))
+					options.light === undefined ? '#ffffff' : String(options.light),
+					options.dark === undefined ? '#000000' : String(options.dark),
 				)
 
 			case 'literal':
-				var template = (options.template === undefined ? '{value}' : String(options.template))
+				var template =
+					options.template === undefined
+						? '{value}'
+						: String(options.template)
 
 				return template.split('{value}').join(value)
 
@@ -539,7 +589,7 @@
 
 		var parsed = Number(value)
 
-		return (isNaN(parsed) ? fallbackValue : parsed)
+		return isNaN(parsed) ? fallbackValue : parsed
 	}
 
 	// ------------------------------------------------------------------ rules
@@ -599,7 +649,7 @@
 				return
 			}
 
-			if ((Math.max.apply(null, rgb) - Math.min.apply(null, rgb)) > 12) {
+			if (Math.max.apply(null, rgb) - Math.min.apply(null, rgb) > 12) {
 				return
 			}
 
@@ -646,7 +696,9 @@
 
 		if (criterion === 'minContrast') {
 			var againstValue = semantic[String(spec.against || '')]
-			var againstRgb = parseColor(againstValue === undefined ? '#ffffff' : againstValue)
+			var againstRgb = parseColor(
+				againstValue === undefined ? '#ffffff' : againstValue,
+			)
 			if (againstRgb === null) {
 				againstRgb = [255, 255, 255]
 			}
@@ -685,7 +737,7 @@
 
 		if (kind === 'literal') {
 			return {
-				value: (fallback.value === undefined ? '' : String(fallback.value)),
+				value: fallback.value === undefined ? '' : String(fallback.value),
 				source: '(Nextcloud default)',
 				reason: 'nextcloud-default-used',
 			}
@@ -707,7 +759,7 @@
 					String(fallback.transform || 'copy'),
 					base,
 					fallback.args,
-					semantic
+					semantic,
 				),
 				source: from,
 				reason: 'derived-from-brand',
@@ -720,7 +772,11 @@
 				return null
 			}
 
-			return { value: picked, source: '(brand ramp)', reason: 'derived-from-brand' }
+			return {
+				value: picked,
+				source: '(brand ramp)',
+				reason: 'derived-from-brand',
+			}
 		}
 
 		return null
@@ -736,7 +792,10 @@
 	 * @return {boolean} True when available.
 	 */
 	function fontIsAvailable(stack, fonts) {
-		var first = String(stack).split(',')[0].trim().replace(/^["']|["']$/g, '')
+		var first = String(stack)
+			.split(',')[0]
+			.trim()
+			.replace(/^["']|["']$/g, '')
 		if (first === '') {
 			return false
 		}
@@ -746,7 +805,7 @@
 			return true
 		}
 
-		var available = (fonts || [])
+		var available = fonts || []
 		for (var i = 0; i < available.length; i++) {
 			if (String(available[i]).toLowerCase() === lower) {
 				return true
@@ -770,7 +829,10 @@
 
 		if (kind === 'fontAvailable') {
 			if (fontIsAvailable(value, fonts) === false) {
-				return { value: value, reason: String(guard.onFail || 'font-not-bundled') }
+				return {
+					value: value,
+					reason: String(guard.onFail || 'font-not-bundled'),
+				}
 			}
 
 			return { value: value, reason: null }
@@ -805,11 +867,17 @@
 			}
 
 			if (ratio(candidateRgb, againstRgb) >= min) {
-				return { value: candidate, reason: String(guard.onFail || 'contrast-adjusted') }
+				return {
+					value: candidate,
+					reason: String(guard.onFail || 'contrast-adjusted'),
+				}
 			}
 		}
 
-		return { value: candidate, reason: String(guard.onFail || 'contrast-adjusted') }
+		return {
+			value: candidate,
+			reason: String(guard.onFail || 'contrast-adjusted'),
+		}
 	}
 
 	// ------------------------------------------------------------------ policy
@@ -848,7 +916,7 @@
 	 */
 	function policyFor(name, slug, table) {
 		var role = roleOf(name)
-		var never = (table.never || [])
+		var never = table.never || []
 
 		for (var i = 0; i < never.length; i++) {
 			var pattern = withSlug(String(never[i].match || ''), slug)
@@ -918,7 +986,10 @@
 	function detectInput(content) {
 		var trimmed = content.trim()
 
-		if (trimmed !== '' && (trimmed.charAt(0) === '{' || trimmed.charAt(0) === '[')) {
+		if (
+			trimmed !== ''
+			&& (trimmed.charAt(0) === '{' || trimmed.charAt(0) === '[')
+		) {
 			var decoded = null
 			try {
 				decoded = JSON.parse(trimmed)
@@ -927,7 +998,7 @@
 			}
 
 			if (decoded !== null && typeof decoded === 'object') {
-				return (hasDtcgLeaf(decoded, 0) === true ? 'B' : 'C')
+				return hasDtcgLeaf(decoded, 0) === true ? 'B' : 'C'
 			}
 		}
 
@@ -935,13 +1006,16 @@
 		if (/--[\w-]+\s*:/.test(stripped) === false) {
 			throw converterError(
 				'The content is not a theme this app can convert. Accepted: built theme CSS with a'
-				+ ' class-scoped block of --custom-properties, a W3C Design Tokens JSON document, a'
-				+ ' Style Dictionary tokens.json, or an existing :root token set.',
-				422
+					+ ' class-scoped block of --custom-properties, a W3C Design Tokens JSON document, a'
+					+ ' Style Dictionary tokens.json, or an existing :root token set.',
+				422,
 			)
 		}
 
-		if (/:root\s*\{/i.test(stripped) === true && /--nldesign-/.test(stripped) === true) {
+		if (
+			/:root\s*\{/i.test(stripped) === true
+			&& /--nldesign-/.test(stripped) === true
+		) {
 			return 'D'
 		}
 
@@ -1017,7 +1091,10 @@
 			})
 		}
 
-		stripped = stripped.replace(/@[a-z-]+[^{;]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/gi, '')
+		stripped = stripped.replace(
+			/@[a-z-]+[^{;]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/gi,
+			'',
+		)
 		stripped = stripped.replace(/@[a-z-]+[^;{]*;/gi, '')
 
 		var declarations = {}
@@ -1049,13 +1126,19 @@
 			return
 		}
 
-		if (Object.prototype.hasOwnProperty.call(node, 'value')
-			&& (node.value === null || typeof node.value !== 'object')) {
-			var segments = path.map(function (segment) {
-				return String(segment).replace(/[^A-Za-z0-9]+/g, '-').toLowerCase()
-			}).filter(function (segment) {
-				return segment !== ''
-			})
+		if (
+			Object.prototype.hasOwnProperty.call(node, 'value')
+			&& (node.value === null || typeof node.value !== 'object')
+		) {
+			var segments = path
+				.map(function (segment) {
+					return String(segment)
+						.replace(/[^A-Za-z0-9]+/g, '-')
+						.toLowerCase()
+				})
+				.filter(function (segment) {
+					return segment !== ''
+				})
 
 			var joined = segments.join('-').replace(/^-+|-+$/g, '')
 			if (joined === '') {
@@ -1081,7 +1164,13 @@
 				return
 			}
 
-			collectStyleDictionaryLeaves(node[key], path.concat([key]), slug, declarations, depth + 1)
+			collectStyleDictionaryLeaves(
+				node[key],
+				path.concat([key]),
+				slug,
+				declarations,
+				depth + 1,
+			)
 		})
 	}
 
@@ -1136,18 +1225,33 @@
 		var result = value.replace(
 			/var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*(?:\([^()]*\)[^()]*)*))?\)/g,
 			function (whole, reference, fallbackValue) {
-				if (seen[reference] !== true
-					&& Object.prototype.hasOwnProperty.call(declarations, reference)) {
+				if (
+					seen[reference] !== true
+					&& Object.prototype.hasOwnProperty.call(declarations, reference)
+				) {
 					var nextSeen = Object.assign({}, seen)
 					nextSeen[reference] = true
-					var inner = resolveValue(declarations[reference], declarations, nextSeen, depth + 1)
+					var inner = resolveValue(
+						declarations[reference],
+						declarations,
+						nextSeen,
+						depth + 1,
+					)
 					if (inner !== null) {
 						return inner
 					}
 				}
 
-				if (fallbackValue !== undefined && String(fallbackValue).trim() !== '') {
-					var innerFallback = resolveValue(String(fallbackValue).trim(), declarations, seen, depth + 1)
+				if (
+					fallbackValue !== undefined
+					&& String(fallbackValue).trim() !== ''
+				) {
+					var innerFallback = resolveValue(
+						String(fallbackValue).trim(),
+						declarations,
+						seen,
+						depth + 1,
+					)
 					if (innerFallback !== null) {
 						return innerFallback
 					}
@@ -1156,7 +1260,7 @@
 				failed = true
 
 				return ''
-			}
+			},
 		)
 
 		if (failed === true) {
@@ -1218,7 +1322,10 @@
 				var buffer = Buffer.from(clean, 'base64')
 				// Node accepts sloppy base64 silently; a re-encode that does not
 				// round-trip is the same rejection PHP's strict decode makes.
-				if (buffer.toString('base64').replace(/=+$/, '') !== clean.replace(/=+$/, '')) {
+				if (
+					buffer.toString('base64').replace(/=+$/, '')
+					!== clean.replace(/=+$/, '')
+				) {
 					return null
 				}
 				return buffer.toString('latin1')
@@ -1255,22 +1362,23 @@
 			return null
 		}
 
-		var types = (spec.types || {})
+		var types = spec.types || {}
 		var type = match[1].toLowerCase()
 		if (types[type] === undefined) {
 			return null
 		}
 
 		var parameters = String(match[2] || '').toLowerCase()
-		var contents = parameters.indexOf('base64') === -1
-			? percentToBytes(match[3])
-			: base64ToBytes(match[3])
+		var contents =
+			parameters.indexOf('base64') === -1
+				? percentToBytes(match[3])
+				: base64ToBytes(match[3])
 
 		if (contents === null) {
 			return null
 		}
 
-		var maxBytes = (spec.maxBytes === undefined ? 262144 : Number(spec.maxBytes))
+		var maxBytes = spec.maxBytes === undefined ? 262144 : Number(spec.maxBytes)
 		if (contents === '' || contents.length > maxBytes) {
 			return null
 		}
@@ -1315,7 +1423,10 @@
 
 		;(spec.sources || []).forEach(function (source) {
 			var name = withSlug(String(source), slug)
-			if (declarations[name] !== undefined && candidates.indexOf(name) === -1) {
+			if (
+				declarations[name] !== undefined
+				&& candidates.indexOf(name) === -1
+			) {
 				candidates.push(name)
 			}
 		})
@@ -1379,7 +1490,7 @@
 			var name = candidates[index]
 			var value = declarations[name]
 			var urlMatch = /url\(\s*(['"]?)([\s\S]*?)\1\s*\)/i.exec(value)
-			var target = (urlMatch === null ? '' : urlMatch[2].trim())
+			var target = urlMatch === null ? '' : urlMatch[2].trim()
 
 			if (target === '' || target.toLowerCase() === 'none') {
 				continue
@@ -1395,7 +1506,8 @@
 						target: '--nldesign-logo-url',
 						action: 'skipped',
 						reason: 'logo-format-unsupported',
-						value: (value.length <= 120 ? value : value.slice(0, 117) + '…'),
+						value:
+							value.length <= 120 ? value : value.slice(0, 117) + '…',
 					})
 					continue
 				}
@@ -1409,7 +1521,8 @@
 				}
 			}
 
-			var path = String(spec.directory) + '/' + assetName + '.' + decoded.extension
+			var path =
+				String(spec.directory) + '/' + assetName + '.' + decoded.extension
 
 			report.push({
 				source: name,
@@ -1465,10 +1578,11 @@
 			}
 
 			var role = roleOf(name)
-			var isComponent = (role !== '' && isPaletteRole(role) === false)
+			var isComponent = role !== '' && isPaletteRole(role) === false
 
 			if (isComponent === true) {
-				var emitted = (hasKnownPrefix(name) === true ? name : '--' + slug + '-' + role)
+				var emitted =
+					hasKnownPrefix(name) === true ? name : '--' + slug + '-' + role
 				component[emitted] = value
 
 				if (policy !== null && String(policy.action || '') === 'keep') {
@@ -1523,7 +1637,10 @@
 				return
 			}
 
-			var renamed = (name.indexOf('--' + slug + '-') === 0 ? name : '--' + slug + '-' + role)
+			var renamed =
+				name.indexOf('--' + slug + '-') === 0
+					? name
+					: '--' + slug + '-' + role
 			palette[renamed] = value
 
 			if (policy !== null && String(policy.action || '') === 'keep') {
@@ -1574,21 +1691,27 @@
 				return
 			}
 
-			var isManifest = (target.indexOf('manifest:') === 0)
+			var isManifest = target.indexOf('manifest:') === 0
 
-			if (isManifest === false && Object.prototype.hasOwnProperty.call(semantic, target)) {
+			if (
+				isManifest === false
+				&& Object.prototype.hasOwnProperty.call(semantic, target)
+			) {
 				return
 			}
 
-			if (rule.when !== undefined && whenSatisfied(rule.when, semantic) === false) {
+			if (
+				rule.when !== undefined
+				&& whenSatisfied(rule.when, semantic) === false
+			) {
 				return
 			}
 
 			var value = null
 			var action = 'applied'
-			var reason = (rule.reason === undefined ? null : rule.reason)
+			var reason = rule.reason === undefined ? null : rule.reason
 			var sourceName = ''
-			var sources = (rule.sources || [])
+			var sources = rule.sources || []
 
 			for (var i = 0; i < sources.length; i++) {
 				var concrete = withSlug(String(sources[i]), slug)
@@ -1600,7 +1723,10 @@
 				}
 
 				var role = roleOf(concrete)
-				if (role !== '' && Object.prototype.hasOwnProperty.call(byRole, role)) {
+				if (
+					role !== ''
+					&& Object.prototype.hasOwnProperty.call(byRole, role)
+				) {
 					value = byRole[role]
 					sourceName = role + ' (by role)'
 					break
@@ -1621,8 +1747,17 @@
 				}
 			}
 
-			if (rule.transform !== undefined && sourceName !== '' && action === 'applied') {
-				value = applyTransform(String(rule.transform), value, rule.args, semantic)
+			if (
+				rule.transform !== undefined
+				&& sourceName !== ''
+				&& action === 'applied'
+			) {
+				value = applyTransform(
+					String(rule.transform),
+					value,
+					rule.args,
+					semantic,
+				)
 			}
 
 			var entry = {
@@ -1693,7 +1828,7 @@
 			D: 'existing token set, add-only',
 		}
 
-		return (labels[kind] === undefined ? 'unknown' : labels[kind])
+		return labels[kind] === undefined ? 'unknown' : labels[kind]
 	}
 
 	/**
@@ -1707,33 +1842,77 @@
 	function buildCss(sections, meta) {
 		var lines = []
 
-		lines.push('/* GENERATED by Thematiq TokenSetConverterService — do not edit by hand.')
-		lines.push(' * Re-run the conversion instead; hand edits are lost on the next run. */')
+		lines.push(
+			'/* GENERATED by Thematiq TokenSetConverterService — do not edit by hand.',
+		)
+		lines.push(
+			' * Re-run the conversion instead; hand edits are lost on the next run. */',
+		)
 		lines.push(':root {')
 
-		lines.push('\t/* 1. Brand palette — the theme\'s own steps, under the set\'s own prefix so')
+		lines.push(
+			"\t/* 1. Brand palette — the theme's own steps, under the set's own prefix so",
+		)
 		lines.push('\t *    they can never masquerade as app vocabulary. */')
 		pushSorted(lines, sections.palette)
 
 		lines.push('')
-		lines.push('\t/* 2. Component layer — emitted verbatim. css/systems/nldesign/utrecht-bridge.css')
-		lines.push('\t *    reads these into --nldesign-component-*, and Conduction\'s apps read them')
-		lines.push('\t *    directly, which is why components Nextcloud lacks are kept rather than dropped. */')
+		lines.push(
+			'\t/* 2. Component layer — emitted verbatim. css/systems/nldesign/utrecht-bridge.css',
+		)
+		lines.push(
+			"\t *    reads these into --nldesign-component-*, and Conduction's apps read them",
+		)
+		lines.push(
+			'\t *    directly, which is why components Nextcloud lacks are kept rather than dropped. */',
+		)
 		pushSorted(lines, sections.component)
 
 		lines.push('')
-		lines.push('\t/* 3. Semantic layer — what Nextcloud\'s chrome actually reads, via')
+		lines.push(
+			"\t/* 3. Semantic layer — what Nextcloud's chrome actually reads, via",
+		)
 		lines.push('\t *    css/systems/nldesign/theme.css and overrides.css. */')
 		pushSorted(lines, sections.semantic)
 
 		lines.push('')
-		lines.push('\t/* 4. Provenance — enough to tell two runs apart without running anything.')
-		lines.push('\t *    input kind:      ' + meta.inputKind + ' (' + inputKindLabel(meta.inputKind) + ')')
-		lines.push('\t *    source:          ' + (meta.sourceName === null || meta.sourceName === undefined ? '(pasted)' : meta.sourceName))
-		lines.push('\t *    source version:  ' + (meta.sourceVersion === null || meta.sourceVersion === undefined ? '(not declared)' : meta.sourceVersion))
+		lines.push(
+			'\t/* 4. Provenance — enough to tell two runs apart without running anything.',
+		)
+		lines.push(
+			'\t *    input kind:      '
+				+ meta.inputKind
+				+ ' ('
+				+ inputKindLabel(meta.inputKind)
+				+ ')',
+		)
+		lines.push(
+			'\t *    source:          '
+				+ (meta.sourceName === null || meta.sourceName === undefined
+					? '(pasted)'
+					: meta.sourceName),
+		)
+		lines.push(
+			'\t *    source version:  '
+				+ (meta.sourceVersion === null || meta.sourceVersion === undefined
+					? '(not declared)'
+					: meta.sourceVersion),
+		)
 		lines.push('\t *    slug:            ' + meta.slug)
-		lines.push('\t *    converter:       ' + String(meta.table.converterVersion === undefined ? '0' : meta.table.converterVersion))
-		lines.push('\t *    mapping table:   v' + String(meta.table.version === undefined ? '0' : meta.table.version) + ' sha256:' + String(meta.tableHash || '').slice(0, 16))
+		lines.push(
+			'\t *    converter:       '
+				+ String(
+					meta.table.converterVersion === undefined
+						? '0'
+						: meta.table.converterVersion,
+				),
+		)
+		lines.push(
+			'\t *    mapping table:   v'
+				+ String(meta.table.version === undefined ? '0' : meta.table.version)
+				+ ' sha256:'
+				+ String(meta.tableHash || '').slice(0, 16),
+		)
 		lines.push('\t *    applied:         ' + meta.counts.applied)
 		lines.push('\t *    adapted:         ' + meta.counts.adapted)
 		lines.push('\t *    kept:            ' + meta.counts.kept)
@@ -1756,9 +1935,11 @@
 	 * @return {void}
 	 */
 	function pushSorted(lines, declarations) {
-		Object.keys(declarations).sort().forEach(function (name) {
-			lines.push('\t' + name + ': ' + declarations[name] + ';')
-		})
+		Object.keys(declarations)
+			.sort()
+			.forEach(function (name) {
+				lines.push('\t' + name + ': ' + declarations[name] + ';')
+			})
 	}
 
 	/**
@@ -1794,7 +1975,10 @@
 		var entry = {
 			id: meta.slug,
 			name: meta.displayName,
-			description: 'Converted from ' + (meta.sourceName || 'a pasted design-system theme') + '.',
+			description:
+				'Converted from '
+				+ (meta.sourceName || 'a pasted design-system theme')
+				+ '.',
 			design_system: 'nldesign',
 		}
 
@@ -1834,30 +2018,40 @@
 	 * @throws {Error} With `code` 422 when the content matches no accepted shape.
 	 */
 	function convert(content, options) {
-		var settings = (options || {})
+		var settings = options || {}
 		var slug = String(settings.slug || '')
 		var table = settings.table
 
 		if (!table || !table.rules) {
-			throw converterError('A decoded mapping table with a rule list is required.', 500)
+			throw converterError(
+				'A decoded mapping table with a rule list is required.',
+				500,
+			)
 		}
 
 		var report = []
 		var inputKind = detectInput(content)
-		var sourceVersion = (settings.sourceVersion === undefined ? null : settings.sourceVersion)
+		var sourceVersion =
+			settings.sourceVersion === undefined ? null : settings.sourceVersion
 		var declarations
 
 		if (inputKind === 'C') {
 			declarations = {}
-			collectStyleDictionaryLeaves(JSON.parse(content.trim()), [], slug, declarations, 0)
+			collectStyleDictionaryLeaves(
+				JSON.parse(content.trim()),
+				[],
+				slug,
+				declarations,
+				0,
+			)
 		} else if (inputKind === 'B') {
 			// DTCG belongs to DesignTokensMapper on the PHP side; this runtime
 			// has no equivalent, so the caller must pre-map a DTCG document.
 			throw converterError(
 				'A W3C Design Tokens document must be converted through the server, which owns the'
-				+ ' DTCG mapping (DesignTokensMapper). Export the theme as CSS or a Style Dictionary'
-				+ ' tokens.json to convert it here.',
-				422
+					+ ' DTCG mapping (DesignTokensMapper). Export the theme as CSS or a Style Dictionary'
+					+ ' tokens.json to convert it here.',
+				422,
 			)
 		} else {
 			declarations = parseCssBlocks(content, report)
@@ -1866,9 +2060,9 @@
 		if (Object.keys(declarations).length === 0) {
 			throw converterError(
 				'No custom properties were found. Paste a built theme CSS (a class-scoped block of'
-				+ ' --custom-properties), a W3C Design Tokens JSON document, a Style Dictionary'
-				+ ' tokens.json, or an existing :root token set.',
-				422
+					+ ' --custom-properties), a W3C Design Tokens JSON document, a Style Dictionary'
+					+ ' tokens.json, or an existing :root token set.',
+				422,
 			)
 		}
 
@@ -1882,7 +2076,7 @@
 			slug,
 			String(settings.assetName || slug),
 			table,
-			report
+			report,
 		)
 
 		if (logo !== null) {
@@ -1892,7 +2086,7 @@
 			})
 		}
 
-		var vocabulary = (settings.vocabulary || {})
+		var vocabulary = settings.vocabulary || {}
 		var sections = classify(declarations, slug, table, vocabulary, report)
 		var manifest = {}
 		var semantic = runRules(
@@ -1900,9 +2094,9 @@
 			sections.semantic,
 			slug,
 			table,
-			(settings.fonts || []),
+			settings.fonts || [],
 			manifest,
-			report
+			report,
 		)
 
 		if (logo !== null) {
@@ -1910,11 +2104,16 @@
 		}
 
 		var counts = countActions(report)
-		var sourceName = (settings.sourceName === undefined ? null : settings.sourceName)
+		var sourceName =
+			settings.sourceName === undefined ? null : settings.sourceName
 
 		return {
 			css: buildCss(
-				{ palette: sections.palette, component: sections.component, semantic: semantic },
+				{
+					palette: sections.palette,
+					component: sections.component,
+					semantic: semantic,
+				},
 				{
 					slug: slug,
 					inputKind: inputKind,
@@ -1922,8 +2121,8 @@
 					sourceVersion: sourceVersion,
 					counts: counts,
 					table: table,
-					tableHash: (settings.tableHash || ''),
-				}
+					tableHash: settings.tableHash || '',
+				},
 			),
 			manifestEntry: buildManifestEntry(
 				{
@@ -1934,7 +2133,7 @@
 				},
 				semantic,
 				manifest,
-				logo
+				logo,
 			),
 			report: report,
 			inputKind: inputKind,
@@ -1942,9 +2141,10 @@
 			// Bytes only when the logo was DECODED out of the theme; a theme
 			// already pointing at a file on disk yields a path and nothing to
 			// write. `contents` is a latin-1 byte string — see base64ToBytes().
-			logoAsset: (logo === null || logo.contents === null)
-				? null
-				: { path: logo.path, contents: logo.contents },
+			logoAsset:
+				logo === null || logo.contents === null
+					? null
+					: { path: logo.path, contents: logo.contents },
 		}
 	}
 

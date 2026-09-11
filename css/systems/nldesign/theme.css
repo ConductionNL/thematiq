@@ -458,13 +458,9 @@ a.primary {
 #content
 	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
 	.button-vue__wrapper,
-.button-vue.button-vue--vue-primary:not(
-		[data-admin-theming-setting-color-picker]
-	)
+.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
 	.button-vue__text,
-.button-vue.button-vue--vue-primary:not(
-		[data-admin-theming-setting-color-picker]
-	)
+.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
 	.button-vue__wrapper {
 	color: var(--nldesign-component-button-primary-action-color) !important;
 }

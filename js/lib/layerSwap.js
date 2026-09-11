@@ -136,7 +136,10 @@
 		var found = []
 		var links = doc.querySelectorAll('link[rel="stylesheet"][href]')
 		for (var index = 0; index < links.length; index++) {
-			if (wanted['file:' + pathnameOf(links[index].getAttribute('href'))] === true) {
+			if (
+				wanted['file:' + pathnameOf(links[index].getAttribute('href'))]
+				=== true
+			) {
 				found.push(links[index])
 			}
 		}
@@ -167,7 +170,9 @@
 	 */
 	function insertBeforeAnchor(doc) {
 		return (
-			doc.querySelector('link[rel="stylesheet"][href*="/thematiq/css/custom-overrides.css"]')
+			doc.querySelector(
+				'link[rel="stylesheet"][href*="/thematiq/css/custom-overrides.css"]',
+			)
 			|| doc.querySelector('link[rel="stylesheet"].theme')
 			|| null
 		)
@@ -285,7 +290,11 @@
 	 * @return {Array<Element>} The links that were refreshed.
 	 */
 	function refreshThemeStylesheets(doc, version) {
-		return refreshStylesheets(doc, 'link[rel="stylesheet"][href*="/apps/theming/"]', version)
+		return refreshStylesheets(
+			doc,
+			'link[rel="stylesheet"][href*="/apps/theming/"]',
+			version,
+		)
 	}
 
 	/**

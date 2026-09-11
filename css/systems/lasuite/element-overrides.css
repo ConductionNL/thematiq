@@ -124,7 +124,8 @@ header#header {
 #header .avatardiv,
 #header .avatardiv *:not([class*='user-status' i]):not([class*='user-status' i] *),
 #header [class*='avatar' i],
-#header [class*='avatar' i]
+#header
+	[class*='avatar' i]
 	*:not([class*='user-status' i]):not([class*='user-status' i] *) {
 	filter: none !important;
 	-webkit-filter: none !important;
@@ -377,7 +378,10 @@ header#header {
  * it is legible against instead, and the bar is gone. */
 #header nav.app-menu .app-menu-entry--active::before,
 #header nav.app-menu .app-menu-entry--active a::before {
-	background-color: var(--lasuite-content-brand, var(--lasuite-color-brand-650)) !important;
+	background-color: var(
+		--lasuite-content-brand,
+		var(--lasuite-color-brand-650)
+	) !important;
 }
 
 #header nav.app-menu a:hover,

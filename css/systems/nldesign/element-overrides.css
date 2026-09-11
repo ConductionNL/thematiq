@@ -184,10 +184,7 @@ header#header .header-menu__trigger {
    the exclusion this rule outranks the avatar protection below on specificity
    ((1,1,2) against (1,1,0)) and repaints them with the header foreground. */
 #header .header-end svg:not([class*='avatar' i] svg):not(.user-status-icon svg),
-#header
-	.header-end
-	svg:not([class*='avatar' i] svg):not(.user-status-icon svg)
-	* {
+#header .header-end svg:not([class*='avatar' i] svg):not(.user-status-icon svg) * {
 	stop-color: currentColor !important;
 	fill: currentColor !important;
 }
@@ -231,7 +228,8 @@ header#header .header-menu__trigger {
 #header .avatardiv,
 #header .avatardiv *:not([class*='user-status' i]):not([class*='user-status' i] *),
 #header [class*='avatar' i],
-#header [class*='avatar' i]
+#header
+	[class*='avatar' i]
 	*:not([class*='user-status' i]):not([class*='user-status' i] *) {
 	color: #ffffff !important;
 }
@@ -506,13 +504,9 @@ a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) span,
-.button-vue--vue-primary:not(
-		[data-admin-theming-setting-color-picker]
-	)
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
 	.button-vue__text,
-.button-vue--vue-primary:not(
-		[data-admin-theming-setting-color-picker]
-	)
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
 	.button-vue__wrapper,
 button.primary,
 button.primary *,
@@ -522,13 +516,8 @@ a.primary,
 a.primary *,
 .button.primary,
 .button.primary *,
-.button-vue.button-vue--vue-primary:not(
-		[data-admin-theming-setting-color-picker]
-	),
-.button-vue.button-vue--vue-primary:not(
-		[data-admin-theming-setting-color-picker]
-	)
-	*,
+.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
+.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
 button[class*='primary']:not([data-admin-theming-setting-color-picker]),
 button[class*='primary']:not([data-admin-theming-setting-color-picker]) *,
 .button-vue[class*='primary']:not([data-admin-theming-setting-color-picker]),
@@ -622,9 +611,10 @@ select,
 #header .header-right .header-menu,
 #header .header-right button:not([class*='avatar' i]),
 .header-menu,
-.header-menu *:not([class*='avatar' i]):not([class*='avatar' i] *):not(
-		.user-status-icon
-	):not(.user-status-icon *),
+.header-menu
+	*:not([class*='avatar' i]):not([class*='avatar' i] *):not(.user-status-icon):not(
+		.user-status-icon *
+	),
 #settings,
 #expand {
 	border-radius: var(--nldesign-border-radius) !important;

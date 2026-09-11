@@ -36,20 +36,33 @@ async function getCoreTheming(page: Page, token: string): Promise<ThemingSnapsho
 			headers: { requesttoken: t },
 		})
 		const j = await r.json()
-		return { primary_color: j.primary_color, background_color: j.background_color }
+		return {
+			primary_color: j.primary_color,
+			background_color: j.background_color,
+		}
 	}, token)
 }
 
-async function setCoreTheming(page: Page, token: string, values: ThemingSnapshot): Promise<void> {
+async function setCoreTheming(
+	page: Page,
+	token: string,
+	values: ThemingSnapshot,
+): Promise<void> {
 	await page.evaluate(
 		async ({ t, v }) => {
 			const body = Object.entries(v)
 				.filter(([, value]) => value !== '')
-				.map(([k, value]) => `${encodeURIComponent(k)}=${encodeURIComponent(value)}`)
+				.map(
+					([k, value]) =>
+						`${encodeURIComponent(k)}=${encodeURIComponent(value)}`,
+				)
 				.join('&')
 			await fetch(OC.generateUrl('/apps/thematiq/settings/theming'), {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded', requesttoken: t },
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					requesttoken: t,
+				},
 				body,
 			})
 		},
@@ -60,8 +73,17 @@ async function setCoreTheming(page: Page, token: string, values: ThemingSnapshot
 /** The Thematiq set-layer <link>s on the page, by pathname under css/. */
 async function setLayerFiles(page: Page): Promise<string[]> {
 	return page.evaluate(() =>
-		Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"][href*="/thematiq/css/"]'))
-			.map((l) => new URL(l.href, location.origin).pathname.replace(/^.*\/thematiq\/css\//, ''))
+		Array.from(
+			document.querySelectorAll<HTMLLinkElement>(
+				'link[rel="stylesheet"][href*="/thematiq/css/"]',
+			),
+		)
+			.map((l) =>
+				new URL(l.href, location.origin).pathname.replace(
+					/^.*\/thematiq\/css\//,
+					'',
+				),
+			)
 			.filter((f) => f.startsWith('systems/') || f.startsWith('tokens/')),
 	)
 }
@@ -69,7 +91,10 @@ async function setLayerFiles(page: Page): Promise<string[]> {
 test.describe('apply without a reload', () => {
 	let originalTokenSet = 'nextcloud'
 	let originalOverrides: Record<string, string> = {}
-	let originalTheming: ThemingSnapshot = { primary_color: '', background_color: '' }
+	let originalTheming: ThemingSnapshot = {
+		primary_color: '',
+		background_color: '',
+	}
 
 	test.beforeAll(async ({ browser }) => {
 		const page = await browser.newPage()
@@ -92,7 +117,9 @@ test.describe('apply without a reload', () => {
 		await page.close()
 	})
 
-	test('select, confirm, sync and switch back on one page load', async ({ page }) => {
+	test('select, confirm, sync and switch back on one page load', async ({
+		page,
+	}) => {
 		let loads = 0
 		page.on('load', () => {
 			loads++
@@ -118,9 +145,13 @@ test.describe('apply without a reload', () => {
 
 		// 2. The set's run is on the page — without navigating.
 		await expect
-			.poll(async () => (await setLayerFiles(page)).includes(`tokens/${SHIPPED_SET}`), {
-				timeout: 15_000,
-			})
+			.poll(
+				async () =>
+					(await setLayerFiles(page)).includes(`tokens/${SHIPPED_SET}`),
+				{
+					timeout: 15_000,
+				},
+			)
 			.toBe(true)
 		expect(await setLayerFiles(page)).toContain('systems/nldesign/theme')
 		expect(loads).toBe(1)
@@ -140,7 +171,9 @@ test.describe('apply without a reload', () => {
 				'[data-admin-theming-setting-primary-color] [data-admin-theming-setting-color-picker]',
 			)
 			if (await shown.count()) {
-				await expect(shown).toContainText(synced.primary_color, { ignoreCase: true })
+				await expect(shown).toContainText(synced.primary_color, {
+					ignoreCase: true,
+				})
 			}
 			expect(loads).toBe(1)
 		}
@@ -152,7 +185,9 @@ test.describe('apply without a reload', () => {
 			await expect(applyDialog).toBeHidden({ timeout: 20_000 })
 		}
 		await expect
-			.poll(async () => (await setLayerFiles(page)).length, { timeout: 15_000 })
+			.poll(async () => (await setLayerFiles(page)).length, {
+				timeout: 15_000,
+			})
 			.toBe(0)
 		expect(loads, 'no reload anywhere in the flow').toBe(1)
 	})

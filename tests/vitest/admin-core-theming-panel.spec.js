@@ -79,7 +79,9 @@ function installFetchRouter(routes, postLog) {
 		}
 		const matches = (route) => url.indexOf(route[0]) !== -1
 		const byMethod = routes.filter((route) => route[2] === method).find(matches)
-		const route = byMethod || routes.filter((route) => route[2] === undefined).find(matches)
+		const route =
+			byMethod
+			|| routes.filter((route) => route[2] === undefined).find(matches)
 		return Promise.resolve({
 			ok: true,
 			status: 200,
@@ -169,7 +171,10 @@ async function applyOpenwoo(themingSnapshot, postLog) {
 			// A token diff exists, so the apply dialog (with its theming
 			// section) is what opens — not the standalone sync dialog.
 			['tokenset-preview', { resolved: { '--color-primary': '#23845c' } }],
-			['tokenset-stylesheets', { tokenSet: 'custom-openwoo', designSystem: 'nldesign', layers: [] }],
+			[
+				'tokenset-stylesheets',
+				{ tokenSet: 'custom-openwoo', designSystem: 'nldesign', layers: [] },
+			],
 			['/settings/overrides', { overrides: {}, status: 'ok' }],
 			['/settings/tokenset', { status: 'ok' }],
 			// The sync itself; the GET below then answers with the post-sync
@@ -217,14 +222,18 @@ describe('admin.js — core Theming panel after a sync', () => {
 			default_background_color: '#00679e',
 		})
 
-		const field = document.querySelector('[data-admin-theming-setting-primary-color]')
+		const field = document.querySelector(
+			'[data-admin-theming-setting-primary-color]',
+		)
 		// The colour, not just the label.
 		expect(field.style.getPropertyValue('--6cc639bc').trim()).toBe('#23845c')
 		// #23845c is dark, so core would put white text on it.
 		expect(field.style.getPropertyValue('--6fa57444').trim()).toBe('#ffffff')
 		expect(field.querySelector('.button-vue__text').textContent).toBe('#23845c')
-		expect(field.querySelector('[data-admin-theming-setting-color]').style.backgroundColor)
-			.toBe('rgb(35, 132, 92)')
+		expect(
+			field.querySelector('[data-admin-theming-setting-color]').style
+				.backgroundColor,
+		).toBe('rgb(35, 132, 92)')
 	})
 
 	it('discovers the hash at runtime — a different build still works', async () => {
@@ -238,7 +247,9 @@ describe('admin.js — core Theming panel after a sync', () => {
 			default_background_color: '#00679e',
 		})
 
-		const field = document.querySelector('[data-admin-theming-setting-primary-color]')
+		const field = document.querySelector(
+			'[data-admin-theming-setting-primary-color]',
+		)
 		expect(field.style.getPropertyValue('--deadbeef').trim()).toBe('#23845c')
 		expect(field.style.getPropertyValue('--cafed00d').trim()).toBe('#ffffff')
 	})
@@ -256,7 +267,9 @@ describe('admin.js — core Theming panel after a sync', () => {
 
 		// The background field's synced value is #ffffff — white on white
 		// would leave the label invisible, which is what the first attempt did.
-		const field = document.querySelector('[data-admin-theming-setting-background-color]')
+		const field = document.querySelector(
+			'[data-admin-theming-setting-background-color]',
+		)
 		expect(field.style.getPropertyValue('--aaa11122').trim()).toBe('#ffffff')
 		expect(field.style.getPropertyValue('--bbb33344').trim()).toBe('#000000')
 	})
@@ -273,7 +286,9 @@ describe('admin.js — core Theming panel after a sync', () => {
 			default_background_color: '#00679e',
 		})
 
-		const field = document.querySelector('[data-admin-theming-setting-primary-color]')
+		const field = document.querySelector(
+			'[data-admin-theming-setting-primary-color]',
+		)
 		expect(field.style.getPropertyValue('--6cc639bc').trim()).toBe('#00679e')
 		expect(field.querySelector('.button-vue__text').textContent).toBe('#00679e')
 	})
@@ -291,10 +306,12 @@ describe('admin.js — core Theming panel after a sync', () => {
 		})
 
 		const preview = document.querySelector('[data-admin-theming-preview-logo]')
-		expect(preview.style.backgroundImage).toContain('/apps/theming/image/logo?v=42')
+		expect(preview.style.backgroundImage).toContain(
+			'/apps/theming/image/logo?v=42',
+		)
 	})
 
-	it('offers nothing when the slot already holds this set\'s logo', async () => {
+	it("offers nothing when the slot already holds this set's logo", async () => {
 		// The bug this pins: `if (proposed.logo)` never compared, so a set with
 		// a logo always looked changed and the dialog could never stop
 		// appearing — measured live, with primary, background AND logo already
@@ -302,7 +319,10 @@ describe('admin.js — core Theming panel after a sync', () => {
 		buildDom('6cc639bc', '6fa57444')
 		installFetchRouter([
 			['tokenset-preview', { error: 'not applicable' }],
-			['tokenset-stylesheets', { tokenSet: 'custom-openwoo', designSystem: 'nldesign', layers: [] }],
+			[
+				'tokenset-stylesheets',
+				{ tokenSet: 'custom-openwoo', designSystem: 'nldesign', layers: [] },
+			],
 			['/settings/tokenset', { status: 'ok' }],
 			[
 				'/settings/theming',
@@ -332,7 +352,10 @@ describe('admin.js — core Theming panel after a sync', () => {
 		buildDom('6cc639bc', '6fa57444')
 		installFetchRouter([
 			['tokenset-preview', { error: 'not applicable' }],
-			['tokenset-stylesheets', { tokenSet: 'custom-openwoo', designSystem: 'nldesign', layers: [] }],
+			[
+				'tokenset-stylesheets',
+				{ tokenSet: 'custom-openwoo', designSystem: 'nldesign', layers: [] },
+			],
 			['/settings/tokenset', { status: 'ok' }],
 			[
 				'/settings/theming',
@@ -380,7 +403,9 @@ describe('admin.js — core Theming panel after a sync', () => {
 		)
 
 		const sync = postLog.find(
-			(entry) => entry.method === 'POST' && entry.url.indexOf('/settings/theming') !== -1,
+			(entry) =>
+				entry.method === 'POST'
+				&& entry.url.indexOf('/settings/theming') !== -1,
 		)
 		expect(sync, 'the apply confirm should POST the theming sync').toBeTruthy()
 		expect(sync.body).toContain('primary_color')

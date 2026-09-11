@@ -321,7 +321,9 @@
 				snapshot.background_color || snapshot.default_background_color,
 			)
 
-			var logoPreview = document.querySelector('[data-admin-theming-preview-logo]')
+			var logoPreview = document.querySelector(
+				'[data-admin-theming-preview-logo]',
+			)
 			if (logoPreview !== null && snapshot.logo_url) {
 				logoPreview.style.backgroundImage = 'url(' + snapshot.logo_url + ')'
 			}
@@ -336,7 +338,9 @@
 		 * dependency, not ours, and this is four lines.
 		 */
 		function contrastTextFor(hex) {
-			var rgb = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(String(hex).trim())
+			var rgb = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(
+				String(hex).trim(),
+			)
 			if (rgb === null) {
 				return '#ffffff'
 			}
@@ -373,7 +377,9 @@
 				return
 			}
 
-			var button = wrapper.querySelector('[data-admin-theming-setting-color-picker]')
+			var button = wrapper.querySelector(
+				'[data-admin-theming-setting-color-picker]',
+			)
 			var shown = ''
 			if (button !== null) {
 				shown = (button.textContent || '').trim().toLowerCase()
@@ -399,10 +405,16 @@
 			var valueProperty = null
 			var textProperty = null
 			properties.forEach(function (property) {
-				var current = wrapper.style.getPropertyValue(property).trim().toLowerCase()
+				var current = wrapper.style
+					.getPropertyValue(property)
+					.trim()
+					.toLowerCase()
 				if (valueProperty === null && shown !== '' && current === shown) {
 					valueProperty = property
-				} else if (textProperty === null && (current === '#ffffff' || current === '#000000')) {
+				} else if (
+					textProperty === null
+					&& (current === '#ffffff' || current === '#000000')
+				) {
 					textProperty = property
 				}
 			})
@@ -417,7 +429,8 @@
 					valueProperty = properties[0]
 				}
 				if (textProperty === null || textProperty === valueProperty) {
-					textProperty = properties[valueProperty === properties[0] ? 1 : 0]
+					textProperty =
+						properties[valueProperty === properties[0] ? 1 : 0]
 				}
 			}
 
@@ -438,7 +451,10 @@
 				} else {
 					for (var node = 0; node < button.childNodes.length; node++) {
 						var child = button.childNodes[node]
-						if (child.nodeType === 3 && child.textContent.trim() !== '') {
+						if (
+							child.nodeType === 3
+							&& child.textContent.trim() !== ''
+						) {
 							child.textContent = hex
 						}
 					}
@@ -489,8 +505,13 @@
 				var options = tokenSetSelect.options
 				for (var index = 0; index < options.length; index++) {
 					var other = tokenSetsData[options[index].value]
-					var otherName = other && other.name ? other.name : options[index].text
-					if (otherName.localeCompare(ts.name || ts.id, undefined, { sensitivity: 'base' }) > 0) {
+					var otherName =
+						other && other.name ? other.name : options[index].text
+					if (
+						otherName.localeCompare(ts.name || ts.id, undefined, {
+							sensitivity: 'base',
+						}) > 0
+					) {
 						before = options[index]
 						break
 					}
@@ -626,7 +647,10 @@
 			// content into, and the pill radius of a navigation entry.
 			s.setProperty(
 				'--prev-radius-container',
-				readVar('--body-container-radius', readVar('--border-radius-large', '12px')),
+				readVar(
+					'--body-container-radius',
+					readVar('--border-radius-large', '12px'),
+				),
 			)
 			s.setProperty(
 				'--prev-radius-pill',
@@ -930,7 +954,10 @@
 
 		function beginPreviewOnPage(tokenSetId) {
 			var ts = tokenSetsData[tokenSetId]
-			activePreview = { tokenSet: tokenSetId, name: ts && ts.name ? ts.name : tokenSetId }
+			activePreview = {
+				tokenSet: tokenSetId,
+				name: ts && ts.name ? ts.name : tokenSetId,
+			}
 			if (previewPanel !== null) {
 				var status = previewPanel.querySelector('[role="status"]')
 				if (status !== null) {
@@ -1003,16 +1030,18 @@
 				})
 					.then(function () {
 						// Back to the instance-wide set on this page.
-						return applyLayersFor(currentTokenSetId).then(function (swapped) {
-							previewDiscardBtn.disabled = false
-							if (swapped !== true) {
-								window.location.reload()
-								return
-							}
-							endPreviewOnPage()
-							reflectSelection(currentTokenSetId)
-							notify(t('thematiq', 'Preview discarded.'))
-						})
+						return applyLayersFor(currentTokenSetId).then(
+							function (swapped) {
+								previewDiscardBtn.disabled = false
+								if (swapped !== true) {
+									window.location.reload()
+									return
+								}
+								endPreviewOnPage()
+								reflectSelection(currentTokenSetId)
+								notify(t('thematiq', 'Preview discarded.'))
+							},
+						)
 					})
 					.catch(function (error) {
 						previewDiscardBtn.disabled = false
@@ -1082,7 +1111,10 @@
 						if (swapped === true) {
 							notify(
 								publishMode === true
-									? t('thematiq', 'Theme published instance-wide and applied.')
+									? t(
+											'thematiq',
+											'Theme published instance-wide and applied.',
+										)
 									: t('thematiq', 'Applied.'),
 							)
 						} else {
@@ -1153,7 +1185,8 @@
 						key: 'background_color',
 						kind: 'color',
 						current: currentTheming.background_color,
-						proposed: currentTheming.default_background_color || '#00679e',
+						proposed:
+							currentTheming.default_background_color || '#00679e',
 						proposedNote: defaultLabel,
 					})
 				}
@@ -1335,7 +1368,9 @@
 						+ cell(diff.current)
 						+ '</td><td>'
 						+ cell(diff.proposed)
-						+ (diff.proposedNote ? ' ' + escapeHtml(diff.proposedNote) : '')
+						+ (diff.proposedNote
+							? ' ' + escapeHtml(diff.proposedNote)
+							: '')
 						+ '</td></tr>'
 					)
 				})
@@ -1384,7 +1419,8 @@
 			if (existing) existing.remove()
 
 			var defaultPrimary = currentTheming.default_primary_color || '#00679e'
-			var defaultBackground = currentTheming.default_background_color || defaultPrimary
+			var defaultBackground =
+				currentTheming.default_background_color || defaultPrimary
 			var defaultLogo = OC.imagePath('core', 'logo/logo.svg')
 			var currentBg = currentTheming.background_color || defaultBackground
 			var currentLogoUrl = currentTheming.logo_url || ''
@@ -1401,27 +1437,47 @@
 			}
 			if (currentTheming.primary_color) {
 				rows +=
-					'<tr><td>' + escapeHtml(t('thematiq', 'Primary color')) + '</td><td>'
-					+ swatchCell(currentTheming.primary_color) + '</td><td>'
-					+ swatchCell(defaultPrimary) + ' ' + defaultLabel + '</td></tr>'
+					'<tr><td>'
+					+ escapeHtml(t('thematiq', 'Primary color'))
+					+ '</td><td>'
+					+ swatchCell(currentTheming.primary_color)
+					+ '</td><td>'
+					+ swatchCell(defaultPrimary)
+					+ ' '
+					+ defaultLabel
+					+ '</td></tr>'
 			}
 			if (currentTheming.background_color) {
 				rows +=
-					'<tr><td>' + escapeHtml(t('thematiq', 'Background color')) + '</td><td>'
-					+ swatchCell(currentTheming.background_color) + '</td><td>'
-					+ swatchCell(defaultBackground) + ' ' + defaultLabel + '</td></tr>'
+					'<tr><td>'
+					+ escapeHtml(t('thematiq', 'Background color'))
+					+ '</td><td>'
+					+ swatchCell(currentTheming.background_color)
+					+ '</td><td>'
+					+ swatchCell(defaultBackground)
+					+ ' '
+					+ defaultLabel
+					+ '</td></tr>'
 			}
 			if (currentTheming.has_custom_logo === true) {
 				rows +=
-					'<tr><td>' + escapeHtml(t('thematiq', 'Logo')) + '</td><td>'
-					+ escapeHtml(t('thematiq', '(custom logo)')) + '</td><td>'
-					+ escapeHtml(t('thematiq', 'Nextcloud logo')) + '</td></tr>'
+					'<tr><td>'
+					+ escapeHtml(t('thematiq', 'Logo'))
+					+ '</td><td>'
+					+ escapeHtml(t('thematiq', '(custom logo)'))
+					+ '</td><td>'
+					+ escapeHtml(t('thematiq', 'Nextcloud logo'))
+					+ '</td></tr>'
 			}
 			if (currentTheming.has_custom_background === true) {
 				rows +=
-					'<tr><td>' + escapeHtml(t('thematiq', 'Background image')) + '</td><td>'
-					+ escapeHtml(t('thematiq', '(custom)')) + '</td><td>'
-					+ defaultLabel + '</td></tr>'
+					'<tr><td>'
+					+ escapeHtml(t('thematiq', 'Background image'))
+					+ '</td><td>'
+					+ escapeHtml(t('thematiq', '(custom)'))
+					+ '</td><td>'
+					+ defaultLabel
+					+ '</td></tr>'
 			}
 
 			var dialogHtml =
@@ -1429,7 +1485,9 @@
 				+ '<div id="nldesign-theming-dialog-overlay" class="nldesign-dialog-overlay">'
 				+ '  <div class="nldesign-dialog">'
 				+ '    <h3>'
-				+ escapeHtml(t('thematiq', 'Reset Nextcloud theming to its defaults?'))
+				+ escapeHtml(
+					t('thematiq', 'Reset Nextcloud theming to its defaults?'),
+				)
 				+ '</h3>'
 				+ '    <div class="nldesign-dialog-previews">'
 				+ '      <div class="nldesign-dialog-preview-col">'
@@ -1439,14 +1497,19 @@
 				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
 				+ escapeHtml(currentBg)
 				+ ';'
-				+ (currentTheming.has_custom_background && currentTheming.background_url
-					? 'background-image:url(' + escapeHtml(currentTheming.background_url) + ');background-size:cover;'
+				+ (currentTheming.has_custom_background
+				&& currentTheming.background_url
+					? 'background-image:url('
+						+ escapeHtml(currentTheming.background_url)
+						+ ');background-size:cover;'
 					: '')
 				+ '">'
 				+ (currentLogoUrl
 					? '          <img class="nldesign-dialog-preview-logo" src="'
 						+ escapeHtml(currentLogoUrl)
-						+ '" alt="' + escapeHtml(t('thematiq', 'Current logo')) + '">'
+						+ '" alt="'
+						+ escapeHtml(t('thematiq', 'Current logo'))
+						+ '">'
 					: '')
 				+ '        </div>'
 				+ '      </div>'
@@ -1459,7 +1522,9 @@
 				+ ';">'
 				+ '          <img class="nldesign-dialog-preview-logo" src="'
 				+ escapeHtml(defaultLogo)
-				+ '" alt="' + escapeHtml(t('thematiq', 'Nextcloud logo')) + '">'
+				+ '" alt="'
+				+ escapeHtml(t('thematiq', 'Nextcloud logo'))
+				+ '">'
 				+ '        </div>'
 				+ '      </div>'
 				+ '    </div>'
@@ -1471,7 +1536,9 @@
 				+ '</th><th>'
 				+ escapeHtml(t('thematiq', 'Proposed'))
 				+ '</th></tr></thead>'
-				+ '      <tbody>' + rows + '</tbody>'
+				+ '      <tbody>'
+				+ rows
+				+ '</tbody>'
 				+ '    </table>'
 				+ '    <p class="nldesign-dialog-hint">'
 				+ escapeHtml(
@@ -1498,31 +1565,42 @@
 			makeDialogAccessible(overlay, function () {
 				closeDialogOverlay(overlay)
 			})
-			overlay.querySelector('.nldesign-dialog-cancel').addEventListener('click', function () {
-				closeDialogOverlay(overlay)
-			})
+			overlay
+				.querySelector('.nldesign-dialog-cancel')
+				.addEventListener('click', function () {
+					closeDialogOverlay(overlay)
+				})
 			overlay.addEventListener('click', function (e) {
 				if (e.target === overlay) {
 					closeDialogOverlay(overlay)
 				}
 			})
 
-			overlay.querySelector('.nldesign-dialog-confirm').addEventListener('click', function () {
-				var btn = this
-				btn.disabled = true
-				btn.textContent = t('thematiq', 'Resetting…')
+			overlay
+				.querySelector('.nldesign-dialog-confirm')
+				.addEventListener('click', function () {
+					var btn = this
+					btn.disabled = true
+					btn.textContent = t('thematiq', 'Resetting…')
 
-				applyThemingPlan({ mode: 'reset', diffs: [], payload: null })
-					.then(function () {
-						closeDialogOverlay(overlay)
-						notify(t('thematiq', 'Nextcloud theming reset to its defaults.'))
-					})
-					.catch(function (error) {
-						closeDialogOverlay(overlay)
-						console.error('Error resetting theming:', error)
-						notify(t('thematiq', 'Failed to reset Nextcloud theming.'))
-					})
-			})
+					applyThemingPlan({ mode: 'reset', diffs: [], payload: null })
+						.then(function () {
+							closeDialogOverlay(overlay)
+							notify(
+								t(
+									'thematiq',
+									'Nextcloud theming reset to its defaults.',
+								),
+							)
+						})
+						.catch(function (error) {
+							closeDialogOverlay(overlay)
+							console.error('Error resetting theming:', error)
+							notify(
+								t('thematiq', 'Failed to reset Nextcloud theming.'),
+							)
+						})
+				})
 		}
 
 		function showThemingDialog(tokenSetData, currentTheming, proposed, diffs) {
@@ -1764,7 +1842,9 @@
 								// values; re-request them and update core's own panel
 								// fields on this page. No reload.
 								return refreshCoreTheming().then(function () {
-									notify(t('thematiq', 'Nextcloud theming updated.'))
+									notify(
+										t('thematiq', 'Nextcloud theming updated.'),
+									)
 								})
 							} else {
 								notify(
@@ -1964,16 +2044,18 @@
 						// The dark-variant layer is part of the set's manifest and
 						// the manifest reads this toggle: re-applying the current set
 						// adds or drops that one stylesheet.
-						return applyLayersFor(pageTokenSetId).then(function (swapped) {
-							notify(
-								swapped === true
-									? t('thematiq', 'Applied.')
-									: t(
-											'nldesign',
-											'Setting saved successfully. reload the page to see changes.',
-										),
-							)
-						})
+						return applyLayersFor(pageTokenSetId).then(
+							function (swapped) {
+								notify(
+									swapped === true
+										? t('thematiq', 'Applied.')
+										: t(
+												'nldesign',
+												'Setting saved successfully. reload the page to see changes.',
+											),
+								)
+							},
+						)
 					} else {
 						notify(t('thematiq', 'Failed to save setting.'))
 					}
@@ -2013,16 +2095,18 @@
 					if (data.status === 'ok') {
 						// The Marianne layer is gated in the set's manifest by this
 						// toggle: re-applying the current set adds or drops it.
-						return applyLayersFor(pageTokenSetId).then(function (swapped) {
-							notify(
-								swapped === true
-									? t('thematiq', 'Applied.')
-									: t(
-											'nldesign',
-											'Setting saved successfully. reload the page to see changes.',
-										),
-							)
-						})
+						return applyLayersFor(pageTokenSetId).then(
+							function (swapped) {
+								notify(
+									swapped === true
+										? t('thematiq', 'Applied.')
+										: t(
+												'nldesign',
+												'Setting saved successfully. reload the page to see changes.',
+											),
+								)
+							},
+						)
 					} else {
 						notify(t('thematiq', 'Failed to save setting.'))
 					}
@@ -2082,7 +2166,10 @@
 				})
 				.then(function (data) {
 					if (data.status === 'ok') {
-						setConditionalLayer('show-menu-labels', showMenuLabels === true)
+						setConditionalLayer(
+							'show-menu-labels',
+							showMenuLabels === true,
+						)
 						notify(t('thematiq', 'Applied.'))
 					} else {
 						notify(t('thematiq', 'Failed to save setting.'))
@@ -2914,7 +3001,9 @@
 
 					// Read at click time: what the admin confirmed is what runs,
 					// whatever happens to the dialog while the apply is in flight.
-					var syncEl = overlay.querySelector('#nldesign-apply-theming-check')
+					var syncEl = overlay.querySelector(
+						'#nldesign-apply-theming-check',
+					)
 					var syncChecked = syncEl !== null && syncEl.checked === true
 
 					var toApply = {}
@@ -2969,7 +3058,9 @@
 						})
 						.then(function (tsData) {
 							if (tsData.status !== 'ok') {
-								throw new Error(tsData.error || 'Token set change failed')
+								throw new Error(
+									tsData.error || 'Token set change failed',
+								)
 							}
 							if (tokenSetSelect !== null && publishMode !== true) {
 								tokenSetSelect.dataset.previousValue = newTokenSetId
@@ -3016,11 +3107,20 @@
 								return applyThemingPlan(plan)
 									.then(function () {
 										return plan.mode === 'reset'
-											? t('thematiq', 'Applied. Nextcloud theming reset to its defaults.')
-											: t('thematiq', 'Applied. Nextcloud theming updated.')
+											? t(
+													'thematiq',
+													'Applied. Nextcloud theming reset to its defaults.',
+												)
+											: t(
+													'thematiq',
+													'Applied. Nextcloud theming updated.',
+												)
 									})
 									.catch(function (themingError) {
-										console.error('Error syncing Nextcloud theming:', themingError)
+										console.error(
+											'Error syncing Nextcloud theming:',
+											themingError,
+										)
 										return t(
 											'thematiq',
 											'Theme applied, but updating Nextcloud theming failed.',
@@ -4089,7 +4189,8 @@
 								loadCustomTokenSets()
 								var wasOnPage = pageTokenSetId === id
 								var wasSelected =
-									tokenSetSelect !== null && tokenSetSelect.value === id
+									tokenSetSelect !== null
+									&& tokenSetSelect.value === id
 								removeTokenSetOption(id)
 								// The server reset the active set to `nextcloud` when the
 								// deleted one was active; mirror that on this page.
@@ -4101,7 +4202,9 @@
 									if (wasSelected === true || wasOnPage === true) {
 										reflectSelection('nextcloud')
 									}
-									notify(t('thematiq', 'Custom token set deleted.'))
+									notify(
+										t('thematiq', 'Custom token set deleted.'),
+									)
 								})
 							} else {
 								notify(
