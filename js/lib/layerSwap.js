@@ -204,31 +204,41 @@
 	}
 
 	/**
-	 * Resolve once a `<link>` has loaded, failed, or taken too long.
+	 * Resolve once a `<link>` has loaded, failed, or taken too long, SAYING
+	 * WHICH.
 	 *
-	 * Failure resolves too: a 404 must not leave the OLD set on the page
-	 * forever, and a missing file is the server's problem to log, not this
-	 * function's to block on.
+	 * Failure never rejects — one 404 must not abandon the rest of the run
+	 * mid-flight — but it must be distinguishable, because the caller is about
+	 * to delete a stylesheet run that currently works. A timeout counts as a
+	 * failure for the same reason: after eight seconds we do not know that the
+	 * new sheet is in effect, and removing the old one on a guess is what turns
+	 * a slow network into an unstyled page.
 	 *
 	 * @param {Element} element The element just inserted.
-	 * @return {Promise<void>} Settled when the sheet is in effect (or given up on).
+	 * @return {Promise<boolean>} True when the sheet loaded; false on error or timeout.
 	 */
 	function whenLoaded(element) {
 		if (element.tagName !== 'LINK') {
-			return Promise.resolve()
+			return Promise.resolve(true)
 		}
 
 		return new Promise(function (resolve) {
 			var done = false
-			var finish = function () {
+			var finish = function (ok) {
 				if (done === false) {
 					done = true
-					resolve()
+					resolve(ok)
 				}
 			}
-			element.addEventListener('load', finish)
-			element.addEventListener('error', finish)
-			setTimeout(finish, LOAD_TIMEOUT_MS)
+			element.addEventListener('load', function () {
+				finish(true)
+			})
+			element.addEventListener('error', function () {
+				finish(false)
+			})
+			setTimeout(function () {
+				finish(false)
+			}, LOAD_TIMEOUT_MS)
 		})
 	}
 
@@ -237,8 +247,14 @@
 	 *
 	 * @param {Document} doc The document.
 	 * @param {{layers: Array<Object>}|null} currentManifest The manifest of the set now on the page, or null when unknown.
+	 * The old run is removed ONLY once every new sheet has actually loaded. If
+	 * any of them 404s, errors or times out, the new run is taken back out and
+	 * the old one is left exactly as it was, because a page that still carries
+	 * the previous theme is recoverable and a half-styled one is not. The caller
+	 * sees `ok: false` and can fall back to a reload.
+	 *
 	 * @param {{layers: Array<Object>}} nextManifest The manifest of the set to apply.
-	 * @return {Promise<{added: Array<Element>, removed: Array<Element>}>} What changed in the document.
+	 * @return {Promise<{ok: boolean, added: Array<Element>, removed: Array<Element>}>} What changed in the document.
 	 */
 	function swap(doc, currentManifest, nextManifest) {
 		var old = currentManifest ? findLayerElements(doc, currentManifest) : []
@@ -263,7 +279,23 @@
 			added.push(element)
 		})
 
-		return Promise.all(added.map(whenLoaded)).then(function () {
+		return Promise.all(added.map(whenLoaded)).then(function (results) {
+			var ok = results.every(function (loaded) {
+				return loaded === true
+			})
+
+			if (ok === false) {
+				// Roll back: take the half-arrived run out again and leave the
+				// page on the theme it already had.
+				added.forEach(function (element) {
+					if (element.parentNode) {
+						element.parentNode.removeChild(element)
+					}
+				})
+
+				return { ok: false, added: [], removed: [] }
+			}
+
 			old.forEach(function (element) {
 				// An inline style the new run re-declares with the same id would
 				// otherwise leave two elements with one id; the old one goes.
@@ -271,7 +303,8 @@
 					element.parentNode.removeChild(element)
 				}
 			})
-			return { added: added, removed: old }
+
+			return { ok: true, added: added, removed: old }
 		})
 	}
 

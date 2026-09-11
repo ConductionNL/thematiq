@@ -21,6 +21,7 @@ use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCP\App\IAppManager;
 use OCP\IConfig;
@@ -59,6 +60,13 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	private ThemingAuditService $auditService;
 
 	/**
+	 * Core theming, so the delete path's undo can be asserted.
+	 *
+	 * @var ThemingService&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private ThemingService $themingService;
+
+	/**
 	 * The mocked request.
 	 *
 	 * @var IRequest&\PHPUnit\Framework\MockObject\MockObject
@@ -77,6 +85,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$this->service = $this->createMock(CustomTokenSetService::class);
 		$this->auditService = $this->createMock(ThemingAuditService::class);
+		$this->themingService = $this->createMock(ThemingService::class);
 		$this->request = $this->createMock(IRequest::class);
 
 		$l = $this->createMock(IL10N::class);
@@ -111,7 +120,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			$l,
 			$this->auditService,
 			$config,
-			$converter
+			$converter,
+			$this->themingService
 		);
 	}//end setUp()
 
@@ -186,6 +196,42 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$this->assertSame(200, $response->getStatus());
 	}//end testDeleteActiveSetLogsActiveReset()
+
+	/**
+	 * Deleting the ACTIVE custom set also undoes what that set pushed into
+	 * Nextcloud's own theming.
+	 *
+	 * Resetting `token_set` alone left the deleted set's primary colour and
+	 * logo on the login page, in e-mails and in the mobile apps, with no set
+	 * left in the dropdown to explain where they came from.
+	 */
+	public function testDeleteActiveSetResetsCoreTheming(): void {
+		$this->appConfig['token_set'] = 'custom-gemeente-voorbeeld';
+
+		$this->service->method('isCustomId')->willReturn(true);
+		$this->service->method('getRawContent')->willReturn(':root { --nldesign-color-primary: #007bc7; }');
+		$this->service->method('delete')->willReturn(true);
+
+		$this->themingService->expects($this->once())->method('resetToDefaults');
+
+		$this->controller->delete(id: 'custom-gemeente-voorbeeld');
+	}//end testDeleteActiveSetResetsCoreTheming()
+
+	/**
+	 * Deleting a set that is NOT active leaves core theming alone — it belongs
+	 * to whichever set is still applied.
+	 */
+	public function testDeleteInactiveSetLeavesCoreThemingAlone(): void {
+		$this->appConfig['token_set'] = 'nextcloud';
+
+		$this->service->method('isCustomId')->willReturn(true);
+		$this->service->method('getRawContent')->willReturn(':root { --nldesign-color-primary: #007bc7; }');
+		$this->service->method('delete')->willReturn(true);
+
+		$this->themingService->expects($this->never())->method('resetToDefaults');
+
+		$this->controller->delete(id: 'custom-gemeente-voorbeeld');
+	}//end testDeleteInactiveSetLeavesCoreThemingAlone()
 
 	/**
 	 * Deleting a non-active custom set logs activeReset === false.

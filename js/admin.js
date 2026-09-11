@@ -217,7 +217,15 @@
 			return Promise.all([current, fetchLayerManifest(tokenSetId)]).then(
 				function (manifests) {
 					return LayerSwap.swap(document, manifests[0], manifests[1]).then(
-						function () {
+						function (result) {
+							// A sheet that 404'd or timed out leaves the page on
+							// the OLD set (swap rolls back), so the page is still
+							// the set it was: do not claim the new one, and let
+							// the caller fall back to asking for a reload.
+							if (result.ok !== true) {
+								return false
+							}
+
 							pageTokenSetId = tokenSetId
 							pageManifest = manifests[1]
 							return true
@@ -4202,6 +4210,21 @@
 									if (wasSelected === true || wasOnPage === true) {
 										reflectSelection('nextcloud')
 									}
+
+									// Deleting the ACTIVE set made the server undo
+									// what that set had pushed into core theming, so
+									// the panel further up this page is now stale:
+									// re-read it rather than leave the deleted set's
+									// colour and logo showing.
+									if (wasOnPage === true) {
+										refreshCoreTheming().catch(function (error) {
+											console.error(
+												'Error refreshing Nextcloud theming after a delete:',
+												error,
+											)
+										})
+									}
+
 									notify(
 										t('thematiq', 'Custom token set deleted.'),
 									)

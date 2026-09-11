@@ -22,6 +22,7 @@ use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http\JSONResponse;
@@ -151,7 +152,8 @@ class CustomTokenSetControllerTest extends TestCase {
 			$l,
 			$this->createMock(ThemingAuditService::class),
 			$config,
-			$converter
+			$converter,
+			$this->createMock(ThemingService::class)
 		);
 	}//end setUp()
 

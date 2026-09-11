@@ -66,15 +66,27 @@ class TokenSetService {
 	 * The shipped sets an admin may CHOOSE, as opposed to the ones the app
 	 * ships.
 	 *
+	 * THE SHIPPED DESIGN-SYSTEM SETS ARE NOT GOOD ENOUGH TO SHIP YET. That is
+	 * the whole reason this list exists, and it is a deliberate, temporary
+	 * narrowing of what the admin dropdown and the group-theming picker offer —
+	 * not an oversight and not a permanent policy.
+	 *
 	 * `css/tokens/` holds 47 files and all but a handful fail
 	 * `TokenSetVocabularyAuditService`: they carry a brand palette under names
 	 * nothing reads and declare none of the semantic vocabulary the theme
 	 * consumes, so picking one silently renders Rijkshuisstijl with, at best,
-	 * the wrong header. Offering those is offering a theme that does not work.
-	 * Until the converter has regenerated them, the dropdown
-	 * offers `nextcloud` — stock, correct by definition, and the baseline every
-	 * conversion is compared against — plus whatever the admin has imported
-	 * themselves, which is the whole point of the converter.
+	 * the wrong header. Offering those is offering a theme that does not work,
+	 * and an admin cannot tell from the dropdown which ones those are. So the
+	 * dropdown offers `nextcloud` — stock, correct by definition, and the
+	 * baseline every conversion is compared against — plus whatever the admin
+	 * has imported themselves.
+	 *
+	 * EACH SET COMES BACK AS IT BECOMES GOOD ENOUGH. The audit is the gate, not
+	 * a person's judgement: a set returns to this list once it passes
+	 * `TokenSetVocabularyAuditService` and its id leaves
+	 * `tests/Unit/fixtures/token-set-vocabulary-allowlist.json`, which is
+	 * shrink-only and must reach empty. At that point every shipped set is
+	 * selectable again and this constant is deleted rather than widened.
 	 *
 	 * Widening this list is one line. Nothing else needs to change, because
 	 * DISCOVERY is deliberately untouched: `getAvailableTokenSets()`, the

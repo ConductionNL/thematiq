@@ -78,8 +78,15 @@ without it.
   (`conduction-new`, `cunningham`, `frankendesk`, `hoog-contrast`, `lasuite`, `leiden`,
   `noaberkracht`, `opencatalogi`, `rijkshuisstijl`, `rotterdam`, `xxllnc`) fail it on partial gaps.
   See design.md "Baseline" for the full table and the per-set reasons. The allow-list therefore
-  starts at 41 entries, not 31; the plan's acceptance line ("lists exactly the 31 sets in Appendix
-  B") is superseded by the measurement, and stage 2's scope is correspondingly larger.
+  starts at 41 entries, not 31; the planning estimate ("exactly the 31 sets") is superseded by the
+  measurement, and the converter's scope is correspondingly larger.
+
+  The 41 above is the figure measured when this change was written. The fixture now holds 39, and
+  the audit reports 7 complete where this measurement found 5: 41 + 5 and 39 + 7 are both 46, the
+  audited total, so exactly two sets moved from incomplete to complete while the branch went on.
+  The list is shrink-only and the gate fails on a listed set that has started passing, so that is
+  the mechanism working rather than drift. The fixture is the authority; a number written into
+  prose is a snapshot, which is why the test's own docblock no longer quotes one.
 - **Behavioural change for shipped sets**: the apply dialog and the dropdown now raise a
   non-blocking warning for 41 of the 48 shipped sets. That is the point ("no silent drops"), but it
   is visible to every admin from this release on; stage 6 refines the copy and grouping.

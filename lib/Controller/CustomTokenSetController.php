@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
@@ -50,6 +51,11 @@ use RuntimeException;
  *
  * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - one endpoint family (import, list, export, delete) for one resource; the branches
+ *   are the order the validation has to run in, and splitting them across classes would spread that order out rather than simplify it.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - importing a theme genuinely needs all of them: convert, validate, parse, store, audit,
+ *   and — when the deleted set was the active one — undo what it pushed into core theming. Each is called here; none is passed through.
  */
 class CustomTokenSetController extends Controller {
 
@@ -106,6 +112,14 @@ class CustomTokenSetController extends Controller {
 	private TokenSetConverterService $converter;
 
 	/**
+	 * Nextcloud core theming, so deleting the ACTIVE set can undo what that set
+	 * pushed into core (primary colour, background, logo).
+	 *
+	 * @var ThemingService
+	 */
+	private ThemingService $themingService;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
@@ -117,6 +131,10 @@ class CustomTokenSetController extends Controller {
 	 * @param ThemingAuditService $auditService The theming audit trail service.
 	 * @param IConfig $config The config service.
 	 * @param TokenSetConverterService $converter The theme converter, which runs before the validator.
+	 * @param ThemingService $themingService Core theming, for undoing a deleted set's sync.
+	 *
+	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else; the
+	 *   alternative is a service locator, which hides exactly these dependencies instead of removing any of them.
 	 */
 	public function __construct(
 		string $appName,
@@ -128,6 +146,7 @@ class CustomTokenSetController extends Controller {
 		ThemingAuditService $auditService,
 		IConfig $config,
 		TokenSetConverterService $converter,
+		ThemingService $themingService,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->service = $service;
@@ -137,6 +156,7 @@ class CustomTokenSetController extends Controller {
 		$this->auditService = $auditService;
 		$this->config = $config;
 		$this->converter = $converter;
+		$this->themingService = $themingService;
 	}//end __construct()
 
 	/**
@@ -152,6 +172,23 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * Conversion runs BEFORE validation, never instead of it: the validator is
 	 * still the last gate on the bytes that get written.
+	 *
+	 * THE CONVERTER IS WIRED IN UNCONDITIONALLY, ON PURPOSE, AND IS NOT
+	 * FINISHED. There is no feature flag and no bypass, because the path it
+	 * replaces was strictly worse: it accepted only pre-baked `--nldesign-*`
+	 * CSS, so every other shape a design system publishes — a W3C Design Tokens
+	 * document, a Style Dictionary `tokens.json`, a built theme stylesheet — was
+	 * simply refused. The converter accepts all four and is already better than
+	 * what was here before, which is why it ships now rather than behind a flag
+	 * nobody would turn on.
+	 *
+	 * What is NOT yet done, and is tracked in
+	 * `openspec/changes/nlds-theme-converter`: the parity tests between this
+	 * runtime and its JS mirror, the paste box, the report rendering in the
+	 * admin panel, and regenerating the shipped sets. Until those land, expect
+	 * conversions to need review — the emitted file is validated, so nothing
+	 * unsafe is written, but "it stored something" is not yet "it stored the
+	 * right thing".
 	 *
 	 * @return JSONResponse `{ id, imported, skipped, warnings, report, counts, inputKind }` or an error.
 	 *
@@ -562,11 +599,30 @@ class CustomTokenSetController extends Controller {
 			$contentHash = 'sha256:' . substr(hash(algo: 'sha256', data: $servedCss), 0, 12);
 		}
 
+		// Deleting the ACTIVE set puts the instance back on stock, and stock
+		// means Nextcloud's own colours and logo — not the deleted set's,
+		// stranded in core theming with no set left to explain them. The service
+		// resets the `token_set` app value; the sync it pushed into core has to
+		// be undone here, exactly as selecting the stock set does.
+		$activeReset = ($activeBefore === $id);
+		if ($activeReset === true) {
+			$this->themingService->resetToDefaults();
+
+			// Nothing is synced any more, so nothing is remembered as synced.
+			foreach (['logo', 'background'] as $imageKey) {
+				$this->config->deleteAppValue(
+					Application::APP_ID,
+					SettingsController::SYNCED_IMAGE_PREFIX . $imageKey
+				);
+			}
+		}
+
 		$this->auditService->log(
 			action: 'custom_set_deleted',
 			context: [
 				'id' => $id,
-				'activeReset' => ($activeBefore === $id),
+				'activeReset' => $activeReset,
+				'themingReset' => $activeReset,
 				'contentHash' => $contentHash,
 			]
 		);

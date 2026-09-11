@@ -15,7 +15,7 @@
  * `css/systems/nldesign/defaults.css`, so the set renders as Rijkshuisstijl
  * rather than as its own brand.
  *
- * The 41 sets that fail today are allow-listed in
+ * The sets that fail are allow-listed in
  * `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` so CI stays green
  * while the converter regenerates them; the gate fails BOTH on a set
  * that is incomplete and not listed AND on a listed set that has since started
