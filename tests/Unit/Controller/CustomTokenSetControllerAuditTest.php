@@ -14,15 +14,20 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OCA\Thematiq\Controller\CustomTokenSetController;
+use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\DesignTokensMapper;
+use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenSetConverterService;
+use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Covers tasks.md#task-2.3 / #task-5.3: upload() logs one
@@ -82,6 +87,21 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
 
+		// A REAL converter: every upload now runs through it before the
+		// validator, so a bare mock returns null and the controller has no CSS
+		// to validate. Its app path is the repo root, which is where the
+		// mapping table it reads lives.
+		$repoAppManager = $this->createMock(IAppManager::class);
+		$repoAppManager->method('getAppPath')->willReturn(dirname(__DIR__, 3));
+		$converter = new TokenSetConverterService(
+			$repoAppManager,
+			new CssParserService(),
+			new ContrastService(),
+			new DesignTokensMapper(),
+			$this->createMock(FontService::class),
+			$this->createMock(LoggerInterface::class)
+		);
+
 		$this->controller = new CustomTokenSetController(
 			'nldesign',
 			$this->request,
@@ -91,7 +111,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			$l,
 			$this->auditService,
 			$config,
-			$this->createMock(TokenSetConverterService::class)
+			$converter
 		);
 	}//end setUp()
 

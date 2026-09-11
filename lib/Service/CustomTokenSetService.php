@@ -182,6 +182,11 @@ class CustomTokenSetService {
 	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
 	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.2
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - storing writes files and a manifest entry in one transaction-like order; every branch is
+	 *   a precondition that must fail before anything is written.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - storing writes files and a manifest entry in one transaction-like order; every branch is a
+	 *   precondition that must fail before anything is written.
 	 */
 	public function store(
 		string $displayName,
@@ -216,10 +221,9 @@ class CustomTokenSetService {
 		// sync with "Image file not found" instead of updating the logo.
 		if ($logoAsset !== null) {
 			$logoPath = $this->writeLogoAsset(id: $id, asset: $logoAsset);
+			unset($theming['logo']);
 			if ($logoPath !== null) {
 				$theming['logo'] = $logoPath;
-			} else {
-				unset($theming['logo']);
 			}
 		}
 

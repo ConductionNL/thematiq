@@ -156,6 +156,11 @@ class CustomTokenSetController extends Controller {
 	 * @return JSONResponse `{ id, imported, skipped, warnings, report, counts, inputKind }` or an error.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one upload endpoint validates name, source, size, kind and logo before it may persist;
+	 *   each check is a branch, and splitting them hides the order they must run in.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - one upload endpoint validates name, source, size, kind and logo before it may persist; each
+	 *   check is a branch, and splitting them hides the order they must run in.
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function upload(): JSONResponse {
@@ -194,11 +199,42 @@ class CustomTokenSetController extends Controller {
 			return new JSONResponse(['error' => $e->getMessage()], $code);
 		}
 
+		// What the ADMIN'S DOCUMENT yielded, reported by the converter from the
+		// end of its input parse — not the size of the emitted file. The
+		// converter fills every unmapped target from the mapping table's
+		// fallbacks, so the emitted file is always the complete semantic layer
+		// and says nothing about what was uploaded.
+		$imported = (int)($converted['imported'] ?? 0);
+		$skipped = $this->skippedFrom(report: $converted['report']);
+
+		// Zero yield is a fixable mistake on the admin's side, so it is refused
+		// WITH the findings rather than with a bare message.
+		if ($imported === 0) {
+			return new JSONResponse(
+				[
+					'error' => $this->l->t(
+						'Nothing in this document maps onto a Nextcloud token. The skipped list'
+						. ' shows what was found and why each token could not be used.'
+					),
+					'imported' => 0,
+					'skipped' => $skipped,
+					'errors' => $converted['errors'],
+				],
+				422
+			);
+		}
+
 		// The validator sees the EMITTED file, which is the thing being stored.
 		$parsed = $this->mapFromCss(content: $converted['css'], slug: $slug);
 		if ($parsed instanceof JSONResponse) {
 			return $parsed;
 		}
+
+		// What the admin's document yielded, and what of it could not be used.
+		// Both describe the UPLOAD, so they replace the validator's split, which
+		// describes the emitted file.
+		$parsed['imported'] = $imported;
+		$parsed['skipped'] = $skipped;
 
 		$parsed['css'] = $converted['css'];
 		$parsed['theming'] = ($converted['manifestEntry']['theming'] ?? []);
@@ -306,6 +342,36 @@ class CustomTokenSetController extends Controller {
 	}//end readUpload()
 
 	/**
+	 * The tokens the conversion could not use, in the `{path, reason}` shape the
+	 * admin panel groups by reason.
+	 *
+	 * Read from the same report the count comes from, so the number and the
+	 * breakdown can never disagree with one another.
+	 *
+	 * @param array<int, array<string, mixed>> $report The conversion report.
+	 *
+	 * @return array<int, array{path: string, reason: string|null}> The skipped tokens.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function skippedFrom(array $report): array {
+		$skipped = [];
+
+		foreach ($report as $entry) {
+			if ((string)($entry['action'] ?? '') !== 'skipped') {
+				continue;
+			}
+
+			$skipped[] = [
+				'path' => (string)($entry['source'] ?? ''),
+				'reason' => ($entry['reason'] ?? null),
+			];
+		}
+
+		return $skipped;
+	}//end skippedFrom()
+
+	/**
 	 * Parse and map a CSS upload into the accepted/skipped split.
 	 *
 	 * @param string $content The raw CSS upload.
@@ -357,6 +423,9 @@ class CustomTokenSetController extends Controller {
 	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - persisting is a sequence of independent optional steps (dark variant, logo, manifest),
+	 *   each guarded.
 	 */
 	private function persist(string $name, array $parsed): JSONResponse {
 		try {
@@ -392,15 +461,15 @@ class CustomTokenSetController extends Controller {
 			context: [
 				'id' => $result['id'],
 				'name' => $name,
-				'declarationCount' => count($parsed['accepted']),
+				'declarationCount' => (int)($parsed['imported'] ?? 0),
 				'contentHash' => $contentHash,
 			]
 		);
 
 		$response = [
 			'id' => $result['id'],
-			'imported' => count($parsed['accepted']),
-			'skipped' => $parsed['skipped'],
+			'imported' => (int)($parsed['imported'] ?? 0),
+			'skipped' => ($parsed['skipped'] ?? []),
 			'warnings' => $result['warnings'],
 		];
 

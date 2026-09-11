@@ -79,6 +79,9 @@ namespace OCA\Thematiq\Service;
  * }
  *
  * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - three independent audit rules plus the CSS walk they read from; each rule is simple
+ *   and they are kept together because the PHPUnit gate and the Node CLI must apply exactly the same set.
  */
 class TokenSetVocabularyAuditService {
 
@@ -150,7 +153,7 @@ class TokenSetVocabularyAuditService {
 	 *
 	 * @var array<string, array<int, string>>
 	 */
-	private array $consumingSystemsCache = [];
+	private array $consumingCache = [];
 
 	/**
 	 * Constructor.
@@ -357,10 +360,13 @@ class TokenSetVocabularyAuditService {
 	 * @param string $appPath The app root path.
 	 *
 	 * @return array<int, string> The consuming design-system ids.
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - deciding whether a design system reads the vocabulary walks several stylesheet kinds,
+	 *   each with its own accept rule.
 	 */
 	public function nldesignConsumingSystems(string $appPath): array {
-		if (isset($this->consumingSystemsCache[$appPath]) === true) {
-			return $this->consumingSystemsCache[$appPath];
+		if (isset($this->consumingCache[$appPath]) === true) {
+			return $this->consumingCache[$appPath];
 		}
 
 		$systems = [];
@@ -392,7 +398,7 @@ class TokenSetVocabularyAuditService {
 		}//end foreach
 
 		sort($systems);
-		$this->consumingSystemsCache[$appPath] = $systems;
+		$this->consumingCache[$appPath] = $systems;
 
 		return $systems;
 	}//end nldesignConsumingSystems()
@@ -405,6 +411,8 @@ class TokenSetVocabularyAuditService {
 	 * @param string $directory The directory to walk.
 	 *
 	 * @return array<int, string> Absolute file paths, sorted for determinism.
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - directory walking with several exclusion rules (runtime files, token sets, dark variants).
 	 */
 	private function collectCssFiles(string $directory): array {
 		if (is_dir($directory) === false) {

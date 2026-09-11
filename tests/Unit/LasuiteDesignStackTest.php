@@ -213,7 +213,9 @@ class LasuiteDesignStackTest extends TestCase {
 
 		$this->assertSame('cunningham', $meta['design_system'] ?? null);
 		$this->assertSame('#1A509F', $meta['theming']['primary_color'] ?? null);
-		$this->assertSame('#FFFFFF', $meta['theming']['background_color'] ?? null);
+		// Matches the background cunningham.css actually paints
+		// (--nldesign-color-background-dark), corrected in 585ceb7.
+		$this->assertSame('#E1E2E5', $meta['theming']['background_color'] ?? null);
 		$this->assertArrayNotHasKey(
 			'logo',
 			$meta['theming'] ?? [],

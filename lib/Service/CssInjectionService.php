@@ -46,6 +46,10 @@ use Throwable;
  * runs through these two one-line wrappers, so no behavior changes.
  *
  * @spec openspec/specs/css-architecture/spec.md
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - this class IS the cascade: one branch per layer the page may emit, and the order of
+ *   those branches is the specification. Splitting it would spread the load order across files, which is the defect the single
+ *   designSystemLayers() list exists to prevent.
  */
 class CssInjectionService {
 

@@ -59,6 +59,16 @@ use RuntimeException;
  * @psalm-type   ReportEntry array{source: string, target: string, action: string, reason: string|null, value: string|null, original?: string}
  *
  * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength) - one interpreter for the mapping table, kept whole on purpose: the JS mirror
+ *   (js/lib/tokenConverter.js) has to agree with it byte for byte, and a boundary drawn here has to be drawn identically there or the two
+ *   runtimes drift.
+ * @SuppressWarnings(PHPMD.TooManyMethods) - one interpreter for the mapping table, kept whole on purpose: the JS mirror
+ *   (js/lib/tokenConverter.js) has to agree with it byte for byte, and a boundary drawn here has to be drawn identically there or the two
+ *   runtimes drift.
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - one interpreter for the mapping table, kept whole on purpose: the JS mirror
+ *   (js/lib/tokenConverter.js) has to agree with it byte for byte, and a boundary drawn here has to be drawn identically there or the two
+ *   runtimes drift.
  */
 class TokenSetConverterService {
 
@@ -227,6 +237,11 @@ class TokenSetConverterService {
 	 * @throws RuntimeException When the content matches none of the four accepted shapes (code 422).
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
+	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the conversion pipeline reads top to bottom as the order it runs in — detect, parse,
+	 *   classify, map, emit — and is far easier to follow whole than chased across a dozen private methods.
 	 */
 	public function convert(
 		string $content,
@@ -242,7 +257,12 @@ class TokenSetConverterService {
 		$inputKind = $this->detectInput(content: $content);
 		$sourceVersion = null;
 
-		if ($inputKind === 'B' || $inputKind === 'C') {
+		// Two guards rather than if/else: only one of them can run, and the
+		// report must not be appended to twice.
+		$isJson = ($inputKind === 'B' || $inputKind === 'C');
+		$declarations = [];
+
+		if ($isJson === true) {
 			$decoded = json_decode($content, true);
 			$declarations = $this->declarationsFromJson(
 				decoded: $decoded,
@@ -251,11 +271,24 @@ class TokenSetConverterService {
 				version: $sourceVersion,
 				report: $report
 			);
-		} else {
+		}
+
+		if ($isJson === false) {
 			$declarations = $this->parseCssBlocks(content: $content, report: $report);
 		}
 
 		if (empty($declarations) === true) {
+			// A document we UNDERSTOOD but could map nothing out of is a
+			// reportable OUTCOME, not an exceptional one: the admin made a
+			// fixable mistake and needs the per-token reasons to fix it. An
+			// exception carries a message and nothing else, which is why the
+			// diagnostics used to die here. Content we could not read at all
+			// still throws — that is the malformed case the spec separates.
+			if ($report !== []) {
+				return $this->zeroYieldResult(report: $report, inputKind: $inputKind);
+			}
+
+
 			throw new RuntimeException(
 				'No custom properties were found. Paste a built theme CSS (a class-scoped block of'
 				. ' --custom-properties), a W3C Design Tokens JSON document, a Style Dictionary'
@@ -295,11 +328,20 @@ class TokenSetConverterService {
 			}
 		}
 
+		// How many declarations the admin's document actually yielded. This is
+		// what 'imported' means to an admin — what THEY supplied that could be
+		// used — and it is counted here, where the input parse ends, because
+		// everything after this point is the app's own emitted layer.
+		$importedCount = count($declarations);
+
 		// Split the input into the three emitted sections.
-		$sections = $this->classify(declarations: $declarations, slug: $slug, inputKind: $inputKind, report: $report);
+		$sections = $this->classify(declarations: $declarations, slug: $slug, report: $report);
 
 		// The semantic layer, from the table. `existing` carries input D's
 		// hand-authored values, which win over anything the rules derive.
+		// `$manifest` is an out-parameter; declaring it first keeps it from
+		// being read before `runRules()` has written it.
+		$manifest = [];
 		$semantic = $this->runRules(
 			declarations: $declarations,
 			existing: $sections['semantic'],
@@ -335,11 +377,12 @@ class TokenSetConverterService {
 
 		return [
 			'css' => $css,
+			'imported' => $importedCount,
 			'manifestEntry' => $this->buildManifestEntry(
 				slug: $slug,
 				displayName: $displayName,
 				semantic: $semantic,
-				manifest: ($manifest ?? []),
+				manifest: $manifest,
 				sourceName: $sourceName,
 				sourceVersion: $sourceVersion,
 				logo: $logo
@@ -352,6 +395,59 @@ class TokenSetConverterService {
 			'errors' => $this->mapperErrors,
 		];
 	}//end convert()
+
+	/**
+	 * A conversion that read the document but mapped nothing out of it.
+	 *
+	 * Same shape as a successful conversion, with an empty emitted file and a
+	 * report that says what was found and why each token could not be used.
+	 * The caller decides the HTTP status; this method only refuses to throw the
+	 * findings away.
+	 *
+	 * @param array<int, ReportEntry> $report    What the read produced.
+	 * @param string                  $inputKind The detected input kind.
+	 *
+	 * @return array<string, mixed> The zero-yield result.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function zeroYieldResult(array $report, string $inputKind): array {
+		return [
+			'css' => '',
+			'imported' => 0,
+			'manifestEntry' => [],
+			'report' => $report,
+			'inputKind' => $inputKind,
+			'counts' => $this->countActions(report: $report),
+			'logoAsset' => null,
+			'importWarnings' => $this->importWarnings,
+			'errors' => $this->mapperErrors,
+		];
+	}//end zeroYieldResult()
+
+	/**
+	 * Import warnings raised by the last conversion (`$deprecated` notices and
+	 * the like), for a caller that needs them after a throw.
+	 *
+	 * @return array<int, array{path: string, message: string|null}> The warnings.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	public function getImportWarnings(): array {
+		return $this->importWarnings;
+	}//end getImportWarnings()
+
+	/**
+	 * Structured mapper errors from the last conversion, for a caller that
+	 * needs them after a throw.
+	 *
+	 * @return array<int, array{path: string, reason: string, detail?: string}> The errors.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	public function getMapperErrors(): array {
+		return $this->mapperErrors;
+	}//end getMapperErrors()
 
 	/**
 	 * The reason-code copy from the mapping table, for rendering a report.
@@ -580,6 +676,8 @@ class TokenSetConverterService {
 	 * @param int                   $depth        Current recursion depth.
 	 *
 	 * @return void
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - Style Dictionary leaves are recognised by shape, and each accepted shape is one branch.
 	 */
 	private function collectStyleDictionaryLeaves(mixed $node, array $path, string $slug, array &$declarations, int $depth = 0): void {
 		if (is_array($node) === false || $depth > 12) {
@@ -701,6 +799,8 @@ class TokenSetConverterService {
 	 * @param int                   $depth        Current depth.
 	 *
 	 * @return string|null The literal value, or null when a reference cannot be resolved.
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per value form the table accepts (literal, reference, alias, function).
 	 */
 	private function resolveValue(string $value, array $declarations, array $seen, int $depth): ?string {
 		if (str_contains($value, 'var(') === false) {
@@ -936,13 +1036,12 @@ class TokenSetConverterService {
 		$parameters = strtolower((string)$matches[2]);
 		$payload = $matches[3];
 
+		$contents = rawurldecode($payload);
 		if (str_contains($parameters, 'base64') === true) {
 			$contents = base64_decode(preg_replace('/\s+/', '', $payload), true);
 			if ($contents === false) {
 				return null;
 			}
-		} else {
-			$contents = rawurldecode($payload);
 		}
 
 		$maxBytes = (int)($spec['maxBytes'] ?? 262144);
@@ -1004,12 +1103,18 @@ class TokenSetConverterService {
 	 *
 	 * @param array<string, string>   $declarations The resolved declarations.
 	 * @param string                  $slug         The brand slug.
-	 * @param string                  $inputKind    The detected input kind.
 	 * @param array<int, ReportEntry> $report       The report, appended to by reference.
 	 *
 	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>}
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per declaration shape the three emitted sections accept; the branches are the
+	 *   specification of what goes where.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per declaration shape the three emitted sections accept; the branches are the
+	 *   specification of what goes where.
+	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - one branch per declaration shape the three emitted sections accept; the branches are
+	 *   the specification of what goes where.
 	 */
-	private function classify(array $declarations, string $slug, string $inputKind, array &$report): array {
+	private function classify(array $declarations, string $slug, array &$report): array {
 		$palette = [];
 		$component = [];
 		$semantic = [];
@@ -1387,6 +1492,13 @@ class TokenSetConverterService {
 	 * @param array<int, ReportEntry>    $report       The report, appended to by reference.
 	 *
 	 * @return array<string, string> The semantic layer.
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest
+	 *   target and report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest target and
+	 *   report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
+	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest
+	 *   target and report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
 	 */
 	private function runRules(array $declarations, array $existing, string $slug, ?array &$manifest, array &$report): array {
 		$semantic = $existing;
@@ -1442,8 +1554,7 @@ class TokenSetConverterService {
 				$derived = $this->applyFallback(
 					fallback: ($rule['fallback'] ?? null),
 					semantic: $semantic,
-					declarations: $declarations,
-					slug: $slug
+					declarations: $declarations
 				);
 
 				if ($derived === null) {
@@ -1491,7 +1602,9 @@ class TokenSetConverterService {
 
 			if ($isManifest === true) {
 				$manifest[substr($target, strlen('manifest:'))] = $value;
-			} else {
+			}
+
+			if ($isManifest === false) {
 				$semantic[$target] = $value;
 			}
 
@@ -1546,11 +1659,10 @@ class TokenSetConverterService {
 	 * @param array<string, mixed>|null $fallback     The fallback spec.
 	 * @param array<string, string>     $semantic     The semantic layer so far.
 	 * @param array<string, string>     $declarations The resolved input.
-	 * @param string                    $slug         The brand slug.
 	 *
 	 * @return array{value: string, source: string, reason: string}|null The derived value, or null when it cannot be derived.
 	 */
-	private function applyFallback(?array $fallback, array $semantic, array $declarations, string $slug): ?array {
+	private function applyFallback(?array $fallback, array $semantic, array $declarations): ?array {
 		if ($fallback === null) {
 			return null;
 		}
@@ -1589,7 +1701,7 @@ class TokenSetConverterService {
 		}
 
 		if ($kind === 'ramp') {
-			$picked = $this->pickFromRamp(spec: $fallback, declarations: $declarations, slug: $slug, semantic: $semantic);
+			$picked = $this->pickFromRamp(spec: $fallback, declarations: $declarations, semantic: $semantic);
 			if ($picked === null) {
 				return null;
 			}
@@ -1614,12 +1726,14 @@ class TokenSetConverterService {
 	 *
 	 * @param array<string, mixed>  $spec         The ramp spec.
 	 * @param array<string, string> $declarations The resolved input.
-	 * @param string                $slug         The brand slug.
 	 * @param array<string, string> $semantic     The semantic layer so far.
 	 *
 	 * @return string|null The picked colour, or null when the theme has no usable ramp.
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
 	 */
-	private function pickFromRamp(array $spec, array $declarations, string $slug, array $semantic): ?string {
+	private function pickFromRamp(array $spec, array $declarations, array $semantic): ?string {
 		$ramp = [];
 		foreach ($declarations as $value) {
 			$rgb = $this->contrast->parseColor(value: $value);
@@ -1698,6 +1812,8 @@ class TokenSetConverterService {
 	 * @param array<string, string> $semantic The semantic layer so far (for `mix` against another token).
 	 *
 	 * @return string The transformed value.
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per transform the mapping table may name.
 	 */
 	private function transform(string $kind, string $value, array $args, array $semantic): string {
 		switch ($kind) {
@@ -1751,6 +1867,11 @@ class TokenSetConverterService {
 	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
 	 * @return array{value: string, reason: string|null} The (possibly corrected) value and the reason when it changed.
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per guard the mapping table may name; a guard that silently did nothing would
+	 *   be worse than a long switch.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per guard the mapping table may name; a guard that silently did nothing would be
+	 *   worse than a long switch.
 	 */
 	private function applyGuard(array $guard, string $value, array $semantic): array {
 		$kind = (string)($guard['kind'] ?? '');

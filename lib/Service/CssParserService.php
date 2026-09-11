@@ -39,6 +39,13 @@ class CssParserService {
 	 * @return array<string, string>|null Parsed token map, or null if none found.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - a CSS tokenizer is a state machine: comments, strings, nesting and fallbacks are states,
+	 *   not helpers, and extracting them would pass the whole state between methods.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - a CSS tokenizer is a state machine: comments, strings, nesting and fallbacks are states, not
+	 *   helpers, and extracting them would pass the whole state between methods.
+	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - a CSS tokenizer is a state machine: comments, strings, nesting and fallbacks are
+	 *   states, not helpers, and extracting them would pass the whole state between methods.
 	 */
 	public function parseDeclarations(string $content): ?array {
 		// Scanned character by character rather than matched with one regex,

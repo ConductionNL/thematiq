@@ -229,18 +229,7 @@ class Admin implements IDelegatedSettings {
 		// reads them from.
 		$this->initialState->provideInitialState('tokenSets', $tokenSets);
 		$this->initialState->provideInitialState('currentTokenSet', $currentTokenSet);
-		// `?? []` and not `$activePreview` on its own. Nextcloud's
-		// InitialStateService accepts a scalar, an array, or a
-		// JsonSerializable — and NULL IS NONE OF THOSE. It does not throw on
-		// one: it writes `Invalid activePreview data provided to
-		// provideInitialState by nldesign` to the log and provides nothing at
-		// all. The key would then simply be absent, `loadState` would return
-		// its fallback, and because that fallback is also null the panel
-		// would look correct while the server logged a warning on every
-		// admin page load. An empty array is the same "no preview" fact in a
-		// shape the service actually carries.
-		$this->initialState->provideInitialState('activePreview', ($activePreview ?? []));
-		$this->initialState->provideInitialState('iconPackSource', $iconPackSource);
+		$this->publishPreviewState(activePreview: $activePreview, iconPackSource: $iconPackSource);
 
 		return new TemplateResponse(
 			Application::APP_ID,
@@ -267,6 +256,30 @@ class Admin implements IDelegatedSettings {
 			]
 		);
 	}//end getForm()
+
+	/**
+	 * Publish the two initial-state keys the preview banner and the icon-pack
+	 * indicator read.
+	 *
+	 * `activePreview` is normalised to an empty array rather than passed as
+	 * null: `provideInitialState(null)` writes "Failed to provideInitialState"
+	 * to the log and provides nothing at all, so the key would be absent,
+	 * `loadState` would return its fallback, and the panel would look correct
+	 * while the server logged a warning on every admin page load. An empty
+	 * array is the same "no preview" fact in a shape the service carries.
+	 *
+	 * @param array<string, mixed>|null $activePreview  The active session preview, or null when there is none.
+	 * @param string                    $iconPackSource Whether the pack list came from the design system or an override.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theme-preview/spec.md
+	 * @spec openspec/specs/icon-packs/spec.md
+	 */
+	private function publishPreviewState(?array $activePreview, string $iconPackSource): void {
+		$this->initialState->provideInitialState('activePreview', ($activePreview ?? []));
+		$this->initialState->provideInitialState('iconPackSource', $iconPackSource);
+	}//end publishPreviewState()
 
 	/**
 	 * Resolve the read-only "active icon pack" indicator: the resolved
