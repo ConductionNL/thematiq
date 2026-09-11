@@ -79,7 +79,21 @@ class CustomTokenSetValidator {
 		$accepted = [];
 		$skipped = [];
 
-		$namePattern = '/^--(nldesign|' . preg_quote($slug, '/') . ')-[a-z0-9-]+$/';
+		// The app's own vocabulary, the set's brand prefix, and the component
+		// layer. The component prefixes are accepted because converter output
+		// NEEDS them: `css/systems/nldesign/utrecht-bridge.css` maps
+		// `--utrecht-*` / `--ams-*` / `--denhaag-*` onto `--nldesign-component-*`,
+		// and Conduction's apps read them directly, so a converted set that
+		// dropped them would lose its component layer at the last gate.
+		// Values are still checked by isForbiddenValue() below — widening WHICH
+		// names may be declared does not widen what may be in them.
+		$componentPrefixes = [];
+		foreach (TokenSetConverterService::COMPONENT_PREFIXES as $prefix) {
+			$componentPrefixes[] = preg_quote(trim($prefix, '-'), '/');
+		}
+
+		$namePattern = '/^--(nldesign|' . preg_quote($slug, '/') . '|'
+			. implode('|', $componentPrefixes) . ')-[a-z0-9-]+$/';
 
 		foreach ($declarations as $name => $value) {
 			if (preg_match($namePattern, $name) !== 1) {

@@ -20,6 +20,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -135,7 +136,8 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 			$config,
 			$this->createMock(LoggerInterface::class),
 			$auditService,
-			$cacheFactory
+			$cacheFactory,
+			new TokenSetVocabularyAuditService(new CssParserService())
 		);
 
 		$designSystemService = $this->createMock(DesignSystemService::class);
@@ -204,7 +206,8 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 			$config,
 			$this->createMock(LoggerInterface::class),
 			$auditService,
-			$cacheFactory
+			$cacheFactory,
+			new TokenSetVocabularyAuditService(new CssParserService())
 		);
 
 		$catalogue = $tokenSetService->getPublicCatalogue();
@@ -244,7 +247,8 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 			$config,
 			$this->createMock(LoggerInterface::class),
 			$auditService,
-			$cacheFactory
+			$cacheFactory,
+			new TokenSetVocabularyAuditService(new CssParserService())
 		);
 
 		$byId = array_column($tokenSetService->getPublicCatalogue(), null, 'id');

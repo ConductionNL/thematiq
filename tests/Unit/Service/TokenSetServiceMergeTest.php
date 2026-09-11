@@ -17,6 +17,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -74,7 +75,14 @@ class TokenSetServiceMergeTest extends TestCase {
 		$cacheFactory = $this->createMock(ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
 
-		$this->service = new TokenSetService($appManager, $config, $this->createMock(LoggerInterface::class), $audit, $cacheFactory);
+		$this->service = new TokenSetService(
+			$appManager,
+			$config,
+			$this->createMock(LoggerInterface::class),
+			$audit,
+			$cacheFactory,
+			new TokenSetVocabularyAuditService(new CssParserService())
+		);
 	}//end setUp()
 
 	/**

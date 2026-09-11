@@ -33,6 +33,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Settings\IDelegatedSettings;
 
@@ -114,6 +115,14 @@ class Admin implements IDelegatedSettings {
 	private IInitialState $initialState;
 
 	/**
+	 * The current request — read only for the `?mock=1` switch that layers the
+	 * presentation mock (js/admin-mock.js) over the panel.
+	 *
+	 * @var IRequest
+	 */
+	private IRequest $request;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -124,6 +133,7 @@ class Admin implements IDelegatedSettings {
 	 * @param IUserSession $userSession The user session.
 	 * @param DesignSystemService $designSystemService Resolves the active icon pack.
 	 * @param IInitialState $initialState Carries server state to admin.js.
+	 * @param IRequest $request The current request (presentation-mock switch).
 	 */
 	public function __construct(
 		IConfig $config,
@@ -134,6 +144,7 @@ class Admin implements IDelegatedSettings {
 		IUserSession $userSession,
 		DesignSystemService $designSystemService,
 		IInitialState $initialState,
+		IRequest $request,
 	) {
 		$this->config = $config;
 		$this->l = $l;
@@ -143,6 +154,7 @@ class Admin implements IDelegatedSettings {
 		$this->userSession = $userSession;
 		$this->designSystemService = $designSystemService;
 		$this->initialState = $initialState;
+		$this->request = $request;
 	}//end __construct()
 
 	/**
@@ -155,7 +167,9 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function getForm(): TemplateResponse {
-		$tokenSets = $this->tokenSetService->getAvailableTokenSets();
+		// The PICKER, not the catalogue: only stock plus the admin's own
+		// imports. See TokenSetService::SELECTABLE_SHIPPED_SETS.
+		$tokenSets = $this->tokenSetService->getSelectableTokenSets();
 
 		$currentTokenSet = $this->config->getAppValue(
 			Application::APP_ID,
@@ -215,18 +229,7 @@ class Admin implements IDelegatedSettings {
 		// reads them from.
 		$this->initialState->provideInitialState('tokenSets', $tokenSets);
 		$this->initialState->provideInitialState('currentTokenSet', $currentTokenSet);
-		// `?? []` and not `$activePreview` on its own. Nextcloud's
-		// InitialStateService accepts a scalar, an array, or a
-		// JsonSerializable — and NULL IS NONE OF THOSE. It does not throw on
-		// one: it writes `Invalid activePreview data provided to
-		// provideInitialState by nldesign` to the log and provides nothing at
-		// all. The key would then simply be absent, `loadState` would return
-		// its fallback, and because that fallback is also null the panel
-		// would look correct while the server logged a warning on every
-		// admin page load. An empty array is the same "no preview" fact in a
-		// shape the service actually carries.
-		$this->initialState->provideInitialState('activePreview', ($activePreview ?? []));
-		$this->initialState->provideInitialState('iconPackSource', $iconPackSource);
+		$this->publishPreviewState(activePreview: $activePreview, iconPackSource: $iconPackSource);
 
 		return new TemplateResponse(
 			Application::APP_ID,
@@ -246,9 +249,37 @@ class Admin implements IDelegatedSettings {
 				'activePreview' => $activePreview,
 				'activeIconPacks' => $activeIconPacks,
 				'iconPackSource' => $iconPackSource,
+				// Presentation mock: `?mock=1` layers the theming-makeover visual shells
+				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
+				// can be screenshotted from a running instance. Nothing else changes.
+				'mockUi' => ($this->request->getParam('mock') === '1'),
 			]
 		);
 	}//end getForm()
+
+	/**
+	 * Publish the two initial-state keys the preview banner and the icon-pack
+	 * indicator read.
+	 *
+	 * `activePreview` is normalised to an empty array rather than passed as
+	 * null: `provideInitialState(null)` writes "Failed to provideInitialState"
+	 * to the log and provides nothing at all, so the key would be absent,
+	 * `loadState` would return its fallback, and the panel would look correct
+	 * while the server logged a warning on every admin page load. An empty
+	 * array is the same "no preview" fact in a shape the service carries.
+	 *
+	 * @param array<string, mixed>|null $activePreview  The active session preview, or null when there is none.
+	 * @param string                    $iconPackSource Whether the pack list came from the design system or an override.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theme-preview/spec.md
+	 * @spec openspec/specs/icon-packs/spec.md
+	 */
+	private function publishPreviewState(?array $activePreview, string $iconPackSource): void {
+		$this->initialState->provideInitialState('activePreview', ($activePreview ?? []));
+		$this->initialState->provideInitialState('iconPackSource', $iconPackSource);
+	}//end publishPreviewState()
 
 	/**
 	 * Resolve the read-only "active icon pack" indicator: the resolved

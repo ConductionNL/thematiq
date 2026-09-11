@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Theming\ImageManager;
+use OCA\Theming\Service\BackgroundService;
 use OCA\Theming\ThemingDefaults;
 use OCP\App\IAppManager;
 
@@ -195,17 +196,39 @@ class ThemingService {
 			}
 		}
 
+		// A plain background colour only shows when there is no background
+		// IMAGE: core paints its default image blob over the colour until the
+		// admin presses "Remove background image", which is exactly this
+		// app value. Set it here unless the same request also brings a
+		// background image, which applyImages() writes (and whose mime then
+		// overrides this) right after.
+		if (in_array('background_color', $updated, true) === true
+			&& (isset($params['background']) === false || $params['background'] === '')
+		) {
+			$this->themingDefaults->set(setting: 'backgroundMime', value: 'backgroundColor');
+		}
+
 		return $updated;
 	}//end applyColors()
 
 	/**
 	 * Apply image changes to the theming image manager.
 	 *
+	 * `ImageManager::updateImage()` only stores the FILE and hands back the
+	 * mime type it detected; the `{key}Mime` app value is the caller's job, and
+	 * it is what `ThemingDefaults::getLogo()` reads to decide whether a custom
+	 * image exists at all. Dropping the return value therefore looked like a
+	 * successful sync — `applyImages()` reported `["logo"]`, the file was
+	 * written, `ImageManager::hasImage()` said true — while every page kept
+	 * rendering the stock Nextcloud logo. Core's own
+	 * `ThemingController::uploadImage()` pairs the two calls the same way.
+	 *
 	 * @param array $params The request parameters.
 	 *
 	 * @return array The list of updated image keys.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function applyImages(array $params): array {
 		$updated = [];
@@ -214,13 +237,67 @@ class ThemingService {
 			if (isset($params[$imageKey]) === true && $params[$imageKey] !== '') {
 				$appPath = $this->appManager->getAppPath(appId: 'thematiq');
 				$fullPath = $appPath . '/' . $params[$imageKey];
-				$this->imageManager->updateImage(key: $imageKey, tmpFile: $fullPath);
+				$mime = $this->imageManager->updateImage(key: $imageKey, tmpFile: $fullPath);
+				$this->themingDefaults->set(setting: $imageKey . 'Mime', value: $mime);
 				$updated[] = $imageKey;
 			}
 		}
 
 		return $updated;
 	}//end applyImages()
+
+	/**
+	 * The settings a reset to stock Nextcloud undoes, in the order core's own
+	 * panel would: colours first, then the two image slots.
+	 *
+	 * @var string[]
+	 */
+	public const RESETTABLE = ['primary_color', 'background_color', 'logo', 'background'];
+
+	/**
+	 * Undo everything Thematiq may have synced into Nextcloud theming.
+	 *
+	 * Selecting the stock `nextcloud` set means "Nextcloud's own colours and
+	 * logo" — not "match the values in a manifest entry", which is what the
+	 * sync did before and why switching back to stock kept the previous set's
+	 * logo. Core's `ThemingDefaults::undo()` is the same call its panel's undo
+	 * arrows make: it deletes the app value, and for an image slot deletes the
+	 * stored image and its `{key}Mime`, so `getLogo()` falls back to core's own.
+	 *
+	 * @return array<int, string> The settings that were reset (always the full list; undo is idempotent).
+	 *
+	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 */
+	public function resetToDefaults(): array {
+		foreach (self::RESETTABLE as $setting) {
+			$this->themingDefaults->undo(setting: $setting);
+		}
+
+		return self::RESETTABLE;
+	}//end resetToDefaults()
+
+	/**
+	 * The colours core falls back to when nothing is configured, so a reset
+	 * dialog can show what "default" will look like before it is applied.
+	 *
+	 * Read from `BackgroundService`'s constants, not from
+	 * `ThemingDefaults::getDefaultColorPrimary()`: that method returns the
+	 * ADMIN-configured primary (the default for users), which is exactly the
+	 * value a reset removes.
+	 *
+	 * @return array{primary_color: string, background_color: string} The stock colours.
+	 *
+	 * @psalm-suppress UndefinedClass OCA\Theming is a first-party Nextcloud app,
+	 *                 present at runtime but not a composer dependency, so it is
+	 *                 absent during analysis — the same rationale this file
+	 *                 already carries for ThemingDefaults.
+	 */
+	public function getDefaultColors(): array {
+		return [
+			'primary_color' => BackgroundService::DEFAULT_COLOR,
+			'background_color' => BackgroundService::DEFAULT_BACKGROUND_COLOR,
+		];
+	}//end getDefaultColors()
 
 	/**
 	 * Get the current Nextcloud theming image manager.

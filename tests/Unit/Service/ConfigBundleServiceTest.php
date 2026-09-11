@@ -26,6 +26,7 @@ use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCP\App\IAppManager;
 use OCP\Http\Client\IClientService;
@@ -151,7 +152,8 @@ class ConfigBundleServiceTest extends TestCase {
 			$config,
 			$logger,
 			new ShippedTokenSetAuditService($contrast, $cssParser),
-			$cacheFactory
+			$cacheFactory,
+			new TokenSetVocabularyAuditService($cssParser)
 		);
 
 		$appThemingService = new AppThemingService($config, $appManager);

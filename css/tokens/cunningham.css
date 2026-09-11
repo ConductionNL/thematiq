@@ -56,9 +56,28 @@
 	 * as lasuite (shared systems/lasuite/fonts stylesheet). */
 	--nldesign-font-family: Marianne, Inter, sans-serif;
 
-	/* Border radius — Cunningham is a flat 4px system. */
-	--nldesign-border-radius: 4px;
+	/* Border radius — NEXTCLOUD'S SCALE, NOT CUNNINGHAM'S.
+	 *
+	 * Cunningham is a flat 4px system, and applying that flat value squared off
+	 * the Nextcloud chrome the way any near-square brand radius does (Zwolle's
+	 * 2px is the extreme case): app shell, navigation entries, search field,
+	 * buttons and modals all read a control radius where a stock instance
+	 * rounds them. This set is Nextcloud with Cunningham's COLOURS, so the
+	 * radius tokens carry Nextcloud 32's own scale (4 / 8 / 8 / 28 / 100) and
+	 * the brand's 4px stays available to NL Design System components through
+	 * the `--utrecht-*` bridge. Literals, not `var()` references:
+	 * overrides.css maps Nextcloud's scale FROM these tokens, so referencing it
+	 * back is a cycle. */
+	--nldesign-border-radius: 8px;
 	--nldesign-border-radius-small: 4px;
-	--nldesign-border-radius-large: 4px;
-	--nldesign-border-radius-rounded: 4px;
+	--nldesign-border-radius-large: 8px;
+	--nldesign-border-radius-rounded: 28px;
+	--nldesign-border-radius-pill: 100px;
+
+	/* Table headers — Nextcloud's, not NL Design System's: the shared theme
+	 * paints every `th` with the NLDS table-header colour, where a stock Files
+	 * list shows muted labels on no background. */
+	--nldesign-component-table-header-background-color: transparent;
+	--nldesign-component-table-header-color: var(--nldesign-color-text-muted);
+	--nldesign-component-table-header-font-weight: 400;
 }

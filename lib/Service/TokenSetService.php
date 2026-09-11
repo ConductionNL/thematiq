@@ -63,6 +63,42 @@ use Psr\Log\LoggerInterface;
 class TokenSetService {
 
 	/**
+	 * The shipped sets an admin may CHOOSE, as opposed to the ones the app
+	 * ships.
+	 *
+	 * THE SHIPPED DESIGN-SYSTEM SETS ARE NOT GOOD ENOUGH TO SHIP YET. That is
+	 * the whole reason this list exists, and it is a deliberate, temporary
+	 * narrowing of what the admin dropdown and the group-theming picker offer —
+	 * not an oversight and not a permanent policy.
+	 *
+	 * `css/tokens/` holds 47 files and all but a handful fail
+	 * `TokenSetVocabularyAuditService`: they carry a brand palette under names
+	 * nothing reads and declare none of the semantic vocabulary the theme
+	 * consumes, so picking one silently renders Rijkshuisstijl with, at best,
+	 * the wrong header. Offering those is offering a theme that does not work,
+	 * and an admin cannot tell from the dropdown which ones those are. So the
+	 * dropdown offers `nextcloud` — stock, correct by definition, and the
+	 * baseline every conversion is compared against — plus whatever the admin
+	 * has imported themselves.
+	 *
+	 * EACH SET COMES BACK AS IT BECOMES GOOD ENOUGH. The audit is the gate, not
+	 * a person's judgement: a set returns to this list once it passes
+	 * `TokenSetVocabularyAuditService` and its id leaves
+	 * `tests/Unit/fixtures/token-set-vocabulary-allowlist.json`, which is
+	 * shrink-only and must reach empty. At that point every shipped set is
+	 * selectable again and this constant is deleted rather than widened.
+	 *
+	 * Widening this list is one line. Nothing else needs to change, because
+	 * DISCOVERY is deliberately untouched: `getAvailableTokenSets()`, the
+	 * public catalogue, the capabilities, the metrics and both audits still see
+	 * every file on disk, because they answer what the app ships, not what may
+	 * be chosen.
+	 *
+	 * @var array<int, string>
+	 */
+	public const SELECTABLE_SHIPPED_SETS = ['nextcloud'];
+
+	/**
 	 * The app manager for resolving paths.
 	 *
 	 * @var IAppManager
@@ -92,6 +128,16 @@ class TokenSetService {
 	private ShippedTokenSetAuditService $audit;
 
 	/**
+	 * The vocabulary-completeness audit service — the second, independent
+	 * warning source: whether a shipped set defines the `--nldesign-*`
+	 * vocabulary the design system reads at all (as opposed to whether its
+	 * colours are legible, which is `$audit`'s job).
+	 *
+	 * @var TokenSetVocabularyAuditService
+	 */
+	private TokenSetVocabularyAuditService $vocabularyAudit;
+
+	/**
 	 * Distributed cache for the resolved WCAG level, keyed by set id.
 	 * Deliberately the same `ICache` prefix (`thematiq_wcag_level`)
 	 * `Capabilities` uses, so the public catalogue and the active-theme
@@ -112,6 +158,7 @@ class TokenSetService {
 	 * @param LoggerInterface $logger The logger.
 	 * @param ShippedTokenSetAuditService $audit The shipped-set contrast audit service.
 	 * @param ICacheFactory $cacheFactory Creates the distributed WCAG-level cache.
+	 * @param TokenSetVocabularyAuditService $vocabularyAudit The vocabulary-completeness audit service.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -119,12 +166,14 @@ class TokenSetService {
 		LoggerInterface $logger,
 		ShippedTokenSetAuditService $audit,
 		ICacheFactory $cacheFactory,
+		TokenSetVocabularyAuditService $vocabularyAudit,
 	) {
 		$this->appManager = $appManager;
 		$this->config = $config;
 		$this->logger = $logger;
 		$this->audit = $audit;
 		$this->wcagCache = $cacheFactory->createDistributed(prefix: 'thematiq_wcag_level');
+		$this->vocabularyAudit = $vocabularyAudit;
 	}//end __construct()
 
 	/**
@@ -203,6 +252,66 @@ class TokenSetService {
 
 		return $tokenSets;
 	}//end getAvailableTokenSets()
+
+	/**
+	 * Get the token sets an admin may select: `SELECTABLE_SHIPPED_SETS` plus
+	 * every admin-imported `custom-*` set.
+	 *
+	 * Three ids are never filtered out, whatever the list says, because
+	 * narrowing a picker must not be able to change what an instance is doing:
+	 *
+	 *  1. The set the instance is CURRENTLY running. Dropping it would render
+	 *     the panel with no option selected, and the first save would silently
+	 *     re-theme the instance to whatever happened to be first.
+	 *  2. Any set a per-group mapping points at, for the same reason — the
+	 *     group picker is fed from this list too, and a group's theme would
+	 *     disappear from the UI while still applying.
+	 *  3. Every `custom-*` set, unconditionally. The converter tells the admin
+	 *     their upload was "added and selectable"; a filter that then hid it
+	 *     would make the converter a liar.
+	 *
+	 * Read straight from `IConfig` rather than through `GroupThemingService`,
+	 * which depends on this service — the group key is a plain JSON array of
+	 * `{group, tokenSet}` and re-reading it here avoids a circular dependency.
+	 *
+	 * @return array<int, TokenSetEntry> The selectable token sets, same shape and order as `getAvailableTokenSets()`.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	public function getSelectableTokenSets(): array {
+		$all = $this->getAvailableTokenSets();
+
+		$keep = array_fill_keys(self::SELECTABLE_SHIPPED_SETS, true);
+
+		// (1) Whatever the instance is running right now.
+		$active = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
+		if ($active !== '') {
+			$keep[$active] = true;
+		}
+
+		// (2) Every set a group mapping points at.
+		$rawMapping = $this->config->getAppValue(Application::APP_ID, 'group_token_sets', '[]');
+		$decodedMapping = json_decode($rawMapping, true);
+		if (is_array($decodedMapping) === true) {
+			foreach ($decodedMapping as $entry) {
+				if (is_array($entry) === true && is_string($entry['tokenSet'] ?? null) === true) {
+					$keep[$entry['tokenSet']] = true;
+				}
+			}
+		}
+
+		$selectable = [];
+		foreach ($all as $tokenSet) {
+			$id = $tokenSet['id'];
+
+			// (3) An imported set is always selectable.
+			if (isset($keep[$id]) === true || str_starts_with($id, 'custom-') === true) {
+				$selectable[] = $tokenSet;
+			}
+		}
+
+		return $selectable;
+	}//end getSelectableTokenSets()
 
 	/**
 	 * Project the catalogue to the closed, non-admin, 5-field public shape:
@@ -319,6 +428,7 @@ class TokenSetService {
 	 * @return array<string, mixed> The token set entry with warnings applied, if any.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
 	 */
 	private function applyWarnings(array $tokenSet, array $meta, string $appPath, string $id, bool $isCustom): array {
 		if ($isCustom === true) {
@@ -339,6 +449,17 @@ class TokenSetService {
 			designSystem: $tokenSet['design_system'],
 			theming: ($tokenSet['theming'] ?? [])
 		);
+
+		// ...and the vocabulary verdict on the same channel: a set that never
+		// declares the tokens the design system reads renders as the
+		// defaults.css brand (Rijkshuisstijl), not as its own, which no
+		// contrast ratio can reveal. Appended after the contrast warnings so
+		// the existing ones keep their position in the list.
+		$warnings = array_merge(
+			$warnings,
+			$this->vocabularyAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
+		);
+
 		if (empty($warnings) === false) {
 			$tokenSet['warnings'] = $warnings;
 		}
