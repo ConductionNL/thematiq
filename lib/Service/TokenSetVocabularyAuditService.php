@@ -209,6 +209,17 @@ class TokenSetVocabularyAuditService {
 		$complete = ($auditable === false
 			|| ($missingRequired === [] && $foreign === [] && $primaryMismatch === false));
 
+		// A set whose design system never reads the --nldesign-* vocabulary has
+		// no findings to report, only an absent verdict. Leaving the computed
+		// lists in place said "26 required tokens are missing" about a set that
+		// was never judged, which reads as a defect rather than as a set the
+		// audit does not apply to.
+		if ($auditable === false) {
+			$missingRequired = [];
+			$foreign = [];
+			$primaryMismatch = false;
+		}
+
 		return [
 			'id' => $id,
 			'designSystem' => $designSystem,
