@@ -8,9 +8,6 @@
  */
 
 :root {
-	/* Logo image */
-	--nldesign-logo-url: url('../../img/logos/provincie-zuid-holland.svg');
-
 	/* NL Design tokens */
 	--nldesign-color-wit: #FFFFFF;
 	--nldesign-color-rood-35: hsl(350deg 75% 34%);
