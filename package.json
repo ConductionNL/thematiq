@@ -60,16 +60,17 @@
 		"@cyclonedx/cyclonedx-npm": "^6.0.1",
 		"@nextcloud/prettier-config": "^1.2.0",
 		"@openfun/cunningham-tokens": "^3.0.0",
-		"@playwright/test": "^1.60.0",
-		"@vitest/coverage-v8": "^4.1.11",
-		"@vitest/ui": "^4.1.11",
+		"@playwright/test": "^1.63.0",
+		"@vitest/coverage-v8": "^5.0.0",
+		"@vitest/ui": "^5.0.0",
 		"jsdom": "^30.0.1",
 		"prettier": "^3.9.6",
-		"stylelint": "^17.4.0",
+		"stylelint": "^17.15.0",
 		"stylelint-config-standard": "^40.0.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^7.0.2",
-		"vitest": "^4.1.11"
+		"vite": "^8.2.2",
+		"vitest": "^5.0.0"
 	},
 	"prettier": "@nextcloud/prettier-config"
 }
