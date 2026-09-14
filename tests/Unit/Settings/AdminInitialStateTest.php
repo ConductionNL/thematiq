@@ -23,6 +23,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
@@ -88,6 +89,9 @@ class AdminInitialStateTest extends TestCase {
 		);
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
+		// getForm() publishes the SELECTABLE list (the narrowed dropdown); the
+		// preview-name lookup still reads the full catalogue.
+		$tokenSetService->method('getSelectableTokenSets')->willReturn(self::TOKEN_SETS);
 		$tokenSetService->method('getAvailableTokenSets')->willReturn(self::TOKEN_SETS);
 
 		$emailThemingService = $this->createMock(EmailThemingService::class);
@@ -126,7 +130,8 @@ class AdminInitialStateTest extends TestCase {
 			$previewService,
 			$userSession,
 			$designSystemService,
-			$initialState
+			$initialState,
+			$this->createMock(IRequest::class)
 		);
 	}//end buildAdmin()
 

@@ -28,8 +28,9 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
-use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\ThemingService;
+use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -50,6 +51,11 @@ use RuntimeException;
  *
  * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - one endpoint family (import, list, export, delete) for one resource; the branches
+ *   are the order the validation has to run in, and splitting them across classes would spread that order out rather than simplify it.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - importing a theme genuinely needs all of them: convert, validate, parse, store, audit,
+ *   and — when the deleted set was the active one — undo what it pushed into core theming. Each is called here; none is passed through.
  */
 class CustomTokenSetController extends Controller {
 
@@ -75,13 +81,6 @@ class CustomTokenSetController extends Controller {
 	private CssParserService $cssParser;
 
 	/**
-	 * The W3C Design Tokens mapper.
-	 *
-	 * @var DesignTokensMapper
-	 */
-	private DesignTokensMapper $mapper;
-
-	/**
 	 * The localization service.
 	 *
 	 * @var IL10N
@@ -104,6 +103,23 @@ class CustomTokenSetController extends Controller {
 	private IConfig $config;
 
 	/**
+	 * The theme converter — runs BEFORE the validator on every upload and
+	 * paste, so an admin can hand this app the artefact a design system
+	 * actually publishes instead of pre-baked `--nldesign-*` CSS.
+	 *
+	 * @var TokenSetConverterService
+	 */
+	private TokenSetConverterService $converter;
+
+	/**
+	 * Nextcloud core theming, so deleting the ACTIVE set can undo what that set
+	 * pushed into core (primary colour, background, logo).
+	 *
+	 * @var ThemingService
+	 */
+	private ThemingService $themingService;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
@@ -111,10 +127,14 @@ class CustomTokenSetController extends Controller {
 	 * @param CustomTokenSetService $service The storage/lifecycle service.
 	 * @param CustomTokenSetValidator $validator The CSS validator.
 	 * @param CssParserService $cssParser The CSS parser service.
-	 * @param DesignTokensMapper $mapper The DTCG mapper.
 	 * @param IL10N $l The localization service.
 	 * @param ThemingAuditService $auditService The theming audit trail service.
 	 * @param IConfig $config The config service.
+	 * @param TokenSetConverterService $converter The theme converter, which runs before the validator.
+	 * @param ThemingService $themingService Core theming, for undoing a deleted set's sync.
+	 *
+	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else; the
+	 *   alternative is a service locator, which hides exactly these dependencies instead of removing any of them.
 	 */
 	public function __construct(
 		string $appName,
@@ -122,31 +142,62 @@ class CustomTokenSetController extends Controller {
 		CustomTokenSetService $service,
 		CustomTokenSetValidator $validator,
 		CssParserService $cssParser,
-		DesignTokensMapper $mapper,
 		IL10N $l,
 		ThemingAuditService $auditService,
 		IConfig $config,
+		TokenSetConverterService $converter,
+		ThemingService $themingService,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->service = $service;
 		$this->validator = $validator;
 		$this->cssParser = $cssParser;
-		$this->mapper = $mapper;
 		$this->l = $l;
 		$this->auditService = $auditService;
 		$this->config = $config;
+		$this->converter = $converter;
+		$this->themingService = $themingService;
 	}//end __construct()
 
 	/**
-	 * Upload a custom token set (CSS or W3C Design Tokens JSON).
+	 * Import a design-system theme (or a finished token set) as a custom set.
 	 *
-	 * Accepts a multipart upload with a `file` field and a `name` field. The
-	 * file is validated, mapped (JSON), whitelisted, re-serialised, stored as
-	 * css/tokens/custom-{slug}.css, and its contrast warnings are computed.
+	 * Accepts a `name` plus EITHER a multipart `file` or a `content` paste —
+	 * identical from the read onward, because a theme usually arrives as text
+	 * in a clipboard, not as a file on disk. The content is CONVERTED first
+	 * (`TokenSetConverterService`, which detects which of the four accepted
+	 * shapes it is from the content itself, never from the file name), and the
+	 * converter's emitted CSS is then put through the existing validator and
+	 * stored as `css/tokens/custom-{slug}.css`.
 	 *
-	 * @return JSONResponse `{ id, imported, skipped, warnings }` or an error.
+	 * Conversion runs BEFORE validation, never instead of it: the validator is
+	 * still the last gate on the bytes that get written.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
+	 * THE CONVERTER IS WIRED IN UNCONDITIONALLY, ON PURPOSE, AND IS NOT
+	 * FINISHED. There is no feature flag and no bypass, because the path it
+	 * replaces was strictly worse: it accepted only pre-baked `--nldesign-*`
+	 * CSS, so every other shape a design system publishes — a W3C Design Tokens
+	 * document, a Style Dictionary `tokens.json`, a built theme stylesheet — was
+	 * simply refused. The converter accepts all four and is already better than
+	 * what was here before, which is why it ships now rather than behind a flag
+	 * nobody would turn on.
+	 *
+	 * What is NOT yet done, and is tracked in
+	 * `openspec/changes/nlds-theme-converter`: the parity tests between this
+	 * runtime and its JS mirror, the paste box, the report rendering in the
+	 * admin panel, and regenerating the shipped sets. Until those land, expect
+	 * conversions to need review — the emitted file is validated, so nothing
+	 * unsafe is written, but "it stored something" is not yet "it stored the
+	 * right thing".
+	 *
+	 * @return JSONResponse `{ id, imported, skipped, warnings, report, counts, inputKind }` or an error.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one upload endpoint validates name, source, size, kind and logo before it may persist;
+	 *   each check is a branch, and splitting them hides the order they must run in.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - one upload endpoint validates name, source, size, kind and logo before it may persist; each
+	 *   check is a branch, and splitting them hides the order they must run in.
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function upload(): JSONResponse {
@@ -160,19 +211,146 @@ class CustomTokenSetController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('A token set name must contain at least one letter or digit.')], 422);
 		}
 
-		$file = $this->request->getUploadedFile(key: 'file');
-		$content = $this->readUpload(file: $file);
-		if ($content instanceof JSONResponse) {
-			return $content;
+		$read = $this->readInput();
+		if ($read instanceof JSONResponse) {
+			return $read;
 		}
 
-		$parsed = $this->mapUpload(fileName: (string)($file['name'] ?? ''), content: $content, slug: $slug);
+		try {
+			$converted = $this->converter->convert(
+				content: $read['content'],
+				slug: $slug,
+				displayName: $name,
+				sourceName: $read['sourceName'],
+				// An extracted logo lands under the SET's id, not the bare
+				// slug, so an uploaded theme named "Amsterdam" can never
+				// overwrite the shipped img/logos/amsterdam.svg.
+				assetName: CustomTokenSetService::ID_PREFIX . $slug
+			);
+		} catch (RuntimeException $e) {
+			$code = $e->getCode();
+			if ($code < 400 || $code > 599) {
+				$code = 422;
+			}
+
+			return new JSONResponse(['error' => $e->getMessage()], $code);
+		}
+
+		// What the ADMIN'S DOCUMENT yielded, reported by the converter from the
+		// end of its input parse — not the size of the emitted file. The
+		// converter fills every unmapped target from the mapping table's
+		// fallbacks, so the emitted file is always the complete semantic layer
+		// and says nothing about what was uploaded.
+		$imported = (int)($converted['imported'] ?? 0);
+		$skipped = $this->skippedFrom(report: $converted['report']);
+
+		// Zero yield is a fixable mistake on the admin's side, so it is refused
+		// WITH the findings rather than with a bare message.
+		if ($imported === 0) {
+			return new JSONResponse(
+				[
+					'error' => $this->l->t(
+						'Nothing in this document maps onto a Nextcloud token. The skipped list'
+						. ' shows what was found and why each token could not be used.'
+					),
+					'imported' => 0,
+					'skipped' => $skipped,
+					'errors' => $converted['errors'],
+				],
+				422
+			);
+		}
+
+		// The validator sees the EMITTED file, which is the thing being stored.
+		$parsed = $this->mapFromCss(content: $converted['css'], slug: $slug);
 		if ($parsed instanceof JSONResponse) {
 			return $parsed;
 		}
 
+		// What the admin's document yielded, and what of it could not be used.
+		// Both describe the UPLOAD, so they replace the validator's split, which
+		// describes the emitted file.
+		$parsed['imported'] = $imported;
+		$parsed['skipped'] = $skipped;
+
+		$parsed['css'] = $converted['css'];
+		$parsed['theming'] = ($converted['manifestEntry']['theming'] ?? []);
+		$parsed['logoAsset'] = ($converted['logoAsset'] ?? null);
+		$parsed['report'] = $converted['report'];
+		$parsed['counts'] = $converted['counts'];
+		$parsed['inputKind'] = $converted['inputKind'];
+		$parsed['reasons'] = $this->converter->getReasons();
+		if (isset($converted['manifestEntry']['upstreamVersion']) === true) {
+			$parsed['version'] = $converted['manifestEntry']['upstreamVersion'];
+		}
+
+		// DTCG-only diagnostics, unchanged in shape from the pre-converter
+		// upload path: `$deprecated` notices about the SOURCE document, and
+		// hard mapping errors. Both stay separate from the conversion report.
+		if (empty($converted['importWarnings']) === false) {
+			$parsed['importWarnings'] = $converted['importWarnings'];
+		}
+
+		if (empty($converted['errors']) === false) {
+			$parsed['errors'] = $converted['errors'];
+		}
+
 		return $this->persist(name: $name, parsed: $parsed);
 	}//end upload()
+
+	/**
+	 * Read the import payload from either the file picker or the paste box.
+	 *
+	 * Both surfaces enforce the same 512 KB limit, and an empty file picker and
+	 * an empty textarea are deliberately the same error: from here on the two
+	 * paths are indistinguishable, so they must fail identically too.
+	 *
+	 * @return array{content: string, sourceName: string|null}|JSONResponse The payload, or the error response.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function readInput() {
+		$file = $this->request->getUploadedFile(key: 'file');
+
+		if (empty($file) === false && isset($file['tmp_name']) === true) {
+			$content = $this->readUpload(file: $file);
+			if ($content instanceof JSONResponse) {
+				return $content;
+			}
+
+			$fileName = trim((string)($file['name'] ?? ''));
+			if ($fileName === '') {
+				$fileName = null;
+			}
+
+			return [
+				'content' => $content,
+				'sourceName' => $fileName,
+			];
+		}
+
+		$pasted = (string)($this->request->getParam('content', ''));
+		if (trim($pasted) === '') {
+			return new JSONResponse(
+				['error' => $this->l->t('Choose a file or paste the contents of a theme file.')],
+				400
+			);
+		}
+
+		if (strlen($pasted) > CustomTokenSetValidator::MAX_SIZE) {
+			return new JSONResponse(['error' => $this->l->t('Pasted content exceeds the 512 KB size limit.')], 413);
+		}
+
+		$sourceName = trim((string)($this->request->getParam('sourceName', '')));
+		if ($sourceName === '') {
+			$sourceName = null;
+		}
+
+		return [
+			'content' => $pasted,
+			'sourceName' => $sourceName,
+		];
+	}//end readInput()
 
 	/**
 	 * Validate the uploaded file envelope and read its content.
@@ -201,25 +379,34 @@ class CustomTokenSetController extends Controller {
 	}//end readUpload()
 
 	/**
-	 * Route the upload to the JSON or CSS mapper based on its file name.
+	 * The tokens the conversion could not use, in the `{path, reason}` shape the
+	 * admin panel groups by reason.
 	 *
-	 * @param string $fileName The uploaded file name.
-	 * @param string $content The raw upload content.
-	 * @param string $slug The derived slug (for `--{slug}-*` extras).
+	 * Read from the same report the count comes from, so the number and the
+	 * breakdown can never disagree with one another.
 	 *
-	 * @return array{accepted: array<string, string>, skipped: string[]}|JSONResponse
+	 * @param array<int, array<string, mixed>> $report The conversion report.
+	 *
+	 * @return array<int, array{path: string, reason: string|null}> The skipped tokens.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function mapUpload(string $fileName, string $content, string $slug) {
-		$lower = strtolower($fileName);
-		$extension = pathinfo($lower, PATHINFO_EXTENSION);
-		if ($extension === 'json' || str_ends_with($lower, '.tokens.json') === true) {
-			return $this->mapFromJson(content: $content);
+	private function skippedFrom(array $report): array {
+		$skipped = [];
+
+		foreach ($report as $entry) {
+			if ((string)($entry['action'] ?? '') !== 'skipped') {
+				continue;
+			}
+
+			$skipped[] = [
+				'path' => (string)($entry['source'] ?? ''),
+				'reason' => ($entry['reason'] ?? null),
+			];
 		}
 
-		return $this->mapFromCss(content: $content, slug: $slug);
-	}//end mapUpload()
+		return $skipped;
+	}//end skippedFrom()
 
 	/**
 	 * Parse and map a CSS upload into the accepted/skipped split.
@@ -254,71 +441,6 @@ class CustomTokenSetController extends Controller {
 	}//end mapFromCss()
 
 	/**
-	 * Parse and map a W3C Design Tokens JSON upload into the accepted/skipped
-	 * split, plus the full DTCG diagnostics (structured skips, errors,
-	 * deprecation warnings, declared package version).
-	 *
-	 * @param string $content The raw JSON upload.
-	 *
-	 * @return array{
-	 *     accepted: array<string, string>,
-	 *     skipped: array<int, array{path: string, reason: string, detail?: string}>,
-	 *     errors: array<int, array{path: string, reason: string, detail?: string}>,
-	 *     importWarnings: array<int, array{path: string, message: string|null}>,
-	 *     version: string|null
-	 * }|JSONResponse The split plus diagnostics, or a hard-failure error response.
-	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
-	 * @spec openspec/specs/custom-token-sets/spec.md
-	 */
-	private function mapFromJson(string $content) {
-		$document = json_decode($content, true);
-		if (is_array($document) === false) {
-			return new JSONResponse(['error' => $this->l->t('The uploaded file is not valid JSON.')], 422);
-		}
-
-		$mapped = $this->mapper->map(document: $document);
-
-		// The mapped declarations are already --nldesign-* targets, but pass
-		// them through the value blacklist so JSON cannot smuggle a forbidden
-		// value into the served CSS.
-		$accepted = [];
-		foreach ($mapped['declarations'] as $name => $value) {
-			if ($this->validator->isForbiddenValue(value: (string)$value) === true) {
-				return new JSONResponse(
-					['error' => $this->l->t('Mapped token %s contains a forbidden value.', [$name])],
-					422
-				);
-			}
-
-			$accepted[$name] = (string)$value;
-		}
-
-		if (empty($accepted) === true) {
-			// Zero-yield: reject actionably, carrying the full structured
-			// diagnostics so the admin can see why nothing mapped.
-			return new JSONResponse(
-				[
-					'error' => $this->l->t('No recognized design tokens were found in the uploaded file.'),
-					'imported' => 0,
-					'skipped' => $mapped['skipped'],
-					'errors' => $mapped['errors'],
-					'importWarnings' => $mapped['warnings'],
-				],
-				422
-			);
-		}
-
-		return [
-			'accepted' => $accepted,
-			'skipped' => $mapped['skipped'],
-			'errors' => $mapped['errors'],
-			'importWarnings' => $mapped['warnings'],
-			'version' => $mapped['packageVersion'],
-		];
-	}//end mapFromJson()
-
-	/**
 	 * Store the accepted declarations and build the upload response.
 	 *
 	 * The response's `warnings` key is always the WCAG contrast warnings
@@ -338,6 +460,9 @@ class CustomTokenSetController extends Controller {
 	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - persisting is a sequence of independent optional steps (dark variant, logo, manifest),
+	 *   each guarded.
 	 */
 	private function persist(string $name, array $parsed): JSONResponse {
 		try {
@@ -346,7 +471,12 @@ class CustomTokenSetController extends Controller {
 				description: trim((string)($this->request->getParam('description', ''))),
 				declarations: $parsed['accepted'],
 				version: ($parsed['version'] ?? null),
-				importWarnings: ($parsed['importWarnings'] ?? [])
+				importWarnings: ($parsed['importWarnings'] ?? []),
+				// The converter's own file, so its four sections and provenance
+				// block are what lands on disk rather than a flat re-serialise.
+				css: ($parsed['css'] ?? null),
+				theming: ($parsed['theming'] ?? []),
+				logoAsset: ($parsed['logoAsset'] ?? null)
 			);
 		} catch (RuntimeException $e) {
 			$code = $e->getCode();
@@ -368,15 +498,15 @@ class CustomTokenSetController extends Controller {
 			context: [
 				'id' => $result['id'],
 				'name' => $name,
-				'declarationCount' => count($parsed['accepted']),
+				'declarationCount' => (int)($parsed['imported'] ?? 0),
 				'contentHash' => $contentHash,
 			]
 		);
 
 		$response = [
 			'id' => $result['id'],
-			'imported' => count($parsed['accepted']),
-			'skipped' => $parsed['skipped'],
+			'imported' => (int)($parsed['imported'] ?? 0),
+			'skipped' => ($parsed['skipped'] ?? []),
 			'warnings' => $result['warnings'],
 		];
 
@@ -391,6 +521,17 @@ class CustomTokenSetController extends Controller {
 		if (array_key_exists('version', $parsed) === true) {
 			$response['version'] = $parsed['version'];
 		}
+
+		// The conversion report: what the theme asked for that Nextcloud will
+		// not do, and why. `reasons` carries the human sentence per code so the
+		// panel does not have to keep its own copy of the mapping table.
+		foreach (['report', 'counts', 'inputKind', 'reasons'] as $key) {
+			if (isset($parsed[$key]) === true) {
+				$response[$key] = $parsed[$key];
+			}
+		}
+
+		$response['selectable'] = true;
 
 		return new JSONResponse($response);
 	}//end persist()
@@ -458,11 +599,30 @@ class CustomTokenSetController extends Controller {
 			$contentHash = 'sha256:' . substr(hash(algo: 'sha256', data: $servedCss), 0, 12);
 		}
 
+		// Deleting the ACTIVE set puts the instance back on stock, and stock
+		// means Nextcloud's own colours and logo — not the deleted set's,
+		// stranded in core theming with no set left to explain them. The service
+		// resets the `token_set` app value; the sync it pushed into core has to
+		// be undone here, exactly as selecting the stock set does.
+		$activeReset = ($activeBefore === $id);
+		if ($activeReset === true) {
+			$this->themingService->resetToDefaults();
+
+			// Nothing is synced any more, so nothing is remembered as synced.
+			foreach (['logo', 'background'] as $imageKey) {
+				$this->config->deleteAppValue(
+					Application::APP_ID,
+					SettingsController::SYNCED_IMAGE_PREFIX . $imageKey
+				);
+			}
+		}
+
 		$this->auditService->log(
 			action: 'custom_set_deleted',
 			context: [
 				'id' => $id,
-				'activeReset' => ($activeBefore === $id),
+				'activeReset' => $activeReset,
+				'themingReset' => $activeReset,
 				'contentHash' => $contentHash,
 			]
 		);

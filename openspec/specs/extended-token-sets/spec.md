@@ -80,10 +80,11 @@ The system MUST dynamically discover available token sets from the filesystem in
 - AND each entry MUST include `id`, `name`, and `description` from the manifest
 
 ### Requirement: Admin Settings Dynamic Dropdown
-The admin settings page MUST display all available token sets dynamically, not a hardcoded list.
+The admin settings page MUST build its dropdown dynamically from what is on disk, never from a hardcoded list. Which of those discovered sets are OFFERED is a separate decision — see the token-sets spec, "Only Fully Functional Brands Are Selectable" — and today that decision leaves `nextcloud` plus whatever the instance is already using. The requirement here is that the list is computed, not that it is complete.
 
 #### Scenario: Settings page shows all token sets
 - GIVEN 48 token set CSS files exist in `css/tokens/`
 - WHEN the admin opens the nldesign settings
-- THEN the dropdown MUST list all 48 organizations with their display names
+- THEN the dropdown MUST list every SELECTABLE set with its display name, resolved at request time from the discovered catalogue
+- AND a set that is offered only because the instance is running it MUST appear, which is what distinguishes a computed list from a hardcoded one
 - AND the currently selected token set MUST be highlighted

@@ -176,7 +176,14 @@
 	/* --navigation-width: intentionally not overridden — 300px, NC layout dependent */
 	/* --sidebar-min-width: intentionally not overridden — NC layout dependent */
 	/* --sidebar-max-width: intentionally not overridden — NC layout dependent */
-	--body-container-radius: var(--nldesign-border-radius) !important;
+	/* --body-container-radius: intentionally not overridden — it is a CONTAINER
+	 * radius, like `--border-radius-container` and `-container-large` above,
+	 * and this used to map it to the brand's CONTROL radius. On a brand whose
+	 * controls are near-square (Zwolle: 2px) that squared off the whole app shell,
+	 * because `#content` draws its `border-radius` from this variable. Left to
+	 * Nextcloud, the shell keeps stock geometry: the base value is 0 and only
+	 * the two TOP corners are rounded, from `--border-radius-large` — which IS
+	 * themed above, so the brand still decides how round the shell reads. */
 	/* --body-container-margin: intentionally not overridden — NC layout dependent */
 	/* --body-height: intentionally not overridden — NC layout dependent */
 	/* --breakpoint-mobile: intentionally not overridden — NC responsive design */
