@@ -1,65 +1,91 @@
-# PHPStan baseline — generated post-canonical-sync (Phase 2 fleet rollout).
-# Cleanup tracked in Codeberg issue #98 (pre-migration, not migrated to GitHub).
-# Notable: absorbs OCA\Theming\ImageManager / ThemingDefaults references from
-# lib/Service/ThemingService.php. OCA\Theming is a server-internal namespace
-# (not exposed via OCP); if other apps baseline the same family, consider
-# promoting an OCA\\Theming\\ ignore pattern to canonical phpstan.neon.
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to method getImageUrl\\(\\) on an unknown class OCA\\\\Theming\\\\ImageManager\\.$#"
+			message: '#^Call to method getImageUrl\(\) on an unknown class OCA\\Theming\\ImageManager\.$#'
+			identifier: class.notFound
 			count: 2
 			path: lib/Controller/SettingsController.php
 
 		-
-			message: "#^Call to method hasImage\\(\\) on an unknown class OCA\\\\Theming\\\\ImageManager\\.$#"
+			message: '#^Call to method hasImage\(\) on an unknown class OCA\\Theming\\ImageManager\.$#'
+			identifier: class.notFound
 			count: 2
 			path: lib/Controller/SettingsController.php
 
 		-
-			message: "#^Call to method set\\(\\) on an unknown class OCA\\\\Theming\\\\ThemingDefaults\\.$#"
+			message: '#^Access to constant DEFAULT_BACKGROUND_COLOR on an unknown class OCA\\Theming\\Service\\BackgroundService\.$#'
+			identifier: class.notFound
 			count: 1
 			path: lib/Service/ThemingService.php
 
 		-
-			message: "#^Call to method updateImage\\(\\) on an unknown class OCA\\\\Theming\\\\ImageManager\\.$#"
+			message: '#^Access to constant DEFAULT_COLOR on an unknown class OCA\\Theming\\Service\\BackgroundService\.$#'
+			identifier: class.notFound
 			count: 1
 			path: lib/Service/ThemingService.php
 
 		-
-			message: "#^Method OCA\\\\Thematiq\\\\Service\\\\ThemingService\\:\\:getImageManager\\(\\) has invalid return type OCA\\\\Theming\\\\ImageManager\\.$#"
+			message: '#^Call to method set\(\) on an unknown class OCA\\Theming\\ThemingDefaults\.$#'
+			identifier: class.notFound
+			count: 3
+			path: lib/Service/ThemingService.php
+
+		-
+			message: '#^Call to method undo\(\) on an unknown class OCA\\Theming\\ThemingDefaults\.$#'
+			identifier: class.notFound
+			count: 1
+			path: lib/Service/ThemingService.php
+
+		-
+			message: '#^Call to method updateImage\(\) on an unknown class OCA\\Theming\\ImageManager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: lib/Service/ThemingService.php
+
+		-
+			message: '#^Method OCA\\Thematiq\\Service\\ThemingService\:\:getImageManager\(\) has invalid return type OCA\\Theming\\ImageManager\.$#'
+			identifier: class.notFound
 			count: 2
 			path: lib/Service/ThemingService.php
 
 		-
-			message: "#^Parameter \\$imageManager of method OCA\\\\Thematiq\\\\Service\\\\ThemingService\\:\\:__construct\\(\\) has invalid type OCA\\\\Theming\\\\ImageManager\\.$#"
+			message: '#^Parameter \$imageManager of method OCA\\Thematiq\\Service\\ThemingService\:\:__construct\(\) has invalid type OCA\\Theming\\ImageManager\.$#'
+			identifier: class.notFound
 			count: 2
 			path: lib/Service/ThemingService.php
 
 		-
-			message: "#^Parameter \\$themingDefaults of method OCA\\\\Thematiq\\\\Service\\\\ThemingService\\:\\:__construct\\(\\) has invalid type OCA\\\\Theming\\\\ThemingDefaults\\.$#"
+			message: '#^Parameter \$themingDefaults of method OCA\\Thematiq\\Service\\ThemingService\:\:__construct\(\) has invalid type OCA\\Theming\\ThemingDefaults\.$#'
+			identifier: class.notFound
 			count: 2
 			path: lib/Service/ThemingService.php
 
 		-
-			message: "#^Property OCA\\\\Thematiq\\\\Service\\\\ThemingService\\:\\:\\$imageManager has unknown class OCA\\\\Theming\\\\ImageManager as its type\\.$#"
+			message: '#^Property OCA\\Thematiq\\Service\\ThemingService\:\:\$imageManager has unknown class OCA\\Theming\\ImageManager as its type\.$#'
+			identifier: class.notFound
 			count: 2
 			path: lib/Service/ThemingService.php
 
 		-
-			message: "#^Property OCA\\\\Thematiq\\\\Service\\\\ThemingService\\:\\:\\$themingDefaults has unknown class OCA\\\\Theming\\\\ThemingDefaults as its type\\.$#"
+			message: '#^Property OCA\\Thematiq\\Service\\ThemingService\:\:\$themingDefaults has unknown class OCA\\Theming\\ThemingDefaults as its type\.$#'
+			identifier: class.notFound
 			count: 2
 			path: lib/Service/ThemingService.php
 
 		-
-			message: "#^Property OCA\\\\Thematiq\\\\Settings\\\\Admin\\:\\:\\$l is never read, only written\\.$#"
+			message: '#^Method OCA\\Thematiq\\Service\\TokenSetConverterService\:\:runRules\(\) never assigns null to &\$manifest so it can be removed from the by\-ref type\.$#'
+			identifier: parameterByRef.unusedType
+			count: 1
+			path: lib/Service/TokenSetConverterService.php
+
+		-
+			message: '#^Parameter &\$report by\-ref type of method OCA\\Thematiq\\Service\\TokenSetConverterService\:\:runRules\(\) expects array\<int, array\{source\: string, target\: string, action\: string, reason\: string\|null, value\: string\|null, original\?\: string\}\>, non\-empty\-array\<int, array\{source\: string, target\: string, action\: string, reason\: mixed, value\: string\|null, original\?\: string\}\> given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: lib/Service/TokenSetConverterService.php
+
+		-
+			message: '#^Property OCA\\Thematiq\\Settings\\Admin\:\:\$l is never read, only written\.$#'
+			identifier: property.onlyWritten
 			count: 1
 			path: lib/Settings/Admin.php
-
-		# getEnabledApps() exists on the concrete OC\App\AppManager at runtime but
-		# is not declared on the OCP\App\IAppManager stub shipped by nextcloud/ocp.
-		# Valid runtime call; the type gap is a stub limitation, not a real defect.
-		-
-			message: "#^Call to an undefined method OCP\\\\App\\\\IAppManager\\:\\:getEnabledApps\\(\\)\\.$#"
-			count: 1
-			path: lib/Service/AppThemingService.php

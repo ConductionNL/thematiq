@@ -34,19 +34,39 @@ label {
 	background-color: transparent !important;
 }
 
-/* App navigation as card with margin */
+/* App navigation — opaque surface, Nextcloud's own layout.
+ *
+ * This deliberately sets NO margin and NO border-radius. Nextcloud's `#content`
+ * is `display: flex` with `border-radius: var(--body-container-radius)` and
+ * `overflow: clip`, and carries no background of its own: the navigation and
+ * the app content sit flush inside it as two panels that the container clips
+ * into one rounded rectangle.
+ *
+ * A `margin-right: 30px !important` here used to open 30px of empty flex space
+ * inside that container. Because `#content` has no background, the page
+ * background (`--color-background-plain`) showed straight through it as a blue
+ * vertical strip between the menu and the detail pane — which is not the
+ * Nextcloud layout, and is not a look any brand asked for. A per-panel
+ * `border-radius` had the same class of problem: the container already rounds
+ * both panels together, so rounding each child again cut notches at the seam.
+ * The container's own radius is left to Nextcloud (see overrides.css, where
+ * `--body-container-radius` is deliberately NOT overridden): stock rounds only
+ * the two TOP corners, from the themed `--border-radius-large`, so the brand
+ * still decides how round the shell reads without a control radius squaring it
+ * off.
+ */
 #app-navigation,
 .app-navigation,
 #app-navigation-vue {
 	background: var(--color-main-background) !important;
 	background-color: var(--color-main-background) !important;
-	margin-right: 30px !important;
-	border-radius: var(--nldesign-border-radius) !important;
-}
 
-#app-navigation.app-navigation--close,
-.app-navigation.app-navigation--close {
-	margin-right: 0 !important;
+	/* Navigation entries are chrome, not content links: they take the body text
+	 * colour, and the selected entry takes the primary colour's paired
+	 * foreground. See NAVIGATION ENTRIES below for why the colour travels as an
+	 * inherited property instead of a `color` rule, and why it is declared here
+	 * rather than in its own block (one selector, one rule). */
+	--nldesign-color-on-surface: var(--color-main-text);
 }
 
 /* Navigation toggle button */
@@ -60,19 +80,32 @@ button.app-navigation-toggle {
 	min-height: var(--default-clickable-area) !important;
 }
 
-/* App content as card */
+/* App content — opaque surface, no own radius (see the navigation rule above:
+ * `#content` clips both panels into one rounded container). */
 #app-content,
 .app-content,
 #app-content-vue,
 .app-content-wrapper {
 	background: var(--color-main-background) !important;
 	background-color: var(--color-main-background) !important;
-	border-radius: var(--nldesign-border-radius) !important;
 }
 
-/* Dashboard apps — transparent background */
-body #content #app-content-vue.app-content,
-body #content main.app-content {
+/* The DASHBOARD's content panel is transparent, so the instance's background
+ * image shows through it — and ONLY the dashboard's. `#content` carries the
+ * current app as a class (`class="app-<appid>"`,
+ * core/templates/layout.user.php), so the rule is scoped with it.
+ *
+ * Unscoped, `body #content main.app-content` matched every Vue app's main
+ * element, the Files app included, whose panel is exactly `<main
+ * id="app-content-vue" class="app-content">`. That panel was therefore
+ * transparent while `#content` above is transparent too, so the PAGE background
+ * showed through everywhere the file list did not paint: as a coloured line
+ * down the seam between the navigation and the content, as a wedge in the notch
+ * of the container's rounded top corner, and as a frame along the right and
+ * bottom edges. The two panels are meant to read as one sheet clipped by
+ * `#content`; that is only true while both of them are opaque. */
+body #content.app-dashboard #app-content-vue.app-content,
+body #content.app-dashboard main.app-content {
 	background: transparent !important;
 	background-color: transparent !important;
 }
@@ -95,30 +128,39 @@ header#header .header-menu__trigger {
 }
 
 /* ============================================
-   HEADER-END ICONS (visible on white background)
+   HEADER GLYPHS — coloured, not filtered
    ============================================ */
 
-#header .header-end svg,
+/* Nextcloud ships every header glyph WHITE, because its own header is a dark
+   brand colour. On a light header (Rijkshuisstijl, Amsterdam and Cunningham all
+   paint it #ffffff) they would be white-on-white, so they are recoloured here. These glyphs are
+   Material SVGs whose `fill` resolves to `currentColor`, so setting `color`
+   recolours them exactly to the set's header text — and colour INHERITS, so
+   a descendant can opt back out.
+
+   An earlier revision used `filter: invert(1) brightness(0) contrast(100)`
+   on every header-end svg, icon and img. That was wrong twice over, the same
+   way the lasuite bundle documents it: `brightness(0)` forces every glyph to
+   PURE BLACK regardless of the header-text token, and a filter on an ancestor
+   rasterises its ENTIRE subtree — `.button-vue__icon` wraps the user-menu
+   trigger, so the avatar inside it was flattened to a solid black square and
+   no descendant `filter: none` could undo that. */
 #header .header-end .button-vue__icon,
 #header .header-end .icon-vue,
-#header .header-end img {
-	filter: invert(1) brightness(0) contrast(100) !important;
-	-webkit-filter: invert(1) brightness(0) contrast(100) !important;
+#header .header-end svg,
+#header .header-end .unified-search__button,
+#header .header-start .button-vue__icon,
+#header .header-start .icon-vue,
+#header .header-start svg,
+#header .app-menu__waffle,
+#header .app-menu__waffle svg {
+	color: var(--nldesign-color-header-text) !important;
+	filter: none !important;
+	-webkit-filter: none !important;
 	opacity: 1 !important;
 }
 
-/* Exceptions: don't invert avatar and user-status */
-#header .header-end .avatardiv img {
-	filter: none !important;
-	-webkit-filter: none !important;
-}
-
-#header .header-end .user-status-icon svg {
-	filter: none !important;
-	-webkit-filter: none !important;
-}
-
-/* Remove gradient masks from header-end icons */
+/* Remove gradient masks from header-end icons so the fill shows */
 #header .header-end .icon-vue,
 #header .header-end .button-vue__icon,
 #header .header-end [class*='icon'] {
@@ -137,9 +179,12 @@ header#header .header-menu__trigger {
 	-webkit-mask-image: none !important;
 }
 
-/* Force solid colors on header-end SVG icons */
-#header .header-end svg,
-#header .header-end svg * {
+/* Force solid colors on header-end SVG icons — except inside the avatar and the
+   user-status badge, which are not chrome and carry their own colours. Without
+   the exclusion this rule outranks the avatar protection below on specificity
+   ((1,1,2) against (1,1,0)) and repaints them with the header foreground. */
+#header .header-end svg:not([class*='avatar' i] svg):not(.user-status-icon svg),
+#header .header-end svg:not([class*='avatar' i] svg):not(.user-status-icon svg) * {
 	stop-color: currentColor !important;
 	fill: currentColor !important;
 }
@@ -149,15 +194,44 @@ header#header .header-menu__trigger {
 	display: none !important;
 }
 
-/* Preserve avatar and user-status icon colors */
-#header .header-end .avatardiv svg,
-#header .header-end .avatardiv svg *,
-#header .header-end .user-status-icon svg,
-#header .header-end .user-status-icon svg * {
-	stop-color: unset !important;
-	fill: unset !important;
+/* The avatar carries Nextcloud's per-user generated colour and the user's own
+   photo, and the user-status badge its own status colours: neither inherits the
+   tint above. `color` is scoped back to the initials so they stay legible on
+   the generated background.
+
+   `filter: none` is load-bearing: core's `.header-menu__trigger img { filter:
+   var(--background-image-invert-if-bright) }` inverts the avatar photo whenever
+   the PAGE background is bright, which has nothing to do with the header the
+   photo actually sits on.
+
+   It no longer forces `fill`/`stop-color`. `fill: unset` resolves to `inherit`
+   (fill is an inherited property) and walks up to the initial value, BLACK — so
+   the status badge, whose own markup says
+   `fill="var(--user-status-color-online, var(--color-success, #2d7b41))"`,
+   rendered as a black disc instead of the green check. The glyph rules above
+   exclude this subtree, so there is nothing left here to undo. */
+#header .avatardiv,
+#header .avatardiv *,
+#header [class*='avatar' i],
+#header [class*='avatar' i] *,
+#header .user-status-icon,
+#header .user-status-icon * {
 	filter: none !important;
 	-webkit-filter: none !important;
+}
+
+/* White is for the INITIALS drawn on the avatar plate. The user-status badge
+   sits on that plate and matches `[class*='avatar' i] *` too
+   (`.avatardiv__user-status`), but it is a status indicator with its own
+   colours on its own light disc — white is the one colour it must not be
+   forced to. It is excluded, and keeps whatever Nextcloud paints it. */
+#header .avatardiv,
+#header .avatardiv *:not([class*='user-status' i]):not([class*='user-status' i] *),
+#header [class*='avatar' i],
+#header
+	[class*='avatar' i]
+	*:not([class*='user-status' i]):not([class*='user-status' i] *) {
+	color: #ffffff !important;
 }
 
 /* ============================================
@@ -314,6 +388,48 @@ a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
 }
 
 /* ============================================
+   NAVIGATION ENTRIES — chrome, not content links
+   ============================================ */
+
+/*
+ * The entries in the app navigation are `<a>` elements, but they are chrome:
+ * a column of destinations Nextcloud paints in the body text colour, with the
+ * selected one filled solid with the primary colour and labelled in that
+ * colour's paired foreground.
+ *
+ * The blanket rule directly above hands every `<a>` the LINK colour, and the
+ * typography section in theme.css underlines every `<a>`, so a themed sidebar
+ * rendered as a column of underlined brand-coloured links, in which the
+ * selected entry was no longer distinguishable from the rest. Stock Nextcloud
+ * underlines nothing in its navigation, and neither do the NL Design sets that
+ * declare `--utrecht-link-text-decoration: none`.
+ *
+ * The colour is corrected through `--nldesign-color-on-surface` — the same
+ * opt-out the dashboard uses below — rather than another `color` rule, because
+ * a custom property INHERITS: one declaration on the navigation reaches every
+ * label, caption and counter inside it without competing on specificity, and
+ * the active entry opts into its own paired foreground the same way. The
+ * navigation's own declaration lives in the CONTAINER OVERRIDES rule at the top
+ * of this file, which already carries that exact selector.
+ */
+#app-navigation li.active,
+#app-navigation .app-navigation-entry.active,
+#app-navigation-vue .app-navigation-entry.active,
+.app-navigation .app-navigation-entry.active {
+	--nldesign-color-on-surface: var(--color-primary-element-text);
+}
+
+/* Underlining is for links in prose. `a { text-decoration: underline }` in
+   theme.css carries `!important` at specificity (0,0,1), so the navigation
+   needs an id-level rule of its own to opt out. */
+#app-navigation a,
+#app-navigation-vue a,
+.app-navigation a,
+#app-settings a {
+	text-decoration: none !important;
+}
+
+/* ============================================
    ON-SURFACE PAIRINGS (WCAG AA)
    ============================================ */
 
@@ -379,11 +495,19 @@ a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
    BUTTON TEXT COLOR FIXES
    ============================================ */
 
-.button-vue--vue-primary,
-.button-vue--vue-primary *,
-.button-vue--vue-primary span,
-.button-vue--vue-primary .button-vue__text,
-.button-vue--vue-primary .button-vue__wrapper,
+/* `:not([data-admin-theming-setting-color-picker])` throughout: Nextcloud's own
+ * colour pickers (Settings › Theming) are NcButtons of type primary whose
+ * background IS the colour being chosen, with a text colour core computes for
+ * legibility. Painting them — or their children — the theme's primary text
+ * colour makes the hex label vanish on a pale swatch. See the longer note on
+ * the matching rule in theme.css. */
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) span,
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__text,
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__wrapper,
 button.primary,
 button.primary *,
 button.primary span,
@@ -392,12 +516,12 @@ a.primary,
 a.primary *,
 .button.primary,
 .button.primary *,
-.button-vue.button-vue--vue-primary,
-.button-vue.button-vue--vue-primary *,
-button[class*='primary'],
-button[class*='primary'] *,
-.button-vue[class*='primary'],
-.button-vue[class*='primary'] * {
+.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
+.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
+button[class*='primary']:not([data-admin-theming-setting-color-picker]),
+button[class*='primary']:not([data-admin-theming-setting-color-picker]) *,
+.button-vue[class*='primary']:not([data-admin-theming-setting-color-picker]),
+.button-vue[class*='primary']:not([data-admin-theming-setting-color-picker]) * {
 	color: var(--nldesign-color-primary-text) !important;
 }
 
@@ -443,11 +567,16 @@ button[class*='primary'] *,
 	justify-content: center !important;
 }
 
-.avatardiv *,
-#header .avatardiv *,
-#settings .avatardiv *,
-#expand .avatardiv *,
-.header-menu .avatardiv * {
+/* The initials, and only the initials — the user-status badge on the same plate
+   is excluded here for the reason given in the HEADER GLYPHS section: it is a
+   status indicator with its own colours, not text on the avatar. */
+.avatardiv *:not([class*='user-status' i]):not([class*='user-status' i] *),
+#header .avatardiv *:not([class*='user-status' i]):not([class*='user-status' i] *),
+#settings .avatardiv *:not([class*='user-status' i]):not([class*='user-status' i] *),
+#expand .avatardiv *:not([class*='user-status' i]):not([class*='user-status' i] *),
+.header-menu
+	.avatardiv
+	*:not([class*='user-status' i]):not([class*='user-status' i] *) {
 	color: white !important;
 	opacity: 1 !important;
 	visibility: visible !important;
@@ -470,10 +599,22 @@ select,
 	border-radius: var(--nldesign-border-radius) !important;
 }
 
+/*
+ * `.header-menu *` reaches EVERY element in the user menu, including the avatar
+ * and the user-status badge sitting on it — both of which Nextcloud draws as
+ * circles (`.avatardiv`, `.avatardiv__user-status`, `border-radius: 50%`). With
+ * the brand radius forced onto them, the account glyph in the header rendered
+ * as a 3px-cornered square with a squared-off status badge, which is not a
+ * shape any token set asked for: a brand radius belongs to boxes, not to a
+ * portrait. The avatar subtree keeps its own radius.
+ */
 #header .header-right .header-menu,
-#header .header-right button,
+#header .header-right button:not([class*='avatar' i]),
 .header-menu,
-.header-menu *,
+.header-menu
+	*:not([class*='avatar' i]):not([class*='avatar' i] *):not(.user-status-icon):not(
+		.user-status-icon *
+	),
 #settings,
 #expand {
 	border-radius: var(--nldesign-border-radius) !important;
@@ -489,13 +630,33 @@ body {
 	padding-top: 0 !important;
 }
 
-/* Header background and border from tokens */
+/* Header background and border from tokens.
+ *
+ * Deliberately does NOT set `position`. Nextcloud's own `#header` is
+ * `position: absolute`, i.e. out of normal flow, and `#content` is
+ * `position: fixed` with `top: auto` — so `#content`'s offset resolves against
+ * its STATIC position, which starts at the top of the viewport, and its
+ * `margin-top: var(--header-height)` (50px) then lands it exactly under the
+ * header.
+ *
+ * A `position: relative !important` here put the header back INTO flow, so it
+ * occupied its 50px and `#content`'s static position started below it — 50px of
+ * flowed header plus the 50px margin, measured as `contentTop: 106.5px` against
+ * stock's 50px. The whole settings page (and every app page) sat ~56px too low,
+ * with the page background showing as a band between the header and the
+ * container.
+ *
+ * It also bought nothing: `#header::before`/`::after` are disabled in the next
+ * rule, the lint/ribbon is `#nextcloud::before` and `#nextcloud` carries its own
+ * `position: relative`, and an `absolute` element is already a containing block
+ * for absolutely positioned descendants. `overflow: visible` stays — the ribbon
+ * is allowed to hang below the header when its height exceeds the header's.
+ */
 #header {
 	background-color: var(--nldesign-color-header-background, #ffffff) !important;
 	background-image: none !important;
 	background: var(--nldesign-color-header-background, #ffffff) !important;
 	border-bottom: var(--nldesign-header-border-bottom, 0) !important;
-	position: relative !important;
 	overflow: visible !important;
 }
 
@@ -525,17 +686,19 @@ body {
 }
 
 #header nav.app-menu .app-menu-entry__label {
-	color: var(--color-main-text) !important;
+	color: var(--nldesign-color-header-text) !important;
 	font-weight: 400 !important;
 }
 
-/* App menu icons — dark for white header */
+/* App menu icons — images, painted per the set's header (see theme.css and
+   defaults.css for --nldesign-header-icon-filter: black on the white default,
+   `none` on dark headers so Nextcloud's white icons stay white). */
 #header nav.app-menu .app-menu-icon img,
 #header nav.app-menu .app-menu-icon__icon,
 #header nav.app-menu .app-menu-entry__icon img,
 #header nav.app-menu img {
-	filter: invert(1) brightness(0) contrast(100) !important;
-	-webkit-filter: invert(1) brightness(0) contrast(100) !important;
+	filter: var(--nldesign-header-icon-filter, none) !important;
+	-webkit-filter: var(--nldesign-header-icon-filter, none) !important;
 	opacity: 1 !important;
 }
 
@@ -547,17 +710,24 @@ body {
 	position: relative !important;
 }
 
-/* Blue indicator bar for active item */
-#header nav.app-menu .app-menu-entry--active a::after,
-#header nav.app-menu .app-menu-entry--active .app-menu-entry__link::after {
-	content: '' !important;
-	position: absolute !important;
-	bottom: 0 !important;
-	left: 0 !important;
-	right: 0 !important;
-	height: 5px !important;
-	background: var(--color-primary) !important;
-	display: block !important;
+/* The active app is marked ONCE, the way Nextcloud marks it.
+ *
+ * Nextcloud already draws that mark: `.app-menu-entry--active::before` is a
+ * 10x5 rounded pill under the icon, painted with
+ * `--color-background-plain-text` — the colour core computes to contrast the
+ * PAGE background, because on a stock instance the header is transparent and
+ * the pill sits on that background. Our header is painted, so on a light header
+ * (Rijkshuisstijl, Amsterdam and Cunningham all paint it #ffffff) core's pill
+ * came out white on white — invisible, or a stray dot on an off-white header.
+ * This block then drew a SECOND mark, a full-width
+ * 5px bar in the primary colour, which no stock instance has.
+ *
+ * So: core's pill keeps its geometry and takes the header's own foreground,
+ * which is by definition the colour the set says is legible on its own header,
+ * and the extra bar is gone. */
+#header nav.app-menu .app-menu-entry--active::before,
+#header nav.app-menu .app-menu-entry--active a::before {
+	background-color: var(--nldesign-color-header-text) !important;
 }
 
 #header nav.app-menu .app-menu-entry {
@@ -588,45 +758,85 @@ body {
 	font-weight: 600 !important;
 }
 
-/* Header right side */
+/* ============================================
+   HEADER RIGHT — the account glyphs
+   ============================================ */
+
+/*
+ * Search, notifications, contacts and the user menu sit ON THE HEADER, so they
+ * take the HEADER's foreground. These rules used `--nldesign-color-text`, which
+ * is the BODY text colour and is a different role in every set whose header is
+ * not the page background:
+ *
+ *   Zwolle     #000000 glyphs on the #476db8 blue header, where the set's
+ *              header text is #ffffff
+ *   Rotterdam  #404b4f glyphs on the #00811f green header — 1.7:1, a glyph you
+ *              cannot find, while the set's header text is #ffffff
+ *
+ * The block is named `.header-right` in this Nextcloud's layout
+ * (core/templates/layout.user.php) and `.header-end` in newer ones. The HEADER
+ * GLYPHS block near the top of this file addresses `.header-end`, which is why
+ * it could not reach these glyphs at all; this section is the `.header-right`
+ * half, and the two must be changed together.
+ *
+ * The opacity is 1, not 0.8: dimming a glyph costs contrast on exactly the
+ * saturated headers where there is least to spare, and Nextcloud does not dim
+ * its own.
+ */
 #header .header-right a,
 #header .header-right button,
 #header .menutoggle {
-	color: var(--nldesign-color-text) !important;
+	color: var(--nldesign-color-header-text) !important;
 	opacity: 1 !important;
 }
 
+/* The avatar and the user-status badge are NOT chrome — the avatar carries the
+   user's photo or their generated colour, the badge its own status colours —
+   so they keep their own painting. */
 #header .header-right [class^='icon-'],
-#header .header-right svg {
+#header .header-right svg:not([class*='avatar' i] svg):not(.user-status-icon svg) {
+	color: var(--nldesign-color-header-text) !important;
+	fill: currentColor !important;
 	filter: none !important;
-	opacity: 0.8 !important;
+	opacity: 1 !important;
 }
 
 /* Unified search */
 #header .unified-search__button {
-	color: var(--nldesign-color-text) !important;
+	color: var(--nldesign-color-header-text) !important;
 	filter: none !important;
 }
 
-/* Header dropdown panels */
-#header .header-menu,
-#header #user-menu,
+/* Header dropdown panels — the PANEL, not the control that opens it.
+ *
+ * `.header-menu` is the class on each header-end ITEM: `#unified-search`,
+ * `#notifications`, `#contactsmenu` and `#user-menu` all carry it, and the panel
+ * that drops out of one is a CHILD, `.header-menu__wrapper` >
+ * `.header-menu__content`. Painting `.header-menu` therefore put an opaque
+ * `--color-main-background` plate behind the account glyphs — a white block
+ * across the right of Zwolle's blue header, the same block on Rotterdam's
+ * green — and handed those glyphs the body text colour on top of it.
+ *
+ * The panel keeps the treatment. The trigger stays transparent, which is how
+ * Nextcloud draws it, so the header colour runs edge to edge. */
+#header .header-menu__wrapper,
+#header .header-menu__content,
 #header .popover {
 	background-color: var(--color-main-background) !important;
 	color: var(--color-main-text) !important;
 }
 
 #header .unified-search__button svg {
-	fill: var(--nldesign-color-text) !important;
+	fill: currentColor !important;
 	filter: none !important;
 }
 
-/* User menu and notifications */
+/* User menu and notifications — full strength, for the same reason as above. */
 #header .header-right .icon-more,
 #header .header-right .notifications,
 #header .header-right .contactsmenu,
 #header .header-right #settings {
-	opacity: 0.8 !important;
+	opacity: 1 !important;
 	filter: none !important;
 }
 

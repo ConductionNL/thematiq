@@ -9,12 +9,18 @@
  */
 
 :root {
-	/* Nextcloud stock primary color (#0082c9) */
-	--nldesign-color-primary: #0082c9;
+	/* Nextcloud stock primary colour. #0082c9 until Nextcloud 29, which
+	 * darkened it to #00679e for contrast; this file still claimed the old
+	 * one, so the set that exists to BE stock did not match stock — and the
+	 * apply dialog pinned that wrong blue into custom-overrides.css, where
+	 * !important kept it on the page through every reset and refresh. Read
+	 * from the running instance with core theming unset
+	 * (apps/theming/theme/default.css). */
+	--nldesign-color-primary: #00679e;
 	--nldesign-color-primary-text: #ffffff;
-	--nldesign-color-primary-hover: #006fad;
-	--nldesign-color-primary-light: #e6f1f8;
-	--nldesign-color-primary-light-hover: #d1e5f2;
+	--nldesign-color-primary-hover: #3285b1;
+	--nldesign-color-primary-light: #e5eff5;
+	--nldesign-color-primary-light-hover: #cfe0ec;
 
 	/* Background colors — Nextcloud defaults */
 	--nldesign-color-background-hover: #f5f5f5;
@@ -22,7 +28,7 @@
 	--nldesign-color-background-darker: #dbdbdb;
 
 	/* Header — Nextcloud uses primary-colored header by default */
-	--nldesign-color-header-background: #0082c9;
+	--nldesign-color-header-background: #00679e;
 	--nldesign-color-header-text: #ffffff;
 	--nldesign-header-border-bottom: 0;
 
@@ -70,24 +76,38 @@
 	--nldesign-color-focus-rgb: 0, 130, 201;
 
 	/* Link colors — Nextcloud defaults (primary-based) */
-	--nldesign-color-link: #0082c9;
-	--nldesign-color-link-hover: #006fad;
-	--nldesign-color-link-visited: #0082c9;
+	--nldesign-color-link: #00679e;
+	--nldesign-color-link-hover: #00507a;
+	--nldesign-color-link-visited: #00679e;
 
 	/* Button colors — Nextcloud defaults */
-	--nldesign-color-button-primary-background: #0082c9;
+	--nldesign-color-button-primary-background: #00679e;
 	--nldesign-color-button-primary-text: #ffffff;
-	--nldesign-color-button-primary-border: #0082c9;
-	--nldesign-color-button-primary-hover: #006fad;
+	--nldesign-color-button-primary-border: #00679e;
+	--nldesign-color-button-primary-hover: #00507a;
 
 	/* Typography — Nextcloud system font stack (no custom font) */
 	--nldesign-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
 
-	/* Border radius — Nextcloud rounded style */
-	--nldesign-border-radius: 3px;
-	--nldesign-border-radius-small: 3px;
-	--nldesign-border-radius-large: 10px;
-	--nldesign-border-radius-rounded: 50%;
+	/* Border radius — Nextcloud stock. These were the pre-Nextcloud-28 values
+	 * (3px/3px/10px/50%), and the same defect the primary colour above had:
+	 * the set that exists to BE stock was not, so selecting it pinned a
+	 * near-square 3px into custom-overrides.css where !important kept it
+	 * through every reset — Nextcloud looked like it had lost its rounding.
+	 * Read from the running instance's own defaults
+	 * (apps/theming/lib/Themes/DefaultTheme.php, Nextcloud 32): small 4px,
+	 * element 8px, large = element, rounded 28px, pill 100px.
+	 *
+	 * `--nldesign-border-radius` feeds BOTH `--border-radius` and
+	 * `--border-radius-element` (css/systems/nldesign/overrides.css), which
+	 * stock splits 4px / 8px. It takes 8px here, because that is the one the
+	 * eye reads: buttons, inputs, navigation and list items. The deprecated
+	 * `--border-radius` is then 8px where stock computes 4px — the nldesign
+	 * token space has no separate element radius to say it with. */
+	--nldesign-border-radius: 8px;
+	--nldesign-border-radius-small: 4px;
+	--nldesign-border-radius-large: 8px;
+	--nldesign-border-radius-rounded: 28px;
 	--nldesign-border-radius-pill: 100px;
 
 	/* Placeholder colors */

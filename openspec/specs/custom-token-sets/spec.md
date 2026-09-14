@@ -41,41 +41,97 @@ The admin settings panel MUST provide an upload control that accepts a CSS file 
 
 ### Requirement: CSS Validation Whitelist
 
-The server MUST reject, as a hard upload failure, any accepted declaration (`--nldesign-*` or
-`--{slug}-*` name) whose value contains a semicolon (`;`) or a CSS comment marker (`/*` or `*/`),
-in addition to the existing rejections (`@import`, `expression(`, `javascript:`, raw `<`, and
-disallowed `url()` schemes/hosts). A value containing any of these MUST cause
-`CustomTokenSetValidator::isForbiddenValue()` to return `true`, which MUST propagate as a 422
-upload failure via `CustomTokenSetController::upload()` for both the CSS and W3C Design Tokens
-JSON upload paths.
+No upload may put a dangerous construct into a served token set. That guarantee is carried by TWO
+mechanisms, and the distinction matters because they produce different HTTP results for the same
+class of payload:
 
-#### Scenario: Semicolon-smuggled declaration is rejected (CSS upload)
+1. **Normalisation.** Every upload is parsed into declarations and re-emitted by
+   `TokenSetConverterService`. Anything that is not a well-formed custom property — a smuggled
+   second declaration after a `;`, a CSS comment, an at-rule — does not survive the round trip and
+   never reaches the emitted file. The upload SUCCEEDS; the payload is simply not in it.
+2. **The value gate.** `CustomTokenSetValidator::isForbiddenValue()` MUST refuse, as a hard 422 via
+   `CustomTokenSetController::upload()`, any declaration that survives normalisation and still
+   carries `@import`, `expression(`, `javascript:`, raw `<`, a disallowed `url()` scheme or host, or
+   an injection character (`;`, `{`, `}`, `/*`, `*/`).
+
+The value gate MUST run over EVERY declaration in the emitted file, not only the ones whose name the
+whitelist accepts. `store()` writes the converter's emitted CSS rather than `serialize($accepted)`,
+and the converter keeps a name it does not recognise verbatim — it parses `--[\w-]+` where the
+whitelist accepts only `[a-z0-9-]+` — so a name such as `--utrecht-colorPrimary` is written even
+though it is reported as skipped. Judging only the accepted set would leave its value unchecked.
+
+#### Scenario: A smuggled second declaration never reaches the served file
 
 - GIVEN a CSS upload whose `:root` block contains
   `--nldesign-color-primary: red; background: url(https://evil.example/x.png);`
 - WHEN the admin uploads the file
-- THEN the upload MUST fail with HTTP 422
-- AND the response MUST NOT contain a served CSS file with the smuggled `background` declaration
+- THEN the served CSS MUST NOT contain the smuggled `background` declaration or the external host
+- AND `--nldesign-color-primary` MUST be stored as `red`
+- AND the upload MAY succeed: the fragment is dropped at parse time rather than refused, because it
+  is not a custom property and so is never a declaration the gate is asked about
 
-#### Scenario: Comment-marker payload is rejected (CSS upload)
+#### Scenario: A comment marker in a value never reaches the served file
 
 - GIVEN a CSS upload whose `:root` block contains a declaration value containing `/*` or `*/`
 - WHEN the admin uploads the file
-- THEN the upload MUST fail with HTTP 422
+- THEN the comment MUST be stripped before parsing
+- AND the served CSS MUST NOT contain the comment or anything hidden inside it
 
-#### Scenario: Semicolon-smuggled value is rejected (W3C Design Tokens JSON upload)
+#### Scenario: A dangerous construct that survives normalisation is a hard 422
 
-- GIVEN a W3C Design Tokens JSON upload whose mapped `--nldesign-*` value contains a semicolon
-  followed by an additional declaration
+- GIVEN a CSS upload declaring `--utrecht-colorPrimary: expression(alert(1))`
+- AND that name is kept verbatim by the converter but skipped by the whitelist
 - WHEN the admin uploads the file
-- THEN `CustomTokenSetController::mapFromJson()` MUST reject the upload with HTTP 422 via the same
-  `isForbiddenValue()` gate used by the CSS path
+- THEN the upload MUST fail with HTTP 422 naming that property
+- AND no manifest entry and no CSS file MUST be written
+- AND the same MUST hold for `javascript:` and for raw `<`, and under an accepted name equally
+
+#### Scenario: The W3C Design Tokens path is gated identically
+
+- GIVEN a W3C Design Tokens JSON upload whose mapped value carries a dangerous construct
+- WHEN the admin uploads the file
+- THEN it MUST be subject to the same two mechanisms as the CSS path
+- AND the gate MUST be `isForbiddenValue()` reached through the converter and
+  `CustomTokenSetController::upload()`; there is no separate JSON mapping entry point
 
 #### Scenario: Legitimate values with no injection characters still succeed
 
 - GIVEN a CSS upload with `--nldesign-color-primary: #154273`
 - WHEN the admin uploads it
 - THEN the upload MUST succeed exactly as before this change (no regression for benign values)
+- AND a well-formed component token such as `--utrecht-button-border-radius: 4px` MUST still be
+  stored, since the gate judges values and not vocabularies
+
+### Requirement: The Stored File Is The Converted File
+
+An upload is stored as the converter's emitted CSS, not as the bytes the admin supplied. Every
+accepted input shape — including hand-authored `--nldesign-*` CSS, which earlier releases stored
+verbatim — is normalised into a complete semantic layer, with targets the document did not declare
+filled from the mapping table's fallbacks.
+
+#### Scenario: A hand-authored upload is backfilled
+
+- GIVEN a CSS upload declaring only `--nldesign-color-primary` and `--nldesign-color-primary-text`
+- WHEN the admin uploads it
+- THEN the stored file MUST carry those two values unchanged
+- AND it MUST additionally carry the semantic targets derived from them and from the mapping table's
+  fallbacks, so the stored set does not resolve through another brand's defaults
+- AND `imported` in the response MUST count what the ADMIN'S document yielded, not the size of the
+  stored file
+
+#### Scenario: A declared value is never overwritten by a fallback
+
+- GIVEN an upload that declares a target the mapping table also has a fallback for
+- WHEN the set is converted
+- THEN the admin's value MUST be kept and reported as `kept`
+- AND the fallback MUST apply only to targets the document left undeclared
+
+#### Scenario: The backfill is inspectable
+
+- GIVEN any successful upload
+- WHEN the response is rendered
+- THEN each derived target MUST appear in `report` with the reason it was derived
+- AND `counts` MUST separate what was kept from what was adapted
 
 ### Requirement: W3C Design Tokens JSON Import
 

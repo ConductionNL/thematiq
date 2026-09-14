@@ -78,16 +78,26 @@ header#header {
 	overflow: visible !important;
 }
 
-/* Logo area - show municipality logo with optional lint/ribbon background */
+/* Logo area - show municipality logo with optional lint/ribbon background.
+ *
+ * The slot keeps STOCK Nextcloud's geometry: core gives the logo the full
+ * header height at 62px wide, 12px from the start edge, and reserves that
+ * space with padding so the app menu begins after it. Thematiq used to force
+ * a 56px centred slot with a 40×32 stamp hung from the top — the ribbon
+ * layout only Rijkshuisstijl needs — so every other set's wordmark rendered
+ * as a postage stamp next to a header that started too early. The ribbon
+ * set declares its own geometry tokens; everyone else gets stock. */
 #nextcloud {
 	background-image: none !important;
 	background: transparent !important;
 	position: relative !important;
 	display: flex !important;
-	align-items: flex-end !important;
-	justify-content: center !important;
+	align-items: center !important;
+	justify-content: flex-start !important;
 	padding: 0 !important;
-	min-width: 56px !important;
+	min-width: calc(
+		var(--nldesign-logo-inset, 12px) + var(--nldesign-logo-width, 62px) + 12px
+	) !important;
 	flex-shrink: 0 !important;
 	overflow: visible !important;
 	z-index: 100 !important;
@@ -108,23 +118,27 @@ header#header {
 	z-index: -1 !important;
 }
 
-/* Municipality logo - dynamic per token set */
+/* Municipality logo - dynamic per token set.
+ *
+ * Geometry defaults to core's own rule for `#header #nextcloud .logo`:
+ * `width: 62px; inset-inline-start: 12px; top: 1px; bottom: 1px` with the
+ * artwork contained and centred — the full header height, so a wordmark is
+ * legible. A set that hangs a ribbon (rijkshuisstijl) overrides the four
+ * geometry tokens in its own file; nothing here assumes a ribbon. */
 #nextcloud .logo {
 	background-image: var(--nldesign-logo-url, none) !important;
 	background-size: contain !important;
 	background-repeat: no-repeat !important;
 	background-position: center !important;
 	filter: var(--nldesign-logo-filter, none) !important;
-	width: 40px !important;
-	height: 32px !important;
+	width: var(--nldesign-logo-width, 62px) !important;
+	height: var(--nldesign-logo-height, auto) !important;
 	opacity: 1 !important;
 	position: absolute !important;
-	bottom: auto !important;
-	left: var(--nldesign-logo-center, 50%) !important;
-	top: calc(
-		max(var(--nldesign-size-lint-height, 0px), 100%) - 32px - 4px
-	) !important;
-	transform: translateX(-50%) !important;
+	inset-inline-start: var(--nldesign-logo-inset, 12px) !important;
+	top: var(--nldesign-logo-top, 1px) !important;
+	bottom: var(--nldesign-logo-bottom, 1px) !important;
+	transform: none !important;
 	margin: 0 !important;
 	flex-shrink: 0 !important;
 }
@@ -136,10 +150,15 @@ header#header {
 	color: var(--nldesign-color-header-text) !important;
 }
 
-/* Header app icons - dynamic filter (default: none for white headers) */
+/* Header app icons — the app menu's icons are IMAGES (white SVG files), so
+   `color` cannot reach them; the set's --nldesign-header-icon-filter says how to
+   paint them for its header (defaults.css: black for the white default header;
+   dark-header sets declare `none` to keep them white). Scoped to the app-menu
+   images only: the user-menu trigger wraps the avatar, and a filter on that
+   ancestor rasterises the avatar with it. Inline SVG glyphs are coloured via
+   currentColor in element-overrides.css instead. */
 #header .app-menu-icon,
-#header .header-menu__trigger,
-#header svg {
+#header .app-menu-entry__icon img {
 	filter: var(--nldesign-header-icon-filter, none);
 }
 
@@ -415,13 +434,34 @@ a.primary {
 	border-radius: var(--nldesign-component-button-border-radius) !important;
 }
 
-/* Force text color on inner spans of primary buttons (Vue scoped styles override inherited color) */
-#body-login .button-vue--vue-primary .button-vue__text,
-#body-login .button-vue--vue-primary .button-vue__wrapper,
-#content .button-vue--vue-primary .button-vue__text,
-#content .button-vue--vue-primary .button-vue__wrapper,
-.button-vue.button-vue--vue-primary .button-vue__text,
-.button-vue.button-vue--vue-primary .button-vue__wrapper {
+/* Force text color on inner spans of primary buttons (Vue scoped styles override inherited color).
+ *
+ * EXCEPT Nextcloud's own colour pickers. Settings › Theming renders each colour
+ * field as an NcButton `type="primary"` whose background IS the colour being
+ * chosen, with a text colour core computes for legibility
+ * (`ColorPickerField.vue`: `colord(value).isLight() ? '#000000' : '#ffffff'`).
+ * Core's `.field__button[data-v-…]` rule keeps the BUTTON right, but declares
+ * nothing for its children — so this rule captured the `<span>` holding the hex
+ * and painted it the theme's primary text colour: white lettering on a white
+ * swatch, measured with #ffffff selected. The `#content` prefix makes this
+ * (1,2,0), which no sane opt-out rule can outrank, so the pickers are excluded
+ * here instead of overridden later. */
+#body-login
+	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__text,
+#body-login
+	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__wrapper,
+#content
+	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__text,
+#content
+	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__wrapper,
+.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__text,
+.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__wrapper {
 	color: var(--nldesign-component-button-primary-action-color) !important;
 }
 
@@ -476,12 +516,17 @@ button.secondary:hover {
 	background-color: var(--nldesign-color-nav-background) !important;
 }
 
-/* Active navigation item */
-#app-navigation li.active > a,
-#app-navigation .app-navigation-entry.active {
-	background-color: var(--nldesign-color-primary-light) !important;
-	transition: background-color var(--nldesign-animation-quick) ease !important;
-}
+/* The ACTIVE navigation entry is deliberately not repainted here.
+ *
+ * Nextcloud's own rule fills it with `--color-primary-element` and writes the
+ * label in `--color-primary-element-text`; both are mapped to this set's brand
+ * in overrides.css, so the stock treatment is already themed and already
+ * contrast-paired. Painting it with `--nldesign-color-primary-light` instead
+ * replaced that solid fill with a pale tint of the brand — the selected item
+ * in the settings sidebar stopped reading as selected, and (because the
+ * label rule further down forced the primary colour onto it) it carried brand
+ * text on a brand tint. The `!important` here outranked Nextcloud's scoped
+ * rule, so no set could opt back in. */
 
 /* ============================================
    LINKS — Component Token Mapping
@@ -819,18 +864,18 @@ button,
    ACTIVE MENU ITEMS - NL Design style
    ============================================ */
 
-/* Active navigation item with left border accent */
-#app-navigation li.active,
-#app-navigation .app-navigation-entry.active,
+/* The active APP-MENU entry (the icon row in the header) keeps its brand
+ * accent; the active APP-NAVIGATION entry (the left sidebar) does not appear
+ * here at all — see the NAVIGATION section above. The sidebar rule used to add
+ * a pale brand fill, a 4px left border and brand-coloured bold text on top of
+ * Nextcloud's own solid-primary selection. That is a different component in
+ * every dimension from the one Nextcloud draws: the border pushed the entry's
+ * text 4px out of line with every inactive row, and the tint-on-tint pairing
+ * lost the selection. */
 .app-menu-main .app-menu-entry.active {
-	background-color: var(--nldesign-color-primary-light) !important;
-	border-left: 4px solid var(--nldesign-color-primary) !important;
 	font-weight: 700 !important;
 }
 
-/* Active menu item text */
-#app-navigation li.active > a,
-#app-navigation .app-navigation-entry.active a,
 .app-menu-main .app-menu-entry.active a {
 	color: var(--nldesign-color-primary) !important;
 	font-weight: 700 !important;
@@ -840,7 +885,15 @@ button,
    REMOVE ALL ROUNDED CORNERS (for sharp themes)
    ============================================ */
 
-/* Force sharp corners on all elements when border-radius is 0 */
+/* Force sharp corners on all elements when border-radius is 0.
+ *
+ * `img` is deliberately NOT in this list. It is not a component: it matched
+ * every image on the page, and Nextcloud's avatars are images inside a
+ * `.avatardiv` that stock rounds to a circle (`border-radius: 50%`). A themed
+ * instance therefore rendered every avatar — the user menu in the header,
+ * the contacts menu, share recipients — as a 3px-cornered SQUARE, which is not
+ * a brand choice any token set made. File previews and app icons were squared
+ * off the same way. Components that need the brand radius are listed by name. */
 .panel,
 .widget,
 .button-vue,
@@ -852,8 +905,7 @@ textarea,
 select,
 .dropdown,
 .popover,
-.tooltip,
-img {
+.tooltip {
 	border-radius: var(--nldesign-border-radius) !important;
 }
 
@@ -939,8 +991,6 @@ button,
 	.button-vue,
 	button,
 	.button,
-	#app-navigation li.active > a,
-	#app-navigation .app-navigation-entry.active,
 	a,
 	input[type='text'],
 	input[type='password'],

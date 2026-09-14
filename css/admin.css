@@ -137,6 +137,16 @@
 	--prev-error: #c0392b;
 	--prev-info: #1f6fd0;
 	--prev-radius: 8px;
+	--prev-radius-container: 12px;
+	--prev-radius-pill: 999px;
+	/* The page background BEHIND Nextcloud's content container, and the header
+	   bar's own colours. Separate roles: a set may paint the header unlike the
+	   primary (Cunningham: a white header over a blue primary), and the plain
+	   background is what shows in the gap around the container. */
+	--prev-plain: #f2f4f7;
+	--prev-header-bg: var(--prev-primary);
+	--prev-header-text: var(--prev-primary-text);
+	--prev-header-border: 0;
 	--prev-login-bg: var(--prev-primary);
 }
 
@@ -207,12 +217,80 @@
 	width: 100%;
 	max-height: 80vh;
 	overflow-y: auto;
+	/* Never scroll the DIALOG sideways. With only `overflow-y: auto` the
+	   x-axis computes to `auto` as well, so a wide token table gave the whole
+	   dialog a horizontal scrollbar — and then the sticky action bar (whose
+	   width is the content box, not the scroll width) scrolled away from the
+	   rows, letting table cells appear beside the buttons. Wide content scrolls
+	   inside its own container instead (see .nldesign-apply-dialog-table). */
+	overflow-x: hidden;
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* The token tables inside the theming-sync and apply dialogs. A token name is
+   long and unbreakable (`--nldesign-component-form-fieldset-legend-margin-block-end`),
+   and there are four columns, so the table is routinely wider than the 700px
+   dialog. It gets its own horizontal scroll container rather than making the
+   dialog scroll sideways — the dialog's sticky action bar cannot follow a
+   horizontal scroll, which is what let cells appear beside the buttons. */
+.nldesign-dialog-table,
+.nldesign-apply-dialog-table {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
+	/* Keep the cells from collapsing to unreadable widths once the table is a
+	   block: the columns size to their content and the container scrolls. */
+	white-space: nowrap;
+}
+
+/* The VALUE columns wrap; the checkbox and token-name columns do not.
+   `white-space: nowrap` sizes every column to its content, and one long value
+   — the font stack, `-apple-system, BlinkMacSystemFont, 'Segoe UI', …` — is
+   wider than the 700px dialog on its own. That pushed the New column out of
+   sight behind a horizontal scrollbar, so the dialog appeared to list only the
+   values already applied and none of the ones being offered. Capping and
+   wrapping the two value columns keeps all four visible without a sideways
+   scroll. */
+.nldesign-dialog-table td:nth-child(n + 3),
+.nldesign-apply-dialog-table td:nth-child(n + 3) {
+	max-width: 230px;
+	white-space: normal;
+	overflow-wrap: anywhere;
 }
 
 /* Dark-logo informational row in the theming-sync dialog (openspec/specs/dark-mode/spec.md) */
 .nldesign-dialog-dark-logo-row {
 	margin-top: 12px;
+}
+
+/* Core theming as a section of the apply dialog (one confirm, no second
+   modal). The table reuses the sync dialog's row styling. */
+.nldesign-apply-theming {
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid var(--color-border, #ddd);
+}
+
+.nldesign-apply-theming__label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 600;
+	margin-bottom: 8px;
+	cursor: pointer;
+}
+
+/* The preview logo is whatever the set or core serves — an SVG with a
+   1369×436 viewBox renders at that size unless told otherwise, which is how a
+   synced wordmark once filled the whole dialog. Fit it to the box. */
+.nldesign-dialog-preview-logo {
+	display: block;
+	max-width: 70%;
+	max-height: 56px;
+	width: auto;
+	height: auto;
+	margin: 0 auto;
+	object-fit: contain;
 }
 
 .nldesign-dialog-preview-box--dark {
@@ -237,14 +315,84 @@
 		-8px 0;
 }
 
+/* Colour chips in front of a hex value, in the theming-sync dialog
+   (`.nldesign-dialog-swatch`, js/admin.js) and the apply dialog
+   (`.nldesign-apply-swatch`). js/admin.js has emitted both spans all along and
+   sets their colour inline, but the rules that give them a box were lost in a
+   stylesheet reorganisation: a span with no width, height or display is zero
+   pixels wide, so both dialogs listed hex strings with no colour next to them.
+   Only css/admin-mock.css still carried a size for them, which is why the
+   colours were visible on the presentation mock and nowhere else. */
+.nldesign-dialog-swatch,
+.nldesign-apply-swatch {
+	display: inline-block;
+	border-radius: 3px;
+	vertical-align: middle;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.nldesign-dialog-swatch {
+	width: 16px;
+	height: 16px;
+	margin-right: 6px;
+}
+
+.nldesign-apply-swatch {
+	width: 14px;
+	height: 14px;
+	margin-right: 5px;
+}
+
+/* A dialog that carries a token table lays out as a column: heading, hint and
+   the select-all row stay put, the table is the only child that scrolls, and
+   the action bar is the last flex item — so it cannot be anywhere but the
+   bottom. The bar used to rely on `position: sticky; bottom: 0` inside the
+   scrolling dialog, which pins it to the bottom of the SCROLLPORT rather than
+   the dialog, so rows kept rendering below the buttons. Scoped with `:has()`
+   because the dialogs without a table (reset, config bundle) are short and
+   should keep growing with their content. */
+.nldesign-dialog:has(.nldesign-dialog-table),
+.nldesign-dialog:has(.nldesign-apply-dialog-table) {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.nldesign-dialog:has(.nldesign-dialog-table) .nldesign-dialog-table,
+.nldesign-dialog:has(.nldesign-apply-dialog-table) .nldesign-apply-dialog-table {
+	/* `min-height: 0` is what allows a flex item to shrink below its content
+	   height; without it the table keeps its full height and pushes the action
+	   bar out of the dialog again. */
+	flex: 0 1 auto;
+	min-height: 0;
+	overflow: auto;
+}
+
+.nldesign-dialog:has(.nldesign-dialog-table) .nldesign-dialog-actions,
+.nldesign-dialog:has(.nldesign-apply-dialog-table) .nldesign-dialog-actions {
+	position: static;
+	flex: 0 0 auto;
+	margin: 0 -24px -24px;
+	padding: 12px 24px 24px;
+	border-top: 1px solid var(--color-border);
+}
+
 .nldesign-dialog-actions {
 	position: sticky;
 	bottom: 0;
 	background: var(--color-main-background);
-	padding-top: 8px;
+	/* The bar sticks to the bottom of the dialog's CONTENT box, which sits 24px
+	   (the dialog's own padding) above its visible bottom edge. With only a
+	   padding-top the bar's background stopped there, so table rows scrolled
+	   through the 24px strip underneath it and appeared below the buttons.
+	   Bleeding the bar into that padding with a negative margin, and paying it
+	   back as padding, makes the background cover the full strip while the
+	   buttons stay where they were. The inline bleed does the same for the left
+	   and right padding, so nothing scrolls past the bar's edges either. */
+	margin: 16px -24px -24px;
+	padding: 8px 24px 24px;
 	display: flex;
 	gap: 8px;
-	margin-top: 16px;
 	justify-content: flex-end;
 }
 
@@ -567,14 +715,32 @@
 	display: none;
 }
 
-/* --- mini app shell --- */
+/* --- mini app shell ---
+ *
+ * A scale model of the REAL Nextcloud shell, because that is what an admin
+ * holds it against. The three structural facts it has to get right:
+ *
+ *   1. The header spans the full width and sits on the PAGE background
+ *      (`--color-background-plain`), which stays visible in the gap around the
+ *      content container.
+ *   2. `#content` is one rounded container (`--body-container-radius`) with
+ *      `overflow: clip`, inset by `--body-container-margin`. The navigation and
+ *      the app content are two panels flush inside it — not two cards.
+ *   3. A navigation entry is a FULL-WIDTH pill (`--border-radius-pill`) with an
+ *      icon and a label in the body text colour, and the selected one is filled
+ *      solid with `--color-primary-element` and labelled in
+ *      `--color-primary-element-text`.
+ *
+ * Before this, the shell drew the navigation as a strip of muted mini-labels
+ * and the app sidebar as a second such strip, so the one panel an admin looks
+ * at first — the sidebar — represented nothing that is actually on screen. */
 .nl-mini {
 	position: relative;
 	height: 300px;
 	overflow: hidden;
 	border-radius: var(--border-radius-large);
 	border: 1px solid var(--prev-border);
-	background: var(--prev-bg);
+	background: var(--prev-plain);
 	display: flex;
 	flex-direction: column;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -584,67 +750,126 @@
 	flex: 0 0 30px;
 	display: flex;
 	align-items: center;
-	gap: 14px;
-	padding: 0 12px;
-	background: var(--prev-primary);
+	gap: 10px;
+	padding: 0 10px;
+	background: var(--prev-header-bg);
+	border-bottom: var(--prev-header-border);
 }
 .nl-mini__logo {
-	width: 16px;
-	height: 16px;
-	border-radius: 50%;
-	background: var(--prev-primary-text);
+	width: 22px;
+	height: 11px;
+	border-radius: 2px;
+	background: var(--prev-header-text);
 	opacity: 0.9;
+	flex: none;
 }
 .nl-mini__navitem {
-	width: 26px;
+	position: relative;
+	width: 24px;
 	height: 6px;
 	border-radius: 3px;
-	background: var(--prev-primary-text);
+	background: var(--prev-header-text);
 	opacity: 0.45;
+	flex: none;
 }
+/* Nextcloud marks the open app with a bar under its icon, not with opacity
+   alone — see the app-menu rules in systems/nldesign/element-overrides.css. */
 .nl-mini__navitem--active {
-	opacity: 0.9;
+	opacity: 0.95;
+}
+.nl-mini__navitem--active::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -9px;
+	height: 3px;
+	border-radius: 2px;
+	background: var(--prev-header-text);
 }
 .nl-mini__navspacer {
 	flex: 1;
 }
-.nl-mini__avatar {
-	width: 16px;
-	height: 16px;
+.nl-mini__navglyph {
+	width: 9px;
+	height: 9px;
 	border-radius: 50%;
-	background: var(--prev-primary-text);
-	opacity: 0.9;
+	background: var(--prev-header-text);
+	opacity: 0.7;
+	flex: none;
 }
+.nl-mini__avatar {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--prev-header-text);
+	opacity: 0.9;
+	flex: none;
+}
+/* The content container: inset from the page background, both panels clipped
+   into one rounded rectangle. */
 .nl-mini__body {
 	flex: 1;
 	display: flex;
 	min-height: 0;
+	margin: 5px;
+	border-radius: var(--prev-radius-container);
+	overflow: hidden;
+	background: var(--prev-surface);
 }
 .nl-mini__menu {
-	flex: 0 0 78px;
+	flex: 0 0 84px;
 	background: var(--prev-surface);
-	border-right: 1px solid var(--prev-border);
-	padding: 8px 6px;
+	padding: 6px 5px;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 2px;
+	min-width: 0;
+}
+/* An app-navigation caption ("Personal", "Administration") — a bar, like every
+   other run of text in this model. */
+.nl-mini__caption {
+	width: 32px;
+	height: 4px;
+	margin: 5px 0 3px 7px;
+	border-radius: 2px;
+	background: var(--prev-border);
+}
+.nl-mini__caption:first-child {
+	margin-top: 1px;
 }
 .nl-mini__menuitem {
+	display: flex;
+	align-items: center;
+	gap: 5px;
 	font-size: 8px;
-	color: var(--prev-muted);
-	padding: 5px 7px;
-	border-radius: 999px;
+	color: var(--prev-text);
+	padding: 4px 7px;
+	border-radius: var(--prev-radius-pill);
 	white-space: nowrap;
 	overflow: hidden;
+}
+.nl-mini__menuicon {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: currentColor;
+	opacity: 0.55;
+	flex: none;
 }
 .nl-mini__menuitem--active {
 	background: var(--prev-primary);
 	color: var(--prev-primary-text);
+	font-weight: 700;
+}
+.nl-mini__menuitem--active .nl-mini__menuicon {
+	opacity: 0.9;
 }
 .nl-mini__content {
 	flex: 1;
-	padding: 10px;
+	padding: 8px;
 	min-width: 0;
+	background: var(--prev-surface);
 }
 .nl-mini__widget {
 	background: var(--prev-surface);
@@ -701,19 +926,33 @@
 	background: color-mix(in srgb, var(--prev-info) 22%, white);
 	border: 1px solid var(--prev-info);
 }
+/* The app sidebar: a panel with a heading and a close control, the way
+   Nextcloud's own sidebar opens beside the content. */
 .nl-mini__sidebar {
-	flex: 0 0 78px;
+	flex: 0 0 88px;
 	background: var(--prev-surface);
 	border-left: 1px solid var(--prev-border);
-	padding: 10px 8px;
+	padding: 8px;
 	display: flex;
 	flex-direction: column;
 	gap: 7px;
 }
 .nl-mini__sidebar-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
 	font-size: 8px;
 	font-weight: 700;
 	color: var(--prev-text);
+}
+.nl-mini__sidebar-close {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--prev-bg);
+	border: 1px solid var(--prev-border);
+	flex: none;
 }
 .nl-mini__line {
 	display: block;

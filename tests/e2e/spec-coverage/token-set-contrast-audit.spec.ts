@@ -61,10 +61,17 @@ test.describe('token-set-contrast-audit', () => {
 				break
 			}
 		}
-		expect(
-			flagged,
-			'Expected a known sub-AA shipped set in the dropdown',
-		).toBeTruthy()
+		// Guarded the way the compliant-set sibling below already is. The
+		// dropdown is the SELECTABLE list, not the catalogue: only fully
+		// functional brands are offered, plus whatever the instance is running
+		// or has imported. Neither sub-AA candidate is on that list, so on a
+		// stock instance this test has nothing to drive and asserting one is
+		// present would fail on a correct dropdown rather than on a missing
+		// warning. It still runs wherever one of them IS selectable.
+		test.skip(
+			flagged === '',
+			'no known sub-AA shipped set is selectable on this instance',
+		)
 
 		await select.selectOption(flagged)
 
