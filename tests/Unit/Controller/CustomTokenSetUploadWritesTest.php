@@ -372,7 +372,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		$live = $this->liveCssOf('custom-filename-probe');
 		$this->assertStringNotContainsString('attacker.example', $live);
 		$this->assertStringNotContainsString('expression(', $live);
-		$this->assertStringNotContainsString('*/', $this->provenanceValueOf('custom-filename-probe', 'source:'));
+		$this->assertProvenanceValueIsInert('custom-filename-probe', 'source:');
 	}//end testAFilenameCannotCloseTheProvenanceComment()
 
 	/**
@@ -401,7 +401,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		$live = $this->liveCssOf('custom-version-probe');
 		$this->assertStringNotContainsString('attacker.example', $live);
 		$this->assertStringNotContainsString('expression(', $live);
-		$this->assertStringNotContainsString('*/', $this->provenanceValueOf('custom-version-probe', 'source version:'));
+		$this->assertProvenanceValueIsInert('custom-version-probe', 'source version:');
 	}//end testADocumentVersionCannotCloseTheProvenanceComment()
 
 	/**
@@ -415,8 +415,44 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 			'expression()' => ['*/ zoom:expression(alert(1)); /*'],
 			'a new selector' => ['*/ } a{background:url(https://attacker.example/p.png)} :root{ /*'],
 			'a newline and a declaration' => ["*/\n\tbackground-image:url(https://attacker.example/p.png);\n\t/*"],
+			// A guard that DELETES the terminator has to survive the terminator
+			// being rebuilt out of what it leaves behind: `preg_replace()`
+			// consumes non-overlapping matches, so `**//` loses the inner `*/`
+			// and the outer `*` and `/` close up into a fresh one. Same for a
+			// terminator split by a byte the guard also strips.
+			'a doubled terminator' => ['**// background-image:url(https://attacker.example/p.png); /*'],
+			'a terminator split by a control byte' => ["*\x00/ background-image:url(https://attacker.example/p.png); /*"],
+			'a terminator split by a stripped byte, doubled' => ["*\x00*\x00// zoom:expression(alert(1)); /*"],
 		];
 	}//end provenancePayloadProvider()
+
+	/**
+	 * Assert a provenance value cannot participate in a comment terminator at
+	 * all.
+	 *
+	 * Deliberately stronger than "does not contain `*​/`". That weaker check is
+	 * what a previous guard passed while still being bypassable: it deleted the
+	 * two-character sequence, and `**​/​/` simply reformed one out of the
+	 * characters left adjacent. Asserting that NEITHER character survives has
+	 * no such gap — there is no arrangement of the input that can spell a
+	 * terminator out of characters that are not there.
+	 *
+	 * @param string $id    The stored set id.
+	 * @param string $label The provenance label.
+	 *
+	 * @return void
+	 */
+	private function assertProvenanceValueIsInert(string $id, string $label): void {
+		$value = $this->provenanceValueOf($id, $label);
+
+		$this->assertStringNotContainsString('*', $value, 'no asterisk may survive into the provenance line');
+		$this->assertStringNotContainsString('/', $value, 'no slash may survive into the provenance line');
+		$this->assertMatchesRegularExpression(
+			'/^[\x20-\x7E]*$/',
+			$value,
+			'only printable ASCII may reach the provenance line'
+		);
+	}//end assertProvenanceValueIsInert()
 
 	/**
 	 * The provenance line carrying the given label, as stored.

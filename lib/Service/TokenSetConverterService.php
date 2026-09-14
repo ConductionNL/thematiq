@@ -2250,7 +2250,26 @@ class TokenSetConverterService {
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 */
 	private function commentSafe(string $value): string {
-		$safe = (string)preg_replace('/[^\x20-\x7E]|\*\//', '', $value);
+		// CHARACTER-WISE, NEVER SEQUENCE-WISE.
+		//
+		// Deleting the two-character terminator is not enough, because
+		// `preg_replace()` consumes NON-OVERLAPPING matches and then stops: it
+		// never re-examines what the deletion brought together. `**//` loses
+		// its inner `*/` and the surviving outer `*` and `/` close up into a
+		// fresh one; `*\x00/` does the same once the control byte is stripped.
+		// Both reach disk as a closed comment, which is the whole defect again.
+		//
+		// Removing the characters has no such fixpoint to reason about. Neither
+		// `*` nor `/` survives at all, so no arrangement of the input can spell
+		// a terminator, whatever the deletions leave adjacent. Everything
+		// outside printable ASCII goes too — a newline breaks the comment's
+		// shape on its own, and it keeps the block to the bytes it should hold.
+		//
+		// The cost is that a `/` or `*` in a legitimate filename is dropped
+		// from the provenance line. That line is a human-readable record, not
+		// an identifier anything resolves, so a lossy rendering is the right
+		// trade against a parser-visible one.
+		$safe = (string)preg_replace('#[^\x20-\x7E]|[*/]#', '', $value);
 		if ($safe === '') {
 			return '(unnamed)';
 		}
