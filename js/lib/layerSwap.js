@@ -44,8 +44,15 @@
 
 	/**
 	 * How long to wait for one stylesheet before giving up on its `load`
-	 * event. A slow sheet still ends up applied; the wait only decides when
-	 * the OLD run is removed.
+	 * event. A sheet that has not loaded by then is treated as FAILED, which
+	 * rolls the whole new run back out and leaves the old one in place — see
+	 * `whenLoaded()` and `swap()` below.
+	 *
+	 * This used to say a slow sheet still ends up applied, and that the wait
+	 * only decided when the old run was removed. That was true while the swap
+	 * removed the old run unconditionally; it is the opposite of what the file
+	 * does now, and a half-applied theme is exactly what the rollback exists
+	 * to prevent.
 	 *
 	 * @type {number}
 	 */

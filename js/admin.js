@@ -3136,9 +3136,20 @@
 									})
 							}
 
+							// The POST that changed the active set has already
+							// succeeded, so this is never an error — but when the
+							// live swap rolled back, the page behind the dialog is
+							// still the OLD theme and the inline preview values
+							// have already been stripped. Saying only "applied"
+							// leaves the admin looking at the previous theme with
+							// nothing to act on, so the fallback names the reload
+							// the way every other rollback path here does.
 							return swapped === true
 								? t('thematiq', 'Applied.')
-								: t('thematiq', 'Token overrides applied.')
+								: t(
+										'thematiq',
+										'Applied. Reload the page to see changes.',
+									)
 						})
 						.then(function (message) {
 							// Only now: the set's stylesheets have loaded, core
