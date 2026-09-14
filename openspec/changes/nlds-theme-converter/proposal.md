@@ -122,9 +122,10 @@ adapted or skipped, and why.
   and `tests/Unit/Service/TokenSetConverterParityTest.php`.
 - **No new dependency, no network at convert time, no CI sourcing** (design decision 3). The fixtures
   are local: `css/tokens/openwoo.css` is the hand-resolved reference the converter's OpenWOO output
-  is diffed against, and the installed `@gemeente-rotterdam/design-tokens` and
-  `@nl-design-system-unstable/zwolle-design-tokens` packages provide DTCG and Style Dictionary
-  fixtures. Final acceptance is a human paste of a real `design-tokens.css` into the panel.
+  is diffed against. This also counted on `@gemeente-rotterdam/design-tokens` and
+  `@nl-design-system-unstable/zwolle-design-tokens` for the DTCG and Style Dictionary fixtures;
+  **both were removed in `c304a57`** over their licences, so those fixtures have to be hand-authored
+  — see design.md. Final acceptance is a human paste of a real `design-tokens.css` into the panel.
 - **No OpenRegister schemas, no lifecycle or notification behaviour.** Filesystem and config work
   only; ADR-031's declarative/imperative split does not apply.
 - **Security**: the conversion runs before `CustomTokenSetValidator`, never instead of it. New value
