@@ -124,8 +124,9 @@ adapted or skipped, and why.
   are local: `css/tokens/openwoo.css` is the hand-resolved reference the converter's OpenWOO output
   is diffed against. This also counted on `@gemeente-rotterdam/design-tokens` and
   `@nl-design-system-unstable/zwolle-design-tokens` for the DTCG and Style Dictionary fixtures;
-  **both were removed in `c304a57`** over their licences, so those fixtures have to be hand-authored
-  — see design.md. Final acceptance is a human paste of a real `design-tokens.css` into the panel.
+  **both were removed in `c304a57`**, because nothing resolved them at runtime — they were inputs to
+  `scripts/generate-brand-set.mjs` and its output is committed — so those fixtures have to be
+  hand-authored, see design.md. Final acceptance is a human paste of a real `design-tokens.css`.
 - **No OpenRegister schemas, no lifecycle or notification behaviour.** Filesystem and config work
   only; ADR-031's declarative/imperative split does not apply.
 - **Security**: the conversion runs before `CustomTokenSetValidator`, never instead of it. New value

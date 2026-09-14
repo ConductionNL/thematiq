@@ -115,10 +115,12 @@ dependency, no vendored `dist/` copies, no fetch. Consequences, all deliberate:
   hand-resolved from `@conduction/theme` 2.1.0) is the reference the OpenWOO conversion is diffed
   against. This originally added that `@gemeente-rotterdam/design-tokens` and
   `@nl-design-system-unstable/zwolle-design-tokens` were installed dependencies supplying one DTCG
-  and one Style Dictionary fixture for free. **Both packages were removed in `c304a57`** (their
-  licences are UNKNOWN and Custom, which the npm licence gate denies), so that fixture plan is gone:
-  whoever picks the converter up needs to commit small hand-authored DTCG and Style Dictionary
-  documents as fixtures instead, the way `tests/integration/fixtures/` already does.
+  and one Style Dictionary fixture for free. **Both packages were removed in `c304a57`** — they were
+  consumed only by `scripts/generate-brand-set.mjs` when the brand CSS is regenerated, and the
+  generated `css/tokens/rotterdam.css` and `css/tokens/zwolle.css` are committed, so nothing
+  resolved them at runtime. That takes the free fixtures with it: whoever picks the converter up
+  needs to commit small hand-authored DTCG and Style Dictionary documents instead, the way
+  `tests/integration/fixtures/` already does.
 - **Acceptance is a human paste.** The definition of done for the admin path is: paste the contents
   of a real `design-tokens.css` into the panel, get a set whose header is the brand's header and
   whose primary is the brand's primary, plus a report that lists the layout tokens it refused. The

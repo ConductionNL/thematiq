@@ -34,12 +34,12 @@ and MUST keep any inline preview values in place until the new stylesheet has lo
 #### Scenario: Read current overrides
 - GIVEN `custom-overrides.css` exists with some overrides
 - WHEN the admin settings panel loads
-- THEN a GET request to `/api/overrides` MUST return the list of currently overridden token names and values as JSON
+- THEN a GET request to `/settings/overrides` MUST return the list of currently overridden token names and values as JSON
 - AND the response MUST include only tokens present in `custom-overrides.css` (not defaults or resolved values)
 
 #### Scenario: Write new overrides
 - GIVEN the admin clicks Save with a new set of token values
-- WHEN a POST request is made to `/api/overrides` with the token map
+- WHEN a POST request is made to `/settings/overrides` with the token map
 - THEN the backend MUST validate each token name against the editable token registry
 - AND it MUST write the validated tokens to `custom-overrides.css` atomically (write to temp file, rename)
 - AND it MUST return HTTP 200 with the final set of written tokens
