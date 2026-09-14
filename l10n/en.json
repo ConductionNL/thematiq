@@ -236,7 +236,7 @@
         "Applied. Nextcloud theming reset to its defaults.": "Applied. Nextcloud theming reset to its defaults.",
         "Applied. Nextcloud theming updated.": "Applied. Nextcloud theming updated.",
         "Theme applied, but updating Nextcloud theming failed.": "Theme applied, but updating Nextcloud theming failed.",
-        "Applied. Reload the page to see changes.": "Applied. Reload the page to see changes."
+        "Reload the page to see changes.": "Reload the page to see changes."
     },
     "plurals": {}
 }

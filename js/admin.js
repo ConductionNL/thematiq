@@ -3099,6 +3099,25 @@
 								endPreviewOnPage()
 							}
 
+							// A rolled-back swap has to be said out loud on EVERY
+							// branch below, not only the one with no core-theming work
+							// to report. The POST that changed the active set has
+							// already succeeded and the inline preview values were
+							// stripped just above, so whichever message this step
+							// produces, the admin is looking at the OLD theme until
+							// they reload.
+							//
+							// Appended as a second WHOLE sentence rather than built
+							// from fragments, so it stands on its own in every locale.
+							var reloadHint =
+								swapped === true
+									? ''
+									: ' '
+										+ t(
+											'thematiq',
+											'Reload the page to see changes.',
+										)
+
 							// Core theming rides on the same confirm. The sync used to
 							// be unreachable from this path and, once reachable, was a
 							// second modal;
@@ -3114,42 +3133,33 @@
 								// still up and closes on the step after this one.
 								return applyThemingPlan(plan)
 									.then(function () {
-										return plan.mode === 'reset'
-											? t(
-													'thematiq',
-													'Applied. Nextcloud theming reset to its defaults.',
-												)
-											: t(
-													'thematiq',
-													'Applied. Nextcloud theming updated.',
-												)
+										return (
+											(plan.mode === 'reset'
+												? t(
+														'thematiq',
+														'Applied. Nextcloud theming reset to its defaults.',
+													)
+												: t(
+														'thematiq',
+														'Applied. Nextcloud theming updated.',
+													)) + reloadHint
+										)
 									})
 									.catch(function (themingError) {
 										console.error(
 											'Error syncing Nextcloud theming:',
 											themingError,
 										)
-										return t(
-											'thematiq',
-											'Theme applied, but updating Nextcloud theming failed.',
+										return (
+											t(
+												'thematiq',
+												'Theme applied, but updating Nextcloud theming failed.',
+											) + reloadHint
 										)
 									})
 							}
 
-							// The POST that changed the active set has already
-							// succeeded, so this is never an error — but when the
-							// live swap rolled back, the page behind the dialog is
-							// still the OLD theme and the inline preview values
-							// have already been stripped. Saying only "applied"
-							// leaves the admin looking at the previous theme with
-							// nothing to act on, so the fallback names the reload
-							// the way every other rollback path here does.
-							return swapped === true
-								? t('thematiq', 'Applied.')
-								: t(
-										'thematiq',
-										'Applied. Reload the page to see changes.',
-									)
+							return t('thematiq', 'Applied.') + reloadHint
 						})
 						.then(function (message) {
 							// Only now: the set's stylesheets have loaded, core
