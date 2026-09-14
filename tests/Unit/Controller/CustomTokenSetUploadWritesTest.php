@@ -202,7 +202,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @return \OCP\AppFramework\Http\JSONResponse The upload response.
 	 */
-	private function upload(string $css, string $name = 'Gemeente Voorbeeld') {
+	private function upload(string $css, string $name = 'Gemeente Voorbeeld', string $fileName = 'theme.css') {
 		$tmpFile = sys_get_temp_dir() . '/thematiq-upload-' . uniqid();
 		file_put_contents($tmpFile, $css);
 
@@ -210,11 +210,32 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 			fn (string $key, $default = null) => ($key === 'name' ? $name : $default)
 		);
 		$this->request->method('getUploadedFile')->willReturn(
-			['tmp_name' => $tmpFile, 'name' => 'theme.css', 'size' => strlen($css)]
+			['tmp_name' => $tmpFile, 'name' => $fileName, 'size' => strlen($css)]
 		);
 
 		return $this->controller->upload();
 	}//end upload()
+
+	/**
+	 * What a consumer of the stored file would actually execute: the bytes with
+	 * every CSS comment removed.
+	 *
+	 * Stripped NON-GREEDILY, the way `CustomTokenSetValidator::hasDisallowedSelector()`
+	 * does, because that is the weaker of the two readings — a terminator
+	 * smuggled into a comment ends the strip early there and leaves whatever
+	 * follows as live text.
+	 *
+	 * @param string $id The stored set id.
+	 *
+	 * @return string The stored CSS with comments removed.
+	 */
+	private function liveCssOf(string $id): string {
+		return (string)preg_replace(
+			'#/\*.*?\*/#s',
+			'',
+			(string)$this->service->getRawContent(id: $id)
+		);
+	}//end liveCssOf()
 
 	/**
 	 * The CSS files present under the temp app dir.
@@ -320,6 +341,119 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		$stored = (string)$this->service->getRawContent(id: 'custom-gemeente-voorbeeld');
 		$this->assertStringContainsString('--utrecht-button-border-radius: 4px;', $stored);
 	}//end testAWellFormedComponentTokenStillStores()
+
+	/**
+	 * THE PROVENANCE COMMENT IS A SECOND BYTE-PATH TO DISK. It is built into
+	 * the emitted file and never passes the declaration gate, because the
+	 * parser only ever collects `--*` names — so a payload that is not a custom
+	 * property is dropped before the gate while its bytes are already written.
+	 *
+	 * A `*​/` in the uploaded FILENAME closed the comment early and turned
+	 * everything after it into live CSS, in a file served to anonymous visitors
+	 * on the login page.
+	 *
+	 * @param string $payload The injected provenance value.
+	 *
+	 * @dataProvider provenancePayloadProvider
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	public function testAFilenameCannotCloseTheProvenanceComment(string $payload): void {
+		$response = $this->upload(
+			":root {\n  --nldesign-color-primary: #154273;\n}\n",
+			'Filename Probe',
+			$payload
+		);
+
+		$this->assertSame(200, $response->getStatus());
+
+		// The comment must still be one comment: nothing the filename carried
+		// may survive as executable CSS.
+		$live = $this->liveCssOf('custom-filename-probe');
+		$this->assertStringNotContainsString('attacker.example', $live);
+		$this->assertStringNotContainsString('expression(', $live);
+		$this->assertStringNotContainsString('*/', $this->provenanceValueOf('custom-filename-probe', 'source:'));
+	}//end testAFilenameCannotCloseTheProvenanceComment()
+
+	/**
+	 * The same through the version the converter reads out of the uploaded
+	 * DOCUMENT. This one does not need a hostile admin — only an admin who
+	 * uploads somebody else's theme.
+	 *
+	 * @param string $payload The injected provenance value.
+	 *
+	 * @dataProvider provenancePayloadProvider
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	public function testADocumentVersionCannotCloseTheProvenanceComment(string $payload): void {
+		$document = json_encode(
+			[
+				'$version' => $payload,
+				'color' => ['primary' => ['$type' => 'color', '$value' => '#154273']],
+			]
+		);
+
+		$response = $this->upload($document, 'Version Probe', 'theme.tokens.json');
+
+		$this->assertSame(200, $response->getStatus());
+
+		$live = $this->liveCssOf('custom-version-probe');
+		$this->assertStringNotContainsString('attacker.example', $live);
+		$this->assertStringNotContainsString('expression(', $live);
+		$this->assertStringNotContainsString('*/', $this->provenanceValueOf('custom-version-probe', 'source version:'));
+	}//end testADocumentVersionCannotCloseTheProvenanceComment()
+
+	/**
+	 * Payloads that close the provenance comment and continue with live CSS.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public static function provenancePayloadProvider(): array {
+		return [
+			'external image' => ['*/ background-image:url(https://attacker.example/p.png); /*'],
+			'expression()' => ['*/ zoom:expression(alert(1)); /*'],
+			'a new selector' => ['*/ } a{background:url(https://attacker.example/p.png)} :root{ /*'],
+			'a newline and a declaration' => ["*/\n\tbackground-image:url(https://attacker.example/p.png);\n\t/*"],
+		];
+	}//end provenancePayloadProvider()
+
+	/**
+	 * The provenance line carrying the given label, as stored.
+	 *
+	 * @param string $id    The stored set id.
+	 * @param string $label The provenance label, e.g. `source:`.
+	 *
+	 * @return string The rest of that line, or '' when absent.
+	 */
+	private function provenanceValueOf(string $id, string $label): string {
+		foreach (explode("\n", (string)$this->service->getRawContent(id: $id)) as $line) {
+			if (str_contains($line, $label) === true) {
+				return trim(substr($line, (strpos($line, $label) + strlen($label))));
+			}
+		}
+
+		return '';
+	}//end provenanceValueOf()
+
+	/**
+	 * A legitimate filename still reaches the provenance block — the guard
+	 * strips comment terminators, it does not blank the field.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	public function testAnOrdinaryFilenameIsStillRecorded(): void {
+		$this->upload(
+			":root {\n  --nldesign-color-primary: #154273;\n}\n",
+			'Gemeente Voorbeeld',
+			'gemeente-voorbeeld-tokens.css'
+		);
+
+		$this->assertSame(
+			'gemeente-voorbeeld-tokens.css',
+			$this->provenanceValueOf('custom-gemeente-voorbeeld', 'source:')
+		);
+	}//end testAnOrdinaryFilenameIsStillRecorded()
 
 	/**
 	 * THE STORED FILE IS NOT THE UPLOADED FILE. A hand-authored `--nldesign-*`

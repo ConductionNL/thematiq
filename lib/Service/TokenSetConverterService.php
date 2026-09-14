@@ -2189,8 +2189,15 @@ class TokenSetConverterService {
 		$lines[] = '';
 		$lines[] = "\t/* 4. Provenance — enough to tell two runs apart without running anything.";
 		$lines[] = "\t *    input kind:      " . $inputKind . ' (' . $this->inputKindLabel(kind: $inputKind) . ')';
-		$lines[] = "\t *    source:          " . ($sourceName ?? '(pasted)');
-		$lines[] = "\t *    source version:  " . ($sourceVersion ?? '(not declared)');
+		// The only two values in this block that come from OUTSIDE the app, and
+		// therefore the only two that have to be made comment-safe. The rest is
+		// the app's own: the input kind is one of four letters this class
+		// chose, the label is a fixed string, the slug is already reduced to
+		// `[a-z0-9-]` by `CustomTokenSetService::slugify()`, the converter and
+		// table versions come from the repository's own mapping table, and the
+		// counts are integers.
+		$lines[] = "\t *    source:          " . $this->commentSafe(value: ($sourceName ?? '(pasted)'));
+		$lines[] = "\t *    source version:  " . $this->commentSafe(value: ($sourceVersion ?? '(not declared)'));
 		$lines[] = "\t *    slug:            " . $slug;
 		$lines[] = "\t *    converter:       " . (string)($table['converterVersion'] ?? '0');
 		$lines[] = "\t *    mapping table:   v" . (string)($table['version'] ?? '0') . ' sha256:' . substr((string)$this->tableHash, 0, 16);
@@ -2204,6 +2211,52 @@ class TokenSetConverterService {
 
 		return implode("\n", $lines);
 	}//end buildCss()
+
+	/**
+	 * Make an externally-supplied string safe to sit inside the provenance
+	 * comment.
+	 *
+	 * THE PROVENANCE BLOCK IS A SECOND BYTE-PATH TO DISK, and it does not go
+	 * through the declaration gate. `CustomTokenSetService::store()` writes the
+	 * string this class builds, so everything in it reaches
+	 * `css/tokens/custom-*.css` — a file served on `login`, `guest` and
+	 * `public`, to anonymous visitors.
+	 *
+	 * A `*​/` inside the comment closes it early, for the browser and for both
+	 * guards, and whatever follows becomes live CSS:
+	 *
+	 *  - `hasDisallowedSelector()` strips comments NON-GREEDILY, so it strips up
+	 *    to the injected terminator and reads the payload as ordinary text. It
+	 *    fires on `{` and on at-rules, neither of which a bare
+	 *    `background-image:url(…)` introduces.
+	 *  - `validateDeclarations()` never sees it either: `CssParserService` only
+	 *    ever collects `--*` names, so a payload that is not a custom property
+	 *    is dropped by the PARSER while its bytes are already in the file.
+	 *
+	 * Two values reach here from outside and both are attacker-reachable: the
+	 * multipart filename (client-supplied bytes, trimmed and nothing else) and
+	 * the version `DesignTokensMapper::extractPackageVersion()` reads verbatim
+	 * out of the uploaded document — so this does not need the admin to be
+	 * hostile, only to upload somebody else's theme.
+	 *
+	 * Everything outside printable ASCII goes too, not just the terminator:
+	 * a newline would break the comment's shape on its own, and it keeps the
+	 * block to the bytes it is supposed to contain.
+	 *
+	 * @param string $value The externally-supplied value.
+	 *
+	 * @return string The value, safe to interpolate into a CSS comment.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	private function commentSafe(string $value): string {
+		$safe = (string)preg_replace('/[^\x20-\x7E]|\*\//', '', $value);
+		if ($safe === '') {
+			return '(unnamed)';
+		}
+
+		return $safe;
+	}//end commentSafe()
 
 	/**
 	 * A human label for an input kind, for the provenance block.
