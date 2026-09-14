@@ -276,7 +276,7 @@ class TokenSetService {
 	 *
 	 * @return array<int, TokenSetEntry> The selectable token sets, same shape and order as `getAvailableTokenSets()`.
 	 *
-	 * @spec openspec/specs/token-sets/spec.md
+	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function getSelectableTokenSets(): array {
 		$all = $this->getAvailableTokenSets();
