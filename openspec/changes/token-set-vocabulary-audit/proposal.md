@@ -81,6 +81,12 @@ without it.
   starts at 41 entries, not 31; the planning estimate ("exactly the 31 sets") is superseded by the
   measurement, and the converter's scope is correspondingly larger.
 
+  **The 41 is the baseline, not the current count.** The list shrinks as sets are repaired and may
+  never grow — that is the fixture's whole contract. `rotterdam` and `zwolle` were repaired within
+  this change and left the list on the same commit that fixed them, so
+  `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` now holds **39**. Read a number here as
+  what was measured on 2026-09-07; the fixture is the only live count.
+
   The 41 above is the figure measured when this change was written. The fixture now holds 39, and
   the audit reports 7 complete where this measurement found 5: 41 + 5 and 39 + 7 are both 46, the
   audited total, so exactly two sets moved from incomplete to complete while the branch went on.
@@ -98,8 +104,9 @@ without it.
   `package.json` (two scripts), `.gitignore` (one entry), `l10n/*` (5 new keys, Dutch translated),
   `tests/Unit/TokenSetVocabularyTest.php` + fixture (new), and the six existing tests that construct
   `TokenSetService` directly.
-- **No token set file is modified by this change.** Fixing the 41 sets is stage 2's job; stage 1 only
-  makes the failure visible and mechanical.
+- **No token set file is modified by stage 1.** Fixing the measured 41 is stage 2's job; stage 1 only
+  makes the failure visible and mechanical. (Two of them, `rotterdam` and `zwolle`, were repaired by
+  hand in a later commit of this same pull request and are no longer allow-listed.)
 - **No OpenRegister schemas, no lifecycle/aggregation/notification behaviour** — the audit is pure
   filesystem work over `css/`, `token-sets.json` and `design-systems.json`. No Seed Data section
   applies and the ADR-031 declarative-vs-imperative distinction does not.

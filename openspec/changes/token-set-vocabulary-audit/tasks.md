@@ -14,7 +14,8 @@ Task numbering (1.1–1.7) follows the planning notes this change was written fr
 - [x] 1.7 Record the measured baseline table (48 sets, per-set missing/foreign/primary/verdict) in
       `design.md`, alongside the reconciliation against the planning estimate — 41 sets fail,
       not 31, and `summer-breeze` is not auditable. Regeneratable with
-      `node scripts/audit-token-sets.mjs --json`.
+      `node scripts/audit-token-sets.mjs --json`. That 41 is the baseline as measured on
+      2026-09-07; the allow-list fixture is the live count and may only shrink from it.
 
 ## 2. Audit Service (plan task 1.2)
 
@@ -31,9 +32,11 @@ Task numbering (1.1–1.7) follows the planning notes this change was written fr
 
 ## 3. PHPUnit Gate (plan task 1.3)
 
-- [x] 3.1 Create `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` holding the 41 measured
+- [x] 3.1 Create `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` holding the measured
       known-incomplete ids plus a `$comment` block stating the shrink-only contract and that the
-      array MUST be empty when stage 2 closes.
+      array MUST be empty when stage 2 closes. Created with the 41 measured on 2026-09-07; it holds
+      39 since `rotterdam` and `zwolle` were repaired, which is the shrink-only contract working
+      rather than a discrepancy.
 - [x] 3.2 Create `tests/Unit/TokenSetVocabularyTest.php` (no Nextcloud runtime, mirroring the
       `TokenSetContrastAuditTest.php` static-inventory pattern) with:
       `testEveryShippedSetIsCompleteOrAllowListed` (fails with a per-set list of missing/foreign/
