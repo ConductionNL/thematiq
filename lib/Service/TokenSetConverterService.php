@@ -453,6 +453,8 @@ class TokenSetConverterService {
 	 * The reason-code copy from the mapping table, for rendering a report.
 	 *
 	 * @return array<string, string> Reason code => one-sentence explanation.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 */
 	public function getReasons(): array {
 		$table = $this->table();

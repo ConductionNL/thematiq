@@ -287,6 +287,8 @@ class ThemingService {
 	 *
 	 * @return array{primary_color: string, background_color: string} The stock colours.
 	 *
+	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 *
 	 * @psalm-suppress UndefinedClass OCA\Theming is a first-party Nextcloud app,
 	 *                 present at runtime but not a composer dependency, so it is
 	 *                 absent during analysis — the same rationale this file

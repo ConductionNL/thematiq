@@ -412,6 +412,93 @@ Token set management endpoints MUST be registered in the route configuration.
 - GIVEN the routes configuration
 - THEN `GET /settings/tokenset-preview/{tokenSetId}` MUST be mapped to `settings#getTokenSetPreview`
 
+### Requirement: Only Fully Functional Brands Are Selectable
+The admin dropdown MUST offer only the token sets that are fully functional. A set that does not declare the vocabulary the design system reads renders as the `defaults.css` brand rather than its own, and offering it invites an admin to apply a theme that does not do what its name says. Today that leaves `nextcloud` and nothing else: every other shipped brand is still discovered, still served and still in the catalogue, but is not offered for selection until it passes the vocabulary audit.
+
+Narrowing a picker MUST NOT be able to change what an instance is doing, so three ids survive the filter whatever the allowlist says.
+
+#### Scenario: The allowlist is the only shipped set offered
+- GIVEN an instance running the stock set
+- WHEN the admin panel builds its dropdown
+- THEN the dropdown MUST contain `TokenSetService::SELECTABLE_SHIPPED_SETS` and no other shipped set
+- AND the full catalogue MUST remain unchanged: discovery, the public catalogue and the preview endpoint still answer for every shipped set
+
+#### Scenario: The active set is always selectable
+- GIVEN the instance is running a set that is not on the allowlist
+- WHEN the dropdown is built
+- THEN that set MUST still be offered
+- BECAUSE dropping it would render the panel with no option selected, and the first save would silently re-theme the instance to whatever happened to come first
+
+#### Scenario: A set a group mapping points at is always selectable
+- GIVEN a per-group mapping assigns a token set to a group
+- WHEN the dropdown is built
+- THEN that set MUST still be offered
+- BECAUSE the group picker is fed from this same list, and a group's theme would disappear from the UI while still being applied
+
+#### Scenario: An imported set is always selectable
+- GIVEN an admin has imported a `custom-*` set
+- WHEN the dropdown is built
+- THEN that set MUST be offered unconditionally
+- BECAUSE the importer tells the admin their upload was added and selectable
+
+#### Scenario: Adding a brand to the allowlist is an audit outcome
+- GIVEN a shipped brand that the vocabulary audit reports as complete
+- THEN it MAY be added to `SELECTABLE_SHIPPED_SETS`
+- AND a brand the audit still reports as incomplete MUST NOT be
+
+### Requirement: Shipped Token Set Vocabulary Completeness
+A shipped token set MUST itself declare the `--nldesign-*` vocabulary the design system reads. A set that declares none of it still renders — as the brand in `css/systems/nldesign/defaults.css` rather than its own — which is why this is audited separately from contrast: no colour ratio can reveal it.
+
+#### Scenario: Required tokens are judged on the set file alone
+- GIVEN a shipped token set file under `css/tokens/`
+- WHEN `TokenSetVocabularyAuditService` audits it
+- THEN the set file MUST be read on its own, never layered over `css/systems/nldesign/defaults.css`
+- AND every `REQUIRED_TOKENS` entry the file does not declare MUST be reported in `missingRequired`
+
+#### Scenario: Raw palette steps may not claim the app vocabulary
+- GIVEN a set declares a `--nldesign-*` name that no CSS layer in the app declares a default for or reads
+- WHEN the set is audited
+- THEN that name MUST be reported in `foreignNldesignNames`
+- AND the raw upstream palette step MUST instead be declared under the brand's own prefix, for example `--zwolle-color-blue-40`
+
+#### Scenario: The CSS primary and the manifest primary are one value
+- GIVEN a set declares `--nldesign-color-primary` in CSS
+- AND `token-sets.json` declares `theming.primary_color` for the same id
+- WHEN the two values differ
+- THEN `primaryMismatch` MUST be true
+- BECAUSE the CSS paints the app while the manifest value is pushed into Nextcloud core theming, so a divergence means the two halves of one theme disagree
+
+#### Scenario: A set the audit cannot judge reports nothing
+- GIVEN a token set whose design system does not read `--nldesign-*` tokens at all
+- WHEN the set is audited
+- THEN `auditable` MUST be false
+- AND the audit MUST report no findings for it, rather than reporting every required token as missing
+
+#### Scenario: The PHP service and the Node CLI apply the same rules
+- GIVEN `scripts/audit-token-sets.mjs` mirrors this service for the standalone CLI
+- THEN its `REQUIRED_TOKENS` MUST stay byte-identical to `TokenSetVocabularyAuditService::REQUIRED_TOKENS`
+- AND the two lists MUST change together or not at all
+
+### Requirement: Incomplete Sets Are Surfaced in the Admin Dropdown
+A shipped set that fails the vocabulary audit MUST reach the admin as a non-blocking warning on the channel the dropdown and the apply dialog already read, so it cannot be applied silently.
+
+#### Scenario: The verdict rides the existing warnings channel
+- GIVEN a shipped set the vocabulary audit reports as incomplete
+- WHEN `TokenSetService` builds that set's entry
+- THEN an entry of the form `{kind: "incomplete", missing, foreign, primaryMismatch, declaredPrimary, cssPrimary}` MUST be appended to the entry's `warnings`
+- AND it MUST be appended AFTER the WCAG contrast warnings, so those keep their position in the list
+
+#### Scenario: A complete set carries no incomplete warning
+- GIVEN a shipped set that declares the full required vocabulary
+- WHEN its entry is built
+- THEN no `incomplete` warning MUST be added for it
+
+#### Scenario: A custom upload keeps its uploader-supplied warnings
+- GIVEN a genuine `custom-*` set imported by an admin
+- WHEN its entry is built
+- THEN its `warnings` MUST be the ones recorded at upload time
+- AND the shipped-set vocabulary audit MUST NOT run for it
+
 ## Current Implementation Status
 
 **Fully implemented:**

@@ -325,6 +325,8 @@ class TokenSetVocabularyAuditService {
 	 * @param string $appPath The app root path.
 	 *
 	 * @return array<int, string> The vocabulary token names.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
 	 */
 	public function declaredVocabulary(string $appPath): array {
 		if (isset($this->vocabularyCache[$appPath]) === true) {
@@ -360,6 +362,8 @@ class TokenSetVocabularyAuditService {
 	 * @param string $appPath The app root path.
 	 *
 	 * @return array<int, string> The consuming design-system ids.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
 	 *
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - deciding whether a design system reads the vocabulary walks several stylesheet kinds,
 	 *   each with its own accept rule.
