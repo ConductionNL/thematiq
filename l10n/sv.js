@@ -236,7 +236,19 @@ OC.L10N.register(
         "Also update Nextcloud theming (login page, e-mails, mobile apps)": "Also update Nextcloud theming (login page, e-mails, mobile apps)",
         "Applied. Nextcloud theming reset to its defaults.": "Applied. Nextcloud theming reset to its defaults.",
         "Applied. Nextcloud theming updated.": "Applied. Nextcloud theming updated.",
-        "Theme applied, but updating Nextcloud theming failed.": "Theme applied, but updating Nextcloud theming failed."
+        "Theme applied, but updating Nextcloud theming failed.": "Theme applied, but updating Nextcloud theming failed.",
+        "{count} saved overrides are not part of the token set vocabulary and are not in the file: {names}": "{count} saved overrides are not part of the token set vocabulary and are not in the file: {names}",
+        "Component": "Component",
+        "corner radius {value}": "corner radius {value}",
+        "Export as token set": "Export as token set",
+        "Full view": "Full view",
+        "no token": "no token",
+        "not in the token registry": "not in the token registry",
+        "Show all {count} tokens of {tab}": "Show all {count} tokens of {tab}",
+        "The token set could not be exported.": "The token set could not be exported.",
+        "Applied. Reload the page to see changes.": "Applied. Reload the page to see changes.",
+        "{count} tokens": "{count} tokens",
+        "Reload the page to see changes.": "Reload the page to see changes."
     },
     "nplurals=2; plural=(n != 1);"
 )
