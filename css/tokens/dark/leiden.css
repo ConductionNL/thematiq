@@ -39,7 +39,6 @@
 		--nldesign-color-alert-succes-background: #1d3f25;
 		--nldesign-color-alert-warning: #f3d16f;
 		--nldesign-color-alert-warning-background: #4f3d04;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #2c2e2f;
 		--nldesign-color-background-darker: #3a3b3c;
 		--nldesign-color-background-hover: #252728;
@@ -185,7 +184,6 @@ body[data-themes*=dark] {
 	--nldesign-color-alert-succes-background: #1d3f25;
 	--nldesign-color-alert-warning: #f3d16f;
 	--nldesign-color-alert-warning-background: #4f3d04;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #2c2e2f;
 	--nldesign-color-background-darker: #3a3b3c;
 	--nldesign-color-background-hover: #252728;
