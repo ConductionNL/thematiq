@@ -135,6 +135,14 @@ class CssInjectionService {
 	private LoggerInterface $logger;
 
 	/**
+	 * Resolves the `nextcloud` set from the running instance rather than from
+	 * the shipped snapshot of it.
+	 *
+	 * @var StockTokensService
+	 */
+	private StockTokensService $stockTokens;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -146,6 +154,7 @@ class CssInjectionService {
 	 * @param GroupThemingService $groupThemingService The per-group token-set resolver.
 	 * @param ThemePreviewBannerService $previewBannerService The theme-preview banner injector.
 	 * @param LoggerInterface $logger The logger for skipped layers.
+	 * @param StockTokensService $stockTokens Resolves the `nextcloud` set from the running instance.
 	 */
 	public function __construct(
 		IConfig $config,
@@ -157,6 +166,7 @@ class CssInjectionService {
 		GroupThemingService $groupThemingService,
 		ThemePreviewBannerService $previewBannerService,
 		LoggerInterface $logger,
+		StockTokensService $stockTokens,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
@@ -167,6 +177,7 @@ class CssInjectionService {
 		$this->groupThemingService = $groupThemingService;
 		$this->previewBannerService = $previewBannerService;
 		$this->logger = $logger;
+		$this->stockTokens = $stockTokens;
 	}//end __construct()
 
 	/**
@@ -356,7 +367,28 @@ class CssInjectionService {
 			return $layers;
 		}
 
-		$layers[] = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
+		// 3a-1. The `nextcloud` set is the one set whose values belong to
+		// something else: it exists to reproduce the appearance of the running
+		// instance, and that appearance changes with every Nextcloud release.
+		// A shipped file can only ever hold a snapshot of one version, so it is
+		// resolved from the instance instead and the file is kept as a
+		// fallback. See StockTokensService for the measurements and for why a
+		// stylesheet cannot do this with var().
+		$stockCss = null;
+		if ($tokenSet === self::STOCK_TOKEN_SET) {
+			$stockCss = $this->stockTokens->getCss();
+		}
+
+		if ($stockCss !== null) {
+			$layers[] = [
+				'layer' => 'tokens',
+				'kind' => 'inline',
+				'css' => $stockCss,
+				'id' => self::STOCK_TOKENS_STYLE_ID,
+			];
+		} else {
+			$layers[] = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
+		}
 		// 3a0. The logo as an ABSOLUTE url, overriding the relative one the token
 		// file declares. See logoUrlLayer() — a relative url() inside a custom
 		// property is resolved against the stylesheet that USES it, and the use
@@ -707,6 +739,24 @@ class CssInjectionService {
 	 * @var string
 	 */
 	public const LOGO_STYLE_ID = 'nldesign-logo-url';
+
+	/**
+	 * The token set that means "look like this Nextcloud", and therefore the
+	 * one set that cannot be described by a file checked into this repository.
+	 *
+	 * @var string
+	 */
+	public const STOCK_TOKEN_SET = 'nextcloud';
+
+	/**
+	 * The `id` the resolved stock-tokens `<style>` carries on the page.
+	 *
+	 * Same contract as {@see self::LOGO_STYLE_ID}: an inline block has no href
+	 * to be found by, so the client replaces it by id when the set changes.
+	 *
+	 * @var string
+	 */
+	public const STOCK_TOKENS_STYLE_ID = 'nldesign-stock-tokens';
 
 	/**
 	 * Build the logo layer entry.

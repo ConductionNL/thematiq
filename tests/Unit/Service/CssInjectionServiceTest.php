@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\ThemePreviewBannerService;
 use OCP\IConfig;
 use OCP\IURLGenerator;
@@ -106,6 +107,17 @@ class CssInjectionServiceTest extends TestCase {
 	private $logger;
 
 	/**
+	 * The stock-token resolver mock.
+	 *
+	 * Inert by default — `getCss()` returns null, which is the "could not read
+	 * the instance" answer and therefore the shipped-file behaviour every other
+	 * test in this suite was written against.
+	 *
+	 * @var StockTokensService&MockObject
+	 */
+	private $stockTokens;
+
+	/**
 	 * Set up mocks before each test.
 	 */
 	protected function setUp(): void {
@@ -119,6 +131,8 @@ class CssInjectionServiceTest extends TestCase {
 		$this->groupThemingService = $this->createMock(GroupThemingService::class);
 		$this->previewBannerService = $this->createMock(ThemePreviewBannerService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->stockTokens = $this->createMock(StockTokensService::class);
+		$this->stockTokens->method('getCss')->willReturn(null);
 
 		// Default: no group mapping configured, so the resolver returns the
 		// plain appconfig token set — byte-identical to pre-per-group behaviour.
@@ -158,6 +172,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->groupThemingService,
 					$this->previewBannerService,
 					$this->logger,
+					$this->stockTokens,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitFontLink'])
