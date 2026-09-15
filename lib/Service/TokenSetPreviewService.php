@@ -58,6 +58,107 @@ class TokenSetPreviewService {
 	}//end __construct()
 
 	/**
+	 * Resolve the complete --nldesign-* layer of a token set: the defaults,
+	 * with the set's own file merged over them.
+	 *
+	 * This is steps 1 and 2 of the pipeline in the class docblock, stopped
+	 * before the --color-* resolution, because two callers want different
+	 * halves of it. {@see getResolvedColors()} wants the Nextcloud variables a
+	 * preview swatch paints; the component playground's export wants the
+	 * semantic layer itself, since a token set FILE is --nldesign-* names and
+	 * an export has to be a complete set, not the handful of values a preview
+	 * needed (component-playground design decision 6).
+	 *
+	 * @param string $tokenSetId The token set identifier (e.g. 'utrecht', 'custom-openwoo').
+	 *
+	 * @return array<string, string> Map of --nldesign-* token name => declared value.
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	public function getResolvedTokens(string $tokenSetId): array {
+		$appPath = $this->appManager->getAppPath('thematiq');
+
+		$vars = $this->parseCssVars(
+			filePath: $appPath . '/css/systems/nldesign/defaults.css'
+		);
+
+		return $this->semanticLayer(
+			vars: array_merge($vars, $this->getDeclaredTokens(tokenSetId: $tokenSetId))
+		);
+	}//end getResolvedTokens()
+
+	/**
+	 * The `--nldesign-*` tokens a set declares in its OWN file, without the
+	 * defaults behind it.
+	 *
+	 * The difference from {@see getResolvedTokens()} is the difference between
+	 * "what this set paints with" and "what this set decided", and only the
+	 * second can answer whether a component is touched by the set at all — the
+	 * question the playground's "only what this set changes" filter asks. A
+	 * merged map answers "yes" for every token, because the defaults declare
+	 * them all.
+	 *
+	 * @param string $tokenSetId The token set identifier.
+	 *
+	 * @return array<string, string> Map of --nldesign-* token name => declared value.
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	public function getDeclaredTokens(string $tokenSetId): array {
+		$path = $this->appManager->getAppPath('thematiq') . '/css/tokens/' . $tokenSetId . '.css';
+		if (file_exists($path) === false) {
+			return [];
+		}
+
+		return $this->semanticLayer(vars: $this->parseCssVars(filePath: $path));
+	}//end getDeclaredTokens()
+
+	/**
+	 * Keep only the semantic layer of a parsed declaration map, sorted.
+	 *
+	 * A token set file may also declare its own brand-prefixed palette steps
+	 * (`--{slug}-*`); those are raw material the design system does not read,
+	 * and neither an export nor a filter should treat them as vocabulary.
+	 *
+	 * @param array<string, string> $vars A parsed declaration map.
+	 *
+	 * @return array<string, string> Only the --nldesign-* entries, sorted by name.
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	private function semanticLayer(array $vars): array {
+		$tokens = [];
+		foreach ($vars as $name => $value) {
+			if (str_starts_with($name, '--nldesign-') === true) {
+				$tokens[$name] = $value;
+			}
+		}
+
+		ksort($tokens);
+
+		return $tokens;
+	}//end semanticLayer()
+
+	/**
+	 * Which `--nldesign-*` token each Nextcloud variable reads.
+	 *
+	 * Parsed out of `overrides.css`, which is the stylesheet that actually
+	 * makes the connection, so the map cannot drift from the cascade the way a
+	 * second copy of it in JavaScript or in a data file would. The component
+	 * playground needs it to write an edited Nextcloud variable back into the
+	 * token set vocabulary when it exports a set.
+	 *
+	 * @return array<string, string> Map of --color-* (or --border-radius-*, …) to --nldesign-* token.
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	public function getTokenSources(): array {
+		return $this->parseMappings(
+			filePath: $this->appManager->getAppPath('thematiq') . '/css/systems/nldesign/overrides.css'
+		);
+	}//end getTokenSources()
+
+	/**
 	 * Resolve all editable --color-* values for a given token set.
 	 *
 	 * @param string $tokenSetId The token set identifier (e.g. 'utrecht').

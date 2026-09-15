@@ -17,6 +17,7 @@ namespace OCA\Thematiq\Tests\Unit\Settings;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Settings\Admin;
@@ -71,7 +72,8 @@ class AdminDelegationTest extends TestCase {
 			$this->createMock(IUserSession::class),
 			$this->createMock(DesignSystemService::class),
 			$this->createMock(IInitialState::class),
-			$this->createMock(IRequest::class)
+			$this->createMock(IRequest::class),
+			$this->createMock(PlaygroundStateService::class)
 		);
 	}//end admin()
 
