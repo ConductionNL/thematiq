@@ -27,6 +27,7 @@ namespace OCA\Thematiq\Settings;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -123,6 +124,15 @@ class Admin implements IDelegatedSettings {
 	private IRequest $request;
 
 	/**
+	 * Assembles what the component playground instrument reads at boot: the
+	 * component inventory, the reason vocabulary and the active set's token
+	 * values.
+	 *
+	 * @var PlaygroundStateService
+	 */
+	private PlaygroundStateService $playgroundState;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -134,6 +144,7 @@ class Admin implements IDelegatedSettings {
 	 * @param DesignSystemService $designSystemService Resolves the active icon pack.
 	 * @param IInitialState $initialState Carries server state to admin.js.
 	 * @param IRequest $request The current request (presentation-mock switch).
+	 * @param PlaygroundStateService $playgroundState What the component playground reads at boot.
 	 */
 	public function __construct(
 		IConfig $config,
@@ -145,6 +156,7 @@ class Admin implements IDelegatedSettings {
 		DesignSystemService $designSystemService,
 		IInitialState $initialState,
 		IRequest $request,
+		PlaygroundStateService $playgroundState,
 	) {
 		$this->config = $config;
 		$this->l = $l;
@@ -155,6 +167,7 @@ class Admin implements IDelegatedSettings {
 		$this->designSystemService = $designSystemService;
 		$this->initialState = $initialState;
 		$this->request = $request;
+		$this->playgroundState = $playgroundState;
 	}//end __construct()
 
 	/**
@@ -230,6 +243,19 @@ class Admin implements IDelegatedSettings {
 		$this->initialState->provideInitialState('tokenSets', $tokenSets);
 		$this->initialState->provideInitialState('currentTokenSet', $currentTokenSet);
 		$this->publishPreviewState(activePreview: $activePreview, iconPackSource: $iconPackSource);
+
+		// The component playground (js/playground.js) rebuilds the token editor
+		// below into a selector / stage / tokens instrument. What it shows is
+		// data, published here — the script decides none of it. The set it
+		// describes is the one the page is WEARING, so a session preview wins.
+		$playgroundSet = $currentTokenSet;
+		if ($activePreview !== null) {
+			$playgroundSet = $activePreview['tokenSet'];
+		}
+
+		foreach ($this->playgroundState->getInitialState(tokenSetId: $playgroundSet) as $key => $value) {
+			$this->initialState->provideInitialState($key, $value);
+		}
 
 		return new TemplateResponse(
 			Application::APP_ID,

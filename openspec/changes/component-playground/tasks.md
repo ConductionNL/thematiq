@@ -5,87 +5,83 @@ Tick a box when the work is merged to `development`, not when it is started.
 ## 1. Spec and design
 
 - [ ] 1.1 Write this change: `proposal.md`, `design.md`, `tasks.md`, spec deltas on
-      `component-playground` (new), `custom-css-overrides`, `admin-settings`, `theme-preview`.
-     
+      `component-playground` (new), `admin-settings`, `custom-css-overrides`, `theme-preview`.
 - [ ] 1.2 Record the rendering decision and the reason the Vue build was not taken, measured
       against what `js/admin-mock.js` already does.
+- [ ] 1.3 Record why this is built into the token editor rather than served as a page, and
+      leave the rejected page in the design so the trade is not re-made (design decision 2).
 
-## 2. The page
+## 2. The instrument
 
-- [ ] 2.1 `PlaygroundController::index()` + route `GET /playground`
-      (`#[AuthorizedAdminSetting(Admin::class)]`, returns a `TemplateResponse`). A non-admin
-      gets the same refusal the settings section gives, not a blank page.
-- [ ] 2.2 `templates/playground.php`: the shell — left rail, sticky edit bar, section
-      container — plus `css/playground.css`. Loads `js/lib/layerSwap.js`,
-      `js/lib/tokenTransforms.js` and `js/playground.js`, in that order.
-- [ ] 2.3 Initial state: the token set catalogue, the active set, the active preview, the
-      resolved values for the active set, and the conversion report when the set has one.
-      Same keys the settings page publishes, so one reader serves both.
-- [ ] 2.4 Entry points: a button in the settings section and "Open playground" in the apply
-      dialog.
+- [ ] 2.1 `js/playground.js`, loaded by `templates/settings/admin.php` after `admin.js`; it
+      waits for the editor admin.js renders and attaches to it.
+- [ ] 2.2 The selector: move `.nldesign-tabs` above `#nldesign-preview`, add the chip row
+      under it, and keep the tab buttons in sync — admin.js can no longer deactivate them
+      once the strip has left its container.
+- [ ] 2.3 The stage: a third `.nldesign-preview-stage[data-view="component"]` in the preview,
+      with the App/Login switch hidden because the tabs now decide the view.
+- [ ] 2.4 `lib/Service/PlaygroundStateService.php` + `lib/Settings/Admin.php`: publish
+      `playgroundInventory`, `playgroundReasons`, `playgroundTokens` and
+      `playgroundTokenSources` for the set the page is wearing.
+- [ ] 2.5 `css/playground.css`: the selector, the chips, the stage, the specimens and the
+      filtered list. Nothing in it may style a specimen from anything but the real
+      `--color-*` variables.
 
-## 3. Inventory and sections
+## 3. Inventory and components
 
-- [ ] 3.1 `js/playground/components.json`: one entry per component — id, label, section, the
-      Nextcloud variables with what each paints, the `--nldesign-*` source token, the derived
-      variables that are locked, and the class names the markup uses.
-- [ ] 3.2 Render one section per entry, in this order: header, app navigation, app
-      content card, app sidebar, buttons, links, text inputs, select and multiselect,
-      textarea, checkbox/radio/switch, note cards, toasts, dialog, popover and actions menu,
-      list items, table, badges and counter bubbles, headings and paragraph, empty content,
-      progress and loading, login card, e-mail template link, dark mode.
-- [ ] 3.3 Header, navigation and sidebar sections annotate the live chrome instead of
-      re-rendering it (design decision 2); the login card carries its own `#body-login`
-      markup.
-- [ ] 3.4 Each section is followed by a collapsed `<details>` listing its variables: name,
-      current computed value, source `--nldesign-*` token, source NLDS token when a report
-      exists, and an editor — colour picker plus hex for colours, text otherwise. One
-      "Expand all / Collapse all"; open state remembered in `localStorage`.
-- [ ] 3.5 Derived variables render locked with their computed value and the conversion reason,
-      never with an editor (design decision 5).
-- [ ] 3.6 Left rail: section list, filter box, and an "only what this set changes" toggle
-      that hides sections none of whose variables the active set declares.
+- [ ] 3.1 `js/playground/components.json`: one entry per component — id, tab, title, subtitle,
+      the states its stage draws, the tokens it reads with what each paints and which state,
+      the token-less facts with their reason codes, and the class names its markup uses.
+- [ ] 3.2 A component per chip, under the four editor tabs, covering every token the registry
+      carries: header bar, login card, login button, logo & slogan, background; app
+      navigation, content card, table, sidebar, text input, select, checkbox & switch,
+      textarea, dialog, list item, progress; primary/secondary/tertiary/error button, note
+      cards, badge & counter, toast; heading, paragraph, link, muted text, status text.
+- [ ] 3.3 Stage markup per component, one specimen per state, numbered to match its rows.
+- [ ] 3.4 The filtered list: cloned editor rows, each with its callout number and what it
+      paints, grouped by state, with "show all N tokens of <tab>" back to the full list.
+- [ ] 3.5 Token-less rows render the fact, no editor, and the converter's reason code.
 
-## 4. Editing, saving, exporting
+## 4. Editing and exporting
 
-- [ ] 4.1 Editing sets the variable inline on `<html>` with `important` priority; the real
-      component repaints.
-- [ ] 4.2 Sticky bar: "N unsaved changes", Save, Discard. Discard removes the inline values
-      and restores the inputs to the computed values.
-- [ ] 4.3 Save merges through `POST /settings/overrides`, bumps `custom-overrides.css`, waits
-      for the sheet, then drops the inline values — the ordering from design decision 3.
-     
-- [ ] 4.4 Export: serialise the active set's resolved `--nldesign-*` values plus unsaved edits
-      into one sorted flat `:root { }` block and offer it as a download.
-- [ ] 4.5 Token-set switcher at the top, reusing the settings page's dropdown, its preview
-      semantics and `layerSwap`; plus a dark-mode toggle for the page.
-- [ ] 4.6 Conversion notes per section when the active set has a conversion report; nothing when
-      it has none.
+- [ ] 4.1 An edit in a cloned row is written back into the editor's original input and
+      re-dispatched there, so dirty tracking, the reset control and Save are untouched.
+- [ ] 4.2 The live recolour is set on `#nldesign-preview`, so the specimen repaints and the
+      settings page does not.
+- [ ] 4.3 The cloned row's reset drives the editor's own reset, then re-reads what it restored.
+- [ ] 4.4 Export as token set, beside Download and Upload: the active set's resolved
+      `--nldesign-*` values with the SAVED overrides folded in, one sorted flat `:root { }`
+      block; overrides that map to no token are reported, not dropped.
+- [ ] 4.5 The open tab and component live in the URL hash, and a stale hash degrades to the
+      plain panel.
 
 ## 5. Tests
 
-- [ ] 5.1 `tests/vitest/playgroundInventory.spec.js`: every Nextcloud variable in
-      `components.json` exists in `TokenRegistry`, every `--nldesign-*` name is declared in
-      `defaults.css`, and every class name appears in the stylesheets that style it (design
-      decision 4).
-- [ ] 5.2 `tests/vitest/playgroundStore.spec.js`: dirty tracking, the save payload equals the
-      token editor's payload for the same edits, and exporting the active set with no edits
-      round-trips to a file the vocabulary audit rates as it rates the source set.
-- [ ] 5.3 `tests/Unit/Controller/PlaygroundControllerTest.php`: admin-only, renders, publishes
-      the initial-state keys the script reads.
-- [ ] 5.4 Playwright visual spec per section in light and dark for `nextcloud`,
-      `rijkshuisstijl` and `openwoo`, under `tests/e2e/visual/`.
-- [ ] 5.5 l10n: new strings in `l10n/en.json`, translated in `nl.json`, backfilled everywhere
+- [ ] 5.1 `tests/vitest/playgroundInventory.spec.js`: every token exists in `TokenRegistry`,
+      the components reach every token the editor can write, every component has stage markup
+      and every piece of stage markup a component, every class name appears in a shipped
+      stylesheet, and every reason code is one the converter defines.
+- [ ] 5.2 `tests/vitest/playgroundSelection.spec.js`: the chips of a tab, the rows grouped per
+      state, the URL hash round-trip and its refusals, and the export (round-trip, audit
+      rating, an override written back to its token, an override that cannot be expressed).
+- [ ] 5.3 `tests/Unit/Service/PlaygroundStateServiceTest.php`: the four keys, the inventory is
+      the shipped file, the tabs are the editor's own, and a missing mapping table or
+      inventory costs only what it must.
+- [ ] 5.4 `tests/Unit/Settings/AdminInitialStateTest.php`: the keys are published, and for the
+      set the page is wearing.
+- [ ] 5.5 Playwright visual spec per component in light and dark, under `tests/e2e/visual/`.
+- [ ] 5.6 l10n: new strings in `l10n/en.json`, translated in `nl.json`, backfilled everywhere
       else by `check-l10n-completeness --write`, `.js` rebuilt.
 
 ## 6. Acceptance
 
-- [ ] 6.1 With the OpenWOO set active: expand Buttons, change the primary hover, see the real
-      primary button change, save, open another page and see the same hover.
-- [ ] 6.2 Export an `openwoo.css` that the vocabulary audit rates complete. This is the handover
-      to the converter — the reference its output is diffed against.
+- [ ] 6.1 Pick Buttons & Status → Primary button: the stage draws it in four states, the list
+      shows five rows, changing the hover colour repaints the hover specimen, and Save writes
+      it exactly as the full list would.
+- [ ] 6.2 Export a token set the vocabulary audit rates complete. This is the handover to the
+      converter — the reference its output is diffed against.
 
 ## 7. Open
 
 - [ ] 7.1 Authoring the OpenWOO reference values is design work that follows this change; the
-      playground is the tool, not the set (design decision 7).
+      instrument is the tool, not the set (design decision 7).

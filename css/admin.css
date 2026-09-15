@@ -2,8 +2,14 @@
  * NL Design System Theme - Admin Settings Styles
  */
 
+/* Wider than the 800px this carried before. Nextcloud's own theming section
+   spans far more of the settings pane, and the component stage below is a
+   drawing of a HEADER — a bar that is the full width of the screen in life and
+   was being judged inside a column narrower than a phone in landscape. Reading
+   width is protected where it matters by `.nldesign-pg-reading`, so the extra
+   room reaches the specimens without turning the prose into a ledger line. */
 #nldesign-settings {
-	max-width: 800px;
+	max-width: 1100px;
 }
 
 #nldesign-settings h2 {

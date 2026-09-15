@@ -16,6 +16,7 @@ namespace OCA\Thematiq\Tests\Unit\Settings;
 
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Settings\Admin;
@@ -67,10 +68,16 @@ class AdminInitialStateTest extends TestCase {
 	 * @param array<string, mixed>|null $activePreview The preview the session user has, or null.
 	 * @param string $iconPackOverride The appconfig `icon_pack` value.
 	 * @param array<string, mixed> $captured Filled with key => value as provided.
+	 * @param string|null $playgroundSetAsked Filled with the set the playground state was assembled for.
 	 *
 	 * @return Admin The system under test.
 	 */
-	private function buildAdmin(?array $activePreview, string $iconPackOverride, array &$captured): Admin {
+	private function buildAdmin(
+		?array $activePreview,
+		string $iconPackOverride,
+		array &$captured,
+		?string &$playgroundSetAsked = null,
+	): Admin {
 		$captured = [];
 
 		$config = $this->createMock(IConfig::class);
@@ -122,6 +129,23 @@ class AdminInitialStateTest extends TestCase {
 			}
 		);
 
+		// The playground's own state is a fixed stub: this suite is about the
+		// keys the panel publishes, and PlaygroundStateServiceTest is about what
+		// goes in them.
+		$playgroundState = $this->createMock(PlaygroundStateService::class);
+		$playgroundState->method('getInitialState')->willReturnCallback(
+			static function (string $tokenSetId) use (&$playgroundSetAsked): array {
+				$playgroundSetAsked = $tokenSetId;
+
+				return [
+					'playgroundInventory' => ['version' => 2, 'tabs' => [], 'components' => []],
+					'playgroundReasons' => [],
+					'playgroundTokens' => [],
+					'playgroundTokenSources' => [],
+				];
+			}
+		);
+
 		return new Admin(
 			$config,
 			$this->createMock(IL10N::class),
@@ -131,13 +155,14 @@ class AdminInitialStateTest extends TestCase {
 			$userSession,
 			$designSystemService,
 			$initialState,
-			$this->createMock(IRequest::class)
+			$this->createMock(IRequest::class),
+			$playgroundState
 		);
 	}//end buildAdmin()
 
 	/**
-	 * All four keys js/admin.js reads MUST be published, with the values the
-	 * script expects. A missing key is not a crash — it is a silent fallback.
+	 * Every key the panel's scripts read MUST be published, with the values they
+	 * expect. A missing key is not a crash — it is a silent fallback.
 	 */
 	public function testEveryKeyTheScriptReadsIsProvided(): void {
 		$captured = [];
@@ -147,9 +172,18 @@ class AdminInitialStateTest extends TestCase {
 		$this->assertInstanceOf(TemplateResponse::class, $response);
 
 		$this->assertSame(
-			['tokenSets', 'currentTokenSet', 'activePreview', 'iconPackSource'],
+			[
+				'tokenSets',
+				'currentTokenSet',
+				'activePreview',
+				'iconPackSource',
+				'playgroundInventory',
+				'playgroundReasons',
+				'playgroundTokens',
+				'playgroundTokenSources',
+			],
 			array_keys($captured),
-			'js/admin.js reads exactly these four keys; publishing fewer makes it fall back silently.'
+			'js/admin.js reads the first four and js/playground.js the rest; publishing fewer makes either fall back silently.'
 		);
 
 		$this->assertSame(self::TOKEN_SETS, $captured['tokenSets']);
@@ -184,6 +218,25 @@ class AdminInitialStateTest extends TestCase {
 			$captured['activePreview']
 		);
 	}//end testActivePreviewIsPublishedWithResolvedName()
+
+	/**
+	 * The playground describes the set the page is WEARING. A session preview
+	 * wins over the instance-wide set, exactly as the render does — otherwise
+	 * the instrument would name the tokens of a theme the admin is not looking
+	 * at, which is worse than naming none.
+	 */
+	public function testThePlaygroundDescribesThePreviewedSet(): void {
+		$captured = [];
+		$asked = null;
+
+		// The instance-wide set is `lasuite` (the stub config); the preview is
+		// deliberately a different one, or this would pass either way.
+		$this->buildAdmin(['tokenSet' => 'nextcloud'], '', $captured, $asked)->getForm();
+		$this->assertSame('nextcloud', $asked);
+
+		$this->buildAdmin(null, '', $captured, $asked)->getForm();
+		$this->assertSame('lasuite', $asked, 'with no preview it is the instance-wide set');
+	}//end testThePlaygroundDescribesThePreviewedSet()
 
 	/**
 	 * When the appconfig override alone decides the icon pack, the published
