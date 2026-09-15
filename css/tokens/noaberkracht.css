@@ -9,10 +9,6 @@
 
 :root {
 	/* NL Design tokens */
-	/* NOTE: #4376fc is the legacy Conduction cobalt (retired 2026-05-13).
-	   Verify with Noaberkracht municipality whether their actual brand primary
-	   should replace this value. If confirmed, update upstream in nl-design-system/themes.
-	   See conduction brand ref: canonical cobalt is #21468B, not #4376fc. */
 	--nldesign-color-primary: #4376fc;
 	--nldesign-color-primary-hover: #2e5ed9;
 	--nldesign-color-error: #dc3545;
@@ -45,7 +41,7 @@
 	--nldesign-color-white-100: #ffffff;
 	--nldesign-color-black-0: #000000;
 	--nldesign-font-size-4xs: 8px;
-	--nldesign-font-size-3xs: 10px;
+	--nldesign-font-size-3xs: 10x;
 	--nldesign-font-size-2xs: 12px;
 	--nldesign-font-size-xs: 14px;
 	--nldesign-font-size-sm: 18px;
@@ -99,17 +95,17 @@
 	--nldesign-conduction-download-card-border-radius: 22px;
 	--nldesign-conduction-logo-header-inline-size: 130px;
 	--nldesign-conduction-logo-header-block-size: 75px;
-	--nldesign-conduction-logo-header-background-image: url('../../../img/logos/noaberkracht.svg');
+	--nldesign-conduction-logo-header-background-image: url('https://werkenbijnoaberkracht.nl/assets/img/base/logo.png');
 	--nldesign-conduction-logo-footer-inline-size: 150px;
 	--nldesign-conduction-logo-footer-block-size: 87px;
-	--nldesign-conduction-logo-footer-background-image: url('../../../img/logos/noaberkracht.svg');
+	--nldesign-conduction-logo-footer-background-image: url('https://werkenbijnoaberkracht.nl/assets/img/base/logo.png');
 	--nldesign-conduction-logo-navbar-inline-size: 69px;
 	--nldesign-conduction-logo-navbar-block-size: 43px;
-	--nldesign-conduction-logo-navbar-background-image: url('../../../img/logos/noaberkracht.svg');
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-primary-top-nav-current-box-shadow: inset 0 -4px {noaberkracht.color.yellow.47}; */
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-primary-top-nav-current-mobile-box-shadow: inset 4px 0 {noaberkracht.color.yellow.47}; */
+	--nldesign-conduction-logo-navbar-background-image: url('https://werkenbijnoaberkracht.nl/assets/img/base/logo.png');
+	--nldesign-conduction-primary-top-nav-current-box-shadow: inset 0 -4px {noaberkracht.color.yellow.47};
+	--nldesign-conduction-primary-top-nav-current-mobile-box-shadow: inset 4px 0 {noaberkracht.color.yellow.47};
 	--nldesign-conduction-primary-top-nav-dropdown-border-style: solid;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-primary-top-nav-dropdown-hover-box-shadow: inset 0 -4px {noaberkracht.color.yellow.47}; */
+	--nldesign-conduction-primary-top-nav-dropdown-hover-box-shadow: inset 0 -4px {noaberkracht.color.yellow.47};
 	--nldesign-conduction-primary-top-nav-item-padding: 18px;
 	--nldesign-conduction-primary-top-nav-padding-inline-end: 16px;
 	--nldesign-conduction-primary-top-nav-padding-inline-start: 16px;
@@ -118,7 +114,7 @@
 	--nldesign-conduction-secondary-top-nav-background-color: transparent;
 	--nldesign-conduction-secondary-top-nav-hover-background-color: transparent;
 	--nldesign-conduction-secondary-top-nav-current-background-color: unset;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-secondary-top-nav-current-box-shadow: inset 0 -4px {noaberkracht.color.yellow.47}; */
+	--nldesign-conduction-secondary-top-nav-current-box-shadow: inset 0 -4px {noaberkracht.color.yellow.47};
 	--nldesign-conduction-secondary-top-nav-font-weight: 400;
 	--nldesign-conduction-secondary-top-nav-item-padding: 18px;
 	--nldesign-conduction-secondary-top-nav-padding-inline-end: 16px;
@@ -154,9 +150,9 @@
 	--nldesign-conduction-tooltip-border-radius: 0px;
 	--nldesign-conduction-tooltip-z-index: 9999;
 	--nldesign-component-badge-counter-border-radius: 50%;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-component-badge-background-color: {noaberkracht.color.blue.31}; */
+	--nldesign-component-badge-background-color: {noaberkracht.color.blue.31} ;
 	--nldesign-component-badge-border-radius: 9999px;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-component-badge-color: {noaberkracht.color.white.100}; */
+	--nldesign-component-badge-color: {noaberkracht.color.white.100} ;
 	--nldesign-component-button-border-radius: 9999px;
 	--nldesign-component-button-font-size: inherit;
 	--nldesign-component-button-font-weight: inherit;
@@ -194,7 +190,6 @@
 	--nldesign-component-textbox-font-size: 14px;
 
 	/* Noaberkracht palette */
-	/* NOTE: legacy #4376fc — verify with municipality; may need upstream update */
 	--noaberkracht-color-primary: #4376fc;
 	--noaberkracht-color-primary-hover: #2e5ed9;
 	--noaberkracht-color-error: #dc3545;
@@ -227,7 +222,7 @@
 	--noaberkracht-color-white-100: #ffffff;
 	--noaberkracht-color-black-0: #000000;
 	--noaberkracht-font-size-4xs: 8px;
-	--noaberkracht-font-size-3xs: 10px;
+	--noaberkracht-font-size-3xs: 10x;
 	--noaberkracht-font-size-2xs: 12px;
 	--noaberkracht-font-size-xs: 14px;
 	--noaberkracht-font-size-sm: 18px;

@@ -94,13 +94,13 @@
 	--nldesign-conduction-download-card-border-radius: 0px;
 	--nldesign-conduction-logo-header-inline-size: 150px;
 	--nldesign-conduction-logo-header-block-size: 30px;
-	--nldesign-conduction-logo-header-background-image: url('../../../img/logos/dinkelland.svg');
+	--nldesign-conduction-logo-header-background-image: url('https://www.dinkelland.nl/sites/all/themes/dinkelland/logo.svg');
 	--nldesign-conduction-logo-navbar-inline-size: 150px;
 	--nldesign-conduction-logo-navbar-block-size: 40px;
-	--nldesign-conduction-logo-navbar-background-image: url('../../../img/logos/dinkelland.svg');
+	--nldesign-conduction-logo-navbar-background-image: url('https://www.dinkelland.nl/sites/all/themes/dinkelland/logo.svg');
 	--nldesign-conduction-primary-top-nav-current-background-color: unset;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-primary-top-nav-current-box-shadow: inset 0 -4px {dinkelland.color.primary}; */
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-primary-top-nav-current-mobile-box-shadow: inset 4px 0 {dinkelland.color.primary}; */
+	--nldesign-conduction-primary-top-nav-current-box-shadow: inset 0 -4px {dinkelland.color.primary};
+	--nldesign-conduction-primary-top-nav-current-mobile-box-shadow: inset 4px 0 {dinkelland.color.primary};
 	--nldesign-conduction-primary-top-nav-item-padding: 18px;
 	--nldesign-conduction-primary-top-nav-padding-inline-end: 16px;
 	--nldesign-conduction-primary-top-nav-padding-inline-start: 16px;
@@ -108,7 +108,7 @@
 	--nldesign-conduction-primary-top-nav-padding-block-start: 16px;
 	--nldesign-conduction-secondary-top-nav-background-color: transparent;
 	--nldesign-conduction-secondary-top-nav-current-background-color: unset;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-secondary-top-nav-current-box-shadow: inset 0 -4px {dinkelland.color.primary}; */
+	--nldesign-conduction-secondary-top-nav-current-box-shadow: inset 0 -4px {dinkelland.color.primary};
 	--nldesign-conduction-secondary-top-nav-font-weight: 400;
 	--nldesign-conduction-secondary-top-nav-item-padding: 18px;
 	--nldesign-conduction-secondary-top-nav-padding-inline-end: 16px;
@@ -145,7 +145,7 @@
 	--nldesign-conduction-tabs-tab-min-width: 160px;
 	--nldesign-conduction-tabs-tab-min-height: 61px;
 	--nldesign-conduction-tabs-tab-selected-background-color: transparent;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-conduction-tabs-tab-selected-box-shadow: 0px 1px 0px 0px {dinkelland.color.white.100}; */
+	--nldesign-conduction-tabs-tab-selected-box-shadow: 0px 1px 0px 0px {dinkelland.color.white.100};
 	--nldesign-conduction-tabs-tab-selected-border-style: solid;
 	--nldesign-conduction-tabs-tab-selected-border-bottom: 0;
 	--nldesign-conduction-tabs-tab-selected-border-bottom-width: 0px;
@@ -166,9 +166,9 @@
 	--nldesign-conduction-tooltip-border-radius: 0px;
 	--nldesign-conduction-tooltip-z-index: 9999;
 	--nldesign-component-badge-counter-border-radius: 50%;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-component-badge-background-color: {dinkelland.color.black.0}; */
+	--nldesign-component-badge-background-color: {dinkelland.color.black.0} ;
 	--nldesign-component-badge-border-radius: 0;
-	/* TODO: unresolved Style-Dictionary ref — needs upstream sync: --nldesign-component-badge-color: {dinkelland.color.white.100}; */
+	--nldesign-component-badge-color: {dinkelland.color.white.100} ;
 	--nldesign-component-button-font-size: inherit;
 	--nldesign-component-button-font-weight: inherit;
 	--nldesign-component-button-primary-action-font-weight: inherit;
@@ -199,7 +199,7 @@
 	--nldesign-component-unordered-list-padding-inline-start: 2ch;
 	--nldesign-component-unordered-list-item-padding-inline-start: 1ch;
 	--nldesign-component-page-footer-background-color: unset;
-	--nldesign-component-page-footer-background-image: unset; /* External footer-bg.svg removed (privacy/availability). Replace with a locally-bundled asset under img/themes/dinkelland/ if needed. */
+	--nldesign-component-page-footer-background-image: url(https://www.dinkelland.nl/sites/all/themes/dinkelland/dist/assets/img/footer-bg.svg);
 	--nldesign-component-page-max-inline-size: 1140px;
 	--nldesign-component-paragraph-line-height: 1.5em;
 	--nldesign-component-radio-button-icon-size: 5px;
