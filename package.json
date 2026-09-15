@@ -58,7 +58,7 @@
 		"@gouvfr/dsfr": "^1.15.1"
 	},
 	"devDependencies": {
-		"@conduction/nextcloud-vue": "^2.36.3",
+		"@conduction/nextcloud-vue": "^2.52.0",
 		"@cyclonedx/cyclonedx-npm": "^6.0.1",
 		"@nextcloud/prettier-config": "^1.2.0",
 		"@openfun/cunningham-tokens": "^3.0.0",
