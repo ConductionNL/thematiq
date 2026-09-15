@@ -1,33 +1,39 @@
 # Spec delta: Admin Settings (component-playground)
 
-The settings section keeps every control it has. What is added is the way out of it: the
-compact token editor stays for admins who know which variable they want, and the playground
-becomes the visual surface for admins who need to see the result.
+The settings section keeps every control it has. What is added is a way of reading its token
+editor: the same rows, narrowed to one component at a time and shown next to a drawing of it.
 
 ## ADDED Requirements
 
-### Requirement: The Settings Section Links To The Playground
-The admin settings section MUST offer a control that opens the component playground, and the
-token-set apply dialog MUST offer the same. The control MUST be present whether or not the
-active set has a conversion report, because the playground's value does not depend on one.
+### Requirement: The Panel Publishes What The Instrument Reads
+The settings section MUST publish the component inventory, the conversion reason vocabulary,
+the active set's resolved `--nldesign-*` values and the variable-to-token map over the
+initial-state channel, for the set the page is WEARING — a session preview wins over the
+instance-wide set, exactly as the render does.
 
-#### Scenario: Opening the playground from the settings section
-- GIVEN an administrator on the Thematiq settings section
-- WHEN they activate the playground control
-- THEN the playground page MUST open for the currently active token set
+#### Scenario: The instrument describes the set on the page
+- GIVEN an active session preview of a set other than the instance-wide one
+- WHEN the admin opens the settings section
+- THEN the published token values MUST be the previewed set's
 
-#### Scenario: Opening the playground after applying a set
-- GIVEN the token-set apply dialog is open
-- WHEN the admin chooses to open the playground from it
-- THEN the playground MUST open for the set the dialog was applying
+#### Scenario: A missing key is not a crash
+- GIVEN the component inventory cannot be read
+- WHEN the settings section renders
+- THEN it MUST render its token editor unchanged
+- AND the instrument MUST simply not build
 
-### Requirement: The Token Editor Remains The Compact View
-The settings section's tabbed token editor MUST remain, and MUST keep writing through the
-overrides endpoint. The playground MUST NOT replace it: the two are alternative views of one
-file, and an admin who knows the variable's name MUST NOT be forced through a visual page to
-set it.
+### Requirement: The Token Editor Remains The Full View
+The tabbed token editor MUST remain, and MUST keep writing through the overrides endpoint.
+The instrument MUST NOT replace it: "full view" MUST be the first chip of every tab and MUST
+restore the complete list, so an admin who knows the variable's name is never forced through
+a component to set it.
 
 #### Scenario: The token editor still saves
 - GIVEN an edit made in the settings section's token editor
 - WHEN the admin saves
 - THEN it MUST be written through the overrides endpoint exactly as before this change
+
+#### Scenario: The full list is one click away
+- GIVEN a component selected in the instrument
+- WHEN the admin returns to the full view
+- THEN every token of the open tab MUST be listed again, unchanged

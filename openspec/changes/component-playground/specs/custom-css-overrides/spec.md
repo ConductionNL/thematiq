@@ -1,7 +1,8 @@
 # Spec delta: Custom CSS Overrides (component-playground)
 
-The overrides file, its format, its place in the load order and its endpoint are unchanged.
-What changes is that it now has a second writer, and that both writers must agree.
+The overrides file, its format, its place in the load order, its endpoint and its single
+writer are all unchanged. This delta exists to say so: the component playground deliberately
+adds no second writer.
 
 ## MODIFIED Requirements
 
@@ -22,14 +23,10 @@ What changes is that it now has a second writer, and that both writers must agre
 ### Requirement: Read/Write PHP Endpoint
 The backend MUST expose a PHP service that reads the current `custom-overrides.css` and writes a new version atomically. Direct file manipulation from Vue components MUST NOT be used.
 
-The overrides endpoint remains the only way the client writes `custom-overrides.css`, and it
-MUST serve both editing surfaces: the settings page's token editor and the component
-playground. Neither surface may write the file by another route, and for the same set of
-edits both MUST produce the same request body, so that a value edited in one place is
-indistinguishable from the same value edited in the other.
-
-A client that has saved MUST re-request the overrides stylesheet rather than reload the page,
-and MUST keep any inline preview values in place until the new stylesheet has loaded.
+The overrides endpoint remains the only way the client writes `custom-overrides.css`, and the
+token editor remains its only caller. The component playground MUST reach it through that
+editor's own rows and its own Save rather than through a path of its own, so there is one
+implementation of "what an edit is" and it cannot disagree with itself.
 
 #### Scenario: Read current overrides
 - GIVEN `custom-overrides.css` exists with some overrides
@@ -51,17 +48,14 @@ and MUST keep any inline preview values in place until the new stylesheet has lo
 - AND the error response MUST include a message indicating the file could not be written
 - AND the existing `custom-overrides.css` MUST remain unchanged
 
-#### Scenario: The playground saves through the same endpoint
-- GIVEN unsaved edits in the component playground
-- WHEN the admin saves them
-- THEN the client MUST POST them to the overrides endpoint
-- AND the resulting file MUST be the merge of the existing overrides with the edits
+#### Scenario: The playground saves through the editor, not beside it
+- GIVEN an edit made under a component in the playground
+- WHEN the admin saves
+- THEN the request MUST be the one the token editor would have sent for the same edit
+- AND the playground MUST NOT issue a write of its own
 
-#### Scenario: The two surfaces agree
-- GIVEN the same variable set to the same value in the token editor and in the playground
-- THEN the request bodies the two surfaces send MUST be equal
-
-#### Scenario: No flash between saving and the new stylesheet
-- GIVEN a saved edit whose value is currently applied inline
-- WHEN the overrides stylesheet is re-requested
-- THEN the inline value MUST be removed only after the new stylesheet has loaded
+#### Scenario: An edit under a component is an edit in the editor
+- GIVEN a component open in the playground
+- WHEN one of its tokens is edited
+- THEN the token editor MUST report an unsaved change, exactly as if the value had been typed
+  in the full list

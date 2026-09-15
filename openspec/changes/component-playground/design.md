@@ -25,70 +25,96 @@ renders without it.
 The drift risk the Vue option removes is real and is handled instead by the class-name
 contract in decision 4.
 
-## 2. A page inside the real shell, not a canvas
+## 2. Inside the token editor, not a page of its own
 
-The playground does not draw a fake Nextcloud. It renders component markup into a normal
-admin page and lets the real cascade paint it, so the header, the navigation, the sidebar
-and the toasts around the content are the actual themed chrome, not a copy of it.
+The playground is built INTO the existing admin panel at `/settings/admin/theming`, in the
+place and the shape `js/admin-mock.js` demonstrated: the token editor's four tabs move above
+the preview and become the selector, a row of component chips goes under them, the preview
+gains a third stage next to its app and login views, and choosing a component filters the
+editor down to the tokens that component actually reads.
 
-Two consequences follow. The header and navigation sections are annotations pointing at the
-live chrome rather than re-renders of it, because the page cannot contain a second header.
-The login card is the exception: `#body-login` never appears on an authenticated page, so
-that one section carries its own copy of the login markup, and decision 4's contract covers
-it like any other.
+An earlier draft of this decision said "an admin-only page at `/apps/thematiq/playground`",
+on the reasoning that only a full page can show the real header, navigation and sidebar. That
+was the wrong trade and it is recorded here so it is not made again. The mock had already
+answered the question in working code, and what it shows is not the live chrome but SPECIMENS
+of it, drawn on the preview stage from the same variables — which works for the login card
+and the login background too, neither of which a signed-in page can ever contain. Against
+that, a separate page costs a route, a controller, a template, a second copy of the token
+editor's state, and a second place for an admin to look for the same file.
 
-## 3. Inline `important` for editing, the overrides file for saving
+The stage draws each component in its own states, with a numbered marker per state, and the
+filtered token list repeats those numbers. That numbering is the whole mechanism: it is what
+ties "this colour" to "this row" without the admin having to know a variable name first.
 
-Editing writes `document.documentElement.style.setProperty(name, value, 'important')`. That
-is the only mechanism that beats `theme.css`'s `body … !important` declarations without
-writing a stylesheet, and it repaints the real component in the same frame.
+## 3. The editor's own rows, and therefore the editor's own saving
 
-It is deliberately not how the set switcher works. The no-reload apply change established that switching sets
-swaps the stylesheet run, because inline variables cannot reproduce
-`token-overrides/<set>.css` rules, the logo `background-image` or the dark variant's scoped
-rules — a page that is almost right is worse than a reload. Per-variable editing has none of
-those problems: one variable, one value, no rules.
+A component's token rows are the editor's rows, cloned. An edit made in a clone is written
+back into the original input and re-dispatched there, so `admin.js`'s dirty tracking, its
+reset buttons, its "customised" badge and its Save all see exactly what they would have seen
+if the admin had typed in the full list.
 
-Saving is the inverse. `POST /settings/overrides` merges the edits into
-`custom-overrides.css`, the client bumps that stylesheet's `?v=`, and only once the new
-sheet has loaded are the inline values removed. Dropping them earlier would flash the old
-value between the save returning and the sheet arriving. This is the same ordering the apply
-dialog uses.
+This is the decision that removes the most code. There is no second store, no second save
+path, no merge of two override maps, and no ordering problem between a save and a stylesheet
+reload — the panel already solved all of that for the four-tab list, and a component view that
+re-solved it would only be able to disagree with it.
+
+The live recolour is scoped to `#nldesign-preview` rather than to the document: the stage
+sits inside that element and inherits from it, so dragging a colour picker repaints the
+specimen being judged and leaves the settings page around it alone. Applying the value to the
+whole document would repaint the very panel the admin is working in, and — because
+`theme.css` declares the token layer on `body` with `!important` — would need an inline
+`!important` on `body` to take effect at all. Scoping to the preview needs neither.
 
 ## 4. The inventory is data, and a test holds it to the code
 
-`js/playground/components.json` is the single source for what each section shows. An entry
-names the Nextcloud variables the component reads, what each one paints, the `--nldesign-*`
-token it comes from, and the class names the section's markup uses.
+`js/playground/components.json` is the single source for what each chip shows. An entry names
+the tab the chip appears under, the component's states, the tokens it reads with what each
+one paints and which state it belongs to, the facts it depends on that have no token at all,
+and the class names its specimen markup uses.
 
-Three tests keep it honest:
+Four tests keep it honest:
 
-- every Nextcloud variable listed exists in `TokenRegistry`;
-- every `--nldesign-*` name listed is declared in `css/systems/nldesign/defaults.css`;
-- every class name listed appears in the stylesheets Thematiq ships for that component.
+- every token listed exists in `TokenRegistry`, or there is no editor row to clone;
+- between them the components reach every token the editor can write, so the chips are a
+  complete way into the same file the four-tab list edits;
+- every component has stage markup and every piece of stage markup has a component;
+- every class name listed appears in the stylesheets Thematiq ships.
 
-The third is the drift guard the Vue option would have given for free. It fails when
-Nextcloud renames a class out from under a copied fragment, which is the failure mode that
-matters: a section that silently stops being styled looks like a broken theme rather than a
-stale copy.
+The last is the drift guard the Vue option would have given for free. It fails when Nextcloud
+renames a class out from under a copied fragment, which is the failure mode that matters: a
+specimen that silently stops being styled looks like a broken theme rather than a stale copy.
 
-## 5. Derived variables are shown locked, never edited
+## 5. Rows with no token, and why they are not "locked variables"
 
-`--color-primary-element*`, `--color-primary-light*`, every `--color-*-rgb`, and
-`--color-main-background*` are computed by Nextcloud from other values. The panel lists them
-with their current computed value and a lock, carrying the conversion reason code where one
-exists, and offers no editor. Offering one would write an override that Nextcloud
-recomputes on the next render, which reads as the playground losing the edit.
+An earlier draft of this decision had the panel LOCK the `--color-primary-element*`,
+`--color-primary-light*`, `*-rgb` and `--color-main-background*` families, on the reasoning
+that Nextcloud derives them. That was wrong twice over: `TokenRegistry` lists most of them as
+editable and the four-tab list has always edited them, and `css/systems/nldesign/overrides.css`
+sets them explicitly — so an override does stick. Locking them would have made the component
+view strictly less capable than the list it sits in, for a reason that is not true.
+
+What the mock actually has, and what this change carries, is a row for something a
+component's look depends on that has NO token: the 50 % opacity of a disabled button,
+Nextcloud's clickable-area floor, a logo that is an asset rather than a value. Those rows show
+the fact, no editor, and the converter's own reason code — `derived-by-nextcloud`,
+`clickable-area-locked`, `logo-extracted` — so the panel and an import report explain the same
+fact in the same words.
 
 ## 6. Export is the set, not the diff
 
-The export button serialises the active set's resolved `--nldesign-*` values merged with the
-unsaved edits, as one flat `:root { }` block sorted by name. It is a complete set, not a
-patch: the custom-set upload and `css/tokens/*.css` both expect a whole set, and the
+The export button serialises the active set's resolved `--nldesign-*` values with the admin's
+SAVED overrides folded in, as one flat `:root { }` block sorted by name. It is a complete set,
+not a patch: the custom-set upload and `css/tokens/*.css` both expect a whole set, and the
 vocabulary audit can only rate something complete if every required token is present.
 
-The export therefore round-trips: exporting the active set with no edits must produce a file
-the audit rates exactly as it rates the set it came from. A vitest case pins that.
+Saved and not unsaved: a token set file is a thing an admin hands to another instance, and
+exporting what is merely typed would produce a file no instance is wearing. An override reaches
+the file through the `--nldesign-*` token that `overrides.css` says the variable reads, so the
+mapping is the stylesheet's rather than a second copy of it, and an override that maps to no
+token is reported rather than dropped.
+
+The export therefore round-trips: exporting the active set with nothing overridden must produce
+a file the audit rates exactly as it rates the set it came from. A vitest case pins that.
 
 ## 7. What this change does not do
 
@@ -96,5 +122,6 @@ It does not build the OpenWOO reference set. The playground is the tool; authori
 is a separate act of design work that follows it, and the acceptance criterion below
 (export an `openwoo.css` the vocabulary audit rates complete) is the handover between the two.
 
-It does not touch the settings page's four-tab token editor. Both write the same file through
-the same endpoint; the compact view stays for admins who know which variable they want.
+It does not replace the settings page's four-tab token editor. "Full view" is the first chip
+of every tab and gives the complete list back, unchanged, for admins who already know which
+variable they want.
