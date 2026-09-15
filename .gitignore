@@ -64,6 +64,8 @@
 !/js/admin.js
 !/js/lib/
 !/js/preview-banner.js
+!/js/playground.js
+!/js/playground/
 /build/
 /dist/
 

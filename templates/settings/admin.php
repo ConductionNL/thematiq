@@ -25,6 +25,11 @@ script('thematiq', 'lib/tokenTransforms');
 script('thematiq', 'lib/layerSwap');
 script('thematiq', 'admin');
 style('thematiq', 'admin');
+// The component playground: the selector / stage / tokens instrument that
+// admin.js's token editor is rebuilt into. Loaded AFTER admin.js because it
+// attaches to the editor that script renders, and waits for it.
+script('thematiq', 'playground');
+style('thematiq', 'playground');
 if ($_['mockUi'] === true) {
 	// Presentation mock — only with `?mock=1` (lib/Settings/Admin.php).
 	script('thematiq', 'admin-mock');

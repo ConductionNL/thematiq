@@ -1,0 +1,1548 @@
+/**
+ * Thematiq — component playground: the selector / stage / tokens instrument
+ * inside the admin panel's token editor.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V.
+ *
+ * Everything here reads Nextcloud's OWN variables, never the preview's
+ * `--prev-*` scale model. The stage exists to show what the active token set
+ * does to a real component, and a second set of values would only show what the
+ * preview thinks it does. An edited token is set inline on `#nldesign-preview`,
+ * so the stage follows it while the settings page around it does not.
+ *
+ * The specimens carry the class names Nextcloud's own components emit
+ * (`button-vue`, `notecard`, `list-item`, `app-navigation-entry`, …) so that
+ * whatever the page already has loaded for those components styles them, and so
+ * Thematiq's own rules for them apply here too. What this file adds is the
+ * GEOMETRY — sizes, spacing, the shape of a row — for the case where the page
+ * has not loaded that component's stylesheet, so a specimen is never a naked
+ * <span>.
+ */
+
+/* --- what the token editor never had -------------------------------------
+ *
+ * `css/admin.css` styles the token ROWS but carries no rule for
+ * `.nldesign-tab-panel`, `.nldesign-tabs` or `.nldesign-tab-btn` at all: the
+ * four panels render stacked and the tab strip is decorative. That is survivable
+ * as one long list and fatal here — a component's filtered rows would sit below
+ * every unfiltered panel, off the bottom of the screen, and a "Buttons & Status"
+ * chip would be read against the Login tab's tokens.
+ *
+ * So the instrument brings the missing rules with it. They are scoped by the
+ * settings id because the tabs and chips are <button> elements and Nextcloud
+ * core's button chrome beats an unscoped class on specificity — the same reason
+ * the presentation mock scopes its own copies.
+ */
+
+#nldesign-settings .nldesign-tab-panel:not(.active) {
+	display: none;
+}
+
+/* The App / Login switch is absorbed by the tabs: the login tab shows the login
+   view. Hidden in CSS, not with the `hidden` attribute, because
+   `.nldesign-preview-switch` sets `display: inline-flex` and that beats it. */
+#nldesign-settings .nldesign-preview-switch {
+	display: none;
+}
+
+#nldesign-settings .nldesign-preview-head {
+	flex-wrap: wrap;
+	gap: 8px 12px;
+}
+
+#nldesign-settings .nldesign-preview-head h3 {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+/* --- selector: the editor's tabs above the preview, chips under them --- */
+
+.nldesign-pg-selector {
+	margin-top: 2em;
+}
+
+#nldesign-settings .nldesign-pg-selector .nldesign-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	border-bottom: 1px solid var(--color-border-dark);
+}
+
+#nldesign-settings .nldesign-pg-selector .nldesign-tab-btn {
+	min-height: 0;
+	margin: 0 0 -1px;
+	padding: 9px 14px;
+	border: 0;
+	border-bottom: 3px solid transparent;
+	border-radius: 0;
+	background: none;
+	color: var(--color-text-maxcontrast);
+	font-weight: 700;
+	box-shadow: none;
+}
+
+#nldesign-settings .nldesign-pg-selector .nldesign-tab-btn.active {
+	color: var(--color-main-text);
+	border-bottom-color: var(--color-primary-element);
+}
+
+.nldesign-pg-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	padding: 12px 0 0;
+}
+
+#nldesign-settings .nldesign-pg-chip {
+	min-height: 30px;
+	margin: 0;
+	padding: 0 12px;
+	border: 1px solid var(--color-border-dark);
+	border-radius: var(--border-radius-pill);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 400;
+	box-shadow: none;
+	cursor: pointer;
+}
+
+#nldesign-settings .nldesign-pg-chip:hover {
+	background: var(--color-background-hover);
+}
+
+/* Filled, not tinted: one chip of a row of a dozen has to be findable at a
+   glance, and a tint of the brand colour is not that. */
+#nldesign-settings .nldesign-pg-chip.on {
+	border-color: transparent;
+	background: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+	font-weight: 700;
+}
+
+/* Every chip is as wide as its own BOLD text, selected or not.
+   Without this, selecting a chip makes it bold, bold makes it wider, and the
+   extra width re-wraps the whole row — so chips jump to another line the moment
+   you click one, and the thing you were aiming at has moved. The hidden twin
+   reserves the selected width up front; the visible label then changes weight
+   inside a box that never changes size. */
+#nldesign-settings .nldesign-pg-chip::after {
+	content: attr(data-label);
+	display: block;
+	height: 0;
+	overflow: hidden;
+	font-weight: 700;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+.nldesign-pg-crumb {
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+	font-weight: 400;
+}
+
+/* --- the component stage --- */
+
+/* The hatched ground says "this is a specimen, not your page" — the same
+   reading as a swatch card, and it keeps a white component visible on a white
+   surface. */
+.nldesign-pg-stage {
+	padding: 18px 20px 16px;
+	border: 1px solid var(--color-border-dark);
+	border-radius: var(--border-radius-large);
+	background:
+		repeating-linear-gradient(
+			45deg,
+			transparent 0 10px,
+			rgb(0 0 0 / 3.5%) 10px 11px
+		),
+		var(--color-main-background);
+}
+
+.nldesign-pg-stage-title {
+	margin-bottom: 16px;
+	font-weight: 700;
+}
+
+.nldesign-pg-dim {
+	color: var(--color-text-maxcontrast);
+	font-weight: 400;
+}
+
+/* Cells stretch to one height, and each lays its specimen out at the TOP with
+   its caption pinned to the BOTTOM. Bottom-aligning the cells instead made a
+   taller one — an invalid field carries an error line the others do not — push
+   its own specimen upward, so three labelled inputs sat at three different
+   heights and read as a layout bug rather than three states. */
+.nldesign-pg-states {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 28px;
+	align-items: stretch;
+}
+
+.nldesign-pg-st {
+	display: grid;
+	grid-template-rows: 1fr auto;
+	gap: 8px;
+	justify-items: center;
+	color: var(--color-text-maxcontrast);
+	font-size: 12.5px;
+}
+
+.nldesign-pg-st > .nldesign-pg-sample {
+	align-self: start;
+}
+
+/* The state caption is drawn ON the ground, so on a saturated one it has to
+   take that ground's paired text colour. It was `--color-text-maxcontrast`
+   throughout, which is a colour for light surfaces: on the header and login
+   grounds the captions came out dark-on-dark and could not be read. */
+#nldesign-preview .nldesign-pg-ground--header .nldesign-pg-st,
+#nldesign-preview .nldesign-pg-ground--login .nldesign-pg-st {
+	color: var(--color-primary-text);
+}
+
+#nldesign-preview .nldesign-pg-ground--plain .nldesign-pg-st,
+#nldesign-preview .nldesign-pg-ground--overlay .nldesign-pg-st {
+	color: var(--color-background-plain-text, var(--color-main-text));
+}
+
+.nldesign-pg-sample {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* A wide specimen is the component at the size you would meet it: a table with
+   five rows, a navigation column with four entries, a dialog with its buttons.
+   The states are marked inside it rather than shown as separate thumbnails. */
+.nldesign-pg-wide {
+	position: relative;
+	width: 100%;
+	max-width: 720px;
+}
+
+/* The numbered marker that ties a state on the stage to its token rows. */
+.nldesign-pg-co {
+	display: inline-grid;
+	place-items: center;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: var(--color-main-text);
+	color: var(--color-main-background);
+	font-size: 11px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 1;
+	vertical-align: middle;
+}
+
+.nldesign-pg-co.lock {
+	background: var(--color-text-maxcontrast);
+}
+
+.nldesign-pg-sample > .nldesign-pg-co {
+	position: absolute;
+	top: -9px;
+	right: -9px;
+	width: 20px;
+	height: 20px;
+	border: 2px solid var(--color-main-background);
+}
+
+/* Inside a wide specimen the marker rides along with the thing it points at,
+   rather than being pinned to a corner nothing is at. */
+.nldesign-pg-wide .nldesign-pg-co {
+	margin-left: 6px;
+}
+
+.nldesign-pg-callouts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 18px;
+	margin-top: 16px;
+	font-size: 13px;
+}
+
+.nldesign-pg-callouts .nldesign-pg-co {
+	margin-right: 5px;
+	vertical-align: -4px;
+}
+
+/* --- the filtered token list --- */
+
+.nldesign-pg-hidden {
+	display: none !important;
+}
+
+.nldesign-pg-panel-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 6px 0;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+.nldesign-pg-panel-head strong {
+	color: var(--color-main-text);
+}
+
+.nldesign-pg-panel-head a {
+	color: var(--color-primary-element);
+	text-decoration: underline;
+}
+
+.nldesign-pg-row .nldesign-pg-co {
+	flex: none;
+}
+
+.nldesign-pg-paints {
+	flex: none;
+	width: 190px;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+.nldesign-pg-row-fixed .nldesign-token-label {
+	color: var(--color-text-maxcontrast);
+}
+
+.nldesign-pg-why {
+	flex: 1;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+.nldesign-pg-why code {
+	padding: 1px 5px;
+	border-radius: var(--border-radius);
+	background: var(--color-background-dark);
+	font-size: 11.5px;
+}
+
+/* --- the specimens ---------------------------------------------------- */
+
+/* Scoped under the preview id, as admin.css does for its own preview parts, to
+   beat Nextcloud core's global chrome for buttons, lists and inputs. */
+
+/* --- the grounds -------------------------------------------------------
+ *
+ * Every specimen is drawn on the surface it really sits on, because "will this
+ * look good" is a question about a component AND its background, and neither
+ * answers it alone. A white avatar disc on a white card looks fine right up
+ * until it lands on the page background.
+ *
+ * Which ground a component gets is data (`ground` in components.json), not a
+ * decision made here.
+ */
+
+#nldesign-preview .nldesign-pg-ground {
+	padding: 16px;
+	border-radius: var(--border-radius-large);
+}
+
+/* The app content surface: where most components live. */
+#nldesign-preview .nldesign-pg-ground--content {
+	background-color: var(--color-main-background);
+}
+
+/* The page background, under the chrome that sits on it. These four
+   declarations are core's own, copied from the `body` rule in
+   `core/css/apps.css`, and the order matters: `--image-background` holds either
+   a `url(…)` or the literal `none`, so the IMAGE wins wherever the instance has
+   one and the colour shows through wherever it does not. That is the priority
+   the real page has, and a specimen that only ever showed the colour would tell
+   an admin their theme looks like something no user will see. */
+#nldesign-preview .nldesign-pg-ground--plain {
+	background-color: var(--color-background-plain, var(--color-main-background));
+	background-image: var(--image-background);
+	background-size: cover;
+	background-position: center;
+}
+
+/* The login page's ground is the same pair, and for the same reason: core paints
+   the image on `body` for the login page too, and Thematiq only sets a
+   background-COLOUR there, so an instance with a background image shows it on
+   the login page as well. */
+#nldesign-preview .nldesign-pg-ground--login {
+	background-color: var(--color-background-plain, var(--color-primary));
+	background-image: var(--image-background);
+	background-size: cover;
+	background-position: center;
+}
+
+/* The header bar's own colour, for the things that live ON it — the account
+   avatar above all. `--nldesign-color-header-background` is what
+   element-overrides.css paints `#header` with; the primary colour is the
+   fallback core uses when a set declares no header colour of its own. */
+#nldesign-preview .nldesign-pg-ground--header {
+	background-color: var(--nldesign-color-header-background, var(--color-primary));
+}
+
+/* Where a modal is actually met: over a dimmed page, not floating on a card. */
+#nldesign-preview .nldesign-pg-ground--overlay {
+	background-color: var(--color-background-plain, var(--color-main-background));
+	background-image:
+		linear-gradient(rgb(0 0 0 / 35%), rgb(0 0 0 / 35%)), var(--image-background);
+	background-size: cover;
+	background-position: center;
+}
+
+#nldesign-preview .nldesign-pg-glyph {
+	display: inline-block;
+	flex: none;
+	width: 18px;
+	height: 18px;
+	border-radius: var(--border-radius-small);
+	background: currentcolor;
+	opacity: 0.85;
+}
+
+#nldesign-preview .nldesign-pg-glyph--dark {
+	background: var(--color-text-maxcontrast);
+}
+
+#nldesign-preview .nldesign-pg-line {
+	height: 8px;
+	margin: 0 0 8px;
+	border-radius: var(--border-radius-pill);
+	background: var(--color-background-dark);
+}
+
+#nldesign-preview .nldesign-pg-line.short {
+	width: 55%;
+}
+
+#nldesign-preview .nldesign-pg-line.wide {
+	width: 85%;
+}
+
+/* Buttons ------------------------------------------------------------- */
+
+#nldesign-preview .nldesign-pg-btn {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: var(--default-clickable-area, 34px);
+	margin: 0 8px 0 0;
+	padding: 0 16px;
+	border: 2px solid transparent;
+	border-radius: var(--border-radius-element);
+	font-size: var(--default-font-size, 15px);
+	font-weight: 700;
+	box-shadow: none;
+	cursor: default;
+}
+
+#nldesign-preview .nldesign-pg-btn.is-primary {
+	background: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+}
+
+#nldesign-preview .nldesign-pg-btn.is-primary.is-hover {
+	background: var(--color-primary-element-hover);
+}
+
+#nldesign-preview .nldesign-pg-btn.is-secondary {
+	background: var(--color-background-dark);
+	color: var(--color-main-text);
+}
+
+#nldesign-preview .nldesign-pg-btn.is-secondary.is-hover {
+	background: var(--color-background-darker);
+}
+
+#nldesign-preview .nldesign-pg-btn.is-tertiary {
+	background: transparent;
+	color: var(--color-primary-element-light-text);
+}
+
+#nldesign-preview .nldesign-pg-btn.is-tertiary.is-hover {
+	background: var(--color-primary-element-light);
+}
+
+#nldesign-preview .nldesign-pg-btn.is-tertiary.is-active {
+	background: var(--color-primary-element-light-hover);
+}
+
+#nldesign-preview .nldesign-pg-btn.is-error {
+	background: var(--color-error);
+	color: #fff;
+}
+
+#nldesign-preview .nldesign-pg-btn.is-error.is-hover {
+	background: var(--color-error-hover);
+}
+
+#nldesign-preview .nldesign-pg-btn.is-success {
+	background: var(--color-success);
+	color: #fff;
+}
+
+#nldesign-preview .nldesign-pg-btn.is-focus {
+	outline: 2px solid var(--color-main-text);
+	outline-offset: 2px;
+	box-shadow: 0 0 0 4px var(--color-main-background);
+}
+
+#nldesign-preview .nldesign-pg-btn.is-disabled {
+	opacity: 0.5;
+}
+
+/* Header --------------------------------------------------------------- */
+
+/* The real bar: 50px tall, edge to edge, logo at the start, a row of app ICONS,
+   and the account glyphs at the end.
+   The header IS a surface — it does not sit on the page, it spans the top of
+   it — so it fills its ground completely rather than floating inside one. An
+   earlier version bled it over a page-background ground, which left the page
+   image showing around a header-shaped strip: two surfaces where the real page
+   has one. */
+#nldesign-preview .nldesign-pg-header {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	width: calc(100% + 32px);
+	height: 50px;
+	margin: -16px;
+	padding: 0 10px;
+	background: transparent;
+	color: var(--color-primary-text);
+}
+
+#nldesign-preview .nldesign-pg-header-logo {
+	flex: none;
+	width: 28px;
+	height: 28px;
+	margin-right: 10px;
+	border-radius: 50%;
+	background: var(--color-primary-text);
+}
+
+#nldesign-preview .nldesign-pg-header .app-menu ul {
+	display: flex;
+	gap: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#nldesign-preview .nldesign-pg-header .app-menu-entry {
+	position: relative;
+	display: grid;
+	place-items: center;
+	width: 42px;
+	height: 44px;
+	border-radius: var(--border-radius);
+}
+
+/* Core's icon classes paint themselves through a background-image, so this only
+   gives them a box to paint in. No background colour of our own: one would sit
+   behind the pictogram and turn it into a tile again. */
+#nldesign-preview .nldesign-pg-icon {
+	display: inline-block;
+	flex: none;
+	width: 20px;
+	height: 20px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 20px;
+	opacity: 0.85;
+}
+
+#nldesign-preview .nldesign-pg-header .app-menu-entry--active .nldesign-pg-icon {
+	opacity: 1;
+}
+
+/* A hovered entry takes the light content-surface hover colour, so its white
+   icon has to invert to stay visible — which is exactly what core does, and
+   what a set with a dark hover colour breaks. */
+#nldesign-preview .nldesign-pg-header .app-menu-entry.is-hover .nldesign-pg-icon {
+	filter: invert(100%);
+}
+
+/* Core marks the active app with a bar under its icon, not with a filled box. */
+#nldesign-preview .nldesign-pg-header .app-menu-entry--active::before {
+	content: '';
+	position: absolute;
+	bottom: 6px;
+	width: 12px;
+	height: 3px;
+	border-radius: var(--border-radius-pill);
+	background: var(--color-primary-text);
+}
+
+/* What core really does on hover: the entry takes the content-surface hover
+   colour, so a light box appears on the saturated bar and the glyph inside it
+   has to flip to the body text colour to stay legible. That flip is the point —
+   a set whose hover colour is dark makes this unreadable. */
+#nldesign-preview .nldesign-pg-header .app-menu-entry.is-hover {
+	background: var(--color-background-hover);
+}
+
+#nldesign-preview .nldesign-pg-header-end {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-left: auto;
+	padding-right: 6px;
+}
+
+#nldesign-preview .nldesign-pg-header .nldesign-pg-avatar {
+	width: 30px;
+	height: 30px;
+}
+
+/* The callout markers sit on a 50px icon cell, so they need pulling out of it
+   rather than trailing after a label that no longer exists. */
+#nldesign-preview .nldesign-pg-header .nldesign-pg-co {
+	position: absolute;
+	top: 2px;
+	right: 0;
+	margin-left: 0;
+}
+
+/* Login ---------------------------------------------------------------- */
+
+/* Transparent on purpose: `.body-login-container` is a layout box in core, not
+   the painter — the login page's background is on `body`, which the specimen's
+   ground now is. Painting it here as well would draw the image twice, at two
+   different offsets. */
+#nldesign-preview .nldesign-pg-loginbg {
+	display: block;
+	width: 100%;
+	padding: 20px;
+	text-align: center;
+}
+
+#nldesign-preview .nldesign-pg-brandbox {
+	display: inline-grid;
+	place-items: center;
+	width: 220px;
+	height: 90px;
+	padding: 12px;
+	text-align: center;
+}
+
+#nldesign-preview .nldesign-pg-slogan {
+	display: block;
+	margin-bottom: 14px;
+	color: var(--color-primary-text);
+	font-family: var(--font-face);
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-logincard {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	max-width: 320px;
+	padding: 20px;
+	border-radius: var(--border-radius-large);
+	background: var(--color-main-background);
+	text-align: left;
+}
+
+#nldesign-preview .nldesign-pg-logincard .login-form__headline {
+	margin: 0 0 12px;
+	font-size: 17px;
+	font-weight: 700;
+}
+
+#nldesign-preview .nldesign-pg-logincard .login-box__alternative-logins {
+	margin: 12px 0 0;
+	color: var(--color-primary);
+	font-size: 13px;
+}
+
+/* App navigation -------------------------------------------------------- */
+
+/* Core's own navigation values, not a solid fill of our own: stock Nextcloud
+   draws this column translucent and blurred, so the page background shows
+   through it (`#app-navigation:not(.vue)` in core/css/apps.css). Thematiq's
+   element-overrides.css then forces it opaque with `!important` whenever a
+   design system is active, and because this specimen carries the real
+   `.app-navigation` class that override reaches it here too. Both looks are
+   therefore true, and neither is hard-coded. */
+#nldesign-preview .nldesign-pg-nav {
+	position: relative;
+	width: 280px;
+	max-width: 100%;
+	padding: 10px 8px;
+	border-radius: var(--border-radius-large);
+	background-color: var(
+		--color-main-background-blur,
+		var(--color-main-background)
+	);
+	/* Both spellings, as core does: Safari still needs the prefixed one. */
+	backdrop-filter: var(--filter-background-blur, none);
+	-webkit-backdrop-filter: var(--filter-background-blur, none);
+}
+
+#nldesign-preview .nldesign-pg-nav-caption {
+	padding: 4px 12px 8px;
+	color: var(--color-text-maxcontrast);
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+#nldesign-preview .nldesign-pg-nav ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#nldesign-preview .nldesign-pg-nav-entry {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 44px;
+	margin-bottom: 2px;
+	padding: 0 14px;
+	border-radius: var(--border-radius-pill);
+	color: var(--color-main-text);
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-nav-label {
+	flex: 1 1 auto;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* Filled with the element colour, label in its paired text colour — which is
+   what Nextcloud draws and what element-overrides.css already assumes when it
+   hands the active entry `--color-primary-element-text`. */
+#nldesign-preview .nldesign-pg-nav-entry.is-selected {
+	background: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+	font-weight: 700;
+}
+
+#nldesign-preview .nldesign-pg-nav-entry.is-selected .nldesign-pg-glyph--dark {
+	background: var(--color-primary-element-text);
+}
+
+#nldesign-preview .nldesign-pg-nav-entry.is-selected .nldesign-pg-bubble {
+	background: var(--color-primary-element-text);
+	color: var(--color-primary-element);
+}
+
+#nldesign-preview .nldesign-pg-nav-entry.is-hover {
+	background: var(--color-background-hover);
+}
+
+#nldesign-preview .nldesign-pg-navtoggle {
+	width: 44px;
+	height: 44px;
+	margin-top: 6px;
+	border-radius: var(--border-radius-element);
+	background: var(--color-background-dark);
+}
+
+/* Content container ------------------------------------------------------ */
+
+#nldesign-preview .nldesign-pg-container {
+	position: relative;
+	padding: 10px;
+	border-radius: var(--body-container-radius);
+	background: var(--color-background-dark);
+}
+
+#nldesign-preview .nldesign-pg-appcontent {
+	display: flex;
+	border-radius: var(--border-radius-rounded);
+	background: var(--color-main-background);
+	overflow: hidden;
+}
+
+#nldesign-preview .nldesign-pg-col {
+	flex: 1 1 40%;
+	padding: 14px;
+}
+
+#nldesign-preview .nldesign-pg-col--detail {
+	position: relative;
+	flex: 1 1 60%;
+	border-left: 1px solid var(--color-border);
+}
+
+#nldesign-preview .nldesign-pg-scrollbar {
+	position: absolute;
+	top: 10px;
+	right: 4px;
+	bottom: 10px;
+	width: 8px;
+	border-radius: var(--border-radius-pill);
+	background: var(--color-scrollbar, var(--color-background-darker));
+}
+
+/* Table ------------------------------------------------------------------ */
+
+#nldesign-preview .nldesign-pg-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-table th {
+	padding: 10px 12px;
+	border-bottom: 1px solid var(--color-border);
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+	font-weight: 400;
+	text-align: left;
+}
+
+#nldesign-preview .nldesign-pg-table td {
+	height: 44px;
+	padding: 0 12px;
+	border-bottom: 1px solid var(--color-border);
+	color: var(--color-main-text);
+}
+
+#nldesign-preview .nldesign-pg-td--muted {
+	color: var(--color-text-maxcontrast);
+	white-space: nowrap;
+}
+
+#nldesign-preview .nldesign-pg-td--actions {
+	width: 44px;
+	color: var(--color-text-maxcontrast);
+	text-align: center;
+}
+
+#nldesign-preview .nldesign-pg-table tr.is-zebra td {
+	background: var(--color-background-dark);
+}
+
+#nldesign-preview .nldesign-pg-table tr.is-hover td {
+	background: var(--color-background-hover);
+}
+
+/* Sidebar ---------------------------------------------------------------- */
+
+#nldesign-preview .nldesign-pg-sidebar {
+	position: relative;
+	width: 340px;
+	max-width: 100%;
+	border: 1px solid var(--color-border);
+	border-left: 4px solid var(--color-border-dark);
+	border-radius: var(--border-radius-large);
+	background: var(--color-main-background);
+	overflow: hidden;
+}
+
+#nldesign-preview .nldesign-pg-sidebar-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 14px;
+}
+
+#nldesign-preview .nldesign-pg-sidebar-title {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-tabs {
+	display: flex;
+	gap: 4px;
+	padding: 0 14px;
+	border-bottom: 1px solid var(--color-border);
+}
+
+#nldesign-preview .nldesign-pg-tab {
+	padding: 10px 12px;
+	border-bottom: 3px solid transparent;
+	margin-bottom: -1px;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-tab.is-active {
+	border-bottom-color: var(--color-primary-element);
+	color: var(--color-main-text);
+	font-weight: 700;
+}
+
+#nldesign-preview .nldesign-pg-sidebar-body {
+	padding: 14px;
+}
+
+/* List items -------------------------------------------------------------- */
+
+#nldesign-preview .nldesign-pg-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#nldesign-preview .nldesign-pg-listitem {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 60px;
+	padding: 8px 12px;
+	border-radius: var(--border-radius-element);
+	transition: background-color var(--animation-quick, 100ms);
+}
+
+#nldesign-preview .nldesign-pg-listitem.is-hover {
+	background: var(--color-background-hover);
+}
+
+#nldesign-preview .nldesign-pg-listitem.is-selected {
+	background: var(--color-primary-light);
+	color: var(--color-primary-light-text);
+}
+
+#nldesign-preview .nldesign-pg-listitem.is-selected:hover {
+	background: var(--color-primary-light-hover);
+}
+
+#nldesign-preview .nldesign-pg-listitem-content {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	min-width: 0;
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-listitem-name {
+	font-weight: 700;
+}
+
+/* Avatar ------------------------------------------------------------------ */
+
+/* A light plate with dark initials: what Nextcloud's generated avatar image
+   looks like, and what an opaque uploaded one covers the background with
+   anyway. The ring keeps it findable on a header whose colour is close to the
+   plate — the same affordance the hatched stage is, not a claim about a token. */
+#nldesign-preview .nldesign-pg-avatar {
+	display: inline-grid;
+	flex: none;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: var(--color-main-background);
+	box-shadow: 0 0 0 1px var(--color-border-dark);
+	color: var(--color-main-text);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+#nldesign-preview .nldesign-pg-avatar--lg {
+	width: 44px;
+	height: 44px;
+	font-size: 15px;
+}
+
+#nldesign-preview .nldesign-pg-avatarwrap {
+	position: relative;
+	display: inline-block;
+}
+
+#nldesign-preview .nldesign-pg-status-dot {
+	position: absolute;
+	right: -2px;
+	bottom: -2px;
+	width: 14px;
+	height: 14px;
+	border: 2px solid var(--color-main-background);
+	border-radius: 50%;
+	background: var(--color-success);
+}
+
+/* Empty content ------------------------------------------------------------ */
+
+#nldesign-preview .nldesign-pg-empty {
+	position: relative;
+	padding: 28px 16px;
+	text-align: center;
+}
+
+#nldesign-preview .nldesign-pg-empty-icon {
+	display: inline-grid;
+	place-items: center;
+	width: 64px;
+	height: 64px;
+	margin-bottom: 12px;
+	border-radius: 50%;
+	background: var(--color-background-dark);
+	color: var(--color-text-maxcontrast);
+	font-size: 28px;
+}
+
+#nldesign-preview .nldesign-pg-empty-name {
+	margin: 0 0 6px;
+	color: var(--color-main-text);
+	font-size: 17px;
+	font-weight: 700;
+}
+
+/* Actions menu -------------------------------------------------------------- */
+
+#nldesign-preview .nldesign-pg-actions {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+#nldesign-preview .nldesign-pg-popover {
+	position: static;
+	width: 260px;
+	padding: 6px;
+	border-radius: var(--border-radius-large);
+	background: var(--color-main-background);
+	box-shadow: 0 2px 12px rgb(0 0 0 / 15%);
+}
+
+#nldesign-preview .nldesign-pg-popover .popovermenu {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#nldesign-preview .nldesign-pg-action {
+	display: flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 12px;
+	border-radius: var(--border-radius);
+	color: var(--color-main-text);
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-action.is-hover {
+	background: var(--color-background-hover);
+}
+
+/* Breadcrumbs ---------------------------------------------------------------- */
+
+#nldesign-preview .nldesign-pg-crumbs {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-crumbs .nldesign-pg-crumb {
+	padding: 6px 10px;
+	border-radius: var(--border-radius-pill);
+	color: var(--color-primary);
+}
+
+#nldesign-preview .nldesign-pg-crumbs .nldesign-pg-crumb.is-hover {
+	background: var(--color-background-hover);
+}
+
+#nldesign-preview .nldesign-pg-crumbs .nldesign-pg-crumb.is-current {
+	color: var(--color-main-text);
+	font-weight: 700;
+}
+
+#nldesign-preview .nldesign-pg-sep {
+	color: var(--color-text-maxcontrast);
+}
+
+/* Settings section ------------------------------------------------------------ */
+
+#nldesign-preview .nldesign-pg-section {
+	padding: 4px 0;
+}
+
+#nldesign-preview .nldesign-pg-section-title {
+	margin: 0 0 6px;
+	color: var(--color-main-text);
+	font-size: 17px;
+	font-weight: 700;
+}
+
+#nldesign-preview .nldesign-pg-hr {
+	height: 1px;
+	margin: 18px 0 0;
+	border: 0;
+	background: var(--color-border);
+}
+
+/* Fields ------------------------------------------------------------------------ */
+
+#nldesign-preview .nldesign-pg-field {
+	display: inline-flex;
+	flex-direction: column;
+	gap: 4px;
+	width: 100%;
+	max-width: 280px;
+	margin-bottom: 10px;
+}
+
+#nldesign-preview .nldesign-pg-field-label {
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+}
+
+#nldesign-preview .nldesign-pg-field.is-focus .nldesign-pg-field-label {
+	color: var(--color-primary-element);
+}
+
+#nldesign-preview .nldesign-pg-input {
+	display: flex;
+	align-items: center;
+	min-height: var(--default-clickable-area, 34px);
+	padding: 0 12px;
+	border: 2px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element);
+	background: var(--color-main-background);
+	color: var(--color-placeholder-dark);
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-field.is-focus .nldesign-pg-input {
+	border-color: var(--color-primary-element);
+	color: var(--color-main-text);
+}
+
+#nldesign-preview .nldesign-pg-field.is-invalid .nldesign-pg-input {
+	border-color: var(--color-error);
+	color: var(--color-main-text);
+}
+
+#nldesign-preview .nldesign-pg-textarea {
+	align-items: flex-start;
+	width: 100%;
+	max-width: 320px;
+	min-height: 76px;
+	padding: 10px 12px;
+	border-radius: var(--border-radius);
+	color: var(--color-main-text);
+}
+
+/* Select --------------------------------------------------------------------------- */
+
+#nldesign-preview .nldesign-pg-selectwrap {
+	width: 260px;
+	max-width: 100%;
+}
+
+#nldesign-preview .nldesign-pg-select {
+	justify-content: space-between;
+	color: var(--color-main-text);
+}
+
+#nldesign-preview .nldesign-pg-options {
+	margin: 4px 0 0;
+	padding: 4px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element);
+	background: var(--color-main-background);
+	list-style: none;
+}
+
+#nldesign-preview .nldesign-pg-option {
+	display: flex;
+	align-items: center;
+	min-height: 36px;
+	padding: 0 10px;
+	border-radius: var(--border-radius);
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-option.is-hover {
+	background: var(--color-background-hover);
+}
+
+/* Checkbox, radio, switch ------------------------------------------------------------ */
+
+#nldesign-preview .nldesign-pg-choices {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px 20px;
+}
+
+#nldesign-preview .nldesign-pg-choice {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 36px;
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-checkbox,
+#nldesign-preview .nldesign-pg-radio,
+#nldesign-preview .nldesign-pg-switch {
+	position: relative;
+	flex: none;
+	border: 2px solid var(--color-border-maxcontrast);
+}
+
+#nldesign-preview .nldesign-pg-checkbox,
+#nldesign-preview .nldesign-pg-radio {
+	width: 22px;
+	height: 22px;
+}
+
+#nldesign-preview .nldesign-pg-checkbox {
+	border-radius: var(--border-radius-small);
+}
+
+#nldesign-preview .nldesign-pg-radio {
+	border-radius: 50%;
+}
+
+#nldesign-preview .nldesign-pg-switch {
+	width: 38px;
+	height: 22px;
+	border-radius: var(--border-radius-pill);
+}
+
+#nldesign-preview .is-checked .nldesign-pg-checkbox,
+#nldesign-preview .is-checked .nldesign-pg-radio,
+#nldesign-preview .is-checked .nldesign-pg-switch {
+	border-color: var(--color-primary-element);
+	background: var(--color-primary-element);
+}
+
+/* The marks themselves. Without them a checked box, a selected radio and a
+   switch that is on are three identical filled shapes — which is how they
+   looked, and it is not how any of them looks in the app. */
+#nldesign-preview .is-checked .nldesign-pg-checkbox::after {
+	content: '';
+	position: absolute;
+	top: 1px;
+	left: 5px;
+	width: 6px;
+	height: 11px;
+	border: solid var(--color-primary-element-text);
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg);
+}
+
+#nldesign-preview .nldesign-pg-radio::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--color-primary-element-text);
+	transform: translate(-50%, -50%) scale(0);
+}
+
+#nldesign-preview .is-checked .nldesign-pg-radio::after {
+	transform: translate(-50%, -50%) scale(1);
+}
+
+/* The knob: parked at the start when off, at the end when on. */
+#nldesign-preview .nldesign-pg-switch::after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--color-border-maxcontrast);
+	transition: left var(--animation-quick, 100ms);
+}
+
+#nldesign-preview .is-checked .nldesign-pg-switch::after {
+	left: 18px;
+	background: var(--color-primary-element-text);
+}
+
+/* Dialog ---------------------------------------------------------------------------- */
+
+#nldesign-preview .nldesign-pg-dialog {
+	position: relative;
+	width: 100%;
+	max-width: 460px;
+	border-radius: var(--border-radius-large);
+	background: var(--color-main-background);
+	box-shadow: 0 4px 20px rgb(0 0 0 / 18%);
+	overflow: hidden;
+	transition: opacity var(--animation-slow, 300ms);
+}
+
+#nldesign-preview .nldesign-pg-dialog-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 14px 16px;
+	border-bottom: 1px solid var(--color-border);
+	font-size: 15px;
+}
+
+#nldesign-preview .nldesign-pg-dialog-body {
+	padding: 14px 16px;
+}
+
+#nldesign-preview .nldesign-pg-dialog-foot {
+	display: flex;
+	justify-content: flex-end;
+	padding: 12px 16px 16px;
+}
+
+/* Progress ------------------------------------------------------------------------------ */
+
+#nldesign-preview .nldesign-pg-progress {
+	display: inline-block;
+	width: 180px;
+	height: 8px;
+	border-radius: var(--border-radius-pill);
+	background: var(--color-background-darker);
+}
+
+#nldesign-preview .nldesign-pg-progress-fill {
+	display: block;
+	width: 60%;
+	height: 100%;
+	border-radius: var(--border-radius-pill);
+	background: var(--color-primary-element);
+}
+
+#nldesign-preview .nldesign-pg-spinner {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	border: 3px solid var(--color-background-darker);
+	border-top-color: var(--color-primary-element);
+	border-radius: 50%;
+	animation: nldesign-pg-spin var(--animation-slow, 800ms) linear infinite;
+}
+
+@keyframes nldesign-pg-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Note cards -------------------------------------------------------------------------------- */
+
+#nldesign-preview .nldesign-pg-note {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin-bottom: 8px;
+	padding: 12px 14px;
+	border-radius: var(--border-radius);
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-note-icon {
+	flex: none;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: currentcolor;
+}
+
+#nldesign-preview .nldesign-pg-note.is-info {
+	border-left: 4px solid var(--color-info);
+	background: var(--color-background-hover);
+	color: var(--color-element-info);
+}
+
+#nldesign-preview .nldesign-pg-note.is-warning {
+	border-left: 4px solid var(--color-warning);
+	background: rgb(var(--color-warning-rgb) / 10%);
+	color: var(--color-element-warning);
+}
+
+#nldesign-preview .nldesign-pg-note.is-error {
+	border: 1px solid var(--color-border-error);
+	border-left: 4px solid var(--color-error);
+	background: rgb(var(--color-error-rgb) / 10%);
+	color: var(--color-element-error);
+}
+
+#nldesign-preview .nldesign-pg-note.is-success {
+	border: 1px solid var(--color-border-success);
+	border-left: 4px solid var(--color-success);
+	background: rgb(var(--color-success-rgb) / 10%);
+	color: var(--color-element-success);
+}
+
+/* Badges and toasts ------------------------------------------------------------------------------ */
+
+#nldesign-preview .nldesign-pg-bubble {
+	display: inline-grid;
+	flex: none;
+	place-items: center;
+	min-width: 26px;
+	height: 22px;
+	padding: 0 7px;
+	border-radius: var(--border-radius-pill);
+	background: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+#nldesign-preview .nldesign-pg-star {
+	color: var(--color-favorite);
+	font-size: 24px;
+}
+
+#nldesign-preview .nldesign-pg-toast {
+	display: block;
+	max-width: 380px;
+	margin-bottom: 8px;
+	padding: 12px 14px;
+	border-radius: var(--border-radius);
+	color: #fff;
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-toast.is-success {
+	background: var(--color-success);
+}
+
+#nldesign-preview .nldesign-pg-toast.is-error {
+	background: var(--color-error);
+}
+
+#nldesign-preview .nldesign-pg-toast.is-warning {
+	background: var(--color-warning);
+}
+
+#nldesign-preview .nldesign-pg-toast.is-info {
+	background: var(--color-info);
+}
+
+/* Type ------------------------------------------------------------------------------------------ */
+
+#nldesign-preview .nldesign-pg-type > * {
+	margin: 0 0 10px;
+}
+
+#nldesign-preview .nldesign-pg-h1,
+#nldesign-preview .nldesign-pg-h2,
+#nldesign-preview .nldesign-pg-h3,
+#nldesign-preview .nldesign-pg-h4 {
+	color: var(--color-main-text);
+	font-family: var(--font-face);
+	font-weight: 700;
+}
+
+#nldesign-preview .nldesign-pg-h1 {
+	font-size: 24px;
+}
+
+#nldesign-preview .nldesign-pg-h2 {
+	font-size: 20px;
+}
+
+#nldesign-preview .nldesign-pg-h3 {
+	font-size: 17px;
+}
+
+#nldesign-preview .nldesign-pg-h4 {
+	font-size: 15px;
+}
+
+#nldesign-preview .nldesign-pg-paragraph {
+	color: var(--color-main-text);
+	font-family: var(--font-face);
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+/* Reading length: a paragraph judged at 200px tells you nothing about how the
+   typeface sets. */
+#nldesign-preview .nldesign-pg-reading {
+	max-width: 60ch;
+}
+
+#nldesign-preview .nldesign-pg-link {
+	color: var(--color-primary);
+	text-decoration: underline;
+}
+
+#nldesign-preview .nldesign-pg-link.is-hover {
+	color: var(--color-primary-hover);
+}
+
+#nldesign-preview .nldesign-pg-muted {
+	font-size: 14px;
+}
+
+#nldesign-preview .nldesign-pg-muted.is-maxcontrast {
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-preview .nldesign-pg-muted.is-light {
+	color: var(--color-text-light);
+}
+
+#nldesign-preview .nldesign-pg-muted.is-lighter {
+	color: var(--color-text-lighter);
+}
+
+#nldesign-preview .nldesign-pg-status {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+#nldesign-preview .nldesign-pg-status.is-error {
+	color: var(--color-text-error);
+}
+
+#nldesign-preview .nldesign-pg-status.is-warning {
+	color: var(--color-text-warning);
+}
+
+#nldesign-preview .nldesign-pg-status.is-success {
+	color: var(--color-text-success);
+}
+
+/* The last-resort specimen: a component whose stage markup is missing. The
+   inventory test makes this unreachable, so seeing it means a data file from a
+   newer version arrived without its markup. */
+#nldesign-preview .nldesign-pg-swatch {
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+	border: 1px dashed var(--color-border-dark);
+	border-radius: var(--border-radius);
+}
+
+/* The specimens that carry a transition or an animation do so because the
+   timing IS the token being judged (--animation-quick, --animation-slow). An
+   admin who has asked for less motion still gets the value in its row; what
+   they do not get is the movement. */
+@media (prefers-reduced-motion: reduce) {
+	#nldesign-preview .nldesign-pg-dialog,
+	#nldesign-preview .nldesign-pg-listitem,
+	#nldesign-preview .nldesign-pg-spinner {
+		transition: none !important;
+		animation: none !important;
+	}
+}
+
+/* --- save bar: status, Download / Upload / Export, Save --- */
+
+#nldesign-token-editor .nldesign-save-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-top: 14px;
+}
+
+#nldesign-token-editor .nldesign-save-status {
+	flex: 1;
+	color: var(--color-text-maxcontrast);
+}
