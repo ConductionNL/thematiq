@@ -57,6 +57,56 @@
 	var EDGE = 8
 
 	/**
+	 * The states an admin produces by pointing, which the stage therefore does
+	 * NOT draw a copy of.
+	 *
+	 * A frozen hover is a lie told in the most confusing possible place: it
+	 * sits beside the live specimen looking like a second component, an admin
+	 * cannot tell which of the two is the real one, and hovering the frozen one
+	 * does nothing while hovering the other one does. The real pseudo-class is
+	 * already wired on every specimen, so the honest move is to draw the
+	 * component once and let it be hovered.
+	 *
+	 * `active` is deliberately absent: on a button it means :active, but on a
+	 * sidebar it means the active tab, which is a persistent state an admin
+	 * picks rather than one they hold the mouse down for.
+	 */
+	var POINTABLE = ['hover', 'focus']
+
+	/**
+	 * The Nextcloud majors the header specimen can be drawn as.
+	 *
+	 * The window `appinfo/info.xml` declares this app supports. 32 and 33 draw
+	 * the same header — the app-menu rewrite landed in 34 — and both are listed
+	 * anyway, because "my 33 will look like this" is the question an admin
+	 * actually asks, and answering it with a version they did not name leaves
+	 * them wondering whether it was understood.
+	 */
+	var HEADER_VERSIONS = [32, 33, 34]
+
+	/**
+	 * Whether a state is one the admin makes rather than one the stage draws.
+	 *
+	 * @param {Object} stateDef The state definition.
+	 * @return {boolean} True when the admin produces it by pointing.
+	 */
+	function isPointable(stateDef) {
+		return POINTABLE.indexOf(stateDef.id) !== -1
+	}
+
+	/**
+	 * The states the stage draws a specimen for.
+	 *
+	 * @param {Object} component The inventory entry.
+	 * @return {Array<Object>} The states that get drawn.
+	 */
+	function drawnStates(component) {
+		return (component.states || []).filter(function (stateDef) {
+			return isPointable(stateDef) === false
+		})
+	}
+
+	/**
 	 * The sets a specimen can be picked from: a row, the container that holds
 	 * its siblings, and the class the picked one wears.
 	 *
@@ -397,6 +447,11 @@
 			reasons: loadState('playgroundReasons', {}),
 			tokens: loadState('playgroundTokens', {}),
 			sources: loadState('playgroundTokenSources', {}),
+			// The version this instance runs, and the one the header specimen
+			// is currently drawn as. They start equal: the version you are on
+			// is the one you are asking about first.
+			serverVersion: loadState('playgroundVersion', 0),
+			headerVersion: headerMajor(loadState('playgroundVersion', 0)),
 			editor: editor,
 			preview: preview,
 			tabs: tabs,
@@ -883,6 +938,175 @@
 	}
 
 	/* ---------------------------------------------------------------- */
+	/* Vue scope attributes                                              */
+	/* ---------------------------------------------------------------- */
+
+	/**
+	 * Why the specimens are no longer drawn.
+	 *
+	 * The settings page this instrument lives on already loads the shipped CSS
+	 * for the components the specimens stand for: `dist/theming-settings-admin.css`
+	 * pulls in the NcButton, NcInputField and NcCheckboxRadioSwitch chunks. Every
+	 * rule in them is Vue-scoped — `.button-vue[data-v-00a99684]`,
+	 * `.input-field__label[data-v-8e16cbb5]` — so the only thing keeping them off
+	 * a specimen that already carries the right class names is an attribute.
+	 *
+	 * The hash is per BUNDLE, not per release: the same NcButton is
+	 * `data-v-00a99684` in the settings bundle and `data-v-29ac0caf` in the one
+	 * the login page loads. That is exactly why it is read at runtime out of the
+	 * sheets THIS page has, instead of being written down here.
+	 *
+	 * @type {?Object<string, Array<string>>}
+	 */
+	var scopes = null
+
+	/**
+	 * Every scope attribute each class name is styled under, read out of the
+	 * stylesheets this page has loaded.
+	 *
+	 * A class can appear under more than one hash — `material-design-icon` is
+	 * scoped separately in every component that draws an icon — and an element
+	 * may legitimately carry several, which is what Vue itself does at the root
+	 * of a child component. So this collects all of them.
+	 *
+	 * @param {Document} [doc] The document to read; the page's own by default.
+	 * @return {Object<string, Array<string>>} Class name → scope attributes.
+	 */
+	function componentScopes(doc) {
+		var found = {}
+		var sheets = (doc || document).styleSheets
+		for (var i = 0; i < sheets.length; i++) {
+			var rules = null
+			try {
+				rules = sheets[i].cssRules
+			} catch (error) {
+				// A stylesheet from another origin. Nextcloud serves all of its
+				// own from this one, so this is never a sheet we wanted.
+				continue
+			}
+			collectScopes(rules, found)
+		}
+		return found
+	}
+
+	/**
+	 * Walk a rule list and record the scope attribute of every scoped class
+	 * selector in it.
+	 *
+	 * @param {CSSRuleList} rules The rules to walk.
+	 * @param {Object<string, Array<string>>} found The map to fill.
+	 * @return {void}
+	 */
+	function collectScopes(rules, found) {
+		if (!rules) {
+			return
+		}
+		for (var i = 0; i < rules.length; i++) {
+			var rule = rules[i]
+
+			// An @import is a rule whose content is a whole other stylesheet,
+			// reached through `styleSheet` and NOT through `cssRules`. That is
+			// not an edge case here: Nextcloud's settings bundle is one <link>
+			// whose entire body is a list of @imports, one per component chunk,
+			// so a walker that follows only `cssRules` finds nothing at all in
+			// it — and every specimen then renders unstamped, which reads as a
+			// theme that has stopped working rather than as a bug in here.
+			if (rule.styleSheet) {
+				try {
+					collectScopes(rule.styleSheet.cssRules, found)
+				} catch (error) {
+					// Same as above: another origin, nothing we wanted.
+				}
+				continue
+			}
+
+			// Media and supports blocks, where the dark halves of these
+			// components live.
+			if (rule.cssRules) {
+				collectScopes(rule.cssRules, found)
+				continue
+			}
+
+			if (!rule.selectorText) {
+				continue
+			}
+			var pattern = /\.([A-Za-z0-9_-]+)\[(data-v-[0-9a-f]+)\]/g
+			var match = pattern.exec(rule.selectorText)
+			while (match !== null) {
+				if (found[match[1]] === undefined) {
+					found[match[1]] = []
+				}
+				if (found[match[1]].indexOf(match[2]) === -1) {
+					found[match[1]].push(match[2])
+				}
+				match = pattern.exec(rule.selectorText)
+			}
+		}
+	}
+
+	/**
+	 * Put the scope attributes on a freshly drawn specimen.
+	 *
+	 * @param {Element} root The subtree to stamp.
+	 * @param {Object<string, Array<string>>} map Class name → scope attributes.
+	 * @return {void}
+	 */
+	function applyScopes(root, map) {
+		var nodes = root.querySelectorAll('*')
+		for (var i = 0; i < nodes.length; i++) {
+			var node = nodes[i]
+			for (var j = 0; j < node.classList.length; j++) {
+				var attributes = map[node.classList[j]]
+				if (attributes === undefined) {
+					continue
+				}
+				for (var k = 0; k < attributes.length; k++) {
+					node.setAttribute(attributes[k], '')
+				}
+			}
+		}
+	}
+
+	/**
+	 * The scope map, read once and reused.
+	 *
+	 * Re-read while it is empty rather than caching the emptiness: at boot a
+	 * stylesheet can still be in flight. If it stays empty the specimens are
+	 * still drawn — `css/playground.css` carries a zero-specificity floor for
+	 * each of these components, which the real rules override the moment they
+	 * apply — but it is worth saying so out loud, because it means an admin is
+	 * looking at this app's approximation of a component rather than at the
+	 * component.
+	 *
+	 * @return {Object<string, Array<string>>} Class name → scope attributes.
+	 */
+	function ensureScopes() {
+		if (typeof document === 'undefined') {
+			return {}
+		}
+		if (scopes === null || Object.keys(scopes).length === 0) {
+			scopes = componentScopes()
+			if (Object.keys(scopes).length === 0) {
+				console.warn(
+					'[thematiq] no Vue component styles found on this page; the'
+						+ ' specimens fall back to the playground\'s own approximation.',
+				)
+			}
+		}
+		return scopes
+	}
+
+	/**
+	 * Stamp a specimen with whatever scopes this page turned out to have.
+	 *
+	 * @param {Element} root The subtree to stamp.
+	 * @return {void}
+	 */
+	function scopeSpecimen(root) {
+		applyScopes(root, ensureScopes())
+	}
+
+	/* ---------------------------------------------------------------- */
 	/* The stage                                                         */
 	/* ---------------------------------------------------------------- */
 
@@ -897,11 +1121,28 @@
 	function renderStage(state, component) {
 		state.stage.innerHTML = ''
 
+		// When this page turns out not to carry the component stylesheets, the
+		// specimens are this app's approximation of the components rather than
+		// the components themselves. css/playground.css keeps a floor under
+		// this class so that case draws something honest instead of nothing;
+		// when the stylesheets ARE there the class is absent, and every rule in
+		// that floor is absent with it.
+		state.stage.classList.toggle(
+			'nldesign-pg-unscoped',
+			Object.keys(ensureScopes()).length === 0,
+		)
+
 		var heading = el('div', 'nldesign-pg-stage-title', component.title + ' ')
 		heading.appendChild(el('span', 'nldesign-pg-dim', '· ' + component.subtitle))
 		state.stage.appendChild(heading)
 
 		var build = STAGES[component.id]
+
+		// The header is the one component whose MARKUP differs between the
+		// versions this app supports, so it gets to be drawn as any of them.
+		if (component.id === 'header-bar') {
+			state.stage.appendChild(versionSwitch(state, component))
+		}
 
 		// The surface the component really sits on: the page background for the
 		// chrome, the login page's ground for the login parts, a dimmed page for
@@ -925,18 +1166,20 @@
 			var wide = el('div', 'nldesign-pg-wide')
 			wide.innerHTML =
 				typeof build === 'function'
-					? build(null, component)
+					? build(null, component, state.headerVersion)
 					: fallbackSample()
+			scopeSpecimen(wide)
 			ground.appendChild(wide)
 		} else {
 			var cells = el('div', 'nldesign-pg-states')
-			component.states.forEach(function (stateDef) {
+			drawnStates(component).forEach(function (stateDef) {
 				var cell = el('div', 'nldesign-pg-st')
 				var sample = el('div', 'nldesign-pg-sample')
 				sample.innerHTML =
 					typeof build === 'function'
 						? build(stateDef.id, component)
 						: fallbackSample()
+				scopeSpecimen(sample)
 				var mark = el(
 					'i',
 					'nldesign-pg-co' + (stateDef.fixed ? ' lock' : ''),
@@ -981,6 +1224,25 @@
 
 		// Where the stage reports what a specimen just did. Always present and
 		// always the same height, so saying something never moves anything.
+		// The states an admin makes for themselves get a line saying so, rather
+		// than a frozen copy pretending to be one.
+		var pointable = component.states.filter(isPointable)
+		if (pointable.length > 0) {
+			state.stage.appendChild(
+				el(
+					'div',
+					'nldesign-pg-pointable',
+					'Beweeg over het onderdeel of geef het focus voor '
+						+ pointable
+							.map(function (stateDef) {
+								return stateDef.id
+							})
+							.join(' en ')
+						+ '.',
+				),
+			)
+		}
+
 		var saidLine = el('div', 'nldesign-pg-say')
 		saidLine.setAttribute('aria-live', 'polite')
 		state.stage.appendChild(saidLine)
@@ -1004,8 +1266,11 @@
 	 * @return {void}
 	 */
 	function decorateFields(stage) {
+		// The text field is a real `<input>` and needs nothing. What is left is
+		// the select, which is chosen from rather than typed in, and the
+		// textarea, which is still drawn.
 		var fields = stage.querySelectorAll(
-			'.nldesign-pg-input:not(.nldesign-pg-select):not(.is-disabled), .nldesign-pg-textarea'
+			'.nldesign-pg-textarea:not(.is-disabled)',
 		)
 		Array.prototype.forEach.call(fields, function (field) {
 			if (field.classList.contains('is-disabled') === true) {
@@ -1016,6 +1281,48 @@
 			field.setAttribute('role', 'textbox')
 			field.setAttribute('spellcheck', 'false')
 		})
+	}
+
+	/**
+	 * The row of Nextcloud versions the header specimen can be drawn as.
+	 *
+	 * This exists so an admin can answer "what does my theme do to the header
+	 * after the upgrade" without upgrading — 34 replaced the app-entry row with
+	 * a waffle and a current-app button, and a theme that reached the old shape
+	 * may reach nothing in the new one. The version they are running is marked,
+	 * so switching away from it is visibly a hypothetical.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Object} component The header component.
+	 * @return {Element} The switch.
+	 */
+	function versionSwitch(state, component) {
+		var row = el('div', 'nldesign-pg-versions')
+		row.appendChild(
+			el('span', 'nldesign-pg-dim', 'Nextcloud-versie'),
+		)
+
+		HEADER_VERSIONS.forEach(function (version) {
+			var running = version === state.serverVersion
+			var button = el(
+				'button',
+				'nldesign-pg-version'
+					+ (version === headerMajor(state.headerVersion) ? ' on' : '')
+					+ (running ? ' is-running' : ''),
+				String(version),
+			)
+			button.type = 'button'
+			if (running === true) {
+				button.title = 'De versie die deze instantie draait'
+			}
+			button.addEventListener('click', function () {
+				state.headerVersion = version
+				renderStage(state, component)
+			})
+			row.appendChild(button)
+		})
+
+		return row
 	}
 
 	/**
@@ -1129,27 +1436,36 @@
 			hideTip(stage)
 		})
 
+		// The login card is a real `<form>`, because core's own stylesheet styles
+		// one and a div is not one. A real form submits — on Enter in a field,
+		// and that would navigate the admin off the settings page mid-edit.
+		// Nothing on this stage ever wants a submission.
+		stage.addEventListener('submit', function (event) {
+			event.preventDefault()
+		})
+
 		stage.addEventListener('click', function (event) {
 			pressFrom(stage, event.target)
 		})
 
-		// Enter and Space, because the specimens are spans carrying
-		// role="button": the role promises keyboard activation and nothing
-		// would deliver it otherwise.
+		// The button specimens are real `<button>` elements, which the browser
+		// already activates on Enter and Space by firing a click — so the
+		// handler above covers them. What is still needed is stopping Space
+		// from scrolling the panel out from under the specimen being looked at.
 		stage.addEventListener('keydown', function (event) {
-			if (event.key !== 'Enter' && event.key !== ' ') {
+			if (event.key !== ' ') {
 				return
 			}
 
 			var target = event.target
-			if (target.closest === undefined || target.closest('.nldesign-pg-btn') === null) {
+			if (
+				target.closest === undefined
+				|| target.closest('.nldesign-pg-btn') === null
+			) {
 				return
 			}
 
-			// Space scrolls the panel otherwise, which throws the specimen the
-			// admin is looking at off the screen.
 			event.preventDefault()
-			pressFrom(stage, target)
 		})
 	}
 
@@ -1234,7 +1550,9 @@
 			toggleChoice(choice)
 			say(
 				stage,
-				choice.classList.contains('is-checked') ? 'Aangezet' : 'Uitgezet'
+				choice.classList.contains('checkbox-radio-switch--checked')
+					? 'Aangezet'
+					: 'Uitgezet',
 			)
 			return
 		}
@@ -1315,18 +1633,54 @@
 	 * @return {void}
 	 */
 	function toggleChoice(choice) {
-		var isRadio = choice.querySelector('.nldesign-pg-radio') !== null
-		if (isRadio === true && choice.classList.contains('is-checked') === false) {
-			var group = choice.parentNode.querySelectorAll('.nldesign-pg-choice')
+		var control = choice.querySelector('.checkbox-radio-switch__input')
+		var isRadio = control !== null && control.type === 'radio'
+		var kind = choice.classList.contains('checkbox-radio-switch-radio')
+			? 'radio'
+			: choice.classList.contains('checkbox-radio-switch-switch')
+				? 'switch'
+				: 'checkbox'
+		var on = choice.classList.contains('checkbox-radio-switch--checked')
+
+		if (isRadio === true && on === false) {
+			var group = choice.parentNode.querySelectorAll(
+				'.checkbox-radio-switch-radio',
+			)
 			Array.prototype.forEach.call(group, function (sibling) {
-				if (sibling.querySelector('.nldesign-pg-radio') !== null) {
-					sibling.classList.remove('is-checked', 'checkbox-radio-switch--checked')
-				}
+				setChoice(sibling, 'radio', false)
 			})
 		}
 
-		choice.classList.toggle('is-checked')
-		choice.classList.toggle('checkbox-radio-switch--checked')
+		setChoice(choice, kind, on === false)
+	}
+
+	/**
+	 * Put one choice into a state, the way the component itself would.
+	 *
+	 * The checked look of a Nextcloud checkbox is a DIFFERENT icon, not a class
+	 * on the same square, so flipping one means swapping the glyph as well as
+	 * the state classes — and flipping the real control underneath, which is
+	 * what the component's own `:focus-within` and sibling selectors read.
+	 *
+	 * @param {Element} choice The choice element.
+	 * @param {string} kind checkbox, radio or switch.
+	 * @param {boolean} checked The state to put it in.
+	 * @return {void}
+	 */
+	function setChoice(choice, kind, checked) {
+		choice.classList.toggle('checkbox-radio-switch--checked', checked)
+
+		var control = choice.querySelector('.checkbox-radio-switch__input')
+		if (control !== null) {
+			control.checked = checked
+		}
+
+		var icon = choice.querySelector('.checkbox-content__icon')
+		if (icon !== null) {
+			icon.classList.toggle('checkbox-content__icon--checked', checked)
+			icon.innerHTML = choiceIcon(kind, checked)
+			scopeSpecimen(icon)
+		}
 	}
 
 	/**
@@ -1483,8 +1837,11 @@
 			return
 		}
 
-		// A disabled specimen must stay unresponsive — that IS its state.
-		if (button.classList.contains('is-disabled') === true) {
+		// A disabled specimen must stay unresponsive — that IS its state. It is
+		// a real `disabled` attribute now rather than a class standing in for
+		// one, so the browser would not deliver the click at all; this stays as
+		// the belt to that brace.
+		if (button.disabled === true) {
 			return
 		}
 
@@ -1578,81 +1935,102 @@
 	 * @type {Object<string, function(?string, Object): string>}
 	 */
 	var STAGES = {
-		'header-bar': function () {
-			// Icons, not labels: the real header is a row of app icons between
-			// the logo and the account glyphs, with the active app marked by a
-			// bar under it. Labels only appear in the app menu you open from the
-			// waffle, and drawing them here made the specimen a row of chunky
-			// boxes that looks nothing like the bar it stands for.
-			// Core's own pictograms, not blocks. `dist/icons.css` ships every one
-			// of these with a `-white` variant precisely because they sit on a
-			// saturated header, so the specimen can use the icons the real bar
-			// uses instead of standing in for them with squares.
-			var icons = [
-				'icon-category-dashboard-white',
-				'icon-files-white',
-				'icon-picture-white',
-				'icon-music-white',
-				'icon-comment-white',
-				'icon-category-office-white',
-				'icon-category-monitoring-white',
-			]
-			var apps = ''
-			icons.forEach(function (icon, index) {
-				var modifier = ''
-				var marker = ''
-				if (index === 1) {
-					modifier = ' app-menu-entry--active'
-					marker = co(1)
-				}
-				if (index === 3) {
-					modifier = ' is-hover'
-					marker = co(2)
-				}
-				apps +=
-					'<li class="app-menu-entry'
-					+ modifier
-					+ '">'
-					+ '<span class="nldesign-pg-icon '
-					+ icon
-					+ '"></span>'
-					+ marker
-					+ '</li>'
-			})
+		'header-bar': function (state, component, version) {
+			var major = headerMajor(version)
+			var modern = major >= 34
 
 			return (
-				'<div class="nldesign-pg-header">'
+				'<div class="nldesign-pg-header' + (modern ? ' is-v34' : '') + '">'
 				+ '<span class="nldesign-pg-header-logo logo"></span>'
-				+ '<nav class="app-menu"><ul>'
-				+ apps
-				+ '</ul></nav>'
+				+ (modern ? appMenu34() : appMenu32())
+				// 34 moved the search into the middle of the bar; before that it
+				// was a magnifier among the glyphs on the right.
+				+ (modern ? headerSearch34() : '')
 				+ '<span class="nldesign-pg-header-end">'
-				+ '<span class="unified-search__button nldesign-pg-icon icon-search-white"></span>'
-				+ '<span class="nldesign-pg-icon icon-comment-white"></span>'
-				+ '<span class="nldesign-pg-icon icon-contacts-white"></span>'
-				+ avatarPlate('RB', true)
+				+ (modern
+					? ''
+					: '<span class="unified-search__button nldesign-pg-icon icon-search-white"></span>')
+				+ glyph('bell', 'nldesign-pg-bell', 'bellDot')
+				+ glyph('contacts', 'nldesign-pg-contacts')
+				+ accountPlate()
 				+ '</span>'
 				+ '</div>'
 			)
 		},
 		'login-card': function () {
+			// `layout.guest.php` and `Login.vue` as they actually render, nesting
+			// and all: the wrapper that holds the header and the card together
+			// and pushes the footer off them, the visually hidden product name,
+			// the guest box, and the empty alternative-logins container an
+			// instance with SSO fills. Flattening any of it leaves core's own
+			// stylesheet with nothing to match.
 			return (
-				'<div class="body-login-container nldesign-pg-loginbg">'
-				+ '<div class="nldesign-pg-slogan">Een veilige thuisbasis voor al je gegevens</div>'
-				+ '<div class="login-box guest-box nldesign-pg-logincard">'
+				'<div class="nldesign-pg-guestpage">'
+				+ '<div class="wrapper"><div class="v-align">'
+				// No `id="header"`, though the guest layout has one: this page
+				// already has an element with that id and its own scripts look
+				// it up. The generated stylesheet rewrites core's `#header`
+				// selector to the class the guest layout always pairs it with.
+				+ '<header><div class="header-guest">'
+				+ '<div class="logo"></div>'
+				+ '</div></header>'
+				+ '<div class="guest-content">'
+				+ '<h1 class="hidden-visually">Nextcloud</h1>'
+				+ '<div>'
+				+ '<div class="guest-box login-box nldesign-pg-logincard">'
 				+ co(1)
+				+ '<div class="login-box__wrapper nldesign-pg-loginwrap">'
+				+ '<form method="post" name="login" class="login-form">'
+				+ '<fieldset class="login-form__fieldset nldesign-pg-loginfields">'
 				+ '<h2 class="login-form__headline">Inloggen bij Nextcloud</h2>'
-				+ '<div class="login-form">'
-				+ field('Accountnaam of e-mail', 'default')
-				+ field('Wachtwoord', 'default')
-				+ button('primary', 'default', 'Inloggen', co(2))
+				+ field('Accountnaam of e-mail', 'default', { inside: true })
+				+ field('Wachtwoord', 'default', {
+					inside: true,
+					type: 'password',
+					trailing: revealEye(),
+				})
+				+ choice('checkbox', true, 'Onthoud mij')
+				+ button('primary', 'default', 'Inloggen', co(2), {
+					icon: submitArrow(),
+					wide: true,
+					done: 'Bezig met inloggen …',
+				})
+				+ '</fieldset>'
+				+ '</form>'
+				// Both of these are NcButtons on the real card, not links: wide,
+				// tertiary, stacked under the form, and siblings of it rather
+				// than children.
+				+ button('tertiary', 'default', 'Inloggen met een apparaat', '', {
+					wide: true,
+					done: 'Apparaat-login geopend',
+				})
+				+ button('tertiary', 'default', 'Wachtwoord vergeten?', '', {
+					wide: true,
+					done: 'Wachtwoordherstel geopend',
+				})
 				+ '</div>'
-				+ '<p class="login-box__alternative-logins">Inloggen met een apparaat</p>'
+				+ '<div class="login-box__alternative-logins"></div>'
+				+ '</div>'
+				+ '</div>'
+				+ '</div>'
 				+ '</div></div>'
+				// Core's own footer, a sibling of the wrapper rather than a
+				// child of it — which is where the real page puts it, and which
+				// means the hide-slogan stylesheet reaches it here exactly as it
+				// reaches the real one.
+				+ '<footer class="guest-box">'
+				+ '<p class="info">Een veilige thuisbasis voor al je gegevens</p>'
+				+ '</footer>'
+				+ '</div>'
 			)
 		},
 		'login-button': function (state) {
-			return button('primary', state, 'Inloggen')
+			// With the arrow, because `LoginButton` always has one: the chip and
+			// the card must not draw the same button two different ways.
+			return button('primary', state, 'Inloggen', '', {
+				icon: submitArrow(),
+				done: 'Bezig met inloggen …',
+			})
 		},
 		'logo-slogan': function () {
 			return (
@@ -1687,7 +2065,7 @@
 				+ '<ul>'
 				+ navEntry('Alle bestanden', '', co(1))
 				+ navEntry('Favorieten', 'is-selected active', co(2), '3')
-				+ navEntry('Gedeeld met jou', 'is-hover', co(3))
+				+ navEntry('Gedeeld met jou', '')
 				+ navEntry('Verwijderde bestanden', '')
 				+ '</ul>'
 				+ '<div class="app-navigation-toggle nldesign-pg-navtoggle"></div>'
@@ -1743,7 +2121,7 @@
 			var rows = [
 				['Jaarverslag 2025.pdf', '2,4 MB', 'Vandaag', '', ''],
 				['Begroting.xlsx', '812 kB', 'Gisteren', 'is-zebra', co(2)],
-				['Notulen raad.docx', '64 kB', '3 dagen geleden', 'is-hover', co(3)],
+				['Notulen raad.docx', '64 kB', '3 dagen geleden', '', ''],
 				['Bijlage A.png', '1,1 MB', 'Vorige week', 'is-zebra', ''],
 				['Archief', '—', 'Vorige maand', '', ''],
 			]
@@ -1820,8 +2198,7 @@
 				+ listItem(
 					'Gemeente Voorbeeld',
 					'Nieuwe reactie op Jaarverslag',
-					'is-hover',
-					co(2),
+					'',
 				)
 				+ listItem(
 					'Jan Bakker',
@@ -1852,9 +2229,7 @@
 				+ co(1)
 				+ '<ul class="popovermenu">'
 				+ '<li class="nldesign-pg-action">Hernoemen</li>'
-				+ '<li class="nldesign-pg-action is-hover">Verplaatsen of kopiëren'
-				+ co(2)
-				+ '</li>'
+				+ '<li class="nldesign-pg-action">Verplaatsen of kopiëren</li>'
 				+ '<li class="nldesign-pg-action">Details openen</li>'
 				+ '<li class="nldesign-pg-action">Verwijderen</li>'
 				+ '</ul></div></div>'
@@ -1870,9 +2245,7 @@
 				+ co(1)
 				+ '</span>'
 				+ '<span class="nldesign-pg-sep">›</span>'
-				+ '<span class="nldesign-pg-crumb is-hover">Documenten'
-				+ co(2)
-				+ '</span>'
+				+ '<span class="nldesign-pg-crumb">Documenten</span>'
 				+ '<span class="nldesign-pg-sep">›</span>'
 				+ '<span class="nldesign-pg-crumb">Rapportages</span>'
 				+ '<span class="nldesign-pg-sep">›</span>'
@@ -1903,11 +2276,13 @@
 				+ '<span class="nldesign-pg-input nldesign-pg-select">Nederland'
 				+ co(1)
 				+ '</span>'
+				// The marker belongs on the LIST, not on one option: state 2 is
+				// "open", which is the list being there at all, and hanging it
+				// off a highlighted row made it read as a hover exemplar.
 				+ '<ul class="nldesign-pg-options">'
-				+ '<li class="nldesign-pg-option">België</li>'
-				+ '<li class="nldesign-pg-option is-hover">Duitsland'
 				+ co(2)
-				+ '</li>'
+				+ '<li class="nldesign-pg-option">België</li>'
+				+ '<li class="nldesign-pg-option">Duitsland</li>'
 				+ '<li class="nldesign-pg-option">Frankrijk</li>'
 				+ '<li class="nldesign-pg-option">Luxemburg</li>'
 				+ '</ul></div>'
@@ -2078,8 +2453,7 @@
 				+ '<span class="nldesign-pg-link">documentatie</span>'
 				+ co(1)
 				+ ', of bekijk de '
-				+ '<span class="nldesign-pg-link is-hover">voorbeeldthema&rsquo;s</span>'
-				+ co(2)
+				+ '<span class="nldesign-pg-link">voorbeeldthema&rsquo;s</span>'
 				+ '.</p>'
 			)
 		},
@@ -2132,6 +2506,94 @@
 	 * @param {boolean} [large] Whether to draw it at the size the sidebar uses.
 	 * @return {string} The markup.
 	 */
+	/**
+	 * The account the header specimen should show.
+	 *
+	 * The bar an admin is judging is THEIR bar, and a stranger's initials in
+	 * the corner of it is the one detail that makes the whole drawing read as
+	 * somebody else's screenshot. `OC.getCurrentUser()` is the same source the
+	 * real avatar menu uses.
+	 *
+	 * Guarded because this file is also loaded under Node by the unit tests,
+	 * where there is no `OC` and no session.
+	 *
+	 * @return {{uid: string, name: string}} The signed-in account, or empties.
+	 */
+	function currentUser() {
+		if (typeof OC === 'undefined' || typeof OC.getCurrentUser !== 'function') {
+			return { uid: '', name: '' }
+		}
+
+		var who = OC.getCurrentUser() || {}
+
+		return {
+			uid: who.uid || '',
+			name: who.displayName || who.uid || '',
+		}
+	}
+
+	/**
+	 * The initials Nextcloud would put on an avatar with no picture.
+	 *
+	 * @param {string} name A display name.
+	 * @return {string} One or two letters.
+	 */
+	function initialsOf(name) {
+		var words = String(name).trim().split(/\s+/).filter(Boolean)
+		if (words.length === 0) {
+			return '?'
+		}
+		if (words.length === 1) {
+			return words[0].charAt(0).toUpperCase()
+		}
+
+		return (
+			words[0].charAt(0) + words[words.length - 1].charAt(0)
+		).toUpperCase()
+	}
+
+	/** Make a string safe to sit inside a double-quoted HTML attribute. */
+	function attr(value) {
+		return String(value)
+			.replace(/&/g, '&amp;')
+			.replace(/"/g, '&quot;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+	}
+
+	/**
+	 * The account glyph at the end of the header: the signed-in user's own
+	 * avatar, with the status bubble the real one carries.
+	 *
+	 * Falls back to initials when there is no session to ask — and the avatar
+	 * endpoint itself falls back to initials for an account with no picture,
+	 * which is exactly what the real header does.
+	 *
+	 * @return {string} The markup.
+	 */
+	function accountPlate() {
+		var who = currentUser()
+		if (who.uid === '') {
+			return avatarPlate('?', true, true)
+		}
+
+		var picture = OC.generateUrl('/avatar/{user}/64', { user: who.uid })
+
+		return (
+			'<span class="nldesign-pg-avatarwrap">'
+			+ '<span class="avatardiv nldesign-pg-avatar nldesign-pg-avatar--lg'
+			+ ' nldesign-pg-avatar--photo" title="'
+			+ attr(who.name)
+			+ '" style="background-image:url('
+			+ picture
+			+ ')">'
+			+ attr(initialsOf(who.name))
+			+ '</span>'
+			+ statusOnline()
+			+ '</span>'
+		)
+	}
+
 	function avatarPlate(initials, status, large) {
 		var plate =
 			'<span class="avatardiv nldesign-pg-avatar'
@@ -2147,9 +2609,261 @@
 		return (
 			'<span class="nldesign-pg-avatarwrap">'
 			+ plate
-			+ '<span class="user-status-icon nldesign-pg-status-dot"></span>'
+			+ statusOnline()
 			+ '</span>'
 		)
+	}
+
+	/**
+	 * The glyphs the 34 header carries, as the paths core's own components
+	 * render.
+	 *
+	 * Transcribed from the live header's DOM. They were CSS masks before, which
+	 * left a soft edge on every one of them — a mask samples an SVG into an
+	 * alpha channel and then paints a box through it, so the result is a
+	 * blurred stencil rather than a drawn shape. Core renders `<svg
+	 * fill="currentColor">` inline, so the specimen does too and the glyphs
+	 * come out identical instead of merely similar.
+	 */
+	var HEADER_GLYPHS = {
+		// IconDotsGrid — nine dots, not a repeating gradient.
+		waffle:
+			'M12 16C13.1 16 14 16.9 14 18S13.1 20 12 20 10 19.1 10 18 10.9 16 12 16M12 10C13.1'
+			+ ' 10 14 10.9 14 12S13.1 14 12 14 10 13.1 10 12 10.9 10 12 10M12 4C13.1 4 14 4.9'
+			+ ' 14 6S13.1 8 12 8 10 7.1 10 6 10.9 4 12 4M6 16C7.1 16 8 16.9 8 18S7.1 20 6 20 4'
+			+ ' 19.1 4 18 4.9 16 6 16M6 10C7.1 10 8 10.9 8 12S7.1 14 6 14 4 13.1 4 12 4.9 10 6'
+			+ ' 10M6 4C7.1 4 8 4.9 8 6S7.1 8 6 8 4 7.1 4 6 4.9 4 6 4M18 16C19.1 16 20 16.9 20'
+			+ ' 18S19.1 20 18 20 16 19.1 16 18 16.9 16 18 16M18 10C19.1 10 20 10.9 20 12S19.1'
+			+ ' 14 18 14 16 13.1 16 12 16.9 10 18 10M18 4C19.1 4 20 4.9 20 6S19.1 8 18 8 16'
+			+ ' 7.1 16 6 16.9 4 18 4Z',
+		magnify:
+			'M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19'
+			+ 'L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,'
+			+ '9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5'
+			+ 'C14,7 12,5 9.5,5Z',
+		// The notifications bell, in the shape it takes WITH unread items: core
+		// swaps in a cut-out bell and draws the dot as a second path, rather
+		// than stacking a badge on top of the plain one.
+		bell:
+			'M 19,11.79 C 18.5,11.92 18,12 17.5,12 14.47,12 12,9.53 12,6.5 12,5.03 12.58,3.7'
+			+ ' 13.5,2.71 13.15,2.28 12.61,2 12,2 10.9,2 10,2.9 10,4 V 4.29 C 7.03,5.17 5,7.9'
+			+ ' 5,11 v 6 l -2,2 v 1 H 21 V 19 L 19,17 V 11.79 M 12,23 c 1.11,0 2,-0.89'
+			+ ' 2,-2 h -4 c 0,1.11 0.9,2 2,2 z',
+		bellDot:
+			'M 21,6.5 C 21,8.43 19.43,10 17.5,10 15.57,10 14,8.43 14,6.5 14,4.57 15.57,3'
+			+ ' 17.5,3 19.43,3 21,4.57 21,6.5',
+		contacts:
+			'M20,0H4V2H20V0M4,24H20V22H4V24M20,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,'
+			+ '0 22,18V6A2,2 0 0,0 20,4M12,6.75A2.25,2.25 0 0,1 14.25,9A2.25,2.25 0 0,1 12,'
+			+ '11.25A2.25,2.25 0 0,1 9.75,9A2.25,2.25 0 0,1 12,6.75M17,17H7V15.5C7,13.83 10.33,'
+			+ '13 12,13C13.67,13 17,13.83 17,15.5V17Z',
+	}
+
+	/**
+	 * The "online" status badge, as the account button renders it.
+	 *
+	 * A check inside a filled circle, not the plain dot the specimen drew: the
+	 * dot is what Nextcloud used before statuses carried a meaning, and an
+	 * admin comparing the two bars reads the difference immediately. Its own
+	 * viewBox, because core's status icons come from a 960-unit set rather than
+	 * the 24-unit one the header glyphs use.
+	 *
+	 * @return {string} The markup.
+	 */
+	function statusOnline() {
+		return (
+			'<span class="user-status-icon nldesign-pg-userstatus" aria-hidden="true">'
+			+ '<svg viewBox="0 -960 960 960" width="16" height="16">'
+			+ '<path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156'
+			+ '-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880'
+			+ 'q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127'
+			+ ' 85.5T480-80Z"></path>'
+			+ '</svg></span>'
+		)
+	}
+
+	/**
+	 * The arrow the log-in button carries.
+	 *
+	 * Core's `LoginButton` puts `vue-material-design-icons/ArrowRight` in
+	 * NcButton's icon slot, so the login page's primary button is never a bare
+	 * label. This is that icon's own path, at that set's 24-unit viewBox.
+	 *
+	 * @return {string} The markup.
+	 */
+	function submitArrow() {
+		return (
+			'<svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24">'
+			+ '<path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,'
+			+ '5.5L16,11H4Z"></path></svg>'
+		)
+	}
+
+	/**
+	 * The reveal button NcPasswordField hangs inside the password box.
+	 *
+	 * A trailing button, not an adornment: it is a real `button-vue` in
+	 * `input-field__trailing-button`, which is why the password box on the
+	 * login card is the one field whose text stops short of its own edge.
+	 *
+	 * @return {string} The markup.
+	 */
+	function revealEye() {
+		return (
+			'<span class="input-field__trailing-button button-vue'
+			+ ' button-vue--tertiary-no-background nldesign-pg-reveal"'
+			// Hidden from assistive technology and out of the tab order: it is
+			// the drawing of a toggle, not a toggle, and an unlabelled tab stop
+			// that does nothing is worse than no tab stop.
+			+ ' aria-hidden="true">'
+			+ '<svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24">'
+			+ '<path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,'
+			+ '0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 '
+			+ '12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 '
+			+ '21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"></path></svg></span>'
+		)
+	}
+
+	/**
+	 * One header glyph, drawn the way core draws it.
+	 *
+	 * @param {string} name A key of HEADER_GLYPHS.
+	 * @param {string} [className] Extra classes for the wrapping span.
+	 * @param {string} [extra] A second path, for the bell's unread dot.
+	 * @return {string} The markup.
+	 */
+	function glyph(name, className, extra) {
+		return (
+			'<span class="nldesign-pg-glyphbox '
+			+ (className || '')
+			+ '" aria-hidden="true">'
+			+ '<svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24">'
+			+ '<path d="'
+			+ HEADER_GLYPHS[name]
+			+ '"></path>'
+			+ (extra
+				? '<path class="nldesign-pg-belldot" d="' + HEADER_GLYPHS[extra] + '"></path>'
+				: '')
+			+ '</svg></span>'
+		)
+	}
+
+	/**
+	 * The app icons the header specimen draws.
+	 *
+	 * Core's own pictograms, not blocks. `dist/icons.css` ships every one of
+	 * these with a `-white` variant precisely because they sit on a saturated
+	 * header, so the specimen can use the icons the real bar uses instead of
+	 * standing in for them with squares.
+	 */
+	var HEADER_ICONS = [
+		'icon-category-dashboard-white',
+		'icon-files-white',
+		'icon-picture-white',
+		'icon-music-white',
+		'icon-comment-white',
+		'icon-category-office-white',
+		'icon-category-monitoring-white',
+	]
+
+	/**
+	 * The app menu as Nextcloud 32 and 33 draw it: a row of app entries.
+	 *
+	 * Icons, not labels. The real bar is a row of app icons between the logo
+	 * and the account glyphs with the active app marked by a bar under it;
+	 * labels only appear in the overflow menu, and drawing them here made the
+	 * specimen a row of chunky boxes that looks nothing like the bar it stands
+	 * for. `core/src/components/AppMenuEntry.vue` is where these class names
+	 * come from — it exists in v32.0.0 and v33.0.0 and is gone in v34.0.0.
+	 *
+	 * @return {string} The markup.
+	 */
+	function appMenu32() {
+		var apps = ''
+		HEADER_ICONS.forEach(function (icon, index) {
+			var active = index === 1
+			apps +=
+				'<li class="app-menu-entry'
+				+ (active ? ' app-menu-entry--active' : '')
+				+ '">'
+				+ '<span class="nldesign-pg-icon '
+				+ icon
+				+ '"></span>'
+				+ (active ? co(1) : '')
+				+ '</li>'
+		})
+
+		return '<nav class="app-menu"><ul class="app-menu__list">' + apps + '</ul></nav>'
+	}
+
+	/**
+	 * The app menu as Nextcloud 34 draws it: a waffle and the current app.
+	 *
+	 * 34 deleted the entry row outright. What replaced it is a
+	 * `tertiary-no-background` button carrying a dots-grid icon, which opens a
+	 * popover grid, and beside it a second button naming the app you are in.
+	 * The popover itself is not drawn: floating-vue renders it outside
+	 * `#header` — which is why core exposes a `popover-base-class` prop at all
+	 * — so a header specimen containing one would be showing something that
+	 * never appears inside the header.
+	 *
+	 * @return {string} The markup.
+	 */
+	function appMenu34() {
+		return (
+			'<nav class="app-menu nldesign-pg-appmenu">'
+			+ '<span class="app-menu__waffle nldesign-pg-waffle">'
+			+ glyph('waffle')
+			+ '</span>'
+			+ '<span class="app-menu__current-app nldesign-pg-currentapp">'
+			+ '<span class="app-menu__current-app-icon nldesign-pg-appicon"></span>'
+			+ '<span class="app-menu__current-app-name">Thematiq</span>'
+			+ co(1)
+			+ '</span>'
+			+ '</nav>'
+		)
+	}
+
+	/**
+	 * The header search, as 34 draws it: a field in the middle of the bar.
+	 *
+	 * 32 and 33 put a magnifier BUTTON among the account glyphs on the right;
+	 * 34 replaced it with `UnifiedSearchInput`, a `<search>` element carrying
+	 * the placeholder, sitting between the app menu and the glyphs. That is a
+	 * change of shape and of position, not just of class name, so the specimen
+	 * has to move it rather than rename it.
+	 *
+	 * @return {string} The markup.
+	 */
+	function headerSearch34() {
+		// The real structure: the <search> element is a centred, click-through
+		// track, and the BUTTON inside it is the thing you see. Flattening the
+		// two into one element is what made the specimen a left-aligned pill
+		// instead of a centred field.
+		return (
+			'<search class="unified-search-input nldesign-pg-search">'
+			+ '<span class="unified-search-input__button nldesign-pg-searchbtn">'
+			+ glyph('magnify', 'unified-search-input__icon')
+			+ '<span class="unified-search-input__label">'
+			+ 'Zoek apps, bestanden, tags, berichten &hellip;'
+			+ '</span>'
+			+ '</span>'
+			+ '</search>'
+		)
+	}
+
+	/**
+	 * The major version a header specimen should be drawn as.
+	 *
+	 * @param {?number} version The version asked for, if any.
+	 * @return {number} A supported major version.
+	 */
+	function headerMajor(version) {
+		if (HEADER_VERSIONS.indexOf(version) !== -1) {
+			return version
+		}
+
+		return HEADER_VERSIONS[HEADER_VERSIONS.length - 1]
 	}
 
 	/**
@@ -2209,40 +2923,235 @@
 		)
 	}
 
+	/** Counter behind specimenId(). */
+	var uid = 0
+
 	/**
-	 * One labelled input, in NcInputField's own class names.
+	 * A specimen-unique id, for the one place the real components need one:
+	 * tying a label to the input it names. Prefixed, because the settings page
+	 * has its own ids and the real login page's are not ours to reuse.
+	 *
+	 * @return {string} An id nothing else on the page carries.
+	 */
+	function specimenId() {
+		uid += 1
+		return 'nldesign-pg-f' + uid
+	}
+
+	/**
+	 * One mdi glyph, in the wrapper vue-material-design-icons emits.
+	 *
+	 * The wrapper is not decoration: NcButton sizes its icon slot through
+	 * `.button-vue__icon > *` and NcCheckboxContent through
+	 * `.checkbox-content__icon > *`, and the `material-design-icon` span is the
+	 * child those rules were measured against.
+	 *
+	 * @param {string} name The icon's own class, as the icon set names it.
+	 * @param {string} path The glyph.
+	 * @param {number} size The pixel size the real component asks for.
+	 * @return {string} The markup.
+	 */
+	function mdi(name, path, size) {
+		return (
+			'<span aria-hidden="true" role="img" class="material-design-icon '
+			+ name
+			+ '">'
+			+ '<svg fill="currentColor" width="'
+			+ size
+			+ '" height="'
+			+ size
+			+ '" viewBox="0 0 24 24" class="material-design-icon__svg">'
+			+ '<path d="'
+			+ path
+			+ '"></path></svg></span>'
+		)
+	}
+
+	/**
+	 * The arrow core's `LoginButton` puts in NcButton's icon slot.
+	 *
+	 * @return {string} The markup.
+	 */
+	function submitArrow() {
+		return mdi(
+			'arrow-right-icon submit-wrapper__icon',
+			'M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z',
+			24,
+		)
+	}
+
+	/**
+	 * The reveal button NcPasswordField hangs inside the password box.
+	 *
+	 * A whole NcButton — icon-only, tertiary-no-background — carrying
+	 * NcInputField's own `input-field__trailing-button`, which is what makes the
+	 * password box the one field whose text stops short of its own edge.
+	 *
+	 * @return {string} The markup.
+	 */
+	function revealEye() {
+		return button('tertiary-no-background', 'default', '', '', {
+			extra: 'input-field__trailing-button',
+			label: 'Wachtwoord weergeven',
+			icon: mdi(
+				'eye-icon',
+				'M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,'
+					+ '9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,'
+					+ '1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C'
+					+ '17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z',
+				18,
+			),
+		})
+	}
+
+	/**
+	 * One input, in NcInputField's own DOM.
+	 *
+	 * A real `<input>` inside a real `input-field__main-wrapper`, because that
+	 * is the structure the component's stylesheet is written against: the label
+	 * is placed over the input and floats onto its top edge on
+	 * `:not(:placeholder-shown)`, the border is a box-shadow on the input
+	 * itself, and the trailing button is positioned against the wrapper. None
+	 * of that can reach a stack of spans.
+	 *
+	 * Two label placements, both real. Without `label-outside` — the default,
+	 * and what the login form uses — the label sits inside the box. With it the
+	 * consumer renders its own caption above, which is what the remaining
+	 * specimens show. The input stays typeable on purpose: the float is
+	 * behaviour worth seeing, and it is a pseudo-class, not a picture.
 	 *
 	 * @param {string} label The field label.
 	 * @param {string} state default, focus or invalid.
+	 * @param {Object} [options] `inside` places the label over the input,
+	 *   `trailing` is markup for a trailing button, `type` is the input type.
 	 * @return {string} The markup.
 	 */
-	function field(label, state) {
+	function field(label, state, options) {
+		var settings = options || {}
+		var inside = settings.inside === true
+		var filled = state === 'focus' || state === 'invalid'
+		var id = specimenId()
 		var classes = ['input-field', 'nldesign-pg-field']
-		if (state === 'focus' || state === 'invalid') {
-			classes.push('is-' + state)
+		if (inside === false) {
+			classes.push('input-field--label-outside')
 		}
-		return (
-			'<span class="'
+		if (settings.trailing) {
+			classes.push('input-field--trailing-icon')
+		}
+		if (state === 'invalid') {
+			classes.push('input-field--error')
+		}
+
+		var box =
+			'<div class="'
 			+ classes.join(' ')
 			+ '">'
-			+ '<span class="input-field__label nldesign-pg-field-label">'
-			+ label
-			+ '</span>'
-			+ '<span class="nldesign-pg-input">'
-			+ (state === 'focus' || state === 'invalid'
-				? 'Ingevulde waarde'
-				: 'Placeholder')
-			+ '</span>'
-			+ (state === 'invalid'
-				? '<span class="nldesign-pg-status is-error">Dit veld is verplicht.</span>'
+			+ '<div class="input-field__main-wrapper">'
+			+ '<input id="'
+			+ id
+			+ '" class="input-field__input" type="'
+			+ (settings.type || 'text')
+			+ '" placeholder="" aria-live="polite" value="'
+			+ (filled ? 'Ingevulde waarde' : '')
+			+ '">'
+			+ (inside
+				? '<label for="'
+					+ id
+					+ '" class="input-field__label">'
+					+ label
+					+ '</label>'
 				: '')
+			// Always rendered, always empty, always hidden: the real component
+			// emits it whether or not there is a leading icon.
+			+ '<div class="input-field__icon input-field__icon--leading"'
+			+ ' style="display: none;"></div>'
+			+ (settings.trailing || '')
+			+ '</div>'
+			+ (state === 'invalid'
+				? '<p class="input-field__helper-text-message">'
+					+ 'Dit veld is verplicht.</p>'
+				: '')
+			+ '</div>'
+
+		if (inside === true) {
+			return box
+		}
+
+		// Label-outside means the CONSUMER renders the label, outside the
+		// component: NcInputField only stops reserving room for one.
+		return (
+			'<span class="nldesign-pg-fieldbox">'
+			+ '<label for="'
+			+ id
+			+ '" class="nldesign-pg-field-label">'
+			+ label
+			+ '</label>'
+			+ box
 			+ '</span>'
 		)
 	}
 
 	/**
-	 * One checkbox, radio or switch with its label, in
-	 * NcCheckboxRadioSwitch's own class names.
+	 * The mdi glyphs NcCheckboxContent swaps between.
+	 *
+	 * The checked look of a Nextcloud checkbox is not a CSS state on a square:
+	 * the component renders a DIFFERENT icon, and the stylesheet only colours
+	 * it. Paths copied from the instance's own bundle.
+	 */
+	var CHOICE_ICONS = {
+		checkbox: {
+			offName: 'checkbox-blank-outline-icon',
+			onName: 'checkbox-marked-icon',
+			off: 'M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5'
+				+ 'C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z',
+			on: 'M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,'
+				+ '3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z',
+		},
+		radio: {
+			offName: 'radiobox-blank-icon',
+			onName: 'radiobox-marked-icon',
+			off: 'M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,'
+				+ '20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,'
+				+ '10 0 0,0 12,2Z',
+			on: 'M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,'
+				+ '20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,'
+				+ '10 0 0,0 12,2M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,'
+				+ '12A5,5 0 0,0 12,7Z',
+		},
+		// The switch is the one glyph still drawn here: NcIconToggleSwitch
+		// addresses its own shape through a CSS-module class whose name is a
+		// build hash, so there is no selector a specimen can carry to be given
+		// it. Everything around the glyph is still the component's own.
+		switch: {
+			offName: 'toggle-switch-off-icon',
+			onName: 'toggle-switch-icon',
+			off: 'M17,7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H17A5,5 0 0,0 22,12A5,5 0 0,'
+				+ '0 17,7M7,15A3,3 0 0,1 4,12A3,3 0 0,1 7,9A3,3 0 0,1 10,12A3,3 0 0,'
+				+ '1 7,15Z',
+			on: 'M17,7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H17A5,5 0 0,0 22,12A5,5 0 0,'
+				+ '0 17,7M17,15A3,3 0 0,1 14,12A3,3 0 0,1 17,9A3,3 0 0,1 20,12A3,3 '
+				+ '0 0,1 17,15Z',
+		},
+	}
+
+	/**
+	 * The icon inside a choice, at the size the component asks for.
+	 *
+	 * @param {string} kind checkbox, radio or switch.
+	 * @param {boolean} checked Whether it is on.
+	 * @return {string} The markup.
+	 */
+	function choiceIcon(kind, checked) {
+		var set = CHOICE_ICONS[kind] || CHOICE_ICONS.checkbox
+		return mdi(
+			checked === true ? set.onName : set.offName,
+			checked === true ? set.on : set.off,
+			kind === 'switch' ? 36 : 24,
+		)
+	}
+
+	/**
+	 * One checkbox, radio or switch, in NcCheckboxRadioSwitch's own DOM.
 	 *
 	 * @param {string} kind checkbox, radio or switch.
 	 * @param {boolean} checked Whether it is on.
@@ -2251,66 +3160,143 @@
 	 * @return {string} The markup.
 	 */
 	function choice(kind, checked, label, marker) {
+		var classes = [
+			'checkbox-radio-switch',
+			'checkbox-radio-switch-' + kind,
+			'nldesign-pg-choice',
+		]
+		if (checked === true) {
+			classes.push('checkbox-radio-switch--checked')
+		}
+
+		// The component v-binds these two onto the root under names that are
+		// build hashes, and the properties they feed are not. Setting those
+		// inline is the one thing a specimen can do to be sized by the
+		// component's own rules rather than by an unresolved calc().
+		var sizes =
+			kind === 'switch'
+				? '--icon-size:36px;--icon-height:16px'
+				: '--icon-size:24px;--icon-height:24px'
+
 		return (
-			'<span class="checkbox-radio-switch nldesign-pg-choice'
-			+ (checked ? ' checkbox-radio-switch--checked is-checked' : '')
+			'<span style="'
+			+ sizes
+			+ '" class="'
+			+ classes.join(' ')
 			+ '">'
-			+ '<span class="nldesign-pg-'
+			+ '<input class="checkbox-radio-switch__input" type="'
+			+ (kind === 'radio' ? 'radio' : 'checkbox')
+			+ '"'
+			+ (checked === true ? ' checked' : '')
+			+ '>'
+			+ '<span class="checkbox-content checkbox-radio-switch__content'
+			+ ' checkbox-content-'
 			+ kind
-			+ '"></span>'
-			+ '<span>'
-			+ label
+			+ ' checkbox-content--has-text">'
+			+ '<span aria-hidden="true" inert class="checkbox-content__icon'
+			+ (checked === true ? ' checkbox-content__icon--checked' : '')
+			+ ' checkbox-radio-switch__icon">'
+			+ choiceIcon(kind, checked)
 			+ '</span>'
+			+ '<span class="checkbox-content__wrapper">'
+			+ '<span class="checkbox-content__text checkbox-radio-switch__text">'
+			+ label
+			+ '</span></span></span>'
 			+ (marker || '')
 			+ '</span>'
 		)
 	}
 
 	/**
-	 * One button in one state, in the class names Nextcloud's own NcButton uses
-	 * so the shipped stylesheets style it exactly as they style the real thing.
+	 * One button, in NcButton's own DOM.
 	 *
-	 * @param {string} kind primary, secondary, tertiary or error.
+	 * A real `<button>`: hover, focus, the press and disabled are pseudo-classes
+	 * and an attribute on exactly that element, so drawing it as a span means
+	 * imitating every one of them.
+	 *
+	 * The variant class keeps its `vue-` infix, which is what this Nextcloud's
+	 * login page actually emits and what Thematiq's element-overrides.css is
+	 * written against. Which spans are rendered follows the shape: a button with
+	 * no text renders no text span at all, because the component's own `:empty`
+	 * and `:has()` rules are what turn an icon-only button square.
+	 *
+	 * @param {string} kind The NcButton variant: primary, secondary, tertiary,
+	 *   tertiary-no-background, error or success.
 	 * @param {string} state The state to draw.
 	 * @param {string} label Its label.
+	 * @param {string} [marker] A callout marker to place on it.
+	 * @param {Object} [options] `icon` is markup for the icon slot; `wide` fills
+	 *   the container, as NcButton's `wide` prop does; `done` replaces the line
+	 *   the press writes below the stage; `extra` is a class the consuming
+	 *   component adds, the way NcInputField marks its trailing button; `label`
+	 *   is an aria-label, for an icon-only button that has no text to read.
 	 * @return {string} The markup.
 	 */
-	function button(kind, state, label, marker) {
-		// The modifier this Nextcloud emits is `button-vue--vue-<type>`, which
-		// is also what Thematiq's element-overrides.css targets. Newer
-		// @nextcloud/vue dropped the `vue-` infix; when this instance follows,
-		// those overrides and this specimen move together, which is the point of
-		// naming the class here rather than painting the button ourselves.
-		var classes = ['button-vue', 'nldesign-pg-btn', 'is-' + kind]
-		if (kind !== 'tertiary') {
-			classes.push('button-vue--vue-' + kind)
+	function button(kind, state, label, marker, options) {
+		var settings = options || {}
+		var hasIcon = Boolean(settings.icon)
+		var hasText = Boolean(label)
+		var shape = hasIcon && hasText
+			? 'icon-and-text'
+			: hasIcon
+				? 'icon-only'
+				: 'text-only'
+
+		var classes = [
+			'button-vue',
+			'button-vue--size-normal',
+			'button-vue--' + shape,
+			'button-vue--vue-' + kind,
+			'nldesign-pg-btn',
+		]
+		if (kind.indexOf('tertiary') === 0) {
+			classes.push('button-vue--tertiary')
 		}
-		if (state && state !== 'default') {
-			classes.push('is-' + state)
+		if (settings.wide === true) {
+			classes.push('button-vue--wide')
+		}
+		if (settings.extra) {
+			classes.push(settings.extra)
+		}
+		// The one state a drawing still has to hold still: `:active` lasts
+		// exactly as long as the press, and the cell exists to put the pressed
+		// colour beside the resting one.
+		if (state === 'active') {
+			classes.push('is-active')
 		}
 
-		// Focusable and announced as a button unless it is the disabled
-		// specimen — which must be reachable by neither, since that is the
-		// state it stands for. Giving it a real role and a real tab stop is
-		// what lets :hover, :focus-visible and :active fire on the specimen
-		// itself, so the cell labelled "hover" and the cell you actually hover
-		// are drawn by the same rule instead of by a class that imitates it.
-		var live = ''
-		if (state !== 'disabled') {
-			live = ' role="button" tabindex="0"'
-		}
-
-		return (
-			'<span class="'
+		var element =
+			'<button type="button" class="'
 			+ classes.join(' ')
 			+ '" data-done="'
-			+ (BUTTON_DONE[kind] || '')
+			+ (settings.done || BUTTON_DONE[kind] || '')
 			+ '"'
-			+ live
-			+ '><span class="button-vue__wrapper"><span class="button-vue__text">'
-			+ label
-			+ '</span></span>'
-			+ (marker || '')
+			+ (settings.label ? ' aria-label="' + settings.label + '"' : '')
+			+ (state === 'disabled' ? ' disabled' : '')
+			+ '><span class="button-vue__wrapper">'
+			+ (hasIcon
+				? '<span aria-hidden="true" class="button-vue__icon">'
+					+ settings.icon
+					+ '</span>'
+				: '')
+			+ (hasText
+				? '<span class="button-vue__text">' + label + '</span>'
+				: '')
+			+ '</span></button>'
+
+		if (!marker) {
+			return element
+		}
+
+		// Outside the button, not in it: NcButton clips its own overflow, and a
+		// marker pinned to a corner from the inside is a marker with its corner
+		// cut off.
+		return (
+			'<span class="nldesign-pg-btnwrap'
+			+ (settings.wide === true ? ' is-wide' : '')
+			+ '">'
+			+ element
+			+ marker
 			+ '</span>'
 		)
 	}
@@ -2444,7 +3430,10 @@
 		exportCss: exportCss,
 		liveTokens: liveTokens,
 		calloutTip: calloutTip,
+		componentScopes: componentScopes,
+		applyScopes: applyScopes,
 		PICKABLE: PICKABLE,
+		POINTABLE: POINTABLE,
 		STAGES: STAGES,
 		FULL_VIEW: FULL_VIEW,
 		// The browser entry point.

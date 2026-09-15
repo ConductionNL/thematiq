@@ -227,7 +227,7 @@
 .nldesign-pg-wide {
 	position: relative;
 	width: 100%;
-	max-width: 720px;
+	max-width: 980px;
 }
 
 /* The numbered marker that ties a state on the stage to its token rows. */
@@ -577,92 +577,132 @@
 
 /* Buttons ------------------------------------------------------------- */
 
+/* A button specimen is a real `<button>` in NcButton's own DOM, carrying the
+   scope attribute this page's own copy of that stylesheet is keyed to — so the
+   fills, the hovers, the focus ring, the disabled fade, the radius and the icon
+   slot are painted by the component. What is left here is placement on the
+   stage, which is this instrument's business and never the component's. */
 #nldesign-preview .nldesign-pg-btn {
+	margin: 0 8px 0 0;
+}
+
+#nldesign-preview .nldesign-pg-btn.button-vue--wide {
+	margin-right: 0;
+}
+
+/* Not the trailing button inside a text field: NcInputField positions that one
+   against the field's own edge, and a margin would push it off it. */
+#nldesign-preview .nldesign-pg-btn.input-field__trailing-button {
+	margin: 0;
+}
+
+/* The one state a drawing still has to hold still: `:active` lasts exactly as
+   long as the press, and the cell exists to put the pressed colour beside the
+   resting one. Core's own value for a tertiary button. */
+#nldesign-preview .nldesign-pg-btn.is-active {
+	background-color: var(--color-primary-element-light-hover);
+}
+
+/* A marker belongs to the stage rather than to the button, and NcButton clips
+   its own overflow — so it hangs off a wrapper instead of being cut off inside
+   one. */
+#nldesign-preview .nldesign-pg-btnwrap {
+	position: relative;
+	display: inline-flex;
+}
+
+#nldesign-preview .nldesign-pg-btnwrap.is-wide {
+	display: flex;
+}
+
+#nldesign-preview .nldesign-pg-btnwrap > .nldesign-pg-co {
+	position: absolute;
+	top: -9px;
+	right: -9px;
+	margin-left: 0;
+	border: 2px solid var(--color-main-background);
+}
+
+/* The floor, and ONLY when this page turned out not to carry NcButton's
+   stylesheet — see renderStage(). Everything below is this app's approximation
+   of a Nextcloud button, which is worth drawing so an admin is not left looking
+   at unstyled HTML, and worth keeping out of the way the moment the real rules
+   are there to do it properly. */
+#nldesign-preview .nldesign-pg-unscoped .button-vue {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	min-height: var(--default-clickable-area, 34px);
-	margin: 0 8px 0 0;
 	padding: 0 16px;
 	border: 2px solid transparent;
 	border-radius: var(--border-radius-element);
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
 	font-size: var(--default-font-size, 15px);
 	font-weight: 700;
-	box-shadow: none;
-	/* The specimen answers a press with a short label change, so it takes the
-	   pointer a real button would. The disabled one keeps `default` below,
-	   because being unresponsive is the state it is there to show. */
 	cursor: pointer;
-	user-select: none;
-	transition: background-color var(--animation-quick, 100ms) ease-in-out;
 }
 
-/* Pressed, on the real thing as well as on the drawing. Without it the label
-   swap is the only feedback and the button feels like it fired by itself. */
-#nldesign-preview .nldesign-pg-btn:not(.is-disabled):active {
-	transform: translateY(1px);
+#nldesign-preview .nldesign-pg-unscoped .button-vue__wrapper {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	width: 100%;
 }
 
-#nldesign-preview .nldesign-pg-btn.is-primary {
+#nldesign-preview .nldesign-pg-unscoped .button-vue__icon {
+	display: inline-grid;
+	flex: none;
+	place-items: center;
+	width: 20px;
+	height: 20px;
+}
+
+#nldesign-preview .nldesign-pg-unscoped .button-vue--wide {
+	width: 100%;
+}
+
+#nldesign-preview .nldesign-pg-unscoped .button-vue--vue-primary {
 	background: var(--color-primary-element);
 	color: var(--color-primary-element-text);
 }
 
-#nldesign-preview .nldesign-pg-btn.is-primary.is-hover,
-#nldesign-preview .nldesign-pg-btn.is-primary:not(.is-disabled):hover {
+#nldesign-preview .nldesign-pg-unscoped .button-vue--vue-primary:hover {
 	background: var(--color-primary-element-hover);
 }
 
-#nldesign-preview .nldesign-pg-btn.is-secondary {
+#nldesign-preview .nldesign-pg-unscoped .button-vue--vue-secondary {
 	background: var(--color-background-dark);
 	color: var(--color-main-text);
 }
 
-#nldesign-preview .nldesign-pg-btn.is-secondary.is-hover,
-#nldesign-preview .nldesign-pg-btn.is-secondary:not(.is-disabled):hover {
-	background: var(--color-background-darker);
-}
-
-#nldesign-preview .nldesign-pg-btn.is-tertiary {
+#nldesign-preview .nldesign-pg-unscoped .button-vue--tertiary {
 	background: transparent;
-	color: var(--color-primary-element-light-text);
+	color: var(--color-main-text);
 }
 
-#nldesign-preview .nldesign-pg-btn.is-tertiary.is-hover,
-#nldesign-preview .nldesign-pg-btn.is-tertiary:not(.is-disabled):hover {
-	background: var(--color-primary-element-light);
+#nldesign-preview .nldesign-pg-unscoped .button-vue--tertiary:hover {
+	background: color-mix(in srgb, var(--color-primary-element) 8%, transparent);
 }
 
-#nldesign-preview .nldesign-pg-btn.is-tertiary.is-active {
-	background: var(--color-primary-element-light-hover);
-}
-
-#nldesign-preview .nldesign-pg-btn.is-error {
+#nldesign-preview .nldesign-pg-unscoped .button-vue--vue-error {
 	background: var(--color-error);
-	color: #fff;
+	color: var(--color-error-text);
 }
 
-#nldesign-preview .nldesign-pg-btn.is-error.is-hover,
-#nldesign-preview .nldesign-pg-btn.is-error:not(.is-disabled):hover {
-	background: var(--color-error-hover);
-}
-
-#nldesign-preview .nldesign-pg-btn.is-success {
+#nldesign-preview .nldesign-pg-unscoped .button-vue--vue-success {
 	background: var(--color-success);
-	color: #fff;
+	color: var(--color-success-text);
 }
 
-/* The frozen specimen and the real thing draw the same ring, so the cell
-   labelled "focus" and the one you actually tab to cannot disagree. */
-#nldesign-preview .nldesign-pg-btn.is-focus,
-#nldesign-preview .nldesign-pg-btn:not(.is-disabled):focus-visible {
+#nldesign-preview .nldesign-pg-unscoped .button-vue:focus-visible {
 	outline: 2px solid var(--color-main-text);
 	outline-offset: 2px;
-	box-shadow: 0 0 0 4px var(--color-main-background);
 }
 
-#nldesign-preview .nldesign-pg-btn.is-disabled {
+#nldesign-preview .nldesign-pg-unscoped .button-vue:disabled {
 	opacity: 0.5;
 	cursor: default;
 }
@@ -688,13 +728,28 @@
 	color: var(--color-primary-text);
 }
 
+/* The logo the instance is actually wearing, resolved through the same chain
+   core's own `.logo` rule uses: the header logo an admin uploaded, then the
+   general one, then Nextcloud's shipped mark. A white disc stood here before,
+   which told an admin nothing about their own branding — the one thing a
+   header specimen is looked at for. The filter is core's too: a bright header
+   inverts the mark so it does not disappear into it. */
 #nldesign-preview .nldesign-pg-header-logo {
 	flex: none;
-	width: 28px;
-	height: 28px;
-	margin-right: 10px;
-	border-radius: 50%;
-	background: var(--color-primary-text);
+	width: 62px;
+	height: 34px;
+	margin-right: 8px;
+	background-image: var(
+		--image-logoheader,
+		var(--image-logo, url("../../../core/img/logo/logo.svg"))
+	);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+	filter: var(
+		--image-logoheader-custom,
+		var(--background-image-invert-if-bright)
+	);
 }
 
 #nldesign-preview .nldesign-pg-header .app-menu ul {
@@ -829,27 +884,94 @@
 	font-size: 14px;
 }
 
+/* The login page, drawn by the login page's own stylesheet.
+
+   `css/playground-guest.css` is `core/css/guest.css` re-emitted under
+   `.nldesign-pg-guestpage` at zero added specificity, so the card's
+   translucent surface and container corner, its shadow and blur, the 175x130
+   logo box, the h2 and the bold links all come from core — and the component
+   stylesheets still beat it exactly where they beat it on the real page.
+
+   What is left below is the handful of declarations that live in Login.vue's
+   and LoginForm.vue's SCOPED styles: those are compiled into a bundle only the
+   login page loads, keyed to a build hash nothing on this page carries, so
+   they are the one part of the login card this app still has to state. */
+#nldesign-preview .nldesign-pg-guestpage {
+	width: 100%;
+	padding: 20px;
+}
+
+/* The one measurement in core's file that cannot come across unchanged.
+   `.wrapper` is spaced with `margin-block: 10vh auto`, and a viewport height
+   inside a stage a few hundred pixels tall is most of the specimen. The `auto`
+   is core's own, and it is what pushes the footer off the bottom of the card. */
+#nldesign-preview .nldesign-pg-guestpage .wrapper {
+	margin-block: 0 auto;
+}
+
+/* Login.vue: `.login-box { width: 320px }` — "same size as dashboard panels".
+   The position is the stage's own, for the callout marker. */
 #nldesign-preview .nldesign-pg-logincard {
 	position: relative;
-	display: inline-block;
-	width: 100%;
-	max-width: 320px;
-	padding: 20px;
-	border-radius: var(--border-radius-large);
-	background: var(--color-main-background);
-	text-align: left;
+	width: 320px;
+	max-width: 100%;
 }
 
-#nldesign-preview .nldesign-pg-logincard .login-form__headline {
-	margin: 0 0 12px;
-	font-size: 17px;
-	font-weight: 700;
+/* Pinned to the card's corner rather than riding inline: callout 1 points at
+   the card and the page behind it, and an inline marker in front of a centred
+   headline moves the headline off centre. */
+#nldesign-preview .nldesign-pg-logincard > .nldesign-pg-co {
+	position: absolute;
+	top: -9px;
+	left: -9px;
+	width: 20px;
+	height: 20px;
+	margin-left: 0;
+	border: 2px solid var(--color-main-background);
 }
 
-#nldesign-preview .nldesign-pg-logincard .login-box__alternative-logins {
-	margin: 12px 0 0;
-	color: var(--color-primary);
-	font-size: 13px;
+/* Login.vue: the wrapper stacks with a two-baseline gap. */
+#nldesign-preview .nldesign-pg-loginwrap {
+	display: flex;
+	flex-direction: column;
+	gap: calc(2 * var(--default-grid-baseline, 4px));
+}
+
+/* LoginForm.vue: the fieldset stacks with half a rem, and carries none of a
+   fieldset's own chrome. */
+#nldesign-preview .nldesign-pg-loginfields {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+/* LoginForm.vue: the form reads start-aligned inside a page core centres, and
+   the headline is the one thing in it that stays centred. */
+#nldesign-preview .nldesign-pg-guestpage .login-form {
+	text-align: start;
+}
+
+#nldesign-preview .nldesign-pg-guestpage .login-form__headline {
+	text-align: center;
+	overflow-wrap: anywhere;
+}
+
+/* The card's fields run edge to edge; the shared cap is for the specimens that
+   stand in a row, and this one does not. */
+#nldesign-preview .nldesign-pg-logincard .nldesign-pg-field {
+	max-width: none;
+}
+
+/* Login.vue: the container an instance with SSO fills with provider buttons.
+   Empty on most instances — it is drawn because the real card has it, and
+   because core's own gap counts it. */
+#nldesign-preview .nldesign-pg-guestpage .login-box__alternative-logins {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
 }
 
 /* App navigation -------------------------------------------------------- */
@@ -1153,10 +1275,21 @@
 	font-weight: 700;
 }
 
+/* `--avatar-size: 32px` is what the real account button sets. */
 #nldesign-preview .nldesign-pg-avatar--lg {
-	width: 44px;
-	height: 44px;
-	font-size: 15px;
+	width: 32px;
+	height: 32px;
+	font-size: 14px;
+}
+
+/* The real account picture. The initials stay as the text behind it, so an
+   avatar endpoint that has not answered yet shows the same letters Nextcloud
+   would draw rather than an empty disc. */
+#nldesign-preview .nldesign-pg-avatar--photo {
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	color: transparent;
 }
 
 #nldesign-preview .nldesign-pg-avatarwrap {
@@ -1164,16 +1297,6 @@
 	display: inline-block;
 }
 
-#nldesign-preview .nldesign-pg-status-dot {
-	position: absolute;
-	right: -2px;
-	bottom: -2px;
-	width: 14px;
-	height: 14px;
-	border: 2px solid var(--color-main-background);
-	border-radius: 50%;
-	background: var(--color-success);
-}
 
 /* Empty content ------------------------------------------------------------ */
 
@@ -1289,13 +1412,29 @@
 
 /* Fields ------------------------------------------------------------------------ */
 
-#nldesign-preview .nldesign-pg-field {
+/* The text field is NcInputField's own DOM — a real `<input>` inside a real
+   `input-field__main-wrapper` — so the border, the radius, the placeholder and
+   the label that floats onto the top edge once the box is filled all come from
+   the component. What is left is how wide the specimen stands, and the caption
+   the LABEL-OUTSIDE mode asks its consumer to render: in a real form that label
+   belongs to the consumer, so here it belongs to us. */
+#nldesign-preview .nldesign-pg-fieldbox {
 	display: inline-flex;
 	flex-direction: column;
 	gap: 4px;
 	width: 100%;
 	max-width: 280px;
 	margin-bottom: 10px;
+	text-align: start;
+}
+
+#nldesign-preview .nldesign-pg-field {
+	width: 100%;
+	max-width: 280px;
+}
+
+#nldesign-preview .nldesign-pg-fieldbox .nldesign-pg-field {
+	max-width: none;
 }
 
 #nldesign-preview .nldesign-pg-field-label {
@@ -1303,10 +1442,7 @@
 	font-size: 13px;
 }
 
-#nldesign-preview .nldesign-pg-field.is-focus .nldesign-pg-field-label {
-	color: var(--color-primary-element);
-}
-
+/* Still drawn, because the select and the textarea are still drawn. */
 #nldesign-preview .nldesign-pg-input {
 	display: flex;
 	align-items: center;
@@ -1319,24 +1455,87 @@
 	font-size: 14px;
 }
 
-#nldesign-preview .nldesign-pg-field.is-focus .nldesign-pg-input {
-	border-color: var(--color-primary-element);
-	color: var(--color-main-text);
+/* The floor, only when NcInputField's stylesheet is absent — see the note in
+   the buttons block. Transcribed from that stylesheet: the box is a control
+   with its name inside it, centred while empty and floated onto the top edge
+   once focused or filled. */
+#nldesign-preview .nldesign-pg-unscoped .input-field__main-wrapper {
+	position: relative;
+	height: var(--default-clickable-area, 44px);
+	padding: 2px;
 }
 
-#nldesign-preview .nldesign-pg-field.is-invalid .nldesign-pg-input {
-	border-color: var(--color-error);
-	color: var(--color-main-text);
-}
-
-#nldesign-preview .nldesign-pg-textarea {
-	align-items: flex-start;
+#nldesign-preview .nldesign-pg-unscoped .input-field__input {
 	width: 100%;
-	max-width: 320px;
-	min-height: 76px;
-	padding: 10px 12px;
-	border-radius: var(--border-radius);
+	height: 100%;
+	padding: 0 var(--border-radius-element, 8px);
+	border: none;
+	border-radius: var(--border-radius-element);
+	background-color: var(--color-main-background);
+	box-shadow: 0 0 0 1px var(--color-border-maxcontrast);
 	color: var(--color-main-text);
+	font-size: var(--default-font-size, 15px);
+}
+
+#nldesign-preview .nldesign-pg-unscoped .input-field__label {
+	position: absolute;
+	inset-block-start: calc((var(--default-clickable-area, 44px) - 1lh) / 2);
+	inset-inline: 2px;
+	max-width: fit-content;
+	margin-inline: var(--border-radius-element, 8px);
+	overflow: hidden;
+	color: var(--color-text-maxcontrast);
+	font-size: var(--default-font-size, 15px);
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	pointer-events: none;
+}
+
+#nldesign-preview
+	.nldesign-pg-unscoped
+	.input-field__input:focus
+	+ .input-field__label,
+#nldesign-preview
+	.nldesign-pg-unscoped
+	.input-field__input:not(:placeholder-shown)
+	+ .input-field__label {
+	inset-block-start: -9px;
+	margin-inline: 4px;
+	padding-inline: 4px;
+	background-color: var(--color-main-background);
+	font-size: 13px;
+	font-weight: 500;
+}
+
+#nldesign-preview .nldesign-pg-unscoped .input-field--trailing-icon
+	.input-field__input {
+	padding-inline-end: var(--default-clickable-area, 44px);
+}
+
+#nldesign-preview .nldesign-pg-unscoped .input-field__trailing-button {
+	position: absolute;
+	top: 2px;
+	inset-inline-end: 2px;
+	min-height: calc(var(--default-clickable-area, 44px) - 4px);
+	padding: 0;
+	background: transparent;
+	color: var(--color-main-text);
+}
+
+#nldesign-preview .nldesign-pg-unscoped .input-field__helper-text-message {
+	padding: 4px var(--border-radius-element, 8px);
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+}
+
+#nldesign-preview .nldesign-pg-unscoped .input-field--error
+	.input-field__input {
+	box-shadow: 0 0 0 2px var(--color-error);
+}
+
+#nldesign-preview .nldesign-pg-unscoped .input-field--error
+	.input-field__helper-text-message {
+	color: var(--color-error-text, var(--color-error));
 }
 
 /* Select --------------------------------------------------------------------------- */
@@ -1352,12 +1551,25 @@
 }
 
 #nldesign-preview .nldesign-pg-options {
+	position: relative;
 	margin: 4px 0 0;
 	padding: 4px;
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-element);
 	background: var(--color-main-background);
 	list-style: none;
+}
+
+/* The "open" marker belongs to the list as a whole, so it rides its corner the
+   way a cell marker rides a specimen's — not inline above the first option,
+   where it would read as a row of its own. */
+#nldesign-preview .nldesign-pg-options > .nldesign-pg-co {
+	position: absolute;
+	top: -9px;
+	right: -9px;
+	width: 20px;
+	height: 20px;
+	border: 2px solid var(--color-main-background);
 }
 
 #nldesign-preview .nldesign-pg-option {
@@ -1375,102 +1587,67 @@
 
 /* Checkbox, radio, switch ------------------------------------------------------------ */
 
+/* Only the grid the specimens stand in. Each control is
+   NcCheckboxRadioSwitch's own DOM — the visually hidden input, the content row,
+   and the icon that IS the checked state rather than a class on a square — so
+   the box, its colour, the tick and the knob come from the component. */
 #nldesign-preview .nldesign-pg-choices {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 8px 20px;
 }
 
-#nldesign-preview .nldesign-pg-choice {
+/* The floor, only when the component's stylesheet is absent. Hiding the real
+   input is the load-bearing part: without it the browser's own checkbox sits
+   next to the icon that stands for it, which is two controls where the page has
+   one. */
+#nldesign-preview .nldesign-pg-unscoped .checkbox-radio-switch {
+	position: relative;
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	min-height: 36px;
-	font-size: 14px;
+	color: var(--color-main-text);
+	font-size: var(--default-font-size, 15px);
 }
 
-#nldesign-preview .nldesign-pg-checkbox,
-#nldesign-preview .nldesign-pg-radio,
-#nldesign-preview .nldesign-pg-switch {
-	position: relative;
-	flex: none;
-	border: 2px solid var(--color-border-maxcontrast);
-}
-
-#nldesign-preview .nldesign-pg-checkbox,
-#nldesign-preview .nldesign-pg-radio {
-	width: 22px;
-	height: 22px;
-}
-
-#nldesign-preview .nldesign-pg-checkbox {
-	border-radius: var(--border-radius-small);
-}
-
-#nldesign-preview .nldesign-pg-radio {
-	border-radius: 50%;
-}
-
-#nldesign-preview .nldesign-pg-switch {
-	width: 38px;
-	height: 22px;
-	border-radius: var(--border-radius-pill);
-}
-
-#nldesign-preview .is-checked .nldesign-pg-checkbox,
-#nldesign-preview .is-checked .nldesign-pg-radio,
-#nldesign-preview .is-checked .nldesign-pg-switch {
-	border-color: var(--color-primary-element);
-	background: var(--color-primary-element);
-}
-
-/* The marks themselves. Without them a checked box, a selected radio and a
-   switch that is on are three identical filled shapes — which is how they
-   looked, and it is not how any of them looks in the app. */
-#nldesign-preview .is-checked .nldesign-pg-checkbox::after {
-	content: '';
+#nldesign-preview .nldesign-pg-unscoped .checkbox-radio-switch__input {
 	position: absolute;
-	top: 1px;
-	left: 5px;
-	width: 6px;
-	height: 11px;
-	border: solid var(--color-primary-element-text);
-	border-width: 0 2px 2px 0;
-	transform: rotate(45deg);
+	z-index: -1;
+	width: var(--icon-size, 24px);
+	height: var(--icon-size, 24px);
+	opacity: 0;
 }
 
-#nldesign-preview .nldesign-pg-radio::after {
-	content: '';
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--color-primary-element-text);
-	transform: translate(-50%, -50%) scale(0);
+#nldesign-preview .nldesign-pg-unscoped .checkbox-content {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: var(--default-grid-baseline, 4px);
+	min-height: var(--default-clickable-area, 44px);
+	max-width: fit-content;
+	padding: var(--default-grid-baseline, 4px)
+		calc(
+			(var(--default-clickable-area, 44px) - var(--icon-height, 24px)) / 2
+		);
+	border-radius: var(--border-radius-element);
+	cursor: pointer;
+	user-select: none;
 }
 
-#nldesign-preview .is-checked .nldesign-pg-radio::after {
-	transform: translate(-50%, -50%) scale(1);
+#nldesign-preview .nldesign-pg-unscoped .checkbox-content__icon {
+	line-height: 0;
 }
 
-/* The knob: parked at the start when off, at the end when on. */
-#nldesign-preview .nldesign-pg-switch::after {
-	content: '';
-	position: absolute;
-	top: 2px;
-	left: 2px;
-	width: 14px;
-	height: 14px;
-	border-radius: 50%;
-	background: var(--color-border-maxcontrast);
-	transition: left var(--animation-quick, 100ms);
+#nldesign-preview .nldesign-pg-unscoped .checkbox-content__icon > * {
+	width: var(--icon-size, 24px);
+	height: var(--icon-height, 24px);
+	color: var(--color-primary-element);
 }
 
-#nldesign-preview .is-checked .nldesign-pg-switch::after {
-	left: 18px;
-	background: var(--color-primary-element-text);
+#nldesign-preview .nldesign-pg-unscoped .checkbox-radio-switch-switch:not(
+		.checkbox-radio-switch--checked
+	)
+	.checkbox-radio-switch__icon > * {
+	color: var(--color-text-maxcontrast);
 }
 
 /* Dialog ---------------------------------------------------------------------------- */
@@ -1755,3 +1932,211 @@
 	flex: 1;
 	color: var(--color-text-maxcontrast);
 }
+
+/* Says where the states the stage does NOT draw come from. A frozen hover
+   beside a live specimen is two components an admin cannot tell apart, one of
+   which does not respond; this line replaces it. */
+.nldesign-pg-pointable {
+	margin-top: 12px;
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+}
+
+/* --- the header's version switch --- */
+
+/* Above the stage rather than on it: it chooses what is drawn, so it is not
+   part of the drawing. */
+.nldesign-pg-versions {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 12px;
+	font-size: 13px;
+}
+
+#nldesign-settings .nldesign-pg-version {
+	min-height: 26px;
+	margin: 0;
+	padding: 0 10px;
+	border: 1px solid var(--color-border-dark);
+	border-radius: var(--border-radius-pill);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 13px;
+	font-weight: 400;
+	box-shadow: none;
+	cursor: pointer;
+}
+
+#nldesign-settings .nldesign-pg-version.on {
+	border-color: transparent;
+	background: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+	font-weight: 700;
+}
+
+/* The version the instance actually runs, so switching away from it reads as
+   the hypothetical it is. */
+#nldesign-settings .nldesign-pg-version.is-running::after {
+	content: ' ·';
+}
+
+/* --- the Nextcloud 34 app menu --- */
+
+#nldesign-preview .nldesign-pg-appmenu {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+}
+
+#nldesign-preview .nldesign-pg-waffle,
+#nldesign-preview .nldesign-pg-currentapp {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	/* The clickable area Nextcloud keeps for WCAG 2.5.8, which is also what
+	   makes the waffle sit on the same baseline as the logo beside it. */
+	min-width: var(--default-clickable-area, 34px);
+	height: var(--default-clickable-area, 34px);
+	border-radius: var(--border-radius-element, 8px);
+	color: var(--nldesign-color-header-text, var(--color-primary-text));
+}
+
+#nldesign-preview .nldesign-pg-currentapp {
+	position: relative;
+	gap: 8px;
+	padding: 0 10px;
+	font-weight: 700;
+}
+
+/* Core renders its header glyphs as inline <svg fill="currentColor">, so the
+   specimen does too. These were CSS masks: a mask samples the shape into an
+   alpha channel and paints a box through it, which leaves a soft edge on
+   every glyph — the haze that made them read as almost-right. */
+#nldesign-preview .nldesign-pg-glyphbox {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+}
+
+/* The fade core puts on every header glyph. `.header-menu__trigger
+   .button-vue__icon svg` takes `mask: var(--header-menu-icon-mask)`, which is
+   a top-to-bottom alpha ramp — solid to 25%, 55% transparent by 90%. Without
+   it the specimen's glyphs are flat where the real ones lift off the bar. */
+#nldesign-preview .nldesign-pg-header.is-v34 .nldesign-pg-glyphbox svg {
+	mask: var(--header-menu-icon-mask, none);
+}
+
+/* The unread dot is a SECOND PATH inside the bell, the way core draws it, not
+   a badge stacked on top of a plain bell — which is why the real bell has a
+   notch bitten out around it. Core fills it with a literal #ff4402 rather than
+   a status token, so the specimen does the same: taking currentColor made it
+   the colour of the bell and the dot disappeared into it. */
+#nldesign-preview .nldesign-pg-belldot {
+	fill: #ff4402;
+}
+
+/* The status badge is a filled check, and it must not take the icon fade above
+   or the tick washes out at the bottom. */
+#nldesign-preview .nldesign-pg-userstatus {
+	position: absolute;
+	right: -3px;
+	bottom: -3px;
+	display: inline-flex;
+	border-radius: 50%;
+	background: var(--color-main-background);
+	mask: none;
+}
+
+#nldesign-preview .nldesign-pg-userstatus svg {
+	mask: none;
+	fill: var(--user-status-color-online, var(--color-success, #2d7b41));
+}
+
+/* Thematiq's own app icon — img/app.svg, an MDI palette-swatch. Used as a mask
+   rather than an image so it takes the header's text colour: the file is white,
+   which is invisible on the light headers Amsterdam and Rijkshuisstijl use. */
+#nldesign-preview .nldesign-pg-appicon {
+	display: inline-block;
+	flex: none;
+	width: 20px;
+	height: 20px;
+	background-color: currentcolor;
+	mask: url("../img/app.svg") center / 20px no-repeat;
+}
+
+
+/* --- the 34 header: search in the middle --- */
+
+/* The foreground chain the real bar uses: Nextcloud's own plain-text token,
+   with Thematiq's header token in front of it because that is what
+   element-overrides.css puts on the live header. */
+#nldesign-preview .nldesign-pg-header.is-v34 {
+	position: relative;
+	color: var(
+		--nldesign-color-header-text,
+		var(--color-background-plain-text, var(--color-primary-text))
+	);
+}
+
+/* Transcribed from UnifiedSearchInput's own stylesheet rather than
+   approximated. The search is NOT a flex item: it is an absolutely centred,
+   click-through track spanning the bar, which is why it sits dead centre
+   regardless of how wide the app name beside it happens to be. Centring it
+   with auto margins in flex put it in the middle of the LEFTOVER space, which
+   is a different place. */
+#nldesign-preview .nldesign-pg-search {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	inset-inline: 0;
+	display: flex;
+	align-items: center;
+	/* Core says `clamp(200px, 35vw, 600px)`, and 35vw is right there because the
+	   header IS the viewport. Here it is a ~980px drawing of one, so a viewport
+	   unit made the field 600px of 980 — 61% of the bar instead of the 35% it
+	   takes in life, which is why it read as far too long. The percentage keeps
+	   the proportion the vw was expressing. */
+	width: clamp(140px, 35%, 600px);
+	max-width: calc(100% - 32px);
+	margin-inline: auto;
+	pointer-events: none;
+}
+
+/* The part you actually see. A black wash at 15%, not a tint of the header's
+   own colour: the real field is DARKER than the bar it sits in, and mixing
+   from the foreground made ours lighter. An 8px element radius, not a pill.
+   And the content is centred, not left-aligned. */
+#nldesign-preview .nldesign-pg-searchbtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	height: calc(var(--default-clickable-area, 34px) - 8px);
+	padding: 0 12px;
+	border: none;
+	border-radius: var(--border-radius-element, 8px);
+	background-color: rgb(0 0 0 / 15%);
+	box-shadow: inset 0 2px 0 rgb(0 0 0 / 12%);
+	color: inherit;
+	font: inherit;
+	font-size: 13px;
+	text-align: center;
+	pointer-events: auto;
+	cursor: pointer;
+	transition: background-color var(--animation-quick, 100ms) ease-in-out;
+}
+
+#nldesign-preview .nldesign-pg-searchbtn:hover {
+	background-color: rgb(0 0 0 / 22%);
+}
+
+#nldesign-preview .nldesign-pg-search .unified-search-input__label {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+

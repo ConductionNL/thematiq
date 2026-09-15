@@ -33,6 +33,11 @@
 				"app-menu-entry--active",
 				"app-menu-entry__label",
 				"unified-search__button",
+				"app-menu__waffle",
+				"app-menu__current-app",
+				"app-menu__current-app-name",
+				"app-menu__current-app-icon",
+				"unified-search-input__button",
 				"avatardiv",
 				"logo"
 			],
@@ -88,14 +93,24 @@
 			"ground": "login",
 			"layout": "wide",
 			"classes": [
-				"login-box",
+				"wrapper",
+				"header-guest",
+				"logo",
+				"hidden-visually",
 				"guest-box",
+				"login-box",
+				"login-box__wrapper",
+				"login-box__alternative-logins",
 				"login-form",
 				"login-form__headline",
-				"body-login-container",
-				"login-box__alternative-logins"
+				"input-field",
+				"input-field__label",
+				"input-field__input",
+				"button-vue",
+				"button-vue--wide",
+				"button-vue__icon",
+				"info"
 			],
-			"radiusToken": "--border-radius-large",
 			"states": [
 				{
 					"n": 1,
@@ -109,16 +124,6 @@
 				}
 			],
 			"tokens": [
-				{
-					"name": "--color-primary-text",
-					"paints": "Slogan and product name",
-					"callout": 1
-				},
-				{
-					"name": "--border-radius-large",
-					"paints": "Card corner",
-					"callout": 1
-				},
 				{
 					"name": "--color-primary-element",
 					"paints": "The Log in button",
@@ -135,8 +140,20 @@
 				{
 					"callout": 1,
 					"what": "Card surface",
-					"why": "The card takes Nextcloud's own main background, which Nextcloud theming owns so dark mode keeps working.",
+					"why": "The card takes Nextcloud's own main background, at the translucency core gives it, which Nextcloud theming owns so dark mode keeps working.",
 					"code": "routed-to-core-theming"
+				},
+				{
+					"callout": 1,
+					"what": "The logo and the slogan",
+					"why": "Both are content rather than colour: they come from Nextcloud's own theming settings, and the only say this app has over them is the switch that hides the slogan.",
+					"code": "routed-to-core-theming"
+				},
+				{
+					"callout": 1,
+					"what": "The card corner",
+					"why": "Nextcloud 34 rounds the login card on its container scale, which this editor does not write; the radii it does write are the ones that round what sits inside the card.",
+					"code": "geometry-kept-nextcloud"
 				}
 			]
 		},

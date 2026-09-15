@@ -171,10 +171,10 @@ describe('component inventory: the components', () => {
 		expect(empty).toEqual([])
 	})
 
-	it('marks every state on the drawing of a wide component', () => {
-		// A wide specimen is drawn once and places its own markers, so the legend
-		// and the drawing can drift apart in a way the cell layout cannot: a
-		// state listed below with no number on the component above it is a
+	it('marks every drawn state on the drawing of a wide component', () => {
+		// A wide specimen is drawn once and places its own markers, so the rows
+		// below and the drawing can drift apart in a way the cell layout cannot:
+		// a state listed below with no number on the component above it is a
 		// promise the picture does not keep.
 		const unmarked = inventory.components
 			.filter((component) => component.layout === 'wide')
@@ -183,6 +183,7 @@ describe('component inventory: the components', () => {
 					playground.STAGES[component.id](null, component) || '',
 				)
 				return component.states
+					.filter((state) => !playground.POINTABLE.includes(state.id))
 					.filter(
 						(state) => markup.includes(`data-co="${state.n}"`) === false,
 					)
@@ -190,6 +191,42 @@ describe('component inventory: the components', () => {
 			})
 
 		expect(unmarked).toEqual([])
+	})
+
+	it('draws no frozen copy of a state the admin can produce by pointing', () => {
+		// A frozen hover beside the live specimen is two components an admin
+		// cannot tell apart, one of which does not respond to being hovered.
+		// The real pseudo-class is wired on every specimen, so the drawing shows
+		// the component once and lets it be hovered.
+		const frozen = inventory.components
+			.flatMap((component) => {
+				// Only the states the stage actually draws: renderStage skips
+				// the pointable ones, so asking a builder for `hover` and then
+				// objecting to what comes back tests nothing that ships.
+				const states =
+					component.layout === 'wide'
+						? [null]
+						: component.states.filter(
+								(state) => !playground.POINTABLE.includes(state.id),
+							)
+				const markup = states
+					.map((state) =>
+						String(
+							playground.STAGES[component.id](
+								state === null ? null : state.id,
+								component,
+							) || '',
+						),
+					)
+					.join('')
+				return playground.POINTABLE.filter((name) =>
+					[...markup.matchAll(/class="([^"]*)"/g)].some((attribute) =>
+						attribute[1].split(/\s+/).includes(`is-${name}`),
+					),
+				).map((name) => `${component.id}: is-${name}`)
+			})
+
+		expect(frozen).toEqual([])
 	})
 
 	it('draws a wide component at a size worth judging', () => {
@@ -301,5 +338,136 @@ describe('component inventory: the components', () => {
 		})
 
 		expect(crossTab.length).toBeGreaterThan(0)
+	})
+})
+
+describe('the header specimen across Nextcloud versions', () => {
+	// The header is the one component whose MARKUP changes between the versions
+	// this app supports. 34 deleted core/src/components/AppMenuEntry.vue — it is
+	// present in v32.0.0 and v33.0.0 and a 404 in v34.0.0 — and replaced the
+	// entry row with a waffle, a popover grid and a current-app button. An admin
+	// on 32 asking "what happens when I upgrade" is the whole point of the
+	// switch, so these assert each version draws the shape that version ships.
+	const header = (version) =>
+		playground.STAGES['header-bar'](null, null, version)
+
+	const classesOf = (markup) =>
+		new Set(
+			[...markup.matchAll(/class="([^"]*)"/g)].flatMap((attribute) =>
+				attribute[1].split(/\s+/),
+			),
+		)
+
+	it('draws the entry row on 32 and 33, and never the 34 shape', () => {
+		for (const version of [32, 33]) {
+			const classes = classesOf(header(version))
+
+			expect(classes.has('app-menu-entry')).toBe(true)
+			expect(classes.has('app-menu__list')).toBe(true)
+			expect(classes.has('app-menu__waffle')).toBe(false)
+			expect(classes.has('app-menu__current-app')).toBe(false)
+		}
+	})
+
+	it('draws the waffle and the current app on 34, and never the entry row', () => {
+		const classes = classesOf(header(34))
+
+		expect(classes.has('app-menu__waffle')).toBe(true)
+		expect(classes.has('app-menu__current-app')).toBe(true)
+		expect(classes.has('app-menu-entry')).toBe(false)
+		expect(classes.has('app-menu__list')).toBe(false)
+	})
+
+	it('moves the search from a glyph on the right to a field in the middle', () => {
+		// 34 did not merely rename .unified-search__button: it replaced the
+		// magnifier among the account glyphs with UnifiedSearchInput, a
+		// <search> element carrying the placeholder, between the app menu and
+		// the glyphs. A specimen that only renamed the class would put the new
+		// search in the old place.
+		expect(classesOf(header(33)).has('unified-search__button')).toBe(true)
+		expect(header(33)).not.toContain('<search')
+
+		expect(classesOf(header(34)).has('unified-search-input')).toBe(true)
+		expect(header(34)).toContain('<search')
+		expect(classesOf(header(34)).has('unified-search__button')).toBe(false)
+	})
+
+	it('names the current app and gives it an icon, on 34 only', () => {
+		expect(header(34)).toContain('Thematiq')
+		expect(classesOf(header(34)).has('app-menu__current-app-icon')).toBe(true)
+		expect(header(32)).not.toContain('Thematiq')
+	})
+
+	it('marks the app menu in every version it can be drawn as', () => {
+		// The callout has to land on something whichever shape is showing,
+		// otherwise switching version silently drops the explanation with it.
+		for (const version of [32, 33, 34]) {
+			expect(header(version)).toContain('data-co="1"')
+		}
+	})
+
+	it('falls back to the newest header when the version is unknown', () => {
+		// playgroundVersion is 0 when the server cannot be asked.
+		expect(classesOf(header(0)).has('app-menu__waffle')).toBe(true)
+		expect(classesOf(header(undefined)).has('app-menu__waffle')).toBe(true)
+	})
+})
+
+describe('the header specimen shows the instance, not a mock-up', () => {
+	const header = (version) =>
+		playground.STAGES['header-bar'](null, null, version)
+
+	it('never hardcodes a stand-in account', () => {
+		// The bar an admin is judging is THEIR bar, and a stranger's initials in
+		// the corner is the one detail that makes the whole drawing read as
+		// somebody else's screenshot. The avatar comes from
+		// OC.getCurrentUser(); these initials were literal.
+		for (const version of [32, 33, 34]) {
+			expect(header(version)).not.toContain('RB')
+		}
+	})
+
+	it('degrades to a placeholder where there is no session to ask', () => {
+		// This file is loaded under Node by these very tests, so `OC` is absent
+		// and accountPlate() must not throw — a builder that crashes takes the
+		// whole stage down, not just the avatar.
+		expect(header(34)).toContain('nldesign-pg-avatarwrap')
+		expect(header(34)).toContain('user-status-icon')
+	})
+
+	it('draws the logo through core class, not a shape of its own', () => {
+		// `.logo` is what core's own header rule paints, so the specimen
+		// resolves --image-logoheader / --image-logo the same way the real bar
+		// does instead of drawing a disc that shows an admin nothing about
+		// their own branding.
+		for (const version of [32, 33, 34]) {
+			expect(header(version)).toContain('nldesign-pg-header-logo logo')
+		}
+	})
+})
+
+describe('the 34 search field matches the structure core gives it', () => {
+	const header34 = () => playground.STAGES['header-bar'](null, null, 34)
+
+	it('nests the button inside the search element, not beside it', () => {
+		// UnifiedSearchInput is two elements doing two jobs: <search> is an
+		// absolutely centred, click-through TRACK spanning the bar, and
+		// .unified-search-input__button inside it is the thing you see and
+		// click. Flattening them into one element is what made the specimen a
+		// left-aligned pill in the middle of the leftover space rather than a
+		// centred field in the middle of the bar.
+		const markup = header34()
+		const search = markup.indexOf('<search')
+		const button = markup.indexOf('unified-search-input__button')
+		const close = markup.indexOf('</search>')
+
+		expect(search).toBeGreaterThan(-1)
+		expect(button).toBeGreaterThan(search)
+		expect(button).toBeLessThan(close)
+	})
+
+	it('carries the icon and the label the real field carries', () => {
+		expect(header34()).toContain('unified-search-input__icon')
+		expect(header34()).toContain('unified-search-input__label')
 	})
 })

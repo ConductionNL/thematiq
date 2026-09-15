@@ -30,6 +30,12 @@ style('thematiq', 'admin');
 // attaches to the editor that script renders, and waits for it.
 script('thematiq', 'playground');
 style('thematiq', 'playground');
+// Nextcloud's own login-page stylesheet, scoped to the playground's login card.
+// It is the one part of Nextcloud whose CSS this page does not already load —
+// the component chunks for buttons, inputs and checkboxes it does — which is
+// why only the login card needed a copy of its own. Generated from a vendored
+// upstream file; see scripts/generate-guest-css.mjs.
+style('thematiq', 'playground-guest');
 if ($_['mockUi'] === true) {
 	// Presentation mock — only with `?mock=1` (lib/Settings/Admin.php).
 	script('thematiq', 'admin-mock');

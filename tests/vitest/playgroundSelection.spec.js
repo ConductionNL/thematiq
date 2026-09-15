@@ -380,6 +380,10 @@ describe('component instrument: the specimens can be used', () => {
 		'.nldesign-pg-option',
 		'.nldesign-pg-action',
 		'.menutoggle',
+		// The text field is a real `<input>` now, rendered in NcInputField's own
+		// DOM so the shipped stylesheet reaches it; the drawn one is what is
+		// left behind for the select and the textarea.
+		'.input-field__input',
 		'.nldesign-pg-input',
 		'.nldesign-pg-textarea',
 		'.nldesign-pg-btn',
@@ -431,5 +435,211 @@ describe('component instrument: the specimens can be used', () => {
 			.map((entry) => entry.id)
 
 		expect(placeheld).toEqual([])
+	})
+})
+
+describe('the shipped stylesheets, reached', () => {
+	// The specimens are drawn in Nextcloud's own component DOM so that the CSS
+	// this page ALREADY loads paints them. Every one of those rules is
+	// Vue-scoped, so the whole arrangement hangs on finding the right attribute
+	// in the loaded sheets and putting it on. When that stops working the
+	// specimens do not look subtly wrong — the components lose their styling
+	// entirely, and an admin reads that as a broken theme.
+
+	/** A stylesheet, shaped the way the CSSOM hands one over. */
+	const sheet = (...selectors) => ({
+		cssRules: selectors.map((selectorText) => ({ selectorText })),
+	})
+
+	/** An element, shaped the way applyScopes uses one. */
+	const element = (...names) => {
+		const attributes = {}
+		return {
+			classList: names,
+			attributes,
+			setAttribute(name, value) {
+				attributes[name] = value
+			},
+		}
+	}
+
+	const tree = (...nodes) => ({ querySelectorAll: () => nodes })
+
+	it('finds the scope attribute each class is styled under', () => {
+		const scopes = playground.componentScopes({
+			styleSheets: [
+				sheet(
+					'.button-vue[data-v-00a99684]',
+					'.button-vue--wide[data-v-00a99684]',
+					'.input-field__label[data-v-8e16cbb5]',
+					'.plain-old-class',
+				),
+			],
+		})
+
+		expect(scopes['button-vue']).toEqual(['data-v-00a99684'])
+		expect(scopes['button-vue--wide']).toEqual(['data-v-00a99684'])
+		expect(scopes['input-field__label']).toEqual(['data-v-8e16cbb5'])
+		expect(scopes['plain-old-class']).toBeUndefined()
+	})
+
+	it('follows an @import, which is how these sheets actually arrive', () => {
+		// Not a corner case, and the reason the first version of this stamped
+		// nothing at all: `dist/theming-settings-admin.css` is one <link> whose
+		// entire body is a list of @imports, one per component chunk. In the
+		// CSSOM each of those is a CSSImportRule and the imported sheet hangs
+		// off `styleSheet` — a property a walker looking for `cssRules` steps
+		// straight past, finding an empty map and leaving every specimen bare.
+		const scopes = playground.componentScopes({
+			styleSheets: [
+				{
+					cssRules: [
+						{ styleSheet: sheet('.button-vue[data-v-00a99684]') },
+						{ styleSheet: sheet('.input-field__input[data-v-8e16cbb5]') },
+					],
+				},
+			],
+		})
+
+		expect(scopes['button-vue']).toEqual(['data-v-00a99684'])
+		expect(scopes['input-field__input']).toEqual(['data-v-8e16cbb5'])
+	})
+
+	it('descends into media and supports blocks', () => {
+		// The dark-mode halves of these components live inside one, and a
+		// component styled only in the light half would go unstamped and lose
+		// its dark rules with it.
+		const scopes = playground.componentScopes({
+			styleSheets: [
+				{
+					cssRules: [
+						{
+							cssRules: sheet('.input-field__input[data-v-8e16cbb5]')
+								.cssRules,
+						},
+					],
+				},
+			],
+		})
+
+		expect(scopes['input-field__input']).toEqual(['data-v-8e16cbb5'])
+	})
+
+	it('keeps every scope a class is styled under, not just the first', () => {
+		// `material-design-icon` is scoped separately in every component that
+		// draws an icon, and one element may legitimately carry several — which
+		// is what Vue itself does at the root of a child component.
+		const scopes = playground.componentScopes({
+			styleSheets: [
+				sheet(
+					'.material-design-icon[data-v-00a99684]',
+					'.material-design-icon[data-v-5ca1e30f]',
+				),
+			],
+		})
+
+		expect(scopes['material-design-icon']).toEqual([
+			'data-v-00a99684',
+			'data-v-5ca1e30f',
+		])
+	})
+
+	it('survives a stylesheet it is not allowed to read', () => {
+		// A sheet from another origin throws on `cssRules`. Nextcloud serves all
+		// of its own from this one, so the answer is to skip it rather than to
+		// give up and leave every specimen unstamped.
+		const scopes = playground.componentScopes({
+			styleSheets: [
+				{
+					get cssRules() {
+						throw new Error('SecurityError')
+					},
+				},
+				sheet('.button-vue[data-v-00a99684]'),
+			],
+		})
+
+		expect(scopes['button-vue']).toEqual(['data-v-00a99684'])
+	})
+
+	it('stamps every scope a specimen carries a styled class for', () => {
+		const node = element('button-vue', 'button-vue--wide', 'nldesign-pg-btn')
+		playground.applyScopes(tree(node), {
+			'button-vue': ['data-v-00a99684'],
+			'button-vue--wide': ['data-v-00a99684'],
+			'input-field': ['data-v-8e16cbb5'],
+		})
+
+		expect(node.attributes).toEqual({ 'data-v-00a99684': '' })
+	})
+})
+
+describe('the login card, against the page it stands for', () => {
+	// Transcribed from the rendered DOM of a real Nextcloud 34 login page. The
+	// class names are the contract: they are what core's stylesheet, the
+	// component stylesheets and Thematiq's own overrides all match on, and a
+	// specimen missing one of them is a specimen one of those three stops
+	// reaching.
+	const markup = playground.STAGES['login-card'](
+		null,
+		inventory.components.find((entry) => entry.id === 'login-card'),
+	)
+
+	it('keeps the guest layout nesting core styles against', () => {
+		// `.wrapper` is what separates the card from the footer, and
+		// `.v-align` and `.guest-content` are what core centres it with.
+		expect(markup).toContain('class="wrapper"')
+		expect(markup).toContain('class="v-align"')
+		expect(markup).toContain('class="guest-content"')
+		expect(markup.indexOf('<footer')).toBeGreaterThan(
+			markup.indexOf('class="guest-content"'),
+		)
+	})
+
+	it('renders the log-in button as NcButton renders it', () => {
+		// Including the `vue-` infix: that is what this Nextcloud's login page
+		// emits, and it is the only name Thematiq's element-overrides.css knows.
+		expect(markup).toContain('button-vue--vue-primary')
+		expect(markup).toContain('button-vue--icon-and-text')
+		expect(markup).toContain('button-vue--wide')
+		expect(markup).toContain('class="button-vue__icon"')
+	})
+
+	it('gives a text button no icon span and an icon button no text span', () => {
+		// NcButton's own `:empty` and `:has()` rules are what turn an icon-only
+		// button square and close up a text-only one; emitting both spans
+		// regardless would defeat them.
+		const tertiary = markup.slice(markup.indexOf('button-vue--text-only'))
+		expect(tertiary.slice(0, tertiary.indexOf('</button>'))).not.toContain(
+			'button-vue__icon',
+		)
+
+		const reveal = markup.slice(markup.indexOf('button-vue--icon-only'))
+		expect(reveal.slice(0, reveal.indexOf('</button>'))).not.toContain(
+			'button-vue__text',
+		)
+	})
+
+	it('renders real controls rather than pictures of them', () => {
+		expect(markup).toContain('class="input-field__input"')
+		expect(markup).toContain('type="password"')
+		expect(markup).toContain('class="checkbox-radio-switch__input"')
+	})
+
+	it('gives the checkbox the sizes the component v-binds onto itself', () => {
+		// Those two custom properties are declared under build-hash names no
+		// specimen can carry; the properties they feed resolve to nothing
+		// without this, and the control collapses.
+		expect(markup).toContain('--icon-size:24px')
+		expect(markup).toContain('--icon-height:24px')
+	})
+
+	it('ties every label to the input it names, under an id of its own', () => {
+		const ids = [...markup.matchAll(/<input id="([^"]+)"/g)].map((m) => m[1])
+		const fors = [...markup.matchAll(/<label for="([^"]+)"/g)].map((m) => m[1])
+
+		expect(ids.length).toBeGreaterThan(0)
+		expect(new Set(ids).size).toBe(ids.length)
+		fors.forEach((name) => expect(ids).toContain(name))
 	})
 })

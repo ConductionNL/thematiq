@@ -183,7 +183,7 @@ class AdminInitialStateTest extends TestCase {
 				'playgroundTokenSources',
 			],
 			array_keys($captured),
-			'js/admin.js reads the first four and js/playground.js the last four; publishing fewer makes either fall back silently.'
+			'js/admin.js reads the first four and js/playground.js the rest; publishing fewer makes either fall back silently.'
 		);
 
 		$this->assertSame(self::TOKEN_SETS, $captured['tokenSets']);

@@ -61,9 +61,9 @@ class PlaygroundStateServiceTest extends TestCase {
 	}//end build()
 
 	/**
-	 * Exactly the four keys js/playground.js reads, and no others.
+	 * Exactly the keys js/playground.js reads, and no others.
 	 */
-	public function testItPublishesTheFourKeysTheInstrumentReads(): void {
+	public function testItPublishesTheKeysTheInstrumentReads(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
 
 		$this->assertSame(
@@ -72,10 +72,37 @@ class PlaygroundStateServiceTest extends TestCase {
 				'playgroundReasons',
 				'playgroundTokens',
 				'playgroundTokenSources',
+				'playgroundVersion',
 			],
 			array_keys($state)
 		);
-	}//end testItPublishesTheFourKeysTheInstrumentReads()
+	}//end testItPublishesTheKeysTheInstrumentReads()
+
+	/**
+	 * The version reaches the instrument as a number it can compare.
+	 *
+	 * The header specimen picks its markup by major version, so a string like
+	 * "34.0.4" or a full array would silently fail every comparison and leave
+	 * the switch opening on the wrong shape.
+	 */
+	public function testItPublishesTheServerMajorAsAnInteger(): void {
+		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
+
+		$this->assertIsInt($state['playgroundVersion']);
+	}//end testItPublishesTheServerMajorAsAnInteger()
+
+	/**
+	 * Without a Nextcloud bootstrap the version is zero, not a crash.
+	 *
+	 * Zero is not a version the switch offers, so the instrument falls back to
+	 * the newest header it knows — which is the right answer for an admin who
+	 * is asking what an upgrade looks like anyway.
+	 */
+	public function testItSurvivesHavingNoServerToAsk(): void {
+		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
+
+		$this->assertGreaterThanOrEqual(0, $state['playgroundVersion']);
+	}//end testItSurvivesHavingNoServerToAsk()
 
 	/**
 	 * The inventory is the shipped file, decoded — the service adds nothing to
