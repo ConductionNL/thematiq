@@ -267,7 +267,7 @@
 				"app-navigation-toggle",
 				"active"
 			],
-			"radiusToken": "--border-radius-pill",
+			"radiusToken": "--border-radius-element",
 			"states": [
 				{
 					"n": 1,
@@ -287,32 +287,34 @@
 			],
 			"tokens": [
 				{
-					"name": "--border-radius-pill",
-					"paints": "Entry pill",
+					"name": "--border-radius-element",
+					"paints": "Entry corners",
 					"callout": 1
 				},
 				{
 					"name": "--color-main-text",
-					"paints": "Entry labels and icons",
+					"paints": "Entry labels and icons, the selected one included",
 					"callout": 1
 				},
 				{
 					"name": "--color-primary-element",
-					"paints": "The selected entry's fill",
+					"paints": "The selected entry's wash and its marker stripe",
 					"callout": 2
-				},
-				{
-					"name": "--color-primary-element-text",
-					"paints": "Its label, icon and counter",
-					"callout": 2
-				},
-				{
-					"name": "--color-background-hover",
-					"paints": "Hovered entry",
-					"callout": 3
 				}
 			],
 			"fixed": [
+				{
+					"callout": 3,
+					"what": "The hovered and selected washes",
+					"why": "Nextcloud mixes the primary element colour into the background rather than reading a colour token — 8% hovered, 16% selected, 22% both — so the shade is computed in the browser and there is nothing to edit but the colour it is mixed from.",
+					"code": "derived-by-nextcloud"
+				},
+				{
+					"callout": 2,
+					"what": "The selected entry marker",
+					"why": "NcAppNavigationItem draws a fixed 3px stripe in ::before; its width and its radius are the component's geometry, not a theme value.",
+					"code": "geometry-kept-nextcloud"
+				},
 				{
 					"callout": 1,
 					"what": "Navigation and page surface",

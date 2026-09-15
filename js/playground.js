@@ -53,6 +53,44 @@
 	/** The chip that means "no component: show the whole tab". */
 	var FULL_VIEW = 'full-view'
 
+	/** How close a tooltip may come to the edge of the stage, in pixels. */
+	var EDGE = 8
+
+	/**
+	 * The sets a specimen can be picked from: a row, the container that holds
+	 * its siblings, and the class the picked one wears.
+	 *
+	 * Order matters only where one selector could match inside another; these
+	 * do not overlap. The container is named rather than assumed to be the
+	 * parent, because a table row's siblings live in `tbody` and a navigation
+	 * entry's in the column, not in whatever element happens to wrap them.
+	 */
+	var PICKABLE = [
+		{ row: '.nldesign-pg-tab', group: '.nldesign-pg-tabs', on: 'is-active' },
+		{ row: '.nldesign-pg-nav-entry', group: '.nldesign-pg-nav', on: 'is-selected active' },
+		{ row: '.nldesign-pg-listitem', group: '.nldesign-pg-list', on: 'is-selected active' },
+		{ row: '.nldesign-pg-rec', group: '.app-content-list', on: 'is-selected' },
+		{ row: '.nldesign-pg-table tbody tr', group: '.nldesign-pg-table tbody', on: 'is-selected' },
+		{ row: '.nldesign-pg-crumb', group: '.nldesign-pg-crumbs', on: 'is-current' },
+	]
+
+	/**
+	 * What the stage reports when each specimen button is pressed.
+	 *
+	 * Reported on the line below the stage rather than written into the
+	 * button's own label — see say(). Dutch and hard-coded, like the specimen
+	 * labels themselves: these belong to a drawing of a component, not to the
+	 * interface an admin acts on, and running them through t() would put a
+	 * translator to work on strings nobody reads for their meaning.
+	 */
+	var BUTTON_DONE = {
+		primary: 'Opgeslagen',
+		secondary: 'Geannuleerd',
+		tertiary: 'Opties open',
+		error: 'Verwijderd',
+		success: 'Goedgekeurd',
+	}
+
 	/* ---------------------------------------------------------------- */
 	/* Pure selection logic                                              */
 	/* ---------------------------------------------------------------- */
@@ -396,6 +434,7 @@
 		state.stage.setAttribute('data-view', 'component')
 		state.stage.hidden = true
 		preview.appendChild(state.stage)
+		bindStage(state.stage)
 
 		// Download and Upload act on the overrides file, so they belong with
 		// Save rather than in a header of their own; the token-set export joins
@@ -626,7 +665,7 @@
 		}
 
 		var filtered = el('div', 'nldesign-pg-panel')
-		filtered.appendChild(panelHead(state, component, panel))
+		filtered.appendChild(panelHead(state, component))
 
 		rowsByState(component).forEach(function (group) {
 			group.tokens.forEach(function (spec) {
@@ -650,10 +689,9 @@
 	 *
 	 * @param {Object} state The instrument state.
 	 * @param {Object} component The open component.
-	 * @param {?Element} panel The tab panel that was hidden.
 	 * @return {Element} The head row.
 	 */
-	function panelHead(state, component, panel) {
+	function panelHead(state, component) {
 		var head = el('div', 'nldesign-pg-panel-head')
 
 		// `t` with a placeholder rather than `n`: nothing else in this app calls
@@ -672,24 +710,10 @@
 		count.appendChild(document.createTextNode(' · ' + component.title))
 		head.appendChild(count)
 
-		var all = el(
-			'a',
-			'',
-			t('thematiq', 'Show all {count} tokens of {tab}', {
-				count:
-					panel !== null
-						? panel.querySelectorAll('.nldesign-token-row').length
-						: 0,
-				tab: tabLabel(state, state.tab),
-			}),
-		)
-		all.href = '#'
-		all.addEventListener('click', function (event) {
-			event.preventDefault()
-			select(state, FULL_VIEW)
-		})
-		head.appendChild(all)
-
+		// No "show all N tokens of <tab>" link here. The chip row above the
+		// stage already carries "Volledig overzicht" as its first chip, which
+		// is the same destination and the place an admin is already looking to
+		// change what the stage shows.
 		return head
 	}
 
@@ -913,13 +937,13 @@
 					typeof build === 'function'
 						? build(stateDef.id, component)
 						: fallbackSample()
-				sample.appendChild(
-					el(
-						'i',
-						'nldesign-pg-co' + (stateDef.fixed ? ' lock' : ''),
-						String(stateDef.n),
-					),
+				var mark = el(
+					'i',
+					'nldesign-pg-co' + (stateDef.fixed ? ' lock' : ''),
+					String(stateDef.n),
 				)
+				mark.setAttribute('data-co', String(stateDef.n))
+				sample.appendChild(mark)
 				cell.appendChild(sample)
 				// The STATE under the specimen ("hover"), not the label — the
 				// label says what the state's tokens paint and is the legend's
@@ -931,19 +955,13 @@
 			ground.appendChild(cells)
 		}
 
+		// The numbered list that used to sit here said, in a row of its own,
+		// what each marker on the drawing meant — which is the same sentence
+		// twice for anything with a name as plain as "primary button", and it
+		// pushed the specimen up the panel to make room. The markers carry it
+		// themselves now: hover or focus one and it says what that state is and
+		// which token paints it. See calloutTip().
 		var legend = el('div', 'nldesign-pg-callouts')
-		component.states.forEach(function (stateDef) {
-			var item = el('span')
-			item.appendChild(
-				el(
-					'i',
-					'nldesign-pg-co' + (stateDef.fixed ? ' lock' : ''),
-					String(stateDef.n),
-				),
-			)
-			item.appendChild(document.createTextNode(stateDef.label))
-			legend.appendChild(item)
-		})
 		if (component.radiusToken) {
 			legend.appendChild(
 				el(
@@ -957,7 +975,552 @@
 				),
 			)
 		}
-		state.stage.appendChild(legend)
+		if (legend.childNodes.length > 0) {
+			state.stage.appendChild(legend)
+		}
+
+		// Where the stage reports what a specimen just did. Always present and
+		// always the same height, so saying something never moves anything.
+		var saidLine = el('div', 'nldesign-pg-say')
+		saidLine.setAttribute('aria-live', 'polite')
+		state.stage.appendChild(saidLine)
+
+		decorateCallouts(state.stage, component)
+		decorateFields(state.stage)
+	}
+
+	/**
+	 * Let the text fields take text.
+	 *
+	 * A field an admin cannot type in cannot be judged: what a token set does
+	 * to an input is most of what it does to a form, and the caret, the
+	 * selection and the text colour only appear once something is in it.
+	 *
+	 * The select is excluded even though it wears the input class — it is
+	 * chosen from, not typed in — and so is anything disabled, which is the
+	 * one field whose whole point is that it refuses.
+	 *
+	 * @param {Element} stage The stage element.
+	 * @return {void}
+	 */
+	function decorateFields(stage) {
+		var fields = stage.querySelectorAll(
+			'.nldesign-pg-input:not(.nldesign-pg-select):not(.is-disabled), .nldesign-pg-textarea'
+		)
+		Array.prototype.forEach.call(fields, function (field) {
+			if (field.classList.contains('is-disabled') === true) {
+				return
+			}
+
+			field.setAttribute('contenteditable', 'true')
+			field.setAttribute('role', 'textbox')
+			field.setAttribute('spellcheck', 'false')
+		})
+	}
+
+	/**
+	 * What a marker says when you ask it.
+	 *
+	 * It says what the marker POINTS AT, in words — the state's own name, then
+	 * what is painted there, then the reason behind anything Nextcloud fixes.
+	 * Deliberately no token names: the filtered rows under the stage are the
+	 * place to read and edit those, they are already numbered to match these
+	 * markers, and repeating them here turned a one-line explanation into a
+	 * wall of `--color-*` that had to be read before it could be understood.
+	 *
+	 * Pure, so the wording is testable without a DOM.
+	 *
+	 * @param {Object} component The inventory entry.
+	 * @param {number} n The state number the marker carries.
+	 * @return {string} The tooltip text, newline-separated, empty when unknown.
+	 */
+	function calloutTip(component, n) {
+		var lines = []
+		var states = component.states || []
+		var tokens = component.tokens || []
+		var fixed = component.fixed || []
+		var paints = []
+
+		states.forEach(function (stateDef) {
+			if (stateDef.n === n) {
+				lines.push(stateDef.label)
+			}
+		})
+		tokens.forEach(function (token) {
+			if (token.callout === n) {
+				paints.push(token.paints)
+			}
+		})
+		if (paints.length > 0) {
+			lines.push(paints.join(' · '))
+		}
+		fixed.forEach(function (fact) {
+			if (fact.callout === n) {
+				lines.push(fact.why)
+			}
+		})
+
+		return lines.join('\n')
+	}
+
+	/**
+	 * Turn every marker on the stage into something you can ask.
+	 *
+	 * Done as a pass over the finished stage rather than inside each builder,
+	 * because a wide specimen places its own markers with co() and only it
+	 * knows where they go — but both kinds carry the state number, which is all
+	 * the lookup needs.
+	 *
+	 * @param {Element} stage The stage element.
+	 * @param {Object} component The inventory entry being drawn.
+	 * @return {void}
+	 */
+	function decorateCallouts(stage, component) {
+		var markers = stage.querySelectorAll('.nldesign-pg-co')
+		Array.prototype.forEach.call(markers, function (marker) {
+			var n = parseInt(marker.getAttribute('data-co') || marker.textContent, 10)
+			var tip = calloutTip(component, n)
+			if (tip === '') {
+				return
+			}
+
+			marker.setAttribute('data-tip', tip)
+			// Focusable so the explanation is reachable without a pointer; the
+			// number stays the label because the token rows below are numbered
+			// to match it, and a row of question marks could not be matched up.
+			marker.setAttribute('tabindex', '0')
+			marker.setAttribute('aria-label', tip)
+			// A marker can sit inside a field that decorateFields() makes
+			// editable; without this it could be typed over or deleted.
+			marker.setAttribute('contenteditable', 'false')
+		})
+	}
+
+	/**
+	 * Wire the stage once: marker tooltips, and specimens that answer back.
+	 *
+	 * Delegated from the stage rather than bound per specimen, because the
+	 * stage is rebuilt from scratch on every selection and per-element
+	 * listeners would have to be re-attached each time — and any that were
+	 * missed would leave a specimen that silently stops responding.
+	 *
+	 * @param {Element} stage The stage element.
+	 * @return {void}
+	 */
+	function bindStage(stage) {
+		stage.addEventListener('mouseover', function (event) {
+			var marker = closestCallout(event.target)
+			if (marker !== null) {
+				showTip(stage, marker)
+			}
+		})
+		stage.addEventListener('mouseout', function (event) {
+			if (closestCallout(event.target) !== null) {
+				hideTip(stage)
+			}
+		})
+		stage.addEventListener('focusin', function (event) {
+			var marker = closestCallout(event.target)
+			if (marker !== null) {
+				showTip(stage, marker)
+			}
+		})
+		stage.addEventListener('focusout', function () {
+			hideTip(stage)
+		})
+
+		stage.addEventListener('click', function (event) {
+			pressFrom(stage, event.target)
+		})
+
+		// Enter and Space, because the specimens are spans carrying
+		// role="button": the role promises keyboard activation and nothing
+		// would deliver it otherwise.
+		stage.addEventListener('keydown', function (event) {
+			if (event.key !== 'Enter' && event.key !== ' ') {
+				return
+			}
+
+			var target = event.target
+			if (target.closest === undefined || target.closest('.nldesign-pg-btn') === null) {
+				return
+			}
+
+			// Space scrolls the panel otherwise, which throws the specimen the
+			// admin is looking at off the screen.
+			event.preventDefault()
+			pressFrom(stage, target)
+		})
+	}
+
+	/**
+	 * Press the specimen button an event landed on, if it was one.
+	 *
+	 * A marker can sit INSIDE a button in a wide specimen, and a marker is for
+	 * asking, not for pressing — so a hit on one never reaches the button
+	 * underneath it.
+	 *
+	 * @param {EventTarget} target The event target.
+	 * @return {void}
+	 */
+	function pressFrom(stage, target) {
+		if (target === null || typeof target.closest !== 'function') {
+			return
+		}
+		if (target.closest('.nldesign-pg-co') !== null) {
+			return
+		}
+
+		var pressed = target.closest('.nldesign-pg-btn')
+		if (pressed !== null) {
+			pressButton(stage, pressed)
+			return
+		}
+
+		interact(stage, target)
+	}
+
+	/**
+	 * Everything on a stage that is not a button, answering the way the real
+	 * component would.
+	 *
+	 * An earlier version of this held every element that carried a callout
+	 * marker frozen, so the drawing could never contradict its own labels. In
+	 * use that was the wrong trade by a wide margin: the marked row is the
+	 * selected one in almost every component, so the one row an admin reaches
+	 * for was the one that refused, and the whole content area read as dead.
+	 * Selection moves now — and the marker that documented it travels with it,
+	 * so "selected entry" keeps pointing at the entry that is selected.
+	 *
+	 * @param {Element} stage The stage element.
+	 * @param {Element} target The clicked element.
+	 * @return {void}
+	 */
+	function interact(stage, target) {
+		// The actions menu: its trigger is the whole point of an actions menu,
+		// and it did nothing at all.
+		var toggle = target.closest('.nldesign-pg-actions .menutoggle')
+		if (toggle !== null) {
+			var menu = toggle.closest('.nldesign-pg-actions')
+			var closed = menu.classList.toggle('is-closed')
+			say(stage, closed ? 'Menu gesloten' : 'Menu geopend')
+			return
+		}
+
+		// Choosing from the select writes the choice into the field.
+		var option = target.closest('.nldesign-pg-option')
+		if (option !== null) {
+			var field = stage.querySelector('.nldesign-pg-select')
+			if (field !== null) {
+				setLabel(field, firstLine(option))
+			}
+			say(stage, firstLine(option) + ' gekozen')
+			return
+		}
+
+		// Picking a menu item closes the menu behind it, the way a menu does.
+		var item = target.closest('.nldesign-pg-action')
+		if (item !== null) {
+			var owner = item.closest('.nldesign-pg-actions')
+			if (owner !== null) {
+				owner.classList.add('is-closed')
+			}
+			say(stage, firstLine(item))
+			return
+		}
+
+		var choice = target.closest('.nldesign-pg-choice')
+		if (choice !== null) {
+			toggleChoice(choice)
+			say(
+				stage,
+				choice.classList.contains('is-checked') ? 'Aangezet' : 'Uitgezet'
+			)
+			return
+		}
+
+		// Everything that is one of a set: rows, entries, tabs, crumbs.
+		for (var i = 0; i < PICKABLE.length; i++) {
+			var group = PICKABLE[i]
+			var row = target.closest(group.row)
+			if (row === null) {
+				continue
+			}
+
+			var within = row.closest(group.group)
+			if (within === null) {
+				continue
+			}
+
+			pick(within, row, group.row, group.on)
+			say(stage, firstLine(row) + ' gekozen')
+			return
+		}
+	}
+
+	/**
+	 * Move a state class to the element that was picked, and take the marker
+	 * that documented it along.
+	 *
+	 * Moving the marker keeps the tooltip honest: "selected entry" should point
+	 * at whichever entry is selected, not at the one that happened to be
+	 * selected when the stage was drawn. It only travels when the new element
+	 * has no marker of its own — otherwise a single element would end up
+	 * wearing two numbers, which reads as a mistake rather than as two facts.
+	 *
+	 * @param {Element} group The container the set lives in.
+	 * @param {Element} row The element that was picked.
+	 * @param {string} rowSelector How to find the others.
+	 * @param {string} on The class names that mark the picked one.
+	 * @return {void}
+	 */
+	function pick(group, row, rowSelector, on) {
+		var classes = on.split(' ')
+		var previous = null
+
+		Array.prototype.forEach.call(
+			group.querySelectorAll(rowSelector),
+			function (candidate) {
+				if (candidate.classList.contains(classes[0]) === true) {
+					previous = candidate
+				}
+				classes.forEach(function (name) {
+					candidate.classList.remove(name)
+				})
+			}
+		)
+
+		classes.forEach(function (name) {
+			row.classList.add(name)
+		})
+
+		if (previous === null || previous === row) {
+			return
+		}
+
+		var marker = previous.querySelector('.nldesign-pg-co')
+		if (marker !== null && row.querySelector('.nldesign-pg-co') === null) {
+			row.appendChild(marker)
+		}
+	}
+
+	/**
+	 * Flip one checkbox, radio or switch.
+	 *
+	 * A radio turns its siblings off, because a radio group that allows two
+	 * answers is not a radio group; a checkbox and a switch answer only for
+	 * themselves.
+	 *
+	 * @param {Element} choice The choice element.
+	 * @return {void}
+	 */
+	function toggleChoice(choice) {
+		var isRadio = choice.querySelector('.nldesign-pg-radio') !== null
+		if (isRadio === true && choice.classList.contains('is-checked') === false) {
+			var group = choice.parentNode.querySelectorAll('.nldesign-pg-choice')
+			Array.prototype.forEach.call(group, function (sibling) {
+				if (sibling.querySelector('.nldesign-pg-radio') !== null) {
+					sibling.classList.remove('is-checked', 'checkbox-radio-switch--checked')
+				}
+			})
+		}
+
+		choice.classList.toggle('is-checked')
+		choice.classList.toggle('checkbox-radio-switch--checked')
+	}
+
+	/**
+	 * Replace an element's own text without disturbing anything nested in it.
+	 *
+	 * `textContent = x` would delete the callout marker living inside the
+	 * select field along with the label.
+	 *
+	 * @param {Element} element The element to relabel.
+	 * @param {string} text The new label.
+	 * @return {void}
+	 */
+	function setLabel(element, text) {
+		Array.prototype.forEach.call(element.childNodes, function (node) {
+			if (node.nodeType === 3) {
+				node.textContent = ''
+			}
+		})
+		element.insertBefore(document.createTextNode(text), element.firstChild)
+	}
+
+	/**
+	 * What to call the thing that was just picked.
+	 *
+	 * Three ways, in order. A row that names itself — a record, a list entry, a
+	 * navigation label — says so in a dedicated element. Otherwise the
+	 * element's OWN text, which skips a callout marker's digit and a counter
+	 * bubble living inside it. Only failing both does it fall back to
+	 * everything inside, which is where "Jan BakkerHeeft je uitgenodigd3"
+	 * comes from and why it is last.
+	 *
+	 * @param {Element} element The element to read.
+	 * @return {string} Its label.
+	 */
+	function firstLine(element) {
+		var named = element.querySelector(
+			'.nldesign-pg-rec-name, .nldesign-pg-listitem-name, .nldesign-pg-nav-label'
+		)
+		if (named !== null) {
+			return named.textContent.trim()
+		}
+
+		var own = ''
+		Array.prototype.forEach.call(element.childNodes, function (node) {
+			if (node.nodeType === 3) {
+				own += node.textContent
+			}
+		})
+		if (own.trim() !== '') {
+			return own.trim()
+		}
+
+		// A table row: its first cell is its name.
+		var cell = element.querySelector('td')
+		if (cell !== null) {
+			return firstLine(cell)
+		}
+
+		return element.textContent.trim()
+	}
+
+	/**
+	 * The marker an event landed on, or null.
+	 *
+	 * @param {EventTarget} target The event target.
+	 * @return {Element|null} The marker.
+	 */
+	function closestCallout(target) {
+		if (target === null || typeof target.closest !== 'function') {
+			return null
+		}
+
+		return target.closest('.nldesign-pg-co[data-tip]')
+	}
+
+	/**
+	 * Show one marker's explanation, positioned against the stage.
+	 *
+	 * The tip is appended to the STAGE, not to the marker, because several
+	 * specimens clip their own overflow — the dialog, the sidebar, the app
+	 * content — and a tip parented inside one of those would be cut off at
+	 * exactly the components whose markers sit deepest inside them.
+	 *
+	 * @param {Element} stage The stage element.
+	 * @param {Element} marker The marker being asked.
+	 * @return {void}
+	 */
+	function showTip(stage, marker) {
+		hideTip(stage)
+
+		var tip = el('div', 'nldesign-pg-tip', marker.getAttribute('data-tip'))
+		tip.setAttribute('role', 'tooltip')
+		stage.appendChild(tip)
+
+		var spot = marker.getBoundingClientRect()
+		var frame = stage.getBoundingClientRect()
+		var left = spot.left - frame.left + spot.width / 2
+		var top = spot.top - frame.top
+
+		tip.style.left = left + 'px'
+		tip.style.top = top + 'px'
+
+		// Measure where that actually put it, then bring it back inside the
+		// stage. A marker rides the top-right corner of its specimen, so the
+		// first thing it does unattended is hang off the edge or sit above the
+		// stage entirely.
+		var box = tip.getBoundingClientRect()
+		var overRight = box.right - (frame.right - EDGE)
+		var overLeft = frame.left + EDGE - box.left
+		if (overRight > 0) {
+			left -= overRight
+		}
+		if (overLeft > 0) {
+			left += overLeft
+		}
+
+		if (box.top < frame.top) {
+			tip.classList.add('is-below')
+			top = spot.top - frame.top + spot.height
+		}
+
+		tip.style.left = left + 'px'
+		tip.style.top = top + 'px'
+	}
+
+	/**
+	 * Remove the open explanation, if there is one.
+	 *
+	 * @param {Element} stage The stage element.
+	 * @return {void}
+	 */
+	function hideTip(stage) {
+		var tip = stage.querySelector('.nldesign-pg-tip')
+		if (tip !== null) {
+			tip.parentNode.removeChild(tip)
+		}
+	}
+
+	/**
+	 * Answer a press on a specimen button.
+	 *
+	 * A specimen that does nothing when clicked reads as a broken control
+	 * rather than as a picture of one, and an admin deciding whether a theme
+	 * works wants to see the pressed state without leaving the panel. It is
+	 * only a label swap: the button is a drawing, and anything more would
+	 * invite it to be mistaken for the real thing.
+	 *
+	 * @param {Element} button The specimen button.
+	 * @return {void}
+	 */
+	function pressButton(stage, button) {
+		var done = button.getAttribute('data-done')
+		if (done === null || done === '') {
+			return
+		}
+
+		// A disabled specimen must stay unresponsive — that IS its state.
+		if (button.classList.contains('is-disabled') === true) {
+			return
+		}
+
+		say(stage, done)
+	}
+
+	/**
+	 * Report what just happened, in the one place on the stage that says so.
+	 *
+	 * The confirmation used to replace the button's own label. That made the
+	 * button resize on every press — "Opslaan" is not as wide as "Opgeslagen" —
+	 * and a row of specimens whose widths change under the pointer reads as a
+	 * layout defect, which is precisely the judgement this panel exists to
+	 * support. The line below the stage has its height reserved, so nothing on
+	 * the stage moves when something is said.
+	 *
+	 * @param {Element} stage The stage element.
+	 * @param {string} message What to report.
+	 * @return {void}
+	 */
+	function say(stage, message) {
+		var line = stage.querySelector('.nldesign-pg-say')
+		if (line === null) {
+			return
+		}
+
+		line.textContent = message
+		if (line.dataset.timer) {
+			clearTimeout(Number(line.dataset.timer))
+		}
+		line.dataset.timer = String(
+			setTimeout(function () {
+				line.textContent = ''
+				delete line.dataset.timer
+			}, 2000)
+		)
 	}
 
 	/**
@@ -1100,7 +1663,18 @@
 			)
 		},
 		'login-background': function () {
-			return '<span class="nldesign-pg-loginbg nldesign-pg-brandbox"></span>'
+			// The ground under this specimen IS the thing being shown, so the
+			// box itself paints nothing. What it carries is the login page in
+			// miniature — logo, slogan, card — because a background is judged
+			// by what sits on it, and an empty rectangle gave an admin nothing
+			// to judge against.
+			return (
+				'<span class="nldesign-pg-loginbg nldesign-pg-brandbox nldesign-pg-bgdemo">'
+				+ '<span class="nldesign-pg-header-logo logo"></span>'
+				+ '<span class="nldesign-pg-slogan">Een veilige thuisbasis</span>'
+				+ '<span class="nldesign-pg-bgcard"></span>'
+				+ '</span>'
+			)
 		},
 		'app-navigation': function () {
 			// On the page background, not on the stage's own ground: the
@@ -1125,13 +1699,39 @@
 				'<div class="content nldesign-pg-container">'
 				+ co(1)
 				+ '<div class="app-content nldesign-pg-appcontent">'
+				// A register and one of its publications, because the dividers
+				// callout 1 points at are only visible between real rows, and a
+				// column of grey bars showed the divider token painting nothing.
 				+ '<div class="app-content-list nldesign-pg-col">'
-				+ '<div class="nldesign-pg-line"></div><div class="nldesign-pg-line short"></div>'
-				+ '<div class="nldesign-pg-line"></div><div class="nldesign-pg-line short"></div>'
+				+ [
+					['Woo-verzoek jeugdzorg', 'Gepubliceerd · 12 mrt'],
+					['Besluitenlijst college', 'Concept · 9 mrt'],
+					['Subsidieregister 2026', 'Gepubliceerd · 2 mrt'],
+					['Inkoopcontracten', 'In behandeling · 28 feb'],
+				]
+					.map(function (row, index) {
+						return (
+							'<div class="nldesign-pg-rec'
+							+ (index === 1 ? ' is-selected' : '')
+							+ '"><span class="nldesign-pg-rec-name">'
+							+ row[0]
+							+ '</span><span class="nldesign-pg-muted is-maxcontrast">'
+							+ row[1]
+							+ '</span></div>'
+						)
+					})
+					.join('')
 				+ '</div>'
 				+ '<div class="app-content-detail nldesign-pg-col nldesign-pg-col--detail">'
-				+ '<div class="nldesign-pg-line wide"></div><div class="nldesign-pg-line"></div>'
-				+ '<div class="nldesign-pg-line short"></div>'
+				+ '<div class="nldesign-pg-rec-title">Besluitenlijst college</div>'
+				+ '<dl class="nldesign-pg-meta">'
+				+ '<dt>Register</dt><dd>Besluiten</dd>'
+				+ '<dt>Status</dt><dd>Concept</dd>'
+				+ '<dt>Gewijzigd</dt><dd>9 maart 2026 om 14:02</dd>'
+				+ '</dl>'
+				+ '<p class="nldesign-pg-paragraph">Wekelijkse besluitenlijst van het '
+				+ 'college van burgemeester en wethouders, inclusief bijlagen en '
+				+ 'openbaar gemaakte stukken.</p>'
 				+ '<span class="nldesign-pg-scrollbar">'
 				+ co(2)
 				+ '</span>'
@@ -1195,9 +1795,16 @@
 				+ '<span class="nldesign-pg-tab">Versies</span>'
 				+ '<span class="nldesign-pg-tab">Activiteit</span>'
 				+ '</div>'
+				// The Delen tab is the active one, so the body shows sharing —
+				// a specimen whose tab strip says one thing and whose body
+				// shows nothing is the emptiness this panel is meant to expose.
 				+ '<div class="nldesign-pg-sidebar-body">'
-				+ '<div class="nldesign-pg-line wide"></div><div class="nldesign-pg-line"></div>'
-				+ '<div class="nldesign-pg-line short"></div>'
+				+ field('Naam, federated cloud-ID of e-mail', 'default')
+				+ '<ul class="nldesign-pg-list nldesign-pg-shares">'
+				+ listItem('Marianne de Vries', 'Kan bewerken', '')
+				+ listItem('Team Communicatie', 'Kan bekijken', '')
+				+ listItem('Openbare link', 'Kan bekijken · verloopt 1 apr', '')
+				+ '</ul>'
 				+ '</div></div>'
 			)
 		},
@@ -1335,7 +1942,27 @@
 				+ '<div class="nldesign-pg-dialog-body">'
 				+ '<p class="nldesign-pg-paragraph">Deze waarden veranderen. Controleer welke je '
 				+ 'wilt toepassen op je eigen overrides.</p>'
-				+ '<div class="nldesign-pg-line wide"></div><div class="nldesign-pg-line"></div>'
+				// The dialog this stands for is Thematiq's own apply dialog, so
+				// it shows what that one shows: the values about to change.
+				+ '<ul class="nldesign-pg-changes">'
+				+ [
+					['Primaire kleur', '#0082c9', '#23845c'],
+					['Hoekradius', '4px', '8px'],
+					['Koptekst', '#ffffff', '#11304e'],
+				]
+					.map(function (row) {
+						return (
+							'<li><span class="nldesign-pg-change-name">'
+							+ row[0]
+							+ '</span><span class="nldesign-pg-muted is-maxcontrast">'
+							+ row[1]
+							+ ' → </span><strong>'
+							+ row[2]
+							+ '</strong></li>'
+						)
+					})
+					.join('')
+				+ '</ul>'
 				+ '</div>'
 				+ '<div class="nldesign-pg-dialog-foot">'
 				+ button('secondary', 'default', 'Annuleren')
@@ -1662,10 +2289,25 @@
 			classes.push('is-' + state)
 		}
 
+		// Focusable and announced as a button unless it is the disabled
+		// specimen — which must be reachable by neither, since that is the
+		// state it stands for. Giving it a real role and a real tab stop is
+		// what lets :hover, :focus-visible and :active fire on the specimen
+		// itself, so the cell labelled "hover" and the cell you actually hover
+		// are drawn by the same rule instead of by a class that imitates it.
+		var live = ''
+		if (state !== 'disabled') {
+			live = ' role="button" tabindex="0"'
+		}
+
 		return (
 			'<span class="'
 			+ classes.join(' ')
-			+ '"><span class="button-vue__wrapper"><span class="button-vue__text">'
+			+ '" data-done="'
+			+ (BUTTON_DONE[kind] || '')
+			+ '"'
+			+ live
+			+ '><span class="button-vue__wrapper"><span class="button-vue__text">'
 			+ label
 			+ '</span></span>'
 			+ (marker || '')
@@ -1702,6 +2344,36 @@
 	}
 
 	/**
+	 * The token values the page is ACTUALLY wearing, not the ones the server
+	 * read out of a file.
+	 *
+	 * The two differ whenever the file is not the whole story, and for the
+	 * `nextcloud` set they differ by construction: that set is resolved from
+	 * the running instance, so its values exist only in the cascade. Reading
+	 * the cascade is also the only approach that cannot go stale — a computed
+	 * value is whatever this Nextcloud version actually decided, on every
+	 * version, with nothing to keep in sync.
+	 *
+	 * The server's map stays as the fallback and as the KEY SET: it defines
+	 * which tokens a set is made of, and a token the cascade has no value for
+	 * still belongs in the export.
+	 *
+	 * Takes the reader as an argument rather than reaching for the document, so
+	 * the merge itself stays pure and testable without a DOM.
+	 *
+	 * @param {Object} tokens The server-published token map.
+	 * @param {Function} read Given (name, fallback), returns the live value.
+	 * @return {Object} The same keys, resolved against the live cascade.
+	 */
+	function liveTokens(tokens, read) {
+		var live = {}
+		Object.keys(tokens).forEach(function (name) {
+			live[name] = read(name, tokens[name])
+		})
+		return live
+	}
+
+	/**
 	 * Fetch the overrides as they are SAVED — not as they are typed — and offer
 	 * the resulting token set as a file.
 	 *
@@ -1721,7 +2393,9 @@
 			})
 			.then(function (data) {
 				var result = exportCss(
-					state.tokens,
+					liveTokens(state.tokens, function (name, fallback) {
+						return readVar(document.documentElement, name, fallback)
+					}),
 					data.overrides || {},
 					state.sources,
 				)
@@ -1768,6 +2442,9 @@
 		parseHash: parseHash,
 		hashFor: hashFor,
 		exportCss: exportCss,
+		liveTokens: liveTokens,
+		calloutTip: calloutTip,
+		PICKABLE: PICKABLE,
 		STAGES: STAGES,
 		FULL_VIEW: FULL_VIEW,
 		// The browser entry point.
