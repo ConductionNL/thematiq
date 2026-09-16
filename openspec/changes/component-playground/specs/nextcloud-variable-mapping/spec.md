@@ -19,6 +19,14 @@ The values MUST come from the same computation the server serves: the theming ap
 This is the instance's stock theme rather than Nextcloud's factory one — an admin who has set
 a primary colour in core theming is wearing that colour, so that colour is what is reported.
 
+The resolution MUST be the INSTANCE's and MUST NOT depend on who is asking. Nextcloud's own
+`getColorPrimary()` returns the signed-in user's personal colour when they have set one, and
+user theming is enabled by default — but a token set is instance-wide, is served to the
+anonymous login page as well, and is cached under a key that has no user in it. A per-user
+resolve would therefore let one account's personal colour reach every other page. The
+admin-level colour MUST be used instead, and a theming app that no longer offers one MUST
+fall back to the shipped file rather than resolve per user.
+
 Resolution MUST produce literal values only. A `--nldesign-*` token MUST NOT be emitted as a
 `var()` reference to a Nextcloud variable: `overrides.css` already declares the opposite
 direction, so the reference would close a loop and CSS discards a custom property that depends
@@ -49,6 +57,12 @@ no stock theme at all is a blank page.
 - WHEN the stock set is resolved
 - THEN `--nldesign-color-primary` MUST take the value of `--color-primary`
 - AND MUST NOT take a text colour from one of the other three
+
+#### Scenario: A user's personal colour does not reach anyone else
+- GIVEN user theming is enabled and a user has set a personal primary colour
+- WHEN the `nextcloud` token set is resolved, whoever the request belongs to
+- THEN the emitted tokens MUST carry the admin's colour, not that user's
+- AND the block served to another user, and to the anonymous login page, MUST be the same one
 
 #### Scenario: A value that cannot be frozen is dropped
 - GIVEN a stock variable whose value is a gradient, a `color-mix()` or an unresolvable `var()` chain

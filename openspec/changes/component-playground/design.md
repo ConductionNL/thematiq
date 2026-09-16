@@ -191,6 +191,19 @@ This is the instance's stock theme rather than Nextcloud's factory one. An admin
 primary colour in core theming is wearing that colour, so that colour is what the set reports —
 which is the right answer for an instrument whose question is "what does my theme change".
 
+**It resolves the INSTANCE's colours, not the current user's.** `DefaultTheme` stores two:
+`defaultPrimaryColor` from `getDefaultColorPrimary()`, which reads the admin's app config only,
+and `primaryColor` from `getColorPrimary()`, which returns the signed-in user's own
+`primary_color` whenever they have set one — and user theming is on by default. All twelve
+`--color-primary*` variables `overrides.css` maps are computed from the second. Taking it
+verbatim made this service's output per-user, which a token set is not: it is injected
+instance-wide, it is served to the anonymous login page, and it is cached under a key with no
+user in it, so the first user to warm that cache after choosing a personal colour would have
+dressed everyone else in it. The admin colour is substituted before the variables are
+generated, so core still does every derivation and the answer is the same for every request.
+The other user-dependent variables are the four `generateUserBackgroundVariables()` emits, and
+`overrides.css` maps none of them.
+
 **And it is cached across requests, because of what `nextcloud` is.** It is the DEFAULT set:
 an instance that never opened this app is wearing it, and the layer list is built on every
 `BeforeTemplateRenderedEvent` and on the login page. Resolving meant a stylesheet read and

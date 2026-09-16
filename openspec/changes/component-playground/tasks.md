@@ -96,7 +96,10 @@ Tick a box when the work is merged to `development`, not when it is started.
 - [ ] 6.4 Spec delta on `nextcloud-variable-mapping`, and `@spec` tags on the service.
 - [ ] 6.5 `tests/Unit/Service/StockTokensServiceTest.php`: the inversion, the many-to-one
       choice, the values that cannot be frozen, and each way the fallback is reached.
-- [ ] 6.6 Cache the resolved block across requests, keyed on the Nextcloud version and the
+- [ ] 6.6 Resolve the ADMIN colour, not the signed-in user’s: `getColorPrimary()` returns a
+      personal colour when one is set and user theming is on by default, and this output is
+      instance-wide (design decision 8).
+- [ ] 6.7 Cache the resolved block across requests, keyed on the Nextcloud version and the
       theming cachebuster — this is the DEFAULT set and the layer list is built on every
       render. Successes only, so a failure does not outlive its cause (design decision 8).
 
