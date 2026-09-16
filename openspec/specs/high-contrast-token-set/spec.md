@@ -4,10 +4,11 @@
 TBD - created by archiving change high-contrast-token-set. Update Purpose after archive.
 ## Requirements
 ### Requirement: High-Contrast Design System and Token Set
-The app MUST ship a `high-contrast` design system in `design-systems.json` — an ordered list of stylesheets under `css/systems/high-contrast/` — and a `hoog-contrast` token set in `token-sets.json` (backed by `css/tokens/hoog-contrast.css`) bound to that design system. The token set MUST appear in the admin token-set dropdown and be selectable exactly like any other set, with no new UI, controller, route, or config key. Its fixed WCAG pairs MUST meet WCAG 2.2 AAA: `--nldesign-color-primary` vs `--nldesign-color-primary-text` ≥ 7:1, and `--nldesign-color-primary` vs the set background ≥ 4.5:1.
+The app MUST ship a `high-contrast` design system in `design-systems.json` — an ordered list of stylesheets under `css/systems/high-contrast/` — and a `hoog-contrast` token set in `token-sets.json` (backed by `css/tokens/hoog-contrast.css`) bound to that design system. The token set MUST be selectable exactly like any other shipped set, with no new UI, controller, route, or config key. Like every shipped brand it is offered in the admin dropdown under the token-sets requirement "Only Fully Functional Brands Are Selectable": today that means while it is active or mapped to a group, until the vocabulary audit admits it to `SELECTABLE_SHIPPED_SETS`. Its fixed WCAG pairs MUST meet WCAG 2.2 AAA: `--nldesign-color-primary` vs `--nldesign-color-primary-text` ≥ 7:1, and `--nldesign-color-primary` vs the set background ≥ 4.5:1.
 
 #### Scenario: High-contrast set is selectable and themes the instance
 - GIVEN an admin on the NL Design settings panel
+- AND the `hoog-contrast` set is selectable under the token-sets requirement "Only Fully Functional Brands Are Selectable"
 - WHEN the admin selects "Hoog contrast (WCAG AAA)" and applies it
 - THEN the `high-contrast` design system stylesheets and the `hoog-contrast` token CSS MUST be injected on themed pages
 - AND the resolved primary/primary-text contrast MUST be at least 7:1
