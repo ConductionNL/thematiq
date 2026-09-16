@@ -88,6 +88,9 @@
 	/** How close a tooltip may come to the edge of the stage, in pixels. */
 	var EDGE = 8
 
+	/** How long boot() waits for the editor before it stops watching, in ms. */
+	var BOOT_GIVE_UP = 60000
+
 	/**
 	 * The states an admin produces by pointing, which the stage therefore does
 	 * NOT draw a copy of.
@@ -336,10 +339,21 @@
 	 * such token cannot be expressed as a token set at all and is reported
 	 * rather than dropped.
 	 *
+	 * That map is MANY-TO-ONE, and this direction is the one where that costs
+	 * something. Four Nextcloud variables read `--nldesign-color-primary`, and
+	 * `TokenRegistry` makes at least two of them editable — so an admin can
+	 * override both, and the file has exactly one line to carry them. Writing
+	 * each in turn left whichever came last in the file and the other nowhere
+	 * at all, silently, which is the one thing this function exists not to do.
+	 * One is chosen by the same rule `StockTokensService::canonical()` applies
+	 * to the same map in the other direction, and the rest are reported.
+	 *
 	 * @param {Object<string, string>} tokens The resolved --nldesign-* values of the active set.
 	 * @param {Object<string, string>} overrides The admin's --color-* overrides.
 	 * @param {Object<string, string>} sources Map of --color-* to the --nldesign-* token it reads.
-	 * @return {{css: string, unexpressed: Array<string>}} The file, and the overrides no token could carry.
+	 * @return {{css: string, unexpressed: Array<string>, overruled: Array<Object>}}
+	 *         The file, the overrides no token could carry, and the ones a
+	 *         competing override took the token from.
 	 */
 	function exportCss(tokens, overrides, sources) {
 		var merged = {}
@@ -347,14 +361,32 @@
 			merged[token] = tokens[token]
 		})
 
+		// Collected per token first, because whether an override survives is
+		// not knowable until every override that reads the same token is in.
 		var unexpressed = []
+		var claims = {}
 		Object.keys(overrides || {}).forEach(function (name) {
 			var token = (sources || {})[name]
 			if (!token) {
 				unexpressed.push(name)
 				return
 			}
-			merged[token] = overrides[name]
+			if (claims[token] === undefined) {
+				claims[token] = []
+			}
+			claims[token].push(name)
+		})
+
+		var overruled = []
+		Object.keys(claims).forEach(function (token) {
+			var winner = canonicalSource(token, claims[token])
+			merged[token] = (overrides || {})[winner]
+
+			claims[token].forEach(function (name) {
+				if (name !== winner) {
+					overruled.push({ name: name, token: token, winner: winner })
+				}
+			})
 		})
 
 		var lines = Object.keys(merged)
@@ -365,12 +397,65 @@
 
 		return {
 			css:
-				'/* NL Design — custom token set. Generated from an admin upload. Do not edit manually. */\n'
+				'/* NL Design — custom token set, exported from the component'
+				+ ' playground. Do not edit manually. */\n'
 				+ ':root {\n'
 				+ lines.join('\n')
 				+ '\n}\n',
 			unexpressed: unexpressed,
+			overruled: overruled,
 		}
+	}
+
+	/**
+	 * A value safe to drop inside a double-quoted HTML attribute.
+	 *
+	 * The stage markup is built by string concatenation, so an attribute value
+	 * that reaches it unescaped is markup. Every caller passes a literal today
+	 * — but a token set NAME is one paste away from those builders, and it is
+	 * admin-supplied. Escaping the quote matters as much as the angle brackets
+	 * here: `admin.js`'s `escapeHtml()` goes through `innerHTML`, which leaves
+	 * `"` alone and is therefore a text escaper, not an attribute one.
+	 *
+	 * Plain string replacement rather than a DOM round-trip, because this file
+	 * builds markup under Node in the inventory tests too.
+	 *
+	 * @param {string} value Any value.
+	 * @return {string} The value, escaped for an attribute.
+	 */
+	function attr(value) {
+		return String(value)
+			.replace(/&/g, '&amp;')
+			.replace(/"/g, '&quot;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+	}
+
+	/**
+	 * Which of the Nextcloud variables reading a token gets to define it.
+	 *
+	 * The same rule as `StockTokensService::canonical()`, deliberately: the two
+	 * halves read one map in opposite directions, and a token that took its
+	 * stock value from `--color-primary` but its exported value from
+	 * `--color-primary-element` would make a round-trip disagree with itself.
+	 *
+	 * A token's own name says what it is, so `--nldesign-color-primary` is
+	 * defined by `--color-primary` and the variables that merely consume it
+	 * lose. Where no variable carries the token's name the candidates are
+	 * genuinely interchangeable, and sorted order decides so the file does not
+	 * depend on the order the overrides happen to arrive in.
+	 *
+	 * @param {string} token The --nldesign-* token being written.
+	 * @param {Array<string>} candidates The overridden --color-* names reading it.
+	 * @return {string} The one whose value the token takes.
+	 */
+	function canonicalSource(token, candidates) {
+		var sameName = '--' + String(token).replace(/^--nldesign-/, '')
+		if (candidates.indexOf(sameName) !== -1) {
+			return sameName
+		}
+
+		return candidates.slice().sort()[0]
 	}
 
 	/* ---------------------------------------------------------------- */
@@ -405,6 +490,17 @@
 			}
 		})
 		observer.observe(host, { childList: true, subtree: true })
+
+		// The editor is FETCHED, so it may never arrive: a failed request, a
+		// 403, an admin who navigates within the page. Without this the
+		// observer watches a subtree for the life of the tab, waking on every
+		// mutation anything else on the settings page makes, for a button that
+		// is not coming. The editor renders in well under a second when it
+		// renders at all, so a minute is "this is not happening" with room to
+		// spare rather than a race.
+		window.setTimeout(function () {
+			observer.disconnect()
+		}, BOOT_GIVE_UP)
 	}
 
 	/**
@@ -515,6 +611,9 @@
 			reasons: loadState('playgroundReasons', {}),
 			tokens: loadState('playgroundTokens', {}),
 			sources: loadState('playgroundTokenSources', {}),
+			// The set the page is WEARING, which a session preview changes —
+			// so an export is named after the set it actually contains.
+			tokenSet: loadState('playgroundSet', ''),
 			// The version this instance runs, and the one the header specimen
 			// is currently drawn as. They start equal: the version you are on
 			// is the one you are asking about first.
@@ -2173,15 +2272,19 @@
 				+ '<div class="login-box__wrapper nldesign-pg-loginwrap">'
 				+ '<form method="post" name="login" class="login-form">'
 				+ '<fieldset class="login-form__fieldset nldesign-pg-loginfields">'
-				+ '<h2 class="login-form__headline">Inloggen bij Nextcloud</h2>'
-				+ field('Accountnaam of e-mail', 'default', { inside: true })
-				+ field('Wachtwoord', 'default', {
+				+ '<h2 class="login-form__headline">'
+				+ t('thematiq', 'Log in to Nextcloud')
+				+ '</h2>'
+				+ field(t('thematiq', 'Account name or email'), 'default', {
+					inside: true,
+				})
+				+ field(t('thematiq', 'Password'), 'default', {
 					inside: true,
 					type: 'password',
 					trailing: revealEye(),
 				})
-				+ choice('checkbox', true, 'Onthoud mij')
-				+ button('primary', 'default', 'Inloggen', co(2), {
+				+ choice('checkbox', true, t('thematiq', 'Remember me'))
+				+ button('primary', 'default', t('thematiq', 'Log in'), co(2), {
 					icon: submitArrow(),
 					wide: true,
 					done: t('thematiq', 'Signing in …'),
@@ -2191,14 +2294,26 @@
 				// Both of these are NcButtons on the real card, not links: wide,
 				// tertiary, stacked under the form, and siblings of it rather
 				// than children.
-				+ button('tertiary', 'default', 'Inloggen met een apparaat', '', {
-					wide: true,
-					done: t('thematiq', 'Device login opened'),
-				})
-				+ button('tertiary', 'default', 'Wachtwoord vergeten?', '', {
-					wide: true,
-					done: t('thematiq', 'Password reset opened'),
-				})
+				+ button(
+					'tertiary',
+					'default',
+					t('thematiq', 'Log in with a device'),
+					'',
+					{
+						wide: true,
+						done: t('thematiq', 'Device login opened'),
+					},
+				)
+				+ button(
+					'tertiary',
+					'default',
+					t('thematiq', 'Forgot password?'),
+					'',
+					{
+						wide: true,
+						done: t('thematiq', 'Password reset opened'),
+					},
+				)
 				+ '</div>'
 				+ '<div class="login-box__alternative-logins"></div>'
 				+ '</div>'
@@ -2210,7 +2325,9 @@
 				// means the hide-slogan stylesheet reaches it here exactly as it
 				// reaches the real one.
 				+ '<footer class="guest-box">'
-				+ '<p class="info">Een veilige thuisbasis voor al je gegevens</p>'
+				+ '<p class="info">'
+				+ t('thematiq', 'A safe home for all your data')
+				+ '</p>'
 				+ '</footer>'
 				+ '</div>'
 			)
@@ -2218,7 +2335,7 @@
 		'login-button': function (state) {
 			// With the arrow, because `LoginButton` always has one: the chip and
 			// the card must not draw the same button two different ways.
-			return button('primary', state, 'Inloggen', '', {
+			return button('primary', state, t('thematiq', 'Log in'), '', {
 				icon: submitArrow(),
 				done: t('thematiq', 'Signing in …'),
 			})
@@ -2227,7 +2344,9 @@
 			return (
 				'<span class="nldesign-pg-loginbg header-guest nldesign-pg-brandbox">'
 				+ '<span class="nldesign-pg-header-logo logo"></span>'
-				+ '<span class="nldesign-pg-slogan">Een veilige thuisbasis</span>'
+				+ '<span class="nldesign-pg-slogan">'
+				+ t('thematiq', 'A safe home')
+				+ '</span>'
 				+ '</span>'
 			)
 		},
@@ -2240,7 +2359,9 @@
 			return (
 				'<span class="nldesign-pg-loginbg nldesign-pg-brandbox nldesign-pg-bgdemo">'
 				+ '<span class="nldesign-pg-header-logo logo"></span>'
-				+ '<span class="nldesign-pg-slogan">Een veilige thuisbasis</span>'
+				+ '<span class="nldesign-pg-slogan">'
+				+ t('thematiq', 'A safe home')
+				+ '</span>'
 				+ '<span class="nldesign-pg-bgcard"></span>'
 				+ '</span>'
 			)
@@ -2252,12 +2373,19 @@
 			// a set look coherent that is not, and vice versa.
 			return (
 				'<div class="app-navigation nldesign-pg-nav">'
-				+ '<div class="nldesign-pg-nav-caption">Bestanden</div>'
+				+ '<div class="nldesign-pg-nav-caption">'
+				+ t('thematiq', 'Files')
+				+ '</div>'
 				+ '<ul>'
-				+ navEntry('Alle bestanden', '', co(1))
-				+ navEntry('Favorieten', 'is-selected active', co(2), '3')
-				+ navEntry('Gedeeld met jou', '')
-				+ navEntry('Verwijderde bestanden', '')
+				+ navEntry(t('thematiq', 'All files'), '', co(1))
+				+ navEntry(
+					t('thematiq', 'Favorites'),
+					'is-selected active',
+					co(2),
+					'3',
+				)
+				+ navEntry(t('thematiq', 'Shared with you'), '')
+				+ navEntry(t('thematiq', 'Deleted files'), '')
 				+ '</ul>'
 				+ '<div class="app-navigation-toggle nldesign-pg-navtoggle"></div>'
 				+ '</div>'
@@ -2295,8 +2423,12 @@
 				+ '<div class="nldesign-pg-rec-title">Besluitenlijst college</div>'
 				+ '<dl class="nldesign-pg-meta">'
 				+ '<dt>Register</dt><dd>Besluiten</dd>'
-				+ '<dt>Status</dt><dd>Concept</dd>'
-				+ '<dt>Gewijzigd</dt><dd>9 maart 2026 om 14:02</dd>'
+				+ '<dt>'
+				+ t('thematiq', 'Status')
+				+ '</dt><dd>Concept</dd>'
+				+ '<dt>'
+				+ t('thematiq', 'Modified')
+				+ '</dt><dd>9 maart 2026 om 14:02</dd>'
 				+ '</dl>'
 				+ '<p class="nldesign-pg-paragraph">Wekelijkse besluitenlijst van het '
 				+ 'college van burgemeester en wethouders, inclusief bijlagen en '
@@ -2319,9 +2451,15 @@
 			return (
 				'<table class="nldesign-pg-table">'
 				+ '<thead><tr>'
-				+ '<th>Naam'
+				+ '<th>'
+				+ t('thematiq', 'Name')
+				+ ''
 				+ co(1)
-				+ '</th><th>Grootte</th><th>Gewijzigd</th><th></th>'
+				+ '</th><th>'
+				+ t('thematiq', 'Size')
+				+ '</th><th>'
+				+ t('thematiq', 'Modified')
+				+ '</th><th></th>'
 				+ '</tr></thead><tbody>'
 				+ rows
 					.map(function (row) {
@@ -2358,10 +2496,14 @@
 				+ '<span class="nldesign-pg-glyph nldesign-pg-glyph--dark"></span>'
 				+ '</div>'
 				+ '<div class="nldesign-pg-tabs">'
-				+ '<span class="nldesign-pg-tab is-active">Delen'
+				+ '<span class="nldesign-pg-tab is-active">'
+				+ t('thematiq', 'Sharing')
+				+ ''
 				+ co(2)
 				+ '</span>'
-				+ '<span class="nldesign-pg-tab">Versies</span>'
+				+ '<span class="nldesign-pg-tab">'
+				+ t('thematiq', 'Versions')
+				+ '</span>'
 				+ '<span class="nldesign-pg-tab">Activiteit</span>'
 				+ '</div>'
 				// The Delen tab is the active one, so the body shows sharing —
@@ -2370,9 +2512,13 @@
 				+ '<div class="nldesign-pg-sidebar-body">'
 				+ field('Naam, federated cloud-ID of e-mail', 'default')
 				+ '<ul class="nldesign-pg-list nldesign-pg-shares">'
-				+ listItem('Marianne de Vries', 'Kan bewerken', '')
-				+ listItem('Team Communicatie', 'Kan bekijken', '')
-				+ listItem('Openbare link', 'Kan bekijken · verloopt 1 apr', '')
+				+ listItem('Marianne de Vries', t('thematiq', 'Can edit'), '')
+				+ listItem('Team Communicatie', t('thematiq', 'Can view'), '')
+				+ listItem(
+					t('thematiq', 'Public link'),
+					'Kan bekijken · verloopt 1 apr',
+					'',
+				)
 				+ '</ul>'
 				+ '</div></div>'
 			)
@@ -2382,14 +2528,20 @@
 				'<ul class="nldesign-pg-list">'
 				+ listItem(
 					'Marianne de Vries',
-					'Deelde "Begroting.xlsx" met jou',
+					t('thematiq', 'Shared {name} with you', {
+						name: '"Begroting.xlsx"',
+					}),
 					'',
 					co(1),
 				)
-				+ listItem('Gemeente Voorbeeld', 'Nieuwe reactie op Jaarverslag', '')
+				+ listItem(
+					'Gemeente Voorbeeld',
+					t('thematiq', 'New comment on {name}', { name: 'Jaarverslag' }),
+					'',
+				)
 				+ listItem(
 					'Jan Bakker',
-					'Heeft je uitgenodigd voor Overleg',
+					t('thematiq', 'Invited you to {name}', { name: 'Overleg' }),
 					'is-selected active',
 					co(3),
 				)
@@ -2400,10 +2552,14 @@
 			return (
 				'<div class="empty-content nldesign-pg-empty">'
 				+ '<div class="empty-content__icon nldesign-pg-empty-icon">☐</div>'
-				+ '<h2 class="empty-content__name nldesign-pg-empty-name">Geen bestanden gevonden</h2>'
+				+ '<h2 class="empty-content__name nldesign-pg-empty-name">'
+				+ t('thematiq', 'No files found')
+				+ '</h2>'
 				+ '<p class="empty-content__description nldesign-pg-muted is-maxcontrast">'
-				+ 'Upload een bestand of maak een nieuwe map om te beginnen.</p>'
-				+ button('secondary', 'default', 'Bestand uploaden')
+				+ ''
+				+ t('thematiq', 'Upload a file or create a folder to get started.')
+				+ '</p>'
+				+ button('secondary', 'default', t('thematiq', 'Upload file'))
 				+ co(1)
 				+ '</div>'
 			)
@@ -2415,10 +2571,18 @@
 				+ '<div class="popover nldesign-pg-popover">'
 				+ co(1)
 				+ '<ul class="popovermenu">'
-				+ '<li class="nldesign-pg-action">Hernoemen</li>'
-				+ '<li class="nldesign-pg-action">Verplaatsen of kopiëren</li>'
-				+ '<li class="nldesign-pg-action">Details openen</li>'
-				+ '<li class="nldesign-pg-action">Verwijderen</li>'
+				+ '<li class="nldesign-pg-action">'
+				+ t('thematiq', 'Rename')
+				+ '</li>'
+				+ '<li class="nldesign-pg-action">'
+				+ t('thematiq', 'Move or copy')
+				+ '</li>'
+				+ '<li class="nldesign-pg-action">'
+				+ t('thematiq', 'Open details')
+				+ '</li>'
+				+ '<li class="nldesign-pg-action">'
+				+ t('thematiq', 'Delete')
+				+ '</li>'
 				+ '</ul></div></div>'
 			)
 		},
@@ -2443,19 +2607,29 @@
 		'settings-section': function () {
 			return (
 				'<div class="nldesign-pg-section">'
-				+ '<h2 class="nldesign-pg-section-title">Achtergrond en kleuren'
+				+ '<h2 class="nldesign-pg-section-title">'
+				+ t('thematiq', 'Background and colours')
+				+ ''
 				+ co(1)
 				+ '</h2>'
 				+ '<p class="nldesign-pg-muted is-maxcontrast nldesign-pg-reading">'
-				+ 'Kies een kleur die past bij je organisatie. De kleur wordt gebruikt in de '
-				+ 'header, op de inlogpagina en in e-mails.</p>'
-				+ button('secondary', 'default', 'Wijzigingen opslaan')
+				+ t(
+					'thematiq',
+					'Pick a colour that suits your organisation. It is used in the header, on the login page and in emails.',
+				)
+				+ '</p>'
+				+ button('secondary', 'default', t('thematiq', 'Save changes'))
 				+ '<hr class="nldesign-pg-hr">'
 				+ '</div>'
 			)
 		},
 		'text-input': function (state) {
-			return field(state === 'invalid' ? 'E-mailadres' : 'Accountnaam', state)
+			return field(
+				state === 'invalid'
+					? t('thematiq', 'Email address')
+					: t('thematiq', 'Account name'),
+				state,
+			)
 		},
 		select: function () {
 			return (
@@ -2478,19 +2652,20 @@
 		'checkbox-switch': function () {
 			return (
 				'<div class="nldesign-pg-choices">'
-				+ choice('checkbox', false, 'Niet aangevinkt', co(1))
-				+ choice('checkbox', true, 'Aangevinkt', co(2))
-				+ choice('radio', false, 'Niet geselecteerd')
-				+ choice('radio', true, 'Geselecteerd')
-				+ choice('switch', false, 'Uit')
-				+ choice('switch', true, 'Aan')
+				+ choice('checkbox', false, t('thematiq', 'Not checked'), co(1))
+				+ choice('checkbox', true, t('thematiq', 'Checked'), co(2))
+				+ choice('radio', false, t('thematiq', 'Not selected'))
+				+ choice('radio', true, t('thematiq', 'Selected'))
+				+ choice('switch', false, t('thematiq', 'Off'))
+				+ choice('switch', true, t('thematiq', 'On'))
 				+ '</div>'
 			)
 		},
 		textarea: function () {
 			return (
 				'<span class="nldesign-pg-input nldesign-pg-textarea">'
-				+ 'Een langere toelichting, over meerdere regels.</span>'
+				+ t('thematiq', 'A longer explanation, over several lines.')
+				+ '</span>'
 			)
 		},
 		dialog: function () {
@@ -2498,19 +2673,25 @@
 				'<div class="modal-container nldesign-pg-dialog">'
 				+ co(1)
 				+ '<div class="nldesign-pg-dialog-head">'
-				+ '<strong>Tokenset toepassen: OpenWOO</strong>'
+				+ '<strong>'
+				+ t('thematiq', 'Apply token set: OpenWOO')
+				+ '</strong>'
 				+ '<span class="nldesign-pg-glyph nldesign-pg-glyph--dark"></span>'
 				+ '</div>'
 				+ '<div class="nldesign-pg-dialog-body">'
-				+ '<p class="nldesign-pg-paragraph">Deze waarden veranderen. Controleer welke je '
-				+ 'wilt toepassen op je eigen overrides.</p>'
+				+ '<p class="nldesign-pg-paragraph">'
+				+ t(
+					'thematiq',
+					'These values change. Check which of them you want to apply to your own overrides.',
+				)
+				+ '</p>'
 				// The dialog this stands for is Thematiq's own apply dialog, so
 				// it shows what that one shows: the values about to change.
 				+ '<ul class="nldesign-pg-changes">'
 				+ [
-					['Primaire kleur', '#0082c9', '#23845c'],
-					['Hoekradius', '4px', '8px'],
-					['Koptekst', '#ffffff', '#11304e'],
+					[t('thematiq', 'Primary colour'), '#0082c9', '#23845c'],
+					[t('thematiq', 'Corner radius'), '4px', '8px'],
+					[t('thematiq', 'Heading text'), '#ffffff', '#11304e'],
 				]
 					.map(function (row) {
 						return (
@@ -2527,8 +2708,8 @@
 				+ '</ul>'
 				+ '</div>'
 				+ '<div class="nldesign-pg-dialog-foot">'
-				+ button('secondary', 'default', 'Annuleren')
-				+ button('primary', 'default', 'Toepassen', co(2))
+				+ button('secondary', 'default', t('thematiq', 'Cancel'))
+				+ button('primary', 'default', t('thematiq', 'Apply'), co(2))
 				+ '</div></div>'
 			)
 		},
@@ -2543,30 +2724,44 @@
 			)
 		},
 		'primary-button': function (state) {
-			return button('primary', state, 'Opslaan')
+			return button('primary', state, t('thematiq', 'Save'))
 		},
 		'secondary-button': function (state) {
-			return button('secondary', state, 'Annuleren')
+			return button('secondary', state, t('thematiq', 'Cancel'))
 		},
 		'tertiary-button': function (state) {
-			return button('tertiary', state, 'Meer opties')
+			return button('tertiary', state, t('thematiq', 'More options'))
 		},
 		'error-button': function (state) {
-			return button('error', state, 'Verwijderen')
+			return button('error', state, t('thematiq', 'Delete'))
 		},
 		'success-button': function (state) {
-			return button('success', state, 'Goedkeuren')
+			return button('success', state, t('thematiq', 'Approve'))
 		},
 		'note-cards': function () {
 			return [
 				[
 					'info',
 					1,
-					'Deze tokenset is geïmporteerd uit een NL Design System thema.',
+					t(
+						'thematiq',
+						'This token set was imported from an NL Design System theme.',
+					),
 				],
-				['warning', 2, 'Twee kleuren halen de WCAG AA-drempel niet.'],
-				['error', 3, 'De tokenset kon niet worden opgeslagen.'],
-				['success', 4, 'De tokenset is toegepast op de hele instantie.'],
+				[
+					'warning',
+					2,
+					t('thematiq', 'Two colours do not meet the WCAG AA threshold.'),
+				],
+				['error', 3, t('thematiq', 'The token set could not be saved.')],
+				[
+					'success',
+					4,
+					t(
+						'thematiq',
+						'The token set has been applied to the whole instance.',
+					),
+				],
 			]
 				.map(function (def) {
 					return (
@@ -2593,10 +2788,14 @@
 		},
 		toast: function () {
 			return [
-				['success', 1, 'Tokenoverrides opgeslagen.'],
-				['error', 2, 'Opslaan is niet gelukt.'],
-				['warning', 3, 'Eén set is onvolledig.'],
-				['info', 4, 'Je bekijkt een voorbeeld in je eigen sessie.'],
+				['success', 1, t('thematiq', 'Token overrides saved.')],
+				['error', 2, t('thematiq', 'Saving failed.')],
+				['warning', 3, t('thematiq', 'One set is incomplete.')],
+				[
+					'info',
+					4,
+					t('thematiq', 'You are previewing in your own session.'),
+				],
 			]
 				.map(function (def) {
 					return (
@@ -2613,22 +2812,30 @@
 		heading: function () {
 			return (
 				'<div class="nldesign-pg-type">'
-				+ '<h1 class="nldesign-pg-h1">Thema en huisstijl'
+				+ '<h1 class="nldesign-pg-h1">'
+				+ t('thematiq', 'Theme and house style')
+				+ ''
 				+ co(1)
 				+ '</h1>'
-				+ '<h2 class="nldesign-pg-h2">Achtergrond en kleuren</h2>'
-				+ '<h3 class="nldesign-pg-h3">Eigen tokenset uploaden</h3>'
-				+ '<h4 class="nldesign-pg-h4">Let op bij het uploaden</h4>'
+				+ '<h2 class="nldesign-pg-h2">'
+				+ t('thematiq', 'Background and colours')
+				+ '</h2>'
+				+ '<h3 class="nldesign-pg-h3">'
+				+ t('thematiq', 'Upload your own token set')
+				+ '</h3>'
+				+ '<h4 class="nldesign-pg-h4">'
+				+ t('thematiq', 'Before you upload')
+				+ '</h4>'
 				+ '</div>'
 			)
 		},
 		paragraph: function () {
 			return (
 				'<p class="nldesign-pg-paragraph nldesign-pg-reading">'
-				+ 'Kies een tokenset als basis, of pas losse Nextcloud-tokens hieronder aan. '
-				+ 'Een tokenset bepaalt de kleuren, de typografie en de vormgeving van elk '
-				+ 'onderdeel dat je hier ziet. Wat je opslaat geldt voor iedereen op deze '
-				+ 'instantie, op elke pagina.'
+				+ t(
+					'thematiq',
+					'Pick a token set as your basis, or adjust individual Nextcloud tokens below. A token set decides the colours, the typography and the shape of every part you see here. What you save applies to everyone on this instance, on every page.',
+				)
 				+ co(1)
 				+ '</p>'
 			)
@@ -2636,24 +2843,34 @@
 		link: function () {
 			return (
 				'<p class="nldesign-pg-paragraph nldesign-pg-reading">'
-				+ 'Meer over het NL Design System lees je in de '
-				+ '<span class="nldesign-pg-link">documentatie</span>'
+				+ t('thematiq', 'Read more about the NL Design System in the ')
+				+ '<span class="nldesign-pg-link">'
+				+ t('thematiq', 'documentation')
+				+ '</span>'
 				+ co(1)
-				+ ', of bekijk de '
-				+ '<span class="nldesign-pg-link">voorbeeldthema&rsquo;s</span>'
+				+ t('thematiq', ', or look at the ')
+				+ '<span class="nldesign-pg-link">'
+				+ t('thematiq', 'example themes')
+				+ '</span>'
 				+ '.</p>'
 			)
 		},
 		'muted-text': function () {
 			return (
 				'<div class="nldesign-pg-type">'
-				+ '<p class="nldesign-pg-muted is-maxcontrast">Secundaire tekst die nog steeds AA moet halen.'
+				+ '<p class="nldesign-pg-muted is-maxcontrast">'
+				+ t('thematiq', 'Secondary text that must still meet AA.')
+				+ ''
 				+ co(1)
 				+ '</p>'
-				+ '<p class="nldesign-pg-muted is-light">Tekst een stap lichter dan de body.'
+				+ '<p class="nldesign-pg-muted is-light">'
+				+ t('thematiq', 'Text one step lighter than the body.')
+				+ ''
 				+ co(2)
 				+ '</p>'
-				+ '<p class="nldesign-pg-muted is-lighter">De lichtste tekst die Nextcloud gebruikt.'
+				+ '<p class="nldesign-pg-muted is-lighter">'
+				+ t('thematiq', 'The lightest text Nextcloud uses.')
+				+ ''
 				+ co(3)
 				+ '</p>'
 				+ '</div>'
@@ -2662,13 +2879,19 @@
 		'status-text': function () {
 			return (
 				'<div class="nldesign-pg-type">'
-				+ '<p class="nldesign-pg-status is-error">Dit veld is verplicht.'
+				+ '<p class="nldesign-pg-status is-error">'
+				+ t('thematiq', 'This field is required.')
+				+ ''
 				+ co(1)
 				+ '</p>'
-				+ '<p class="nldesign-pg-status is-warning">Twee waarden halen de AA-drempel niet.'
+				+ '<p class="nldesign-pg-status is-warning">'
+				+ t('thematiq', 'Two values do not meet the AA threshold.')
+				+ ''
 				+ co(2)
 				+ '</p>'
-				+ '<p class="nldesign-pg-status is-success">De wijzigingen zijn opgeslagen.'
+				+ '<p class="nldesign-pg-status is-success">'
+				+ t('thematiq', 'Your changes have been saved.')
+				+ ''
 				+ co(3)
 				+ '</p>'
 				+ '</div>'
@@ -3036,7 +3259,7 @@
 			+ '<span class="unified-search-input__button nldesign-pg-searchbtn">'
 			+ glyph('magnify', 'unified-search-input__icon')
 			+ '<span class="unified-search-input__label">'
-			+ 'Zoek apps, bestanden, tags, berichten &hellip;'
+			+ t('thematiq', 'Search apps, files, tags, messages …')
 			+ '</span>'
 			+ '</span>'
 			+ '</search>'
@@ -3183,7 +3406,7 @@
 	function revealEye() {
 		return button('tertiary-no-background', 'default', '', '', {
 			extra: 'input-field__trailing-button',
-			label: 'Wachtwoord weergeven',
+			label: t('thematiq', 'Show password'),
 			icon: mdi(
 				'eye-icon',
 				'M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,'
@@ -3260,7 +3483,9 @@
 			+ '</div>'
 			+ (state === 'invalid'
 				? '<p class="input-field__helper-text-message">'
-					+ 'Dit veld is verplicht.</p>'
+					+ ''
+					+ t('thematiq', 'This field is required.')
+					+ '</p>'
 				: '')
 			+ '</div>'
 
@@ -3469,7 +3694,7 @@
 			+ '" data-done="'
 			+ (settings.done || buttonDone(kind))
 			+ '"'
-			+ (settings.label ? ' aria-label="' + settings.label + '"' : '')
+			+ (settings.label ? ' aria-label="' + attr(settings.label) + '"' : '')
 			+ (state === 'disabled' ? ' disabled' : '')
 			+ '><span class="button-vue__wrapper">'
 			+ (hasIcon
@@ -3571,6 +3796,15 @@
 			headers: { requesttoken: OC.requestToken },
 		})
 			.then(function (response) {
+				// Checked here and nowhere else in this file, because export is
+				// the one caller whose failure the admin KEEPS: a 403 or a 500
+				// parsed as `{}` downloads a file with every override missing,
+				// and it looks exactly like a correct export of a set that has
+				// none. Every other reader just re-renders a screen.
+				if (response.ok === false) {
+					throw new Error('overrides request failed: ' + response.status)
+				}
+
 				return response.json()
 			})
 			.then(function (data) {
@@ -3586,11 +3820,42 @@
 				var url = URL.createObjectURL(blob)
 				var link = document.createElement('a')
 				link.href = url
-				link.download = 'token-set.css'
+				// Named after the set it came from: an admin comparing two
+				// exports otherwise gets `token-set (1).css` and has to open
+				// both to find out which is which.
+				link.download =
+					(slug(state.tokenSet || 'token-set') || 'token-set') + '.css'
 				document.body.appendChild(link)
 				link.click()
 				document.body.removeChild(link)
 				URL.revokeObjectURL(url)
+
+				if (result.overruled.length > 0) {
+					// Two overrides, one line in the file. Said out loud with
+					// the winner named, because the admin has to know WHICH of
+					// the two colours the set they are handing on will wear.
+					notify(
+						t(
+							'thematiq',
+							'{count} overrides share a token with another override and are not in the file: {names}',
+							{
+								count: result.overruled.length,
+								names: result.overruled
+									.map(function (loss) {
+										return (
+											loss.name
+											+ ' ('
+											+ loss.token
+											+ ' took '
+											+ loss.winner
+											+ ')'
+										)
+									})
+									.join(', '),
+							},
+						),
+					)
+				}
 
 				if (result.unexpressed.length > 0) {
 					// Said out loud rather than dropped quietly: a token set has

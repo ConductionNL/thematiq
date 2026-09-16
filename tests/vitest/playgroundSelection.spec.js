@@ -217,6 +217,87 @@ describe('component instrument: the token set export', () => {
 		expect(parseTokens(result.css)).toEqual(tokens)
 	})
 
+	it('keeps the defining variable when two overrides read one token', () => {
+		// The map is many-to-one: `overrides.css` points both --color-primary
+		// and --color-primary-element at --nldesign-color-primary, and
+		// TokenRegistry makes both editable — so an admin can override both and
+		// the file has one line to carry them. The token's own name decides,
+		// the same rule StockTokensService::canonical() applies to the same map
+		// in the other direction.
+		const result = playground.exportCss(
+			tokens,
+			{
+				'--color-primary-element': '#00ff00',
+				'--color-primary': '#ff0000',
+			},
+			sources,
+		)
+
+		expect(parseTokens(result.css)['--nldesign-color-primary']).toBe('#ff0000')
+	})
+
+	it('reports the override the other one took the token from', () => {
+		// The bug this guards: the loser used to vanish from the file AND from
+		// the report, so an admin re-imported a set that had silently lost a
+		// change they had made and saved.
+		const result = playground.exportCss(
+			tokens,
+			{
+				'--color-primary': '#ff0000',
+				'--color-primary-element': '#00ff00',
+			},
+			sources,
+		)
+
+		expect(result.overruled).toEqual([
+			{
+				name: '--color-primary-element',
+				token: '--nldesign-color-primary',
+				winner: '--color-primary',
+			},
+		])
+		expect(result.unexpressed).toEqual([])
+	})
+
+	it('does not depend on the order the overrides arrive in', () => {
+		const forwards = playground.exportCss(
+			tokens,
+			{ '--color-primary': '#ff0000', '--color-primary-element': '#00ff00' },
+			sources,
+		)
+		const backwards = playground.exportCss(
+			tokens,
+			{ '--color-primary-element': '#00ff00', '--color-primary': '#ff0000' },
+			sources,
+		)
+
+		expect(forwards.css).toBe(backwards.css)
+		expect(forwards.overruled).toEqual(backwards.overruled)
+	})
+
+	it('falls back to sorted order when no variable carries the token name', () => {
+		// --nldesign-color-main-background is read by variables none of which is
+		// called --color-main-background, so the candidates are interchangeable
+		// and the file must still not depend on iteration order.
+		const competing = Object.keys(sources).filter(
+			(name) =>
+				sources[name] === '--nldesign-color-primary'
+				&& name !== '--color-primary',
+		)
+
+		const result = playground.exportCss(
+			tokens,
+			Object.fromEntries(competing.map((name, i) => [name, '#00000' + i])),
+			sources,
+		)
+
+		const winner = [...competing].sort()[0]
+		expect(parseTokens(result.css)['--nldesign-color-primary']).toBe(
+			'#00000' + competing.indexOf(winner),
+		)
+		expect(result.overruled).toHaveLength(competing.length - 1)
+	})
+
 	it('emits one flat :root block, sorted, in the shape the upload accepts', () => {
 		const lines = playground.exportCss(tokens, {}, sources).css.split('\n')
 		const names = lines
