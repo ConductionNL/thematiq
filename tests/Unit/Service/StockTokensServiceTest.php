@@ -415,6 +415,123 @@ class StockTokensServiceTest extends TestCase {
 	}//end testTheKeyMovesWhenEitherInputMoves()
 
 	/**
+	 * The block does not depend on who is asking.
+	 *
+	 * `DefaultTheme::$primaryColor` is the SIGNED-IN USER's colour whenever
+	 * they have set one, and user theming is on by default. The output of this
+	 * service is a token set — instance-wide, and cached under a key with no
+	 * user in it — so a per-user resolve would have let the first user to warm
+	 * the cache after picking a personal colour dress everyone else, and the
+	 * anonymous login page, in it.
+	 *
+	 * The stand-in mirrors the two fields core keeps: the admin's colour and
+	 * the one the current user resolves to.
+	 */
+	public function testTheBlockIsTheInstanceColourNotTheUsers(): void {
+		$theme = new class {
+			public string $defaultPrimaryColor = '#00679e';
+
+			public string $primaryColor = '#ff00ff';
+
+			/**
+			 * @return array<string, string> The variables, as core computes them
+			 *                               from whichever colour is set.
+			 */
+			public function getCSSVariables(): array {
+				return ['--color-primary' => $this->primaryColor];
+			}
+		};
+
+		$preview = $this->createMock(TokenSetPreviewService::class);
+		$preview->method('getTokenSources')->willReturn(
+			['--color-primary' => '--nldesign-color-primary']
+		);
+
+		$service = new class(
+			$preview,
+			$this->createMock(LoggerInterface::class),
+			$this->cacheFactory(),
+			$this->createMock(IConfig::class),
+			$theme
+		) extends StockTokensService {
+			public function __construct(
+				TokenSetPreviewService $sources,
+				LoggerInterface $logger,
+				ICacheFactory $cacheFactory,
+				IConfig $config,
+				private object $theme
+			) {
+				parent::__construct($sources, $logger, $cacheFactory, $config);
+			}
+
+			/**
+			 * @return object The stand-in theme, in place of the container's.
+			 */
+			protected function resolveTheme(): object {
+				return $this->theme;
+			}
+		};
+
+		$css = (string)$service->getCss();
+
+		$this->assertStringContainsString('--nldesign-color-primary:#00679e;', $css);
+		$this->assertStringNotContainsString('#ff00ff', $css);
+	}//end testTheBlockIsTheInstanceColourNotTheUsers()
+
+	/**
+	 * A theme that no longer carries an admin colour falls back rather than
+	 * resolving per user.
+	 *
+	 * This is the safety half of the same fact: the check above is what keeps
+	 * one account's colour out of everyone else's page, so a theming app whose
+	 * shape no longer allows it must reach the shipped file.
+	 */
+	public function testAThemeWithoutAnAdminColourFallsBack(): void {
+		$theme = new class {
+			public string $primaryColor = '#ff00ff';
+
+			/**
+			 * @return array<string, string> The variables.
+			 */
+			public function getCSSVariables(): array {
+				return ['--color-primary' => $this->primaryColor];
+			}
+		};
+
+		$preview = $this->createMock(TokenSetPreviewService::class);
+		$preview->method('getTokenSources')->willReturn(
+			['--color-primary' => '--nldesign-color-primary']
+		);
+
+		$service = new class(
+			$preview,
+			$this->createMock(LoggerInterface::class),
+			$this->cacheFactory(),
+			$this->createMock(IConfig::class),
+			$theme
+		) extends StockTokensService {
+			public function __construct(
+				TokenSetPreviewService $sources,
+				LoggerInterface $logger,
+				ICacheFactory $cacheFactory,
+				IConfig $config,
+				private object $theme
+			) {
+				parent::__construct($sources, $logger, $cacheFactory, $config);
+			}
+
+			/**
+			 * @return object The stand-in theme, in place of the container's.
+			 */
+			protected function resolveTheme(): object {
+				return $this->theme;
+			}
+		};
+
+		$this->assertNull($service->getCss());
+	}//end testAThemeWithoutAnAdminColourFallsBack()
+
+	/**
 	 * A failed resolve is NOT cached.
 	 *
 	 * The theming app being absent or throwing does not move the cache key

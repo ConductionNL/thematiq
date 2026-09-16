@@ -24,6 +24,7 @@ use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -291,6 +292,84 @@ class StockTokensService {
 	}//end canonical()
 
 	/**
+	 * The theming app's default theme, out of the container.
+	 *
+	 * Its own method so a test can hand asInstance() a theme without a running
+	 * server — the colour-per-user question this class has to get right is
+	 * about which FIELD is read, and that is answerable with a stand-in.
+	 *
+	 * @return object The theme.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - another app's class, see the note
+	 *                                         on DEFAULT_THEME: a constructor
+	 *                                         type-hint would make this file
+	 *                                         unloadable without the theming app.
+	 *
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 */
+	protected function resolveTheme(): object {
+		return \OCP\Server::get(self::DEFAULT_THEME);
+	}//end resolveTheme()
+
+	/**
+	 * The theme as the INSTANCE wears it, not as the current user does.
+	 *
+	 * `DefaultTheme::__construct()` stores two colours: `defaultPrimaryColor`
+	 * from `getDefaultColorPrimary()`, which reads the admin's app config only,
+	 * and `primaryColor` from `getColorPrimary()`, which returns the signed-in
+	 * user's own `primary_color` when they have set one — and user theming is
+	 * ON by default (`isUserThemingDisabled()` defaults to false). Everything
+	 * `generatePrimaryVariables()` emits is computed from the second one, which
+	 * is all twelve `--color-primary*` variables `overrides.css` maps.
+	 *
+	 * That makes the raw resolve per USER, and this service's output is not:
+	 * it is a token set, injected instance-wide, and — since the previous
+	 * commit — cached under a key of the Nextcloud version and the app-level
+	 * theming cachebuster. A personal colour moves neither. So the first user
+	 * to warm that cache after setting one would have dressed every other user,
+	 * and the anonymous login page, in their own colour until it expired.
+	 *
+	 * Swapping the admin colour in makes the resolve genuinely instance-wide,
+	 * which is what `nextcloud-variable-mapping` says this set is, and what
+	 * makes the existing cache key correct rather than merely cheap. Keying the
+	 * cache per user instead would be wrong for the login page — which has no
+	 * user — and would multiply the entries by the account count.
+	 *
+	 * Only the primary family needs this. The other user-dependent variables
+	 * are the four `generateUserBackgroundVariables()` emits, and `overrides.css`
+	 * maps none of them, so none reaches a token.
+	 *
+	 * A CLONE, because the theme comes from the container and is the same
+	 * instance the page around us is being rendered with.
+	 *
+	 * @param object $theme The theming app's default theme.
+	 *
+	 * @return object A theme that resolves the admin's colours.
+	 *
+	 * @throws RuntimeException When the theme does not carry the admin colour,
+	 *                           so a user-dependent block can never be cached.
+	 */
+	private function asInstance(object $theme): object {
+		if (
+			property_exists($theme, 'primaryColor') === false
+			|| property_exists($theme, 'defaultPrimaryColor') === false
+		) {
+			// Refused rather than resolved: this is the check that keeps one
+			// account's colour out of everyone else's page, so a theming app
+			// whose shape no longer allows it must reach the shipped file, not
+			// the user's own theme.
+			throw new RuntimeException(
+				'the theming app no longer exposes an admin-level primary colour'
+			);
+		}
+
+		$instance = clone $theme;
+		$instance->primaryColor = $instance->defaultPrimaryColor;
+
+		return $instance;
+	}//end asInstance()
+
+	/**
 	 * Replace every `var()` reference with the literal it resolves to, and
 	 * drop what cannot be resolved.
 	 *
@@ -354,9 +433,7 @@ class StockTokensService {
 	 */
 	protected function stockVariables(): array {
 		try {
-			$theme = \OCP\Server::get(self::DEFAULT_THEME);
-
-			return $theme->getCSSVariables();
+			return $this->asInstance(theme: $this->resolveTheme())->getCSSVariables();
 		} catch (Throwable $e) {
 			$this->logger->debug(
 				'thematiq: the stock theme could not be read from the instance, '
