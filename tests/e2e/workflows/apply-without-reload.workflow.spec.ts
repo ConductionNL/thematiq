@@ -13,7 +13,7 @@
  * Mutates instance state (token_set, custom-overrides.css, core theming) and
  * restores every piece in afterAll, per _helpers.ts.
  */
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Locator, type Page } from '@playwright/test'
 import {
 	openTheming,
 	requestToken,
@@ -91,6 +91,22 @@ async function setLayerFiles(page: Page): Promise<string[]> {
 	)
 }
 
+/**
+ * Whether a dialog shows up within five seconds.
+ *
+ * `locator.isVisible()` does not wait: its `timeout` option is ignored, so it
+ * answers for the instant it is called. The apply dialog opens only after the
+ * set's preview has been fetched, which is later than that instant, so the
+ * old check read "no dialog", skipped the confirm and left the dialog open
+ * (CI run 35146705670, screenshot: "Apply token set: amsterdam" still up).
+ */
+async function appears(dialog: Locator): Promise<boolean> {
+	return dialog
+		.waitFor({ state: 'visible', timeout: 5_000 })
+		.then(() => true)
+		.catch(() => false)
+}
+
 test.describe('apply without a reload', () => {
 	let originalTokenSet = 'nextcloud'
 	let originalOverrides: Record<string, string> = {}
@@ -145,7 +161,7 @@ test.describe('apply without a reload', () => {
 		// 1. Select a shipped set: the apply dialog opens, confirm it.
 		await page.selectOption('#nldesign-token-set-select', SHIPPED_SET)
 		const applyDialog = page.locator('#nldesign-apply-dialog-overlay')
-		if (await applyDialog.isVisible({ timeout: 5_000 }).catch(() => false)) {
+		if (await appears(applyDialog)) {
 			await applyDialog.locator('.nldesign-dialog-confirm').click()
 			// The dialog stays up until the swap and the theming sync have
 			// both settled, so its disappearance IS the "applied" signal: by
@@ -170,7 +186,7 @@ test.describe('apply without a reload', () => {
 		// 3. The theming-sync step is offered for a set with theming metadata;
 		//    confirming it must NOT reload either.
 		const syncDialog = page.locator('#nldesign-theming-dialog-overlay')
-		if (await syncDialog.isVisible({ timeout: 5_000 }).catch(() => false)) {
+		if (await appears(syncDialog)) {
 			await syncDialog.locator('.nldesign-dialog-confirm').click()
 			await expect(syncDialog).toBeHidden({ timeout: 15_000 })
 
@@ -191,7 +207,7 @@ test.describe('apply without a reload', () => {
 
 		// 4. Back to stock: every set layer is gone, still no navigation.
 		await page.selectOption('#nldesign-token-set-select', 'nextcloud')
-		if (await applyDialog.isVisible({ timeout: 5_000 }).catch(() => false)) {
+		if (await appears(applyDialog)) {
 			await applyDialog.locator('.nldesign-dialog-confirm').click()
 			await expect(applyDialog).toBeHidden({ timeout: 20_000 })
 		}
