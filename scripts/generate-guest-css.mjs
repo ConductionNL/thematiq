@@ -40,7 +40,7 @@
  * exactly the weight it has upstream and the component stylesheets keep beating
  * it exactly where they beat it on the real page.
  *
- * THE FIVE REWRITES, and why each one is safe
+ * THE SIX REWRITES, and why each one is safe
  *
  *  1. `html` is dropped. Its only declaration is `height: 100%`, which means
  *     nothing on an element that is not the document.
@@ -57,6 +57,9 @@
  *     whose own scripts look that id up.
  *  5. `@keyframes` blocks are dropped. They are global names, the page already
  *     has them from core, and a scope prefix cannot be applied to one anyway.
+ *  6. A `prefers-reduced-motion: reduce` block is APPENDED, under the scope.
+ *     The source has none of its own and two of its declarations animate here,
+ *     one of them an infinite spinner. See reducedMotion().
  *
  * Relative `url()` references are re-expressed: the source resolves them
  * against `core/css/`, the output is read from this app's `css/` directory.
@@ -330,8 +333,39 @@ function generate(sourceCss) {
 		'',
 	].join('\n')
 
+	const body = split(stripComments(sourceCss)).map(emit).join('').trimEnd()
+
+	return header + body + '\n\n' + reducedMotion()
+}
+
+/**
+ * REWRITE 6: motion, under the scope, honouring the user's setting.
+ *
+ * The source carries no `prefers-reduced-motion` block of its own — on the
+ * real login page it does not need one, because nothing there animates for
+ * longer than a submit — but two of its declarations reach this stage: the
+ * submit icon's `transition` and, at `.icon-loading:after`, an INFINITE
+ * spinner. Moving content that starts on its own and runs past five seconds
+ * is WCAG 2.2 AA territory in its own right (SC 2.2.2 Pause, Stop, Hide), not
+ * only a gate failure, and `css/playground.css` already answers the same
+ * question for the specimens it draws itself.
+ *
+ * Emitted here rather than added to the committed CSS by hand: that file is
+ * byte-compared against a fresh run of this generator, so a hand edit is
+ * exactly what the drift check exists to catch.
+ *
+ * @return {string} The reduced-motion block.
+ */
+function reducedMotion() {
 	return (
-		header + split(stripComments(sourceCss)).map(emit).join('').trimEnd() + '\n'
+		'@media (prefers-reduced-motion: reduce) {\n'
+		+ '\t' + SCOPE + ' *,\n'
+		+ '\t' + SCOPE + ' *::before,\n'
+		+ '\t' + SCOPE + ' *::after {\n'
+		+ '\t\ttransition: none !important;\n'
+		+ '\t\tanimation: none !important;\n'
+		+ '\t}\n'
+		+ '}\n'
 	)
 }
 

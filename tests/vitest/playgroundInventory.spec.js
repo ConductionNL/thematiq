@@ -198,33 +198,32 @@ describe('component inventory: the components', () => {
 		// cannot tell apart, one of which does not respond to being hovered.
 		// The real pseudo-class is wired on every specimen, so the drawing shows
 		// the component once and lets it be hovered.
-		const frozen = inventory.components
-			.flatMap((component) => {
-				// Only the states the stage actually draws: renderStage skips
-				// the pointable ones, so asking a builder for `hover` and then
-				// objecting to what comes back tests nothing that ships.
-				const states =
-					component.layout === 'wide'
-						? [null]
-						: component.states.filter(
-								(state) => !playground.POINTABLE.includes(state.id),
-							)
-				const markup = states
-					.map((state) =>
-						String(
-							playground.STAGES[component.id](
-								state === null ? null : state.id,
-								component,
-							) || '',
-						),
-					)
-					.join('')
-				return playground.POINTABLE.filter((name) =>
-					[...markup.matchAll(/class="([^"]*)"/g)].some((attribute) =>
-						attribute[1].split(/\s+/).includes(`is-${name}`),
+		const frozen = inventory.components.flatMap((component) => {
+			// Only the states the stage actually draws: renderStage skips
+			// the pointable ones, so asking a builder for `hover` and then
+			// objecting to what comes back tests nothing that ships.
+			const states =
+				component.layout === 'wide'
+					? [null]
+					: component.states.filter(
+							(state) => !playground.POINTABLE.includes(state.id),
+						)
+			const markup = states
+				.map((state) =>
+					String(
+						playground.STAGES[component.id](
+							state === null ? null : state.id,
+							component,
+						) || '',
 					),
-				).map((name) => `${component.id}: is-${name}`)
-			})
+				)
+				.join('')
+			return playground.POINTABLE.filter((name) =>
+				[...markup.matchAll(/class="([^"]*)"/g)].some((attribute) =>
+					attribute[1].split(/\s+/).includes(`is-${name}`),
+				),
+			).map((name) => `${component.id}: is-${name}`)
+		})
 
 		expect(frozen).toEqual([])
 	})
@@ -348,8 +347,7 @@ describe('the header specimen across Nextcloud versions', () => {
 	// entry row with a waffle, a popover grid and a current-app button. An admin
 	// on 32 asking "what happens when I upgrade" is the whole point of the
 	// switch, so these assert each version draws the shape that version ships.
-	const header = (version) =>
-		playground.STAGES['header-bar'](null, null, version)
+	const header = (version) => playground.STAGES['header-bar'](null, null, version)
 
 	const classesOf = (markup) =>
 		new Set(
@@ -414,8 +412,7 @@ describe('the header specimen across Nextcloud versions', () => {
 })
 
 describe('the header specimen shows the instance, not a mock-up', () => {
-	const header = (version) =>
-		playground.STAGES['header-bar'](null, null, version)
+	const header = (version) => playground.STAGES['header-bar'](null, null, version)
 
 	it('never hardcodes a stand-in account', () => {
 		// The bar an admin is judging is THEIR bar, and a stranger's initials in

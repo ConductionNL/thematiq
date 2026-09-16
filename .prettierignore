@@ -36,6 +36,12 @@ css/tokens/
 css/systems/lasuite/defaults.css
 css/systems/lasuite/brand-override.css
 
+# Same contract, different generator: emitted by scripts/generate-guest-css.mjs
+# from the vendored core/css/guest.css and byte-compared against the committed
+# copy by `npm run test:guest-css`. Its generator input lives under
+# scripts/sources/, which is already ignored above.
+css/playground-guest.css
+
 # VENDORED UPSTREAM, AND GENERATOR INPUT. This is the deployed Cunningham token
 # dump that generate-lasuite-tokens.mjs READS to produce brand-override.css.
 # Reformatting the input changes the output, so the drift check would fail on a

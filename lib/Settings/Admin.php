@@ -145,6 +145,9 @@ class Admin implements IDelegatedSettings {
 	 * @param IInitialState $initialState Carries server state to admin.js.
 	 * @param IRequest $request The current request (presentation-mock switch).
 	 * @param PlaygroundStateService $playgroundState What the component playground reads at boot.
+	 *
+	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - this is the app's one admin settings form, and Nextcloud's container injects
+	 *   through the constructor and nothing else; the parameter count is the number of things the panel renders.
 	 */
 	public function __construct(
 		IConfig $config,
@@ -244,18 +247,10 @@ class Admin implements IDelegatedSettings {
 		$this->initialState->provideInitialState('currentTokenSet', $currentTokenSet);
 		$this->publishPreviewState(activePreview: $activePreview, iconPackSource: $iconPackSource);
 
-		// The component playground (js/playground.js) rebuilds the token editor
-		// below into a selector / stage / tokens instrument. What it shows is
-		// data, published here — the script decides none of it. The set it
-		// describes is the one the page is WEARING, so a session preview wins.
-		$playgroundSet = $currentTokenSet;
-		if ($activePreview !== null) {
-			$playgroundSet = $activePreview['tokenSet'];
-		}
-
-		foreach ($this->playgroundState->getInitialState(tokenSetId: $playgroundSet) as $key => $value) {
-			$this->initialState->provideInitialState($key, $value);
-		}
+		$this->publishPlaygroundState(
+			currentTokenSet: $currentTokenSet,
+			activePreview: $activePreview
+		);
 
 		return new TemplateResponse(
 			Application::APP_ID,
@@ -306,6 +301,38 @@ class Admin implements IDelegatedSettings {
 		$this->initialState->provideInitialState('activePreview', ($activePreview ?? []));
 		$this->initialState->provideInitialState('iconPackSource', $iconPackSource);
 	}//end publishPreviewState()
+
+	/**
+	 * Publish what the component playground reads at boot.
+	 *
+	 * The instrument (js/playground.js) rebuilds the token editor below into a
+	 * selector / stage / tokens view. Everything it shows is data published
+	 * here — the script decides none of it.
+	 *
+	 * The set it describes is the one the page is WEARING, so a session
+	 * preview wins over the persisted set: an admin previewing a set and
+	 * opening a component must be shown the set in front of them.
+	 *
+	 * Keys are forwarded rather than named here so the service stays the one
+	 * place that decides what the instrument is given.
+	 *
+	 * @param string                    $currentTokenSet The persisted token set id.
+	 * @param array<string, mixed>|null $activePreview   The active session preview, or null when there is none.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	private function publishPlaygroundState(string $currentTokenSet, ?array $activePreview): void {
+		$playgroundSet = $currentTokenSet;
+		if ($activePreview !== null) {
+			$playgroundSet = $activePreview['tokenSet'];
+		}
+
+		foreach ($this->playgroundState->getInitialState(tokenSetId: $playgroundSet) as $key => $value) {
+			$this->initialState->provideInitialState($key, $value);
+		}
+	}//end publishPlaygroundState()
 
 	/**
 	 * Resolve the read-only "active icon pack" indicator: the resolved

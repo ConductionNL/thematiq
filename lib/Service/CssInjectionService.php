@@ -50,6 +50,9 @@ use Throwable;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - this class IS the cascade: one branch per layer the page may emit, and the order of
  *   those branches is the specification. Splitting it would spread the load order across files, which is the defect the single
  *   designSystemLayers() list exists to prevent.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - for the same reason: every collaborator here answers "does this layer load, and with
+ *   what". A layer whose source lived behind a facade would be a layer whose position in the cascade is decided somewhere other than
+ *   designSystemLayers(), which is exactly what this class exists to prevent.
  */
 class CssInjectionService {
 
@@ -155,6 +158,9 @@ class CssInjectionService {
 	 * @param ThemePreviewBannerService $previewBannerService The theme-preview banner injector.
 	 * @param LoggerInterface $logger The logger for skipped layers.
 	 * @param StockTokensService $stockTokens Resolves the `nextcloud` set from the running instance.
+	 *
+	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
+	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
 	 */
 	public function __construct(
 		IConfig $config,
@@ -339,6 +345,11 @@ class CssInjectionService {
 	 *         Ordered entries: `kind` is `file` (a stylesheet under `css/`, `file` without extension)
 	 *         or `inline` (a `<style>` block, `css`, with the element `id` the client replaces).
 	 *
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - the path count IS the number of
+	 *   layer combinations a page can emit, and each branch here is one
+	 *   documented condition. Extracting halves would move part of the load
+	 *   order out of the one list that states it.
+	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
 	 */
@@ -379,16 +390,20 @@ class CssInjectionService {
 			$stockCss = $this->stockTokens->getCss();
 		}
 
+		// 3a-2. The shipped file is the layer unless the instance answered, in
+		// which case the resolved block takes its place.
+		$tokenLayer = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
 		if ($stockCss !== null) {
-			$layers[] = [
+			$tokenLayer = [
 				'layer' => 'tokens',
 				'kind' => 'inline',
 				'css' => $stockCss,
 				'id' => self::STOCK_TOKENS_STYLE_ID,
 			];
-		} else {
-			$layers[] = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
 		}
+
+		$layers[] = $tokenLayer;
+
 		// 3a0. The logo as an ABSOLUTE url, overriding the relative one the token
 		// file declares. See logoUrlLayer() — a relative url() inside a custom
 		// property is resolved against the stylesheet that USES it, and the use

@@ -741,15 +741,12 @@
 	margin-right: 8px;
 	background-image: var(
 		--image-logoheader,
-		var(--image-logo, url("../../../core/img/logo/logo.svg"))
+		var(--image-logo, url('../../../core/img/logo/logo.svg'))
 	);
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: contain;
-	filter: var(
-		--image-logoheader-custom,
-		var(--background-image-invert-if-bright)
-	);
+	filter: var(--image-logoheader-custom, var(--background-image-invert-if-bright));
 }
 
 #nldesign-preview .nldesign-pg-header .app-menu ul {
@@ -1297,7 +1294,6 @@
 	display: inline-block;
 }
 
-
 /* Empty content ------------------------------------------------------------ */
 
 #nldesign-preview .nldesign-pg-empty {
@@ -1507,7 +1503,9 @@
 	font-weight: 500;
 }
 
-#nldesign-preview .nldesign-pg-unscoped .input-field--trailing-icon
+#nldesign-preview
+	.nldesign-pg-unscoped
+	.input-field--trailing-icon
 	.input-field__input {
 	padding-inline-end: var(--default-clickable-area, 44px);
 }
@@ -1528,12 +1526,13 @@
 	font-size: 13px;
 }
 
-#nldesign-preview .nldesign-pg-unscoped .input-field--error
-	.input-field__input {
+#nldesign-preview .nldesign-pg-unscoped .input-field--error .input-field__input {
 	box-shadow: 0 0 0 2px var(--color-error);
 }
 
-#nldesign-preview .nldesign-pg-unscoped .input-field--error
+#nldesign-preview
+	.nldesign-pg-unscoped
+	.input-field--error
 	.input-field__helper-text-message {
 	color: var(--color-error-text, var(--color-error));
 }
@@ -1625,9 +1624,7 @@
 	min-height: var(--default-clickable-area, 44px);
 	max-width: fit-content;
 	padding: var(--default-grid-baseline, 4px)
-		calc(
-			(var(--default-clickable-area, 44px) - var(--icon-height, 24px)) / 2
-		);
+		calc((var(--default-clickable-area, 44px) - var(--icon-height, 24px)) / 2);
 	border-radius: var(--border-radius-element);
 	cursor: pointer;
 	user-select: none;
@@ -1643,10 +1640,11 @@
 	color: var(--color-primary-element);
 }
 
-#nldesign-preview .nldesign-pg-unscoped .checkbox-radio-switch-switch:not(
-		.checkbox-radio-switch--checked
-	)
-	.checkbox-radio-switch__icon > * {
+#nldesign-preview
+	.nldesign-pg-unscoped
+	.checkbox-radio-switch-switch:not(.checkbox-radio-switch--checked)
+	.checkbox-radio-switch__icon
+	> * {
 	color: var(--color-text-maxcontrast);
 }
 
@@ -2063,9 +2061,8 @@
 	width: 20px;
 	height: 20px;
 	background-color: currentcolor;
-	mask: url("../img/app.svg") center / 20px no-repeat;
+	mask: url('../img/app.svg') center / 20px no-repeat;
 }
-
 
 /* --- the 34 header: search in the middle --- */
 
@@ -2139,4 +2136,3 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-

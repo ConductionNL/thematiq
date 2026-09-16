@@ -116,6 +116,8 @@ class PlaygroundStateService {
 	 * @return int The major version, or 0 when it cannot be read.
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - see rationale above.
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
 	 */
 	protected function getServerMajor(): int {
 		try {

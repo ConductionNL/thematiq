@@ -258,7 +258,10 @@ describe('component instrument: the values the export carries', () => {
 		// set: the file defines what the set is MADE of, and a set that
 		// silently loses a token is a set that cannot be re-imported whole.
 		const live = playground.liveTokens(
-			{ '--nldesign-color-primary': '#00679e', '--nldesign-color-error': '#FFE7E7' },
+			{
+				'--nldesign-color-primary': '#00679e',
+				'--nldesign-color-error': '#FFE7E7',
+			},
 			(name, fallback) => fallback,
 		)
 
@@ -288,10 +291,25 @@ describe('component instrument: what a marker explains', () => {
 		],
 		tokens: [
 			{ name: '--color-primary-element', paints: 'The fill', callout: 1 },
-			{ name: '--color-primary-element-text', paints: 'The label', callout: 1 },
-			{ name: '--color-primary-element-hover', paints: 'The hovered fill', callout: 2 },
+			{
+				name: '--color-primary-element-text',
+				paints: 'The label',
+				callout: 1,
+			},
+			{
+				name: '--color-primary-element-hover',
+				paints: 'The hovered fill',
+				callout: 2,
+			},
 		],
-		fixed: [{ callout: 3, what: 'Disabled opacity', why: 'Nextcloud fixes it at 0.5.', code: 'derived-by-nextcloud' }],
+		fixed: [
+			{
+				callout: 3,
+				what: 'Disabled opacity',
+				why: 'Nextcloud fixes it at 0.5.',
+				code: 'derived-by-nextcloud',
+			},
+		],
 	}
 
 	it('names the state, then says what is painted there', () => {
@@ -495,7 +513,11 @@ describe('the shipped stylesheets, reached', () => {
 				{
 					cssRules: [
 						{ styleSheet: sheet('.button-vue[data-v-00a99684]') },
-						{ styleSheet: sheet('.input-field__input[data-v-8e16cbb5]') },
+						{
+							styleSheet: sheet(
+								'.input-field__input[data-v-8e16cbb5]',
+							),
+						},
 					],
 				},
 			],

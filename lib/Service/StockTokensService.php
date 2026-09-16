@@ -117,8 +117,15 @@ class StockTokensService {
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public function getCss(): ?string {
+		// The memo is false once a resolve has failed, a string once one has
+		// succeeded, and null while neither has happened. Taken in that order
+		// so what is returned second is a string and nothing else.
+		if ($this->memo === false) {
+			return null;
+		}
+
 		if ($this->memo !== null) {
-			return $this->memo === false ? null : $this->memo;
+			return $this->memo;
 		}
 
 		$css = $this->build();
@@ -138,7 +145,7 @@ class StockTokensService {
 			return null;
 		}
 
-		// getTokenSources() maps --color-X => --nldesign-Y, which is the
+		// The getTokenSources() map runs --color-X => --nldesign-Y, which is the
 		// direction the cascade reads. Here the question is the other way
 		// round — for this token, which Nextcloud variable holds its stock
 		// value — so the map is inverted.
@@ -258,6 +265,11 @@ class StockTokensService {
 	 * stand in for that only if it is overridable.
 	 *
 	 * @return array<string, string> Variable name => declared value.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - another app's class, see the note
+	 *                                         on DEFAULT_THEME: a constructor
+	 *                                         type-hint would make this file
+	 *                                         unloadable without the theming app.
 	 *
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */

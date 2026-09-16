@@ -752,3 +752,12 @@
 :where(#nldesign-preview .nldesign-pg-guestpage) .hidden {
 	display:none;
 }
+
+@media (prefers-reduced-motion: reduce) {
+	:where(#nldesign-preview .nldesign-pg-guestpage) *,
+	:where(#nldesign-preview .nldesign-pg-guestpage) *::before,
+	:where(#nldesign-preview .nldesign-pg-guestpage) *::after {
+		transition: none !important;
+		animation: none !important;
+	}
+}
