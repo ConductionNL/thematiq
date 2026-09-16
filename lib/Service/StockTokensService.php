@@ -12,6 +12,8 @@
  * @copyright 2026 Conduction B.V.
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
+ *
+ * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
  */
 
 declare(strict_types=1);
@@ -52,6 +54,8 @@ use Throwable;
  * Every failure path returns null so the caller can fall back to the shipped
  * file. A wrong stock theme is a cosmetic defect; no stock theme at all is a
  * blank page.
+ *
+ * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
  */
 class StockTokensService {
 
@@ -96,6 +100,8 @@ class StockTokensService {
 	 *
 	 * @param TokenSetPreviewService $sources The variable-to-token mapping.
 	 * @param LoggerInterface        $logger  Records resolve failures.
+	 *
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public function __construct(TokenSetPreviewService $sources, LoggerInterface $logger) {
 		$this->sources = $sources;
@@ -107,6 +113,8 @@ class StockTokensService {
 	 *
 	 * @return string|null The stylesheet body, or null when the instance could
 	 *                     not be read and the shipped file should be used.
+	 *
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public function getCss(): ?string {
 		if ($this->memo !== null) {
@@ -250,6 +258,8 @@ class StockTokensService {
 	 * stand in for that only if it is overridable.
 	 *
 	 * @return array<string, string> Variable name => declared value.
+	 *
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
 	protected function stockVariables(): array {
 		try {

@@ -70,12 +70,18 @@ service that already resolves them for the preview swatches.
 
 - **Affected specs**: `component-playground` (new), `admin-settings` (the panel gains the
   instrument and publishes what it reads), `custom-css-overrides` (unchanged writer, new
-  surface), `theme-preview` (the instrument describes the previewed set).
+  surface), `theme-preview` (the instrument describes the previewed set),
+  `nextcloud-variable-mapping` (the `nextcloud` set is resolved from the running instance
+  rather than read from a shipped snapshot).
 - **Affected code**: `lib/Service/PlaygroundStateService.php` (new),
   `lib/Service/TokenSetPreviewService.php` (resolved tokens and the variable-to-token map),
-  `lib/Settings/Admin.php` (publishes the four keys), `templates/settings/admin.php` (loads
+  `lib/Settings/Admin.php` (publishes the five keys), `templates/settings/admin.php` (loads
   the script and its stylesheet), `js/playground.js` (new),
-  `js/playground/components.json` (new), `css/playground.css` (new), `l10n/*`.
+  `js/playground/components.json` (new), `css/playground.css` (new), `l10n/*`;
+  `lib/Service/StockTokensService.php` (new) and `lib/Service/CssInjectionService.php`
+  (the `nextcloud` set resolves from the instance, with `css/tokens/nextcloud.css` demoted
+  to the fallback); `scripts/generate-guest-css.mjs`, `scripts/sources/nextcloud-guest.css`
+  and `css/playground-guest.css` (the vendored login stylesheet, design decision 7).
 - **Reused, not rebuilt**: the token editor's rows, dirty tracking and Save; the preview
   container and its two existing stages; `TokenRegistry` for the vocabulary;
   `css/systems/nldesign/overrides.css` for the variable-to-token map; the converter's reason
@@ -85,7 +91,8 @@ service that already resolves them for the preview swatches.
   rows per state, the URL hash, the export),
   `tests/Unit/Service/PlaygroundStateServiceTest.php` (what the panel publishes and what
   happens when a piece is missing), `tests/Unit/Settings/AdminInitialStateTest.php` (the keys
-  are published, for the set the page is wearing), and a Playwright visual spec per component
-  in light and dark under `tests/e2e/visual/`.
+  are published, for the set the page is wearing), `tests/Unit/Service/StockTokensServiceTest.php`
+  (the inversion of the mapping, the values that cannot be frozen, and every path that falls
+  back), and a Playwright visual spec per component in light and dark under `tests/e2e/visual/`.
 - **No new dependency and no build step.** The repo's "no build for the admin panel" stance
   in `project.md` is unchanged, and `npm run build` stays fonts and icons.

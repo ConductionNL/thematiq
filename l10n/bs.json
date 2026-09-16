@@ -243,11 +243,25 @@
         "Full view": "Full view",
         "no token": "no token",
         "not in the token registry": "not in the token registry",
-        "Show all {count} tokens of {tab}": "Show all {count} tokens of {tab}",
         "The token set could not be exported.": "The token set could not be exported.",
-        "Applied. Reload the page to see changes.": "Applied. Reload the page to see changes.",
         "{count} tokens": "{count} tokens",
-        "Reload the page to see changes.": "Reload the page to see changes."
+        "Reload the page to see changes.": "Reload the page to see changes.",
+        "Nextcloud version": "Nextcloud version",
+        "Text area specimen": "Text area specimen",
+        "The version this instance is running": "The version this instance is running",
+        "Saved": "Saved",
+        "Cancelled": "Cancelled",
+        "Options open": "Options open",
+        "Deleted": "Deleted",
+        "Approved": "Approved",
+        "Signing in …": "Signing in …",
+        "Device login opened": "Device login opened",
+        "Password reset opened": "Password reset opened",
+        "Menu closed": "Menu closed",
+        "Menu opened": "Menu opened",
+        "{name} selected": "{name} selected",
+        "Switched on": "Switched on",
+        "Switched off": "Switched off"
     },
     "plurals": {}
 }

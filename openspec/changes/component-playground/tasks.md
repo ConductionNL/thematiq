@@ -5,7 +5,8 @@ Tick a box when the work is merged to `development`, not when it is started.
 ## 1. Spec and design
 
 - [ ] 1.1 Write this change: `proposal.md`, `design.md`, `tasks.md`, spec deltas on
-      `component-playground` (new), `admin-settings`, `custom-css-overrides`, `theme-preview`.
+      `component-playground` (new), `admin-settings`, `custom-css-overrides`, `theme-preview`,
+      `nextcloud-variable-mapping`.
 - [ ] 1.2 Record the rendering decision and the reason the Vue build was not taken, measured
       against what `js/admin-mock.js` already does.
 - [ ] 1.3 Record why this is built into the token editor rather than served as a page, and
@@ -21,8 +22,8 @@ Tick a box when the work is merged to `development`, not when it is started.
 - [ ] 2.3 The stage: a third `.nldesign-preview-stage[data-view="component"]` in the preview,
       with the App/Login switch hidden because the tabs now decide the view.
 - [ ] 2.4 `lib/Service/PlaygroundStateService.php` + `lib/Settings/Admin.php`: publish
-      `playgroundInventory`, `playgroundReasons`, `playgroundTokens` and
-      `playgroundTokenSources` for the set the page is wearing.
+      `playgroundInventory`, `playgroundReasons`, `playgroundTokens`,
+      `playgroundTokenSources` and `playgroundVersion` for the set the page is wearing.
 - [ ] 2.5 `css/playground.css`: the selector, the chips, the stage, the specimens and the
       filtered list. Nothing in it may style a specimen from anything but the real
       `--color-*` variables.
@@ -39,7 +40,10 @@ Tick a box when the work is merged to `development`, not when it is started.
       cards, badge & counter, toast; heading, paragraph, link, muted text, status text.
 - [ ] 3.3 Stage markup per component, one specimen per state, numbered to match its rows.
 - [ ] 3.4 The filtered list: cloned editor rows, each with its callout number and what it
-      paints, grouped by state, with "show all N tokens of <tab>" back to the full list.
+      paints, grouped by state. No "show all N tokens of <tab>" link back to the full list:
+      the chip row above the stage already carries the full view as its first chip, which is
+      the same destination and the place an admin is already looking to change what the stage
+      shows. A second route to it was considered and dropped.
 - [ ] 3.5 Token-less rows render the fact, no editor, and the converter's reason code.
 
 ## 4. Editing and exporting
@@ -64,7 +68,7 @@ Tick a box when the work is merged to `development`, not when it is started.
 - [ ] 5.2 `tests/vitest/playgroundSelection.spec.js`: the chips of a tab, the rows grouped per
       state, the URL hash round-trip and its refusals, and the export (round-trip, audit
       rating, an override written back to its token, an override that cannot be expressed).
-- [ ] 5.3 `tests/Unit/Service/PlaygroundStateServiceTest.php`: the four keys, the inventory is
+- [ ] 5.3 `tests/Unit/Service/PlaygroundStateServiceTest.php`: the five keys, the inventory is
       the shipped file, the tabs are the editor's own, and a missing mapping table or
       inventory costs only what it must.
 - [ ] 5.4 `tests/Unit/Settings/AdminInitialStateTest.php`: the keys are published, and for the
@@ -73,15 +77,41 @@ Tick a box when the work is merged to `development`, not when it is started.
 - [ ] 5.6 l10n: new strings in `l10n/en.json`, translated in `nl.json`, backfilled everywhere
       else by `check-l10n-completeness --write`, `.js` rebuilt.
 
-## 6. Acceptance
+## 6. The stock token set
 
-- [ ] 6.1 Pick Buttons & Status → Primary button: the stage draws it in four states, the list
+- [ ] 6.1 `lib/Service/StockTokensService.php`: build the `nextcloud` set from
+      `DefaultTheme::getCSSVariables()`, inverting the `--color-*` → `--nldesign-*` map that
+      `TokenSetPreviewService` parses out of `overrides.css` (design decision 7).
+- [ ] 6.2 Literals only: resolve `var()` chains, drop what cannot be frozen, and pick the
+      defining variable where several read one token.
+- [ ] 6.3 `lib/Service/CssInjectionService.php`: emit the resolved block as the tokens layer
+      for that set, and fall back to `css/tokens/nextcloud.css` on every failure path.
+- [ ] 6.4 Spec delta on `nextcloud-variable-mapping`, and `@spec` tags on the service.
+- [ ] 6.5 `tests/Unit/Service/StockTokensServiceTest.php`: the inversion, the many-to-one
+      choice, the values that cannot be frozen, and each way the fallback is reached.
+
+## 7. The guest stylesheet
+
+- [ ] 7.1 Vendor `core/css/guest.css` from `nextcloud/server v34.0.0` verbatim as
+      `scripts/sources/nextcloud-guest.css`, keeping its AGPL-3.0-or-later SPDX header and both
+      copyright lines.
+- [ ] 7.2 `scripts/generate-guest-css.mjs`: re-emit every rule under
+      `:where(#nldesign-preview .nldesign-pg-guestpage)` so the login specimens are painted by
+      core's own declarations without a single one reaching the settings page (design decision 8).
+- [ ] 7.3 `npm run generate:guest-css` / `npm run test:guest-css`, the same check/--write shape
+      as `generate-lasuite-tokens.mjs`, and `css/playground-guest.css` committed as its output.
+- [ ] 7.4 Keep the generated file out of the formatters that would rewrite it: `ignoreFiles` in
+      `stylelint.config.js`, and the generated pair in `.prettierignore`.
+
+## 8. Acceptance
+
+- [ ] 8.1 Pick Buttons & Status → Primary button: the stage draws it in four states, the list
       shows five rows, changing the hover colour repaints the hover specimen, and Save writes
       it exactly as the full list would.
-- [ ] 6.2 Export a token set the vocabulary audit rates complete. This is the handover to the
+- [ ] 8.2 Export a token set the vocabulary audit rates complete. This is the handover to the
       converter — the reference its output is diffed against.
 
-## 7. Open
+## 9. Open
 
-- [ ] 7.1 Authoring the OpenWOO reference values is design work that follows this change; the
-      instrument is the tool, not the set (design decision 7).
+- [ ] 9.1 Authoring the OpenWOO reference values is design work that follows this change; the
+      instrument is the tool, not the set (design decision 9).

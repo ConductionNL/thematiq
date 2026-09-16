@@ -116,7 +116,92 @@ token is reported rather than dropped.
 The export therefore round-trips: exporting the active set with nothing overridden must produce
 a file the audit rates exactly as it rates the set it came from. A vitest case pins that.
 
-## 7. What this change does not do
+## 7. The `nextcloud` set is resolved from the instance, not from a file
+
+The playground is an instrument for judging what a token set does, and the first set anyone
+judges against is `nextcloud` — the one that is supposed to look like the instance with no
+theme applied. That set was a hand-copied snapshot in `css/tokens/nextcloud.css`, and a
+snapshot of a moving target is wrong the moment the target moves. Measured on 34.0.4 against
+the theme the server itself serves: of the 29 values that map onto a live Nextcloud variable,
+12 matched and 17 did not. Several were not merely stale but inverted in role — Nextcloud
+turned `--color-error` from a saturated fill into a pale background with its own `-text`
+token, so the set that exists to look like stock was painting NC29-era fills onto NC34. The
+file's own header records the previous round of the same bug: it claimed `#0082c9` after NC29
+had moved to `#00679e`.
+
+An instrument drawn against values that are wrong by a third is worse than no instrument, so
+`StockTokensService` resolves the set from `DefaultTheme::getCSSVariables()` — the same
+computation that produces `/apps/theming/theme/default.css` — and `css/tokens/nextcloud.css`
+stays as the fallback. Three things about that are load-bearing, and all three are requirements
+in the `nextcloud-variable-mapping` delta:
+
+- **A stylesheet cannot do this.** Writing `--nldesign-color-primary: var(--color-primary)`
+  closes a loop with `overrides.css`, which already says the opposite, and CSS discards a
+  custom property that depends on itself. The values have to be resolved before they reach the
+  page, and only literals may leave — a gradient or a `color-mix()` is dropped rather than
+  frozen into a token that would resolve differently in the browser.
+- **The inverse mapping is many-to-one, and the choice is visible.** Four variables read
+  `--nldesign-color-primary`, and their stock values differ: `--color-primary` is `#00679e`
+  while `--color-primary-light-text` is `#00293f`. Taking whichever came last gave the token a
+  text colour, which paints the header a shade nobody asked for. The variable carrying the
+  token's own name defines it; where none does, sorted order decides, so the output does not
+  depend on the order declarations appear in `overrides.css`.
+- **Every failure path degrades to the file.** The theming app is another app and may be
+  absent; `\OCP\Server::get()` on its class is wrapped, the class is named as a string rather
+  than imported so this file stays parseable without it, and a failure is logged because the
+  fallback is otherwise silent. A stale stock theme is a cosmetic defect; no stock theme at all
+  is a blank page.
+
+This is the instance's stock theme rather than Nextcloud's factory one. An admin who has set a
+primary colour in core theming is wearing that colour, so that colour is what the set reports —
+which is the right answer for an instrument whose question is "what does my theme change".
+
+## 8. The login specimens are painted by a vendored, rewritten copy of core's guest.css
+
+The settings page already loads the shipped stylesheets for most of what the specimens stand
+for — the NcButton, NcInputField and NcCheckboxRadioSwitch chunks are all imported by
+`dist/theming-settings-admin.css` — so a specimen carrying the right class names and the right
+Vue scope attribute is painted by the component's own rules (decision 1).
+
+`core/css/guest.css` is the exception: Nextcloud emits it on the login page and nowhere else.
+It is also the file that owns everything an admin looks at on a login specimen — `.guest-box`
+(the translucent surface, the blur, `--border-radius-container`, the shadow), the logo's
+175x130 box, the `h2`, the bold links, the footer that carries the slogan. Hand-drawing that
+card was the alternative, and a hand-drawn card is right on the day it is written and quietly
+wrong after the next release.
+
+So the file is vendored and re-emitted under one scope, and that is a contract rather than a
+copy:
+
+- **Source.** `scripts/sources/nextcloud-guest.css` is `core/css/guest.css` from
+  `nextcloud/server v34.0.0`, vendored verbatim. `scripts/generate-guest-css.mjs` names the
+  release in `SOURCE_RELEASE` and stamps it into the generated header.
+- **Output.** `css/playground-guest.css` is generated, never hand-edited. `npm run
+  generate:guest-css` writes it; `npm run test:guest-css` regenerates to a temporary file and
+  diffs it against the committed copy, so the two cannot drift apart unnoticed. Because the
+  check compares generator OUTPUT against the committed file, a fix belongs in the generator
+  and is then regenerated — editing the CSS directly is exactly what the check exists to catch.
+- **Why `:where()`.** The scope is `:where(#nldesign-preview .nldesign-pg-guestpage)`, which
+  contributes zero specificity. A plain prefix would not just place these rules, it would
+  promote them: upstream `button { background-color: var(--color-main-background) }` is (0,0,1)
+  and loses to NcButton's `.button-vue[data-v-…]` at (0,2,0), which is why the log-in button is
+  not a white box. Prefixed with an id and a class it would be (1,2,0) and would start winning,
+  inverting the cascade the whole file was written inside.
+- **What is rewritten.** Five things, each argued in the generator's header: `html` is dropped,
+  `body` and `#body-login` become the scope root minus the viewport-only declarations, `#header`
+  becomes `.header-guest` (the settings page already has an element with the id `header`), and
+  `@keyframes` blocks are dropped as global names the page already carries. Relative `url()`
+  references are re-expressed from `core/css/` to this app's `css/`.
+- **Bumping the snapshot.** Replace `scripts/sources/nextcloud-guest.css` with the file from the
+  new release, update `SOURCE_RELEASE`, run `npm run generate:guest-css`, and read the diff of
+  the generated file — a rewrite that stopped matching shows up there rather than on the stage.
+
+On licensing there is nothing to reconcile: the vendored file keeps its upstream
+`SPDX-License-Identifier: AGPL-3.0-or-later` and both copyright lines, the generated file
+reproduces them, and neither is relicensed. AGPL-3.0 is on the EUPL-1.2 compatibility list and
+the file is aggregated rather than merged into this app's own EUPL-1.2 sources.
+
+## 9. What this change does not do
 
 It does not build the OpenWOO reference set. The playground is the tool; authoring the values
 is a separate act of design work that follows it, and the acceptance criterion below

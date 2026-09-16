@@ -50,6 +50,38 @@
 })(typeof window !== 'undefined' ? window : this, function () {
 	'use strict'
 
+	/**
+	 * Nextcloud's `t()`, looked up at call time and safe where there is none.
+	 *
+	 * The stage builders are unit-tested under Node, where no `OC` global has
+	 * ever been loaded. Reaching straight for the global would make a specimen
+	 * that says anything throw while it is being drawn, and every inventory
+	 * test would then fail for a reason that has nothing to do with the
+	 * inventory. Falling back to the English source with its placeholders
+	 * filled in is exactly what `l10n/en.json` carries anyway.
+	 *
+	 * Looked up per call rather than captured once, because this file is
+	 * evaluated at load and the catalogue is registered by the page.
+	 *
+	 * @param {string} app The app the catalogue belongs to.
+	 * @param {string} text The English source string.
+	 * @param {Object} [vars] Placeholder values.
+	 * @return {string} The translation, or the source with placeholders filled.
+	 */
+	function t(app, text, vars) {
+		if (typeof window !== 'undefined' && typeof window.t === 'function') {
+			return window.t(app, text, vars)
+		}
+
+		return String(text).replace(/\{(\w+)\}/g, function (whole, name) {
+			if (vars === undefined || vars === null || vars[name] === undefined) {
+				return whole
+			}
+
+			return String(vars[name])
+		})
+	}
+
 	/** The chip that means "no component: show the whole tab". */
 	var FULL_VIEW = 'full-view'
 
@@ -128,17 +160,37 @@
 	 * What the stage reports when each specimen button is pressed.
 	 *
 	 * Reported on the line below the stage rather than written into the
-	 * button's own label — see say(). Dutch and hard-coded, like the specimen
-	 * labels themselves: these belong to a drawing of a component, not to the
-	 * interface an admin acts on, and running them through t() would put a
-	 * translator to work on strings nobody reads for their meaning.
+	 * button's own label — see say(). These are the instrument SPEAKING to the
+	 * admin about what the specimen just did, not text drawn inside the
+	 * drawing, so they are translated like the rest of the panel's own chrome.
+	 * The labels ON the specimens stay as they are: those are the content of a
+	 * picture of a Nextcloud screen.
+	 *
+	 * A function rather than a table, because `t()` must be called when the
+	 * stage is drawn — a table built at load time would freeze whatever locale
+	 * happened to be registered first.
+	 *
+	 * @param {string} kind The button kind: primary, secondary, tertiary…
+	 * @return {string} What the stage says when it is pressed.
 	 */
-	var BUTTON_DONE = {
-		primary: 'Opgeslagen',
-		secondary: 'Geannuleerd',
-		tertiary: 'Opties open',
-		error: 'Verwijderd',
-		success: 'Goedgekeurd',
+	function buttonDone(kind) {
+		if (kind === 'primary') {
+			return t('thematiq', 'Saved')
+		}
+		if (kind === 'secondary') {
+			return t('thematiq', 'Cancelled')
+		}
+		if (kind === 'tertiary') {
+			return t('thematiq', 'Options open')
+		}
+		if (kind === 'error') {
+			return t('thematiq', 'Deleted')
+		}
+		if (kind === 'success') {
+			return t('thematiq', 'Approved')
+		}
+
+		return ''
 	}
 
 	/* ---------------------------------------------------------------- */
@@ -466,7 +518,16 @@
 		var selector = el('div', 'nldesign-pg-selector')
 		selector.appendChild(tabs)
 		state.chips = el('div', 'nldesign-pg-chips')
-		state.chips.setAttribute('role', 'radiogroup')
+		// A plain group of toggle buttons, NOT a radiogroup. The semantics of a
+		// radiogroup are right — one of N, exactly one on — but announcing one
+		// promises the WAI-ARIA radio keyboard contract with it: a single tab
+		// stop for the whole row, arrows moving between the options. These
+		// chips are native buttons, so every one of them is a tab stop, and
+		// there is no arrow handling; a screen-reader user told this is a
+		// radiogroup would press arrows at a row that does not answer.
+		// `aria-pressed` on a button describes what the row actually does and
+		// needs neither roving tabindex nor arrow keys.
+		state.chips.setAttribute('role', 'group')
 		state.chips.setAttribute('aria-label', t('thematiq', 'Component'))
 		selector.appendChild(state.chips)
 		preview.parentNode.insertBefore(selector, preview)
@@ -656,14 +717,13 @@
 		entries.forEach(function (entry) {
 			var chip = el('button', 'nldesign-pg-chip', entry.title)
 			chip.type = 'button'
-			chip.setAttribute('role', 'radio')
 			// Read by the hidden bold twin in css/playground.css, which holds
 			// every chip at its selected width so the row cannot re-wrap under
 			// the pointer when one is clicked.
 			chip.setAttribute('data-label', entry.title)
 			var on = entry.id === state.component
 			chip.classList.toggle('on', on)
-			chip.setAttribute('aria-checked', on ? 'true' : 'false')
+			chip.setAttribute('aria-pressed', on ? 'true' : 'false')
 			chip.addEventListener('click', function () {
 				select(state, entry.id)
 			})
@@ -852,17 +912,65 @@
 					twin.value = input.value
 					twin.dispatchEvent(new Event('input', { bubbles: true }))
 				}
+				// Both directions, the way admin.js does it on the originals.
+				// Mirroring only picker → text left the swatch beside a
+				// hand-typed hex showing the previous colour, which is the one
+				// thing in the row that is not a number an admin can check.
 				var text = row.querySelector('.nldesign-color-text')
 				if (input.type === 'color' && text !== null) {
 					text.value = input.value
 				}
+				var swatch = row.querySelector('.nldesign-color-picker')
+				if (
+					input.type === 'text'
+					&& swatch !== null
+					&& /^#[0-9a-fA-F]{6}$/.test(input.value.trim()) === true
+				) {
+					swatch.value = input.value.trim()
+				}
+
 				state.preview.style.setProperty(spec.name, input.value)
+
+				// markDirty() puts the custom-value badge on the row it finds
+				// by `data-token-row`, which is always the ORIGINAL — and the
+				// original is hidden while a component is open. Without this
+				// the badge appears only after leaving and re-entering the
+				// component, so the one row the admin is looking at is the one
+				// that never says the token is overridden.
+				mirrorBadge(original, row)
 			})
 		})
 
 		wireReset(state, row, original, spec)
 
 		return row
+	}
+
+	/**
+	 * Carry the "this token is overridden" badge from the real row onto the
+	 * clone, in both directions — admin.js adds it on an edit and removes it on
+	 * a reset, and the clone is the row that is actually on screen.
+	 *
+	 * @param {Element} original The editor's own row.
+	 * @param {Element} row The cloned row.
+	 * @return {void}
+	 */
+	function mirrorBadge(original, row) {
+		var label = row.querySelector('.nldesign-token-label')
+		if (label === null) {
+			return
+		}
+
+		var wanted = original.querySelector('.nldesign-token-custom-badge')
+		var here = label.querySelector('.nldesign-token-custom-badge')
+
+		if (wanted !== null && here === null) {
+			label.appendChild(wanted.cloneNode(true))
+			return
+		}
+		if (wanted === null && here !== null) {
+			here.remove()
+		}
 	}
 
 	/**
@@ -899,6 +1007,7 @@
 							target.value = source.value
 						}
 					})
+				mirrorBadge(original, row)
 			}, 0)
 		})
 	}
@@ -1068,15 +1177,27 @@
 	}
 
 	/**
-	 * The scope map, read once and reused.
+	 * The scope map for the stage currently being built.
 	 *
-	 * Re-read while it is empty rather than caching the emptiness: at boot a
-	 * stylesheet can still be in flight. If it stays empty the specimens are
-	 * still drawn — `css/playground.css` carries a zero-specificity floor for
-	 * each of these components, which the real rules override the moment they
-	 * apply — but it is worth saying so out loud, because it means an admin is
-	 * looking at this app's approximation of a component rather than at the
-	 * component.
+	 * The memo lives for one `renderStage()` call, which invalidates it before
+	 * it draws, and NOT for the life of the page. Caching until the map came
+	 * back empty was not enough: `build()` runs off a MutationObserver on the
+	 * editor render, which is not synchronised with stylesheet loading, so the
+	 * common shape of a sheet still in flight is some sheets parsed and one
+	 * not — a map that is non-empty and missing exactly the classes of the
+	 * late chunk. That map passed the emptiness test and was then kept, and
+	 * every specimen from the late chunk drew unstamped with no warning.
+	 *
+	 * Re-reading costs one regex walk of the sheets per stage, and a stage is
+	 * rebuilt only on an explicit selection, so the memo was buying very
+	 * little to begin with. Within one build it still holds, which is what the
+	 * per-specimen and per-interaction calls need.
+	 *
+	 * If the map is empty the specimens are still drawn — `css/playground.css`
+	 * carries a zero-specificity floor for each of these components, which the
+	 * real rules override the moment they apply — but it is worth saying so
+	 * out loud, because it means an admin is looking at this app's
+	 * approximation of a component rather than at the component.
 	 *
 	 * @return {Object<string, Array<string>>} Class name → scope attributes.
 	 */
@@ -1084,7 +1205,7 @@
 		if (typeof document === 'undefined') {
 			return {}
 		}
-		if (scopes === null || Object.keys(scopes).length === 0) {
+		if (scopes === null) {
 			scopes = componentScopes()
 			if (Object.keys(scopes).length === 0) {
 				console.warn(
@@ -1120,6 +1241,12 @@
 	 */
 	function renderStage(state, component) {
 		state.stage.innerHTML = ''
+
+		// Drop the scope map so this stage is stamped from the sheets that are
+		// loaded NOW. See ensureScopes(): a map read while one chunk was still
+		// in flight is partial rather than empty, and keeping it leaves that
+		// chunk's specimens unstamped for the rest of the session.
+		scopes = null
 
 		// When this page turns out not to carry the component stylesheets, the
 		// specimens are this app's approximation of the components rather than
@@ -1279,6 +1406,11 @@
 
 			field.setAttribute('contenteditable', 'true')
 			field.setAttribute('role', 'textbox')
+			// A textbox in the tab order has to say what it is and how many
+			// lines it takes; without these it is announced as an unnamed
+			// single-line field that then behaves like neither.
+			field.setAttribute('aria-multiline', 'true')
+			field.setAttribute('aria-label', t('thematiq', 'Text area specimen'))
 			field.setAttribute('spellcheck', 'false')
 		})
 	}
@@ -1299,7 +1431,7 @@
 	function versionSwitch(state, component) {
 		var row = el('div', 'nldesign-pg-versions')
 		row.appendChild(
-			el('span', 'nldesign-pg-dim', 'Nextcloud-versie'),
+			el('span', 'nldesign-pg-dim', t('thematiq', 'Nextcloud version')),
 		)
 
 		HEADER_VERSIONS.forEach(function (version) {
@@ -1313,7 +1445,7 @@
 			)
 			button.type = 'button'
 			if (running === true) {
-				button.title = 'De versie die deze instantie draait'
+				button.title = t('thematiq', 'The version this instance is running')
 			}
 			button.addEventListener('click', function () {
 				state.headerVersion = version
@@ -1396,6 +1528,11 @@
 			// number stays the label because the token rows below are numbered
 			// to match it, and a row of question marks could not be matched up.
 			marker.setAttribute('tabindex', '0')
+			// A focusable generic is announced inconsistently — VoiceOver reads
+			// the label, NVDA can skip the element entirely. The marker answers
+			// focus and hover by revealing content, so `button` is the role
+			// that describes it.
+			marker.setAttribute('role', 'button')
 			marker.setAttribute('aria-label', tip)
 			// A marker can sit inside a field that decorateFields() makes
 			// editable; without this it could be typed over or deleted.
@@ -1453,6 +1590,29 @@
 		// handler above covers them. What is still needed is stopping Space
 		// from scrolling the panel out from under the specimen being looked at.
 		stage.addEventListener('keydown', function (event) {
+			// A marker's explanation must be dismissible without moving the
+			// pointer or the focus (WCAG 2.2 AA, SC 1.4.13): until this, the
+			// only way to clear a tip was to leave the marker it explains.
+			if (event.key === 'Escape') {
+				hideTip(stage)
+				return
+			}
+
+			// A marker carries `role="button"`, so Enter and Space have to do
+			// what a button does — an announced role whose keys are dead is the
+			// mismatch this row of specimens is meant to help an admin see.
+			// Focus has already opened the tip, so the press toggles it.
+			var marker = closestCallout(event.target)
+			if (marker !== null && (event.key === 'Enter' || event.key === ' ')) {
+				event.preventDefault()
+				if (stage.querySelector('.nldesign-pg-tip') === null) {
+					showTip(stage, marker)
+				} else {
+					hideTip(stage)
+				}
+				return
+			}
+
 			if (event.key !== ' ') {
 				return
 			}
@@ -1519,7 +1679,10 @@
 		if (toggle !== null) {
 			var menu = toggle.closest('.nldesign-pg-actions')
 			var closed = menu.classList.toggle('is-closed')
-			say(stage, closed ? 'Menu gesloten' : 'Menu geopend')
+			say(
+				stage,
+				closed ? t('thematiq', 'Menu closed') : t('thematiq', 'Menu opened'),
+			)
 			return
 		}
 
@@ -1530,7 +1693,14 @@
 			if (field !== null) {
 				setLabel(field, firstLine(option))
 			}
-			say(stage, firstLine(option) + ' gekozen')
+			// The name is the specimen's own label and stays in the language the
+			// drawing is in; the sentence around it is the instrument speaking.
+			say(
+				stage,
+				t('thematiq', '{name} selected', {
+					name: firstLine(option),
+				}),
+			)
 			return
 		}
 
@@ -1551,8 +1721,8 @@
 			say(
 				stage,
 				choice.classList.contains('checkbox-radio-switch--checked')
-					? 'Aangezet'
-					: 'Uitgezet',
+					? t('thematiq', 'Switched on')
+					: t('thematiq', 'Switched off'),
 			)
 			return
 		}
@@ -1571,7 +1741,7 @@
 			}
 
 			pick(within, row, group.row, group.on)
-			say(stage, firstLine(row) + ' gekozen')
+			say(stage, t('thematiq', '{name} selected', { name: firstLine(row) }))
 			return
 		}
 	}
@@ -1993,7 +2163,7 @@
 				+ button('primary', 'default', 'Inloggen', co(2), {
 					icon: submitArrow(),
 					wide: true,
-					done: 'Bezig met inloggen …',
+					done: t('thematiq', 'Signing in …'),
 				})
 				+ '</fieldset>'
 				+ '</form>'
@@ -2002,11 +2172,11 @@
 				// than children.
 				+ button('tertiary', 'default', 'Inloggen met een apparaat', '', {
 					wide: true,
-					done: 'Apparaat-login geopend',
+					done: t('thematiq', 'Device login opened'),
 				})
 				+ button('tertiary', 'default', 'Wachtwoord vergeten?', '', {
 					wide: true,
-					done: 'Wachtwoordherstel geopend',
+					done: t('thematiq', 'Password reset opened'),
 				})
 				+ '</div>'
 				+ '<div class="login-box__alternative-logins"></div>'
@@ -2029,7 +2199,7 @@
 			// the card must not draw the same button two different ways.
 			return button('primary', state, 'Inloggen', '', {
 				icon: submitArrow(),
-				done: 'Bezig met inloggen …',
+				done: t('thematiq', 'Signing in …'),
 			})
 		},
 		'logo-slogan': function () {
@@ -3269,7 +3439,7 @@
 			'<button type="button" class="'
 			+ classes.join(' ')
 			+ '" data-done="'
-			+ (settings.done || BUTTON_DONE[kind] || '')
+			+ (settings.done || buttonDone(kind))
 			+ '"'
 			+ (settings.label ? ' aria-label="' + settings.label + '"' : '')
 			+ (state === 'disabled' ? ' disabled' : '')
