@@ -20,6 +20,14 @@
  * scripts/generate-guest-css.mjs for what is rewritten and why.
  */
 
+@-webkit-keyframes nldesign-pg-guest-rotate {
+from{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}
+}
+
+@keyframes nldesign-pg-guest-rotate {
+from{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}
+}
+
 :where(#nldesign-preview) .nldesign-pg-guestpage,
 :where(#nldesign-preview .nldesign-pg-guestpage) div,
 :where(#nldesign-preview .nldesign-pg-guestpage) span,
@@ -603,7 +611,7 @@
 :where(#nldesign-preview .nldesign-pg-guestpage) .icon-loading-dark:after,
 :where(#nldesign-preview .nldesign-pg-guestpage) .icon-loading-small:after,
 :where(#nldesign-preview .nldesign-pg-guestpage) .icon-loading-small-dark:after {
-	border:2px solid rgba(150,150,150,.5);border-radius:100%;border-top-color:#646464;z-index:2;content:"";height:32px;width:32px;margin:-17px 0 0 -17px;position:absolute;top:50%;inset-inline-start:50%;-webkit-animation:rotate .8s infinite linear;animation:rotate .8s infinite linear;-webkit-transform-origin:center;-ms-transform-origin:center;transform-origin:center;
+	border:2px solid rgba(150,150,150,.5);border-radius:100%;border-top-color:#646464;z-index:2;content:"";height:32px;width:32px;margin:-17px 0 0 -17px;position:absolute;top:50%;inset-inline-start:50%;-webkit-animation:nldesign-pg-guest-rotate .8s infinite linear;animation:nldesign-pg-guest-rotate .8s infinite linear;-webkit-transform-origin:center;-ms-transform-origin:center;transform-origin:center;
 }
 
 :where(#nldesign-preview .nldesign-pg-guestpage) .primary .loading,
@@ -673,6 +681,14 @@
 :where(#nldesign-preview .nldesign-pg-guestpage) select.icon-loading-small-dark,
 :where(#nldesign-preview .nldesign-pg-guestpage) div[contenteditable=true].icon-loading-small-dark {
 	background-image:url("../../../core/img/loading-small-dark.gif");
+}
+
+@-webkit-keyframes nldesign-pg-guest-rotate {
+from{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}
+}
+
+@keyframes nldesign-pg-guest-rotate {
+from{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}
 }
 
 :where(#nldesign-preview .nldesign-pg-guestpage) footer .info .entity-name {

@@ -55,8 +55,13 @@
  *     element both, and the settings page already has an element with the id
  *     `header`; emitting a second one would be a duplicate id in a document
  *     whose own scripts look that id up.
- *  5. `@keyframes` blocks are dropped. They are global names, the page already
- *     has them from core, and a scope prefix cannot be applied to one anyway.
+ *  5. `@keyframes` blocks are RENAMED, not dropped. A keyframe name is global
+ *     and cannot be scoped, so re-emitting `rotate` verbatim would redefine it
+ *     for the whole settings page — but dropping it left the login card's
+ *     spinner referring to a name nothing on this page defines, so the one
+ *     specimen whose entire point is that it moves stood still. Every name is
+ *     re-emitted under `nldesign-pg-guest-`, and the `animation` declarations
+ *     that referred to it are repointed at the new name.
  *  6. A `prefers-reduced-motion: reduce` block is APPENDED, under the scope.
  *     The source has none of its own and two of its declarations animate here,
  *     one of them an infinite spinner. See reducedMotion().
@@ -258,6 +263,84 @@ function stripViewportOnly(body) {
 }
 
 /**
+ * The prefix every keyframe name from the vendored file is re-emitted under.
+ *
+ * `rotate` is the name upstream, and it is not the app's to define: a bare
+ * `@keyframes rotate` here would be a global redefinition reaching every
+ * animation on the settings page that happens to use that name.
+ */
+const KEYFRAME_PREFIX = 'nldesign-pg-guest-'
+
+/**
+ * The keyframe names the vendored file defines, in the order it defines them.
+ *
+ * @param {Array<{prelude: string, kind: string}>} rules The parsed top-level rules.
+ * @return {Array<string>} The names.
+ */
+function keyframeNames(rules) {
+	const names = []
+	for (const rule of rules) {
+		if (rule.kind.indexOf('@') !== 0 || /keyframes/i.test(rule.kind) === false) {
+			continue
+		}
+		const name = rule.prelude.replace(/^@[-\w]*keyframes\s+/i, '').trim()
+		if (name !== '' && names.indexOf(name) === -1) {
+			names.push(name)
+		}
+	}
+	return names
+}
+
+/**
+ * Rewrite a `@keyframes` prelude to its prefixed name.
+ *
+ * @param {string} prelude The at-rule prelude, e.g. `@-webkit-keyframes rotate`.
+ * @return {string} The prelude with the name prefixed.
+ */
+function renameKeyframes(prelude) {
+	return prelude.replace(
+		/^(@[-\w]*keyframes\s+)(.+)$/i,
+		(whole, at, name) => at + KEYFRAME_PREFIX + name.trim(),
+	)
+}
+
+/**
+ * Repoint every reference to a renamed keyframe inside a declaration body.
+ *
+ * Both spellings the source uses: the `animation` shorthand, where the name is
+ * one word among the timing values, and `animation-name`. Only the names this
+ * file actually defines are touched, so an animation core owns elsewhere is
+ * left pointing where it pointed.
+ *
+ * @param {string} body A declaration body.
+ * @return {string} The body with animation names repointed.
+ */
+function repointAnimations(body) {
+	let result = body
+	for (const name of RENAMED_KEYFRAMES) {
+		result = result.replace(
+			new RegExp(
+				'((?:^|[;{]|-webkit-)\\s*animation(?:-name)?\\s*:[^;}]*?\\b)'
+					+ name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+					+ '\\b',
+				'g',
+			),
+			(whole, before) => before + KEYFRAME_PREFIX + name,
+		)
+	}
+	return result
+}
+
+/**
+ * Filled by generate() before any rule is emitted, because the names are
+ * needed while rewriting rules that appear BEFORE the keyframes that define
+ * them — the source declares `rotate` at both ends of the file.
+ *
+ * @type {Array<string>}
+ */
+let RENAMED_KEYFRAMES = []
+
+/**
  * Re-emit one rule under the scope.
  *
  * @param {{prelude: string, body: string, kind: string}} rule The rule.
@@ -265,11 +348,14 @@ function stripViewportOnly(body) {
  */
 function emit(rule) {
 	if (rule.kind.indexOf('@') === 0) {
-		// Keyframes are global names the page already has; a scope prefix
-		// cannot be applied to one, and redefining them here would reach the
-		// settings page around the specimen.
+		// A keyframe name is global — it cannot be scoped, and re-emitting it
+		// verbatim would redefine `rotate` for the whole settings page. So it
+		// is RENAMED instead of dropped, and every animation that referred to
+		// it is repointed at the new name below.
 		if (/keyframes/i.test(rule.kind)) {
-			return ''
+			return (
+				renameKeyframes(rule.prelude) + ' {\n' + rule.body.trim() + '\n}\n\n'
+			)
 		}
 		const inner = split(rule.body).map(emit).join('')
 		if (inner.trim() === '') {
@@ -292,7 +378,7 @@ function emit(rule) {
 	}
 
 	let body = isBody ? stripViewportOnly(rule.body) : rule.body
-	body = repointUrls(body).trim()
+	body = repointAnimations(repointUrls(body)).trim()
 	if (body === '' || body === ';') {
 		return ''
 	}
@@ -333,7 +419,10 @@ function generate(sourceCss) {
 		'',
 	].join('\n')
 
-	const body = split(stripComments(sourceCss)).map(emit).join('').trimEnd()
+	const rules = split(stripComments(sourceCss))
+	RENAMED_KEYFRAMES = keyframeNames(rules)
+
+	const body = rules.map(emit).join('').trimEnd()
 
 	return header + body + '\n\n' + reducedMotion()
 }
