@@ -116,7 +116,42 @@ token is reported rather than dropped.
 The export therefore round-trips: exporting the active set with nothing overridden must produce
 a file the audit rates exactly as it rates the set it came from. A vitest case pins that.
 
-## 7. The `nextcloud` set is resolved from the instance, not from a file
+That map is many-to-one, and this is the direction where it costs something. Four Nextcloud
+variables read `--nldesign-color-primary`, `TokenRegistry` makes more than one of them
+editable, and the file has a single line to carry them — so two overrides can compete for one
+token. Writing each in turn left whichever came last in the file and the other nowhere, with
+nothing reported, which breaks the guarantee this decision is built on. The winner is chosen by
+the same rule `StockTokensService::canonical()` applies to the same map in the other direction
+(decision 8): the variable carrying the token's own name defines it, and where none does,
+sorted order decides. Using one rule for both halves is not tidiness — a token that took its
+stock value from `--color-primary` and its exported value from `--color-primary-element` would
+make a round-trip disagree with itself. The losers are reported alongside the overrides no
+token could carry, naming which override took the token, because "your set now has this colour
+and not that one" is the thing an admin has to know before handing the file on.
+
+## 7. What is translated in a specimen, and what is not
+
+A specimen is a picture of a Nextcloud screen, and a picture has two kinds of words in it.
+The line between them is worth stating, because the first reading of any Dutch string in this
+file is "someone forgot `t()`".
+
+**The drawn interface's own labels are translated.** "Log in", "Save", "Cancel", "Name",
+"Size", "Modified", the empty state, the field errors, the switch's on and off — Nextcloud
+translates every one of these in the real product, so a specimen that leaves them in one
+language is not showing a German admin what their theme does to a German screen. The same goes
+for everything the instrument SAYS about a specimen: the marker tooltips, the line under the
+stage, the version switch. These all go through `t()` and live in `l10n/`.
+
+**The sample content is not.** File names, people's names, dates, file sizes, the text of a
+mock Woo record: `Jaarverslag 2025.pdf`, `Jan Bakker`, `2,4 MB`, `9 maart 2026`. These are not
+labels, they are the material a label is wrapped around, and translating them means inventing
+a German person and a German file. Where a sentence mixes the two — "Shared {name} with you" —
+the sentence is translated and the sample name is a placeholder.
+
+The practical test when adding a specimen: would Nextcloud itself ship this string in a
+language file? If yes it goes through `t()`; if it is the content of a record, it does not.
+
+## 8. The `nextcloud` set is resolved from the instance, not from a file
 
 The playground is an instrument for judging what a token set does, and the first set anyone
 judges against is `nextcloud` — the one that is supposed to look like the instance with no
@@ -156,7 +191,27 @@ This is the instance's stock theme rather than Nextcloud's factory one. An admin
 primary colour in core theming is wearing that colour, so that colour is what the set reports —
 which is the right answer for an instrument whose question is "what does my theme change".
 
-## 8. The login specimens are painted by a vendored, rewritten copy of core's guest.css
+**And it is cached across requests, because of what `nextcloud` is.** It is the DEFAULT set:
+an instance that never opened this app is wearing it, and the layer list is built on every
+`BeforeTemplateRenderedEvent` and on the login page. Resolving meant a stylesheet read and
+regex scan plus the theming app's whole variable computation, per request, forever — where
+before this change the same layer was a `<link>` to a static file and cost no PHP at all.
+
+So the resolved block is kept in a distributed cache under a key of the installed Nextcloud
+version and the theming app's cachebuster. That pair is exactly what can change the answer —
+the variables are the release's own code, and core bumps the cachebuster whenever an admin
+changes anything in its theming settings — so the cache invalidates itself on an upgrade or a
+theming edit and needs nothing to clear it. Only a success is stored: a failure is the theming
+app being absent or throwing, neither of which moves the key when it is fixed, so a cached
+failure would outlive its cause. `TokenSetPreviewService::getTokenSources()` memoises its
+`overrides.css` parse for the same reason at request scope.
+
+What remains is that the token layer for this one set is an inline `<style>` rather than a
+cached static asset, so it is re-sent in every HTML response. That is inherent to resolving at
+all — the values are per-instance, so there is no static file to link — and it is the price of
+the set being right rather than three years stale.
+
+## 9. The login specimens are painted by a vendored, rewritten copy of core's guest.css
 
 The settings page already loads the shipped stylesheets for most of what the specimens stand
 for — the NcButton, NcInputField and NcCheckboxRadioSwitch chunks are all imported by
@@ -201,7 +256,7 @@ On licensing there is nothing to reconcile: the vendored file keeps its upstream
 reproduces them, and neither is relicensed. AGPL-3.0 is on the EUPL-1.2 compatibility list and
 the file is aggregated rather than merged into this app's own EUPL-1.2 sources.
 
-## 9. What this change does not do
+## 10. What this change does not do
 
 It does not build the OpenWOO reference set. The playground is the tool; authoring the values
 is a separate act of design work that follows it, and the acceptance criterion below

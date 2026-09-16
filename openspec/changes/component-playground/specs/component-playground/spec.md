@@ -85,6 +85,13 @@ the shipped token sets and the custom-set upload already accept. The export MUST
 set, not a diff, so the vocabulary audit can rate it. An override that maps to no token in the
 vocabulary MUST be reported rather than silently omitted.
 
+The variable-to-token map is many-to-one, so two overridden variables can read one token while
+the file has one line to carry them. The winner MUST be chosen by the same rule the stock
+resolution applies to the same map in the other direction — the variable carrying the token's
+own name, and sorted order where none does — so the file does not depend on the order the
+overrides arrive in, and a round-trip does not disagree with itself. Every override that loses
+such a contest MUST be reported, naming the override that took the token.
+
 #### Scenario: Exporting with nothing overridden round-trips
 - GIVEN a token set active and no saved overrides
 - WHEN the admin exports
@@ -95,6 +102,16 @@ vocabulary MUST be reported rather than silently omitted.
 - WHEN the admin exports
 - THEN the file MUST NOT claim it
 - AND the admin MUST be told which overrides were left out
+
+#### Scenario: Two overrides reading one token
+- GIVEN saved overrides of both `--color-primary` and `--color-primary-element`, which
+  `overrides.css` both point at `--nldesign-color-primary`
+- WHEN the admin exports
+- THEN `--nldesign-color-primary` MUST carry the value of `--color-primary`, the variable whose
+  name the token carries
+- AND the admin MUST be told that `--color-primary-element` is not in the file and which
+  override took its token
+- AND the file MUST be the same whichever order the two overrides were saved in
 
 ### Requirement: The Selection Is Addressable
 The open tab and component MUST be reflected in the URL hash, and a hash naming a tab and a

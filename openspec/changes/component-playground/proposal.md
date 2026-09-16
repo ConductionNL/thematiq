@@ -75,13 +75,13 @@ service that already resolves them for the preview swatches.
   rather than read from a shipped snapshot).
 - **Affected code**: `lib/Service/PlaygroundStateService.php` (new),
   `lib/Service/TokenSetPreviewService.php` (resolved tokens and the variable-to-token map),
-  `lib/Settings/Admin.php` (publishes the five keys), `templates/settings/admin.php` (loads
+  `lib/Settings/Admin.php` (publishes the six keys), `templates/settings/admin.php` (loads
   the script and its stylesheet), `js/playground.js` (new),
   `js/playground/components.json` (new), `css/playground.css` (new), `l10n/*`;
   `lib/Service/StockTokensService.php` (new) and `lib/Service/CssInjectionService.php`
   (the `nextcloud` set resolves from the instance, with `css/tokens/nextcloud.css` demoted
   to the fallback); `scripts/generate-guest-css.mjs`, `scripts/sources/nextcloud-guest.css`
-  and `css/playground-guest.css` (the vendored login stylesheet, design decision 7).
+  and `css/playground-guest.css` (the vendored login stylesheet, design decision 9).
 - **Reused, not rebuilt**: the token editor's rows, dirty tracking and Save; the preview
   container and its two existing stages; `TokenRegistry` for the vocabulary;
   `css/systems/nldesign/overrides.css` for the variable-to-token map; the converter's reason
@@ -89,6 +89,8 @@ service that already resolves them for the preview swatches.
 - **Tests**: `tests/vitest/playgroundInventory.spec.js` (the inventory against the registry,
   the stage markup and the stylesheets), `tests/vitest/playgroundSelection.spec.js` (chips,
   rows per state, the URL hash, the export),
+  `tests/Unit/Service/TokenSetPreviewServiceTest.php` (the variable-to-token map and the
+  resolved layer, read out of fixture stylesheets),
   `tests/Unit/Service/PlaygroundStateServiceTest.php` (what the panel publishes and what
   happens when a piece is missing), `tests/Unit/Settings/AdminInitialStateTest.php` (the keys
   are published, for the set the page is wearing), `tests/Unit/Service/StockTokensServiceTest.php`
