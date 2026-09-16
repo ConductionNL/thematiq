@@ -339,7 +339,12 @@ OC.L10N.register(
         "New comment on {name}": "New comment on {name}",
         "Not checked": "Not checked",
         "Not selected": "Not selected",
-        "Shared {name} with you": "Shared {name} with you"
+        "Shared {name} with you": "Shared {name} with you",
+        "Activity": "Activity",
+        "expires {date}": "expires {date}",
+        "Name, federated cloud ID or email": "Name, federated cloud ID or email",
+        "Today": "Today",
+        "Yesterday": "Yesterday"
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -339,7 +339,12 @@ OC.L10N.register(
         "A longer explanation, over several lines.": "Een langere toelichting, over meerdere regels.",
         "Shared {name} with you": "Deelde {name} met jou",
         "New comment on {name}": "Nieuwe reactie op {name}",
-        "Invited you to {name}": "Heeft je uitgenodigd voor {name}"
+        "Invited you to {name}": "Heeft je uitgenodigd voor {name}",
+        "Activity": "Activiteit",
+        "Name, federated cloud ID or email": "Naam, federated cloud-ID of e-mail",
+        "expires {date}": "verloopt {date}",
+        "Today": "Vandaag",
+        "Yesterday": "Gisteren"
     },
     "nplurals=2; plural=(n != 1);"
 )

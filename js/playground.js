@@ -2442,8 +2442,14 @@
 		},
 		table: function () {
 			var rows = [
-				['Jaarverslag 2025.pdf', '2,4 MB', 'Vandaag', '', ''],
-				['Begroting.xlsx', '812 kB', 'Gisteren', 'is-zebra', co(2)],
+				['Jaarverslag 2025.pdf', '2,4 MB', t('thematiq', 'Today'), '', ''],
+				[
+					'Begroting.xlsx',
+					'812 kB',
+					t('thematiq', 'Yesterday'),
+					'is-zebra',
+					co(2),
+				],
 				['Notulen raad.docx', '64 kB', '3 dagen geleden', '', ''],
 				['Bijlage A.png', '1,1 MB', 'Vorige week', 'is-zebra', ''],
 				['Archief', '—', 'Vorige maand', '', ''],
@@ -2504,19 +2510,26 @@
 				+ '<span class="nldesign-pg-tab">'
 				+ t('thematiq', 'Versions')
 				+ '</span>'
-				+ '<span class="nldesign-pg-tab">Activiteit</span>'
+				+ '<span class="nldesign-pg-tab">'
+				+ t('thematiq', 'Activity')
+				+ '</span>'
 				+ '</div>'
 				// The Delen tab is the active one, so the body shows sharing —
 				// a specimen whose tab strip says one thing and whose body
 				// shows nothing is the emptiness this panel is meant to expose.
 				+ '<div class="nldesign-pg-sidebar-body">'
-				+ field('Naam, federated cloud-ID of e-mail', 'default')
+				+ field(
+					t('thematiq', 'Name, federated cloud ID or email'),
+					'default',
+				)
 				+ '<ul class="nldesign-pg-list nldesign-pg-shares">'
 				+ listItem('Marianne de Vries', t('thematiq', 'Can edit'), '')
 				+ listItem('Team Communicatie', t('thematiq', 'Can view'), '')
 				+ listItem(
 					t('thematiq', 'Public link'),
-					'Kan bekijken · verloopt 1 apr',
+					t('thematiq', 'Can view')
+						+ ' · '
+						+ t('thematiq', 'expires {date}', { date: '1 Apr' }),
 					'',
 				)
 				+ '</ul>'
