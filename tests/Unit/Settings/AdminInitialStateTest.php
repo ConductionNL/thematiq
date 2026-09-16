@@ -143,6 +143,7 @@ class AdminInitialStateTest extends TestCase {
 					'playgroundTokens' => [],
 					'playgroundTokenSources' => [],
 					'playgroundVersion' => 34,
+					'playgroundSet' => $tokenSetId,
 				];
 			}
 		);
@@ -183,6 +184,7 @@ class AdminInitialStateTest extends TestCase {
 				'playgroundTokens',
 				'playgroundTokenSources',
 				'playgroundVersion',
+				'playgroundSet',
 			],
 			array_keys($captured),
 			'js/admin.js reads the first four and js/playground.js the rest; publishing fewer makes either fall back silently.'

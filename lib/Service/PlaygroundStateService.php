@@ -94,6 +94,11 @@ class PlaygroundStateService {
 			'playgroundTokens' => $this->previewValues->getResolvedTokens(tokenSetId: $tokenSetId),
 			'playgroundTokenSources' => $this->previewValues->getTokenSources(),
 			'playgroundVersion' => $this->getServerMajor(),
+			// The set these values came from, so an export is named after the
+			// set it actually contains. Published rather than re-derived in the
+			// script, because a session preview decides it and the script has
+			// no business knowing that rule twice.
+			'playgroundSet' => $tokenSetId,
 		];
 	}//end getInitialState()
 

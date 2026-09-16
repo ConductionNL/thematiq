@@ -73,10 +73,21 @@ class PlaygroundStateServiceTest extends TestCase {
 				'playgroundTokens',
 				'playgroundTokenSources',
 				'playgroundVersion',
+				'playgroundSet',
 			],
 			array_keys($state)
 		);
 	}//end testItPublishesTheKeysTheInstrumentReads()
+
+	/**
+	 * The published set id is the one asked for, which is the set the page is
+	 * WEARING — a session preview changes it, and an export is named after it.
+	 */
+	public function testItPublishesTheSetItWasAskedFor(): void {
+		$state = $this->build()->getInitialState(tokenSetId: 'openwoo');
+
+		$this->assertSame('openwoo', $state['playgroundSet']);
+	}//end testItPublishesTheSetItWasAskedFor()
 
 	/**
 	 * The version reaches the instrument as a number it can compare.
