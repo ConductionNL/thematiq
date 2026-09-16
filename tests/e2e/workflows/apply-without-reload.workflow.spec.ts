@@ -21,6 +21,9 @@ import {
 	setTokenSet,
 	getOverrides,
 	setOverrides,
+	offerTokenSets,
+	withdrawTokenSetOffer,
+	type TokenSetOffer,
 } from './_helpers'
 
 declare const OC: { generateUrl: (path: string) => string; requestToken: string }
@@ -95,6 +98,7 @@ test.describe('apply without a reload', () => {
 		primary_color: '',
 		background_color: '',
 	}
+	let offer: TokenSetOffer | null = null
 
 	test.beforeAll(async ({ browser }) => {
 		const page = await browser.newPage()
@@ -104,6 +108,10 @@ test.describe('apply without a reload', () => {
 		originalOverrides = await getOverrides(page, token)
 		originalTheming = await getCoreTheming(page, token)
 		await setTokenSet(page, token, 'nextcloud')
+		// A shipped brand is only in the dropdown once something makes it
+		// selectable (token-sets spec, "Only Fully Functional Brands Are
+		// Selectable"); a group mapping does so without theming this admin.
+		offer = await offerTokenSets(page, token, [SHIPPED_SET])
 		await page.close()
 	})
 
@@ -114,6 +122,9 @@ test.describe('apply without a reload', () => {
 		await setOverrides(page, token, originalOverrides)
 		await setTokenSet(page, token, originalTokenSet)
 		await setCoreTheming(page, token, originalTheming)
+		if (offer !== null) {
+			await withdrawTokenSetOffer(page, token, offer)
+		}
 		await page.close()
 	})
 

@@ -263,6 +263,18 @@ const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 			+ 'half of the stylesheet is kept on purpose: it is what themes the header on the oldest '
 			+ 'server this app is offered to.',
 	},
+	{
+		pattern: /^\[data-admin-theming-setting-color-(picker|reset)\] \*$/,
+		reason:
+			'NC 32/33 colour-picker markup. Those releases render the admin colour fields as '
+			+ 'NcButtons carrying data-admin-theming-setting-color-picker / -color-reset. NC 34 '
+			+ 'rewrote Settings > Theming as a Vue 3 app with CSS-module classes '
+			+ '(_colorPickerField__button_<hash>) and no data attribute: MEASURED on run '
+			+ '35051300741, whose admin-theming DOM snapshot has neither attribute anywhere. '
+			+ 'The rule is still what keeps the picker label legible on the NC 32 floor. The NC 34 '
+			+ 'picker is not excluded by any rule yet; that gap is tracked separately rather than '
+			+ 'hidden here.',
+	},
 ]
 
 function allowedReason(selector: string): string | null {
