@@ -20,6 +20,9 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCP\ICache;
+use OCP\ICacheFactory;
+use OCP\IConfig;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -96,16 +99,55 @@ class StockTokensService {
 	private $memo = null;
 
 	/**
+	 * Survives the request, unlike the memo above.
+	 *
+	 * The `nextcloud` set is the DEFAULT set, and this layer is resolved on
+	 * every page render including the login page — so without this, the work
+	 * below (a stylesheet parse, plus the theming app's whole variable
+	 * computation) runs once per request forever, on an instance that never
+	 * chose a token set at all. Distributed rather than local, because every
+	 * node of a cluster would otherwise recompute the same answer.
+	 *
+	 * @var ICache
+	 */
+	private ICache $cache;
+
+	/**
+	 * Reads the two values the cache key is made of.
+	 *
+	 * @var IConfig
+	 */
+	private IConfig $config;
+
+	/**
+	 * How long a resolved block is kept, in seconds.
+	 *
+	 * The key already contains everything that can change the answer, so this
+	 * is a floor under unbounded growth rather than a correctness mechanism —
+	 * an entry for a version nobody runs any more should not live forever.
+	 */
+	private const CACHE_TTL = 86400;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param TokenSetPreviewService $sources The variable-to-token mapping.
-	 * @param LoggerInterface        $logger  Records resolve failures.
+	 * @param TokenSetPreviewService $sources      The variable-to-token mapping.
+	 * @param LoggerInterface        $logger       Records resolve failures.
+	 * @param ICacheFactory          $cacheFactory Creates the cross-request block cache.
+	 * @param IConfig                $config       Reads the version and theming cachebuster.
 	 *
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
-	public function __construct(TokenSetPreviewService $sources, LoggerInterface $logger) {
+	public function __construct(
+		TokenSetPreviewService $sources,
+		LoggerInterface $logger,
+		ICacheFactory $cacheFactory,
+		IConfig $config,
+	) {
 		$this->sources = $sources;
 		$this->logger = $logger;
+		$this->cache = $cacheFactory->createDistributed(prefix: 'thematiq-stock-tokens');
+		$this->config = $config;
 	}//end __construct()
 
 	/**
@@ -128,11 +170,48 @@ class StockTokensService {
 			return $this->memo;
 		}
 
+		$key = $this->cacheKey();
+
+		$cached = $this->cache->get($key);
+		if (is_string($cached) === true) {
+			$this->memo = $cached;
+
+			return $cached;
+		}
+
 		$css = $this->build();
+
+		// Only a success is kept. A failure is the theming app being absent or
+		// throwing, and neither of those moves the cache key when it is fixed —
+		// so a cached failure would outlive its cause and keep an instance on
+		// the shipped snapshot after the thing that broke was put back.
+		if ($css !== null) {
+			$this->cache->set($key, $css, self::CACHE_TTL);
+		}
+
 		$this->memo = ($css ?? false);
 
 		return $css;
 	}//end getCss()
+
+	/**
+	 * Everything that can change the resolved block, in one string.
+	 *
+	 * The inputs are the installed Nextcloud version — the theme's variables
+	 * are that release's code — and the theming app's cachebuster, which core
+	 * bumps whenever an admin changes anything in its own theming settings.
+	 * That is precisely the pair that makes this answer go stale, and both are
+	 * cheap reads, so the cache invalidates itself rather than needing to be
+	 * cleared by anything.
+	 *
+	 * @return string The cache key.
+	 */
+	private function cacheKey(): string {
+		$version = $this->config->getSystemValueString('version', '0.0.0');
+		$cachebuster = $this->config->getAppValue('theming', 'cachebuster', '0');
+
+		return $version . ':' . $cachebuster;
+	}//end cacheKey()
 
 	/**
 	 * Resolve the block, or null if any step cannot be completed.

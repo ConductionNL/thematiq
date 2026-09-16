@@ -20,6 +20,9 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
+use OCP\ICache;
+use OCP\ICacheFactory;
+use OCP\IConfig;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -33,6 +36,22 @@ use Psr\Log\LoggerInterface;
  * could not be asked.
  */
 class StockTokensServiceTest extends TestCase {
+
+	/**
+	 * A cache factory whose cache never has anything and keeps nothing.
+	 *
+	 * These cases are about what the service RESOLVES, and a cache that
+	 * answered would test the cache instead. The cases that are about the
+	 * cache build their own.
+	 *
+	 * @return ICacheFactory The factory.
+	 */
+	private function cacheFactory(): ICacheFactory {
+		$factory = $this->createMock(ICacheFactory::class);
+		$factory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+
+		return $factory;
+	}//end cacheFactory()
 
 	/**
 	 * Build the service with a fixed stock-variable map.
@@ -51,7 +70,14 @@ class StockTokensServiceTest extends TestCase {
 		$preview->method('getTokenSources')->willReturn($sources);
 
 		$service = $this->getMockBuilder(StockTokensService::class)
-			->setConstructorArgs([$preview, $this->createMock(LoggerInterface::class)])
+			->setConstructorArgs(
+				[
+					$preview,
+					$this->createMock(LoggerInterface::class),
+					$this->cacheFactory(),
+					$this->createMock(IConfig::class),
+				]
+			)
 			->onlyMethods(['stockVariables'])
 			->getMock();
 
@@ -237,7 +263,14 @@ class StockTokensServiceTest extends TestCase {
 		$preview->method('getTokenSources')->willReturn(['--color-primary' => '--nldesign-color-primary']);
 
 		$service = $this->getMockBuilder(StockTokensService::class)
-			->setConstructorArgs([$preview, $this->createMock(LoggerInterface::class)])
+			->setConstructorArgs(
+				[
+					$preview,
+					$this->createMock(LoggerInterface::class),
+					$this->cacheFactory(),
+					$this->createMock(IConfig::class),
+				]
+			)
 			->onlyMethods(['stockVariables'])
 			->getMock();
 
@@ -257,7 +290,14 @@ class StockTokensServiceTest extends TestCase {
 		$preview->method('getTokenSources')->willReturn(['--color-primary' => '--nldesign-color-primary']);
 
 		$service = $this->getMockBuilder(StockTokensService::class)
-			->setConstructorArgs([$preview, $this->createMock(LoggerInterface::class)])
+			->setConstructorArgs(
+				[
+					$preview,
+					$this->createMock(LoggerInterface::class),
+					$this->cacheFactory(),
+					$this->createMock(IConfig::class),
+				]
+			)
 			->onlyMethods(['stockVariables'])
 			->getMock();
 
@@ -266,4 +306,128 @@ class StockTokensServiceTest extends TestCase {
 		$this->assertNull($service->getCss());
 		$this->assertNull($service->getCss());
 	}//end testDoesNotRetryAFailedResolve()
+
+	/* ---------------------------------------------------------------- */
+	/* The cross-request cache                                           */
+	/* ---------------------------------------------------------------- */
+
+	/**
+	 * Build the service with a real (in-memory) cache and a config whose two
+	 * key inputs are fixed.
+	 *
+	 * @param ICache                $cache       The cache to use.
+	 * @param string                $version     The instance's Nextcloud version.
+	 * @param string                $cachebuster The theming app's cachebuster.
+	 * @param array<string, string> $stock       What the instance reports.
+	 *
+	 * @return StockTokensService The system under test.
+	 */
+	private function buildCached(
+		ICache $cache,
+		string $version,
+		string $cachebuster,
+		array $stock
+	): StockTokensService {
+		$preview = $this->createMock(TokenSetPreviewService::class);
+		$preview->method('getTokenSources')->willReturn(
+			['--color-primary' => '--nldesign-color-primary']
+		);
+
+		$factory = $this->createMock(ICacheFactory::class);
+		$factory->method('createDistributed')->willReturn($cache);
+
+		$config = $this->createMock(IConfig::class);
+		$config->method('getSystemValueString')->willReturn($version);
+		$config->method('getAppValue')->willReturn($cachebuster);
+
+		$service = $this->getMockBuilder(StockTokensService::class)
+			->setConstructorArgs([$preview, $this->createMock(LoggerInterface::class), $factory, $config])
+			->onlyMethods(['stockVariables'])
+			->getMock();
+
+		$service->method('stockVariables')->willReturn($stock);
+
+		return $service;
+	}//end buildCached()
+
+	/**
+	 * A cached block is served without asking the instance again.
+	 *
+	 * This is the whole point: `nextcloud` is the DEFAULT set and this layer is
+	 * resolved on every page render, so an instance that never chose a token
+	 * set would otherwise recompute the theming app's entire variable map once
+	 * per request forever.
+	 */
+	public function testAServedBlockComesFromTheCache(): void {
+		$cache = $this->createMock(ICache::class);
+		$cache->method('get')->willReturn(':root{--nldesign-color-primary:#cached;}');
+		$cache->expects($this->never())->method('set');
+
+		$service = $this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e']);
+
+		$this->assertSame(':root{--nldesign-color-primary:#cached;}', $service->getCss());
+	}//end testAServedBlockComesFromTheCache()
+
+	/**
+	 * A resolved block is written back, under a key made of the two things
+	 * that can change the answer.
+	 */
+	public function testAResolvedBlockIsCachedUnderVersionAndCachebuster(): void {
+		$written = [];
+		$cache = $this->createMock(ICache::class);
+		$cache->method('get')->willReturn(null);
+		$cache->method('set')->willReturnCallback(
+			static function (string $key, $value) use (&$written): bool {
+				$written[$key] = $value;
+
+				return true;
+			}
+		);
+
+		$service = $this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e']);
+		$service->getCss();
+
+		$this->assertArrayHasKey('34.0.4:7', $written);
+		$this->assertStringContainsString('--nldesign-color-primary:#00679e;', $written['34.0.4:7']);
+	}//end testAResolvedBlockIsCachedUnderVersionAndCachebuster()
+
+	/**
+	 * An upgrade or a theming edit moves the key, so the old block is not
+	 * served for the new state — the cache invalidates itself rather than
+	 * needing to be cleared by anything.
+	 */
+	public function testTheKeyMovesWhenEitherInputMoves(): void {
+		$keys = [];
+		$cache = $this->createMock(ICache::class);
+		$cache->method('get')->willReturnCallback(
+			static function (string $key) use (&$keys) {
+				$keys[] = $key;
+
+				return null;
+			}
+		);
+
+		$this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e'])->getCss();
+		$this->buildCached($cache, '34.0.5', '7', ['--color-primary' => '#00679e'])->getCss();
+		$this->buildCached($cache, '34.0.4', '8', ['--color-primary' => '#00679e'])->getCss();
+
+		$this->assertSame(['34.0.4:7', '34.0.5:7', '34.0.4:8'], $keys);
+	}//end testTheKeyMovesWhenEitherInputMoves()
+
+	/**
+	 * A failed resolve is NOT cached.
+	 *
+	 * The theming app being absent or throwing does not move the cache key
+	 * when it is put back, so a cached failure would outlive its own cause and
+	 * hold the instance on the shipped snapshot indefinitely.
+	 */
+	public function testAFailedResolveIsNotCached(): void {
+		$cache = $this->createMock(ICache::class);
+		$cache->method('get')->willReturn(null);
+		$cache->expects($this->never())->method('set');
+
+		$service = $this->buildCached($cache, '34.0.4', '7', []);
+
+		$this->assertNull($service->getCss());
+	}//end testAFailedResolveIsNotCached()
 }//end class

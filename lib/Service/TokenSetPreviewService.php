@@ -49,6 +49,20 @@ class TokenSetPreviewService {
 	private IAppManager $appManager;
 
 	/**
+	 * The parsed `overrides.css` mapping for this request, or null if it has
+	 * not been read yet.
+	 *
+	 * `getTokenSources()` is asked for on every page render now that the stock
+	 * set is resolved rather than linked, and twice within a render when the
+	 * playground is on the page. The file does not change during a request, so
+	 * reading and regex-scanning it more than once per request is work with no
+	 * possible answer but the first one.
+	 *
+	 * @var array<string, string>|null
+	 */
+	private ?array $sourceMemo = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager.
@@ -153,9 +167,15 @@ class TokenSetPreviewService {
 	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
 	 */
 	public function getTokenSources(): array {
-		return $this->parseMappings(
+		if ($this->sourceMemo !== null) {
+			return $this->sourceMemo;
+		}
+
+		$this->sourceMemo = $this->parseMappings(
 			filePath: $this->appManager->getAppPath('thematiq') . '/css/systems/nldesign/overrides.css'
 		);
+
+		return $this->sourceMemo;
 	}//end getTokenSources()
 
 	/**
