@@ -1168,6 +1168,79 @@
 }
 
 /* ==========================================================================
+   Theming audit log
+   ==========================================================================
+
+   The panel shipped as a bare <table> with no rules of its own, so it drew at
+   browser defaults: no cell padding, no header weight beyond the UA's bold, no
+   rule anywhere. Beside the rest of this settings page that read as unformatted
+   output rather than as a table, which is the whole point of the panel — it is
+   the evidence an accessibility audit is shown.
+
+   Colours come from Nextcloud's own variables, so the panel follows the active
+   theme and this app's overrides of it rather than pinning greys of its own. */
+.nldesign-audit-table {
+	width: 100%;
+	margin-bottom: 1em;
+	border-collapse: collapse;
+	font-size: 0.9em;
+}
+
+.nldesign-audit-table th,
+.nldesign-audit-table td {
+	padding: 6px 12px 6px 0;
+	text-align: start;
+	vertical-align: top;
+	border-bottom: 1px solid var(--color-border);
+}
+
+/* The header rule is the darker one: it separates a label row from data, which
+   is a stronger break than the one between two data rows. */
+.nldesign-audit-table thead th {
+	border-bottom: 2px solid var(--color-border-dark, var(--color-border));
+	color: var(--color-text-maxcontrast);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.nldesign-audit-table tbody tr:hover {
+	background-color: var(--color-background-hover);
+}
+
+/* A timestamp and an actor are identifiers and must not be broken across
+   lines; the action is the app's own vocabulary, which has no spaces to break
+   on anyway. */
+.nldesign-audit-ts,
+.nldesign-audit-actor {
+	white-space: nowrap;
+}
+
+.nldesign-audit-action {
+	font-family: var(--font-face-monospace, monospace);
+	white-space: nowrap;
+}
+
+/* The two value columns are the ones that can hold something long — a custom
+   token set name an admin chose, or a digest. They are the only columns
+   allowed to wrap, and they break inside a word because a sha256 digest has
+   nowhere else to break. */
+.nldesign-audit-value {
+	width: 22%;
+	overflow-wrap: anywhere;
+}
+
+/* Below the mobile breakpoint five columns cannot all be read at once. The
+   table scrolls in its own container rather than widening the settings page,
+   which is the same treatment the token dialogs get further up this file. */
+@media (max-width: 480px) {
+	.nldesign-audit-table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+	}
+}
+
+/* ==========================================================================
    Reduced motion — WCAG 2.2 SC 2.3.3
    ==========================================================================
 
