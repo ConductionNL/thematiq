@@ -279,6 +279,22 @@ body {
 	--border-radius-element: var(--lasuite-border-radius) !important;
 
 	/* ===================================================================
+	 * TYPOGRAPHY WEIGHTS
+	 * =================================================================== */
+
+	/* The three weights NC 33 exposed. Cunningham publishes no weight token to
+	   bridge to, and La Suite already pins the one that matters at element
+	   level: element-overrides.css sets
+	   `.button-vue__text { font-weight: 500 !important }`, which claims the
+	   child NcButton itself styles and therefore wins on both releases. That is
+	   why this bundle never showed the NC 32 → 34 button-label shift the NL
+	   Design bundle did — @nextcloud/vue 9 moved that label from a hard-coded
+	   `bold` onto `--font-weight-element`, and nothing here reads it. */
+	/* --font-weight-default: unmapped — no Cunningham weight token; NC's 400 stands */
+	/* --font-weight-element: intentionally not overridden — element-overrides.css pins the button label at 500 directly */
+	/* --font-weight-heading: unmapped — no Cunningham heading-weight token */
+
+	/* ===================================================================
 	 * SPECIAL COLORS
 	 * =================================================================== */
 
@@ -286,6 +302,9 @@ body {
 	/* --color-loading-light: unmapped — NC loading animation internal */
 	/* --color-loading-dark: unmapped — NC loading animation internal */
 	/* --color-scrollbar: intentionally not overridden — depends on --color-border-maxcontrast, already mapped above */
+	/* --color-background-selection: intentionally not overridden — new in NC 33/34. Derived from --color-primary-element, mapped above, at 20% alpha */
+	/* --color-text-selection: intentionally not overridden — new in NC 33/34. Derived from --color-main-text; a contrast pair with the wash above */
+	/* --color-mark: unmapped — new in NC 33/34. A fixed #fff0c7 highlight tint behind <mark>; no Cunningham equivalent, and it has to stay legible under the text colour */
 
 	/* ===================================================================
 	 * SHADOWS

@@ -144,6 +144,9 @@ This document provides a complete mapping between every Nextcloud CSS custom pro
 | `--default-font-size` | unmapped | Typography | Base font size (15px); standard across themes |
 | `--font-size-small` | unmapped | Typography | Small font size (13px); standard |
 | `--default-line-height` | unmapped | Typography | Line height (1.5); standard |
+| `--font-weight-default` | `--nldesign-font-weight-default` | Typography | Body weight; new in NC 33/34 |
+| `--font-weight-element` | `--nldesign-font-weight-element` | Typography | Weight of controls and button labels; new in NC 33/34. NcButton in @nextcloud/vue 9 reads it on `.button-vue__text`, where NC 32 hard-coded `bold` |
+| `--font-weight-heading` | `--nldesign-font-weight-heading` | Typography | Heading weight; new in NC 33/34. The per-level `--nldesign-component-heading-N-font-weight` tokens resolve through it |
 
 ## Spacing & Clickable Areas
 
@@ -200,6 +203,9 @@ This document provides a complete mapping between every Nextcloud CSS custom pro
 | `--color-loading-light` | unmapped | Special | Loading animation light; NC internal |
 | `--color-loading-dark` | unmapped | Special | Loading animation dark; NC internal |
 | `--color-scrollbar` | intentionally not overridden | Special | Scrollbar color; depends on border-maxcontrast |
+| `--color-background-selection` | intentionally not overridden | Special | Selection wash; new in NC 33/34. Derived from `--color-primary-element` at 20% alpha, and that variable is mapped |
+| `--color-text-selection` | intentionally not overridden | Special | Selected text; new in NC 33/34. Derived from `--color-main-text`, which is mapped |
+| `--color-mark` | unmapped | Special | `<mark>` highlight tint (#fff0c7); new in NC 33/34. No NL Design highlight token, and the tint has to stay legible under the text colour |
 
 ## Focus
 
@@ -269,15 +275,15 @@ These are `--nldesign-*` tokens that don't map to standard Nextcloud variables b
 | Status (Info) | 5 | 2 | 3 | 0 |
 | Border | 5 | 3 | 2 | 0 |
 | Border Radius | 8 | 6 | 2 | 0 |
-| Typography | 4 | 1 | 3 | 0 |
+| Typography | 7 | 4 | 3 | 0 |
 | Spacing | 4 | 0 | 4 | 0 |
 | Layout | 11 | 0 | 0 | 11 |
 | Animation | 3 | 2 | 0 | 1 |
 | Shadow | 2 | 0 | 2 | 0 |
 | Gradient | 2 | 0 | 0 | 2 |
-| Special | 3 | 1 | 2 | 0 |
+| Special | 6 | 1 | 3 | 2 |
 | Focus | 0 | 0 | 0 | 0 |
 | Filter | 5 | 0 | 0 | 5 |
 | Image | 3 | 0 | 0 | 3 |
 | Assistant | 4 | 0 | 0 | 4 |
-| **Total** | **102** | **49** | **28** | **32** |
+| **Total** | **108** | **52** | **29** | **34** |
