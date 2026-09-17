@@ -281,7 +281,21 @@ class StockTokensService {
 	 * @return string The variable whose stock value the token should take.
 	 */
 	private function canonical(string $token, array $candidates): string {
-		$sameName = '--' . substr($token, strlen('--nldesign-'));
+		// Anchored, like the JS twin's `replace(/^--nldesign-/, '')`, rather
+		// than a fixed-length chop. Every mapping in overrides.css targets a
+		// --nldesign-* token today, so the two agree — but parseMappings()
+		// captures any --* as the target, so a mapping onto a differently
+		// prefixed token would leave this one silently eating eleven
+		// characters of a name it does not own, while the JS half left it
+		// alone. The two halves read one map in opposite directions and have
+		// to agree about what a name means.
+		$prefix = '--nldesign-';
+		$stem = $token;
+		if (str_starts_with($token, $prefix) === true) {
+			$stem = substr($token, strlen($prefix));
+		}
+
+		$sameName = '--' . $stem;
 		if (in_array($sameName, $candidates, true) === true) {
 			return $sameName;
 		}
