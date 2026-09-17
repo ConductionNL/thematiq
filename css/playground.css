@@ -230,88 +230,12 @@
 	max-width: 980px;
 }
 
-/* The numbered marker that ties a state on the stage to its token rows. */
-.nldesign-pg-co {
-	display: inline-grid;
-	place-items: center;
-	width: 18px;
-	height: 18px;
-	border-radius: 50%;
-	background: var(--color-main-text);
-	color: var(--color-main-background);
-	font-size: 11px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 1;
-	vertical-align: middle;
-}
-
-.nldesign-pg-co.lock {
-	background: var(--color-text-maxcontrast);
-}
-
-.nldesign-pg-sample > .nldesign-pg-co {
-	position: absolute;
-	top: -9px;
-	right: -9px;
-	width: 20px;
-	height: 20px;
-	border: 2px solid var(--color-main-background);
-}
-
-/* Inside a wide specimen the marker rides along with the thing it points at,
-   rather than being pinned to a corner nothing is at. */
-.nldesign-pg-wide .nldesign-pg-co {
-	margin-left: 6px;
-}
-
 .nldesign-pg-callouts {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 6px 18px;
 	margin-top: 16px;
 	font-size: 13px;
-}
-
-/* A marker that can be asked what it means. The number stays the label —
-   the token rows below are numbered to match it — so the affordance is the
-   cursor and the focus ring rather than a glyph. */
-.nldesign-pg-co[data-tip] {
-	cursor: help;
-}
-
-.nldesign-pg-co[data-tip]:hover,
-.nldesign-pg-co[data-tip]:focus-visible {
-	outline: 2px solid var(--color-primary-element);
-	outline-offset: 1px;
-}
-
-/* Parented to the stage, never to the specimen: the dialog, the sidebar and
-   the app content clip their own overflow, and a tip inside one of those
-   would be cut off exactly where the markers sit deepest. */
-.nldesign-pg-tip {
-	position: absolute;
-	z-index: 30;
-	max-width: 280px;
-	padding: 8px 10px;
-	transform: translate(-50%, calc(-100% - 10px));
-	border-radius: var(--border-radius-element, 8px);
-	/* showTip() nudges `left` back inside the stage when a marker sits near an
-	   edge, so the box must not also be pulled around by its own layout. */
-	text-align: start;
-	background: var(--color-main-text);
-	color: var(--color-main-background);
-	font-size: 12px;
-	line-height: 1.45;
-	white-space: pre-line;
-	pointer-events: none;
-	box-shadow: 0 2px 8px var(--color-box-shadow, rgba(0, 0, 0, 0.3));
-}
-
-/* Flipped under the marker when there is no room above it — the top row of a
-   stage is the usual case. */
-.nldesign-pg-tip.is-below {
-	transform: translate(-50%, 10px);
 }
 
 /* What a specimen just did. The height is reserved whether or not anything is
@@ -325,8 +249,10 @@
 	line-height: 1.4;
 }
 
-/* The actions menu opens and closes from its own trigger. */
-#nldesign-preview .nldesign-pg-actions .menutoggle {
+/* The actions menu opens and closes from its own trigger. NcActions names it
+   `.action-item__menutoggle` in every version this app supports; the bare
+   `.menutoggle` this used to match is the pre-Vue name, styled by 32 alone. */
+#nldesign-preview .nldesign-pg-actions .action-item__menutoggle {
 	cursor: pointer;
 }
 
@@ -390,10 +316,6 @@
 .nldesign-pg-panel-head a {
 	color: var(--color-primary-element);
 	text-decoration: underline;
-}
-
-.nldesign-pg-row .nldesign-pg-co {
-	flex: none;
 }
 
 .nldesign-pg-paints {
@@ -603,26 +525,6 @@
 	background-color: var(--color-primary-element-light-hover);
 }
 
-/* A marker belongs to the stage rather than to the button, and NcButton clips
-   its own overflow — so it hangs off a wrapper instead of being cut off inside
-   one. */
-#nldesign-preview .nldesign-pg-btnwrap {
-	position: relative;
-	display: inline-flex;
-}
-
-#nldesign-preview .nldesign-pg-btnwrap.is-wide {
-	display: flex;
-}
-
-#nldesign-preview .nldesign-pg-btnwrap > .nldesign-pg-co {
-	position: absolute;
-	top: -9px;
-	right: -9px;
-	margin-left: 0;
-	border: 2px solid var(--color-main-background);
-}
-
 /* The floor, and ONLY when this page turned out not to carry NcButton's
    stylesheet — see renderStage(). Everything below is this app's approximation
    of a Nextcloud button, which is worth drawing so an admin is not left looking
@@ -823,15 +725,6 @@
 	height: 30px;
 }
 
-/* The callout markers sit on a 50px icon cell, so they need pulling out of it
-   rather than trailing after a label that no longer exists. */
-#nldesign-preview .nldesign-pg-header .nldesign-pg-co {
-	position: absolute;
-	top: 2px;
-	right: 0;
-	margin-left: 0;
-}
-
 /* Login ---------------------------------------------------------------- */
 
 /* Transparent on purpose: `.body-login-container` is a layout box in core, not
@@ -906,25 +799,10 @@
 	margin-block: 0 auto;
 }
 
-/* Login.vue: `.login-box { width: 320px }` — "same size as dashboard panels".
-   The position is the stage's own, for the callout marker. */
+/* Login.vue: `.login-box { width: 320px }` — "same size as dashboard panels". */
 #nldesign-preview .nldesign-pg-logincard {
-	position: relative;
 	width: 320px;
 	max-width: 100%;
-}
-
-/* Pinned to the card's corner rather than riding inline: callout 1 points at
-   the card and the page behind it, and an inline marker in front of a centred
-   headline moves the headline off centre. */
-#nldesign-preview .nldesign-pg-logincard > .nldesign-pg-co {
-	position: absolute;
-	top: -9px;
-	left: -9px;
-	width: 20px;
-	height: 20px;
-	margin-left: 0;
-	border: 2px solid var(--color-main-background);
 }
 
 /* Login.vue: the wrapper stacks with a two-baseline gap. */
@@ -1323,38 +1201,125 @@
 
 /* Actions menu -------------------------------------------------------------- */
 
+/* Trigger above, menu below and aligned to it — the way an actions menu
+   actually hangs. Side by side was a layout no NcActions ever produces. */
 #nldesign-preview .nldesign-pg-actions {
 	display: flex;
+	flex-direction: column;
 	align-items: flex-start;
-	gap: 10px;
+	gap: 4px;
 }
 
 #nldesign-preview .nldesign-pg-popover {
 	position: static;
-	width: 260px;
-	padding: 6px;
+	/* Sized to its rows, like a real menu, not to a fixed 260px plate. */
+	width: max-content;
+	min-width: 180px;
+	max-width: 280px;
+	padding: 4px;
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
 	box-shadow: 0 2px 12px rgb(0 0 0 / 15%);
 }
 
+/* `display` is the point of this rule. Core ships `.popovermenu` as
+   `position: absolute; display: none` — it is only shown when something adds
+   the open class — so the specimen drew as an empty plate: the list was hidden
+   and only the container around it had any paint. The specimen menu is always
+   open, because a menu nobody can see is not a specimen of anything. */
 #nldesign-preview .nldesign-pg-popover .popovermenu {
+	display: block;
+	position: static;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	filter: none;
+}
+
+/* The rows carry NcActionButton's own classes, and those are what is styled
+   here — `.nldesign-pg-action` stays on the row purely as the click hook the
+   stage listens for. The button inside each row has to be stripped of the
+   `button-vue` painting it would otherwise take from this app's own button
+   rules: an action row is a menu row, not a button. */
+#nldesign-preview .nldesign-pg-popover .action {
+	display: block;
+	min-height: 0;
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-#nldesign-preview .nldesign-pg-action {
+#nldesign-preview .nldesign-pg-popover .action-button {
 	display: flex;
 	align-items: center;
-	min-height: 44px;
-	padding: 0 12px;
+	/* The preview's own .button-vue rule centres its content, and the row
+	   really does carry button-vue, so the alignment is restated here. The
+	   WEIGHT is not: the design-system bundles now exclude .action-button from
+	   their button rules, so the row takes --font-weight-element the way
+	   NcActionButton asks for it. */
+	justify-content: flex-start;
+	width: 100%;
+	height: auto;
+	min-height: 0;
+	margin: 0;
+	/* End padding only, and the library's own value for it:
+	   `$icon-margin` is `calc((var(--default-clickable-area) - 16px) / 2)`.
+	   Nothing pads the start, because the icon box IS the start gutter. */
+	padding: 0 calc((var(--default-clickable-area, 34px) - 16px) / 2) 0 0;
+	border: none;
 	border-radius: var(--border-radius);
+	background: transparent;
+	box-shadow: none;
 	color: var(--color-main-text);
-	font-size: 14px;
+	font-size: var(--default-font-size, 15px);
+	line-height: var(--default-clickable-area, 34px);
+	white-space: nowrap;
+	text-align: start;
+	cursor: pointer;
 }
 
-#nldesign-preview .nldesign-pg-action.is-hover {
+/* NcIconSvgWrapper's own scoped rule, which is where the row's left gutter
+   comes from in the real menu — a clickable-area square centring the icon.
+   It is mirrored rather than invented: the preview cannot reach a scoped
+   style, and hard-coding a 34px box on the wrong element is what this
+   replaces. */
+#nldesign-preview .nldesign-pg-popover .icon-vue {
+	flex: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: var(--default-clickable-area, 34px);
+	min-height: var(--default-clickable-area, 34px);
+	opacity: 1;
+}
+
+#nldesign-preview .nldesign-pg-popover .icon-vue span {
+	line-height: 0;
+}
+
+/* The svg carries no width, height or fill of its own, the way the wrapper
+   leaves it — the size is the icon prop and the colour is inherited. */
+#nldesign-preview .nldesign-pg-popover .icon-vue svg {
+	width: 20px;
+	height: 20px;
+	fill: currentColor;
+}
+
+#nldesign-preview .nldesign-pg-popover .action-button__longtext-wrapper {
+	min-width: 0;
+}
+
+/* The label is what truncates, not the wrapper around it: the wrapper also
+   holds the name and description slots, which stack. */
+#nldesign-preview .nldesign-pg-popover .action-button__text {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#nldesign-preview .nldesign-pg-action.is-hover .action-button,
+#nldesign-preview .nldesign-pg-popover .action-button:hover {
 	background: var(--color-background-hover);
 }
 
@@ -1557,18 +1522,6 @@
 	border-radius: var(--border-radius-element);
 	background: var(--color-main-background);
 	list-style: none;
-}
-
-/* The "open" marker belongs to the list as a whole, so it rides its corner the
-   way a cell marker rides a specimen's — not inline above the first option,
-   where it would read as a row of its own. */
-#nldesign-preview .nldesign-pg-options > .nldesign-pg-co {
-	position: absolute;
-	top: -9px;
-	right: -9px;
-	width: 20px;
-	height: 20px;
-	border: 2px solid var(--color-main-background);
 }
 
 #nldesign-preview .nldesign-pg-option {
@@ -2101,6 +2054,18 @@
 	pointer-events: none;
 }
 
+/* The 32 and 33 search sits among the account glyphs, and core's own scoped
+   rule makes `.unified-search-menu` a centred flex row. The specimen carries
+   the same nesting — `.unified-search-menu` > `.header-menu` >
+   `.header-menu__trigger` — so it needs the same, or the two wrappers would
+   leave the magnifier out of line with the bell and the contacts glyph. */
+#nldesign-preview .nldesign-pg-searchmenu,
+#nldesign-preview .nldesign-pg-searchmenu .header-menu {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 /* The part you actually see. A black wash at 15%, not a tint of the header's
    own colour: the real field is DARKER than the bar it sits in, and mixing
    from the foreground made ours lighter. An 8px element radius, not a pill.
@@ -2135,4 +2100,13 @@
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+
+/* The token editor's own heading, lifted up here with the tab strip.
+ * It governs the specimens AND the rows below them — left in the editor it
+ * sat between the two and read as a heading for the rows alone, with the
+ * specimens under nothing. Only spacing is needed; the heading keeps the
+ * settings page's own type. */
+#nldesign-settings .nldesign-pg-selector .nldesign-token-editor-header {
+	margin-bottom: 8px;
 }

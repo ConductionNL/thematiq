@@ -359,96 +359,13 @@ describe('component instrument: the values the export carries', () => {
 	})
 })
 
-describe('component instrument: what a marker explains', () => {
-	// The numbered legend under the specimen is gone; the markers carry it.
-	// That only works if every marker actually has something to say, which is
-	// what these assert — a silent marker is worse than the row that was
-	// removed, because nothing on screen admits it is missing.
-	const component = {
-		states: [
-			{ n: 1, id: 'default', label: 'background · label' },
-			{ n: 2, id: 'hover', label: 'background on hover' },
-			{ n: 3, id: 'disabled', label: 'fixed by Nextcloud' },
-		],
-		tokens: [
-			{ name: '--color-primary-element', paints: 'The fill', callout: 1 },
-			{
-				name: '--color-primary-element-text',
-				paints: 'The label',
-				callout: 1,
-			},
-			{
-				name: '--color-primary-element-hover',
-				paints: 'The hovered fill',
-				callout: 2,
-			},
-		],
-		fixed: [
-			{
-				callout: 3,
-				what: 'Disabled opacity',
-				why: 'Nextcloud fixes it at 0.5.',
-				code: 'derived-by-nextcloud',
-			},
-		],
-	}
-
-	it('names the state, then says what is painted there', () => {
-		expect(playground.calloutTip(component, 1)).toBe(
-			'background · label\nThe fill · The label',
-		)
-	})
-
-	it('never spells a token name, for any state of any shipped component', () => {
-		// The rows under the stage are where tokens are read and edited, and
-		// they are numbered to match these markers. Repeating the names here
-		// turned a one-line explanation into a wall of --color-* that had to be
-		// read before it could be understood.
-		const leaked = []
-		inventory.components.forEach((entry) => {
-			;(entry.states || []).forEach((state) => {
-				if (playground.calloutTip(entry, state.n).includes('--')) {
-					leaked.push(`${entry.id}#${state.n}`)
-				}
-			})
-		})
-
-		expect(leaked).toEqual([])
-	})
-
-	it('explains a token-less state from its reason, not from a token', () => {
-		const tip = playground.calloutTip(component, 3)
-
-		expect(tip).toContain('fixed by Nextcloud')
-		expect(tip).toContain('Nextcloud fixes it at 0.5.')
-		expect(tip).not.toContain('--color-')
-	})
-
-	it('gives every state of every shipped component something to say', () => {
-		const silent = []
-		inventory.components.forEach((entry) => {
-			;(entry.states || []).forEach((state) => {
-				if (playground.calloutTip(entry, state.n) === '') {
-					silent.push(`${entry.id}#${state.n}`)
-				}
-			})
-		})
-
-		expect(silent).toEqual([])
-	})
-
-	it('says nothing for a number no state carries', () => {
-		expect(playground.calloutTip(component, 99)).toBe('')
-	})
-})
-
 describe('component instrument: the specimens can be used', () => {
 	// The content area once rendered as a wall of drawings that ignored every
-	// click, because the rule then in force froze any element carrying a callout
-	// marker — and the marked row is the selected one in almost every component,
-	// so the row an admin reaches for was exactly the row that refused. These
-	// assert the hooks are in the markup, so a rewritten specimen cannot quietly
-	// go inert again.
+	// click, because the rule then in force froze any element documenting a
+	// state — and that is the selected row in almost every component, so the row
+	// an admin reaches for was exactly the row that refused. These assert the
+	// hooks are in the markup, so a rewritten specimen cannot quietly go inert
+	// again.
 
 	// Read-only indicators. An avatar and a progress bar report state; there is
 	// nothing a click could mean on either, and inventing something would be
@@ -478,7 +395,7 @@ describe('component instrument: the specimens can be used', () => {
 		'.nldesign-pg-choice',
 		'.nldesign-pg-option',
 		'.nldesign-pg-action',
-		'.menutoggle',
+		'.action-item__menutoggle',
 		// The text field is a real `<input>` now, rendered in NcInputField's own
 		// DOM so the shipped stylesheet reaches it; the drawn one is what is
 		// left behind for the select and the textarea.

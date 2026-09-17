@@ -171,28 +171,6 @@ describe('component inventory: the components', () => {
 		expect(empty).toEqual([])
 	})
 
-	it('marks every drawn state on the drawing of a wide component', () => {
-		// A wide specimen is drawn once and places its own markers, so the rows
-		// below and the drawing can drift apart in a way the cell layout cannot:
-		// a state listed below with no number on the component above it is a
-		// promise the picture does not keep.
-		const unmarked = inventory.components
-			.filter((component) => component.layout === 'wide')
-			.flatMap((component) => {
-				const markup = String(
-					playground.STAGES[component.id](null, component) || '',
-				)
-				return component.states
-					.filter((state) => !playground.POINTABLE.includes(state.id))
-					.filter(
-						(state) => markup.includes(`data-co="${state.n}"`) === false,
-					)
-					.map((state) => `${component.id}: ${state.n} (${state.id})`)
-			})
-
-		expect(unmarked).toEqual([])
-	})
-
 	it('draws no frozen copy of a state the admin can produce by pointing', () => {
 		// A frozen hover beside the live specimen is two components an admin
 		// cannot tell apart, one of which does not respond to being hovered.
@@ -377,17 +355,25 @@ describe('the header specimen across Nextcloud versions', () => {
 	})
 
 	it('moves the search from a glyph on the right to a field in the middle', () => {
-		// 34 did not merely rename .unified-search__button: it replaced the
-		// magnifier among the account glyphs with UnifiedSearchInput, a
-		// <search> element carrying the placeholder, between the app menu and
-		// the glyphs. A specimen that only renamed the class would put the new
-		// search in the old place.
-		expect(classesOf(header(33)).has('unified-search__button')).toBe(true)
+		// 34 did not merely rename the search trigger: it replaced the magnifier
+		// among the account glyphs with UnifiedSearchInput, a <search> element
+		// carrying the placeholder, between the app menu and the glyphs. A
+		// specimen that only renamed the class would put the new search in the
+		// old place.
+		//
+		// The 32/33 side is asserted on the names UnifiedSearch.vue really
+		// emits — .unified-search-menu around an NcHeaderButton, whose visible
+		// element is .header-menu__trigger. The name this test used to assert,
+		// .unified-search__button, is pre-Vue and is emitted by NEITHER
+		// release, so it proved only that the specimen still said it.
+		expect(classesOf(header(33)).has('unified-search-menu')).toBe(true)
+		expect(classesOf(header(33)).has('header-menu__trigger')).toBe(true)
+		expect(classesOf(header(33)).has('unified-search__button')).toBe(false)
 		expect(header(33)).not.toContain('<search')
 
 		expect(classesOf(header(34)).has('unified-search-input')).toBe(true)
 		expect(header(34)).toContain('<search')
-		expect(classesOf(header(34)).has('unified-search__button')).toBe(false)
+		expect(classesOf(header(34)).has('unified-search-menu')).toBe(false)
 	})
 
 	it('names the current app and gives it an icon, on 34 only', () => {
@@ -396,11 +382,12 @@ describe('the header specimen across Nextcloud versions', () => {
 		expect(header(32)).not.toContain('Thematiq')
 	})
 
-	it('marks the app menu in every version it can be drawn as', () => {
-		// The callout has to land on something whichever shape is showing,
-		// otherwise switching version silently drops the explanation with it.
+	it('draws an app menu in every version it can be drawn as', () => {
+		// Whichever shape is showing, the menu itself has to be there: a version
+		// branch that returns nothing would leave the bar with a logo and the
+		// account glyphs and nothing between them.
 		for (const version of [32, 33, 34]) {
-			expect(header(version)).toContain('data-co="1"')
+			expect(classesOf(header(version)).has('app-menu')).toBe(true)
 		}
 	})
 

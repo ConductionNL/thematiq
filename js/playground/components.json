@@ -32,7 +32,8 @@
 				"app-menu-entry",
 				"app-menu-entry--active",
 				"app-menu-entry__label",
-				"unified-search__button",
+				"unified-search-menu",
+				"header-menu__trigger",
 				"app-menu__waffle",
 				"app-menu__current-app",
 				"app-menu__current-app-name",
@@ -80,7 +81,7 @@
 				{
 					"callout": 1,
 					"what": "Header height",
-					"why": "Nextcloud keeps a 50px header and a 44px clickable area for WCAG 2.5.8.",
+					"why": "Nextcloud fixes the header height itself — 50px on 32 and 33, 44px from 35 — and keeps every glyph above the WCAG 2.5.8 target size.",
 					"code": "clickable-area-locked"
 				}
 			]
@@ -166,6 +167,7 @@
 			"classes": [
 				"button-vue",
 				"button-vue--vue-primary",
+				"button-vue--primary",
 				"button-vue__wrapper",
 				"button-vue__text"
 			],
@@ -351,7 +353,7 @@
 				"app-content",
 				"app-content-wrapper",
 				"app-content-list",
-				"app-content-detail",
+				"app-content-details",
 				"content"
 			],
 			"radiusToken": "--body-container-radius",
@@ -605,7 +607,17 @@
 			"subtitle": "NcActions in an NcPopover",
 			"ground": "content",
 			"layout": "wide",
-			"classes": ["popover", "popovermenu", "menutoggle", "icon-more"],
+			"classes": [
+				"popover",
+				"popovermenu",
+				"action-item__menutoggle",
+				"action",
+				"action-button",
+				"icon-vue",
+				"action-button__text",
+				"button-vue",
+				"button-vue--tertiary"
+			],
 			"radiusToken": "--border-radius-large",
 			"states": [
 				{
@@ -1033,6 +1045,7 @@
 			"classes": [
 				"button-vue",
 				"button-vue--vue-primary",
+				"button-vue--primary",
 				"button-vue__wrapper",
 				"button-vue__text"
 			],
@@ -1085,6 +1098,11 @@
 					"name": "--border-radius-element",
 					"paints": "Corner",
 					"callout": 1
+				},
+				{
+					"name": "--font-weight-element",
+					"paints": "Label weight",
+					"callout": 1
 				}
 			],
 			"fixed": [
@@ -1105,6 +1123,7 @@
 			"classes": [
 				"button-vue",
 				"button-vue--vue-secondary",
+				"button-vue--secondary",
 				"button-vue__wrapper",
 				"button-vue__text"
 			],
@@ -1491,6 +1510,11 @@
 					"name": "--color-main-text",
 					"paints": "Heading colour",
 					"callout": 1
+				},
+				{
+					"name": "--font-weight-heading",
+					"paints": "Heading weight",
+					"callout": 1
 				}
 			],
 			"fixed": [
@@ -1526,6 +1550,11 @@
 				{
 					"name": "--font-face",
 					"paints": "Typeface",
+					"callout": 1
+				},
+				{
+					"name": "--font-weight-default",
+					"paints": "Body weight",
 					"callout": 1
 				}
 			],

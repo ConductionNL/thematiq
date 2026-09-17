@@ -85,9 +85,6 @@
 	/** The chip that means "no component: show the whole tab". */
 	var FULL_VIEW = 'full-view'
 
-	/** How close a tooltip may come to the edge of the stage, in pixels. */
-	var EDGE = 8
-
 	/** How long boot() waits for the editor before it stops watching, in ms. */
 	var BOOT_GIVE_UP = 60000
 
@@ -264,8 +261,9 @@
 
 	/**
 	 * The tokens a component reads, grouped under the state each one paints, in
-	 * callout order. This is the order the filtered panel lists them in, so a
-	 * row and the numbered marker on the stage always line up.
+	 * callout order. This is the order the filtered panel lists them in, so the
+	 * rows for a state read together and the hover ones come after the resting
+	 * ones rather than being scattered through the list.
 	 *
 	 * @param {Object} component An inventory component.
 	 * @return {Array<{state: Object, tokens: Array<Object>, fixed: Array<Object>}>} Rows per state.
@@ -679,6 +677,21 @@
 		}
 		state.saveBar = saveBar
 
+		// The editor's OWN heading goes to the top of the selector, so the
+		// section has one. Lifting the tab strip out and leaving the heading
+		// behind put "Custom token overrides" BETWEEN the specimens and the
+		// rows: it read as a heading for the rows alone, and the specimens —
+		// the thing the overrides are judged against, and the reason a row is
+		// in the list at all — sat under no heading whatsoever.
+		//
+		// After the actions above, deliberately: they are looked up inside the
+		// editor, and moving their container out of it first would leave
+		// Download and Upload stranded in the header instead of beside Save.
+		var editorHead = editor.querySelector('.nldesign-token-editor-header')
+		if (editorHead !== null) {
+			selector.insertBefore(editorHead, selector.firstChild)
+		}
+
 		// admin.js deactivates tab buttons by querying its OWN container, and the
 		// strip no longer lives there, so it can no longer do it: the panels still
 		// switch (they did not move) but the buttons would all stay active. The
@@ -975,7 +988,7 @@
 	 * so the component repaints as the value changes.
 	 *
 	 * @param {Object} state The instrument state.
-	 * @param {{name: string, paints: string, callout: number}} spec The token to clone.
+	 * @param {{name: string, paints: string}} spec The token to clone.
 	 * @return {Element} The cloned row.
 	 */
 	function cloneRow(state, spec) {
@@ -988,7 +1001,6 @@
 			// not an expected state; it is rendered rather than skipped because a
 			// silently missing row is how a panel starts lying about a component.
 			var missing = el('div', 'nldesign-token-row nldesign-pg-row')
-			missing.appendChild(el('i', 'nldesign-pg-co', String(spec.callout)))
 			var wrap = el('div', 'nldesign-token-label-wrap')
 			wrap.appendChild(el('span', 'nldesign-token-label', spec.name))
 			wrap.appendChild(
@@ -1005,10 +1017,6 @@
 		var row = original.cloneNode(true)
 		row.classList.add('nldesign-pg-row')
 		row.removeAttribute('data-token-row')
-		row.insertBefore(
-			el('i', 'nldesign-pg-co', String(spec.callout)),
-			row.firstChild,
-		)
 
 		var labelWrap = row.querySelector('.nldesign-token-label-wrap')
 		if (labelWrap !== null) {
@@ -1133,7 +1141,7 @@
 	 * the panel and an import report explain it in the same words.
 	 *
 	 * @param {Object} state The instrument state.
-	 * @param {{callout: number, what: string, why: string, code: string}} spec The fixed fact.
+	 * @param {{what: string, why: string, code: string}} spec The fixed fact.
 	 * @return {Element} The row.
 	 */
 	function fixedRow(state, spec) {
@@ -1141,7 +1149,6 @@
 			'div',
 			'nldesign-token-row nldesign-pg-row nldesign-pg-row-fixed',
 		)
-		row.appendChild(el('i', 'nldesign-pg-co lock', String(spec.callout)))
 
 		var wrap = el('div', 'nldesign-token-label-wrap')
 		wrap.appendChild(el('span', 'nldesign-token-label', spec.what))
@@ -1347,8 +1354,8 @@
 	/* ---------------------------------------------------------------- */
 
 	/**
-	 * Draw one component on the stage: its title, one cell per state with the
-	 * numbered marker that ties it to the token rows, and the legend.
+	 * Draw one component on the stage: its title, one cell per state under its
+	 * own name, and the legend.
 	 *
 	 * @param {Object} state The instrument state.
 	 * @param {Object} component The component to draw.
@@ -1400,7 +1407,7 @@
 		state.stage.appendChild(ground)
 
 		if (component.layout === 'wide') {
-			// One specimen, full width, carrying every callout itself. A table,
+			// One specimen, full width. A table,
 			// a list, a dialog or a navigation column cannot be judged from a
 			// thumbnail of one state: what an admin is deciding about is the
 			// rhythm of the whole thing — the rules between rows, the zebra
@@ -1422,13 +1429,6 @@
 						? build(stateDef.id, component)
 						: fallbackSample()
 				scopeSpecimen(sample)
-				var mark = el(
-					'i',
-					'nldesign-pg-co' + (stateDef.fixed ? ' lock' : ''),
-					String(stateDef.n),
-				)
-				mark.setAttribute('data-co', String(stateDef.n))
-				sample.appendChild(mark)
 				cell.appendChild(sample)
 				// The STATE under the specimen ("hover"), not the label — the
 				// label says what the state's tokens paint and is the legend's
@@ -1440,12 +1440,12 @@
 			ground.appendChild(cells)
 		}
 
-		// The numbered list that used to sit here said, in a row of its own,
-		// what each marker on the drawing meant — which is the same sentence
-		// twice for anything with a name as plain as "primary button", and it
-		// pushed the specimen up the panel to make room. The markers carry it
-		// themselves now: hover or focus one and it says what that state is and
-		// which token paints it. See calloutTip().
+		// What is left of the legend: the corner radius, which is the one fact
+		// about a specimen that no row below states in the same words. The
+		// numbered list that used to sit here, and the markers that replaced
+		// it, both said what the cell captions and the rows already say — the
+		// state's name above each specimen, and what each token paints beside
+		// its own row.
 		var legend = el('div', 'nldesign-pg-callouts')
 		if (component.radiusToken) {
 			legend.appendChild(
@@ -1474,13 +1474,17 @@
 				el(
 					'div',
 					'nldesign-pg-pointable',
-					'Beweeg over het onderdeel of geef het focus voor '
-						+ pointable
-							.map(function (stateDef) {
-								return stateDef.id
-							})
-							.join(' en ')
-						+ '.',
+					t(
+						'thematiq',
+						'Hover the component, or give it focus, for {states}.',
+						{
+							states: pointable
+								.map(function (stateDef) {
+									return stateDef.id
+								})
+								.join(t('thematiq', ' and ')),
+						},
+					),
 				),
 			)
 		}
@@ -1489,7 +1493,6 @@
 		saidLine.setAttribute('aria-live', 'polite')
 		state.stage.appendChild(saidLine)
 
-		decorateCallouts(state.stage, component)
 		decorateFields(state.stage)
 	}
 
@@ -1572,91 +1575,7 @@
 		return row
 	}
 
-	/**
-	 * What a marker says when you ask it.
-	 *
-	 * It says what the marker POINTS AT, in words — the state's own name, then
-	 * what is painted there, then the reason behind anything Nextcloud fixes.
-	 * Deliberately no token names: the filtered rows under the stage are the
-	 * place to read and edit those, they are already numbered to match these
-	 * markers, and repeating them here turned a one-line explanation into a
-	 * wall of `--color-*` that had to be read before it could be understood.
-	 *
-	 * Pure, so the wording is testable without a DOM.
-	 *
-	 * @param {Object} component The inventory entry.
-	 * @param {number} n The state number the marker carries.
-	 * @return {string} The tooltip text, newline-separated, empty when unknown.
-	 */
-	function calloutTip(component, n) {
-		var lines = []
-		var states = component.states || []
-		var tokens = component.tokens || []
-		var fixed = component.fixed || []
-		var paints = []
 
-		states.forEach(function (stateDef) {
-			if (stateDef.n === n) {
-				lines.push(stateDef.label)
-			}
-		})
-		tokens.forEach(function (token) {
-			if (token.callout === n) {
-				paints.push(token.paints)
-			}
-		})
-		if (paints.length > 0) {
-			lines.push(paints.join(' · '))
-		}
-		fixed.forEach(function (fact) {
-			if (fact.callout === n) {
-				lines.push(fact.why)
-			}
-		})
-
-		return lines.join('\n')
-	}
-
-	/**
-	 * Turn every marker on the stage into something you can ask.
-	 *
-	 * Done as a pass over the finished stage rather than inside each builder,
-	 * because a wide specimen places its own markers with co() and only it
-	 * knows where they go — but both kinds carry the state number, which is all
-	 * the lookup needs.
-	 *
-	 * @param {Element} stage The stage element.
-	 * @param {Object} component The inventory entry being drawn.
-	 * @return {void}
-	 */
-	function decorateCallouts(stage, component) {
-		var markers = stage.querySelectorAll('.nldesign-pg-co')
-		Array.prototype.forEach.call(markers, function (marker) {
-			var n = parseInt(
-				marker.getAttribute('data-co') || marker.textContent,
-				10,
-			)
-			var tip = calloutTip(component, n)
-			if (tip === '') {
-				return
-			}
-
-			marker.setAttribute('data-tip', tip)
-			// Focusable so the explanation is reachable without a pointer; the
-			// number stays the label because the token rows below are numbered
-			// to match it, and a row of question marks could not be matched up.
-			marker.setAttribute('tabindex', '0')
-			// A focusable generic is announced inconsistently — VoiceOver reads
-			// the label, NVDA can skip the element entirely. The marker answers
-			// focus and hover by revealing content, so `button` is the role
-			// that describes it.
-			marker.setAttribute('role', 'button')
-			marker.setAttribute('aria-label', tip)
-			// A marker can sit inside a field that decorateFields() makes
-			// editable; without this it could be typed over or deleted.
-			marker.setAttribute('contenteditable', 'false')
-		})
-	}
 
 	/**
 	 * Wire the stage once: marker tooltips, and specimens that answer back.
@@ -1670,27 +1589,6 @@
 	 * @return {void}
 	 */
 	function bindStage(stage) {
-		stage.addEventListener('mouseover', function (event) {
-			var marker = closestCallout(event.target)
-			if (marker !== null) {
-				showTip(stage, marker)
-			}
-		})
-		stage.addEventListener('mouseout', function (event) {
-			if (closestCallout(event.target) !== null) {
-				hideTip(stage)
-			}
-		})
-		stage.addEventListener('focusin', function (event) {
-			var marker = closestCallout(event.target)
-			if (marker !== null) {
-				showTip(stage, marker)
-			}
-		})
-		stage.addEventListener('focusout', function () {
-			hideTip(stage)
-		})
-
 		// The login card is a real `<form>`, because core's own stylesheet styles
 		// one and a div is not one. A real form submits — on Enter in a field,
 		// and that would navigate the admin off the settings page mid-edit.
@@ -1708,29 +1606,6 @@
 		// handler above covers them. What is still needed is stopping Space
 		// from scrolling the panel out from under the specimen being looked at.
 		stage.addEventListener('keydown', function (event) {
-			// A marker's explanation must be dismissible without moving the
-			// pointer or the focus (WCAG 2.2 AA, SC 1.4.13): until this, the
-			// only way to clear a tip was to leave the marker it explains.
-			if (event.key === 'Escape') {
-				hideTip(stage)
-				return
-			}
-
-			// A marker carries `role="button"`, so Enter and Space have to do
-			// what a button does — an announced role whose keys are dead is the
-			// mismatch this row of specimens is meant to help an admin see.
-			// Focus has already opened the tip, so the press toggles it.
-			var marker = closestCallout(event.target)
-			if (marker !== null && (event.key === 'Enter' || event.key === ' ')) {
-				event.preventDefault()
-				if (stage.querySelector('.nldesign-pg-tip') === null) {
-					showTip(stage, marker)
-				} else {
-					hideTip(stage)
-				}
-				return
-			}
-
 			if (event.key !== ' ') {
 				return
 			}
@@ -1750,10 +1625,6 @@
 	/**
 	 * Press the specimen button an event landed on, if it was one.
 	 *
-	 * A marker can sit INSIDE a button in a wide specimen, and a marker is for
-	 * asking, not for pressing — so a hit on one never reaches the button
-	 * underneath it.
-	 *
 	 * @param {EventTarget} target The event target.
 	 * @return {void}
 	 */
@@ -1761,7 +1632,12 @@
 		if (target === null || typeof target.closest !== 'function') {
 			return
 		}
-		if (target.closest('.nldesign-pg-co') !== null) {
+
+		// The actions trigger is drawn with button(), so it carries the specimen
+		// button class — but it opens a menu rather than answering a press, and
+		// interact() is where that lives.
+		if (target.closest('.nldesign-pg-actions .action-item__menutoggle') !== null) {
+			interact(stage, target)
 			return
 		}
 
@@ -1778,13 +1654,12 @@
 	 * Everything on a stage that is not a button, answering the way the real
 	 * component would.
 	 *
-	 * An earlier version of this held every element that carried a callout
-	 * marker frozen, so the drawing could never contradict its own labels. In
-	 * use that was the wrong trade by a wide margin: the marked row is the
-	 * selected one in almost every component, so the one row an admin reaches
-	 * for was the one that refused, and the whole content area read as dead.
-	 * Selection moves now — and the marker that documented it travels with it,
-	 * so "selected entry" keeps pointing at the entry that is selected.
+	 * An earlier version of this held the element documenting each state frozen,
+	 * so the drawing could never contradict its own labels. In use that was the
+	 * wrong trade by a wide margin: the documented row is the selected one in
+	 * almost every component, so the one row an admin reaches for was the one
+	 * that refused, and the whole content area read as dead. Selection moves
+	 * now.
 	 *
 	 * @param {Element} stage The stage element.
 	 * @param {Element} target The clicked element.
@@ -1793,7 +1668,9 @@
 	function interact(stage, target) {
 		// The actions menu: its trigger is the whole point of an actions menu,
 		// and it did nothing at all.
-		var toggle = target.closest('.nldesign-pg-actions .menutoggle')
+		var toggle = target.closest(
+			'.nldesign-pg-actions .action-item__menutoggle',
+		)
 		if (toggle !== null) {
 			var menu = toggle.closest('.nldesign-pg-actions')
 			var closed = menu.classList.toggle('is-closed')
@@ -1829,7 +1706,7 @@
 			if (owner !== null) {
 				owner.classList.add('is-closed')
 			}
-			say(stage, firstLine(item))
+			say(stage, t('thematiq', '{name} selected', { name: firstLine(item) }))
 			return
 		}
 
@@ -1865,14 +1742,7 @@
 	}
 
 	/**
-	 * Move a state class to the element that was picked, and take the marker
-	 * that documented it along.
-	 *
-	 * Moving the marker keeps the tooltip honest: "selected entry" should point
-	 * at whichever entry is selected, not at the one that happened to be
-	 * selected when the stage was drawn. It only travels when the new element
-	 * has no marker of its own — otherwise a single element would end up
-	 * wearing two numbers, which reads as a mistake rather than as two facts.
+	 * Move a state class to the element that was picked.
 	 *
 	 * @param {Element} group The container the set lives in.
 	 * @param {Element} row The element that was picked.
@@ -1882,14 +1752,10 @@
 	 */
 	function pick(group, row, rowSelector, on) {
 		var classes = on.split(' ')
-		var previous = null
 
 		Array.prototype.forEach.call(
 			group.querySelectorAll(rowSelector),
 			function (candidate) {
-				if (candidate.classList.contains(classes[0]) === true) {
-					previous = candidate
-				}
 				classes.forEach(function (name) {
 					candidate.classList.remove(name)
 				})
@@ -1899,15 +1765,6 @@
 		classes.forEach(function (name) {
 			row.classList.add(name)
 		})
-
-		if (previous === null || previous === row) {
-			return
-		}
-
-		var marker = previous.querySelector('.nldesign-pg-co')
-		if (marker !== null && row.querySelector('.nldesign-pg-co') === null) {
-			row.appendChild(marker)
-		}
 	}
 
 	/**
@@ -1974,8 +1831,8 @@
 	/**
 	 * Replace an element's own text without disturbing anything nested in it.
 	 *
-	 * `textContent = x` would delete the callout marker living inside the
-	 * select field along with the label.
+	 * `textContent = x` would delete the option list nested inside the select
+	 * field along with the label.
 	 *
 	 * @param {Element} element The element to relabel.
 	 * @param {string} text The new label.
@@ -1995,8 +1852,8 @@
 	 *
 	 * Three ways, in order. A row that names itself — a record, a list entry, a
 	 * navigation label — says so in a dedicated element. Otherwise the
-	 * element's OWN text, which skips a callout marker's digit and a counter
-	 * bubble living inside it. Only failing both does it fall back to
+	 * element's OWN text, which skips a counter bubble living inside it. Only
+	 * failing both does it fall back to
 	 * everything inside, which is where "Jan BakkerHeeft je uitgenodigd3"
 	 * comes from and why it is last.
 	 *
@@ -2030,82 +1887,8 @@
 		return element.textContent.trim()
 	}
 
-	/**
-	 * The marker an event landed on, or null.
-	 *
-	 * @param {EventTarget} target The event target.
-	 * @return {Element|null} The marker.
-	 */
-	function closestCallout(target) {
-		if (target === null || typeof target.closest !== 'function') {
-			return null
-		}
 
-		return target.closest('.nldesign-pg-co[data-tip]')
-	}
 
-	/**
-	 * Show one marker's explanation, positioned against the stage.
-	 *
-	 * The tip is appended to the STAGE, not to the marker, because several
-	 * specimens clip their own overflow — the dialog, the sidebar, the app
-	 * content — and a tip parented inside one of those would be cut off at
-	 * exactly the components whose markers sit deepest inside them.
-	 *
-	 * @param {Element} stage The stage element.
-	 * @param {Element} marker The marker being asked.
-	 * @return {void}
-	 */
-	function showTip(stage, marker) {
-		hideTip(stage)
-
-		var tip = el('div', 'nldesign-pg-tip', marker.getAttribute('data-tip'))
-		tip.setAttribute('role', 'tooltip')
-		stage.appendChild(tip)
-
-		var spot = marker.getBoundingClientRect()
-		var frame = stage.getBoundingClientRect()
-		var left = spot.left - frame.left + spot.width / 2
-		var top = spot.top - frame.top
-
-		tip.style.left = left + 'px'
-		tip.style.top = top + 'px'
-
-		// Measure where that actually put it, then bring it back inside the
-		// stage. A marker rides the top-right corner of its specimen, so the
-		// first thing it does unattended is hang off the edge or sit above the
-		// stage entirely.
-		var box = tip.getBoundingClientRect()
-		var overRight = box.right - (frame.right - EDGE)
-		var overLeft = frame.left + EDGE - box.left
-		if (overRight > 0) {
-			left -= overRight
-		}
-		if (overLeft > 0) {
-			left += overLeft
-		}
-
-		if (box.top < frame.top) {
-			tip.classList.add('is-below')
-			top = spot.top - frame.top + spot.height
-		}
-
-		tip.style.left = left + 'px'
-		tip.style.top = top + 'px'
-	}
-
-	/**
-	 * Remove the open explanation, if there is one.
-	 *
-	 * @param {Element} stage The stage element.
-	 * @return {void}
-	 */
-	function hideTip(stage) {
-		var tip = stage.querySelector('.nldesign-pg-tip')
-		if (tip !== null) {
-			tip.parentNode.removeChild(tip)
-		}
-	}
 
 	/**
 	 * Answer a press on a specimen button.
@@ -2179,37 +1962,13 @@
 		return '<span class="nldesign-pg-swatch"></span>'
 	}
 
-	/**
-	 * A numbered callout marker, as markup.
-	 *
-	 * A wide specimen places its own markers, because only the specimen knows
-	 * which part of itself a state refers to — the zebra row, the active tab,
-	 * the hovered crumb. The inventory test asserts that a wide specimen carries
-	 * one marker per state it declares, so a state can never be listed in the
-	 * legend and be invisible on the drawing.
-	 *
-	 * @param {number} n The state number.
-	 * @param {boolean} [fixed] Whether the state is one Nextcloud fixes.
-	 * @return {string} The marker markup.
-	 */
-	function co(n, fixed) {
-		return (
-			'<i class="nldesign-pg-co'
-			+ (fixed ? ' lock' : '')
-			+ '" data-co="'
-			+ n
-			+ '">'
-			+ n
-			+ '</i>'
-		)
-	}
 
 	/**
 	 * The stage markup per component, keyed by the inventory's component id.
 	 *
 	 * Called once per state for a component the stage draws as cells, and once
 	 * with a null state for a `layout: wide` one, which returns its whole
-	 * specimen and places its own callout markers.
+	 * specimen in a single drawing.
 	 *
 	 * Two rules hold throughout. Every specimen carries the class names
 	 * Nextcloud's own components emit — `button-vue`, `notecard`, `list-item`,
@@ -2233,13 +1992,14 @@
 				+ '">'
 				+ '<span class="nldesign-pg-header-logo logo"></span>'
 				+ (modern ? appMenu34() : appMenu32())
-				// 34 moved the search into the middle of the bar; before that it
-				// was a magnifier among the glyphs on the right.
+				// Version drift, not a style choice, and the second of two in
+				// this one bar: 34 moved the search into the middle, where 32
+				// and 33 put a magnifier among the glyphs on the right. It is
+				// branched the way the app menu above it is, because the shape
+				// and the position both changed, not just the class name.
 				+ (modern ? headerSearch34() : '')
 				+ '<span class="nldesign-pg-header-end">'
-				+ (modern
-					? ''
-					: '<span class="unified-search__button nldesign-pg-icon icon-search-white"></span>')
+				+ (modern ? '' : headerSearch32())
 				+ glyph('bell', 'nldesign-pg-bell', 'bellDot')
 				+ glyph('contacts', 'nldesign-pg-contacts')
 				+ accountPlate()
@@ -2268,7 +2028,6 @@
 				+ '<h1 class="hidden-visually">Nextcloud</h1>'
 				+ '<div>'
 				+ '<div class="guest-box login-box nldesign-pg-logincard">'
-				+ co(1)
 				+ '<div class="login-box__wrapper nldesign-pg-loginwrap">'
 				+ '<form method="post" name="login" class="login-form">'
 				+ '<fieldset class="login-form__fieldset nldesign-pg-loginfields">'
@@ -2284,7 +2043,7 @@
 					trailing: revealEye(),
 				})
 				+ choice('checkbox', true, t('thematiq', 'Remember me'))
-				+ button('primary', 'default', t('thematiq', 'Log in'), co(2), {
+				+ button('primary', 'default', t('thematiq', 'Log in'), {
 					icon: submitArrow(),
 					wide: true,
 					done: t('thematiq', 'Signing in …'),
@@ -2294,26 +2053,14 @@
 				// Both of these are NcButtons on the real card, not links: wide,
 				// tertiary, stacked under the form, and siblings of it rather
 				// than children.
-				+ button(
-					'tertiary',
-					'default',
-					t('thematiq', 'Log in with a device'),
-					'',
-					{
-						wide: true,
-						done: t('thematiq', 'Device login opened'),
-					},
-				)
-				+ button(
-					'tertiary',
-					'default',
-					t('thematiq', 'Forgot password?'),
-					'',
-					{
-						wide: true,
-						done: t('thematiq', 'Password reset opened'),
-					},
-				)
+				+ button('tertiary', 'default', t('thematiq', 'Log in with a device'), {
+					wide: true,
+					done: t('thematiq', 'Device login opened'),
+				})
+				+ button('tertiary', 'default', t('thematiq', 'Forgot password?'), {
+					wide: true,
+					done: t('thematiq', 'Password reset opened'),
+				})
 				+ '</div>'
 				+ '<div class="login-box__alternative-logins"></div>'
 				+ '</div>'
@@ -2335,7 +2082,7 @@
 		'login-button': function (state) {
 			// With the arrow, because `LoginButton` always has one: the chip and
 			// the card must not draw the same button two different ways.
-			return button('primary', state, t('thematiq', 'Log in'), '', {
+			return button('primary', state, t('thematiq', 'Log in'), {
 				icon: submitArrow(),
 				done: t('thematiq', 'Signing in …'),
 			})
@@ -2377,11 +2124,10 @@
 				+ t('thematiq', 'Files')
 				+ '</div>'
 				+ '<ul>'
-				+ navEntry(t('thematiq', 'All files'), '', co(1))
+				+ navEntry(t('thematiq', 'All files'), '')
 				+ navEntry(
 					t('thematiq', 'Favorites'),
 					'is-selected active',
-					co(2),
 					'3',
 				)
 				+ navEntry(t('thematiq', 'Shared with you'), '')
@@ -2394,11 +2140,10 @@
 		'content-card': function () {
 			return (
 				'<div class="content nldesign-pg-container">'
-				+ co(1)
 				+ '<div class="app-content nldesign-pg-appcontent">'
 				// A register and one of its publications, because the dividers
-				// callout 1 points at are only visible between real rows, and a
-				// column of grey bars showed the divider token painting nothing.
+				// are only visible between real rows, and a column of grey bars
+				// showed the divider token painting nothing.
 				+ '<div class="app-content-list nldesign-pg-col">'
 				+ [
 					['Woo-verzoek jeugdzorg', 'Gepubliceerd · 12 mrt'],
@@ -2419,7 +2164,8 @@
 					})
 					.join('')
 				+ '</div>'
-				+ '<div class="app-content-detail nldesign-pg-col nldesign-pg-col--detail">'
+				+ '<div class="app-content-details nldesign-pg-col '
+				+ 'nldesign-pg-col--detail">'
 				+ '<div class="nldesign-pg-rec-title">Besluitenlijst college</div>'
 				+ '<dl class="nldesign-pg-meta">'
 				+ '<dt>Register</dt><dd>Besluiten</dd>'
@@ -2434,7 +2180,6 @@
 				+ 'college van burgemeester en wethouders, inclusief bijlagen en '
 				+ 'openbaar gemaakte stukken.</p>'
 				+ '<span class="nldesign-pg-scrollbar">'
-				+ co(2)
 				+ '</span>'
 				+ '</div>'
 				+ '</div></div>'
@@ -2448,7 +2193,6 @@
 					'812 kB',
 					t('thematiq', 'Yesterday'),
 					'is-zebra',
-					co(2),
 				],
 				['Notulen raad.docx', '64 kB', '3 dagen geleden', '', ''],
 				['Bijlage A.png', '1,1 MB', 'Vorige week', 'is-zebra', ''],
@@ -2460,7 +2204,6 @@
 				+ '<th>'
 				+ t('thematiq', 'Name')
 				+ ''
-				+ co(1)
 				+ '</th><th>'
 				+ t('thematiq', 'Size')
 				+ '</th><th>'
@@ -2494,7 +2237,6 @@
 		sidebar: function () {
 			return (
 				'<div class="app-sidebar nldesign-pg-sidebar">'
-				+ co(1)
 				+ '<div class="nldesign-pg-sidebar-head">'
 				+ '<span class="avatardiv nldesign-pg-avatar">JV</span>'
 				+ '<span class="nldesign-pg-sidebar-title"><strong>Jaarverslag 2025.pdf</strong>'
@@ -2505,7 +2247,6 @@
 				+ '<span class="nldesign-pg-tab is-active">'
 				+ t('thematiq', 'Sharing')
 				+ ''
-				+ co(2)
 				+ '</span>'
 				+ '<span class="nldesign-pg-tab">'
 				+ t('thematiq', 'Versions')
@@ -2545,7 +2286,6 @@
 						name: '"Begroting.xlsx"',
 					}),
 					'',
-					co(1),
 				)
 				+ listItem(
 					'Gemeente Voorbeeld',
@@ -2556,7 +2296,6 @@
 					'Jan Bakker',
 					t('thematiq', 'Invited you to {name}', { name: 'Overleg' }),
 					'is-selected active',
-					co(3),
 				)
 				+ '</ul>'
 			)
@@ -2573,29 +2312,34 @@
 				+ t('thematiq', 'Upload a file or create a folder to get started.')
 				+ '</p>'
 				+ button('secondary', 'default', t('thematiq', 'Upload file'))
-				+ co(1)
 				+ '</div>'
 			)
 		},
 		'actions-menu': function () {
 			return (
+				// The trigger is `.action-item__menutoggle`, NcActions' own
+				// class, which is unchanged from 32 to 34. The bare
+				// `.menutoggle` this carried before is the pre-Vue name, which
+				// only 32 still styles, so on 34 the trigger fell through to
+				// this app's own floor instead of being painted by the
+				// component it is meant to be showing.
+				// The trigger is an NcButton, not a glyph: NcActions renders
+				// `h(NcButton, { class: 'action-item__menutoggle', variant:
+				// triggerButtonVariant })` with a dots-horizontal icon at 20px,
+				// tertiary and icon-only. Building it with this file's own
+				// button() gives it the same DOM and the same pair of variant
+				// spellings every other button specimen carries.
 				'<div class="nldesign-pg-actions">'
-				+ '<span class="menutoggle icon-more nldesign-pg-glyph nldesign-pg-glyph--dark">⋯</span>'
+				+ button('tertiary', 'default', '', {
+					icon: mdi('dots-horizontal-icon', DOTS_PATH, 20),
+					label: t('thematiq', 'Actions'),
+					extra: 'action-item__menutoggle',
+				})
 				+ '<div class="popover nldesign-pg-popover">'
-				+ co(1)
-				+ '<ul class="popovermenu">'
-				+ '<li class="nldesign-pg-action">'
-				+ t('thematiq', 'Rename')
-				+ '</li>'
-				+ '<li class="nldesign-pg-action">'
-				+ t('thematiq', 'Move or copy')
-				+ '</li>'
-				+ '<li class="nldesign-pg-action">'
-				+ t('thematiq', 'Open details')
-				+ '</li>'
-				+ '<li class="nldesign-pg-action">'
-				+ t('thematiq', 'Delete')
-				+ '</li>'
+				+ '<ul class="popovermenu" role="menu">'
+				+ action(EYE_PATH, t('thematiq', 'View'))
+				+ action(PENCIL_PATH, t('thematiq', 'Edit'))
+				+ action(TRASH_PATH, t('thematiq', 'Delete'))
 				+ '</ul></div></div>'
 			)
 		},
@@ -2606,7 +2350,6 @@
 			return (
 				'<nav class="nldesign-pg-crumbs">'
 				+ '<span class="nldesign-pg-crumb">Home'
-				+ co(1)
 				+ '</span>'
 				+ '<span class="nldesign-pg-sep">›</span>'
 				+ '<span class="nldesign-pg-crumb">Documenten</span>'
@@ -2623,7 +2366,6 @@
 				+ '<h2 class="nldesign-pg-section-title">'
 				+ t('thematiq', 'Background and colours')
 				+ ''
-				+ co(1)
 				+ '</h2>'
 				+ '<p class="nldesign-pg-muted is-maxcontrast nldesign-pg-reading">'
 				+ t(
@@ -2648,13 +2390,8 @@
 			return (
 				'<div class="nldesign-pg-selectwrap">'
 				+ '<span class="nldesign-pg-input nldesign-pg-select">Nederland'
-				+ co(1)
 				+ '</span>'
-				// The marker belongs on the LIST, not on one option: state 2 is
-				// "open", which is the list being there at all, and hanging it
-				// off a highlighted row made it read as a hover exemplar.
 				+ '<ul class="nldesign-pg-options">'
-				+ co(2)
 				+ '<li class="nldesign-pg-option">België</li>'
 				+ '<li class="nldesign-pg-option">Duitsland</li>'
 				+ '<li class="nldesign-pg-option">Frankrijk</li>'
@@ -2665,8 +2402,8 @@
 		'checkbox-switch': function () {
 			return (
 				'<div class="nldesign-pg-choices">'
-				+ choice('checkbox', false, t('thematiq', 'Not checked'), co(1))
-				+ choice('checkbox', true, t('thematiq', 'Checked'), co(2))
+				+ choice('checkbox', false, t('thematiq', 'Not checked'))
+				+ choice('checkbox', true, t('thematiq', 'Checked'))
 				+ choice('radio', false, t('thematiq', 'Not selected'))
 				+ choice('radio', true, t('thematiq', 'Selected'))
 				+ choice('switch', false, t('thematiq', 'Off'))
@@ -2684,7 +2421,6 @@
 		dialog: function () {
 			return (
 				'<div class="modal-container nldesign-pg-dialog">'
-				+ co(1)
 				+ '<div class="nldesign-pg-dialog-head">'
 				+ '<strong>'
 				+ t('thematiq', 'Apply token set: OpenWOO')
@@ -2722,7 +2458,7 @@
 				+ '</div>'
 				+ '<div class="nldesign-pg-dialog-foot">'
 				+ button('secondary', 'default', t('thematiq', 'Cancel'))
-				+ button('primary', 'default', t('thematiq', 'Apply'), co(2))
+				+ button('primary', 'default', t('thematiq', 'Apply'))
 				+ '</div></div>'
 			)
 		},
@@ -2787,7 +2523,6 @@
 						+ '<span>'
 						+ def[2]
 						+ '</span>'
-						+ co(def[1])
 						+ '</div>'
 					)
 				})
@@ -2816,7 +2551,6 @@
 						+ def[0]
 						+ '">'
 						+ def[2]
-						+ co(def[1])
 						+ '</div>'
 					)
 				})
@@ -2828,7 +2562,6 @@
 				+ '<h1 class="nldesign-pg-h1">'
 				+ t('thematiq', 'Theme and house style')
 				+ ''
-				+ co(1)
 				+ '</h1>'
 				+ '<h2 class="nldesign-pg-h2">'
 				+ t('thematiq', 'Background and colours')
@@ -2849,7 +2582,6 @@
 					'thematiq',
 					'Pick a token set as your basis, or adjust individual Nextcloud tokens below. A token set decides the colours, the typography and the shape of every part you see here. What you save applies to everyone on this instance, on every page.',
 				)
-				+ co(1)
 				+ '</p>'
 			)
 		},
@@ -2860,7 +2592,6 @@
 				+ '<span class="nldesign-pg-link">'
 				+ t('thematiq', 'documentation')
 				+ '</span>'
-				+ co(1)
 				+ t('thematiq', ', or look at the ')
 				+ '<span class="nldesign-pg-link">'
 				+ t('thematiq', 'example themes')
@@ -2874,17 +2605,14 @@
 				+ '<p class="nldesign-pg-muted is-maxcontrast">'
 				+ t('thematiq', 'Secondary text that must still meet AA.')
 				+ ''
-				+ co(1)
 				+ '</p>'
 				+ '<p class="nldesign-pg-muted is-light">'
 				+ t('thematiq', 'Text one step lighter than the body.')
 				+ ''
-				+ co(2)
 				+ '</p>'
 				+ '<p class="nldesign-pg-muted is-lighter">'
 				+ t('thematiq', 'The lightest text Nextcloud uses.')
 				+ ''
-				+ co(3)
 				+ '</p>'
 				+ '</div>'
 			)
@@ -2895,17 +2623,14 @@
 				+ '<p class="nldesign-pg-status is-error">'
 				+ t('thematiq', 'This field is required.')
 				+ ''
-				+ co(1)
 				+ '</p>'
 				+ '<p class="nldesign-pg-status is-warning">'
 				+ t('thematiq', 'Two values do not meet the AA threshold.')
 				+ ''
-				+ co(2)
 				+ '</p>'
 				+ '<p class="nldesign-pg-status is-success">'
 				+ t('thematiq', 'Your changes have been saved.')
 				+ ''
-				+ co(3)
 				+ '</p>'
 				+ '</div>'
 			)
@@ -3212,7 +2937,6 @@
 				+ '<span class="nldesign-pg-icon '
 				+ icon
 				+ '"></span>'
-				+ (active ? co(1) : '')
 				+ '</li>'
 		})
 
@@ -3245,9 +2969,30 @@
 			+ '<span class="app-menu__current-app nldesign-pg-currentapp">'
 			+ '<span class="app-menu__current-app-icon nldesign-pg-appicon"></span>'
 			+ '<span class="app-menu__current-app-name">Thematiq</span>'
-			+ co(1)
 			+ '</span>'
 			+ '</nav>'
+		)
+	}
+
+	/**
+	 * The header search, as 32 and 33 draw it: a glyph among the account ones.
+	 *
+	 * `UnifiedSearch.vue` wraps an `NcHeaderButton`, so the magnifier on the
+	 * right of the bar is `.header-menu__trigger`, inside `#unified-search`
+	 * — which carries `.header-menu` — inside `.unified-search-menu`. The
+	 * class this specimen used to carry, `.unified-search__button`, is emitted
+	 * by neither 32 nor 34: it is a pre-Vue name, so nothing but this app's own
+	 * fallback floor ever painted it, in either version.
+	 *
+	 * @return {string} The markup.
+	 */
+	function headerSearch32() {
+		return (
+			'<span class="unified-search-menu nldesign-pg-searchmenu">'
+			+ '<span class="header-menu">'
+			+ '<span class="header-menu__trigger nldesign-pg-icon '
+			+ 'icon-search-white"></span>'
+			+ '</span></span>'
 		)
 	}
 
@@ -3279,6 +3024,70 @@
 		)
 	}
 
+	/** Material icon paths, for the actions menu rows. */
+	var EYE_PATH =
+		'M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,'
+		+ '17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,'
+		+ '4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,'
+		+ '16.39 23,12C21.27,7.61 17,4.5 12,4.5Z'
+	var PENCIL_PATH =
+		'M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 '
+		+ '16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,'
+		+ '6.18L3,17.25Z'
+	var TRASH_PATH =
+		'M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 '
+		+ '18,19V7H6V19Z'
+	var DOTS_PATH =
+		'M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,'
+		+ '12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 '
+		+ '10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z'
+
+	/**
+	 * One row of the actions menu, in NcActionButton's own class names.
+	 *
+	 * `<li class="action">` wrapping `<button class="action-button
+	 * button-vue focusable">`, label in `.action-button__text` inside
+	 * `.action-button__longtext-wrapper`. Identical in @nextcloud/vue 8 and 9,
+	 * so there is nothing to branch.
+	 *
+	 * The ICON is `.icon-vue`, not `.action-button__icon`. That distinction
+	 * is the whole reason this row needed rewriting: NcActionButton emits
+	 * `__icon` only on the FALLBACK span, for the legacy `icon` prop, and
+	 * action.scss styles it as a background-IMAGE box. Every real menu passes a
+	 * component through the icon slot instead, which is an NcIconSvgWrapper and
+	 * renders `.icon-vue` around a bare `<svg>` in a `<span>`. Naming
+	 * `__icon` put an inline SVG inside a class meant for a background image,
+	 * and left the 34px gutter to be hard-coded here — when `.icon-vue` gets
+	 * it from its own `min-width: var(--default-clickable-area)`, which is
+	 * where the real menu's alignment comes from.
+	 *
+	 * The svg carries no width, height or fill: the wrapper sizes it and
+	 * `fill: currentColor` colours it, exactly as the real one does.
+	 *
+	 * Menu semantics are the component's too — `role="menu"` on the list,
+	 * `presentation` on each item, `menuitem` on each button.
+	 *
+	 * @param {string} path The Material icon path.
+	 * @param {string} label The row label.
+	 * @return {string} The markup.
+	 */
+	function action(path, label) {
+		return (
+			'<li class="action nldesign-pg-action" role="presentation">'
+			+ '<button type="button" role="menuitem" '
+			+ 'class="action-button button-vue focusable">'
+			+ '<span aria-hidden="true" role="img" class="icon-vue">'
+			+ '<span><svg viewBox="0 0 24 24"><path d="'
+			+ path
+			+ '"></path></svg></span></span>'
+			+ '<span class="action-button__longtext-wrapper">'
+			+ '<span class="action-button__text">'
+			+ label
+			+ '</span></span>'
+			+ '</button></li>'
+		)
+	}
+
 	/**
 	 * The major version a header specimen should be drawn as.
 	 *
@@ -3298,11 +3107,10 @@
 	 *
 	 * @param {string} label The entry label.
 	 * @param {string} modifier Extra state classes.
-	 * @param {string} [marker] A callout marker to place on it.
 	 * @param {string} [counter] A counter bubble value.
 	 * @return {string} The markup.
 	 */
-	function navEntry(label, modifier, marker, counter) {
+	function navEntry(label, modifier, counter) {
 		return (
 			'<li class="app-navigation-entry nldesign-pg-nav-entry '
 			+ modifier
@@ -3314,7 +3122,6 @@
 			+ (counter
 				? '<span class="nldesign-pg-bubble">' + counter + '</span>'
 				: '')
-			+ (marker || '')
 			+ '</li>'
 		)
 	}
@@ -3325,10 +3132,9 @@
 	 * @param {string} name The row's name line.
 	 * @param {string} subname Its second line.
 	 * @param {string} modifier Extra state classes.
-	 * @param {string} [marker] A callout marker to place on it.
 	 * @return {string} The markup.
 	 */
-	function listItem(name, subname, modifier, marker) {
+	function listItem(name, subname, modifier) {
 		return (
 			'<li class="list-item nldesign-pg-listitem '
 			+ modifier
@@ -3345,7 +3151,6 @@
 			+ '</span>'
 			+ '</span>'
 			+ '<span class="nldesign-pg-bubble">3</span>'
-			+ (marker || '')
 			+ '</li>'
 		)
 	}
@@ -3417,7 +3222,7 @@
 	 * @return {string} The markup.
 	 */
 	function revealEye() {
-		return button('tertiary-no-background', 'default', '', '', {
+		return button('tertiary-no-background', 'default', '', {
 			extra: 'input-field__trailing-button',
 			label: t('thematiq', 'Show password'),
 			icon: mdi(
@@ -3591,10 +3396,9 @@
 	 * @param {string} kind checkbox, radio or switch.
 	 * @param {boolean} checked Whether it is on.
 	 * @param {string} label Its label.
-	 * @param {string} [marker] A callout marker to place on it.
 	 * @return {string} The markup.
 	 */
-	function choice(kind, checked, label, marker) {
+	function choice(kind, checked, label) {
 		var classes = [
 			'checkbox-radio-switch',
 			'checkbox-radio-switch-' + kind,
@@ -3637,7 +3441,6 @@
 			+ '<span class="checkbox-content__text checkbox-radio-switch__text">'
 			+ label
 			+ '</span></span></span>'
-			+ (marker || '')
 			+ '</span>'
 		)
 	}
@@ -3659,7 +3462,6 @@
 	 *   tertiary-no-background, error or success.
 	 * @param {string} state The state to draw.
 	 * @param {string} label Its label.
-	 * @param {string} [marker] A callout marker to place on it.
 	 * @param {Object} [options] `icon` is markup for the icon slot; `wide` fills
 	 *   the container, as NcButton's `wide` prop does; `done` replaces the line
 	 *   the press writes below the stage; `extra` is a class the consuming
@@ -3667,7 +3469,7 @@
 	 *   is an aria-label, for an icon-only button that has no text to read.
 	 * @return {string} The markup.
 	 */
-	function button(kind, state, label, marker, options) {
+	function button(kind, state, label, options) {
 		var settings = options || {}
 		var hasIcon = Boolean(settings.icon)
 		var hasText = Boolean(label)
@@ -3678,14 +3480,30 @@
 					? 'icon-only'
 					: 'text-only'
 
+		// Both spellings of the variant, because NcButton renamed it between the
+		// releases this app supports: @nextcloud/vue 8 (NC 32) emits
+		// `button-vue--vue-${variant}`, vue 9 (NC 34) emits
+		// `button-vue--${variant}`. A specimen carrying one of them is painted
+		// by the page's own stylesheet on one release and by this app's floor on
+		// the other, which is a specimen that lies about half the fleet.
+		//
+		// The shape class is vue 8 only — vue 9 deleted --icon-only,
+		// --text-only and --icon-and-text outright and tells the shapes apart
+		// with :empty and :has() on the spans instead. It is still emitted so
+		// the 32 stylesheet has something to match, and the spans stay
+		// CONDITIONAL rather than following vue 9's always-render-then-:empty:
+		// vue 8 has no :empty rule, so an empty icon span would add a whole
+		// --button-inner-size to every text-only button on NC 32. Omitting the
+		// span lays out the same on 34 as hiding it does.
 		var classes = [
 			'button-vue',
 			'button-vue--size-normal',
 			'button-vue--' + shape,
 			'button-vue--vue-' + kind,
+			'button-vue--' + kind,
 			'nldesign-pg-btn',
 		]
-		if (kind.indexOf('tertiary') === 0) {
+		if (kind.indexOf('tertiary') === 0 && kind !== 'tertiary') {
 			classes.push('button-vue--tertiary')
 		}
 		if (settings.wide === true) {
@@ -3718,21 +3536,7 @@
 			+ (hasText ? '<span class="button-vue__text">' + label + '</span>' : '')
 			+ '</span></button>'
 
-		if (!marker) {
-			return element
-		}
-
-		// Outside the button, not in it: NcButton clips its own overflow, and a
-		// marker pinned to a corner from the inside is a marker with its corner
-		// cut off.
-		return (
-			'<span class="nldesign-pg-btnwrap'
-			+ (settings.wide === true ? ' is-wide' : '')
-			+ '">'
-			+ element
-			+ marker
-			+ '</span>'
-		)
+		return element
 	}
 
 	/* ---------------------------------------------------------------- */
@@ -3903,7 +3707,6 @@
 		hashFor: hashFor,
 		exportCss: exportCss,
 		liveTokens: liveTokens,
-		calloutTip: calloutTip,
 		componentScopes: componentScopes,
 		applyScopes: applyScopes,
 		PICKABLE: PICKABLE,
