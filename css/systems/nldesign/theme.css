@@ -329,6 +329,7 @@ div[class*='login-box__wrapper'] > div {
 
 /* Login box primary button */
 #body-login .button-vue--vue-primary,
+#body-login .button-vue--primary,
 #body-login input[type='submit'],
 #body-login button.primary,
 .login-form button[type='submit'] {
@@ -345,6 +346,7 @@ div[class*='login-box__wrapper'] > div {
 }
 
 #body-login .button-vue--vue-primary:hover,
+#body-login .button-vue--primary:hover,
 #body-login input[type='submit']:hover,
 #body-login button.primary:hover {
 	background-color: var(
@@ -401,9 +403,22 @@ body.body-login-container header {
    BUTTONS — Component Token Mapping
    ============================================ */
 
-/* Base button styling */
-.button-vue,
-button,
+/* Base button styling.
+ *
+ * `.button-vue__text` is named as well as the button itself, because NcButton
+ * puts a weight on that child and a child's own rule beats what it would
+ * inherit. On @nextcloud/vue 8 (NC 32) that child is hard-coded `bold`; on
+ * vue 9 (NC 34) it reads `--font-weight-element`, which overrides.css now
+ * maps. Claiming the child here is what makes the two releases agree AND makes
+ * the token reach the label on the older one, where there is no variable to
+ * map. */
+/* `.action-button` is excluded throughout: NcActionButton carries
+   `button-vue` and is a `<button>`, so a broad button rule repaints every
+   row of every actions menu — bolding it, padding it out and rounding it.
+   A menu row is not a button, and `action.scss` styles it as a row. */
+.button-vue:not(.action-button),
+.button-vue:not(.action-button) .button-vue__text,
+button:not(.action-button),
 .button {
 	font-family: var(--nldesign-component-button-font-family) !important;
 	font-weight: var(--nldesign-component-button-font-weight) !important;
@@ -417,6 +432,7 @@ button,
 
 /* Primary buttons */
 .button-vue--vue-primary,
+.button-vue--primary,
 button.primary,
 input.primary,
 a.primary {
@@ -461,11 +477,28 @@ a.primary {
 .button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
 	.button-vue__text,
 .button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__wrapper,
+#body-login
+	.button-vue--primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__text,
+#body-login
+	.button-vue--primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__wrapper,
+#content
+	.button-vue--primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__text,
+#content
+	.button-vue--primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__wrapper,
+.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker])
+	.button-vue__text,
+.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker])
 	.button-vue__wrapper {
 	color: var(--nldesign-component-button-primary-action-color) !important;
 }
 
 .button-vue--vue-primary:hover,
+.button-vue--primary:hover,
 button.primary:hover,
 input.primary:hover,
 a.primary:hover {
@@ -478,6 +511,7 @@ a.primary:hover {
 }
 
 .button-vue--vue-primary:disabled,
+.button-vue--primary:disabled,
 button.primary:disabled {
 	background-color: var(
 		--nldesign-component-button-disabled-background-color
@@ -488,6 +522,7 @@ button.primary:disabled {
 
 /* Secondary buttons */
 .button-vue--vue-secondary,
+.button-vue--secondary,
 button.secondary {
 	background-color: var(
 		--nldesign-component-button-secondary-action-background-color
@@ -500,6 +535,7 @@ button.secondary {
 }
 
 .button-vue--vue-secondary:hover,
+.button-vue--secondary:hover,
 button.secondary:hover {
 	background-color: var(
 		--nldesign-component-button-secondary-action-hover-background-color
@@ -841,10 +877,12 @@ header nav svg radialGradient,
    ============================================ */
 
 /* Fix "Aanpassen" and other button text overflow */
-.button-vue,
+.button-vue:not(.action-button),
 .button-vue--vue-primary,
+.button-vue--primary,
 .button-vue--vue-secondary,
-button,
+.button-vue--secondary,
+button:not(.action-button),
 .button {
 	padding: 8px 16px !important;
 	min-width: max-content !important;
@@ -896,8 +934,8 @@ button,
  * off the same way. Components that need the brand radius are listed by name. */
 .panel,
 .widget,
-.button-vue,
-button,
+.button-vue:not(.action-button),
+button:not(.action-button),
 .modal-container,
 .app-navigation-entry,
 input,
@@ -949,7 +987,7 @@ body,
 #app-content,
 .app-content-wrapper,
 .app-content-list,
-.app-content-detail {
+.app-content-details {
 	background-image: none !important;
 }
 
@@ -985,6 +1023,7 @@ button,
    step with the motion declarations above. */
 @media (prefers-reduced-motion: reduce) {
 	#body-login .button-vue--vue-primary,
+	#body-login .button-vue--primary,
 	#body-login input[type='submit'],
 	#body-login button.primary,
 	.login-form button[type='submit'],

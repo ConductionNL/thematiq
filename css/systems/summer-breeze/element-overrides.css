@@ -162,8 +162,8 @@ input[type='email']:focus {
    BUTTONS — rounded, smooth, no hard edges
    ============================================ */
 
-.button-vue,
-button,
+.button-vue:not(.action-button),
+button:not(.action-button),
 .button {
 	border-radius: var(--summer-radius) !important;
 	transition:
