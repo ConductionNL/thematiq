@@ -344,7 +344,15 @@ OC.L10N.register(
         "Name, federated cloud ID or email": "Naam, federated cloud-ID of e-mail",
         "expires {date}": "verloopt {date}",
         "Today": "Vandaag",
-        "Yesterday": "Gisteren"
+        "Yesterday": "Gisteren",
+        "Hover the component, or give it focus, for {states}.": "Beweeg over het onderdeel of geef het focus voor {states}.",
+        " and ": " en ",
+        "{count} entries": "{count} entries",
+        "From": "From",
+        "To": "To",
+        "Edit": "Edit",
+        "View": "View",
+        "Actions": "Actions"
     },
     "nplurals=2; plural=(n != 1);"
 )

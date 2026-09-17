@@ -344,7 +344,15 @@ OC.L10N.register(
         "expires {date}": "expires {date}",
         "Name, federated cloud ID or email": "Name, federated cloud ID or email",
         "Today": "Today",
-        "Yesterday": "Yesterday"
+        "Yesterday": "Yesterday",
+        " and ": " and ",
+        "Hover the component, or give it focus, for {states}.": "Hover the component, or give it focus, for {states}.",
+        "{count} entries": "{count} entries",
+        "From": "From",
+        "To": "To",
+        "Edit": "Edit",
+        "View": "View",
+        "Actions": "Actions"
     },
     "nplurals=2; plural=(n != 1);"
 )
