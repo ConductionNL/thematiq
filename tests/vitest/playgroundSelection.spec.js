@@ -462,10 +462,31 @@ describe('the shipped stylesheets, reached', () => {
 	// specimens do not look subtly wrong — the components lose their styling
 	// entirely, and an admin reads that as a broken theme.
 
+	/**
+	 * A style rule, shaped the way a real one is.
+	 *
+	 * The `cssRules` is the point. Since CSS Nesting shipped, CSSStyleRule
+	 * inherits it from CSSGroupingRule, so a real style rule carries an empty
+	 * list — and an empty CSSRuleList is an object, so it is TRUTHY. A helper
+	 * that left it out modelled a CSSOM no browser has produced for years, and
+	 * it is what let the walker ship testing `cssRules` before
+	 * `selectorText`: every real style rule took the grouping branch and no
+	 * specimen was stamped, while these tests stayed green.
+	 */
+	const styleRule = (selectorText, nested = []) => ({
+		selectorText,
+		cssRules: nested,
+	})
+
 	/** A stylesheet, shaped the way the CSSOM hands one over. */
 	const sheet = (...selectors) => ({
-		cssRules: selectors.map((selectorText) => ({ selectorText })),
+		cssRules: selectors.map((s) =>
+			typeof s === 'string' ? styleRule(s) : s,
+		),
 	})
+
+	/** A grouping rule — @media, @supports — which has no selector of its own. */
+	const group = (...children) => ({ cssRules: children })
 
 	/** An element, shaped the way applyScopes uses one. */
 	const element = (...names) => {
@@ -497,6 +518,45 @@ describe('the shipped stylesheets, reached', () => {
 		expect(scopes['button-vue--wide']).toEqual(['data-v-00a99684'])
 		expect(scopes['input-field__label']).toEqual(['data-v-8e16cbb5'])
 		expect(scopes['plain-old-class']).toBeUndefined()
+	})
+
+	it('reads a style rule that carries an empty cssRules of its own', () => {
+		// The regression guard for the walker's rule order. Every rule here is
+		// shaped like a real CSSStyleRule, so a walker that descends before it
+		// reads the selector finds nothing at all.
+		const scopes = playground.componentScopes({
+			styleSheets: [sheet('.notecard[data-v-11112222]')],
+		})
+
+		expect(scopes.notecard).toEqual(['data-v-11112222'])
+	})
+
+	it('reads a nested style rule as well as the one holding it', () => {
+		// CSS Nesting again, from the other side: a style rule can be BOTH a
+		// selector and a container, so finding the parent must not stop the
+		// descent and descending must not skip the parent.
+		const scopes = playground.componentScopes({
+			styleSheets: [
+				sheet(
+					styleRule('.list-item[data-v-aaaabbbb]', [
+						styleRule('.list-item__name[data-v-aaaabbbb]'),
+					]),
+				),
+			],
+		})
+
+		expect(scopes['list-item']).toEqual(['data-v-aaaabbbb'])
+		expect(scopes['list-item__name']).toEqual(['data-v-aaaabbbb'])
+	})
+
+	it('still descends into a grouping rule, which has no selector', () => {
+		const scopes = playground.componentScopes({
+			styleSheets: [
+				{ cssRules: [group(styleRule('.avatardiv[data-v-ccccdddd]'))] },
+			],
+		})
+
+		expect(scopes.avatardiv).toEqual(['data-v-ccccdddd'])
 	})
 
 	it('follows an @import, which is how these sheets actually arrive', () => {

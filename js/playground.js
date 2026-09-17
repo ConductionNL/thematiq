@@ -406,30 +406,6 @@
 	}
 
 	/**
-	 * A value safe to drop inside a double-quoted HTML attribute.
-	 *
-	 * The stage markup is built by string concatenation, so an attribute value
-	 * that reaches it unescaped is markup. Every caller passes a literal today
-	 * — but a token set NAME is one paste away from those builders, and it is
-	 * admin-supplied. Escaping the quote matters as much as the angle brackets
-	 * here: `admin.js`'s `escapeHtml()` goes through `innerHTML`, which leaves
-	 * `"` alone and is therefore a text escaper, not an attribute one.
-	 *
-	 * Plain string replacement rather than a DOM round-trip, because this file
-	 * builds markup under Node in the inventory tests too.
-	 *
-	 * @param {string} value Any value.
-	 * @return {string} The value, escaped for an attribute.
-	 */
-	function attr(value) {
-		return String(value)
-			.replace(/&/g, '&amp;')
-			.replace(/"/g, '&quot;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-	}
-
-	/**
 	 * Which of the Nextcloud variables reading a token gets to define it.
 	 *
 	 * The same rule as `StockTokensService::canonical()`, deliberately: the two
@@ -476,16 +452,46 @@
 			return
 		}
 
+		// The editor is rendered MORE THAN ONCE. admin.js calls
+		// initTokenEditor() again after a token set is applied and after
+		// overrides are imported, and each call replaces the host's contents
+		// wholesale. build() moves three of the editor's own elements out of it
+		// — the tab strip, the actions block and the heading — so a re-render
+		// hands the editor fresh copies while the moved originals stay in the
+		// selector above the preview: two tab strips, and the one an admin sees
+		// wired to an editor that no longer exists.
+		//
+		// The invariant that detects it: once build() has run, the editor does
+		// NOT contain .nldesign-tabs. If it does, it has been re-rendered and
+		// the instrument has to be rebuilt around it.
+		var rebuilding = false
+		var rebuild = function () {
+			if (rebuilding === true) {
+				return
+			}
+			rebuilding = true
+			try {
+				build()
+			} finally {
+				rebuilding = false
+			}
+		}
+
 		if (document.getElementById('nldesign-save-btn') !== null) {
-			build()
-			return
+			rebuild()
 		}
 
 		var observer = new MutationObserver(function () {
-			if (document.getElementById('nldesign-save-btn') !== null) {
-				observer.disconnect()
-				build()
+			if (document.getElementById('nldesign-save-btn') === null) {
+				return
 			}
+			// build() itself mutates the host, so this must only fire for a
+			// strip the EDITOR owns. After a successful build there is none,
+			// which is what stops this feeding itself.
+			if (host.querySelector('.nldesign-tabs') === null) {
+				return
+			}
+			rebuild()
 		})
 		observer.observe(host, { childList: true, subtree: true })
 
@@ -497,6 +503,9 @@
 		// renders at all, so a minute is "this is not happening" with room to
 		// spare rather than a race.
 		window.setTimeout(function () {
+			if (document.getElementById('nldesign-save-btn') !== null) {
+				return
+			}
 			observer.disconnect()
 		}, BOOT_GIVE_UP)
 	}
@@ -594,6 +603,20 @@
 		var tabs = editor !== null ? editor.querySelector('.nldesign-tabs') : null
 		if (editor === null || preview === null || tabs === null) {
 			return
+		}
+
+		// Everything a previous run put OUTSIDE the editor, which a re-render
+		// cannot clear on its own: the selector holding the moved strip and
+		// heading, and the stage appended to the preview. The actions block
+		// needs no cleanup — it is moved into the save bar, which lives inside
+		// the editor and goes with it.
+		var stale = preview.parentNode.querySelector('.nldesign-pg-selector')
+		if (stale !== null) {
+			stale.parentNode.removeChild(stale)
+		}
+		var staleStage = preview.querySelector('.nldesign-pg-stage')
+		if (staleStage !== null) {
+			staleStage.parentNode.removeChild(staleStage)
 		}
 
 		var inventory = loadState('playgroundInventory', {
@@ -1251,11 +1274,24 @@
 				continue
 			}
 
-			// Media and supports blocks, where the dark halves of these
-			// components live.
-			if (rule.cssRules) {
+			// The SELECTOR is read first, and the descent is not an else.
+			//
+			// Since CSS Nesting shipped, CSSStyleRule inherits cssRules from
+			// CSSGroupingRule, so every plain style rule carries one — an empty
+			// list, which is still truthy. A walker that tested cssRules first
+			// therefore sent EVERY style rule down the grouping branch and
+			// never reached a selector at all, which meant no specimen was ever
+			// stamped in a real browser. It read as correct here because the
+			// only rules that reach this in a test are hand-built objects that
+			// have no cssRules of their own.
+			//
+			// A nested style rule is both things at once — it has a selector
+			// AND children — so both branches run, and neither continues past
+			// the other.
+			if (rule.cssRules && rule.cssRules.length > 0) {
+				// Media and supports blocks, where the dark halves of these
+				// components live, and since Nesting, nested style rules.
 				collectScopes(rule.cssRules, found)
-				continue
 			}
 
 			if (!rule.selectorText) {
@@ -2825,48 +2861,6 @@
 			+ 'q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127'
 			+ ' 85.5T480-80Z"></path>'
 			+ '</svg></span>'
-		)
-	}
-
-	/**
-	 * The arrow the log-in button carries.
-	 *
-	 * Core's `LoginButton` puts `vue-material-design-icons/ArrowRight` in
-	 * NcButton's icon slot, so the login page's primary button is never a bare
-	 * label. This is that icon's own path, at that set's 24-unit viewBox.
-	 *
-	 * @return {string} The markup.
-	 */
-	function submitArrow() {
-		return (
-			'<svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24">'
-			+ '<path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,'
-			+ '5.5L16,11H4Z"></path></svg>'
-		)
-	}
-
-	/**
-	 * The reveal button NcPasswordField hangs inside the password box.
-	 *
-	 * A trailing button, not an adornment: it is a real `button-vue` in
-	 * `input-field__trailing-button`, which is why the password box on the
-	 * login card is the one field whose text stops short of its own edge.
-	 *
-	 * @return {string} The markup.
-	 */
-	function revealEye() {
-		return (
-			'<span class="input-field__trailing-button button-vue'
-			+ ' button-vue--tertiary-no-background nldesign-pg-reveal"'
-			// Hidden from assistive technology and out of the tab order: it is
-			// the drawing of a toggle, not a toggle, and an unlabelled tab stop
-			// that does nothing is worse than no tab stop.
-			+ ' aria-hidden="true">'
-			+ '<svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24">'
-			+ '<path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,'
-			+ '0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 '
-			+ '12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 '
-			+ '21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"></path></svg></span>'
 		)
 	}
 
