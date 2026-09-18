@@ -393,6 +393,9 @@ function emit(rule) {
  * @return {string} The generated stylesheet.
  */
 function generate(sourceCss) {
+	// REUSE-IgnoreStart -- the SPDX tags below are DATA, not this file's own:
+	// they are the header written INTO the generated stylesheet, carrying
+	// Nextcloud's licence for the vendored source. This file is EUPL-1.2.
 	const header = [
 		'/**',
 		" * Nextcloud's own login-page stylesheet, scoped to the playground stage.",
@@ -418,6 +421,7 @@ function generate(sourceCss) {
 		'',
 		'',
 	].join('\n')
+	// REUSE-IgnoreEnd
 
 	const rules = split(stripComments(sourceCss))
 	RENAMED_KEYFRAMES = keyframeNames(rules)

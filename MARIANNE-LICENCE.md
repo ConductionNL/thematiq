@@ -28,7 +28,7 @@ Source of the DSFR package and the official system-de-design site:
 The DSFR package — including the Marianne font files — is published under
 the **Etalab Open Licence 2.0** (`Etalab-2.0`, "Licence Ouverte 2.0" /
 "Open Licence 2.0"). The full licence text is reproduced at
-[`LICENSES/Etalab-2.0.txt`](LICENSES/Etalab-2.0.txt).
+[`LICENSES/etalab-2.0.txt`](LICENSES/etalab-2.0.txt).
 
 Official licence page: <https://www.etalab.gouv.fr/licence-ouverte-open-licence/>
 
@@ -100,7 +100,7 @@ State agency, this app:
 4. **Carries this licence and attribution with the files.**
    `.license-overrides.json` maps every bundled Marianne `woff2` path to the
    `Etalab-2.0` SPDX identifier, resolving to
-   [`LICENSES/Etalab-2.0.txt`](LICENSES/Etalab-2.0.txt).
+   [`LICENSES/etalab-2.0.txt`](LICENSES/etalab-2.0.txt).
 
 ## Copyright
 
