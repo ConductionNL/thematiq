@@ -322,6 +322,7 @@ class StockTokensService {
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
 	protected function resolveTheme(): object {
+		// phpcs:ignore CustomSniffs.Nextcloud.NoServiceLocator.GlobalContainerLookup -- Optional cross-app dependency: the theming app may be absent, and DEFAULT_THEME is held as a string for that reason, so a constructor type-hint would make this file unloadable instead of falling back to the shipped snapshot.
 		return \OCP\Server::get(self::DEFAULT_THEME);
 	}//end resolveTheme()
 
