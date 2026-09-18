@@ -1708,6 +1708,7 @@
 		if (toggle !== null) {
 			var menu = toggle.closest('.nldesign-pg-actions')
 			var closed = menu.classList.toggle('is-closed')
+			toggle.setAttribute('aria-expanded', closed ? 'false' : 'true')
 			say(
 				stage,
 				closed ? t('thematiq', 'Menu closed') : t('thematiq', 'Menu opened'),
@@ -2360,6 +2361,12 @@
 					icon: mdi('dots-horizontal-icon', DOTS_PATH, 20),
 					label: t('thematiq', 'Actions'),
 					extra: 'action-item__menutoggle',
+					// The specimen is really interactive — the class toggle
+					// drives display:none on the popover — so the trigger has to
+					// say what it controls and whether it is open, or a screen
+					// reader hears only the live region and never the control's
+					// own state. The menu is drawn open.
+					attrs: ' aria-haspopup="true" aria-expanded="true"',
 				})
 				+ '<div class="popover nldesign-pg-popover">'
 				+ '<ul class="popovermenu" role="menu">'
@@ -3510,6 +3517,7 @@
 			+ (settings.done || buttonDone(kind))
 			+ '"'
 			+ (settings.label ? ' aria-label="' + attr(settings.label) + '"' : '')
+			+ (settings.attrs || '')
 			+ (state === 'disabled' ? ' disabled' : '')
 			+ '><span class="button-vue__wrapper">'
 			+ (hasIcon

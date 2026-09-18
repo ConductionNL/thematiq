@@ -44,16 +44,35 @@ const registryTabs = new Map(
 	].map((match) => [match[1], match[2]]),
 )
 
-/** Every stylesheet this app ships, as one string, for the class-name check. */
+/**
+ * The THEMING stylesheets, as one string, for the class-name check.
+ *
+ * The playground's own sheets are excluded on purpose, and that exclusion is
+ * the whole point of the guard. A class name here is meant to prove the theme
+ * still reaches the component; counting css/playground.css lets the specimen's
+ * fallback floor answer for the theme, and a floor defines every class the
+ * specimen draws by construction. That is exactly how three wrong names —
+ * .menutoggle, .unified-search__button and .app-content-detail — survived this
+ * guard until they were read off Nextcloud's own source instead.
+ *
+ * So: a name has to appear in a stylesheet that paints the REAL component, not
+ * in the one that paints the drawing of it.
+ */
+const SELF_PAINTED = /playground/
+
 const stylesheets = (function read(dir) {
 	return fs.readdirSync(dir, { withFileTypes: true }).reduce((text, entry) => {
 		const full = path.join(dir, entry.name)
 		if (entry.isDirectory()) {
 			return text + read(full)
 		}
-		return entry.name.endsWith('.css')
-			? text + fs.readFileSync(full, 'utf8')
-			: text
+		if (entry.name.endsWith('.css') === false) {
+			return text
+		}
+		if (SELF_PAINTED.test(entry.name) === true) {
+			return text
+		}
+		return text + fs.readFileSync(full, 'utf8')
 	}, '')
 })(path.join(ROOT, 'css'))
 

@@ -1,5 +1,5 @@
 {
-	"$comment": "Component inventory for the selector / stage / tokens instrument inside the admin panel's token editor (/settings/admin/theming). One entry per component chip, covering the @nextcloud/vue components a token set actually repaints. `tab` is the token editor tab the chip appears under; `tokens` are REAL registry tokens, and the instrument clones the editor's own row for each so edits keep flowing through the editor's dirty tracking and Save; `fixed` are facts with no token at all, carrying a reason code from the converter's vocabulary; `states` are what the stage draws, and a token's `callout` points at the state it paints. `layout: wide` means the component cannot be judged from a swatch — a table, a list, a dialog — so the stage draws ONE full-width specimen carrying every callout instead of a cell per state. `classes` lists only the class names THEMATIQ ITSELF styles for that component: the specimen markup uses the full real class names, but this list is the drift guard, and a name here that no shipped stylesheet mentions means the theme has stopped reaching the component. tests/vitest/playgroundInventory.spec.js enforces all of it.",
+	"$comment": "Component inventory for the selector / stage / tokens instrument inside the admin panel's token editor (/settings/admin/theming). One entry per component chip, covering the @nextcloud/vue components a token set actually repaints. `tab` is the token editor tab the chip appears under; `tokens` are REAL registry tokens, and the instrument clones the editor's own row for each so edits keep flowing through the editor's dirty tracking and Save; `fixed` are facts with no token at all, carrying a reason code from the converter's vocabulary; `states` are what the stage draws, and a token's `callout` points at the state it paints. `layout: wide` means the component cannot be judged from a swatch — a table, a list, a dialog — so the stage draws ONE full-width specimen carrying every callout instead of a cell per state. `classes` lists only the class names THEMATIQ ITSELF styles for that component: the specimen markup uses the full real class names, but this list is the drift guard, and a name here that no shipped stylesheet mentions means the theme has stopped reaching the component. The check deliberately EXCLUDES css/playground*.css: the specimen fallback floor defines every class the specimen draws, so counting it lets the drawing answer for the theme — which is how .menutoggle, .unified-search__button and .app-content-detail all passed this guard while being names Nextcloud does not emit. tests/vitest/playgroundInventory.spec.js enforces all of it.",
 	"version": 3,
 	"tabs": [
 		{
@@ -108,9 +108,7 @@
 				"input-field__label",
 				"input-field__input",
 				"button-vue",
-				"button-vue--wide",
-				"button-vue__icon",
-				"info"
+				"button-vue__icon"
 			],
 			"states": [
 				{
@@ -610,11 +608,9 @@
 			"classes": [
 				"popover",
 				"popovermenu",
-				"action-item__menutoggle",
 				"action",
 				"action-button",
 				"icon-vue",
-				"action-button__text",
 				"button-vue",
 				"button-vue--tertiary"
 			],
