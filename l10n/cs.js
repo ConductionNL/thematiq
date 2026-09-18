@@ -355,7 +355,8 @@ OC.L10N.register(
         "%n entries": "%n entries",
         "%n entry": "%n entry",
         "Nothing": "Nothing",
-        "Changed": "Changed"
+        "Changed": "Changed",
+        "+%n more": "+%n more"
     },
     "nplurals=2; plural=(n != 1);"
 )

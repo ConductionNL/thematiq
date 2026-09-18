@@ -354,7 +354,8 @@
         "%n entries": "%n entries",
         "%n entry": "%n entry",
         "Nothing": "Nothing",
-        "Changed": "Changed"
+        "Changed": "Changed",
+        "+%n more": "+%n more"
     },
     "plurals": {}
 }

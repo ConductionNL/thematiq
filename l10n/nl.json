@@ -354,7 +354,8 @@
         "%n entries": "%n items",
         "%n entry": "%n item",
         "Nothing": "Niets",
-        "Changed": "Gewijzigd"
+        "Changed": "Gewijzigd",
+        "+%n more": "+nog %n"
     },
     "plurals": {}
 }
