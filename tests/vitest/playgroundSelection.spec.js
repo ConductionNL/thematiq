@@ -480,9 +480,7 @@ describe('the shipped stylesheets, reached', () => {
 
 	/** A stylesheet, shaped the way the CSSOM hands one over. */
 	const sheet = (...selectors) => ({
-		cssRules: selectors.map((s) =>
-			typeof s === 'string' ? styleRule(s) : s,
-		),
+		cssRules: selectors.map((s) => (typeof s === 'string' ? styleRule(s) : s)),
 	})
 
 	/** A grouping rule — @media, @supports — which has no selector of its own. */

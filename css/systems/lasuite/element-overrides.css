@@ -761,7 +761,7 @@ button[class*='primary']:not([data-admin-theming-setting-color-picker]) {
 .button-vue--vue-primary:hover,
 .button-vue--primary:hover,
 button.primary:hover,
-.button-vue.button-vue--primary:hover ,
+.button-vue.button-vue--primary:hover,
 .button-vue.button-vue--vue-primary:hover {
 	background-color: var(
 		--lasuite-content-brand,

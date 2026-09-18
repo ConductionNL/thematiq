@@ -369,7 +369,9 @@
 	--nldesign-component-link-color: var(--nldesign-color-link);
 	--nldesign-component-link-hover-color: var(--nldesign-color-link-hover);
 	--nldesign-component-link-visited-color: var(--nldesign-color-link-visited);
-	--nldesign-component-link-font-weight: var(--nldesign-font-weight-default); /* reserved */
+	--nldesign-component-link-font-weight: var(
+		--nldesign-font-weight-default
+	); /* reserved */
 	--nldesign-component-link-text-decoration: underline;
 
 	/* ===================================================================

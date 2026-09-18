@@ -1611,8 +1611,6 @@
 		return row
 	}
 
-
-
 	/**
 	 * Wire the stage once: marker tooltips, and specimens that answer back.
 	 *
@@ -1672,7 +1670,9 @@
 		// The actions trigger is drawn with button(), so it carries the specimen
 		// button class — but it opens a menu rather than answering a press, and
 		// interact() is where that lives.
-		if (target.closest('.nldesign-pg-actions .action-item__menutoggle') !== null) {
+		if (
+			target.closest('.nldesign-pg-actions .action-item__menutoggle') !== null
+		) {
 			interact(stage, target)
 			return
 		}
@@ -1704,9 +1704,7 @@
 	function interact(stage, target) {
 		// The actions menu: its trigger is the whole point of an actions menu,
 		// and it did nothing at all.
-		var toggle = target.closest(
-			'.nldesign-pg-actions .action-item__menutoggle',
-		)
+		var toggle = target.closest('.nldesign-pg-actions .action-item__menutoggle')
 		if (toggle !== null) {
 			var menu = toggle.closest('.nldesign-pg-actions')
 			var closed = menu.classList.toggle('is-closed')
@@ -1923,9 +1921,6 @@
 		return element.textContent.trim()
 	}
 
-
-
-
 	/**
 	 * Answer a press on a specimen button.
 	 *
@@ -1997,7 +1992,6 @@
 	function fallbackSample() {
 		return '<span class="nldesign-pg-swatch"></span>'
 	}
-
 
 	/**
 	 * The stage markup per component, keyed by the inventory's component id.
@@ -2089,10 +2083,15 @@
 				// Both of these are NcButtons on the real card, not links: wide,
 				// tertiary, stacked under the form, and siblings of it rather
 				// than children.
-				+ button('tertiary', 'default', t('thematiq', 'Log in with a device'), {
-					wide: true,
-					done: t('thematiq', 'Device login opened'),
-				})
+				+ button(
+					'tertiary',
+					'default',
+					t('thematiq', 'Log in with a device'),
+					{
+						wide: true,
+						done: t('thematiq', 'Device login opened'),
+					},
+				)
 				+ button('tertiary', 'default', t('thematiq', 'Forgot password?'), {
 					wide: true,
 					done: t('thematiq', 'Password reset opened'),
@@ -2161,11 +2160,7 @@
 				+ '</div>'
 				+ '<ul>'
 				+ navEntry(t('thematiq', 'All files'), '')
-				+ navEntry(
-					t('thematiq', 'Favorites'),
-					'is-selected active',
-					'3',
-				)
+				+ navEntry(t('thematiq', 'Favorites'), 'is-selected active', '3')
 				+ navEntry(t('thematiq', 'Shared with you'), '')
 				+ navEntry(t('thematiq', 'Deleted files'), '')
 				+ '</ul>'
@@ -2224,12 +2219,7 @@
 		table: function () {
 			var rows = [
 				['Jaarverslag 2025.pdf', '2,4 MB', t('thematiq', 'Today'), '', ''],
-				[
-					'Begroting.xlsx',
-					'812 kB',
-					t('thematiq', 'Yesterday'),
-					'is-zebra',
-				],
+				['Begroting.xlsx', '812 kB', t('thematiq', 'Yesterday'), 'is-zebra'],
 				['Notulen raad.docx', '64 kB', '3 dagen geleden', '', ''],
 				['Bijlage A.png', '1,1 MB', 'Vorige week', 'is-zebra', ''],
 				['Archief', '—', 'Vorige maand', '', ''],
