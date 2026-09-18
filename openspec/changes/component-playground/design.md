@@ -9,7 +9,7 @@ The first choice was a small Vue build for this page only, so the components are
 real `@nextcloud/vue` ones and cannot drift. It was not taken.
 
 The deciding fact is that the approach already exists and works. `js/admin-mock.js` renders
-a component stage with numbered callouts, filters the real token rows beside it, and
+a component stage, filters the real token rows beside it, and
 recolours the component live while a value is edited — behind `?mock=1`, in plain DOM calls,
 with no bundler. What the playground needs is that mechanism applied to the full inventory rather
 than to one button.
@@ -42,9 +42,16 @@ and the login background too, neither of which a signed-in page can ever contain
 that, a separate page costs a route, a controller, a template, a second copy of the token
 editor's state, and a second place for an admin to look for the same file.
 
-The stage draws each component in its own states, with a numbered marker per state, and the
-filtered token list repeats those numbers. That numbering is the whole mechanism: it is what
-ties "this colour" to "this row" without the admin having to know a variable name first.
+The stage draws each component in its own states, each cell captioned with the state it
+shows, and the filtered token list is grouped under those same states and says what each
+token paints. That pairing is the whole mechanism: it is what ties "this colour" to "this
+row" without the admin having to know a variable name first.
+
+An earlier revision did it with numbered markers on the drawing, repeated beside each row.
+They were removed: the caption and the "paints" column already say it, so the number was a
+third spelling of the same fact, and it brought a tooltip layer with it that had to be
+keyboard-reachable and dismissible to earn its place. The state numbers stay in the
+inventory data, where they group the rows.
 
 ## 3. The editor's own rows, and therefore the editor's own saving
 
@@ -139,7 +146,7 @@ file is "someone forgot `t()`".
 "Size", "Modified", the empty state, the field errors, the switch's on and off — Nextcloud
 translates every one of these in the real product, so a specimen that leaves them in one
 language is not showing a German admin what their theme does to a German screen. The same goes
-for everything the instrument SAYS about a specimen: the marker tooltips, the line under the
+for everything the instrument SAYS about a specimen: the state captions, the line under the
 stage, the version switch. These all go through `t()` and live in `l10n/`.
 
 **The sample content is not.** File names, people's names, dates, file sizes, the text of a

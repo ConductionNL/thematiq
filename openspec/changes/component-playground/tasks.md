@@ -39,9 +39,10 @@ Tick a box when the work is merged to `development`, not when it is started.
       navigation, content card, table, sidebar, text input, select, checkbox & switch,
       textarea, dialog, list item, progress; primary/secondary/tertiary/error button, note
       cards, badge & counter, toast; heading, paragraph, link, muted text, status text.
-- [ ] 3.3 Stage markup per component, one specimen per state, numbered to match its rows.
-- [ ] 3.4 The filtered list: cloned editor rows, each with its callout number and what it
-      paints, grouped by state. No "show all N tokens of <tab>" link back to the full list:
+- [ ] 3.3 Stage markup per component, one specimen per state, each captioned with the state
+      it draws.
+- [ ] 3.4 The filtered list: cloned editor rows, each saying what it paints, grouped by the
+      state that paints it. No "show all N tokens of <tab>" link back to the full list:
       the chip row above the stage already carries the full view as its first chip, which is
       the same destination and the place an admin is already looking to change what the stage
       shows. A second route to it was considered and dropped.

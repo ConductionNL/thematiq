@@ -263,6 +263,11 @@ These are `--nldesign-*` tokens that don't map to standard Nextcloud variables b
 
 ## Summary
 
+Counts NEXTCLOUD variables. The Focus and Header & Navigation sections above
+list `--nldesign-*` tokens that answer to no Nextcloud variable at all, so they
+have nothing to count here — which is why the rows below do not add up to the
+number of table rows in this file.
+
 | Category | Total Variables | Mapped | Unmapped | Intentionally Not Overridden |
 |---|---|---|---|---|
 | Primary | 13 | 12 | 1 | 0 |
@@ -286,4 +291,4 @@ These are `--nldesign-*` tokens that don't map to standard Nextcloud variables b
 | Filter | 5 | 0 | 0 | 5 |
 | Image | 3 | 0 | 0 | 3 |
 | Assistant | 4 | 0 | 0 | 4 |
-| **Total** | **108** | **52** | **29** | **34** |
+| **Total** | **115** | **52** | **29** | **34** |

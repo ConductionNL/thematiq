@@ -19,13 +19,29 @@ converter is wrong" stays an opinion instead of a diff.
 
 This change is the component playground: the token editor in the theming panel becomes a
 selector, a stage and a filtered token list. Picking a component draws it on the preview in
-each of its states, with a numbered marker per state, and narrows the editor to the tokens
-that component reads — each row numbered to match. It is where the OpenWOO reference set gets
+each of its states, each cell captioned with the state it shows, and narrows the editor to
+the tokens that component reads — grouped under the state each one paints. It is where the OpenWOO reference set gets
 built by hand, against components, so that the converter has a fixture to diff against.
 
 It depends on nothing that is not already in the panel: the editor's rows and its Save, the
 preview container, and the token registry. The `--nldesign-*` values it exports come from the
 service that already resolves them for the preview swatches.
+
+### Two other changes travel in this branch
+
+Named here because they are not the instrument, they change what an admin sees without it,
+and an artefact that describes only the instrument would leave a reader of this change
+unable to account for the diff.
+
+- **`StockTokensService`** resolves the `nextcloud` set's stock colours from the INSTANCE
+  the app is running on rather than from a snapshot taken when the file was written. It
+  changes which colours an admin sees for that set on every instance, playground or not.
+  A snapshot of a moving target is wrong the moment the target moves, which is the whole
+  argument for the service.
+- **`css/playground-guest.css`** vendors core's `guest.css` under a `:where()` scope, from
+  `scripts/generate-guest-css.mjs`. The login page is the one part of Nextcloud whose
+  stylesheet the settings page does not load, so it is the one part a login specimen could
+  not otherwise be painted by. Generated and byte-compared, never hand-edited.
 
 ## What Changes
 
@@ -37,7 +53,7 @@ service that already resolves them for the preview swatches.
   component reads. Design decision 2 records why an earlier draft's separate page was the
   wrong trade.
 - **Vanilla rendering, no build step, following `js/admin-mock.js`.** The mock already
-  renders a component stage with numbered callouts, filters the real token rows beside it,
+  renders a component stage, filters the real token rows beside it,
   and recolours the component live while a token is edited — it works today behind `?mock=1`.
   This change generalises that mechanism from one component to the full inventory. No
   bundler, no `vue`, no `@nextcloud/vue`, no dist artifact: `js/playground.js` is vanilla and
