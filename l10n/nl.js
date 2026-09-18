@@ -347,12 +347,15 @@ OC.L10N.register(
         "Yesterday": "Gisteren",
         "Hover the component, or give it focus, for {states}.": "Beweeg over het onderdeel of geef het focus voor {states}.",
         " and ": " en ",
-        "{count} entries": "{count} entries",
-        "From": "From",
-        "To": "To",
-        "Edit": "Edit",
-        "View": "View",
-        "Actions": "Actions"
+        "From": "Van",
+        "To": "Naar",
+        "Edit": "Bewerken",
+        "View": "Bekijken",
+        "Actions": "Acties",
+        "%n entries": "%n items",
+        "%n entry": "%n item",
+        "Nothing": "Niets",
+        "Changed": "Changed"
     },
     "nplurals=2; plural=(n != 1);"
 )
