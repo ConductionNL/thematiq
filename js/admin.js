@@ -4531,11 +4531,32 @@
 			tableBody.innerHTML = ''
 			var row = document.createElement('tr')
 			var cell = document.createElement('td')
-			cell.colSpan = 4
+			cell.colSpan = 6
 			cell.className = 'settings-hint'
 			cell.textContent = message
 			row.appendChild(cell)
 			tableBody.appendChild(row)
+		}
+
+		/**
+		 * The four pure formatters, from js/lib/auditFormat.js.
+		 *
+		 * Read through a local alias rather than called globally so the panel
+		 * degrades the way the rest of this file does when a module is absent:
+		 * an entry renders its raw value instead of throwing and taking the
+		 * whole table with it.
+		 */
+		var auditFormat = (typeof window !== 'undefined'
+			&& window.ThematiqAuditFormat) || {
+			formatAuditChanged: function (entry) {
+				return String(entry.changed || '')
+			},
+			formatAuditTimestamp: function (ts) {
+				return String(ts || '')
+			},
+			formatAuditValue: function (value) {
+				return value === null || value === undefined ? '' : String(value)
+			},
 		}
 
 		function renderAuditTable(tableBody, entries) {
@@ -4552,59 +4573,41 @@
 			entries.forEach(function (entry) {
 				var row = document.createElement('tr')
 
-				var tsCell = document.createElement('td')
-				tsCell.textContent = entry.ts || ''
-				row.appendChild(tsCell)
-
-				var actorCell = document.createElement('td')
-				actorCell.textContent = entry.actor || ''
-				row.appendChild(actorCell)
-
-				var actionCell = document.createElement('td')
-				actionCell.textContent = entry.action || ''
-				row.appendChild(actionCell)
-
-				var detailsCell = document.createElement('td')
-				detailsCell.textContent = formatAuditDetails(entry)
-				row.appendChild(detailsCell)
+				// One fact per cell. The old single Details column held
+				// "from X to Y" as one string, which meant the two values could
+				// not be lined up down the table — the thing an audit is read
+				// for is what changed, and that is a comparison between two
+				// columns, not a sentence.
+				;[
+					[
+						'nldesign-audit-ts',
+						auditFormat.formatAuditTimestamp(entry.ts),
+					],
+					['nldesign-audit-actor', entry.actor || ''],
+					['nldesign-audit-action', entry.action || ''],
+					[
+						'nldesign-audit-value',
+						auditFormat.formatAuditValue(entry.old),
+					],
+					[
+						'nldesign-audit-value',
+						auditFormat.formatAuditValue(entry.new),
+					],
+					[
+						'nldesign-audit-changed',
+						auditFormat.formatAuditChanged(entry),
+					],
+				].forEach(function (cell) {
+					var td = document.createElement('td')
+					td.className = cell[0]
+					// textContent throughout: an entry can carry an
+					// admin-supplied custom token set name.
+					td.textContent = cell[1]
+					row.appendChild(td)
+				})
 
 				tableBody.appendChild(row)
 			})
-		}
-
-		function formatAuditValue(value) {
-			if (value === null || value === undefined) {
-				return ''
-			}
-			if (typeof value === 'object') {
-				try {
-					return JSON.stringify(value)
-				} catch (e) {
-					return String(value)
-				}
-			}
-			return String(value)
-		}
-
-		function formatAuditDetails(entry) {
-			var parts = []
-			if (entry.old !== undefined && entry.old !== null) {
-				parts.push(
-					t('thematiq', 'from {value}').replace(
-						'{value}',
-						formatAuditValue(entry.old),
-					),
-				)
-			}
-			if (entry.new !== undefined && entry.new !== null) {
-				parts.push(
-					t('thematiq', 'to {value}').replace(
-						'{value}',
-						formatAuditValue(entry.new),
-					),
-				)
-			}
-			return parts.join(' ')
 		}
 
 		initAuditLog()

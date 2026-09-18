@@ -78,9 +78,15 @@ class TokenSetServiceSelectableTest extends TestCase {
 	}//end repoRoot()
 
 	/**
-	 * Lay down a four-set catalogue: the allowlisted `nextcloud`, plus three
-	 * shipped sets that are not allowlisted and therefore have to be KEPT by
-	 * one of the three survival rules or dropped.
+	 * Lay down the catalogue: every allowlisted id, plus three shipped sets
+	 * that are not allowlisted and therefore have to be KEPT by one of the
+	 * three survival rules or dropped.
+	 *
+	 * The allowlisted half is read from the constant rather than spelled out,
+	 * because these tests assert that the filter's output IS the constant — an
+	 * id the synthetic catalogue never carried could not survive the filter,
+	 * so a hard-coded list here silently turns "widened the allowlist" into a
+	 * test failure that says nothing about the filter.
 	 *
 	 * Synthetic rather than the real `css/tokens/`, because what is under test
 	 * is the filter, not discovery — and because a full catalogue build audits
@@ -94,7 +100,12 @@ class TokenSetServiceSelectableTest extends TestCase {
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
 		$manifest = [];
-		foreach (['nextcloud', 'rijkshuisstijl', 'amsterdam', 'utrecht'] as $id) {
+		$catalogue = array_merge(
+			TokenSetService::SELECTABLE_SHIPPED_SETS,
+			['rijkshuisstijl', 'amsterdam', 'utrecht']
+		);
+
+		foreach ($catalogue as $id) {
 			file_put_contents(
 				$this->appDir . '/css/tokens/' . $id . '.css',
 				":root {\n  --nldesign-color-primary: #154273;\n}\n"
@@ -191,7 +202,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 		$selectable = $this->ids($service->getSelectableTokenSets());
 		$all = $this->ids($service->getAvailableTokenSets());
 
-		$this->assertSame(TokenSetService::SELECTABLE_SHIPPED_SETS, $selectable);
+		$this->assertEqualsCanonicalizing(TokenSetService::SELECTABLE_SHIPPED_SETS, $selectable);
 		$this->assertContains('nextcloud', $selectable);
 		// The catalogue is NOT what was narrowed — only the picker is.
 		$this->assertGreaterThan(count($selectable), count($all));
@@ -251,7 +262,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 	public function testAnUnusableGroupMappingIsIgnored(string $mapping): void {
 		$service = $this->service(['token_set' => 'nextcloud', 'group_token_sets' => $mapping]);
 
-		$this->assertSame(
+		$this->assertEqualsCanonicalizing(
 			TokenSetService::SELECTABLE_SHIPPED_SETS,
 			$this->ids($service->getSelectableTokenSets())
 		);
@@ -281,11 +292,11 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testAnEmptyActiveSetAddsNothing(): void {
-		$this->assertSame(
+		$this->assertEqualsCanonicalizing(
 			TokenSetService::SELECTABLE_SHIPPED_SETS,
 			$this->ids($this->service(['token_set' => ''])->getSelectableTokenSets())
 		);
-		$this->assertSame(
+		$this->assertEqualsCanonicalizing(
 			TokenSetService::SELECTABLE_SHIPPED_SETS,
 			$this->ids($this->service([])->getSelectableTokenSets())
 		);
@@ -310,8 +321,9 @@ class TokenSetServiceSelectableTest extends TestCase {
 			$this->assertContains($entry, $all);
 		}
 
+		$expected = array_merge(TokenSetService::SELECTABLE_SHIPPED_SETS, ['rijkshuisstijl']);
 		$order = array_values(
-			array_filter($this->ids($all), static fn (string $id): bool => in_array($id, ['nextcloud', 'rijkshuisstijl'], true))
+			array_filter($this->ids($all), static fn (string $id): bool => in_array($id, $expected, true))
 		);
 		$this->assertSame($order, $this->ids($selectable));
 	}//end testSelectableEntriesAreCatalogueEntriesInCatalogueOrder()

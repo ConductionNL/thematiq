@@ -405,11 +405,22 @@ class SettingsController extends Controller {
 		$current = (int)$this->config->getAppValue(Application::APP_ID, 'theming_syncs_total', '0');
 		$this->config->setAppValue(Application::APP_ID, 'theming_syncs_total', (string)($current + 1));
 
+		// A SECOND SNAPSHOT, not $updated. The audit service diffs `old`
+		// against `new` to fill the entry's `changed` list, and that only
+		// means anything when both sides are the same shape. $updated is a
+		// LIST of the field names that were written; $before is a keyed
+		// snapshot. Diffing a map's keys against a list's indices reported
+		// every one of the snapshot's fields as changed on every sync, plus
+		// the integers 0, 1, 2 — so the one field a reader relies on to see
+		// what a sync actually did was noise. $updated is still what the
+		// response carries; the audit entry gets before-and-after.
+		$after = $this->buildThemingSnapshot();
+
 		$this->auditService->log(
 			action: 'theming_sync_applied',
 			context: [
 				'old' => $before,
-				'new' => $updated,
+				'new' => $after,
 			]
 		);
 

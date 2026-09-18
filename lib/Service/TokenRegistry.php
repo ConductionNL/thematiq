@@ -159,6 +159,9 @@ class TokenRegistry implements TokenRegistryInterface {
 			'--color-text-success' => ['tab' => 'typography', 'type' => 'color', 'label' => 'Text success'],
 			'--color-text-warning' => ['tab' => 'typography', 'type' => 'color', 'label' => 'Text warning'],
 			'--font-face' => ['tab' => 'typography', 'type' => 'text',  'label' => 'Font family'],
+			'--font-weight-default' => ['tab' => 'typography', 'type' => 'text',  'label' => 'Body font weight'],
+			'--font-weight-element' => ['tab' => 'typography', 'type' => 'text',  'label' => 'Control font weight'],
+			'--font-weight-heading' => ['tab' => 'typography', 'type' => 'text',  'label' => 'Heading font weight'],
 		];
 	}//end getTypographyTokens()
 

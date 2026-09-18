@@ -17,79 +17,100 @@ say whether it is right. The converter then has to answer "is the converter's ou
 against a reference that was itself guessed. Without a set that is known to be right, "the
 converter is wrong" stays an opinion instead of a diff.
 
-This change is the component playground: an admin-only page that renders every
-component Thematiq styles, inside the real Nextcloud shell so the real cascade paints it,
-with the variables each component actually reads listed beside it, editable, applied to the
-page as you type, saved through the same `custom-overrides.css` the token editor writes, and
-exportable as a flat `--nldesign-*` token set. It is where the OpenWOO reference set gets
-built by hand, against real components, so that the converter has a fixture to diff against.
+This change is the component playground: the token editor in the theming panel becomes a
+selector, a stage and a filtered token list. Picking a component draws it on the preview in
+each of its states, each cell captioned with the state it shows, and narrows the editor to
+the tokens that component reads — grouped under the state each one paints. It is where the OpenWOO reference set gets
+built by hand, against components, so that the converter has a fixture to diff against.
 
-It depends on the no-reload apply change and nothing else: the layer swap for the set switcher, the no-reload
-save path, and the existing `/settings/overrides` endpoint. It does not depend on the
-converter — the per-component "what was not applied" notes appear when the active set has a
-conversion report and are simply absent when it does not.
+It depends on nothing that is not already in the panel: the editor's rows and its Save, the
+preview container, and the token registry. The `--nldesign-*` values it exports come from the
+service that already resolves them for the preview swatches.
+
+### Two other changes travel in this branch
+
+Named here because they are not the instrument, they change what an admin sees without it,
+and an artefact that describes only the instrument would leave a reader of this change
+unable to account for the diff.
+
+- **`StockTokensService`** resolves the `nextcloud` set's stock colours from the INSTANCE
+  the app is running on rather than from a snapshot taken when the file was written. It
+  changes which colours an admin sees for that set on every instance, playground or not.
+  A snapshot of a moving target is wrong the moment the target moves, which is the whole
+  argument for the service.
+- **`css/playground-guest.css`** vendors core's `guest.css` under a `:where()` scope, from
+  `scripts/generate-guest-css.mjs`. The login page is the one part of Nextcloud whose
+  stylesheet the settings page does not load, so it is the one part a login specimen could
+  not otherwise be painted by. Generated and byte-compared, never hand-edited.
 
 ## What Changes
 
-- **An admin-only page, not a modal.** `GET /apps/thematiq/playground`, reached from a
-  button in the settings section and from the apply dialog. A modal cannot show the header,
-  the app navigation, the app sidebar or the login card, which are the most visible surfaces
-  a theme changes. The page runs inside the real Nextcloud shell, so the chrome around it is
-  themed by the actual cascade rather than by a copy of it.
+- **Built into the token editor, not a page of its own.** The panel at
+  `/settings/admin/theming` is where an admin already changes a theme, and the presentation
+  mock already showed the shape: the editor's four tabs move above the preview and become the
+  selector, a row of component chips goes under them, the preview gains a third stage next to
+  its app and login views, and choosing a component filters the editor to the tokens that
+  component reads. Design decision 2 records why an earlier draft's separate page was the
+  wrong trade.
 - **Vanilla rendering, no build step, following `js/admin-mock.js`.** The mock already
-  renders a component stage with numbered callouts, filters the real token rows beside it,
+  renders a component stage, filters the real token rows beside it,
   and recolours the component live while a token is edited — it works today behind `?mock=1`.
-  The playground generalises that mechanism from one component to the full inventory. No
+  This change generalises that mechanism from one component to the full inventory. No
   bundler, no `vue`, no `@nextcloud/vue`, no dist artifact: `js/playground.js` is vanilla and
-  loaded the way `js/admin.js` is. Design decision 1 records why the Vue option was
-  not taken.
+  loaded the way `js/admin.js` is. Design decision 1 records why the Vue option was not taken.
 - **The inventory is data, not code.** `js/playground/components.json` carries one entry per
-  component: id, label, section, the Nextcloud variables it reads with what each paints, the
-  `--nldesign-*` token each comes from, and the variables Nextcloud derives and no one can
-  set. A unit test asserts every listed Nextcloud variable exists in `TokenRegistry` and
-  every listed `--nldesign-*` name exists in `css/systems/nldesign/defaults.css`, so a panel
-  can never claim a variable that is not real.
-- **Editing is inline on `<html>` with `important` priority.** This is the one place inline
-  variables are the right tool: the component on the page is the real one, styled by the real
-  cascade, and an inline `important` custom property is what beats `theme.css`'s
-  `body … !important` rules without touching a stylesheet. Set switching deliberately does
-  not work this way (see the apply-without-reload design); per-variable editing has no
-  other option.
-- **Saving goes through the endpoint that already exists.** A sticky bar shows the unsaved
-  count, Save and Discard. Save merges into `custom-overrides.css` through
-  `POST /settings/overrides`, the same file and endpoint the settings page's token editor
-  writes, then refreshes that stylesheet and drops the inline values. The two surfaces edit
-  one file; the settings page stays the compact view and the playground is the visual one.
-- **Export as a token set.** A button serialises the active set's resolved `--nldesign-*`
-  values plus the unsaved edits into one flat `:root { }` block — the shape `css/tokens/*.css`
-  and the custom-set upload already accept — and offers it as a download. This is how the
-  hand-built OpenWOO reference leaves the playground and becomes the fixture the
-  converter is diffed against.
-- **Navigation and comparison.** A left rail lists the sections with a filter box and an
-  "only what this set changes" toggle; the token-set switcher from the settings page sits at
-  the top with the same preview semantics and the same layer swap; a dark-mode toggle flips
-  the page so a set can be judged in both schemes.
-- **Conversion notes ride along.** When the active set has a conversion report, each section
-  shows the reasons that apply to its variables. When it has none, nothing is shown — the
-  playground never invents an explanation.
+  component: the tab its chip appears under, the states its stage draws, the tokens it reads
+  with what each paints and which state it belongs to, the facts it depends on that have no
+  token, and the class names its specimen markup uses. Unit tests assert every listed token
+  exists in `TokenRegistry`, that the components between them reach every token the editor can
+  write, and that every component has stage markup — so a chip can never claim a token that is
+  not real, and no token is reachable only by scrolling the full list.
+- **The rows are the editor's rows.** A component's token rows are clones of the editor's own,
+  and an edit is written back into the original input and re-dispatched there, so the panel's
+  dirty tracking, reset buttons and Save keep working untouched. There is no second store and
+  no second save path. The live recolour is scoped to `#nldesign-preview`, so the specimen
+  repaints and the settings page around it does not.
+- **Rows for what has no token.** A disabled button's 50 % opacity, Nextcloud's clickable-area
+  floor, a logo that is an asset rather than a value: each is listed with the fact, no editor,
+  and the converter's own reason code, so the panel and an import report explain the same thing
+  in the same words.
+- **Export as a token set.** A button beside Download and Upload serialises the active set's
+  resolved `--nldesign-*` values with the saved overrides folded in, as one flat `:root { }`
+  block — the shape `css/tokens/*.css` and the custom-set upload already accept — and offers it
+  as a download. This is how the hand-built OpenWOO reference leaves the panel and becomes the
+  fixture the converter is diffed against.
+- **A linkable selection.** The open tab and component live in the URL hash
+  (`#preview=status/primary-button`), so a component can be linked to and survives a reload.
 
 ## Impact
 
-- **Affected specs**: `component-playground` (new), `custom-css-overrides` (the playground is
-  a second writer of the same file), `admin-settings` (the entry point), `theme-preview` (the
-  switcher runs the same preview semantics).
-- **Affected code**: `lib/Controller/PlaygroundController.php` (new),
-  `appinfo/routes.php`, `lib/Settings/Admin.php` (entry button + initial state),
-  `templates/playground.php` (new), `js/playground.js` (new),
-  `js/playground/components.json` (new), `css/playground.css` (new), `js/admin.js` (the
-  "Open playground" button), `l10n/*`.
-- **Reused, not rebuilt**: `js/lib/layerSwap.js` for the switcher, `js/lib/tokenTransforms.js`
-  for value normalisation, `POST /settings/overrides` for saving, `TokenRegistry` for the
-  variable vocabulary, and `ThemePreviewService` for session previews.
-- **Tests**: `tests/vitest/playgroundStore.spec.js` (dirty tracking, save payload, export
-  serialisation), `tests/vitest/playgroundInventory.spec.js` (every listed variable exists),
-  `tests/Unit/Controller/PlaygroundControllerTest.php` (admin-only, renders), and a Playwright
-  visual spec per section in light and dark for the `nextcloud`, `rijkshuisstijl` and
-  `openwoo` sets under `tests/e2e/visual/`.
+- **Affected specs**: `component-playground` (new), `admin-settings` (the panel gains the
+  instrument and publishes what it reads), `custom-css-overrides` (unchanged writer, new
+  surface), `theme-preview` (the instrument describes the previewed set),
+  `nextcloud-variable-mapping` (the `nextcloud` set is resolved from the running instance
+  rather than read from a shipped snapshot).
+- **Affected code**: `lib/Service/PlaygroundStateService.php` (new),
+  `lib/Service/TokenSetPreviewService.php` (resolved tokens and the variable-to-token map),
+  `lib/Settings/Admin.php` (publishes the six keys), `templates/settings/admin.php` (loads
+  the script and its stylesheet), `js/playground.js` (new),
+  `js/playground/components.json` (new), `css/playground.css` (new), `l10n/*`;
+  `lib/Service/StockTokensService.php` (new) and `lib/Service/CssInjectionService.php`
+  (the `nextcloud` set resolves from the instance, with `css/tokens/nextcloud.css` demoted
+  to the fallback); `scripts/generate-guest-css.mjs`, `scripts/sources/nextcloud-guest.css`
+  and `css/playground-guest.css` (the vendored login stylesheet, design decision 9).
+- **Reused, not rebuilt**: the token editor's rows, dirty tracking and Save; the preview
+  container and its two existing stages; `TokenRegistry` for the vocabulary;
+  `css/systems/nldesign/overrides.css` for the variable-to-token map; the converter's reason
+  codes for the token-less rows.
+- **Tests**: `tests/vitest/playgroundInventory.spec.js` (the inventory against the registry,
+  the stage markup and the stylesheets), `tests/vitest/playgroundSelection.spec.js` (chips,
+  rows per state, the URL hash, the export),
+  `tests/Unit/Service/TokenSetPreviewServiceTest.php` (the variable-to-token map and the
+  resolved layer, read out of fixture stylesheets),
+  `tests/Unit/Service/PlaygroundStateServiceTest.php` (what the panel publishes and what
+  happens when a piece is missing), `tests/Unit/Settings/AdminInitialStateTest.php` (the keys
+  are published, for the set the page is wearing), `tests/Unit/Service/StockTokensServiceTest.php`
+  (the inversion of the mapping, the values that cannot be frozen, and every path that falls
+  back), and a Playwright visual spec per component in light and dark under `tests/e2e/visual/`.
 - **No new dependency and no build step.** The repo's "no build for the admin panel" stance
   in `project.md` is unchanged, and `npm run build` stays fonts and icons.

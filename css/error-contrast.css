@@ -29,6 +29,7 @@
 /* NcButton type="error" and NcChip variant="error" both render
    `background: var(--color-error); color: var(--color-error-text)`. */
 .button-vue--vue-error,
+.button-vue--error,
 .nc-chip--error {
 	color: #fff !important;
 }

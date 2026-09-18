@@ -709,9 +709,11 @@ body > #content-vue,
    ============================================ */
 
 .button-vue--vue-primary,
+.button-vue--primary,
 button.primary,
 input.primary,
 .button-vue.button-vue--vue-primary,
+.button-vue.button-vue--primary,
 button[class*='primary'] {
 	background-color: var(
 		--lasuite-content-brand-icon,
@@ -729,8 +731,11 @@ button[class*='primary'] {
    readable text colour for it, so brand-050 lettering would vanish on a pale
    swatch. See the longer note in css/systems/nldesign/theme.css. */
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
+.button-vue--primary:not([data-admin-theming-setting-color-picker]),
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
+.button-vue--primary:not([data-admin-theming-setting-color-picker]) *,
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) span,
+.button-vue--primary:not([data-admin-theming-setting-color-picker]) span,
 button.primary,
 button.primary *,
 input.primary,
@@ -754,7 +759,9 @@ button[class*='primary']:not([data-admin-theming-setting-color-picker]) {
 }
 
 .button-vue--vue-primary:hover,
+.button-vue--primary:hover,
 button.primary:hover,
+.button-vue.button-vue--primary:hover,
 .button-vue.button-vue--vue-primary:hover {
 	background-color: var(
 		--lasuite-content-brand,
@@ -776,8 +783,10 @@ button.primary:hover,
    ============================================ */
 
 .button-vue--vue-secondary,
+.button-vue--secondary,
 button.secondary,
 .button-vue.button-vue--vue-secondary,
+.button-vue.button-vue--secondary,
 button[class*='secondary'] {
 	background-color: var(
 		--lasuite--contextuals--background--semantic--brand--secondary
@@ -787,8 +796,11 @@ button[class*='secondary'] {
 }
 
 .button-vue--vue-secondary,
+.button-vue--secondary,
 .button-vue--vue-secondary *,
+.button-vue--secondary *,
 .button-vue--vue-secondary span,
+.button-vue--secondary span,
 button.secondary,
 button.secondary *,
 button[class*='secondary'] {
@@ -859,7 +871,8 @@ button.secondary {
 .button-vue--tertiary.button-vue--text-only:not(#header *),
 .button-vue--tertiary.button-vue--icon-and-text:not(#header *),
 .button-vue--vue-tertiary.button-vue--text-only:not(#header *),
-.button-vue--vue-tertiary.button-vue--icon-and-text:not(#header *) {
+.button-vue--vue-tertiary.button-vue--icon-and-text:not(#header *),
+.button-vue--tertiary:not(#header *):has(.button-vue__text:not(:empty)) {
 	color: var(
 		--lasuite--contextuals--content--semantic--brand--tertiary
 	) !important;
@@ -869,7 +882,8 @@ button.secondary {
 .button-vue--tertiary.button-vue--text-only:not(#header *) span,
 .button-vue--tertiary.button-vue--icon-and-text:not(#header *) span,
 .button-vue--vue-tertiary.button-vue--text-only:not(#header *) span,
-.button-vue--vue-tertiary.button-vue--icon-and-text:not(#header *) span {
+.button-vue--vue-tertiary.button-vue--icon-and-text:not(#header *) span,
+.button-vue--tertiary:not(#header *):has(.button-vue__text:not(:empty)) span {
 	color: inherit !important;
 }
 
