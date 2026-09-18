@@ -13,7 +13,7 @@
 input,
 textarea,
 select,
-button,
+button:not(.action-button),
 .button-vue:not(.action-button),
 .button {
 	border: 2px solid var(--nldesign-color-border) !important;

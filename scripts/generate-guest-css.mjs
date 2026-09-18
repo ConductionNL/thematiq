@@ -424,7 +424,7 @@ function generate(sourceCss) {
 
 	const body = rules.map(emit).join('').trimEnd()
 
-	return header + body + '\n\n' + reducedMotion()
+	return header + body + '\n\n' + reducedMotion(body)
 }
 
 /**
@@ -445,12 +445,32 @@ function generate(sourceCss) {
  *
  * @return {string} The reduced-motion block.
  */
-function reducedMotion() {
+function reducedMotion(body) {
+	const moving = []
+	const rules = body.matchAll(/([^{}]+){([^{}]*)}/g)
+	for (const rule of rules) {
+		if (!/(^|[;\s])(transition|animation)\s*:/.test(rule[2])) {
+			continue
+		}
+		if (/(transition|animation)\s*:\s*none/.test(rule[2])) {
+			continue
+		}
+		for (const selector of rule[1].split(',')) {
+			const trimmed = selector.trim()
+			if (trimmed !== '' && moving.indexOf(trimmed) === -1) {
+				moving.push(trimmed)
+			}
+		}
+	}
+
+	if (moving.length === 0) {
+		return ''
+	}
+
 	return (
 		'@media (prefers-reduced-motion: reduce) {\n'
-		+ '\t' + SCOPE + ' *,\n'
-		+ '\t' + SCOPE + ' *::before,\n'
-		+ '\t' + SCOPE + ' *::after {\n'
+		+ moving.map((selector) => '\t' + selector).join(',\n')
+		+ ' {\n'
 		+ '\t\ttransition: none !important;\n'
 		+ '\t\tanimation: none !important;\n'
 		+ '\t}\n'
@@ -501,10 +521,18 @@ for (let i = 0; i < Math.max(committedLines.length, generatedLines.length); i++)
 	}
 	process.stderr.write(
 		'generate-guest-css: the committed file is stale.\n'
-			+ '  first difference at line ' + (i + 1) + '\n'
-			+ '  committed: ' + (committedLines[i] ?? '<end of file>') + '\n'
-			+ '  generated: ' + (generatedLines[i] ?? '<end of file>') + '\n'
-			+ '  regenerated to ' + temporary + '\n',
+			+ '  first difference at line '
+			+ (i + 1)
+			+ '\n'
+			+ '  committed: '
+			+ (committedLines[i] ?? '<end of file>')
+			+ '\n'
+			+ '  generated: '
+			+ (generatedLines[i] ?? '<end of file>')
+			+ '\n'
+			+ '  regenerated to '
+			+ temporary
+			+ '\n',
 	)
 	break
 }

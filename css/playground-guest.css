@@ -770,9 +770,13 @@ from{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:
 }
 
 @media (prefers-reduced-motion: reduce) {
-	:where(#nldesign-preview .nldesign-pg-guestpage) *,
-	:where(#nldesign-preview .nldesign-pg-guestpage) *::before,
-	:where(#nldesign-preview .nldesign-pg-guestpage) *::after {
+	:where(#nldesign-preview .nldesign-pg-guestpage) #submit-wrapper .submit-icon,
+	:where(#nldesign-preview .nldesign-pg-guestpage) .loading:after,
+	:where(#nldesign-preview .nldesign-pg-guestpage) .loading-small:after,
+	:where(#nldesign-preview .nldesign-pg-guestpage) .icon-loading:after,
+	:where(#nldesign-preview .nldesign-pg-guestpage) .icon-loading-dark:after,
+	:where(#nldesign-preview .nldesign-pg-guestpage) .icon-loading-small:after,
+	:where(#nldesign-preview .nldesign-pg-guestpage) .icon-loading-small-dark:after {
 		transition: none !important;
 		animation: none !important;
 	}
