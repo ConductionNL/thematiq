@@ -63,15 +63,38 @@
 	/* Header & Navigation — white header by default */
 	--nldesign-color-header-background: #ffffff;
 	--nldesign-color-header-text: #333333;
+	/* How the header's app-menu IMAGES (Nextcloud ships them white) are painted
+	 * for this header: black on the white default. A set with a dark header
+	 * declares `none` so they stay white; `color` cannot tint an <img>. */
+	--nldesign-header-icon-filter: invert(1) brightness(0) contrast(100);
 	--nldesign-header-border-bottom: 0;
 	--nldesign-color-nav-background: #ffffff;
 
-	/* Logo & Lint — no lint by default, logo shows in natural colors */
+	/* Logo & Lint — no lint by default, logo shows in natural colors.
+	 *
+	 * `--nldesign-logo-url` is deliberately absent here: it is declared per set
+	 * (a set that ships `img/logos/<id>.svg`). A set that ships none does not
+	 * fall through to an empty header — CssInjectionService::injectLogoUrl()
+	 * supplies Nextcloud's own logo instead, either the admin-uploaded one as
+	 * it is, or core's white `logo.svg` masked to
+	 * `--nldesign-color-header-text`. Which branch runs is decided by the FILE,
+	 * not by the token file: a set that declares a logo url with no matching
+	 * file was requesting a 404 (a relative url() in a custom property resolves
+	 * against the stylesheet that USES it), so it gets the fallback too. */
 	--nldesign-color-logo-background: transparent;
 	--nldesign-size-lint: 0px;
 	--nldesign-size-lint-height: 0px;
 	--nldesign-logo-center: 50%;
 	--nldesign-logo-filter: none;
+	/* Header logo geometry — stock Nextcloud's own numbers (core's
+	 * `#header #nextcloud .logo`: 62px wide, 12px from the start edge, 1px
+	 * from top and bottom, so the artwork gets the full header height). A set
+	 * that hangs a ribbon overrides these four; see css/tokens/rijkshuisstijl.css. */
+	--nldesign-logo-width: 62px;
+	--nldesign-logo-height: auto;
+	--nldesign-logo-inset: 12px;
+	--nldesign-logo-top: 1px;
+	--nldesign-logo-bottom: 1px;
 
 	/* ===================================================================
 	 * TEXT COLORS
@@ -128,6 +151,22 @@
 	--nldesign-font-family:
 		'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 		Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
+
+	/* The base weight scale. NL Design keeps one — Utrecht spells it
+	 * `--utrecht-typography-weight-scale-{normal,bold}-font-weight` — and
+	 * Nextcloud 33 exposed the same three roles as variables, so they map one
+	 * to one and a set can move any of them.
+	 *
+	 * `--font-weight-element` is Nextcloud's CONTROL weight, and it reaches
+	 * more than buttons: NcActionButton reads it for every row of an actions
+	 * menu. It is kept at Nextcloud's own 500 rather than raised to NL Design's
+	 * button weight, because pushing it to 700 bolds every menu row — which is
+	 * not what Nextcloud draws and not what NL Design asks for. Buttons stay
+	 * bold through their own component token below, which is exactly what a
+	 * component token is for. */
+	--nldesign-font-weight-default: 400;
+	--nldesign-font-weight-element: 500;
+	--nldesign-font-weight-heading: 700;
 
 	/* ===================================================================
 	 * BORDER RADIUS
@@ -281,37 +320,37 @@
 
 	/* Heading 1 */
 	--nldesign-component-heading-1-font-size: 2.5rem;
-	--nldesign-component-heading-1-font-weight: 700;
+	--nldesign-component-heading-1-font-weight: var(--nldesign-font-weight-heading);
 	--nldesign-component-heading-1-line-height: 1.2;
 	--nldesign-component-heading-1-color: var(--nldesign-color-text);
 
 	/* Heading 2 */
 	--nldesign-component-heading-2-font-size: 2rem;
-	--nldesign-component-heading-2-font-weight: 700;
+	--nldesign-component-heading-2-font-weight: var(--nldesign-font-weight-heading);
 	--nldesign-component-heading-2-line-height: 1.25;
 	--nldesign-component-heading-2-color: var(--nldesign-color-text);
 
 	/* Heading 3 */
 	--nldesign-component-heading-3-font-size: 1.5rem;
-	--nldesign-component-heading-3-font-weight: 700;
+	--nldesign-component-heading-3-font-weight: var(--nldesign-font-weight-heading);
 	--nldesign-component-heading-3-line-height: 1.3;
 	--nldesign-component-heading-3-color: var(--nldesign-color-text);
 
 	/* Heading 4 */
 	--nldesign-component-heading-4-font-size: 1.25rem;
-	--nldesign-component-heading-4-font-weight: 700;
+	--nldesign-component-heading-4-font-weight: var(--nldesign-font-weight-heading);
 	--nldesign-component-heading-4-line-height: 1.35;
 	--nldesign-component-heading-4-color: var(--nldesign-color-text);
 
 	/* Heading 5 */
 	--nldesign-component-heading-5-font-size: 1.125rem;
-	--nldesign-component-heading-5-font-weight: 700;
+	--nldesign-component-heading-5-font-weight: var(--nldesign-font-weight-heading);
 	--nldesign-component-heading-5-line-height: 1.4;
 	--nldesign-component-heading-5-color: var(--nldesign-color-text);
 
 	/* Heading 6 */
 	--nldesign-component-heading-6-font-size: 1rem;
-	--nldesign-component-heading-6-font-weight: 700;
+	--nldesign-component-heading-6-font-weight: var(--nldesign-font-weight-heading);
 	--nldesign-component-heading-6-line-height: 1.5;
 	--nldesign-component-heading-6-color: var(--nldesign-color-text);
 
@@ -330,7 +369,9 @@
 	--nldesign-component-link-color: var(--nldesign-color-link);
 	--nldesign-component-link-hover-color: var(--nldesign-color-link-hover);
 	--nldesign-component-link-visited-color: var(--nldesign-color-link-visited);
-	--nldesign-component-link-font-weight: 400; /* reserved */
+	--nldesign-component-link-font-weight: var(
+		--nldesign-font-weight-default
+	); /* reserved */
 	--nldesign-component-link-text-decoration: underline;
 
 	/* ===================================================================

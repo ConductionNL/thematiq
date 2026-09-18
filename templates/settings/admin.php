@@ -12,13 +12,39 @@
  * @var array{tokenSet: string, name: string}|null $activePreview
  * @var string[] $activeIconPacks
  * @var 'design-system'|'override' $iconPackSource
+ * @var bool $mockUi
  */
 
 // Load the pure token/colour transforms first so admin.js can consume them via
 // window.NldesignTokenTransforms (admin.js falls back to inline copies if absent).
 script('thematiq', 'lib/tokenTransforms');
+// The stylesheet layer swap (window.NldesignLayerSwap): applies a token set to
+// the page the admin is on by replacing Thematiq's <link>/<style> elements with
+// the ones the server would emit for the new set — no reload. admin.js falls
+// back to its old reload-asking toasts when the module is absent.
+script('thematiq', 'lib/layerSwap');
+// The audit log's value formatting (window.ThematiqAuditFormat): four pure
+// functions the panel renders each entry with. A module of its own so they can
+// be unit-tested; admin.js falls back to raw values when it is absent.
+script('thematiq', 'lib/auditFormat');
 script('thematiq', 'admin');
 style('thematiq', 'admin');
+// The component playground: the selector / stage / tokens instrument that
+// admin.js's token editor is rebuilt into. Loaded AFTER admin.js because it
+// attaches to the editor that script renders, and waits for it.
+script('thematiq', 'playground');
+style('thematiq', 'playground');
+// Nextcloud's own login-page stylesheet, scoped to the playground's login card.
+// It is the one part of Nextcloud whose CSS this page does not already load —
+// the component chunks for buttons, inputs and checkboxes it does — which is
+// why only the login card needed a copy of its own. Generated from a vendored
+// upstream file; see scripts/generate-guest-css.mjs.
+style('thematiq', 'playground-guest');
+if ($_['mockUi'] === true) {
+	// Presentation mock — only with `?mock=1` (lib/Settings/Admin.php).
+	script('thematiq', 'admin-mock');
+	style('thematiq', 'admin-mock');
+}
 ?>
 
 <!-- Server state for js/admin.js (tokenSets, currentTokenSet, activePreview,
@@ -49,6 +75,13 @@ style('thematiq', 'admin');
 			<?php endforeach; ?>
 		</select>
 		<span id="nldesign-design-system-badge" class="nldesign-badge"></span>
+		<!-- Vocabulary-completeness badge (openspec/specs/token-sets/spec.md's
+		     "Incomplete sets are surfaced in the admin dropdown"). Empty and
+		     hidden until admin.js reads the selected set's `warnings` — the same
+		     channel the WCAG contrast warning already travels on — so a set that
+		     never declares the tokens the design system reads is not silently
+		     presented as its own brand. -->
+		<span id="nldesign-token-set-completeness-badge" class="nldesign-badge" hidden></span>
 		<button type="button" id="nldesign-preview-btn" class="button">
 			<?php p($l->t('Preview in my session')); ?>
 		</button>
@@ -154,6 +187,176 @@ style('thematiq', 'admin');
 		</div>
 	</div>
 
+	<div class="nldesign-preview" id="nldesign-preview">
+		<div class="nldesign-preview-head">
+			<h3><?php p($l->t('Preview')); ?></h3>
+			<div class="nldesign-preview-switch" role="tablist" aria-label="<?php p($l->t('Preview view')); ?>">
+				<button type="button" class="nldesign-preview-switch-btn active" data-view="app" aria-selected="true"><?php p($l->t('App')); ?></button>
+				<button type="button" class="nldesign-preview-switch-btn" data-view="login" aria-selected="false"><?php p($l->t('Login')); ?></button>
+			</div>
+		</div>
+
+		<!-- App-shell preview: it mirrors the REAL Nextcloud shell, because that is
+		     what an admin compares it against.
+		       - the header bar spans the full width and sits on the page
+		         background, with the app menu on the left and the account
+		         glyphs on the right;
+		       - the content CONTAINER is inset from the page background and
+		         clips the navigation and the app content into one rounded
+		         rectangle (Nextcloud's `#content`, `--body-container-radius`);
+		       - navigation entries are full-width pills carrying an icon and a
+		         label, grouped under captions, and the selected one is FILLED
+		         with the primary colour and labelled in its paired text colour
+		         (`--border-radius-pill`, `--color-primary-element`);
+		       - the app sidebar is a real panel with a heading and a close
+		         control, not a second strip of grey lines.
+		     Captions and body text are drawn as bars rather than words on
+		     purpose: the shell is a scale model, and only the roles that carry a
+		     token need to be legible. -->
+		<div class="nldesign-preview-stage" data-view="app">
+			<div class="nl-mini">
+				<div class="nl-mini__navbar">
+					<span class="nl-mini__logo"></span>
+					<span class="nl-mini__navitem nl-mini__navitem--active"></span>
+					<span class="nl-mini__navitem"></span>
+					<span class="nl-mini__navitem"></span>
+					<span class="nl-mini__navspacer"></span>
+					<span class="nl-mini__navglyph"></span>
+					<span class="nl-mini__navglyph"></span>
+					<span class="nl-mini__avatar"></span>
+				</div>
+				<div class="nl-mini__body">
+					<nav class="nl-mini__menu">
+						<span class="nl-mini__caption"></span>
+						<span class="nl-mini__menuitem nl-mini__menuitem--active"><i class="nl-mini__menuicon"></i><?php p($l->t('Dashboard')); ?></span>
+						<span class="nl-mini__menuitem"><i class="nl-mini__menuicon"></i><?php p($l->t('Orders')); ?></span>
+						<span class="nl-mini__menuitem"><i class="nl-mini__menuicon"></i><?php p($l->t('Reports')); ?></span>
+						<span class="nl-mini__caption"></span>
+						<span class="nl-mini__menuitem"><i class="nl-mini__menuicon"></i><?php p($l->t('Settings')); ?></span>
+					</nav>
+					<main class="nl-mini__content">
+						<div class="nl-mini__widget">
+							<div class="nl-mini__widget-head"><?php p($l->t('Orders')); ?></div>
+							<table class="nl-mini__table">
+								<thead><tr><th></th><th></th><th></th></tr></thead>
+								<tbody>
+									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--primary"></span></td></tr>
+									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--warning"></span></td></tr>
+									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--info"></span></td></tr>
+								</tbody>
+							</table>
+						</div>
+					</main>
+					<aside class="nl-mini__sidebar">
+						<div class="nl-mini__sidebar-head"><?php p($l->t('Details')); ?><span class="nl-mini__sidebar-close"></span></div>
+						<span class="nl-mini__line"></span>
+						<span class="nl-mini__line nl-mini__line--short"></span>
+						<span class="nl-mini__line"></span>
+					</aside>
+				</div>
+				<div class="nl-mini__modal-overlay">
+					<div class="nl-mini__modal">
+						<div class="nl-mini__modal-head"><?php p($l->t('Dialog')); ?></div>
+						<div class="nl-mini__modal-body">
+							<span class="nl-mini__line"></span>
+							<span class="nl-mini__line nl-mini__line--short"></span>
+						</div>
+						<div class="nl-mini__modal-actions">
+							<button type="button" class="nl-btn nl-btn--primary"><?php p($l->t('Primary')); ?></button>
+							<button type="button" class="nl-btn nl-btn--secondary"><?php p($l->t('Secondary')); ?></button>
+							<button type="button" class="nl-btn nl-btn--warning"><?php p($l->t('Alert')); ?></button>
+							<button type="button" class="nl-btn nl-btn--error"><?php p($l->t('Danger')); ?></button>
+							<button type="button" class="nl-btn nl-btn--info"><?php p($l->t('Info')); ?></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Login-page preview -->
+		<div class="nldesign-preview-stage" data-view="login" hidden>
+			<div class="nl-login">
+				<div class="nl-login__logo"></div>
+				<div class="nl-login__card">
+					<span class="nl-login__field"></span>
+					<span class="nl-login__field"></span>
+					<button type="button" class="nl-btn nl-btn--primary nl-login__submit"><?php p($l->t('Log in')); ?></button>
+				</div>
+				<div class="nl-login__slogan"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Token Editor Panel — mounted by admin.js -->
+	<div id="nldesign-token-editor" style="margin-top:2em">
+		<p class="settings-hint"><?php p($l->t('Loading token editor…')); ?></p>
+	</div>
+
+	<!-- Freeform custom CSS — admin-authored arbitrary rules, sanitised
+	     server-side and emitted after every other theming layer. -->
+	<div class="nldesign-custom-css" id="nldesign-custom-css" style="margin-top:2em">
+		<h3><?php p($l->t('Custom CSS')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Freeform CSS applied after every other theming layer, so it always wins. Use it for tweaks the token editor cannot express.')); ?>
+		</p>
+		<p class="settings-hint">
+			<?php p($l->t('For safety this is checked before it is saved: @import, external url() references, script-execution vectors and HTML tags are refused, as are the background variables Nextcloud needs for dark mode. Relative paths and data: URIs are allowed. Every save is written to the audit log.')); ?>
+		</p>
+		<p>
+			<input type="checkbox" id="nldesign-custom-css-enabled" class="checkbox">
+			<label for="nldesign-custom-css-enabled"><?php p($l->t('Enable custom CSS')); ?></label>
+		</p>
+		<label for="nldesign-custom-css-input" class="hidden-visually"><?php p($l->t('Custom CSS')); ?></label>
+		<textarea id="nldesign-custom-css-input" rows="10" spellcheck="false"
+				  style="width:100%;font-family:monospace;font-size:13px"
+				  placeholder=".app-content { padding: 8px; }"></textarea>
+		<button type="button" id="nldesign-custom-css-save" class="button primary">
+			<?php p($l->t('Save custom CSS')); ?>
+		</button>
+		<span id="nldesign-custom-css-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- Theming per app — exclude individual apps from nldesign theming -->
+	<div class="nldesign-app-theming" id="nldesign-app-theming" style="margin-top:2em">
+		<h3><?php p($l->t('Theming per app')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Choose which apps the NL Design theme applies to. Unchecking an app makes its pages render with stock Nextcloud styling, including the header on those pages.')); ?>
+		</p>
+		<div id="nldesign-app-theming-list" class="nldesign-app-theming-list" role="group"
+			 aria-label="<?php p($l->t('Theming per app')); ?>">
+			<p class="settings-hint"><?php p($l->t('Loading apps…')); ?></p>
+		</div>
+		<button type="button" id="nldesign-app-theming-save" class="button">
+			<?php p($l->t('Save app theming')); ?>
+		</button>
+		<span id="nldesign-app-theming-feedback" class="nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- Group theming — map Nextcloud groups to token sets for shared-instance
+	     multi-tenant huisstijl (openspec/specs/per-group-theming/spec.md).
+	     Row order IS priority order; keyboard-operable move-up/move-down
+	     buttons instead of drag-and-drop. -->
+	<div class="nldesign-group-theming" id="nldesign-group-theming" style="margin-top:2em">
+		<h3><?php p($l->t('Group theming')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Map Nextcloud groups to token sets so different gemeenten sharing one instance each see their own house style. Row order is priority order: for a user in multiple mapped groups, the first matching row wins.')); ?>
+		</p>
+		<p class="settings-hint">
+			<?php p($l->t('Logo, mail templates, and other Nextcloud core branding always follow the instance default token set above — they are not per-group. Only this token-set stylesheet layer differs per group.')); ?>
+		</p>
+		<div id="nldesign-group-theming-list" class="nldesign-group-theming-list" role="group"
+			 aria-label="<?php p($l->t('Group theming')); ?>">
+			<p class="settings-hint"><?php p($l->t('Loading group mappings…')); ?></p>
+		</div>
+		<button type="button" id="nldesign-group-theming-add" class="button">
+			<?php p($l->t('Add mapping')); ?>
+		</button>
+		<button type="button" id="nldesign-group-theming-save" class="button primary">
+			<?php p($l->t('Save group theming')); ?>
+		</button>
+		<span id="nldesign-group-theming-feedback" class="nldesign-group-theming-feedback" role="status" aria-live="polite"></span>
+	</div>
+
 	<!-- Custom font upload -->
 	<div class="nldesign-custom-fonts" id="nldesign-custom-fonts" style="margin-top:2em">
 		<h3><?php p($l->t('Custom fonts')); ?></h3>
@@ -229,47 +432,6 @@ style('thematiq', 'admin');
 		<?php p($l->t('When enabled, a generated dark-mode stylesheet follows whichever Nextcloud dark/light/system theme is already active — it never changes your Nextcloud theme choice itself.')); ?>
 	</p>
 
-	<!-- Theming per app — exclude individual apps from nldesign theming -->
-	<div class="nldesign-app-theming" id="nldesign-app-theming" style="margin-top:2em">
-		<h3><?php p($l->t('Theming per app')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Choose which apps the NL Design theme applies to. Unchecking an app makes its pages render with stock Nextcloud styling, including the header on those pages.')); ?>
-		</p>
-		<div id="nldesign-app-theming-list" class="nldesign-app-theming-list" role="group"
-			 aria-label="<?php p($l->t('Theming per app')); ?>">
-			<p class="settings-hint"><?php p($l->t('Loading apps…')); ?></p>
-		</div>
-		<button type="button" id="nldesign-app-theming-save" class="button">
-			<?php p($l->t('Save app theming')); ?>
-		</button>
-		<span id="nldesign-app-theming-feedback" class="nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- Group theming — map Nextcloud groups to token sets for shared-instance
-	     multi-tenant huisstijl (openspec/specs/per-group-theming/spec.md).
-	     Row order IS priority order; keyboard-operable move-up/move-down
-	     buttons instead of drag-and-drop. -->
-	<div class="nldesign-group-theming" id="nldesign-group-theming" style="margin-top:2em">
-		<h3><?php p($l->t('Group theming')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Map Nextcloud groups to token sets so different gemeenten sharing one instance each see their own house style. Row order is priority order: for a user in multiple mapped groups, the first matching row wins.')); ?>
-		</p>
-		<p class="settings-hint">
-			<?php p($l->t('Logo, mail templates, and other Nextcloud core branding always follow the instance default token set above — they are not per-group. Only this token-set stylesheet layer differs per group.')); ?>
-		</p>
-		<div id="nldesign-group-theming-list" class="nldesign-group-theming-list" role="group"
-			 aria-label="<?php p($l->t('Group theming')); ?>">
-			<p class="settings-hint"><?php p($l->t('Loading group mappings…')); ?></p>
-		</div>
-		<button type="button" id="nldesign-group-theming-add" class="button">
-			<?php p($l->t('Add mapping')); ?>
-		</button>
-		<button type="button" id="nldesign-group-theming-save" class="button primary">
-			<?php p($l->t('Save group theming')); ?>
-		</button>
-		<span id="nldesign-group-theming-feedback" class="nldesign-group-theming-feedback" role="status" aria-live="polite"></span>
-	</div>
-
 	<!-- Email template theming — mail_template_class toggle + compliance footer -->
 	<div class="nldesign-email-theming" id="nldesign-email-theming" style="margin-top:2em"
 		 data-state="<?php p($_['emailThemingState']['state']); ?>"
@@ -340,91 +502,6 @@ style('thematiq', 'admin');
 		</div>
 	</div>
 
-	<div class="nldesign-preview" id="nldesign-preview">
-		<div class="nldesign-preview-head">
-			<h3><?php p($l->t('Preview')); ?></h3>
-			<div class="nldesign-preview-switch" role="tablist" aria-label="<?php p($l->t('Preview view')); ?>">
-				<button type="button" class="nldesign-preview-switch-btn active" data-view="app" aria-selected="true"><?php p($l->t('App')); ?></button>
-				<button type="button" class="nldesign-preview-switch-btn" data-view="login" aria-selected="false"><?php p($l->t('Login')); ?></button>
-			</div>
-		</div>
-
-		<!-- App-shell preview: navbar, menu, content + table widget, sidebar, open modal -->
-		<div class="nldesign-preview-stage" data-view="app">
-			<div class="nl-mini">
-				<div class="nl-mini__navbar">
-					<span class="nl-mini__logo"></span>
-					<span class="nl-mini__navitem nl-mini__navitem--active"></span>
-					<span class="nl-mini__navitem"></span>
-					<span class="nl-mini__navitem"></span>
-					<span class="nl-mini__navspacer"></span>
-					<span class="nl-mini__avatar"></span>
-				</div>
-				<div class="nl-mini__body">
-					<nav class="nl-mini__menu">
-						<span class="nl-mini__menuitem nl-mini__menuitem--active"><?php p($l->t('Dashboard')); ?></span>
-						<span class="nl-mini__menuitem"><?php p($l->t('Orders')); ?></span>
-						<span class="nl-mini__menuitem"><?php p($l->t('Reports')); ?></span>
-						<span class="nl-mini__menuitem"><?php p($l->t('Settings')); ?></span>
-					</nav>
-					<main class="nl-mini__content">
-						<div class="nl-mini__widget">
-							<div class="nl-mini__widget-head"><?php p($l->t('Orders')); ?></div>
-							<table class="nl-mini__table">
-								<thead><tr><th></th><th></th><th></th></tr></thead>
-								<tbody>
-									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--primary"></span></td></tr>
-									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--warning"></span></td></tr>
-									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--info"></span></td></tr>
-								</tbody>
-							</table>
-						</div>
-					</main>
-					<aside class="nl-mini__sidebar">
-						<div class="nl-mini__sidebar-head"><?php p($l->t('Details')); ?></div>
-						<span class="nl-mini__line"></span>
-						<span class="nl-mini__line nl-mini__line--short"></span>
-						<span class="nl-mini__line"></span>
-					</aside>
-				</div>
-				<div class="nl-mini__modal-overlay">
-					<div class="nl-mini__modal">
-						<div class="nl-mini__modal-head"><?php p($l->t('Dialog')); ?></div>
-						<div class="nl-mini__modal-body">
-							<span class="nl-mini__line"></span>
-							<span class="nl-mini__line nl-mini__line--short"></span>
-						</div>
-						<div class="nl-mini__modal-actions">
-							<button type="button" class="nl-btn nl-btn--primary"><?php p($l->t('Primary')); ?></button>
-							<button type="button" class="nl-btn nl-btn--secondary"><?php p($l->t('Secondary')); ?></button>
-							<button type="button" class="nl-btn nl-btn--warning"><?php p($l->t('Alert')); ?></button>
-							<button type="button" class="nl-btn nl-btn--error"><?php p($l->t('Danger')); ?></button>
-							<button type="button" class="nl-btn nl-btn--info"><?php p($l->t('Info')); ?></button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Login-page preview -->
-		<div class="nldesign-preview-stage" data-view="login" hidden>
-			<div class="nl-login">
-				<div class="nl-login__logo"></div>
-				<div class="nl-login__card">
-					<span class="nl-login__field"></span>
-					<span class="nl-login__field"></span>
-					<button type="button" class="nl-btn nl-btn--primary nl-login__submit"><?php p($l->t('Log in')); ?></button>
-				</div>
-				<div class="nl-login__slogan"></div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Token Editor Panel — mounted by admin.js -->
-	<div id="nldesign-token-editor" style="margin-top:2em">
-		<p class="settings-hint"><?php p($l->t('Loading token editor…')); ?></p>
-	</div>
-
 	<!-- Upstream token updates — opt-in daily freshness check against
 	     nl-design-system/themes (openspec/specs/upstream-freshness/spec.md).
 	     Disabled by default; the toggle label discloses the contacted host.
@@ -450,30 +527,6 @@ style('thematiq', 'admin');
 			 aria-label="<?php p($l->t('Upstream token updates')); ?>"></div>
 	</div>
 
-	<!-- Freeform custom CSS — admin-authored arbitrary rules, sanitised
-	     server-side and emitted after every other theming layer. -->
-	<div class="nldesign-custom-css" id="nldesign-custom-css" style="margin-top:2em">
-		<h3><?php p($l->t('Custom CSS')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Freeform CSS applied after every other theming layer, so it always wins. Use it for tweaks the token editor cannot express.')); ?>
-		</p>
-		<p class="settings-hint">
-			<?php p($l->t('For safety this is checked before it is saved: @import, external url() references, script-execution vectors and HTML tags are refused, as are the background variables Nextcloud needs for dark mode. Relative paths and data: URIs are allowed. Every save is written to the audit log.')); ?>
-		</p>
-		<p>
-			<input type="checkbox" id="nldesign-custom-css-enabled" class="checkbox">
-			<label for="nldesign-custom-css-enabled"><?php p($l->t('Enable custom CSS')); ?></label>
-		</p>
-		<label for="nldesign-custom-css-input" class="hidden-visually"><?php p($l->t('Custom CSS')); ?></label>
-		<textarea id="nldesign-custom-css-input" rows="10" spellcheck="false"
-				  style="width:100%;font-family:monospace;font-size:13px"
-				  placeholder=".app-content { padding: 8px; }"></textarea>
-		<button type="button" id="nldesign-custom-css-save" class="button primary">
-			<?php p($l->t('Save custom CSS')); ?>
-		</button>
-		<span id="nldesign-custom-css-feedback" role="status" aria-live="polite"></span>
-	</div>
-
 	<!-- Theming audit log — who changed which theming setting, from what, to
 	     what, and when. Evidence for accessibility/WCAG-EM audits. -->
 	<div class="nldesign-audit-log" id="nldesign-audit-log" style="margin-top:2em">
@@ -481,19 +534,24 @@ style('thematiq', 'admin');
 		<p class="settings-hint">
 			<?php p($l->t('A record of theming configuration changes: who changed what, from what, to what, and when. Useful evidence for accessibility audits.')); ?>
 		</p>
+		<div class="nldesign-audit-scroll" tabindex="0" role="region"
+		     aria-label="<?php p($l->t('Theming audit log')); ?>">
 		<table class="nldesign-audit-table" id="nldesign-audit-table">
 			<thead>
 				<tr>
 					<th scope="col"><?php p($l->t('Timestamp')); ?></th>
 					<th scope="col"><?php p($l->t('User')); ?></th>
 					<th scope="col"><?php p($l->t('Action')); ?></th>
-					<th scope="col"><?php p($l->t('Details')); ?></th>
+					<th scope="col"><?php p($l->t('From')); ?></th>
+					<th scope="col"><?php p($l->t('To')); ?></th>
+					<th scope="col"><?php p($l->t('Changed')); ?></th>
 				</tr>
 			</thead>
 			<tbody id="nldesign-audit-table-body">
-				<tr><td colspan="4" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
+				<tr><td colspan="6" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
 			</tbody>
 		</table>
+		</div>
 		<button type="button" id="nldesign-audit-download-btn" class="button">
 			<?php p($l->t('Download full log')); ?>
 		</button>

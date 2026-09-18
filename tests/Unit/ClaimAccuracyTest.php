@@ -102,6 +102,11 @@ class ClaimAccuracyTest extends TestCase {
 		);
 	}
 
+	// REUSE-IgnoreStart -- from here to the end of testSpdxHeadersAgreeWithManifest()
+	// the SPDX tags are the SUBJECT of the assertions (patterns matched against
+	// lib/**/*.php), not a declaration about this file, which is EUPL-1.2 per its
+	// own header above.
+
 	/**
 	 * Every PHP file under lib/ carries SPDX-License-Identifier: EUPL-1.2 and none declares AGPL.
 	 *
@@ -141,6 +146,8 @@ class ClaimAccuracyTest extends TestCase {
 
 		$this->assertGreaterThan(0, $checked, 'No PHP files were scanned under lib/.');
 	}
+
+	// REUSE-IgnoreEnd
 
 	/**
 	 * The government checklist states the real licence (EUPL-1.2) and host (GitHub).

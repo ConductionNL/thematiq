@@ -43,11 +43,15 @@
 		"test:coverage-ratchet": "npm run test:coverage && bash tests/coverage-ratchet.sh vitest coverage-vitest/coverage-summary.json",
 		"test:unit:watch": "vitest",
 		"check:manifest": "node tests/validate-manifest.js",
+		"audit:token-sets": "node scripts/audit-token-sets.mjs",
+		"audit:token-sets:check": "node scripts/audit-token-sets.mjs --check",
 		"format": "prettier --check \"**/*.{js,ts,vue,css,scss}\"",
 		"format:fix": "prettier --write \"**/*.{js,ts,vue,css,scss}\"",
 		"prepare": "git config core.hooksPath .githooks || true",
 		"l10n:build": "node scripts/build-l10n-js.js",
-		"check:l10n-js": "node scripts/build-l10n-js.js --check"
+		"check:l10n-js": "node scripts/build-l10n-js.js --check",
+		"generate:guest-css": "node scripts/generate-guest-css.mjs",
+		"test:guest-css": "node scripts/generate-guest-css.mjs --check"
 	},
 	"dependencies": {
 		"@fontsource/fira-sans": "^5.0.0"
@@ -56,7 +60,7 @@
 		"@gouvfr/dsfr": "^1.15.1"
 	},
 	"devDependencies": {
-		"@conduction/nextcloud-vue": "^2.25.1",
+		"@conduction/nextcloud-vue": "^2.52.0",
 		"@cyclonedx/cyclonedx-npm": "^6.0.1",
 		"@nextcloud/prettier-config": "^1.2.0",
 		"@openfun/cunningham-tokens": "^3.0.0",
@@ -69,7 +73,7 @@
 		"stylelint-config-standard": "^40.0.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^7.0.2",
-		"vite": "^8.2.2",
+		"vite": "^8.3.0",
 		"vitest": "^5.0.0"
 	},
 	"prettier": "@nextcloud/prettier-config"

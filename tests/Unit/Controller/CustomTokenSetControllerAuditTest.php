@@ -14,15 +14,21 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OCA\Thematiq\Controller\CustomTokenSetController;
+use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignTokensMapper;
+use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\ThemingService;
+use OCA\Thematiq\Service\TokenSetConverterService;
+use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Covers tasks.md#task-2.3 / #task-5.3: upload() logs one
@@ -54,6 +60,13 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	private ThemingAuditService $auditService;
 
 	/**
+	 * Core theming, so the delete path's undo can be asserted.
+	 *
+	 * @var ThemingService&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private ThemingService $themingService;
+
+	/**
 	 * The mocked request.
 	 *
 	 * @var IRequest&\PHPUnit\Framework\MockObject\MockObject
@@ -72,6 +85,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$this->service = $this->createMock(CustomTokenSetService::class);
 		$this->auditService = $this->createMock(ThemingAuditService::class);
+		$this->themingService = $this->createMock(ThemingService::class);
 		$this->request = $this->createMock(IRequest::class);
 
 		$l = $this->createMock(IL10N::class);
@@ -82,16 +96,32 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
 
+		// A REAL converter: every upload now runs through it before the
+		// validator, so a bare mock returns null and the controller has no CSS
+		// to validate. Its app path is the repo root, which is where the
+		// mapping table it reads lives.
+		$repoAppManager = $this->createMock(IAppManager::class);
+		$repoAppManager->method('getAppPath')->willReturn(dirname(__DIR__, 3));
+		$converter = new TokenSetConverterService(
+			$repoAppManager,
+			new CssParserService(),
+			new ContrastService(),
+			new DesignTokensMapper(),
+			$this->createMock(FontService::class),
+			$this->createMock(LoggerInterface::class)
+		);
+
 		$this->controller = new CustomTokenSetController(
 			'nldesign',
 			$this->request,
 			$this->service,
 			new CustomTokenSetValidator(),
 			new CssParserService(),
-			$this->createMock(DesignTokensMapper::class),
 			$l,
 			$this->auditService,
-			$config
+			$config,
+			$converter,
+			$this->themingService
 		);
 	}//end setUp()
 
@@ -166,6 +196,42 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$this->assertSame(200, $response->getStatus());
 	}//end testDeleteActiveSetLogsActiveReset()
+
+	/**
+	 * Deleting the ACTIVE custom set also undoes what that set pushed into
+	 * Nextcloud's own theming.
+	 *
+	 * Resetting `token_set` alone left the deleted set's primary colour and
+	 * logo on the login page, in e-mails and in the mobile apps, with no set
+	 * left in the dropdown to explain where they came from.
+	 */
+	public function testDeleteActiveSetResetsCoreTheming(): void {
+		$this->appConfig['token_set'] = 'custom-gemeente-voorbeeld';
+
+		$this->service->method('isCustomId')->willReturn(true);
+		$this->service->method('getRawContent')->willReturn(':root { --nldesign-color-primary: #007bc7; }');
+		$this->service->method('delete')->willReturn(true);
+
+		$this->themingService->expects($this->once())->method('resetToDefaults');
+
+		$this->controller->delete(id: 'custom-gemeente-voorbeeld');
+	}//end testDeleteActiveSetResetsCoreTheming()
+
+	/**
+	 * Deleting a set that is NOT active leaves core theming alone — it belongs
+	 * to whichever set is still applied.
+	 */
+	public function testDeleteInactiveSetLeavesCoreThemingAlone(): void {
+		$this->appConfig['token_set'] = 'nextcloud';
+
+		$this->service->method('isCustomId')->willReturn(true);
+		$this->service->method('getRawContent')->willReturn(':root { --nldesign-color-primary: #007bc7; }');
+		$this->service->method('delete')->willReturn(true);
+
+		$this->themingService->expects($this->never())->method('resetToDefaults');
+
+		$this->controller->delete(id: 'custom-gemeente-voorbeeld');
+	}//end testDeleteInactiveSetLeavesCoreThemingAlone()
 
 	/**
 	 * Deleting a non-active custom set logs activeReset === false.

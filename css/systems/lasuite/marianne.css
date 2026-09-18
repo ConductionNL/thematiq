@@ -21,7 +21,7 @@
  * Font source: @gouvfr/dsfr@1.15.1 (dist/fonts/Marianne-*.woff2), the
  * official French government Design System (DSFR) package, npm devDependency
  * (build-only, see scripts/build-fonts-marianne.js) — under the Etalab Open
- * Licence 2.0 (`Etalab-2.0`), see LICENSES/Etalab-2.0.txt. Weights: Light
+ * Licence 2.0 (`Etalab-2.0`), see LICENSES/etalab-2.0.txt. Weights: Light
  * (300), Regular (400), Medium (500), Bold (700), each with an italic
  * variant. woff2 only (no woff fallback) for CSP-clean self-hosting.
  */

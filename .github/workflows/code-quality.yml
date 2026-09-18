@@ -299,6 +299,26 @@ jobs:
       # recursively.
       enable-newman: true
 
+      # ── Licensing ────────────────────────────────────────────────────────
+      # REUSE findings fail the build. The shared workflow defaults this OFF
+      # because most fleet apps ship no REUSE.toml or LICENSES/ directory;
+      # thematiq now ships both and lints at 3680/3680 with 0 missing, 0
+      # unused and 0 invalid expressions, compliant with version 3.3 of the
+      # REUSE specification.
+      #
+      # It stayed off while the repo was NOT compliant, deliberately: turning
+      # it on then would have failed every open PR for a debt none of them
+      # introduced. Now that the tree is clean, off is the worse default —
+      # non-blocking surfaces a regression only as REUSE ❌ in the Quality
+      # Report comment, which is easy to miss.
+      #
+      # The blanket `path = "**"` annotation in REUSE.toml makes every new file
+      # compliant on arrival, whatever its type, so ordinary work cannot trip
+      # this. Two regression modes remain: vendoring a file whose own SPDX
+      # header names a licence with no text in LICENSES/, and writing prose
+      # that QUOTES an SPDX tag outside a REUSE-IgnoreStart/End pair.
+      reuse-blocking: true
+
       # ── Frontend Check legs ──────────────────────────────────────────────
       # `frontend-checks` defaults to `[]`, and an empty list means the shared
       # workflow emits NO "Frontend Check" job at all — so these two validators

@@ -20,7 +20,10 @@ use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignTokensMapper;
+use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\ThemingService;
+use OCA\Thematiq\Service\TokenSetConverterService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IConfig;
@@ -122,6 +125,23 @@ class CustomTokenSetControllerTest extends TestCase {
 			}
 		);
 
+		// The converter reads the mapping table and the two vocabulary
+		// stylesheets out of the app directory, which for it must be the REPO,
+		// not the temp dir the service writes into — hence a second app-manager
+		// mock. Everything the converter writes still goes through $this->service
+		// and lands in the temp dir.
+		$repoAppManager = $this->createMock(IAppManager::class);
+		$repoAppManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
+
+		$converter = new TokenSetConverterService(
+			$repoAppManager,
+			new CssParserService(),
+			new ContrastService(),
+			new DesignTokensMapper(),
+			$this->createMock(FontService::class),
+			$this->createMock(LoggerInterface::class)
+		);
+
 		$this->request = $this->createMock(IRequest::class);
 		$this->controller = new CustomTokenSetController(
 			'nldesign',
@@ -129,10 +149,11 @@ class CustomTokenSetControllerTest extends TestCase {
 			$this->service,
 			new CustomTokenSetValidator(),
 			new CssParserService(),
-			new DesignTokensMapper(),
 			$l,
 			$this->createMock(ThemingAuditService::class),
-			$config
+			$config,
+			$converter,
+			$this->createMock(ThemingService::class)
 		);
 	}//end setUp()
 

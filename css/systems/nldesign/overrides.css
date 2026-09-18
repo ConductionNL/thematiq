@@ -154,6 +154,22 @@
 	/* --default-font-size: unmapped — standard 15px */
 	/* --font-size-small: unmapped — standard 13px */
 	/* --default-line-height: unmapped — standard 1.5 */
+	/* The three weights NC 33 exposed (400 body / 500 element / 600 heading).
+	 *
+	 * An earlier pass left these unmapped, reasoning that theme.css already sets
+	 * weight at element level with !important so a token mapping would lose
+	 * anyway. That was wrong, and measurably so. theme.css claims `.button-vue`
+	 * — the CONTAINER — and NcButton in @nextcloud/vue 9 puts
+	 * `font-weight: var(--font-weight-element, bold)` on `.button-vue__text`,
+	 * the child, whose own rule beats anything inherited from the parent. On
+	 * NC 32 that child was hard-coded `bold`, so button labels rendered 700
+	 * there and 500 on NC 34, with nothing in this app able to reach them.
+	 *
+	 * Mapping them is also the rule rather than the exception: every Nextcloud
+	 * variable is a token a set may move. */
+	--font-weight-default: var(--nldesign-font-weight-default) !important;
+	--font-weight-element: var(--nldesign-font-weight-element) !important;
+	--font-weight-heading: var(--nldesign-font-weight-heading) !important;
 
 	/* ===================================================================
 	 * SPACING & CLICKABLE AREAS
@@ -170,13 +186,20 @@
 	 * Intentionally not overridden — these are core to Nextcloud layout.
 	 * =================================================================== */
 
-	/* --header-height: intentionally not overridden — 50px, overriding breaks layout */
+	/* --header-height: intentionally not overridden — Nextcloud sets it per release (50px on 32–34, 44px from 35) and the shell clears it; overriding breaks layout */
 	/* --header-menu-item-height: intentionally not overridden — NC layout dependent */
 	/* --header-menu-icon-mask: intentionally not overridden — NC internal */
 	/* --navigation-width: intentionally not overridden — 300px, NC layout dependent */
 	/* --sidebar-min-width: intentionally not overridden — NC layout dependent */
 	/* --sidebar-max-width: intentionally not overridden — NC layout dependent */
-	--body-container-radius: var(--nldesign-border-radius) !important;
+	/* --body-container-radius: intentionally not overridden — it is a CONTAINER
+	 * radius, like `--border-radius-container` and `-container-large` above,
+	 * and this used to map it to the brand's CONTROL radius. On a brand whose
+	 * controls are near-square (Zwolle: 2px) that squared off the whole app shell,
+	 * because `#content` draws its `border-radius` from this variable. Left to
+	 * Nextcloud, the shell keeps stock geometry: the base value is 0 and only
+	 * the two TOP corners are rounded, from `--border-radius-large` — which IS
+	 * themed above, so the brand still decides how round the shell reads. */
 	/* --body-container-margin: intentionally not overridden — NC layout dependent */
 	/* --body-height: intentionally not overridden — NC layout dependent */
 	/* --breakpoint-mobile: intentionally not overridden — NC responsive design */
@@ -195,6 +218,21 @@
 	 * =================================================================== */
 
 	--color-favorite: var(--nldesign-color-favorite) !important;
+	/* --color-background-selection: intentionally not overridden — new in NC 33/34.
+	 * Its value is `rgb(from var(--color-primary-element) r g b / 0.2)`, and
+	 * `--color-primary-element` is mapped to the brand primary at the top of
+	 * this file, so the selection wash already follows the set. Overriding it
+	 * would only re-state that, and would lose the 20% alpha core relies on to
+	 * keep selected text legible. */
+	/* --color-text-selection: intentionally not overridden — new in NC 33/34.
+	 * Its value is `var(--color-main-text)`, which is mapped to
+	 * --nldesign-color-text above, so selected text already takes the set's
+	 * text colour. It is a contrast PAIR with the wash above; the two have to
+	 * be decided together or not at all. */
+	/* --color-mark: unmapped — new in NC 33/34. A fixed #fff0c7 highlight tint
+	 * behind <mark>, for search hits. NL Design has no highlight token, and a
+	 * brand colour here is the wrong instrument: the tint has to stay legible
+	 * under --color-main-text, which a saturated primary is not. */
 	/* --color-loading-light: unmapped — NC loading animation internal */
 	/* --color-loading-dark: unmapped — NC loading animation internal */
 	/* --color-scrollbar: intentionally not overridden — depends on border-maxcontrast */
