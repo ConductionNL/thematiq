@@ -1229,13 +1229,32 @@
 	overflow-wrap: anywhere;
 }
 
-/* Below the mobile breakpoint five columns cannot all be read at once. The
-   table scrolls in its own container rather than widening the settings page,
-   which is the same treatment the token dialogs get further up this file. */
+/* Below the mobile breakpoint the columns cannot all be read at once, so the
+   table scrolls — in a real CONTAINER, not by making the table itself the
+   scroller. `display: block` on a <table> drops its implicit table role in
+   Chrome and Firefox, which unassociates every `th[scope=col]` from its
+   cells; on the panel that exists to be shown to an accessibility auditor,
+   that is the one thing it must not do.
+
+   The container is focusable because an `overflow-x: auto` element that
+   cannot take focus cannot be scrolled without a pointer. It carries a role
+   and a name so the focus stop announces itself rather than being a silent
+   one. */
+.nldesign-audit-scroll {
+	max-width: 100%;
+}
+
+.nldesign-audit-scroll:focus-visible {
+	outline: 2px solid var(--color-primary-element);
+	outline-offset: 2px;
+}
+
 @media (max-width: 480px) {
-	.nldesign-audit-table {
-		display: block;
+	.nldesign-audit-scroll {
 		overflow-x: auto;
+	}
+
+	.nldesign-audit-table {
 		white-space: nowrap;
 	}
 }

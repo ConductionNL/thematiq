@@ -23,6 +23,10 @@ script('thematiq', 'lib/tokenTransforms');
 // the ones the server would emit for the new set — no reload. admin.js falls
 // back to its old reload-asking toasts when the module is absent.
 script('thematiq', 'lib/layerSwap');
+// The audit log's value formatting (window.ThematiqAuditFormat): four pure
+// functions the panel renders each entry with. A module of its own so they can
+// be unit-tested; admin.js falls back to raw values when it is absent.
+script('thematiq', 'lib/auditFormat');
 script('thematiq', 'admin');
 style('thematiq', 'admin');
 // The component playground: the selector / stage / tokens instrument that
@@ -530,6 +534,8 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint">
 			<?php p($l->t('A record of theming configuration changes: who changed what, from what, to what, and when. Useful evidence for accessibility audits.')); ?>
 		</p>
+		<div class="nldesign-audit-scroll" tabindex="0" role="region"
+		     aria-label="<?php p($l->t('Theming audit log')); ?>">
 		<table class="nldesign-audit-table" id="nldesign-audit-table">
 			<thead>
 				<tr>
@@ -538,12 +544,14 @@ if ($_['mockUi'] === true) {
 					<th scope="col"><?php p($l->t('Action')); ?></th>
 					<th scope="col"><?php p($l->t('From')); ?></th>
 					<th scope="col"><?php p($l->t('To')); ?></th>
+					<th scope="col"><?php p($l->t('Changed')); ?></th>
 				</tr>
 			</thead>
 			<tbody id="nldesign-audit-table-body">
-				<tr><td colspan="5" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
+				<tr><td colspan="6" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
 			</tbody>
 		</table>
+		</div>
 		<button type="button" id="nldesign-audit-download-btn" class="button">
 			<?php p($l->t('Download full log')); ?>
 		</button>

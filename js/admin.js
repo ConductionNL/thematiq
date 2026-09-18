@@ -4531,11 +4531,32 @@
 			tableBody.innerHTML = ''
 			var row = document.createElement('tr')
 			var cell = document.createElement('td')
-			cell.colSpan = 5
+			cell.colSpan = 6
 			cell.className = 'settings-hint'
 			cell.textContent = message
 			row.appendChild(cell)
 			tableBody.appendChild(row)
+		}
+
+		/**
+		 * The four pure formatters, from js/lib/auditFormat.js.
+		 *
+		 * Read through a local alias rather than called globally so the panel
+		 * degrades the way the rest of this file does when a module is absent:
+		 * an entry renders its raw value instead of throwing and taking the
+		 * whole table with it.
+		 */
+		var auditFormat = (typeof window !== 'undefined'
+			&& window.ThematiqAuditFormat) || {
+			formatAuditChanged: function (entry) {
+				return String(entry.changed || '')
+			},
+			formatAuditTimestamp: function (ts) {
+				return String(ts || '')
+			},
+			formatAuditValue: function (value) {
+				return value === null || value === undefined ? '' : String(value)
+			},
 		}
 
 		function renderAuditTable(tableBody, entries) {
@@ -4558,11 +4579,24 @@
 				// for is what changed, and that is a comparison between two
 				// columns, not a sentence.
 				;[
-					['nldesign-audit-ts', formatAuditTimestamp(entry.ts)],
+					[
+						'nldesign-audit-ts',
+						auditFormat.formatAuditTimestamp(entry.ts),
+					],
 					['nldesign-audit-actor', entry.actor || ''],
 					['nldesign-audit-action', entry.action || ''],
-					['nldesign-audit-value', formatAuditValue(entry.old)],
-					['nldesign-audit-value', formatAuditValue(entry.new)],
+					[
+						'nldesign-audit-value',
+						auditFormat.formatAuditValue(entry.old),
+					],
+					[
+						'nldesign-audit-value',
+						auditFormat.formatAuditValue(entry.new),
+					],
+					[
+						'nldesign-audit-changed',
+						auditFormat.formatAuditChanged(entry),
+					],
 				].forEach(function (cell) {
 					var td = document.createElement('td')
 					td.className = cell[0]
@@ -4574,99 +4608,6 @@
 
 				tableBody.appendChild(row)
 			})
-		}
-
-		/**
-		 * The stored timestamp, with the machine punctuation taken out.
-		 *
-		 * Entries are written by `gmdate('Y-m-d\TH:i:s\Z')`, so
-		 * `2026-09-17T09:14:02Z` — exact, and hard to scan down a column
-		 * because of the T and the Z. The T becomes a space and the Z becomes
-		 * the word, and that is the whole change.
-		 *
-		 * It stays in UTC on purpose. This panel is evidence an accessibility
-		 * audit is shown, and a local time rendered without naming its zone
-		 * cannot be lined up against anything — a reader in another zone would
-		 * read a different hour off the same record, with nothing on screen
-		 * saying so. Converting AND naming the zone would be honest, but then
-		 * the exported log and the panel would disagree about when something
-		 * happened, and the export is the artefact that gets filed.
-		 *
-		 * Anything not in that exact shape is passed through untouched rather
-		 * than guessed at.
-		 */
-		function formatAuditTimestamp(ts) {
-			if (!ts) {
-				return ''
-			}
-
-			var iso = String(ts)
-			var match = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})Z$/.exec(iso)
-			if (match === null) {
-				return iso
-			}
-
-			return match[1] + ' ' + match[2] + ' UTC'
-		}
-
-		/**
-		 * One side of a change, in words rather than in JSON.
-		 *
-		 * The service never stores a whole value: an array is reduced to its
-		 * count and a CSS payload to a length plus a digest, so what arrives
-		 * here is already a summary. It was being printed as the literal
-		 * `{"count":3}`, which is the summary spelled as its own data
-		 * structure — true, and unreadable in a column.
-		 */
-		function formatAuditValue(value) {
-			// An entry that has no before-side (a first write, an upload) is a
-			// real fact about the change, so the cell says so rather than
-			// sitting empty and reading as a rendering failure.
-			if (value === null || value === undefined) {
-				return '—'
-			}
-			if (typeof value === 'boolean') {
-				return value === true ? t('thematiq', 'On') : t('thematiq', 'Off')
-			}
-			if (typeof value === 'object') {
-				// An array the service counted. Deliberately "entries" and not
-				// "tokens": the same shape carries override maps, per-app
-				// exclusion lists and group→set mappings.
-				if (typeof value.count === 'number') {
-					return t('thematiq', '{count} entries').replace(
-						'{count}',
-						String(value.count),
-					)
-				}
-				// A CSS payload: its length, and the digest that identifies
-				// which payload it was — the evidence half of the record.
-				if (typeof value.bytes === 'number') {
-					return (
-						formatAuditBytes(value.bytes)
-						+ (value.hash ? ' · ' + value.hash : '')
-					)
-				}
-				try {
-					return JSON.stringify(value)
-				} catch (e) {
-					return String(value)
-				}
-			}
-			return String(value)
-		}
-
-		/**
-		 * A byte count at a readable scale. Not translated: the output is a
-		 * number and an SI unit, which do not change between locales here.
-		 */
-		function formatAuditBytes(bytes) {
-			if (bytes < 1024) {
-				return bytes + ' B'
-			}
-			if (bytes < 1024 * 1024) {
-				return (bytes / 1024).toFixed(1) + ' kB'
-			}
-			return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
 		}
 
 		initAuditLog()
