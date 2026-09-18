@@ -1179,11 +1179,42 @@
 
    Colours come from Nextcloud's own variables, so the panel follows the active
    theme and this app's overrides of it rather than pinning greys of its own. */
+/* `table-layout: fixed` is what stops this panel widening the settings page.
+   Under the default `auto` the browser sizes every column to its content, and
+   the Changed cell holds an unbounded list of token names — one
+   overrides_written entry names forty — so the table grew past 100% and took
+   the page with it. Fixed layout makes the declared widths binding and the
+   content wrap inside them. */
 .nldesign-audit-table {
 	width: 100%;
+	table-layout: fixed;
 	margin-bottom: 1em;
 	border-collapse: collapse;
 	font-size: 0.9em;
+}
+
+/* Timestamp, User, Action, From, To, Changed. The first five are bounded by
+   what they hold — an ISO timestamp, an account name, the app's own action
+   vocabulary, two summarised values — so Changed gets the remainder. */
+.nldesign-audit-table th:nth-child(1) {
+	width: 15%;
+}
+
+.nldesign-audit-table th:nth-child(2) {
+	width: 10%;
+}
+
+.nldesign-audit-table th:nth-child(3) {
+	width: 16%;
+}
+
+.nldesign-audit-table th:nth-child(4),
+.nldesign-audit-table th:nth-child(5) {
+	width: 11%;
+}
+
+.nldesign-audit-table th:nth-child(6) {
+	width: 37%;
 }
 
 .nldesign-audit-table th,
@@ -1215,9 +1246,19 @@
 	white-space: nowrap;
 }
 
+/* The action wraps rather than being pinned: under a fixed layout a nowrap
+   cell overflows its column instead of widening it, and `theming_sync_applied`
+   is longer than its share. Underscores give it somewhere to break. */
 .nldesign-audit-action {
 	font-family: var(--font-face-monospace, monospace);
-	white-space: nowrap;
+	overflow-wrap: anywhere;
+}
+
+/* The changed list is the unbounded one — every token name a write touched.
+   It wraps inside its column and breaks mid-name if it has to, because a
+   forty-name list has to be readable without the table escaping the page. */
+.nldesign-audit-changed {
+	overflow-wrap: anywhere;
 }
 
 /* The two value columns are the ones that can hold something long — a custom
@@ -1254,8 +1295,22 @@
 		overflow-x: auto;
 	}
 
+	/* Back to auto: here the table is MEANT to exceed the viewport and be
+	   scrolled, which a fixed layout cannot do — its columns would keep their
+	   percentages and the content would spill out of them instead. */
 	.nldesign-audit-table {
+		table-layout: auto;
+		min-width: 40em;
 		white-space: nowrap;
+	}
+
+	.nldesign-audit-table th:nth-child(1),
+	.nldesign-audit-table th:nth-child(2),
+	.nldesign-audit-table th:nth-child(3),
+	.nldesign-audit-table th:nth-child(4),
+	.nldesign-audit-table th:nth-child(5),
+	.nldesign-audit-table th:nth-child(6) {
+		width: auto;
 	}
 }
 

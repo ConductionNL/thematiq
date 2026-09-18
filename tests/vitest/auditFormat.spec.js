@@ -91,6 +91,32 @@ describe('which identities changed', () => {
 		).toBe('primary_color, logo')
 	})
 
+	it('caps a long list, because one write can name forty tokens', () => {
+		// Printed in full this cell was taller than the rest of the row and,
+		// before the table layout was fixed, wider than the page. The count is
+		// what a reader acts on; the names are in the exported log.
+		const many = Array.from({ length: 40 }, (unused, i) => '--token-' + i)
+		const out = format.formatAuditChanged({ changed: many })
+
+		expect(out).toContain('--token-0')
+		expect(out).toContain('--token-5')
+		expect(out).not.toContain('--token-6')
+		expect(out).toContain('+34 more')
+	})
+
+	it('does not cap a list that already fits', () => {
+		const six = Array.from({ length: 6 }, (unused, i) => '--token-' + i)
+
+		expect(format.formatAuditChanged({ changed: six })).toBe(six.join(', '))
+		expect(format.formatAuditChanged({ changed: six })).not.toContain('more')
+	})
+
+	it('counts the remainder, not the whole list', () => {
+		const seven = Array.from({ length: 7 }, (unused, i) => '--token-' + i)
+
+		expect(format.formatAuditChanged({ changed: seven })).toContain('+1 more')
+	})
+
 	it('distinguishes "nothing changed" from "not applicable"', () => {
 		expect(format.formatAuditChanged({ changed: [] })).toBe('Nothing')
 		expect(format.formatAuditChanged({})).toBe('—')

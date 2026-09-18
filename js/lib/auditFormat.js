@@ -28,21 +28,43 @@
 })(typeof window !== 'undefined' ? window : this, function () {
 	'use strict'
 
-	/** Nextcloud's translators, with a pass-through for Node. */
-	var tr = function (key) {
-		if (typeof t === 'function') {
-			return t('thematiq', key)
+	/**
+	 * How many changed identities a cell prints before summarising the rest.
+	 *
+	 * Six fits one line at the column's width without the row growing taller
+	 * than its neighbours, which is the whole reason this cap exists.
+	 */
+	var CHANGED_SHOWN = 6
+
+	/**
+	 * Nextcloud's own translators, shadowed locally so this module runs under
+	 * Node with no globals.
+	 *
+	 * They keep the names t and n on purpose. tests/l10n/check-l10n.js extracts
+	 * by matching the literal CALL SHAPE — the helper's name, the app id and
+	 * then quoted source strings — so a differently-named wrapper makes every
+	 * string in this file invisible to it. That is not hypothetical: with the
+	 * wrappers named tr and plural, the +%n more key reached review absent from
+	 * en.json while the check still reported OK.
+	 *
+	 * For the same reason this comment spells no example arguments: the scan
+	 * reads comments as well as code, and a quoted sample invents a key.
+	 */
+	var t = function (app, key) {
+		if (typeof globalThis.t === 'function') {
+			return globalThis.t(app, key)
 		}
+
 		return key
 	}
 
-	var plural = function (one, many, count) {
-		if (typeof n === 'function') {
-			return n('thematiq', one, many, count)
+	var n = function (app, one, many, count) {
+		if (typeof globalThis.n === 'function') {
+			return globalThis.n(app, one, many, count)
 		}
+
 		return (count === 1 ? one : many).replace('%n', String(count))
 	}
-
 	/**
 	 * WHICH identities changed, which is the only cell that answers the
 	 * question an audit is read for.
@@ -62,10 +84,28 @@
 			return '—'
 		}
 		if (entry.changed.length === 0) {
-			return tr('Nothing')
+			return t('thematiq', 'Nothing')
+		}
+		if (entry.changed.length <= CHANGED_SHOWN) {
+			return entry.changed.join(', ')
 		}
 
-		return entry.changed.join(', ')
+		// One overrides_written entry names forty tokens. Printed in full it
+		// made this cell taller than the rest of the row put together and,
+		// before the table layout was fixed, wider than the page. The count is
+		// the part a reader acts on — "did this write touch more than I
+		// expected" — and the names themselves are in the exported log, which
+		// is the artefact that gets filed.
+		return (
+			entry.changed.slice(0, CHANGED_SHOWN).join(', ')
+			+ ' '
+			+ n(
+				'thematiq',
+				'+%n more',
+				'+%n more',
+				entry.changed.length - CHANGED_SHOWN,
+			)
+		)
 	}
 
 	/**
@@ -118,14 +158,14 @@
 			return '—'
 		}
 		if (typeof value === 'boolean') {
-			return value === true ? tr('On') : tr('Off')
+			return value === true ? t('thematiq', 'On') : t('thematiq', 'Off')
 		}
 		if (typeof value === 'object') {
 			// An array the service counted. Deliberately "entries" and not
 			// "tokens": the same shape carries override maps, per-app
 			// exclusion lists and group→set mappings.
 			if (typeof value.count === 'number') {
-				return plural('%n entry', '%n entries', value.count)
+				return n('thematiq', '%n entry', '%n entries', value.count)
 			}
 			// A CSS payload: its length, and the digest that identifies
 			// which payload it was — the evidence half of the record.
