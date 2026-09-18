@@ -94,9 +94,34 @@ class TokenSetService {
 	 * every file on disk, because they answer what the app ships, not what may
 	 * be chosen.
 	 *
+	 * `cunningham` IS LISTED WHILE STILL FAILING THAT AUDIT, and that is a
+	 * deliberate exception rather than the gate being ignored.
+	 *
+	 * The audit measures one thing: how much of the `--nldesign-*` vocabulary
+	 * a SET FILE declares. That is the right measure for an nldesign set, whose
+	 * file is the only place its values come from. It is the wrong measure for
+	 * a bridge-based system. `cunningham`'s stack is
+	 * `lasuite/{fonts,defaults,bridge,element-overrides}`: the bundle's own
+	 * defaults declare 1191 `--lasuite-*` tokens and `bridge.css` sets 52
+	 * Nextcloud `--color-*` variables from them. The set file's 25 tokens are
+	 * supplementary, so counting them says nothing about whether the theme
+	 * renders — and it renders.
+	 *
+	 * It also carries more evidence than any other bundle here: a parity suite,
+	 * a radius-scale suite, a bridge-cascade suite, and
+	 * `tests/css/check-lasuite-bridge-coverage.js`, which asserts every one of
+	 * the 71 audited Nextcloud `--color-*` variables is accounted for in the
+	 * bridge.
+	 *
+	 * Its id therefore STAYS in
+	 * `tests/Unit/fixtures/token-set-vocabulary-allowlist.json`: it has not
+	 * passed the audit and the shrink-only fixture must keep saying so. When
+	 * the audit learns to judge a bridge-based system by its bundle rather than
+	 * by its set file, that entry goes and this paragraph with it.
+	 *
 	 * @var array<int, string>
 	 */
-	public const SELECTABLE_SHIPPED_SETS = ['nextcloud'];
+	public const SELECTABLE_SHIPPED_SETS = ['nextcloud', 'cunningham'];
 
 	/**
 	 * The app manager for resolving paths.
