@@ -81,7 +81,14 @@ test.describe('admin panels for the market-gap wave features', () => {
 	}) => {
 		const table = page.locator('#nldesign-audit-table')
 		await expect(table).toBeVisible()
-		for (const header of ['Timestamp', 'User', 'Action', 'From', 'To', 'Changed']) {
+		for (const header of [
+			'Timestamp',
+			'User',
+			'Action',
+			'From',
+			'To',
+			'Changed',
+		]) {
 			await expect(table.locator('thead')).toContainText(header)
 		}
 	})
