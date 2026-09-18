@@ -355,7 +355,7 @@ OC.L10N.register(
         "%n entries": "%n items",
         "%n entry": "%n item",
         "Nothing": "Niets",
-        "Changed": "Changed"
+        "Changed": "Gewijzigd"
     },
     "nplurals=2; plural=(n != 1);"
 )
