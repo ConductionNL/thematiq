@@ -113,8 +113,13 @@
 	 * anyway, because "my 33 will look like this" is the question an admin
 	 * actually asks, and answering it with a version they did not name leaves
 	 * them wondering whether it was understood.
+	 *
+	 * 34 and 35 do NOT draw the same header, which is why 35 is its own entry
+	 * rather than a second label on the 34 one: 35 gave the bar a real centre
+	 * column, turned the search trigger into a field, and grouped the waffle
+	 * and the current app under one highlight.
 	 */
-	var HEADER_VERSIONS = [32, 33, 34]
+	var HEADER_VERSIONS = [32, 33, 34, 35]
 
 	/**
 	 * Whether a state is one the admin makes rather than one the stage draws.
@@ -1574,9 +1579,11 @@
 	 *
 	 * This exists so an admin can answer "what does my theme do to the header
 	 * after the upgrade" without upgrading — 34 replaced the app-entry row with
-	 * a waffle and a current-app button, and a theme that reached the old shape
-	 * may reach nothing in the new one. The version they are running is marked,
-	 * so switching away from it is visibly a hypothetical.
+	 * a waffle and a current-app button, and 35 grouped those two under one
+	 * highlight and turned the search trigger into a field in a centre column.
+	 * A theme that reached the old shape may reach nothing in the new one. The
+	 * version they are running is marked, so switching away from it is visibly
+	 * a hypothetical.
 	 *
 	 * @param {Object} state The instrument state.
 	 * @param {Object} component The header component.
@@ -2015,20 +2022,35 @@
 	var STAGES = {
 		'header-bar': function (state, component, version) {
 			var major = headerMajor(version)
+			// Everything from 34 on: the waffle app menu, the centred search,
+			// and the glyph fade. `columns` is the narrower 35-only change.
 			var modern = major >= 34
+			// 35 rebuilt the bar as three real columns — `.header-start`,
+			// `.header-center`, `.header-end` — where 34 centred the search by
+			// floating it over a two-column bar. The start side has to become a
+			// wrapper for that, because a centre column only stays centred
+			// between a start and an end that both grow.
+			var columns = major >= 35
+
+			var start =
+				'<span class="nldesign-pg-header-logo logo"></span>'
+				+ (modern ? (columns ? appMenu35() : appMenu34()) : appMenu32())
 
 			return (
 				'<div class="nldesign-pg-header'
-				+ (modern ? ' is-v34' : '')
+				+ (modern ? ' is-modern' : '')
+				+ (columns ? ' is-v35' : '')
 				+ '">'
-				+ '<span class="nldesign-pg-header-logo logo"></span>'
-				+ (modern ? appMenu34() : appMenu32())
+				+ (columns
+					? '<span class="nldesign-pg-header-start">' + start + '</span>'
+					: start)
 				// Version drift, not a style choice, and the second of two in
 				// this one bar: 34 moved the search into the middle, where 32
-				// and 33 put a magnifier among the glyphs on the right. It is
-				// branched the way the app menu above it is, because the shape
-				// and the position both changed, not just the class name.
-				+ (modern ? headerSearch34() : '')
+				// and 33 put a magnifier among the glyphs on the right, and 35
+				// turned that middle trigger into a field. It is branched the
+				// way the app menu above it is, because the shape and the
+				// position both changed, not just the class name.
+				+ (modern ? (columns ? headerSearch35() : headerSearch34()) : '')
 				+ '<span class="nldesign-pg-header-end">'
 				+ (modern ? '' : headerSearch32())
 				+ glyph('bell', 'nldesign-pg-bell', 'bellDot')
@@ -2966,6 +2988,42 @@
 	}
 
 	/**
+	 * The app menu as Nextcloud 35 draws it: the same two buttons, grouped.
+	 *
+	 * 35 kept 34's waffle and current-app buttons and wrapped them in one
+	 * `.app-menu__trigger`, which carries a single highlight spanning both —
+	 * where 34 gave each button its own. The pair is what an admin sees change,
+	 * so the wrapper is drawn even though nothing hovers here: a theme reaching
+	 * `.app-menu__waffle:hover` for the highlight paints nothing on 35, and
+	 * that is only visible if the element it moved to exists in the specimen.
+	 *
+	 * The current-app icon also gained a level: 34 rendered an `<img
+	 * class="app-menu__current-app-icon">`, 35 nests a `__glyph` span inside
+	 * that class so the outer element can carry the header fade while the inner
+	 * one carries the icon shape.
+	 *
+	 * @return {string} The markup.
+	 */
+	function appMenu35() {
+		return (
+			'<nav class="app-menu nldesign-pg-appmenu">'
+			+ '<span class="app-menu__trigger nldesign-pg-appmenutrigger">'
+			+ '<span class="app-menu__waffle nldesign-pg-waffle">'
+			+ glyph('waffle')
+			+ '</span>'
+			+ '<span class="app-menu__current-app nldesign-pg-currentapp">'
+			+ '<span class="app-menu__current-app-icon nldesign-pg-appfade">'
+			+ '<span class="app-menu__current-app-glyph nldesign-pg-appicon">'
+			+ '</span>'
+			+ '</span>'
+			+ '<span class="app-menu__current-app-name">Thematiq</span>'
+			+ '</span>'
+			+ '</span>'
+			+ '</nav>'
+		)
+	}
+
+	/**
 	 * The header search, as 32 and 33 draw it: a glyph among the account ones.
 	 *
 	 * `UnifiedSearch.vue` wraps an `NcHeaderButton`, so the magnifier on the
@@ -3009,6 +3067,48 @@
 			+ glyph('magnify', 'unified-search-input__icon')
 			+ '<span class="unified-search-input__label">'
 			+ t('thematiq', 'Search apps, files, tags, messages …')
+			+ '</span>'
+			+ '</span>'
+			+ '</search>'
+		)
+	}
+
+	/**
+	 * The header search, as 35 draws it: a real field in a real centre column.
+	 *
+	 * 34's trigger was a `<button class="unified-search-input__button">` that
+	 * carried the icon and the label itself. 35 replaced it with
+	 * `.unified-search-input__field` — a container holding a decorative
+	 * `__resting` group (magnifier and placeholder), the real `<input>`, and a
+	 * `__shortcut` hint naming the keys that focus it. The placeholder changed
+	 * with it, from "Search apps, files, tags, messages …" to "Apps, files,
+	 * messages, and more".
+	 *
+	 * The `<input>` is not drawn. It is transparent and empty until the field
+	 * is focused, and the specimen is a still life of the bar at rest — the
+	 * same reason 34's popover is left out of the app menu above. What the
+	 * resting field does show is the surface an admin is judging: a black wash
+	 * on the header, which a dark token set turns invisible unless core's own
+	 * primary tint reaches it.
+	 *
+	 * @return {string} The markup.
+	 */
+	function headerSearch35() {
+		return (
+			'<search class="unified-search-input nldesign-pg-search35">'
+			+ '<span class="unified-search-input__field nldesign-pg-searchfield">'
+			+ '<span class="unified-search-input__resting nldesign-pg-searchresting">'
+			+ glyph('magnify', 'unified-search-input__icon')
+			+ '<span class="unified-search-input__label">'
+			+ t('thematiq', 'Apps, files, messages, and more')
+			+ '</span>'
+			+ '</span>'
+			// Real `<kbd>` elements, because that is what NcKbd renders and
+			// what core's own rule for the hint selects — `:deep(kbd)`, not a
+			// class of its own.
+			+ '<span class="unified-search-input__shortcut nldesign-pg-searchkbd"'
+			+ ' aria-hidden="true">'
+			+ '<kbd>Ctrl</kbd><kbd>K</kbd>'
 			+ '</span>'
 			+ '</span>'
 			+ '</search>'
