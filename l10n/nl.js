@@ -356,7 +356,8 @@ OC.L10N.register(
         "%n entry": "%n item",
         "Nothing": "Niets",
         "Changed": "Gewijzigd",
-        "+%n more": "+nog %n"
+        "+%n more": "+nog %n",
+        "Apps, files, messages, and more": "Apps, bestanden, berichten en meer"
     },
     "nplurals=2; plural=(n != 1);"
 )

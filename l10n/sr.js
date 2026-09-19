@@ -356,7 +356,8 @@ OC.L10N.register(
         "%n entry": "%n entry",
         "Nothing": "Nothing",
         "Changed": "Changed",
-        "+%n more": "+%n more"
+        "+%n more": "+%n more",
+        "Apps, files, messages, and more": "Apps, files, messages, and more"
     },
     "nplurals=2; plural=(n != 1);"
 )

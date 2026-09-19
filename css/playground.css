@@ -1932,7 +1932,7 @@
 	content: ' ·';
 }
 
-/* --- the Nextcloud 34 app menu --- */
+/* --- the Nextcloud 34 and 35 app menu --- */
 
 #nldesign-preview .nldesign-pg-appmenu {
 	display: inline-flex;
@@ -1975,7 +1975,7 @@
    .button-vue__icon svg` takes `mask: var(--header-menu-icon-mask)`, which is
    a top-to-bottom alpha ramp — solid to 25%, 55% transparent by 90%. Without
    it the specimen's glyphs are flat where the real ones lift off the bar. */
-#nldesign-preview .nldesign-pg-header.is-v34 .nldesign-pg-glyphbox svg {
+#nldesign-preview .nldesign-pg-header.is-modern .nldesign-pg-glyphbox svg {
 	mask: var(--header-menu-icon-mask, none);
 }
 
@@ -2017,12 +2017,15 @@
 	mask: url('../img/app.svg') center / 20px no-repeat;
 }
 
-/* --- the 34 header: search in the middle --- */
+/* --- the 34-and-newer header: search in the middle --- */
 
 /* The foreground chain the real bar uses: Nextcloud's own plain-text token,
    with Thematiq's header token in front of it because that is what
-   element-overrides.css puts on the live header. */
-#nldesign-preview .nldesign-pg-header.is-v34 {
+   element-overrides.css puts on the live header. `is-modern` rather than a
+   per-version class: this chain, and the glyph fade above, are what 34
+   introduced and 35 kept, so naming them after either version would say the
+   other one does something else. */
+#nldesign-preview .nldesign-pg-header.is-modern {
 	position: relative;
 	color: var(
 		--nldesign-color-header-text,
@@ -2095,11 +2098,150 @@
 	background-color: rgb(0 0 0 / 22%);
 }
 
-#nldesign-preview .nldesign-pg-search .unified-search-input__label {
+#nldesign-preview .nldesign-pg-search .unified-search-input__label,
+#nldesign-preview .nldesign-pg-searchresting .unified-search-input__label {
 	min-width: 0;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+
+/* --- the 35 header: three columns, and a real field --- */
+
+/* 35 replaced 34's floating search with a genuine `.header-center` between a
+   `.header-start` and a `.header-end` that both GROW. That is the mechanism
+   keeping the field dead centre: two equal side columns, not an absolutely
+   positioned track. Drawing it any other way would put the field in the middle
+   of the leftover space, which moves with the length of the app name. */
+#nldesign-preview .nldesign-pg-header.is-v35 .nldesign-pg-header-start {
+	display: flex;
+	flex: 1 0;
+	align-items: center;
+	gap: 2px;
+	min-width: 0;
+}
+
+/* The auto margin that centred nothing on 34 has to go: with both sides
+   growing there is no free space left for it to absorb, and leaving it in
+   would read as the thing doing the work. */
+#nldesign-preview .nldesign-pg-header.is-v35 .nldesign-pg-header-end {
+	flex: 1 0;
+	justify-content: flex-end;
+	margin-left: 0;
+}
+
+/* One shared highlight spanning the waffle AND the current app, where 34 gave
+   each button its own. Nothing hovers in a specimen, so only the geometry is
+   drawn — but the element has to exist, because a theme still reaching
+   `.app-menu__waffle:hover` paints a pill the width of the waffle alone. */
+#nldesign-preview .nldesign-pg-appmenutrigger {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	border-radius: var(--border-radius-element, 8px);
+}
+
+/* The level 35 added around the app icon. Core puts the header's alpha ramp on
+   this outer element and the icon shape on the inner one, so the fade applies
+   once to the glyph rather than to a box behind it. */
+#nldesign-preview .nldesign-pg-appfade {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	mask: var(--header-menu-icon-mask, none);
+}
+
+/* Core says `clamp(200px, 35vw, 700px)` — 700, where 34 capped at 600. The
+   percentage stands in for the vw for the same reason it does on 34: the
+   header IS the viewport in life, and here it is a ~980px drawing of one. */
+#nldesign-preview .nldesign-pg-search35 {
+	display: flex;
+	flex: 0 1 auto;
+	align-items: center;
+	width: clamp(140px, 35%, 700px);
+	min-width: 0;
+}
+
+/* The field itself. Same black wash and inset shadow 34's button carried — 35
+   changed what the element IS, not what it looks like at rest — on the full
+   clickable area rather than 8px inside it. */
+#nldesign-preview .nldesign-pg-searchfield {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: var(--default-clickable-area, 34px);
+	border-radius: var(--border-radius-element, 8px);
+	background-color: rgb(0 0 0 / 15%);
+	box-shadow: inset 0 2px 0 rgb(0 0 0 / 12%);
+	color: inherit;
+	font-size: 13px;
+}
+
+/* On dark themes the plain black wash all but disappears into the bar, so 35
+   tints it with the primary element colour instead. That swap is a token
+   decision, which makes it something an admin is here to judge. */
+[data-theme-dark] #nldesign-preview .nldesign-pg-searchfield,
+[data-theme-dark-highcontrast] #nldesign-preview .nldesign-pg-searchfield {
+	background-color: color-mix(
+		in srgb,
+		var(--color-primary-element) 16%,
+		transparent
+	);
+}
+
+/* The magnifier and placeholder. Core absolutely positions this group and
+   slides it from the centre to the leading edge on focus, using container
+   units to find the centre. A specimen is drawn at rest and never focuses, so
+   only the resting position is transcribed — as a centred flex row, which
+   lands in the same place without the machinery that moves it. */
+#nldesign-preview .nldesign-pg-searchresting {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-width: 0;
+	padding-inline: 12px;
+	color: color-mix(
+		in srgb,
+		var(--color-background-plain-text) 70%,
+		var(--color-background-plain)
+	);
+	pointer-events: none;
+}
+
+/* The Ctrl-K hint, pinned to the trailing edge and overlaid on the field. */
+#nldesign-preview .nldesign-pg-searchkbd {
+	position: absolute;
+	inset-inline-end: 4px;
+	top: 50%;
+	display: flex;
+	gap: 2px;
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+#nldesign-preview .nldesign-pg-searchkbd kbd {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 12px;
+	height: 12px;
+	padding-inline: 5px;
+	border: 1px solid
+		color-mix(in srgb, var(--color-background-plain-text) 20%, transparent);
+	border-bottom-width: 2px;
+	border-radius: var(--border-radius-small, 4px);
+	background: none;
+	color: color-mix(
+		in srgb,
+		var(--color-background-plain-text) 70%,
+		var(--color-background-plain)
+	);
+	font-family: inherit;
+	font-size: 13px;
+	line-height: 1;
 }
 
 /* The token editor's own heading, lifted up here with the tab strip.
