@@ -395,9 +395,14 @@ describe('the header specimen across Nextcloud versions', () => {
 		expect(classesOf(header(34)).has('unified-search-menu')).toBe(false)
 	})
 
-	it('names the current app and gives it an icon, on 34 only', () => {
-		expect(header(34)).toContain('Thematiq')
-		expect(classesOf(header(34)).has('app-menu__current-app-icon')).toBe(true)
+	it('names the current app and gives it an icon, from 34 on', () => {
+		for (const version of [34, 35]) {
+			expect(header(version)).toContain('Thematiq')
+			expect(
+				classesOf(header(version)).has('app-menu__current-app-icon'),
+			).toBe(true)
+		}
+
 		expect(header(32)).not.toContain('Thematiq')
 	})
 
@@ -405,7 +410,7 @@ describe('the header specimen across Nextcloud versions', () => {
 		// Whichever shape is showing, the menu itself has to be there: a version
 		// branch that returns nothing would leave the bar with a logo and the
 		// account glyphs and nothing between them.
-		for (const version of [32, 33, 34]) {
+		for (const version of [32, 33, 34, 35]) {
 			expect(classesOf(header(version)).has('app-menu')).toBe(true)
 		}
 	})
@@ -425,7 +430,7 @@ describe('the header specimen shows the instance, not a mock-up', () => {
 		// the corner is the one detail that makes the whole drawing read as
 		// somebody else's screenshot. The avatar comes from
 		// OC.getCurrentUser(); these initials were literal.
-		for (const version of [32, 33, 34]) {
+		for (const version of [32, 33, 34, 35]) {
 			expect(header(version)).not.toContain('RB')
 		}
 	})
@@ -443,7 +448,7 @@ describe('the header specimen shows the instance, not a mock-up', () => {
 		// resolves --image-logoheader / --image-logo the same way the real bar
 		// does instead of drawing a disc that shows an admin nothing about
 		// their own branding.
-		for (const version of [32, 33, 34]) {
+		for (const version of [32, 33, 34, 35]) {
 			expect(header(version)).toContain('nldesign-pg-header-logo logo')
 		}
 	})
@@ -472,5 +477,73 @@ describe('the 34 search field matches the structure core gives it', () => {
 	it('carries the icon and the label the real field carries', () => {
 		expect(header34()).toContain('unified-search-input__icon')
 		expect(header34()).toContain('unified-search-input__label')
+	})
+})
+
+describe('the 35 header draws what 35 changed, not 34 again', () => {
+	// 35 is not a relabelled 34. `core/templates/layout.user.php` is byte-identical
+	// across 32, 33 and 34 and gains a `.header-center` in 35;
+	// UnifiedSearchInput.vue turns its button into a field with a shortcut hint;
+	// AppMenu.vue wraps the waffle and the current app in one `.app-menu__trigger`.
+	// A 35 button that drew the 34 bar would answer the upgrade question wrongly,
+	// which is worse than not offering it.
+	const header = (version) => playground.STAGES['header-bar'](null, null, version)
+
+	const classesOf = (markup) =>
+		new Set(
+			[...markup.matchAll(/class="([^"]*)"/g)].flatMap((attribute) =>
+				attribute[1].split(/\s+/),
+			),
+		)
+
+	it('gives the bar a start column so the centre has something to centre between', () => {
+		expect(classesOf(header(35)).has('nldesign-pg-header-start')).toBe(true)
+		expect(classesOf(header(34)).has('nldesign-pg-header-start')).toBe(false)
+	})
+
+	it('groups the waffle and the current app under one trigger', () => {
+		expect(classesOf(header(35)).has('app-menu__trigger')).toBe(true)
+		expect(classesOf(header(35)).has('app-menu__waffle')).toBe(true)
+		expect(classesOf(header(35)).has('app-menu__current-app')).toBe(true)
+		expect(classesOf(header(34)).has('app-menu__trigger')).toBe(false)
+	})
+
+	it('nests the app icon one level deeper than 34 does', () => {
+		// 34 renders an <img class="app-menu__current-app-icon">. 35 keeps that
+		// class on an outer element and puts the shape on a __glyph inside it,
+		// so the header fade lands on the glyph rather than on a box behind it.
+		expect(classesOf(header(35)).has('app-menu__current-app-glyph')).toBe(true)
+		expect(classesOf(header(34)).has('app-menu__current-app-glyph')).toBe(false)
+	})
+
+	it('replaces the search button with a field, not a renamed button', () => {
+		const classes = classesOf(header(35))
+
+		expect(header(35)).toContain('<search')
+		expect(classes.has('unified-search-input__field')).toBe(true)
+		expect(classes.has('unified-search-input__resting')).toBe(true)
+		expect(classes.has('unified-search-input__button')).toBe(false)
+	})
+
+	it('carries the shortcut hint as real kbd elements', () => {
+		// NcKbd renders <kbd>, and core's own rule for the hint selects that
+		// element rather than a class — a span styled to look like a key would
+		// be reached by neither core nor a theme.
+		expect(header(35)).toContain('unified-search-input__shortcut')
+		expect(header(35)).toContain('<kbd>Ctrl</kbd>')
+		expect(header(35)).toContain('<kbd>K</kbd>')
+		expect(header(34)).not.toContain('<kbd>')
+	})
+
+	it('uses the placeholder 35 ships, not 34s', () => {
+		expect(header(35)).toContain('Apps, files, messages, and more')
+		expect(header(34)).toContain('Search apps, files, tags, messages')
+	})
+
+	it('is what an unknown version falls back to', () => {
+		// headerMajor() answers with the newest supported major, which is now
+		// 35 — an instance the server cannot be asked about is far likelier to
+		// be new than to be 34.
+		expect(classesOf(header(0)).has('unified-search-input__field')).toBe(true)
 	})
 })

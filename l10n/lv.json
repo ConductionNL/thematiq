@@ -355,7 +355,8 @@
         "%n entry": "%n entry",
         "Nothing": "Nothing",
         "Changed": "Changed",
-        "+%n more": "+%n more"
+        "+%n more": "+%n more",
+        "Apps, files, messages, and more": "Apps, files, messages, and more"
     },
     "plurals": {}
 }
