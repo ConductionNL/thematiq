@@ -414,6 +414,27 @@ if ($_['mockUi'] === true) {
 		</label>
 	</div>
 
+	<!-- Primary drives every component — the deliberate opt-out of per-component
+	     theming (openspec/specs/component-tokens/spec.md). Off by default, and
+	     that is not a behaviour change: with no per-component value stored the
+	     component tokens already resolve to the brand primary. Turning it on
+	     emits css/primary-lock.css, which forces them back to the brand value,
+	     and locks the colour controls the primary now owns. Stored values are
+	     kept, so turning it off restores them. -->
+	<div class="nldesign-option">
+		<input type="checkbox"
+			   name="nldesign-primary-drives-components"
+			   id="nldesign-primary-drives-components"
+			   class="checkbox"
+			   <?php if ($_['primaryDrivesComponents']): ?>checked<?php endif; ?>>
+		<label for="nldesign-primary-drives-components">
+			<?php p($l->t('Let the primary colour drive every component')); ?>
+		</label>
+		<p class="settings-hint">
+			<?php p($l->t('While this is on, the brand primary overrules any colour set on an individual component, and those controls are locked. Switching it off gives each component its own colour back.')); ?>
+		</p>
+	</div>
+
 	<!-- Dark mode variants — instance-wide toggle for the generated dark
 	     stylesheets (openspec/specs/dark-mode/spec.md). Never touches the
 	     user's/instance's Nextcloud dark/light/system theme choice; it only

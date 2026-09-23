@@ -170,7 +170,7 @@ jobs:
       # entirely on the version openregister cannot load.
       #
       # EVERY MAJOR IN THE DECLARED RANGE, NOT JUST ITS ENDS. appinfo/info.xml declares
-      # <nextcloud min-version="32" max-version="34"/>, and
+      # <nextcloud min-version="32" max-version="35"/>, and
       # tests/Unit/ClaimAccuracyTest::testDeclaredNextcloudRangeMatchesTheTestedMatrix
       # asserts that the lowest ref here EQUALS that floor. A matrix of stable34
       # alone therefore advertises 32 and 33 to the app store while exercising
@@ -187,14 +187,20 @@ jobs:
       # in the LOOSER direction, which this fleet does not take. The floor is still
       # 32, so ClaimAccuracyTest's lowest-ref-equals-floor assertion is unaffected.
       #
-      # stable34 is FIRST deliberately. Playwright is the job that reads [0], and
+      # stable35 is FIRST deliberately, and moved there when max-version rose to
+      # 35. Playwright is the job that reads [0], and
       # tests/e2e/spec-coverage/selector-liveness.spec.ts is a cross-version
       # stylesheet audit whose SINCE deferrals expire only once the survey
-      # reaches the newest supported major (MAX_SUPPORTED_NC). Surveying 32 would
-      # defer the NC33+ header selectors indefinitely; surveying 34 forces them
-      # to be proven live — which is how the eight dead NC 32/33-only selectors
-      # now recorded in that file's ALLOWED list were found.
-      nextcloud-test-refs: '["stable34", "stable32", "stable33"]'
+      # reaches the newest supported major (MAX_SUPPORTED_NC, a constant in that
+      # spec file that mirrors info.xml BY HAND — it still reads 34, so raising
+      # it is a separate decision: it expires that file's SINCE deferrals).
+      # Surveying 32 would defer the NC33+ header selectors
+      # indefinitely; surveying the newest major forces them to be proven live —
+      # which is how the eight dead NC 32/33-only selectors now recorded in that
+      # file's ALLOWED list were found. Leaving stable34 in front of a declared
+      # 35 would put the survey one major behind the claim and start that drift
+      # over again.
+      nextcloud-test-refs: '["stable35", "stable32", "stable33", "stable34"]'
       # These three were `false`, and that is worse than it sounds. The shared
       # workflow builds one matrix leg per tool unconditionally; a disabled leg
       # prints "<tool> is disabled — skipping." and `exit 0`. The job therefore
