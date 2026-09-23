@@ -1,0 +1,1372 @@
+{
+	"$comment": [
+		"Component-scoped tokens: the layer that lets one component be restyled without",
+		"repainting every other component that happens to share a Nextcloud variable.",
+		"",
+		"THE PROBLEM THIS FILE SOLVES. Nextcloud has ~60 global variables and every",
+		"component draws from them, so `--color-primary-element` paints the primary button,",
+		"the selected navigation entry, the sidebar's active tab, a focused text input, the",
+		"checked checkbox, the progress bar, the dialog's confirm button and the counter",
+		"bubble. The token editor could only write those globals, so `Primary button` in the",
+		"playground moved all eight. A component chip that cannot reach its own component is",
+		"a control that lies about what it does.",
+		"",
+		"THE MECHANISM. Every entry below names a `global` -- the Nextcloud variable the",
+		"component actually consumes -- and a component token that REPLACES it inside that",
+		"component's own subtree. scripts/generate-component-scopes.mjs turns this file into",
+		"css/component-scopes.css, one rule per component:",
+		"",
+		"    .app-navigation {",
+		"      --color-primary-element: var(",
+		"        --nldesign-component-navigation-active-background-color,",
+		"        var(--thematiq-global-color-primary-element)",
+		"      );",
+		"    }",
+		"",
+		"Nextcloud's own stylesheets keep doing the painting; only the value they see inside",
+		"that subtree changes. Nothing here adds an `!important` element rule, so this layer",
+		"cannot drift out of step with a Nextcloud release the way a hand-written selector can.",
+		"",
+		"WHY THE `--thematiq-global-*` CAPTURE. A scope rule cannot write",
+		"`--color-primary-element: var(--X, var(--color-primary-element))` -- a custom property",
+		"whose value depends on itself is discarded as invalid, which is the same cycle",
+		"StockTokensService documents. So :root copies each global under a `--thematiq-global-*`",
+		"name first, and the scopes fall back to the copy. The copy is resolved at :root, where",
+		"the global still has its ordinary value, so there is no cycle and an unset component",
+		"token is indistinguishable from stock.",
+		"",
+		"WHY THE FALLBACK MATTERS. The component tokens are NOT declared here. An admin who has",
+		"never touched a component leaves them undefined, the `var()` falls through to the",
+		"captured global, and the instance renders exactly as it did before this layer existed.",
+		"Only css/systems/nldesign/defaults.css declares them, and only for the nldesign system,",
+		"which is why the layer is safe to load under `none`, `summer-breeze` and the rest.",
+		"",
+		"`primary: true` marks a token the brand primary used to drive. Those are the ones the",
+		"`primary_drives_components` admin toggle forces back to the brand colour and locks in",
+		"the editor; see css/primary-lock.css, which is generated from the same flag.",
+		"",
+		"`brandTokens` at the foot are the globals themselves. They stay editable from the token",
+		"editor's four-tab list -- that list IS the brand-level control -- but no chip owns them,",
+		"because moving one is MEANT to move every component that has not been given a value of",
+		"its own. tests/vitest/playgroundInventory.spec.js reads the list to keep its coverage",
+		"guard honest.",
+		"",
+		"",
+		"`aliases` IS THE ESCAPE HATCH, and it has exactly one user so far. Re-scoping a Nextcloud",
+		"global only works where a NEXTCLOUD rule reads it. The login button is painted by thematiq",
+		"itself, from the PRIMARY button's tokens, so there is no global left in the chain to redirect.",
+		"Writing a more specific rule does not work either: its label is claimed at (1,3,0) by",
+		"`#body-login …:not(…) .button-vue__text` and by the `#content` twin that catches the playground",
+		"specimen, and nothing this layer can write outranks those.",
+		"",
+		"So an alias redirects one level up: inside the component, the token its own rules read IS its",
+		"own token. `--nldesign-component-button-primary-action-background-color` becomes",
+		"`--nldesign-component-login-button-background-color` within the login button's selectors. The",
+		"rules that already win then resolve to the right value untouched — on the real login page and",
+		"on the playground specimen alike, which is what lets the specimen be honest without a single",
+		"playground-specific selector in the design-system stylesheets.",
+		"BOTH RUNTIMES READ THIS FILE. lib/Service/TokenRegistry.php builds the editable registry",
+		"from it and js/playground/components.json names the same tokens, so a token cannot exist",
+		"in one and be missing from the other."
+	],
+	"version": 1,
+	"capturePrefix": "--thematiq-global-",
+	"componentPrefix": "--nldesign-component-",
+	"components": {
+		"header-bar": {
+			"tab": "login",
+			"selectors": ["#header"],
+			"tokens": {
+				"--nldesign-component-header-background-color": {
+					"global": "--color-primary",
+					"label": "Header background",
+					"type": "color",
+					"primary": true,
+					"paints": "The header, when the set declares no header colour",
+					"callout": 1
+				},
+				"--nldesign-component-header-color": {
+					"global": "--color-primary-text",
+					"label": "Header glyphs",
+					"type": "color",
+					"primary": true,
+					"paints": "App icons, search and the account glyphs",
+					"callout": 1
+				},
+				"--nldesign-component-header-hover-background-color": {
+					"global": "--color-background-hover",
+					"label": "Header hovered entry",
+					"type": "color",
+					"primary": false,
+					"paints": "Hovered app entry",
+					"callout": 2
+				}
+			}
+		},
+		"login-card": {
+			"tab": "login",
+			"selectors": ["#body-login .guest-box", "#body-login .login-box"],
+			"tokens": {
+				"--nldesign-component-login-box-border-radius": {
+					"global": "--border-radius-large",
+					"label": "Login card corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Its corner",
+					"callout": 1
+				},
+				"--nldesign-component-login-box-border-color": {
+					"global": "--color-border",
+					"label": "Login card edge",
+					"type": "color",
+					"primary": false,
+					"paints": "Its border",
+					"callout": 1
+				}
+			}
+		},
+		"login-button": {
+			"tab": "login",
+			"selectors": [
+				"#body-login .button-vue--primary",
+				"#body-login .button-vue--vue-primary",
+				"#body-login input[type='submit']",
+				"#body-login button.primary",
+				".login-form button[type='submit']"
+			],
+			"tokens": {
+				"--nldesign-component-login-button-background-color": {
+					"global": "--color-primary-element",
+					"label": "Login button background",
+					"type": "color",
+					"primary": true,
+					"paints": "Background",
+					"callout": 1
+				},
+				"--nldesign-component-login-button-color": {
+					"global": "--color-primary-element-text",
+					"label": "Login button label",
+					"type": "color",
+					"primary": true,
+					"paints": "Label",
+					"callout": 1
+				},
+				"--nldesign-component-login-button-hover-background-color": {
+					"global": "--color-primary-element-hover",
+					"label": "Login button hover background",
+					"type": "color",
+					"primary": true,
+					"paints": "Background on hover",
+					"callout": 2
+				},
+				"--nldesign-component-login-button-border-radius": {
+					"global": "--border-radius-element",
+					"label": "Login button corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Corner",
+					"callout": 1
+				}
+			},
+			"aliases": {
+				"--nldesign-component-button-primary-action-background-color": "--nldesign-component-login-button-background-color",
+				"--nldesign-component-button-primary-action-border-color": "--nldesign-component-login-button-background-color",
+				"--nldesign-component-button-primary-action-color": "--nldesign-component-login-button-color",
+				"--nldesign-component-button-primary-action-hover-background-color": "--nldesign-component-login-button-hover-background-color",
+				"--nldesign-component-button-border-radius": "--nldesign-component-login-button-border-radius"
+			}
+		},
+		"logo-slogan": {
+			"tab": "login",
+			"selectors": ["#body-login .header-guest", "#body-login .logo"],
+			"tokens": {
+				"--nldesign-component-logo-slogan-color": {
+					"global": "--color-primary-text",
+					"label": "Slogan text",
+					"type": "color",
+					"primary": true,
+					"paints": "Slogan text",
+					"callout": 1
+				},
+				"--nldesign-component-logo-slogan-font-family": {
+					"global": "--font-face",
+					"label": "Slogan typeface",
+					"type": "text",
+					"primary": false,
+					"paints": "Slogan typeface",
+					"callout": 1
+				}
+			}
+		},
+		"app-navigation": {
+			"tab": "content",
+			"selectors": [
+				"#app-navigation",
+				"#app-navigation-vue",
+				".app-navigation"
+			],
+			"tokens": {
+				"--nldesign-component-navigation-border-radius": {
+					"global": "--border-radius-element",
+					"label": "Navigation entry corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Entry corners",
+					"callout": 1
+				},
+				"--nldesign-component-navigation-color": {
+					"global": "--color-main-text",
+					"label": "Navigation label",
+					"type": "color",
+					"primary": false,
+					"paints": "Entry labels and icons, the selected one included",
+					"callout": 1
+				},
+				"--nldesign-component-navigation-active-background-color": {
+					"global": "--color-primary-element",
+					"label": "Navigation selected entry",
+					"type": "color",
+					"primary": true,
+					"paints": "The selected entry's wash and its marker stripe",
+					"callout": 2
+				}
+			}
+		},
+		"content-card": {
+			"tab": "content",
+			"selectors": ["#app-content", ".app-content", "#content"],
+			"tokens": {
+				"--nldesign-component-content-card-container-border-radius": {
+					"global": "--body-container-radius",
+					"label": "Content container corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Container corner",
+					"callout": 1
+				},
+				"--nldesign-component-content-card-border-radius": {
+					"global": "--border-radius-rounded",
+					"label": "Content rounded surfaces",
+					"type": "text",
+					"primary": false,
+					"paints": "Rounded surfaces inside it",
+					"callout": 1
+				},
+				"--nldesign-component-content-card-border-color": {
+					"global": "--color-border",
+					"label": "Content rule",
+					"type": "color",
+					"primary": false,
+					"paints": "The rule between list and detail",
+					"callout": 1
+				},
+				"--nldesign-component-content-card-scrollbar-color": {
+					"global": "--color-scrollbar",
+					"label": "Content scrollbar",
+					"type": "color",
+					"primary": false,
+					"paints": "Scrollbar thumb",
+					"callout": 1
+				}
+			}
+		},
+		"table": {
+			"tab": "content",
+			"selectors": ["table"],
+			"tokens": {
+				"--nldesign-component-table-header-color": {
+					"global": "--color-text-maxcontrast",
+					"label": "Table header label",
+					"type": "color",
+					"primary": false,
+					"paints": "Header row labels and secondary cells",
+					"callout": 1
+				},
+				"--nldesign-component-table-border-color": {
+					"global": "--color-border",
+					"label": "Table row rule",
+					"type": "color",
+					"primary": false,
+					"paints": "The rule under each row",
+					"callout": 1
+				},
+				"--nldesign-component-table-zebra-background-color": {
+					"global": "--color-background-dark",
+					"label": "Table zebra row",
+					"type": "color",
+					"primary": false,
+					"paints": "Zebra row",
+					"callout": 1
+				},
+				"--nldesign-component-table-row-hover-background-color": {
+					"global": "--color-background-hover",
+					"label": "Table hovered row",
+					"type": "color",
+					"primary": false,
+					"paints": "Hovered row",
+					"callout": 2
+				}
+			}
+		},
+		"sidebar": {
+			"tab": "content",
+			"selectors": ["#app-sidebar", "#app-sidebar-vue", ".app-sidebar"],
+			"tokens": {
+				"--nldesign-component-sidebar-border-color": {
+					"global": "--color-border",
+					"label": "Sidebar edge",
+					"type": "color",
+					"primary": false,
+					"paints": "Its left edge and the tab strip rule",
+					"callout": 1
+				},
+				"--nldesign-component-sidebar-divider-color": {
+					"global": "--color-border-dark",
+					"label": "Sidebar divider",
+					"type": "color",
+					"primary": false,
+					"paints": "The stronger divider",
+					"callout": 1
+				},
+				"--nldesign-component-sidebar-border-radius": {
+					"global": "--border-radius-large",
+					"label": "Sidebar corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Panel corner",
+					"callout": 1
+				},
+				"--nldesign-component-sidebar-active-color": {
+					"global": "--color-primary-element",
+					"label": "Sidebar active tab",
+					"type": "color",
+					"primary": true,
+					"paints": "The active tab underline",
+					"callout": 2
+				}
+			}
+		},
+		"list-item": {
+			"tab": "content",
+			"selectors": [".list-item", ".list-item__wrapper"],
+			"tokens": {
+				"--nldesign-component-list-item-border-radius": {
+					"global": "--border-radius-element",
+					"label": "List row corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Row corner",
+					"callout": 1
+				},
+				"--nldesign-component-list-item-subline-color": {
+					"global": "--color-text-maxcontrast",
+					"label": "List row subline",
+					"type": "color",
+					"primary": false,
+					"paints": "The subline",
+					"callout": 1
+				},
+				"--nldesign-component-list-item-hover-background-color": {
+					"global": "--color-background-hover",
+					"label": "List row hover",
+					"type": "color",
+					"primary": false,
+					"paints": "Hovered row",
+					"callout": 2
+				},
+				"--nldesign-component-list-item-transition-duration": {
+					"global": "--animation-quick",
+					"label": "List row transition",
+					"type": "text",
+					"primary": false,
+					"paints": "The hover transition",
+					"callout": 2
+				},
+				"--nldesign-component-list-item-selected-background-color": {
+					"global": "--color-primary-light",
+					"label": "List row selected",
+					"type": "color",
+					"primary": true,
+					"paints": "Selected row",
+					"callout": 3
+				},
+				"--nldesign-component-list-item-selected-color": {
+					"global": "--color-primary-light-text",
+					"label": "List row selected text",
+					"type": "color",
+					"primary": true,
+					"paints": "Its text",
+					"callout": 3
+				},
+				"--nldesign-component-list-item-selected-hover-background-color": {
+					"global": "--color-primary-light-hover",
+					"label": "List row selected hover",
+					"type": "color",
+					"primary": true,
+					"paints": "The selected row on hover",
+					"callout": 3
+				}
+			}
+		},
+		"empty-content": {
+			"tab": "content",
+			"selectors": [".empty-content"],
+			"tokens": {
+				"--nldesign-component-empty-content-color": {
+					"global": "--color-main-text",
+					"label": "Empty state title",
+					"type": "color",
+					"primary": false,
+					"paints": "Its title",
+					"callout": 1
+				},
+				"--nldesign-component-empty-content-description-color": {
+					"global": "--color-text-maxcontrast",
+					"label": "Empty state description",
+					"type": "color",
+					"primary": false,
+					"paints": "Its description",
+					"callout": 1
+				},
+				"--nldesign-component-empty-content-icon-background-color": {
+					"global": "--color-background-dark",
+					"label": "Empty state icon disc",
+					"type": "color",
+					"primary": false,
+					"paints": "The disc behind the icon",
+					"callout": 1
+				}
+			}
+		},
+		"actions-menu": {
+			"tab": "content",
+			"selectors": [".popover", ".popovermenu", ".v-popper__popper"],
+			"tokens": {
+				"--nldesign-component-actions-menu-color": {
+					"global": "--color-main-text",
+					"label": "Menu entry label",
+					"type": "color",
+					"primary": false,
+					"paints": "Entry labels",
+					"callout": 1
+				},
+				"--nldesign-component-actions-menu-border-radius": {
+					"global": "--border-radius-large",
+					"label": "Menu corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Panel corner",
+					"callout": 1
+				},
+				"--nldesign-component-actions-menu-hover-background-color": {
+					"global": "--color-background-hover",
+					"label": "Menu hovered entry",
+					"type": "color",
+					"primary": false,
+					"paints": "Hovered entry",
+					"callout": 2
+				}
+			}
+		},
+		"avatar": {
+			"tab": "content",
+			"selectors": [".avatardiv", ".user-status-icon"],
+			"tokens": {
+				"--nldesign-component-avatar-online-status-color": {
+					"global": "--color-success",
+					"label": "Avatar online dot",
+					"type": "color",
+					"primary": false,
+					"paints": "The online status dot",
+					"callout": 1
+				}
+			}
+		},
+		"breadcrumbs": {
+			"tab": "content",
+			"selectors": [".breadcrumb", ".vue-crumb"],
+			"tokens": {
+				"--nldesign-component-breadcrumb-color": {
+					"global": "--color-primary",
+					"label": "Breadcrumb link",
+					"type": "color",
+					"primary": true,
+					"paints": "A crumb that is a link",
+					"callout": 1
+				},
+				"--nldesign-component-breadcrumb-separator-color": {
+					"global": "--color-text-maxcontrast",
+					"label": "Breadcrumb separator",
+					"type": "color",
+					"primary": false,
+					"paints": "The separators",
+					"callout": 1
+				},
+				"--nldesign-component-breadcrumb-hover-background-color": {
+					"global": "--color-background-hover",
+					"label": "Breadcrumb hover",
+					"type": "color",
+					"primary": false,
+					"paints": "The hovered crumb",
+					"callout": 2
+				}
+			}
+		},
+		"settings-section": {
+			"tab": "content",
+			"selectors": [".settings-section", ".app-settings-section"],
+			"tokens": {
+				"--nldesign-component-settings-section-heading-color": {
+					"global": "--color-main-text",
+					"label": "Settings heading",
+					"type": "color",
+					"primary": false,
+					"paints": "The section heading",
+					"callout": 1
+				},
+				"--nldesign-component-settings-section-hint-color": {
+					"global": "--color-text-maxcontrast",
+					"label": "Settings hint",
+					"type": "color",
+					"primary": false,
+					"paints": "Its hint text",
+					"callout": 1
+				},
+				"--nldesign-component-settings-section-border-color": {
+					"global": "--color-border",
+					"label": "Settings rule",
+					"type": "color",
+					"primary": false,
+					"paints": "The rule between sections",
+					"callout": 1
+				}
+			}
+		},
+		"text-input": {
+			"tab": "content",
+			"selectors": [
+				".input-field",
+				"input[type='text']",
+				"input[type='password']",
+				"input[type='email']",
+				"input[type='search']"
+			],
+			"tokens": {
+				"--nldesign-component-textbox-border-color": {
+					"global": "--color-border-maxcontrast",
+					"label": "Text input border",
+					"type": "color",
+					"primary": false,
+					"paints": "Border",
+					"callout": 1
+				},
+				"--nldesign-component-textbox-placeholder-color": {
+					"global": "--color-placeholder-dark",
+					"label": "Text input placeholder",
+					"type": "color",
+					"primary": false,
+					"paints": "Placeholder",
+					"callout": 1
+				},
+				"--nldesign-component-textbox-placeholder-light-color": {
+					"global": "--color-placeholder-light",
+					"label": "Text input placeholder (tinted)",
+					"type": "color",
+					"primary": false,
+					"paints": "Placeholder on a tinted field",
+					"callout": 1
+				},
+				"--nldesign-component-textbox-border-radius": {
+					"global": "--border-radius-element",
+					"label": "Text input corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Corner",
+					"callout": 1
+				},
+				"--nldesign-component-textbox-focus-border-color": {
+					"global": "--color-primary-element",
+					"label": "Text input focus",
+					"type": "color",
+					"primary": true,
+					"paints": "Focused border and label",
+					"callout": 2
+				},
+				"--nldesign-component-textbox-invalid-border-color": {
+					"global": "--color-error",
+					"label": "Text input invalid",
+					"type": "color",
+					"primary": false,
+					"paints": "Invalid border",
+					"callout": 3
+				}
+			}
+		},
+		"select": {
+			"tab": "content",
+			"selectors": ["select", ".v-select"],
+			"tokens": {
+				"--nldesign-component-form-select-border-color": {
+					"global": "--color-border-maxcontrast",
+					"label": "Select border",
+					"type": "color",
+					"primary": false,
+					"paints": "Control border",
+					"callout": 1
+				},
+				"--nldesign-component-form-select-border-radius": {
+					"global": "--border-radius-element",
+					"label": "Select corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Corner",
+					"callout": 1
+				},
+				"--nldesign-component-form-select-option-hover-background-color": {
+					"global": "--color-background-hover",
+					"label": "Select hovered option",
+					"type": "color",
+					"primary": false,
+					"paints": "Hovered option",
+					"callout": 2
+				}
+			}
+		},
+		"checkbox-switch": {
+			"tab": "content",
+			"selectors": [
+				".checkbox-radio-switch",
+				"input[type='checkbox']",
+				"input[type='radio']"
+			],
+			"tokens": {
+				"--nldesign-component-checkbox-border-color": {
+					"global": "--color-border-maxcontrast",
+					"label": "Checkbox outline",
+					"type": "color",
+					"primary": false,
+					"paints": "The unchecked outline",
+					"callout": 1
+				},
+				"--nldesign-component-checkbox-border-radius": {
+					"global": "--border-radius-small",
+					"label": "Checkbox corner",
+					"type": "text",
+					"primary": false,
+					"paints": "The checkbox corner",
+					"callout": 1
+				},
+				"--nldesign-component-checkbox-checked-background-color": {
+					"global": "--color-primary-element",
+					"label": "Checkbox checked",
+					"type": "color",
+					"primary": true,
+					"paints": "The checked mark, dot and switch track",
+					"callout": 2
+				}
+			}
+		},
+		"textarea": {
+			"tab": "content",
+			"selectors": ["textarea"],
+			"tokens": {
+				"--nldesign-component-textarea-border-color": {
+					"global": "--color-border-maxcontrast",
+					"label": "Textarea border",
+					"type": "color",
+					"primary": false,
+					"paints": "Border",
+					"callout": 1
+				},
+				"--nldesign-component-textarea-border-radius": {
+					"global": "--border-radius",
+					"label": "Textarea corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Corner",
+					"callout": 1
+				}
+			},
+			"aliases": {
+				"--nldesign-component-textbox-border-color": "--nldesign-component-textarea-border-color",
+				"--nldesign-component-textbox-border-radius": "--nldesign-component-textarea-border-radius"
+			}
+		},
+		"dialog": {
+			"tab": "content",
+			"selectors": [".modal-container", ".modal-wrapper", ".dialog"],
+			"tokens": {
+				"--nldesign-component-dialog-border-radius": {
+					"global": "--border-radius-large",
+					"label": "Dialog corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Corner",
+					"callout": 1
+				},
+				"--nldesign-component-dialog-border-color": {
+					"global": "--color-border",
+					"label": "Dialog header rule",
+					"type": "color",
+					"primary": false,
+					"paints": "The rule under the header",
+					"callout": 1
+				},
+				"--nldesign-component-dialog-transition-duration": {
+					"global": "--animation-slow",
+					"label": "Dialog transition",
+					"type": "text",
+					"primary": false,
+					"paints": "Its open and close transition",
+					"callout": 1
+				},
+				"--nldesign-component-dialog-confirm-background-color": {
+					"global": "--color-primary-element",
+					"label": "Dialog confirm button",
+					"type": "color",
+					"primary": true,
+					"paints": "Its confirm button",
+					"callout": 2
+				}
+			}
+		},
+		"progress": {
+			"tab": "content",
+			"selectors": ["progress", ".progress-bar", ".icon-loading"],
+			"tokens": {
+				"--nldesign-component-progress-background-color": {
+					"global": "--color-primary-element",
+					"label": "Progress fill",
+					"type": "color",
+					"primary": true,
+					"paints": "The filled part of the bar",
+					"callout": 1
+				},
+				"--nldesign-component-progress-track-background-color": {
+					"global": "--color-background-darker",
+					"label": "Progress track",
+					"type": "color",
+					"primary": false,
+					"paints": "Its track",
+					"callout": 1
+				},
+				"--nldesign-component-progress-border-radius": {
+					"global": "--border-radius-pill",
+					"label": "Progress shape",
+					"type": "text",
+					"primary": false,
+					"paints": "Bar shape",
+					"callout": 1
+				},
+				"--nldesign-component-progress-transition-duration": {
+					"global": "--animation-slow",
+					"label": "Spinner rotation",
+					"type": "text",
+					"primary": false,
+					"paints": "The spinner's rotation",
+					"callout": 2
+				}
+			}
+		},
+		"primary-button": {
+			"tab": "status",
+			"selectors": [
+				".button-vue--primary",
+				".button-vue--vue-primary",
+				"button.primary",
+				"input[type='submit']"
+			],
+			"tokens": {
+				"--nldesign-component-button-primary-action-background-color": {
+					"global": "--color-primary-element",
+					"label": "Primary button background",
+					"type": "color",
+					"primary": true,
+					"paints": "Background",
+					"callout": 1
+				},
+				"--nldesign-component-button-primary-action-color": {
+					"global": "--color-primary-element-text",
+					"label": "Primary button label",
+					"type": "color",
+					"primary": true,
+					"paints": "Label",
+					"callout": 1
+				},
+				"--nldesign-component-button-primary-action-hover-background-color": {
+					"global": "--color-primary-element-hover",
+					"label": "Primary button hover",
+					"type": "color",
+					"primary": true,
+					"paints": "Background on hover",
+					"callout": 2
+				},
+				"--nldesign-component-button-focus-border-color": {
+					"global": "--color-main-text",
+					"label": "Button focus ring",
+					"type": "color",
+					"primary": false,
+					"paints": "Focus ring",
+					"callout": 3
+				},
+				"--nldesign-component-button-border-radius": {
+					"global": "--border-radius-element",
+					"label": "Button corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Corner",
+					"callout": 1
+				},
+				"--nldesign-component-button-font-weight": {
+					"global": "--font-weight-element",
+					"label": "Button label weight",
+					"type": "text",
+					"primary": false,
+					"paints": "Label weight",
+					"callout": 1
+				}
+			},
+			"aliases": {
+				"--nldesign-component-button-primary-action-font-weight": "--nldesign-component-button-font-weight"
+			}
+		},
+		"secondary-button": {
+			"tab": "status",
+			"selectors": [".button-vue--secondary", ".button-vue--vue-secondary"],
+			"tokens": {
+				"--nldesign-component-button-secondary-action-background-color": {
+					"global": "--color-background-dark",
+					"label": "Secondary button background",
+					"type": "color",
+					"primary": false,
+					"paints": "Background",
+					"callout": 1
+				},
+				"--nldesign-component-button-secondary-action-color": {
+					"global": "--color-main-text",
+					"label": "Secondary button label",
+					"type": "color",
+					"primary": false,
+					"paints": "Label",
+					"callout": 1
+				},
+				"--nldesign-component-button-secondary-action-hover-background-color": {
+					"global": "--color-background-darker",
+					"label": "Secondary button hover",
+					"type": "color",
+					"primary": false,
+					"paints": "Background on hover",
+					"callout": 2
+				},
+				"--nldesign-component-button-secondary-action-border-radius": {
+					"global": "--border-radius-element",
+					"label": "Secondary button corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Corner",
+					"callout": 1
+				}
+			},
+			"aliases": {
+				"--nldesign-component-button-border-radius": "--nldesign-component-button-secondary-action-border-radius"
+			}
+		},
+		"tertiary-button": {
+			"tab": "status",
+			"selectors": [
+				".button-vue--tertiary",
+				".button-vue--vue-tertiary",
+				".button-vue--tertiary-no-background"
+			],
+			"tokens": {
+				"--nldesign-component-button-color": {
+					"global": "--color-primary-element-light-text",
+					"label": "Tertiary button label",
+					"type": "color",
+					"primary": true,
+					"paints": "Label",
+					"callout": 1
+				},
+				"--nldesign-component-button-hover-background-color": {
+					"global": "--color-primary-element-light",
+					"label": "Tertiary button hover",
+					"type": "color",
+					"primary": true,
+					"paints": "Background on hover",
+					"callout": 2
+				},
+				"--nldesign-component-button-active-background-color": {
+					"global": "--color-primary-element-light-hover",
+					"label": "Tertiary button pressed",
+					"type": "color",
+					"primary": true,
+					"paints": "Background when pressed",
+					"callout": 3
+				}
+			}
+		},
+		"error-button": {
+			"tab": "status",
+			"selectors": [".button-vue--error", ".button-vue--vue-error"],
+			"tokens": {
+				"--nldesign-component-button-error-background-color": {
+					"global": "--color-error",
+					"label": "Error button background",
+					"type": "color",
+					"primary": false,
+					"paints": "Background",
+					"callout": 1
+				},
+				"--nldesign-component-button-error-background-color-rgb": {
+					"global": "--color-error-rgb",
+					"label": "Error button fill (RGB)",
+					"type": "text",
+					"primary": false,
+					"paints": "Its tinted fill, mixed from the same colour",
+					"callout": 1
+				},
+				"--nldesign-component-button-error-hover-background-color": {
+					"global": "--color-error-hover",
+					"label": "Error button hover",
+					"type": "color",
+					"primary": false,
+					"paints": "Background on hover",
+					"callout": 2
+				}
+			}
+		},
+		"success-button": {
+			"tab": "status",
+			"selectors": [".button-vue--success", ".button-vue--vue-success"],
+			"tokens": {
+				"--nldesign-component-button-success-background-color": {
+					"global": "--color-success",
+					"label": "Success button background",
+					"type": "color",
+					"primary": false,
+					"paints": "Background",
+					"callout": 1
+				},
+				"--nldesign-component-button-success-color": {
+					"global": "--color-element-success",
+					"label": "Success button icon",
+					"type": "color",
+					"primary": false,
+					"paints": "Its icon",
+					"callout": 1
+				}
+			}
+		},
+		"note-cards": {
+			"tab": "status",
+			"selectors": [".notecard"],
+			"tokens": {
+				"--nldesign-component-notecard-info-color": {
+					"global": "--color-info",
+					"label": "Note card info stripe",
+					"type": "color",
+					"primary": false,
+					"paints": "Info stripe",
+					"callout": 1
+				},
+				"--nldesign-component-notecard-info-icon-color": {
+					"global": "--color-element-info",
+					"label": "Note card info glyph",
+					"type": "color",
+					"primary": false,
+					"paints": "Info glyph",
+					"callout": 1
+				},
+				"--nldesign-component-notecard-border-radius": {
+					"global": "--border-radius",
+					"label": "Note card corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Card corner",
+					"callout": 1
+				},
+				"--nldesign-component-notecard-warning-color": {
+					"global": "--color-warning",
+					"label": "Note card warning stripe",
+					"type": "color",
+					"primary": false,
+					"paints": "Warning stripe",
+					"callout": 2
+				},
+				"--nldesign-component-notecard-warning-icon-color": {
+					"global": "--color-element-warning",
+					"label": "Note card warning glyph",
+					"type": "color",
+					"primary": false,
+					"paints": "Warning glyph",
+					"callout": 2
+				},
+				"--nldesign-component-notecard-warning-color-rgb": {
+					"global": "--color-warning-rgb",
+					"label": "Note card warning fill (RGB)",
+					"type": "text",
+					"primary": false,
+					"paints": "Warning fill, mixed from the same colour",
+					"callout": 2
+				},
+				"--nldesign-component-notecard-error-color": {
+					"global": "--color-error",
+					"label": "Note card error stripe",
+					"type": "color",
+					"primary": false,
+					"paints": "Error stripe",
+					"callout": 3
+				},
+				"--nldesign-component-notecard-error-icon-color": {
+					"global": "--color-element-error",
+					"label": "Note card error glyph",
+					"type": "color",
+					"primary": false,
+					"paints": "Error glyph",
+					"callout": 3
+				},
+				"--nldesign-component-notecard-error-border-color": {
+					"global": "--color-border-error",
+					"label": "Note card error border",
+					"type": "color",
+					"primary": false,
+					"paints": "Error card border",
+					"callout": 3
+				},
+				"--nldesign-component-notecard-error-color-rgb": {
+					"global": "--color-error-rgb",
+					"label": "Note card error fill (RGB)",
+					"type": "text",
+					"primary": false,
+					"paints": "Error fill, mixed from the same colour",
+					"callout": 3
+				},
+				"--nldesign-component-notecard-success-color": {
+					"global": "--color-success",
+					"label": "Note card success stripe",
+					"type": "color",
+					"primary": false,
+					"paints": "Success stripe",
+					"callout": 4
+				},
+				"--nldesign-component-notecard-success-icon-color": {
+					"global": "--color-element-success",
+					"label": "Note card success glyph",
+					"type": "color",
+					"primary": false,
+					"paints": "Success glyph",
+					"callout": 4
+				},
+				"--nldesign-component-notecard-success-border-color": {
+					"global": "--color-border-success",
+					"label": "Note card success border",
+					"type": "color",
+					"primary": false,
+					"paints": "Success card border",
+					"callout": 4
+				},
+				"--nldesign-component-notecard-success-color-rgb": {
+					"global": "--color-success-rgb",
+					"label": "Note card success fill (RGB)",
+					"type": "text",
+					"primary": false,
+					"paints": "Success fill, mixed from the same colour",
+					"callout": 4
+				}
+			}
+		},
+		"badge-counter": {
+			"tab": "status",
+			"selectors": [
+				".counter-bubble",
+				".counter-bubble__counter",
+				".app-navigation-entry__counter"
+			],
+			"tokens": {
+				"--nldesign-component-badge-background-color": {
+					"global": "--color-primary-element",
+					"label": "Badge background",
+					"type": "color",
+					"primary": true,
+					"paints": "The highlighted bubble",
+					"callout": 1
+				},
+				"--nldesign-component-badge-color": {
+					"global": "--color-primary-element-text",
+					"label": "Badge number",
+					"type": "color",
+					"primary": true,
+					"paints": "Its number",
+					"callout": 1
+				},
+				"--nldesign-component-badge-border-radius": {
+					"global": "--border-radius-pill",
+					"label": "Badge shape",
+					"type": "text",
+					"primary": false,
+					"paints": "Bubble shape",
+					"callout": 1
+				},
+				"--nldesign-component-badge-favorite-color": {
+					"global": "--color-favorite",
+					"label": "Favourite star",
+					"type": "color",
+					"primary": false,
+					"paints": "The favourite star",
+					"callout": 2
+				}
+			}
+		},
+		"toast": {
+			"tab": "status",
+			"selectors": [".toastify"],
+			"tokens": {
+				"--nldesign-component-toast-success-background-color": {
+					"global": "--color-success",
+					"label": "Toast success",
+					"type": "color",
+					"primary": false,
+					"paints": "Success toast",
+					"callout": 1
+				},
+				"--nldesign-component-toast-border-radius": {
+					"global": "--border-radius",
+					"label": "Toast corner",
+					"type": "text",
+					"primary": false,
+					"paints": "Corner",
+					"callout": 1
+				},
+				"--nldesign-component-toast-error-background-color": {
+					"global": "--color-error",
+					"label": "Toast error",
+					"type": "color",
+					"primary": false,
+					"paints": "Error toast",
+					"callout": 2
+				},
+				"--nldesign-component-toast-warning-background-color": {
+					"global": "--color-warning",
+					"label": "Toast warning",
+					"type": "color",
+					"primary": false,
+					"paints": "Warning toast",
+					"callout": 3
+				},
+				"--nldesign-component-toast-info-background-color": {
+					"global": "--color-info",
+					"label": "Toast info",
+					"type": "color",
+					"primary": false,
+					"paints": "Info toast",
+					"callout": 4
+				}
+			}
+		},
+		"heading": {
+			"tab": "typography",
+			"selectors": ["h1", "h2", "h3", "h4", "h5", "h6"],
+			"tokens": {
+				"--nldesign-component-heading-font-family": {
+					"global": "--font-face",
+					"label": "Heading typeface",
+					"type": "text",
+					"primary": false,
+					"paints": "Typeface",
+					"callout": 1
+				},
+				"--nldesign-component-heading-color": {
+					"global": "--color-main-text",
+					"label": "Heading colour",
+					"type": "color",
+					"primary": false,
+					"paints": "Heading colour",
+					"callout": 1
+				},
+				"--nldesign-component-heading-font-weight": {
+					"global": "--font-weight-heading",
+					"label": "Heading weight",
+					"type": "text",
+					"primary": false,
+					"paints": "Heading weight",
+					"callout": 1
+				}
+			}
+		},
+		"paragraph": {
+			"tab": "typography",
+			"selectors": ["p"],
+			"tokens": {
+				"--nldesign-component-paragraph-color": {
+					"global": "--color-main-text",
+					"label": "Body text colour",
+					"type": "color",
+					"primary": false,
+					"paints": "Body text",
+					"callout": 1
+				},
+				"--nldesign-component-paragraph-font-family": {
+					"global": "--font-face",
+					"label": "Body typeface",
+					"type": "text",
+					"primary": false,
+					"paints": "Typeface",
+					"callout": 1
+				},
+				"--nldesign-component-paragraph-font-weight": {
+					"global": "--font-weight-default",
+					"label": "Body weight",
+					"type": "text",
+					"primary": false,
+					"paints": "Body weight",
+					"callout": 1
+				}
+			}
+		},
+		"link": {
+			"tab": "typography",
+			"selectors": ["a"],
+			"tokens": {
+				"--nldesign-component-link-color": {
+					"global": "--color-primary",
+					"label": "Link colour",
+					"type": "color",
+					"primary": true,
+					"paints": "Link colour",
+					"callout": 1
+				},
+				"--nldesign-component-link-hover-color": {
+					"global": "--color-primary-hover",
+					"label": "Link hover colour",
+					"type": "color",
+					"primary": true,
+					"paints": "Link on hover",
+					"callout": 2
+				}
+			}
+		},
+		"muted-text": {
+			"tab": "typography",
+			"selectors": [".settings-hint", ".app-settings-section__hint"],
+			"tokens": {
+				"--nldesign-component-text-muted-color": {
+					"global": "--color-text-maxcontrast",
+					"label": "Muted text",
+					"type": "color",
+					"primary": false,
+					"paints": "Secondary text that still has to pass AA",
+					"callout": 1
+				},
+				"--nldesign-component-text-light-color": {
+					"global": "--color-text-light",
+					"label": "Light text",
+					"type": "color",
+					"primary": false,
+					"paints": "Text one step lighter than body",
+					"callout": 1
+				},
+				"--nldesign-component-text-lighter-color": {
+					"global": "--color-text-lighter",
+					"label": "Lighter text",
+					"type": "color",
+					"primary": false,
+					"paints": "The lightest text Nextcloud uses",
+					"callout": 1
+				}
+			}
+		},
+		"status-text": {
+			"tab": "typography",
+			"selectors": [
+				".status-text",
+				".text-error",
+				".text-warning",
+				".text-success"
+			],
+			"tokens": {
+				"--nldesign-component-text-error-color": {
+					"global": "--color-text-error",
+					"label": "Error text",
+					"type": "color",
+					"primary": false,
+					"paints": "Error text",
+					"callout": 1
+				},
+				"--nldesign-component-text-warning-color": {
+					"global": "--color-text-warning",
+					"label": "Warning text",
+					"type": "color",
+					"primary": false,
+					"paints": "Warning text",
+					"callout": 2
+				},
+				"--nldesign-component-text-success-color": {
+					"global": "--color-text-success",
+					"label": "Success text",
+					"type": "color",
+					"primary": false,
+					"paints": "Success text",
+					"callout": 3
+				}
+			}
+		}
+	},
+	"brandTokens": [
+		"--color-primary",
+		"--color-primary-text",
+		"--color-background-hover",
+		"--border-radius-large",
+		"--color-border",
+		"--color-primary-element",
+		"--color-primary-element-text",
+		"--color-primary-element-hover",
+		"--border-radius-element",
+		"--font-face",
+		"--color-main-text",
+		"--body-container-radius",
+		"--border-radius-rounded",
+		"--color-scrollbar",
+		"--color-text-maxcontrast",
+		"--color-background-dark",
+		"--color-border-dark",
+		"--animation-quick",
+		"--color-primary-light",
+		"--color-primary-light-text",
+		"--color-primary-light-hover",
+		"--color-success",
+		"--color-border-maxcontrast",
+		"--color-placeholder-dark",
+		"--color-placeholder-light",
+		"--color-error",
+		"--border-radius-small",
+		"--border-radius",
+		"--animation-slow",
+		"--color-background-darker",
+		"--border-radius-pill",
+		"--font-weight-element",
+		"--color-primary-element-light-text",
+		"--color-primary-element-light",
+		"--color-primary-element-light-hover",
+		"--color-error-rgb",
+		"--color-error-hover",
+		"--color-element-success",
+		"--color-info",
+		"--color-element-info",
+		"--color-warning",
+		"--color-element-warning",
+		"--color-warning-rgb",
+		"--color-element-error",
+		"--color-border-error",
+		"--color-border-success",
+		"--color-success-rgb",
+		"--color-favorite",
+		"--font-weight-heading",
+		"--font-weight-default",
+		"--color-primary-hover",
+		"--color-text-light",
+		"--color-text-lighter",
+		"--color-text-error",
+		"--color-text-warning",
+		"--color-text-success"
+	]
+}
