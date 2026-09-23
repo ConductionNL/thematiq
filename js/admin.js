@@ -2067,12 +2067,9 @@
 
 		// Handle the "primary drives every component" checkbox
 		if (primaryDrivesComponentsCheckbox) {
-			primaryDrivesComponentsCheckbox.addEventListener(
-				'change',
-				function () {
-					savePrimaryDrivesComponentsSetting(this.checked)
-				},
-			)
+			primaryDrivesComponentsCheckbox.addEventListener('change', function () {
+				savePrimaryDrivesComponentsSetting(this.checked)
+			})
 		}
 
 		// Handle show menu labels checkbox

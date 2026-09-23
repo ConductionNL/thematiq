@@ -32,7 +32,10 @@ const inventory = JSON.parse(
  * keeps this guard checking the same registry the editor actually renders.
  */
 const componentTokens = JSON.parse(
-	fs.readFileSync(path.join(ROOT, 'scripts/mapping/component-tokens.json'), 'utf8'),
+	fs.readFileSync(
+		path.join(ROOT, 'scripts/mapping/component-tokens.json'),
+		'utf8',
+	),
 )
 
 const registryPhp = fs.readFileSync(
@@ -64,7 +67,9 @@ const registry = new Set([
 /** The tab each registry token is filed under, which is where its row renders. */
 const registryTabs = new Map([
 	...[
-		...registryPhp.matchAll(/'(--[a-z0-9-]+)'\s*=>\s*\['tab'\s*=>\s*'([a-z]+)'/g),
+		...registryPhp.matchAll(
+			/'(--[a-z0-9-]+)'\s*=>\s*\['tab'\s*=>\s*'([a-z]+)'/g,
+		),
 	].map((match) => [match[1], match[2]]),
 	...Object.values(componentTokens.components).flatMap((component) =>
 		Object.keys(component.tokens).map((name) => [name, component.tab]),
@@ -382,7 +387,7 @@ describe('component inventory: the components', () => {
 		expect(empty).toEqual([])
 	})
 
-	it('files every chip token under the chip\'s own tab', () => {
+	it("files every chip token under the chip's own tab", () => {
 		// This used to assert the OPPOSITE — that at least one chip read a token
 		// filed under another tab — and the example it pinned was the primary
 		// button, which lives under Buttons & Status and was painted by
