@@ -35,6 +35,84 @@ class TokenRegistryTest extends TestCase {
 	}
 
 	/**
+	 * The registry is two layers, and every entry says which one it is in.
+	 *
+	 * The editor renders the brand globals as the four-tab list and the
+	 * component tokens under their component's own heading, so an entry with
+	 * no `group` would land in neither. `primary` is the other half: it is
+	 * what the `primary_drives_components` setting reads to decide which rows
+	 * to lock.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testEveryTokenDeclaresItsLayer(): void {
+		$tokens = TokenRegistry::getTokens();
+
+		foreach ($tokens as $name => $meta) {
+			$this->assertArrayHasKey('group', $meta, "Token {$name} is missing 'group'");
+			$this->assertArrayHasKey('primary', $meta, "Token {$name} is missing 'primary'");
+			$this->assertIsBool($meta['primary'], "Token {$name} has a non-boolean 'primary'");
+		}
+	}//end testEveryTokenDeclaresItsLayer()
+
+	/**
+	 * The brand layer is grouped under `brand` and is never locked.
+	 *
+	 * The `primary_drives_components` setting exists to make these globals
+	 * win, not to freeze them — a brand token flagged `primary` would lock the
+	 * very control the setting hands authority to.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testTheBrandLayerIsNeverLocked(): void {
+		$brand = TokenRegistry::getBrandTokens();
+
+		$this->assertNotEmpty($brand);
+		foreach ($brand as $name => $meta) {
+			$this->assertSame('brand', $meta['group'], "Brand token {$name} is not grouped under 'brand'");
+			$this->assertFalse($meta['primary'], "Brand token {$name} would be locked by the setting");
+		}
+	}//end testTheBrandLayerIsNeverLocked()
+
+	/**
+	 * The component layer is read from the shared mapping table, and each
+	 * entry carries the Nextcloud global it stands in for.
+	 *
+	 * That global is not decoration: a component token is deliberately
+	 * undeclared until someone sets one, so the editor reads the global to
+	 * show the colour the component is ACTUALLY wearing rather than a blank
+	 * swatch. An entry without it renders an empty control.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testTheComponentLayerNamesTheGlobalItReplaces(): void {
+		$components = TokenRegistry::getComponentTokens();
+
+		$this->assertNotEmpty($components, 'the mapping table produced no component tokens');
+
+		foreach ($components as $name => $meta) {
+			$this->assertStringStartsWith('--nldesign-component-', $name);
+			$this->assertNotSame('brand', $meta['group'], "Component token {$name} claims the brand layer");
+			$this->assertArrayHasKey('global', $meta, "Component token {$name} names no global");
+			$this->assertStringStartsWith('--', $meta['global'], "Component token {$name} has a malformed global");
+		}
+	}//end testTheComponentLayerNamesTheGlobalItReplaces()
+
+	/**
+	 * getTokens() is both layers, and neither shadows the other.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testGetTokensIsBothLayers(): void {
+		$brand = TokenRegistry::getBrandTokens();
+		$components = TokenRegistry::getComponentTokens();
+		$all = TokenRegistry::getTokens();
+
+		$this->assertSame([], array_intersect_key($brand, $components), 'the two layers share a token name');
+		$this->assertCount(count($brand) + count($components), $all);
+	}//end testGetTokensIsBothLayers()
+
+	/**
 	 * Test that all token names start with '--'.
 	 */
 	public function testTokenNamesStartWithDoubleDash(): void {

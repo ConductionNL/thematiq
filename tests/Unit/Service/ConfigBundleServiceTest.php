@@ -408,6 +408,77 @@ class ConfigBundleServiceTest extends TestCase {
 	}//end testNonexistentTokenSetIsHardError()
 
 	/**
+	 * `primaryDrivesComponents` travels in the bundle, so an OTAP promotion
+	 * carries the toggle instead of silently resetting it to off.
+	 *
+	 * Off is the default, and the difference between the two is visible: with
+	 * it on, css/primary-lock.css is emitted and the per-component colour
+	 * controls lock. A promotion that dropped the key would hand production a
+	 * theme configured differently from the acceptance environment it was
+	 * signed off on.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testPrimaryDrivesComponentsSurvivesExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['primary_drives_components'] = '1';
+
+		$bundle = $this->service->export();
+		$this->assertTrue($bundle['config']['primaryDrivesComponents']);
+
+		$this->appConfig['primary_drives_components'] = '0';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('1', $this->appConfig['primary_drives_components']);
+	}//end testPrimaryDrivesComponentsSurvivesExportAndImport()
+
+	/**
+	 * A bundle that omits the key imports as off rather than as an error.
+	 *
+	 * Bundles exported before the toggle existed have no such key, and the
+	 * setting's default is off, so the absent case is a valid bundle — not
+	 * something an admin has to hand-edit before a promotion will run.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testAnAbsentPrimaryDrivesComponentsImportsAsOff(): void {
+		$this->appConfig['primary_drives_components'] = '1';
+
+		$result = $this->service->import(bundle: $this->baseBundle(), dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('0', $this->appConfig['primary_drives_components']);
+	}//end testAnAbsentPrimaryDrivesComponentsImportsAsOff()
+
+	/**
+	 * A non-boolean `primaryDrivesComponents` is rejected, not coerced.
+	 *
+	 * The string "false" is truthy in PHP, so coercion would turn an explicit
+	 * off into an on and lock every component colour on the target
+	 * environment.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testANonBooleanPrimaryDrivesComponentsIsRejected(): void {
+		$bundle = $this->baseBundle(['config' => ['primaryDrivesComponents' => 'false']]);
+
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertFalse($result['valid']);
+		$this->assertNotEmpty(
+			array_filter(
+				$result['errors'],
+				static fn (array $error): bool => str_contains(
+					$error['message'],
+					'config.primaryDrivesComponents'
+				)
+			),
+			'the error names the offending key'
+		);
+	}//end testANonBooleanPrimaryDrivesComponentsIsRejected()
+
+	/**
 	 * A dry-run of a valid bundle reports the would-be sections and writes
 	 * nothing at all.
 	 */

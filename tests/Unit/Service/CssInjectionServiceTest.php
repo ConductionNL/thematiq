@@ -380,7 +380,45 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertNotContains('hide-slogan', $styleLog);
 		$this->assertNotContains('show-menu-labels', $styleLog);
+		$this->assertNotContains('primary-lock', $styleLog);
 	}//end testConditionalStylesheetsAbsentWhenDisabled()
+
+	/**
+	 * `primary-lock` is emitted only while the setting is on, and LAST of all.
+	 *
+	 * It and `custom-overrides.css` both write `--nldesign-component-*` at
+	 * `:root` with `!important`, so the later of the two wins. While the
+	 * setting is on the brand primary is meant to beat a per-component value
+	 * the admin stored earlier, which is only true if this layer comes after
+	 * the overrides — hence the position is asserted, not just the presence.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testPrimaryLockEmittedLastWhenTheSettingIsOn(): void {
+		$this->configureAppValues(['primary_drives_components' => '1']);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
+		$this->designSystemService->method('getDesignSystem')->willReturn(
+			[
+				'id' => 'nldesign',
+				'name' => 'NL Design System',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$service->inject('user');
+
+		$this->assertContains('primary-lock', $styleLog);
+		$this->assertSame('primary-lock', end($styleLog), 'primary-lock is the last layer emitted');
+		$this->assertGreaterThan(
+			array_search('custom-overrides', $styleLog, true),
+			array_search('primary-lock', $styleLog, true),
+			'primary-lock must come after custom-overrides, or the stored value would win'
+		);
+	}//end testPrimaryLockEmittedLastWhenTheSettingIsOn()
 
 	/**
 	 * Custom fonts inject a `<link>` header (not a static stylesheet) after
