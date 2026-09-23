@@ -67,8 +67,14 @@ body {
 /* Main header bar */
 #header,
 header#header {
-	background: var(--nldesign-color-header-background) !important;
-	background-color: var(--nldesign-color-header-background) !important;
+	background: var(
+		--nldesign-component-header-background-color,
+		var(--nldesign-color-header-background)
+	) !important;
+	background-color: var(
+		--nldesign-component-header-background-color,
+		var(--nldesign-color-header-background)
+	) !important;
 	overflow: visible !important;
 }
 
@@ -147,7 +153,10 @@ header#header {
 #header *,
 #header .header-appname,
 #header .header-appname-container .header-appname {
-	color: var(--nldesign-color-header-text) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 }
 
 /* Header app icons — the app menu's icons are IMAGES (white SVG files), so
@@ -165,7 +174,10 @@ header#header {
 /* User menu in header */
 #header .header-menu,
 #header #user-menu {
-	color: var(--nldesign-color-header-text) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 }
 
 /* ============================================
@@ -183,7 +195,10 @@ header#header {
 	max-width: 500px;
 	margin: 0 auto;
 	box-shadow: none !important;
-	border-radius: var(--nldesign-border-radius) !important;
+	border-radius: var(
+		--nldesign-component-login-box-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
 	padding-top: 0 !important; /* Remove top padding so header is at top of box */
 }
 
@@ -203,7 +218,10 @@ header#header {
 #body-login .body-login-container > div {
 	background: #ffffff !important;
 	box-shadow: none !important;
-	border-radius: var(--nldesign-border-radius) !important;
+	border-radius: var(
+		--nldesign-component-login-box-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
 	border: none !important;
 }
 
@@ -215,7 +233,10 @@ header#header {
 	background: #ffffff !important;
 	background-color: #ffffff !important;
 	box-shadow: none !important;
-	border-radius: var(--nldesign-border-radius) !important;
+	border-radius: var(
+		--nldesign-component-login-box-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
 	border: none !important;
 	backdrop-filter: none !important;
 	-webkit-backdrop-filter: none !important;
@@ -320,14 +341,30 @@ div[class*='login-box__wrapper'] > div {
 
 /* Remove all shadows from login elements */
 #body-login input,
+/* The login page's own shape reset. The button reads its OWN corner token
+   here, otherwise this rule outranks the button rule below and the Login
+   button chip's Corner row does nothing. */
 #body-login button,
 #body-login .button-vue,
 #body-login a {
 	box-shadow: none !important;
-	border-radius: var(--nldesign-border-radius) !important;
+	border-radius: var(
+		--nldesign-component-login-button-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
 }
 
-/* Login box primary button */
+/* Login box primary button.
+ *
+ * The login button reads its OWN component tokens first and falls back to the
+ * shared primary-action ones. Without that fallback chain this rule painted the
+ * login button from `--nldesign-component-button-primary-action-*` — the same
+ * tokens the main primary button uses — so the two could not be moved apart,
+ * which is exactly what `--nldesign-component-login-button-*` exists to allow.
+ *
+ * The fallback is what keeps every shipped token set correct: a set that styles
+ * its buttons and says nothing about the login page still gets the button
+ * colours here, as it did before. */
 #body-login .button-vue--vue-primary,
 #body-login .button-vue--primary,
 #body-login input[type='submit'],
@@ -586,7 +623,10 @@ a:visited {
 #header a,
 #header a:hover,
 #header a:visited {
-	color: var(--nldesign-color-header-text) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 	text-decoration: none !important;
 }
 
@@ -685,10 +725,19 @@ label,
    CHECKBOXES & RADIO BUTTONS
    ============================================ */
 
+/* The checkbox reads its own token first so it can be moved without moving the
+   brand primary, and falls back to the primary so every existing token set is
+   unaffected. */
 input[type='checkbox']:checked,
 input[type='radio']:checked {
-	background-color: var(--nldesign-color-primary) !important;
-	border-color: var(--nldesign-color-primary) !important;
+	background-color: var(
+		--nldesign-component-checkbox-checked-background-color,
+		var(--nldesign-color-primary)
+	) !important;
+	border-color: var(
+		--nldesign-component-checkbox-checked-background-color,
+		var(--nldesign-color-primary)
+	) !important;
 }
 
 /* ============================================
@@ -697,7 +746,10 @@ input[type='radio']:checked {
 
 .icon-loading,
 .icon-loading-small {
-	border-color: var(--nldesign-color-primary) !important;
+	border-color: var(
+		--nldesign-component-progress-background-color,
+		var(--nldesign-color-primary)
+	) !important;
 }
 
 /* ============================================
@@ -747,11 +799,25 @@ h6 {
 	color: var(--nldesign-component-heading-6-color) !important;
 }
 
+/* Typeface for headings, as one rule rather than six: the six per-level tokens
+   cover size, weight, line-height and colour, and a brand that gives its
+   headings a display face gives it to all of them. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--nldesign-component-heading-font-family) !important;
+}
+
 /* Paragraphs */
 p {
 	font-size: var(--nldesign-component-paragraph-font-size) !important;
 	line-height: var(--nldesign-component-paragraph-line-height) !important;
 	color: var(--nldesign-component-paragraph-color) !important;
+	font-family: var(--nldesign-component-paragraph-font-family) !important;
+	font-weight: var(--nldesign-component-paragraph-font-weight) !important;
 }
 
 /* Tables */
@@ -785,7 +851,10 @@ hr {
    ============================================ */
 
 .toastify.dialogs {
-	border-radius: var(--nldesign-border-radius) !important;
+	border-radius: var(
+		--nldesign-component-toast-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
 }
 
 /* ============================================
@@ -931,20 +1000,66 @@ button:not(.action-button),
  * instance therefore rendered every avatar — the user menu in the header,
  * the contacts menu, share recipients — as a 3px-cornered SQUARE, which is not
  * a brand choice any token set made. File previews and app icons were squared
- * off the same way. Components that need the brand radius are listed by name. */
+ * off the same way. Components that need the brand radius are listed by name.
+ *
+ * SPLIT BY COMPONENT, and that is what makes the corner rows work.
+ *
+ * This was one rule forcing `--nldesign-border-radius` onto every selector
+ * below, which outranked each component's own radius rule — so the Corner row
+ * on seven chips set a token nothing read. Every component token here is
+ * UNDECLARED until someone sets one and falls back to `--nldesign-border-radius`,
+ * so a sharp theme still squares off exactly as before. */
 .panel,
 .widget,
-.button-vue:not(.action-button),
-button:not(.action-button),
-.modal-container,
-.app-navigation-entry,
-input,
-textarea,
-select,
-.dropdown,
-.popover,
 .tooltip {
 	border-radius: var(--nldesign-border-radius) !important;
+}
+
+.button-vue:not(.action-button),
+button:not(.action-button) {
+	border-radius: var(
+		--nldesign-component-button-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
+.modal-container {
+	border-radius: var(
+		--nldesign-component-dialog-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
+.app-navigation-entry {
+	border-radius: var(
+		--nldesign-component-navigation-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
+input {
+	border-radius: var(
+		--nldesign-component-textbox-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
+textarea {
+	border-radius: var(
+		--nldesign-component-textarea-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
+/* `select` is not repeated here: its own rule in FORM ELEMENTS above already
+   reads `--nldesign-component-form-select-border-radius`. */
+
+.dropdown,
+.popover {
+	border-radius: var(
+		--nldesign-component-actions-menu-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
 }
 
 /* ============================================
