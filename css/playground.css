@@ -397,8 +397,19 @@
    avatar above all. `--nldesign-color-header-background` is what
    element-overrides.css paints `#header` with; the primary colour is the
    fallback core uses when a set declares no header colour of its own. */
+/* The same chain the real `#header` rule uses, component token first.
+ *
+ * Reading `--nldesign-color-header-background` alone was not enough once the
+ * header got a component token: a token set DECLARES the header colour, so the
+ * fallback behind it never fired and the specimen ignored anything an admin set
+ * on the Header bar chip. The stage's `[data-thematiq-component]` re-scope does
+ * not rescue this one either — that redirects `--color-primary`, which this
+ * chain only reaches as a last resort. */
 #nldesign-preview .nldesign-pg-ground--header {
-	background-color: var(--nldesign-color-header-background, var(--color-primary));
+	background-color: var(
+		--nldesign-component-header-background-color,
+		var(--nldesign-color-header-background, var(--color-primary))
+	);
 }
 
 /* Where a modal is actually met: over a dimmed page, not floating on a card. */
@@ -1950,7 +1961,10 @@
 	min-width: var(--default-clickable-area, 34px);
 	height: var(--default-clickable-area, 34px);
 	border-radius: var(--border-radius-element, 8px);
-	color: var(--nldesign-color-header-text, var(--color-primary-text));
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text, var(--color-primary-text))
+	);
 }
 
 #nldesign-preview .nldesign-pg-currentapp {
@@ -2028,8 +2042,11 @@
 #nldesign-preview .nldesign-pg-header.is-modern {
 	position: relative;
 	color: var(
-		--nldesign-color-header-text,
-		var(--color-background-plain-text, var(--color-primary-text))
+		--nldesign-component-header-color,
+		var(
+			--nldesign-color-header-text,
+			var(--color-background-plain-text, var(--color-primary-text))
+		)
 	);
 }
 

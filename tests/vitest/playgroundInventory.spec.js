@@ -26,23 +26,50 @@ const inventory = JSON.parse(
 	fs.readFileSync(path.join(ROOT, 'js/playground/components.json'), 'utf8'),
 )
 
-/** Every variable the token editor can write, read out of the PHP registry. */
-const registry = new Set(
-	[
-		...fs
-			.readFileSync(path.join(ROOT, 'lib/Service/TokenRegistry.php'), 'utf8')
-			.matchAll(/'(--[a-z0-9-]+)'\s*=>\s*\[/g),
-	].map((match) => match[1]),
+/**
+ * The component-token table, which TokenRegistry.php reads at runtime and
+ * scripts/generate-component-scopes.mjs turns into CSS. Reading it here is what
+ * keeps this guard checking the same registry the editor actually renders.
+ */
+const componentTokens = JSON.parse(
+	fs.readFileSync(path.join(ROOT, 'scripts/mapping/component-tokens.json'), 'utf8'),
 )
 
-/** The tab each registry token is filed under, which is where its row renders. */
-const registryTabs = new Map(
-	[
-		...fs
-			.readFileSync(path.join(ROOT, 'lib/Service/TokenRegistry.php'), 'utf8')
-			.matchAll(/'(--[a-z0-9-]+)'\s*=>\s*\['tab'\s*=>\s*'([a-z]+)'/g),
-	].map((match) => [match[1], match[2]]),
+const registryPhp = fs.readFileSync(
+	path.join(ROOT, 'lib/Service/TokenRegistry.php'),
+	'utf8',
 )
+
+/**
+ * The BRAND layer: Nextcloud's own globals, hand-listed in the PHP.
+ *
+ * No chip owns these, and that is deliberate — moving one is MEANT to move
+ * every component that has not been given a value of its own, so they are
+ * edited from the four-tab list rather than from a component chip.
+ */
+const brandTokens = new Set(
+	[...registryPhp.matchAll(/'(--[a-z0-9-]+)'\s*=>\s*\[/g)].map(
+		(match) => match[1],
+	),
+)
+
+/** Every variable the token editor can write: the brand layer plus the components. */
+const registry = new Set([
+	...brandTokens,
+	...Object.values(componentTokens.components).flatMap((component) =>
+		Object.keys(component.tokens),
+	),
+])
+
+/** The tab each registry token is filed under, which is where its row renders. */
+const registryTabs = new Map([
+	...[
+		...registryPhp.matchAll(/'(--[a-z0-9-]+)'\s*=>\s*\['tab'\s*=>\s*'([a-z]+)'/g),
+	].map((match) => [match[1], match[2]]),
+	...Object.values(componentTokens.components).flatMap((component) =>
+		Object.keys(component.tokens).map((name) => [name, component.tab]),
+	),
+])
 
 /**
  * The THEMING stylesheets, as one string, for the class-name check.
@@ -93,17 +120,49 @@ describe('component inventory: the tokens', () => {
 		expect(unknown).toEqual([])
 	})
 
-	it('reaches every token the editor can write', () => {
+	it('reaches every component token the editor can write', () => {
 		// The chips are the visual way into the same file the four-tab list
-		// edits. A token no component reads is one an admin can only find by
+		// edits. A component token no chip reads is one an admin can only find by
 		// scrolling the full list, which is the thing this instrument exists to
 		// make unnecessary.
+		//
+		// The brand globals are exempt, and only they: they have no component to
+		// belong to, because moving one is meant to move everything that has not
+		// opted out. Exempting them here is what lets the chips stop naming them.
 		const covered = new Set(tokens.map((token) => token.name))
 		const unreachable = [...registry].filter(
-			(name) => covered.has(name) === false,
+			(name) => covered.has(name) === false && brandTokens.has(name) === false,
 		)
 
 		expect(unreachable).toEqual([])
+	})
+
+	it('names no Nextcloud global from a chip', () => {
+		// The regression this whole layer exists to prevent. A chip that names a
+		// global writes a value every other component sharing it also receives —
+		// which is how `Primary button` used to move the navigation, the sidebar,
+		// the checkbox, the progress bar, the dialog and the counter bubble.
+		const globals = tokens
+			.filter((token) => brandTokens.has(token.name) === true)
+			.map((token) => `${token.component}: ${token.name}`)
+
+		expect(globals).toEqual([])
+	})
+
+	it('gives every chip token a scope rule that applies it', () => {
+		// A token the editor can write and no stylesheet consumes is a control
+		// that does nothing. css/component-scopes.css is generated from the same
+		// table, so the check is that the table and the chips agree.
+		const scoped = new Set(
+			Object.values(componentTokens.components).flatMap((component) =>
+				Object.keys(component.tokens),
+			),
+		)
+		const unapplied = tokens
+			.filter((token) => scoped.has(token.name) === false)
+			.map((token) => `${token.component}: ${token.name}`)
+
+		expect(unapplied).toEqual([])
 	})
 
 	it('points every token at a state the stage actually draws', () => {
@@ -323,17 +382,31 @@ describe('component inventory: the components', () => {
 		expect(empty).toEqual([])
 	})
 
-	it('may read a token filed under another tab, and does', () => {
-		// Not a defect, and worth pinning: a primary button lives under Buttons
-		// & Status while the colour it is painted with is filed under Login page
-		// & Branding. The instrument clones from the whole editor rather than
-		// from the open panel precisely so this works.
-		const crossTab = tokens.filter((token) => {
-			const component = playground.componentById(inventory, token.component)
-			return registryTabs.get(token.name) !== component.tab
-		})
+	it('files every chip token under the chip\'s own tab', () => {
+		// This used to assert the OPPOSITE — that at least one chip read a token
+		// filed under another tab — and the example it pinned was the primary
+		// button, which lives under Buttons & Status and was painted by
+		// `--color-primary-element`, filed under Login page & Branding.
+		//
+		// That was a symptom, not a feature. The button read that token because
+		// chips named Nextcloud's globals, which is the same reason moving the
+		// button moved seven other components. Now each chip owns component
+		// tokens that take the chip's own tab, so no chip reaches across.
+		//
+		// The instrument still clones from the whole editor rather than from the
+		// open panel, so a cross-tab token would keep working if one ever came
+		// back. What is pinned here is that none is needed.
+		const crossTab = tokens
+			.filter((token) => {
+				const component = playground.componentById(
+					inventory,
+					token.component,
+				)
+				return registryTabs.get(token.name) !== component.tab
+			})
+			.map((token) => `${token.component}: ${token.name}`)
 
-		expect(crossTab.length).toBeGreaterThan(0)
+		expect(crossTab).toEqual([])
 	})
 })
 
