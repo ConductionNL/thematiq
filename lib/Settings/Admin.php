@@ -193,8 +193,8 @@ class Admin implements IDelegatedSettings {
 			'nextcloud'
 		);
 
-		$hideSlogan = $this->isFlagOn('hide_slogan');
-		$showMenuLabels = $this->isFlagOn('show_menu_labels');
+		$hideSlogan = $this->isFlagOn(key: 'hide_slogan');
+		$showMenuLabels = $this->isFlagOn(key: 'show_menu_labels');
 
 		// Whether the brand primary overrules every component token it used to
 		// drive. OFF by default, and that costs nothing visually: with no
@@ -203,10 +203,10 @@ class Admin implements IDelegatedSettings {
 		// renders identically either way. Turning it ON is the deliberate choice
 		// to give that back up — the primary wins again and the per-component
 		// colour controls lock.
-		$drivesComponents = $this->isFlagOn('primary_drives_components');
+		$drivesComponents = $this->isFlagOn(key: 'primary_drives_components');
 
-		$darkVariantsEnabled = $this->isFlagOn('dark_variants', default: '1');
-		$marianneEnabled = $this->isFlagOn('marianne_enabled');
+		$darkVariantsEnabled = $this->isFlagOn(key: 'dark_variants', fallback: '1');
+		$marianneEnabled = $this->isFlagOn(key: 'marianne_enabled');
 
 		// The design system backing the current token set — resolved from the
 		// already-fetched $tokenSets inventory (TokenSetService surfaces
@@ -279,13 +279,13 @@ class Admin implements IDelegatedSettings {
 	 * phpmd allows and keeps the default visible at the call site, which is the
 	 * part that differs between them.
 	 *
-	 * @param string $key     The appconfig key.
-	 * @param string $default The value to assume when the key was never set.
+	 * @param string $key      The appconfig key.
+	 * @param string $fallback The value to assume when the key was never set.
 	 *
 	 * @return bool Whether the flag is on.
 	 */
-	private function isFlagOn(string $key, string $default = '0'): bool {
-		return ($this->config->getAppValue(Application::APP_ID, $key, $default) === '1');
+	private function isFlagOn(string $key, string $fallback = '0'): bool {
+		return ($this->config->getAppValue(Application::APP_ID, $key, $fallback) === '1');
 	}//end isFlagOn()
 
 	/**
