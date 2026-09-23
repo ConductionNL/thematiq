@@ -280,11 +280,6 @@ class CssInjectionService {
 			work: fn () => $this->injectDesignSystemStyles(designSystemId: $designSystemId, tokenSet: $tokenSet)
 		);
 
-		// 3.9. Component scopes. Must sit AFTER the design-system layers, whose
-		// `:root` declarations it captures, and BEFORE the admin's own overrides,
-		// which are allowed to move the brand values those captures resolve to.
-		$this->runLayer(layer: 'component-scopes', work: fn () => $this->emitStyle(file: 'component-scopes'));
-
 		// 4/4.1. Custom overrides, then freeform custom CSS.
 		$this->runLayer(layer: 'override-styles', work: fn () => $this->injectOverrideStyles());
 
@@ -444,6 +439,14 @@ class CssInjectionService {
 		// components painting --color-error-text on it lose all contrast
 		// (see css/error-contrast.css).
 		$layers[] = ['layer' => 'contrast', 'kind' => 'file', 'file' => 'error-contrast'];
+
+		// 3.9. Component scopes, last of the set layers: it captures the `:root`
+		// declarations the layers above make, and the admin's own overrides come
+		// after it and are allowed to move the brand values those captures resolve
+		// to. It rides with the set layers rather than beside them so `none` stays
+		// stock — that branch returns above — and so the manifest carries it, which
+		// is what lets the client add and remove it without a reload.
+		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
 		return $layers;
 	}//end designSystemLayers()

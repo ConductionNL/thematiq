@@ -265,6 +265,7 @@ class CssInjectionServiceTest extends TestCase {
 				'tokens/rijkshuisstijl',
 				'icon-contrast',
 				'error-contrast',
+				'component-scopes',
 				'custom-overrides',
 			],
 			$styleLog
@@ -352,7 +353,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertSame(
-			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'custom-overrides', 'hide-slogan', 'show-menu-labels'],
+			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'component-scopes', 'custom-overrides', 'hide-slogan', 'show-menu-labels'],
 			$styleLog
 		);
 	}//end testConditionalStylesheetsLoadedWhenEnabled()
@@ -477,6 +478,7 @@ class CssInjectionServiceTest extends TestCase {
 				'tokens/lasuite',
 				'icon-contrast',
 				'error-contrast',
+				'component-scopes',
 				'custom-overrides',
 			],
 			$styleLog
