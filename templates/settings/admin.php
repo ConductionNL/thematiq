@@ -23,8 +23,23 @@ script('thematiq', 'lib/tokenTransforms');
 // the ones the server would emit for the new set — no reload. admin.js falls
 // back to its old reload-asking toasts when the module is absent.
 script('thematiq', 'lib/layerSwap');
+// The audit log's value formatting (window.ThematiqAuditFormat): four pure
+// functions the panel renders each entry with. A module of its own so they can
+// be unit-tested; admin.js falls back to raw values when it is absent.
+script('thematiq', 'lib/auditFormat');
 script('thematiq', 'admin');
 style('thematiq', 'admin');
+// The component playground: the selector / stage / tokens instrument that
+// admin.js's token editor is rebuilt into. Loaded AFTER admin.js because it
+// attaches to the editor that script renders, and waits for it.
+script('thematiq', 'playground');
+style('thematiq', 'playground');
+// Nextcloud's own login-page stylesheet, scoped to the playground's login card.
+// It is the one part of Nextcloud whose CSS this page does not already load —
+// the component chunks for buttons, inputs and checkboxes it does — which is
+// why only the login card needed a copy of its own. Generated from a vendored
+// upstream file; see scripts/generate-guest-css.mjs.
+style('thematiq', 'playground-guest');
 if ($_['mockUi'] === true) {
 	// Presentation mock — only with `?mock=1` (lib/Settings/Admin.php).
 	script('thematiq', 'admin-mock');
@@ -172,192 +187,6 @@ if ($_['mockUi'] === true) {
 		</div>
 	</div>
 
-	<!-- Custom font upload -->
-	<div class="nldesign-custom-fonts" id="nldesign-custom-fonts" style="margin-top:2em">
-		<h3><?php p($l->t('Custom fonts')); ?></h3>
-		<p class="nldesign-license-notice">
-			<?php p($l->t('Only upload fonts your organization holds a license to self-host. Licensing responsibility rests with the uploader.')); ?>
-		</p>
-		<p class="settings-hint">
-			<?php p($l->t('Upload a WOFF2 font file (max 2 MB, 20 fonts max) and assign it to the body text or heading role. Uploaded fonts are self-hosted — no external requests.')); ?>
-		</p>
-		<div class="nldesign-upload-form">
-			<label for="nldesign-font-name"><?php p($l->t('Font display name')); ?></label>
-			<input type="text" id="nldesign-font-name" class="nldesign-font-name"
-				   placeholder="<?php p($l->t('e.g. Rijks Sans')); ?>"
-				   maxlength="64">
-			<label for="nldesign-font-role"><?php p($l->t('Font role')); ?></label>
-			<select id="nldesign-font-role" name="nldesign-font-role">
-				<option value="body"><?php p($l->t('Body text')); ?></option>
-				<option value="heading"><?php p($l->t('Heading')); ?></option>
-			</select>
-			<input type="file" id="nldesign-font-input" accept=".woff2"
-				   aria-label="<?php p($l->t('Font file to upload (WOFF2)')); ?>"
-				   style="display:none">
-			<button type="button" id="nldesign-font-upload-btn" class="button">
-				<?php p($l->t('Choose font and upload')); ?>
-			</button>
-		</div>
-		<div id="nldesign-font-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
-		<div id="nldesign-font-list" class="nldesign-custom-set-list" role="group"
-			 aria-label="<?php p($l->t('Custom fonts')); ?>">
-			<p class="settings-hint"><?php p($l->t('Loading fonts…')); ?></p>
-		</div>
-	</div>
-
-	<!-- Hide Slogan/Payoff Option -->
-	<div class="nldesign-option">
-		<input type="checkbox"
-			   name="nldesign-hide-slogan"
-			   id="nldesign-hide-slogan"
-			   class="checkbox"
-			   <?php if ($_['hideSlogan']): ?>checked<?php endif; ?>>
-		<label for="nldesign-hide-slogan">
-			<?php p($l->t('Hide Nextcloud slogan/payoff on login page')); ?>
-		</label>
-	</div>
-
-	<!-- Show Menu Labels Option -->
-	<div class="nldesign-option">
-		<input type="checkbox"
-			   name="nldesign-show-menu-labels"
-			   id="nldesign-show-menu-labels"
-			   class="checkbox"
-			   <?php if ($_['showMenuLabels']): ?>checked<?php endif; ?>>
-		<label for="nldesign-show-menu-labels">
-			<?php p($l->t('Show text labels in app menu (hide icons)')); ?>
-		</label>
-	</div>
-
-	<!-- Dark mode variants — instance-wide toggle for the generated dark
-	     stylesheets (openspec/specs/dark-mode/spec.md). Never touches the
-	     user's/instance's Nextcloud dark/light/system theme choice; it only
-	     follows whatever Nextcloud itself already decided. -->
-	<div class="nldesign-option">
-		<input type="checkbox"
-			   name="nldesign-dark-variants"
-			   id="nldesign-dark-variants"
-			   class="checkbox"
-			   <?php if ($_['darkVariantsEnabled']): ?>checked<?php endif; ?>>
-		<label for="nldesign-dark-variants">
-			<?php p($l->t('Enable dark mode variants for the active token set')); ?>
-		</label>
-	</div>
-	<p class="settings-hint">
-		<?php p($l->t('When enabled, a generated dark-mode stylesheet follows whichever Nextcloud dark/light/system theme is already active — it never changes your Nextcloud theme choice itself.')); ?>
-	</p>
-
-	<!-- Theming per app — exclude individual apps from nldesign theming -->
-	<div class="nldesign-app-theming" id="nldesign-app-theming" style="margin-top:2em">
-		<h3><?php p($l->t('Theming per app')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Choose which apps the NL Design theme applies to. Unchecking an app makes its pages render with stock Nextcloud styling, including the header on those pages.')); ?>
-		</p>
-		<div id="nldesign-app-theming-list" class="nldesign-app-theming-list" role="group"
-			 aria-label="<?php p($l->t('Theming per app')); ?>">
-			<p class="settings-hint"><?php p($l->t('Loading apps…')); ?></p>
-		</div>
-		<button type="button" id="nldesign-app-theming-save" class="button">
-			<?php p($l->t('Save app theming')); ?>
-		</button>
-		<span id="nldesign-app-theming-feedback" class="nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- Group theming — map Nextcloud groups to token sets for shared-instance
-	     multi-tenant huisstijl (openspec/specs/per-group-theming/spec.md).
-	     Row order IS priority order; keyboard-operable move-up/move-down
-	     buttons instead of drag-and-drop. -->
-	<div class="nldesign-group-theming" id="nldesign-group-theming" style="margin-top:2em">
-		<h3><?php p($l->t('Group theming')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Map Nextcloud groups to token sets so different gemeenten sharing one instance each see their own house style. Row order is priority order: for a user in multiple mapped groups, the first matching row wins.')); ?>
-		</p>
-		<p class="settings-hint">
-			<?php p($l->t('Logo, mail templates, and other Nextcloud core branding always follow the instance default token set above — they are not per-group. Only this token-set stylesheet layer differs per group.')); ?>
-		</p>
-		<div id="nldesign-group-theming-list" class="nldesign-group-theming-list" role="group"
-			 aria-label="<?php p($l->t('Group theming')); ?>">
-			<p class="settings-hint"><?php p($l->t('Loading group mappings…')); ?></p>
-		</div>
-		<button type="button" id="nldesign-group-theming-add" class="button">
-			<?php p($l->t('Add mapping')); ?>
-		</button>
-		<button type="button" id="nldesign-group-theming-save" class="button primary">
-			<?php p($l->t('Save group theming')); ?>
-		</button>
-		<span id="nldesign-group-theming-feedback" class="nldesign-group-theming-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- Email template theming — mail_template_class toggle + compliance footer -->
-	<div class="nldesign-email-theming" id="nldesign-email-theming" style="margin-top:2em"
-		 data-state="<?php p($_['emailThemingState']['state']); ?>"
-		 data-config-read-only="<?php p($_['emailThemingState']['configReadOnly'] ? '1' : '0'); ?>"
-		 data-foreign-class="<?php p($_['emailThemingState']['foreignClass'] ?? ''); ?>">
-		<h3><?php p($l->t('Email template')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Brand password-reset, share-notification, and other system emails with the active token set\'s color and logo. If nldesign is later disabled, Nextcloud automatically falls back to the stock email template — mail is never blocked by this setting.')); ?>
-		</p>
-
-		<?php if ($_['emailThemingState']['state'] === 'foreign'): ?>
-			<p class="nldesign-email-foreign-note" role="alert">
-				<?php p($l->t('A different mail template class is already configured ({class}); nldesign will not overwrite it.', ['class' => $_['emailThemingState']['foreignClass']])); ?>
-			</p>
-		<?php endif; ?>
-
-		<div class="nldesign-option">
-			<input type="checkbox"
-				   name="nldesign-email-theming-enabled"
-				   id="nldesign-email-theming-enabled"
-				   class="checkbox"
-				   <?php if ($_['emailThemingState']['state'] === 'enabled'): ?>checked<?php endif; ?>
-				   <?php if ($_['emailThemingState']['state'] === 'foreign'): ?>disabled<?php endif; ?>>
-			<label for="nldesign-email-theming-enabled">
-				<?php p($l->t('Use NL Design email template')); ?>
-			</label>
-		</div>
-
-		<div class="nldesign-email-footer-fields">
-			<!-- autocomplete="off" on all three: these are INSTANCE-WIDE
-			     configuration values (the organisation shown in every
-			     outgoing mail, and that organisation's public statement
-			     URLs), not personal details of the admin filling the form.
-			     WCAG 2.2 SC 1.3.5 asks for an autocomplete token when a
-			     field collects information ABOUT THE USER; none of these
-			     do, so declaring the purpose as "off" is the accurate
-			     answer, and it stops a browser offering the admin's own
-			     profile data as the value for a setting that applies to
-			     everyone on the instance. -->
-			<label for="nldesign-email-footer-org-name"><?php p($l->t('Organization name')); ?></label>
-			<input type="text" id="nldesign-email-footer-org-name" class="nldesign-email-footer-input"
-				   autocomplete="off"
-				   value="<?php p($_['emailFooterConfig']['orgName']); ?>"
-				   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>" maxlength="2048">
-
-			<label for="nldesign-email-footer-accessibility-url"><?php p($l->t('Accessibility statement URL')); ?></label>
-			<input type="url" id="nldesign-email-footer-accessibility-url" class="nldesign-email-footer-input"
-				   autocomplete="off"
-				   value="<?php p($_['emailFooterConfig']['accessibilityUrl']); ?>"
-				   placeholder="https://example.org/toegankelijkheidsverklaring" maxlength="2048">
-
-			<label for="nldesign-email-footer-privacy-url"><?php p($l->t('Privacy statement URL')); ?></label>
-			<input type="url" id="nldesign-email-footer-privacy-url" class="nldesign-email-footer-input"
-				   autocomplete="off"
-				   value="<?php p($_['emailFooterConfig']['privacyUrl']); ?>"
-				   placeholder="https://example.org/privacy" maxlength="2048">
-		</div>
-
-		<button type="button" id="nldesign-email-theming-save" class="button">
-			<?php p($l->t('Save email template settings')); ?>
-		</button>
-		<span id="nldesign-email-theming-feedback" class="nldesign-email-theming-feedback" role="status" aria-live="polite"></span>
-
-		<div class="nldesign-email-occ-hint" id="nldesign-email-occ-hint" role="alert" style="display:none">
-			<p><?php p($l->t('config.php is read-only. Run one of the following commands manually to enable or disable the email template:')); ?></p>
-			<p><code id="nldesign-email-occ-enable"><?php p($_['occEnableCommand']); ?></code></p>
-			<p><code id="nldesign-email-occ-disable"><?php p($_['occDisableCommand']); ?></code></p>
-		</div>
-	</div>
-
 	<div class="nldesign-preview" id="nldesign-preview">
 		<div class="nldesign-preview-head">
 			<h3><?php p($l->t('Preview')); ?></h3>
@@ -463,6 +292,237 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint"><?php p($l->t('Loading token editor…')); ?></p>
 	</div>
 
+	<!-- Freeform custom CSS — admin-authored arbitrary rules, sanitised
+	     server-side and emitted after every other theming layer. -->
+	<div class="nldesign-custom-css" id="nldesign-custom-css" style="margin-top:2em">
+		<h3><?php p($l->t('Custom CSS')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Freeform CSS applied after every other theming layer, so it always wins. Use it for tweaks the token editor cannot express.')); ?>
+		</p>
+		<p class="settings-hint">
+			<?php p($l->t('For safety this is checked before it is saved: @import, external url() references, script-execution vectors and HTML tags are refused, as are the background variables Nextcloud needs for dark mode. Relative paths and data: URIs are allowed. Every save is written to the audit log.')); ?>
+		</p>
+		<p>
+			<input type="checkbox" id="nldesign-custom-css-enabled" class="checkbox">
+			<label for="nldesign-custom-css-enabled"><?php p($l->t('Enable custom CSS')); ?></label>
+		</p>
+		<label for="nldesign-custom-css-input" class="hidden-visually"><?php p($l->t('Custom CSS')); ?></label>
+		<textarea id="nldesign-custom-css-input" rows="10" spellcheck="false"
+				  style="width:100%;font-family:monospace;font-size:13px"
+				  placeholder=".app-content { padding: 8px; }"></textarea>
+		<button type="button" id="nldesign-custom-css-save" class="button primary">
+			<?php p($l->t('Save custom CSS')); ?>
+		</button>
+		<span id="nldesign-custom-css-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- Theming per app — exclude individual apps from nldesign theming -->
+	<div class="nldesign-app-theming" id="nldesign-app-theming" style="margin-top:2em">
+		<h3><?php p($l->t('Theming per app')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Choose which apps the NL Design theme applies to. Unchecking an app makes its pages render with stock Nextcloud styling, including the header on those pages.')); ?>
+		</p>
+		<div id="nldesign-app-theming-list" class="nldesign-app-theming-list" role="group"
+			 aria-label="<?php p($l->t('Theming per app')); ?>">
+			<p class="settings-hint"><?php p($l->t('Loading apps…')); ?></p>
+		</div>
+		<button type="button" id="nldesign-app-theming-save" class="button">
+			<?php p($l->t('Save app theming')); ?>
+		</button>
+		<span id="nldesign-app-theming-feedback" class="nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- Group theming — map Nextcloud groups to token sets for shared-instance
+	     multi-tenant huisstijl (openspec/specs/per-group-theming/spec.md).
+	     Row order IS priority order; keyboard-operable move-up/move-down
+	     buttons instead of drag-and-drop. -->
+	<div class="nldesign-group-theming" id="nldesign-group-theming" style="margin-top:2em">
+		<h3><?php p($l->t('Group theming')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Map Nextcloud groups to token sets so different gemeenten sharing one instance each see their own house style. Row order is priority order: for a user in multiple mapped groups, the first matching row wins.')); ?>
+		</p>
+		<p class="settings-hint">
+			<?php p($l->t('Logo, mail templates, and other Nextcloud core branding always follow the instance default token set above — they are not per-group. Only this token-set stylesheet layer differs per group.')); ?>
+		</p>
+		<div id="nldesign-group-theming-list" class="nldesign-group-theming-list" role="group"
+			 aria-label="<?php p($l->t('Group theming')); ?>">
+			<p class="settings-hint"><?php p($l->t('Loading group mappings…')); ?></p>
+		</div>
+		<button type="button" id="nldesign-group-theming-add" class="button">
+			<?php p($l->t('Add mapping')); ?>
+		</button>
+		<button type="button" id="nldesign-group-theming-save" class="button primary">
+			<?php p($l->t('Save group theming')); ?>
+		</button>
+		<span id="nldesign-group-theming-feedback" class="nldesign-group-theming-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- Custom font upload -->
+	<div class="nldesign-custom-fonts" id="nldesign-custom-fonts" style="margin-top:2em">
+		<h3><?php p($l->t('Custom fonts')); ?></h3>
+		<p class="nldesign-license-notice">
+			<?php p($l->t('Only upload fonts your organization holds a license to self-host. Licensing responsibility rests with the uploader.')); ?>
+		</p>
+		<p class="settings-hint">
+			<?php p($l->t('Upload a WOFF2 font file (max 2 MB, 20 fonts max) and assign it to the body text or heading role. Uploaded fonts are self-hosted — no external requests.')); ?>
+		</p>
+		<div class="nldesign-upload-form">
+			<label for="nldesign-font-name"><?php p($l->t('Font display name')); ?></label>
+			<input type="text" id="nldesign-font-name" class="nldesign-font-name"
+				   placeholder="<?php p($l->t('e.g. Rijks Sans')); ?>"
+				   maxlength="64">
+			<label for="nldesign-font-role"><?php p($l->t('Font role')); ?></label>
+			<select id="nldesign-font-role" name="nldesign-font-role">
+				<option value="body"><?php p($l->t('Body text')); ?></option>
+				<option value="heading"><?php p($l->t('Heading')); ?></option>
+			</select>
+			<input type="file" id="nldesign-font-input" accept=".woff2"
+				   aria-label="<?php p($l->t('Font file to upload (WOFF2)')); ?>"
+				   style="display:none">
+			<button type="button" id="nldesign-font-upload-btn" class="button">
+				<?php p($l->t('Choose font and upload')); ?>
+			</button>
+		</div>
+		<div id="nldesign-font-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+		<div id="nldesign-font-list" class="nldesign-custom-set-list" role="group"
+			 aria-label="<?php p($l->t('Custom fonts')); ?>">
+			<p class="settings-hint"><?php p($l->t('Loading fonts…')); ?></p>
+		</div>
+	</div>
+
+	<!-- Hide Slogan/Payoff Option -->
+	<div class="nldesign-option">
+		<input type="checkbox"
+			   name="nldesign-hide-slogan"
+			   id="nldesign-hide-slogan"
+			   class="checkbox"
+			   <?php if ($_['hideSlogan']): ?>checked<?php endif; ?>>
+		<label for="nldesign-hide-slogan">
+			<?php p($l->t('Hide Nextcloud slogan/payoff on login page')); ?>
+		</label>
+	</div>
+
+	<!-- Show Menu Labels Option -->
+	<div class="nldesign-option">
+		<input type="checkbox"
+			   name="nldesign-show-menu-labels"
+			   id="nldesign-show-menu-labels"
+			   class="checkbox"
+			   <?php if ($_['showMenuLabels']): ?>checked<?php endif; ?>>
+		<label for="nldesign-show-menu-labels">
+			<?php p($l->t('Show text labels in app menu (hide icons)')); ?>
+		</label>
+	</div>
+
+	<!-- Primary drives every component — the deliberate opt-out of per-component
+	     theming (openspec/specs/component-tokens/spec.md). Off by default, and
+	     that is not a behaviour change: with no per-component value stored the
+	     component tokens already resolve to the brand primary. Turning it on
+	     emits css/primary-lock.css, which forces them back to the brand value,
+	     and locks the colour controls the primary now owns. Stored values are
+	     kept, so turning it off restores them. -->
+	<div class="nldesign-option">
+		<input type="checkbox"
+			   name="nldesign-primary-drives-components"
+			   id="nldesign-primary-drives-components"
+			   class="checkbox"
+			   <?php if ($_['primaryDrivesComponents']): ?>checked<?php endif; ?>>
+		<label for="nldesign-primary-drives-components">
+			<?php p($l->t('Let the primary colour drive every component')); ?>
+		</label>
+		<p class="settings-hint">
+			<?php p($l->t('While this is on, the brand primary overrules any colour set on an individual component, and those controls are locked. Switching it off gives each component its own colour back.')); ?>
+		</p>
+	</div>
+
+	<!-- Dark mode variants — instance-wide toggle for the generated dark
+	     stylesheets (openspec/specs/dark-mode/spec.md). Never touches the
+	     user's/instance's Nextcloud dark/light/system theme choice; it only
+	     follows whatever Nextcloud itself already decided. -->
+	<div class="nldesign-option">
+		<input type="checkbox"
+			   name="nldesign-dark-variants"
+			   id="nldesign-dark-variants"
+			   class="checkbox"
+			   <?php if ($_['darkVariantsEnabled']): ?>checked<?php endif; ?>>
+		<label for="nldesign-dark-variants">
+			<?php p($l->t('Enable dark mode variants for the active token set')); ?>
+		</label>
+	</div>
+	<p class="settings-hint">
+		<?php p($l->t('When enabled, a generated dark-mode stylesheet follows whichever Nextcloud dark/light/system theme is already active — it never changes your Nextcloud theme choice itself.')); ?>
+	</p>
+
+	<!-- Email template theming — mail_template_class toggle + compliance footer -->
+	<div class="nldesign-email-theming" id="nldesign-email-theming" style="margin-top:2em"
+		 data-state="<?php p($_['emailThemingState']['state']); ?>"
+		 data-config-read-only="<?php p($_['emailThemingState']['configReadOnly'] ? '1' : '0'); ?>"
+		 data-foreign-class="<?php p($_['emailThemingState']['foreignClass'] ?? ''); ?>">
+		<h3><?php p($l->t('Email template')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Brand password-reset, share-notification, and other system emails with the active token set\'s color and logo. If nldesign is later disabled, Nextcloud automatically falls back to the stock email template — mail is never blocked by this setting.')); ?>
+		</p>
+
+		<?php if ($_['emailThemingState']['state'] === 'foreign'): ?>
+			<p class="nldesign-email-foreign-note" role="alert">
+				<?php p($l->t('A different mail template class is already configured ({class}); nldesign will not overwrite it.', ['class' => $_['emailThemingState']['foreignClass']])); ?>
+			</p>
+		<?php endif; ?>
+
+		<div class="nldesign-option">
+			<input type="checkbox"
+				   name="nldesign-email-theming-enabled"
+				   id="nldesign-email-theming-enabled"
+				   class="checkbox"
+				   <?php if ($_['emailThemingState']['state'] === 'enabled'): ?>checked<?php endif; ?>
+				   <?php if ($_['emailThemingState']['state'] === 'foreign'): ?>disabled<?php endif; ?>>
+			<label for="nldesign-email-theming-enabled">
+				<?php p($l->t('Use NL Design email template')); ?>
+			</label>
+		</div>
+
+		<div class="nldesign-email-footer-fields">
+			<!-- autocomplete="off" on all three: these are INSTANCE-WIDE
+			     configuration values (the organisation shown in every
+			     outgoing mail, and that organisation's public statement
+			     URLs), not personal details of the admin filling the form.
+			     WCAG 2.2 SC 1.3.5 asks for an autocomplete token when a
+			     field collects information ABOUT THE USER; none of these
+			     do, so declaring the purpose as "off" is the accurate
+			     answer, and it stops a browser offering the admin's own
+			     profile data as the value for a setting that applies to
+			     everyone on the instance. -->
+			<label for="nldesign-email-footer-org-name"><?php p($l->t('Organization name')); ?></label>
+			<input type="text" id="nldesign-email-footer-org-name" class="nldesign-email-footer-input"
+				   autocomplete="off"
+				   value="<?php p($_['emailFooterConfig']['orgName']); ?>"
+				   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>" maxlength="2048">
+
+			<label for="nldesign-email-footer-accessibility-url"><?php p($l->t('Accessibility statement URL')); ?></label>
+			<input type="url" id="nldesign-email-footer-accessibility-url" class="nldesign-email-footer-input"
+				   autocomplete="off"
+				   value="<?php p($_['emailFooterConfig']['accessibilityUrl']); ?>"
+				   placeholder="https://example.org/toegankelijkheidsverklaring" maxlength="2048">
+
+			<label for="nldesign-email-footer-privacy-url"><?php p($l->t('Privacy statement URL')); ?></label>
+			<input type="url" id="nldesign-email-footer-privacy-url" class="nldesign-email-footer-input"
+				   autocomplete="off"
+				   value="<?php p($_['emailFooterConfig']['privacyUrl']); ?>"
+				   placeholder="https://example.org/privacy" maxlength="2048">
+		</div>
+
+		<button type="button" id="nldesign-email-theming-save" class="button">
+			<?php p($l->t('Save email template settings')); ?>
+		</button>
+		<span id="nldesign-email-theming-feedback" class="nldesign-email-theming-feedback" role="status" aria-live="polite"></span>
+
+		<div class="nldesign-email-occ-hint" id="nldesign-email-occ-hint" role="alert" style="display:none">
+			<p><?php p($l->t('config.php is read-only. Run one of the following commands manually to enable or disable the email template:')); ?></p>
+			<p><code id="nldesign-email-occ-enable"><?php p($_['occEnableCommand']); ?></code></p>
+			<p><code id="nldesign-email-occ-disable"><?php p($_['occDisableCommand']); ?></code></p>
+		</div>
+	</div>
+
 	<!-- Upstream token updates — opt-in daily freshness check against
 	     nl-design-system/themes (openspec/specs/upstream-freshness/spec.md).
 	     Disabled by default; the toggle label discloses the contacted host.
@@ -488,30 +548,6 @@ if ($_['mockUi'] === true) {
 			 aria-label="<?php p($l->t('Upstream token updates')); ?>"></div>
 	</div>
 
-	<!-- Freeform custom CSS — admin-authored arbitrary rules, sanitised
-	     server-side and emitted after every other theming layer. -->
-	<div class="nldesign-custom-css" id="nldesign-custom-css" style="margin-top:2em">
-		<h3><?php p($l->t('Custom CSS')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Freeform CSS applied after every other theming layer, so it always wins. Use it for tweaks the token editor cannot express.')); ?>
-		</p>
-		<p class="settings-hint">
-			<?php p($l->t('For safety this is checked before it is saved: @import, external url() references, script-execution vectors and HTML tags are refused, as are the background variables Nextcloud needs for dark mode. Relative paths and data: URIs are allowed. Every save is written to the audit log.')); ?>
-		</p>
-		<p>
-			<input type="checkbox" id="nldesign-custom-css-enabled" class="checkbox">
-			<label for="nldesign-custom-css-enabled"><?php p($l->t('Enable custom CSS')); ?></label>
-		</p>
-		<label for="nldesign-custom-css-input" class="hidden-visually"><?php p($l->t('Custom CSS')); ?></label>
-		<textarea id="nldesign-custom-css-input" rows="10" spellcheck="false"
-				  style="width:100%;font-family:monospace;font-size:13px"
-				  placeholder=".app-content { padding: 8px; }"></textarea>
-		<button type="button" id="nldesign-custom-css-save" class="button primary">
-			<?php p($l->t('Save custom CSS')); ?>
-		</button>
-		<span id="nldesign-custom-css-feedback" role="status" aria-live="polite"></span>
-	</div>
-
 	<!-- Theming audit log — who changed which theming setting, from what, to
 	     what, and when. Evidence for accessibility/WCAG-EM audits. -->
 	<div class="nldesign-audit-log" id="nldesign-audit-log" style="margin-top:2em">
@@ -519,19 +555,24 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint">
 			<?php p($l->t('A record of theming configuration changes: who changed what, from what, to what, and when. Useful evidence for accessibility audits.')); ?>
 		</p>
+		<div class="nldesign-audit-scroll" tabindex="0" role="region"
+		     aria-label="<?php p($l->t('Theming audit log')); ?>">
 		<table class="nldesign-audit-table" id="nldesign-audit-table">
 			<thead>
 				<tr>
 					<th scope="col"><?php p($l->t('Timestamp')); ?></th>
 					<th scope="col"><?php p($l->t('User')); ?></th>
 					<th scope="col"><?php p($l->t('Action')); ?></th>
-					<th scope="col"><?php p($l->t('Details')); ?></th>
+					<th scope="col"><?php p($l->t('From')); ?></th>
+					<th scope="col"><?php p($l->t('To')); ?></th>
+					<th scope="col"><?php p($l->t('Changed')); ?></th>
 				</tr>
 			</thead>
 			<tbody id="nldesign-audit-table-body">
-				<tr><td colspan="4" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
+				<tr><td colspan="6" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
 			</tbody>
 		</table>
+		</div>
 		<button type="button" id="nldesign-audit-download-btn" class="button">
 			<?php p($l->t('Download full log')); ?>
 		</button>

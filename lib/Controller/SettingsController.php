@@ -324,6 +324,43 @@ class SettingsController extends Controller {
 	}//end setSloganSetting()
 
 	/**
+	 * Set whether the brand primary overrules the component tokens it used to drive.
+	 *
+	 * Turning this on emits `css/primary-lock.css`, which forces every component
+	 * token flagged `primary` in `scripts/mapping/component-tokens.json` back to
+	 * the brand value. Stored per-component values are left untouched, so turning
+	 * it off restores them.
+	 *
+	 * @param bool $primaryDrivesComponents Whether the primary overrules component tokens.
+	 *
+	 * @return JSONResponse The response with the status.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 *
+	 * @SuppressWarnings(PHPMD.LongVariable) - the parameter name IS the wire contract: Nextcloud binds it from the JSON body key the
+	 * admin panel posts, so shortening it to satisfy a length rule would rename the API field.
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function setPrimaryDrivesComponentsSetting(bool $primaryDrivesComponents): JSONResponse {
+		$previous = ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1');
+		$this->saveBooleanSetting(key: 'primary_drives_components', value: $primaryDrivesComponents);
+
+		$this->auditService->log(
+			action: 'toggle_changed',
+			context: [
+				'key' => 'primary_drives_components',
+				'old' => $previous,
+				'new' => $primaryDrivesComponents,
+			]
+		);
+
+		return new JSONResponse(
+			['status' => 'ok', 'primaryDrivesComponents' => $primaryDrivesComponents]
+		);
+	}//end setPrimaryDrivesComponentsSetting()
+
+	/**
 	 * Set the show menu labels setting.
 	 *
 	 * @param bool $showMenuLabels Whether to show text labels in app menu.
@@ -405,11 +442,22 @@ class SettingsController extends Controller {
 		$current = (int)$this->config->getAppValue(Application::APP_ID, 'theming_syncs_total', '0');
 		$this->config->setAppValue(Application::APP_ID, 'theming_syncs_total', (string)($current + 1));
 
+		// A SECOND SNAPSHOT, not $updated. The audit service diffs `old`
+		// against `new` to fill the entry's `changed` list, and that only
+		// means anything when both sides are the same shape. $updated is a
+		// LIST of the field names that were written; $before is a keyed
+		// snapshot. Diffing a map's keys against a list's indices reported
+		// every one of the snapshot's fields as changed on every sync, plus
+		// the integers 0, 1, 2 — so the one field a reader relies on to see
+		// what a sync actually did was noise. $updated is still what the
+		// response carries; the audit entry gets before-and-after.
+		$after = $this->buildThemingSnapshot();
+
 		$this->auditService->log(
 			action: 'theming_sync_applied',
 			context: [
 				'old' => $before,
-				'new' => $updated,
+				'new' => $after,
 			]
 		);
 

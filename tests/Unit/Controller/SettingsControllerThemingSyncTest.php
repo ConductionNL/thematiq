@@ -270,6 +270,45 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	}//end testASuccessfulApplyRecordsTheSyncedImageAndCountsIt()
 
 	/**
+	 * The audit entry's `old` and `new` are both SNAPSHOTS, so the trail can
+	 * say what a sync changed.
+	 *
+	 * `new` used to be the list of field names that were written, while `old`
+	 * was a keyed snapshot. ThemingAuditService diffs the two to fill the
+	 * entry's `changed` list, and diffing a map's keys against a list's
+	 * indices named every snapshot field on every sync plus the integers 0, 1
+	 * and 2 — so the field a reader relies on to see what happened carried
+	 * nothing but noise. The response still carries the list; the audit entry
+	 * carries before and after.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-append-only-audit-entries
+	 */
+	public function testTheSyncAuditEntryComparesTwoSnapshots(): void {
+		$this->withParams(['primary_color' => '#154273']);
+		$this->themingService->method('validateColors')->willReturn(null);
+		$this->themingService->method('validateImagePaths')->willReturn(null);
+		$this->themingService->method('applyColors')->willReturn(['primary_color']);
+		$this->themingService->method('applyImages')->willReturn([]);
+
+		$this->controller->updateThemingValues();
+
+		$context = $this->audited[0][1];
+
+		$this->assertArrayHasKey('old', $context);
+		$this->assertArrayHasKey('new', $context);
+
+		// Both sides carry the snapshot's own keys, and neither is a list.
+		$this->assertArrayHasKey('primary_color', $context['old']);
+		$this->assertArrayHasKey('primary_color', $context['new']);
+		$this->assertSame(array_keys($context['old']), array_keys($context['new']));
+		$this->assertNotSame(
+			array_keys($context['new']),
+			range(0, (count($context['new']) - 1)),
+			'`new` must be a snapshot, not a list of written field names.'
+		);
+	}//end testTheSyncAuditEntryComparesTwoSnapshots()
+
+	/**
 	 * The sync counter accumulates rather than being re-set to one; it is the
 	 * value `MetricsController` exposes as `nldesign_theming_syncs_total`.
 	 *

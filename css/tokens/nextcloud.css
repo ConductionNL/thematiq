@@ -6,6 +6,20 @@
  * an appearance identical to a vanilla Nextcloud installation.
  *
  * Values sourced from Nextcloud 32 default theme (server/core/css/server.css).
+ *
+ * THIS FILE IS NOW THE FALLBACK, NOT THE SOURCE.
+ *
+ * `StockTokensService` resolves this set from the running instance, so the
+ * page normally carries values that match whatever Nextcloud is installed and
+ * this file is never read. It is emitted only when the instance cannot be
+ * asked — a missing or changed theming app — because a stale theme is a
+ * cosmetic defect and no theme at all is a blank page.
+ *
+ * So the values below are ALLOWED to be out of date and updating them by hand
+ * fixes nothing an admin will ever see. Measured on 34.0.4: 17 of the 29
+ * values that map onto a live Nextcloud variable were wrong, several of them
+ * inverted in role after Nextcloud turned `--color-error` and its siblings
+ * from saturated fills into pale backgrounds.
  */
 
 :root {

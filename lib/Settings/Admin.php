@@ -27,6 +27,7 @@ namespace OCA\Thematiq\Settings;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -123,6 +124,15 @@ class Admin implements IDelegatedSettings {
 	private IRequest $request;
 
 	/**
+	 * Assembles what the component playground instrument reads at boot: the
+	 * component inventory, the reason vocabulary and the active set's token
+	 * values.
+	 *
+	 * @var PlaygroundStateService
+	 */
+	private PlaygroundStateService $playgroundState;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -134,6 +144,10 @@ class Admin implements IDelegatedSettings {
 	 * @param DesignSystemService $designSystemService Resolves the active icon pack.
 	 * @param IInitialState $initialState Carries server state to admin.js.
 	 * @param IRequest $request The current request (presentation-mock switch).
+	 * @param PlaygroundStateService $playgroundState What the component playground reads at boot.
+	 *
+	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - this is the app's one admin settings form, and Nextcloud's container injects
+	 *   through the constructor and nothing else; the parameter count is the number of things the panel renders.
 	 */
 	public function __construct(
 		IConfig $config,
@@ -145,6 +159,7 @@ class Admin implements IDelegatedSettings {
 		DesignSystemService $designSystemService,
 		IInitialState $initialState,
 		IRequest $request,
+		PlaygroundStateService $playgroundState,
 	) {
 		$this->config = $config;
 		$this->l = $l;
@@ -155,6 +170,7 @@ class Admin implements IDelegatedSettings {
 		$this->designSystemService = $designSystemService;
 		$this->initialState = $initialState;
 		$this->request = $request;
+		$this->playgroundState = $playgroundState;
 	}//end __construct()
 
 	/**
@@ -177,29 +193,20 @@ class Admin implements IDelegatedSettings {
 			'nextcloud'
 		);
 
-		$hideSlogan = $this->config->getAppValue(
-			Application::APP_ID,
-			'hide_slogan',
-			'0'
-		) === '1';
+		$hideSlogan = $this->isFlagOn(key: 'hide_slogan');
+		$showMenuLabels = $this->isFlagOn(key: 'show_menu_labels');
 
-		$showMenuLabels = $this->config->getAppValue(
-			Application::APP_ID,
-			'show_menu_labels',
-			'0'
-		) === '1';
+		// Whether the brand primary overrules every component token it used to
+		// drive. OFF by default, and that costs nothing visually: with no
+		// per-component value stored, the component tokens already resolve to the
+		// brand primary, so an instance that has never opened the playground
+		// renders identically either way. Turning it ON is the deliberate choice
+		// to give that back up — the primary wins again and the per-component
+		// colour controls lock.
+		$drivesComponents = $this->isFlagOn(key: 'primary_drives_components');
 
-		$darkVariantsEnabled = $this->config->getAppValue(
-			Application::APP_ID,
-			'dark_variants',
-			'1'
-		) === '1';
-
-		$marianneEnabled = $this->config->getAppValue(
-			Application::APP_ID,
-			'marianne_enabled',
-			'0'
-		) === '1';
+		$darkVariantsEnabled = $this->isFlagOn(key: 'dark_variants', fallback: '1');
+		$marianneEnabled = $this->isFlagOn(key: 'marianne_enabled');
 
 		// The design system backing the current token set — resolved from the
 		// already-fetched $tokenSets inventory (TokenSetService surfaces
@@ -231,6 +238,11 @@ class Admin implements IDelegatedSettings {
 		$this->initialState->provideInitialState('currentTokenSet', $currentTokenSet);
 		$this->publishPreviewState(activePreview: $activePreview, iconPackSource: $iconPackSource);
 
+		$this->publishPlaygroundState(
+			currentTokenSet: $currentTokenSet,
+			activePreview: $activePreview
+		);
+
 		return new TemplateResponse(
 			Application::APP_ID,
 			'settings/admin',
@@ -240,6 +252,7 @@ class Admin implements IDelegatedSettings {
 				'currentDesignSystem' => $currentDesignSystem,
 				'hideSlogan' => $hideSlogan,
 				'showMenuLabels' => $showMenuLabels,
+				'primaryDrivesComponents' => $drivesComponents,
 				'darkVariantsEnabled' => $darkVariantsEnabled,
 				'marianneEnabled' => $marianneEnabled,
 				'emailThemingState' => $emailThemingState,
@@ -256,6 +269,24 @@ class Admin implements IDelegatedSettings {
 			]
 		);
 	}//end getForm()
+
+	/**
+	 * Reads one on/off appconfig flag.
+	 *
+	 * Every toggle on this panel is stored the same way — the string '1' or
+	 * '0' under the app id — and getForm() read five of them as five identical
+	 * five-line blocks. One name for that shape keeps the method at the length
+	 * phpmd allows and keeps the default visible at the call site, which is the
+	 * part that differs between them.
+	 *
+	 * @param string $key      The appconfig key.
+	 * @param string $fallback The value to assume when the key was never set.
+	 *
+	 * @return bool Whether the flag is on.
+	 */
+	private function isFlagOn(string $key, string $fallback = '0'): bool {
+		return ($this->config->getAppValue(Application::APP_ID, $key, $fallback) === '1');
+	}//end isFlagOn()
 
 	/**
 	 * Publish the two initial-state keys the preview banner and the icon-pack
@@ -280,6 +311,38 @@ class Admin implements IDelegatedSettings {
 		$this->initialState->provideInitialState('activePreview', ($activePreview ?? []));
 		$this->initialState->provideInitialState('iconPackSource', $iconPackSource);
 	}//end publishPreviewState()
+
+	/**
+	 * Publish what the component playground reads at boot.
+	 *
+	 * The instrument (js/playground.js) rebuilds the token editor below into a
+	 * selector / stage / tokens view. Everything it shows is data published
+	 * here — the script decides none of it.
+	 *
+	 * The set it describes is the one the page is WEARING, so a session
+	 * preview wins over the persisted set: an admin previewing a set and
+	 * opening a component must be shown the set in front of them.
+	 *
+	 * Keys are forwarded rather than named here so the service stays the one
+	 * place that decides what the instrument is given.
+	 *
+	 * @param string                    $currentTokenSet The persisted token set id.
+	 * @param array<string, mixed>|null $activePreview   The active session preview, or null when there is none.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	private function publishPlaygroundState(string $currentTokenSet, ?array $activePreview): void {
+		$playgroundSet = $currentTokenSet;
+		if ($activePreview !== null) {
+			$playgroundSet = $activePreview['tokenSet'];
+		}
+
+		foreach ($this->playgroundState->getInitialState(tokenSetId: $playgroundSet) as $key => $value) {
+			$this->initialState->provideInitialState($key, $value);
+		}
+	}//end publishPlaygroundState()
 
 	/**
 	 * Resolve the read-only "active icon pack" indicator: the resolved

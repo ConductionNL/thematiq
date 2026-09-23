@@ -154,7 +154,10 @@ header#header .header-menu__trigger {
 #header .header-start svg,
 #header .app-menu__waffle,
 #header .app-menu__waffle svg {
-	color: var(--nldesign-color-header-text) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 	filter: none !important;
 	-webkit-filter: none !important;
 	opacity: 1 !important;
@@ -374,10 +377,12 @@ body,
 p,
 span:not(#header span):not(#header * span):not(.tile-widget span):not(
 		.tile-widget * span
-	):not(.button-vue--vue-primary span):not(.button-vue--vue-primary *),
+	):not(.button-vue--vue-primary span):not(.button-vue--vue-primary *):not(
+		.button-vue--primary span
+	):not(.button-vue--primary *),
 div:not(#header div):not(#header * div):not(.tile-widget div):not(
 		.tile-widget * div
-	):not(.button-vue--vue-primary div),
+	):not(.button-vue--vue-primary div):not(.button-vue--primary div),
 li:not(#header li):not(#header * li),
 a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-text)) !important;
@@ -502,8 +507,11 @@ a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
  * colour makes the hex label vanish on a pale swatch. See the longer note on
  * the matching rule in theme.css. */
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
+.button-vue--primary:not([data-admin-theming-setting-color-picker]),
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
+.button-vue--primary:not([data-admin-theming-setting-color-picker]) *,
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) span,
+.button-vue--primary:not([data-admin-theming-setting-color-picker]) span,
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
 	.button-vue__text,
 .button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
@@ -517,12 +525,24 @@ a.primary *,
 .button.primary,
 .button.primary *,
 .button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
+.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker]),
 .button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
+.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker]) *,
 button[class*='primary']:not([data-admin-theming-setting-color-picker]),
 button[class*='primary']:not([data-admin-theming-setting-color-picker]) *,
 .button-vue[class*='primary']:not([data-admin-theming-setting-color-picker]),
 .button-vue[class*='primary']:not([data-admin-theming-setting-color-picker]) * {
-	color: var(--nldesign-color-primary-text) !important;
+	/* The component token first, the brand token behind it.
+	 *
+	 * This rule claims the label AND every descendant of a primary button, at a
+	 * specificity nothing in the scope layer can outrank — so while it read the
+	 * BRAND token directly, no per-button label token could ever take effect.
+	 * That is why the login button's label stayed white: its own token was
+	 * never in the chain that painted it. */
+	color: var(
+		--nldesign-component-button-primary-action-color,
+		var(--nldesign-color-primary-text)
+	) !important;
 }
 
 /* ============================================
@@ -587,16 +607,57 @@ button[class*='primary']:not([data-admin-theming-setting-color-picker]) *,
    BORDER RADIUS CONSISTENCY
    ============================================ */
 
+/* Split by component, and this file is the one that decides.
+ *
+ * theme.css carries the same list under "REMOVE ALL ROUNDED CORNERS", but this
+ * file loads AFTER it, so whatever is written here is what a component ends up
+ * with. While both were one blanket rule, splitting theme.css alone changed
+ * nothing — every Corner row in the playground still set a token this rule
+ * overrode. Each token below is undeclared until an admin sets one and falls
+ * back to `--nldesign-border-radius`, so a sharp theme is unaffected. */
 .button,
-button,
-.button-vue,
-input,
-textarea,
-select,
+button:not(.action-button),
+.button-vue:not(.action-button) {
+	border-radius: var(
+		--nldesign-component-button-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
+input {
+	border-radius: var(
+		--nldesign-component-textbox-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
+textarea {
+	border-radius: var(
+		--nldesign-component-textarea-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
+select {
+	border-radius: var(
+		--nldesign-component-form-select-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
 .dropdown,
-.modal-container,
 .popover {
-	border-radius: var(--nldesign-border-radius) !important;
+	border-radius: var(
+		--nldesign-component-actions-menu-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
+}
+
+.modal-container {
+	border-radius: var(
+		--nldesign-component-dialog-border-radius,
+		var(--nldesign-border-radius)
+	) !important;
 }
 
 /*
@@ -652,10 +713,19 @@ body {
  * for absolutely positioned descendants. `overflow: visible` stays — the ribbon
  * is allowed to hang below the header when its height exceeds the header's.
  */
+/* The component token wins, then the set's own header colour, then white. The
+   chain is what lets the header be moved from the playground without touching
+   `--nldesign-color-header-background`, which a token set owns. */
 #header {
-	background-color: var(--nldesign-color-header-background, #ffffff) !important;
+	background-color: var(
+		--nldesign-component-header-background-color,
+		var(--nldesign-color-header-background, #ffffff)
+	) !important;
 	background-image: none !important;
-	background: var(--nldesign-color-header-background, #ffffff) !important;
+	background: var(
+		--nldesign-component-header-background-color,
+		var(--nldesign-color-header-background, #ffffff)
+	) !important;
 	border-bottom: var(--nldesign-header-border-bottom, 0) !important;
 	overflow: visible !important;
 }
@@ -686,7 +756,10 @@ body {
 }
 
 #header nav.app-menu .app-menu-entry__label {
-	color: var(--nldesign-color-header-text) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 	font-weight: 400 !important;
 }
 
@@ -727,7 +800,10 @@ body {
  * and the extra bar is gone. */
 #header nav.app-menu .app-menu-entry--active::before,
 #header nav.app-menu .app-menu-entry--active a::before {
-	background-color: var(--nldesign-color-header-text) !important;
+	background-color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 }
 
 #header nav.app-menu .app-menu-entry {
@@ -751,10 +827,14 @@ body {
 	color: var(--color-primary) !important;
 }
 
-/* Header branding text */
+/* Header branding text — follows the header's own colour token when one is
+   set, and keeps the brand primary when none is. */
 #header .header-appname,
 #header .header-left a {
-	color: var(--nldesign-color-primary) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-primary)
+	) !important;
 	font-weight: 600 !important;
 }
 
@@ -786,7 +866,10 @@ body {
 #header .header-right a,
 #header .header-right button,
 #header .menutoggle {
-	color: var(--nldesign-color-header-text) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 	opacity: 1 !important;
 }
 
@@ -795,7 +878,10 @@ body {
    so they keep their own painting. */
 #header .header-right [class^='icon-'],
 #header .header-right svg:not([class*='avatar' i] svg):not(.user-status-icon svg) {
-	color: var(--nldesign-color-header-text) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 	fill: currentColor !important;
 	filter: none !important;
 	opacity: 1 !important;
@@ -803,7 +889,10 @@ body {
 
 /* Unified search */
 #header .unified-search__button {
-	color: var(--nldesign-color-header-text) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 	filter: none !important;
 }
 

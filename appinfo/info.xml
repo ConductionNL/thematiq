@@ -124,7 +124,7 @@ Gratis en open source onder de EUPL-1.2 licentie.
 
 		     max-version stays 34, which is the fleet-wide value; openconnector is
 		     the only repo that says 35. -->
-		<nextcloud min-version="32" max-version="34"/>
+		<nextcloud min-version="32" max-version="35"/>
 	</dependencies>
 
 	<!-- Upstream token freshness check (openspec/specs/upstream-freshness/spec.md):

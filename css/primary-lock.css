@@ -1,0 +1,67 @@
+/**
+ * GENERATED FILE — do not edit.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Source: scripts/mapping/component-tokens.json
+ * Regenerate: npm run generate:component-scopes
+ */
+
+/*
+ * The `primary_drives_components` toggle, as a stylesheet.
+ *
+ * Emitted by CssInjectionService only while the admin setting is on, and
+ * emitted AFTER custom-overrides.css so it outranks any per-component value
+ * already stored there. Nothing is deleted: turning the setting back off
+ * drops this layer and the stored values take effect again.
+ *
+ * Only the tokens flagged `primary` in the mapping appear here — the ones the
+ * brand primary used to drive before components could be themed separately.
+ * A component token for a border radius or a font weight is untouched, and
+ * stays editable while the toggle is on.
+ */
+
+:root {
+	/* header-bar */
+	--nldesign-component-header-background-color: var(--thematiq-global-color-primary) !important;
+	--nldesign-component-header-color: var(--thematiq-global-color-primary-text) !important;
+	/* login-button */
+	--nldesign-component-login-button-background-color: var(--thematiq-global-color-primary-element) !important;
+	--nldesign-component-login-button-color: var(--thematiq-global-color-primary-element-text) !important;
+	--nldesign-component-login-button-hover-background-color: var(--thematiq-global-color-primary-element-hover) !important;
+	/* logo-slogan */
+	--nldesign-component-logo-slogan-color: var(--thematiq-global-color-primary-text) !important;
+	/* app-navigation */
+	--nldesign-component-navigation-active-background-color: var(--thematiq-global-color-primary-element) !important;
+	/* sidebar */
+	--nldesign-component-sidebar-active-color: var(--thematiq-global-color-primary-element) !important;
+	/* list-item */
+	--nldesign-component-list-item-selected-background-color: var(--thematiq-global-color-primary-light) !important;
+	--nldesign-component-list-item-selected-color: var(--thematiq-global-color-primary-light-text) !important;
+	--nldesign-component-list-item-selected-hover-background-color: var(--thematiq-global-color-primary-light-hover) !important;
+	/* breadcrumbs */
+	--nldesign-component-breadcrumb-color: var(--thematiq-global-color-primary) !important;
+	/* text-input */
+	--nldesign-component-textbox-focus-border-color: var(--thematiq-global-color-primary-element) !important;
+	/* checkbox-switch */
+	--nldesign-component-checkbox-checked-background-color: var(--thematiq-global-color-primary-element) !important;
+	/* dialog */
+	--nldesign-component-dialog-confirm-background-color: var(--thematiq-global-color-primary-element) !important;
+	/* progress */
+	--nldesign-component-progress-background-color: var(--thematiq-global-color-primary-element) !important;
+	/* primary-button */
+	--nldesign-component-button-primary-action-background-color: var(--thematiq-global-color-primary-element) !important;
+	--nldesign-component-button-primary-action-color: var(--thematiq-global-color-primary-element-text) !important;
+	--nldesign-component-button-primary-action-hover-background-color: var(--thematiq-global-color-primary-element-hover) !important;
+	/* tertiary-button */
+	--nldesign-component-button-color: var(--thematiq-global-color-primary-element-light-text) !important;
+	--nldesign-component-button-hover-background-color: var(--thematiq-global-color-primary-element-light) !important;
+	--nldesign-component-button-active-background-color: var(--thematiq-global-color-primary-element-light-hover) !important;
+	/* badge-counter */
+	--nldesign-component-badge-background-color: var(--thematiq-global-color-primary-element) !important;
+	--nldesign-component-badge-color: var(--thematiq-global-color-primary-element-text) !important;
+	/* link */
+	--nldesign-component-link-color: var(--thematiq-global-color-primary) !important;
+	--nldesign-component-link-hover-color: var(--thematiq-global-color-primary-hover) !important;
+}

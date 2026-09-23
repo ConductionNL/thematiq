@@ -1,0 +1,1762 @@
+{
+	"$comment": [
+		"Component inventory for the selector / stage / tokens instrument inside the admin panel's token",
+		"editor (/settings/admin/theming). One entry per component chip, covering the @nextcloud/vue",
+		"components a token set actually repaints. `tab` is the token editor tab the chip appears under.",
+		"",
+		"`tokens` ARE COMPONENT-SCOPED, AND THAT IS THE POINT. Every name here is a",
+		"`--nldesign-component-*` token defined in scripts/mapping/component-tokens.json, not one of",
+		"Nextcloud's globals. Until version 4 these chips named the globals directly, so `Primary button`",
+		"wrote `--color-primary-element` — the variable that also paints the selected navigation entry,",
+		"the sidebar's active tab, a focused text input, the checked checkbox, the progress bar, the",
+		"dialog confirm button and the counter bubble. Moving the button moved all eight. The mapping",
+		"file now gives each chip its own token and css/component-scopes.css re-scopes the global inside",
+		"that component's subtree, so a chip reaches its own component and nothing else.",
+		"",
+		"The globals themselves are still editable, from the editor's four-tab list rather than from a",
+		"chip: moving one is MEANT to move every component that has not been given a value of its own.",
+		"They are listed as `brandTokens` in the mapping file, and tests/vitest/playgroundInventory.spec.js",
+		"reads that list so its coverage guard stays honest about what a chip is allowed not to cover.",
+		"",
+		"The instrument clones the editor's own row for each token, so edits keep flowing through the",
+		"editor's dirty tracking and Save — including the `disabled` a row carries while the",
+		"`primary_drives_components` setting owns it.",
+		"",
+		"`fixed` are facts with no token at all, carrying a reason code from the converter's vocabulary;",
+		"`states` are what the stage draws, and a token's `callout` points at the state it paints.",
+		"`layout: wide` means the component cannot be judged from a swatch — a table, a list, a dialog —",
+		"so the stage draws ONE full-width specimen carrying every callout instead of a cell per state.",
+		"",
+		"`classes` lists only the class names THEMATIQ ITSELF styles for that component: the specimen",
+		"markup uses the full real class names, but this list is the drift guard, and a name here that no",
+		"shipped stylesheet mentions means the theme has stopped reaching the component. The check",
+		"deliberately EXCLUDES css/playground*.css: the specimen fallback floor defines every class the",
+		"specimen draws, so counting it lets the drawing answer for the theme — which is how",
+		".menutoggle, .unified-search__button and .app-content-detail all passed this guard while being",
+		"names Nextcloud does not emit. tests/vitest/playgroundInventory.spec.js enforces all of it."
+	],
+	"version": 4,
+	"tabs": [
+		{
+			"id": "login",
+			"label": "Login page & Branding"
+		},
+		{
+			"id": "content",
+			"label": "Content area"
+		},
+		{
+			"id": "status",
+			"label": "Buttons & Status"
+		},
+		{
+			"id": "typography",
+			"label": "Typography"
+		}
+	],
+	"components": [
+		{
+			"id": "header-bar",
+			"tab": "login",
+			"title": "Header bar",
+			"subtitle": "#header with the app menu and the account glyphs",
+			"ground": "header",
+			"layout": "wide",
+			"classes": [
+				"app-menu",
+				"app-menu-entry",
+				"app-menu-entry--active",
+				"app-menu-entry__label",
+				"unified-search-menu",
+				"header-menu__trigger",
+				"app-menu__waffle",
+				"app-menu__current-app",
+				"app-menu__current-app-name",
+				"app-menu__current-app-icon",
+				"unified-search-input__button",
+				"avatardiv",
+				"logo"
+			],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "background · glyphs"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "hovered app entry"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-header-background-color",
+					"paints": "The header, when the set declares no header colour",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-header-color",
+					"paints": "App icons, search and the account glyphs",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-header-hover-background-color",
+					"paints": "Hovered app entry",
+					"callout": 2
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "The header colour",
+					"why": "A token set paints the header from its own header colour, which this editor does not write; the primary colour below shows only where a set declares none.",
+					"code": "derived-from-header"
+				},
+				{
+					"callout": 1,
+					"what": "Header height",
+					"why": "Nextcloud fixes the header height itself — 50px on 32 and 33, 44px from 35 — and keeps every glyph above the WCAG 2.5.8 target size.",
+					"code": "clickable-area-locked"
+				}
+			]
+		},
+		{
+			"id": "login-card",
+			"tab": "login",
+			"title": "Login card",
+			"subtitle": "NcGuestContent on #body-login",
+			"ground": "login",
+			"layout": "wide",
+			"classes": [
+				"wrapper",
+				"header-guest",
+				"logo",
+				"hidden-visually",
+				"guest-box",
+				"login-box",
+				"login-box__wrapper",
+				"login-box__alternative-logins",
+				"login-form",
+				"login-form__headline",
+				"input-field",
+				"input-field__label",
+				"input-field__input",
+				"button-vue",
+				"button-vue__icon"
+			],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "card · page behind it"
+				},
+				{
+					"n": 2,
+					"id": "button",
+					"label": "the log-in button"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-login-box-border-radius",
+					"paints": "Its corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-login-box-border-color",
+					"paints": "Its border",
+					"callout": 1
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "The page behind the card",
+					"why": "The login page shows the background image where the instance has one, and otherwise the background colour from Nextcloud's theming settings — neither is a token this editor writes.",
+					"code": "routed-to-core-theming"
+				},
+				{
+					"callout": 1,
+					"what": "Card surface",
+					"why": "The card takes Nextcloud's own main background, at the translucency core gives it, which Nextcloud theming owns so dark mode keeps working.",
+					"code": "routed-to-core-theming"
+				},
+				{
+					"callout": 1,
+					"what": "The logo and the slogan",
+					"why": "Both are content rather than colour: they come from Nextcloud's own theming settings, and the only say this app has over them is the switch that hides the slogan.",
+					"code": "routed-to-core-theming"
+				},
+				{
+					"callout": 1,
+					"what": "The card corner",
+					"why": "Nextcloud 34 rounds the login card on its container scale, which this editor does not write; the radii it does write are the ones that round what sits inside the card.",
+					"code": "geometry-kept-nextcloud"
+				}
+			]
+		},
+		{
+			"id": "login-button",
+			"tab": "login",
+			"title": "Login button",
+			"subtitle": "NcButton type=\"primary\" on the login card",
+			"ground": "content",
+			"classes": [
+				"button-vue",
+				"button-vue--vue-primary",
+				"button-vue--primary",
+				"button-vue__wrapper",
+				"button-vue__text"
+			],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "background · label"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "background on hover"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-login-button-background-color",
+					"paints": "Background",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-login-button-color",
+					"paints": "Label",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-login-button-hover-background-color",
+					"paints": "Background on hover",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-login-button-border-radius",
+					"paints": "Corner",
+					"callout": 1
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "logo-slogan",
+			"tab": "login",
+			"title": "Logo & slogan",
+			"subtitle": "the branding above the login card",
+			"ground": "login",
+			"classes": [
+				"logo",
+				"header-guest"
+			],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "slogan"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-logo-slogan-color",
+					"paints": "Slogan text",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-logo-slogan-font-family",
+					"paints": "Slogan typeface",
+					"callout": 1
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "The logo image",
+					"why": "A logo is an asset, not a token: it comes from the set's own manifest or from Nextcloud's theming settings.",
+					"code": "logo-extracted"
+				}
+			]
+		},
+		{
+			"id": "login-background",
+			"tab": "login",
+			"title": "Background",
+			"subtitle": "the page behind everything",
+			"ground": "login",
+			"classes": [
+				"body-login-container"
+			],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "image, else colour"
+				}
+			],
+			"tokens": [],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "The background image",
+					"why": "An image wins over the colour wherever the instance has one, on the login page as much as in the app, and it is uploaded in Nextcloud's own theming settings rather than set by a token.",
+					"code": "routed-to-core-theming"
+				},
+				{
+					"callout": 1,
+					"what": "The background colour",
+					"why": "The page background comes from the set's background_color through Nextcloud's theming settings, not from a token this editor writes, so dark mode keeps working.",
+					"code": "routed-to-core-theming"
+				}
+			]
+		},
+		{
+			"id": "app-navigation",
+			"tab": "content",
+			"title": "App navigation",
+			"subtitle": "NcAppNavigation with NcAppNavigationItem",
+			"ground": "plain",
+			"layout": "wide",
+			"classes": [
+				"app-navigation",
+				"app-navigation-entry",
+				"app-navigation-toggle",
+				"active"
+			],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "entry"
+				},
+				{
+					"n": 2,
+					"id": "selected",
+					"label": "selected entry"
+				},
+				{
+					"n": 3,
+					"id": "hover",
+					"label": "hovered entry"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-navigation-border-radius",
+					"paints": "Entry corners",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-navigation-color",
+					"paints": "Entry labels and icons, the selected one included",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-navigation-active-background-color",
+					"paints": "The selected entry's wash and its marker stripe",
+					"callout": 2
+				}
+			],
+			"fixed": [
+				{
+					"callout": 3,
+					"what": "The hovered and selected washes",
+					"why": "Nextcloud mixes the primary element colour into the background rather than reading a colour token — 8% hovered, 16% selected, 22% both — so the shade is computed in the browser and there is nothing to edit but the colour it is mixed from.",
+					"code": "derived-by-nextcloud"
+				},
+				{
+					"callout": 2,
+					"what": "The selected entry marker",
+					"why": "NcAppNavigationItem draws a fixed 3px stripe in ::before; its width and its radius are the component's geometry, not a theme value.",
+					"code": "geometry-kept-nextcloud"
+				},
+				{
+					"callout": 1,
+					"what": "Navigation and page surface",
+					"why": "The column takes Nextcloud's own main background and sits on its plain page background; Nextcloud theming owns both, so dark mode keeps working.",
+					"code": "routed-to-core-theming"
+				}
+			]
+		},
+		{
+			"id": "content-card",
+			"tab": "content",
+			"title": "Content card",
+			"subtitle": "NcAppContent with its list and detail columns",
+			"ground": "plain",
+			"layout": "wide",
+			"classes": [
+				"app-content",
+				"app-content-wrapper",
+				"app-content-list",
+				"app-content-details",
+				"content"
+			],
+			"radiusToken": "--body-container-radius",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "container · dividers"
+				},
+				{
+					"n": 2,
+					"id": "scroll",
+					"label": "scrollbar"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-content-card-container-border-radius",
+					"paints": "Container corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-content-card-border-radius",
+					"paints": "Rounded surfaces inside it",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-content-card-border-color",
+					"paints": "The rule between list and detail",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-content-card-scrollbar-color",
+					"paints": "Scrollbar thumb",
+					"callout": 1
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "Content surface",
+					"why": "The surface every app draws on is Nextcloud's own main background, which Nextcloud theming owns.",
+					"code": "routed-to-core-theming"
+				}
+			]
+		},
+		{
+			"id": "table",
+			"tab": "content",
+			"title": "Table",
+			"subtitle": "a file list: header row, zebra rows, hover",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"states": [
+				{
+					"n": 1,
+					"id": "header",
+					"label": "header row · rules"
+				},
+				{
+					"n": 2,
+					"id": "zebra",
+					"label": "zebra row"
+				},
+				{
+					"n": 3,
+					"id": "hover",
+					"label": "hovered row"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-table-header-color",
+					"paints": "Header row labels and secondary cells",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-table-border-color",
+					"paints": "The rule under each row",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-table-zebra-background-color",
+					"paints": "Zebra row",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-table-row-hover-background-color",
+					"paints": "Hovered row",
+					"callout": 2
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "Row height and column spacing",
+					"why": "A token set is a reskin: it carries colours and leaves table geometry and header weight to Nextcloud.",
+					"code": "geometry-kept-nextcloud"
+				}
+			]
+		},
+		{
+			"id": "sidebar",
+			"tab": "content",
+			"title": "Sidebar",
+			"subtitle": "NcAppSidebar with its tab strip",
+			"ground": "plain",
+			"layout": "wide",
+			"classes": [
+				"app-sidebar"
+			],
+			"radiusToken": "--border-radius-large",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "panel · tab strip"
+				},
+				{
+					"n": 2,
+					"id": "active",
+					"label": "active tab"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-sidebar-border-color",
+					"paints": "Its left edge and the tab strip rule",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-sidebar-divider-color",
+					"paints": "The stronger divider",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-sidebar-border-radius",
+					"paints": "Panel corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-sidebar-active-color",
+					"paints": "The active tab underline",
+					"callout": 2
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "list-item",
+			"tab": "content",
+			"title": "List item",
+			"subtitle": "NcListItem with NcAvatar and a counter",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [
+				"list-item",
+				"avatardiv",
+				"user-status-icon"
+			],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "row · subline"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "hovered row"
+				},
+				{
+					"n": 3,
+					"id": "selected",
+					"label": "selected row"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-list-item-border-radius",
+					"paints": "Row corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-list-item-subline-color",
+					"paints": "The subline",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-list-item-hover-background-color",
+					"paints": "Hovered row",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-list-item-transition-duration",
+					"paints": "The hover transition",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-list-item-selected-background-color",
+					"paints": "Selected row",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-list-item-selected-color",
+					"paints": "Its text",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-list-item-selected-hover-background-color",
+					"paints": "The selected row on hover",
+					"callout": 3
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "empty-content",
+			"tab": "content",
+			"title": "Empty content",
+			"subtitle": "NcEmptyContent",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "icon · title · description"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-empty-content-color",
+					"paints": "Its title",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-empty-content-description-color",
+					"paints": "Its description",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-empty-content-icon-background-color",
+					"paints": "The disc behind the icon",
+					"callout": 1
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "actions-menu",
+			"tab": "content",
+			"title": "Actions menu",
+			"subtitle": "NcActions in an NcPopover",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [
+				"popover",
+				"popovermenu",
+				"action",
+				"action-button",
+				"icon-vue",
+				"button-vue",
+				"button-vue--tertiary"
+			],
+			"radiusToken": "--border-radius-large",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "panel · entries"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "hovered entry"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-actions-menu-color",
+					"paints": "Entry labels",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-actions-menu-border-radius",
+					"paints": "Panel corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-actions-menu-hover-background-color",
+					"paints": "Hovered entry",
+					"callout": 2
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "Panel surface",
+					"why": "The popover takes Nextcloud's own main background, which Nextcloud theming owns.",
+					"code": "routed-to-core-theming"
+				}
+			]
+		},
+		{
+			"id": "avatar",
+			"tab": "content",
+			"title": "Avatar",
+			"subtitle": "NcAvatar with NcUserStatusIcon, on the header",
+			"ground": "header",
+			"classes": [
+				"avatardiv",
+				"user-status-icon"
+			],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "disc · initials"
+				},
+				{
+					"n": 2,
+					"id": "status",
+					"label": "status dot"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-avatar-online-status-color",
+					"paints": "The online status dot",
+					"callout": 1
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "The disc and its initials",
+					"why": "Nextcloud renders an avatar as an image — uploaded, or generated from the account name — so no token paints it; an opaque image covers whatever colour the cascade puts behind it.",
+					"code": "logo-extracted"
+				}
+			]
+		},
+		{
+			"id": "breadcrumbs",
+			"tab": "content",
+			"title": "Breadcrumbs",
+			"subtitle": "NcBreadcrumbs",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "crumbs · separators"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "hovered crumb"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-breadcrumb-color",
+					"paints": "A crumb that is a link",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-breadcrumb-separator-color",
+					"paints": "The separators",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-breadcrumb-hover-background-color",
+					"paints": "The hovered crumb",
+					"callout": 2
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "settings-section",
+			"tab": "content",
+			"title": "Settings section",
+			"subtitle": "NcSettingsSection — the frame this panel is in",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "heading · hint · rule"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-settings-section-heading-color",
+					"paints": "The section heading",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-settings-section-hint-color",
+					"paints": "Its hint text",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-settings-section-border-color",
+					"paints": "The rule between sections",
+					"callout": 1
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "text-input",
+			"tab": "content",
+			"title": "Text input",
+			"subtitle": "NcTextField / NcInputField",
+			"ground": "content",
+			"classes": [
+				"input-field",
+				"input-field__label"
+			],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "border · placeholder"
+				},
+				{
+					"n": 2,
+					"id": "focus",
+					"label": "focused border"
+				},
+				{
+					"n": 3,
+					"id": "invalid",
+					"label": "invalid border"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-textbox-border-color",
+					"paints": "Border",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-textbox-placeholder-color",
+					"paints": "Placeholder",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-textbox-placeholder-light-color",
+					"paints": "Placeholder on a tinted field",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-textbox-border-radius",
+					"paints": "Corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-textbox-focus-border-color",
+					"paints": "Focused border and label",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-textbox-invalid-border-color",
+					"paints": "Invalid border",
+					"callout": 3
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "Field height and padding",
+					"why": "Nextcloud keeps a 34px/44px minimum clickable area for WCAG 2.5.8.",
+					"code": "clickable-area-locked"
+				}
+			]
+		},
+		{
+			"id": "select",
+			"tab": "content",
+			"title": "Select",
+			"subtitle": "NcSelect with its options list open",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "control"
+				},
+				{
+					"n": 2,
+					"id": "open",
+					"label": "hovered option"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-form-select-border-color",
+					"paints": "Control border",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-form-select-border-radius",
+					"paints": "Corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-form-select-option-hover-background-color",
+					"paints": "Hovered option",
+					"callout": 2
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "checkbox-switch",
+			"tab": "content",
+			"title": "Checkbox & switch",
+			"subtitle": "NcCheckboxRadioSwitch, all three types",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"radiusToken": "--border-radius-small",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "unchecked"
+				},
+				{
+					"n": 2,
+					"id": "checked",
+					"label": "checked"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-checkbox-border-color",
+					"paints": "The unchecked outline",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-checkbox-border-radius",
+					"paints": "The checkbox corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-checkbox-checked-background-color",
+					"paints": "The checked mark, dot and switch track",
+					"callout": 2
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "textarea",
+			"tab": "content",
+			"title": "Textarea",
+			"subtitle": "NcTextArea",
+			"ground": "content",
+			"classes": [],
+			"radiusToken": "--border-radius",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "border · corner"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-textarea-border-color",
+					"paints": "Border",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-textarea-border-radius",
+					"paints": "Corner",
+					"callout": 1
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "dialog",
+			"tab": "content",
+			"title": "Dialog",
+			"subtitle": "NcDialog / NcModal with its button row",
+			"ground": "overlay",
+			"layout": "wide",
+			"classes": [
+				"modal-container",
+				"modal-wrapper",
+				"modal-mask",
+				"dialogs"
+			],
+			"radiusToken": "--border-radius-large",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "surface · header rule"
+				},
+				{
+					"n": 2,
+					"id": "buttons",
+					"label": "its button row"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-dialog-border-radius",
+					"paints": "Corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-dialog-border-color",
+					"paints": "The rule under the header",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-dialog-transition-duration",
+					"paints": "Its open and close transition",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-dialog-confirm-background-color",
+					"paints": "Its confirm button",
+					"callout": 2
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "Dialog surface",
+					"why": "The dialog takes Nextcloud's own main background, which Nextcloud theming owns.",
+					"code": "routed-to-core-theming"
+				}
+			]
+		},
+		{
+			"id": "progress",
+			"tab": "content",
+			"title": "Progress & loading",
+			"subtitle": "NcProgressBar and NcLoadingIcon",
+			"ground": "content",
+			"classes": [
+				"icon-loading"
+			],
+			"radiusToken": "--border-radius-pill",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "fill · track"
+				},
+				{
+					"n": 2,
+					"id": "loading",
+					"label": "the spinner"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-progress-background-color",
+					"paints": "The filled part of the bar",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-progress-track-background-color",
+					"paints": "Its track",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-progress-border-radius",
+					"paints": "Bar shape",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-progress-transition-duration",
+					"paints": "The spinner's rotation",
+					"callout": 2
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "primary-button",
+			"tab": "status",
+			"title": "Primary button",
+			"subtitle": "NcButton type=\"primary\"",
+			"ground": "content",
+			"classes": [
+				"button-vue",
+				"button-vue--vue-primary",
+				"button-vue--primary",
+				"button-vue__wrapper",
+				"button-vue__text"
+			],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "background · label"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "background on hover"
+				},
+				{
+					"n": 3,
+					"id": "focus",
+					"label": "focus ring"
+				},
+				{
+					"n": 4,
+					"id": "disabled",
+					"label": "fixed by Nextcloud",
+					"fixed": true
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-button-primary-action-background-color",
+					"paints": "Background",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-primary-action-color",
+					"paints": "Label",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-primary-action-hover-background-color",
+					"paints": "Background on hover",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-button-focus-border-color",
+					"paints": "Focus ring",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-button-border-radius",
+					"paints": "Corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-font-weight",
+					"paints": "Label weight",
+					"callout": 1
+				}
+			],
+			"fixed": [
+				{
+					"callout": 4,
+					"what": "Disabled state",
+					"why": "Nextcloud renders disabled buttons at 50 % opacity; there is nothing to set.",
+					"code": "derived-by-nextcloud"
+				}
+			]
+		},
+		{
+			"id": "secondary-button",
+			"tab": "status",
+			"title": "Secondary button",
+			"subtitle": "NcButton type=\"secondary\"",
+			"ground": "content",
+			"classes": [
+				"button-vue",
+				"button-vue--vue-secondary",
+				"button-vue--secondary",
+				"button-vue__wrapper",
+				"button-vue__text"
+			],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "background · label"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "background on hover"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-button-secondary-action-background-color",
+					"paints": "Background",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-secondary-action-color",
+					"paints": "Label",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-secondary-action-hover-background-color",
+					"paints": "Background on hover",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-button-secondary-action-border-radius",
+					"paints": "Corner",
+					"callout": 1
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "tertiary-button",
+			"tab": "status",
+			"title": "Tertiary button",
+			"subtitle": "NcButton type=\"tertiary\"",
+			"ground": "content",
+			"classes": [
+				"button-vue",
+				"button-vue__wrapper",
+				"button-vue__text"
+			],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "label only"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "background on hover"
+				},
+				{
+					"n": 3,
+					"id": "active",
+					"label": "background, pressed"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-button-color",
+					"paints": "Label",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-hover-background-color",
+					"paints": "Background on hover",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-button-active-background-color",
+					"paints": "Background when pressed",
+					"callout": 3
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "error-button",
+			"tab": "status",
+			"title": "Error button",
+			"subtitle": "NcButton type=\"error\"",
+			"ground": "content",
+			"classes": [
+				"button-vue",
+				"button-vue__wrapper",
+				"button-vue__text"
+			],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "background"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "background on hover"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-button-error-background-color",
+					"paints": "Background",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-error-background-color-rgb",
+					"paints": "Its tinted fill, mixed from the same colour",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-error-hover-background-color",
+					"paints": "Background on hover",
+					"callout": 2
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "success-button",
+			"tab": "status",
+			"title": "Success button",
+			"subtitle": "NcButton type=\"success\"",
+			"ground": "content",
+			"classes": [
+				"button-vue",
+				"button-vue__wrapper",
+				"button-vue__text"
+			],
+			"radiusToken": "--border-radius-element",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "background · icon"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-button-success-background-color",
+					"paints": "Background",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-success-color",
+					"paints": "Its icon",
+					"callout": 1
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "note-cards",
+			"tab": "status",
+			"title": "Note cards",
+			"subtitle": "NcNoteCard, all four types",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [
+				"notecard"
+			],
+			"radiusToken": "--border-radius",
+			"states": [
+				{
+					"n": 1,
+					"id": "info",
+					"label": "info"
+				},
+				{
+					"n": 2,
+					"id": "warning",
+					"label": "warning"
+				},
+				{
+					"n": 3,
+					"id": "error",
+					"label": "error"
+				},
+				{
+					"n": 4,
+					"id": "success",
+					"label": "success"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-notecard-info-color",
+					"paints": "Info stripe",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-notecard-info-icon-color",
+					"paints": "Info glyph",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-notecard-border-radius",
+					"paints": "Card corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-notecard-warning-color",
+					"paints": "Warning stripe",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-notecard-warning-icon-color",
+					"paints": "Warning glyph",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-notecard-warning-color-rgb",
+					"paints": "Warning fill, mixed from the same colour",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-notecard-error-color",
+					"paints": "Error stripe",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-notecard-error-icon-color",
+					"paints": "Error glyph",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-notecard-error-border-color",
+					"paints": "Error card border",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-notecard-error-color-rgb",
+					"paints": "Error fill, mixed from the same colour",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-notecard-success-color",
+					"paints": "Success stripe",
+					"callout": 4
+				},
+				{
+					"name": "--nldesign-component-notecard-success-icon-color",
+					"paints": "Success glyph",
+					"callout": 4
+				},
+				{
+					"name": "--nldesign-component-notecard-success-border-color",
+					"paints": "Success card border",
+					"callout": 4
+				},
+				{
+					"name": "--nldesign-component-notecard-success-color-rgb",
+					"paints": "Success fill, mixed from the same colour",
+					"callout": 4
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "badge-counter",
+			"tab": "status",
+			"title": "Badge & counter",
+			"subtitle": "NcCounterBubble and the favourite star",
+			"ground": "content",
+			"classes": [],
+			"radiusToken": "--border-radius-pill",
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "counter bubble"
+				},
+				{
+					"n": 2,
+					"id": "favorite",
+					"label": "favourite star"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-badge-background-color",
+					"paints": "The highlighted bubble",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-badge-color",
+					"paints": "Its number",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-badge-border-radius",
+					"paints": "Bubble shape",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-badge-favorite-color",
+					"paints": "The favourite star",
+					"callout": 2
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "toast",
+			"tab": "status",
+			"title": "Toast",
+			"subtitle": "OCP.Toast, all four types",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [
+				"toastify"
+			],
+			"radiusToken": "--border-radius",
+			"states": [
+				{
+					"n": 1,
+					"id": "success",
+					"label": "success"
+				},
+				{
+					"n": 2,
+					"id": "error",
+					"label": "error"
+				},
+				{
+					"n": 3,
+					"id": "warning",
+					"label": "warning"
+				},
+				{
+					"n": 4,
+					"id": "info",
+					"label": "info"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-toast-success-background-color",
+					"paints": "Success toast",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-toast-border-radius",
+					"paints": "Corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-toast-error-background-color",
+					"paints": "Error toast",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-toast-warning-background-color",
+					"paints": "Warning toast",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-toast-info-background-color",
+					"paints": "Info toast",
+					"callout": 4
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "heading",
+			"tab": "typography",
+			"title": "Headings",
+			"subtitle": "h1 to h4 in the type scale",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "colour · typeface"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-heading-font-family",
+					"paints": "Typeface",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-heading-color",
+					"paints": "Heading colour",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-heading-font-weight",
+					"paints": "Heading weight",
+					"callout": 1
+				}
+			],
+			"fixed": [
+				{
+					"callout": 1,
+					"what": "Heading sizes",
+					"why": "Nextcloud sizes text from its own 15px baseline so icons, inputs and rows stay aligned.",
+					"code": "typography-scale-locked"
+				}
+			]
+		},
+		{
+			"id": "paragraph",
+			"tab": "typography",
+			"title": "Paragraph",
+			"subtitle": "body text at reading length",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "colour · typeface"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-paragraph-color",
+					"paints": "Body text",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-paragraph-font-family",
+					"paints": "Typeface",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-paragraph-font-weight",
+					"paints": "Body weight",
+					"callout": 1
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "link",
+			"tab": "typography",
+			"title": "Link",
+			"subtitle": "an inline link in body text",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"states": [
+				{
+					"n": 1,
+					"id": "default",
+					"label": "link colour"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "link on hover"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-link-color",
+					"paints": "Link colour",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-link-hover-color",
+					"paints": "Link on hover",
+					"callout": 2
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "muted-text",
+			"tab": "typography",
+			"title": "Muted text",
+			"subtitle": "the three weights below body text",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"states": [
+				{
+					"n": 1,
+					"id": "maxcontrast",
+					"label": "still passes AA"
+				},
+				{
+					"n": 2,
+					"id": "light",
+					"label": "one step lighter"
+				},
+				{
+					"n": 3,
+					"id": "lighter",
+					"label": "the lightest"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-text-muted-color",
+					"paints": "Secondary text that still has to pass AA",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-text-light-color",
+					"paints": "Text one step lighter than body",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-text-lighter-color",
+					"paints": "The lightest text Nextcloud uses",
+					"callout": 1
+				}
+			],
+			"fixed": []
+		},
+		{
+			"id": "status-text",
+			"tab": "typography",
+			"title": "Status text",
+			"subtitle": "inline error, warning and success text",
+			"ground": "content",
+			"layout": "wide",
+			"classes": [],
+			"states": [
+				{
+					"n": 1,
+					"id": "error",
+					"label": "error text"
+				},
+				{
+					"n": 2,
+					"id": "warning",
+					"label": "warning text"
+				},
+				{
+					"n": 3,
+					"id": "success",
+					"label": "success text"
+				}
+			],
+			"tokens": [
+				{
+					"name": "--nldesign-component-text-error-color",
+					"paints": "Error text",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-text-warning-color",
+					"paints": "Warning text",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-text-success-color",
+					"paints": "Success text",
+					"callout": 3
+				}
+			],
+			"fixed": []
+		}
+	]
+}

@@ -152,6 +152,22 @@
 		'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 		Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
 
+	/* The base weight scale. NL Design keeps one — Utrecht spells it
+	 * `--utrecht-typography-weight-scale-{normal,bold}-font-weight` — and
+	 * Nextcloud 33 exposed the same three roles as variables, so they map one
+	 * to one and a set can move any of them.
+	 *
+	 * `--font-weight-element` is Nextcloud's CONTROL weight, and it reaches
+	 * more than buttons: NcActionButton reads it for every row of an actions
+	 * menu. It is kept at Nextcloud's own 500 rather than raised to NL Design's
+	 * button weight, because pushing it to 700 bolds every menu row — which is
+	 * not what Nextcloud draws and not what NL Design asks for. Buttons stay
+	 * bold through their own component token below, which is exactly what a
+	 * component token is for. */
+	--nldesign-font-weight-default: 400;
+	--nldesign-font-weight-element: 500;
+	--nldesign-font-weight-heading: 700;
+
 	/* ===================================================================
 	 * BORDER RADIUS
 	 * =================================================================== */
@@ -302,41 +318,63 @@
 	 * COMPONENT TOKENS — Typography: Headings
 	 * =================================================================== */
 
+	/* ALL headings, which is the level the playground's `Headings` chip edits.
+	 * The six per-level tokens below derive from these three rather than from
+	 * the brand tokens directly, so moving the heading colour or weight once
+	 * moves h1 through h6 — while a token set that wants one level to differ
+	 * still overrides that level's own token and wins, because its declaration
+	 * replaces the derivation. */
+	--nldesign-component-heading-font-family: var(--nldesign-font-family);
+	--nldesign-component-heading-font-weight: var(--nldesign-font-weight-heading);
+	--nldesign-component-heading-color: var(--nldesign-color-text);
+
 	/* Heading 1 */
 	--nldesign-component-heading-1-font-size: 2.5rem;
-	--nldesign-component-heading-1-font-weight: 700;
+	--nldesign-component-heading-1-font-weight: var(
+		--nldesign-component-heading-font-weight
+	);
 	--nldesign-component-heading-1-line-height: 1.2;
-	--nldesign-component-heading-1-color: var(--nldesign-color-text);
+	--nldesign-component-heading-1-color: var(--nldesign-component-heading-color);
 
 	/* Heading 2 */
 	--nldesign-component-heading-2-font-size: 2rem;
-	--nldesign-component-heading-2-font-weight: 700;
+	--nldesign-component-heading-2-font-weight: var(
+		--nldesign-component-heading-font-weight
+	);
 	--nldesign-component-heading-2-line-height: 1.25;
-	--nldesign-component-heading-2-color: var(--nldesign-color-text);
+	--nldesign-component-heading-2-color: var(--nldesign-component-heading-color);
 
 	/* Heading 3 */
 	--nldesign-component-heading-3-font-size: 1.5rem;
-	--nldesign-component-heading-3-font-weight: 700;
+	--nldesign-component-heading-3-font-weight: var(
+		--nldesign-component-heading-font-weight
+	);
 	--nldesign-component-heading-3-line-height: 1.3;
-	--nldesign-component-heading-3-color: var(--nldesign-color-text);
+	--nldesign-component-heading-3-color: var(--nldesign-component-heading-color);
 
 	/* Heading 4 */
 	--nldesign-component-heading-4-font-size: 1.25rem;
-	--nldesign-component-heading-4-font-weight: 700;
+	--nldesign-component-heading-4-font-weight: var(
+		--nldesign-component-heading-font-weight
+	);
 	--nldesign-component-heading-4-line-height: 1.35;
-	--nldesign-component-heading-4-color: var(--nldesign-color-text);
+	--nldesign-component-heading-4-color: var(--nldesign-component-heading-color);
 
 	/* Heading 5 */
 	--nldesign-component-heading-5-font-size: 1.125rem;
-	--nldesign-component-heading-5-font-weight: 700;
+	--nldesign-component-heading-5-font-weight: var(
+		--nldesign-component-heading-font-weight
+	);
 	--nldesign-component-heading-5-line-height: 1.4;
-	--nldesign-component-heading-5-color: var(--nldesign-color-text);
+	--nldesign-component-heading-5-color: var(--nldesign-component-heading-color);
 
 	/* Heading 6 */
 	--nldesign-component-heading-6-font-size: 1rem;
-	--nldesign-component-heading-6-font-weight: 700;
+	--nldesign-component-heading-6-font-weight: var(
+		--nldesign-component-heading-font-weight
+	);
 	--nldesign-component-heading-6-line-height: 1.5;
-	--nldesign-component-heading-6-color: var(--nldesign-color-text);
+	--nldesign-component-heading-6-color: var(--nldesign-component-heading-color);
 
 	/* ===================================================================
 	 * COMPONENT TOKENS — Typography: Paragraph
@@ -345,6 +383,8 @@
 	--nldesign-component-paragraph-font-size: 1rem;
 	--nldesign-component-paragraph-line-height: 1.5;
 	--nldesign-component-paragraph-color: var(--nldesign-color-text);
+	--nldesign-component-paragraph-font-family: var(--nldesign-font-family);
+	--nldesign-component-paragraph-font-weight: var(--nldesign-font-weight-default);
 
 	/* ===================================================================
 	 * COMPONENT TOKENS — Link
@@ -353,7 +393,9 @@
 	--nldesign-component-link-color: var(--nldesign-color-link);
 	--nldesign-component-link-hover-color: var(--nldesign-color-link-hover);
 	--nldesign-component-link-visited-color: var(--nldesign-color-link-visited);
-	--nldesign-component-link-font-weight: 400; /* reserved */
+	--nldesign-component-link-font-weight: var(
+		--nldesign-font-weight-default
+	); /* reserved */
 	--nldesign-component-link-text-decoration: underline;
 
 	/* ===================================================================

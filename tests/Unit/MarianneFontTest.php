@@ -286,19 +286,27 @@ class MarianneFontTest extends TestCase {
 			'AGREEMENT-MARIANNE.md must state the French-State-agency eligibility condition.'
 		);
 
-		$etalabText = $this->readFile('LICENSES/Etalab-2.0.txt');
-		$this->assertStringContainsString('SPDX-License-Identifier: Etalab-2.0', $etalabText);
+		$etalabText = $this->readFile('LICENSES/etalab-2.0.txt');
+		// REUSE-IgnoreStart -- asserted string, not this file's own licence tag.
+		$this->assertStringContainsString('SPDX-License-Identifier: etalab-2.0', $etalabText);
+		// REUSE-IgnoreEnd
 		$this->assertMatchesRegularExpression(
 			'/LICENCE OUVERTE 2\.0/i',
 			$etalabText,
-			'LICENSES/Etalab-2.0.txt must carry the Etalab Open Licence 2.0 text.'
+			'LICENSES/etalab-2.0.txt must carry the Etalab Open Licence 2.0 text.'
 		);
 	}//end testLegalArtifactsExistAndCiteTheSource()
 
 	/**
 	 * `.license-overrides.json` maps every bundled Marianne woff2 path to
-	 * `Etalab-2.0`, and `LICENSES/Etalab-2.0.txt` exists so the identifier
+	 * `Etalab-2.0`, and `LICENSES/etalab-2.0.txt` exists so the identifier
 	 * resolves to licence text.
+	 *
+	 * The two spellings are deliberate and belong to different gates: the
+	 * override value is the licence string the dependency SBOM reports for
+	 * `@gouvfr/dsfr`, while the file name is the SPDX licence list's own
+	 * identifier, which is lower-case and is the only spelling `reuse lint`
+	 * accepts under `LICENSES/`.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
@@ -313,8 +321,8 @@ class MarianneFontTest extends TestCase {
 		}
 
 		$this->assertFileExists(
-			$this->repoRoot() . '/LICENSES/Etalab-2.0.txt',
-			'LICENSES/Etalab-2.0.txt must exist so the Etalab-2.0 identifier resolves to licence text.'
+			$this->repoRoot() . '/LICENSES/etalab-2.0.txt',
+			'LICENSES/etalab-2.0.txt must exist so the Etalab-2.0 identifier resolves to licence text.'
 		);
 	}//end testLicenseOverridesMapsMarianneFilesToEtalab()
 

@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\ThemePreviewBannerService;
 use OCP\IConfig;
 use OCP\IURLGenerator;
@@ -106,6 +107,17 @@ class CssInjectionServiceTest extends TestCase {
 	private $logger;
 
 	/**
+	 * The stock-token resolver mock.
+	 *
+	 * Inert by default — `getCss()` returns null, which is the "could not read
+	 * the instance" answer and therefore the shipped-file behaviour every other
+	 * test in this suite was written against.
+	 *
+	 * @var StockTokensService&MockObject
+	 */
+	private $stockTokens;
+
+	/**
 	 * Set up mocks before each test.
 	 */
 	protected function setUp(): void {
@@ -119,6 +131,8 @@ class CssInjectionServiceTest extends TestCase {
 		$this->groupThemingService = $this->createMock(GroupThemingService::class);
 		$this->previewBannerService = $this->createMock(ThemePreviewBannerService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->stockTokens = $this->createMock(StockTokensService::class);
+		$this->stockTokens->method('getCss')->willReturn(null);
 
 		// Default: no group mapping configured, so the resolver returns the
 		// plain appconfig token set — byte-identical to pre-per-group behaviour.
@@ -158,6 +172,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->groupThemingService,
 					$this->previewBannerService,
 					$this->logger,
+					$this->stockTokens,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitFontLink'])
@@ -250,6 +265,7 @@ class CssInjectionServiceTest extends TestCase {
 				'tokens/rijkshuisstijl',
 				'icon-contrast',
 				'error-contrast',
+				'component-scopes',
 				'custom-overrides',
 			],
 			$styleLog
@@ -337,7 +353,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertSame(
-			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'custom-overrides', 'hide-slogan', 'show-menu-labels'],
+			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'component-scopes', 'custom-overrides', 'hide-slogan', 'show-menu-labels'],
 			$styleLog
 		);
 	}//end testConditionalStylesheetsLoadedWhenEnabled()
@@ -364,7 +380,45 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertNotContains('hide-slogan', $styleLog);
 		$this->assertNotContains('show-menu-labels', $styleLog);
+		$this->assertNotContains('primary-lock', $styleLog);
 	}//end testConditionalStylesheetsAbsentWhenDisabled()
+
+	/**
+	 * `primary-lock` is emitted only while the setting is on, and LAST of all.
+	 *
+	 * It and `custom-overrides.css` both write `--nldesign-component-*` at
+	 * `:root` with `!important`, so the later of the two wins. While the
+	 * setting is on the brand primary is meant to beat a per-component value
+	 * the admin stored earlier, which is only true if this layer comes after
+	 * the overrides — hence the position is asserted, not just the presence.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testPrimaryLockEmittedLastWhenTheSettingIsOn(): void {
+		$this->configureAppValues(['primary_drives_components' => '1']);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
+		$this->designSystemService->method('getDesignSystem')->willReturn(
+			[
+				'id' => 'nldesign',
+				'name' => 'NL Design System',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$service->inject('user');
+
+		$this->assertContains('primary-lock', $styleLog);
+		$this->assertSame('primary-lock', end($styleLog), 'primary-lock is the last layer emitted');
+		$this->assertGreaterThan(
+			array_search('custom-overrides', $styleLog, true),
+			array_search('primary-lock', $styleLog, true),
+			'primary-lock must come after custom-overrides, or the stored value would win'
+		);
+	}//end testPrimaryLockEmittedLastWhenTheSettingIsOn()
 
 	/**
 	 * Custom fonts inject a `<link>` header (not a static stylesheet) after
@@ -462,6 +516,7 @@ class CssInjectionServiceTest extends TestCase {
 				'tokens/lasuite',
 				'icon-contrast',
 				'error-contrast',
+				'component-scopes',
 				'custom-overrides',
 			],
 			$styleLog

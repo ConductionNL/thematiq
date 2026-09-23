@@ -2,8 +2,14 @@
  * NL Design System Theme - Admin Settings Styles
  */
 
+/* Wider than the 800px this carried before. Nextcloud's own theming section
+   spans far more of the settings pane, and the component stage below is a
+   drawing of a HEADER — a bar that is the full width of the screen in life and
+   was being judged inside a column narrower than a phone in landscape. Reading
+   width is protected where it matters by `.nldesign-pg-reading`, so the extra
+   room reaches the specimens without turning the prose into a ledger line. */
 #nldesign-settings {
-	max-width: 800px;
+	max-width: 1100px;
 }
 
 #nldesign-settings h2 {
@@ -548,6 +554,17 @@
 	gap: 12px;
 	padding: 7px 0;
 	border-bottom: 1px solid var(--color-border);
+}
+/* A row the "primary drives every component" setting has taken ownership of.
+ *
+ * Dimmed rather than hidden: the stored value is still there and comes back the
+ * moment the setting is switched off, and a row that vanished would read as a
+ * value that was thrown away. `cursor: not-allowed` is on the row rather than
+ * the input because a disabled input does not fire pointer events, so the
+ * cursor would never change over the control itself. */
+.nldesign-token-row--locked {
+	opacity: 0.55;
+	cursor: not-allowed;
 }
 .nldesign-token-label-wrap {
 	flex: 1 1 auto;
@@ -1159,6 +1176,135 @@
 	display: block;
 	margin-top: 0.5em;
 	color: var(--color-text-maxcontrast);
+}
+
+/* ==========================================================================
+   Theming audit log
+   ==========================================================================
+
+   The panel shipped as a bare <table> with no rules of its own, so it drew at
+   browser defaults: no cell padding, no header weight beyond the UA's bold, no
+   rule anywhere. Beside the rest of this settings page that read as unformatted
+   output rather than as a table, which is the whole point of the panel — it is
+   the evidence an accessibility audit is shown.
+
+   Colours come from Nextcloud's own variables, so the panel follows the active
+   theme and this app's overrides of it rather than pinning greys of its own. */
+/* The panel scrolls SIDEWAYS in its own container at every width, not just on
+   a phone. Six columns of audit evidence do not fit the settings column on a
+   laptop either, and the previous answer — `table-layout: fixed` with declared
+   percentages — did not bound anything: a nowrap timestamp or a set name wider
+   than its 15% simply drew over the cell beside it, so Timestamp overlapped
+   User and From overlapped To on every row.
+
+   So the table sizes to its content (`auto`) and is given a floor wide enough
+   for all six columns to be read; whatever the settings column cannot show is
+   reached by scrolling the container. The container, not the <table>:
+   `display: block` on a table drops its implicit table role in Chrome and
+   Firefox, which unassociates every `th[scope=col]` from its cells, and this
+   is the panel shown to an accessibility auditor.
+
+   The container is focusable because an `overflow-x: auto` element that cannot
+   take focus cannot be scrolled without a pointer (SC 2.1.1). It carries a
+   role and a name so the focus stop announces itself rather than being a
+   silent one. */
+.nldesign-audit-scroll {
+	max-width: 100%;
+	overflow-x: auto;
+	/* The gap to the download button below; the table itself no longer carries
+	   a bottom margin, which would fall inside the container border. */
+	margin-bottom: 1em;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large, 8px);
+	background-color: var(--color-main-background);
+}
+
+.nldesign-audit-scroll:focus-visible {
+	outline: 2px solid var(--color-primary-element);
+	outline-offset: 2px;
+}
+
+.nldesign-audit-table {
+	width: 100%;
+	/* Wide enough that no column has to be squeezed below what it holds. Under
+	   the settings column this is exceeded, which is what the scroller is for. */
+	min-width: 72em;
+	table-layout: auto;
+	margin-bottom: 0;
+	border-collapse: collapse;
+	font-size: 0.9em;
+}
+
+.nldesign-audit-table th,
+.nldesign-audit-table td {
+	padding: 10px 16px;
+	text-align: start;
+	vertical-align: top;
+	border-bottom: 1px solid var(--color-border);
+}
+
+/* The header is a label row over data, a stronger break than the one between
+   two data rows: it gets the darker rule and a tint of its own. */
+.nldesign-audit-table thead th {
+	background-color: var(--color-background-dark);
+	border-bottom: 2px solid var(--color-border-dark, var(--color-border));
+	color: var(--color-text-maxcontrast);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+/* Banding carries the eye across six columns on a row that is wider than the
+   viewport — the case this panel is always in. Hover wins over the band. */
+.nldesign-audit-table tbody tr:nth-child(even) {
+	background-color: var(--color-background-hover);
+}
+
+.nldesign-audit-table tbody tr:hover {
+	background-color: var(--color-background-dark);
+}
+
+/* The last row's rule would double the container's own border. */
+.nldesign-audit-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+/* A timestamp, an actor and an action are identifiers: they are compared down
+   the column, so they hold one line each and the table widens for them rather
+   than breaking them in half. */
+.nldesign-audit-ts,
+.nldesign-audit-actor,
+.nldesign-audit-action {
+	white-space: nowrap;
+}
+
+.nldesign-audit-ts {
+	font-variant-numeric: tabular-nums;
+	color: var(--color-text-maxcontrast);
+}
+
+/* The action is the app's own vocabulary — a key, not prose — so it is set as
+   one. */
+.nldesign-audit-action {
+	font-family: var(--font-face-monospace, monospace);
+	font-size: 0.95em;
+}
+
+/* From and To hold the one thing a reader compares across, so they line up at
+   a common width and wrap inside it: a custom token set name an admin chose or
+   a sha256 digest has nowhere else to break. */
+.nldesign-audit-value {
+	width: 12em;
+	min-width: 9em;
+	overflow-wrap: anywhere;
+}
+
+/* Changed is the unbounded column — every token name a write touched, forty of
+   them on one overrides_written entry. It gets a preferred width and wraps
+   inside it instead of stretching the row past any useful scroll distance. */
+.nldesign-audit-changed {
+	width: 26em;
+	color: var(--color-text-maxcontrast);
+	overflow-wrap: anywhere;
 }
 
 /* ==========================================================================
