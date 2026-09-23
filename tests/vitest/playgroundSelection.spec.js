@@ -108,8 +108,12 @@ describe('component instrument: the rows under a component', () => {
 		const groups = playground.rowsByState(component)
 
 		expect(groups.map((group) => group.state.n)).toEqual([1, 2, 3, 4])
+		// The button's OWN background token, not `--color-primary-element`. The
+		// chip named that global until the component-token layer landed, which is
+		// why moving this row also moved the navigation, the sidebar, the
+		// checkbox, the progress bar, the dialog and the counter bubble.
 		expect(groups[0].tokens.map((token) => token.name)).toContain(
-			'--color-primary-element',
+			'--nldesign-component-button-primary-action-background-color',
 		)
 	})
 

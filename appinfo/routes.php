@@ -32,6 +32,7 @@ return [
 		['name' => 'settings#getTokenSet', 'url' => '/settings/tokenset', 'verb' => 'GET'],
 		['name' => 'settings#setSloganSetting', 'url' => '/settings/slogan', 'verb' => 'POST'],
 		['name' => 'settings#setMenuLabelsSetting', 'url' => '/settings/menulabels', 'verb' => 'POST'],
+		['name' => 'settings#setPrimaryDrivesComponentsSetting', 'url' => '/settings/primary-drives-components', 'verb' => 'POST'],
 		['name' => 'settings#getThemingValues', 'url' => '/settings/theming', 'verb' => 'GET'],
 		['name' => 'settings#updateThemingValues', 'url' => '/settings/theming', 'verb' => 'POST'],
 		// Resetting core theming to stock deliberately has NO route of its own:
