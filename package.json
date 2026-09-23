@@ -60,7 +60,7 @@
 		"@gouvfr/dsfr": "^1.15.1"
 	},
 	"devDependencies": {
-		"@conduction/nextcloud-vue": "^2.36.3",
+		"@conduction/nextcloud-vue": "^2.52.0",
 		"@cyclonedx/cyclonedx-npm": "^6.0.1",
 		"@nextcloud/prettier-config": "^1.2.0",
 		"@openfun/cunningham-tokens": "^3.0.0",
@@ -73,7 +73,7 @@
 		"stylelint-config-standard": "^40.0.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^7.0.2",
-		"vite": "^8.2.2",
+		"vite": "^8.3.0",
 		"vitest": "^5.0.0"
 	},
 	"prettier": "@nextcloud/prettier-config"
