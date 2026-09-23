@@ -337,6 +337,9 @@ class SettingsController extends Controller {
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 *
+	 * @SuppressWarnings(PHPMD.LongVariable) - the parameter name IS the wire contract: Nextcloud binds it from the JSON body key the
+	 * admin panel posts, so shortening it to satisfy a length rule would rename the API field.
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setPrimaryDrivesComponentsSetting(bool $primaryDrivesComponents): JSONResponse {
