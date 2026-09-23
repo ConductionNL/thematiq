@@ -51,7 +51,9 @@
 		"l10n:build": "node scripts/build-l10n-js.js",
 		"check:l10n-js": "node scripts/build-l10n-js.js --check",
 		"generate:guest-css": "node scripts/generate-guest-css.mjs",
-		"test:guest-css": "node scripts/generate-guest-css.mjs --check"
+		"test:guest-css": "node scripts/generate-guest-css.mjs --check",
+		"generate:component-scopes": "node scripts/generate-component-scopes.mjs",
+		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check"
 	},
 	"dependencies": {
 		"@fontsource/fira-sans": "^5.0.0"
