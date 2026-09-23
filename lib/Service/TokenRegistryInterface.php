@@ -31,7 +31,7 @@ interface TokenRegistryInterface {
 	 * `--nldesign-component-*` token; `primary` marks a component token the brand
 	 * primary used to drive, which the `primary_drives_components` setting locks.
 	 *
-	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool}> The token registry.
+	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global?: string}> The token registry.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */

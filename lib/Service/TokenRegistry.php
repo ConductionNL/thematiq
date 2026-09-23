@@ -77,7 +77,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * The registry is asked for on every admin page render and the table is
 	 * parsed from disk, so the result is kept for the rest of the request.
 	 *
-	 * @var array<string, array{tab: string, type: string, label: string, group: string, primary: bool}>|null
+	 * @var array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global: string}>|null
 	 */
 	private static ?array $componentTokens = null;
 
@@ -87,7 +87,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * Keys are CSS custom property names (e.g. '--color-primary').
 	 * Values carry 'tab', 'type', 'label', 'group' and 'primary'.
 	 *
-	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool}> The token registry.
+	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global?: string}> The token registry.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
@@ -129,7 +129,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * because `css/component-scopes.css` falls back to the captured global for
 	 * every component token nobody set.
 	 *
-	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool}> The component tokens.
+	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global: string}> The component tokens.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
