@@ -95,7 +95,38 @@
 		var settingsEl = document.getElementById('nldesign-settings')
 		var tokenSetSelect = document.getElementById('nldesign-token-set-select')
 		var hideSloganCheckbox = document.getElementById('nldesign-hide-slogan')
+		var primaryDrivesComponentsCheckbox = document.getElementById(
+			'nldesign-primary-drives-components',
+		)
 		var previewRoot = document.getElementById('nldesign-preview')
+
+		// Whether the brand primary currently overrules the component tokens it
+		// used to drive. Read off the server-rendered checkbox rather than through
+		// initial state: the template already carries the value, and the flag has
+		// to stay in step with the control the admin is looking at.
+		var primaryDrivesComponents =
+			primaryDrivesComponentsCheckbox !== null
+			&& primaryDrivesComponentsCheckbox.checked === true
+
+		/**
+		 * Whether a token's control is locked by the "primary drives every
+		 * component" setting.
+		 *
+		 * Only component tokens carry `primary`. The brand tokens never lock —
+		 * that setting exists to make THEM win, so freezing them would leave the
+		 * admin with no way to change anything at all.
+		 *
+		 * @param {string} name The CSS custom property name.
+		 *
+		 * @return {boolean} True when the row must render disabled.
+		 */
+		function isTokenLocked(name) {
+			if (primaryDrivesComponents === false) {
+				return false
+			}
+			var meta = tokenRegistry[name]
+			return meta !== undefined && meta.primary === true
+		}
 
 		// Read a live CSS custom property with a fallback. Reads from <body> first
 		// (Nextcloud and the nldesign themes set their token vars there), then :root.
@@ -619,81 +650,103 @@
 		// the live NC token values. Primary comes from the selected set's metadata
 		// (it isn't applied until confirmed); the remaining colours mirror the live
 		// theme, so the token-editor pickers reflect into the preview too.
+		/**
+		 * Repaint the rich preview from the live CSS stack.
+		 *
+		 * READ EVERYTHING, THEN WRITE EVERYTHING — and that split is the whole
+		 * performance of this panel.
+		 *
+		 * This used to interleave the two: read a variable, set a `--prev-*`,
+		 * read the next. Writing to `previewRoot.style` invalidates style for
+		 * the subtree, so the read after it could not be served from the last
+		 * computation and forced a fresh synchronous one. Eighteen properties
+		 * meant eighteen full style recalculations, against a cascade that
+		 * carries theme.css, element-overrides.css, component-scopes.css and
+		 * the vendored guest sheet. The colour picker fires `input` on every
+		 * pixel of a drag, so that ran dozens of times a second — which is what
+		 * made the picker stutter.
+		 *
+		 * Reading first means one recalculation for the batch, and the writes
+		 * afterwards cost nothing until the next frame paints.
+		 *
+		 * @param {string} tokenSet The token set id the preview is drawn for.
+		 *
+		 * @return {void}
+		 */
 		function updatePreview(tokenSet) {
 			if (!previewRoot) {
 				return
 			}
+
 			var colors = getPreviewColors(tokenSet)
-			var s = previewRoot.style
-			s.setProperty('--prev-primary', colors.primary)
-			s.setProperty(
-				'--prev-primary-text',
-				colors.primaryText || readVar('--color-primary-text', '#ffffff'),
-			)
-			s.setProperty(
-				'--prev-surface',
-				readVar('--color-main-background', '#ffffff'),
-			)
-			s.setProperty('--prev-bg', readVar('--color-background-dark', '#f2f4f7'))
-			s.setProperty('--prev-text', readVar('--color-main-text', '#1b2733'))
-			s.setProperty(
-				'--prev-muted',
-				readVar('--color-text-maxcontrast', '#6b7785'),
-			)
-			s.setProperty('--prev-border', readVar('--color-border', '#e3e9f0'))
-			s.setProperty('--prev-warning', readVar('--color-warning', '#c79a00'))
-			s.setProperty('--prev-error', readVar('--color-error', '#c0392b'))
-			s.setProperty(
-				'--prev-info',
-				readVar(
+
+			// ---- read phase -------------------------------------------------
+			// Both declarations are resolved once here instead of per lookup;
+			// `readVar` builds a new pair on every call.
+			var bodyStyle = getComputedStyle(document.body)
+			var rootStyle = getComputedStyle(document.documentElement)
+
+			function read(name, fallback) {
+				var value = (bodyStyle.getPropertyValue(name) || '').trim()
+				if (value === '') {
+					value = (rootStyle.getPropertyValue(name) || '').trim()
+				}
+				return value || fallback
+			}
+
+			var primaryText =
+				colors.primaryText || read('--color-primary-text', '#ffffff')
+
+			var values = {
+				'--prev-primary': colors.primary,
+				'--prev-primary-text': primaryText,
+				'--prev-surface': read('--color-main-background', '#ffffff'),
+				'--prev-bg': read('--color-background-dark', '#f2f4f7'),
+				'--prev-text': read('--color-main-text', '#1b2733'),
+				'--prev-muted': read('--color-text-maxcontrast', '#6b7785'),
+				'--prev-border': read('--color-border', '#e3e9f0'),
+				'--prev-warning': read('--color-warning', '#c79a00'),
+				'--prev-error': read('--color-error', '#c0392b'),
+				'--prev-info': read(
 					'--color-info',
-					readVar('--color-primary-element', colors.primary),
+					read('--color-primary-element', colors.primary),
 				),
-			)
-			s.setProperty('--prev-radius', readVar('--border-radius-element', '8px'))
-			// The rounded container Nextcloud clips the navigation and the app
-			// content into, and the pill radius of a navigation entry.
-			s.setProperty(
-				'--prev-radius-container',
-				readVar(
+				'--prev-radius': read('--border-radius-element', '8px'),
+				// The rounded container Nextcloud clips the navigation and the
+				// app content into, and the pill radius of a navigation entry.
+				'--prev-radius-container': read(
 					'--body-container-radius',
-					readVar('--border-radius-large', '12px'),
+					read('--border-radius-large', '12px'),
 				),
-			)
-			s.setProperty(
-				'--prev-radius-pill',
-				readVar('--border-radius-pill', '999px'),
-			)
-			// The page background BEHIND the content container — visible in the
-			// gap around it, which is where a themed instance shows its plain
-			// colour or background image.
-			s.setProperty(
-				'--prev-plain',
-				readVar(
+				'--prev-radius-pill': read('--border-radius-pill', '999px'),
+				// The page background BEHIND the content container — visible in
+				// the gap around it, which is where a themed instance shows its
+				// plain colour or background image.
+				'--prev-plain': read(
 					'--color-background-plain',
-					readVar('--color-background-dark', '#f2f4f7'),
+					read('--color-background-dark', '#f2f4f7'),
 				),
-			)
-			// The header is its own role: a set may paint it differently from the
-			// primary (Cunningham and Amsterdam both paint it white, over a blue
-			// primary). Fall back to the primary only when the page carries no
-			// header token.
-			s.setProperty(
-				'--prev-header-bg',
-				readVar('--nldesign-color-header-background', colors.primary),
-			)
-			s.setProperty(
-				'--prev-header-text',
-				readVar(
+				// The header is its own role: a set may paint it differently
+				// from the primary (Cunningham and Amsterdam both paint it white
+				// over a blue primary). Fall back to the primary only when the
+				// page carries no header token.
+				'--prev-header-bg': read(
+					'--nldesign-color-header-background',
+					colors.primary,
+				),
+				'--prev-header-text': read(
 					'--nldesign-color-header-text',
-					colors.primaryText || readVar('--color-primary-text', '#ffffff'),
+					primaryText,
 				),
-			)
-			s.setProperty(
-				'--prev-header-border',
-				readVar('--nldesign-header-border-bottom', '0'),
-			)
-			s.setProperty('--prev-login-bg', colors.primary)
+				'--prev-header-border': read('--nldesign-header-border-bottom', '0'),
+				'--prev-login-bg': colors.primary,
+			}
+
+			// ---- write phase ------------------------------------------------
+			var s = previewRoot.style
+			Object.keys(values).forEach(function (name) {
+				s.setProperty(name, values[name])
+			})
 		}
 
 		// App / Login preview switch.
@@ -2012,6 +2065,16 @@
 			})
 		}
 
+		// Handle the "primary drives every component" checkbox
+		if (primaryDrivesComponentsCheckbox) {
+			primaryDrivesComponentsCheckbox.addEventListener(
+				'change',
+				function () {
+					savePrimaryDrivesComponentsSetting(this.checked)
+				},
+			)
+		}
+
 		// Handle show menu labels checkbox
 		var showMenuLabelsCheckbox = document.getElementById(
 			'nldesign-show-menu-labels',
@@ -2157,6 +2220,71 @@
 				})
 		}
 
+		// Save the "primary drives every component" setting to the server, then
+		// bring this page into the state it just asked for: add or drop
+		// primary-lock.css so the specimens and the playground repaint, and
+		// re-render the editor so the rows the primary now owns lock or unlock.
+		function savePrimaryDrivesComponentsSetting(enabled) {
+			var url = OC.generateUrl(
+				'/apps/thematiq/settings/primary-drives-components',
+			)
+
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({ primaryDrivesComponents: enabled }),
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					if (data.status === 'ok') {
+						primaryDrivesComponents = enabled === true
+						setConditionalLayer('primary-lock', primaryDrivesComponents)
+						refreshTokenEditorLocks()
+						notify(t('thematiq', 'Applied.'))
+					} else {
+						notify(t('thematiq', 'Failed to save setting.'))
+					}
+				})
+				.catch(function (error) {
+					console.error(
+						'Error saving primary-drives-components setting:',
+						error,
+					)
+					notify(t('thematiq', 'Failed to save setting.'))
+				})
+		}
+
+		/**
+		 * Lock or unlock the editor rows the primary owns, in place.
+		 *
+		 * Deliberately not a re-render: the editor holds unsaved edits in
+		 * `tokenEditorState`, and rebuilding the panels would drop them and reset
+		 * the open tab. Only the two attributes that express the lock are touched.
+		 *
+		 * @return {void}
+		 */
+		function refreshTokenEditorLocks() {
+			var container = document.getElementById('nldesign-token-editor')
+			if (container === null) {
+				return
+			}
+
+			container
+				.querySelectorAll('.nldesign-token-row')
+				.forEach(function (row) {
+					var locked = isTokenLocked(row.dataset.tokenRow)
+					row.classList.toggle('nldesign-token-row--locked', locked)
+					row.querySelectorAll('input').forEach(function (input) {
+						input.disabled = locked
+					})
+				})
+		}
+
 		// Save show menu labels setting to server.
 		function saveMenuLabelsSetting(showMenuLabels) {
 			var url = OC.generateUrl('/apps/thematiq/settings/menulabels')
@@ -2201,6 +2329,45 @@
 		var tokenTabLabels = {}
 
 		/**
+		 * The value a token row should show.
+		 *
+		 * A component token is deliberately UNDECLARED until somebody sets one:
+		 * that is what makes `var(--nldesign-component-x, var(--global))` in
+		 * css/component-scopes.css fall through to the brand value, and what
+		 * makes an untouched instance render exactly as it did before the
+		 * component layer existed. The cost is that `getPropertyValue` reports
+		 * it as the empty string, so every one of those rows opened blank —
+		 * a white swatch beside a component that is plainly not white.
+		 *
+		 * So when the token itself is unset, the row shows the Nextcloud
+		 * variable it falls back to: the colour the component is ACTUALLY
+		 * wearing. The registry carries that name as `global`.
+		 *
+		 * This is display only. `saveOverrides()` writes a token only when its
+		 * value differs from `resolved`, and `resolved` is what this returned —
+		 * so showing the inherited colour never writes it, and the fallback
+		 * stays live until the admin actually picks something.
+		 *
+		 * @param {CSSStyleDeclaration} rootStyle Computed style of the document element.
+		 * @param {string} name The CSS custom property name.
+		 *
+		 * @return {string} The resolved value, or its fallback, or ''.
+		 */
+		function resolveTokenValue(rootStyle, name) {
+			var own = rootStyle.getPropertyValue(name).trim()
+			if (own !== '') {
+				return own
+			}
+
+			var meta = tokenRegistry[name]
+			if (meta === undefined || !meta.global) {
+				return ''
+			}
+
+			return rootStyle.getPropertyValue(meta.global).trim()
+		}
+
+		/**
 		 * Initialise and mount the token editor panel into #nldesign-token-editor.
 		 */
 		function initTokenEditor() {
@@ -2223,7 +2390,7 @@
 					// Read resolved values from the live CSS stack.
 					var rootStyle = getComputedStyle(document.documentElement)
 					Object.keys(tokenRegistry).forEach(function (name) {
-						var resolved = rootStyle.getPropertyValue(name).trim()
+						var resolved = resolveTokenValue(rootStyle, name)
 						var overridden =
 							overrides[name] !== undefined ? overrides[name] : null
 						tokenEditorState[name] = {
@@ -2397,6 +2564,22 @@
 				}),
 			)
 
+			// Locked rows render disabled rather than hidden. The value is still
+			// stored and still shown, because turning the setting back off restores
+			// it — hiding the control would make a kept value look like a lost one.
+			// `disabled` also carries to the playground, which clones these rows.
+			var locked = isTokenLocked(name)
+			var lockedAttr = locked
+				? ' disabled title="'
+					+ escapeHtml(
+						t(
+							'thematiq',
+							'The primary colour drives this component. Switch off "Let the primary colour drive every component" to set it separately.',
+						),
+					)
+					+ '"'
+				: ''
+
 			var inputHtml = ''
 			if (meta.type === 'color') {
 				var pickerVal = normaliseColorForPicker(displayVal)
@@ -2408,14 +2591,18 @@
 					+ escapeHtml(name)
 					+ '" value="'
 					+ escapeHtml(pickerVal)
-					+ '">'
+					+ '"'
+					+ lockedAttr
+					+ '>'
 					+ '<input type="text" class="nldesign-color-text" aria-label="'
 					+ inputLabel
 					+ '" data-token="'
 					+ escapeHtml(name)
 					+ '" value="'
 					+ escapeHtml(displayVal)
-					+ '">'
+					+ '"'
+					+ lockedAttr
+					+ '>'
 					+ '</div>'
 			} else {
 				inputHtml =
@@ -2425,11 +2612,15 @@
 					+ escapeHtml(name)
 					+ '" value="'
 					+ escapeHtml(displayVal)
-					+ '">'
+					+ '"'
+					+ lockedAttr
+					+ '>'
 			}
 
 			return (
-				'<div class="nldesign-token-row" data-token-row="'
+				'<div class="nldesign-token-row'
+				+ (locked ? ' nldesign-token-row--locked' : '')
+				+ '" data-token-row="'
 				+ escapeHtml(name)
 				+ '">'
 				+ '<div class="nldesign-token-label-wrap">'
@@ -2555,14 +2746,42 @@
 				})
 		}
 
+		// Pending preview repaint, so a drag cannot queue more than one a frame.
+		var previewFrame = null
+
+		/**
+		 * Ask for a preview repaint at the next frame, at most one per frame.
+		 *
+		 * A colour input fires `input` continuously while the pointer is down —
+		 * well above 60 a second on a fast mouse — and each repaint reads the
+		 * computed cascade. Repainting per event did work the frame could never
+		 * show, because several events land between two paints and only the
+		 * last one is visible. Coalescing keeps the preview exactly as current
+		 * while doing a fraction of the work.
+		 *
+		 * @return {void}
+		 */
+		function schedulePreviewRepaint() {
+			if (previewFrame !== null) {
+				return
+			}
+			previewFrame = requestAnimationFrame(function () {
+				previewFrame = null
+				updatePreview(tokenSetSelect ? tokenSetSelect.value : '')
+			})
+		}
+
 		function applyLivePreview(name, value) {
+			// The custom property is written immediately, NOT deferred: this is
+			// what repaints the real components on the page, and the browser
+			// already batches it into the next frame for free. Only the rich
+			// preview — which has to READ the cascade back — is worth delaying.
 			if (value.trim() === '') {
 				document.documentElement.style.removeProperty(name)
 			} else {
 				document.documentElement.style.setProperty(name, value)
 			}
-			// Reflect the live token edit into the rich preview.
-			updatePreview(tokenSetSelect ? tokenSetSelect.value : '')
+			schedulePreviewRepaint()
 		}
 
 		function markDirty(name, value, container) {

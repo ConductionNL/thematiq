@@ -555,6 +555,17 @@
 	padding: 7px 0;
 	border-bottom: 1px solid var(--color-border);
 }
+/* A row the "primary drives every component" setting has taken ownership of.
+ *
+ * Dimmed rather than hidden: the stored value is still there and comes back the
+ * moment the setting is switched off, and a row that vanished would read as a
+ * value that was thrown away. `cursor: not-allowed` is on the row rather than
+ * the input because a disabled input does not fire pointer events, so the
+ * cursor would never change over the control itself. */
+.nldesign-token-row--locked {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
 .nldesign-token-label-wrap {
 	flex: 1 1 auto;
 	min-width: 0;
