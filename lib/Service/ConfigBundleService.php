@@ -251,6 +251,7 @@ class ConfigBundleService {
 				'tokenSet' => $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud'),
 				'hideSlogan' => ($this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1'),
 				'showMenuLabels' => ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1'),
+				'primaryDrivesComponents' => ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1'),
 				'disabledApps' => $this->appThemingService->getDisabledApps(),
 				'upstreamFreshnessEnabled' => $this->freshnessService->isEnabled(),
 			],
@@ -440,6 +441,11 @@ class ConfigBundleService {
 			$errors[] = ['section' => 'config', 'message' => '"config.showMenuLabels" must be a boolean.'];
 		}
 
+		$primaryDrivesComponents = ($config['primaryDrivesComponents'] ?? false);
+		if (is_bool($primaryDrivesComponents) === false) {
+			$errors[] = ['section' => 'config', 'message' => '"config.primaryDrivesComponents" must be a boolean.'];
+		}
+
 		$disabledApps = $this->validateDisabledApps(config: $config, errors: $errors);
 
 		$upstreamFreshnessEnabled = ($config['upstreamFreshnessEnabled'] ?? false);
@@ -451,6 +457,7 @@ class ConfigBundleService {
 			'tokenSet' => $tokenSet,
 			'hideSlogan' => ($hideSlogan === true),
 			'showMenuLabels' => ($showMenuLabels === true),
+			'primaryDrivesComponents' => ($primaryDrivesComponents === true),
 			'disabledApps' => $disabledApps,
 			'upstreamFreshnessEnabled' => ($upstreamFreshnessEnabled === true),
 		];
@@ -840,6 +847,7 @@ class ConfigBundleService {
 				'tokenSet' => $resolved['config']['tokenSet'],
 				'hideSlogan' => $resolved['config']['hideSlogan'],
 				'showMenuLabels' => $resolved['config']['showMenuLabels'],
+				'primaryDrivesComponents' => $resolved['config']['primaryDrivesComponents'],
 				'disabledAppsCount' => count($resolved['config']['disabledApps']),
 				'upstreamFreshnessEnabled' => $resolved['config']['upstreamFreshnessEnabled'],
 			],
@@ -884,9 +892,15 @@ class ConfigBundleService {
 			$showMenuLabelsValue = '1';
 		}
 
+		$primaryDrivesComponentsValue = '0';
+		if ($config['primaryDrivesComponents'] === true) {
+			$primaryDrivesComponentsValue = '1';
+		}
+
 		$this->config->setAppValue(Application::APP_ID, 'token_set', $config['tokenSet']);
 		$this->config->setAppValue(Application::APP_ID, 'hide_slogan', $hideSloganValue);
 		$this->config->setAppValue(Application::APP_ID, 'show_menu_labels', $showMenuLabelsValue);
+		$this->config->setAppValue(Application::APP_ID, 'primary_drives_components', $primaryDrivesComponentsValue);
 		$this->appThemingService->setDisabledApps(appIds: $config['disabledApps']);
 		$this->freshnessService->setEnabled(enabled: $config['upstreamFreshnessEnabled']);
 
