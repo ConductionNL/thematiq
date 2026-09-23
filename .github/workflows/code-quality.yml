@@ -191,8 +191,10 @@ jobs:
       # 35. Playwright is the job that reads [0], and
       # tests/e2e/spec-coverage/selector-liveness.spec.ts is a cross-version
       # stylesheet audit whose SINCE deferrals expire only once the survey
-      # reaches the newest supported major (MAX_SUPPORTED_NC, read from
-      # info.xml). Surveying 32 would defer the NC33+ header selectors
+      # reaches the newest supported major (MAX_SUPPORTED_NC, a constant in that
+      # spec file that mirrors info.xml BY HAND — it still reads 34, so raising
+      # it is a separate decision: it expires that file's SINCE deferrals).
+      # Surveying 32 would defer the NC33+ header selectors
       # indefinitely; surveying the newest major forces them to be proven live —
       # which is how the eight dead NC 32/33-only selectors now recorded in that
       # file's ALLOWED list were found. Leaving stable34 in front of a declared
