@@ -232,8 +232,8 @@ class CssInjectionService {
 	 * appconfig (see {@see isContextThemed()}). Otherwise this is the
 	 * verbatim former `Application::injectThemeCSS()` body: design-system
 	 * stylesheets in declared order, token set CSS, icon/error contrast
-	 * fixes, custom overrides, custom fonts, then conditional
-	 * hide-slogan/show-menu-labels stylesheets.
+	 * fixes, the component scopes, custom overrides, custom fonts, then
+	 * conditional hide-slogan/show-menu-labels/primary-lock stylesheets.
 	 *
 	 * @param string $context One of `user`/`login`/`guest`/`public`/`error`,
 	 *                        or any other value (always themed — fail open).
@@ -440,6 +440,14 @@ class CssInjectionService {
 		// (see css/error-contrast.css).
 		$layers[] = ['layer' => 'contrast', 'kind' => 'file', 'file' => 'error-contrast'];
 
+		// 3.9. Component scopes, last of the set layers: it captures the `:root`
+		// declarations the layers above make, and the admin's own overrides come
+		// after it and are allowed to move the brand values those captures resolve
+		// to. It rides with the set layers rather than beside them so `none` stays
+		// stock — that branch returns above — and so the manifest carries it, which
+		// is what lets the client add and remove it without a reload.
+		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
+
 		return $layers;
 	}//end designSystemLayers()
 
@@ -604,11 +612,20 @@ class CssInjectionService {
 	}//end injectCustomFontLink()
 
 	/**
-	 * Emit the appconfig-gated hide-slogan and show-menu-labels stylesheets.
+	 * Emit the appconfig-gated hide-slogan, show-menu-labels and primary-lock
+	 * stylesheets.
+	 *
+	 * `primary-lock` is emitted LAST on purpose. It and `custom-overrides.css`
+	 * both write `--nldesign-component-*` at `:root` with `!important`, so the
+	 * later of the two wins — and while the setting is on, the brand primary is
+	 * meant to beat a per-component value the admin stored earlier. Nothing is
+	 * deleted: turning the setting off drops this layer and the stored values
+	 * take effect again.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	private function injectConditionalStyles(): void {
 		if ($this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1') {
@@ -617,6 +634,10 @@ class CssInjectionService {
 
 		if ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1') {
 			$this->emitStyle(file: 'show-menu-labels');
+		}
+
+		if ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1') {
+			$this->emitStyle(file: 'primary-lock');
 		}
 	}//end injectConditionalStyles()
 

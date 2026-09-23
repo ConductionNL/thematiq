@@ -1405,6 +1405,26 @@
 	function renderStage(state, component) {
 		state.stage.innerHTML = ''
 
+		// Name the component this stage is drawing, so the theme can reach the
+		// specimen the way it reaches the real thing.
+		//
+		// A specimen carries the component's real CLASS names, which is enough
+		// for every component whose own rules are class-scoped. It is not
+		// enough for the four whose rules are id-scoped — `#header`, and the
+		// three under `#body-login` — because a specimen cannot carry an id
+		// that belongs to the page it is drawn on. The login button is the
+		// visible case: its specimen is the same `.button-vue--primary` markup
+		// as the primary button's, so without this hook it was painted by the
+		// PRIMARY button's token and an admin editing the login colour saw
+		// nothing move.
+		//
+		// css/component-scopes.css lists `[data-thematiq-component='<id>']`
+		// beside each component's real selectors, so the specimen resolves the
+		// same tokens the real component does. Nothing in the design-system
+		// stylesheets knows about the playground; the redirect is entirely in
+		// the generated scope layer.
+		state.stage.setAttribute('data-thematiq-component', component.id)
+
 		// Drop the scope map so this stage is stamped from the sheets that are
 		// loaded NOW. See ensureScopes(): a map read while one chunk was still
 		// in flight is partial rather than empty, and keeping it leaves that
