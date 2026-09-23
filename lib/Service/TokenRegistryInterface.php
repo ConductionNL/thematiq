@@ -27,7 +27,11 @@ interface TokenRegistryInterface {
 	/**
 	 * Returns the full registry of editable tokens.
 	 *
-	 * @return array<string, array{tab: string, type: string, label: string}> The token registry.
+	 * `group` is `brand` for Nextcloud's own globals and the component id for a
+	 * `--nldesign-component-*` token; `primary` marks a component token the brand
+	 * primary used to drive, which the `primary_drives_components` setting locks.
+	 *
+	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool}> The token registry.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */

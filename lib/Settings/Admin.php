@@ -205,6 +205,19 @@ class Admin implements IDelegatedSettings {
 			'0'
 		) === '1';
 
+		// Whether the brand primary overrules every component token it used to
+		// drive. OFF by default, and that costs nothing visually: with no
+		// per-component value stored, the component tokens already resolve to the
+		// brand primary, so an instance that has never opened the playground
+		// renders identically either way. Turning it ON is the deliberate choice
+		// to give that back up — the primary wins again and the per-component
+		// colour controls lock.
+		$primaryDrivesComponents = $this->config->getAppValue(
+			Application::APP_ID,
+			'primary_drives_components',
+			'0'
+		) === '1';
+
 		$darkVariantsEnabled = $this->config->getAppValue(
 			Application::APP_ID,
 			'dark_variants',
@@ -261,6 +274,7 @@ class Admin implements IDelegatedSettings {
 				'currentDesignSystem' => $currentDesignSystem,
 				'hideSlogan' => $hideSlogan,
 				'showMenuLabels' => $showMenuLabels,
+				'primaryDrivesComponents' => $primaryDrivesComponents,
 				'darkVariantsEnabled' => $darkVariantsEnabled,
 				'marianneEnabled' => $marianneEnabled,
 				'emailThemingState' => $emailThemingState,

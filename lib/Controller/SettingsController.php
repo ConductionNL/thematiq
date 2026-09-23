@@ -324,6 +324,40 @@ class SettingsController extends Controller {
 	}//end setSloganSetting()
 
 	/**
+	 * Set whether the brand primary overrules the component tokens it used to drive.
+	 *
+	 * Turning this on emits `css/primary-lock.css`, which forces every component
+	 * token flagged `primary` in `scripts/mapping/component-tokens.json` back to
+	 * the brand value. Stored per-component values are left untouched, so turning
+	 * it off restores them.
+	 *
+	 * @param bool $primaryDrivesComponents Whether the primary overrules component tokens.
+	 *
+	 * @return JSONResponse The response with the status.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function setPrimaryDrivesComponentsSetting(bool $primaryDrivesComponents): JSONResponse {
+		$previous = ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1');
+		$this->saveBooleanSetting(key: 'primary_drives_components', value: $primaryDrivesComponents);
+
+		$this->auditService->log(
+			action: 'toggle_changed',
+			context: [
+				'key' => 'primary_drives_components',
+				'old' => $previous,
+				'new' => $primaryDrivesComponents,
+			]
+		);
+
+		return new JSONResponse(
+			['status' => 'ok', 'primaryDrivesComponents' => $primaryDrivesComponents]
+		);
+	}//end setPrimaryDrivesComponentsSetting()
+
+	/**
 	 * Set the show menu labels setting.
 	 *
 	 * @param bool $showMenuLabels Whether to show text labels in app menu.
