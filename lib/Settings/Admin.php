@@ -193,29 +193,20 @@ class Admin implements IDelegatedSettings {
 			'nextcloud'
 		);
 
-		$hideSlogan = $this->config->getAppValue(
-			Application::APP_ID,
-			'hide_slogan',
-			'0'
-		) === '1';
+		$hideSlogan = $this->isFlagOn(key: 'hide_slogan');
+		$showMenuLabels = $this->isFlagOn(key: 'show_menu_labels');
 
-		$showMenuLabels = $this->config->getAppValue(
-			Application::APP_ID,
-			'show_menu_labels',
-			'0'
-		) === '1';
+		// Whether the brand primary overrules every component token it used to
+		// drive. OFF by default, and that costs nothing visually: with no
+		// per-component value stored, the component tokens already resolve to the
+		// brand primary, so an instance that has never opened the playground
+		// renders identically either way. Turning it ON is the deliberate choice
+		// to give that back up — the primary wins again and the per-component
+		// colour controls lock.
+		$drivesComponents = $this->isFlagOn(key: 'primary_drives_components');
 
-		$darkVariantsEnabled = $this->config->getAppValue(
-			Application::APP_ID,
-			'dark_variants',
-			'1'
-		) === '1';
-
-		$marianneEnabled = $this->config->getAppValue(
-			Application::APP_ID,
-			'marianne_enabled',
-			'0'
-		) === '1';
+		$darkVariantsEnabled = $this->isFlagOn(key: 'dark_variants', fallback: '1');
+		$marianneEnabled = $this->isFlagOn(key: 'marianne_enabled');
 
 		// The design system backing the current token set — resolved from the
 		// already-fetched $tokenSets inventory (TokenSetService surfaces
@@ -261,6 +252,7 @@ class Admin implements IDelegatedSettings {
 				'currentDesignSystem' => $currentDesignSystem,
 				'hideSlogan' => $hideSlogan,
 				'showMenuLabels' => $showMenuLabels,
+				'primaryDrivesComponents' => $drivesComponents,
 				'darkVariantsEnabled' => $darkVariantsEnabled,
 				'marianneEnabled' => $marianneEnabled,
 				'emailThemingState' => $emailThemingState,
@@ -277,6 +269,24 @@ class Admin implements IDelegatedSettings {
 			]
 		);
 	}//end getForm()
+
+	/**
+	 * Reads one on/off appconfig flag.
+	 *
+	 * Every toggle on this panel is stored the same way — the string '1' or
+	 * '0' under the app id — and getForm() read five of them as five identical
+	 * five-line blocks. One name for that shape keeps the method at the length
+	 * phpmd allows and keeps the default visible at the call site, which is the
+	 * part that differs between them.
+	 *
+	 * @param string $key      The appconfig key.
+	 * @param string $fallback The value to assume when the key was never set.
+	 *
+	 * @return bool Whether the flag is on.
+	 */
+	private function isFlagOn(string $key, string $fallback = '0'): bool {
+		return ($this->config->getAppValue(Application::APP_ID, $key, $fallback) === '1');
+	}//end isFlagOn()
 
 	/**
 	 * Publish the two initial-state keys the preview banner and the icon-pack

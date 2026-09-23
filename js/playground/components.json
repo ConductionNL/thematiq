@@ -1,6 +1,41 @@
 {
-	"$comment": "Component inventory for the selector / stage / tokens instrument inside the admin panel's token editor (/settings/admin/theming). One entry per component chip, covering the @nextcloud/vue components a token set actually repaints. `tab` is the token editor tab the chip appears under; `tokens` are REAL registry tokens, and the instrument clones the editor's own row for each so edits keep flowing through the editor's dirty tracking and Save; `fixed` are facts with no token at all, carrying a reason code from the converter's vocabulary; `states` are what the stage draws, and a token's `callout` points at the state it paints. `layout: wide` means the component cannot be judged from a swatch — a table, a list, a dialog — so the stage draws ONE full-width specimen carrying every callout instead of a cell per state. `classes` lists only the class names THEMATIQ ITSELF styles for that component: the specimen markup uses the full real class names, but this list is the drift guard, and a name here that no shipped stylesheet mentions means the theme has stopped reaching the component. The check deliberately EXCLUDES css/playground*.css: the specimen fallback floor defines every class the specimen draws, so counting it lets the drawing answer for the theme — which is how .menutoggle, .unified-search__button and .app-content-detail all passed this guard while being names Nextcloud does not emit. tests/vitest/playgroundInventory.spec.js enforces all of it.",
-	"version": 3,
+	"$comment": [
+		"Component inventory for the selector / stage / tokens instrument inside the admin panel's token",
+		"editor (/settings/admin/theming). One entry per component chip, covering the @nextcloud/vue",
+		"components a token set actually repaints. `tab` is the token editor tab the chip appears under.",
+		"",
+		"`tokens` ARE COMPONENT-SCOPED, AND THAT IS THE POINT. Every name here is a",
+		"`--nldesign-component-*` token defined in scripts/mapping/component-tokens.json, not one of",
+		"Nextcloud's globals. Until version 4 these chips named the globals directly, so `Primary button`",
+		"wrote `--color-primary-element` — the variable that also paints the selected navigation entry,",
+		"the sidebar's active tab, a focused text input, the checked checkbox, the progress bar, the",
+		"dialog confirm button and the counter bubble. Moving the button moved all eight. The mapping",
+		"file now gives each chip its own token and css/component-scopes.css re-scopes the global inside",
+		"that component's subtree, so a chip reaches its own component and nothing else.",
+		"",
+		"The globals themselves are still editable, from the editor's four-tab list rather than from a",
+		"chip: moving one is MEANT to move every component that has not been given a value of its own.",
+		"They are listed as `brandTokens` in the mapping file, and tests/vitest/playgroundInventory.spec.js",
+		"reads that list so its coverage guard stays honest about what a chip is allowed not to cover.",
+		"",
+		"The instrument clones the editor's own row for each token, so edits keep flowing through the",
+		"editor's dirty tracking and Save — including the `disabled` a row carries while the",
+		"`primary_drives_components` setting owns it.",
+		"",
+		"`fixed` are facts with no token at all, carrying a reason code from the converter's vocabulary;",
+		"`states` are what the stage draws, and a token's `callout` points at the state it paints.",
+		"`layout: wide` means the component cannot be judged from a swatch — a table, a list, a dialog —",
+		"so the stage draws ONE full-width specimen carrying every callout instead of a cell per state.",
+		"",
+		"`classes` lists only the class names THEMATIQ ITSELF styles for that component: the specimen",
+		"markup uses the full real class names, but this list is the drift guard, and a name here that no",
+		"shipped stylesheet mentions means the theme has stopped reaching the component. The check",
+		"deliberately EXCLUDES css/playground*.css: the specimen fallback floor defines every class the",
+		"specimen draws, so counting it lets the drawing answer for the theme — which is how",
+		".menutoggle, .unified-search__button and .app-content-detail all passed this guard while being",
+		"names Nextcloud does not emit. tests/vitest/playgroundInventory.spec.js enforces all of it."
+	],
+	"version": 4,
 	"tabs": [
 		{
 			"id": "login",
@@ -56,17 +91,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary",
+					"name": "--nldesign-component-header-background-color",
 					"paints": "The header, when the set declares no header colour",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-text",
+					"name": "--nldesign-component-header-color",
 					"paints": "App icons, search and the account glyphs",
 					"callout": 1
 				},
 				{
-					"name": "--color-background-hover",
+					"name": "--nldesign-component-header-hover-background-color",
 					"paints": "Hovered app entry",
 					"callout": 2
 				}
@@ -124,9 +159,14 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary-element",
-					"paints": "The Log in button",
-					"callout": 2
+					"name": "--nldesign-component-login-box-border-radius",
+					"paints": "Its corner",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-login-box-border-color",
+					"paints": "Its border",
+					"callout": 1
 				}
 			],
 			"fixed": [
@@ -184,22 +224,22 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary-element",
+					"name": "--nldesign-component-login-button-background-color",
 					"paints": "Background",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element-text",
+					"name": "--nldesign-component-login-button-color",
 					"paints": "Label",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element-hover",
+					"name": "--nldesign-component-login-button-hover-background-color",
 					"paints": "Background on hover",
 					"callout": 2
 				},
 				{
-					"name": "--border-radius-element",
+					"name": "--nldesign-component-login-button-border-radius",
 					"paints": "Corner",
 					"callout": 1
 				}
@@ -212,7 +252,10 @@
 			"title": "Logo & slogan",
 			"subtitle": "the branding above the login card",
 			"ground": "login",
-			"classes": ["logo", "header-guest"],
+			"classes": [
+				"logo",
+				"header-guest"
+			],
 			"states": [
 				{
 					"n": 1,
@@ -222,12 +265,12 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary-text",
+					"name": "--nldesign-component-logo-slogan-color",
 					"paints": "Slogan text",
 					"callout": 1
 				},
 				{
-					"name": "--font-face",
+					"name": "--nldesign-component-logo-slogan-font-family",
 					"paints": "Slogan typeface",
 					"callout": 1
 				}
@@ -247,7 +290,9 @@
 			"title": "Background",
 			"subtitle": "the page behind everything",
 			"ground": "login",
-			"classes": ["body-login-container"],
+			"classes": [
+				"body-login-container"
+			],
 			"states": [
 				{
 					"n": 1,
@@ -304,17 +349,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--border-radius-element",
+					"name": "--nldesign-component-navigation-border-radius",
 					"paints": "Entry corners",
 					"callout": 1
 				},
 				{
-					"name": "--color-main-text",
+					"name": "--nldesign-component-navigation-color",
 					"paints": "Entry labels and icons, the selected one included",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element",
+					"name": "--nldesign-component-navigation-active-background-color",
 					"paints": "The selected entry's wash and its marker stripe",
 					"callout": 2
 				}
@@ -369,24 +414,24 @@
 			],
 			"tokens": [
 				{
-					"name": "--body-container-radius",
+					"name": "--nldesign-component-content-card-container-border-radius",
 					"paints": "Container corner",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius-rounded",
+					"name": "--nldesign-component-content-card-border-radius",
 					"paints": "Rounded surfaces inside it",
 					"callout": 1
 				},
 				{
-					"name": "--color-border",
+					"name": "--nldesign-component-content-card-border-color",
 					"paints": "The rule between list and detail",
 					"callout": 1
 				},
 				{
-					"name": "--color-scrollbar",
+					"name": "--nldesign-component-content-card-scrollbar-color",
 					"paints": "Scrollbar thumb",
-					"callout": 2
+					"callout": 1
 				}
 			],
 			"fixed": [
@@ -425,24 +470,24 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-text-maxcontrast",
+					"name": "--nldesign-component-table-header-color",
 					"paints": "Header row labels and secondary cells",
 					"callout": 1
 				},
 				{
-					"name": "--color-border",
+					"name": "--nldesign-component-table-border-color",
 					"paints": "The rule under each row",
 					"callout": 1
 				},
 				{
-					"name": "--color-background-dark",
+					"name": "--nldesign-component-table-zebra-background-color",
 					"paints": "Zebra row",
-					"callout": 2
+					"callout": 1
 				},
 				{
-					"name": "--color-background-hover",
+					"name": "--nldesign-component-table-row-hover-background-color",
 					"paints": "Hovered row",
-					"callout": 3
+					"callout": 2
 				}
 			],
 			"fixed": [
@@ -461,7 +506,9 @@
 			"subtitle": "NcAppSidebar with its tab strip",
 			"ground": "plain",
 			"layout": "wide",
-			"classes": ["app-sidebar"],
+			"classes": [
+				"app-sidebar"
+			],
 			"radiusToken": "--border-radius-large",
 			"states": [
 				{
@@ -477,22 +524,22 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-border",
+					"name": "--nldesign-component-sidebar-border-color",
 					"paints": "Its left edge and the tab strip rule",
 					"callout": 1
 				},
 				{
-					"name": "--color-border-dark",
+					"name": "--nldesign-component-sidebar-divider-color",
 					"paints": "The stronger divider",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius-large",
+					"name": "--nldesign-component-sidebar-border-radius",
 					"paints": "Panel corner",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element",
+					"name": "--nldesign-component-sidebar-active-color",
 					"paints": "The active tab underline",
 					"callout": 2
 				}
@@ -506,7 +553,11 @@
 			"subtitle": "NcListItem with NcAvatar and a counter",
 			"ground": "content",
 			"layout": "wide",
-			"classes": ["list-item", "avatardiv", "user-status-icon"],
+			"classes": [
+				"list-item",
+				"avatardiv",
+				"user-status-icon"
+			],
 			"radiusToken": "--border-radius-element",
 			"states": [
 				{
@@ -527,37 +578,37 @@
 			],
 			"tokens": [
 				{
-					"name": "--border-radius-element",
+					"name": "--nldesign-component-list-item-border-radius",
 					"paints": "Row corner",
 					"callout": 1
 				},
 				{
-					"name": "--color-text-maxcontrast",
+					"name": "--nldesign-component-list-item-subline-color",
 					"paints": "The subline",
 					"callout": 1
 				},
 				{
-					"name": "--color-background-hover",
+					"name": "--nldesign-component-list-item-hover-background-color",
 					"paints": "Hovered row",
 					"callout": 2
 				},
 				{
-					"name": "--animation-quick",
+					"name": "--nldesign-component-list-item-transition-duration",
 					"paints": "The hover transition",
 					"callout": 2
 				},
 				{
-					"name": "--color-primary-light",
+					"name": "--nldesign-component-list-item-selected-background-color",
 					"paints": "Selected row",
 					"callout": 3
 				},
 				{
-					"name": "--color-primary-light-text",
+					"name": "--nldesign-component-list-item-selected-color",
 					"paints": "Its text",
 					"callout": 3
 				},
 				{
-					"name": "--color-primary-light-hover",
+					"name": "--nldesign-component-list-item-selected-hover-background-color",
 					"paints": "The selected row on hover",
 					"callout": 3
 				}
@@ -581,17 +632,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-main-text",
+					"name": "--nldesign-component-empty-content-color",
 					"paints": "Its title",
 					"callout": 1
 				},
 				{
-					"name": "--color-text-maxcontrast",
+					"name": "--nldesign-component-empty-content-description-color",
 					"paints": "Its description",
 					"callout": 1
 				},
 				{
-					"name": "--color-background-dark",
+					"name": "--nldesign-component-empty-content-icon-background-color",
 					"paints": "The disc behind the icon",
 					"callout": 1
 				}
@@ -629,17 +680,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-main-text",
+					"name": "--nldesign-component-actions-menu-color",
 					"paints": "Entry labels",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius-large",
+					"name": "--nldesign-component-actions-menu-border-radius",
 					"paints": "Panel corner",
 					"callout": 1
 				},
 				{
-					"name": "--color-background-hover",
+					"name": "--nldesign-component-actions-menu-hover-background-color",
 					"paints": "Hovered entry",
 					"callout": 2
 				}
@@ -659,7 +710,10 @@
 			"title": "Avatar",
 			"subtitle": "NcAvatar with NcUserStatusIcon, on the header",
 			"ground": "header",
-			"classes": ["avatardiv", "user-status-icon"],
+			"classes": [
+				"avatardiv",
+				"user-status-icon"
+			],
 			"states": [
 				{
 					"n": 1,
@@ -674,9 +728,9 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-success",
+					"name": "--nldesign-component-avatar-online-status-color",
 					"paints": "The online status dot",
-					"callout": 2
+					"callout": 1
 				}
 			],
 			"fixed": [
@@ -710,17 +764,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary",
+					"name": "--nldesign-component-breadcrumb-color",
 					"paints": "A crumb that is a link",
 					"callout": 1
 				},
 				{
-					"name": "--color-text-maxcontrast",
+					"name": "--nldesign-component-breadcrumb-separator-color",
 					"paints": "The separators",
 					"callout": 1
 				},
 				{
-					"name": "--color-background-hover",
+					"name": "--nldesign-component-breadcrumb-hover-background-color",
 					"paints": "The hovered crumb",
 					"callout": 2
 				}
@@ -744,17 +798,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-main-text",
+					"name": "--nldesign-component-settings-section-heading-color",
 					"paints": "The section heading",
 					"callout": 1
 				},
 				{
-					"name": "--color-text-maxcontrast",
+					"name": "--nldesign-component-settings-section-hint-color",
 					"paints": "Its hint text",
 					"callout": 1
 				},
 				{
-					"name": "--color-border",
+					"name": "--nldesign-component-settings-section-border-color",
 					"paints": "The rule between sections",
 					"callout": 1
 				}
@@ -767,7 +821,10 @@
 			"title": "Text input",
 			"subtitle": "NcTextField / NcInputField",
 			"ground": "content",
-			"classes": ["input-field", "input-field__label"],
+			"classes": [
+				"input-field",
+				"input-field__label"
+			],
 			"radiusToken": "--border-radius-element",
 			"states": [
 				{
@@ -788,32 +845,32 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-border-maxcontrast",
+					"name": "--nldesign-component-textbox-border-color",
 					"paints": "Border",
 					"callout": 1
 				},
 				{
-					"name": "--color-placeholder-dark",
+					"name": "--nldesign-component-textbox-placeholder-color",
 					"paints": "Placeholder",
 					"callout": 1
 				},
 				{
-					"name": "--color-placeholder-light",
+					"name": "--nldesign-component-textbox-placeholder-light-color",
 					"paints": "Placeholder on a tinted field",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius-element",
+					"name": "--nldesign-component-textbox-border-radius",
 					"paints": "Corner",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element",
+					"name": "--nldesign-component-textbox-focus-border-color",
 					"paints": "Focused border and label",
 					"callout": 2
 				},
 				{
-					"name": "--color-error",
+					"name": "--nldesign-component-textbox-invalid-border-color",
 					"paints": "Invalid border",
 					"callout": 3
 				}
@@ -850,17 +907,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-border-maxcontrast",
+					"name": "--nldesign-component-form-select-border-color",
 					"paints": "Control border",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius-element",
+					"name": "--nldesign-component-form-select-border-radius",
 					"paints": "Corner",
 					"callout": 1
 				},
 				{
-					"name": "--color-background-hover",
+					"name": "--nldesign-component-form-select-option-hover-background-color",
 					"paints": "Hovered option",
 					"callout": 2
 				}
@@ -890,17 +947,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-border-maxcontrast",
+					"name": "--nldesign-component-checkbox-border-color",
 					"paints": "The unchecked outline",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius-small",
+					"name": "--nldesign-component-checkbox-border-radius",
 					"paints": "The checkbox corner",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element",
+					"name": "--nldesign-component-checkbox-checked-background-color",
 					"paints": "The checked mark, dot and switch track",
 					"callout": 2
 				}
@@ -924,12 +981,12 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-border-maxcontrast",
+					"name": "--nldesign-component-textarea-border-color",
 					"paints": "Border",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius",
+					"name": "--nldesign-component-textarea-border-radius",
 					"paints": "Corner",
 					"callout": 1
 				}
@@ -943,7 +1000,12 @@
 			"subtitle": "NcDialog / NcModal with its button row",
 			"ground": "overlay",
 			"layout": "wide",
-			"classes": ["modal-container", "modal-wrapper", "modal-mask", "dialogs"],
+			"classes": [
+				"modal-container",
+				"modal-wrapper",
+				"modal-mask",
+				"dialogs"
+			],
 			"radiusToken": "--border-radius-large",
 			"states": [
 				{
@@ -959,22 +1021,22 @@
 			],
 			"tokens": [
 				{
-					"name": "--border-radius-large",
+					"name": "--nldesign-component-dialog-border-radius",
 					"paints": "Corner",
 					"callout": 1
 				},
 				{
-					"name": "--color-border",
+					"name": "--nldesign-component-dialog-border-color",
 					"paints": "The rule under the header",
 					"callout": 1
 				},
 				{
-					"name": "--animation-slow",
+					"name": "--nldesign-component-dialog-transition-duration",
 					"paints": "Its open and close transition",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element",
+					"name": "--nldesign-component-dialog-confirm-background-color",
 					"paints": "Its confirm button",
 					"callout": 2
 				}
@@ -994,7 +1056,9 @@
 			"title": "Progress & loading",
 			"subtitle": "NcProgressBar and NcLoadingIcon",
 			"ground": "content",
-			"classes": ["icon-loading"],
+			"classes": [
+				"icon-loading"
+			],
 			"radiusToken": "--border-radius-pill",
 			"states": [
 				{
@@ -1010,22 +1074,22 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary-element",
+					"name": "--nldesign-component-progress-background-color",
 					"paints": "The filled part of the bar",
 					"callout": 1
 				},
 				{
-					"name": "--color-background-darker",
+					"name": "--nldesign-component-progress-track-background-color",
 					"paints": "Its track",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius-pill",
+					"name": "--nldesign-component-progress-border-radius",
 					"paints": "Bar shape",
 					"callout": 1
 				},
 				{
-					"name": "--animation-slow",
+					"name": "--nldesign-component-progress-transition-duration",
 					"paints": "The spinner's rotation",
 					"callout": 2
 				}
@@ -1071,32 +1135,32 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary-element",
+					"name": "--nldesign-component-button-primary-action-background-color",
 					"paints": "Background",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element-text",
+					"name": "--nldesign-component-button-primary-action-color",
 					"paints": "Label",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element-hover",
+					"name": "--nldesign-component-button-primary-action-hover-background-color",
 					"paints": "Background on hover",
 					"callout": 2
 				},
 				{
-					"name": "--color-main-text",
+					"name": "--nldesign-component-button-focus-border-color",
 					"paints": "Focus ring",
 					"callout": 3
 				},
 				{
-					"name": "--border-radius-element",
+					"name": "--nldesign-component-button-border-radius",
 					"paints": "Corner",
 					"callout": 1
 				},
 				{
-					"name": "--font-weight-element",
+					"name": "--nldesign-component-button-font-weight",
 					"paints": "Label weight",
 					"callout": 1
 				}
@@ -1138,22 +1202,22 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-background-dark",
+					"name": "--nldesign-component-button-secondary-action-background-color",
 					"paints": "Background",
 					"callout": 1
 				},
 				{
-					"name": "--color-main-text",
+					"name": "--nldesign-component-button-secondary-action-color",
 					"paints": "Label",
 					"callout": 1
 				},
 				{
-					"name": "--color-background-darker",
+					"name": "--nldesign-component-button-secondary-action-hover-background-color",
 					"paints": "Background on hover",
 					"callout": 2
 				},
 				{
-					"name": "--border-radius-element",
+					"name": "--nldesign-component-button-secondary-action-border-radius",
 					"paints": "Corner",
 					"callout": 1
 				}
@@ -1166,7 +1230,11 @@
 			"title": "Tertiary button",
 			"subtitle": "NcButton type=\"tertiary\"",
 			"ground": "content",
-			"classes": ["button-vue", "button-vue__wrapper", "button-vue__text"],
+			"classes": [
+				"button-vue",
+				"button-vue__wrapper",
+				"button-vue__text"
+			],
 			"radiusToken": "--border-radius-element",
 			"states": [
 				{
@@ -1187,17 +1255,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary-element-light-text",
+					"name": "--nldesign-component-button-color",
 					"paints": "Label",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element-light",
+					"name": "--nldesign-component-button-hover-background-color",
 					"paints": "Background on hover",
 					"callout": 2
 				},
 				{
-					"name": "--color-primary-element-light-hover",
+					"name": "--nldesign-component-button-active-background-color",
 					"paints": "Background when pressed",
 					"callout": 3
 				}
@@ -1210,7 +1278,11 @@
 			"title": "Error button",
 			"subtitle": "NcButton type=\"error\"",
 			"ground": "content",
-			"classes": ["button-vue", "button-vue__wrapper", "button-vue__text"],
+			"classes": [
+				"button-vue",
+				"button-vue__wrapper",
+				"button-vue__text"
+			],
 			"radiusToken": "--border-radius-element",
 			"states": [
 				{
@@ -1226,17 +1298,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-error",
+					"name": "--nldesign-component-button-error-background-color",
 					"paints": "Background",
 					"callout": 1
 				},
 				{
-					"name": "--color-error-rgb",
+					"name": "--nldesign-component-button-error-background-color-rgb",
 					"paints": "Its tinted fill, mixed from the same colour",
 					"callout": 1
 				},
 				{
-					"name": "--color-error-hover",
+					"name": "--nldesign-component-button-error-hover-background-color",
 					"paints": "Background on hover",
 					"callout": 2
 				}
@@ -1249,7 +1321,11 @@
 			"title": "Success button",
 			"subtitle": "NcButton type=\"success\"",
 			"ground": "content",
-			"classes": ["button-vue", "button-vue__wrapper", "button-vue__text"],
+			"classes": [
+				"button-vue",
+				"button-vue__wrapper",
+				"button-vue__text"
+			],
 			"radiusToken": "--border-radius-element",
 			"states": [
 				{
@@ -1260,12 +1336,12 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-success",
+					"name": "--nldesign-component-button-success-background-color",
 					"paints": "Background",
 					"callout": 1
 				},
 				{
-					"name": "--color-element-success",
+					"name": "--nldesign-component-button-success-color",
 					"paints": "Its icon",
 					"callout": 1
 				}
@@ -1279,7 +1355,9 @@
 			"subtitle": "NcNoteCard, all four types",
 			"ground": "content",
 			"layout": "wide",
-			"classes": ["notecard"],
+			"classes": [
+				"notecard"
+			],
 			"radiusToken": "--border-radius",
 			"states": [
 				{
@@ -1305,72 +1383,72 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-info",
+					"name": "--nldesign-component-notecard-info-color",
 					"paints": "Info stripe",
 					"callout": 1
 				},
 				{
-					"name": "--color-element-info",
+					"name": "--nldesign-component-notecard-info-icon-color",
 					"paints": "Info glyph",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius",
+					"name": "--nldesign-component-notecard-border-radius",
 					"paints": "Card corner",
 					"callout": 1
 				},
 				{
-					"name": "--color-warning",
+					"name": "--nldesign-component-notecard-warning-color",
 					"paints": "Warning stripe",
 					"callout": 2
 				},
 				{
-					"name": "--color-element-warning",
+					"name": "--nldesign-component-notecard-warning-icon-color",
 					"paints": "Warning glyph",
 					"callout": 2
 				},
 				{
-					"name": "--color-warning-rgb",
+					"name": "--nldesign-component-notecard-warning-color-rgb",
 					"paints": "Warning fill, mixed from the same colour",
 					"callout": 2
 				},
 				{
-					"name": "--color-error",
+					"name": "--nldesign-component-notecard-error-color",
 					"paints": "Error stripe",
 					"callout": 3
 				},
 				{
-					"name": "--color-element-error",
+					"name": "--nldesign-component-notecard-error-icon-color",
 					"paints": "Error glyph",
 					"callout": 3
 				},
 				{
-					"name": "--color-border-error",
+					"name": "--nldesign-component-notecard-error-border-color",
 					"paints": "Error card border",
 					"callout": 3
 				},
 				{
-					"name": "--color-error-rgb",
+					"name": "--nldesign-component-notecard-error-color-rgb",
 					"paints": "Error fill, mixed from the same colour",
 					"callout": 3
 				},
 				{
-					"name": "--color-success",
+					"name": "--nldesign-component-notecard-success-color",
 					"paints": "Success stripe",
 					"callout": 4
 				},
 				{
-					"name": "--color-element-success",
+					"name": "--nldesign-component-notecard-success-icon-color",
 					"paints": "Success glyph",
 					"callout": 4
 				},
 				{
-					"name": "--color-border-success",
+					"name": "--nldesign-component-notecard-success-border-color",
 					"paints": "Success card border",
 					"callout": 4
 				},
 				{
-					"name": "--color-success-rgb",
+					"name": "--nldesign-component-notecard-success-color-rgb",
 					"paints": "Success fill, mixed from the same colour",
 					"callout": 4
 				}
@@ -1399,22 +1477,22 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary-element",
+					"name": "--nldesign-component-badge-background-color",
 					"paints": "The highlighted bubble",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-element-text",
+					"name": "--nldesign-component-badge-color",
 					"paints": "Its number",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius-pill",
+					"name": "--nldesign-component-badge-border-radius",
 					"paints": "Bubble shape",
 					"callout": 1
 				},
 				{
-					"name": "--color-favorite",
+					"name": "--nldesign-component-badge-favorite-color",
 					"paints": "The favourite star",
 					"callout": 2
 				}
@@ -1428,7 +1506,9 @@
 			"subtitle": "OCP.Toast, all four types",
 			"ground": "content",
 			"layout": "wide",
-			"classes": ["toastify"],
+			"classes": [
+				"toastify"
+			],
 			"radiusToken": "--border-radius",
 			"states": [
 				{
@@ -1454,27 +1534,27 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-success",
+					"name": "--nldesign-component-toast-success-background-color",
 					"paints": "Success toast",
 					"callout": 1
 				},
 				{
-					"name": "--border-radius",
+					"name": "--nldesign-component-toast-border-radius",
 					"paints": "Corner",
 					"callout": 1
 				},
 				{
-					"name": "--color-error",
+					"name": "--nldesign-component-toast-error-background-color",
 					"paints": "Error toast",
 					"callout": 2
 				},
 				{
-					"name": "--color-warning",
+					"name": "--nldesign-component-toast-warning-background-color",
 					"paints": "Warning toast",
 					"callout": 3
 				},
 				{
-					"name": "--color-info",
+					"name": "--nldesign-component-toast-info-background-color",
 					"paints": "Info toast",
 					"callout": 4
 				}
@@ -1498,17 +1578,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--font-face",
+					"name": "--nldesign-component-heading-font-family",
 					"paints": "Typeface",
 					"callout": 1
 				},
 				{
-					"name": "--color-main-text",
+					"name": "--nldesign-component-heading-color",
 					"paints": "Heading colour",
 					"callout": 1
 				},
 				{
-					"name": "--font-weight-heading",
+					"name": "--nldesign-component-heading-font-weight",
 					"paints": "Heading weight",
 					"callout": 1
 				}
@@ -1539,17 +1619,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-main-text",
+					"name": "--nldesign-component-paragraph-color",
 					"paints": "Body text",
 					"callout": 1
 				},
 				{
-					"name": "--font-face",
+					"name": "--nldesign-component-paragraph-font-family",
 					"paints": "Typeface",
 					"callout": 1
 				},
 				{
-					"name": "--font-weight-default",
+					"name": "--nldesign-component-paragraph-font-weight",
 					"paints": "Body weight",
 					"callout": 1
 				}
@@ -1578,12 +1658,12 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-primary",
+					"name": "--nldesign-component-link-color",
 					"paints": "Link colour",
 					"callout": 1
 				},
 				{
-					"name": "--color-primary-hover",
+					"name": "--nldesign-component-link-hover-color",
 					"paints": "Link on hover",
 					"callout": 2
 				}
@@ -1617,19 +1697,19 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-text-maxcontrast",
+					"name": "--nldesign-component-text-muted-color",
 					"paints": "Secondary text that still has to pass AA",
 					"callout": 1
 				},
 				{
-					"name": "--color-text-light",
+					"name": "--nldesign-component-text-light-color",
 					"paints": "Text one step lighter than body",
-					"callout": 2
+					"callout": 1
 				},
 				{
-					"name": "--color-text-lighter",
+					"name": "--nldesign-component-text-lighter-color",
 					"paints": "The lightest text Nextcloud uses",
-					"callout": 3
+					"callout": 1
 				}
 			],
 			"fixed": []
@@ -1661,17 +1741,17 @@
 			],
 			"tokens": [
 				{
-					"name": "--color-text-error",
+					"name": "--nldesign-component-text-error-color",
 					"paints": "Error text",
 					"callout": 1
 				},
 				{
-					"name": "--color-text-warning",
+					"name": "--nldesign-component-text-warning-color",
 					"paints": "Warning text",
 					"callout": 2
 				},
 				{
-					"name": "--color-text-success",
+					"name": "--nldesign-component-text-success-color",
 					"paints": "Success text",
 					"callout": 3
 				}
