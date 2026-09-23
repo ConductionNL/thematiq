@@ -52,3 +52,10 @@ scripts/sources/
 # file — so the validation tests have something to reject. Formatting them
 # would remove the very defect under test.
 tests/integration/fixtures/
+
+# Same contract again: both emitted by scripts/generate-component-scopes.mjs
+# from scripts/mapping/component-tokens.json and byte-compared against the
+# committed copies by `npm run test:component-scopes`. Prettier would rewrap
+# the var() fallback chains and fail that check on a file nobody edited.
+css/component-scopes.css
+css/primary-lock.css

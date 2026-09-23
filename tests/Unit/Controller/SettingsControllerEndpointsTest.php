@@ -237,7 +237,12 @@ class SettingsControllerEndpointsTest extends TestCase {
 	}//end testATogglePersistsTheOnValue()
 
 	/**
-	 * The two boolean login-page toggles.
+	 * The boolean toggles that persist, echo and audit the same way.
+	 *
+	 * `primary_drives_components` is one of them and not a special case: it
+	 * stores '1'/'0' under the app id, echoes the new value, and audits the
+	 * previous one. What it switches on — css/primary-lock.css, and the locked
+	 * rows in the editor — is decided elsewhere by reading that same key.
 	 *
 	 * @return array<string, array{0: string, 1: string, 2: string}>
 	 */
@@ -245,6 +250,11 @@ class SettingsControllerEndpointsTest extends TestCase {
 		return [
 			'hide slogan' => ['setSloganSetting', 'hide_slogan', 'hideSlogan'],
 			'show menu labels' => ['setMenuLabelsSetting', 'show_menu_labels', 'showMenuLabels'],
+			'primary drives components' => [
+				'setPrimaryDrivesComponentsSetting',
+				'primary_drives_components',
+				'primaryDrivesComponents',
+			],
 		];
 	}//end toggleProvider()
 
