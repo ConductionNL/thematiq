@@ -1875,6 +1875,7 @@
 @media (prefers-reduced-motion: reduce) {
 	#nldesign-preview .nldesign-pg-dialog,
 	#nldesign-preview .nldesign-pg-listitem,
+	#nldesign-preview .nldesign-pg-searchbtn,
 	#nldesign-preview .nldesign-pg-spinner {
 		transition: none !important;
 		animation: none !important;
