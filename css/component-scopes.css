@@ -16,12 +16,26 @@
  * when one is set and the brand-wide global when one is not. Nextcloud's own
  * stylesheets keep doing the painting; only the value they see changes.
  *
- * The :root block captures each global under a name the scopes can fall back
+ * The capture block copies each global under a name the scopes can fall back
  * to. Falling back to the global directly would be a self-referential custom
  * property, which CSS discards as invalid.
+ *
+ * IT IS `body`, NOT `:root`, AND THAT IS THE WHOLE POINT.
+ *
+ * Every design system declares the Nextcloud globals on `body` —
+ * css/systems/nldesign/theme.css does, and so do the high-contrast,
+ * summer-breeze and lasuite sheets. Nextcloud core declares its OWN on
+ * `:root`, because ThemeInjectionService serves the default theme with
+ * `plain=true`. So a capture taken on `:root` copied core's value and never
+ * the token set's, and every component whose token nobody had set was painted
+ * Nextcloud blue instead of the brand colour.
+ *
+ * `body` sees both: what it declares itself, and whatever `:root` declares,
+ * by inheritance. There is no element between `body` and the components that
+ * declares a global, so nothing is missed.
  */
 
-:root {
+body {
 	--thematiq-global-color-primary: var(--color-primary);
 	--thematiq-global-color-primary-text: var(--color-primary-text);
 	--thematiq-global-color-background-hover: var(--color-background-hover);

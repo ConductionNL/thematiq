@@ -38,11 +38,15 @@
  *
  * because a custom property whose value depends on itself is discarded as
  * invalid — the same cycle `StockTokensService` documents for
- * `--nldesign-color-primary`. So `:root` copies each global under a
+ * `--nldesign-color-primary`. So `body` copies each global under a
  * `--thematiq-global-*` name first and the scopes fall back to the copy. The
- * copy resolves at `:root`, where the global still holds its ordinary value,
- * so there is no cycle and an unset component token is indistinguishable from
- * stock.
+ * copy resolves on `body`, which is where the design systems declare the
+ * globals, so there is no cycle and an unset component token is
+ * indistinguishable from stock.
+ *
+ * `:root` is the wrong element for that copy and was the bug: Nextcloud core
+ * declares the globals there, the design systems declare them on `body`, so a
+ * `:root` capture pinned every fallback to core's palette.
  *
  * Note that the capture is deliberately NOT `!important`. custom-overrides.css
  * writes admin-set globals at `:root` with `!important` and loads later, so the
@@ -143,12 +147,26 @@ const scopes = [
 	" * when one is set and the brand-wide global when one is not. Nextcloud's own",
 	' * stylesheets keep doing the painting; only the value they see changes.',
 	' *',
-	' * The :root block captures each global under a name the scopes can fall back',
+	' * The capture block copies each global under a name the scopes can fall back',
 	' * to. Falling back to the global directly would be a self-referential custom',
 	' * property, which CSS discards as invalid.',
+	' *',
+	' * IT IS `body`, NOT `:root`, AND THAT IS THE WHOLE POINT.',
+	' *',
+	' * Every design system declares the Nextcloud globals on `body` —',
+	' * css/systems/nldesign/theme.css does, and so do the high-contrast,',
+	' * summer-breeze and lasuite sheets. Nextcloud core declares its OWN on',
+	' * `:root`, because ThemeInjectionService serves the default theme with',
+	" * `plain=true`. So a capture taken on `:root` copied core's value and never",
+	" * the token set's, and every component whose token nobody had set was painted",
+	' * Nextcloud blue instead of the brand colour.',
+	' *',
+	' * `body` sees both: what it declares itself, and whatever `:root` declares,',
+	' * by inheritance. There is no element between `body` and the components that',
+	' * declares a global, so nothing is missed.',
 	' */',
 	'',
-	':root {',
+	'body {',
 ]
 
 const captured = []
@@ -267,9 +285,14 @@ const lock = [
 	' * brand primary used to drive before components could be themed separately.',
 	' * A component token for a border radius or a font weight is untouched, and',
 	' * stays editable while the toggle is on.',
+	' *',
+	' * On `body` for the same reason the capture block is: these declarations read',
+	' * `--thematiq-global-*`, which is declared there. Landing on `body` also means',
+	" * they beat custom-overrides.css's `:root` `!important` for every descendant,",
+	' * which is exactly what the toggle is for.',
 	' */',
 	'',
-	':root {',
+	'body {',
 ]
 
 for (const [id, component] of Object.entries(mapping.components)) {

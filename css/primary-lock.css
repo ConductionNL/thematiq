@@ -20,9 +20,14 @@
  * brand primary used to drive before components could be themed separately.
  * A component token for a border radius or a font weight is untouched, and
  * stays editable while the toggle is on.
+ *
+ * On `body` for the same reason the capture block is: these declarations read
+ * `--thematiq-global-*`, which is declared there. Landing on `body` also means
+ * they beat custom-overrides.css's `:root` `!important` for every descendant,
+ * which is exactly what the toggle is for.
  */
 
-:root {
+body {
 	/* header-bar */
 	--nldesign-component-header-background-color: var(--thematiq-global-color-primary) !important;
 	--nldesign-component-header-color: var(--thematiq-global-color-primary-text) !important;
