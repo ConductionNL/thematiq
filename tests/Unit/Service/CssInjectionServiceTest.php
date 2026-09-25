@@ -274,10 +274,19 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testStandardNldesignOrder()
 
 	/**
-	 * The "none" design system (stock Nextcloud) loads no layer 1-7
-	 * stylesheet and no token/contrast CSS, but custom-overrides still loads.
+	 * The "none" design system (stock Nextcloud) loads no layer 1-7 stylesheet
+	 * and no token/contrast CSS. It DOES load component-scopes, and then
+	 * custom-overrides on top of it.
+	 *
+	 * The component layer is what makes a stock instance themable at all: every
+	 * instance starts on the stock `nextcloud` set, so without it an admin had
+	 * to pick some other theme before the token editor could change anything —
+	 * you needed a theme in order to make one. It only redirects Nextcloud's own
+	 * variables inside a component's subtree and every component token is
+	 * undeclared until somebody sets one, so an untouched stock instance still
+	 * renders byte-identically to stock.
 	 */
-	public function testNoneDesignSystemLoadsNoStylesheets(): void {
+	public function testNoneDesignSystemLoadsOnlyTheComponentLayer(): void {
 		$this->configureAppValues(['token_set' => 'nextcloud']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'none']);
 		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
@@ -294,9 +303,9 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame(['custom-overrides'], $styleLog);
+		$this->assertSame(['component-scopes', 'custom-overrides'], $styleLog);
 		$this->assertSame([], $fontLog);
-	}//end testNoneDesignSystemLoadsNoStylesheets()
+	}//end testNoneDesignSystemLoadsOnlyTheComponentLayer()
 
 	/**
 	 * Custom overrides load after all design-system and token layers, and
@@ -1095,15 +1104,20 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testStylesheetManifestMatchesInjectedSetLayers()
 
 	/**
-	 * Stock Nextcloud (design system `none`) has no set layers, so its manifest
-	 * is empty — which is what lets the client remove every Thematiq layer when
-	 * an admin switches back to stock without a reload.
+	 * Stock Nextcloud (design system `none`) carries exactly one set layer: the
+	 * component scopes.
+	 *
+	 * The manifest is what the client swaps when an admin changes set without a
+	 * reload, so the layer has to be IN it — otherwise switching to stock would
+	 * strip the component layer off the live page and the token editor would go
+	 * inert until the next reload, which is the same trap as not emitting it at
+	 * all. Everything else Thematiq adds is still removed.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
 	 */
-	public function testStylesheetManifestIsEmptyForStockNextcloud(): void {
+	public function testStylesheetManifestCarriesOnlyComponentScopesForStockNextcloud(): void {
 		$this->configureAppValues();
 		$this->designSystemService->method('getTokenSetMeta')->with('nextcloud')
 			->willReturn(['design_system' => 'none']);
@@ -1122,6 +1136,9 @@ class CssInjectionServiceTest extends TestCase {
 		$manifest = $service->getStylesheetManifest('nextcloud');
 
 		$this->assertSame('none', $manifest['designSystem']);
-		$this->assertSame([], $manifest['layers']);
-	}//end testStylesheetManifestIsEmptyForStockNextcloud()
+		$this->assertSame(
+			['component-scopes'],
+			array_column($manifest['layers'], 'layer')
+		);
+	}//end testStylesheetManifestCarriesOnlyComponentScopesForStockNextcloud()
 }//end class

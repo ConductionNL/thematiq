@@ -361,6 +361,59 @@ class SettingsController extends Controller {
 	}//end setPrimaryDrivesComponentsSetting()
 
 	/**
+	 * Set whether Save overrides asks for confirmation first.
+	 *
+	 * Two flags, because the two questions are not the same one. On the stock
+	 * `nextcloud` set there is a real choice to make — keep the edits as a new
+	 * token set, or write them over the running Nextcloud theme — and on any
+	 * other set there is only a confirmation. An admin who has stopped wanting
+	 * one has not necessarily stopped wanting the other.
+	 *
+	 * Both default to ON. The dialogs offer "do not ask again", and the pair of
+	 * controls under the token editor turns them back on, so the choice is never
+	 * one-way.
+	 *
+	 * @param bool $confirmSaveStock Whether to ask when the stock set is active.
+	 * @param bool $confirmSaveTheme Whether to ask when a token set is active.
+	 *
+	 * @return JSONResponse The response with the status.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function setSaveConfirmSettings(bool $confirmSaveStock, bool $confirmSaveTheme): JSONResponse {
+		foreach (
+			[
+				'confirm_save_stock' => $confirmSaveStock,
+				'confirm_save_theme' => $confirmSaveTheme,
+			] as $key => $value
+		) {
+			$previous = ($this->config->getAppValue(Application::APP_ID, $key, '1') === '1');
+			if ($previous === $value) {
+				continue;
+			}
+
+			$this->saveBooleanSetting(key: $key, value: $value);
+			$this->auditService->log(
+				action: 'toggle_changed',
+				context: [
+					'key' => $key,
+					'old' => $previous,
+					'new' => $value,
+				]
+			);
+		}
+
+		return new JSONResponse(
+			[
+				'status' => 'ok',
+				'confirmSaveStock' => $confirmSaveStock,
+				'confirmSaveTheme' => $confirmSaveTheme,
+			]
+		);
+	}//end setSaveConfirmSettings()
+
+	/**
 	 * Set the show menu labels setting.
 	 *
 	 * @param bool $showMenuLabels Whether to show text labels in app menu.

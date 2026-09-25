@@ -62,21 +62,71 @@ class PlaygroundStateService {
 	private TokenSetConverterService $converter;
 
 	/**
+	 * The running instance's own stock theme, as tokens.
+	 *
+	 * Only consulted for the stock set, whose values live in the instance rather
+	 * than in a file — see {@see getExportTokens()}.
+	 *
+	 * @var StockTokensService
+	 */
+	private StockTokensService $stockTokens;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager              $appManager    Resolves the app directory.
 	 * @param TokenSetPreviewService   $previewValues Resolves token values and sources.
 	 * @param TokenSetConverterService $converter     The conversion reason vocabulary.
+	 * @param StockTokensService       $stockTokens   The instance's own stock theme.
 	 */
 	public function __construct(
 		IAppManager $appManager,
 		TokenSetPreviewService $previewValues,
 		TokenSetConverterService $converter,
+		StockTokensService $stockTokens,
 	) {
 		$this->appManager = $appManager;
 		$this->previewValues = $previewValues;
 		$this->converter = $converter;
+		$this->stockTokens = $stockTokens;
 	}//end __construct()
+
+	/**
+	 * The base an export writes: what the active set DECLARES, nothing else.
+	 *
+	 * Deliberately not `getResolvedTokens()`, which is what the instrument draws
+	 * with. That map merges `css/systems/nldesign/defaults.css` UNDER the set —
+	 * 200 tokens, 115 of them component tokens, all carrying Rijkshuisstijl
+	 * values — so exporting from it wrote a theme full of decisions the admin
+	 * never made and the set never held. `getDeclaredTokens()`'s own docblock
+	 * says as much: a merged map "answers yes for every token, because the
+	 * defaults declare them all".
+	 *
+	 * The stock set is the exception, and it is the whole reason this is a
+	 * method rather than one more call in the list. Its values are not in a file
+	 * — `css/tokens/nextcloud.css` is a snapshot of one Nextcloud version, kept
+	 * as a fallback — they are in the running instance. Saving "the Nextcloud
+	 * theme plus my change" has to write what THIS server is wearing, so the
+	 * stock resolver answers for it and the file answers only if that fails.
+	 *
+	 * @param string $tokenSetId The token set the page is wearing.
+	 *
+	 * @return array<string, string> Map of `--nldesign-*` token name => declared value.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	private function getExportTokens(string $tokenSetId): array {
+		if ($tokenSetId !== CssInjectionService::STOCK_TOKEN_SET) {
+			return $this->previewValues->getDeclaredTokens(tokenSetId: $tokenSetId);
+		}
+
+		$stock = $this->stockTokens->getTokens();
+		if ($stock !== []) {
+			return $stock;
+		}
+
+		return $this->previewValues->getDeclaredTokens(tokenSetId: $tokenSetId);
+	}//end getExportTokens()
 
 	/**
 	 * The initial-state keys the instrument reads.
@@ -92,6 +142,7 @@ class PlaygroundStateService {
 			'playgroundInventory' => $this->getInventory(),
 			'playgroundReasons' => $this->getReasons(),
 			'playgroundTokens' => $this->previewValues->getResolvedTokens(tokenSetId: $tokenSetId),
+			'playgroundExportTokens' => $this->getExportTokens(tokenSetId: $tokenSetId),
 			'playgroundTokenSources' => $this->previewValues->getTokenSources(),
 			'playgroundVersion' => $this->getServerMajor(),
 			// The set these values came from, so an export is named after the

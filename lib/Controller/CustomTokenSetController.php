@@ -28,6 +28,7 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
@@ -120,6 +121,13 @@ class CustomTokenSetController extends Controller {
 	private ThemingService $themingService;
 
 	/**
+	 * The shipped design-system manifest, used to allow-list a claimed id.
+	 *
+	 * @var DesignSystemService
+	 */
+	private DesignSystemService $designSystems;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
@@ -132,6 +140,7 @@ class CustomTokenSetController extends Controller {
 	 * @param IConfig $config The config service.
 	 * @param TokenSetConverterService $converter The theme converter, which runs before the validator.
 	 * @param ThemingService $themingService Core theming, for undoing a deleted set's sync.
+	 * @param DesignSystemService $designSystems The design-system manifest, for allow-listing a claimed id.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else; the
 	 *   alternative is a service locator, which hides exactly these dependencies instead of removing any of them.
@@ -147,6 +156,7 @@ class CustomTokenSetController extends Controller {
 		IConfig $config,
 		TokenSetConverterService $converter,
 		ThemingService $themingService,
+		DesignSystemService $designSystems,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->service = $service;
@@ -157,6 +167,7 @@ class CustomTokenSetController extends Controller {
 		$this->config = $config;
 		$this->converter = $converter;
 		$this->themingService = $themingService;
+		$this->designSystems = $designSystems;
 	}//end __construct()
 
 	/**
@@ -214,6 +225,38 @@ class CustomTokenSetController extends Controller {
 		$read = $this->readInput();
 		if ($read instanceof JSONResponse) {
 			return $read;
+		}
+
+		// ALREADY A TOKEN SET — store it as it arrived.
+		//
+		// The token editor's "save as a new theme" serialises the active set and
+		// the admin's overrides straight into the `css/tokens/*.css` shape, so
+		// there is nothing to convert. Running it through the converter anyway
+		// was actively wrong: the converter's job is to make an incomplete NLDS
+		// document whole, and it does that by filling every unmapped target from
+		// the mapping table's fallbacks. An admin who changed one colour got a
+		// theme carrying 121 component tokens of Rijkshuisstijl defaults they
+		// never chose.
+		//
+		// Uploads are untouched — a file an admin picks off disk is still an
+		// unknown document and still goes through the converter.
+		if ($this->request->getParam('raw', false) === true) {
+			$parsed = $this->mapFromCss(content: $read['content'], slug: $slug);
+			if ($parsed instanceof JSONResponse) {
+				return $parsed;
+			}
+
+			$parsed['css'] = $read['content'];
+
+			// Which design system the editor was looking at when it serialised
+			// this. Allow-listed against the shipped manifest rather than taken
+			// on trust: it decides which stylesheet layers every page load emits.
+			$claimed = trim((string)$this->request->getParam('designSystem', ''));
+			if ($claimed !== '' && isset($this->designSystems->getDesignSystems()[$claimed]) === true) {
+				$parsed['designSystem'] = $claimed;
+			}
+
+			return $this->persist(name: $name, parsed: $parsed);
 		}
 
 		try {
@@ -476,7 +519,8 @@ class CustomTokenSetController extends Controller {
 				// block are what lands on disk rather than a flat re-serialise.
 				css: ($parsed['css'] ?? null),
 				theming: ($parsed['theming'] ?? []),
-				logoAsset: ($parsed['logoAsset'] ?? null)
+				logoAsset: ($parsed['logoAsset'] ?? null),
+				designSystem: ($parsed['designSystem'] ?? null)
 			);
 		} catch (RuntimeException $e) {
 			$code = $e->getCode();

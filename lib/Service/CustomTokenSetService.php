@@ -173,6 +173,9 @@ class CustomTokenSetService {
 	 *                                       to be written under `img/logos/`. Nextcloud's core theming takes a
 	 *                                       logo as a FILE (`ImageManager::updateImage()`), so a theme's inline
 	 *                                       `data:` URI has to become one before `theming.logo` can mean anything.
+	 * @param string|null $designSystem The design system this set was created FROM, when the caller knows it.
+	 *                                  Decides which stylesheet layers the set emits; left unset for an
+	 *                                  upload of an unknown document, which still resolves to nldesign.
 	 *
 	 * @return array{id: string, warnings: array<int, array<string, mixed>>} The result.
 	 *
@@ -197,6 +200,7 @@ class CustomTokenSetService {
 		?string $css = null,
 		array $theming = [],
 		?array $logoAsset = null,
+		?string $designSystem = null,
 	): array {
 		$slug = $this->slugify(name: $displayName);
 		if ($slug === '') {
@@ -247,6 +251,22 @@ class CustomTokenSetService {
 
 		if (empty($importWarnings) === false) {
 			$entry['importWarnings'] = $importWarnings;
+		}
+
+		// The design system this set was MADE from, when the caller knows it.
+		//
+		// Without it every custom set resolved to `nldesign`, so a theme saved
+		// from the stock Nextcloud set came back with the whole NL Design System
+		// layer on top of it — fonts, defaults.css, element-overrides.css — and
+		// an admin who had changed one colour found their instance rebuilt.
+		// Recording it keeps "save this as a theme" faithful to what was saved.
+		//
+		// Left unset when the caller has no opinion (an upload of an unknown
+		// document is exactly that), and an unset value still resolves to
+		// `nldesign` downstream, which is what every set written before this
+		// field existed already was.
+		if ($designSystem !== null && $designSystem !== '') {
+			$entry['design_system'] = $designSystem;
 		}
 
 		$manifest = $this->getManifest();

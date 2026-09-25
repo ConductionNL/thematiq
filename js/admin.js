@@ -2345,12 +2345,23 @@
 		 * so showing the inherited colour never writes it, and the fallback
 		 * stays live until the admin actually picks something.
 		 *
+		 * The FALLBACK is read off `<body>` first, for the same reason
+		 * css/component-scopes.css captures it there: the design systems declare
+		 * the Nextcloud globals on `body` and Nextcloud core declares its own on
+		 * `:root`. Reading the global off the document element returned CORE's
+		 * colour, so a row for a token nobody had set opened showing Nextcloud
+		 * blue beside a component wearing the brand colour.
+		 *
+		 * The token's OWN value is still read off `:root` — that is where
+		 * defaults.css and custom-overrides.css declare `--nldesign-*`.
+		 *
 		 * @param {CSSStyleDeclaration} rootStyle Computed style of the document element.
+		 * @param {CSSStyleDeclaration} bodyStyle Computed style of the body element.
 		 * @param {string} name The CSS custom property name.
 		 *
 		 * @return {string} The resolved value, or its fallback, or ''.
 		 */
-		function resolveTokenValue(rootStyle, name) {
+		function resolveTokenValue(rootStyle, bodyStyle, name) {
 			var own = rootStyle.getPropertyValue(name).trim()
 			if (own !== '') {
 				return own
@@ -2359,6 +2370,11 @@
 			var meta = tokenRegistry[name]
 			if (meta === undefined || !meta.global) {
 				return ''
+			}
+
+			var inherited = bodyStyle.getPropertyValue(meta.global).trim()
+			if (inherited !== '') {
+				return inherited
 			}
 
 			return rootStyle.getPropertyValue(meta.global).trim()
@@ -2386,8 +2402,9 @@
 
 					// Read resolved values from the live CSS stack.
 					var rootStyle = getComputedStyle(document.documentElement)
+					var bodyStyle = getComputedStyle(document.body)
 					Object.keys(tokenRegistry).forEach(function (name) {
-						var resolved = resolveTokenValue(rootStyle, name)
+						var resolved = resolveTokenValue(rootStyle, bodyStyle, name)
 						var overridden =
 							overrides[name] !== undefined ? overrides[name] : null
 						tokenEditorState[name] = {
@@ -2487,6 +2504,27 @@
 				+ '</button>'
 				+ '</div>'
 				+ '</div>'
+				// The way back. "Do not ask again" lives inside a dialog the
+				// admin has just dismissed, so without these two the offer to
+				// keep a set of changes as its own theme would be gone for good
+				// after one careless click.
+				+ '<div class="nldesign-confirm-controls">'
+				+ '<label>'
+				+ '<input type="checkbox" id="nldesign-confirm-save-stock">'
+				+ escapeHtml(
+					t(
+						'thematiq',
+						'Ask before saving while the stock Nextcloud theme is active',
+					),
+				)
+				+ '</label>'
+				+ '<label>'
+				+ '<input type="checkbox" id="nldesign-confirm-save-theme">'
+				+ escapeHtml(
+					t('thematiq', 'Ask before saving while a token set is active'),
+				)
+				+ '</label>'
+				+ '</div>'
 				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>'
 
 			container.querySelectorAll('.nldesign-tab-btn').forEach(function (btn) {
@@ -2513,6 +2551,8 @@
 			})
 
 			wireTokenRows(container)
+
+			wireConfirmControls()
 
 			document
 				.getElementById('nldesign-save-btn')
@@ -2773,10 +2813,23 @@
 			// what repaints the real components on the page, and the browser
 			// already batches it into the next frame for free. Only the rich
 			// preview — which has to READ the cascade back — is worth delaying.
+			//
+			// WRITTEN `!important`, and it has to be. CustomOverridesService
+			// emits every stored token as `!important` (see the note in its
+			// write()), so once a token had been saved ONCE, this inline
+			// declaration lost the cascade to custom-overrides.css and dragging
+			// its picker moved nothing on the page. An admin who had already
+			// saved a colour could never preview a different one — which reads
+			// as the editor being dead, not as a cascade nicety.
+			//
+			// Inline `!important` outranks any author stylesheet, so the preview
+			// now wins over the stored value it is about to replace, while
+			// `primary-lock.css` still wins over the preview: it declares on
+			// `body`, below this element, which is what that toggle means.
 			if (value.trim() === '') {
 				document.documentElement.style.removeProperty(name)
 			} else {
-				document.documentElement.style.setProperty(name, value)
+				document.documentElement.style.setProperty(name, value, 'important')
 			}
 			schedulePreviewRepaint()
 		}
@@ -2820,7 +2873,645 @@
 				dirtyCount > 0 ? t('thematiq', 'Unsaved changes') : ''
 		}
 
-		function saveOverrides() {
+		/* ==========================================================================
+		 * SAVE CONFIRMATION
+		 *
+		 * Two dialogs, because the two situations ask different questions.
+		 *
+		 * On the stock `nextcloud` set there is a real fork: the edits can be
+		 * kept as a NEW token set, or written straight over the running
+		 * Nextcloud theme. That choice has to be made before anything is
+		 * written, because the two go to different places.
+		 *
+		 * On any other set there is nothing to choose — the overrides belong to
+		 * the set that is on — so it is a plain confirmation.
+		 *
+		 * Both carry "do not ask again", and both flags are turned back on from
+		 * the pair of controls under the editor. A one-way switch buried in a
+		 * dialog is how an admin loses the only offer of the new-set path.
+		 * ========================================================================== */
+
+		// The stock set's id, as CssInjectionService::STOCK_TOKEN_SET spells it.
+		// It is the one set whose "save" has a second route, because it is the
+		// running Nextcloud theme rather than a theme this app ships.
+		var STOCK_TOKEN_SET = 'nextcloud'
+
+		// Server-rendered, and kept in step as the dialogs and the controls
+		// under the editor change them.
+		var confirmSaveStock = loadInitialState('confirmSaveStock', true) === true
+		var confirmSaveTheme = loadInitialState('confirmSaveTheme', true) === true
+
+		/**
+		 * Put the two controls under the editor in step with the flags.
+		 *
+		 * Called after a dialog changes one, so ticking "do not ask again" and
+		 * then looking down at the controls shows the same fact in both places.
+		 *
+		 * @return {void}
+		 */
+		function refreshConfirmControls() {
+			var stockEl = document.getElementById('nldesign-confirm-save-stock')
+			var themeEl = document.getElementById('nldesign-confirm-save-theme')
+			if (stockEl !== null) {
+				stockEl.checked = confirmSaveStock
+			}
+			if (themeEl !== null) {
+				themeEl.checked = confirmSaveTheme
+			}
+		}
+
+		/**
+		 * Wire the two controls under the editor, and set their initial state.
+		 *
+		 * @return {void}
+		 */
+		function wireConfirmControls() {
+			var stockEl = document.getElementById('nldesign-confirm-save-stock')
+			var themeEl = document.getElementById('nldesign-confirm-save-theme')
+			if (stockEl === null || themeEl === null) {
+				return
+			}
+
+			refreshConfirmControls()
+
+			stockEl.addEventListener('change', function () {
+				confirmSaveStock = stockEl.checked === true
+				saveConfirmFlags()
+			})
+			themeEl.addEventListener('change', function () {
+				confirmSaveTheme = themeEl.checked === true
+				saveConfirmFlags()
+			})
+		}
+
+		/**
+		 * Persist both confirmation flags.
+		 *
+		 * Sent as a pair rather than one at a time: the controls under the
+		 * editor render both, and a single round trip cannot leave the two
+		 * halves of the preference disagreeing if one request fails.
+		 *
+		 * @return {Promise} Resolves when the server has stored them.
+		 */
+		function saveConfirmFlags() {
+			return fetch(
+				OC.generateUrl('/apps/thematiq/settings/save-confirmations'),
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						requesttoken: OC.requestToken,
+					},
+					body: JSON.stringify({
+						confirmSaveStock: confirmSaveStock,
+						confirmSaveTheme: confirmSaveTheme,
+					}),
+				},
+			).catch(function (err) {
+				console.error('Error saving the confirmation settings:', err)
+			})
+		}
+
+		/**
+		 * Whether the active set is the stock one, read fresh.
+		 *
+		 * The dropdown can move under the editor without a reload, so the
+		 * server-rendered flag is only the starting point.
+		 *
+		 * @return {boolean} True when the stock Nextcloud set is active.
+		 */
+		function onStockSet() {
+			if (tokenSetSelect !== null && tokenSetSelect.value !== '') {
+				return tokenSetSelect.value === STOCK_TOKEN_SET
+			}
+
+			return pageTokenSetId === STOCK_TOKEN_SET
+		}
+
+		/**
+		 * Put the "do not ask again" row into a dialog and report its state.
+		 *
+		 * @param {Element} overlay The dialog overlay.
+		 * @param {string} which Which flag this dialog controls.
+		 *
+		 * @return {void}
+		 */
+		function wireDoNotAskAgain(overlay, which) {
+			var box = overlay.querySelector('.nldesign-dialog-dontask')
+			if (box === null) {
+				return
+			}
+
+			box.addEventListener('change', function () {
+				if (which === 'stock') {
+					confirmSaveStock = box.checked === false
+				} else {
+					confirmSaveTheme = box.checked === false
+				}
+				saveConfirmFlags().then(refreshConfirmControls)
+			})
+		}
+
+		/**
+		 * The markup both dialogs share for the "do not ask again" row.
+		 *
+		 * @return {string} The row's HTML.
+		 */
+		function dontAskAgainRow() {
+			return (
+				'<label class="nldesign-dialog-dontask-row">'
+				+ '<input type="checkbox" class="nldesign-dialog-dontask">'
+				+ escapeHtml(t('thematiq', 'Do not ask again'))
+				+ '</label>'
+			)
+		}
+
+		/**
+		 * Ask before saving, and run `proceed` with the chosen route.
+		 *
+		 * `proceed` is called with `'new-set'` to keep the edits as a token set
+		 * of their own, or `'overrides'` to write them over the active theme.
+		 * Cancelling calls nothing at all — deliberately, so a dismissed dialog
+		 * can never be mistaken for a save.
+		 *
+		 * @param {Function} proceed Called with the chosen route.
+		 *
+		 * @return {void}
+		 */
+		function confirmSave(proceed) {
+			var stock = onStockSet()
+
+			if (stock === false && confirmSaveTheme === false) {
+				proceed('overrides')
+				return
+			}
+			if (stock === true && confirmSaveStock === false) {
+				proceed('overrides')
+				return
+			}
+
+			if (stock === true) {
+				openStockSaveDialog(proceed)
+				return
+			}
+
+			openThemeSaveDialog(proceed)
+		}
+
+		/**
+		 * The stock-set dialog: new token set, or over the Nextcloud theme.
+		 *
+		 * @param {Function} proceed Called with the chosen route.
+		 *
+		 * @return {void}
+		 */
+		function openStockSaveDialog(proceed) {
+			var html =
+				'<div class="nldesign-dialog-overlay" id="nldesign-save-dialog-overlay">'
+				+ '<div class="nldesign-dialog">'
+				+ '<h3>'
+				+ escapeHtml(t('thematiq', 'Keep these changes as a new theme?'))
+				+ '</h3>'
+				+ '<p class="settings-hint">'
+				+ escapeHtml(
+					t(
+						'thematiq',
+						'You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself.',
+					),
+				)
+				+ '</p>'
+				+ '<label class="nldesign-dialog-field">'
+				+ escapeHtml(t('thematiq', 'Name for the new theme'))
+				+ '<input type="text" id="nldesign-save-newset-name" '
+				+ 'placeholder="'
+				+ escapeHtml(t('thematiq', 'My organisation'))
+				+ '">'
+				+ '</label>'
+				// Where the server's refusal lands. In the dialog, beside the
+				// field that caused it, because the one thing an admin needs
+				// after "that name is taken" is the name still being there to
+				// edit. A toast over a closed dialog loses the whole export.
+				+ '<p class="nldesign-dialog-error" id="nldesign-save-newset-error"'
+				+ ' role="alert" hidden></p>'
+				+ dontAskAgainRow()
+				+ '<div class="nldesign-dialog-actions">'
+				+ '<button class="nldesign-dialog-cancel">'
+				+ escapeHtml(t('thematiq', 'Cancel'))
+				+ '</button>'
+				+ '<button class="nldesign-dialog-overwrite">'
+				+ escapeHtml(t('thematiq', 'No, change the Nextcloud theme'))
+				+ '</button>'
+				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
+				+ escapeHtml(t('thematiq', 'Yes, save as a new theme'))
+				+ '</button>'
+				+ '</div>'
+				+ '</div>'
+				+ '</div>'
+
+			document.body.insertAdjacentHTML('beforeend', html)
+			var overlay = document.getElementById('nldesign-save-dialog-overlay')
+
+			function close() {
+				overlay.remove()
+			}
+
+			makeDialogAccessible(overlay, close)
+			wireDoNotAskAgain(overlay, 'stock')
+
+			overlay
+				.querySelector('.nldesign-dialog-cancel')
+				.addEventListener('click', close)
+			overlay
+				.querySelector('.nldesign-dialog-overwrite')
+				.addEventListener('click', function () {
+					close()
+					proceed('overrides')
+				})
+			overlay
+				.querySelector('.nldesign-dialog-confirm')
+				.addEventListener('click', function () {
+					var nameEl = document.getElementById(
+						'nldesign-save-newset-name',
+					)
+					if (nameEl === null) {
+						return
+					}
+
+					var name = nameEl.value.trim()
+					if (name === '') {
+						// Refused here rather than at the server, because the
+						// name is the one thing this dialog exists to collect,
+						// and a round trip to be told so loses what was typed.
+						showError(t('thematiq', 'Give the new theme a name.'))
+						return
+					}
+
+					// The dialog STAYS OPEN across the request and closes only
+					// once the set exists. A name collision is the expected
+					// failure here — the server answers 409 with the name it
+					// already has — and the admin's next move is to change one
+					// word and try again, which is only possible if the dialog
+					// and everything typed into it are still on screen.
+					busy(true)
+					showError('')
+					proceed('new-set', name, {
+						done: function () {
+							busy(false)
+							close()
+						},
+						fail: function (message) {
+							busy(false)
+							showError(message)
+						},
+					})
+				})
+
+			/**
+			 * Show, or clear, the server's refusal inside the dialog.
+			 *
+			 * @param {string} message The message, or '' to clear it.
+			 *
+			 * @return {void}
+			 */
+			function showError(message) {
+				var errorEl = document.getElementById(
+					'nldesign-save-newset-error',
+				)
+				var nameEl = document.getElementById('nldesign-save-newset-name')
+				if (errorEl === null) {
+					return
+				}
+
+				errorEl.textContent = message
+				errorEl.hidden = message === ''
+				if (nameEl === null) {
+					return
+				}
+
+				if (message === '') {
+					nameEl.removeAttribute('aria-invalid')
+					return
+				}
+
+				nameEl.setAttribute('aria-invalid', 'true')
+				nameEl.focus()
+				nameEl.select()
+			}
+
+			/**
+			 * Lock the dialog's controls while the set is being created.
+			 *
+			 * @param {boolean} on Whether a request is in flight.
+			 *
+			 * @return {void}
+			 */
+			function busy(on) {
+				overlay
+					.querySelectorAll('button, input')
+					.forEach(function (control) {
+						control.disabled = on
+					})
+			}
+		}
+
+		/**
+		 * The plain confirmation shown on every set that is not stock.
+		 *
+		 * @param {Function} proceed Called with the chosen route.
+		 *
+		 * @return {void}
+		 */
+		function openThemeSaveDialog(proceed) {
+			var setName =
+				tokenSetSelect !== null
+				&& tokenSetsData[tokenSetSelect.value] !== undefined
+					? tokenSetsData[tokenSetSelect.value].name
+					: tokenSetSelect !== null
+						? tokenSetSelect.value
+						: ''
+
+			var html =
+				'<div class="nldesign-dialog-overlay" id="nldesign-save-dialog-overlay">'
+				+ '<div class="nldesign-dialog nldesign-dialog--small">'
+				+ '<h3>'
+				+ escapeHtml(t('thematiq', 'Save these overrides?'))
+				+ '</h3>'
+				+ '<p class="settings-hint">'
+				+ escapeHtml(
+					t('thematiq', 'They are applied on top of {set}.', {
+						set: setName,
+					}),
+				)
+				+ '</p>'
+				+ dontAskAgainRow()
+				+ '<div class="nldesign-dialog-actions">'
+				+ '<button class="nldesign-dialog-cancel">'
+				+ escapeHtml(t('thematiq', 'Cancel'))
+				+ '</button>'
+				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
+				+ escapeHtml(t('thematiq', 'Save overrides'))
+				+ '</button>'
+				+ '</div>'
+				+ '</div>'
+				+ '</div>'
+
+			document.body.insertAdjacentHTML('beforeend', html)
+			var overlay = document.getElementById('nldesign-save-dialog-overlay')
+
+			function close() {
+				overlay.remove()
+			}
+
+			makeDialogAccessible(overlay, close)
+			wireDoNotAskAgain(overlay, 'theme')
+
+			overlay
+				.querySelector('.nldesign-dialog-cancel')
+				.addEventListener('click', close)
+			overlay
+				.querySelector('.nldesign-dialog-confirm')
+				.addEventListener('click', function () {
+					close()
+					proceed('overrides')
+				})
+		}
+
+		/**
+		 * The design system the page is currently wearing.
+		 *
+		 * Read off the selected option's `data-design-system`, which is the same
+		 * attribute the badge reads, so the value saved into a new theme is the
+		 * one the panel is showing the admin.
+		 *
+		 * @return {string} A design-system id, defaulting to nldesign.
+		 */
+		function currentDesignSystemId() {
+			if (tokenSetSelect === null) {
+				return 'nldesign'
+			}
+
+			var option = tokenSetSelect.querySelector(
+				'option[value="' + tokenSetSelect.value + '"]',
+			)
+
+			return option === null
+				? 'nldesign'
+				: option.getAttribute('data-design-system') || 'nldesign'
+		}
+
+		/**
+		 * Serialise what the page is wearing into a new custom token set.
+		 *
+		 * Reuses the playground's exporter — the same function behind "Export as
+		 * token set" — so a set created here and one downloaded there are the
+		 * same file. It is posted to the custom-set upload endpoint rather than
+		 * downloaded, which is what makes this one click instead of a round trip
+		 * through the admin's file manager.
+		 *
+		 * @param {string} name The display name the admin typed.
+		 *
+		 * @return {void}
+		 */
+		function saveAsNewTokenSet(name, report) {
+			var playground = window.ThematiqPlayground
+			if (playground === undefined || playground.exportCss === undefined) {
+				report.fail(
+					t(
+						'thematiq',
+						'The theme exporter is not loaded on this page, so no new theme was created.',
+					),
+				)
+				return
+			}
+
+			// `playgroundExportTokens`, NOT `playgroundTokens`.
+			//
+			// The second is what the instrument DRAWS with: the active set on top
+			// of css/systems/nldesign/defaults.css, so every token has a value to
+			// show. Exporting from it wrote all 200 of them — 115 component
+			// tokens of Rijkshuisstijl defaults — into a theme whose author had
+			// changed one colour. The first is what the set DECLARES, which for
+			// the stock set is resolved from the running instance rather than
+			// from a file. See PlaygroundStateService::getExportTokens().
+			// Captured before the request, so the set is recorded against the
+			// design system the page was wearing when it was serialised, not
+			// whatever the dropdown says by the time the response lands.
+			var designSystem = currentDesignSystemId()
+
+			var result = playground.exportCss(
+				playground.liveTokens(
+					loadInitialState('playgroundExportTokens', {}),
+					function (n, fallback) {
+						return readVar(n, fallback)
+					},
+				),
+				collectOverrides(),
+				loadInitialState('playgroundTokenSources', {}),
+			)
+
+			fetch(OC.generateUrl('/apps/thematiq/settings/tokensets/upload'), {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				// `sourceName` is what the custom-set list shows as the origin.
+				// Saying it came from the editor rather than leaving it blank is
+				// what tells a later admin why a set exists that nobody uploaded.
+				//
+				// `raw` says this is already a token set, so the server stores it
+				// as it arrived instead of running it through the NLDS converter,
+				// whose job is to complete an unknown document and which therefore
+				// fills every token the file leaves out.
+				//
+				// `designSystem` is the one the page is wearing, so a theme saved
+				// off stock Nextcloud stays stock Nextcloud instead of coming back
+				// with the whole nldesign layer on top of it. Allow-listed server
+				// side; this is a claim, not a decision.
+				body: JSON.stringify({
+					name: name,
+					content: result.css,
+					sourceName: t('thematiq', 'Token editor'),
+					raw: true,
+					designSystem: designSystem,
+				}),
+			})
+				.then(function (r) {
+					// Read the body whatever the status: the refusals worth
+					// showing an admin — 409 for a name already taken, 422 for a
+					// name with nothing to slugify — all carry their reason in
+					// `error`, and throwing on `!r.ok` would replace every one of
+					// them with "could not be created".
+					return r.json().then(
+						function (data) {
+							return { ok: r.ok, status: r.status, data: data }
+						},
+						function () {
+							return { ok: r.ok, status: r.status, data: {} }
+						},
+					)
+				})
+				.then(function (result) {
+					if (result.data.error) {
+						report.fail(result.data.error)
+						return
+					}
+					if (result.ok === false) {
+						report.fail(
+							t(
+								'thematiq',
+								'The new theme could not be created (HTTP {status}).',
+								{ status: String(result.status) },
+							),
+						)
+						return
+					}
+
+					report.done()
+					applyCreatedTokenSet(result.data.id, name, designSystem)
+				})
+				.catch(function (err) {
+					console.error('Error creating the token set:', err)
+					report.fail(t('thematiq', 'The new theme could not be created.'))
+				})
+		}
+
+		/**
+		 * Put a just-created set in the dropdown, then make it the live theme.
+		 *
+		 * Saving a theme IS choosing it. The admin has just described the thing
+		 * they want the instance to look like and named it; leaving the instance
+		 * on the theme they were editing away from, with a notice telling them to
+		 * go and pick it, made a successful save look like a failed one.
+		 *
+		 * The set is brand new, so the dropdown has no option for it — the server
+		 * rendered that list before it existed. It is inserted here rather than by
+		 * re-rendering the panel, because a re-render would drop every unsaved row
+		 * in the editor.
+		 *
+		 * No apply dialog either. That dialog exists to show what CHANGES when you
+		 * move between two themes; here the page is already wearing these values
+		 * (the editor has been previewing them inline all along), so the only work
+		 * left is to make the server agree and swap the stylesheets under it.
+		 *
+		 * @param {string} id   The new set's id, as the server assigned it.
+		 * @param {string} name The display name the admin typed.
+		 *
+		 * @return {void}
+		 */
+		function applyCreatedTokenSet(id, name, designSystem) {
+			if (typeof id !== 'string' || id === '') {
+				// Created, but we cannot name it — say so rather than silently
+				// leaving the instance on the old theme.
+				notify(
+					t(
+						'thematiq',
+						'Theme "{name}" was created but could not be applied. Pick it in the theme dropdown.',
+						{ name: name },
+					),
+				)
+				return
+			}
+
+			// The set was saved carrying the design system the page was wearing,
+			// so the dropdown entry and the badge say the same thing the server
+			// stored — a theme made from stock Nextcloud reads as stock, not as
+			// NL Design System.
+			tokenSetsData[id] = { id: id, name: name, design_system: designSystem }
+
+			if (tokenSetSelect !== null
+				&& tokenSetSelect.querySelector('option[value="' + id + '"]') === null
+			) {
+				var option = document.createElement('option')
+				option.value = id
+				option.textContent = name
+				option.dataset.designSystem = designSystem
+				tokenSetSelect.appendChild(option)
+			}
+
+			commitTokenSetChange(id, false)
+				.then(function (data) {
+					if (data.status !== 'ok') {
+						throw new Error(data.error || 'Token set change failed')
+					}
+
+					// reflectSelection() moves the dropdown WITHOUT opening the
+					// apply dialog, which its own change handler would.
+					reflectSelection(id)
+
+					return applyLayersFor(id)
+				})
+				.then(function (swapped) {
+					notify(
+						swapped === true
+							? t('thematiq', 'Theme "{name}" created and applied.', {
+									name: name,
+								})
+							: t(
+									'thematiq',
+									'Theme "{name}" created and set as the active theme. Reload the page to see it.',
+									{ name: name },
+								),
+					)
+				})
+				.catch(function (err) {
+					console.error('Error applying the new token set:', err)
+					notify(
+						t(
+							'thematiq',
+							'Theme "{name}" was created but could not be applied. Pick it in the theme dropdown.',
+							{ name: name },
+						),
+					)
+				})
+		}
+
+		/**
+		 * The dirty tokens, in the shape the overrides endpoint stores.
+		 *
+		 * @return {Object} Token name → value.
+		 */
+		function collectOverrides() {
 			var overrides = {}
 			Object.keys(tokenEditorState).forEach(function (name) {
 				var state = tokenEditorState[name]
@@ -2829,6 +3520,22 @@
 					overrides[name] = value
 				}
 			})
+
+			return overrides
+		}
+
+		function saveOverrides() {
+			confirmSave(function (route, name, report) {
+				if (route === 'new-set') {
+					saveAsNewTokenSet(name, report)
+					return
+				}
+				writeOverrides()
+			})
+		}
+
+		function writeOverrides() {
+			var overrides = collectOverrides()
 
 			var btn = document.getElementById('nldesign-save-btn')
 			if (btn !== null) {

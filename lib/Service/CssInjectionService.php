@@ -375,6 +375,25 @@ class CssInjectionService {
 
 		// 3. Load token values (only when a design system reads --nldesign-* vars).
 		if ($designSystemId === 'none') {
+			// STOCK STILL GETS THE COMPONENT LAYER, and that is the difference
+			// between a themable instance and an inert one.
+			//
+			// `none` means "no design system", not "the app does nothing". Every
+			// instance STARTS on the stock `nextcloud` set, so without this the
+			// token editor and the playground could not move a single colour
+			// until an admin had already picked some other theme — you had to
+			// have a theme before you could make one.
+			//
+			// Emitting it costs nothing visually. This layer only REDIRECTS
+			// Nextcloud's own variables inside a component's subtree, and every
+			// component token is undeclared until somebody sets one, so an
+			// untouched stock instance resolves each redirect straight back to
+			// the captured global and renders byte-identically to stock. What it
+			// buys is that `custom-overrides.css` — which is emitted after this
+			// list whatever the design system — finally has something reading the
+			// tokens it writes.
+			$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
+
 			return $layers;
 		}
 

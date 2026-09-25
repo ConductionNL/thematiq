@@ -1323,3 +1323,78 @@
 		animation: none !important;
 	}
 }
+
+/* ==========================================================================
+   SAVE CONFIRMATION
+   ========================================================================== */
+
+/* The plain "are you sure" is narrower than the dialogs that carry a table:
+   it holds two lines and three controls, and at the shared width it reads as
+   an emptier version of a bigger question than it is asking. */
+.nldesign-dialog--small {
+	max-width: 420px;
+}
+
+/* The name field in the stock dialog. Stacked rather than inline, because the
+   label is a sentence and a side-by-side field pushes it into two lines at the
+   widths this dialog actually gets. */
+.nldesign-dialog-field {
+	display: block;
+	margin: 16px 0 8px;
+	font-weight: 500;
+}
+
+.nldesign-dialog-field input[type='text'] {
+	display: block;
+	width: 100%;
+	margin-top: 4px;
+	font-weight: normal;
+}
+
+.nldesign-dialog-field input[aria-invalid='true'] {
+	border-color: var(--color-error);
+}
+
+/* "Do not ask again" sits with the question, not with the buttons: it belongs
+   to what is being asked, and putting it in the action bar made it read as a
+   third choice beside Cancel and Save. */
+.nldesign-dialog-dontask-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-top: 16px;
+	color: var(--color-text-maxcontrast);
+}
+
+/* The way back, under the editor. Deliberately quiet — it is a preference
+   about dialogs, not a theming control, and it must not compete with the token
+   rows above it for an admin's attention. */
+.nldesign-confirm-controls {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--color-border);
+	color: var(--color-text-maxcontrast);
+	font-size: 0.9em;
+}
+
+.nldesign-confirm-controls label {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	cursor: pointer;
+}
+
+/* The server's refusal, inside the dialog that caused it. `hidden` is honoured
+   explicitly because the flex/block display below would otherwise beat it. */
+.nldesign-dialog-error {
+	margin: 8px 0 0;
+	color: var(--color-error-text, var(--color-error));
+	font-size: 0.9em;
+}
+
+.nldesign-dialog-error[hidden] {
+	display: none;
+}
