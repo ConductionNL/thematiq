@@ -1309,6 +1309,38 @@
 			"featureConfidence": "high"
 		},
 		{
+			"id": "app-simple-theme-switch",
+			"area": "apply",
+			"name": "Let people who are not token specialists switch between brand themes without learning the token editor.",
+			"thematiq": "yes",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "partial",
+			"built": {
+				"state": "built",
+				"evidence": "templates/settings/admin.php:66-76 renders one 'Design token set' dropdown of every shipped and uploaded set; choosing one POSTs to settings#setTokenSet (appinfo/routes.php:31) and applies the whole house style, so switching brands needs no token editing (the token editor is a separate section)",
+				"owner": "ConductionNL/thematiq",
+				"origin": "competitor"
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (templates/settings/admin.php:68)",
+			"evidence": {
+				"nextcloud-theming": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"m365-branding": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"opendesk": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"liferay-dxp": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"tokens-studio": "tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/src/app/components/ThemeSelector/ThemeSelector.tsx:27-40,131-135: a theme dropdown exists inside the full plugin and is pro-gated; no simplified switcher (board post, 8 votes, status Requests)"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sets",
+			"featureConfidence": "high",
+			"origin": "featureRequest",
+			"originUrl": "https://feedback.tokens.studio/p/theme-switcher-for-non-ds-designers",
+			"note": "brand managers in a municipality are not token engineers"
+		},
+		{
 			"id": "aut-upload-css",
 			"area": "authoring",
 			"name": "Upload your own house style as a CSS file of design tokens.",
