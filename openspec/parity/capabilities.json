@@ -24,7 +24,39 @@
 			"name": "Nextcloud Theming (built-in app)",
 			"vendor": "Nextcloud GmbH",
 			"readOn": "2026-09-26",
-			"columnAddedOn": "2026-09-26"
+			"columnAddedOn": "2026-09-26",
+			"evidenceGrade": "docs-only",
+			"unknownReason": "Only acc-keyboard-admin is unknown: verifying full keyboard operability of the rendered admin settings page requires driving a live instance in a browser, which is out of scope for a source-and-docs reading. Every other row was settled yes/partial/no from the theming app's PHP/Vue source and the admin manual.",
+			"sources": [
+				"server repo @ 175c7e6be47 (git -C ~/nextcloud-docker-dev/workspace/server log -1 --format=%h), apps/theming/lib/Controller/ThemingController.php",
+				"apps/theming/lib/ThemingDefaults.php",
+				"apps/theming/lib/Capabilities.php",
+				"apps/theming/lib/IconBuilder.php",
+				"apps/theming/lib/ImageManager.php",
+				"apps/theming/lib/Util.php",
+				"apps/theming/lib/ConfigLexicon.php",
+				"apps/theming/lib/Command/UpdateConfig.php",
+				"apps/theming/lib/Settings/Admin.php",
+				"apps/theming/lib/Settings/Personal.php",
+				"apps/theming/lib/Themes/DefaultTheme.php",
+				"apps/theming/lib/Themes/DarkTheme.php",
+				"apps/theming/lib/Themes/LightTheme.php",
+				"apps/theming/lib/Themes/HighContrastTheme.php",
+				"apps/theming/lib/Themes/DarkHighContrastTheme.php",
+				"apps/theming/lib/Themes/DyslexiaFont.php",
+				"apps/theming/lib/Themes/ReducedMotion.php",
+				"apps/theming/lib/Themes/CommonThemeTrait.php",
+				"apps/theming/lib/Service/ThemesService.php",
+				"apps/theming/lib/Service/BackgroundService.php",
+				"apps/theming/lib/Controller/UserThemeController.php",
+				"apps/theming/src/components/admin/ColorPickerField.vue",
+				"apps/theming/src/utils/refreshStyles.ts",
+				"apps/theming/fonts/ (OpenDyslexic-Regular.otf, OpenDyslexic-Bold.otf, no in-repo LICENSE found)",
+				"lib/private/Mail/EMailTemplate.php",
+				"config/config.sample.php (enforce_theme, theming.standalone_window.enabled)",
+				"https://docs.nextcloud.com/server/stable/admin_manual/configuration_server/theming.html (fetched 2026-09-26, thinner than the source: covers name/url/slogan, primary+background colour, logo, background/login image, favicon, legal links, disable-user-theming, occ theming:config; does not mention fonts, custom CSS, group theming, accessibility statements, dark/high-contrast modes, or a marketplace)"
+			],
+			"readingNotes": "Grade is docs-only: this reading was of the local server source (read-only) plus the published admin manual, not of a running instance, per the brief. Key structural facts a matrix author needs: (1) there is no house-style *catalogue* at all in stock Nextcloud - admin theming is exactly two colours (primary, background) plus four uploadable images (logo, logoheader, background, favicon) plus text fields (name, url, slogan, imprint/privacy URLs); most 'catalogue', 'authoring' (token-set upload/DTCG/CSS/Figma/Git) and 'scoping' (group/tenant/domain) rows are structurally out of scope, not merely unimplemented. (2) The 'themes' the app does ship are accessibility/appearance variants - default, light, dark, high-contrast, dark+high-contrast, a dyslexia font, and a reduced-motion toggle - selectable per-user in Personal settings, auto-applied via prefers-color-scheme/prefers-contrast/prefers-reduced-motion media queries, and instance-enforceable via config.php's enforce_theme. (3) Its one real strength versus thematiq's likely gaps: Util::elementColor() bakes a minimum-contrast guarantee (3.2:1, 5.6:1 under high-contrast) into every derived element colour automatically, and DefaultTheme/DarkTheme hand-tune status colours to a documented 4.5:1 target - a built-in contrast-safety net thematiq would need to demonstrate matching. (4) Governance: this settings section already supports Nextcloud's native admin-delegation (IDelegatedSettings), so 'delegate theme editing to a non-admin' is a real yes, not a gap. (5) No custom CSS field, no font upload, no audit log, no OTAP config bundle (only per-key occ theming:config), no marketplace, no desktop/mobile client branding (Enterprise-only per Nextcloud's own tiering, not present here)."
 		},
 		{
 			"key": "m365-branding",
@@ -183,7 +215,7 @@
 			"area": "catalogue",
 			"name": "Apply the Dutch national government house style (Rijkshuisstijl) without designing anything.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -196,6 +228,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (templates/settings/admin.php:68)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Service/ThemesService.php:37-48 : only default/light/dark/highcontrast/dark-highcontrast/dyslexia-font/reduced-motion are registered, no Dutch government house style shipped",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -209,7 +242,7 @@
 			"area": "catalogue",
 			"name": "Pick your own municipality or organisation from a list of ready-made house styles.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -222,6 +255,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:70-167 : admin sets one primary_color/background_color/logo manually, no catalogue of municipality styles to pick from",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -235,7 +269,7 @@
 			"area": "catalogue",
 			"name": "Use the full design systems of the large cities (Utrecht, Amsterdam, Den Haag, Rotterdam).",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -248,6 +282,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no design-system catalogue exists (apps/theming/lib/Service/ThemesService.php registers only accessibility/appearance modes, not organisation design systems)",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -262,7 +297,7 @@
 			"area": "catalogue",
 			"name": "Apply the VNG house style for a municipal association or shared service.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -275,6 +310,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
+				"nextcloud-theming": "outside the product: same absence of any house-style catalogue as cat-municipal-sets",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -288,7 +324,7 @@
 			"area": "catalogue",
 			"name": "Make the workspace match the French La Suite numerique look so a sovereign workplace bundle shows no visual seam.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -301,6 +337,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
+				"nextcloud-theming": "outside the product: theming has no bundled external design-system look, only manual colour/logo fields",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -314,7 +351,7 @@
 			"area": "catalogue",
 			"name": "Find a house style by typing its name in a searchable picker that scales to hundreds of entries.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -327,6 +364,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (browser-native type-ahead only)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Settings/Admin.php:57-83 : initial state exposes fixed fields (name, colors, images, urls), no searchable list of styles",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : theme picker is a fixed gallery of 8 light + 2 dark default themes plus any custom org themes, not a searchable-by-name picker scaling to hundreds",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : a site's style book picker lists the style books available for that site/theme, not a searchable catalogue of hundreds of named house styles"
 			},
@@ -341,7 +379,7 @@
 			"area": "catalogue",
 			"name": "See a colour swatch and the primary colour of each house style before choosing it.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -354,6 +392,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming: select a set in the dropdown (live preview shell repaints immediately), then the apply dialog shows swatches before you confirm",
 			"evidence": {
+				"nextcloud-theming": "no catalogue of house styles exists to show swatches of; apps/theming/src/components/admin/ColorPickerField.vue only shows the swatch of the two manually-set colour fields",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : the default-themes gallery shows each theme's colour settings and 'those color settings are instantly applied to the page' when picked, i.e. a swatch/preview in the SharePoint theme picker; Entra ID sign-in branding has no such gallery, it is a single custom configuration",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : style book editor lets you 'preview the effects of a style book on your pages... before publishing', i.e. a live preview, but the picker itself was not documented as showing a colour swatch before opening a style book"
 			},
@@ -368,7 +407,7 @@
 			"area": "catalogue",
 			"name": "Switch back to stock Nextcloud styling with one choice, removing every added stylesheet.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -381,6 +420,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, select 'Nextcloud (default)' in the dropdown",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:331-345 undoAll() and apps/theming/lib/ThemingDefaults.php:480-487 undoAll() revert every appconfig value (colors, images, name, slogan, app menu) to stock defaults in one action",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'Reset color: Select this link to reset colors to the default colors' (per-tab reset, not one action that also removes uploaded logos/CSS everywhere)",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : every site has a default 'Styles from X Theme' style book 'with all of the default values', selectable to revert a site, but this is per-site not an instance-wide one-click stock switch"
 			},
@@ -394,7 +434,7 @@
 			"area": "catalogue",
 			"name": "See how complete a house style's token vocabulary is before you rely on it.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -407,6 +447,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, badge next to the token set dropdown",
 			"evidence": {
+				"nextcloud-theming": "no house-style token vocabulary/completeness concept exists in the app",
 				"m365-branding": "not checked: no token-vocabulary-completeness indicator found in Entra ID, M365 org theme or SharePoint theming docs read on 2026-09-26",
 				"liferay-dxp": "not checked: no token-vocabulary-completeness indicator found in the style book or frontend-token-definition docs read on 2026-09-26"
 			},
@@ -420,7 +461,7 @@
 			"area": "catalogue",
 			"name": "Choose between whole design systems (NL Design System, La Suite, high contrast, a soft light theme), not only colour sets.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -433,6 +474,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, dropdown option carries data-design-system, badge shown via js/admin.js updateDesignSystemBadge()",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Service/ThemesService.php:37-48 : the only selectable set is default/light/dark/highcontrast/dark-highcontrast/dyslexia-font/reduced-motion, accessibility/appearance variants not whole design systems like NL DS or La Suite",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme / https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : both only expose colour/logo fields, not a choice between whole named design systems",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : since DXP 2025.Q2 'every style book is explicitly tied to a specific theme' (Token Isolation), so switching theme effectively switches the whole design system, but Liferay ships no NL Design System/high-contrast/soft-light design-system catalogue itself"
 			},
@@ -446,7 +488,7 @@
 			"area": "catalogue",
 			"name": "Follow a link from the settings page to the design system's own documentation.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -459,6 +501,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Documentation' link in the section header",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Settings/Admin.php:62 'docUrl' => urlGenerator->linkToDocs('admin-theming') links to Nextcloud's own theming admin docs, not an external design system's documentation",
 				"m365-branding": "not checked: no 'link to the design system's own documentation' field found in the branding admin screens documented",
 				"liferay-dxp": "not checked: no such link found in the style book editor documentation"
 			},
@@ -473,7 +516,7 @@
 			"area": "catalogue",
 			"name": "Use community-maintained brand sets for organisations that are not a municipality.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -486,6 +529,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no marketplace or community brand sets exist",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -499,7 +543,7 @@
 			"area": "catalogue",
 			"name": "Start from a ready-made template or example theme and adapt it instead of starting blank.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -512,6 +556,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming: pick a shipped set as a base, then the token editor below it",
 			"evidence": {
+				"nextcloud-theming": "outside the product: settings form starts from the current live values, no example/starter theme to adapt",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : SharePoint's default themes (Teal, Blue, Orange...) 'have been designed for readability, so you might find them to be useful starting points for creating custom themes'; Entra ID sign-in branding has no such starter gallery, only a blank form",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : every theme ships a default 'Styles from X Theme' style book that can be duplicated/edited as a starting point instead of building from scratch"
 			},
@@ -526,7 +571,7 @@
 			"area": "catalogue",
 			"name": "Download additional themes from a marketplace or gallery maintained by the vendor or community.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -539,6 +584,7 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no theme marketplace or gallery in the theming app",
 				"m365-branding": "not checked: no vendor/community marketplace for SharePoint or Entra sign-in themes found in the docs read",
 				"liferay-dxp": "https://marketplace.liferay.com/p/materialized-theme : marketplace.liferay.com lists installable themes (e.g. Materialized Theme, Seven Theme, Mercury Theme) maintained by Liferay and third parties"
 			},
@@ -553,7 +599,7 @@
 			"area": "catalogue",
 			"name": "Apply a house style for a province or water board.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -566,6 +612,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (province only)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no provincial/waterboard house styles are shipped",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -580,7 +627,7 @@
 			"area": "apply",
 			"name": "Re-brand the whole workspace, its apps and the login page in one action.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -593,6 +640,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, dropdown selection then 'Apply selected' in the apply dialog",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:70-293 : each value (name, colors, logo, background, favicon) is set through its own separate ajax call; there is no single house-style object to apply everything from in one action",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding ; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme ; https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : sign-in branding, the M365 suite-header theme and SharePoint site themes are three separate admin surfaces with no single action that rebrands all of them plus every app at once",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : a style book applies to the pages of one site via its theme; login/administrative themes are excluded ('Style books cannot be used in administrative themes'), so one style book does not cover the whole workspace including login"
 			},
@@ -606,7 +654,7 @@
 			"area": "apply",
 			"name": "See exactly which colour values will change before you apply a new house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -619,6 +667,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog shown after selecting a token set",
 			"evidence": {
+				"nextcloud-theming": "no house-style object exists to diff against the current values before applying",
 				"m365-branding": "not checked: no before/after colour-diff dialog found, only instant live substitution when a theme is chosen",
 				"liferay-dxp": "not checked: no before/after colour-diff dialog found in the style book docs, only live preview"
 			},
@@ -632,7 +681,7 @@
 			"area": "apply",
 			"name": "Tick which individual values to take over when switching house style, and keep the rest.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -645,6 +694,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog: per-row checkboxes",
 			"evidence": {
+				"nextcloud-theming": "not applicable: there is no house style to selectively apply fields from",
 				"m365-branding": "not checked: Entra/SharePoint branding screens apply the whole configuration on save, no per-value adoption picker when switching",
 				"liferay-dxp": "not checked: no 'tick which tokens to adopt when switching style book' control found; tokens can link to other token values but that is authoring, not a switch-time picker"
 			},
@@ -659,7 +709,7 @@
 			"area": "apply",
 			"name": "Switch house style and see it repaint the page you are on without reloading.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -672,6 +722,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, applying any token set repaints the settings page itself with no reload",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/src/utils/refreshStyles.ts : swaps the <link class=\"theme\"> stylesheet href with a cache-busted URL and removes the old node once loaded, repainting without a full page reload",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : 'When you choose a theme in the list, those color settings are instantly applied to the page so that you can see what the selected theme will look like'",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : the style book editor lets a builder 'preview the effects of a style book on your pages, templates, and page fragments' as they edit, before publishing"
 			},
@@ -685,7 +736,7 @@
 			"area": "apply",
 			"name": "Preview the house style on a mock of the real app shell (header, navigation, buttons) inside the settings page.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -698,6 +749,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, mock app-shell preview region",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/src/components/admin/ColorPickerField.vue:47-76 : the colour picker's own button previews the chosen colour live, but there is no mock of the full app shell (header, navigation, buttons) in the settings page",
 				"m365-branding": "not checked: the Entra branding wizard assembles settings section by section and shows a labelled diagram of sign-in elements, but no explicit 'live mock of the shell inside the settings page' was described in the docs read",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : the style book editor previews changes directly on real pages, templates and page fragments as you edit tokens, which covers header/navigation/button chrome in place"
 			},
@@ -711,7 +763,7 @@
 			"area": "apply",
 			"name": "Preview how the login page will look before publishing.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -724,6 +776,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, component playground, 'Login page & Branding' tab",
 			"evidence": {
+				"nextcloud-theming": "no login-page preview component found in apps/theming/src/views/AdminTheming.vue or Admin.php; admin must open the real login page to see the result",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : the 'Review' step shows 'all of the available options... in one list so you can review everything you customized' before you select Create, but this is a settings summary, not a rendered login-page preview",
 				"liferay-dxp": "not checked: style books are excluded from administrative/login themes, so login look is only visible after a theme/client extension is actually deployed, no in-settings login preview documented"
 			},
@@ -738,7 +791,7 @@
 			"area": "apply",
 			"name": "Try a house style in your own session only, while everyone else keeps the current one.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -751,6 +804,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Preview in my session' button next to the dropdown",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:461-475 set() writes directly to appconfig and calls increaseCacheBuster(), which is instance-wide and immediate, not scoped to the editing admin's own session",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : choosing a theme 'instantly applies' it in the editor's own view, and you 'choose Save... to save your selection, or choose Cancel to revert', i.e. changes stay local until saved",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : style book edits are live-previewed for the editor and only affect everyone once published, but this is an edit-mode draft, not a separately shareable per-user trial session"
 			},
@@ -764,7 +818,7 @@
 			"area": "apply",
 			"name": "See a banner reminding you that you are looking at a trial theme, with a way back.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -777,6 +831,7 @@
 			},
 			"reachedOn": "Any page while a session preview is active (banner injected app-wide), and the active-preview panel on Settings > Administration > Theming (templates/settings/admin.php:142-153)",
 			"evidence": {
+				"nextcloud-theming": "no trial mode exists, so no such banner is needed or present",
 				"m365-branding": "not checked: no trial-mode banner described in the SharePoint/Entra branding editors",
 				"liferay-dxp": "not checked: no trial-mode banner described in the style book editor docs"
 			},
@@ -790,7 +845,7 @@
 			"area": "apply",
 			"name": "Publish a theme you have been trialling to everyone in one step.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -803,6 +858,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, active-preview panel 'Publish' button, then confirm in the apply dialog",
 			"evidence": {
+				"nextcloud-theming": "not applicable: admin changes are already live the moment they are saved (ThemingDefaults::set), there is no separate trial-then-publish step",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : the branding wizard's final 'Create'/'Save' step applies the whole configuration to everyone in one action",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : style book changes are saved/published to the site in one action from the editor"
 			},
@@ -816,7 +872,7 @@
 			"area": "apply",
 			"name": "Discard a trial theme and return to what everyone else sees.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -829,6 +885,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, active-preview panel 'Discard' button",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:302-323 undo(setting) reverts one changed field to its previous default, the closest analogue to discarding a change, but it is a manual per-field revert, not a bundled trial discard",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : 'After you've found a theme that you want to use, choose Save to save your selection, or choose Cancel to revert to your current theme'",
 				"liferay-dxp": "not checked: no explicit 'discard and revert to the published style book' control was described in the docs read, though the editor implies unsaved changes do not affect other users"
 			},
@@ -842,7 +899,7 @@
 			"area": "apply",
 			"name": "Look at buttons, inputs, note cards, list items and the login card in each of their states while you edit the tokens they read.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -855,6 +912,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, component playground below the token editor",
 			"evidence": {
+				"nextcloud-theming": "no component-state preview surface (buttons/inputs/note-cards/list items/login card) exists in the settings UI",
 				"m365-branding": "not checked: no component-state playground found in Entra/SharePoint/M365 branding docs",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : the style book has a dedicated buttons section for 'individual customization of primary, secondary, dark, and light button styling' with live preview on real fragments, but the docs read do not show a dedicated states playground (hover/focus/disabled) covering inputs, note cards and the login card together"
 			},
@@ -868,7 +926,7 @@
 			"area": "apply",
 			"name": "Make the brand primary colour drive every component, or deliberately let components keep their own colours.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -881,6 +939,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Let the primary colour drive every component' checkbox",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Util.php:70-99 elementColor() and apps/theming/lib/Themes/CommonThemeTrait.php:28-56 derive nearly every element colour from the single primary colour with automatic contrast correction, but there is no explicit toggle to let individual components keep their own colours instead",
 				"m365-branding": "not checked: M365/SharePoint theme colours (nav bar, accent, text/icon / accent-background pairs) are global settings, not a per-component lock/unlock choice",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/creating-pages/building-and-managing-content-pages/configuring-fragment-styles.html : 'Users can edit fragment styles only inside the brand/style book limits', implying components normally follow the style book's tokens but a page builder can still adjust individual fragment styles within limits"
 			},
@@ -894,7 +953,7 @@
 			"area": "apply",
 			"name": "Change the brand at runtime from an admin screen, without a redeployment or configuration management run.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -907,6 +966,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, dropdown + apply dialog",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:70-167 updateStylesheet() and :221-293 uploadImage() apply admin changes at runtime through the settings screen, no redeploy or config-management run needed",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding ; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme ; https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : all three are configured from admin portals at runtime with no application redeployment",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : 'With style books, you can customize the values of frontend tokens without touching any code', a pure admin-UI runtime action"
 			},
@@ -920,7 +980,7 @@
 			"area": "apply",
 			"name": "Schedule a theme change for a date, such as a campaign or a holiday look.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -933,6 +993,7 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
+				"nextcloud-theming": "no scheduling mechanism for theme/value changes exists in the app or its background Jobs",
 				"m365-branding": "not checked: no scheduled/date-triggered branding switch found for Entra ID or SharePoint theming",
 				"liferay-dxp": "https://www.xtivia.com/blog/liferay-dxp-publications-versus-staging/ : Publications group changes into a change set that authors 'publish them to the live site on a schedule', but the docs read do not confirm style book/theme configuration is itself trackable inside a Publication change set"
 			},
@@ -946,7 +1007,7 @@
 			"area": "apply",
 			"name": "Roll back to an earlier version of the theme from a version history.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -959,6 +1020,7 @@
 			},
 			"reachedOn": "nothing reaches it (the audit log at Settings > Administration > Theming shows history but offers no restore action)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:495-530 undo() only resets a field to the app's built-in default, there is no stored history of prior admin-set values to roll back through",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/organization-assets-library ; https://learn.microsoft.com/en-us/sharepoint/brand-center-overview : brand assets live in ordinary SharePoint document libraries, which carry SharePoint's standard file version history, but the Entra sign-in and M365 org-theme settings themselves have no documented version history",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/publishing-tools/staging : Publications track and can be reverted as change sets over time, which could include site design changes, but no dedicated 'style book version history' UI was found in the style book docs"
 			},
@@ -973,7 +1035,7 @@
 			"area": "apply",
 			"name": "Reset Nextcloud's own theming values back to stock in one action.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -986,6 +1048,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming: selecting 'Nextcloud (default)' opens a confirm dialog with a 'Reset theming' button",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:331-345 undoAll() plus ThemingDefaults::undoAll() (lib/ThemingDefaults.php:480-487) reset all Nextcloud's own theming values (colors, images, name, slogan, app menu) back to stock in one action",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'Reset color: Select this link to reset colors to the default colors'",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : selecting the theme's default 'Styles from X Theme' style book restores 'all of the default values'"
 			},
@@ -999,7 +1062,7 @@
 			"area": "authoring",
 			"name": "Upload your own house style as a CSS file of design tokens.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -1012,6 +1075,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets, 'Choose file and upload' (templates/settings/admin.php:179)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:48 VALID_UPLOAD_KEYS = ['header','logo','logoheader','background','favicon'] : only images can be uploaded, no CSS/token file upload exists",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : 'Custom CSS: Upload a custom CSS file to replace the Microsoft default style of the page', but 'Tenants created after January 5, 2026, don't have custom CSS available' and it is being retired entirely",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/development/customizing-liferays-look-and-feel/using-a-theme-css-client-extension : a theme CSS client extension overrides 'main.css and clay.css', but it is authored/deployed as a packaged client extension via Gradle (client-extension.yaml + zip to the deploy folder), not a simple admin-facing CSS file upload"
 			},
@@ -1025,7 +1089,7 @@
 			"area": "authoring",
 			"name": "Upload your own house style as a W3C Design Tokens (DTCG) JSON file.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1038,6 +1102,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets upload form (same control as CSS upload)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no DTCG/W3C design-tokens JSON import path exists anywhere in lib/ or src/",
 				"m365-branding": "not checked: Entra custom CSS is plain CSS, not a W3C Design Tokens (DTCG) JSON file, and no such upload path was found",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/developer-guide/style-book-token-definitions : Liferay's frontend-token-definition.json is Liferay's own proprietary schema (frontendTokenCategories/tokens), not the W3C DTCG format, and no DTCG import was found"
 			},
@@ -1051,7 +1116,7 @@
 			"area": "authoring",
 			"name": "Get told on upload which tokens are missing or invalid before the set is accepted.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -1064,6 +1129,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, upload result panel under the upload form (#nldesign-upload-result, admin.php:183)",
 			"evidence": {
+				"nextcloud-theming": "not applicable: there is no style/token file upload to validate, only image uploads (validated for mime type only, see aut-upload-security)",
 				"m365-branding": "not checked: no 'missing/invalid tokens' upload feedback found; Entra branding fields are validated individually (image size/file-size limits), not as a token set",
 				"liferay-dxp": "not checked: no documented message that names which tokens are missing/invalid on deploy of a theme CSS client extension; a malformed extension would fail the Gradle/module deploy generically"
 			},
@@ -1077,7 +1143,7 @@
 			"area": "authoring",
 			"name": "Be protected from uploaded styles that could run script or load outside resources (unsafe content is refused with reasons).",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1090,6 +1156,7 @@
 			},
 			"reachedOn": "Server-side gate on the same upload path as aut-upload-css/aut-upload-dtcg; surfaced to the admin as an upload error",
 			"evidence": {
+				"nextcloud-theming": "row concerns uploaded 'styles'; the product has no style/token upload at all, only image uploads whose mime type is checked (apps/theming/lib/ImageManager.php:218-337 updateImage()/getSupportedUploadImageFormats())",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : Microsoft is 'retiring support for custom CSS layout and positioning properties (such as position, margin, transform, and overflow)... to align with the Microsoft Secure Future Initiative and its focus on identity security and phishing resistance', i.e. specific CSS capabilities are being stripped for security, though this is a property-level restriction/retirement, not a general upload-time sanitiser",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/development/customizing-liferays-look-and-feel/using-a-theme-css-client-extension : theme CSS client extensions are code deployed by developers via a build pipeline into the deploy folder, a trusted deployment path with no documented stripping/sanitisation step for script or external-resource loading"
 			},
@@ -1104,7 +1171,7 @@
 			"area": "authoring",
 			"name": "List, activate and delete the house styles you uploaded.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1117,6 +1184,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets list (#nldesign-custom-set-list, admin.php:184) with Download/Delete buttons per row; activation via the main token-set dropdown",
 			"evidence": {
+				"nextcloud-theming": "outside the product: there is nothing to list/activate/delete since no custom house styles can be uploaded",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview ; https://learn.microsoft.com/en-us/sharepoint/brand-center-overview : custom SharePoint themes created via the brand center appear in the 'Change the Look' picker for site owners; Entra ID has only one default plus per-language brandings, not a general list/delete of uploaded styles",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : style books are created, listed and one marked default under Site Menu -> Design -> Style Books, matching list/activate/delete"
 			},
@@ -1130,7 +1198,7 @@
 			"area": "authoring",
 			"name": "Download a house style you uploaded, to reuse or share it.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1143,6 +1211,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets list, 'Download' button per row",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no uploaded house style exists to export",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/general-development/how-to-deploy-a-custom-theme-in-sharepoint : SharePoint theme JSON can be exported/deployed with PnP PowerShell/CSOM, but this needs developer tooling, not an admin 'download' button",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/exporting-and-importing-style-books : style books can be exported as a zip (style-book.json + frontend-token-values.json) or LAR file 'to share them between Liferay installations'"
 			},
@@ -1156,7 +1225,7 @@
 			"area": "authoring",
 			"name": "Convert an existing NL Design System theme from its upstream token format into a working set.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1169,6 +1238,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets upload form (conversion runs server-side on upload, no separate UI)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no NL Design System token converter exists",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -1182,7 +1252,7 @@
 			"area": "authoring",
 			"name": "Edit individual colour tokens in the browser with a colour picker.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1195,6 +1265,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Custom token overrides' panel (#nldesign-token-editor, admin.php:291)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/src/components/admin/ColorPickerField.vue plus apps/theming/lib/Controller/ThemingController.php:115-130 : a colour picker exists, but only for exactly two tokens (primary_color, background_color), far short of a full token vocabulary",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/brand-center-overview : brand center lets you 'select your primary, secondary colors using your brand colors or by adding a custom color'; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : Colors tab has pickers for nav bar/text/icon/accent colours",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : 'colors support hex codes, custom pickers', and since DXP 2025.Q4 the style book colour editor supports 8-digit hex with alpha"
 			},
@@ -1208,7 +1279,7 @@
 			"area": "authoring",
 			"name": "Browse the editable tokens grouped in tabs (for example primary, background, text, status).",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1221,6 +1292,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor tab bar (.nldesign-tabs inside #nldesign-token-editor)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/src/components/AdminSectionTheming.vue and Admin.php:57-83 : the admin form is a flat list of fields (name, url, slogan, 2 colours, images, legal urls), not tabs of grouped tokens",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : the theme editor is organised into General / Logos / Colors tabs, a coarser grouping than per-token-category tabs",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : the style book editor is organised into sections such as colour, typography, spacing, buttons and general settings, matching grouped/tabbed token browsing"
 			},
@@ -1234,7 +1306,7 @@
 			"area": "authoring",
 			"name": "Reset one edited token to its house style value without touching the others.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -1247,6 +1319,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, per-token reset button in the token editor rows (.nldesign-reset-btn)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/src/components/admin/ColorPickerField.vue (Reset to default button) calling useAdminThemingValue's reset(), backed by apps/theming/lib/Controller/ThemingController.php:302-323 undo(setting), reverts one field without touching the others",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : only one 'Reset color' link is documented, which resets colours together rather than confirming a per-token reset",
 				"liferay-dxp": "not checked: no explicit 'reset this one token only' control documented for the style book editor"
 			},
@@ -1260,7 +1333,7 @@
 			"area": "authoring",
 			"name": "See an edited token take effect immediately, before saving.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1273,6 +1346,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor color pickers/text inputs; effect visible immediately on the settings page itself",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/src/components/admin/ColorPickerField.vue:31-34 updates its own preview button live while dragging the picker, and refreshStyles.ts swaps the served stylesheet after save without reload, but there is no full-page live repaint while still editing/unsaved",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : 'those color settings are instantly applied to the page' when a theme is chosen, before saving",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : style book token edits are previewed live on pages/templates/fragments before publishing"
 			},
@@ -1286,7 +1360,7 @@
 			"area": "authoring",
 			"name": "Save your token edits so they survive a restart and apply to everyone.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1299,6 +1373,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Save overrides' button in the token editor (#nldesign-save-btn)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:461-475 set() persists values via IAppConfig to the database, applied instance-wide and surviving restarts",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding ; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : saved branding/theme settings are tenant configuration that persists and applies to everyone",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : published style book token values are saved site configuration that persists and applies to every visitor"
 			},
@@ -1312,7 +1387,7 @@
 			"area": "authoring",
 			"name": "Export your token edits as a file and import them again on another instance.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1325,6 +1400,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor header 'Download'/'Upload' controls (#nldesign-export-btn, #nldesign-import-input)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Command/UpdateConfig.php:21-131 : occ theming:config can get/set one key at a time for scripting onto another instance, but there is no single export/import file of the whole configuration",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/general-development/how-to-deploy-a-custom-theme-in-sharepoint : SharePoint theme JSON can be uploaded to the Theme Gallery and deployed to another site/tenant via PnP tooling, which needs developer/PowerShell skills rather than a built-in export-then-import admin flow",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/exporting-and-importing-style-books : style books export to a zip or LAR file and can be imported 'to share them between Liferay installations'"
 			},
@@ -1338,7 +1414,7 @@
 			"area": "authoring",
 			"name": "Add your own free-form CSS rules for things tokens cannot express.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1351,6 +1427,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Custom CSS' section (#nldesign-custom-css, admin.php:297)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ITheme.php:96 getCustomCss() only returns hardcoded CSS from the shipped PHP theme classes (e.g. HighContrastTheme.php:133, DyslexiaFont.php:53); there is no admin-facing free-form CSS field",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : custom CSS upload exists for things the branding form fields cannot express, but is deprecated for new tenants and being retired",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/development/customizing-liferays-look-and-feel/using-a-theme-css-client-extension : 'the CSS in these files is added to the styling already used in your theme... the client extension's CSS overrides the styling already on the page', explicitly for cases tokens cannot express"
 			},
@@ -1364,7 +1441,7 @@
 			"area": "authoring",
 			"name": "Have free-form CSS checked on the server before it is saved, with unsafe rules refused.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1377,6 +1454,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom CSS save button (#nldesign-custom-css-save) surfaces validator errors in #nldesign-custom-css-feedback",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no admin-authored custom CSS input exists to sanitise",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : Microsoft is removing specific 'layout and positioning' CSS properties from allowed custom CSS for security reasons, which is a restriction/removal rather than an active clean-on-save sanitiser, and custom CSS is being retired altogether",
 				"liferay-dxp": "not checked: no server-side checking/cleaning of theme CSS client extension content was documented; it is developer-authored code deployed through the build pipeline"
 			},
@@ -1391,7 +1469,7 @@
 			"area": "authoring",
 			"name": "Change the tokens of one component type (for example buttons) without changing the global palette.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1404,6 +1482,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor rows for component tokens (visible once 'Let the primary colour drive every component' is switched off)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: tokens are not scoped per component type, only two global colours plus images exist",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : colours (nav bar, accent, text, icon) are single global settings, no per-component-type token layer documented",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : the style book has a distinct buttons section ('individual customization of primary, secondary, dark, and light button styling') separate from the general colour palette"
 			},
@@ -1417,7 +1496,7 @@
 			"area": "authoring",
 			"name": "Get a dark variant of your house style derived automatically.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -1430,6 +1509,7 @@
 			},
 			"reachedOn": "Automatic on upload (Settings > Administration > Theming, Custom token sets upload); instance-wide on/off toggle at #nldesign-dark-variants",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DarkTheme.php reuses the same admin-set primary colour through CommonThemeTrait::generatePrimaryVariables() to auto-derive a dark palette, served via the '(prefers-color-scheme: dark)' media query",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme ; https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : dark-theme logos ('Square logo (dark theme)', 'alternate logo... optimized for use in Microsoft 365 dark themes') must be uploaded manually, there is no automatic derivation of a dark palette from the light one",
 				"liferay-dxp": "not checked: no automatic dark-variant generation for style book token values was found; SharePoint's own inverted themes derive dark neutrals from an isInverted flag, but that mechanism was documented for SharePoint site theming (the m365-branding key), not for Liferay style books"
 			},
@@ -1443,7 +1523,7 @@
 			"area": "authoring",
 			"name": "Define tokens as references to other tokens so one change flows through the semantic layer.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1456,6 +1536,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, DTCG upload only (aliases are read and flattened, not preserved as an editable semantic layer)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: CSS variables are hardcoded per theme class, not defined as references between tokens",
 				"m365-branding": "not checked: M365/SharePoint colour fields are independent values, no token-references-token mechanism documented",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : style book colours support 'linking to other style book token values', i.e. one token can reference another so a change flows through"
 			},
@@ -1470,7 +1551,7 @@
 			"area": "authoring",
 			"name": "Compute token values from other tokens with expressions (for example spacing times two).",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1482,6 +1563,7 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no expression-based token computation exists",
 				"m365-branding": "not checked: no expression/computed-value support found for M365/SharePoint theme values",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/developer-guide/style-book-token-definitions : frontend token definitions describe simple typed values (defaultValue/label/type/validValues), no arithmetic-expression support was found"
 			},
@@ -1495,7 +1577,7 @@
 			"area": "authoring",
 			"name": "Maintain several brands or themes in one token source and switch between them.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1508,6 +1590,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Per-group theming' section (#nldesign-group-theming)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: only one active brand (primary/background colour, logo) exists instance-wide, no multiple brands maintained in one source",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'you can create multiple themes for the people in your organization... add or update a default theme... and create up to four additional group themes'",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : a site can hold several style books (one default) that can be switched, and virtual instances add fully separate brands per tenant"
 			},
@@ -1522,7 +1605,7 @@
 			"area": "authoring",
 			"name": "Keep the tokens in sync with the designers' Figma files.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1534,6 +1617,7 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no Figma integration exists",
 				"m365-branding": "not checked: no Figma synchronisation found in Entra/SharePoint/M365 branding docs",
 				"liferay-dxp": "not checked: no Figma synchronisation found in the style book/frontend-token-definition docs"
 			},
@@ -1547,7 +1631,7 @@
 			"area": "authoring",
 			"name": "Store and version the token source in a Git repository with pull requests.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -1559,6 +1643,7 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
+				"nextcloud-theming": "outside the product: theming values live in the appconfig database, not a Git-backed token source",
 				"m365-branding": "not checked: no git-based token source/PR workflow found for Entra/SharePoint/M365 branding, which is configured through admin portals",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/development/customizing-liferays-look-and-feel/using-a-theme-css-client-extension : theme CSS client extensions are built and deployed from a Liferay Workspace project (Gradle-based), a source layout that is normally kept in git, though the docs do not describe a PR-based sync feature as such"
 			},
@@ -1572,7 +1657,7 @@
 			"area": "authoring",
 			"name": "Export the same tokens to several platforms (CSS, iOS, Android, JSON).",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1584,6 +1669,7 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no multi-platform token export (CSS/iOS/Android/JSON) exists",
 				"m365-branding": "not checked: no cross-platform (iOS/Android) token export found for M365/SharePoint branding",
 				"liferay-dxp": "not checked: frontend token definitions target the web portal's CSS only; no iOS/Android export was found"
 			},
@@ -1597,7 +1683,7 @@
 			"area": "authoring",
 			"name": "Set a brand with nothing more than a primary colour, a background colour and a logo in a simple form.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -1609,6 +1695,7 @@
 			},
 			"reachedOn": "nothing reaches it as a single simple form; closest is the full token editor, which is not colour-only",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Settings/Admin.php:67-83 exposes exactly primaryColor, backgroundColor and a logo upload as the core branding form, matching a simple 'colour + colour + logo' setup",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : the theme form is essentially logo + a handful of colour fields (nav bar, accent, text/icon), matching a simple primary-colour/background/logo form",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : a style book exposes many token categories beyond colour/logo (typography, spacing, buttons...), so setting only 3 fields is possible but is not a distinct 'simple mode'"
 			},
@@ -1622,7 +1709,7 @@
 			"area": "typography",
 			"name": "Use the house style's open fonts (Fira Sans, Inter) served from the instance itself, with no external font service.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1635,6 +1722,7 @@
 			},
 			"reachedOn": "Applied automatically whenever a house style using these fonts is active; not a distinct admin control",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DefaultTheme.php:203 hardcodes a system-ui/OS font stack (no Fira Sans/Inter); the only bundled alternate font is OpenDyslexic for the accessibility toggle, not a house-style font",
 				"m365-branding": "not checked: M365/SharePoint default typography is Microsoft's own fonts (e.g. Segoe UI), not Fira Sans/Inter, and no self-hosted open-font bundle for org branding was found",
 				"liferay-dxp": "not checked: Liferay's default Clay/Lexicon typography was not documented as Fira Sans/Inter, and font tokens reference font-family names such as 'sans-serif'/'Courier New', not a bundled open-font set"
 			},
@@ -1648,7 +1736,7 @@
 			"area": "typography",
 			"name": "Keep typography working on an air-gapped instance under the default content security policy.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -1661,6 +1749,7 @@
 			},
 			"reachedOn": "Works automatically under Nextcloud's default CSP; no admin control needed",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DyslexiaFont.php:54-55 serves the one bundled font (OpenDyslexic) from the instance itself via linkTo('theming','fonts/...'), and the default UI uses the OS system font stack with no external fetch, so typography works air-gapped even though there is no 'house style font' concept",
 				"m365-branding": "not checked: Microsoft 365/SharePoint/Entra ID are cloud SaaS services; an air-gapped instance is outside the product",
 				"liferay-dxp": "not checked: Liferay DXP can run on-premises/air-gapped, but whether style book fonts (and any external Google-Fonts-style references) keep working under a strict default CSP with no internet access was not confirmed in the docs read"
 			},
@@ -1674,7 +1763,7 @@
 			"area": "typography",
 			"name": "Upload your organisation's own licensed webfont.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1687,6 +1776,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts, 'Choose font and upload' (admin.php:382)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:48 VALID_UPLOAD_KEYS has no font entry; ImageManager::SUPPORTED_IMAGE_KEYS likewise excludes fonts",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/brand-fonts : brand fonts are 'uploaded and managed within the SharePoint brand center'; supported file types are TrueType (.ttf), OpenType (.otf), WOFF and WOFF2, up to 10 MB",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/developer-guide/style-book-token-definitions : font tokens are typed string values with a defaultValue and a list of valid font-family names (e.g. 'sans-serif', 'Courier New'); no font-FILE upload mechanism for style books was found"
 			},
@@ -1700,7 +1790,7 @@
 			"area": "typography",
 			"name": "Have an uploaded font checked for format and size before it is accepted.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1713,6 +1803,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts upload result (#nldesign-font-upload-result, admin.php:386)",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no font upload path exists to validate",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/brand-fonts : only .ttf/.otf/.woff/.woff2 are accepted and 'Font file Size Limit: 10 MB'",
 				"liferay-dxp": "not checked: no font-file upload/validation exists for style book font tokens (see typ-upload-font)"
 			},
@@ -1726,7 +1817,7 @@
 			"area": "typography",
 			"name": "List and delete the fonts you uploaded.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1739,6 +1830,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts list (#nldesign-font-list)",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no uploaded fonts exist to list or delete",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/brand-fonts : custom fonts live in the Brand Fonts library where you can 'Edit the Visible property... to control the availability' and remove a font tenant-wide with Remove-SPOFontFile",
 				"liferay-dxp": "not checked: no font-file library to list/delete exists for style books (fonts are referenced by name in tokens, not uploaded files)"
 			},
@@ -1752,7 +1844,7 @@
 			"area": "typography",
 			"name": "Show your own font on the login page, before anyone has signed in.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1765,6 +1857,7 @@
 			},
 			"reachedOn": "The Nextcloud login page (font loads via the publicly-served /fonts/css and /fonts/{id}.woff2 routes)",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no organisation font upload exists to show anywhere, including the login page",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : sign-in page font could only be affected via the deprecated custom-CSS override, since the SharePoint brand-center Brand Fonts library is a separate surface not documented as reaching the Entra sign-in page",
 				"liferay-dxp": "not checked: style books are excluded from administrative/login themes, so a style-book font token cannot reach the login page"
 			},
@@ -1778,7 +1871,7 @@
 			"area": "typography",
 			"name": "Enable the French State Marianne typeface only after confirming you are entitled to it.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1791,6 +1884,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Marianne licence gate (#nldesign-marianne-gate)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no Marianne typeface or entitlement gating exists",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -1804,7 +1898,7 @@
 			"area": "typography",
 			"name": "Set font family, size and weight through tokens per house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1817,6 +1911,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor 'Typography' tab (font family); size/weight are per-house-style tokens, not user-editable overrides",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ConfigLexicon.php has no font-family/size/weight config entries; font values are hardcoded per PHP theme class (DefaultTheme.php:203-211), not admin-settable tokens",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/brand-fonts ; https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : brand fonts are applied via font packages, but the SharePoint theme JSON schema documented is colour/accent focused (up to 16 accent-and-background pairs), not a unified family+size+weight token set",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : the style book Typography section lets you 'define new fonts for your pages' and 'adjust header sizing', i.e. family and size are both style-book tokens"
 			},
@@ -1831,7 +1926,7 @@
 			"area": "typography",
 			"name": "Let a user switch to a dyslexia-friendly font for themselves.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1843,6 +1938,7 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DyslexiaFont.php : a personal-settings toggle lets a user enable the OpenDyslexic font for themselves (ITheme::TYPE_FONT)",
 				"m365-branding": "not checked: no dyslexia-friendly font toggle found for end users in M365/SharePoint branding docs",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/personalization/experiences/using-the-accessibility-menu : the Accessibility Menu offers underlined links, increased text spacing, expanded text, reduced motion and focus ring animation, but no dyslexia-friendly font option"
 			},
@@ -1856,7 +1952,7 @@
 			"area": "typography",
 			"name": "Offer site owners a central library of approved organisation fonts to choose from.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -1869,6 +1965,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts list + role select (#nldesign-font-list, #nldesign-font-role)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no font library exists for site owners to choose from",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/brand-fonts : the SharePoint brand center's Brand Fonts library is exactly 'a central library of approved organisation fonts' for site owners, also reaching Viva Connections and PowerPoint for the web",
 				"liferay-dxp": "not checked: no curated, shared 'approved fonts library' feeding the style book font token picker was found; font tokens are typed values defined per theme"
 			},
@@ -1883,7 +1980,7 @@
 			"area": "assets",
 			"name": "Set the workspace logo to your organisation's logo when you pick its house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -1896,6 +1993,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (templates/settings/admin.php:68); picking a set opens an apply dialog (js/admin.js:965-982 change handler -> checkAndShowThemingDialog) that offers the sync",
 			"evidence": {
+				"nextcloud-theming": "not applicable: there is no house-style catalogue whose selection would auto-set the logo; the logo is one manually uploaded global asset (apps/theming/lib/ImageManager.php:25 SUPPORTED_IMAGE_KEYS)",
 				"m365-branding": "not checked: there is no catalogue of pickable house styles to sync a logo from (see cat-* rows); the org's single logo is set directly, not synced from a style pick",
 				"liferay-dxp": "not checked: same reasoning, no catalogue of named house styles to sync a logo from"
 			},
@@ -1910,7 +2008,7 @@
 			"area": "assets",
 			"name": "Set the login background to match the house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -1923,6 +2021,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown, same apply dialog as ast-logo-sync",
 			"evidence": {
+				"nextcloud-theming": "not applicable, same reasoning as ast-logo-sync: no house style exists to sync a login background from",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : background image is one of the branding elements configured alongside logo/colours as part of the same sign-in branding, so it is set consistently with the rest, though not 'synced' from a separate catalogue pick",
 				"liferay-dxp": "not checked: a login background can be styled through a theme/theme CSS client extension consistent with the rest of the site's style book tokens, but no dedicated 'sync login background to style book' feature was documented"
 			},
@@ -1936,7 +2035,7 @@
 			"area": "assets",
 			"name": "Upload a logo of your own.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -1949,6 +2048,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core's own panel, separate from thematiq's Theming section)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:221-293 uploadImage() with key='logo' lets the admin upload their own logo",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding ; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : banner logo, header logo, square light/dark logos (Entra) and default/alternate logo (M365 org theme) are all uploadable",
 				"liferay-dxp": "https://help.liferay.com/hc/en-us/articles/360018171691-Page-Set-Look-and-Feel : 'If you want to use your own logo for a specific Site, you can select the Logo tab from the Configure interface and browse to the location of your logo'"
 			},
@@ -1963,7 +2063,7 @@
 			"area": "assets",
 			"name": "Upload a login background image of your own.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -1976,6 +2076,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:221-293 uploadImage() with key='background', backed by apps/theming/lib/Service/BackgroundService.php setFileBackground(), lets the admin upload a login background image",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : 'Background image: Select a PNG or JPG to display as the main image on your sign-in page... Image size: 1920x1080 px, Max file size: 300 KB'",
 				"liferay-dxp": "not checked: a login/page background image can be set through theme/master-page customisation, but no simple admin 'upload a login background image' UI was documented the way Entra ID has one"
 			},
@@ -1990,7 +2091,7 @@
 			"area": "assets",
 			"name": "Set the browser tab icon (favicon) to your organisation's.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -2003,6 +2104,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Advanced theming settings')",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:48 VALID_UPLOAD_KEYS includes 'favicon'; uploadImage() lets the admin set a custom favicon (also auto-generated otherwise via lib/IconBuilder.php:34 getFavicon())",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : 'Favicon: Select a PNG or JPG of your logo that appears in the web browser tab. Image size: 32x32 px, Max file size: 5 KB'",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/development/customizing-liferays-look-and-feel/using-a-theme-favicon-client-extension : a theme favicon client extension lets you set a custom favicon image via a client-extension.yaml url property, available as a favicon option for every page"
 			},
@@ -2017,7 +2119,7 @@
 			"area": "assets",
 			"name": "Reuse a library of government icons by name from any app on the instance.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2030,6 +2132,7 @@
 			},
 			"reachedOn": "machine: any Nextcloud app, via the standard static app-asset path (imagePath()/OC.filePath()), verified by the e2e test above",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no reusable government icon library exists",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -2044,7 +2147,7 @@
 			"area": "assets",
 			"name": "Reuse bundled logos of government organisations by name.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2057,6 +2160,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown -> apply dialog (same as ast-logo-sync)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no bundled library of government organisation logos exists, only one manually uploaded logo",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -2070,7 +2174,7 @@
 			"area": "assets",
 			"name": "Have the icon style follow the design system you chose (for example a municipal icon pack).",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2083,6 +2187,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Active icon pack' indicator only (templates/settings/admin.php:94-103); no icon anywhere in the running instance visibly changes to the named pack",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/IconBuilder.php:219-231 colorSvg() just recolours each app's existing SVG icon to the primary brand colour; it does not swap in a different municipal icon pack/design system",
 				"m365-branding": "not checked: no switchable icon pack tied to a chosen design system was found in M365/SharePoint branding docs",
 				"liferay-dxp": "not checked: no switchable icon pack tied to a theme/style book was found in the docs read"
 			},
@@ -2097,7 +2202,7 @@
 			"area": "assets",
 			"name": "See which icon pack is active on the settings page.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2110,6 +2215,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Active icon pack' block under the token-set dropdown (templates/settings/admin.php:94)",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no icon pack concept exists to indicate on the settings page",
 				"m365-branding": "not checked: follows from ast-icon-pack, no icon pack concept exists to indicate",
 				"liferay-dxp": "not checked: follows from ast-icon-pack, no icon pack concept exists to indicate"
 			},
@@ -2123,7 +2229,7 @@
 			"area": "assets",
 			"name": "Keep icons legible against the brand colours, with contrast fixes for dark and light backgrounds.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2136,6 +2242,7 @@
 			},
 			"reachedOn": "Every page (the fix is scoped to Nextcloud's own app-management/appstore icon list, class selector '[class*=_appIcon_]')",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/IconBuilder.php:219-231 colorSvg() tints icons using apps/theming/lib/Util.php:70-99 elementColor(), which enforces a minimum contrast ratio (3.2:1, or 5.6:1 in high-contrast) against the background automatically, but this is the general colour-derivation engine rather than a dedicated per-icon dark/light contrast-fix feature",
 				"m365-branding": "not checked: no automated icon-contrast-fix feature found in the branding docs read",
 				"liferay-dxp": "not checked: no automated icon-contrast-fix feature found in the style book/accessibility docs read"
 			},
@@ -2150,7 +2257,7 @@
 			"area": "assets",
 			"name": "Use a separate logo for dark mode.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2163,6 +2270,7 @@
 			},
 			"reachedOn": "nothing reaches it: no shipped token set and no custom-token-set upload path ever sets 'logo_dark', so the dark-logo code path never fires for any real admin",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ImageManager.php:25 SUPPORTED_IMAGE_KEYS has only one 'logo' key; dark mode instead applies a CSS invert filter to the same logo unless customised (apps/theming/lib/Themes/CommonThemeTrait.php '--primary-invert-if-dark' / '--image-logoheader-custom'), not a separately uploaded dark-mode logo",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : 'Square logo (dark theme): Select a square PNG or JPG image file of your logo to be used in browsers that are using a dark color theme'; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'Alternate logo: ...optimized for use in Microsoft 365 dark themes'",
 				"liferay-dxp": "not checked: no dedicated dark-mode logo slot was found in the style book/Site Logo documentation read"
 			},
@@ -2177,7 +2285,7 @@
 			"area": "assets",
 			"name": "Offer users a central set of approved brand images and banners to use in their own content.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2190,6 +2298,7 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no central library of approved brand images/banners for user content exists",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/organization-assets-library : the organization assets library lets users 'select \"Your organization\" in the left pane to browse the libraries you've specified' when adding an image to any modern page, i.e. a central set of approved brand images for use in their own content",
 				"liferay-dxp": "not checked: no curated 'approved brand images library' surfaced to page builders was found for Liferay beyond generic Documents and Media libraries"
 			},
@@ -2204,7 +2313,7 @@
 			"area": "surfaces",
 			"name": "Style every Nextcloud page, including apps from other vendors, not only a single portal.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -2217,6 +2326,7 @@
 			},
 			"reachedOn": "every Nextcloud page (any app), unless that app id is on the admin's exclusion list (Settings > Administration > Theming > 'Theming per app')",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:398-443 getThemeStylesheet() serves the CSS variables globally for any app consuming Nextcloud's own theming variables, but a genuinely different-vendor app not built on those CSS variables is not restyled by this mechanism",
 				"m365-branding": "https://learn.microsoft.com/en-us/answers/questions/5985270/microsoft-365-organisational-theme-no-longer-appli : the M365 organisation theme is meant to appear across the whole 'Microsoft 365 suite header', but a Microsoft Q&A thread reports it 'no longer applied in New Outlook and Outlook on the web', showing inconsistent reach across first-party surfaces, let alone third-party ISV apps",
 				"liferay-dxp": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : theming is portal-wide for native Liferay pages/widgets via shared frontend tokens, but the docs read do not confirm third-party/embedded (non-Liferay) apps automatically pick up the same tokens"
 			},
@@ -2230,7 +2340,7 @@
 			"area": "surfaces",
 			"name": "Have every Conduction app pick up the house style through shared tokens.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2243,6 +2353,7 @@
 			},
 			"reachedOn": "machine: every Conduction app built on CnAppRoot, automatically at app mount (no admin action)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: stock Nextcloud theming has no concept of 'Conduction apps'; any app inherits styling only incidentally if it happens to consume the same CSS variables",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -2257,7 +2368,7 @@
 			"area": "surfaces",
 			"name": "Style the login page, including before any session exists.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -2270,6 +2381,7 @@
 			},
 			"reachedOn": "the Nextcloud login page, before any session exists",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:360-385 getImage() is #[PublicPage] so the login page (before any session) gets the themed logo/background/colours",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : the whole article is about branding 'the sign-in page' before any authentication has happened",
 				"liferay-dxp": "not checked: the Sign In portlet/login page can be restyled through a custom theme or theme CSS client extension, but style books (the no-code path) explicitly 'cannot be used in administrative themes', so this needs developer-level theme work, not simple site styling"
 			},
@@ -2283,7 +2395,7 @@
 			"area": "surfaces",
 			"name": "Style the header and app navigation bar in the house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -2296,6 +2408,7 @@
 			},
 			"reachedOn": "every logged-in page's header and app-navigation bar",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DefaultTheme.php:242-249 defines --header-height/--header-menu-item-height/--header-menu-icon-mask and the header uses getColorBackground()/getLogo(), so header and navigation are themed",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'Navigation bar color: Select a color to use for the background of the navigation bar. The navigation bar appears at the top on every page'",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : style books style header/navigation chrome as part of the site's overall look through the theme's master page and tokens"
 			},
@@ -2309,7 +2422,7 @@
 			"area": "surfaces",
 			"name": "Show text labels instead of icons only in the app menu.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2322,6 +2435,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Show text labels in app menu' checkbox (templates/settings/admin.php:409)",
 			"evidence": {
+				"nextcloud-theming": "not found: no toggle for text labels vs icons-only in the app menu exists in apps/theming/lib or src/components/AppOrderSelector*.vue, which only reorders/enables default apps",
 				"m365-branding": "not checked: no text-labels-vs-icons-only app-menu setting found in the branding docs read",
 				"liferay-dxp": "not checked: no such setting found in the style book/site docs read"
 			},
@@ -2335,7 +2449,7 @@
 			"area": "surfaces",
 			"name": "Hide the Nextcloud slogan on the login page.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2348,6 +2462,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Hide slogan' checkbox (templates/settings/admin.php:397)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:110-114 lets the admin set the slogan to an empty string, which effectively removes it, but there is no dedicated 'hide slogan' toggle distinct from clearing the text field",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : the documented sign-in elements (title, description, username hint, sign-in text) do not include a Microsoft product slogan to hide",
 				"liferay-dxp": "not checked: no product-slogan element was found in Liferay's login/theme documentation"
 			},
@@ -2361,7 +2476,7 @@
 			"area": "surfaces",
 			"name": "Style public share and link pages that visitors without an account see.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -2374,6 +2489,7 @@
 			},
 			"reachedOn": "public share/link pages (RENDER_AS_PUBLIC responses)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:126-178 getShortFooter() (used for guest/public pages) carries the entity name and legal links, so public pages inherit some branding, but this reading did not confirm full logo/colour theming coverage of every public share/link page template",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : a SharePoint site's theme is a site-wide setting that would apply to that site's pages including externally shared/anonymous-access pages, though this was not explicitly confirmed for anonymous visitors in the docs read",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/creating-pages : Liferay sites have a first-class distinction between public and private pages, and public pages are themed the same as any other page in the site via its style book"
 			},
@@ -2387,7 +2503,7 @@
 			"area": "surfaces",
 			"name": "Send notification emails in the house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2400,6 +2516,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Email template' section (templates/settings/admin.php:461)",
 			"evidence": {
+				"nextcloud-theming": "lib/private/Mail/EMailTemplate.php:81-82 renders the theming logo inside a background-colour circle in the email header, and its button styling (line 201) is filled with the theme's primary colour",
 				"m365-branding": "not checked: the M365 organisation theme documentation states it appears 'in the top navigation bar for everyone in the organization', with no mention of notification emails",
 				"liferay-dxp": "not checked: no email-template theming tied to style books/frontend tokens was found in the docs read"
 			},
@@ -2414,7 +2531,7 @@
 			"area": "surfaces",
 			"name": "Add a compliance footer (organisation name, address, legal text) to every email.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2427,6 +2544,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Email template' section, footer fields (templates/settings/admin.php:496)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:126-178 getShortFooter() adds the entity/organisation name plus 'Legal notice' and 'Privacy policy' links to the footer used in emails/pages, but there is no dedicated postal-address or free-text compliance field beyond those two link fields",
 				"m365-branding": "not checked: no compliance-footer-for-email feature found in the branding docs read",
 				"liferay-dxp": "not checked: no compliance-footer-for-email feature found in the docs read"
 			},
@@ -2440,7 +2558,7 @@
 			"area": "surfaces",
 			"name": "Map community component tokens (Utrecht) onto the workspace's own components.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2453,6 +2571,7 @@
 			},
 			"reachedOn": "every themed page (part of the always-loaded design-system stylesheet stack)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no Utrecht/community-component token mapping exists",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -2466,7 +2585,7 @@
 			"area": "surfaces",
 			"name": "Map every Nextcloud colour variable to a design token, so no stock colour leaks through.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2479,6 +2598,7 @@
 			},
 			"reachedOn": "every themed page (part of the always-loaded nldesign stylesheet stack)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DefaultTheme.php:124-268 defines the full internal --color-* variable set consumed by Nextcloud's own UI, so none of NC's own stock colours are left unmapped (third-party apps not using these variables are out of scope, as in sur-all-pages)",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -2492,7 +2612,7 @@
 			"area": "surfaces",
 			"name": "Keep error and status messages readable in every house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2505,6 +2625,7 @@
 			},
 			"reachedOn": "every themed page",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DefaultTheme.php:82-83,94-105 hand-tunes error/warning/success/info colours with a documented 4.5:1 contrast target, and DarkTheme.php recomputes equivalents for dark backgrounds",
 				"m365-branding": "not checked: no per-house-style audit of error/status message contrast was found",
 				"liferay-dxp": "not checked: general accessibility conformance is covered by Liferay's VPAT (https://www.liferay.com/documents/d/guest/vpat2-5rev_int_february2025_liferay_dxp_sites_experience), but not broken out per house style/status message"
 			},
@@ -2519,7 +2640,7 @@
 			"area": "surfaces",
 			"name": "Colour success, warning and error states from the house style's status tokens.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -2532,6 +2653,7 @@
 			},
 			"reachedOn": "every themed page's success/warning/error UI elements",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DefaultTheme.php:94-105,163-175 defines --color-error/-warning/-success/-info plus -text/-element variants used to colour status states",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : the only theme colour tokens documented are navigation bar, accent, text and icon colours, with no separate success/warning/error tokens",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : the style book's colour options include 'alert-related element colours' in addition to body/background/text, i.e. status colours are part of the token set"
 			},
@@ -2546,7 +2668,7 @@
 			"area": "surfaces",
 			"name": "Carry the brand into the desktop and mobile sync clients.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2559,6 +2681,7 @@
 			},
 			"reachedOn": "official desktop/mobile sync clients, via the same core theming capability thematiq partially populates",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:322-349 only themes the client download URLs (iOSClientUrl/AndroidClientUrl/FDroidClientUrl); actual visual branding of the desktop/mobile sync clients is a Nextcloud Enterprise-only capability, not present in this AGPL app",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : the organisation theme is documented to appear 'in the top navigation bar for everyone in the organization' as part of the web suite header, with no mention of the OneDrive/desktop sync client or mobile apps",
 				"liferay-dxp": "not checked: Liferay DXP is a web portal/CMS with no documented desktop or mobile file-sync client to carry a brand into"
 			},
@@ -2573,7 +2696,7 @@
 			"area": "surfaces",
 			"name": "Carry the brand into the integrated office editor and chat in the same suite.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2586,6 +2709,7 @@
 			},
 			"reachedOn": "nothing reaches it for the office editor; Nextcloud Talk, being an ordinary NC app, would get the same generic per-page CSS layer as any other app (sur-all-pages) but no Talk-specific work exists",
 			"evidence": {
+				"nextcloud-theming": "outside the product: the theming app has no integrated office editor or chat component to brand",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : the organisation theme is shared across the Microsoft 365 suite header used by Office web apps, though the Outlook regression noted above shows inconsistent reach",
 				"liferay-dxp": "not checked: Liferay DXP has no bundled office editor/chat suite of its own to carry a brand into"
 			},
@@ -2599,7 +2723,7 @@
 			"area": "surfaces",
 			"name": "Serve the branded workspace on the organisation's own domain name.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -2612,6 +2736,7 @@
 			},
 			"reachedOn": "machine: the web server / reverse proxy in front of the self-hosted instance",
 			"evidence": {
+				"nextcloud-theming": "outside the product: getBaseUrl()/getName() only label the configured URL and name (apps/theming/lib/ThemingDefaults.php:98-100,73-75); serving the workspace on that domain is a webserver/reverse-proxy concern, not a theming-app feature",
 				"m365-branding": "not checked: whether a SharePoint/M365 tenant can be served on a fully custom (non- *.sharepoint.com/*.onmicrosoft.com) domain was not confirmed in the docs read",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/security-and-administration/administration/configuring-liferay/virtual-instances : each virtual instance is 'accessed via a unique domain name', i.e. the branded workspace is served on the organisation's own domain"
 			},
@@ -2626,7 +2751,7 @@
 			"area": "surfaces",
 			"name": "Add legal links (privacy statement, imprint, accessibility statement) to the footer and login page.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -2639,6 +2764,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Legal notice URL' / 'Privacy policy URL' fields), rendered in every page footer and the login page",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:142-176 getShortFooter() adds 'Legal notice' and 'Privacy policy' links to the footer and login footer (no separate accessibility-statement link field though)",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : the Footer section explicitly supports custom 'Privacy & Cookies' and 'Terms of Use' display text and links",
 				"liferay-dxp": "not checked: legal footer links can be added through theme/master-page development, but no built-in admin UI field for privacy/imprint/accessibility-statement footer links was found for style books"
 			},
@@ -2653,7 +2779,7 @@
 			"area": "surfaces",
 			"name": "Change the product name, slogan and web address shown to users.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -2666,6 +2792,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, basic settings)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:75-114 lets the admin change name/slogan/url; apps/theming/lib/ConfigLexicon.php PRODUCT_NAME/INSTANCE_NAME/INSTANCE_SLOGAN drive what is shown across the UI",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : sign-in title/description text can be customised, but the underlying Microsoft 365/Entra product name and web address are not rebrandable",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/security-and-administration/administration/configuring-liferay/virtual-instances : a virtual instance has its own domain name, and sites have their own configurable name, but the Liferay product name itself is not rebranded by this"
 			},
@@ -2680,7 +2807,7 @@
 			"area": "scoping",
 			"name": "Exclude individual apps from the house style and leave them stock while you test.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2693,6 +2820,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Theming per app' section (templates/settings/admin.php:320)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: there is no per-app opt-out of the active theme",
 				"m365-branding": "not checked: no per-app opt-out of org branding was found",
 				"liferay-dxp": "not checked: theme CSS client extensions and style books are scoped per site, not per individual app/widget, so no documented way to exclude one app while the rest of the site is themed"
 			},
@@ -2706,7 +2834,7 @@
 			"area": "scoping",
 			"name": "Give a group of users a different house style on a shared instance.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2719,6 +2847,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Group theming' section (templates/settings/admin.php:339)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:185-232 getColorPrimary()/getColorBackground() only branch on the single logged-in user's own override, appconfig values are instance-wide with no group-scoped storage",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'you can also create up to four additional group themes that can be assigned to multiple Microsoft 365 groups'",
 				"liferay-dxp": "not checked: Liferay themes/style books are assigned per site, not per user group on a shared site; no per-group theming was found"
 			},
@@ -2733,7 +2862,7 @@
 			"area": "scoping",
 			"name": "Decide which house style wins for a user who is in several themed groups.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2746,6 +2875,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Group theming' section (the list order set there is the priority order)",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no group-scoped theming exists to prioritise between",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'What happens if a user is assigned to multiple group themes? Users who are assigned to multiple group themes will be shown the default theme.' -- a fixed fallback rule, not an admin-chosen priority order",
 				"liferay-dxp": "not checked: not applicable, Liferay has no per-user-group theme feature to prioritise (see sco-per-group)"
 			},
@@ -2759,7 +2889,7 @@
 			"area": "scoping",
 			"name": "Keep the login page on the instance-wide style while groups have their own.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2772,6 +2902,7 @@
 			},
 			"reachedOn": "the login page and any unauthenticated request, which always render the instance-default token set regardless of any group mapping",
 			"evidence": {
+				"nextcloud-theming": "not applicable: since no group-scoped theming exists at all (see sco-per-group), there is nothing for the login page to be deliberately exempted from",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding ; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : the sign-in page branding is one shared tenant-wide configuration, independent of the M365 group themes that only change the suite-header nav bar",
 				"liferay-dxp": "not checked: not applicable, no per-group theming exists to be unaffected by"
 			},
@@ -2785,7 +2916,7 @@
 			"area": "scoping",
 			"name": "Let each user choose a theme (light, dark, high contrast) for themselves.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -2798,6 +2929,7 @@
 			},
 			"reachedOn": "Settings > Personal > Appearance and accessibility (core Nextcloud), which thematiq's per-house-style dark/high-contrast CSS then honours",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Settings/Personal.php:38-53 plus apps/theming/lib/Service/ThemesService.php let each user enable default/light/dark/highcontrast/dark-highcontrast for themselves",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'you can prevent users from overriding their theme', implying that by default end users CAN override their assigned organisation theme unless the admin locks it",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/personalization/experiences/using-the-accessibility-menu : the personal Accessibility Menu (underlined links, text spacing, expanded text, reduced motion, focus ring animation) lets a user self-select display preferences, though it is not literally a light/dark/high-contrast theme switch"
 			},
@@ -2812,7 +2944,7 @@
 			"area": "scoping",
 			"name": "Follow the user's operating system preference for dark mode and high contrast.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2825,6 +2957,7 @@
 			},
 			"reachedOn": "any page, automatically, when the OS/browser reports prefers-color-scheme:dark, prefers-contrast:more or forced-colors:active and no explicit user theme choice overrides it",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/LightTheme.php:37 '(prefers-color-scheme: light)', DarkTheme.php:39 '(prefers-color-scheme: dark)' and HighContrastTheme's '(prefers-contrast: more)' media queries auto-apply based on the OS/browser preference",
 				"m365-branding": "not checked: no OS dark-mode/high-contrast auto-follow behaviour documented for M365/SharePoint org branding",
 				"liferay-dxp": "not checked: no prefers-color-scheme/forced-colors auto-follow behaviour documented for Liferay's accessibility menu or style books"
 			},
@@ -2839,7 +2972,7 @@
 			"area": "scoping",
 			"name": "Give each site, portal or department its own theme.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -2852,6 +2985,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Group theming' section -- but only for authenticated members of the mapped group",
 			"evidence": {
+				"nextcloud-theming": "outside the product: Nextcloud theming is instance-wide, no per-site/portal/department theme exists",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : each SharePoint site selects and can customise its own theme independently",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance : style books (and themes) are assigned per Site, so each site/department can have its own"
 			},
@@ -2866,7 +3000,7 @@
 			"area": "scoping",
 			"name": "Show a different brand depending on which domain the user arrives on.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -2879,6 +3013,7 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no domain-based brand switching exists",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : Home Realm Discovery lets company branding show immediately 'For customers who access applications from a custom URL, the whr query string parameter, or a domain variable', and B2B cross-tenant sign-ins show the visiting user's own home-tenant branding by domain",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/security-and-administration/administration/configuring-liferay/virtual-instances : virtual instances are each reached via their own domain name with independent configuration, so the brand shown depends on which domain/instance the user arrives on"
 			},
@@ -2892,7 +3027,7 @@
 			"area": "scoping",
 			"name": "Run fully separate brands for separate tenants on one installation.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -2905,6 +3040,7 @@
 			},
 			"reachedOn": "nothing reaches it as real tenant isolation",
 			"evidence": {
+				"nextcloud-theming": "outside the product: appconfig-backed theming values (apps/theming/lib/ThemingDefaults.php) are global to the single Nextcloud instance, no multi-tenant isolation",
 				"m365-branding": "not checked: Microsoft 365 organisational branding is scoped to one Azure/Entra tenant; running fully separate isolated brands 'on one installation' is not how a customer's single M365 tenant works, each brand needs its own Microsoft tenant",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/security-and-administration/administration/configuring-liferay/virtual-instances : 'Liferay DXP can host multiple portals on one installation, called virtual instances, with completely separate data and configurations', which is exactly tenant isolation on one installation"
 			},
@@ -2918,7 +3054,7 @@
 			"area": "scoping",
 			"name": "Let another app on the instance list the available house styles for its own picker without admin rights.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2931,6 +3067,7 @@
 			},
 			"reachedOn": "machine: any Conduction app's own token-set picker, via useScopedTheme(), with only a logged-in (non-admin) session required",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Capabilities.php:114-144 exposes the active theme's colours/logo/background and enabledThemes list to any client without admin rights via the public capabilities API, but this is the single active theme's values, not a browsable catalogue of house styles for a picker",
 				"m365-branding": "https://learn.microsoft.com/en-us/graph/api/organizationalbranding-update : reading organizationalBranding via Microsoft Graph requires an application permission such as OrganizationalBranding.Read.All, which needs admin consent, not something another app can call without admin rights",
 				"liferay-dxp": "not checked: Liferay's Headless APIs were confirmed to exist generally, but whether a non-admin-scoped endpoint lists the site's style book catalogue was not confirmed in the docs read"
 			},
@@ -2944,7 +3081,7 @@
 			"area": "accessibility",
 			"name": "Get a warning about insufficient colour contrast when you upload a house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -2957,6 +3094,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload panel (#nldesign-custom-token-sets), warning banner appears after upload",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no house-style upload exists; admin colour fields are validated only for hex syntax, not contrast (apps/theming/lib/Controller/ThemingController.php:115-130)",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : the FAQ documents the exact warning 'Doesn't meet minimum color contrast ratio of 4.5:1' shown when saving theme colours",
 				"liferay-dxp": "not checked: no contrast warning at token-save time was found in the style book editor documentation"
 			},
@@ -2971,7 +3109,7 @@
 			"area": "accessibility",
 			"name": "Check any pair of colours against WCAG contrast from within an app.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -2984,6 +3122,7 @@
 			},
 			"reachedOn": "machine: other apps' theme-picker dialogs (bq-audit, bq-audit2, openbuild ThemePickerDialog.vue) via nextcloud-vue's useScopedTheme().evaluateContrast()",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Util.php:35-37 colorContrast()/invertTextColor() are internal helper functions, not exposed as a UI tool for checking an arbitrary pair of colours",
 				"m365-branding": "not checked: no standalone WCAG contrast-checking tool for arbitrary colour pairs was found in M365/SharePoint admin docs",
 				"liferay-dxp": "not checked: no standalone WCAG contrast-checking tool for arbitrary colour pairs was found in the Liferay docs read"
 			},
@@ -2998,7 +3137,7 @@
 			"area": "accessibility",
 			"name": "Rely on every shipped house style having been checked automatically for WCAG contrast.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -3011,6 +3150,7 @@
 			},
 			"reachedOn": "machine: CI (PHPUnit suite run by code-quality.yml on every push/PR)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Util.php:70-99 elementColor() enforces a minimum contrast ratio (3.2:1, 5.6:1 high-contrast) when deriving element colours, and DefaultTheme.php:82-83 documents a 4.5:1 target in comments, but there is no published/automated audit artifact, only these code-level design choices",
 				"m365-branding": "not checked: not applicable, M365 org branding ships no catalogue of preset house styles to audit",
 				"liferay-dxp": "not checked: SharePoint's/Liferay's own default themes are described only as 'designed for readability', with no explicit statement that every shipped theme is automatically WCAG-contrast-checked"
 			},
@@ -3025,7 +3165,7 @@
 			"area": "accessibility",
 			"name": "Read a published contrast report per house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3038,6 +3178,7 @@
 			},
 			"reachedOn": "https://thematiq.conduction.nl/reference/contrast-report (published docs site)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no published per-theme contrast report exists",
 				"m365-branding": "not checked: no per-house-style published contrast report was found; M365 branding has no catalogue of named house styles",
 				"liferay-dxp": "not checked: Liferay publishes a product-level VPAT (https://www.liferay.com/documents/d/guest/vpat2-5rev_int_february2025_liferay_dxp_sites_experience), not a per-theme/per-style-book contrast report"
 			},
@@ -3051,7 +3192,7 @@
 			"area": "accessibility",
 			"name": "Download an evidence report of the contrast of your active configuration for an audit.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -3064,6 +3205,7 @@
 			},
 			"reachedOn": "nothing reaches it from the admin UI; the route exists and works if hit directly, but there is no button",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no downloadable contrast/compliance evidence report exists",
 				"m365-branding": "not checked: no exportable contrast-evidence report of the tenant's active branding configuration was found",
 				"liferay-dxp": "https://www.liferay.com/documents/d/guest/vpat2-5rev_int_february2025_liferay_dxp_sites_experience : Liferay publishes a Voluntary Product Accessibility Template (VPAT) conformance report, but it documents the product in general, not the contrast of a specific customer's active style book/theme configuration"
 			},
@@ -3078,7 +3220,7 @@
 			"area": "accessibility",
 			"name": "Produce that compliance report from the command line.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3091,6 +3233,7 @@
 			},
 			"reachedOn": "occ nldesign:compliance-report",
 			"evidence": {
+				"nextcloud-theming": "outside the product: apps/theming/lib/Command/UpdateConfig.php is the only occ command, it manages config values, not compliance reporting",
 				"m365-branding": "not checked: no CLI for generating a contrast compliance report was found",
 				"liferay-dxp": "not checked: no CLI for generating a contrast compliance report was found"
 			},
@@ -3104,7 +3247,7 @@
 			"area": "accessibility",
 			"name": "Apply a maximum-contrast (WCAG AAA) theme instance-wide.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -3117,6 +3260,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, house style dropdown, select 'Hoog contrast (WCAG AAA)'",
 			"evidence": {
+				"nextcloud-theming": "config/config.sample.php:2472-2476 'enforce_theme' lets an admin force the high-contrast theme instance-wide, honoured by apps/theming/lib/Service/ThemesService.php:60,150 getThemes()/getEnabledThemes()",
 				"m365-branding": "not checked: no maximum-contrast/WCAG AAA instance-wide theme option was found for M365/SharePoint org branding, which only offers arbitrary admin-chosen colours",
 				"liferay-dxp": "https://learn.liferay.com/kb-article/creating-high-contrast-color-themes-in-liferay-dxp-7.0 : since Fix Pack 58, 'navigate to Control Panel > Configuration > System Settings > Web Experience > Product Menu Accessibility, and check the Use High Contrast option' turns on an instance-wide high-contrast colour scheme, though the docs read do not label it explicitly as WCAG AAA"
 			},
@@ -3130,7 +3274,7 @@
 			"area": "accessibility",
 			"name": "Cooperate with the operating system's forced colours and high-contrast modes.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -3143,6 +3287,7 @@
 			},
 			"reachedOn": "any page, but only once the admin has selected the 'Hoog contrast' token set; not present for the default nldesign/rijkshuisstijl theme or any other set",
 			"evidence": {
+				"nextcloud-theming": "themes are scoped to '(prefers-contrast: more)' and '(prefers-color-scheme: dark/light)' media queries (apps/theming/lib/Themes/HighContrastTheme.php, LightTheme.php:37, DarkTheme.php:39), which cooperate with OS accessibility signals, but no use of the CSS 'forced-colors' media feature itself was found in lib/ or core/css",
 				"m365-branding": "not checked: no forced-colors/OS high-contrast-mode cooperation documented for M365/SharePoint branding",
 				"liferay-dxp": "not checked: no forced-colors media-query cooperation documented for Liferay's accessibility menu or style books"
 			},
@@ -3157,7 +3302,7 @@
 			"area": "accessibility",
 			"name": "Offer a dark mode of the house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -3170,6 +3315,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Enable dark mode variants for the active token set' checkbox",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DarkTheme.php is a full built-in theme, user-selectable or auto-applied via prefers-color-scheme",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme ; https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : dark-mode logos are supported ('alternate logo... optimized for use in Microsoft 365 dark themes', 'Square logo (dark theme)'), and SharePoint ships 2 dark/'inverted' default site themes, but the M365 organisation theme's nav-bar/accent/text colours have only one value each, no separate dark palette",
 				"liferay-dxp": "not checked: no full dark-mode variant of a style book/house style was found in the docs read; the accessibility menu (https://learn.liferay.com/w/dxp/personalization/experiences/using-the-accessibility-menu) does not list a dark-mode toggle"
 			},
@@ -3184,7 +3330,7 @@
 			"area": "accessibility",
 			"name": "Regenerate the dark variants from the command line after changing sets.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3197,6 +3343,7 @@
 			},
 			"reachedOn": "occ nldesign:generate-dark-variants",
 			"evidence": {
+				"nextcloud-theming": "the dark variant is a hand-written PHP class shipped with the app (apps/theming/lib/Themes/DarkTheme.php), not something regenerated from a house style by an occ command; no such command exists in lib/Command/",
 				"m365-branding": "not checked: no CLI to regenerate dark variants was found",
 				"liferay-dxp": "not checked: no CLI to regenerate dark variants was found"
 			},
@@ -3210,7 +3357,7 @@
 			"area": "accessibility",
 			"name": "Show visible focus indicators in the house style's colours.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -3223,6 +3370,7 @@
 			},
 			"reachedOn": "every page, once a token set with design_system nldesign is active (the default)",
 			"evidence": {
+				"nextcloud-theming": "no dedicated focus-indicator colour token scoped to the active house style was found in apps/theming/lib/Themes/DefaultTheme.php's CSS-variable list; focus styling is core Nextcloud CSS, not theming-app-managed",
 				"m365-branding": "not checked: no focus-indicator styling tied to house-style colours was found in M365/SharePoint branding docs",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/personalization/experiences/using-the-accessibility-menu : DXP 2026.Q3+ ships a 'Focus Ring Animation' accessibility option where 'the ring appears at a larger size and then contracts to its normal size, drawing your eye to the new element', showing focus indicators are a first-class feature, though the docs read do not confirm the ring colour is drawn from the house style's own tokens"
 			},
@@ -3236,7 +3384,7 @@
 			"area": "accessibility",
 			"name": "Respect a user's preference for reduced motion.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -3249,6 +3397,7 @@
 			},
 			"reachedOn": "any page (login and app pages) and the theming settings page itself, automatically when the OS/browser reports prefers-reduced-motion",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/ReducedMotion.php sets --animation-quick/--animation-slow to 0 and is auto-applied via '(prefers-reduced-motion: reduce)'",
 				"m365-branding": "not checked: no reduced-motion preference support documented for M365/SharePoint org branding surfaces",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/personalization/experiences/using-the-accessibility-menu : 'Reduced Motion: Stop all motion and animations to hide transitions and other movement effects' is a documented accessibility menu option"
 			},
@@ -3276,6 +3425,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, the whole page",
 			"evidence": {
+				"nextcloud-theming": "not checked: verifying full keyboard operability of the rendered settings page requires driving a live browser, out of scope for a source/docs-only reading",
 				"m365-branding": "not checked: keyboard-only operability of the Entra/SharePoint/M365 theming admin screens specifically was not confirmed in the docs read",
 				"liferay-dxp": "not checked: keyboard-only operability of the style book editor specifically was not confirmed in the docs read, beyond Liferay's general accessibility conformance claims in its VPAT"
 			},
@@ -3290,7 +3440,7 @@
 			"area": "accessibility",
 			"name": "Check that a house style defines the full token vocabulary so nothing falls back to an unreadable default.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -3303,6 +3453,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload/list panel, 'Incomplete set' warning banner",
 			"evidence": {
+				"nextcloud-theming": "not applicable: there is no house-style token vocabulary object in this product to check for completeness, only two required colour fields plus optional images",
 				"m365-branding": "not checked: no token-vocabulary-completeness audit was found for M365/SharePoint theme configuration",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books : since DXP 2025.Q2, style books are strictly tied to one theme's token definition ('Token Isolation and Restricted Application'), which constrains which tokens exist but was not documented as an audit that flags an incomplete vocabulary"
 			},
@@ -3316,7 +3467,7 @@
 			"area": "accessibility",
 			"name": "Be prevented from publishing a theme whose contrast fails WCAG.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3329,6 +3480,7 @@
 			},
 			"reachedOn": "nothing reaches it; no such block exists",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:115-130 updateStylesheet() validates only hex-colour syntax for primary_color/background_color, not contrast; publishing a low-contrast pair is not blocked",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'You can override this recommendation and still save your theme as this is not a requirement', i.e. a failing contrast ratio does NOT block publishing",
 				"liferay-dxp": "not checked: no publish-time WCAG contrast gate was found for style books"
 			},
@@ -3343,7 +3495,7 @@
 			"area": "accessibility",
 			"name": "See the contrast ratio next to a colour while you edit it.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3356,6 +3508,7 @@
 			},
 			"reachedOn": "nothing reaches it; the token editor has no live per-swatch contrast readout",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/src/components/admin/ColorPickerField.vue shows only a live colour swatch/preview button, no numeric contrast ratio next to it",
 				"m365-branding": "not checked: no live contrast-ratio readout next to the colour picker was found; the contrast warning in M365 org theme (acc-contrast-on-upload) appears on save, not while picking the colour",
 				"liferay-dxp": "not checked: no live contrast-ratio readout next to the style book colour picker was found"
 			},
@@ -3370,7 +3523,7 @@
 			"area": "accessibility",
 			"name": "Generate or host the accessibility statement that Dutch government sites must publish.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3383,6 +3536,7 @@
 			},
 			"reachedOn": "nothing generates or hosts a statement; only a link field to an externally-authored one",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no accessibility-statement generator/host exists; only imprint/privacy URL fields are provided (apps/theming/lib/ThemingDefaults.php:112-118)",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -3397,7 +3551,7 @@
 			"area": "governance",
 			"name": "Allow only administrators to change the theme.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -3410,6 +3564,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, the section is only listed/reachable for admins (and delegated groups)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php : every value-changing endpoint carries #[AuthorizedAdminSetting(settings: Admin::class)]",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : 'The Organizational Branding Administrator role is the minimum role required to customize company branding'",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/users-and-permissions/roles-and-permissions/creating-and-managing-roles : role-based permissions gate administrative actions such as site/style-book management to Site Administrators and other privileged roles"
 			},
@@ -3423,7 +3578,7 @@
 			"area": "governance",
 			"name": "Delegate theme editing to a brand manager who is not a full administrator.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -3436,6 +3591,7 @@
 			},
 			"reachedOn": "Settings > Administration > Security > Administration privileges (core), grant a group access to the Theming settings section",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Settings/Admin.php:26,116-120 implements IDelegatedSettings with getAuthorizedAppConfig(), Nextcloud's mechanism for delegating this settings section to a non-admin settings-delegate role",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : the 'Organizational Branding Administrator' role is a scoped delegation, distinct from Global Administrator; https://learn.microsoft.com/en-us/sharepoint/brand-center-overview : 'a brand manager can create custom themes for your organization' as a role distinct from the global admin",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/users-and-permissions/roles-and-permissions/creating-and-managing-roles : custom roles with narrower permission sets (e.g. scoped to Sites/Style Books) can be created instead of granting full Administrator access"
 			},
@@ -3450,7 +3606,7 @@
 			"area": "governance",
 			"name": "See who changed which theming setting, from what to what, and when.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -3463,6 +3619,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Theming audit log' table",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:461-475 set() and :495-530 undo() write directly to appconfig with no logging of who changed what from what value to what",
 				"m365-branding": "not checked: no branding-specific audit trail (who changed which value, from what, to what) was confirmed for Entra/SharePoint/M365 theming in the docs read; general Microsoft Purview audit logging exists but was not verified for this specific resource",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/security-and-administration/administration/audit-framework : the audit framework records 'the user who performed it, the resource on which it was executed, the type of action... and execution date' for add/update/delete actions generally, though the docs read do not confirm field-level before/after values specifically for style book/theme changes"
 			},
@@ -3476,7 +3633,7 @@
 			"area": "governance",
 			"name": "Export the theming audit log for an auditor.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -3489,6 +3646,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Download full log' button",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no audit log exists to export",
 				"m365-branding": "not checked: no export-to-file capability for a branding-specific audit log was confirmed",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/security-and-administration/administration/audit-framework/searching-and-exporting-audit-events : the audit application lets you 'export audit events to CSV'"
 			},
@@ -3502,7 +3660,7 @@
 			"area": "governance",
 			"name": "Rely on the audit log not being editable after the fact.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -3515,6 +3673,7 @@
 			},
 			"reachedOn": "n/a (a guarantee about the absence of an edit path, not a screen)",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no audit log exists to be append-only",
 				"m365-branding": "not checked: audit-log immutability was not confirmed for M365/SharePoint",
 				"liferay-dxp": "not checked: audit-log immutability/append-only guarantee was not confirmed in the audit framework docs read"
 			},
@@ -3529,7 +3688,7 @@
 			"area": "governance",
 			"name": "Promote the complete theme configuration from test to acceptance to production as one file.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -3542,6 +3701,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Complete configuration bundle' panel, download/upload buttons",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Command/UpdateConfig.php only gets/sets one key at a time, there is no single file bundling the whole theme configuration to promote across environments",
 				"m365-branding": "not checked: no single-file promotion of the complete branding configuration between tenants/environments was found; each tenant is configured independently",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/exporting-and-importing-style-books : style books export/import as a single zip or LAR file, which can be used to move a complete style book between environments, though the docs explicitly do not give dev/test/prod promotion guidance"
 			},
@@ -3555,7 +3715,7 @@
 			"area": "governance",
 			"name": "Export and import that configuration bundle from the command line for scripted deployments.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3568,6 +3728,7 @@
 			},
 			"reachedOn": "occ nldesign:config:export / occ nldesign:config:import",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Command/UpdateConfig.php:21-131 occ theming:config lets each setting/image be scripted individually for deployment automation, but there is no one bundled config file to export/import as a unit",
 				"m365-branding": "https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.identity.directorymanagement/update-mgorganizationbranding : Microsoft Graph PowerShell cmdlets (Get-MgOrganizationBranding/Update-MgOrganizationBranding) let you script reading and writing the branding configuration, usable for promoting settings between tenants",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/exporting-and-importing-style-books : the export/import documentation for style books contains no mention of CLI tools or scripting; 'both methods appear limited to the user interface'"
 			},
@@ -3581,7 +3742,7 @@
 			"area": "governance",
 			"name": "Share the theme configuration with other instances through federated configuration sharing.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3594,6 +3755,7 @@
 			},
 			"reachedOn": "nothing reaches it: thematiq's contract is real and OpenRegister's engine/routes are real, but neither repo has a UI screen that drives a federated share end to end",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no federated configuration sharing between instances exists",
 				"m365-branding": "not checked: no federated cross-instance branding sharing was found",
 				"liferay-dxp": "not checked: no federated cross-instance style book sharing was found beyond manual zip/LAR export-import"
 			},
@@ -3608,7 +3770,7 @@
 			"area": "governance",
 			"name": "Declare the theme in deployment configuration (for example Helm values) so it is versioned with the infrastructure.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -3621,6 +3783,7 @@
 			},
 			"reachedOn": "nothing reaches it; no such capability exists",
 			"evidence": {
+				"nextcloud-theming": "occ theming:config commands (apps/theming/lib/Command/UpdateConfig.php) and config.php keys like 'enforce_theme'/'theming.standalone_window.enabled' (config/config.sample.php:2472-2484) can be driven from Helm/Ansible-style deployment scripts, but most theming values live in the appconfig database rather than being declared natively in config.php itself",
 				"m365-branding": "not checked: Microsoft 365/SharePoint/Entra ID are SaaS services with no customer-controlled deployment manifest (Helm values or similar) that declares tenant branding",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/development/customizing-liferays-look-and-feel/using-a-theme-css-client-extension : theme CSS client extensions are declared in a client-extension.yaml inside a Liferay Workspace project and built/deployed via Gradle, i.e. the styling is code that is versioned and deployed together with the rest of the application"
 			},
@@ -3635,7 +3798,7 @@
 			"area": "governance",
 			"name": "Require a second person to approve a theme change before it goes live.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -3648,6 +3811,7 @@
 			},
 			"reachedOn": "nothing reaches it; no such capability exists",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no second-approver workflow exists before a theming change goes live (ThemingDefaults::set() applies immediately)",
 				"m365-branding": "not checked: no second-approver workflow for saving branding changes was found; Save/Create applies immediately",
 				"liferay-dxp": "https://www.xtivia.com/blog/liferay-dxp-publications-versus-staging/ : Publications 'enables content authors to create/edit content, possibly have those changes go through a content approval workflow, and publish them to the live site on a schedule', though it was not confirmed whether style book/theme changes specifically flow through this approval step"
 			},
@@ -3662,7 +3826,7 @@
 			"area": "governance",
 			"name": "Install and update the theming from the platform's app store.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -3675,6 +3839,7 @@
 			},
 			"reachedOn": "Nextcloud instance's Apps admin page, App Store listing for thematiq (formerly nldesign)",
 			"evidence": {
+				"nextcloud-theming": "theming ships as a shipped core app under apps/theming with the standard Nextcloud app lifecycle (appinfo/info.xml), installed/updated the same way as any Nextcloud app",
 				"m365-branding": "not checked: organisational branding is a built-in tenant setting, not an app installed/updated from a store",
 				"liferay-dxp": "https://marketplace.liferay.com/p/materialized-theme : themes such as the Materialized Theme are installed and updated from marketplace.liferay.com, Liferay's own app marketplace"
 			},
@@ -3689,7 +3854,7 @@
 			"area": "governance",
 			"name": "Use, inspect and change the theming software under an open source licence.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -3702,6 +3867,7 @@
 			},
 			"reachedOn": "the public GitHub repository and the app's own LICENSE/info.xml metadata",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php:5 SPDX-License-Identifier: AGPL-3.0-or-later, part of the open-source Nextcloud server source",
 				"m365-branding": "not checked: Entra ID, Microsoft 365 and SharePoint Online are proprietary closed-source cloud services",
 				"liferay-dxp": "not checked, general knowledge caveat: Liferay DXP is Liferay's commercial/enterprise edition under a proprietary licence; only the separate Liferay Portal Community Edition core is open source (Apache-licensed), so DXP itself cannot be freely inspected/changed under an open source licence"
 			},
@@ -3715,7 +3881,7 @@
 			"area": "governance",
 			"name": "See the licence of every bundled font and asset stated in the product.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -3728,6 +3894,7 @@
 			},
 			"reachedOn": "https://thematiq.conduction.nl/reference/assets and /reference/compliance (published docs site)",
 			"evidence": {
+				"nextcloud-theming": "the bundled OpenDyslexic font files (apps/theming/fonts/OpenDyslexic-Regular.otf, -Bold.otf) ship with no in-repo LICENSE file found alongside them, and the product UI does not state the font's or other bundled assets' licence",
 				"m365-branding": "not checked: no in-product statement of the licence of every bundled font/asset was found for M365/SharePoint",
 				"liferay-dxp": "not checked: no in-product statement of the licence of every bundled font/asset was found for Liferay"
 			},
@@ -3742,7 +3909,7 @@
 			"area": "sync",
 			"name": "Get house styles generated from the official NL Design System token sources rather than copied by hand.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3755,6 +3922,7 @@
 			},
 			"reachedOn": "machine: GitHub Actions (repo maintainer facing, not an admin-facing UI feature)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: there is no NL Design System token source this app generates house styles from",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -3769,7 +3937,7 @@
 			"area": "sync",
 			"name": "Receive upstream token changes as proposed updates through a nightly synchronisation.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3782,6 +3950,7 @@
 			},
 			"reachedOn": "machine: GitHub Actions nightly cron, opens a PR on ConductionNL/thematiq",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no nightly upstream-sync job exists (no such entry in apps/theming/lib/Jobs)",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -3796,7 +3965,7 @@
 			"area": "sync",
 			"name": "Opt in to a daily check that tells you when your house style is behind the upstream tokens.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3809,6 +3978,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Upstream token updates' checkbox",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no upstream-freshness check exists",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -3822,7 +3992,7 @@
 			"area": "sync",
 			"name": "Dismiss an upstream-update notice until the next change.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3835,6 +4005,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Dismiss' button on an upstream-update notice",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no freshness notice exists to dismiss",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -3848,7 +4019,7 @@
 			"area": "sync",
 			"name": "See when the upstream check last ran and what it found.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3861,6 +4032,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, 'last checked' text and notices list under the upstream-freshness toggle",
 			"evidence": {
+				"nextcloud-theming": "not applicable: no freshness check exists to report a last-run status",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -3875,7 +4047,7 @@
 			"area": "sync",
 			"name": "Keep Nextcloud's built-in theming colours and logo in line with the chosen house style.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3888,6 +4060,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog's 'Also update Nextcloud theming' section",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ThemingDefaults.php IS Nextcloud's built-in theming source of truth for colours/logo, so there is nothing external to keep it 'in sync' with, it is trivially always in sync with itself",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -3902,7 +4075,7 @@
 			"area": "sync",
 			"name": "Edit Nextcloud's built-in theming values from the same settings page.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -3915,6 +4088,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog's 'Also update Nextcloud theming' section",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Settings/Admin.php is the same settings page where Nextcloud's built-in theming colours/logo are edited directly",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
@@ -3929,7 +4103,7 @@
 			"area": "sync",
 			"name": "Keep your settings intact when the app is renamed or upgraded.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -3942,6 +4116,7 @@
 			},
 			"reachedOn": "machine: Nextcloud's own repair-step runner (occ upgrade / app enable), no admin UI action needed",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/ConfigLexicon.php:41-46 documents legacy keys (url/docBaseUrl) kept for compatibility, and apps/theming/lib/Migration/ manages schema changes across app versions/upgrades so settings survive them",
 				"m365-branding": "not checked: not applicable in the way this row frames it (an installable app being renamed/upgraded); M365 organisational branding is a built-in tenant setting with no separate app identity to rename",
 				"liferay-dxp": "https://liferay.dev/b/from-theme-to-theme-less-the-smart-path-to-faster-future-ready-liferay-dxp-upgrades : Liferay documents an explicit migration path 'From Theme to Theme-less' for DXP upgrades, moving styling from classic themes to Style Books/Theme CSS Client Extensions across major versions, evidence that keeping styling intact across an upgrade is a named, supported path"
 			},
@@ -3955,7 +4130,7 @@
 			"area": "integration",
 			"name": "Let clients and other apps read the active house style through the platform capabilities API.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -3968,6 +4143,7 @@
 			},
 			"reachedOn": "machine: any OCS capabilities consumer (mobile/desktop clients, other apps' JS, login page) via GET /ocs/v2.php/cloud/capabilities",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Capabilities.php implements IPublicCapability, exposing the active theme's colour/logo/background/enabledThemes via the OCS capabilities endpoint",
 				"m365-branding": "https://learn.microsoft.com/en-us/graph/api/organizationalbranding-update : the organizationalBranding resource can be read via Microsoft Graph (GET), letting clients read the active branding configuration",
 				"liferay-dxp": "not checked: Liferay's Headless APIs were confirmed to exist generally, but no specific 'active style book/theme' read endpoint analogous to a capabilities API was confirmed in the docs read"
 			},
@@ -3981,7 +4157,7 @@
 			"area": "integration",
 			"name": "Let other apps list the house style catalogue through an API.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -3994,6 +4170,7 @@
 			},
 			"reachedOn": "machine: sibling apps' theme-picker dialogs (e.g. bq-audit/bq-audit2/openbuild ThemePickerDialog.vue) mounted inside CnAppRoot",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Capabilities.php:114-144 exposes only the single active theme's values plus enabledThemes ids, not a browsable catalogue of house styles for another app's picker",
 				"m365-branding": "https://learn.microsoft.com/en-us/graph/api/organizationalbranding-update : organizationalBrandingLocalization is a listable Graph collection (one entry per browser-language branding), which is the closest documented equivalent to an API-listable catalogue, though it lists language variants of one brand rather than a catalogue of distinct named house styles",
 				"liferay-dxp": "not checked: no headless endpoint for listing a site's available style books/themes was confirmed in the docs read"
 			},
@@ -4008,7 +4185,7 @@
 			"area": "integration",
 			"name": "Let a page fetch the stylesheets a house style needs, in cascade order, to swap it in place.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -4021,6 +4198,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, token set preview/apply dialog (apply-without-reload)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:398-443 getThemeStylesheet(themeId) lets a page fetch one theme's CSS variables plus custom CSS on demand by id, but it returns a single theme's stylesheet, not a manifest describing a cascade of several stylesheets composing one house style",
 				"m365-branding": "not checked: no manifest API for fetching a house style's stylesheets in cascade order was found",
 				"liferay-dxp": "not checked: no manifest API for fetching a style book's stylesheets in cascade order was found"
 			},
@@ -4035,7 +4213,7 @@
 			"area": "integration",
 			"name": "Monitor theming through Prometheus metrics (active set, overrides, syncs).",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -4048,6 +4226,7 @@
 			},
 			"reachedOn": "machine: Prometheus scraper hitting GET /api/metrics with an admin app-password",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no Prometheus metrics endpoint exists in apps/theming",
 				"m365-branding": "not checked: no Prometheus-style metrics for the branding subsystem were found",
 				"liferay-dxp": "not checked: no Prometheus-style metrics for the style book/theming subsystem were found"
 			},
@@ -4061,7 +4240,7 @@
 			"area": "integration",
 			"name": "Check that the theming app is healthy from a monitoring system.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -4074,6 +4253,7 @@
 			},
 			"reachedOn": "machine: any monitoring system hitting GET /api/health (public, no auth required)",
 			"evidence": {
+				"nextcloud-theming": "outside the product: no dedicated theming health-check endpoint for monitoring exists",
 				"m365-branding": "not checked: Microsoft 365 Service Health covers the service generally, not a dedicated 'theming app' health check",
 				"liferay-dxp": "not checked: no dedicated health-check endpoint for the theming/style-book subsystem was confirmed in the docs read"
 			},
@@ -4087,7 +4267,7 @@
 			"area": "integration",
 			"name": "Let other apps style themselves with the same CSS variables, with no build step.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -4100,6 +4280,7 @@
 			},
 			"reachedOn": "any page in the instance, automatically, for any app that writes plain CSS against the --nldesign-* variables",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Themes/DefaultTheme.php:124-268 exposes plain CSS custom properties consumable directly by any app's CSS with no build step, served globally via getThemeStylesheet()",
 				"m365-branding": "not checked: no evidence that third-party apps can consume the M365/SharePoint theme's colours as ready-made CSS custom properties with no build step",
 				"liferay-dxp": "https://github.com/liferay/liferay-frontend-projects/blob/master/guidelines/dxp/how_to_use_css_custom_properties.md : frontend tokens are implemented as CSS custom properties available at runtime portal-wide, so other portlets/apps can style themselves with the same variables with no build step"
 			},
@@ -4113,7 +4294,7 @@
 			"area": "integration",
 			"name": "Apply the theme as pure CSS with no JavaScript cost on ordinary pages.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -4126,6 +4307,7 @@
 			},
 			"reachedOn": "every ordinary page in the instance (no admin.js/playground.js loaded there)",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php:398-443 getThemeStylesheet() returns a cacheable text/css DataDisplayResponse consumed via a <link> stylesheet, no JS execution required to apply colours on ordinary pages",
 				"m365-branding": "not checked: whether M365/SharePoint theming is applied as pure CSS with no JS cost was not documented one way or the other",
 				"liferay-dxp": "https://liferay.dev/b/from-theme-to-theme-less-the-smart-path-to-faster-future-ready-liferay-dxp-upgrades : the 2025 'theme-less' architecture is built on Style Books, Theme CSS Client Extensions and Master Page templates as CSS, with JS Client Extensions kept as a distinct, separate mechanism, implying the CSS theming path itself carries no JS cost"
 			},
@@ -4139,7 +4321,7 @@
 			"area": "integration",
 			"name": "Change the theme through a documented REST or management API.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -4152,6 +4334,7 @@
 			},
 			"reachedOn": "nothing reaches it as a documented external API; only the admin page's own JS calls it, with a CSRF token tied to that session",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Controller/ThemingController.php updateStylesheet()/uploadImage()/undo() are callable ajax endpoints but carry no #[OpenAPI] attribute (unlike getImage/getManifest/getThemeStylesheet which do), so they are not documented as a public/OpenAPI'd management API",
 				"m365-branding": "https://learn.microsoft.com/en-us/graph/api/organizationalbranding-update : organizationalBranding can be updated via a documented Microsoft Graph REST endpoint; https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : SharePoint site theming is also documented via 'the SharePoint REST API'",
 				"liferay-dxp": "not checked: Liferay's Headless APIs exist generally, but a documented REST endpoint specifically for changing a site's active style book/theme was not confirmed in the docs read"
 			},
@@ -4166,7 +4349,7 @@
 			"area": "integration",
 			"name": "Set the active theme from the command line.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "partial",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
@@ -4179,6 +4362,7 @@
 			},
 			"reachedOn": "occ nldesign:config:import <bundle-file>, where the bundle's tokenSet field becomes the active theme",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Command/UpdateConfig.php sets individual values (colors, images, name, etc.) from the CLI, and config.php 'enforce_theme' can force a personal theme id instance-wide, but there is no single 'set active theme <id>' command since no house-style catalogue exists to select from",
 				"m365-branding": "https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.identity.directorymanagement/update-mgorganizationbranding : Update-MgOrganizationBranding (Microsoft Graph PowerShell) and PnP PowerShell cmdlets let you set branding/site theme values from the command line",
 				"liferay-dxp": "not checked, but with contrary evidence: theme CSS client extensions are deployed via Gradle from the command line, but the style book export/import docs explicitly say both methods 'appear limited to the user interface', so activating a given style book on a site from the CLI is not documented"
 			},
@@ -4193,7 +4377,7 @@
 			"area": "integration",
 			"name": "Read end-user and admin documentation for every theming feature.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
@@ -4206,6 +4390,7 @@
 			},
 			"reachedOn": "https://thematiq.conduction.nl",
 			"evidence": {
+				"nextcloud-theming": "apps/theming/lib/Settings/Admin.php:62 links to https://docs.nextcloud.com/server/stable/admin_manual/configuration_server/theming.html, Nextcloud's published admin manual page for theming",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding ; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme ; https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview ; https://learn.microsoft.com/en-us/sharepoint/brand-center-overview ; https://learn.microsoft.com/en-us/sharepoint/organization-assets-library ; https://learn.microsoft.com/en-us/sharepoint/brand-fonts : extensive end-user and admin documentation exists for every theming feature covered in this review",
 				"liferay-dxp": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance ; https://learn.liferay.com/w/dxp/development/customizing-liferays-look-and-feel/using-a-theme-css-client-extension ; https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/exporting-and-importing-style-books ; https://learn.liferay.com/w/dxp/security-and-administration/administration/configuring-liferay/virtual-instances ; https://learn.liferay.com/w/dxp/security-and-administration/administration/audit-framework ; https://learn.liferay.com/w/dxp/personalization/experiences/using-the-accessibility-menu : extensive end-user, admin and developer documentation exists for every theming feature covered in this review"
 			},
@@ -4219,7 +4404,7 @@
 			"area": "integration",
 			"name": "Ship as part of a sovereign workplace bundle with one brand across all its components.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
@@ -4232,6 +4417,7 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, select the 'La Suite numérique' token set, so this Nextcloud instance visually matches a surrounding La Suite (MijnBureau/EDIC) bundle",
 			"evidence": {
+				"nextcloud-theming": "outside the product: stock Nextcloud theming has no concept of a sovereign-workplace bundle brand shared across multiple products",
 				"m365-branding": "outside the product: Microsoft 365 organisational branding (Entra sign-in, org theme, SharePoint theme/brand center) ships no catalogue of Dutch government or country-specific house styles, read across all core branding docs on 2026-09-26",
 				"liferay-dxp": "outside the product: Liferay DXP style books/themes ship generic default palettes (Teal, Blue, Orange...), not Dutch-government or country-specific house styles, per the style book and site theming docs read on 2026-09-26"
 			},
