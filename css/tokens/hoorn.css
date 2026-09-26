@@ -8,9 +8,6 @@
  */
 
 :root {
-	/* Logo image */
-	--nldesign-logo-url: url('../../img/logos/hoorn.svg');
-
 	/* NL Design tokens */
 	--nldesign-color-blue-20: #09366c;
 	--nldesign-color-blue-25: hsl(213deg 85% 23%);

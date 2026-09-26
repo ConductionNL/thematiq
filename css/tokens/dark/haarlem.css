@@ -32,7 +32,6 @@
 		--haarlem-color-zand-25: #463d11;
 		--haarlem-color-zand-50: #6b5d1a;
 		--haarlem-color-zand-75: #907d22;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #2c2e2f;
 		--nldesign-color-background-darker: #3a3b3c;
 		--nldesign-color-background-hover: #252728;
@@ -78,11 +77,11 @@
 		--nldesign-color-oceaan-75: #4f80b6;
 		--nldesign-color-placeholder-dark: #3f3f3f;
 		--nldesign-color-placeholder-light: #2a2a2a;
-		--nldesign-color-primary: #2f80d9;
+		--nldesign-color-primary: #154273;
 		--nldesign-color-primary-hover: #1d5499;
 		--nldesign-color-primary-light: #112131;
 		--nldesign-color-primary-light-hover: #172d41;
-		--nldesign-color-primary-text: #111111;
+		--nldesign-color-primary-text: #dedede;
 		--nldesign-color-rood-10: #380308;
 		--nldesign-color-rood-100: #d23545;
 		--nldesign-color-rood-25: #5d050f;
@@ -186,7 +185,6 @@ body[data-themes*=dark] {
 	--haarlem-color-zand-25: #463d11;
 	--haarlem-color-zand-50: #6b5d1a;
 	--haarlem-color-zand-75: #907d22;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #2c2e2f;
 	--nldesign-color-background-darker: #3a3b3c;
 	--nldesign-color-background-hover: #252728;
@@ -232,11 +230,11 @@ body[data-themes*=dark] {
 	--nldesign-color-oceaan-75: #4f80b6;
 	--nldesign-color-placeholder-dark: #3f3f3f;
 	--nldesign-color-placeholder-light: #2a2a2a;
-	--nldesign-color-primary: #2f80d9;
+	--nldesign-color-primary: #154273;
 	--nldesign-color-primary-hover: #1d5499;
 	--nldesign-color-primary-light: #112131;
 	--nldesign-color-primary-light-hover: #172d41;
-	--nldesign-color-primary-text: #111111;
+	--nldesign-color-primary-text: #dedede;
 	--nldesign-color-rood-10: #380308;
 	--nldesign-color-rood-100: #d23545;
 	--nldesign-color-rood-25: #5d050f;

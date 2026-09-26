@@ -2,7 +2,6 @@
 @media (prefers-color-scheme: dark) {
 	body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast]) {
 		--haarlemmermeer-color-grey-45: #888888;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #2c2e2f;
 		--nldesign-color-background-darker: #3a3b3c;
 		--nldesign-color-background-hover: #252728;
@@ -29,11 +28,11 @@
 		--nldesign-color-nav-background: #141414;
 		--nldesign-color-placeholder-dark: #3f3f3f;
 		--nldesign-color-placeholder-light: #2a2a2a;
-		--nldesign-color-primary: #2f80d9;
+		--nldesign-color-primary: #154273;
 		--nldesign-color-primary-hover: #1d5499;
 		--nldesign-color-primary-light: #112131;
 		--nldesign-color-primary-light-hover: #172d41;
-		--nldesign-color-primary-text: #111111;
+		--nldesign-color-primary-text: #dedede;
 		--nldesign-color-success: #9ceb6f;
 		--nldesign-color-success-rgb: 156, 235, 111;
 		--nldesign-color-text: #cccccc;
@@ -96,7 +95,6 @@
 body[data-theme-dark],
 body[data-themes*=dark] {
 	--haarlemmermeer-color-grey-45: #888888;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #2c2e2f;
 	--nldesign-color-background-darker: #3a3b3c;
 	--nldesign-color-background-hover: #252728;
@@ -123,11 +121,11 @@ body[data-themes*=dark] {
 	--nldesign-color-nav-background: #141414;
 	--nldesign-color-placeholder-dark: #3f3f3f;
 	--nldesign-color-placeholder-light: #2a2a2a;
-	--nldesign-color-primary: #2f80d9;
+	--nldesign-color-primary: #154273;
 	--nldesign-color-primary-hover: #1d5499;
 	--nldesign-color-primary-light: #112131;
 	--nldesign-color-primary-light-hover: #172d41;
-	--nldesign-color-primary-text: #111111;
+	--nldesign-color-primary-text: #dedede;
 	--nldesign-color-success: #9ceb6f;
 	--nldesign-color-success-rgb: 156, 235, 111;
 	--nldesign-color-text: #cccccc;
