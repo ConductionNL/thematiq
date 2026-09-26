@@ -144,151 +144,224 @@
 			"id": "cat-rijkshuisstijl",
 			"area": "catalogue",
 			"name": "Apply the Dutch national government house style (Rijkshuisstijl) without designing anything.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "token-sets.json id=rijkshuisstijl; templates/settings/admin.php:66-76 renders it as an <option> in the token-set select; SettingsController::setTokenSet applies it via /settings/tokenset",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (templates/settings/admin.php:68)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "cat-municipal-sets",
 			"area": "catalogue",
 			"name": "Pick your own municipality or organisation from a list of ready-made house styles.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "token-sets.json lists ~30 municipality sets (amsterdam, utrecht, leiden, nijmegen, tilburg, zwolle, etc); admin.php:66-76 dropdown, alphabetically sorted (js/admin.js:531-561 upsertTokenSetOption)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "cat-bigcity-systems",
 			"area": "catalogue",
 			"name": "Use the full design systems of the large cities (Utrecht, Amsterdam, Den Haag, Rotterdam).",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "token-sets.json has utrecht, amsterdam, denhaag, rotterdam entries; each has its own theming/design_system block; reachable from the same dropdown",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sets",
+			"featureConfidence": "high",
+			"note": "info.xml description explicitly names these four as 'full design systems of the large cities'."
 		},
 		{
 			"id": "cat-vng",
 			"area": "catalogue",
 			"name": "Apply the VNG house style for a municipal association or shared service.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "token-sets.json id=vng name='VNG Vereniging Nederlandse Gemeenten'; openspec/specs/vng-token-set/ exists; reachable from the same dropdown",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "vng-token-set",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "cat-lasuite",
 			"area": "catalogue",
 			"name": "Make the workspace match the French La Suite numerique look so a sovereign workplace bundle shows no visual seam.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "token-sets.json id=lasuite (design_system=lasuite) and id=frankendesk; design-systems.json id=lasuite 'La Suite numerique'; openspec/specs/lasuite-parity, lasuite-stack exist",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "lasuite-stack",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "cat-searchable-picker",
 			"area": "catalogue",
 			"name": "Find a house style by typing its name in a searchable picker that scales to hundreds of entries.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "templates/settings/admin.php:66-76 is a plain native <select> with 47 <option> entries, alphabetically sorted (js/admin.js:540-558); no filter/search input for it. Compare js/admin.js:3480-3609 which DOES build a dedicated '<input type=search>' with live filtering for the (separate) per-app theming exclusion list.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (browser-native type-ahead only)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-set-dropdown",
+			"featureConfidence": "medium",
+			"note": "You can pick from a list of 47 sets and jump to one by typing its first letters via the browser's own select behaviour, but there is no purpose-built search/filter box the way there is for the app-exclusion list. At 47 entries it is usable; it does not obviously scale to 'hundreds'."
 		},
 		{
 			"id": "cat-swatch-preview",
 			"area": "catalogue",
 			"name": "See a colour swatch and the primary colour of each house style before choosing it.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:964-994 dropdown 'change' handler calls updatePreview() (js/admin.js:676-745, reads theming.primary_color via getPreviewColors at :600-615) which repaints the live-preview shell BEFORE the apply dialog opens; the apply dialog itself (js/admin.js:3019-3025 '.nldesign-apply-swatch') and the core-theming diff dialog (js/admin.js:1685-1693 '.nldesign-dialog-swatch') both render colour swatches for current vs proposed primary/background colour",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming: select a set in the dropdown (live preview shell repaints immediately), then the apply dialog shows swatches before you confirm",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-set-apply-dialog",
+			"featureConfidence": "high",
+			"note": "Swatch appears once you have selected the set in the dropdown but before you confirm applying it, not while merely browsing the closed list."
 		},
 		{
 			"id": "cat-stock-option",
 			"area": "catalogue",
 			"name": "Switch back to stock Nextcloud styling with one choice, removing every added stylesheet.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "token-sets.json id=nextcloud 'Nextcloud (default)' design_system=none; selecting it triggers reset mode (js/admin.js:1270-1275 buildThemingPlan -> mode 'reset'); js/lib/layerSwap.js swaps the injected <link>/<style> run for the new set's manifest with no reload (GET /settings/tokenset-stylesheets/{id}); dialog text at js/admin.js:1608 'Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.'",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, select 'Nextcloud (default)' in the dropdown",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "cat-completeness-badge",
 			"area": "catalogue",
 			"name": "See how complete a house style's token vocabulary is before you rely on it.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "templates/settings/admin.php:84 '#nldesign-token-set-completeness-badge' (hidden by default); js/admin.js:813-824 incompleteWarningFor() reads ts.warnings (kind=='incomplete') from the initial-state tokenSets payload; js/admin.js:887-905 updateCompletenessBadge() shows 'Incomplete set' with a title tooltip listing missing tokens, called on every selection change (js/admin.js:979,588)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, badge next to the token set dropdown",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "cat-design-system-choice",
 			"area": "catalogue",
 			"name": "Choose between whole design systems (NL Design System, La Suite, high contrast, a soft light theme), not only colour sets.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "design-systems.json lists none, nldesign, summer-breeze, high-contrast, lasuite, cunningham; token-sets.json 'hoog-contrast' (design_system=high-contrast) and 'summer-breeze' cover a soft/light theme and WCAG AAA contrast set",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, dropdown option carries data-design-system, badge shown via js/admin.js updateDesignSystemBadge()",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "high-contrast-token-set",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "cat-design-system-docs",
@@ -609,277 +682,406 @@
 			"id": "aut-upload-css",
 			"area": "authoring",
 			"name": "Upload your own house style as a CSS file of design tokens.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/CustomTokenSetController.php:203 upload(); lib/Service/TokenSetConverterService.php:246 convert() detects input kind A (NL Design CSS); templates/settings/admin.php:176 file input accept=\".css,.json,.tokens.json\"; js/admin.js:4206 POST /settings/tokensets/upload",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom token sets, 'Choose file and upload' (templates/settings/admin.php:179)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-upload-dtcg",
 			"area": "authoring",
 			"name": "Upload your own house style as a W3C Design Tokens (DTCG) JSON file.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/TokenSetConverterService.php:257 detectInput() classifies input kind B (W3C DTCG JSON, $value/$type, {a.b.c} aliases) and routes to DesignTokensMapper; same upload endpoint/UI as CSS (CustomTokenSetController.php:203; admin.php:176 accepts .json/.tokens.json)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom token sets upload form (same control as CSS upload)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-upload-validate",
 			"area": "authoring",
 			"name": "Get told on upload which tokens are missing or invalid before the set is accepted.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/CustomTokenSetController.php:242-289 returns 422 with imported/skipped/errors when zero tokens map; lib/Service/CustomTokenSetValidator.php:78 validateDeclarations() rejects unknown/forbidden declarations with a message; js/admin.js:4206-4269 renders 'X tokens imported, Y skipped' plus a diagnostics fragment (buildDiagnosticsFragment) in #nldesign-upload-result",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, upload result panel under the upload form (#nldesign-upload-result, admin.php:183)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-upload-security",
 			"area": "authoring",
 			"name": "Have uploaded styles stripped of anything that could run script or load outside resources.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/CustomTokenSetValidator.php:78-131 isForbiddenValue() rejects @import, expression(), javascript:, external url() and markup in every declaration value BEFORE the name split (comment at lines 100-118 explains why the value gate must run first); rejects on upload with a 422 (CustomTokenSetController.php:203)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Server-side gate on the same upload path as aut-upload-css/aut-upload-dtcg; surfaced to the admin as an upload error",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "Fail-closed reject, not silent stripping: the whole declaration is refused rather than laundered."
 		},
 		{
 			"id": "aut-custom-list-delete",
 			"area": "authoring",
 			"name": "List, activate and delete the house styles you uploaded.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/CustomTokenSetController.php:547 list(), :585 delete(); js/admin.js:4303 GET /settings/tokensets/custom (loadCustomTokenSets), :4396 DELETE .../custom/{id} (deleteCustomSet); activation is the existing token-set dropdown (#nldesign-token-set-select, admin.php:68) which lists custom sets alongside shipped ones via refreshTokenSetCatalogue()",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom token sets list (#nldesign-custom-set-list, admin.php:184) with Download/Delete buttons per row; activation via the main token-set dropdown",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-custom-export",
 			"area": "authoring",
 			"name": "Download a house style you uploaded, to reuse or share it.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/CustomTokenSetController.php:561 export(); js/admin.js:4387 'Download' button per row builds GET /settings/tokensets/custom/{id}/export via window.location",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom token sets list, 'Download' button per row",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-convert-nlds-theme",
 			"area": "authoring",
 			"name": "Convert an existing NL Design System theme from its upstream token format into a working set.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/TokenSetConverterService.php:73-400 convert() maps upstream NL Design tokens (utrecht/ams/denhaag/DTCG) onto the app's --nldesign-* vocabulary via the mapping table and DesignTokensMapper, emits a complete CSS file and a report of imported/skipped tokens; reached through the same upload form as aut-upload-css/aut-upload-dtcg (this IS the upload conversion step, not a separate control)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom token sets upload form (conversion runs server-side on upload, no separate UI)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "nlds-theme-converter",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-token-editor",
 			"area": "authoring",
 			"name": "Edit individual colour tokens in the browser with a colour picker.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:2371 mountTokenEditor()/2415 renderTokenEditor() builds a colour-picker + text input per token (buildTokenRow, ~2600); templates/settings/admin.php:291 #nldesign-token-editor is the mount point; save goes to POST /settings/overrides (js/admin.js:2823 saveOverrides)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Custom token overrides' panel (#nldesign-token-editor, admin.php:291)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-overrides",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-token-editor-tabs",
 			"area": "authoring",
 			"name": "Browse the editable tokens grouped in tabs (for example primary, background, text, status).",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:2429 tabOrder = ['login','content','status','typography'] groups tokenRegistry entries by meta.tab and renders one .nldesign-tab-btn / .nldesign-tab-panel per group (2415-2510); click handler at 2489-2508 switches the active panel",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, token editor tab bar (.nldesign-tabs inside #nldesign-token-editor)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-overrides",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-token-reset",
 			"area": "authoring",
 			"name": "Reset one edited token to its house style value without touching the others.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:2701-2739 wireTokenRows() reset-button handler reads tokenEditorState[name].resolved (the house-style default), writes it back into the text/colour inputs, removes the custom badge, calls document.documentElement.style.removeProperty(name) and marks only that token dirty for save",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, per-token reset button in the token editor rows (.nldesign-reset-btn)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-overrides",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-token-live",
 			"area": "authoring",
 			"name": "See an edited token take effect immediately, before saving.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:2771 applyLivePreview() writes document.documentElement.style.setProperty(name, value) synchronously on every input event (wireTokenRows ~2664/2684/2695), and schedulePreviewRepaint() (2745) coalesces the rich preview repaint to one per animation frame",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, token editor color pickers/text inputs; effect visible immediately on the settings page itself",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-overrides",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-overrides-persist",
 			"area": "authoring",
 			"name": "Save your token edits so they survive a restart and apply to everyone.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:2823 saveOverrides() POSTs to /apps/thematiq/settings/overrides; lib/Controller/OverridesController.php:138 setOverrides(); lib/Service/CustomOverridesService.php writes a single instance-wide custom-overrides.css file (validated against TokenRegistry) that is re-read on every request, not per-user session state, so it survives a restart and applies to every user",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Save overrides' button in the token editor (#nldesign-save-btn)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-overrides",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-overrides-import-export",
 			"area": "authoring",
 			"name": "Export your token edits as a file and import them again on another instance.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:2875 exportOverrides() downloads GET /settings/overrides/export as custom-overrides.css; js/admin.js:2884 importOverrides() POSTs a chosen file to /settings/overrides/import via the token editor's Upload label/input; lib/Controller/OverridesController.php exportOverrides()/importOverrides() (routes.php lines for overrides/export, overrides/import)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, token editor header 'Download'/'Upload' controls (#nldesign-export-btn, #nldesign-import-input)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-overrides",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-custom-css",
 			"area": "authoring",
 			"name": "Add your own free-form CSS rules for things tokens cannot express.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "templates/settings/admin.php:297-317 #nldesign-custom-css panel (enable checkbox, textarea, save button, feedback span); js/admin.js:5314 initCustomCss() loads/saves via GET/POST /apps/thematiq/settings/custom-css; lib/Controller/CustomCssController.php getCustomCss()/setCustomCss(); lib/Service/CustomCssService.php persists it and CssInjectionService emits it 'after every other theming layer'",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Custom CSS' section (#nldesign-custom-css, admin.php:297)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-css-freeform",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-custom-css-sanitise",
 			"area": "authoring",
 			"name": "Have free-form CSS checked and cleaned on the server before it is saved.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/CustomCssValidator.php:87 validate() rejects @import/@charset, external url() schemes, expression()/behavior:/-moz-binding:, </style>/<script>, and the Nextcloud dark-mode reserved variables, returning every violation; js/admin.js:5345-5365 saveCustomCss handler renders a 422's errors array into the feedback span and writes nothing on failure",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom CSS save button (#nldesign-custom-css-save) surfaces validator errors in #nldesign-custom-css-feedback",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-css-freeform",
+			"featureConfidence": "high",
+			"note": "It is fail-closed reject-all-or-nothing, documented in the class docblock as deliberately not stripping the offending fragment (would silently mutate CSS the admin never reviewed); the row's 'cleaned' is satisfied by rejection with reasons, not by silent stripping."
 		},
 		{
 			"id": "aut-component-scoped",
 			"area": "authoring",
 			"name": "Change the tokens of one component type (for example buttons) without changing the global palette.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/TokenRegistry.php:125-180 getComponentTokens() reads scripts/mapping/component-tokens.json and exposes each component's tokens grouped by component id/tab; these render as normal rows in the same token editor (js/admin.js:2415 renderTokenEditor groups by meta.tab, meta.group=componentId); a 'primary_drives_components' instance setting (admin.php:427 #nldesign-primary-drives-components) locks component rows to the primary colour when ON, and unlocking it lets an admin set e.g. button tokens independently of the global palette",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, token editor rows for component tokens (visible once 'Let the primary colour drive every component' is switched off)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "component-tokens",
+			"featureConfidence": "medium"
 		},
 		{
 			"id": "aut-dark-variant-auto",
 			"area": "authoring",
 			"name": "Get a dark variant of your house style derived automatically.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/DarkPaletteService.php derives a dark palette algorithmically (preserve hue, invert lightness) and verifies WCAG AA via ContrastService; lib/Service/CustomTokenSetService.php:89 generates css/tokens/dark/custom-{slug}.css automatically AT UPLOAD TIME for a custom set (not only via the occ command); the instance-wide dark-variants toggle is wired at admin.php:445 (#nldesign-dark-variants) to GET/POST /settings/dark-variants (settings#getDarkVariants/setDarkVariants)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Automatic on upload (Settings > Administration > Theming, Custom token sets upload); instance-wide on/off toggle at #nldesign-dark-variants",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "dark-mode",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-semantic-aliases",
 			"area": "authoring",
 			"name": "Define tokens as references to other tokens so one change flows through the semantic layer.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/DesignTokensAliasResolver.php resolves W3C DTCG {token.path} aliases transitively (max 10 hops, cycle/missing-target detection) but ONLY during DTCG import: DesignTokensMapper.php:300-301 calls resolve() and writes the RESOLVED concrete value into the emitted CSS. Once stored, the app's own token editor and custom-overrides layer are flat --nldesign-*/--color-* custom properties with no alias graph, so editing one token afterwards does not cascade to anything that referenced it in the source document.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, DTCG upload only (aliases are read and flattened, not preserved as an editable semantic layer)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "medium",
+			"note": "Reads a semantic layer on import but does not keep it live afterward, so a later edit does not flow through anything."
 		},
 		{
 			"id": "aut-token-math",
 			"area": "authoring",
 			"name": "Compute token values from other tokens with expressions (for example spacing times two).",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -887,29 +1089,43 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -F 'calc(' and grep -niE 'expression|math' across lib/Service/DesignTokensMapper.php and lib/Service/TokenSetConverterService.php found nothing except the unrelated CSS 'expression(' security check; no token-to-token arithmetic (e.g. spacing * 2) exists anywhere in the mapper, converter, or TokenRegistry",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "medium"
 		},
 		{
 			"id": "aut-multi-brand-themes",
 			"area": "authoring",
 			"name": "Maintain several brands or themes in one token source and switch between them.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/GroupThemingService.php maps Nextcloud groups to token sets, stored as an ordered JSON array under appconfig key group_token_sets (comment at top of file); lib/Controller/SettingsController.php:907 getGroupTheming(), :934 setGroupTheming(); UI at templates/settings/admin.php:339 (#nldesign-group-theming) via js/admin.js:3692/3891. Several house styles CAN coexist (each an independent uploaded/shipped token set) and be switched per group, but there is no single token SOURCE that holds multiple brands together (Style-Dictionary style); each brand is a separate uploaded set.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Per-group theming' section (#nldesign-group-theming)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "per-group-theming",
+			"featureConfidence": "medium",
+			"note": "Achieves the practical outcome (several themes, switchable) via independent sets + a group map, not via one multi-brand token source."
 		},
 		{
 			"id": "aut-figma-sync",
 			"area": "authoring",
 			"name": "Keep the tokens in sync with the designers' Figma files.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -917,14 +1133,20 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rniF 'figma' across the whole repo (lib, js, css, scripts, openspec) found nothing outside this matrix's own input/rows files",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-git-sync",
 			"area": "authoring",
 			"name": "Store and version the token source in a Git repository with pull requests.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -932,14 +1154,20 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rniF for a git-backed token source (pull request workflow, git clone/push in lib/Service or lib/Command) found nothing; token sets are uploaded as files (CustomTokenSetController.php:203) or shipped as static CSS in css/tokens/, never sourced from a Git remote",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-multi-platform-export",
 			"area": "authoring",
 			"name": "Export the same tokens to several platforms (CSS, iOS, Android, JSON).",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -947,14 +1175,20 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rniF 'ios|android' across lib/ and js/ found nothing; CustomTokenSetController.php:561 export() and TokenSetConverterService only ever produce CSS (the app's one internal format), no iOS/Android/other-platform token exporters exist",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-colour-only-ui",
 			"area": "authoring",
 			"name": "Set a brand with nothing more than a primary colour, a background colour and a logo in a simple form.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -962,8 +1196,14 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "No simple 3-field (primary colour + background + logo) brand form exists; the only path to a house style is either uploading a full CSS/DTCG token set (CustomTokenSetController.php:203, requiring a real token document) or hand-editing individual tokens one at a time in the tabbed token editor (js/admin.js:2415 renderTokenEditor); there is a primary-colour-drives-components toggle (admin.php:427) but it locks EXISTING component tokens to the current primary, it is not a brand-creation form",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it as a single simple form; closest is the full token editor, which is not colour-only",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-overrides",
+			"featureConfidence": "medium"
 		},
 		{
 			"id": "typ-bundled-open-fonts",
