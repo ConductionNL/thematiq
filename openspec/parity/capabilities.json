@@ -1584,172 +1584,257 @@
 			"id": "ast-logo-sync",
 			"area": "assets",
 			"name": "Set the workspace logo to your organisation's logo when you pick its house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/ThemingService.php:233-247 applyImages() writes the token set's logo file into NC core's ImageManager+ThemingDefaults; js/admin.js:1223-1366 computeThemingPlan() reads the token set's manifest theming.logo and diffs it against the current NC logo; js/admin.js:1367-1402 applyThemingPlan() POSTs the diff to /apps/thematiq/settings/theming; lib/Controller/SettingsController.php:399-465 updateThemingValues() calls applyColors/applyImages.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (templates/settings/admin.php:68); picking a set opens an apply dialog (js/admin.js:965-982 change handler -> checkAndShowThemingDialog) that offers the sync",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "high",
+			"note": "Sync is opt-in per switch: the admin sees a diff dialog and confirms before the logo actually changes, it is not silent."
 		},
 		{
 			"id": "ast-background-sync",
 			"area": "assets",
 			"name": "Set the login background to match the house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/ThemingService.php:189-247 applyColors()/applyImages() include background_color and background image; js/admin.js:1300-1358 computeThemingPlan() diffs background_color and background image the same way as logo.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown, same apply dialog as ast-logo-sync",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "ast-upload-logo",
 			"area": "assets",
 			"name": "Upload a logo of your own.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "Upload happens on Nextcloud core's own Theming admin page, not a thematiq page: apps/theming/src/components/AdminSectionThemingAdvanced.vue and apps/theming/lib/ImageManager.php:25 SUPPORTED_IMAGE_KEYS=['background','logo','logoheader','favicon']. thematiq composes with it: lib/Service/CssInjectionService.php:673-681,730-735 checks theming.logoheaderMime/logoMime and, when an admin uploaded a logo through core, shows it as-is instead of the token set's own logo.",
+				"owner": "nextcloud/server",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming (Nextcloud core's own panel, separate from thematiq's Theming section)",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "medium",
+			"note": "thematiq does not implement the upload itself; it defers to and honours core's existing upload rather than overriding it."
 		},
 		{
 			"id": "ast-upload-background",
 			"area": "assets",
 			"name": "Upload a login background image of your own.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "Same core Theming panel and ImageManager as ast-upload-logo (apps/theming/lib/ImageManager.php:25 includes 'background'); thematiq's own resetToDefaults()/RESETTABLE (lib/Service/ThemingService.php:255-277) treats 'background' as one of the settings it can undo, confirming it shares the same core slot.",
+				"owner": "nextcloud/server",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel)",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "medium",
+			"note": "Same as ast-upload-logo: core's feature, thematiq only reads/resets the resulting value."
 		},
 		{
 			"id": "ast-favicon",
 			"area": "assets",
 			"name": "Set the browser tab icon (favicon) to your organisation's.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "apps/theming/lib/ImageManager.php:25,57,332-345 and apps/theming/src/components/AdminSectionThemingAdvanced.vue:107 ('favicon' field) implement favicon upload/generation in Nextcloud core. thematiq does not sync or touch the favicon key at all: lib/Service/ThemingService.php only ever touches 'logo'/'background'/'primary_color'/'background_color' (grep -F 'favicon' lib js/admin.js templates/settings/admin.php found nothing in thematiq's own code).",
+				"owner": "nextcloud/server",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Advanced theming settings')",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "medium",
+			"note": "Entirely a core Nextcloud feature; thematiq neither syncs a favicon per token set nor blocks the core one."
 		},
 		{
 			"id": "ast-icon-library",
 			"area": "assets",
 			"name": "Reuse a library of government icons by name from any app on the instance.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "img/icons/{rvo,open-gemeenten,den-haag,dsfr}/*.svg bundle ~2500 government icons (img/ICONS.md); openspec/specs/icon-assets/spec.md Requirement 'Consumption Contract via Nextcloud Image Path' documents the standard IURLGenerator::imagePath('nldesign'|'thematiq', 'icons/{set}/{name}.svg') contract with no thematiq bootstrap required; tests/e2e/spec-coverage/icon-assets-ncvue.spec.ts:1-60 fetches representative icons from all packs via OC.filePath('thematiq','img','icons') and asserts HTTP 200; tests/Unit/IconAssetsTest.php checks the img/ICONS.md inventory matches the filesystem.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: any Nextcloud app, via the standard static app-asset path (imagePath()/OC.filePath()), verified by the e2e test above",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "icon-assets",
+			"featureConfidence": "high",
+			"note": "A consumer must already know which pack+name it wants (hardcode 'rvo/house.svg' etc). The one helper meant to auto-pick the icon from whichever pack the ACTIVE design system uses, DesignSystemService::resolveIconPath() (lib/Service/DesignSystemService.php:252-265), has no caller anywhere in lib/ or js/, and no sibling repo (nextcloud-vue, openregister) references it either -- so automatic active-pack resolution is unreachable even though static-by-name reuse works."
 		},
 		{
 			"id": "ast-org-logos",
 			"area": "assets",
 			"name": "Reuse bundled logos of government organisations by name.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "img/logos/*.svg bundles 25 organisation logos (amsterdam.svg, utrecht.svg, rijkshuisstijl.svg, vng.svg, etc, per openspec/specs/icon-assets/spec.md); each municipality/organisation token set's manifest entry names its own logo file, applied via the same theming-sync path as ast-logo-sync (lib/Service/ThemingService.php:233-247, js/admin.js:1223-1366).",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown -> apply dialog (same as ast-logo-sync)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "ast-icon-pack",
 			"area": "assets",
 			"name": "Have the icon style follow the design system you chose (for example a municipal icon pack).",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "building",
+				"evidence": "design-systems.json:20 declares nldesign's icon_pack=['rvo','open-gemeenten','den-haag'], :53 declares lasuite's icon_pack='dsfr'; lib/Service/DesignSystemService.php:178-234 getIconPacks()/resolveActiveIconPacks() compute which pack is active for the chosen design system; js/admin.js:924-937 updateIconPackIndicator() reflects that resolution as a text label. But nothing actually re-skins any rendered icon to the resolved pack: grep for 'img/icons' or a pack directory name in css/ and js/admin.js (outside DesignSystemService) found no consumer, and resolveIconPath() (the one function that maps a name to a file in the active pack) has no caller anywhere (see ast-icon-library defect).",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Active icon pack' indicator only (templates/settings/admin.php:94-103); no icon anywhere in the running instance visibly changes to the named pack",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "icon-packs",
+			"featureConfidence": "high",
+			"note": "The resolution and the label are real and correct, but 'the icon style follows the design system' as a user would see it -- actual icons changing on screen -- does not happen anywhere in the code."
 		},
 		{
 			"id": "ast-icon-pack-indicator",
 			"area": "assets",
 			"name": "See which icon pack is active on the settings page.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "templates/settings/admin.php:94-103 renders #nldesign-icon-pack-indicator/#nldesign-icon-pack-value/#nldesign-icon-pack-source; js/admin.js:909-937 updateIconPackIndicator() fills it in and updates it on token-set change; lib/Settings/Admin.php:360 getActiveIconPackIndicator()-equivalent (resolveActiveIconPacks call) supplies the initial-state value server-side.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Active icon pack' block under the token-set dropdown (templates/settings/admin.php:94)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "icon-packs",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "ast-icon-contrast",
 			"area": "assets",
 			"name": "Keep icons legible against the brand colours, with contrast fixes for dark and light backgrounds.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/icon-contrast.css forces 'fill:currentColor!important' on '[class*=_appIcon_] svg' (and its children), always injected: lib/Service/CssInjectionService.php:433-436 adds the 'icon-contrast' layer unconditionally for every design system (comment: 'loaded for every design system (not none)'). currentColor adapts to both light and dark surfaces automatically since it inherits the surrounding text colour.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Every page (the fix is scoped to Nextcloud's own app-management/appstore icon list, class selector '[class*=_appIcon_]')",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "medium",
+			"note": "This is one specific, narrow fix (white-fill SVG icons vanishing in the NC 34+ app-management list), not a general icon-legibility system across every icon or every government icon pack; the capability as a government-wide guarantee is not what ships."
 		},
 		{
 			"id": "ast-dark-logo",
 			"area": "assets",
 			"name": "Use a separate logo for dark mode.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "building",
+				"evidence": "Plumbing exists in three places -- lib/Service/ThemingService.php:126-146 validates a 'logo_dark' path exactly like 'logo'; lib/Service/DarkPaletteService.php:739,771-802 emits a '--nldesign-logo-url' CSS override when a set's manifest has 'theming.logo_dark'; js/admin.js:1721-1727 shows an informational dark-logo row in the apply dialog when 'proposed.logo_dark' is set -- but grep -F 'logo_dark' token-sets.json (all bundled municipality/organisation sets) and the custom-token-set import/converter code (lib/Service/CustomTokenSetService.php, TokenSetConverterService.php, CustomTokenSetValidator.php) returns zero matches, so no bundled or importable token set can ever populate it.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it: no shipped token set and no custom-token-set upload path ever sets 'logo_dark', so the dark-logo code path never fires for any real admin",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "high",
+			"note": "Nextcloud core also has only a single logo slot (nextcloud/server#47357, cited in the code's own comment), which is why this needed its own CSS-based path in the first place; that path is real code with no data ever flowing through it."
 		},
 		{
 			"id": "ast-brand-images",
 			"area": "assets",
 			"name": "Offer users a central set of approved brand images and banners to use in their own content.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -1757,8 +1842,16 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "no route, controller, service or UI found; searched for 'banner', 'brand image', 'image library' across lib/, js/admin.js, templates/settings/admin.php",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "low",
+			"note": "grep -niF 'banner' across lib/, js/admin.js and templates/ found only the admin theme-preview session banner (CssInjectionService.php ~295, js/admin.js ~1012) which is a staff-only preview affordance, never a library of images/banners offered to ordinary users for their own content (documents, wiki pages, etc). No such feature exists."
 		},
 		{
 			"id": "sur-all-pages",
@@ -2184,217 +2277,323 @@
 			"id": "acc-contrast-on-upload",
 			"area": "accessibility",
 			"name": "Get a warning about insufficient colour contrast when you upload a house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/CustomTokenSetController.php:230-268 persist() calls CustomTokenSetService::store(); lib/Service/CustomTokenSetService.php:230 $warnings = $this->contrast->check(declarations: $declarations); js/admin.js:4015 buildContrastWarningHtml() renders it as a role=alert banner in the upload result block (#nldesign-upload-result, templates/settings/admin.php:183)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, custom token set upload panel (#nldesign-custom-token-sets), warning banner appears after upload",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "warning only, upload always succeeds regardless of contrast result (see acc-block-inaccessible)."
 		},
 		{
 			"id": "acc-contrast-evaluate",
 			"area": "accessibility",
 			"name": "Check any pair of colours against WCAG contrast from within an app.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "appinfo/routes.php: POST /api/contrast/evaluate -> contrast#evaluate, NoAdminRequired; lib/Controller/ContrastController.php; consumed by @conduction/nextcloud-vue src/composables/useScopedTheme.js:315 evaluateContrast(), which is called from real call sites: apps-extra/bq-audit/src/dialogs/ThemePickerDialog.vue, apps-extra/bq-audit2/src/dialogs/ThemePickerDialog.vue and apps-extra/openbuild/src/dialogs/ThemePickerDialog.vue",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: other apps' theme-picker dialogs (bq-audit, bq-audit2, openbuild ThemePickerDialog.vue) via nextcloud-vue's useScopedTheme().evaluateContrast()",
+			"provider": "nextcloud-vue",
+			"providerHow": "read-from-code",
+			"feature": "app-token-set-selection",
+			"featureConfidence": "high",
+			"note": "verified two hops: route exists, composable calls it, and three sibling apps actually call the composable's evaluateContrast (not just define it)."
 		},
 		{
 			"id": "acc-shipped-audit",
 			"area": "accessibility",
 			"name": "Rely on every shipped house style having been checked automatically for WCAG contrast.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/ShippedTokenSetAuditService.php auditSet()/renderReport(); tests/Unit/TokenSetContrastAuditTest.php runs ContrastService over every manifest entry in token-sets.json (auditableManifest()) and asserts DOCUMENTED_AA_SETS actually meet AA; this is a normal PHPUnit test so it runs in CI (.github/workflows/code-quality.yml runs the PHPUnit suite) on every push",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: CI (PHPUnit suite run by code-quality.yml on every push/PR)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "shipped-token-set-contrast-audit",
+			"featureConfidence": "high",
+			"note": "gate is real: it fails if a documented-AA set stops meeting AA or the generated report drifts from committed docs/reference/contrast-report.md."
 		},
 		{
 			"id": "acc-contrast-report-doc",
 			"area": "accessibility",
 			"name": "Read a published contrast report per house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "docs/reference/contrast-report.md generated by ShippedTokenSetAuditService::renderReport(), lists every shipped set's primary/text and primary/bg ratios and verdict; docs/ is a Docusaurus site published by .github/workflows/documentation.yml on push to development to https://thematiq.conduction.nl",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "https://thematiq.conduction.nl/reference/contrast-report (published docs site)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "shipped-token-set-contrast-audit",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "acc-compliance-report",
 			"area": "accessibility",
 			"name": "Download an evidence report of the contrast of your active configuration for an audit.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "building",
+				"evidence": "lib/Controller/SettingsController.php complianceReport() route GET /settings/compliance-report (AuthorizedAdminSetting) calls ComplianceReportService, returns a DataDownloadResponse; api-paths.txt confirms no caller in js/admin.js, js/playground.js or templates/settings/admin.php; grep -F 'compliance' templates/settings/admin.php and js/admin.js found no button/link",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "nothing reaches it from the admin UI; the route exists and works if hit directly, but there is no button",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "compliance-evidence",
+			"featureConfidence": "high",
+			"note": "the capability exists end-to-end via occ (see acc-compliance-cli, same ComplianceReportService, byte-identical output per the command's own docblock) but the admin panel has no download button for it, so as a UI feature it is unreached."
 		},
 		{
 			"id": "acc-compliance-cli",
 			"area": "accessibility",
 			"name": "Produce that compliance report from the command line.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Command/ComplianceReport.php registered in appinfo/info.xml:235 as OCA\\Thematiq\\Command\\ComplianceReport; occ nldesign:compliance-report --format=json|markdown [--output=path]; reuses ComplianceReportService exclusively so output is byte-identical to the HTTP endpoint per the command's own docblock",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "occ nldesign:compliance-report",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "compliance-evidence",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "acc-high-contrast-set",
 			"area": "accessibility",
 			"name": "Apply a maximum-contrast (WCAG AAA) theme instance-wide.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "token-sets.json:403-412 'hoog-contrast' set, design_system 'high-contrast', description states WCAG 2.2 AAA (>=7:1); css/tokens/hoog-contrast.css; selectable via #nldesign-token-set-select (templates/settings/admin.php:68) -> POST /apps/thematiq/settings/tokenset (js/admin.js:1143), applied instance-wide through ThemeInjectionListener on every subsequent page",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, house style dropdown, select 'Hoog contrast (WCAG AAA)'",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "acc-forced-colors",
 			"area": "accessibility",
 			"name": "Cooperate with the operating system's forced colours and high-contrast modes.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/systems/high-contrast/theme.css:129 @media (forced-colors: active) and css/systems/high-contrast/element-overrides.css:70 same query, both loaded only when the 'hoog-contrast' design system is active; grep -n 'forced-colors' across css/systems/nldesign/*.css and css/admin.css returned nothing, so the default/other design systems carry no forced-colors cooperation",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "any page, but only once the admin has selected the 'Hoog contrast' token set; not present for the default nldesign/rijkshuisstijl theme or any other set",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "high-contrast",
+			"featureConfidence": "high",
+			"note": "cooperates with OS forced-colors mode, but only for the one opt-in high-contrast design system, not instance-wide for whichever theme is active."
 		},
 		{
 			"id": "acc-dark-mode",
 			"area": "accessibility",
 			"name": "Offer a dark mode of the house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "openspec/specs/dark-mode/spec.md; route GET/POST /settings/dark-variants -> settings#getDarkVariants/setDarkVariants; templates/settings/admin.php:441-449 #nldesign-dark-variants checkbox; js/admin.js:2097 saveDarkVariantsSetting() posts to /apps/thematiq/settings/dark-variants; css/tokens/dark/*.css are the generated variants DarkPaletteService/ThemeInjectionListener swap in",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Enable dark mode variants for the active token set' checkbox",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "dark-mode",
+			"featureConfidence": "high",
+			"note": "this toggle follows Nextcloud's own dark/light/system choice; it is not a nldesign-controlled dark-mode switch by itself."
 		},
 		{
 			"id": "acc-dark-generate-cli",
 			"area": "accessibility",
 			"name": "Regenerate the dark variants from the command line after changing sets.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Command/GenerateDarkVariants.php registered in appinfo/info.xml:236; occ nldesign:generate-dark-variants uses DarkPaletteService to write css/tokens/dark/{id}.css for eligible sets at build/install time (never per-request per the command's docblock)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "occ nldesign:generate-dark-variants",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "dark-mode",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "acc-focus-indicators",
 			"area": "accessibility",
 			"name": "Show visible focus indicators in the house style's colours.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/systems/nldesign/theme.css:637 '*:focus-visible { outline: 2px solid var(--nldesign-color-focus) !important; outline-offset: 2px !important; }', a per-token-set colour; theme.css is injected on every page via lib/Listener/ThemeInjectionListener.php",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "every page, once a token set with design_system nldesign is active (the default)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "acc-reduced-motion",
 			"area": "accessibility",
 			"name": "Respect a user's preference for reduced motion.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/systems/nldesign/theme.css:1139 @media (prefers-reduced-motion: reduce) removes button/login transitions; css/admin.css:1318 same for the settings page's own controls; css/playground.css:1875 same for the token-set preview widgets, all with transition:none!important; animation:none!important",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "any page (login and app pages) and the theming settings page itself, automatically when the OS/browser reports prefers-reduced-motion",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high",
+			"note": "origin:competitor row, answered yes: real, working, three separate stylesheets covering login/app chrome, the settings page and the preview widgets."
 		},
 		{
 			"id": "acc-keyboard-admin",
 			"area": "accessibility",
 			"name": "Operate the whole theming settings page with the keyboard alone.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "tests/vitest/admin-a11y.spec.js: dedicated keyboard-accessibility suite for the hand-rolled dialog (focus trap, Tab wrap, Escape-closes-and-returns-focus, WCAG 2.4.3/2.1.1 cited in comments at js/admin.js:1943-1945,3597,3842); the one other hand-rolled widget, the per-app theming dropdown (js/admin.js:3491-3600), has its own keydown handler with Escape support (comment at js/admin.js:3597); all other controls on the page are native <select>/<input>/<button>/<textarea> elements",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, the whole page",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "admin-settings",
+			"featureConfidence": "medium",
+			"note": "code reading only, not a live tab-through; confidence is medium because full-page keyboard operability was not walked end to end in a browser."
 		},
 		{
 			"id": "acc-vocabulary-audit",
 			"area": "accessibility",
 			"name": "Check that a house style defines the full token vocabulary so nothing falls back to an unreadable default.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/TokenSetVocabularyAuditService.php audits whether a set defines the full token vocabulary the design system reads; js/admin.js:3981 buildIncompleteWarningHtml() renders an 'Incomplete set' banner (kind==='incomplete') listing the tokens that fall back to Rijkshuisstijl defaults, shown alongside the contrast warnings in #nldesign-upload-result",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, custom token set upload/list panel, 'Incomplete set' warning banner",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "acc-block-inaccessible",
 			"area": "accessibility",
 			"name": "Be prevented from publishing a theme whose contrast fails WCAG.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -2402,14 +2601,22 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "lib/Controller/CustomTokenSetController.php:446-450 docblock states the 'warnings' key is always the WCAG contrast warnings, non-blocking; grep -n -i contrast across CustomTokenSetValidator.php and CustomTokenSetController.php found no rejection/blocking path tied to a contrast failure; persist() always stores the set once validation of the CSS shape passes, regardless of the contrast verdict",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it; no such block exists",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "origin:competitor row, answered no as a normal finding: an admin can publish/select a theme that fails WCAG contrast, they only get a warning."
 		},
 		{
 			"id": "acc-contrast-in-editor",
 			"area": "accessibility",
 			"name": "See the contrast ratio next to a colour while you edit it.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -2417,14 +2624,22 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "js/admin.js token editor (initTokenEditor()/renderTokenEditor(), ~line 2367 onward) has no ratio/ WCAG computation attached to individual colour inputs; grep -n 'ratio|WCAG|evaluate' js/admin.js shows WCAG ratio text only inside buildContrastWarningHtml(), which runs after upload/apply, not while editing a single colour token; js/playground.js's 'maxcontrast' hits are an unrelated NC CSS utility class name, not a contrast feature",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it; the token editor has no live per-swatch contrast readout",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-editor",
+			"featureConfidence": "high",
+			"note": "origin:competitor row, answered no: contrast is only ever evaluated after the fact (on upload, or via the separate /api/contrast/evaluate machine endpoint), never live next to a colour being edited."
 		},
 		{
 			"id": "acc-accessibility-statement",
 			"area": "accessibility",
 			"name": "Generate or host the accessibility statement that Dutch government sites must publish.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -2432,134 +2647,201 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "openspec/specs/compliance-evidence/spec.md:173-176 states explicitly the compliance report 'is supporting evidence for a toegankelijkheidsverklaring — an expert WCAG-EM evaluation remains required' and 'No output of this feature ... may claim WCAG compliance of the instance'; the email-theming footer only stores an admin-supplied external URL (lib/Service/EmailThemingService.php:86-90,178, templates/settings/admin.php:502-505 accessibilityUrl input) and links to it, it does not generate or host a statement",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing generates or hosts a statement; only a link field to an externally-authored one",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "compliance-evidence",
+			"featureConfidence": "high",
+			"note": "origin:competitor row, answered no: the spec is explicit that this app's evidence is not itself a toegankelijkheidsverklaring."
 		},
 		{
 			"id": "gov-admin-only",
 			"area": "governance",
 			"name": "Allow only administrators to change the theme.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "9 controller classes use #[AuthorizedAdminSetting] (grep -rln AuthorizedAdminSetting lib/Controller/ -> 9 files: Audit, ConfigBundle, CustomTokenSet, Font, Overrides, CustomCss, Settings, Preview controllers); lib/Settings/Admin.php implements IDelegatedSettings so the whole /settings/* surface requires an admin session (or a group the instance owner has delegated, see gov-delegated-role)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, the section is only listed/reachable for admins (and delegated groups)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "admin-settings",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "gov-delegated-role",
 			"area": "governance",
 			"name": "Delegate theme editing to a brand manager who is not a full administrator.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Settings/Admin.php:38 'class Admin implements IDelegatedSettings' with docblock 'Implements IDelegatedSettings so AuthorizedAdminSetting can reference this class'; this is Nextcloud core's settings-admin-delegation mechanism (Settings > Administration > Security, 'Administration privileges' per group)",
+				"owner": "nextcloud",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Security > Administration privileges (core), grant a group access to the Theming settings section",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "admin-settings",
+			"featureConfidence": "high",
+			"note": "the delegation mechanism and its UI are Nextcloud core; thematiq's contribution is implementing IDelegatedSettings so its section can be delegated to a non-full-admin group ('brand manager')."
 		},
 		{
 			"id": "gov-audit-log",
 			"area": "governance",
 			"name": "See who changed which theming setting, from what to what, and when.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/ThemingAuditService.php:189 log()/285 buildEntry() records {ts, actor, action, old, new, changed}; route GET /settings/audit -> audit#list (lib/Controller/AuditController.php); js/admin.js:4720 fetches it and renders into templates/settings/admin.php:553-573 #nldesign-audit-table with Timestamp/User/Action/From/To/Changed columns",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Theming audit log' table",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-audit",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "gov-audit-export",
 			"area": "governance",
 			"name": "Export the theming audit log for an auditor.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/ThemingAuditService.php:266 exportAll(); route GET /settings/audit/export -> audit#export; templates/settings/admin.php:576 #nldesign-audit-download-btn 'Download full log'; js/admin.js:4740 wires the click to that route",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Download full log' button",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-audit",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "gov-audit-append-only",
 			"area": "governance",
 			"name": "Rely on the audit log not being editable after the fact.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/ThemingAuditService.php only exposes log() (append), getRecent() and exportAll() (both read-only); appendLine() (line 471) only ever concatenates onto the stored file ($current . $line) and rotates on size cap, it never truncates/edits an existing entry; grep -n 'function ' on the file shows no update/delete method; no route in appinfo/routes.php targets audit#update or audit#delete",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "n/a (a guarantee about the absence of an edit path, not a screen)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-audit",
+			"featureConfidence": "medium",
+			"note": "no API/UI path in this app can edit or delete an entry once written. Caveat: the log is a flat JSONL file in Nextcloud appdata, not a cryptographically tamper-evident or hash-chained log, so it relies on filesystem access control, not its own immutability proof."
 		},
 		{
 			"id": "gov-otap-bundle",
 			"area": "governance",
 			"name": "Promote the complete theme configuration from test to acceptance to production as one file.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/ConfigBundleService.php export()/import of the complete config; routes GET/POST /settings/config/export, /settings/config/import -> configBundle#export/import; templates/settings/admin.php:586-602 #nldesign-config-bundle-download-btn and #nldesign-config-bundle-upload-btn; js/admin.js:4840/4856 wire the download/upload",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Complete configuration bundle' panel, download/upload buttons",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "config-portability",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "gov-otap-cli",
 			"area": "governance",
 			"name": "Export and import that configuration bundle from the command line for scripted deployments.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Command/ConfigExport.php and lib/Command/ConfigImport.php registered in appinfo/info.xml:237-238; occ nldesign:config:export [file] / nldesign:config:import [file]; ConfigExport's docblock states it reuses ConfigBundleService::export() exclusively so output is byte-identical to the HTTP endpoint",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "occ nldesign:config:export / occ nldesign:config:import",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "config-portability",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "gov-federated-share",
 			"area": "governance",
 			"name": "Share the theme configuration with other instances through federated configuration sharing.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "building",
+				"evidence": "lib/Listener/ShareableConfigTypeListener.php + lib/Service/Config/NlDesignThemeShareableConfigType.php contribute a real OCA\\OpenRegister\\Service\\Config\\IShareableConfigType (id nldesign.theme) whose serialise() wraps ConfigBundleService::export() (openspec/specs/federated-config-sharing/spec.md); checked the consuming side in ~/nextcloud-docker-dev/workspace/server/apps-extra/openregister (origin/development 94e8c29e42): real routes exist (appinfo/routes.php:2193-2202 federatedConfig#types/bundle/install/publish/discover/fetch/trust) and lib/Controller/FederatedConfigController.php + lib/Service/Config/FederatedConfigService.php exist, but grep -rln FederatedConfig/shareable openregister/src/ found no Vue page or component calling any of those routes",
+				"owner": "ConductionNL/openregister",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "nothing reaches it: thematiq's contract is real and OpenRegister's engine/routes are real, but neither repo has a UI screen that drives a federated share end to end",
+			"provider": "openregister",
+			"providerHow": "read-from-code",
+			"feature": "federated-config-sharing",
+			"featureConfidence": "high",
+			"note": "not marked pending because I could check the sibling repo directly rather than merely being unable to see it: OpenRegister's federated-config engine exists in lib/ but has no UI caller either, so this is a real gap, not an unknown. Lane decision: the sharing engine and any screen that drives it belong to openregister; its federatedConfig routes (appinfo/routes.php:2193-2202 at 94e8c29) have no Vue caller, so no page drives a federated theme share."
 		},
 		{
 			"id": "gov-config-as-code",
 			"area": "governance",
 			"name": "Declare the theme in deployment configuration (for example Helm values) so it is versioned with the infrastructure.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -2567,14 +2849,22 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rli 'helm|values.yaml|config-as-code|infrastructure as code' across the repo (docs, openspec, appinfo) found only two openspec files, and reading them showed the 'helm' hit was a substring match inside the unrelated word 'overwhelm' (openspec/specs/lasuite-parity/spec.md:172); no Helm chart, values file, Kubernetes manifest or IaC integration exists anywhere in this repo",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it; no such capability exists",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "config-portability",
+			"featureConfidence": "high",
+			"note": "origin:competitor row, answered no as a normal finding. The closest thing is occ config:export/import (see gov-otap-cli), which is a file, not deployment-config-as-code (e.g. Helm values)."
 		},
 		{
 			"id": "gov-approval-workflow",
 			"area": "governance",
 			"name": "Require a second person to approve a theme change before it goes live.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -2582,53 +2872,84 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rli 'approval|four-eyes|second admin|maker.checker|dual.control' across lib/ and openspec/specs found nothing; the preview/publish flow (PreviewController::start/publish, routes /settings/preview and /settings/preview/publish) is a single admin previewing then publishing their own change, with no second-actor gate in between",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it; no such capability exists",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theme-preview",
+			"featureConfidence": "high",
+			"note": "origin:competitor row, answered no as a normal finding. The audit log (gov-audit-log) records who published a change after the fact, it does not gate the publish on a second person's approval before it goes live."
 		},
 		{
 			"id": "gov-app-store-install",
 			"area": "governance",
 			"name": "Install and update the theming from the platform's app store.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "appinfo/info.xml:71 <category>customization</category>, three <screenshot> URLs; .github/workflows/release.yml calls the org's reusable ConductionNL/.github/.github/workflows/release.yml@main which publishes releases to the Nextcloud App Store (per this repo's own comments about 'the store accepts' releases at line ~90)",
+				"owner": "nextcloud",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Nextcloud instance's Apps admin page, App Store listing for thematiq (formerly nldesign)",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "app-store",
+			"featureConfidence": "medium",
+			"note": "the app-store install/update mechanism itself is Nextcloud core; thematiq's own release pipeline is what publishes new versions to it."
 		},
 		{
 			"id": "gov-open-source",
 			"area": "governance",
 			"name": "Use, inspect and change the theming software under an open source licence.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "appinfo/info.xml:68 <licence>EUPL-1.2</licence>; repository root LICENSE file (EUPL v1.2 full text); LICENSES/ directory (REUSE-style per-license texts: AGPL-3.0-or-later, EUPL-1.2, MIT, etalab-2.0); public repository github.com/ConductionNL/thematiq",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "the public GitHub repository and the app's own LICENSE/info.xml metadata",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "licensing",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "gov-licence-clarity",
 			"area": "governance",
 			"name": "See the licence of every bundled font and asset stated in the product.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "docs/reference/assets.md documents Fira Sans (open, no permission needed), the official proprietary RijksoverheidSansWebText font (requires permission), the official Rijkslogo (copyright, strict use) and Tabler Icons (MIT); docs/reference/compliance.md:295-317 documents the bundled Marianne font (Etalab-2.0, off by default) and Inter (SIL OFL 1.1, the actual fallback shipped); MARIANNE-LICENCE.md and AGREEMENT-MARIANNE.md carry the Marianne licence text verbatim; templates/settings/admin.php:363-364 carries an explicit disclaimer for admin-uploaded custom fonts",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "https://thematiq.conduction.nl/reference/assets and /reference/compliance (published docs site)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "compliance-evidence",
+			"featureConfidence": "medium",
+			"note": "the information is real and reasonably complete for the bundled fonts (Fira Sans, Inter, Marianne) and the two logo/icon families, but it is spread across three separate docs pages rather than a single consolidated 'licences' page in the product."
 		},
 		{
 			"id": "syn-upstream-generated",
@@ -2815,112 +3136,163 @@
 			"id": "int-capability-api",
 			"area": "integration",
 			"name": "Let clients and other apps read the active house style through the platform capabilities API.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Capabilities.php implements OCP\\Capabilities\\IPublicCapability, docblock states it contributes an 'nldesign' entry to /ocs/v2.php/cloud/capabilities describing active token set, resolved design system, icon pack, WCAG contrast level, logo variants and slogan/menu-label toggles; IPublicCapability (not ICapability) so unauthenticated clients can read it too",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: any OCS capabilities consumer (mobile/desktop clients, other apps' JS, login page) via GET /ocs/v2.php/cloud/capabilities",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-capability",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "int-token-set-api",
 			"area": "integration",
 			"name": "Let other apps list the house style catalogue through an API.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "appinfo/routes.php GET /api/token-sets -> catalog#tokenSets, NoAdminRequired; @conduction/nextcloud-vue src/composables/useScopedTheme.js:297-311 listTokenSets() calls it; that composable is used by src/components/CnAppRoot/CnAppRoot.vue:1559 (const scopedTheme = useScopedTheme()), and CnAppRoot is imported by real apps, e.g. apps-extra/bq-audit/src/App.vue and others (grep -rln CnAppRoot */src across apps-extra returned bq-audit, bq-audit2, openbuild and more)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: sibling apps' theme-picker dialogs (e.g. bq-audit/bq-audit2/openbuild ThemePickerDialog.vue) mounted inside CnAppRoot",
+			"provider": "nextcloud-vue",
+			"providerHow": "read-from-code",
+			"feature": "app-token-set-selection",
+			"featureConfidence": "high",
+			"note": "verified the full chain: route exists in thematiq, composable calls it, composable is wired into CnAppRoot, and CnAppRoot is actually imported by other apps, so this is a reached capability, not just a declared one. Lane decision: the endpoint logic is thematiq's; nextcloud-vue useScopedTheme is the consumer, not the owner. Real call sites: buildiq (openbuild) src/dialogs/ThemePickerDialog.vue and the bq-audit clones."
 		},
 		{
 			"id": "int-stylesheet-manifest",
 			"area": "integration",
 			"name": "Let a page fetch the stylesheets a house style needs, in cascade order, to swap it in place.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "route GET /settings/tokenset-stylesheets/{tokenSetId} -> layer#getStylesheets (lib/Controller/LayerController.php); js/admin.js:203-214 fetchLayerManifest() calls it and uses the manifest to swap the page's own <link>/<style> elements in cascade order when previewing a different token set without a reload",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, token set preview/apply dialog (apply-without-reload)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high",
+			"note": "the only known consumer of this route is thematiq's own admin page, not a third-party app."
 		},
 		{
 			"id": "int-metrics",
 			"area": "integration",
 			"name": "Monitor theming through Prometheus metrics (active set, overrides, syncs).",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/MetricsController.php GET /api/metrics (admin-auth, no NoAdminRequired/PublicPage so a Prometheus scraper must authenticate); emits nldesign_info, nldesign_up, nldesign_theming_syncs_total, nldesign_audit_entries_total, nldesign_token_sets_total and a custom-overrides-total gauge, in Prometheus text exposition format",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: Prometheus scraper hitting GET /api/metrics with an admin app-password",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "observability",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "int-health",
 			"area": "integration",
 			"name": "Check that the theming app is healthy from a monitoring system.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "route GET /api/health -> health#index; lib/AppInfo/Application.php:50-60 docblock: HealthController adopts the OpenRegister AppHost observability engine by composition (ADR-040), resolved by FQCN at dispatch time so OpenRegister stays optional; #[PublicPage]+#[NoCSRFRequired] per the route comment in appinfo/routes.php, contract is {status, app, version, checks}",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: any monitoring system hitting GET /api/health (public, no auth required)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "observability",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "int-tokens-for-other-apps",
 			"area": "integration",
 			"name": "Let other apps style themselves with the same CSS variables, with no build step.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Listener/ThemeInjectionListener.php registers on BeforeTemplateRenderedEvent and BeforeLoginTemplateRenderedEvent and calls CssInjectionService::inject() on every page render, adding the --nldesign-* custom properties as plain <link>/<style> stylesheets; any app's own CSS can read var(--nldesign-color-primary) etc without any build step or JS dependency",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "any page in the instance, automatically, for any app that writes plain CSS against the --nldesign-* variables",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "int-no-js-overhead",
 			"area": "integration",
 			"name": "Apply the theme as pure CSS with no JavaScript cost on ordinary pages.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Listener/ThemeInjectionListener.php injects CSS via OCP\\Util::addStyle()-style stylesheet links on the two render events, not by shipping a JS runtime; the docblock states any listener failure is caught so 'theming is presentation, never a hard dependency'; the only JS in this app (js/admin.js, js/playground.js, js/preview-banner.js) is scoped to the admin settings page and the session preview banner, never loaded on an ordinary page",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "every ordinary page in the instance (no admin.js/playground.js loaded there)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "int-rest-api-theme",
 			"area": "integration",
 			"name": "Change the theme through a documented REST or management API.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -2928,53 +3300,84 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "GET/POST /settings/theming and POST /settings/tokenset exist (lib/Controller/SettingsController.php) but are AuthorizedAdminSetting + CSRF-protected admin-session endpoints for the settings page's own AJAX calls (js/admin.js:324,1389,1442,1879,1143), not a documented external management API; grep -rln 'REST API|api reference' across docs/reference/*.md found nothing describing these routes for external/scripted callers",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it as a documented external API; only the admin page's own JS calls it, with a CSRF token tied to that session",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "config-portability",
+			"featureConfidence": "high",
+			"note": "origin:competitor row, answered no: the closest documented, scriptable path to changing the theme is occ nldesign:config:import (see int-cli-set-theme / gov-otap-cli), not a REST API."
 		},
 		{
 			"id": "int-cli-set-theme",
 			"area": "integration",
 			"name": "Set the active theme from the command line.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/ConfigBundleService.php:900 import() does $this->config->setAppValue(Application::APP_ID, 'token_set', $config['tokenSet']), so occ nldesign:config:import (lib/Command/ConfigImport.php) does set the active token set as one field of a full bundle import; there is no single-purpose 'occ nldesign:set-theme <name>' command",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "occ nldesign:config:import <bundle-file>, where the bundle's tokenSet field becomes the active theme",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "config-portability",
+			"featureConfidence": "high",
+			"note": "origin:competitor row: you can set the active theme from the CLI, but only as a side effect of importing a whole configuration bundle (which must first be constructed/exported with the desired token set), not via a dedicated 'set theme' command."
 		},
 		{
 			"id": "int-docs-site",
 			"area": "integration",
 			"name": "Read end-user and admin documentation for every theming feature.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "docs/ is a Docusaurus site (docusaurus.config.js url thematiq.conduction.nl) with feature pages under docs/features/*.md and reference pages under docs/reference/*.md (assets, compliance, contrast-report, tokens, mappings, icons, brand-identity, token-audit, development, app-token-scope-contract); .github/workflows/documentation.yml publishes it to a Cloudflare Worker on every push to development, with both thematiq.conduction.nl and the retired nldesign.conduction.nl hostname (301 to the canonical one)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "https://thematiq.conduction.nl",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "documentation",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "int-sovereign-bundle",
 			"area": "integration",
 			"name": "Ship as part of a sovereign workplace bundle with one brand across all its components.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "openspec/specs/lasuite-stack/spec.md:6-16 the app ships a 'lasuite' design system (5 stylesheets: fonts, defaults, brand-override, bridge, element-overrides) whose stated goal is 'a Nextcloud core inside a MijnBureau/EDIC sovereign-workplace bundle shows no visual seam against the surrounding La Suite apps'; token-sets.json has a 'lasuite' entry; openspec/specs/lasuite-parity/spec.md has a visual-regression e2e suite for it",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, select the 'La Suite numérique' token set, so this Nextcloud instance visually matches a surrounding La Suite (MijnBureau/EDIC) bundle",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "lasuite-stack",
+			"featureConfidence": "high",
+			"note": "origin:competitor row: thematiq makes Nextcloud's own chrome match a sovereign-workplace bundle's brand, which is what a Nextcloud-only app can do; it does not itself assemble or ship the multi-component bundle (Docs/Meet/Chat + Nextcloud) that answer, that packaging is MijnBureau/EDIC's job."
 		}
 	],
 	"pending": []
