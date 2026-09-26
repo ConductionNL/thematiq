@@ -592,127 +592,184 @@
 			"id": "app-login-preview",
 			"area": "apply",
 			"name": "Preview how the login page will look before publishing.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/playground/components.json tabs[0] id='login' label='Login page & Branding'; js/playground.js:2083-2103 'login-card' renders a real <form class=\"guest-box login-box nldesign-pg-logincard\">; templates/settings/admin.php:37-42 loads Nextcloud's own login-page stylesheet 'playground-guest', scoped so only the login card in the playground gets a copy, and reads the token editor's live values",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, component playground, 'Login page & Branding' tab",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "component-tokens",
+			"featureConfidence": "high",
+			"note": "This previews a mock login card inside the playground stage, not the real public /login page in an iframe; it repaints live as you edit tokens."
 		},
 		{
 			"id": "app-trial-session",
 			"area": "apply",
 			"name": "Try a house style in your own session only, while everyone else keeps the current one.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/PreviewController.php start()/discard()/publish() behind POST/DELETE /settings/preview and POST /settings/preview/publish; js/admin.js:1044-1078 'Preview in my session' button POSTs to start a session-only preview, applies the new stylesheet layer on this page only (applyLayersFor), and leaves the instance-wide token_set untouched",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Preview in my session' button next to the dropdown",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theme-preview",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-trial-banner",
 			"area": "apply",
 			"name": "See a banner reminding you that you are looking at a trial theme, with a way back.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/preview-banner.js:10-30 reads OCP.InitialState.loadState('thematiq','preview',null) and renders a persistent role=status banner with Publish/Discard controls; lib/Service/CssInjectionService.php:299 injects layer 'preview-banner' via ThemeInjectionListener on every BeforeTemplateRenderedEvent page, not only the settings page",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Any page while a session preview is active (banner injected app-wide), and the active-preview panel on Settings > Administration > Theming (templates/settings/admin.php:142-153)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theme-preview",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-trial-publish",
 			"area": "apply",
 			"name": "Publish a theme you have been trialling to everyone in one step.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:1123-1132 previewPublishBtn click -> openTokenSetApplyDialog(activePreview.tokenSet, currentTokenSetId, true); on confirm, commitTokenSetChange() POSTs /settings/preview/publish (js/admin.js:1142ish), which PreviewController::publish() promotes the session preview to the instance-wide token set in one step",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, active-preview panel 'Publish' button, then confirm in the apply dialog",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theme-preview",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-trial-discard",
 			"area": "apply",
 			"name": "Discard a trial theme and return to what everyone else sees.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:1086-1110 previewDiscardBtn click -> DELETE /settings/preview (PreviewController::discard()), then applyLayersFor(currentTokenSetId) reverts the page's stylesheets to the instance-wide set and endPreviewOnPage() hides the active-preview panel",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, active-preview panel 'Discard' button",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theme-preview",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-component-playground",
 			"area": "apply",
 			"name": "Look at buttons, inputs, note cards, list items and the login card in each of their states while you edit the tokens they read.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/playground/components.json tabs: login, content, status (buttons & status), typography; js/playground.js (loaded at admin.php:35-36, after admin.js, attaches to the token editor); component tokens are scoped per component (css/component-scopes.css, scripts/mapping/component-tokens.json) so a chip edits only that component per the file's own header comment",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, component playground below the token editor",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "component-tokens",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-primary-lock",
 			"area": "apply",
 			"name": "Make the brand primary colour drive every component, or deliberately let components keep their own colours.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "templates/settings/admin.php:426-430 checkbox id='nldesign-primary-drives-components'; js/admin.js:2069-2073 change handler -> savePrimaryDrivesComponentsSetting() POSTs /settings/primary-drives-components; js/admin.js:2568-2578 isTokenLocked(name) disables a component's own colour row (with an explanatory title) while this setting is on, letting it flow from the primary colour instead",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Let the primary colour drive every component' checkbox",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "component-tokens",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-runtime-no-deploy",
 			"area": "apply",
 			"name": "Change the brand at runtime from an admin screen, without a redeployment or configuration management run.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "the entire apply path (dropdown -> apply dialog -> POST /settings/tokenset, SettingsController::setTokenSet) runs from the admin settings page at request time, writing IAppConfig/IConfig values that ThemeInjectionListener reads on the next render; no build step, redeploy or occ command is required for the base flow",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, dropdown + apply dialog",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-capability",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-scheduled-switch",
 			"area": "apply",
 			"name": "Schedule a theme change for a date, such as a campaign or a holiday look.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -720,14 +777,21 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rniF 'schedule' across lib/, js/admin.js, templates/ found only js/admin.js:2761 schedulePreviewRepaint() (an animation-frame debounce, unrelated) and UpstreamFreshnessJob's own cron wiring comment; no date-based or calendar theme-change feature exists anywhere",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-capability",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-rollback-history",
 			"area": "apply",
 			"name": "Roll back to an earlier version of the theme from a version history.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -735,23 +799,38 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "lib/Controller/AuditController.php only exposes list() and export() (both #[AuthorizedAdminSetting]); lib/Service/ThemingAuditService.php has log()/getRecent()/exportAll() but no restore/revert method; grep -rniF 'rollback' in lib/ only turns up comments about the app-id migration rollback, not a theme-version rollback feature",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it (the audit log at Settings > Administration > Theming shows history but offers no restore action)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-audit",
+			"featureConfidence": "high",
+			"note": "The audit log (theming-audit) is read-only evidence for compliance, not an undo mechanism."
 		},
 		{
 			"id": "app-reset-core",
 			"area": "apply",
 			"name": "Reset Nextcloud's own theming values back to stock in one action.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/SettingsController.php:406-408 updateThemingValues() checks params['reset']==1 and calls resetThemingValues(); js/admin.js:1640-1664 confirm dialog 'Reset theming' -> applyThemingPlan({mode:'reset',...}) -> POST /settings/theming with reset=1, undoing everything Thematiq synced into core theming (colours, logo) via ThemingService (uses OCA\\Theming\\ThemingDefaults::undo())",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming: selecting 'Nextcloud (default)' opens a confirm dialog with a 'Reset theming' button",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "aut-upload-css",
@@ -2555,121 +2634,182 @@
 			"id": "syn-upstream-generated",
 			"area": "sync",
 			"name": "Get house styles generated from the official NL Design System token sources rather than copied by hand.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": ".github/workflows/sync-tokens.yml clones nl-design-system/themes and runs 'node scripts/generate-tokens.mjs /tmp/themes <sha>' to regenerate css/tokens/ and token-sets.json entries from the official upstream source, not hand-copied values",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: GitHub Actions (repo maintainer facing, not an admin-facing UI feature)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sync-workflow",
+			"featureConfidence": "high",
+			"note": "This benefits the people who maintain thematiq's shipped token sets, not a live admin using the app; there is no UI surface for it, which is expected for a build-time/CI capability."
 		},
 		{
 			"id": "syn-nightly-pr",
 			"area": "sync",
 			"name": "Receive upstream token changes as proposed updates through a nightly synchronisation.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": ".github/workflows/sync-tokens.yml: 'on: schedule: cron: 0 3 * * *'; after generation it diffs css/tokens*, token-sets.json, opens or updates a PR (chore/sync-nldesign-tokens) against the repo via 'gh pr create'/'gh pr comment'",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: GitHub Actions nightly cron, opens a PR on ConductionNL/thematiq",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sync-workflow",
+			"featureConfidence": "high",
+			"note": "Same caveat as syn-upstream-generated: reaches the repo's maintainers as a PR, not a running-instance admin. Lane decision: the nightly sync opens pull requests on the thematiq repository for the maintainer; an instance admin receives the changes only through an app release, not as proposed updates on the instance, so partial for the admin this row addresses."
 		},
 		{
 			"id": "syn-freshness-check",
 			"area": "sync",
 			"name": "Opt in to a daily check that tells you when your house style is behind the upstream tokens.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "appinfo/info.xml registers OCA\\Thematiq\\BackgroundJob\\UpstreamFreshnessJob (daily); templates/settings/admin.php:524-544 checkbox id='nldesign-upstream-freshness-toggle' 'Check daily for upstream token updates (contacts api.github.com)'; js/admin.js:5257-5290 initUpstreamFreshness() POSTs {enabled} to /settings/upstream-freshness on toggle",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Upstream token updates' checkbox",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "upstream-freshness",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "syn-freshness-dismiss",
 			"area": "sync",
 			"name": "Dismiss an upstream-update notice until the next change.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:5197-5218 renders one 'Dismiss' button per upstream notice; js/admin.js:5234-5255 dismissUpstreamNotice() POSTs {setId, version} to /settings/upstream-freshness/dismiss (SettingsController::dismissUpstreamNotice), then reloads the freshness panel",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Dismiss' button on an upstream-update notice",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "upstream-freshness",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "syn-freshness-status",
 			"area": "sync",
 			"name": "See when the upstream check last ran and what it found.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "templates/settings/admin.php:539 '<p ... id=\"nldesign-upstream-freshness-lastchecked\">'; js/admin.js:5221-5232 loadUpstreamFreshness() GETs /settings/upstream-freshness and renders it via renderUpstreamFreshness(), showing last-checked time and the notices list",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'last checked' text and notices list under the upstream-freshness toggle",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "upstream-freshness",
+			"featureConfidence": "high",
+			"note": "Minor: one notify() call at js/admin.js:5282-5284 uses the l10n domain 'nldesign' instead of 'thematiq' for the enabled-confirmation toast, so that one string will not be translated (falls back to the raw English key); does not affect the feature's function."
 		},
 		{
 			"id": "syn-nc-theming-sync",
 			"area": "sync",
 			"name": "Keep Nextcloud's built-in theming colours and logo in line with the chosen house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/ThemingService.php:26-28 imports OCA\\Theming\\ImageManager, BackgroundService, ThemingDefaults; applies logo/background/logo_dark and primary_color/background_color (lib/Service/ThemingService.php:127-260) into Nextcloud's own theming app config when a token set is applied and the sync checkbox is on",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, apply dialog's 'Also update Nextcloud theming' section",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "high",
+			"note": "Owner is thematiq's ThemingService, but the values it writes are consumed by Nextcloud core's own theming (OCA\\Theming), so provider is recorded as nextcloud for the sink; thematiq is the driver."
 		},
 		{
 			"id": "syn-nc-theming-edit",
 			"area": "sync",
 			"name": "Edit Nextcloud's built-in theming values from the same settings page.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/SettingsController.php:399-424 updateThemingValues() accepts primary_color/background_color/logo/background params, validates them (themingService->validateColors/validateImagePaths), and writes them; reached from the apply dialog's core-theming section (js/admin.js:3092-3120), which lets the admin accept/reject the proposed colours before POSTing",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, apply dialog's 'Also update Nextcloud theming' section",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync-dialog",
+			"featureConfidence": "medium",
+			"note": "This is editing in the sense of accepting or rejecting the proposed sync as a whole (one bulk checkbox, js/admin.js:3097), driven by picking a token set; there is no free-text field to type an arbitrary custom primary colour independent of any token set."
 		},
 		{
 			"id": "syn-upgrade-migration",
 			"area": "sync",
 			"name": "Keep your settings intact when the app is renamed or upgraded.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "appinfo/info.xml <repair-steps>: MigrateAppConfigKeys, MigrateUserPreferences, MigrateStoredClassNames, MigrateSchemaApplicationId, GenerateDarkVariantsRepairStep, registered under BOTH <post-migration> and <install> (an app-id rename presents to Nextcloud as a fresh install, so <install> is what actually fires); lib/Repair/MigrateAppConfigKeys.php copies nldesign-keyed oc_appconfig rows to thematiq only when thematiq has no value yet, so a real admin's settings are not stranded under the old app id",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: Nextcloud's own repair-step runner (occ upgrade / app enable), no admin UI action needed",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "theming-capability",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "int-capability-api",
