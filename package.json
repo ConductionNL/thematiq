@@ -51,30 +51,32 @@
 		"l10n:build": "node scripts/build-l10n-js.js",
 		"check:l10n-js": "node scripts/build-l10n-js.js --check",
 		"generate:guest-css": "node scripts/generate-guest-css.mjs",
-		"test:guest-css": "node scripts/generate-guest-css.mjs --check"
+		"test:guest-css": "node scripts/generate-guest-css.mjs --check",
+		"generate:component-scopes": "node scripts/generate-component-scopes.mjs",
+		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check"
 	},
 	"dependencies": {
 		"@fontsource/fira-sans": "^5.0.0"
 	},
 	"optionalDependencies": {
-		"@gouvfr/dsfr": "^1.15.1"
+		"@gouvfr/dsfr": "^1.15.3"
 	},
 	"devDependencies": {
-		"@conduction/nextcloud-vue": "^2.52.0",
+		"@conduction/nextcloud-vue": "^2.55.1",
 		"@cyclonedx/cyclonedx-npm": "^6.0.1",
 		"@nextcloud/prettier-config": "^1.2.0",
 		"@openfun/cunningham-tokens": "^3.0.0",
 		"@playwright/test": "^1.63.0",
-		"@vitest/coverage-v8": "^5.0.0",
+		"@vitest/coverage-v8": "^5.0.1",
 		"@vitest/ui": "^5.0.0",
-		"jsdom": "^30.0.1",
-		"prettier": "^3.9.6",
+		"jsdom": "^30.1.0",
+		"prettier": "^3.9.8",
 		"stylelint": "^17.15.0",
 		"stylelint-config-standard": "^40.0.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^7.0.2",
 		"vite": "^8.3.0",
-		"vitest": "^5.0.0"
+		"vitest": "^5.0.1"
 	},
 	"prettier": "@nextcloud/prettier-config"
 }
