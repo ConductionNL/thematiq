@@ -1,0 +1,2455 @@
+{
+	"comparedOn": "2026-09-26",
+	"category": "Runtime brand and design-token theming for a government collaboration workspace. Thematiq applies a government house style, expressed as NL Design System design tokens (and the French Cunningham/La Suite system), to a whole Nextcloud instance at runtime: every app, the login page, emails and the header, scoped per app or per group, with WCAG contrast evidence, a trial before publishing, an audit trail and OTAP portability. The buyer is a government IT or communications team that must make a self-hosted workplace look like the organisation's own. It therefore competes with the branding layer of other workplace suites (Nextcloud's own Theming app, Microsoft 365 organisational branding, openDesk) and with the design-token tooling a team uses to maintain a house style for government portals (Liferay DXP style books, Tokens Studio). It is not a design system or a component library: NL Design System, GOV.UK, USWDS and the like are its inputs, not its competitors.",
+	"corpus": {
+		"repo": "ConductionNL/thematiq",
+		"file": "openspec/parity/capabilities.json"
+	},
+	"readAt": {
+		"repo": "ConductionNL/thematiq",
+		"branch": "development",
+		"sha": "fa7117c18e5c03755e77d342b497078cd0b54db9"
+	},
+	"systems": [
+		{
+			"key": "thematiq",
+			"name": "Thematiq",
+			"vendor": "Conduction",
+			"isSelf": true,
+			"readOn": "2026-09-26",
+			"columnAddedOn": "2026-09-26"
+		},
+		{
+			"key": "nextcloud-theming",
+			"name": "Nextcloud Theming (built-in app)",
+			"vendor": "Nextcloud GmbH",
+			"readOn": "2026-09-26",
+			"columnAddedOn": "2026-09-26"
+		},
+		{
+			"key": "m365-branding",
+			"name": "Microsoft 365 organisational branding (Entra company branding, Microsoft 365 themes, SharePoint brand center)",
+			"vendor": "Microsoft",
+			"readOn": "2026-09-26",
+			"columnAddedOn": "2026-09-26"
+		},
+		{
+			"key": "opendesk",
+			"name": "openDesk theming",
+			"vendor": "ZenDiS",
+			"readOn": "2026-09-26",
+			"columnAddedOn": "2026-09-26"
+		},
+		{
+			"key": "liferay-dxp",
+			"name": "Liferay DXP (style books, themes, client extensions)",
+			"vendor": "Liferay",
+			"readOn": "2026-09-26",
+			"columnAddedOn": "2026-09-26"
+		},
+		{
+			"key": "tokens-studio",
+			"name": "Tokens Studio (Figma plugin and platform)",
+			"vendor": "Tokens Studio",
+			"readOn": "2026-09-26",
+			"columnAddedOn": "2026-09-26"
+		}
+	],
+	"areas": [
+		{
+			"key": "catalogue",
+			"name": "Ready-made government house styles",
+			"name_nl": "Kant-en-klare overheidshuisstijlen"
+		},
+		{
+			"key": "apply",
+			"name": "Applying and switching a theme",
+			"name_nl": "Een thema toepassen en wisselen"
+		},
+		{
+			"key": "authoring",
+			"name": "Bringing your own brand",
+			"name_nl": "Je eigen huisstijl meebrengen"
+		},
+		{
+			"key": "typography",
+			"name": "Fonts and typography",
+			"name_nl": "Lettertypen en typografie"
+		},
+		{
+			"key": "assets",
+			"name": "Logos, icons and imagery",
+			"name_nl": "Logo's, iconen en beeldmateriaal"
+		},
+		{
+			"key": "surfaces",
+			"name": "Where the theme reaches",
+			"name_nl": "Waar het thema zichtbaar is"
+		},
+		{
+			"key": "scoping",
+			"name": "Scoping a theme",
+			"name_nl": "Een thema afbakenen"
+		},
+		{
+			"key": "accessibility",
+			"name": "Accessibility and contrast",
+			"name_nl": "Toegankelijkheid en contrast"
+		},
+		{
+			"key": "governance",
+			"name": "Governance and change control",
+			"name_nl": "Beheer en wijzigingscontrole"
+		},
+		{
+			"key": "sync",
+			"name": "Staying current with upstream",
+			"name_nl": "Actueel blijven met de bron"
+		},
+		{
+			"key": "integration",
+			"name": "Integration and operations",
+			"name_nl": "Integratie en beheer"
+		}
+	],
+	"providers": [
+		{
+			"key": "thematiq",
+			"name": "Thematiq",
+			"kind": "self"
+		},
+		{
+			"key": "nextcloud",
+			"name": "Nextcloud server and its built-in Theming app",
+			"kind": "platform"
+		},
+		{
+			"key": "openregister",
+			"name": "OpenRegister",
+			"kind": "app"
+		},
+		{
+			"key": "nextcloud-vue",
+			"name": "@conduction/nextcloud-vue",
+			"kind": "app"
+		},
+		{
+			"key": "nl-design-system",
+			"name": "NL Design System community (upstream token sources)",
+			"kind": "external"
+		}
+	],
+	"capabilities": [
+		{
+			"id": "cat-rijkshuisstijl",
+			"area": "catalogue",
+			"name": "Apply the Dutch national government house style (Rijkshuisstijl) without designing anything.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-municipal-sets",
+			"area": "catalogue",
+			"name": "Pick your own municipality or organisation from a list of ready-made house styles.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-bigcity-systems",
+			"area": "catalogue",
+			"name": "Use the full design systems of the large cities (Utrecht, Amsterdam, Den Haag, Rotterdam).",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-vng",
+			"area": "catalogue",
+			"name": "Apply the VNG house style for a municipal association or shared service.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-lasuite",
+			"area": "catalogue",
+			"name": "Make the workspace match the French La Suite numerique look so a sovereign workplace bundle shows no visual seam.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-searchable-picker",
+			"area": "catalogue",
+			"name": "Find a house style by typing its name in a searchable picker that scales to hundreds of entries.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-swatch-preview",
+			"area": "catalogue",
+			"name": "See a colour swatch and the primary colour of each house style before choosing it.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-stock-option",
+			"area": "catalogue",
+			"name": "Switch back to stock Nextcloud styling with one choice, removing every added stylesheet.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-completeness-badge",
+			"area": "catalogue",
+			"name": "See how complete a house style's token vocabulary is before you rely on it.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-design-system-choice",
+			"area": "catalogue",
+			"name": "Choose between whole design systems (NL Design System, La Suite, high contrast, a soft light theme), not only colour sets.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-design-system-docs",
+			"area": "catalogue",
+			"name": "Follow a link from the settings page to the design system's own documentation.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-community-sets",
+			"area": "catalogue",
+			"name": "Use community-maintained brand sets for organisations that are not a municipality.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "cat-starter-templates",
+			"area": "catalogue",
+			"name": "Start from a ready-made template or example theme and adapt it instead of starting blank.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "cat-marketplace",
+			"area": "catalogue",
+			"name": "Download additional themes from a marketplace or gallery maintained by the vendor or community.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "cat-provincial-sets",
+			"area": "catalogue",
+			"name": "Apply a house style for a province or water board.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "app-one-click",
+			"area": "apply",
+			"name": "Re-brand the whole workspace, its apps and the login page in one action.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-diff-dialog",
+			"area": "apply",
+			"name": "See exactly which colour values will change before you apply a new house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-choose-what-changes",
+			"area": "apply",
+			"name": "Tick which individual values to take over when switching house style, and keep the rest.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-no-reload",
+			"area": "apply",
+			"name": "Switch house style and see it repaint the page you are on without reloading.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-live-preview-shell",
+			"area": "apply",
+			"name": "Preview the house style on a mock of the real app shell (header, navigation, buttons) inside the settings page.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-login-preview",
+			"area": "apply",
+			"name": "Preview how the login page will look before publishing.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-trial-session",
+			"area": "apply",
+			"name": "Try a house style in your own session only, while everyone else keeps the current one.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-trial-banner",
+			"area": "apply",
+			"name": "See a banner reminding you that you are looking at a trial theme, with a way back.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-trial-publish",
+			"area": "apply",
+			"name": "Publish a theme you have been trialling to everyone in one step.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-trial-discard",
+			"area": "apply",
+			"name": "Discard a trial theme and return to what everyone else sees.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-component-playground",
+			"area": "apply",
+			"name": "Look at buttons, inputs, note cards, list items and the login card in each of their states while you edit the tokens they read.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-primary-lock",
+			"area": "apply",
+			"name": "Make the brand primary colour drive every component, or deliberately let components keep their own colours.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "app-runtime-no-deploy",
+			"area": "apply",
+			"name": "Change the brand at runtime from an admin screen, without a redeployment or configuration management run.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "app-scheduled-switch",
+			"area": "apply",
+			"name": "Schedule a theme change for a date, such as a campaign or a holiday look.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "app-rollback-history",
+			"area": "apply",
+			"name": "Roll back to an earlier version of the theme from a version history.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "app-reset-core",
+			"area": "apply",
+			"name": "Reset Nextcloud's own theming values back to stock in one action.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-upload-css",
+			"area": "authoring",
+			"name": "Upload your own house style as a CSS file of design tokens.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-upload-dtcg",
+			"area": "authoring",
+			"name": "Upload your own house style as a W3C Design Tokens (DTCG) JSON file.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-upload-validate",
+			"area": "authoring",
+			"name": "Get told on upload which tokens are missing or invalid before the set is accepted.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-upload-security",
+			"area": "authoring",
+			"name": "Have uploaded styles stripped of anything that could run script or load outside resources.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-custom-list-delete",
+			"area": "authoring",
+			"name": "List, activate and delete the house styles you uploaded.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-custom-export",
+			"area": "authoring",
+			"name": "Download a house style you uploaded, to reuse or share it.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-convert-nlds-theme",
+			"area": "authoring",
+			"name": "Convert an existing NL Design System theme from its upstream token format into a working set.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-token-editor",
+			"area": "authoring",
+			"name": "Edit individual colour tokens in the browser with a colour picker.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-token-editor-tabs",
+			"area": "authoring",
+			"name": "Browse the editable tokens grouped in tabs (for example primary, background, text, status).",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-token-reset",
+			"area": "authoring",
+			"name": "Reset one edited token to its house style value without touching the others.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-token-live",
+			"area": "authoring",
+			"name": "See an edited token take effect immediately, before saving.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-overrides-persist",
+			"area": "authoring",
+			"name": "Save your token edits so they survive a restart and apply to everyone.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-overrides-import-export",
+			"area": "authoring",
+			"name": "Export your token edits as a file and import them again on another instance.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-custom-css",
+			"area": "authoring",
+			"name": "Add your own free-form CSS rules for things tokens cannot express.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-custom-css-sanitise",
+			"area": "authoring",
+			"name": "Have free-form CSS checked and cleaned on the server before it is saved.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-component-scoped",
+			"area": "authoring",
+			"name": "Change the tokens of one component type (for example buttons) without changing the global palette.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-dark-variant-auto",
+			"area": "authoring",
+			"name": "Get a dark variant of your house style derived automatically.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "aut-semantic-aliases",
+			"area": "authoring",
+			"name": "Define tokens as references to other tokens so one change flows through the semantic layer.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "aut-token-math",
+			"area": "authoring",
+			"name": "Compute token values from other tokens with expressions (for example spacing times two).",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "aut-multi-brand-themes",
+			"area": "authoring",
+			"name": "Maintain several brands or themes in one token source and switch between them.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "aut-figma-sync",
+			"area": "authoring",
+			"name": "Keep the tokens in sync with the designers' Figma files.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "aut-git-sync",
+			"area": "authoring",
+			"name": "Store and version the token source in a Git repository with pull requests.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "aut-multi-platform-export",
+			"area": "authoring",
+			"name": "Export the same tokens to several platforms (CSS, iOS, Android, JSON).",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "aut-colour-only-ui",
+			"area": "authoring",
+			"name": "Set a brand with nothing more than a primary colour, a background colour and a logo in a simple form.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "typ-bundled-open-fonts",
+			"area": "typography",
+			"name": "Use the house style's open fonts (Fira Sans, Inter) served from the instance itself, with no external font service.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "typ-air-gapped",
+			"area": "typography",
+			"name": "Keep typography working on an air-gapped instance under the default content security policy.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "typ-upload-font",
+			"area": "typography",
+			"name": "Upload your organisation's own licensed webfont.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "typ-font-validate",
+			"area": "typography",
+			"name": "Have an uploaded font checked for format and size before it is accepted.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "typ-font-list-delete",
+			"area": "typography",
+			"name": "List and delete the fonts you uploaded.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "typ-font-login",
+			"area": "typography",
+			"name": "Show your own font on the login page, before anyone has signed in.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "typ-marianne-gated",
+			"area": "typography",
+			"name": "Enable the French State Marianne typeface only after confirming you are entitled to it.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "typ-font-tokens",
+			"area": "typography",
+			"name": "Set font family, size and weight through tokens per house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "typ-dyslexia-font",
+			"area": "typography",
+			"name": "Let a user switch to a dyslexia-friendly font for themselves.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "typ-org-font-library",
+			"area": "typography",
+			"name": "Offer site owners a central library of approved organisation fonts to choose from.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "ast-logo-sync",
+			"area": "assets",
+			"name": "Set the workspace logo to your organisation's logo when you pick its house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "ast-background-sync",
+			"area": "assets",
+			"name": "Set the login background to match the house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "ast-upload-logo",
+			"area": "assets",
+			"name": "Upload a logo of your own.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "ast-upload-background",
+			"area": "assets",
+			"name": "Upload a login background image of your own.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "ast-favicon",
+			"area": "assets",
+			"name": "Set the browser tab icon (favicon) to your organisation's.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "ast-icon-library",
+			"area": "assets",
+			"name": "Reuse a library of government icons by name from any app on the instance.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "ast-org-logos",
+			"area": "assets",
+			"name": "Reuse bundled logos of government organisations by name.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "ast-icon-pack",
+			"area": "assets",
+			"name": "Have the icon style follow the design system you chose (for example a municipal icon pack).",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "ast-icon-pack-indicator",
+			"area": "assets",
+			"name": "See which icon pack is active on the settings page.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "ast-icon-contrast",
+			"area": "assets",
+			"name": "Keep icons legible against the brand colours, with contrast fixes for dark and light backgrounds.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "ast-dark-logo",
+			"area": "assets",
+			"name": "Use a separate logo for dark mode.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "ast-brand-images",
+			"area": "assets",
+			"name": "Offer users a central set of approved brand images and banners to use in their own content.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sur-all-pages",
+			"area": "surfaces",
+			"name": "Style every Nextcloud page, including apps from other vendors, not only a single portal.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-conduction-apps",
+			"area": "surfaces",
+			"name": "Have every Conduction app pick up the house style through shared tokens.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-login-page",
+			"area": "surfaces",
+			"name": "Style the login page, including before any session exists.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-header-nav",
+			"area": "surfaces",
+			"name": "Style the header and app navigation bar in the house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-menu-labels",
+			"area": "surfaces",
+			"name": "Show text labels instead of icons only in the app menu.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-hide-slogan",
+			"area": "surfaces",
+			"name": "Hide the Nextcloud slogan on the login page.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-public-pages",
+			"area": "surfaces",
+			"name": "Style public share and link pages that visitors without an account see.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-email",
+			"area": "surfaces",
+			"name": "Send notification emails in the house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-email-footer",
+			"area": "surfaces",
+			"name": "Add a compliance footer (organisation name, address, legal text) to every email.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-component-bridge",
+			"area": "surfaces",
+			"name": "Map community component tokens (Utrecht) onto the workspace's own components.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-nc-variable-mapping",
+			"area": "surfaces",
+			"name": "Map every Nextcloud colour variable to a design token, so no stock colour leaks through.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-error-contrast",
+			"area": "surfaces",
+			"name": "Keep error and status messages readable in every house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-status-tokens",
+			"area": "surfaces",
+			"name": "Colour success, warning and error states from the house style's status tokens.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sur-mobile-desktop-clients",
+			"area": "surfaces",
+			"name": "Carry the brand into the desktop and mobile sync clients.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sur-office-suite",
+			"area": "surfaces",
+			"name": "Carry the brand into the integrated office editor and chat in the same suite.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sur-custom-domain",
+			"area": "surfaces",
+			"name": "Serve the branded workspace on the organisation's own domain name.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sur-footer-links",
+			"area": "surfaces",
+			"name": "Add legal links (privacy statement, imprint, accessibility statement) to the footer and login page.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sur-web-app-name",
+			"area": "surfaces",
+			"name": "Change the product name, slogan and web address shown to users.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sco-per-app-exclude",
+			"area": "scoping",
+			"name": "Exclude individual apps from the house style and leave them stock while you test.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sco-per-group",
+			"area": "scoping",
+			"name": "Give a group of users a different house style on a shared instance.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sco-group-priority",
+			"area": "scoping",
+			"name": "Decide which house style wins for a user who is in several themed groups.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sco-login-unaffected",
+			"area": "scoping",
+			"name": "Keep the login page on the instance-wide style while groups have their own.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sco-user-choice",
+			"area": "scoping",
+			"name": "Let each user choose a theme (light, dark, high contrast) for themselves.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sco-user-follow-os",
+			"area": "scoping",
+			"name": "Follow the user's operating system preference for dark mode and high contrast.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "sco-per-site",
+			"area": "scoping",
+			"name": "Give each site, portal or department its own theme.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sco-per-domain",
+			"area": "scoping",
+			"name": "Show a different brand depending on which domain the user arrives on.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sco-tenant-isolation",
+			"area": "scoping",
+			"name": "Run fully separate brands for separate tenants on one installation.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "sco-app-token-catalogue",
+			"area": "scoping",
+			"name": "Let another app on the instance list the available house styles for its own picker without admin rights.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-contrast-on-upload",
+			"area": "accessibility",
+			"name": "Get a warning about insufficient colour contrast when you upload a house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-contrast-evaluate",
+			"area": "accessibility",
+			"name": "Check any pair of colours against WCAG contrast from within an app.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-shipped-audit",
+			"area": "accessibility",
+			"name": "Rely on every shipped house style having been checked automatically for WCAG contrast.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-contrast-report-doc",
+			"area": "accessibility",
+			"name": "Read a published contrast report per house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-compliance-report",
+			"area": "accessibility",
+			"name": "Download an evidence report of the contrast of your active configuration for an audit.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-compliance-cli",
+			"area": "accessibility",
+			"name": "Produce that compliance report from the command line.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-high-contrast-set",
+			"area": "accessibility",
+			"name": "Apply a maximum-contrast (WCAG AAA) theme instance-wide.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-forced-colors",
+			"area": "accessibility",
+			"name": "Cooperate with the operating system's forced colours and high-contrast modes.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-dark-mode",
+			"area": "accessibility",
+			"name": "Offer a dark mode of the house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-dark-generate-cli",
+			"area": "accessibility",
+			"name": "Regenerate the dark variants from the command line after changing sets.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-focus-indicators",
+			"area": "accessibility",
+			"name": "Show visible focus indicators in the house style's colours.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-reduced-motion",
+			"area": "accessibility",
+			"name": "Respect a user's preference for reduced motion.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "acc-keyboard-admin",
+			"area": "accessibility",
+			"name": "Operate the whole theming settings page with the keyboard alone.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-vocabulary-audit",
+			"area": "accessibility",
+			"name": "Check that a house style defines the full token vocabulary so nothing falls back to an unreadable default.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "acc-block-inaccessible",
+			"area": "accessibility",
+			"name": "Be prevented from publishing a theme whose contrast fails WCAG.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "acc-contrast-in-editor",
+			"area": "accessibility",
+			"name": "See the contrast ratio next to a colour while you edit it.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "acc-accessibility-statement",
+			"area": "accessibility",
+			"name": "Generate or host the accessibility statement that Dutch government sites must publish.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "gov-admin-only",
+			"area": "governance",
+			"name": "Allow only administrators to change the theme.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "gov-delegated-role",
+			"area": "governance",
+			"name": "Delegate theme editing to a brand manager who is not a full administrator.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "gov-audit-log",
+			"area": "governance",
+			"name": "See who changed which theming setting, from what to what, and when.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "gov-audit-export",
+			"area": "governance",
+			"name": "Export the theming audit log for an auditor.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "gov-audit-append-only",
+			"area": "governance",
+			"name": "Rely on the audit log not being editable after the fact.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "gov-otap-bundle",
+			"area": "governance",
+			"name": "Promote the complete theme configuration from test to acceptance to production as one file.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "gov-otap-cli",
+			"area": "governance",
+			"name": "Export and import that configuration bundle from the command line for scripted deployments.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "gov-federated-share",
+			"area": "governance",
+			"name": "Share the theme configuration with other instances through federated configuration sharing.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "gov-config-as-code",
+			"area": "governance",
+			"name": "Declare the theme in deployment configuration (for example Helm values) so it is versioned with the infrastructure.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "gov-approval-workflow",
+			"area": "governance",
+			"name": "Require a second person to approve a theme change before it goes live.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "gov-app-store-install",
+			"area": "governance",
+			"name": "Install and update the theming from the platform's app store.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "gov-open-source",
+			"area": "governance",
+			"name": "Use, inspect and change the theming software under an open source licence.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "gov-licence-clarity",
+			"area": "governance",
+			"name": "See the licence of every bundled font and asset stated in the product.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "syn-upstream-generated",
+			"area": "sync",
+			"name": "Get house styles generated from the official NL Design System token sources rather than copied by hand.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "syn-nightly-pr",
+			"area": "sync",
+			"name": "Receive upstream token changes as proposed updates through a nightly synchronisation.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "syn-freshness-check",
+			"area": "sync",
+			"name": "Opt in to a daily check that tells you when your house style is behind the upstream tokens.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "syn-freshness-dismiss",
+			"area": "sync",
+			"name": "Dismiss an upstream-update notice until the next change.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "syn-freshness-status",
+			"area": "sync",
+			"name": "See when the upstream check last ran and what it found.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "syn-nc-theming-sync",
+			"area": "sync",
+			"name": "Keep Nextcloud's built-in theming colours and logo in line with the chosen house style.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "syn-nc-theming-edit",
+			"area": "sync",
+			"name": "Edit Nextcloud's built-in theming values from the same settings page.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "syn-upgrade-migration",
+			"area": "sync",
+			"name": "Keep your settings intact when the app is renamed or upgraded.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "int-capability-api",
+			"area": "integration",
+			"name": "Let clients and other apps read the active house style through the platform capabilities API.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "int-token-set-api",
+			"area": "integration",
+			"name": "Let other apps list the house style catalogue through an API.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "int-stylesheet-manifest",
+			"area": "integration",
+			"name": "Let a page fetch the stylesheets a house style needs, in cascade order, to swap it in place.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "int-metrics",
+			"area": "integration",
+			"name": "Monitor theming through Prometheus metrics (active set, overrides, syncs).",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "int-health",
+			"area": "integration",
+			"name": "Check that the theming app is healthy from a monitoring system.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "int-tokens-for-other-apps",
+			"area": "integration",
+			"name": "Let other apps style themselves with the same CSS variables, with no build step.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "int-no-js-overhead",
+			"area": "integration",
+			"name": "Apply the theme as pure CSS with no JavaScript cost on ordinary pages.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "int-rest-api-theme",
+			"area": "integration",
+			"name": "Change the theme through a documented REST or management API.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "int-cli-set-theme",
+			"area": "integration",
+			"name": "Set the active theme from the command line.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		},
+		{
+			"id": "int-docs-site",
+			"area": "integration",
+			"name": "Read end-user and admin documentation for every theming feature.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "own"
+			}
+		},
+		{
+			"id": "int-sovereign-bundle",
+			"area": "integration",
+			"name": "Ship as part of a sovereign workplace bundle with one brand across all its components.",
+			"thematiq": "unknown",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "none",
+				"origin": "competitor"
+			}
+		}
+	],
+	"pending": []
+}
