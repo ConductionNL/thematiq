@@ -554,7 +554,6 @@
 		--nl-number-badge-color: #9e9e9e;
 		--nl-skip-link-background-color: #f2d40d;
 		--nl-skip-link-color: #eaebeb;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #1b2b30;
 		--nldesign-color-background-darker: #223337;
 		--nldesign-color-background-hover: #172227;
@@ -2114,7 +2113,6 @@ body[data-themes*=dark] {
 	--nl-number-badge-color: #9e9e9e;
 	--nl-skip-link-background-color: #f2d40d;
 	--nl-skip-link-color: #eaebeb;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #1b2b30;
 	--nldesign-color-background-darker: #223337;
 	--nldesign-color-background-hover: #172227;

@@ -137,7 +137,6 @@
 		--denhaag-step-marker-warning-color: #c1b10c;
 		--denhaag-step-marker-warning-nested-background-color: #141414;
 		--denhaag-step-marker-warning-nested-border-color: #ed7719;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #1b2b30;
 		--nldesign-color-background-darker: #223337;
 		--nldesign-color-background-hover: #172227;
@@ -894,7 +893,6 @@ body[data-themes*=dark] {
 	--denhaag-step-marker-warning-color: #c1b10c;
 	--denhaag-step-marker-warning-nested-background-color: #141414;
 	--denhaag-step-marker-warning-nested-border-color: #ed7719;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #1b2b30;
 	--nldesign-color-background-darker: #223337;
 	--nldesign-color-background-hover: #172227;
