@@ -367,52 +367,75 @@
 			"id": "cat-design-system-docs",
 			"area": "catalogue",
 			"name": "Follow a link from the settings page to the design system's own documentation.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "templates/settings/admin.php:57-60 renders a single static link '<a href=\"https://nldesign.app\">Documentation</a>' in the section header; js/admin.js has no code that swaps this href when a different design system (lasuite, high-contrast, cunningham) is selected -- grep -F 'nldesign-doc-link' js/admin.js found no writer, only the static PHP-rendered anchor",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Documentation' link in the section header",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "nl-design",
+			"featureConfidence": "medium",
+			"note": "The link is real and reachable, but it always points at nldesign.app regardless of the design system actually selected (La Suite, high contrast, Cunningham all get the NL Design System link, not their own)."
 		},
 		{
 			"id": "cat-community-sets",
 			"area": "catalogue",
 			"name": "Use community-maintained brand sets for organisations that are not a municipality.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "token-sets.json includes non-municipal community sets: duo, opencatalogi, xxllnc, conduction-new, demodam, noaberkracht, riddeliemers -- none of these are a municipality/province/VNG",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "extended-token-sets",
+			"featureConfidence": "medium"
 		},
 		{
 			"id": "cat-starter-templates",
 			"area": "catalogue",
 			"name": "Start from a ready-made template or example theme and adapt it instead of starting blank.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "templates/settings/admin.php:63 hint text: 'Select a Dutch government design token set as a base, or customize individual Nextcloud CSS tokens below'; overrides editor persists per-token customisations on top of the selected base via POST /settings/overrides",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming: pick a shipped set as a base, then the token editor below it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-editor-ui",
+			"featureConfidence": "medium",
+			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it."
 		},
 		{
 			"id": "cat-marketplace",
 			"area": "catalogue",
 			"name": "Download additional themes from a marketplace or gallery maintained by the vendor or community.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -420,98 +443,150 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rniF 'marketplace|gallery' across lib/, js/, docs/GOVERNMENT-FEATURES.md, openspec/specs found nothing; the only additive mechanism is admin-side upload of the admin's own file (customTokenSet#upload, /settings/tokensets/upload), not browsing/downloading themes from a vendor or community-run catalogue",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "The only outbound network call this app makes at all is the opt-in upstream-freshness check against api.github.com (templates/settings/admin.php:527); there is no marketplace/gallery browse-and-download feature."
 		},
 		{
 			"id": "cat-provincial-sets",
 			"area": "catalogue",
 			"name": "Apply a house style for a province or water board.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "token-sets.json id=provincie-zuid-holland 'Provincie Zuid-Holland' exists; grep -rniF 'waterschap|water board|hoogheemraad' across token-sets.json, lib/, scripts/, docs/, openspec/ found nothing",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (province only)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "extended-token-sets",
+			"featureConfidence": "high",
+			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue."
 		},
 		{
 			"id": "app-one-click",
 			"area": "apply",
 			"name": "Re-brand the whole workspace, its apps and the login page in one action.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Listener/ThemeInjectionListener.php:26-46 registers for both BeforeTemplateRenderedEvent (workspace + apps) and BeforeLoginTemplateRenderedEvent (login page), calling CssInjectionService::inject() for either; js/admin.js:2930-2996 openTokenSetApplyDialog -> js/admin.js:3121-3127 'Apply selected' button is the single confirm that both saves the token set and (checkbox-gated) syncs core theming (colours/logo used on login + emails)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, dropdown selection then 'Apply selected' in the apply dialog",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-set-apply-dialog",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-diff-dialog",
 			"area": "apply",
 			"name": "See exactly which colour values will change before you apply a new house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:2998-3130 showApplyDialog() renders a table (Token | Current | New) per changed CSS variable, with swatches for colour tokens (js/admin.js:3019-3025), before any save happens; opened from the dropdown 'change' handler (js/admin.js:984) via openTokenSetApplyDialog",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, apply dialog shown after selecting a token set",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-set-apply-dialog",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-choose-what-changes",
 			"area": "apply",
 			"name": "Tick which individual values to take over when switching house style, and keep the rest.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:3032 '<input type=\"checkbox\" class=\"nldesign-apply-check\" data-token=...' per row in the apply dialog table, plus 'Select all'/'Deselect all' toggles (js/admin.js:3164-3180); only checked rows are sent (js/admin.js:3142-3160 reads .nldesign-apply-check state before POST)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, apply dialog: per-row checkboxes",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-set-apply-dialog",
+			"featureConfidence": "high",
+			"note": "Nextcloud core theming (primary/background colour, logo) inside the same dialog is one bulk 'also update Nextcloud theming' checkbox (js/admin.js:3095-3097), not per-field."
 		},
 		{
 			"id": "app-no-reload",
 			"area": "apply",
 			"name": "Switch house style and see it repaint the page you are on without reloading.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/lib/layerSwap.js:1-40 documents and implements swapping the injected <link>/<style> run for the page you are on, fetching the new manifest from GET /settings/tokenset-stylesheets/{id} (lib/Controller/LayerController.php) and inserting the new elements before removing the old ones (no flash of unstyled chrome); admin.php:25 loads lib/layerSwap before admin.js",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, applying any token set repaints the settings page itself with no reload",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-live-preview-shell",
 			"area": "apply",
 			"name": "Preview the house style on a mock of the real app shell (header, navigation, buttons) inside the settings page.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "js/admin.js:676-745 updatePreview() writes --prev-* CSS custom properties (primary, surface, bg, text, border, header-bg, radius, etc) consumed by a mock app-shell region on the settings page, updated on every dropdown selection (js/admin.js:977) before any apply/publish",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, mock app-shell preview region",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-editor-ui",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "app-login-preview",
@@ -747,7 +822,7 @@
 		{
 			"id": "aut-upload-security",
 			"area": "authoring",
-			"name": "Have uploaded styles stripped of anything that could run script or load outside resources.",
+			"name": "Be protected from uploaded styles that could run script or load outside resources (unsafe content is refused with reasons).",
 			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
@@ -990,7 +1065,7 @@
 		{
 			"id": "aut-custom-css-sanitise",
 			"area": "authoring",
-			"name": "Have free-form CSS checked and cleaned on the server before it is saved.",
+			"name": "Have free-form CSS checked on the server before it is saved, with unsafe rules refused.",
 			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
@@ -1209,127 +1284,184 @@
 			"id": "typ-bundled-open-fonts",
 			"area": "typography",
 			"name": "Use the house style's open fonts (Fira Sans, Inter) served from the instance itself, with no external font service.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/fonts/fira-sans-latin-*.woff2 and css/systems/*/fonts/inter-latin-*.woff2 are shipped in the app itself; css/fonts.css / css/systems/nldesign/fonts.css declare @font-face rules pointing at these local files, so the house style's fonts are served from the instance with no external font service (no fonts.googleapis.com or similar reference found)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Applied automatically whenever a house style using these fonts is active; not a distinct admin control",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "typography",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "typ-air-gapped",
 			"area": "typography",
 			"name": "Keep typography working on an air-gapped instance under the default content security policy.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/FontService.php:40 storage is self-hosted, no external CDN, CSP-clean per its own docblock; lib/Controller/FontController.php:199 serve()/:234 css() are same-origin routes (#[PublicPage]); no ContentSecurityPolicy grep hits in lib/AppInfo/Application.php because none is needed: every font byte and stylesheet is served from the app's own /fonts/* routes under the default 'self' CSP",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Works automatically under Nextcloud's default CSP; no admin control needed",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "typography",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "typ-upload-font",
 			"area": "typography",
 			"name": "Upload your organisation's own licensed webfont.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/FontController.php:105 upload(); templates/settings/admin.php:361-386 #nldesign-custom-fonts form (name, role select body/heading, .woff2 file input, upload button); js/admin.js:4544 POST /settings/fonts/upload",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom fonts, 'Choose font and upload' (admin.php:382)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-fonts",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "typ-font-validate",
 			"area": "typography",
 			"name": "Have an uploaded font checked for format and size before it is accepted.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/FontValidator.php enforces WOFF2 format and a size cap; admin.php:366 states 'max 2 MB, 20 fonts max'; FontController.php:105 upload() returns validator errors as a JSON error rather than accepting a bad file",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom fonts upload result (#nldesign-font-upload-result, admin.php:386)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-fonts",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "typ-font-list-delete",
 			"area": "typography",
 			"name": "List and delete the fonts you uploaded.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/FontController.php:150 list(), :164 delete(); js/admin.js:4592 GET /settings/fonts, :4667 DELETE /settings/fonts/{id}; rendered into #nldesign-font-list (admin.php:387)",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom fonts list (#nldesign-font-list)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-fonts",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "typ-font-login",
 			"area": "typography",
 			"name": "Show your own font on the login page, before anyone has signed in.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Listener/ThemeInjectionListener.php:116-119 handle() injects CSS with context 'login' on BeforeLoginTemplateRenderedEvent (comment: 'login is never an app page, the per-app guard never runs'); lib/Controller/FontController.php:230-234 css()/:199 serve() are #[PublicPage] #[NoCSRFRequired] specifically so the font stylesheet and bytes resolve before any session exists",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "The Nextcloud login page (font loads via the publicly-served /fonts/css and /fonts/{id}.woff2 routes)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-fonts",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "typ-marianne-gated",
 			"area": "typography",
 			"name": "Enable the French State Marianne typeface only after confirming you are entitled to it.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/SettingsController.php:861 getMarianneEnabled(), :883 setMarianneEnabled(bool); templates/settings/admin.php:122-141 #nldesign-marianne-gate with a license notice (#nldesign-marianne-notice) and an off-by-default checkbox (#nldesign-marianne-enabled); js/admin.js:2149 GET/POST /settings/marianne; lib/Service/CssInjectionService.php:866 only emits the self-hosted Marianne @font-face layer while the flag is '1'",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Marianne licence gate (#nldesign-marianne-gate)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "marianne-font",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "typ-font-tokens",
 			"area": "typography",
 			"name": "Set font family, size and weight through tokens per house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/TypographyTokens.php:39-46 exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, token editor 'Typography' tab (font family); size/weight are per-house-style tokens, not user-editable overrides",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "typography",
+			"featureConfidence": "medium",
+			"note": "Family is user-editable via the override editor; size/weight exist as house-style tokens but are not exposed there, so the fuller claim is partly a code-reading inference."
 		},
 		{
 			"id": "typ-dyslexia-font",
 			"area": "typography",
 			"name": "Let a user switch to a dyslexia-friendly font for themselves.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -1337,23 +1469,37 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rniF 'dyslex' across lib/, js/, css/, scripts/, openspec/ found nothing (the only hits are this matrix's own row files under _lane/); no per-user font-switch preference exists anywhere in the app, which is instance/admin-scoped theming only, not a per-user accessibility preference",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "typography",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "typ-org-font-library",
 			"area": "typography",
 			"name": "Offer site owners a central library of approved organisation fonts to choose from.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Controller/FontController.php:150 list() and lib/Service/FontService.php maintain a per-instance manifest of up to 20 uploaded fonts, each assignable to a role (body/heading) via the font-role select (admin.php:375); this gives a single instance's admins a shared, central list of self-hosted fonts to assign roles from. It is not a curated catalogue of pre-approved fonts to pick without uploading, and 'site owners' (plural, e.g. multiple tenants) has no meaning here: thematiq themes one Nextcloud instance, admin-only.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom fonts list + role select (#nldesign-font-list, #nldesign-font-role)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-fonts",
+			"featureConfidence": "medium",
+			"note": "Functions as a de facto library of the instance's own uploads, not a curated organisation-wide catalogue independent of upload."
 		},
 		{
 			"id": "ast-logo-sync",
