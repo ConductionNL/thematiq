@@ -4963,7 +4963,7 @@
 			"thematiq": "no",
 			"nextcloud-theming": "partial",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "partial",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
@@ -4976,7 +4976,7 @@
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 lib/private/URLGenerator.php:229-231 builds doc links through ThemingDefaults, and apps/theming/lib/ThemingDefaults.php:120-123 reads a docBaseUrl app config key (legacy key, lib/ConfigLexicon.php:44-45), settable only with occ config:app:set and still suffixed with /server/<version>/go.php (lib/private/legacy/OC_Defaults.php:259-264); the embedded help page serves core/doc (apps/settings/lib/Controller/HelpController.php:56-57); no admin UI field",
 				"m365-branding": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/functional.yaml.gotmpl:452-453 linkDocumentation (default https://docs.opendesk.eu/) is passed to the portal at helmfile/apps/nubus/values-nubus.yaml.gotmpl:1416 and shown in the portal corner, so the portal documentation link is configurable. The Nextcloud help link is left stock: grep -rniE 'docbase|knowledgebase' in opendesk-nextcloud-image@v2.17.2 src finds nothing, although Nextcloud 33.0.9 reads a docBaseUrl app value (nextcloud/server@v33.0.9 apps/theming/lib/ThemingDefaults.php:112-113)",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
 				"tokens-studio": "outside the product: tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/manifest.json:2-9 is a Figma plugin and the Studio platform manages token sources (https://documentation-v2.tokens.studio/getting-started/what-is-studio.html); neither renders a workspace, a user menu or help link"
 			},
@@ -4995,7 +4995,7 @@
 			"thematiq": "no",
 			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "partial",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
@@ -5008,7 +5008,7 @@
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/ThemingDefaults.php:142-151 hard-codes only Legal notice and Privacy policy; extra footer links come only from apps registering guest navigation entries in code (153-160), and the admin form has no such field (src/components/AdminSectionTheming.vue:44-57)",
 				"m365-branding": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/functional.yaml.gotmpl:454-455 linkSupport (default ~, off) is passed to the portal at helmfile/apps/nubus/values-nubus.yaml.gotmpl:1417 with its own tile icon (theme.yaml.gotmpl:115); legal notice and privacy sit in the portal menu (functional.yaml.gotmpl:448-451). The Nextcloud footer gets only imprint and privacy (helmfile/apps/nextcloud/values-nextcloud-management.yaml.gotmpl:293-295), so no support link next to them there",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
 				"tokens-studio": "outside the product: tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/manifest.json:2-9 is a Figma plugin and the Studio platform manages token sources (https://documentation-v2.tokens.studio/getting-started/what-is-studio.html); neither renders a workspace, a footer or legal links"
 			},
@@ -5027,7 +5027,7 @@
 			"thematiq": "no",
 			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "partial",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
@@ -5040,7 +5040,7 @@
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/ThemingDefaults.php:72-75 getName() returns one stored value; getSlogan($lang) (107-110) passes the language only to the built-in default, a stored slogan is the same for every language",
 				"m365-branding": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/theme.yaml.gotmpl:17-18 has one productName and one slogan, sent unchanged to Nextcloud (opendesk-nextcloud-image@v2.17.2 src/files/usr/local/bin/entrypoint/php/nextcloud_configure_theming.php:60-66). Per-language strings exist only around the name: Keycloak loginTitle de/en (helmfile/apps/nubus/values-nubus.yaml.gotmpl:208-213) and portalTitleDE/EN (:1412-1413), both built from the same productName by default",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
 				"tokens-studio": "outside the product: tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/manifest.json:2-9 is a Figma plugin and the Studio platform manages token sources (https://documentation-v2.tokens.studio/getting-started/what-is-studio.html); neither renders a workspace or an instance name"
 			},
@@ -5059,7 +5059,7 @@
 			"thematiq": "no",
 			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "partial",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
@@ -5072,7 +5072,7 @@
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:74-147 accepts no login text keys; login strings are fixed translations in core, changeable only by overriding templates in a legacy theme folder (lib/private/Template/Template.php:74-84)",
 				"m365-branding": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/apps/nubus/values-nubus.yaml.gotmpl:207-213 sets keycloak.login.messages per language (de, en) for the Keycloak login page every openDesk app signs in through, overriding loginTitle. Only that key is set; whether the nubus Keycloak chart passes any other message key (such as the account field label) is not in the cloned sources, so a full wording override is unverified",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
 				"tokens-studio": "outside the product: tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/manifest.json:2-9 is a Figma plugin and the Studio platform manages token sources (https://documentation-v2.tokens.studio/getting-started/what-is-studio.html); neither renders a workspace or a login page"
 			},
@@ -5091,7 +5091,7 @@
 			"thematiq": "no",
 			"nextcloud-theming": "partial",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
@@ -5104,7 +5104,7 @@
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 config/config.sample.php:2471-2476 enforce_theme forces a theme only through config.php (applied in apps/theming/lib/Service/ThemesService.php:58-79 and filtered in lib/Settings/Personal.php:36-53); the admin page only offers Disable user theming for colours and background (src/components/AdminSectionThemingAdvanced.vue:118-124)",
 				"m365-branding": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
+				"opendesk": "opendesk-nextcloud-image@v2.17.2 src/files/usr/local/bin/entrypoint/php/config_base.php:166 hard-sets enforce_theme to an empty string and apply_env_to_nc_config.php:9-11 writes it over config.php on every start, so no appearance theme is forced; nextcloud_configure_theming.php:16-18 sets disable-user-theming, which in Nextcloud hides only the colour and background sections, not the theme list (nextcloud/server@v35.0.1 apps/theming/src/views/UserTheming.vue:15-19,42-49). grep -rn enforce_theme in opendesk helmfile: no values key",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
 				"tokens-studio": "outside the product: tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/manifest.json:2-9 is a Figma plugin and the Studio platform manages token sources (https://documentation-v2.tokens.studio/getting-started/what-is-studio.html); neither renders a workspace with user appearance settings to enforce"
 			},
@@ -5123,7 +5123,7 @@
 			"thematiq": "no",
 			"nextcloud-theming": "yes",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
@@ -5136,7 +5136,7 @@
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/src/components/UserSectionToastTimeout.vue:116-120 mounted by src/views/UserTheming.vue:52; allowed values 7, 15, 30 seconds or never in lib/Capabilities.php:32, stored as user config toast_timeout (lib/ConfigLexicon.php:118-127)",
 				"m365-branding": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/images.yaml.gotmpl:351 pins the opendesk-nextcloud image 33.0.9, so Nextcloud 33.0.9 is shipped; the per-user toast timeout arrived in Nextcloud 35 (github.com/nextcloud/server/pull/62689, milestone Nextcloud 35, no backport found) and apps/theming/src/components/UserSectionToastTimeout.vue returns 404 at nextcloud/server@v33.0.9. grep -rni toast in opendesk helmfile and opendesk-nextcloud-image@v2.17.2 src: nothing, so openDesk adds no such setting",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
 				"tokens-studio": "outside the product: tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/manifest.json:2-9 is a Figma plugin and the Studio platform manages token sources (https://documentation-v2.tokens.studio/getting-started/what-is-studio.html); neither renders a workspace; its own toasts are not user-configurable"
 			},
@@ -5155,7 +5155,7 @@
 			"thematiq": "yes",
 			"nextcloud-theming": "yes",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "partial",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
@@ -5168,7 +5168,7 @@
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Themes/DefaultTheme.php:178 --color-background-selection is rgb(from var(--color-primary-element) r g b / 0.2) (0.4 in DarkTheme.php:127), and DefaultTheme.php:177 adds --color-mark for highlighted text",
 				"m365-branding": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/images.yaml.gotmpl:351 pins the opendesk-nextcloud image 33.0.9, so Nextcloud 33.0.9 is shipped, whose core/css/server.css (nextcloud/server@v33.0.9) has ::selection{background-color:var(--color-primary-element);color:var(--color-primary-element-text)}: selection takes the brand primary openDesk sets (nextcloud_configure_theming.php:21-23, #571EFA) with readable text, but solid, not translucent; the translucent form came in Nextcloud 34 (github.com/nextcloud/server/pull/58834)",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
 				"tokens-studio": "outside the product: tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/manifest.json:2-9 is a Figma plugin and the Studio platform manages token sources (https://documentation-v2.tokens.studio/getting-started/what-is-studio.html); neither renders a workspace; a token could hold a selection colour but nothing applies it to text selection"
 			},
@@ -5283,7 +5283,7 @@
 			"thematiq": "no",
 			"nextcloud-theming": "partial",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
@@ -5296,7 +5296,7 @@
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 theming values are per instance (apps/theming/lib/ThemingDefaults.php:237-258, set via lib/Controller/ThemingController.php:74-130 or occ theming:config), so a test instance can be given its own name, colour and logo; there is no dedicated environment banner or marker setting in apps/theming",
 				"m365-branding": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/theme.yaml.gotmpl:13-154 holds the whole theming surface (texts, colors, imagery, styles.portal) as one deploy-time values tree; it has no environment name, label or colour key. grep -rniE 'environment.?(label|banner|marker|name)|staging|production' helmfile/environments/default/theme.yaml.gotmpl functional.yaml.gotmpl helmfile/files/theme: no hits. Separate environments get separate values files (helmfile/bases/environments.yaml.gotmpl), so an operator can only hand-pick a different colour or logo per environment",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 after this column was read; queued for the re-read",
 				"tokens-studio": "outside the product: tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/manifest.json:2-9 is a Figma plugin and the Studio platform manages token sources (https://documentation-v2.tokens.studio/getting-started/what-is-studio.html); neither renders a workspace; no environment marker in any settings"
 			},
@@ -5345,9 +5345,9 @@
 			"area": "governance",
 			"name": "Mark a token as deprecated with a severity, a replacement token and a removal date, so teams that consume the house style see it before it disappears.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "yes",
 			"built": {
@@ -5358,9 +5358,9 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload, import warnings list",
 			"evidence": {
-				"nextcloud-theming": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/css/default.css:48-54 and lib/Themes/DefaultTheme.php:180,230 mark some of Nextcloud's own variables deprecated in code comments ('@deprecated use css color functions'), with no severity or removal date; an admin cannot mark a token (ThemingController.php:74-147 accepts no such field)",
 				"m365-branding": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/theme.yaml.gotmpl:13-154 holds the whole theming surface (texts, colors, imagery, styles.portal) as one deploy-time values tree; colours are plain hex values and portal tokens are plain CSS custom properties (helmfile/files/theme/portal/stylesheet.css:5-97). grep -rniE 'deprecat|\\$deprecated' helmfile/files/theme helmfile/environments/default/theme.yaml.gotmpl: no hits, so no deprecation marking exists",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
 				"tokens-studio": "tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/src/app/components/EditTokenForm.tsx:450-468: a $deprecated block with severity is written on the token; CHANGELOG.md 8ad16a0e3 adds visual indicators and two-way sync of the state to Studio"
 			},
@@ -5377,9 +5377,9 @@
 			"area": "sync",
 			"name": "Have theme changes made in the design tool pushed to the central token platform in real time, and back.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "yes",
 			"built": {
@@ -5390,9 +5390,9 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
-				"nextcloud-theming": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"nextcloud-theming": "nextcloud/server@v35.0.1 grep -rniE 'figma|webhook|design.?token' apps/theming/lib apps/theming/src: no hits; theming values live in app config and are changed only via the admin page or occ theming:config (lib/Command/UpdateConfig.php:23)",
 				"m365-branding": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/theme.yaml.gotmpl:13-154 holds the whole theming surface (texts, colors, imagery, styles.portal) as one deploy-time values tree; theming is applied one way at deploy time (occ commands in opendesk-nextcloud-image@v2.17.2 nextcloud_configure_theming.php:118). grep -rniE 'figma|tokens studio|webhook' helmfile/files/theme helmfile/environments/default/theme.yaml.gotmpl docs/theming.md: no hits, no design tool or token platform link",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
 				"tokens-studio": "CHANGELOG.md 1876bc42c (2.11.9): theme create, update, delete, renames and assignments are pushed to the Studio REST API in real time; provider tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/src/constants/StorageProviderType.ts:11 tokensstudio-oauth"
 			},
@@ -5409,9 +5409,9 @@
 			"area": "authoring",
 			"name": "Convert a whole token source between the older format and the W3C DTCG format in one action, on a separate branch that can be reverted.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "yes",
 			"built": {
@@ -5422,9 +5422,9 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
-				"nextcloud-theming": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:48 VALID_UPLOAD_KEYS = header, logo, logoheader, background, favicon; grep -rniE 'dtcg|\\$value|\\$type' apps/theming/lib apps/theming/src: no token file format exists to convert",
 				"m365-branding": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/theme.yaml.gotmpl:13-154 holds the whole theming surface (texts, colors, imagery, styles.portal) as one deploy-time values tree; grep -rniE 'dtcg|\\$value|\\$type|style-dictionary' helmfile/files/theme helmfile/environments/default/theme.yaml.gotmpl docs/theming.md: no hits, there is no token file format to convert",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
 				"tokens-studio": "tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/src/app/components/ConvertToDTCGModal.tsx:41-42 commits the conversion with a revert branch 'w3c-dtcg-conversion-revert'; DTCG default since 2.11.0 (CHANGELOG.md f9a3f61de), GitHub conversion fix e70f7ec5d in 2.12.0"
 			},
@@ -5441,9 +5441,9 @@
 			"area": "authoring",
 			"name": "Define motion, duration and easing as tokens of the house style.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "yes",
 			"built": {
@@ -5454,9 +5454,9 @@
 			},
 			"reachedOn": "any page styled by a set whose upstream defines motion tokens",
 			"evidence": {
-				"nextcloud-theming": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Themes/DefaultTheme.php:216-217 hard-codes --animation-quick 100ms and --animation-slow 200ms (ReducedMotion.php:59-60 zeroes them); these are Nextcloud's own fixed variables, and no admin setting defines duration or easing (ThemingController.php:74-147)",
 				"m365-branding": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/files/theme/portal/stylesheet.css:5-97 defines colour, font-size, line-height and weight tokens but no duration or easing token; the file only consumes --portal-transition-duration (:295,328,400) which it never defines, and hard-codes .5s cubic-bezier at :120. Nothing reaches the other components",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
 				"tokens-studio": "tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/src/constants/TokenTypes.ts:28-33 duration, cubicBezier and transition types (CHANGELOG.md 09b51eff2)"
 			},
@@ -5473,7 +5473,7 @@
 			"area": "typography",
 			"name": "Give each theme its own base font size, so rem values scale per brand or density.",
 			"thematiq": "no",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
@@ -5486,9 +5486,9 @@
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
-				"nextcloud-theming": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Themes/DefaultTheme.php:204 hard-codes --default-font-size 15px; grep default-font-size apps/theming/lib/Themes: only that line, so no theme sets its own base size and no admin setting exists",
 				"m365-branding": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"opendesk": "not checked: unknown: opendesk@v1.18.2 helmfile/files/theme/portal/stylesheet.css:53 defines --font-size-html: 1rem, but nothing in the openDesk sources reads it (grep font-size-html helmfile: only :53); its reader would be the Nubus portal CSS, not cloned. For Nextcloud, --default-font-size is fixed in code (nextcloud/server@v35.0.1 apps/theming/lib/Themes/DefaultTheme.php:204) and openDesk sets nothing for it. One brand per deployment either way",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
 				"tokens-studio": "tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/src/app/components/RemConfiguration.tsx:23,46: the base font size can be an alias resolved per active theme; CHANGELOG.md 1d5c60fde (2.11.5) and d4140d9b8 (2.10.3) resolve it per mode on export"
 			},
@@ -5505,9 +5505,9 @@
 			"area": "sync",
 			"name": "Read and write tokens in the stable DTCG specification, including colour values stored as objects with an explicit colour space.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "partial",
 			"built": {
@@ -5518,9 +5518,9 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload of a DTCG JSON file",
 			"evidence": {
-				"nextcloud-theming": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:115-130 accepts colours only as hex strings for primary and background; grep -rniE 'dtcg|colorSpace|color_space' apps/theming/lib apps/theming/src: no hits",
 				"m365-branding": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/environments/default/theme.yaml.gotmpl:13-154 holds the whole theming surface (texts, colors, imagery, styles.portal) as one deploy-time values tree; colours are hex strings (theme.yaml.gotmpl:29-47). grep -rniE 'dtcg|colorSpace|\\$value' helmfile/files/theme helmfile/environments/default/theme.yaml.gotmpl: no hits, no DTCG read or write",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
 				"tokens-studio": "tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/src/utils/color/gradientTokenToCss.ts:7-15 reads {colorSpace, components} colour objects only inside gradients; colour tokens are strings; related board post https://feedback.tokens.studio/p/dtcg-format-update-on-color-tokens-and-support-for-color (12 votes, Discussion)"
 			},
@@ -5537,9 +5537,9 @@
 			"area": "authoring",
 			"name": "See one list of every broken token reference in the house style before publishing it.",
 			"thematiq": "yes",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "partial",
 			"built": {
@@ -5550,9 +5550,9 @@
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload, validation errors list",
 			"evidence": {
-				"nextcloud-theming": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"nextcloud-theming": "nextcloud/server@v35.0.1 references between variables exist only as fixed code (apps/theming/lib/Themes/CommonThemeTrait.php:63-65); an admin sets two colours (src/components/AdminSectionThemingAdvanced.vue:72-92), so there are no authored references to check and no such list",
 				"m365-branding": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 helmfile/files/theme/portal/stylesheet.css:16-44 uses var() references between tokens, but nothing validates them; grep -rniE 'lint|validat' helmfile/files/theme and the theming docs (docs/theming.md): no check, a broken var() simply falls back in the browser",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
 				"tokens-studio": "tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/src/app/components/BrokenReferenceIndicator.tsx:13-17 marks a broken reference per token; no listing view found"
 			},
@@ -5569,9 +5569,9 @@
 			"area": "catalogue",
 			"name": "Generate living documentation of the house style's tokens as a core feature.",
 			"thematiq": "partial",
-			"nextcloud-theming": "unknown",
+			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
-			"opendesk": "unknown",
+			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "partial",
 			"built": {
@@ -5582,9 +5582,9 @@
 			},
 			"reachedOn": "thematiq.conduction.nl reference pages",
 			"evidence": {
-				"nextcloud-theming": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"nextcloud-theming": "nextcloud/server@v35.0.1 grep -rniE 'generate.*(doc|reference)|variables list' apps/theming/lib apps/theming/src: no generator; the only docs link is the admin manual (apps/theming/lib/Settings/Admin.php:62-63), not a generated reference of the CSS variables",
 				"m365-branding": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
-				"opendesk": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
+				"opendesk": "opendesk@v1.18.2 docs/theming.md:16-31 is three hand-written paragraphs on the values tree; grep -rniE 'generate|token' docs/theming.md and no generator exists in helmfile or docs, so no generated token documentation",
 				"liferay-dxp": "not checked: row mined on 2026-09-26 from the Tokens Studio changelog or issues after this column was read; queued for the re-read",
 				"tokens-studio": "tokens-studio/figma-plugin@2.12.1 packages/tokens-studio-for-figma/src/app/components/GenerateDocumentationButton.tsx:9-24 draws token documentation into a Figma frame; no published documentation page"
 			},
