@@ -1857,217 +1857,320 @@
 			"id": "sur-all-pages",
 			"area": "surfaces",
 			"name": "Style every Nextcloud page, including apps from other vendors, not only a single portal.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Listener/ThemeInjectionListener.php:100-146 handle() listens to BeforeTemplateRenderedEvent for every renderAs (user/guest/public/error) and BeforeLoginTemplateRenderedEvent, injecting CssInjectionService::inject() for the resolved context on every page render; the per-app exclusion guard (AppThemingService) is opt-out, not opt-in, so an app is themed unless explicitly excluded.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "every Nextcloud page (any app), unless that app id is on the admin's exclusion list (Settings > Administration > Theming > 'Theming per app')",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sur-conduction-apps",
 			"area": "surfaces",
 			"name": "Have every Conduction app pick up the house style through shared tokens.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "@conduction/nextcloud-vue src/composables/useScopedTheme.js (origin/development) calls GET /apps/{nldesign|thematiq}/api/token-sets and POST /api/contrast/evaluate (catalog#tokenSets, contrast#evaluate in appinfo/routes.php); CnAppRoot.vue:649,1568 (nextcloud-vue origin/development) imports and instantiates useScopedTheme() unconditionally in the shared app-root component every Conduction Vue app mounts, so the wiring is default, not opt-in per app.",
+				"owner": "ConductionNL/nextcloud-vue",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: every Conduction app built on CnAppRoot, automatically at app mount (no admin action)",
+			"provider": "nextcloud-vue",
+			"providerHow": "read-from-code",
+			"feature": "app-token-set-selection",
+			"featureConfidence": "high",
+			"note": "thematiq supplies the two read-only APIs (/api/token-sets, /api/contrast/evaluate); the consuming wiring itself lives in nextcloud-vue."
 		},
 		{
 			"id": "sur-login-page",
 			"area": "surfaces",
 			"name": "Style the login page, including before any session exists.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Listener/ThemeInjectionListener.php:113-117 handles BeforeLoginTemplateRenderedEvent by calling cssInjectionService->inject(context: 'login') unconditionally (no per-app guard, since login is never an app page); templates/settings/admin.php:279 '.nl-login__logo' preview element shows the effect is authored for the login screen specifically.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "the Nextcloud login page, before any session exists",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sur-header-nav",
 			"area": "surfaces",
 			"name": "Style the header and app navigation bar in the house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/systems/nldesign/element-overrides.css:148-169,185-221,293-305 target '#header', '#appmenu', '.app-menu', 'header nav' selectors to recolor/refilter the header and app-navigation icons and bars per the active token set; this file is in nldesign's stylesheets list (design-systems.json) and injected for the 'user' render context.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "every logged-in page's header and app-navigation bar",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sur-menu-labels",
 			"area": "surfaces",
 			"name": "Show text labels instead of icons only in the app menu.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/show-menu-labels.css exists and is added/removed as a conditional layer by js/admin.js:284-311 setConditionalLayer(); templates/settings/admin.php:409 '#nldesign-show-menu-labels' checkbox; js/admin.js:2080-2090 change handler POSTs to /apps/thematiq/settings/menulabels (settings#setMenuLabelsSetting, appinfo/routes.php:34).",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Show text labels in app menu' checkbox (templates/settings/admin.php:409)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "menu-labels",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sur-hide-slogan",
 			"area": "surfaces",
 			"name": "Hide the Nextcloud slogan on the login page.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/hide-slogan.css exists, added/removed via the same setConditionalLayer() mechanism as menu-labels; templates/settings/admin.php:397 '#nldesign-hide-slogan' checkbox; js/admin.js:2062-2070 posts to /apps/thematiq/settings/slogan (settings#setSloganSetting, appinfo/routes.php:33).",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Hide slogan' checkbox (templates/settings/admin.php:397)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "hide-slogan",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sur-public-pages",
 			"area": "surfaces",
 			"name": "Style public share and link pages that visitors without an account see.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Listener/ThemeInjectionListener.php:166-171 resolveContext() maps TemplateResponse::RENDER_AS_PUBLIC to context 'public', one of CssInjectionService::VALID_CONTEXTS (CssInjectionService.php:74), and inject() runs for it the same as any other context.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "public share/link pages (RENDER_AS_PUBLIC responses)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sur-email",
 			"area": "surfaces",
 			"name": "Send notification emails in the house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Mail/NLDesignEMailTemplate.php implements Nextcloud's mail template contract and is wired via the system config key 'mail_template_class' (lib/Service/EmailThemingService.php:41-68, OCC_ENABLE_COMMAND); templates/settings/admin.php:457-517 renders the 'Email template' section with an enable checkbox (#nldesign-email-theming-enabled) posting to /settings/email-theming (settings#setEmailTheming, appinfo/routes.php:91); resolves the active token set's primary color/text color/logo for the email.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Email template' section (templates/settings/admin.php:461)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "email-theming",
+			"featureConfidence": "high",
+			"note": "A documented past defect (now fixed) is preserved in the code's own comment: a stale namespace in the occ command silently disabled branded email until OC\\Mail\\Mailer's class_exists() guard was traced (lib/Service/EmailThemingService.php:53-64)."
 		},
 		{
 			"id": "sur-email-footer",
 			"area": "surfaces",
 			"name": "Add a compliance footer (organisation name, address, legal text) to every email.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/EmailThemingService.php:79-100 FOOTER_ORG_NAME_KEY/FOOTER_ACCESSIBILITY_URL_KEY/FOOTER_PRIVACY_URL_KEY; lib/Mail/NLDesignEMailTemplate.php:107-139,303-329 addFooter() appends the configured org name + accessibility/privacy URLs to every sent email when at least one value is set; templates/settings/admin.php:496-513 org name/accessibility URL/privacy URL input fields.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Email template' section, footer fields (templates/settings/admin.php:496)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "email-theming",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sur-component-bridge",
 			"area": "surfaces",
 			"name": "Map community component tokens (Utrecht) onto the workspace's own components.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/systems/nldesign/utrecht-bridge.css (86 '--nldesign-component-*' mappings) and css/systems/lasuite/bridge.css are both listed in design-systems.json's stylesheets arrays for 'nldesign'/'lasuite'/'cunningham' and injected via CssInjectionService's per-design-system layer stack; openspec/specs/component-tokens/spec.md documents the '--utrecht-*' -> '--nldesign-component-*' contract with a fallback-to-defaults requirement.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "every themed page (part of the always-loaded design-system stylesheet stack)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "component-tokens",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sur-nc-variable-mapping",
 			"area": "surfaces",
 			"name": "Map every Nextcloud colour variable to a design token, so no stock colour leaks through.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/systems/nldesign/overrides.css (283 lines) maps Nextcloud CSS custom properties to '--nldesign-*' tokens with '!important', e.g. lines 80-114 for text/error/warning/success colors; listed in design-systems.json's nldesign stylesheets array; openspec/specs/nextcloud-variable-mapping/spec.md requires every NC variable be either mapped or commented out with a reason, and unmapped ones are indeed left as explanatory comments (e.g. overrides.css:90 '--color-error-text: unmapped').",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "every themed page (part of the always-loaded nldesign stylesheet stack)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "nextcloud-variable-mapping",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sur-error-contrast",
 			"area": "surfaces",
 			"name": "Keep error and status messages readable in every house style.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/error-contrast.css exists and is injected unconditionally for every design system (lib/Service/CssInjectionService.php:437-441, right after icon-contrast, same 'loaded for every design system' comment pattern).",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "every themed page",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "medium",
+			"note": "Verified the file exists and is unconditionally injected; did not diff its exact selectors against every design system's error-state components."
 		},
 		{
 			"id": "sur-status-tokens",
 			"area": "surfaces",
 			"name": "Colour success, warning and error states from the house style's status tokens.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/systems/nldesign/overrides.css:88-114 maps '--color-error'/'--color-warning'/'--color-success' (and their -rgb/-element/-border variants) to '--nldesign-color-error/warning/success', which default in css/systems/nldesign/defaults.css:42-50 to token values; always injected as part of the nldesign stylesheet stack.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "every themed page's success/warning/error UI elements",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "component-tokens",
+			"featureConfidence": "high",
+			"note": "lib/Service/StatusTokens.php (a separate PHP class with the same token list) has zero callers anywhere (grep -rn 'StatusTokens::' found nothing); the token editor actually uses a hardcoded duplicate list in lib/Service/TokenRegistry.php:244-262. StatusTokens.php looks like dead/orphaned code, but it is not on the path that makes this capability work."
 		},
 		{
 			"id": "sur-mobile-desktop-clients",
 			"area": "surfaces",
 			"name": "Carry the brand into the desktop and mobile sync clients.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "apps/theming/lib/Capabilities.php:47-60 (Nextcloud core) exposes 'name, productName, url, imprintUrl, privacyUrl, slogan, color, ...' as the theming capability official mobile/desktop clients read. thematiq's own sync (lib/Service/ThemingService.php:189-247) only ever writes 'primary_color', 'background_color', 'logo', 'background' into that same core theming store on a token-set switch -- it never writes name/productName/url/slogan/imprintUrl/privacyUrl.",
+				"owner": "nextcloud/server",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "official desktop/mobile sync clients, via the same core theming capability thematiq partially populates",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "medium",
+			"note": "Colour and logo do carry through automatically as a side effect of thematiq's core-theming sync; product name, slogan and web address do not, so a client shows the house-style colour/logo but the stock Nextcloud name/slogan unless an admin sets those separately in core."
 		},
 		{
 			"id": "sur-office-suite",
 			"area": "surfaces",
 			"name": "Carry the brand into the integrated office editor and chat in the same suite.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -2075,164 +2178,248 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rniF 'collabora|onlyoffice|richdocuments|talk\\b|spreed' across lib/, js/admin.js, docs/ and openspec/specs found zero references. CSS injection (ThemeInjectionListener) only reaches same-origin Nextcloud page renders; Collabora/OnlyOffice run in a separate-origin iframe it cannot reach.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it for the office editor; Nextcloud Talk, being an ordinary NC app, would get the same generic per-page CSS layer as any other app (sur-all-pages) but no Talk-specific work exists",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "css-architecture",
+			"featureConfidence": "medium"
 		},
 		{
 			"id": "sur-custom-domain",
 			"area": "surfaces",
 			"name": "Serve the branded workspace on the organisation's own domain name.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "Serving on a custom domain is a Nextcloud server/hosting property (config.php trusted_domains / overwrite.cli.url), independent of any app; a self-hosted instance running thematiq can be reached on any domain the operator points at it. No thematiq or core-Theming code participates.",
+				"owner": "nextcloud/server",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "machine: the web server / reverse proxy in front of the self-hosted instance",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "low",
+			"note": "This is an inherent property of self-hosting, not a feature thematiq or Nextcloud's Theming app implements; included for completeness since the capability is trivially true for a self-hosted product."
 		},
 		{
 			"id": "sur-footer-links",
 			"area": "surfaces",
 			"name": "Add legal links (privacy statement, imprint, accessibility statement) to the footer and login page.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "apps/theming/lib/ThemingDefaults.php:162-177 builds 'legalLinks' (Imprint/Privacy, from 'imprintUrl'/'privacyUrl') into getFooter(), which core renders both in the app footer and on the login page. thematiq does not add, remove or touch these fields (grep -niF 'legal notice|privacy|imprint|accessibility statement' in lib/, templates/settings/admin.php, js/admin.js found nothing).",
+				"owner": "nextcloud/server",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Legal notice URL' / 'Privacy policy URL' fields), rendered in every page footer and the login page",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "medium",
+			"note": "No accessibility-statement field exists in core or thematiq specifically; only imprint/privacy are supported."
 		},
 		{
 			"id": "sur-web-app-name",
 			"area": "surfaces",
 			"name": "Change the product name, slogan and web address shown to users.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "apps/theming/lib/Capabilities.php:47-51 (name, productName, url, slogan) are standard core Theming admin-settings fields. thematiq's own sync never touches them (lib/Service/ThemingService.php only handles primary_color/background_color/logo/background).",
+				"owner": "nextcloud/server",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, basic settings)",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "theming-sync",
+			"featureConfidence": "medium",
+			"note": "Entirely core Nextcloud; thematiq is silent on name/slogan/url."
 		},
 		{
 			"id": "sco-per-app-exclude",
 			"area": "scoping",
 			"name": "Exclude individual apps from the house style and leave them stock while you test.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/AppThemingService.php:29-34 stores an exclusion list in appconfig 'disabled_apps' (nldesign/settings/theming protected from exclusion); lib/Listener/ThemeInjectionListener.php:175-195 isThemingDisabledForResponse() consults it on every render; templates/settings/admin.php:320-332 'Theming per app' section with #nldesign-app-theming-list checkboxes and #nldesign-app-theming-save, posting to /settings/app-theming (settings#setAppTheming, appinfo/routes.php:47).",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Theming per app' section (templates/settings/admin.php:320)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "per-app-theming",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sco-per-group",
 			"area": "scoping",
 			"name": "Give a group of users a different house style on a shared instance.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/GroupThemingService.php:30-50,306-345 stores an ordered '{group, tokenSet}' mapping in appconfig 'group_token_sets' and resolves it per logged-in user in resolveTokenSetForRequestUnsafe(); templates/settings/admin.php:339-357 'Group theming' section with #nldesign-group-theming-list/#nldesign-group-theming-add/#nldesign-group-theming-save, posting to /settings/group-theming (settings#setGroupTheming, appinfo/routes.php:112).",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Group theming' section (templates/settings/admin.php:339)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "per-group-theming",
+			"featureConfidence": "high",
+			"note": "Per-group theming covers only which token-set CSS stack is injected; core theming values (logo/primary/background) stay instance-global by design (GroupThemingService.php:51-55 docblock)."
 		},
 		{
 			"id": "sco-group-priority",
 			"area": "scoping",
 			"name": "Decide which house style wins for a user who is in several themed groups.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/GroupThemingService.php:33-38 docblock: 'array order IS priority order (index 0 wins first), so there is no separate priority field that could drift out of sync'; matchFirstEntry() (called from resolveTokenSetForRequestUnsafe(), line ~335) returns the first mapping entry whose group contains the user.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Group theming' section (the list order set there is the priority order)",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "per-group-theming",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sco-login-unaffected",
 			"area": "scoping",
 			"name": "Keep the login page on the instance-wide style while groups have their own.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "lib/Service/GroupThemingService.php:316-322: explicit branch '2. No session (login/public/error pages, occ/cron): explicit branch to the instance default ... and it MUST NOT touch IGroupManager' when userSession->getUser() is null.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "the login page and any unauthenticated request, which always render the instance-default token set regardless of any group mapping",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "per-group-theming",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sco-user-choice",
 			"area": "scoping",
 			"name": "Let each user choose a theme (light, dark, high contrast) for themselves.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "Nextcloud core's personal Appearance settings let a user pick light/dark/high-contrast, which core marks on the page as 'body[data-theme-dark]'/'body[data-theme-light-highcontrast]' etc. thematiq's own generated dark stylesheets explicitly target those same attributes: css/tokens/dark/amsterdam.css:2-3,105-106 'body:not([data-theme-light]):not([data-theme-dark])...' for auto and 'body[data-theme-dark], body[data-themes*=dark]' for the explicit choice.",
+				"owner": "nextcloud/server",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Personal > Appearance and accessibility (core Nextcloud), which thematiq's per-house-style dark/high-contrast CSS then honours",
+			"provider": "nextcloud",
+			"providerHow": "read-from-code",
+			"feature": "dark-mode",
+			"featureConfidence": "high",
+			"note": "The picker itself is core Nextcloud, present with or without thematiq; thematiq's value-add is that its dark-mode token variants genuinely respond to that per-user choice rather than only to the OS media query."
 		},
 		{
 			"id": "sco-user-follow-os",
 			"area": "scoping",
 			"name": "Follow the user's operating system preference for dark mode and high contrast.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "css/tokens/dark/amsterdam.css:2 '@media (prefers-color-scheme: dark)' generated for every municipality/organisation token set with a dark variant, gated by an instance toggle (lib/Service/CssInjectionService.php:856-863 hasDarkVariantLayer(), appconfig 'dark_variants'); css/systems/high-contrast/theme.css:112-129 and element-overrides.css:69-70 add '@media (prefers-contrast: more)' and '@media (forced-colors: active)' cooperation for the dedicated high-contrast design system.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "any page, automatically, when the OS/browser reports prefers-color-scheme:dark, prefers-contrast:more or forced-colors:active and no explicit user theme choice overrides it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "dark-mode",
+			"featureConfidence": "high",
+			"note": "OS-driven dark mode works across every generated municipal/organisation token set; OS-driven high-contrast cooperation is scoped to the dedicated 'high-contrast' design system rather than layered onto every house style."
 		},
 		{
 			"id": "sco-per-site",
 			"area": "scoping",
 			"name": "Give each site, portal or department its own theme.",
-			"thematiq": "unknown",
+			"thematiq": "partial",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "Scoping granularity is strictly per-NC-group for logged-in users (lib/Service/GroupThemingService.php); there is no separate 'site' or 'portal' concept, and unauthenticated/public-facing pages always fall back to the single instance default (GroupThemingService.php:316-322), so a department's own public-facing pages (share links, login) cannot carry its own brand -- only what an already-logged-in member of that department's group sees can.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "Settings > Administration > Theming, 'Group theming' section -- but only for authenticated members of the mapped group",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "per-group-theming",
+			"featureConfidence": "medium",
+			"note": "If 'site/portal' means an NC group of logged-in users, this is the same feature as sco-per-group (yes); if it means a distinct public-facing portal/domain, it is not covered (see sco-login-unaffected, sco-per-domain)."
 		},
 		{
 			"id": "sco-per-domain",
 			"area": "scoping",
 			"name": "Show a different brand depending on which domain the user arrives on.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -2240,14 +2427,21 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rniF 'domain|getServerHost|http_host' across lib/ and openspec/specs found zero matches; token-set resolution (GroupThemingService::resolveTokenSetForRequestUnsafe) only ever looks at preview state, NC group membership, or the instance default -- never the request host/domain.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "per-group-theming",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sco-tenant-isolation",
 			"area": "scoping",
 			"name": "Run fully separate brands for separate tenants on one installation.",
-			"thematiq": "unknown",
+			"thematiq": "no",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
@@ -2255,23 +2449,37 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "none",
+				"evidence": "grep -rniF 'tenant' across lib/ and openspec/specs found zero matches. The routes.php comment calling group theming 'multi-tenant huisstijl' is loose language for department-level CSS scoping within one shared instance/user directory, not isolated tenants -- there is one shared appconfig, one shared user/group directory, and only the CSS token stack differs.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
-			}
+			},
+			"reachedOn": "nothing reaches it as real tenant isolation",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "per-group-theming",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "sco-app-token-catalogue",
 			"area": "scoping",
 			"name": "Let another app on the instance list the available house styles for its own picker without admin rights.",
-			"thematiq": "unknown",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "none",
+				"state": "built",
+				"evidence": "appinfo/routes.php:27 'catalog#tokenSets' -> GET /api/token-sets is #[NoAdminRequired] (per the route comment at routes.php:22-27); consumed by @conduction/nextcloud-vue's useScopedTheme.js listTokenSets() (origin/development, calls '/apps/{slug}/api/token-sets'), which CnAppRoot.vue mounts by default for every Conduction app.",
+				"owner": "ConductionNL/thematiq",
 				"origin": "own"
-			}
+			},
+			"reachedOn": "machine: any Conduction app's own token-set picker, via useScopedTheme(), with only a logged-in (non-admin) session required",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "app-token-set-selection",
+			"featureConfidence": "high"
 		},
 		{
 			"id": "acc-contrast-on-upload",
