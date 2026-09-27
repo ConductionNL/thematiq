@@ -96,6 +96,70 @@
 		"decidedOn": "2026-09-27"
 	},
 	{
+		"row": "aut-multi-brand-themes",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with three competitors rated yes (Microsoft 365, Liferay, Tokens Studio). The missing half is one token source that holds several brands; today each brand is a separately uploaded set.",
+		"change": "authoring-multi-brand-token-source",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-dtcg-colour-objects",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a featureRequest demand row (tokens-studio figma-plugin#3236) for reading and writing stable DTCG colour objects. The missing half is writing DTCG and colour spaces other than sRGB.",
+		"change": "authoring-dtcg-export",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-alpha-hex",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a changelog demand row (Liferay style books) and Liferay rated yes. The missing half is the editor colour fields; the theming sync fields stay 6 digit because core theming refuses 8 digits, so translucent colours are blended before sync.",
+		"change": "authoring-token-value-types",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-light-dark-values",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a changelog demand row (Liferay LPD-96942). The missing half is a dark value per colour token in the editor; dark values are only derived today.",
+		"change": "authoring-token-value-types",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-motion-tokens",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a changelog demand row (Tokens Studio 2.12.1) and Tokens Studio rated yes. The missing half is easing tokens and typed duration tokens in the token editor; the editor lists two duration tokens as untyped text (lib/Service/TokenRegistry.php:232-233), so the row evidence overstates the gap.",
+		"change": "authoring-token-value-types",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-add-token",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a roadmap demand row (Liferay LPD-80283) for adding a token from the editor, which is exactly the missing half.",
+		"change": "authoring-token-lifecycle",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "gov-token-deprecation",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a changelog demand row (Tokens Studio 2.12.1) and Tokens Studio rated yes. The missing half is authoring a deprecation with a replacement and a removal date; thematiq only reads one on import.",
+		"change": "authoring-token-lifecycle",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-component-preview",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a featureRequest demand row (Liferay LPD-88654). The missing half is a builder's own components; the open component-playground change renders a fixed inventory only.",
+		"change": "authoring-own-markup-preview",
+		"decidedOn": "2026-09-27"
+	},
+	{
 		"row": "gov-lock-per-space",
 		"matrix": "thematiq",
 		"decision": "build",

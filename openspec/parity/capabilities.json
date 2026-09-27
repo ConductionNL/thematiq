@@ -2005,10 +2005,11 @@
 			"liferay-dxp": "yes",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "lib/Service/GroupThemingService.php maps Nextcloud groups to token sets, stored as an ordered JSON array under appconfig key group_token_sets (comment at top of file); lib/Controller/SettingsController.php:907 getGroupTheming(), :934 setGroupTheming(); UI at templates/settings/admin.php:339 (#nldesign-group-theming) via js/admin.js:3692/3891. Several house styles CAN coexist (each an independent uploaded/shipped token set) and be switched per group, but there is no single token SOURCE that holds multiple brands together (Style-Dictionary style); each brand is a separate uploaded set.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/authoring-multi-brand-token-source (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Per-group theming' section (#nldesign-group-theming)",
 			"evidence": {
@@ -5476,10 +5477,11 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "thematiq reads a DTCG $deprecated notice on import and shows it to the admin (lib/Controller/CustomTokenSetController.php:288-291, js/admin.js:4186-4189, lib/Service/TokenSetConverterService.php:177-181), but cannot author a deprecation with a replacement and a removal date",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/authoring-token-lifecycle (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload, import warnings list",
 			"evidence": {
@@ -5572,10 +5574,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "built",
-				"evidence": "shipped sets carry upstream motion values where the design system defines them (css/tokens/rotterdam.css:741 --utrecht-backdrop-fade-in-animation-duration), but the token editor exposes no duration or easing tokens and reduced motion is handled separately (acc-reduced-motion)",
+				"state": "specified",
+				"evidence": "shipped sets carry upstream motion values where the design system defines them (css/tokens/rotterdam.css:741 --utrecht-backdrop-fade-in-animation-duration), the token editor lists two duration tokens as untyped text fields (lib/Service/TokenRegistry.php:232-233, --animation-quick and --animation-slow) and no easing token; reduced motion is handled separately (acc-reduced-motion)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/authoring-token-value-types (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "any page styled by a set whose upstream defines motion tokens",
 			"evidence": {
@@ -5636,10 +5639,11 @@
 			"liferay-dxp": "no",
 			"tokens-studio": "partial",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "lib/Service/DesignTokensMapper.php:605-630 serializeColorObject() reads DTCG v2025.10 colour objects (hex or components) in the sRGB family and reports other colour spaces as unsupported-color-space (48-56); writing DTCG is not supported (aut-dtcg-bulk-convert)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/authoring-dtcg-export (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload of a DTCG JSON file",
 			"evidence": {
@@ -6093,10 +6097,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "each shipped set has a separate dark stylesheet (css/tokens/dark/amsterdam.css) derived by lib/Service/DarkPaletteService.php:289 deriveDarkDeclarations(); the token editor overrides hold one value per token with no dark field (grep -n dark lib/Service/CustomOverridesService.php lib/Controller/OverridesController.php finds nothing)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/authoring-token-value-types (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor",
 			"evidence": {
@@ -6125,10 +6130,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "the token editor only edits tokens that already exist; a new token is added without code by uploading a token set that declares it (aut-upload-css, lib/Controller/CustomTokenSetController.php), not from the editor",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/authoring-token-lifecycle (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload",
 			"evidence": {
@@ -6157,10 +6163,11 @@
 			"liferay-dxp": "yes",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "the settings colour fields accept only 3 or 6 digit hex (lib/Service/ThemingService.php:91-93 isValidHexColor, called from lib/Controller/SettingsController.php:410; js/admin.js:3421 editor check); an uploaded token set is validated on token names, not values (lib/Service/CustomTokenSetValidator.php:64,113), so 8 digit hex in an uploaded set passes through",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/authoring-token-value-types (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload",
 			"evidence": {
@@ -6189,10 +6196,11 @@
 			"liferay-dxp": "no",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "the component playground in the token editor (js/playground.js header, templates/settings/admin.php:32-42, lib/Service/PlaygroundStateService.php) renders the inventory in js/playground/components.json with the live tokens before saving; a builder's own new components are not in that inventory",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/authoring-own-markup-preview (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming, component playground",
 			"evidence": {
