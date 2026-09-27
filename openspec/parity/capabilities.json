@@ -889,10 +889,11 @@
 			"liferay-dxp": "yes",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "grep -rniF 'marketplace|gallery' across lib/, js/, docs/GOVERNMENT-FEATURES.md, openspec/specs found nothing; the only additive mechanism is admin-side upload of the admin's own file (customTokenSet#upload, /settings/tokensets/upload), not browsing/downloading themes from a vendor or community-run catalogue",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/catalogue-theme-gallery (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -1328,10 +1329,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "grep -rniF 'schedule' across lib/, js/admin.js, templates/ found only js/admin.js:2761 schedulePreviewRepaint() (an animation-frame debounce, unrelated) and UpstreamFreshnessJob's own cron wiring comment; no date-based or calendar theme-change feature exists anywhere",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/apply-scheduled-theme-switch (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -1357,10 +1359,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "partial",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "lib/Controller/AuditController.php only exposes list() and export() (both #[AuthorizedAdminSetting]); lib/Service/ThemingAuditService.php has log()/getRecent()/exportAll() but no restore/revert method; grep -rniF 'rollback' in lib/ only turns up comments about the app-id migration rollback, not a theme-version rollback feature",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/apply-restore-earlier-version (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it (the audit log at Settings > Administration > Theming shows history but offers no restore action)",
 			"evidence": {
@@ -1975,7 +1978,8 @@
 			"built": {
 				"state": "none",
 				"evidence": "grep -F 'calc(' and grep -niE 'expression|math' across lib/Service/DesignTokensMapper.php and lib/Service/TokenSetConverterService.php found nothing except the unrelated CSS 'expression(' security check; no token-to-token arithmetic (e.g. spacing * 2) exists anywhere in the mapper, converter, or TokenRegistry",
-				"origin": "competitor"
+				"origin": "competitor",
+				"owner": "ConductionNL/thematiq"
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -2033,7 +2037,8 @@
 			"built": {
 				"state": "none",
 				"evidence": "grep -rniF 'figma' across the whole repo (lib, js, css, scripts, openspec) found nothing outside this matrix's own input/rows files",
-				"origin": "competitor"
+				"origin": "competitor",
+				"owner": "ConductionNL/thematiq"
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -2059,9 +2064,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "grep -rniF for a git-backed token source (pull request workflow, git clone/push in lib/Service or lib/Command) found nothing; token sets are uploaded as files (CustomTokenSetController.php:203) or shipped as static CSS in css/tokens/, never sourced from a Git remote",
-				"origin": "competitor"
+				"origin": "competitor",
+				"owner": "ConductionNL/thematiq",
+				"note": "Specified in openspec/changes/governance-theme-as-code (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -2089,7 +2096,8 @@
 			"built": {
 				"state": "none",
 				"evidence": "grep -rniF 'ios|android' across lib/ and js/ found nothing; CustomTokenSetController.php:561 export() and TokenSetConverterService only ever produce CSS (the app's one internal format), no iOS/Android/other-platform token exporters exist",
-				"origin": "competitor"
+				"origin": "competitor",
+				"owner": "ConductionNL/thematiq"
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -2115,9 +2123,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "No simple 3-field (primary colour + background + logo) brand form exists; the only path to a house style is either uploading a full CSS/DTCG token set (CustomTokenSetController.php:203, requiring a real token document) or hand-editing individual tokens one at a time in the tabbed token editor (js/admin.js:2415 renderTokenEditor); there is a primary-colour-drives-components toggle (admin.php:427) but it locks EXISTING component tokens to the current primary, it is not a brand-creation form",
-				"origin": "competitor"
+				"origin": "competitor",
+				"owner": "ConductionNL/thematiq",
+				"note": "Specified in openspec/changes/authoring-simple-brand-form (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it as a single simple form; closest is the full token editor, which is not colour-only",
 			"evidence": {
@@ -2376,9 +2386,11 @@
 			"liferay-dxp": "no",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "grep -rniF 'dyslex' across lib/, js/, css/, scripts/, openspec/ found nothing (the only hits are this matrix's own row files under _lane/); no per-user font-switch preference exists anywhere in the app, which is instance/admin-scoped theming only, not a per-user accessibility preference",
-				"origin": "competitor"
+				"origin": "competitor",
+				"owner": "nextcloud/server",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner filled as nextcloud/server: the per-user dyslexia font is the platform's own theme (nextcloud/server DyslexiaFont), and per-user settings are a recorded non-goal of thematiq (openspec/changes/archive/2026-03-21-admin-settings/design.md:8). Not checked live: whether the house font override in css/systems/nldesign/overrides.css:153 lets the user's choice through."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -3172,10 +3184,11 @@
 			"liferay-dxp": "no",
 			"tokens-studio": "no",
 			"built": {
-				"state": "built",
+				"state": "decided-no",
 				"evidence": "apps/theming/lib/Capabilities.php:47-60 (Nextcloud core) exposes 'name, productName, url, imprintUrl, privacyUrl, slogan, color, ...' as the theming capability official mobile/desktop clients read. thematiq's own sync (lib/Service/ThemingService.php:189-247) only ever writes 'primary_color', 'background_color', 'logo', 'background' into that same core theming store on a token-set switch -- it never writes name/productName/url/slogan/imprintUrl/privacyUrl.",
 				"owner": "nextcloud/server",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owned by nextcloud/server in the matrix: the official clients read core theming capabilities; platform-provided, outside the fleet."
 			},
 			"reachedOn": "official desktop/mobile sync clients, via the same core theming capability thematiq partially populates",
 			"evidence": {
@@ -3498,10 +3511,11 @@
 			"liferay-dxp": "yes",
 			"tokens-studio": "no",
 			"built": {
-				"state": "built",
+				"state": "decided-no",
 				"evidence": "Scoping granularity is strictly per-NC-group for logged-in users (lib/Service/GroupThemingService.php); there is no separate 'site' or 'portal' concept, and unauthenticated/public-facing pages always fall back to the single instance default (GroupThemingService.php:316-322), so a department's own public-facing pages (share links, login) cannot carry its own brand -- only what an already-logged-in member of that department's group sees can.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Partial, built, two competitors yes, so a gap; the missing half (a department's public pages, share links and login carrying its own brand) is excluded by openspec/specs/per-group-theming/spec.md:56, which requires anonymous, public-share, login and error pages to resolve to the instance default. The group half stays built."
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Group theming' section -- but only for authenticated members of the mapped group",
 			"evidence": {
@@ -3528,10 +3542,11 @@
 			"liferay-dxp": "yes",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "grep -rniF 'domain|getServerHost|http_host' across lib/ and openspec/specs found zero matches; token-set resolution (GroupThemingService::resolveTokenSetForRequestUnsafe) only ever looks at preview state, NC group membership, or the instance default -- never the request host/domain.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Recorded non-goal: openspec/changes/archive/2026-07-23-per-group-theming/design.md:29 names per-domain mapping as a non-goal (the domain theming app's territory)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -4029,10 +4044,11 @@
 			"liferay-dxp": "no",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "lib/Controller/CustomTokenSetController.php:446-450 docblock states the 'warnings' key is always the WCAG contrast warnings, non-blocking; grep -n -i contrast across CustomTokenSetValidator.php and CustomTokenSetController.php found no rejection/blocking path tied to a contrast failure; persist() always stores the set once validation of the CSS shape passes, regardless of the contrast verdict",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Recorded decision: openspec/specs/custom-token-sets/spec.md:227-253 requires contrast failures to be non-blocking warnings, and app-token-set-selection \"Selection Contrast Is Non-Blocking\" extends that to selection. Blocking publication contradicts both."
 			},
 			"reachedOn": "nothing reaches it; no such block exists",
 			"evidence": {
@@ -4089,10 +4105,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "openspec/specs/compliance-evidence/spec.md:173-176 states explicitly the compliance report 'is supporting evidence for a toegankelijkheidsverklaring, an expert WCAG-EM evaluation remains required' and 'No output of this feature ... may claim WCAG compliance of the instance'; the email-theming footer only stores an admin-supplied external URL (lib/Service/EmailThemingService.php:86-90,178, templates/settings/admin.php:502-505 accessibilityUrl input) and links to it, it does not generate or host a statement",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Recorded decision: openspec/specs/compliance-evidence/spec.md:171-176 says the compliance report is supporting evidence for a toegankelijkheidsverklaring, an expert WCAG-EM evaluation remains required, and no output may claim WCAG compliance of the instance. Generating the statement would make that claim."
 			},
 			"reachedOn": "nothing generates or hosts a statement; only a link field to an externally-authored one",
 			"evidence": {
@@ -4354,10 +4371,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "grep -rli 'helm|values.yaml|config-as-code|infrastructure as code' across the repo (docs, openspec, appinfo) found only two openspec files, and reading them showed the 'helm' hit was a substring match inside the unrelated word 'overwhelm' (openspec/specs/lasuite-parity/spec.md:172); no Helm chart, values file, Kubernetes manifest or IaC integration exists anywhere in this repo",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/governance-theme-as-code (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it; no such capability exists",
 			"evidence": {
@@ -4975,10 +4993,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "lib/Service/ConfigBundleService.php:900 import() does $this->config->setAppValue(Application::APP_ID, 'token_set', $config['tokenSet']), so occ nldesign:config:import (lib/Command/ConfigImport.php) does set the active token set as one field of a full bundle import; there is no single-purpose 'occ nldesign:set-theme <name>' command",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/integration-occ-set-theme (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "occ nldesign:config:import <bundle-file>, where the bundle's tokenSet field becomes the active theme",
 			"evidence": {
@@ -5064,10 +5083,11 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "grep -rniE 'docBaseUrl|doc_base|helpUrl' in lib/, src/, templates/, appinfo/ finds nothing; thematiq does not touch the help or documentation links",
-				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"owner": "nextcloud/server",
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/server: the help and documentation links are built by core ThemingDefaults (docBaseUrl), and the demand row is a request against nextcloud/server (issue 58909)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5096,10 +5116,11 @@
 			"liferay-dxp": "yes",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "lib/Service/EmailThemingService.php:83-97 stores only an organisation name, an accessibility URL and a privacy URL for the email footer; no support or helpdesk link exists for the web footer or login page (grep -niE 'support|helpdesk|servicedesk' in templates/settings/admin.php and lib/Controller finds nothing)",
-				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"owner": "nextcloud/server",
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/server: the legal notice and privacy links are core ThemingDefaults footer links, a third link needs core, and the demand row is a request against nextcloud/server (issue 39047). Thematiq's own email footer could carry one later."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5128,10 +5149,11 @@
 			"liferay-dxp": "yes",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "thematiq edits Nextcloud's single stored name and slogan (syn-nc-theming-edit) and can hide the slogan (lib/Controller/SettingsController.php:300-310); no per-language value exists",
-				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"owner": "nextcloud/server",
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/server: the instance name and slogan are single core ThemingDefaults values, and the demand row is a request against nextcloud/server (issue 37550). Thematiq could only change them by rewriting the rendered core page from a script, which breaks with every core release."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5160,10 +5182,11 @@
 			"liferay-dxp": "yes",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "lib/Service/LoginTokens.php:39 getTokens() returns colour and typography tokens for the login page only; no login text or label is configurable",
-				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"owner": "nextcloud/server",
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/server: the login form and its labels are core, and the demand row is a request against nextcloud/server (issue 38831). Thematiq could only change the labels by rewriting the core login view from a script, which breaks with every core release."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5192,10 +5215,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "no setting in lib/ or templates/settings/admin.php forces one appearance theme; thematiq reads the user's own theme choice (lib/Service/StockTokensService.php:335-336 notes user theming stays on by default) and renders dark variants for it (lib/Service/DarkPaletteService.php:806-833)",
-				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"owner": "nextcloud/server",
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/server: the appearance themes and enforce_theme are the platform's own theming (config.php enforce_theme), and the demand row is a request against nextcloud/server (issue 38966)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5224,10 +5248,11 @@
 			"liferay-dxp": "no",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "css/component-scopes.css:719-721 styles toasts in the house style, but no toast timeout setting exists in lib/ or src/; the timing is the platform's",
-				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"owner": "nextcloud/server",
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/server: the per-user toast timeout is the platform's own theming setting (nextcloud/server v35 UserSectionToastTimeout), and per-user settings are a recorded non-goal of thematiq (openspec/changes/archive/2026-03-21-admin-settings/design.md:8)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5320,10 +5345,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "built",
+				"state": "decided-no",
 				"evidence": "lib/Service/DarkPaletteService.php:806-833 renders the dark palette for body[data-theme-dark] and prefers-color-scheme, so one user choice applies on every Nextcloud app page; it does not reach a separate office editor or chat server (see sur-office-suite)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Partial, built, with a roadmap demand row (openDesk baseline requirements); the Nextcloud half is built. The missing half is a separate office editor and chat server, which thematiq cannot reach: its CSS injection only reaches same-origin Nextcloud pages (Collabora runs in a separate-origin frame), so that half belongs to those products."
 			},
 			"reachedOn": "any Nextcloud page after the user picks dark or high contrast once in personal settings",
 			"evidence": {
@@ -5384,10 +5410,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "the only per-environment feature is promoting the configuration bundle between OTAP stages (lib/Service/ConfigBundleService.php:31); the trial banner (lib/Service/ThemePreviewBannerService.php) marks a session trial, not an environment; no environment label or colour exists",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/governance-environment-marker (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5416,10 +5443,11 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "grep -rliE 'pdf|docx|documenttemplate' lib/ src/ finds no document generation; thematiq styles the web interface and emails only (sur-email), document templates belong to a document app",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/surfaces-document-house-style (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5672,10 +5700,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "partial",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "docs/reference/contrast-report.md is generated per shipped set by ShippedTokenSetAuditService::renderReport() and docs/reference/tokens.md documents the token architecture on thematiq.conduction.nl, but no generated per-set token reference is published",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/catalogue-token-reference-pages (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "thematiq.conduction.nl reference pages",
 			"evidence": {
@@ -5704,10 +5733,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "thematiq styles the workspace chrome only; the office editor is out of reach (sur-office-suite is no) and there is no approved brand image or asset set offered to users (ast-brand-images is no); grep -rniE 'brandkit|brand kit' lib js templates finds nothing",
-				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"owner": "external",
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to external: the presentation editor is Collabora or OnlyOffice in a separate-origin frame that thematiq cannot reach (see sur-office-suite evidence). A brand kit inside it is the editor's feature. The one reachable piece, publishing the organisation fonts as a remote font configuration, is noted for a later pass."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5736,10 +5766,11 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "the login page is instance wide by design: lib/Service/GroupThemingService.php applies group themes only after login and sco-login-unaffected keeps the login page on the instance style; there is no per connected application login branding",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Recorded decision: openspec/specs/per-group-theming/spec.md:56 requires login pages to resolve to the instance default set, so a login page per connected application is excluded."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5768,10 +5799,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "nobody but an administrator can change the house style anywhere (gov-admin-only; SettingsController setters are admin routes), so every space is locked; the reverse, letting chosen spaces keep their own freedom, is limited to excluding whole apps (lib/Service/AppThemingService.php disabled_apps list)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/scoping-delegated-group-house-style (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming",
 			"evidence": {
@@ -5800,10 +5832,11 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "grep -rniF assistant lib templates js finds no hook into the Nextcloud Assistant; thematiq restyles its colours through the shared CSS variables like any app (sur-all-pages) but shows no organisation mark inside it",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/surfaces-assistant-approved-mark (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5864,10 +5897,11 @@
 			"liferay-dxp": "no",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "thematiq changes colours, fonts and images but not the reaction emoji of Nextcloud Talk; grep -rniE 'reaction' lib css js templates finds nothing",
-				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"owner": "nextcloud/spreed",
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/spreed: meeting reactions are the emoji set Nextcloud Talk renders; custom reaction images need Talk to support them, and thematiq only changes colours, fonts and images through CSS. Platform capability outside the fleet."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5896,10 +5930,11 @@
 			"liferay-dxp": "no",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "decided-no",
 				"evidence": "outside the product: thematiq styles the pages Nextcloud itself serves (sur-all-pages, including its error pages); a block page served by a network gateway is not a Nextcloud page",
-				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"owner": "external",
+				"origin": "competitor",
+				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to external: the row's own evidence says a block page served by a network gateway is not a Nextcloud page, so it is outside the product."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5928,10 +5963,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "thematiq applies one house style instance wide (or per group, sco-per-group) and can only exclude an app (lib/Service/AppThemingService.php disabled_apps); no app can carry its own brand name, logo and colour",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/surfaces-per-app-brand (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
@@ -5992,10 +6028,11 @@
 			"liferay-dxp": "no",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "lib/Service/ConfigBundleService.php (header comment) exports every instance-wide thematiq value as one bundle for OTAP promotion and applies it on import, but font binaries are not embedded (metadata only; the admin re-uploads fonts on the target), so the package is not complete; overlaps gov-otap-bundle, kept for the self-applying package angle",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/governance-theme-as-code (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming, configuration bundle export and import",
 			"evidence": {
