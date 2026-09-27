@@ -96,6 +96,22 @@
 		"decidedOn": "2026-09-27"
 	},
 	{
+		"row": "gov-lock-per-space",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a roadmap demand row (Microsoft 365 roadmap 526794) and Microsoft 365 rated yes. Every space is locked today; the missing half is letting chosen groups keep their own choice while others stay locked.",
+		"change": "scoping-delegated-group-house-style",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-per-app-brand",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Roadmap demand (Microsoft 365 roadmap 568364) plus one competitor yes (Microsoft 365). Re-read app-token-set-selection: it lets a leaf app's own picker choose a set for its users, not an admin give an app its own colour and logos, so the row stays none.",
+		"change": "surfaces-per-app-brand",
+		"decidedOn": "2026-09-27"
+	},
+	{
 		"row": "acc-accessibility-statement",
 		"matrix": "thematiq",
 		"decision": "decided-no",

@@ -5799,10 +5799,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "built",
+				"state": "specified",
 				"evidence": "nobody but an administrator can change the house style anywhere (gov-admin-only; SettingsController setters are admin routes), so every space is locked; the reverse, letting chosen spaces keep their own freedom, is limited to excluding whole apps (lib/Service/AppThemingService.php disabled_apps list)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/scoping-delegated-group-house-style (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "Settings > Administration > Theming",
 			"evidence": {
@@ -5962,10 +5963,11 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
+				"state": "specified",
 				"evidence": "thematiq applies one house style instance wide (or per group, sco-per-group) and can only exclude an app (lib/Service/AppThemingService.php disabled_apps); no app can carry its own brand name, logo and colour",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"note": "Specified in openspec/changes/surfaces-per-app-brand (OpenSpec pass 2026-09-27)."
 			},
 			"reachedOn": "nothing reaches it",
 			"evidence": {
