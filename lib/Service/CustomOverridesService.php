@@ -159,6 +159,50 @@ class CustomOverridesService {
 	}//end write()
 
 	/**
+	 * List the tokens in a map that write() would not persist, with the reason.
+	 *
+	 * A token is refused when its name is not in the TokenRegistry, when its value
+	 * is not a string, or when its value carries a character the writer strips to
+	 * keep the file a single :root block. Callers that answer an admin use this to
+	 * refuse the whole save instead of reporting tokens that never reached the file.
+	 *
+	 * @param array<array-key, mixed> $tokens Input token map.
+	 *
+	 * @return array<string, string> Map of refused token name => reason; empty when all are accepted.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.1
+	 */
+	public function findRejected(array $tokens): array {
+		$rejected = [];
+		foreach ($tokens as $name => $value) {
+			$name = (string)$name;
+			if (TokenRegistry::isEditable(tokenName: $name) === false) {
+				$rejected[$name] = 'not an editable token';
+				continue;
+			}
+
+			if (is_string($value) === false || $this->isUnsafeValue(value: $value) === true) {
+				$rejected[$name] = 'not an allowed value';
+			}
+		}
+
+		return $rejected;
+	}//end findRejected()
+
+	/**
+	 * Tell whether a value carries a character that would break out of the :root block.
+	 *
+	 * @param string $value The token value.
+	 *
+	 * @return bool True when the writer would drop the value.
+	 */
+	private function isUnsafeValue(string $value): bool {
+		return preg_match('/[{};]|\/\*|\*\//', $value) === 1;
+	}//end isUnsafeValue()
+
+	/**
 	 * Filter a token map to only those present in the registry.
 	 *
 	 * @param array<string, string> $tokens Input token map.
@@ -250,7 +294,7 @@ class CustomOverridesService {
 		$lines = [];
 		foreach ($tokens as $name => $value) {
 			// Reject any value containing CSS injection characters.
-			if (preg_match('/[{};]|\/\*|\*\//', $value) === 1) {
+			if ($this->isUnsafeValue(value: $value) === true) {
 				continue;
 			}
 
