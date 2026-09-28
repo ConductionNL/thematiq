@@ -117,6 +117,93 @@ class ContrastServiceTest extends TestCase {
 	}//end testParseColorSupportsCommonLiterals()
 
 	/**
+	 * Thematiq#696: faint text is measured as it renders. `rgba(0, 0, 0, 0.2)`
+	 * on white blends to #cccccc and must fail AA, although opaque black passes.
+	 */
+	public function testFaintTextFailsAfterBlend(): void {
+		$warnings = $this->contrast->check(
+			declarations: [
+				'--nldesign-color-primary-text' => 'rgba(0, 0, 0, 0.2)',
+				'--nldesign-color-primary' => '#ffffff',
+			]
+		);
+
+		$this->assertCount(1, $warnings);
+		$this->assertArrayNotHasKey('unevaluated', $warnings[0]);
+		$this->assertSame(
+			round($this->contrast->ratio(first: [204, 204, 204], second: [255, 255, 255]), 2),
+			$warnings[0]['ratio']
+		);
+	}//end testFaintTextFailsAfterBlend()
+
+	/**
+	 * Thematiq#696: an 8-digit hex gets a ratio and a verdict, not `unevaluated`.
+	 */
+	public function testEightDigitHexIsEvaluated(): void {
+		$failing = $this->contrast->check(
+			declarations: [
+				'--nldesign-color-primary-text' => '#00000033',
+				'--nldesign-color-primary' => '#ffffff',
+			]
+		);
+		$this->assertCount(1, $failing);
+		$this->assertArrayNotHasKey('unevaluated', $failing[0]);
+		$this->assertNotNull($failing[0]['ratio']);
+
+		$passing = $this->contrast->check(
+			declarations: [
+				'--nldesign-color-primary-text' => '#000000cc',
+				'--nldesign-color-primary' => '#ffffff',
+			]
+		);
+		$this->assertSame([], $passing);
+	}//end testEightDigitHexIsEvaluated()
+
+	/**
+	 * Thematiq#696: a translucent background is blended over the page
+	 * background first. A 10% blue behind white text is nearly white.
+	 */
+	public function testTranslucentBackgroundIsBlendedOverThePage(): void {
+		$warnings = $this->contrast->check(
+			declarations: [
+				'--nldesign-color-primary-text' => '#ffffff',
+				'--nldesign-color-primary' => 'rgba(21, 66, 115, 0.1)',
+				'--nldesign-color-background' => '#ffffff',
+			]
+		);
+
+		$pairs = array_column($warnings, 'pair');
+		$this->assertContains('--nldesign-color-primary-text vs --nldesign-color-primary', $pairs);
+	}//end testTranslucentBackgroundIsBlendedOverThePage()
+
+	/**
+	 * Thematiq#696: evaluate() blends a translucent candidate over the background too.
+	 */
+	public function testEvaluateBlendsATranslucentCandidate(): void {
+		$results = $this->contrast->evaluate(
+			candidates: [['name' => 'faint', 'value' => 'rgba(0, 0, 0, 0.2)', 'role' => 'text']],
+			background: '#ffffff'
+		);
+
+		$this->assertFalse($results[0]['pass']);
+		$this->assertLessThan(2.0, $results[0]['ratio']);
+	}//end testEvaluateBlendsATranslucentCandidate()
+
+	/**
+	 * Thematiq#696: parseColorWithAlpha reads the alpha of every hex and rgba() form.
+	 */
+	public function testParseColorWithAlphaReadsEveryForm(): void {
+		$this->assertSame([0, 0, 0, 1.0], $this->contrast->parseColorWithAlpha(value: '#000'));
+		$this->assertSame([255, 255, 255, 1.0], $this->contrast->parseColorWithAlpha(value: '#ffffff'));
+		$this->assertSame([0, 0, 0, 0.8], $this->contrast->parseColorWithAlpha(value: '#000000cc'));
+		$this->assertSame([255, 0, 0, 0.6], $this->contrast->parseColorWithAlpha(value: '#f009'));
+		$this->assertSame([1, 2, 3, 0.5], $this->contrast->parseColorWithAlpha(value: 'rgba(1, 2, 3, 0.5)'));
+		$this->assertSame([1, 2, 3, 0.25], $this->contrast->parseColorWithAlpha(value: 'rgba(1, 2, 3, 25%)'));
+		$this->assertSame([0, 0, 0], $this->contrast->parseColor(value: '#00000080'));
+		$this->assertNull($this->contrast->parseColorWithAlpha(value: 'var(--x)'));
+	}//end testParseColorWithAlphaReadsEveryForm()
+
+	/**
 	 * parseColor returns null for unparseable values.
 	 */
 	public function testParseColorReturnsNullForUnparseable(): void {
