@@ -1481,7 +1481,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Service/TokenSetConverterService.php:257 detectInput() classifies input kind B (W3C DTCG JSON, $value/$type, {a.b.c} aliases) and routes to DesignTokensMapper; same upload endpoint/UI as CSS (CustomTokenSetController.php:203; admin.php:176 accepts .json/.tokens.json)",
+				"evidence": "lib/Service/TokenSetConverterService.php:257 detectInput() classifies input kind B (W3C DTCG JSON, $value/$type, {a.b.c} aliases) and routes to DesignTokensMapper; same upload endpoint/UI as CSS (CustomTokenSetController.php:203; admin.php:176 accepts .json/.tokens.json) Corrections round 8 (2026-09-28), thematiq#695: a DTCG colour object in srgb-linear is scaled to hex without the sRGB transfer function and its alpha is dropped, both without a report, lib/Service/DesignTokensMapper.php:57 and :644-652 at fd992ea.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own"
 			},
@@ -1496,7 +1496,8 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"note": "Corrections round 8 (2026-09-28): the import writes the wrong colour for srgb-linear colour objects and drops alpha, thematiq#695; rating kept because the upload and mapping still work for srgb hex and component colours and every other token type, the defect is on those two colour shapes only."
 		},
 		{
 			"id": "aut-upload-validate",
@@ -1764,7 +1765,7 @@
 			"id": "aut-overrides-persist",
 			"area": "authoring",
 			"name": "Save your token edits so they survive a restart and apply to everyone.",
-			"thematiq": "yes",
+			"thematiq": "partial",
 			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "yes",
@@ -1772,7 +1773,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "built",
-				"evidence": "js/admin.js:2823 saveOverrides() POSTs to /apps/thematiq/settings/overrides; lib/Controller/OverridesController.php:138 setOverrides(); lib/Service/CustomOverridesService.php writes a single instance-wide custom-overrides.css file (validated against TokenRegistry) that is re-read on every request, not per-user session state, so it survives a restart and applies to every user",
+				"evidence": "js/admin.js:2823 saveOverrides() POSTs to /apps/thematiq/settings/overrides; lib/Controller/OverridesController.php:138 setOverrides(); lib/Service/CustomOverridesService.php writes a single instance-wide custom-overrides.css file (validated against TokenRegistry) that is re-read on every request, not per-user session state, so it survives a restart and applies to every user Corrections round 8 (2026-09-28), thematiq#698: the overrides are written as one :root block with !important, while core declares the chosen theme colours on body[data-theme-dark], so a user who picked the dark theme never inherits an edited colour, lib/Service/CustomOverridesService.php:232-237 and :249-278 at fd992ea.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own"
 			},
@@ -1787,7 +1788,8 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"note": "Own rating yes to partial (corrections round 8, 2026-09-28): the edits persist, but colour edits do not apply to users who chose the dark theme in their personal settings, so they do not reach everyone, thematiq#698."
 		},
 		{
 			"id": "aut-overrides-import-export",
@@ -1918,7 +1920,7 @@
 			"tokens-studio": "partial",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Service/DarkPaletteService.php derives a dark palette algorithmically (preserve hue, invert lightness) and verifies WCAG AA via ContrastService; lib/Service/CustomTokenSetService.php:89 generates css/tokens/dark/custom-{slug}.css automatically AT UPLOAD TIME for a custom set (not only via the occ command); the instance-wide dark-variants toggle is wired at admin.php:445 (#nldesign-dark-variants) to GET/POST /settings/dark-variants (settings#getDarkVariants/setDarkVariants)",
+				"evidence": "lib/Service/DarkPaletteService.php derives a dark palette algorithmically (preserve hue, invert lightness) and verifies WCAG AA via ContrastService; lib/Service/CustomTokenSetService.php:89 generates css/tokens/dark/custom-{slug}.css automatically AT UPLOAD TIME for a custom set (not only via the occ command); the instance-wide dark-variants toggle is wired at admin.php:445 (#nldesign-dark-variants) to GET/POST /settings/dark-variants (settings#getDarkVariants/setDarkVariants) Corrections round 8 (2026-09-28), thematiq#696: ContrastService::parseColor() reads only #rgb, #rrggbb and the rgb part of rgba(), so a translucent colour is derived as an opaque hex and an 8-digit hex is skipped, lib/Service/ContrastService.php:245-263 and lib/Service/DarkPaletteService.php:314-321 at fd992ea.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own"
 			},
@@ -1933,7 +1935,8 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"note": "Corrections round 8 (2026-09-28): translucent colours lose their alpha in the derived dark palette and 8-digit hex tokens are not darkened, thematiq#696; rating kept because the dark variant is still derived automatically for every opaque colour token, the defect is on translucent tokens only."
 		},
 		{
 			"id": "aut-semantic-aliases",
@@ -5575,7 +5578,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "specified",
-				"evidence": "shipped sets carry upstream motion values where the design system defines them (css/tokens/rotterdam.css:741 --utrecht-backdrop-fade-in-animation-duration), the token editor lists two duration tokens as untyped text fields (lib/Service/TokenRegistry.php:232-233, --animation-quick and --animation-slow) and no easing token; reduced motion is handled separately (acc-reduced-motion)",
+				"evidence": "shipped sets carry upstream motion values where the design system defines them (css/tokens/rotterdam.css:741 --utrecht-backdrop-fade-in-animation-duration), the token editor lists two duration tokens as untyped text fields (lib/Service/TokenRegistry.php:232-233, --animation-quick and --animation-slow) and no easing token; reduced motion is handled separately (acc-reduced-motion) Corrections round 8 (2026-09-28), thematiq#697: the editor duration tokens reach Nextcloud components only, while the theme transitions read nldesign-animation-quick, which the editor never sets, css/systems/nldesign/overrides.css:212-213 and css/systems/nldesign/theme.css:382 at fd992ea.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"note": "Specified in openspec/changes/authoring-token-value-types (OpenSpec pass 2026-09-27)."
@@ -5594,7 +5597,7 @@
 			"featureConfidence": "high",
 			"origin": "changelog",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/releases/tag/2.12.1",
-			"note": "motion tokens are what a theme needs to honour reduced-motion preferences consistently across apps"
+			"note": "motion tokens are what a theme needs to honour reduced-motion preferences consistently across apps Corrections round 8 (2026-09-28): the two editor duration tokens do not reach the theme transitions, thematiq#697; rating kept because partial already reflects two untyped duration tokens and no easing token, and those tokens still reach Nextcloud components."
 		},
 		{
 			"id": "typ-theme-base-size",
