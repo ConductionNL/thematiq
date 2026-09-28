@@ -314,21 +314,43 @@ class DarkPaletteService {
 			// propagates through this alias in dark mode; the alternative is a
 			// dark mode that only ever half-applies.
 			$literal = $this->resolveAlias(value: $value, declarations: $lightDeclarations);
-			$rgba = $this->contrast->parseColorWithAlpha(value: $literal);
-			if ($rgba === null) {
+			$darkValue = $this->deriveDarkValue(token: $token, lightValue: $literal, context: $lightDeclarations);
+			if ($darkValue === null) {
 				// Unparseable (gradient, keyword, size, font stack, url(), an
 				// alias chain with no literal at the end) — skip.
 				continue;
 			}
 
-			// The dark channels come from the opaque colour; a translucent light
-			// value keeps its alpha, so an overlay stays an overlay in dark mode.
-			$dark[$token] = $this->deriveColorToken(token: $token, rgb: [$rgba[0], $rgba[1], $rgba[2]], lightDeclarations: $lightDeclarations)
-				. $this->alphaSuffix(alpha: $rgba[3]);
+			$dark[$token] = $darkValue;
 		}
 
 		return $this->regenerateRgbCompanions(lightDeclarations: $lightDeclarations, darkDeclarations: $dark);
 	}//end deriveDarkDeclarations()
+
+	/**
+	 * Derive the dark value of one colour literal, as the generated dark
+	 * stylesheets do, so the token editor and the generator never disagree.
+	 *
+	 * The dark channels come from the opaque colour; a translucent light value
+	 * keeps its alpha, so an overlay stays an overlay in dark mode.
+	 *
+	 * @param string $token The token name (decides text-class or surface-class).
+	 * @param string $lightValue The light colour literal.
+	 * @param array<string, string> $context The light declarations around it, for the brand-primary exception.
+	 *
+	 * @return string|null The dark hex value, or null when the value is not a colour literal.
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.3
+	 */
+	public function deriveDarkValue(string $token, string $lightValue, array $context = []): ?string {
+		$rgba = $this->contrast->parseColorWithAlpha(value: $lightValue);
+		if ($rgba === null) {
+			return null;
+		}
+
+		return $this->deriveColorToken(token: $token, rgb: [$rgba[0], $rgba[1], $rgba[2]], lightDeclarations: $context)
+			. $this->alphaSuffix(alpha: $rgba[3]);
+	}//end deriveDarkValue()
 
 	/**
 	 * Follow a `var()` alias chain to the literal it ends at.

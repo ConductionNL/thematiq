@@ -556,7 +556,7 @@ class ConfigBundleService {
 			return ['tokens' => [], 'skipped' => []];
 		}
 
-		$parsed = $this->cssParser->parseDeclarations(content: $css);
+		$parsed = $this->cssParser->parseOverridesFile(css: $css);
 		if ($parsed === null) {
 			$parsed = [];
 		}
