@@ -660,6 +660,76 @@ class DesignTokensMapperTest extends TestCase {
 		$this->assertAccountingInvariant(document: $document, result: $result, message: $fixture);
 	}//end testAccountingInvariantHoldsAcrossFullCorpus()
 
+	// -- Colour components: srgb-linear and alpha (thematiq#695) -------------
+
+	/**
+	 * Map one object-form colour `$value` onto --nldesign-color-primary.
+	 *
+	 * @param array<string, mixed> $value The DTCG colour object.
+	 *
+	 * @return array<string, mixed> The mapper result.
+	 */
+	private function mapPrimaryColour(array $value): array {
+		return $this->mapper->map(document: ['color' => ['primary' => ['$type' => 'color', '$value' => $value]]]);
+	}//end mapPrimaryColour()
+
+	/**
+	 * Linear-light components go through the sRGB transfer function before
+	 * scaling: a linear 0.5 grey is about #bcbcbc, not #808080.
+	 */
+	public function testSrgbLinearAppliesTransferFunction(): void {
+		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb-linear', 'components' => [0.5, 0.5, 0.5]]);
+
+		$this->assertSame('#bcbcbc', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame([], $result['errors']);
+	}//end testSrgbLinearAppliesTransferFunction()
+
+	/**
+	 * The transfer function's linear segment near black is honoured too.
+	 */
+	public function testSrgbLinearNearBlackUsesTheLinearSegment(): void {
+		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb-linear', 'components' => [0.002, 0, 1]]);
+
+		// 0.002 * 12.92 = 0.02584 -> 7 -> 07.
+		$this->assertSame('#0700ff', $result['declarations']['--nldesign-color-primary']);
+	}//end testSrgbLinearNearBlackUsesTheLinearSegment()
+
+	/**
+	 * A colour's alpha is kept as the fourth pair of an 8-digit hex.
+	 */
+	public function testAlphaKeptAsEightDigitHex(): void {
+		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb', 'components' => [0, 0, 0], 'alpha' => 0.5]);
+
+		$this->assertSame('#00000080', $result['declarations']['--nldesign-color-primary']);
+	}//end testAlphaKeptAsEightDigitHex()
+
+	/**
+	 * Alpha and srgb-linear together, the issue's own example.
+	 */
+	public function testSrgbLinearWithAlpha(): void {
+		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb-linear', 'components' => [0.5, 0.5, 0.5], 'alpha' => 0.5]);
+
+		$this->assertSame('#bcbcbc80', $result['declarations']['--nldesign-color-primary']);
+	}//end testSrgbLinearWithAlpha()
+
+	/**
+	 * An alpha on the hex fallback is kept too, since the hex member carries no alpha.
+	 */
+	public function testAlphaIsAddedToTheHexFallback(): void {
+		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb', 'components' => [0, 0, 0], 'hex' => '#000000', 'alpha' => 0.25]);
+
+		$this->assertSame('#00000040', $result['declarations']['--nldesign-color-primary']);
+	}//end testAlphaIsAddedToTheHexFallback()
+
+	/**
+	 * A fully opaque colour stays a 6-digit hex, so existing sets import unchanged.
+	 */
+	public function testOpaqueColourStaysSixDigitHex(): void {
+		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb', 'components' => [0.0823, 0.2588, 0.451], 'alpha' => 1]);
+
+		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
+	}//end testOpaqueColourStaysSixDigitHex()
+
 	/**
 	 * Every JSON fixture in the corpus (malformed JSON is a controller-level
 	 * concern and is excluded here).
