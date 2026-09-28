@@ -136,7 +136,7 @@ class ConfigBundleServiceTest extends TestCase {
 		$customTokenSetValidator = new CustomTokenSetValidator();
 		$logger = $this->createMock(LoggerInterface::class);
 
-		$this->overridesService = new CustomOverridesService($appManager, $cssParser);
+		$this->overridesService = new CustomOverridesService($appManager, $cssParser, new DarkPaletteService($contrast, $cssParser, $appManager, $logger));
 		$this->customTokenSetService = new CustomTokenSetService(
 			$appManager,
 			$config,

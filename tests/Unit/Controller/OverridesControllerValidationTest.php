@@ -14,12 +14,15 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OCA\Thematiq\Controller\OverridesController;
+use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCP\App\IAppManager;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Thematiq#694: a save with an unknown token name or an unsafe value answered
@@ -69,7 +72,9 @@ class OverridesControllerValidationTest extends TestCase {
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$this->overridesService = new CustomOverridesService($appManager, new CssParserService());
+		$parser = new CssParserService();
+		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
+		$this->overridesService = new CustomOverridesService($appManager, $parser, $darkPalette);
 		$this->overridesService->write(tokens: ['--color-primary' => '#000000']);
 
 		$this->auditService = $this->createMock(ThemingAuditService::class);

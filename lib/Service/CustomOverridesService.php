@@ -37,11 +37,15 @@ use RuntimeException;
  * It validates all token names against the TokenRegistry before writing.
  *
  * The CSS file format is strictly controlled:
- * - Single :root {} block
+ * - One :root {} block with the light values, read back by read()
+ * - For every brand-layer colour override, the two dark scopes of the generated dark
+ *   stylesheets with its derived dark value, so a user who chose the dark
+ *   theme (whose colours Nextcloud declares on body) and a user whose system
+ *   is dark see the same colour
  * - One declaration per line
  * - Each declaration carries !important so user overrides win the cascade over
  *   the nldesign design-system stylesheets and Nextcloud core theming
- * - No selectors other than :root
+ * - No selectors other than :root and the two dark scopes
  *
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
@@ -53,6 +57,22 @@ use RuntimeException;
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
  */
 class CustomOverridesService {
+
+	/**
+	 * The scope of a user whose system is dark and who chose no theme (as in
+	 * the generated dark stylesheets).
+	 *
+	 * @var string
+	 */
+	private const SYSTEM_DARK_SELECTOR = 'body:not([data-theme-light]):not([data-theme-dark])'
+		. ':not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])';
+
+	/**
+	 * The scope of a user who chose the dark theme (as in the generated dark stylesheets).
+	 *
+	 * @var string
+	 */
+	private const CHOSEN_DARK_SELECTOR = 'body[data-theme-dark],' . PHP_EOL . 'body[data-themes*=dark]';
 
 	/**
 	 * The CSS file header comment.
@@ -76,14 +96,24 @@ class CustomOverridesService {
 	private CssParserService $cssParser;
 
 	/**
+	 * The dark palette, which derives a colour override's dark value exactly
+	 * as the generated dark stylesheets do.
+	 *
+	 * @var DarkPaletteService
+	 */
+	private DarkPaletteService $darkPalette;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager.
 	 * @param CssParserService $cssParser CSS parser for :root block extraction.
+	 * @param DarkPaletteService $darkPalette Derives each colour override's dark value.
 	 */
-	public function __construct(IAppManager $appManager, CssParserService $cssParser) {
+	public function __construct(IAppManager $appManager, CssParserService $cssParser, DarkPaletteService $darkPalette) {
 		$this->appManager = $appManager;
 		$this->cssParser = $cssParser;
+		$this->darkPalette = $darkPalette;
 	}//end __construct()
 
 	/**
@@ -277,9 +307,61 @@ class CustomOverridesService {
 		}
 
 		$lines = $this->buildDeclarationLines(tokens: $tokens);
+		$css = $header . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
 
-		return $header . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
+		$darkLines = $this->buildDeclarationLines(tokens: $this->darkValues(tokens: $tokens));
+		if (empty($darkLines) === true) {
+			return $css;
+		}
+
+		// The same two scopes the generated dark stylesheets use. A user who
+		// chose the dark theme gets Nextcloud's dark colours declared on body,
+		// which a :root value never reaches; a body-level declaration wins for
+		// both kinds of dark user.
+		$css .= '@media (prefers-color-scheme: dark) {' . PHP_EOL
+			. '	' . self::SYSTEM_DARK_SELECTOR . ' {' . PHP_EOL
+			. '	' . implode(PHP_EOL . '	', $darkLines) . PHP_EOL
+			. '	}' . PHP_EOL
+			. '}' . PHP_EOL
+			. self::CHOSEN_DARK_SELECTOR . ' {' . PHP_EOL
+			. implode(PHP_EOL, $darkLines) . PHP_EOL
+			. '}' . PHP_EOL;
+
+		return $css;
 	}//end buildCss()
+
+	/**
+	 * The dark value of every brand-layer colour override: derived as the
+	 * generated dark stylesheets derive it, or the light value when it is not
+	 * a colour literal, so both kinds of dark user still see the same thing.
+	 *
+	 * Only the brand layer (Nextcloud's own variables) is split today, because
+	 * only those does Nextcloud re-declare on body for a chosen theme. Component
+	 * tokens are left out: both kinds of dark user already get the same body
+	 * value from the generated dark stylesheet, and a body-level copy here would
+	 * outrank the primary-lock layer, which locks them at :root.
+	 *
+	 * @param array<string, string> $tokens Token name => light value.
+	 *
+	 * @return array<string, string> Colour token name => dark value.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.2
+	 */
+	private function darkValues(array $tokens): array {
+		$registry = TokenRegistry::getTokens();
+		$dark = [];
+		foreach ($tokens as $name => $value) {
+			if (($registry[$name]['type'] ?? '') !== 'color' || ($registry[$name]['group'] ?? '') !== 'brand') {
+				continue;
+			}
+
+			$dark[$name] = ($this->darkPalette->deriveDarkValue(token: $name, lightValue: $value, context: $tokens) ?? $value);
+		}
+
+		return $dark;
+	}//end darkValues()
 
 	/**
 	 * Build individual CSS declaration lines from a token map.

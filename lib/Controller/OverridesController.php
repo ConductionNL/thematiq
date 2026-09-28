@@ -225,7 +225,8 @@ class OverridesController extends Controller {
 			return new JSONResponse(['error' => 'Could not read uploaded file'], 400);
 		}
 
-		$parsed = $this->cssParser->parseDeclarations($content);
+		// The light values only; an exported file also carries the dark blocks.
+		$parsed = $this->cssParser->parseOverridesFile(css: $content);
 		if ($parsed === null) {
 			return new JSONResponse(
 				['error' => 'No CSS custom property declarations found in the uploaded file'],
