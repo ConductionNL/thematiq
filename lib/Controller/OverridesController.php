@@ -54,6 +54,14 @@ use OCP\IRequest;
 class OverridesController extends Controller {
 
 	/**
+	 * The answer to a failed write. The exception text names the absolute file
+	 * path, which is not for the browser.
+	 *
+	 * @var string
+	 */
+	private const WRITE_FAILED = 'The token overrides could not be saved. Check that the web server can write to the app\'s css/ directory.';
+
+	/**
 	 * The custom overrides service.
 	 *
 	 * @var CustomOverridesService
@@ -127,7 +135,8 @@ class OverridesController extends Controller {
 	 * Write new custom token overrides to custom-overrides.css.
 	 *
 	 * Accepts a JSON body with an 'overrides' key containing token name => value pairs.
-	 * Only tokens in the TokenRegistry are accepted; others are silently ignored.
+	 * A save with any token outside the TokenRegistry, or with a value the writer
+	 * would drop, is refused with 400 naming those tokens, and nothing is written.
 	 *
 	 * @return JSONResponse Status and count of written tokens.
 	 *
@@ -143,12 +152,25 @@ class OverridesController extends Controller {
 			return new JSONResponse(['error' => 'overrides must be an object'], 400);
 		}
 
+		// Refuse the whole save when any token would be dropped, so the answer,
+		// the written count and the audit entry all describe what reached the file.
+		$rejected = $this->overridesService->findRejected(tokens: $overrides);
+		if (empty($rejected) === false) {
+			return new JSONResponse(
+				[
+					'error' => 'Some tokens were not saved: ' . implode(', ', array_keys($rejected)),
+					'rejected' => $rejected,
+				],
+				400
+			);
+		}
+
 		$before = $this->overridesService->read();
 
 		try {
 			$this->overridesService->write(tokens: $overrides);
-		} catch (\RuntimeException $e) {
-			return new JSONResponse(['error' => $e->getMessage()], 500);
+		} catch (\RuntimeException) {
+			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}
 
 		$this->auditService->log(
@@ -298,8 +320,8 @@ class OverridesController extends Controller {
 
 		try {
 			$this->overridesService->write(tokens: $toImport);
-		} catch (\RuntimeException $e) {
-			return new JSONResponse(['error' => $e->getMessage()], 500);
+		} catch (\RuntimeException) {
+			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}
 
 		$this->auditService->log(
