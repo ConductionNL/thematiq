@@ -8,6 +8,7 @@
  * admin settings page.
  */
 import { test, expect } from '@playwright/test'
+import { openTokenTab } from '../workflows/_helpers'
 
 const THEMING_URL = '/settings/admin/theming'
 
@@ -23,9 +24,11 @@ test.describe('token-editor-ui', () => {
 		// Token editor is inside #nldesign-token-editor
 		const editorEl = page.locator('#nldesign-token-editor')
 		await expect(editorEl).toBeVisible()
-		// Tabs must be present
-		const tabs = editorEl
-			.locator('button')
+		// Tabs must be present. They are looked up on the whole page: the
+		// playground (js/playground.js) moves the strip out of the editor, into
+		// the selector above the preview.
+		const tabs = page
+			.locator('.nldesign-tabs button')
 			.filter({ hasText: /Login page|Content area|Buttons|Typography/ })
 		await expect(tabs.first()).toBeVisible()
 	})
@@ -58,13 +61,16 @@ test.describe('token-editor-ui', () => {
 		await page.goto(THEMING_URL)
 		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
 
-		// The first tab (Login page & Branding) is active by default and its
-		// panel must contain the primary-colour token rows.
+		// Opening Login page & Branding activates its panel, which must contain
+		// the primary-colour token rows. It is opened rather than assumed: the
+		// playground decides which tab the editor opens on.
 		const loginPanel = page.locator('.nldesign-tab-panel[data-panel="login"]')
 		const contentPanel = page.locator(
 			'.nldesign-tab-panel[data-panel="content"]',
 		)
+		await openTokenTab(page, 'login')
 		await expect(loginPanel).toHaveClass(/active/)
+		await expect(contentPanel).not.toHaveClass(/active/)
 		await expect(
 			loginPanel.locator('[data-token-row="--color-primary"]'),
 		).toHaveCount(1)
