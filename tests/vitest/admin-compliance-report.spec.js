@@ -66,7 +66,9 @@ describe('admin.js contrast evidence report', () => {
 		await flush()
 
 		expect(
-			document.getElementById('nldesign-compliance-report-json').getAttribute('href'),
+			document
+				.getElementById('nldesign-compliance-report-json')
+				.getAttribute('href'),
 		).toBe('/index.php/apps/thematiq/settings/compliance-report?format=json')
 		expect(
 			document
