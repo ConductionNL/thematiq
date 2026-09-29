@@ -68,7 +68,7 @@
 		"@openfun/cunningham-tokens": "^3.0.0",
 		"@playwright/test": "^1.63.0",
 		"@vitest/coverage-v8": "^5.0.1",
-		"@vitest/ui": "^5.0.0",
+		"@vitest/ui": "^5.0.2",
 		"jsdom": "^30.1.0",
 		"prettier": "^3.9.8",
 		"stylelint": "^17.15.0",
