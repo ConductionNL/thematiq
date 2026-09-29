@@ -33,7 +33,8 @@ async function loadScript() {
 describe('environment marker', () => {
 	beforeEach(() => {
 		document.title = 'Files - Nextcloud'
-		document.body.innerHTML = '<header id="header">header</header><main>content</main>'
+		document.body.innerHTML =
+			'<header id="header">header</header><main>content</main>'
 	})
 
 	afterEach(() => {
@@ -47,7 +48,12 @@ describe('environment marker', () => {
 	})
 
 	it('puts the label first in the page as a note and prefixes the title', async () => {
-		installState({ environment: 'test', style: 'test', label: 'Test environment', short: '[Test]' })
+		installState({
+			environment: 'test',
+			style: 'test',
+			label: 'Test environment',
+			short: '[Test]',
+		})
 		await loadScript()
 
 		const note = document.body.firstElementChild
@@ -59,7 +65,12 @@ describe('environment marker', () => {
 	})
 
 	it('keeps the prefix when an app changes the title', async () => {
-		installState({ environment: 'acceptance', style: 'acceptance', label: 'Acceptance environment', short: '[Acceptance]' })
+		installState({
+			environment: 'acceptance',
+			style: 'acceptance',
+			label: 'Acceptance environment',
+			short: '[Acceptance]',
+		})
 		await loadScript()
 
 		document.title = 'Calendar - Nextcloud'
