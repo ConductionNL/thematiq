@@ -103,6 +103,10 @@ class ThemingAuditService {
 	 * `group_theming_changed` added by `openspec/specs/per-group-theming/spec.md`
 	 * (the group→token-set mapping save).
 	 *
+	 * `scheduled_switch_applied` added by change `apply-scheduled-theme-switch`
+	 * (a planned switch applied or failed by the background job; its entries
+	 * pass `actor: system` in the context, because cron runs in CLI).
+	 *
 	 * @var array<int, string>
 	 */
 	private const VOCABULARY = [
@@ -118,6 +122,7 @@ class ThemingAuditService {
 		'preview_published',
 		'group_theming_changed',
 		'version_restored',
+		'scheduled_switch_applied',
 	];
 
 	/**
@@ -180,7 +185,8 @@ class ThemingAuditService {
 	 *   version (see class docblock for why the service does not read
 	 *   token-sets.json itself).
 	 * - any other key is copied into the entry verbatim (small scalars only
-	 *   — never CSS bodies).
+	 *   — never CSS bodies). `actor` is one of them: it overrides the resolved
+	 *   actor, which the scheduled switch job uses to record `system`.
 	 *
 	 * @param string $action One of the closed vocabulary actions.
 	 * @param array<string, mixed> $context The entry context (see above).

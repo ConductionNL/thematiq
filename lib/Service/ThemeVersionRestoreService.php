@@ -150,6 +150,18 @@ class ThemeVersionRestoreService {
 			$changes[] = ['field' => 'customOverridesCss', 'from' => 'current', 'to' => 'version'];
 		}
 
+		// Planned switches are named as a count; a version 1 bundle has none
+		// and leaves them alone on import (config-portability).
+		if (array_key_exists('scheduledSwitches', ($target['config'] ?? [])) === true
+			&& ($current['config']['scheduledSwitches'] ?? []) !== $target['config']['scheduledSwitches']
+		) {
+			$changes[] = [
+				'field' => 'scheduledSwitches',
+				'from' => count(($current['config']['scheduledSwitches'] ?? [])),
+				'to' => count((array)$target['config']['scheduledSwitches']),
+			];
+		}
+
 		if (($current['emailFooter'] ?? []) !== ($target['emailFooter'] ?? [])) {
 			$changes[] = ['field' => 'emailFooter', 'from' => ($current['emailFooter'] ?? []), 'to' => ($target['emailFooter'] ?? [])];
 		}

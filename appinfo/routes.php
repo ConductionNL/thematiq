@@ -30,6 +30,10 @@ return [
 		['name' => 'settings#getAvailableTokenSets', 'url' => '/settings/tokensets', 'verb' => 'GET'],
 		['name' => 'settings#setTokenSet', 'url' => '/settings/tokenset', 'verb' => 'POST'],
 		['name' => 'settings#getTokenSet', 'url' => '/settings/tokenset', 'verb' => 'GET'],
+		// Planned token set switches (openspec/changes/apply-scheduled-theme-switch).
+		['name' => 'scheduledSwitch#index', 'url' => '/settings/scheduled-switches', 'verb' => 'GET'],
+		['name' => 'scheduledSwitch#create', 'url' => '/settings/scheduled-switches', 'verb' => 'POST'],
+		['name' => 'scheduledSwitch#cancel', 'url' => '/settings/scheduled-switches/{id}', 'verb' => 'DELETE'],
 		['name' => 'settings#setSloganSetting', 'url' => '/settings/slogan', 'verb' => 'POST'],
 		['name' => 'settings#setMenuLabelsSetting', 'url' => '/settings/menulabels', 'verb' => 'POST'],
 		['name' => 'settings#setPrimaryDrivesComponentsSetting', 'url' => '/settings/primary-drives-components', 'verb' => 'POST'],

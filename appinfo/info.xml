@@ -178,6 +178,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 	     daily, time-insensitive, disabled by default (admin opt-in toggle). -->
 	<background-jobs>
 		<job>OCA\Thematiq\BackgroundJob\UpstreamFreshnessJob</job>
+		<job>OCA\Thematiq\BackgroundJob\ScheduledSwitchJob</job>
 	</background-jobs>
 
 	<!--

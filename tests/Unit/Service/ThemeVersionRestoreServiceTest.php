@@ -110,6 +110,22 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 	}//end testThePreviewListsTheChangesAndWritesNothing()
 
 	/**
+	 * Restoring a version that carries other planned switches says so, as a
+	 * count; a version 1 bundle without them names no change there.
+	 *
+	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 */
+	public function testThePreviewNamesAChangeInPlannedSwitches(): void {
+		$this->bundles->method('import')->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);
+		$preview = $this->service()->preview(id: $this->version['id']);
+		$this->assertNotContains('scheduledSwitches', array_column($preview['changes'], 'field'));
+
+		$this->version['bundle']['config']['scheduledSwitches'] = [['id' => 'a1', 'tokenSet' => 'koningsdag-oranje']];
+		$preview = $this->service()->preview(id: $this->version['id']);
+		$this->assertContains(['field' => 'scheduledSwitches', 'from' => 0, 'to' => 1], $preview['changes']);
+	}//end testThePreviewNamesAChangeInPlannedSwitches()
+
+	/**
 	 * A restore imports the bundle and records version_restored with the
 	 * version it replaced.
 	 */
