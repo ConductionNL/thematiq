@@ -253,4 +253,53 @@ class BrandingCaptureServiceTest extends TestCase {
 		$this->assertSame([], $this->service->all());
 		$this->assertFileDoesNotExist($this->appDir . '/' . $theming['logo']);
 	}//end testForgetRemovesTheBrandingAndItsImages()
+
+	/**
+	 * An image directory that cannot be created leaves the image out rather
+	 * than failing the save: the colours are still captured.
+	 */
+	public function testAnUncreatableImageDirectoryLeavesTheImageOut(): void {
+		// A file where img/ should be, so img/logos can never be made.
+		file_put_contents($this->appDir . '/img', 'not a directory');
+		$this->uploads(['logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg/>']]);
+		$this->values['theming/primary_color'] = '#23845c';
+
+		$theming = $this->quietly(fn (): array => $this->service->capture(setId: 'custom-openwoo'));
+
+		$this->assertArrayNotHasKey('logo', $theming);
+		$this->assertSame('#23845c', $theming['primary_color']);
+		$this->assertArrayNotHasKey('thematiq/synced_logo', $this->values);
+	}//end testAnUncreatableImageDirectoryLeavesTheImageOut()
+
+	/**
+	 * An image that cannot be written is left out the same way.
+	 */
+	public function testAnUnwritableImageIsLeftOut(): void {
+		// A directory where the copy should land, so writing it fails.
+		mkdir($this->appDir . '/img/logos/custom-openwoo-captured-logo.svg', 0777, true);
+		$this->uploads(['logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg/>']]);
+
+		$theming = $this->quietly(fn (): array => $this->service->capture(setId: 'custom-openwoo'));
+
+		$this->assertArrayNotHasKey('logo', $theming);
+		$this->assertArrayNotHasKey('thematiq/synced_logo', $this->values);
+	}//end testAnUnwritableImageIsLeftOut()
+
+	/**
+	 * Run a callback with PHP warnings silenced: the filesystem failures
+	 * these tests force are reported by PHP as warnings, and the service's
+	 * answer to them is what is under test.
+	 *
+	 * @param callable $callback The code to run.
+	 *
+	 * @return mixed What the callback returned.
+	 */
+	private function quietly(callable $callback) {
+		set_error_handler(static fn (): bool => true);
+		try {
+			return $callback();
+		} finally {
+			restore_error_handler();
+		}
+	}//end quietly()
 }//end class

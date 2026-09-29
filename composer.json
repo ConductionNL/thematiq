@@ -84,6 +84,7 @@
             "cyclonedx/cyclonedx-php-composer": true
         },
         "optimize-autoloader": true,
+        "prepend-autoloader": false,
         "sort-packages": true,
         "platform": {
             "php": "8.3",
