@@ -69,11 +69,7 @@ class ConfigRestore extends Command {
 		$id = (string)$input->getArgument('id');
 		$dryRun = ($input->getOption('dry-run') === true);
 
-		if ($dryRun === true) {
-			$result = $this->restorer->preview(id: $id);
-		} else {
-			$result = $this->restorer->restore(id: $id);
-		}
+		$result = ($dryRun === true) ? $this->restorer->preview(id: $id) : $this->restorer->restore(id: $id);
 
 		if ($result === null) {
 			$output->writeln('<error>Unknown version: ' . $id . '</error>');
