@@ -5422,21 +5422,20 @@
 			"id": "gov-environment-marker",
 			"area": "governance",
 			"name": "Show a visible difference between the test and the production environment, so nobody works in the wrong one.",
-			"thematiq": "no",
+			"thematiq": "yes",
 			"nextcloud-theming": "partial",
 			"m365-branding": "partial",
 			"opendesk": "no",
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "the only per-environment feature is promoting the configuration bundle between OTAP stages (lib/Service/ConfigBundleService.php:31); the trial banner (lib/Service/ThemePreviewBannerService.php) marks a session trial, not an environment; no environment label or colour exists",
+				"state": "built",
+				"evidence": "lib/Service/EnvironmentMarkerService.php reads thematiq.environment from config.php (IConfig::getSystemValueString); lib/Listener/ThemeInjectionListener.php calls it before the per-app guard for the login and every template render; js/environment-marker.js + css/environment-marker.css render a role=note stripe with a text label and prefix the title; templates/settings/admin.php #nldesign-environment shows it read-only; ConfigBundleService never exports it",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor",
-				"note": "Specified in openspec/changes/governance-environment-marker (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/governance-environment-marker"
+				"origin": "own",
+				"change": "governance-environment-marker"
 			},
-			"reachedOn": "nothing reaches it",
+			"reachedOn": "any page of a server with thematiq.environment set to development, test or acceptance in config.php; Settings > Administration > Theming shows the value",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 theming values are per instance (apps/theming/lib/ThemingDefaults.php:237-258, set via lib/Controller/ThemingController.php:74-130 or occ theming:config), so a test instance can be given its own name, colour and logo; there is no dedicated environment banner or marker setting in apps/theming",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding: branding is per tenant, so a test tenant can carry a visibly different sign-in and header brand, and https://learn.microsoft.com/en-us/entra/fundamentals/reference-company-branding-css-template advises validating 'in a test tenant first'; no built-in environment banner",

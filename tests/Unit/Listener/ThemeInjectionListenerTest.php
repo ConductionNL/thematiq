@@ -286,7 +286,7 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * The environment marker is a safety signal, not a theme: an app
 	 * excluded from theming still gets it.
 	 *
-	 * @spec openspec/changes/governance-environment-marker/specs/environment-marker/spec.md
+	 * @spec openspec/specs/environment-marker/spec.md
 	 */
 	public function testExcludedAppStillGetsTheEnvironmentMarker(): void {
 		$response = new TemplateResponse('calendar', 'index', [], TemplateResponse::RENDER_AS_USER);
@@ -301,7 +301,7 @@ class ThemeInjectionListenerTest extends TestCase {
 	/**
 	 * The login page gets the environment marker.
 	 *
-	 * @spec openspec/changes/governance-environment-marker/specs/environment-marker/spec.md
+	 * @spec openspec/specs/environment-marker/spec.md
 	 */
 	public function testLoginPageGetsTheEnvironmentMarker(): void {
 		$response = new TemplateResponse('core', 'login', [], TemplateResponse::RENDER_AS_GUEST);

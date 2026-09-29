@@ -619,7 +619,7 @@ class ConfigBundleServiceTest extends TestCase {
 	 * The environment config.php declares never travels in a bundle: it is
 	 * the one value that must differ between OTAP environments.
 	 *
-	 * @spec openspec/changes/governance-environment-marker/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function testExportNeverCarriesTheEnvironment(): void {
 		$this->seedConfig();

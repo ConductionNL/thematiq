@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/governance-environment-marker/specs/environment-marker/spec.md
+ * @spec openspec/specs/environment-marker/spec.md
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

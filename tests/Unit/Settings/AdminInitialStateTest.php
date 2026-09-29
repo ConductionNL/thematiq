@@ -287,7 +287,7 @@ class AdminInitialStateTest extends TestCase {
 	 * The settings page shows the environment config.php declares, and the
 	 * occ command that sets it.
 	 *
-	 * @spec openspec/changes/governance-environment-marker/specs/environment-marker/spec.md
+	 * @spec openspec/specs/environment-marker/spec.md
 	 */
 	public function testTheFormCarriesTheDeclaredEnvironment(): void {
 		$captured = [];
