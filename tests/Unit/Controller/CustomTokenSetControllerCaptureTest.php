@@ -65,6 +65,13 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	private $capture;
 
 	/**
+	 * The design-system manifest mock.
+	 *
+	 * @var DesignSystemService&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private $designSystems;
+
+	/**
 	 * The controller under test.
 	 *
 	 * @var CustomTokenSetController
@@ -103,6 +110,8 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 		$this->request = $this->createMock(IRequest::class);
 		$this->capture = $this->createMock(BrandingCaptureService::class);
+		$this->designSystems = $this->createMock(DesignSystemService::class);
+		$this->designSystems->method('getDesignSystems')->willReturn(['nldesign' => ['id' => 'nldesign']]);
 
 		$this->controller = new CustomTokenSetController(
 			'thematiq',
@@ -115,7 +124,7 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 			$config,
 			$this->createMock(TokenSetConverterService::class),
 			$this->createMock(ThemingService::class),
-			$this->createMock(DesignSystemService::class),
+			$this->designSystems,
 			$this->capture
 		);
 	}//end setUp()
@@ -157,16 +166,20 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	 * Save a theme from the editor: a raw token set, capture asked for or not.
 	 *
 	 * @param bool $capture Whether `captureTheming` is sent.
+	 * @param array<string, mixed> $extra Further request parameters, overriding the defaults.
 	 *
 	 * @return void
 	 */
-	private function savingFromTheEditor(bool $capture): void {
-		$params = [
-			'name' => 'OpenWoo',
-			'content' => ":root {\n  --nldesign-color-primary: #154273;\n}\n",
-			'raw' => true,
-			'captureTheming' => $capture,
-		];
+	private function savingFromTheEditor(bool $capture, array $extra = []): void {
+		$params = array_merge(
+			[
+				'name' => 'OpenWoo',
+				'content' => ":root {\n  --nldesign-color-primary: #154273;\n}\n",
+				'raw' => true,
+				'captureTheming' => $capture,
+			],
+			$extra
+		);
 		$this->request->method('getParam')->willReturnCallback(
 			fn (string $key, $default = null) => ($params[$key] ?? $default)
 		);
@@ -215,4 +228,45 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 		$this->assertSame(200, $response->getStatus());
 	}//end testDeletingAThemeForgetsItsBranding()
+
+	/**
+	 * A refused save captures nothing: the branding is only copied once the
+	 * set is safely stored, so a rejected one leaves no images behind.
+	 */
+	public function testARefusedSaveCapturesNothing(): void {
+		$this->savingFromTheEditor(capture: true, extra: ['content' => ".header {\n  color: red;\n}\n"]);
+		$this->capture->expects($this->never())->method('capture');
+
+		$response = $this->controller->upload();
+
+		$this->assertSame(422, $response->getStatus());
+		$this->assertArrayHasKey('error', $response->getData());
+		$this->assertArrayNotHasKey(CustomTokenSetService::MANIFEST_KEY, $this->appConfig);
+	}//end testARefusedSaveCapturesNothing()
+
+	/**
+	 * The design system the editor was looking at is recorded with the set,
+	 * so the theme comes back with the layers it was saved on.
+	 */
+	public function testAShippedDesignSystemIsRecordedWithTheSet(): void {
+		$this->savingFromTheEditor(capture: false, extra: ['designSystem' => ' nldesign ']);
+
+		$this->controller->upload();
+
+		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
+		$this->assertSame('nldesign', $manifest['custom-openwoo']['design_system']);
+	}//end testAShippedDesignSystemIsRecordedWithTheSet()
+
+	/**
+	 * A claimed design system the manifest does not ship is ignored rather
+	 * than trusted: it decides which stylesheet layers every page emits.
+	 */
+	public function testAnUnknownDesignSystemClaimIsIgnored(): void {
+		$this->savingFromTheEditor(capture: false, extra: ['designSystem' => 'evil']);
+
+		$this->controller->upload();
+
+		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
+		$this->assertArrayNotHasKey('design_system', $manifest['custom-openwoo']);
+	}//end testAnUnknownDesignSystemClaimIsIgnored()
 }//end class
