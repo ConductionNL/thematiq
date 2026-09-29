@@ -356,7 +356,7 @@ class ThemingAuditServiceTest extends TestCase {
 
 		$this->userSession->method('getUser')->willReturn(null);
 
-		$service = new class(new FakeAuditAppDataFactory(appData: $this->root), $config, $this->userSession, $timeFactory, $this->logger) extends ThemingAuditService {
+		$service = new class(new FakeAuditAppDataFactory(appData: $this->root), $config, $this->userSession, $timeFactory, $this->logger, $this->createMock(ThemeVersionService::class)) extends ThemingAuditService {
 			protected function isRunningInCli(): bool {
 				return false;
 			}

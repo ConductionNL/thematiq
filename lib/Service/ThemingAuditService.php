@@ -117,6 +117,7 @@ class ThemingAuditService {
 		'config_imported',
 		'preview_published',
 		'group_theming_changed',
+		'version_restored',
 	];
 
 	/**
@@ -142,6 +143,7 @@ class ThemingAuditService {
 	 * @param IUserSession $userSession The user session (actor resolution).
 	 * @param ITimeFactory $timeFactory The time factory (testable timestamps).
 	 * @param LoggerInterface $logger Logger for warnings on unknown actions / write failures.
+	 * @param ThemeVersionService $versionService Keeps the configuration after each change (theme-versions spec).
 	 */
 	public function __construct(
 		private readonly IAppDataFactory $appDataFactory,
@@ -149,6 +151,7 @@ class ThemingAuditService {
 		private readonly IUserSession $userSession,
 		private readonly ITimeFactory $timeFactory,
 		private readonly LoggerInterface $logger,
+		private readonly ThemeVersionService $versionService,
 	) {
 	}//end __construct()
 
@@ -185,6 +188,7 @@ class ThemingAuditService {
 	 * @return void
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-append-only-audit-entries
+	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	public function log(string $action, array $context = []): void {
 		if (in_array($action, self::VOCABULARY, true) === false) {
@@ -196,6 +200,22 @@ class ThemingAuditService {
 		}
 
 		$entry = $this->buildEntry(action: $action, context: $context);
+
+		// Keep the configuration this change produced, so the entry can be
+		// restored later. A capture that fails leaves the entry without a
+		// versionId and never blocks it (openspec/specs/theme-versions/spec.md).
+		unset($entry['versionId']);
+		try {
+			$versionId = $this->versionService->capture(auditAction: $action, actor: (string)$entry['actor']);
+			if ($versionId !== null) {
+				$entry['versionId'] = $versionId;
+			}
+		} catch (\Throwable $e) {
+			$this->logger->warning(
+				'nldesign audit: no version was kept for action "{action}": {message}',
+				['action' => $action, 'message' => $e->getMessage()]
+			);
+		}
 
 		$line = json_encode($entry, JSON_UNESCAPED_SLASHES);
 		if ($line === false) {
