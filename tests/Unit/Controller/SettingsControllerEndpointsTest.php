@@ -323,4 +323,48 @@ class SettingsControllerEndpointsTest extends TestCase {
 
 		$this->assertSame([], $response->getData()['disabledApps']);
 	}//end testClearingTheExclusionListStoresAnEmptyList()
+
+	/**
+	 * The two save confirmations are separate switches: turning one off
+	 * stores and audits that one only. Both start ON, so the flag left alone
+	 * is neither rewritten nor logged — a trail with an entry per save for a
+	 * setting nobody touched would bury the one that changed.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	public function testASaveConfirmationStoresAndAuditsOnlyTheFlagThatChanged(): void {
+		$response = $this->controller->setSaveConfirmSettings(confirmSaveStock: false, confirmSaveTheme: true);
+
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(
+			['status' => 'ok', 'confirmSaveStock' => false, 'confirmSaveTheme' => true],
+			$response->getData()
+		);
+		$this->assertSame('0', $this->appConfig['thematiq|confirm_save_stock']);
+		$this->assertArrayNotHasKey('thematiq|confirm_save_theme', $this->appConfig);
+
+		$this->assertCount(1, $this->audited);
+		$this->assertSame('toggle_changed', $this->audited[0][0]);
+		$this->assertSame(['key' => 'confirm_save_stock', 'old' => true, 'new' => false], $this->audited[0][1]);
+	}//end testASaveConfirmationStoresAndAuditsOnlyTheFlagThatChanged()
+
+	/**
+	 * The controls under the token editor turn a "do not ask again" back on,
+	 * so the choice is never one-way: both flags go back to `'1'`, each with
+	 * its own audit entry.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	public function testBothSaveConfirmationsCanBeTurnedBackOn(): void {
+		$this->appConfig['thematiq|confirm_save_stock'] = '0';
+		$this->appConfig['thematiq|confirm_save_theme'] = '0';
+
+		$this->controller->setSaveConfirmSettings(confirmSaveStock: true, confirmSaveTheme: true);
+
+		$this->assertSame('1', $this->appConfig['thematiq|confirm_save_stock']);
+		$this->assertSame('1', $this->appConfig['thematiq|confirm_save_theme']);
+		$this->assertCount(2, $this->audited);
+		$this->assertSame(['key' => 'confirm_save_stock', 'old' => false, 'new' => true], $this->audited[0][1]);
+		$this->assertSame(['key' => 'confirm_save_theme', 'old' => false, 'new' => true], $this->audited[1][1]);
+	}//end testBothSaveConfirmationsCanBeTurnedBackOn()
 }//end class

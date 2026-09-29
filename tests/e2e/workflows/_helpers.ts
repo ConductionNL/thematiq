@@ -60,6 +60,34 @@ export async function openTheming(page: Page): Promise<void> {
 	}
 }
 
+/**
+ * Open one of the token editor's tabs and wait until its panel is the open one.
+ *
+ * js/playground.js lifts the editor's tab strip out of #nldesign-token-editor
+ * into the selector above the preview, and opens the Content area tab rather
+ * than the first one. A test that needs one tab's rows therefore opens that tab
+ * itself instead of assuming which one is open.
+ *
+ * The playground builds after the editor has rendered, and on building clicks
+ * the tab it wants. A click made before that would be undone, so this waits for
+ * the build first — the preview names its open tab once it has run. On a page
+ * where the playground does not load the attribute never appears, and the
+ * editor's own tab handler does the switching.
+ *
+ * @param page The Playwright page, on the theming settings.
+ * @param tab The tab id: login, content, status or typography.
+ */
+export async function openTokenTab(page: Page, tab: string): Promise<void> {
+	await page
+		.locator('#nldesign-preview[data-pg-tab]')
+		.waitFor({ state: 'attached', timeout: 10_000 })
+		.catch(() => {})
+	await page.locator(`.nldesign-tab-btn[data-tab="${tab}"]`).click()
+	await expect(
+		page.locator(`.nldesign-tab-panel[data-panel="${tab}"]`),
+	).toHaveClass(/\bactive\b/)
+}
+
 /** Fetch the persisted custom token overrides from the backend (GET /settings/overrides). */
 export async function getOverrides(
 	page: Page,

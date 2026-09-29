@@ -43,39 +43,64 @@ const AA_NORMAL = 4.5
 const AA_LARGE = 3.0
 
 /**
+ * The admin section that renders note cards: Basic settings, with the
+ * background-jobs and profile cards. Named explicitly, because Nextcloud 35
+ * opens /settings/admin on the overview instead, which has none.
+ */
+const NOTECARD_ROUTE = '/settings/admin/server'
+
+/**
+ * How one surface is found on the page.
+ *
+ * `backdrop` names the element that paints the fill when it is not an ancestor
+ * of the text but a sibling the text is positioned over. Without it the fill is
+ * looked for up the text's own ancestors.
+ */
+type SurfaceTarget = { selector: string; backdrop?: string }
+
+/**
  * Surfaces Nextcloud paints with a saturated colour, each of which regressed.
  *
  * `min` is the floor for that node's own font size — the dashboard heading is
  * large bold text, so 3.0 is the correct floor for it, not 4.5. Using 4.5
  * everywhere would be a stricter test that fails on compliant markup.
+ *
+ * `targets` lists the markup a surface has had across the Nextcloud versions
+ * CI runs, oldest first; the first one present on the page is measured.
  */
 const SURFACES: Array<{
 	route: string
-	selector: string
+	targets: SurfaceTarget[]
 	min: number
 	why: string
 }> = [
 	{
 		route: '/settings/user',
-		selector: '.preview-card__header',
+		targets: [
+			// Nextcloud 34 and older: a header strip that holds the name.
+			{ selector: '.preview-card__header' },
+			// Nextcloud 35: the name is positioned over a banner that is its
+			// sibling, not its parent.
+			{ selector: '.preview-card__name', backdrop: '.preview-card__banner' },
+		],
 		min: AA_NORMAL,
-		why: 'theme preview card header on --color-primary',
+		why: 'profile preview card name on its primary-tinted fill',
 	},
 	{
 		route: '/apps/dashboard/',
-		selector: '#app-dashboard > h2',
+		targets: [{ selector: '#app-dashboard > h2' }],
 		min: AA_LARGE,
 		why: 'dashboard greeting on the plain background',
 	},
 	{
-		route: '/settings/admin',
-		selector: '.notecard--success',
+		route: NOTECARD_ROUTE,
+		targets: [{ selector: '.notecard--success' }],
 		min: AA_NORMAL,
 		why: 'NcNoteCard success fill',
 	},
 	{
-		route: '/settings/admin',
-		selector: '.notecard--info',
+		route: NOTECARD_ROUTE,
+		targets: [{ selector: '.notecard--info' }],
 		min: AA_NORMAL,
 		why: 'NcNoteCard info fill',
 	},
@@ -103,10 +128,18 @@ const SURFACES: Array<{
 type ContrastResult =
 	{ ratio: number; fg: string; bg: string } | { undetermined: string } | null
 
-async function contrastOf(page: Page, selector: string): Promise<ContrastResult> {
-	return await page.evaluate((sel) => {
+async function contrastOf(
+	page: Page,
+	target: SurfaceTarget,
+): Promise<ContrastResult> {
+	const args = { sel: target.selector, bd: target.backdrop ?? null }
+	return await page.evaluate(({ sel, bd }) => {
 		const container = document.querySelector(sel) as HTMLElement | null
 		if (!container) return null
+		// Where the fill is looked for from: the named backdrop, else the text.
+		const backdrop =
+			bd === null ? null : (document.querySelector(bd) as HTMLElement | null)
+		if (bd !== null && !backdrop) return null
 
 		// Measure the node that actually HOLDS the text, not the container that
 		// happens to paint the fill. A container's own `color` is inert when its
@@ -127,7 +160,7 @@ async function contrastOf(page: Page, selector: string): Promise<ContrastResult>
 						HTMLElement | undefined)) ?? container
 
 		for (
-			let probe: HTMLElement | null = el;
+			let probe: HTMLElement | null = backdrop ?? el;
 			probe;
 			probe = probe.parentElement
 		) {
@@ -165,7 +198,7 @@ async function contrastOf(page: Page, selector: string): Promise<ContrastResult>
 		}
 
 		// Walk up until an opaque background is found, compositing alpha layers.
-		let node: HTMLElement | null = el
+		let node: HTMLElement | null = backdrop ?? el
 		let bg: [number, number, number] = [255, 255, 255]
 		const stack: Array<[number, number, number, number]> = []
 		while (node) {
@@ -203,7 +236,7 @@ async function contrastOf(page: Page, selector: string): Promise<ContrastResult>
 			fg: hex(composedFg),
 			bg: hex(bg),
 		}
-	}, selector)
+	}, args)
 }
 
 /** The token sets driven here: the default, and the one whose name promises contrast. */
@@ -240,6 +273,9 @@ test.describe('rendered-surface contrast', () => {
 		test(`no painted surface falls below WCAG AA on the ${tokenSet} token set`, async ({
 			page,
 		}) => {
+			// Four page loads, each given time to mount, plus the token-set
+			// switch: more than the default 30s on a slow runner.
+			test.setTimeout(90_000)
 			await page.goto(THEMING_URL)
 			await setTokenSet(page, await requestToken(page), tokenSet)
 
@@ -253,7 +289,14 @@ test.describe('rendered-surface contrast', () => {
 				await page.waitForLoadState('domcontentloaded')
 				await page.waitForTimeout(1500)
 
-				const result = await contrastOf(page, surface.selector)
+				// The first of the surface's markups that this version renders.
+				let target = surface.targets[0]
+				let result: ContrastResult = null
+				for (const candidate of surface.targets) {
+					target = candidate
+					result = await contrastOf(page, candidate)
+					if (result !== null) break
+				}
 				if (result === null) {
 					// Absent is NOT a pass, but it is also not this app's
 					// defect — which of these components renders depends on
@@ -262,21 +305,21 @@ test.describe('rendered-surface contrast', () => {
 					// failing here failed on the FIXTURE. Recorded, and the
 					// coverage floor below is what stops that being silent.
 					absent.push(
-						`${surface.route} ${surface.selector} (${surface.why})`,
+						`${surface.route} ${surface.targets.map((t) => t.selector).join(' / ')} (${surface.why})`,
 					)
 					continue
 				}
 				if ('undetermined' in result) {
-					undetermined.push(`${surface.selector} (${result.undetermined})`)
+					undetermined.push(`${target.selector} (${result.undetermined})`)
 					continue
 				}
 
 				measured.push(
-					`${surface.selector} ${result.ratio}:1 (${result.fg} on ${result.bg})`,
+					`${target.selector} ${result.ratio}:1 (${result.fg} on ${result.bg})`,
 				)
 				if (result.ratio < surface.min) {
 					failures.push(
-						`${surface.route} ${surface.selector} — ${result.ratio}:1 `
+						`${surface.route} ${target.selector} — ${result.ratio}:1 `
 							+ `(${result.fg} on ${result.bg}), needs ${surface.min}:1 — ${surface.why}`,
 					)
 				}
@@ -394,7 +437,7 @@ test.describe('rendered-surface contrast', () => {
 	test('every status note card carries its body text at AA, whatever variants ship', async ({
 		page,
 	}) => {
-		await page.goto('/settings/admin')
+		await page.goto(NOTECARD_ROUTE)
 		await page.waitForLoadState('domcontentloaded')
 		await page.waitForTimeout(1500)
 
@@ -409,13 +452,13 @@ test.describe('rendered-surface contrast', () => {
 
 		expect(
 			variants.length,
-			'no note cards on /settings/admin — the sweep measured nothing',
+			`no note cards on ${NOTECARD_ROUTE} — the sweep measured nothing`,
 		).toBeGreaterThan(0)
 
 		const failures: string[] = []
 		let measured = 0
 		for (const variant of variants) {
-			const result = await contrastOf(page, `.${variant}`)
+			const result = await contrastOf(page, { selector: `.${variant}` })
 			if (result === null || 'undetermined' in result) continue
 			measured++
 			if (result.ratio < AA_NORMAL) {
