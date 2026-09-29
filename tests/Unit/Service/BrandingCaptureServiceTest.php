@@ -215,6 +215,33 @@ class BrandingCaptureServiceTest extends TestCase {
 	}//end testCopiesEveryUploadedImage()
 
 	/**
+	 * An image of a type core cannot take back, or one that cannot be read,
+	 * is left out rather than failing the save it rides on.
+	 */
+	public function testAnImageThatCannotComeBackIsLeftOut(): void {
+		$this->values['theming/logoMime'] = 'image/tiff';
+		$this->values['theming/faviconMime'] = 'image/png';
+		$this->imageManager->method('hasImage')->willReturnCallback(
+			fn (string $key): bool => in_array($key, ['logo', 'favicon'], true)
+		);
+		$this->imageManager->method('getImage')->willThrowException(new \RuntimeException('unreadable'));
+
+		$theming = $this->service->capture(setId: 'custom-openwoo');
+
+		$this->assertArrayNotHasKey('logo', $theming);
+		$this->assertArrayNotHasKey('favicon', $theming);
+	}//end testAnImageThatCannotComeBackIsLeftOut()
+
+	/**
+	 * An unreadable store reads as nothing captured.
+	 */
+	public function testAnUnreadableStoreReadsAsEmpty(): void {
+		$this->values['thematiq/' . BrandingCaptureService::CAPTURED_KEY] = 'not json';
+
+		$this->assertSame([], $this->service->all());
+	}//end testAnUnreadableStoreReadsAsEmpty()
+
+	/**
 	 * Forgetting a set removes its captured branding and its copied images.
 	 */
 	public function testForgetRemovesTheBrandingAndItsImages(): void {

@@ -369,6 +369,56 @@ class ThemingServiceTest extends TestCase {
 	}//end testACapturedDefaultBackgroundIsRestoredNotRemoved()
 
 	/**
+	 * A theme that captured "Remove background image" gets it back, whether
+	 * or not a background colour comes with it.
+	 */
+	public function testACapturedRemovedBackgroundIsRemovedAgain(): void {
+		$written = [];
+		$this->themingDefaults->method('set')->willReturnCallback(
+			function (string $setting, string $value) use (&$written): void {
+				$written[$setting] = $value;
+			}
+		);
+
+		$updated = $this->service->applyColors(params: ['background_mode' => 'color']);
+
+		$this->assertSame(['background_mode'], $updated);
+		$this->assertSame('backgroundColor', ($written['backgroundMime'] ?? null));
+	}//end testACapturedRemovedBackgroundIsRemovedAgain()
+
+	/**
+	 * An unknown background state is refused before anything is written.
+	 */
+	public function testAnUnknownBackgroundModeIsRefused(): void {
+		$this->assertSame(
+			'Invalid background_mode: tiled',
+			$this->service->validateImagePaths(params: ['background_mode' => 'tiled'])
+		);
+		$this->assertNull($this->service->validateImagePaths(params: ['background_mode' => 'default']));
+	}//end testAnUnknownBackgroundModeIsRefused()
+
+	/**
+	 * The navigation-bar logo and the favicon are synced like the logo: the
+	 * stored file paired with its mime.
+	 */
+	public function testApplyImagesSyncsTheNavigationBarLogoAndFavicon(): void {
+		$this->imageManager->method('updateImage')->willReturn('image/svg+xml');
+		$mimes = [];
+		$this->themingDefaults->method('set')->willReturnCallback(
+			function (string $setting, string $value) use (&$mimes): void {
+				$mimes[$setting] = $value;
+			}
+		);
+
+		$updated = $this->service->applyImages(
+			params: ['logoheader' => 'img/logos/present.svg', 'favicon' => 'img/logos/present.svg']
+		);
+
+		$this->assertSame(['logoheader', 'favicon'], $updated);
+		$this->assertSame(['logoheaderMime' => 'image/svg+xml', 'faviconMime' => 'image/svg+xml'], $mimes);
+	}//end testApplyImagesSyncsTheNavigationBarLogoAndFavicon()
+
+	/**
 	 * A theme that captured an image of its own never has it removed by the
 	 * colour: the image is written by applyImages() right after.
 	 */
