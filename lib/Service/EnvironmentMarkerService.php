@@ -44,12 +44,12 @@ class EnvironmentMarkerService {
 	/**
 	 * The system config key in config.php.
 	 */
-	public const CONFIG_KEY = 'thematiq.environment';
+	public const CONFIG_KEY = Application::ENVIRONMENT_CONFIG_KEY;
 
 	/**
 	 * The command an administrator runs to declare the environment.
 	 */
-	public const OCC_SET_COMMAND = 'occ config:system:set thematiq.environment --value=<environment>';
+	public const OCC_SET_COMMAND = Application::ENVIRONMENT_OCC_COMMAND;
 
 	/**
 	 * Fixed stripe and label colours per style. Each pair reaches 4.5:1 and
