@@ -373,7 +373,19 @@
         "[Acceptance]": "[Acceptatie]",
         "[Unknown]": "[Onbekend]",
         "Environment: {environment}": "Omgeving: {environment}",
-        "No environment is set, so no page is marked. Declare it in config.php with:": "Er is geen omgeving ingesteld, dus geen pagina wordt gemarkeerd. Leg de omgeving vast in config.php met:"
+        "No environment is set, so no page is marked. Declare it in config.php with:": "Er is geen omgeving ingesteld, dus geen pagina wordt gemarkeerd. Leg de omgeving vast in config.php met:",
+        "Version": "Versie",
+        "Restore": "Herstellen",
+        "Restore the configuration from {time}": "De configuratie van {time} herstellen",
+        "{field}: {from} to {to}": "{field}: {from} naar {to}",
+        "Custom token set added: {id}": "Eigen tokenset toegevoegd: {id}",
+        "Custom token set removed: {id}": "Eigen tokenset verwijderd: {id}",
+        "The {role} font {name} is no longer uploaded and stays on the default font.": "Het {role}-lettertype {name} is niet meer geüpload en blijft op het standaardlettertype.",
+        "This version matches the current configuration.": "Deze versie komt overeen met de huidige configuratie.",
+        "This version does not validate today and cannot be restored.": "Deze versie is vandaag niet geldig en kan niet worden hersteld.",
+        "Restore this version?": "Deze versie herstellen?",
+        "The version was not restored. Nothing was changed.": "De versie is niet hersteld. Er is niets gewijzigd.",
+        "Each change keeps the configuration it produced, up to the last 50 changes or 20 MB. Restore shows what will change before anything is written.": "Elke wijziging bewaart de configuratie die eruit volgde, tot de laatste 50 wijzigingen of 20 MB. Herstellen laat eerst zien wat er verandert, voordat er iets wordt opgeslagen."
     },
     "plurals": {}
 }

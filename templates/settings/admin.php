@@ -626,6 +626,7 @@ if ($_['mockUi'] === true) {
 		<h3><?php p($l->t('Theming audit log')); ?></h3>
 		<p class="settings-hint">
 			<?php p($l->t('A record of theming configuration changes: who changed what, from what, to what, and when. Useful evidence for accessibility audits.')); ?>
+			<?php p($l->t('Each change keeps the configuration it produced, up to the last 50 changes or 20 MB. Restore shows what will change before anything is written.')); ?>
 		</p>
 		<div class="nldesign-audit-scroll" tabindex="0" role="region"
 		     aria-label="<?php p($l->t('Theming audit log')); ?>">
@@ -638,10 +639,11 @@ if ($_['mockUi'] === true) {
 					<th scope="col"><?php p($l->t('From')); ?></th>
 					<th scope="col"><?php p($l->t('To')); ?></th>
 					<th scope="col"><?php p($l->t('Changed')); ?></th>
+					<th scope="col"><?php p($l->t('Version')); ?></th>
 				</tr>
 			</thead>
 			<tbody id="nldesign-audit-table-body">
-				<tr><td colspan="6" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
+				<tr><td colspan="7" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
 			</tbody>
 		</table>
 		</div>
