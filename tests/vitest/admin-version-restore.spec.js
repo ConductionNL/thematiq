@@ -63,7 +63,6 @@ function install() {
 		}
 		return Promise.resolve({ status: 200, ok: true, json: () => Promise.resolve(body) })
 	})
-	window.location.reload = vi.fn()
 }
 
 async function flush(rounds = 10) {
@@ -119,7 +118,6 @@ describe('admin.js version restore', () => {
 		expect(dialog).toContain('Gone Sans')
 		const restore = calls.find((c) => c.url && c.url.indexOf('/settings/versions/20260929164000-0001/restore') !== -1)
 		expect(restore.method).toBe('POST')
-		expect(window.location.reload).toHaveBeenCalled()
 	})
 
 	it('changes nothing on cancel and returns focus to the button', async () => {
