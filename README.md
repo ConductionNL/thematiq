@@ -31,7 +31,7 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
 
 ## Icons
 
-The app includes **2526 icons** across four government icon sets and **25 logos**:
+The app includes **2526 icons** across four government icon sets and **26 logos**:
 
 - RVO, OpenGemeenten, Gemeente Den Haag — **1488 icons** (CC0-1.0 / CC0-1.0 / EUPL-1.2), materialized from `@conduction/nextcloud-vue`
 - DSFR (Système de Design de l'État) — **1038 icons** (**Etalab-2.0**), materialized from `@gouvfr/dsfr`
