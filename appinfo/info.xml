@@ -283,6 +283,8 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 		<command>OCA\Thematiq\Command\GenerateDarkVariants</command>
 		<command>OCA\Thematiq\Command\ConfigExport</command>
 		<command>OCA\Thematiq\Command\ConfigImport</command>
+		<command>OCA\Thematiq\Command\ConfigVersions</command>
+		<command>OCA\Thematiq\Command\ConfigRestore</command>
 	</commands>
 	<settings>
 		<admin>OCA\Thematiq\Settings\Admin</admin>
