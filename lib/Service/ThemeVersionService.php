@@ -244,9 +244,11 @@ class ThemeVersionService {
 		}
 
 		$total = array_sum($sizes);
-		while (count($names) > 1 && (count($names) > self::MAX_COUNT || $total > self::MAX_BYTES)) {
+		$kept = count($names);
+		while ($kept > 1 && ($kept > self::MAX_COUNT || $total > self::MAX_BYTES)) {
 			$oldest = array_shift($names);
 			$total -= $sizes[$oldest];
+			$kept--;
 			$folder->getFile($oldest)->delete();
 		}
 	}//end prune()

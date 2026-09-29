@@ -47,6 +47,8 @@ class ConfigRestore extends Command {
 	 * Configure the command.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	protected function configure(): void {
 		$this->setName(name: 'nldesign:config:restore')

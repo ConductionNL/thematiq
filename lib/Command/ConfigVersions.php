@@ -45,6 +45,8 @@ class ConfigVersions extends Command {
 	 * Configure the command.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	protected function configure(): void {
 		$this->setName(name: 'nldesign:config:versions')
@@ -58,6 +60,8 @@ class ConfigVersions extends Command {
 	 * @param OutputInterface $output The output.
 	 *
 	 * @return int The exit code.
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - Symfony's execute() signature; this command takes no input.
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
