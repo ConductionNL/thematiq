@@ -69,7 +69,7 @@ class ConfigRestore extends Command {
 		$id = (string)$input->getArgument('id');
 		$dryRun = ($input->getOption('dry-run') === true);
 
-		$result = ($dryRun === true) ? $this->restorer->preview(id: $id) : $this->restorer->restore(id: $id);
+		$result = $this->previewOrRestore(id: $id, dryRun: $dryRun);
 
 		if ($result === null) {
 			$output->writeln('<error>Unknown version: ' . $id . '</error>');
@@ -87,10 +87,33 @@ class ConfigRestore extends Command {
 			return Command::FAILURE;
 		}
 
-		$output->writeln($dryRun === true ? '<info>Dry run: nothing was written.</info>' : '<info>Version ' . $id . ' restored.</info>');
+		$done = '<info>Version ' . $id . ' restored.</info>';
+		if ($dryRun === true) {
+			$done = '<info>Dry run: nothing was written.</info>';
+		}
+
+		$output->writeln($done);
 
 		return Command::SUCCESS;
 	}//end execute()
+
+	/**
+	 * Preview on a dry run, restore otherwise.
+	 *
+	 * @param string $id     The version id.
+	 * @param bool   $dryRun Whether to write nothing.
+	 *
+	 * @return array<string, mixed>|null The result, or null for an unknown id.
+	 *
+	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - mirrors the --dry-run option.
+	 */
+	private function previewOrRestore(string $id, bool $dryRun): ?array {
+		if ($dryRun === true) {
+			return $this->restorer->preview(id: $id);
+		}
+
+		return $this->restorer->restore(id: $id);
+	}//end previewOrRestore()
 
 	/**
 	 * Print the changes a restore makes.
@@ -102,7 +125,9 @@ class ConfigRestore extends Command {
 	 */
 	private function printChanges(OutputInterface $output, array $result): void {
 		foreach ($result['changes'] as $change) {
-			$output->writeln('  ' . $change['field'] . ': ' . json_encode($change['from'], JSON_UNESCAPED_SLASHES) . ' -> ' . json_encode($change['to'], JSON_UNESCAPED_SLASHES));
+			$from = json_encode($change['from'], JSON_UNESCAPED_SLASHES);
+			$to = json_encode($change['to'], JSON_UNESCAPED_SLASHES);
+			$output->writeln('  ' . $change['field'] . ': ' . $from . ' -> ' . $to);
 		}
 
 		foreach ($result['customTokenSets']['add'] as $setId) {
