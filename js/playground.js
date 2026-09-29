@@ -106,6 +106,14 @@
 	var POINTABLE = ['hover', 'focus']
 
 	/**
+	 * The pseudo-state `rowsByState()` files callout-0 tokens under: the ones
+	 * every state of a component shares.
+	 *
+	 * @type {{n: number, id: string, label: string}}
+	 */
+	var SHARED_STATE = { n: 0, id: 'all', label: 'every variant' }
+
+	/**
 	 * The Nextcloud majors the header specimen can be drawn as.
 	 *
 	 * The window `appinfo/info.xml` declares this app supports. 32 and 33 draw
@@ -274,7 +282,7 @@
 	 * @return {Array<{state: Object, tokens: Array<Object>, fixed: Array<Object>}>} Rows per state.
 	 */
 	function rowsByState(component) {
-		return (component.states || []).map(function (state) {
+		var groups = (component.states || []).map(function (state) {
 			return {
 				state: state,
 				tokens: (component.tokens || []).filter(function (token) {
@@ -285,6 +293,18 @@
 				}),
 			}
 		})
+
+		// Callout 0 is a token every state shares — the note cards' and the
+		// toasts' corner. Filed under the first state it read as belonging to
+		// that one variant, so it leads the list on its own instead.
+		var shared = (component.tokens || []).filter(function (token) {
+			return token.callout === 0
+		})
+		if (shared.length > 0) {
+			groups.unshift({ state: SHARED_STATE, tokens: shared, fixed: [] })
+		}
+
+		return groups
 	}
 
 	/**
@@ -368,7 +388,23 @@
 		// not knowable until every override that reads the same token is in.
 		var unexpressed = []
 		var claims = {}
+		var direct = {}
 		Object.keys(overrides || {}).forEach(function (name) {
+			// ALREADY A TOKEN, so there is nothing to map.
+			//
+			// `sources` runs Nextcloud variable => token, and every override
+			// used to be a Nextcloud variable: the editor exposed `--color-*`
+			// and nothing else. The component layer changed that — a row for
+			// `--nldesign-component-header-background-color` sets the token
+			// itself — and those names have no entry in a map keyed by
+			// `--color-*`, so every one of them was reported as inexpressible
+			// and left out of the file. An admin who set a header colour and
+			// saved it as a theme got a theme with no header colour in it.
+			if (name.indexOf('--nldesign-') === 0) {
+				direct[name] = (overrides || {})[name]
+				return
+			}
+
 			var token = (sources || {})[name]
 			if (!token) {
 				unexpressed.push(name)
@@ -390,6 +426,15 @@
 					overruled.push({ name: name, token: token, winner: winner })
 				}
 			})
+		})
+
+		// Applied after the mapped ones, so a token an admin set BY NAME beats
+		// the same token reached through a Nextcloud variable. Nothing in the
+		// registry makes both reachable today — the brand rows are `--color-*`
+		// and the component rows are `--nldesign-component-*` — but the rule
+		// wants stating rather than depending on those two lists never meeting.
+		Object.keys(direct).forEach(function (token) {
+			merged[token] = direct[token]
 		})
 
 		var lines = Object.keys(merged)
@@ -640,11 +685,12 @@
 			// The set the page is WEARING, which a session preview changes —
 			// so an export is named after the set it actually contains.
 			tokenSet: loadState('playgroundSet', ''),
-			// The version this instance runs, and the one the header specimen
-			// is currently drawn as. They start equal: the version you are on
-			// is the one you are asking about first.
+			// The version this instance runs, and per component the one it is
+			// currently drawn as. Each starts on the running version — the one
+			// you are on is the one you are asking about first — and choosing
+			// another for one component leaves every other component alone.
 			serverVersion: loadState('playgroundVersion', 0),
-			headerVersion: headerMajor(loadState('playgroundVersion', 0)),
+			versions: {},
 			editor: editor,
 			preview: preview,
 			tabs: tabs,
@@ -684,6 +730,21 @@
 		state.crumb = el('span', 'nldesign-pg-crumb')
 		if (title !== null) {
 			title.appendChild(state.crumb)
+		}
+
+		// The app mock's typography link is a real `<a href>` as well, for its
+		// hover and focus; following it would rewrite the hash the selection
+		// lives in. Bound once, because build() runs again on every re-render.
+		if (preview.hasAttribute('data-pg-links') === false) {
+			preview.setAttribute('data-pg-links', '')
+			preview.addEventListener('click', function (event) {
+				if (
+					typeof event.target.closest === 'function'
+					&& event.target.closest('.nl-mini a[href]') !== null
+				) {
+					event.preventDefault()
+				}
+			})
 		}
 
 		// The third stage, next to the app and login views.
@@ -807,6 +868,10 @@
 			})
 
 		exitComponent(state)
+		// The app-shell and login previews draw a different part of themselves
+		// for each tab (css/admin.css keys on this), so a tab's full view shows
+		// that tab's components rather than one picture shared by all of them.
+		state.preview.setAttribute('data-pg-tab', tab)
 		showView(state, tab === 'login' ? 'login' : 'app')
 		renderChips(state)
 		updateCrumb(state)
@@ -938,8 +1003,25 @@
 		var filtered = el('div', 'nldesign-pg-panel')
 		filtered.appendChild(panelHead(state, component))
 
+		var groupsDrawn = 0
 		rowsByState(component).forEach(function (group) {
+			if (group.tokens.length === 0 && group.fixed.length === 0) {
+				return
+			}
+			// A component made of variants — one card or toast per type — puts
+			// a rule between them, so it is clear which rows belong together.
+			if (component.separateStates === true && groupsDrawn > 0) {
+				filtered.appendChild(el('hr', 'nldesign-pg-rowsep'))
+			}
+			groupsDrawn++
 			group.tokens.forEach(function (spec) {
+				// A token only one version reads — the note cards' `-rgb` fills
+				// exist on Nextcloud 32 alone — is offered while that version is
+				// the one drawn, and nowhere else: a row that moves nothing on
+				// the instance being themed is a control that does nothing.
+				if (spec.until !== undefined && versionOf(state, component) > spec.until) {
+					return
+				}
 				filtered.appendChild(cloneRow(state, spec))
 			})
 			group.fixed.forEach(function (spec) {
@@ -1067,20 +1149,38 @@
 				// Mirroring only picker → text left the swatch beside a
 				// hand-typed hex showing the previous colour, which is the one
 				// thing in the row that is not a number an admin can check.
-				var text = row.querySelector('.nldesign-color-text')
-				if (input.type === 'color' && text !== null) {
-					text.value = input.value
-				}
-				var swatch = row.querySelector('.nldesign-color-picker')
+				// On an `rgb` row the picker reports #RRGGBB but the token holds
+				// the bare `r, g, b` triplet, so the value is converted once here
+				// and everything below writes the converted one.
+				var value = input.value
+				var transforms = window.NldesignTokenTransforms || {}
 				if (
-					input.type === 'text'
-					&& swatch !== null
-					&& /^#[0-9a-fA-F]{6}$/.test(input.value.trim()) === true
+					input.type === 'color'
+					&& input.dataset.format === 'rgb'
+					&& typeof transforms.hexToRgbTriplet === 'function'
 				) {
-					swatch.value = input.value.trim()
+					value = transforms.hexToRgbTriplet(input.value) || input.value
 				}
 
-				state.preview.style.setProperty(spec.name, input.value)
+				var text = row.querySelector('.nldesign-color-text')
+				if (input.type === 'color' && text !== null) {
+					text.value = value
+				}
+				var swatch = row.querySelector('.nldesign-color-picker')
+				if (input.type === 'text' && swatch !== null) {
+					var typed = input.value.trim()
+					if (/^#[0-9a-fA-F]{6}$/.test(typed) === true) {
+						swatch.value = typed
+					} else if (
+						swatch.dataset.format === 'rgb'
+						&& typeof transforms.normaliseColorForPicker === 'function'
+						&& transforms.normaliseColorForPicker(typed) !== null
+					) {
+						swatch.value = transforms.normaliseColorForPicker(typed)
+					}
+				}
+
+				state.preview.style.setProperty(spec.name, value)
 
 				// markDirty() puts the custom-value badge on the row it finds
 				// by `data-token-row`, which is always the ORIGINAL — and the
@@ -1143,8 +1243,10 @@
 
 		reset.addEventListener('click', function (event) {
 			event.preventDefault()
+			// The real reset also puts the preview back — on the saved value when
+			// there is one — and `state.preview` is the element it writes on.
+			// Clearing the property here as well threw that saved value away.
 			originalReset.click()
-			state.preview.style.removeProperty(spec.name)
 
 			// After the real reset has run: whatever it put back is the truth.
 			window.setTimeout(function () {
@@ -1448,9 +1550,13 @@
 
 		var build = STAGES[component.id]
 
-		// The header is the one component whose MARKUP differs between the
-		// versions this app supports, so it gets to be drawn as any of them.
-		if (component.id === 'header-bar') {
+		// A component that differs between the supported versions can be asked
+		// about as any of them: `versionNotes` in js/playground/components.json
+		// lists what differs. The header and the note cards are also DRAWN as
+		// the chosen version; for the others the stage says what that version
+		// does differently. A component every version draws the same gets no
+		// switch, because there would be nothing to switch.
+		if (hasVersions(component) === true) {
 			state.stage.appendChild(versionSwitch(state, component))
 		}
 
@@ -1476,7 +1582,7 @@
 			var wide = el('div', 'nldesign-pg-wide')
 			wide.innerHTML =
 				typeof build === 'function'
-					? build(null, component, state.headerVersion)
+					? build(null, component, versionOf(state, component))
 					: fallbackSample()
 			scopeSpecimen(wide)
 			ground.appendChild(wide)
@@ -1550,6 +1656,28 @@
 			)
 		}
 
+		// Nextcloud 32 and 33 draw the app menu from white icon IMAGES, and a
+		// colour cannot reach an image — only a filter can, and Nextcloud picks
+		// that filter from its own background colour, not from the header's.
+		// Said on the stage, because the specimen is right and still looks like
+		// the glyph token is broken.
+		if (component.id === 'header-bar' && versionOf(state, component) < 34) {
+			state.stage.appendChild(
+				el(
+					'div',
+					'nldesign-pg-pointable',
+					t(
+						'thematiq',
+						'On Nextcloud 32 and 33 the app icons are images, so "Header glyphs" does not recolour them: they stay white. The other header glyphs do follow it. From Nextcloud 34 the app menu follows it too.',
+					),
+				),
+			)
+		}
+
+		versionNotes(state, component).forEach(function (line) {
+			state.stage.appendChild(el('div', 'nldesign-pg-pointable', line))
+		})
+
 		var saidLine = el('div', 'nldesign-pg-say')
 		saidLine.setAttribute('aria-live', 'polite')
 		state.stage.appendChild(saidLine)
@@ -1620,7 +1748,7 @@
 			var button = el(
 				'button',
 				'nldesign-pg-version'
-					+ (version === headerMajor(state.headerVersion) ? ' on' : '')
+					+ (version === versionOf(state, component) ? ' on' : '')
 					+ (running ? ' is-running' : ''),
 				String(version),
 			)
@@ -1629,13 +1757,90 @@
 				button.title = t('thematiq', 'The version this instance is running')
 			}
 			button.addEventListener('click', function () {
-				state.headerVersion = version
+				state.versions[component.id] = version
+				// A versioned component can offer different rows per version,
+				// so the panel is rebuilt with the stage. The header only
+				// changes its drawing.
+				if (component.versioned === true) {
+					enterComponent(state, component)
+					return
+				}
 				renderStage(state, component)
 			})
 			row.appendChild(button)
 		})
 
 		return row
+	}
+
+	/**
+	 * The version a component is drawn as: the one chosen for it, else the one
+	 * this instance runs.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Object} component The component.
+	 * @return {number} A supported major version.
+	 */
+	function versionOf(state, component) {
+		var chosen = state.versions[component.id]
+		return headerMajor(chosen === undefined ? state.serverVersion : chosen)
+	}
+
+	/**
+	 * Whether a component differs between the supported versions at all.
+	 *
+	 * @param {Object} component The component.
+	 * @return {boolean} True when it has version notes, or is drawn per version.
+	 */
+	function hasVersions(component) {
+		return (component.versionNotes || []).length > 0
+			|| component.id === 'header-bar'
+			|| component.versioned === true
+	}
+
+	/**
+	 * What the stage says about the version a component is drawn as.
+	 *
+	 * `versionNotes` in js/playground/components.json holds what a version
+	 * does differently, read off each version's own component stylesheets. A
+	 * component with none is drawn the same by every supported version and has
+	 * no switch, so nothing is said. Only
+	 * the header and the note cards are also DRAWN as another version; for the
+	 * rest the preview keeps the styles of the version this instance runs, and
+	 * says so while another one is chosen.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Object} component The component.
+	 * @return {Array<string>} The lines to show.
+	 */
+	function versionNotes(state, component) {
+		var version = versionOf(state, component)
+		var running = headerMajor(state.serverVersion)
+		var notes = component.versionNotes || []
+		var lines = []
+
+		if (hasVersions(component) === false) {
+			return lines
+		}
+
+		notes.forEach(function (note) {
+			if (note.versions.indexOf(version) !== -1) {
+				lines.push(t('thematiq', 'Nextcloud {version}:', { version: String(version) }) + ' ' + note.text)
+			}
+		})
+
+		var drawn = component.id === 'header-bar' || component.versioned === true
+		if (version !== running && drawn === false) {
+			lines.push(
+				t(
+					'thematiq',
+					'The preview keeps the styles of Nextcloud {running}, the version this instance runs.',
+					{ running: String(running) },
+				),
+			)
+		}
+
+		return lines
 	}
 
 	/**
@@ -1659,6 +1864,15 @@
 		})
 
 		stage.addEventListener('click', function (event) {
+			// A specimen link is a real `<a href>`, for its hover and focus.
+			// Following it would rewrite the hash this instrument keeps its
+			// selection in.
+			if (
+				typeof event.target.closest === 'function'
+				&& event.target.closest('a[href]') !== null
+			) {
+				event.preventDefault()
+			}
 			pressFrom(stage, event.target)
 		})
 
@@ -2116,10 +2330,16 @@
 					trailing: revealEye(),
 				})
 				+ choice('checkbox', true, t('thematiq', 'Remember me'))
+				// Named as the login button, because on the real page it IS one:
+				// `#body-login .button-vue--primary` puts it in the login button's
+				// scope. This stage is named `login-card`, so without the hook the
+				// submit resolved the PRIMARY button's token, and a login colour —
+				// saved or still being edited — never reached the card.
 				+ button('primary', 'default', t('thematiq', 'Log in'), {
 					icon: submitArrow(),
 					wide: true,
 					done: t('thematiq', 'Signing in …'),
+					attrs: ' data-thematiq-component="login-button"',
 				})
 				+ '</fieldset>'
 				+ '</form>'
@@ -2437,8 +2657,10 @@
 		},
 		'settings-section': function () {
 			return (
-				'<div class="nldesign-pg-section">'
-				+ '<h2 class="nldesign-pg-section-title">'
+				// NcSettingsSection's own class names, so the section scope
+				// reaches the heading as it does on a real settings page.
+				'<div class="settings-section nldesign-pg-section">'
+				+ '<h2 class="settings-section__name nldesign-pg-section-title">'
 				+ t('thematiq', 'Background and colours')
 				+ ''
 				+ '</h2>'
@@ -2454,17 +2676,23 @@
 			)
 		},
 		'text-input': function (state) {
+			// A placeholder, so the empty field shows the placeholder colour
+			// the text input's own rows set.
 			return field(
 				state === 'invalid'
 					? t('thematiq', 'Email address')
 					: t('thematiq', 'Account name'),
 				state,
+				{ placeholder: t('thematiq', 'e.g. j.jansen') },
 			)
 		},
 		select: function () {
 			return (
+				// The chosen value in NcSelect's pill, then the open list, whose
+				// options answer the pointer the way the real dropdown does.
 				'<div class="nldesign-pg-selectwrap">'
-				+ '<span class="nldesign-pg-input nldesign-pg-select">Nederland'
+				+ '<span class="nldesign-pg-input nldesign-pg-select">'
+				+ '<span class="nldesign-pg-selected">Nederland</span>'
 				+ '</span>'
 				+ '<ul class="nldesign-pg-options">'
 				+ '<li class="nldesign-pg-option">België</li>'
@@ -2486,10 +2714,17 @@
 				+ '</div>'
 			)
 		},
-		textarea: function () {
+		textarea: function (state) {
+			// Empty, so its placeholder shows; invalid, filled in and edged in
+			// the invalid colour. Focus is the admin's own: click into it.
+			var invalid = state === 'invalid'
 			return (
-				'<span class="nldesign-pg-input nldesign-pg-textarea">'
-				+ t('thematiq', 'A longer explanation, over several lines.')
+				'<span class="nldesign-pg-input nldesign-pg-textarea'
+				+ (invalid ? ' is-invalid' : '')
+				+ '" data-placeholder="'
+				+ attr(t('thematiq', 'Describe the change in a few lines…'))
+				+ '">'
+				+ (invalid ? t('thematiq', 'A longer explanation, over several lines.') : '')
 				+ '</span>'
 			)
 		},
@@ -2562,7 +2797,11 @@
 		'success-button': function (state) {
 			return button('success', state, t('thematiq', 'Approve'))
 		},
-		'note-cards': function () {
+		'note-cards': function (state, component, version) {
+			// Nextcloud 32 (@nextcloud/vue 8) mixed the fill from the `-rgb`
+			// token at 10% and drew the stripe in the type colour; 33 and later
+			// fill the card with the type colour itself.
+			var legacy = headerMajor(version) <= 32 ? ' is-v32' : ''
 			return [
 				[
 					'info',
@@ -2593,6 +2832,7 @@
 						+ def[0]
 						+ ' nldesign-pg-note is-'
 						+ def[0]
+						+ legacy
 						+ '">'
 						+ '<span class="nldesign-pg-note-icon"></span>'
 						+ '<span>'
@@ -2622,7 +2862,11 @@
 			]
 				.map(function (def) {
 					return (
-						'<div class="toastify nldesign-pg-toast is-'
+						// Core's own toast classes, so the same paint rules that reach
+						// a real toast in css/component-scopes.css reach this one.
+						'<div class="toastify toast toast-'
+						+ def[0]
+						+ ' nldesign-pg-toast is-'
 						+ def[0]
 						+ '">'
 						+ def[2]
@@ -2661,16 +2905,19 @@
 			)
 		},
 		link: function () {
+			// Real links, so hover and keyboard focus are the browser's own
+			// states and the page's link rules reach them as they reach any
+			// link. bindStage() keeps a click from leaving the page.
 			return (
 				'<p class="nldesign-pg-paragraph nldesign-pg-reading">'
 				+ t('thematiq', 'Read more about the NL Design System in the ')
-				+ '<span class="nldesign-pg-link">'
+				+ '<a href="#" class="nldesign-pg-link">'
 				+ t('thematiq', 'documentation')
-				+ '</span>'
+				+ '</a>'
 				+ t('thematiq', ', or look at the ')
-				+ '<span class="nldesign-pg-link">'
+				+ '<a href="#" class="nldesign-pg-link">'
 				+ t('thematiq', 'example themes')
-				+ '</span>'
+				+ '</a>'
 				+ '.</p>'
 			)
 		},
@@ -3366,7 +3613,8 @@
 	 * @param {string} label The field label.
 	 * @param {string} state default, focus or invalid.
 	 * @param {Object} [options] `inside` places the label over the input,
-	 *   `trailing` is markup for a trailing button, `type` is the input type.
+	 *   `trailing` is markup for a trailing button, `type` is the input type,
+	 *   `placeholder` is the hint an empty field shows.
 	 * @return {string} The markup.
 	 */
 	function field(label, state, options) {
@@ -3394,7 +3642,9 @@
 			+ id
 			+ '" class="input-field__input" type="'
 			+ (settings.type || 'text')
-			+ '" placeholder="" aria-live="polite" value="'
+			+ '" placeholder="'
+			+ attr(settings.placeholder || '')
+			+ '" aria-live="polite" value="'
 			+ (filled ? 'Ingevulde waarde' : '')
 			+ '">'
 			+ (inside

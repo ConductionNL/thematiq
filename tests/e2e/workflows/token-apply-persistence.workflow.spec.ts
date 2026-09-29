@@ -11,7 +11,8 @@
  *     the GET /settings/overrides response now contain it), and
  *   - after a FRESH RELOAD the editor shows the persisted override (input value
  *     + custom badge) — i.e. the override survives a round-trip, and
- *   - resetting / clearing the override removes it from the backend.
+ *   - clearing the override removes it from the backend. (The row's reset
+ *     button goes back to the SAVED value, so it is not the way to drop one.)
  *
  * It also probes whether the saved override is REFLECTED in the live CSS
  * variable on the page (the "applies the theme" promise). See the fixme block —
@@ -22,7 +23,7 @@
  * theming). The prior file content is snapshotted in beforeAll and RESTORED in
  * afterAll so the dev instance is never left re-themed.
  */
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 import {
 	openTheming,
 	requestToken,
@@ -38,6 +39,20 @@ const TEST_TOKEN = '--color-primary'
 const TEST_VALUE = '#a1b2c3' // deliberate, easily-recognised, easily-reverted value
 
 let baselineOverrides: Record<string, string> = {}
+
+/**
+ * Unlock Nextcloud's base tokens, which --color-primary is one of: they stay
+ * locked until the admin ticks the opt-in and confirms its warning.
+ *
+ * @param page The Playwright page, on the theming settings.
+ */
+async function unlockBaseTokens(page: Page): Promise<void> {
+	await page.locator('#nldesign-base-unlock').click()
+	await page
+		.locator('#nldesign-base-unlock-overlay .nldesign-dialog-confirm')
+		.click()
+	await expect(page.locator('#nldesign-base-unlock')).toBeChecked()
+}
 
 test.describe('workflow: token-apply persistence', () => {
 	test.describe.configure({ mode: 'serial', timeout: 90_000 })
@@ -69,6 +84,7 @@ test.describe('workflow: token-apply persistence', () => {
 		const token = await requestToken(page)
 
 		// Drive the real editor UI: type the value into the --color-primary text field.
+		await unlockBaseTokens(page)
 		const textField = page.locator(
 			`.nldesign-color-text[data-token="${TEST_TOKEN}"]`,
 		)
@@ -149,7 +165,7 @@ test.describe('workflow: token-apply persistence', () => {
 		expect(live.toLowerCase()).toBe(TEST_VALUE.toLowerCase())
 	})
 
-	test('clearing the override REMOVES it from the backend (reset path)', async ({
+	test('clearing the override REMOVES it from the backend', async ({
 		page,
 	}) => {
 		await openTheming(page)
@@ -159,8 +175,12 @@ test.describe('workflow: token-apply persistence', () => {
 		const before = await getOverrides(page, token)
 		expect(before[TEST_TOKEN]).toBe(TEST_VALUE)
 
-		// Click the row's reset button (↺) to clear the custom value, then Save.
-		await page.locator(`.nldesign-reset-btn[data-token="${TEST_TOKEN}"]`).click()
+		// Empty the row's field, then Save: an emptied row is how a saved value
+		// stops being saved. The reset button would restore the saved value.
+		await unlockBaseTokens(page)
+		await page
+			.locator(`.nldesign-color-text[data-token="${TEST_TOKEN}"]`)
+			.fill('')
 		await page.locator('#nldesign-save-btn').click()
 		await expect(page.locator('#nldesign-save-status')).toHaveText('', {
 			timeout: 10_000,
@@ -170,7 +190,7 @@ test.describe('workflow: token-apply persistence', () => {
 		const after = await getOverrides(page, token)
 		expect(
 			after[TEST_TOKEN],
-			'override should be removed after reset+save',
+			'override should be removed after clearing the field and saving',
 		).toBeUndefined()
 
 		// The served file no longer contains the declaration.

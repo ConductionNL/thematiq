@@ -58,8 +58,10 @@ test.describe('token-editor-edit-behavior', () => {
 		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
 		await dismissSyncDialog(page)
 
-		// Pick the first colour text field in the editor and read its token name.
-		const field = page.locator('.nldesign-color-text').first()
+		// Pick the first EDITABLE colour text field and read its token name.
+		// Nextcloud's base tokens lead the list and stay locked until the
+		// admin opts in, so the first field overall is a disabled one.
+		const field = page.locator('.nldesign-color-text:not([disabled])').first()
 		await expect(field).toBeAttached()
 		const tokenName = await field.getAttribute('data-token')
 		expect(tokenName, 'colour field must carry a data-token').toBeTruthy()
@@ -75,13 +77,19 @@ test.describe('token-editor-edit-behavior', () => {
 		await field.fill(NEW)
 		await field.dispatchEvent('input')
 
-		// Live preview: the inline style on the document element must now carry
-		// the new value for this token (applyLivePreview → documentElement.style).
-		const inlineVal = await page.evaluate(
-			(name) => document.documentElement.style.getPropertyValue(name).trim(),
+		// Live preview: the preview carries the new value for this token, and
+		// the page does not — an unsaved edit is a preview until it is saved
+		// (applyLivePreview → #nldesign-preview.style, never <html>).
+		const inline = await page.evaluate(
+			(name) => ({
+				preview: (document.getElementById('nldesign-preview') as HTMLElement)
+					.style.getPropertyValue(name).trim(),
+				page: document.documentElement.style.getPropertyValue(name).trim(),
+			}),
 			tokenName as string,
 		)
-		expect(inlineVal.toLowerCase()).toBe(NEW)
+		expect(inline.preview.toLowerCase()).toBe(NEW)
+		expect(inline.page).toBe('')
 
 		// A custom-value badge must appear on the edited row (markDirty).
 		await expect(badge).toHaveCount(1)
@@ -102,7 +110,7 @@ test.describe('token-editor-edit-behavior', () => {
 		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
 		await dismissSyncDialog(page)
 
-		const field = page.locator('.nldesign-color-text').first()
+		const field = page.locator('.nldesign-color-text:not([disabled])').first()
 		const tokenName = await field.getAttribute('data-token')
 		const picker = page.locator(
 			`.nldesign-color-picker[data-token="${tokenName}"]`,
@@ -125,7 +133,7 @@ test.describe('token-editor-edit-behavior', () => {
 		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
 		await dismissSyncDialog(page)
 
-		const field = page.locator('.nldesign-color-text').first()
+		const field = page.locator('.nldesign-color-text:not([disabled])').first()
 		const tokenName = await field.getAttribute('data-token')
 		const row = page.locator(`[data-token-row="${tokenName}"]`)
 		const badge = row.locator('.nldesign-token-custom-badge')
@@ -140,10 +148,10 @@ test.describe('token-editor-edit-behavior', () => {
 		await expect(resetBtn).toBeVisible()
 		await resetBtn.click()
 
-		// Reset removes the inline style (document.documentElement.style.removeProperty)
-		// and removes the custom badge.
+		// Reset removes the preview's inline style and removes the custom badge.
 		const inlineVal = await page.evaluate(
-			(name) => document.documentElement.style.getPropertyValue(name).trim(),
+			(name) => (document.getElementById('nldesign-preview') as HTMLElement)
+				.style.getPropertyValue(name).trim(),
 			tokenName as string,
 		)
 		expect(inlineVal).toBe('')

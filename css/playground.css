@@ -170,6 +170,16 @@
 	font-weight: 700;
 }
 
+/* The rule between one variant's rows and the next in a component's panel.
+   Heavier and darker than the rule under each row, and with room around it,
+   so it reads as "a new group starts here" rather than as one more row edge. */
+.nldesign-pg-panel .nldesign-pg-rowsep {
+	height: 0;
+	margin: 18px 0 12px;
+	border: none;
+	border-top: 2px solid var(--color-border-maxcontrast);
+}
+
 .nldesign-pg-dim {
 	color: var(--color-text-maxcontrast);
 	font-weight: 400;
@@ -288,6 +298,37 @@
 	cursor: text;
 }
 
+/* The textarea as NcTextArea draws it: the typed text on its fill inside the
+   border, the placeholder while empty, the border darkening on focus and
+   taking the error edge when invalid. The fill, text, border, corner and
+   invalid edge are Nextcloud variables the textarea scope redirects; the
+   placeholder and the focused border have none, so they read their tokens
+   here, as css/component-scopes.css paints them on the real field. */
+#nldesign-preview .nldesign-pg-input.nldesign-pg-textarea {
+	align-items: flex-start;
+	width: 260px;
+	max-width: 100%;
+	min-height: 88px;
+	padding: 10px 12px;
+	border-color: var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+}
+
+#nldesign-preview .nldesign-pg-input.nldesign-pg-textarea:empty::before {
+	content: attr(data-placeholder);
+	color: var(--nldesign-component-textarea-placeholder-color, var(--color-text-maxcontrast));
+}
+
+#nldesign-preview .nldesign-pg-input.nldesign-pg-textarea:focus {
+	border-color: var(--nldesign-component-textarea-focus-border-color, var(--color-main-text));
+}
+
+#nldesign-preview .nldesign-pg-input.nldesign-pg-textarea.is-invalid {
+	border-color: var(--color-border-error, var(--color-error));
+}
+
 #nldesign-preview .nldesign-pg-input[contenteditable]:focus-visible,
 #nldesign-preview .nldesign-pg-textarea[contenteditable]:focus-visible {
 	outline: 2px solid var(--color-primary-element);
@@ -397,19 +438,8 @@
    avatar above all. `--nldesign-color-header-background` is what
    element-overrides.css paints `#header` with; the primary colour is the
    fallback core uses when a set declares no header colour of its own. */
-/* The same chain the real `#header` rule uses, component token first.
- *
- * Reading `--nldesign-color-header-background` alone was not enough once the
- * header got a component token: a token set DECLARES the header colour, so the
- * fallback behind it never fired and the specimen ignored anything an admin set
- * on the Header bar chip. The stage's `[data-thematiq-component]` re-scope does
- * not rescue this one either — that redirects `--color-primary`, which this
- * chain only reaches as a last resort. */
 #nldesign-preview .nldesign-pg-ground--header {
-	background-color: var(
-		--nldesign-component-header-background-color,
-		var(--nldesign-color-header-background, var(--color-primary))
-	);
+	background-color: var(--nldesign-color-header-background, var(--color-primary));
 }
 
 /* Where a modal is actually met: over a dimmed page, not floating on a card. */
@@ -532,8 +562,9 @@
 /* The one state a drawing still has to hold still: `:active` lasts exactly as
    long as the press, and the cell exists to put the pressed colour beside the
    resting one. Core's own value for a tertiary button. */
+/* Held pressed: what NcButton's own `.button-vue:active` paints. */
 #nldesign-preview .nldesign-pg-btn.is-active {
-	background-color: var(--color-primary-element-light-hover);
+	background-color: var(--color-primary-element-light);
 }
 
 /* The floor, and ONLY when this page turned out not to carry NcButton's
@@ -587,8 +618,8 @@
 }
 
 #nldesign-preview .nldesign-pg-unscoped .button-vue--vue-secondary {
-	background: var(--color-background-dark);
-	color: var(--color-main-text);
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
 }
 
 #nldesign-preview .nldesign-pg-unscoped .button-vue--tertiary {
@@ -637,8 +668,11 @@
 	height: 50px;
 	margin: -16px;
 	padding: 0 10px;
-	background: transparent;
-	color: var(--color-primary-text);
+	/* Painted the way css/component-scopes.css paints the real `#header`: from
+	   the header token, or not at all — Nextcloud gives the bar no background
+	   of its own, so the ground behind it shows through, as the page does. */
+	background-color: var(--nldesign-component-header-background-color, transparent);
+	color: var(--nldesign-component-header-color, var(--color-primary-text));
 }
 
 /* The logo the instance is actually wearing, resolved through the same chain
@@ -700,6 +734,7 @@
 /* A hovered entry takes the light content-surface hover colour, so its white
    icon has to invert to stay visible — which is exactly what core does, and
    what a set with a dark hover colour breaks. */
+#nldesign-preview .nldesign-pg-header .app-menu-entry:hover .nldesign-pg-icon,
 #nldesign-preview .nldesign-pg-header .app-menu-entry.is-hover .nldesign-pg-icon {
 	filter: invert(100%);
 }
@@ -719,6 +754,7 @@
    colour, so a light box appears on the saturated bar and the glyph inside it
    has to flip to the body text colour to stay legible. That flip is the point —
    a set whose hover colour is dark makes this unreadable. */
+#nldesign-preview .nldesign-pg-header .app-menu-entry:hover,
 #nldesign-preview .nldesign-pg-header .app-menu-entry.is-hover {
 	background: var(--color-background-hover);
 }
@@ -814,6 +850,15 @@
 #nldesign-preview .nldesign-pg-logincard {
 	width: 320px;
 	max-width: 100%;
+}
+
+/* The card's edge, painted from its token the way css/component-scopes.css
+   paints the real login box: Nextcloud's guest box draws no border, so there
+   is no variable to redirect. Unset, the declaration is invalid and the card
+   has no edge, as in Nextcloud. `!important` because the nldesign theme sets
+   `border: none !important` on every guest box. */
+#nldesign-preview .nldesign-pg-logincard {
+	border: 1px solid var(--nldesign-component-login-box-border-color) !important;
 }
 
 /* Login.vue: the wrapper stacks with a two-baseline gap. */
@@ -954,6 +999,7 @@
    `:not(.app-navigation-entry--legacy)` rule after it wins on every entry that
    is not explicitly legacy. (Selected-and-hovered is 22%, and has no rule here
    because the stage draws the two states separately.) */
+#nldesign-preview .nldesign-pg-nav-entry:not(.is-selected):hover,
 #nldesign-preview .nldesign-pg-nav-entry.is-hover {
 	background: color-mix(in srgb, var(--color-primary-element) 8%, transparent);
 }
@@ -1011,12 +1057,16 @@
 	font-size: 14px;
 }
 
+/* The header row's fill and weight have no Nextcloud variable to redirect, so
+   they are painted from their tokens here, as css/component-scopes.css paints
+   them on real tables, falling back to what Nextcloud draws. */
 #nldesign-preview .nldesign-pg-table th {
 	padding: 10px 12px;
 	border-bottom: 1px solid var(--color-border);
+	background-color: var(--nldesign-component-table-header-background-color, transparent);
 	color: var(--color-text-maxcontrast);
 	font-size: 13px;
-	font-weight: 400;
+	font-weight: var(--nldesign-component-table-header-font-weight, 400);
 	text-align: left;
 }
 
@@ -1042,6 +1092,7 @@
 	background: var(--color-background-dark);
 }
 
+#nldesign-preview .nldesign-pg-table tbody tr:hover td,
 #nldesign-preview .nldesign-pg-table tr.is-hover td {
 	background: var(--color-background-hover);
 }
@@ -1116,6 +1167,7 @@
 	transition: background-color var(--animation-quick, 100ms);
 }
 
+#nldesign-preview .nldesign-pg-listitem:not(.is-selected):hover,
 #nldesign-preview .nldesign-pg-listitem.is-hover {
 	background: var(--color-background-hover);
 }
@@ -1329,6 +1381,7 @@
 	white-space: nowrap;
 }
 
+#nldesign-preview .nldesign-pg-action:hover .action-button,
 #nldesign-preview .nldesign-pg-action.is-hover .action-button,
 #nldesign-preview .nldesign-pg-popover .action-button:hover {
 	background: var(--color-background-hover);
@@ -1349,6 +1402,7 @@
 	color: var(--color-primary);
 }
 
+#nldesign-preview .nldesign-pg-crumbs .nldesign-pg-crumb:not(.is-current):hover,
 #nldesign-preview .nldesign-pg-crumbs .nldesign-pg-crumb.is-hover {
 	background: var(--color-background-hover);
 }
@@ -1520,9 +1574,21 @@
 	max-width: 100%;
 }
 
+/* NcSelect is vue-select, and it is themed through vue-select's own `--vs-*`
+   variables, which the select scope in css/component-scopes.css points at the
+   select tokens. The Nextcloud colour behind each is what NcSelect itself
+   sets, for a page that does not carry NcSelect's stylesheet. */
 #nldesign-preview .nldesign-pg-select {
 	justify-content: space-between;
-	color: var(--color-main-text);
+	border-color: var(--vs-border-color, var(--color-border-maxcontrast));
+	border-radius: var(--vs-border-radius, var(--border-radius-element));
+	color: var(--vs-selected-color, var(--color-main-text));
+}
+
+#nldesign-preview .nldesign-pg-selected {
+	padding: 2px 10px;
+	border-radius: 16px;
+	background: var(--color-primary-element-light);
 }
 
 #nldesign-preview .nldesign-pg-options {
@@ -1541,11 +1607,14 @@
 	min-height: 36px;
 	padding: 0 10px;
 	border-radius: var(--border-radius);
+	color: var(--vs-dropdown-color, var(--color-main-text));
 	font-size: 14px;
 }
 
+#nldesign-preview .nldesign-pg-option:hover,
 #nldesign-preview .nldesign-pg-option.is-hover {
-	background: var(--color-background-hover);
+	background: var(--vs-dropdown-option--active-bg, var(--color-background-hover));
+	color: var(--vs-dropdown-option--active-color, var(--vs-dropdown-color, var(--color-main-text)));
 }
 
 /* Checkbox, radio, switch ------------------------------------------------------------ */
@@ -1698,30 +1767,87 @@
 	background: currentcolor;
 }
 
+/* A note card as Nextcloud 34+ draws one (NcNoteCard): the type colour is the
+   FILL, its paired text colour the stripe and the glyph. The text colour is not
+   set here — css/component-scopes.css paints it, with !important as core does,
+   from the card's text token, or white/black against a background the theme
+   set, or the main text. */
 #nldesign-preview .nldesign-pg-note.is-info {
-	border-left: 4px solid var(--color-info);
-	background: var(--color-background-hover);
-	color: var(--color-element-info);
+	border-inline-start: 4px solid var(--color-info-text, var(--color-element-info));
+	background: var(--color-info);
 }
 
 #nldesign-preview .nldesign-pg-note.is-warning {
-	border-left: 4px solid var(--color-warning);
-	background: rgb(var(--color-warning-rgb) / 10%);
-	color: var(--color-element-warning);
+	border-inline-start: 4px solid var(--color-warning-text, var(--color-element-warning));
+	background: var(--color-warning);
 }
 
 #nldesign-preview .nldesign-pg-note.is-error {
-	border: 1px solid var(--color-border-error);
-	border-left: 4px solid var(--color-error);
-	background: rgb(var(--color-error-rgb) / 10%);
-	color: var(--color-element-error);
+	border-inline-start: 4px solid var(--color-error-text, var(--color-element-error));
+	background: var(--color-error);
 }
 
 #nldesign-preview .nldesign-pg-note.is-success {
-	border: 1px solid var(--color-border-success);
-	border-left: 4px solid var(--color-success);
-	background: rgb(var(--color-success-rgb) / 10%);
-	color: var(--color-element-success);
+	border-inline-start: 4px solid var(--color-success-text, var(--color-element-success));
+	background: var(--color-success);
+}
+
+/* Nextcloud 32 (@nextcloud/vue 8): the fill is the type colour's `-rgb`
+   triplet at 10%, and the stripe and glyph are the type colour itself.
+   Declared as the variables NcNoteCard reads rather than painted: the
+   specimen carries the real component's scope, and its own rule paints the
+   fill from --note-background with !important, as it does on the page. */
+#nldesign-preview .nldesign-pg-note.is-v32.is-info {
+	--note-background: rgba(var(--color-info-rgb), 0.1);
+	--note-theme: var(--color-info);
+}
+
+#nldesign-preview .nldesign-pg-note.is-v32.is-warning {
+	--note-background: rgba(var(--color-warning-rgb), 0.1);
+	--note-theme: var(--color-warning);
+}
+
+#nldesign-preview .nldesign-pg-note.is-v32.is-error {
+	--note-background: rgba(var(--color-error-rgb), 0.1);
+	--note-theme: var(--color-error);
+}
+
+#nldesign-preview .nldesign-pg-note.is-v32.is-success {
+	--note-background: rgba(var(--color-success-rgb), 0.1);
+	--note-theme: var(--color-success);
+}
+
+/* The glyph takes the stripe colour, as NcNoteCard's does. */
+#nldesign-preview .nldesign-pg-note.is-info .nldesign-pg-note-icon {
+	color: var(--color-info-text, var(--color-element-info));
+}
+
+#nldesign-preview .nldesign-pg-note.is-warning .nldesign-pg-note-icon {
+	color: var(--color-warning-text, var(--color-element-warning));
+}
+
+#nldesign-preview .nldesign-pg-note.is-error .nldesign-pg-note-icon {
+	color: var(--color-error-text, var(--color-element-error));
+}
+
+#nldesign-preview .nldesign-pg-note.is-success .nldesign-pg-note-icon {
+	color: var(--color-success-text, var(--color-element-success));
+}
+
+#nldesign-preview .nldesign-pg-note.is-v32.is-info .nldesign-pg-note-icon {
+	color: var(--color-info);
+}
+
+#nldesign-preview .nldesign-pg-note.is-v32.is-warning .nldesign-pg-note-icon {
+	color: var(--color-warning);
+}
+
+#nldesign-preview .nldesign-pg-note.is-v32.is-error .nldesign-pg-note-icon {
+	color: var(--color-error);
+}
+
+#nldesign-preview .nldesign-pg-note.is-v32.is-success .nldesign-pg-note-icon {
+	color: var(--color-success);
 }
 
 /* Badges and toasts ------------------------------------------------------------------------------ */
@@ -1745,30 +1871,37 @@
 	font-size: 24px;
 }
 
+/* A toast as Nextcloud draws one: a card on the main background, main text,
+   and the type colour as a stripe. The background and the text are NOT set
+   here: css/component-scopes.css paints both from the toast tokens, on the real
+   toasts and on this specimen alike, and a rule under the preview's id would
+   out-rank it and freeze the specimen. The text follows the background when a
+   theme sets one and no text colour of its own. */
 #nldesign-preview .nldesign-pg-toast {
+	position: static;
 	display: block;
 	max-width: 380px;
 	margin-bottom: 8px;
 	padding: 12px 14px;
-	border-radius: var(--border-radius);
-	color: #fff;
+	border-radius: var(--nldesign-component-toast-border-radius, var(--border-radius));
+	box-shadow: 0 0 6px 0 var(--color-box-shadow);
 	font-size: 14px;
 }
 
 #nldesign-preview .nldesign-pg-toast.is-success {
-	background: var(--color-success);
+	border-inline-start: 3px solid var(--color-element-success, var(--color-success));
 }
 
 #nldesign-preview .nldesign-pg-toast.is-error {
-	background: var(--color-error);
+	border-inline-start: 3px solid var(--color-element-error, var(--color-error));
 }
 
 #nldesign-preview .nldesign-pg-toast.is-warning {
-	background: var(--color-warning);
+	border-inline-start: 3px solid var(--color-element-warning, var(--color-warning));
 }
 
 #nldesign-preview .nldesign-pg-toast.is-info {
-	background: var(--color-info);
+	border-inline-start: 3px solid var(--color-element-info, var(--color-primary));
 }
 
 /* Type ------------------------------------------------------------------------------------------ */
@@ -1820,6 +1953,10 @@
 	text-decoration: underline;
 }
 
+/* Hovered, or focused from the keyboard: the link's hover colour, which the
+   link scope in css/component-scopes.css points at the link hover token. */
+#nldesign-preview .nldesign-pg-link:hover,
+#nldesign-preview .nldesign-pg-link:focus-visible,
 #nldesign-preview .nldesign-pg-link.is-hover {
 	color: var(--color-primary-hover);
 }
@@ -2042,6 +2179,8 @@
    other one does something else. */
 #nldesign-preview .nldesign-pg-header.is-modern {
 	position: relative;
+	/* The header token first, as element-overrides.css and the component
+	   scope both put it on the live header. */
 	color: var(
 		--nldesign-component-header-color,
 		var(
