@@ -128,7 +128,8 @@
 		"theming": {
 			"primary_color": "#00549E",
 			"background_color": "#FFFFFF",
-			"logo": "img/logos/epe.svg"
+			"logo": "img/logos/epe.svg",
+			"logo_dark": "img/logos/epe-dark.svg"
 		}
 	},
 	{
