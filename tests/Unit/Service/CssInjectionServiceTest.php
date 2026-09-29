@@ -303,9 +303,35 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame(['component-scopes', 'custom-overrides'], $styleLog);
+		$this->assertSame(['component-scopes', 'custom-overrides-nextcloud'], $styleLog);
 		$this->assertSame([], $fontLog);
 	}//end testNoneDesignSystemLoadsOnlyTheComponentLayer()
+
+	/**
+	 * A custom set saved off stock Nextcloud is on `none` too, but unlike the
+	 * stock set it HAS a file, and that file is where its values live. It is
+	 * loaded before the component layer that reads it, and the set gets an
+	 * overrides file of its own — neither the shared one nor the stock set's.
+	 */
+	public function testACustomSetOnNoneLoadsItsOwnTokenFile(): void {
+		$this->configureAppValues(['token_set' => 'custom-openwoo']);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'none']);
+		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
+			[
+				'id' => 'none',
+				'name' => 'No design system',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$service->inject('user');
+
+		$this->assertSame(['tokens/custom-openwoo', 'component-scopes', 'custom-overrides-custom-openwoo'], $styleLog);
+	}//end testACustomSetOnNoneLoadsItsOwnTokenFile()
 
 	/**
 	 * Custom overrides load after all design-system and token layers, and
@@ -337,7 +363,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertTrue($ensureExistsCalledBeforeStyle);
-		$this->assertSame(end($styleLog), 'custom-overrides');
+		$this->assertSame(end($styleLog), 'custom-overrides-nextcloud');
 	}//end testCustomOverridesAlwaysLoadedLast()
 
 	/**
@@ -362,7 +388,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertSame(
-			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'component-scopes', 'custom-overrides', 'hide-slogan', 'show-menu-labels'],
+			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'component-scopes', 'custom-overrides-nextcloud', 'hide-slogan', 'show-menu-labels'],
 			$styleLog
 		);
 	}//end testConditionalStylesheetsLoadedWhenEnabled()
@@ -423,7 +449,7 @@ class CssInjectionServiceTest extends TestCase {
 		$this->assertContains('primary-lock', $styleLog);
 		$this->assertSame('primary-lock', end($styleLog), 'primary-lock is the last layer emitted');
 		$this->assertGreaterThan(
-			array_search('custom-overrides', $styleLog, true),
+			array_search('custom-overrides-nextcloud', $styleLog, true),
 			array_search('primary-lock', $styleLog, true),
 			'primary-lock must come after custom-overrides, or the stored value would win'
 		);
@@ -610,7 +636,7 @@ class CssInjectionServiceTest extends TestCase {
 			$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 			$service->inject($context);
 
-			$this->assertContains('custom-overrides', $styleLog, 'context ' . $context . ' must be themed');
+			$this->assertContains('custom-overrides-nextcloud', $styleLog, 'context ' . $context . ' must be themed');
 		}
 	}//end testAbsentThemedContextsThemesEveryContext()
 
@@ -640,7 +666,7 @@ class CssInjectionServiceTest extends TestCase {
 		$userFontLog = [];
 		$userService = $this->buildService(styleLog: $userStyleLog, fontLog: $userFontLog);
 		$userService->inject('user');
-		$this->assertContains('custom-overrides', $userStyleLog);
+		$this->assertContains('custom-overrides-nextcloud', $userStyleLog);
 	}//end testConfiguredListExcludesUnlistedContexts()
 
 	/**
@@ -663,7 +689,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('public');
 
-		$this->assertContains('custom-overrides', $styleLog);
+		$this->assertContains('custom-overrides-nextcloud', $styleLog);
 	}//end testInvalidJsonThemedContextsFailsOpen()
 
 	/**
@@ -686,7 +712,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('guest');
 
-		$this->assertContains('custom-overrides', $styleLog);
+		$this->assertContains('custom-overrides-nextcloud', $styleLog);
 	}//end testNonArrayJsonThemedContextsFailsOpen()
 
 	/**
@@ -710,7 +736,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('blank');
 
-		$this->assertContains('custom-overrides', $styleLog);
+		$this->assertContains('custom-overrides-nextcloud', $styleLog);
 	}//end testUnknownContextAlwaysThemed()
 
 	/**
@@ -733,7 +759,7 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertContains('custom-css', $styleLog);
 		$this->assertGreaterThan(
-			array_search('custom-overrides', $styleLog, true),
+			array_search('custom-overrides-nextcloud', $styleLog, true),
 			array_search('custom-css', $styleLog, true),
 			'custom-css must be emitted AFTER custom-overrides so it wins the cascade.'
 		);
@@ -836,7 +862,7 @@ class CssInjectionServiceTest extends TestCase {
 
 		// The layer that failed is the ONLY one missing: there is no file to
 		// link, so emitting the tag would be a guaranteed 404.
-		$this->assertNotContains('custom-overrides', $styleLog);
+		$this->assertNotContains('custom-overrides-nextcloud', $styleLog);
 
 		// Layer 2 ran (it precedes the failure) ...
 		$this->assertContains('systems/nldesign/fonts', $styleLog);
@@ -874,7 +900,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertCount(1, $warnings);
-		$this->assertStringContainsString('custom-overrides.css', $warnings[0]);
+		$this->assertStringContainsString('custom-overrides-nextcloud.css', $warnings[0]);
 	}//end testASkippedOverridesLayerIsLogged()
 
 	/**
@@ -902,7 +928,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertContains('custom-overrides', $styleLog, 'layer 4 was cancelled');
+		$this->assertContains('custom-overrides-nextcloud', $styleLog, 'layer 4 was cancelled');
 		$this->assertContains('hide-slogan', $styleLog, 'layer 5 was cancelled');
 		$this->assertTrue($bannerInjected, 'layer 6 (preview banner) was cancelled');
 	}//end testAFailingDesignSystemLayerDoesNotCancelTheLaterLayers()
@@ -932,7 +958,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertContains('custom-overrides', $styleLog);
+		$this->assertContains('custom-overrides-nextcloud', $styleLog);
 		$this->assertCount(1, $warnings);
 		$this->assertStringContainsString('preview-banner', $warnings[0]);
 	}//end testAFailingPreviewBannerIsContainedAndLogged()

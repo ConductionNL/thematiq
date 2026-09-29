@@ -23,6 +23,10 @@
 # boot, so it must never be committed (a stray test value here restyles the
 # whole instance the moment the app is activated).
 /css/custom-overrides.css
+# The same, per set, for every set on no design system: the stock Nextcloud
+# theme (custom-overrides-nextcloud.css) and the themes saved off it. Only that
+# set loads its file, so emptying the stock one (the reset) gives stock back.
+/css/custom-overrides-*.css
 
 # Runtime theme state — written by the freeform custom-CSS editor at runtime
 # (CustomCssService::write(), atomic temp-file + rename). Unlike

@@ -27,21 +27,32 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenRegistry;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\IConfig;
 use OCP\IRequest;
 
 /**
  * Controller for managing custom CSS token overrides.
  *
- * Handles CRUD, import, and export of custom-overrides.css.
+ * Handles CRUD, import, and export of the overrides files, and the reset to
+ * stock Nextcloud.
+ *
+ * Every endpoint takes an optional `tokenSet`: the set whose overrides file
+ * is meant. The admin page can be wearing a set other than the instance's
+ * active one (a preview, or a switch that has not reloaded), and the stock set
+ * keeps its edits in a file of its own — see CustomOverridesService. Without
+ * it, the instance's active set is meant.
  *
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
@@ -50,6 +61,10 @@ use OCP\IRequest;
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - The reset to stock touches every part a theme
+ * is made of: the overrides files, the active set and core theming. Each dependency is one of them;
+ * a separate reset service would move the same coupling one class along.
  */
 class OverridesController extends Controller {
 
@@ -75,6 +90,20 @@ class OverridesController extends Controller {
 	private ThemingAuditService $auditService;
 
 	/**
+	 * The app config, for the active token set.
+	 *
+	 * @var IConfig
+	 */
+	private IConfig $config;
+
+	/**
+	 * The theming service, for resetting core theming with the theme.
+	 *
+	 * @var ThemingService
+	 */
+	private ThemingService $themingService;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
@@ -82,6 +111,8 @@ class OverridesController extends Controller {
 	 * @param CustomOverridesService $overridesService The custom overrides service.
 	 * @param CssParserService $cssParser The CSS parser service.
 	 * @param ThemingAuditService $auditService The theming audit trail service.
+	 * @param IConfig $config The app config.
+	 * @param ThemingService $themingService The theming service.
 	 */
 	public function __construct(
 		string $appName,
@@ -89,12 +120,30 @@ class OverridesController extends Controller {
 		CustomOverridesService $overridesService,
 		CssParserService $cssParser,
 		ThemingAuditService $auditService,
+		IConfig $config,
+		ThemingService $themingService,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->overridesService = $overridesService;
 		$this->cssParser = $cssParser;
 		$this->auditService = $auditService;
+		$this->config = $config;
+		$this->themingService = $themingService;
 	}//end __construct()
+
+	/**
+	 * The token set a request names, or null for the instance's active set.
+	 *
+	 * @return string|null The `tokenSet` parameter, or null when absent or empty.
+	 */
+	private function requestedTokenSet(): ?string {
+		$tokenSet = $this->request->getParam('tokenSet', '');
+		if (is_string($tokenSet) === false || $tokenSet === '') {
+			return null;
+		}
+
+		return $tokenSet;
+	}//end requestedTokenSet()
 
 	/**
 	 * Get the current custom token overrides.
@@ -110,7 +159,7 @@ class OverridesController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getOverrides(): JSONResponse {
-		$overrides = $this->overridesService->read();
+		$overrides = $this->overridesService->read(tokenSet: $this->requestedTokenSet());
 		$registry = TokenRegistry::getTokens();
 		$tabs = TokenRegistry::getTabLabels();
 
@@ -129,6 +178,11 @@ class OverridesController extends Controller {
 	 * Accepts a JSON body with an 'overrides' key containing token name => value pairs.
 	 * Only tokens in the TokenRegistry are accepted; others are silently ignored.
 	 *
+	 * `reset: true` instead resets the theme to stock Nextcloud — see
+	 * {@see self::resetToStock()}. It shares this endpoint rather than taking a
+	 * route of its own because Nextcloud caches the route collection per host
+	 * for an hour, so a new route 404s on every warm instance until then.
+	 *
 	 * @return JSONResponse Status and count of written tokens.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
@@ -137,16 +191,22 @@ class OverridesController extends Controller {
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setOverrides(): JSONResponse {
 		$params = $this->request->getParams();
+
+		if (($params['reset'] ?? false) === true) {
+			return $this->resetToStock();
+		}
+
 		$overrides = $params['overrides'] ?? [];
 
 		if (is_array($overrides) === false) {
 			return new JSONResponse(['error' => 'overrides must be an object'], 400);
 		}
 
-		$before = $this->overridesService->read();
+		$tokenSet = $this->requestedTokenSet();
+		$before = $this->overridesService->read(tokenSet: $tokenSet);
 
 		try {
-			$this->overridesService->write(tokens: $overrides);
+			$this->overridesService->write(tokens: $overrides, tokenSet: $tokenSet);
 		} catch (\RuntimeException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], 500);
 		}
@@ -163,6 +223,62 @@ class OverridesController extends Controller {
 	}//end setOverrides()
 
 	/**
+	 * Reset the theme to stock Nextcloud.
+	 *
+	 * Empties the overrides of the set that was active and of the stock set,
+	 * makes the stock set the active one, and undoes what the theming sync
+	 * wrote into core theming. What is left is what the running Nextcloud
+	 * paints on its own. Instance-wide features that do not belong to a theme
+	 * — freeform custom CSS, custom fonts, the display toggles, group and
+	 * per-app theming, and the custom token sets themselves — are kept.
+	 *
+	 * Both files are emptied, not only the active set's: the stock set is
+	 * where this lands, and its own edits are exactly what "stock" excludes.
+	 *
+	 * @return JSONResponse `{status: "ok", tokenSet: "nextcloud"}`, or 500 when a file cannot be written.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function resetToStock(): JSONResponse {
+		$stock = CssInjectionService::STOCK_TOKEN_SET;
+		$previous = $this->config->getAppValue(Application::APP_ID, 'token_set', $stock);
+
+		$emptied = [];
+		foreach (array_unique([$previous, $stock]) as $tokenSet) {
+			$before = $this->overridesService->read(tokenSet: $tokenSet);
+
+			try {
+				$this->overridesService->write(tokens: [], tokenSet: $tokenSet);
+			} catch (\RuntimeException $e) {
+				return new JSONResponse(['error' => $e->getMessage()], 500);
+			}
+
+			if ($before !== []) {
+				$emptied[] = $before;
+			}
+		}
+
+		$this->config->setAppValue(Application::APP_ID, 'token_set', $stock);
+		$this->themingService->resetToDefaults();
+		// Nothing is synced any more, so nothing is remembered as synced — the
+		// same keys SettingsController::resetThemingValues() clears.
+		foreach (['logo', 'background'] as $imageKey) {
+			$this->config->deleteAppValue(Application::APP_ID, SettingsController::SYNCED_IMAGE_PREFIX . $imageKey);
+		}
+
+		// Recorded as what it did, in the actions the audit trail already knows.
+		foreach ($emptied as $before) {
+			$this->auditService->log(action: 'overrides_written', context: ['old' => $before, 'new' => []]);
+		}
+
+		if ($previous !== $stock) {
+			$this->auditService->log(action: 'token_set_changed', context: ['old' => $previous, 'new' => $stock]);
+		}
+
+		return new JSONResponse(['status' => 'ok', 'tokenSet' => $stock]);
+	}//end resetToStock()
+
+	/**
 	 * Download custom-overrides.css as a file.
 	 *
 	 * @return DataDownloadResponse The CSS file as a download.
@@ -171,7 +287,7 @@ class OverridesController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function exportOverrides(): DataDownloadResponse {
-		$content = $this->overridesService->getRawContent();
+		$content = $this->overridesService->getRawContent(tokenSet: $this->requestedTokenSet());
 
 		return new DataDownloadResponse(
 			data: $content,
@@ -297,7 +413,7 @@ class OverridesController extends Controller {
 		}
 
 		try {
-			$this->overridesService->write(tokens: $toImport);
+			$this->overridesService->write(tokens: $toImport, tokenSet: $this->requestedTokenSet());
 		} catch (\RuntimeException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], 500);
 		}
