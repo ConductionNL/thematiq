@@ -26,6 +26,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import {
 	openTheming,
+	openTokenTab,
 	requestToken,
 	getOverrides,
 	setOverrides,
@@ -34,7 +35,8 @@ import {
 } from './_helpers'
 
 // A token we drive through the editor. --color-primary is a real, prominent
-// theming token and is present in the editor's "login" tab.
+// theming token and is present in the editor's "login" tab, which is not the
+// tab the editor opens on — see openTokenTab().
 const TEST_TOKEN = '--color-primary'
 const TEST_VALUE = '#a1b2c3' // deliberate, easily-recognised, easily-reverted value
 
@@ -85,6 +87,7 @@ test.describe('workflow: token-apply persistence', () => {
 
 		// Drive the real editor UI: type the value into the --color-primary text field.
 		await unlockBaseTokens(page)
+		await openTokenTab(page, 'login')
 		const textField = page.locator(
 			`.nldesign-color-text[data-token="${TEST_TOKEN}"]`,
 		)
@@ -176,6 +179,7 @@ test.describe('workflow: token-apply persistence', () => {
 		// Empty the row's field, then Save: an emptied row is how a saved value
 		// stops being saved. The reset button would restore the saved value.
 		await unlockBaseTokens(page)
+		await openTokenTab(page, 'login')
 		await page
 			.locator(`.nldesign-color-text[data-token="${TEST_TOKEN}"]`)
 			.fill('')

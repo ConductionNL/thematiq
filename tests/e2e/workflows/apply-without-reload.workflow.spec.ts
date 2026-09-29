@@ -73,7 +73,11 @@ async function setCoreTheming(
 	)
 }
 
-/** The Thematiq set-layer <link>s on the page, by pathname under css/. */
+/**
+ * The Thematiq set-layer <link>s on the page, by pathname under css/ without
+ * the extension — `tokens/amsterdam`, whether the link was served as
+ * `tokens/amsterdam.css` or without one.
+ */
 async function setLayerFiles(page: Page): Promise<string[]> {
 	return page.evaluate(() =>
 		Array.from(
@@ -82,10 +86,9 @@ async function setLayerFiles(page: Page): Promise<string[]> {
 			),
 		)
 			.map((l) =>
-				new URL(l.href, location.origin).pathname.replace(
-					/^.*\/thematiq\/css\//,
-					'',
-				),
+				new URL(l.href, location.origin).pathname
+					.replace(/^.*\/thematiq\/css\//, '')
+					.replace(/\.css$/, ''),
 			)
 			.filter((f) => f.startsWith('systems/') || f.startsWith('tokens/')),
 	)

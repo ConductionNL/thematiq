@@ -171,6 +171,14 @@ type Surface = {
  *     /s/<token>                 body#body-public          -> 1
  *     /apps/files/ (dark on)     body[data-theme-dark]     -> 1
  *                                body[data-themes*="dark"] -> 1
+ *
+ * The admin theming page is surveyed for the same reason. On Nextcloud 35 the
+ * app surfaces above still render nc-vue 8 buttons (`button-vue--vue-primary`),
+ * and the nc-vue 9 spelling `button-vue--primary` appears only on Vue 3 pages
+ * such as Settings > Theming — the page the
+ * `:not([data-admin-theming-setting-color-picker])` rules are written for.
+ * MEASURED on run 36543049050: its traces show `button-vue--primary` on
+ * /settings/admin/theming and on none of the other surfaces.
  */
 const SURFACES: Array<Surface> = [
 	{
@@ -194,6 +202,7 @@ const SURFACES: Array<Surface> = [
 		resolvePath: () => publicShareUrl,
 	},
 	{ name: 'files-dark', path: '/apps/files/', dark: true },
+	{ name: 'admin-theming', path: '/settings/admin/theming' },
 ]
 
 /**
@@ -262,6 +271,15 @@ const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 			+ 'declares min-version="32" and the PHPUnit matrix still carries a stable32 leg, so this '
 			+ 'half of the stylesheet is kept on purpose: it is what themes the header on the oldest '
 			+ 'server this app is offered to.',
+	},
+	{
+		pattern: /^#header \.unified-search-input__(button|icon)$/,
+		reason:
+			'NC 33/34 header search markup. NC 35 rewrote UnifiedSearchInput.vue: it renders '
+			+ 'unified-search-input__field, __resting, __label, __input and __shortcut, and no '
+			+ '__button or __icon. MEASURED on run 36543049050, whose traces show exactly those '
+			+ 'classes on every authenticated surface. appinfo/info.xml still declares '
+			+ 'min-version="32", so the rules stay for the 33/34 servers this app is offered to.',
 	},
 	{
 		pattern: /^\[data-admin-theming-setting-color-(picker|reset)\] \*$/,
