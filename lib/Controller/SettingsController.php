@@ -541,7 +541,7 @@ class SettingsController extends Controller {
 		$reset = $this->themingService->resetToDefaults();
 
 		// Nothing is synced any more, so nothing is remembered as synced.
-		foreach (['logo', 'background'] as $imageKey) {
+		foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
 			$this->config->deleteAppValue(Application::APP_ID, self::SYNCED_IMAGE_PREFIX . $imageKey);
 		}
 
@@ -588,7 +588,12 @@ class SettingsController extends Controller {
 			'logo_url' => $imgManager->getImageUrl('logo'),
 			'background_url' => $imgManager->getImageUrl('background'),
 			'has_custom_logo' => $imgManager->hasImage('logo'),
+			'has_custom_logoheader' => $imgManager->hasImage('logoheader'),
+			'has_custom_favicon' => $imgManager->hasImage('favicon'),
 			'has_custom_background' => $imgManager->hasImage('background'),
+			// 'backgroundColor' when "Remove background image" is on — the
+			// state a theme that captured the panel may need to put back.
+			'background_mime' => $this->config->getAppValue('theming', 'backgroundMime', ''),
 			// What a reset lands on, so the stock set's dialog can show it
 			// before it is applied rather than guess.
 			'default_primary_color' => $defaults['primary_color'],
@@ -603,6 +608,16 @@ class SettingsController extends Controller {
 			'synced_background' => $this->config->getAppValue(
 				Application::APP_ID,
 				self::SYNCED_IMAGE_PREFIX . 'background',
+				''
+			),
+			'synced_logoheader' => $this->config->getAppValue(
+				Application::APP_ID,
+				self::SYNCED_IMAGE_PREFIX . 'logoheader',
+				''
+			),
+			'synced_favicon' => $this->config->getAppValue(
+				Application::APP_ID,
+				self::SYNCED_IMAGE_PREFIX . 'favicon',
 				''
 			),
 		];

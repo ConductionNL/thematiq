@@ -347,6 +347,46 @@ class ThemingServiceTest extends TestCase {
 	}//end testApplyColorsLeavesTheMimeAloneWhenAnImageIsAlsoGiven()
 
 	/**
+	 * A theme that captured Nextcloud's default background image gets that
+	 * image back — the background is undone to core's own — instead of the
+	 * colour-only background a plain background colour would otherwise force.
+	 */
+	public function testACapturedDefaultBackgroundIsRestoredNotRemoved(): void {
+		$written = [];
+		$this->themingDefaults->method('set')->willReturnCallback(
+			function (string $setting, string $value) use (&$written): void {
+				$written[$setting] = $value;
+			}
+		);
+		$this->themingDefaults->expects($this->once())->method('undo')->with('background');
+
+		$updated = $this->service->applyColors(
+			params: ['background_color' => '#ffffff', 'background_mode' => 'default']
+		);
+
+		$this->assertSame(['background_color', 'background_mode'], $updated);
+		$this->assertArrayNotHasKey('backgroundMime', $written);
+	}//end testACapturedDefaultBackgroundIsRestoredNotRemoved()
+
+	/**
+	 * A theme that captured an image of its own never has it removed by the
+	 * colour: the image is written by applyImages() right after.
+	 */
+	public function testACapturedImageBackgroundIsNotRemovedByTheColour(): void {
+		$written = [];
+		$this->themingDefaults->method('set')->willReturnCallback(
+			function (string $setting, string $value) use (&$written): void {
+				$written[$setting] = $value;
+			}
+		);
+		$this->themingDefaults->expects($this->never())->method('undo');
+
+		$this->service->applyColors(params: ['background_color' => '#ffffff', 'background_mode' => 'image']);
+
+		$this->assertArrayNotHasKey('backgroundMime', $written);
+	}//end testACapturedImageBackgroundIsNotRemovedByTheColour()
+
+	/**
 	 * The pairing the service exists to keep: `updateImage()` stores the file
 	 * and returns the detected mime, and the `{key}Mime` app value is what
 	 * `ThemingDefaults::getLogo()` reads to decide a custom image exists at

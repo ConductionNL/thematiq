@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
@@ -128,6 +129,15 @@ class CustomTokenSetController extends Controller {
 	private DesignSystemService $designSystems;
 
 	/**
+	 * Copies Nextcloud's own branding into a theme saved from the editor.
+	 * Optional so a caller that builds this controller by hand need not know
+	 * about it; the container always injects it.
+	 *
+	 * @var BrandingCaptureService|null
+	 */
+	private ?BrandingCaptureService $brandingCapture;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
@@ -141,6 +151,7 @@ class CustomTokenSetController extends Controller {
 	 * @param TokenSetConverterService $converter The theme converter, which runs before the validator.
 	 * @param ThemingService $themingService Core theming, for undoing a deleted set's sync.
 	 * @param DesignSystemService $designSystems The design-system manifest, for allow-listing a claimed id.
+	 * @param BrandingCaptureService|null $brandingCapture Copies Nextcloud's branding into a theme saved from the editor.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else; the
 	 *   alternative is a service locator, which hides exactly these dependencies instead of removing any of them.
@@ -157,6 +168,7 @@ class CustomTokenSetController extends Controller {
 		TokenSetConverterService $converter,
 		ThemingService $themingService,
 		DesignSystemService $designSystems,
+		?BrandingCaptureService $brandingCapture = null,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->service = $service;
@@ -168,6 +180,7 @@ class CustomTokenSetController extends Controller {
 		$this->converter = $converter;
 		$this->themingService = $themingService;
 		$this->designSystems = $designSystems;
+		$this->brandingCapture = $brandingCapture;
 	}//end __construct()
 
 	/**
@@ -256,7 +269,22 @@ class CustomTokenSetController extends Controller {
 				$parsed['designSystem'] = $claimed;
 			}
 
-			return $this->persist(name: $name, parsed: $parsed);
+			$response = $this->persist(name: $name, parsed: $parsed);
+
+			// A theme saved from the editor keeps the Nextcloud branding that
+			// was on when it was saved — colours, background, logos, favicon —
+			// so applying it later brings that back too. Only once the set is
+			// safely stored: a refused save must not leave copied images behind.
+			if ($this->request->getParam('captureTheming', false) === true
+				&& $this->brandingCapture !== null
+				&& $response->getStatus() === 200
+			) {
+				$data = $response->getData();
+				$data['theming'] = $this->brandingCapture->capture(setId: (string)$data['id']);
+				$response->setData($data);
+			}
+
+			return $response;
 		}
 
 		try {
@@ -638,6 +666,11 @@ class CustomTokenSetController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
 		}
 
+		// The branding it captured, and the images copied for it, go with it.
+		if ($this->brandingCapture !== null) {
+			$this->brandingCapture->forget(setId: $id);
+		}
+
 		$contentHash = null;
 		if ($servedCss !== null) {
 			$contentHash = 'sha256:' . substr(hash(algo: 'sha256', data: $servedCss), 0, 12);
@@ -653,7 +686,7 @@ class CustomTokenSetController extends Controller {
 			$this->themingService->resetToDefaults();
 
 			// Nothing is synced any more, so nothing is remembered as synced.
-			foreach (['logo', 'background'] as $imageKey) {
+			foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
 				$this->config->deleteAppValue(
 					Application::APP_ID,
 					SettingsController::SYNCED_IMAGE_PREFIX . $imageKey

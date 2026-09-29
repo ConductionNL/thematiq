@@ -28,6 +28,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
@@ -104,6 +105,15 @@ class OverridesController extends Controller {
 	private ThemingService $themingService;
 
 	/**
+	 * Copies Nextcloud's own branding into the theme on save. Optional so a
+	 * caller that builds this controller by hand need not know about it; the
+	 * container always injects it.
+	 *
+	 * @var BrandingCaptureService|null
+	 */
+	private ?BrandingCaptureService $brandingCapture;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
@@ -113,6 +123,7 @@ class OverridesController extends Controller {
 	 * @param ThemingAuditService $auditService The theming audit trail service.
 	 * @param IConfig $config The app config.
 	 * @param ThemingService $themingService The theming service.
+	 * @param BrandingCaptureService|null $brandingCapture Copies Nextcloud's branding into the theme on save.
 	 */
 	public function __construct(
 		string $appName,
@@ -122,6 +133,7 @@ class OverridesController extends Controller {
 		ThemingAuditService $auditService,
 		IConfig $config,
 		ThemingService $themingService,
+		?BrandingCaptureService $brandingCapture = null,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->overridesService = $overridesService;
@@ -129,6 +141,7 @@ class OverridesController extends Controller {
 		$this->auditService = $auditService;
 		$this->config = $config;
 		$this->themingService = $themingService;
+		$this->brandingCapture = $brandingCapture;
 	}//end __construct()
 
 	/**
@@ -219,7 +232,21 @@ class OverridesController extends Controller {
 			]
 		);
 
-		return new JSONResponse(['status' => 'ok', 'written' => count($overrides)]);
+		$response = ['status' => 'ok', 'written' => count($overrides)];
+
+		// Saving a theme keeps the Nextcloud branding that is on now —
+		// colours, background, logos, favicon — with it, so applying the
+		// theme later brings that back as well. Not for the stock set: its
+		// branding IS Nextcloud's own settings, and applying stock resets them.
+		$setId = ($tokenSet ?? $this->config->getAppValue(Application::APP_ID, 'token_set', CssInjectionService::STOCK_TOKEN_SET));
+		if ($this->request->getParam('captureTheming', false) === true
+			&& $this->brandingCapture !== null
+			&& $setId !== CssInjectionService::STOCK_TOKEN_SET
+		) {
+			$response['theming'] = $this->brandingCapture->capture(setId: $setId);
+		}
+
+		return new JSONResponse($response);
 	}//end setOverrides()
 
 	/**

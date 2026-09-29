@@ -28,6 +28,13 @@
 # set loads its file, so emptying the stock one (the reset) gives stock back.
 /css/custom-overrides-*.css
 
+# Runtime theme state — Nextcloud's own logos, favicon and background image,
+# copied into a theme when it is saved from the editor (BrandingCaptureService)
+# so applying the theme brings them back. They are an admin's uploads on one
+# instance, never part of the app.
+/img/logos/*-captured-*
+/img/backgrounds/*-captured-*
+
 # Runtime theme state — written by the freeform custom-CSS editor at runtime
 # (CustomCssService::write(), atomic temp-file + rename). Unlike
 # custom-overrides.css nothing recreates it on boot: CssInjectionService only
