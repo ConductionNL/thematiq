@@ -15,8 +15,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const ENTRIES = [
-	{ ts: '2026-09-29T17:00:00Z', actor: 'admin', action: 'custom_set_uploaded', new: 'custom-bad', versionId: '20260929170000-0001' },
-	{ ts: '2026-09-29T16:40:00Z', actor: 'admin', action: 'token_set_changed', new: 'rijkshuisstijl', versionId: '20260929164000-0001' },
+	{
+		ts: '2026-09-29T17:00:00Z',
+		actor: 'admin',
+		action: 'custom_set_uploaded',
+		new: 'custom-bad',
+		versionId: '20260929170000-0001',
+	},
+	{
+		ts: '2026-09-29T16:40:00Z',
+		actor: 'admin',
+		action: 'token_set_changed',
+		new: 'rijkshuisstijl',
+		versionId: '20260929164000-0001',
+	},
 	{ ts: '2026-09-29T16:00:00Z', actor: 'admin', action: 'toggle_changed' },
 ]
 
@@ -36,7 +48,10 @@ function install() {
 	global.t = (app, text, params) =>
 		params === undefined
 			? text
-			: Object.keys(params).reduce((acc, key) => acc.replace('{' + key + '}', params[key]), text)
+			: Object.keys(params).reduce(
+					(acc, key) => acc.replace('{' + key + '}', params[key]),
+					text,
+				)
 	global.n = (app, singular, plural, count) => (count === 1 ? singular : plural)
 	global.OC = {
 		generateUrl: (url) => url,
@@ -61,7 +76,11 @@ function install() {
 		} else if (url.indexOf('/restore') !== -1) {
 			body = Object.assign({ applied: true }, PREVIEW)
 		}
-		return Promise.resolve({ status: 200, ok: true, json: () => Promise.resolve(body) })
+		return Promise.resolve({
+			status: 200,
+			ok: true,
+			json: () => Promise.resolve(body),
+		})
 	})
 }
 
@@ -110,13 +129,23 @@ describe('admin.js version restore', () => {
 		document.querySelectorAll('button.nldesign-audit-restore')[1].click()
 		await flush()
 
-		const preview = calls.find((c) => c.url && c.url.indexOf('/settings/versions/20260929164000-0001/preview') !== -1)
+		const preview = calls.find(
+			(c) =>
+				c.url
+				&& c.url.indexOf('/settings/versions/20260929164000-0001/preview')
+					!== -1,
+		)
 		expect(preview.method).toBe('POST')
 		const dialog = calls.find((c) => c.dialog).dialog
 		expect(dialog).toContain('tokenSet: custom-bad to rijkshuisstijl')
 		expect(dialog).toContain('custom-bad')
 		expect(dialog).toContain('Gone Sans')
-		const restore = calls.find((c) => c.url && c.url.indexOf('/settings/versions/20260929164000-0001/restore') !== -1)
+		const restore = calls.find(
+			(c) =>
+				c.url
+				&& c.url.indexOf('/settings/versions/20260929164000-0001/restore')
+					!== -1,
+		)
 		expect(restore.method).toBe('POST')
 	})
 
@@ -128,7 +157,9 @@ describe('admin.js version restore', () => {
 		button.click()
 		await flush()
 
-		expect(calls.some((c) => c.url && c.url.indexOf('/restore') !== -1)).toBe(false)
+		expect(calls.some((c) => c.url && c.url.indexOf('/restore') !== -1)).toBe(
+			false,
+		)
 		expect(document.activeElement).toBe(button)
 	})
 })

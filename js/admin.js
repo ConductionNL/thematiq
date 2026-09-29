@@ -6160,18 +6160,26 @@
 				lines.push(t('thematiq', 'Custom token set added: {id}', { id: id }))
 			})
 			;(sets.remove || []).forEach(function (id) {
-				lines.push(t('thematiq', 'Custom token set removed: {id}', { id: id }))
+				lines.push(
+					t('thematiq', 'Custom token set removed: {id}', { id: id }),
+				)
 			})
 			;(preview.missingFonts || []).forEach(function (font) {
 				lines.push(
-					t('thematiq', 'The {role} font {name} is no longer uploaded and stays on the default font.', {
-						role: font.role,
-						name: font.name,
-					}),
+					t(
+						'thematiq',
+						'The {role} font {name} is no longer uploaded and stays on the default font.',
+						{
+							role: font.role,
+							name: font.name,
+						},
+					),
 				)
 			})
 			if (lines.length === 0) {
-				lines.push(t('thematiq', 'This version matches the current configuration.'))
+				lines.push(
+					t('thematiq', 'This version matches the current configuration.'),
+				)
 			}
 			return lines.join('\n')
 		}
@@ -6186,7 +6194,9 @@
 		 * @spec openspec/specs/theme-versions/spec.md
 		 */
 		function restoreVersion(versionId, button) {
-			var base = OC.generateUrl('/apps/thematiq/settings/versions/' + encodeURIComponent(versionId))
+			var base = OC.generateUrl(
+				'/apps/thematiq/settings/versions/' + encodeURIComponent(versionId),
+			)
 			var post = { method: 'POST', headers: { requesttoken: OC.requestToken } }
 			button.disabled = true
 			fetch(base + '/preview', post)
@@ -6196,7 +6206,12 @@
 				.then(function (preview) {
 					button.disabled = false
 					if (!preview || preview.valid !== true) {
-						notify(t('thematiq', 'This version does not validate today and cannot be restored.'))
+						notify(
+							t(
+								'thematiq',
+								'This version does not validate today and cannot be restored.',
+							),
+						)
 						button.focus()
 						return
 					}
@@ -6217,7 +6232,12 @@
 										window.location.reload()
 										return
 									}
-									notify(t('thematiq', 'The version was not restored. Nothing was changed.'))
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
 									button.focus()
 								})
 						},
@@ -6227,7 +6247,12 @@
 				.catch(function (err) {
 					console.error('Error restoring a version:', err)
 					button.disabled = false
-					notify(t('thematiq', 'The version was not restored. Nothing was changed.'))
+					notify(
+						t(
+							'thematiq',
+							'The version was not restored. Nothing was changed.',
+						),
+					)
 					button.focus()
 				})
 		}
