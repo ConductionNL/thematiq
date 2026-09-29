@@ -174,7 +174,9 @@ describe('component inventory: the tokens', () => {
 		const dangling = inventory.components.flatMap((component) => {
 			// Callout 0 is the shared group: a token every state reads, such
 			// as the note cards' corner, listed ahead of the states.
-			const states = new Set([0].concat(component.states.map((state) => state.n)))
+			const states = new Set(
+				[0].concat(component.states.map((state) => state.n)),
+			)
 			return component.tokens
 				.concat(component.fixed)
 				.filter((entry) => states.has(entry.callout) === false)

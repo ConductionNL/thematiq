@@ -364,7 +364,10 @@ describe('component tokens: the capture block is taken on body', () => {
 
 		const head = css.slice(0, open)
 		const start = Math.max(head.lastIndexOf('}') + 1, head.lastIndexOf('*/') + 2)
-		const selectors = head.slice(start).split(',').map((s) => s.trim())
+		const selectors = head
+			.slice(start)
+			.split(',')
+			.map((s) => s.trim())
 
 		expect(selectors[0]).toBe('body')
 		// The token editor's preview is captured too: an unsaved edit is

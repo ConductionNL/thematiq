@@ -1019,7 +1019,10 @@
 				// exist on Nextcloud 32 alone — is offered while that version is
 				// the one drawn, and nowhere else: a row that moves nothing on
 				// the instance being themed is a control that does nothing.
-				if (spec.until !== undefined && versionOf(state, component) > spec.until) {
+				if (
+					spec.until !== undefined
+					&& versionOf(state, component) > spec.until
+				) {
 					return
 				}
 				filtered.appendChild(cloneRow(state, spec))
@@ -1793,9 +1796,11 @@
 	 * @return {boolean} True when it has version notes, or is drawn per version.
 	 */
 	function hasVersions(component) {
-		return (component.versionNotes || []).length > 0
+		return (
+			(component.versionNotes || []).length > 0
 			|| component.id === 'header-bar'
 			|| component.versioned === true
+		)
 	}
 
 	/**
@@ -1825,7 +1830,13 @@
 
 		notes.forEach(function (note) {
 			if (note.versions.indexOf(version) !== -1) {
-				lines.push(t('thematiq', 'Nextcloud {version}:', { version: String(version) }) + ' ' + note.text)
+				lines.push(
+					t('thematiq', 'Nextcloud {version}:', {
+						version: String(version),
+					})
+						+ ' '
+						+ note.text,
+				)
 			}
 		})
 
@@ -2724,7 +2735,9 @@
 				+ '" data-placeholder="'
 				+ attr(t('thematiq', 'Describe the change in a few lines…'))
 				+ '">'
-				+ (invalid ? t('thematiq', 'A longer explanation, over several lines.') : '')
+				+ (invalid
+					? t('thematiq', 'A longer explanation, over several lines.')
+					: '')
 				+ '</span>'
 			)
 		},

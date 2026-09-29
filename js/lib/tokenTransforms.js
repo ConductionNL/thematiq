@@ -109,7 +109,9 @@
 				+ triplet
 					.slice(1)
 					.map(function (channel) {
-						return ('0' + Math.min(255, Number(channel)).toString(16)).slice(-2)
+						return (
+							'0' + Math.min(255, Number(channel)).toString(16)
+						).slice(-2)
 					})
 					.join('')
 			)
@@ -130,7 +132,12 @@
 	 */
 	function hexToRgbTriplet(value) {
 		var hex = normaliseColorForPicker(value)
-		if (hex === null || value === undefined || value === null || String(value).trim() === '') {
+		if (
+			hex === null
+			|| value === undefined
+			|| value === null
+			|| String(value).trim() === ''
+		) {
 			return null
 		}
 		return [1, 3, 5]

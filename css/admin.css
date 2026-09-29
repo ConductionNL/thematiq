@@ -771,7 +771,10 @@
 	padding: 0 10px;
 	/* The header reads its own component tokens first, the way #header does in
 	   systems/nldesign/theme.css, and the set summary only when they are unset. */
-	background: var(--nldesign-component-header-background-color, var(--prev-header-bg));
+	background: var(
+		--nldesign-component-header-background-color,
+		var(--prev-header-bg)
+	);
 	border-bottom: var(--prev-header-border);
 }
 .nl-mini__logo {
@@ -833,7 +836,10 @@
 	display: flex;
 	min-height: 0;
 	margin: 5px;
-	border-radius: var(--nldesign-component-content-card-container-border-radius, var(--prev-radius-container));
+	border-radius: var(
+		--nldesign-component-content-card-container-border-radius,
+		var(--prev-radius-container)
+	);
 	overflow: hidden;
 	background: var(--prev-surface);
 }
@@ -865,10 +871,16 @@
 	font-size: 8px;
 	/* Both, because the entry is a `span`: nldesign's blanket text rule claims
 	   every span with `!important` and reads this property first. */
-	--nldesign-color-on-surface: var(--nldesign-component-navigation-color, var(--prev-text));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-navigation-color,
+		var(--prev-text)
+	);
 	color: var(--nldesign-component-navigation-color, var(--prev-text));
 	padding: 4px 7px;
-	border-radius: var(--nldesign-component-navigation-border-radius, var(--prev-radius-pill));
+	border-radius: var(
+		--nldesign-component-navigation-border-radius,
+		var(--prev-radius-pill)
+	);
 	white-space: nowrap;
 	overflow: hidden;
 }
@@ -881,7 +893,10 @@
 	flex: none;
 }
 .nl-mini__menuitem--active {
-	background: var(--nldesign-component-navigation-active-background-color, var(--prev-primary));
+	background: var(
+		--nldesign-component-navigation-active-background-color,
+		var(--prev-primary)
+	);
 	--nldesign-color-on-surface: var(--prev-primary-text);
 	color: var(--prev-primary-text);
 	font-weight: 700;
@@ -897,7 +912,8 @@
 }
 .nl-mini__widget {
 	background: var(--prev-surface);
-	border: 1px solid var(--nldesign-component-content-card-border-color, var(--prev-border));
+	border: 1px solid
+		var(--nldesign-component-content-card-border-color, var(--prev-border));
 	border-radius: var(--prev-radius);
 	overflow: hidden;
 	height: 100%;
@@ -919,22 +935,42 @@
    table token. The labels are words rather than bars so the weight shows. */
 .nl-mini__table thead th {
 	padding: 4px 9px;
-	border-bottom: 1px solid var(--nldesign-component-table-border-color, var(--color-border, var(--prev-border)));
-	background-color: var(--nldesign-component-table-header-background-color, transparent);
-	color: var(--nldesign-component-table-header-color, var(--color-text-maxcontrast, var(--prev-muted)));
+	border-bottom: 1px solid
+		var(
+			--nldesign-component-table-border-color,
+			var(--color-border, var(--prev-border))
+		);
+	background-color: var(
+		--nldesign-component-table-header-background-color,
+		transparent
+	);
+	color: var(
+		--nldesign-component-table-header-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
 	font-size: 7px;
 	font-weight: var(--nldesign-component-table-header-font-weight, normal);
 	text-align: left;
 }
 .nl-mini__table td {
 	padding: 6px 9px;
-	border-bottom: 1px solid var(--nldesign-component-table-border-color, var(--color-border, var(--prev-border)));
+	border-bottom: 1px solid
+		var(
+			--nldesign-component-table-border-color,
+			var(--color-border, var(--prev-border))
+		);
 }
 .nl-mini__table tr.is-zebra td {
-	background: var(--nldesign-component-table-zebra-background-color, var(--color-background-dark, var(--prev-bg)));
+	background: var(
+		--nldesign-component-table-zebra-background-color,
+		var(--color-background-dark, var(--prev-bg))
+	);
 }
 .nl-mini__table tr.is-hover td {
-	background: var(--nldesign-component-table-row-hover-background-color, var(--color-background-hover, var(--prev-bg)));
+	background: var(
+		--nldesign-component-table-row-hover-background-color,
+		var(--color-background-hover, var(--prev-bg))
+	);
 }
 .nl-mini__table td::after {
 	content: '';
@@ -969,7 +1005,8 @@
 .nl-mini__sidebar {
 	flex: 0 0 88px;
 	background: var(--prev-surface);
-	border-left: 1px solid var(--nldesign-component-sidebar-border-color, var(--prev-border));
+	border-left: 1px solid
+		var(--nldesign-component-sidebar-border-color, var(--prev-border));
 	padding: 8px;
 	display: flex;
 	flex-direction: column;
@@ -997,7 +1034,8 @@
 .nl-mini__sidebar-tabs {
 	display: flex;
 	gap: 6px;
-	border-bottom: 1px solid var(--nldesign-component-sidebar-divider-color, var(--prev-border));
+	border-bottom: 1px solid
+		var(--nldesign-component-sidebar-divider-color, var(--prev-border));
 }
 .nl-mini__sidebar-tab {
 	width: 20px;
@@ -1042,8 +1080,14 @@
 	min-width: 12px;
 	padding: 0 3px;
 	border-radius: var(--nldesign-component-badge-border-radius, 999px);
-	background: var(--nldesign-component-badge-background-color, var(--prev-primary));
-	--nldesign-color-on-surface: var(--nldesign-component-badge-color, var(--prev-primary-text));
+	background: var(
+		--nldesign-component-badge-background-color,
+		var(--prev-primary)
+	);
+	--nldesign-color-on-surface: var(
+		--nldesign-component-badge-color,
+		var(--prev-primary-text)
+	);
 	color: var(--nldesign-component-badge-color, var(--prev-primary-text));
 	font-size: 7px;
 	font-weight: 700;
@@ -1052,8 +1096,14 @@
 }
 .nl-mini__star {
 	margin-left: 4px;
-	--nldesign-color-on-surface: var(--nldesign-component-badge-favorite-color, var(--color-favorite, #a08b00));
-	color: var(--nldesign-component-badge-favorite-color, var(--color-favorite, #a08b00));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-badge-favorite-color,
+		var(--color-favorite, #a08b00)
+	);
+	color: var(
+		--nldesign-component-badge-favorite-color,
+		var(--color-favorite, #a08b00)
+	);
 }
 
 /* Note cards: the type colour is the fill, and the type text colour the
@@ -1070,7 +1120,10 @@
 	gap: 4px;
 	padding: 4px 5px;
 	border-inline-start: 2px solid var(--nl-note-icon);
-	border-radius: var(--nldesign-component-notecard-border-radius, var(--border-radius, 3px));
+	border-radius: var(
+		--nldesign-component-notecard-border-radius,
+		var(--border-radius, 3px)
+	);
 	background: var(--nl-note-fill);
 }
 .nl-mini__note-icon {
@@ -1089,23 +1142,56 @@
 }
 .nl-mini__note--info {
 	--nl-note-fill: var(--nldesign-component-notecard-info-color, var(--color-info));
-	--nl-note-icon: var(--nldesign-component-notecard-info-icon-color, var(--color-info-text, var(--color-element-info)));
-	--nl-note-text: var(--nldesign-component-notecard-info-text-color, var(--prev-text));
+	--nl-note-icon: var(
+		--nldesign-component-notecard-info-icon-color,
+		var(--color-info-text, var(--color-element-info))
+	);
+	--nl-note-text: var(
+		--nldesign-component-notecard-info-text-color,
+		var(--prev-text)
+	);
 }
 .nl-mini__note--warning {
-	--nl-note-fill: var(--nldesign-component-notecard-warning-color, var(--color-warning));
-	--nl-note-icon: var(--nldesign-component-notecard-warning-icon-color, var(--color-warning-text, var(--color-element-warning)));
-	--nl-note-text: var(--nldesign-component-notecard-warning-text-color, var(--prev-text));
+	--nl-note-fill: var(
+		--nldesign-component-notecard-warning-color,
+		var(--color-warning)
+	);
+	--nl-note-icon: var(
+		--nldesign-component-notecard-warning-icon-color,
+		var(--color-warning-text, var(--color-element-warning))
+	);
+	--nl-note-text: var(
+		--nldesign-component-notecard-warning-text-color,
+		var(--prev-text)
+	);
 }
 .nl-mini__note--error {
-	--nl-note-fill: var(--nldesign-component-notecard-error-color, var(--color-error));
-	--nl-note-icon: var(--nldesign-component-notecard-error-icon-color, var(--color-error-text, var(--color-element-error)));
-	--nl-note-text: var(--nldesign-component-notecard-error-text-color, var(--prev-text));
+	--nl-note-fill: var(
+		--nldesign-component-notecard-error-color,
+		var(--color-error)
+	);
+	--nl-note-icon: var(
+		--nldesign-component-notecard-error-icon-color,
+		var(--color-error-text, var(--color-element-error))
+	);
+	--nl-note-text: var(
+		--nldesign-component-notecard-error-text-color,
+		var(--prev-text)
+	);
 }
 .nl-mini__note--success {
-	--nl-note-fill: var(--nldesign-component-notecard-success-color, var(--color-success));
-	--nl-note-icon: var(--nldesign-component-notecard-success-icon-color, var(--color-success-text, var(--color-element-success)));
-	--nl-note-text: var(--nldesign-component-notecard-success-text-color, var(--prev-text));
+	--nl-note-fill: var(
+		--nldesign-component-notecard-success-color,
+		var(--color-success)
+	);
+	--nl-note-icon: var(
+		--nldesign-component-notecard-success-icon-color,
+		var(--color-success-text, var(--color-element-success))
+	);
+	--nl-note-text: var(
+		--nldesign-component-notecard-success-text-color,
+		var(--prev-text)
+	);
 }
 
 /* Toasts: a card on its own background with the type colour as a stripe,
@@ -1124,7 +1210,10 @@
 	display: block;
 	padding: 4px 5px;
 	border-inline-start: 2px solid var(--nl-toast-stripe);
-	border-radius: var(--nldesign-component-toast-border-radius, var(--border-radius, 3px));
+	border-radius: var(
+		--nldesign-component-toast-border-radius,
+		var(--border-radius, 3px)
+	);
 	background: var(--nl-toast-fill);
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 }
@@ -1136,22 +1225,34 @@
 	opacity: 0.7;
 }
 .nl-mini__toast--success {
-	--nl-toast-fill: var(--nldesign-component-toast-success-background-color, var(--prev-surface));
+	--nl-toast-fill: var(
+		--nldesign-component-toast-success-background-color,
+		var(--prev-surface)
+	);
 	--nl-toast-text: var(--nldesign-component-toast-success-color, var(--prev-text));
 	--nl-toast-stripe: var(--color-element-success, var(--color-success));
 }
 .nl-mini__toast--error {
-	--nl-toast-fill: var(--nldesign-component-toast-error-background-color, var(--prev-surface));
+	--nl-toast-fill: var(
+		--nldesign-component-toast-error-background-color,
+		var(--prev-surface)
+	);
 	--nl-toast-text: var(--nldesign-component-toast-error-color, var(--prev-text));
 	--nl-toast-stripe: var(--color-element-error, var(--color-error));
 }
 .nl-mini__toast--warning {
-	--nl-toast-fill: var(--nldesign-component-toast-warning-background-color, var(--prev-surface));
+	--nl-toast-fill: var(
+		--nldesign-component-toast-warning-background-color,
+		var(--prev-surface)
+	);
 	--nl-toast-text: var(--nldesign-component-toast-warning-color, var(--prev-text));
 	--nl-toast-stripe: var(--color-element-warning, var(--color-warning));
 }
 .nl-mini__toast--info {
-	--nl-toast-fill: var(--nldesign-component-toast-info-background-color, var(--prev-surface));
+	--nl-toast-fill: var(
+		--nldesign-component-toast-info-background-color,
+		var(--prev-surface)
+	);
 	--nl-toast-text: var(--nldesign-component-toast-info-color, var(--prev-text));
 	--nl-toast-stripe: var(--color-element-info, var(--prev-primary));
 }
@@ -1164,7 +1265,10 @@
 	width: 5px;
 	height: 5px;
 	border-radius: 50%;
-	background: var(--nldesign-component-avatar-online-status-color, var(--color-success, #2d7b41));
+	background: var(
+		--nldesign-component-avatar-online-status-color,
+		var(--color-success, #2d7b41)
+	);
 }
 
 /* Breadcrumbs: a link crumb, a hovered one and the current one. They are
@@ -1180,11 +1284,20 @@
 .nl-mini__crumb {
 	padding: 1px 5px;
 	border-radius: var(--prev-radius-pill);
-	--nldesign-color-on-surface: var(--nldesign-component-breadcrumb-color, var(--color-primary, var(--prev-primary)));
-	color: var(--nldesign-component-breadcrumb-color, var(--color-primary, var(--prev-primary)));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-breadcrumb-color,
+		var(--color-primary, var(--prev-primary))
+	);
+	color: var(
+		--nldesign-component-breadcrumb-color,
+		var(--color-primary, var(--prev-primary))
+	);
 }
 .nl-mini__crumb--hover {
-	background: var(--nldesign-component-breadcrumb-hover-background-color, var(--color-background-hover, var(--prev-bg)));
+	background: var(
+		--nldesign-component-breadcrumb-hover-background-color,
+		var(--color-background-hover, var(--prev-bg))
+	);
 }
 .nl-mini__crumb--current {
 	--nldesign-color-on-surface: var(--prev-text);
@@ -1192,8 +1305,14 @@
 	font-weight: 700;
 }
 .nl-mini__crumb-sep {
-	--nldesign-color-on-surface: var(--nldesign-component-breadcrumb-separator-color, var(--color-text-maxcontrast, var(--prev-muted)));
-	color: var(--nldesign-component-breadcrumb-separator-color, var(--color-text-maxcontrast, var(--prev-muted)));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-breadcrumb-separator-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
+	color: var(
+		--nldesign-component-breadcrumb-separator-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
 }
 
 /* A form row: text field, checked checkbox, progress bar. */
@@ -1209,34 +1328,56 @@
 	align-items: center;
 	height: 14px;
 	padding: 0 6px;
-	border: 1px solid var(--nldesign-component-textbox-border-color, var(--color-border-maxcontrast, var(--prev-border)));
-	border-radius: var(--nldesign-component-textbox-border-radius, var(--prev-radius));
+	border: 1px solid
+		var(
+			--nldesign-component-textbox-border-color,
+			var(--color-border-maxcontrast, var(--prev-border))
+		);
+	border-radius: var(
+		--nldesign-component-textbox-border-radius,
+		var(--prev-radius)
+	);
 }
 .nl-mini__input-text {
 	width: 50%;
 	height: 4px;
 	border-radius: 2px;
-	background: var(--nldesign-component-textbox-placeholder-color, var(--color-placeholder-dark, var(--prev-muted)));
+	background: var(
+		--nldesign-component-textbox-placeholder-color,
+		var(--color-placeholder-dark, var(--prev-muted))
+	);
 }
 .nl-mini__check {
 	flex: none;
 	width: 10px;
 	height: 10px;
-	border-radius: var(--nldesign-component-checkbox-border-radius, var(--border-radius-small, 3px));
-	background: var(--nldesign-component-checkbox-checked-background-color, var(--color-primary-element, var(--prev-primary)));
+	border-radius: var(
+		--nldesign-component-checkbox-border-radius,
+		var(--border-radius-small, 3px)
+	);
+	background: var(
+		--nldesign-component-checkbox-checked-background-color,
+		var(--color-primary-element, var(--prev-primary))
+	);
 }
 .nl-mini__progress {
 	flex: 0 0 50px;
 	height: 5px;
 	overflow: hidden;
 	border-radius: var(--nldesign-component-progress-border-radius, 999px);
-	background: var(--nldesign-component-progress-track-background-color, var(--color-background-darker, var(--prev-border)));
+	background: var(
+		--nldesign-component-progress-track-background-color,
+		var(--color-background-darker, var(--prev-border))
+	);
 }
 .nl-mini__progress-fill {
 	display: block;
 	width: 60%;
 	height: 100%;
-	background: var(--nldesign-component-progress-background-color, var(--color-primary-element, var(--prev-primary)));
+	background: var(
+		--nldesign-component-progress-background-color,
+		var(--color-primary-element, var(--prev-primary))
+	);
 }
 
 /* Typography in the dialog: each text painted from its own token. They are
@@ -1247,30 +1388,66 @@
 	gap: 4px;
 }
 .nl-mini__type-heading {
-	--nldesign-color-on-surface: var(--nldesign-component-heading-color, var(--color-main-text, var(--prev-text)));
-	color: var(--nldesign-component-heading-color, var(--color-main-text, var(--prev-text)));
-	font-family: var(--nldesign-component-heading-font-family, var(--font-face, inherit));
-	font-weight: var(--nldesign-component-heading-font-weight, var(--font-weight-heading, 700));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-heading-color,
+		var(--color-main-text, var(--prev-text))
+	);
+	color: var(
+		--nldesign-component-heading-color,
+		var(--color-main-text, var(--prev-text))
+	);
+	font-family: var(
+		--nldesign-component-heading-font-family,
+		var(--font-face, inherit)
+	);
+	font-weight: var(
+		--nldesign-component-heading-font-weight,
+		var(--font-weight-heading, 700)
+	);
 	font-size: 13px;
 	line-height: 1.2;
 }
 .nl-mini__type-paragraph {
-	--nldesign-color-on-surface: var(--nldesign-component-paragraph-color, var(--color-main-text, var(--prev-text)));
-	color: var(--nldesign-component-paragraph-color, var(--color-main-text, var(--prev-text)));
-	font-family: var(--nldesign-component-paragraph-font-family, var(--font-face, inherit));
-	font-weight: var(--nldesign-component-paragraph-font-weight, var(--font-weight-default, 400));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-paragraph-color,
+		var(--color-main-text, var(--prev-text))
+	);
+	color: var(
+		--nldesign-component-paragraph-color,
+		var(--color-main-text, var(--prev-text))
+	);
+	font-family: var(
+		--nldesign-component-paragraph-font-family,
+		var(--font-face, inherit)
+	);
+	font-weight: var(
+		--nldesign-component-paragraph-font-weight,
+		var(--font-weight-default, 400)
+	);
 	font-size: 9px;
 }
 .nl-mini__type-link {
-	--nldesign-color-on-surface: var(--nldesign-component-link-color, var(--color-primary, var(--prev-primary)));
-	color: var(--nldesign-component-link-color, var(--color-primary, var(--prev-primary)));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-link-color,
+		var(--color-primary, var(--prev-primary))
+	);
+	color: var(
+		--nldesign-component-link-color,
+		var(--color-primary, var(--prev-primary))
+	);
 	text-decoration: underline;
 	cursor: pointer;
 }
 .nl-mini__type-link:hover,
 .nl-mini__type-link:focus-visible {
-	--nldesign-color-on-surface: var(--nldesign-component-link-hover-color, var(--color-primary-hover, var(--prev-primary)));
-	color: var(--nldesign-component-link-hover-color, var(--color-primary-hover, var(--prev-primary)));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-link-hover-color,
+		var(--color-primary-hover, var(--prev-primary))
+	);
+	color: var(
+		--nldesign-component-link-hover-color,
+		var(--color-primary-hover, var(--prev-primary))
+	);
 }
 .nl-mini__type-row {
 	display: flex;
@@ -1278,28 +1455,64 @@
 	font-size: 9px;
 }
 .nl-mini__type-muted {
-	--nldesign-color-on-surface: var(--nldesign-component-text-muted-color, var(--color-text-maxcontrast, var(--prev-muted)));
-	color: var(--nldesign-component-text-muted-color, var(--color-text-maxcontrast, var(--prev-muted)));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-muted-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
+	color: var(
+		--nldesign-component-text-muted-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
 }
 .nl-mini__type-light {
-	--nldesign-color-on-surface: var(--nldesign-component-text-light-color, var(--color-text-light, var(--prev-muted)));
-	color: var(--nldesign-component-text-light-color, var(--color-text-light, var(--prev-muted)));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-light-color,
+		var(--color-text-light, var(--prev-muted))
+	);
+	color: var(
+		--nldesign-component-text-light-color,
+		var(--color-text-light, var(--prev-muted))
+	);
 }
 .nl-mini__type-lighter {
-	--nldesign-color-on-surface: var(--nldesign-component-text-lighter-color, var(--color-text-lighter, var(--prev-muted)));
-	color: var(--nldesign-component-text-lighter-color, var(--color-text-lighter, var(--prev-muted)));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-lighter-color,
+		var(--color-text-lighter, var(--prev-muted))
+	);
+	color: var(
+		--nldesign-component-text-lighter-color,
+		var(--color-text-lighter, var(--prev-muted))
+	);
 }
 .nl-mini__type-error {
-	--nldesign-color-on-surface: var(--nldesign-component-text-error-color, var(--color-text-error, var(--prev-error)));
-	color: var(--nldesign-component-text-error-color, var(--color-text-error, var(--prev-error)));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-error-color,
+		var(--color-text-error, var(--prev-error))
+	);
+	color: var(
+		--nldesign-component-text-error-color,
+		var(--color-text-error, var(--prev-error))
+	);
 }
 .nl-mini__type-warning {
-	--nldesign-color-on-surface: var(--nldesign-component-text-warning-color, var(--color-text-warning, var(--prev-warning)));
-	color: var(--nldesign-component-text-warning-color, var(--color-text-warning, var(--prev-warning)));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-warning-color,
+		var(--color-text-warning, var(--prev-warning))
+	);
+	color: var(
+		--nldesign-component-text-warning-color,
+		var(--color-text-warning, var(--prev-warning))
+	);
 }
 .nl-mini__type-success {
-	--nldesign-color-on-surface: var(--nldesign-component-text-success-color, var(--color-text-success, #2d7b41));
-	color: var(--nldesign-component-text-success-color, var(--color-text-success, #2d7b41));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-success-color,
+		var(--color-text-success, #2d7b41)
+	);
+	color: var(
+		--nldesign-component-text-success-color,
+		var(--color-text-success, #2d7b41)
+	);
 }
 
 /* Each tab's full view shows that tab's part of the shell. js/playground.js
@@ -1331,7 +1544,10 @@
 .nl-mini__modal {
 	width: 78%;
 	background: var(--prev-surface);
-	border-radius: var(--nldesign-component-dialog-border-radius, var(--border-radius-large));
+	border-radius: var(
+		--nldesign-component-dialog-border-radius,
+		var(--border-radius-large)
+	);
 	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 	padding: 12px;
 }
@@ -1423,7 +1639,10 @@
    which is what makes a pale fill readable. White on every fill assumed a
    saturated one and lost the label on a set with pale status colours. */
 #nldesign-preview .nl-btn--error {
-	background: var(--nldesign-component-button-error-background-color, var(--prev-error));
+	background: var(
+		--nldesign-component-button-error-background-color,
+		var(--prev-error)
+	);
 	border-color: var(
 		--nldesign-component-button-error-hover-background-color,
 		var(--color-error-hover, var(--prev-error))
@@ -1441,7 +1660,10 @@
 		--nldesign-component-button-success-hover-background-color,
 		var(--color-success-hover, var(--color-success, #2d7b41))
 	);
-	color: var(--nldesign-component-button-success-color, var(--color-success-text, #fff));
+	color: var(
+		--nldesign-component-button-success-color,
+		var(--color-success-text, #fff)
+	);
 }
 #nldesign-preview .nl-btn--success:hover {
 	background: var(
@@ -1456,11 +1678,17 @@
 #nldesign-preview .nl-btn--primary:hover {
 	background: var(
 		--nldesign-component-button-primary-action-hover-background-color,
-		var(--nldesign-component-button-primary-action-background-color, var(--prev-primary))
+		var(
+			--nldesign-component-button-primary-action-background-color,
+			var(--prev-primary)
+		)
 	);
 	border-color: var(
 		--nldesign-component-button-primary-action-hover-background-color,
-		var(--nldesign-component-button-primary-action-background-color, var(--prev-primary))
+		var(
+			--nldesign-component-button-primary-action-background-color,
+			var(--prev-primary)
+		)
 	);
 }
 #nldesign-preview .nl-btn--secondary:hover {
@@ -1472,13 +1700,20 @@
 #nldesign-preview .nl-btn--tertiary:hover {
 	background: var(
 		--nldesign-component-button-hover-background-color,
-		color-mix(in srgb, var(--color-primary-element, var(--prev-primary)) 8%, transparent)
+		color-mix(
+			in srgb,
+			var(--color-primary-element, var(--prev-primary)) 8%,
+			transparent
+		)
 	);
 }
 #nldesign-preview .nl-btn--tertiary:active {
 	background: var(
 		--nldesign-component-button-active-background-color,
-		var(--color-primary-element-light, color-mix(in srgb, var(--prev-primary) 20%, transparent))
+		var(
+			--color-primary-element-light,
+			color-mix(in srgb, var(--prev-primary) 20%, transparent)
+		)
 	);
 }
 #nldesign-preview .nl-btn--error:hover {
@@ -1519,7 +1754,10 @@
 	width: 190px;
 	background: var(--prev-surface);
 	border: 1px solid var(--nldesign-component-login-box-border-color, transparent);
-	border-radius: var(--nldesign-component-login-box-border-radius, var(--border-radius-large));
+	border-radius: var(
+		--nldesign-component-login-box-border-radius,
+		var(--border-radius-large)
+	);
 	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
 	padding: 16px;
 	display: flex;
@@ -1533,15 +1771,25 @@
 	align-items: center;
 	height: 16px;
 	padding: 0 7px;
-	border-radius: var(--nldesign-component-textbox-border-radius, var(--prev-radius));
+	border-radius: var(
+		--nldesign-component-textbox-border-radius,
+		var(--prev-radius)
+	);
 	background: var(--prev-surface);
-	border: 1px solid var(--nldesign-component-textbox-border-color, var(--color-border-maxcontrast, var(--prev-border)));
+	border: 1px solid
+		var(
+			--nldesign-component-textbox-border-color,
+			var(--color-border-maxcontrast, var(--prev-border))
+		);
 }
 .nl-login__placeholder {
 	width: 55%;
 	height: 4px;
 	border-radius: 2px;
-	background: var(--nldesign-component-textbox-placeholder-color, var(--color-placeholder-dark, var(--prev-muted)));
+	background: var(
+		--nldesign-component-textbox-placeholder-color,
+		var(--color-placeholder-dark, var(--prev-muted))
+	);
 }
 /* The login button: its own tokens first, the primary button's behind them,
    the way #body-login resolves it (css/component-scopes.css). Declared after
@@ -1552,15 +1800,24 @@
 	padding: 7px;
 	background: var(
 		--nldesign-component-login-button-background-color,
-		var(--nldesign-component-button-primary-action-background-color, var(--prev-primary))
+		var(
+			--nldesign-component-button-primary-action-background-color,
+			var(--prev-primary)
+		)
 	);
 	border-color: var(
 		--nldesign-component-login-button-background-color,
-		var(--nldesign-component-button-primary-action-background-color, var(--prev-primary))
+		var(
+			--nldesign-component-button-primary-action-background-color,
+			var(--prev-primary)
+		)
 	);
 	color: var(
 		--nldesign-component-login-button-color,
-		var(--nldesign-component-button-primary-action-color, var(--prev-primary-text))
+		var(
+			--nldesign-component-button-primary-action-color,
+			var(--prev-primary-text)
+		)
 	);
 	border-radius: var(
 		--nldesign-component-login-button-border-radius,
@@ -1572,23 +1829,35 @@
 		--nldesign-component-login-button-hover-background-color,
 		var(
 			--nldesign-component-button-primary-action-hover-background-color,
-			var(--nldesign-component-login-button-background-color, var(--prev-primary))
+			var(
+				--nldesign-component-login-button-background-color,
+				var(--prev-primary)
+			)
 		)
 	);
 	border-color: var(
 		--nldesign-component-login-button-hover-background-color,
 		var(
 			--nldesign-component-button-primary-action-hover-background-color,
-			var(--nldesign-component-login-button-background-color, var(--prev-primary))
+			var(
+				--nldesign-component-login-button-background-color,
+				var(--prev-primary)
+			)
 		)
 	);
 }
 /* The slogan in its own colour and typeface. It is a `div`, so it also sets
    the on-surface property nldesign's blanket text rule reads first. */
 .nl-login__slogan {
-	--nldesign-color-on-surface: var(--nldesign-component-logo-slogan-color, var(--prev-primary-text));
+	--nldesign-color-on-surface: var(
+		--nldesign-component-logo-slogan-color,
+		var(--prev-primary-text)
+	);
 	color: var(--nldesign-component-logo-slogan-color, var(--prev-primary-text));
-	font-family: var(--nldesign-component-logo-slogan-font-family, var(--font-face, inherit));
+	font-family: var(
+		--nldesign-component-logo-slogan-font-family,
+		var(--font-face, inherit)
+	);
 	font-size: 9px;
 }
 

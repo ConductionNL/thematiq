@@ -165,9 +165,7 @@ test.describe('workflow: token-apply persistence', () => {
 		expect(live.toLowerCase()).toBe(TEST_VALUE.toLowerCase())
 	})
 
-	test('clearing the override REMOVES it from the backend', async ({
-		page,
-	}) => {
+	test('clearing the override REMOVES it from the backend', async ({ page }) => {
 		await openTheming(page)
 		const token = await requestToken(page)
 

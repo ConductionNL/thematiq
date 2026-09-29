@@ -499,7 +499,9 @@ a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
  */
 .button-vue--vue-secondary,
 .button-vue--secondary {
-	--nldesign-color-on-surface: var(--nldesign-component-button-secondary-action-color);
+	--nldesign-color-on-surface: var(
+		--nldesign-component-button-secondary-action-color
+	);
 }
 
 /*

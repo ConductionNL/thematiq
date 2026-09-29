@@ -82,8 +82,11 @@ test.describe('token-editor-edit-behavior', () => {
 		// (applyLivePreview → #nldesign-preview.style, never <html>).
 		const inline = await page.evaluate(
 			(name) => ({
-				preview: (document.getElementById('nldesign-preview') as HTMLElement)
-					.style.getPropertyValue(name).trim(),
+				preview: (
+					document.getElementById('nldesign-preview') as HTMLElement
+				).style
+					.getPropertyValue(name)
+					.trim(),
 				page: document.documentElement.style.getPropertyValue(name).trim(),
 			}),
 			tokenName as string,
@@ -150,8 +153,10 @@ test.describe('token-editor-edit-behavior', () => {
 
 		// Reset removes the preview's inline style and removes the custom badge.
 		const inlineVal = await page.evaluate(
-			(name) => (document.getElementById('nldesign-preview') as HTMLElement)
-				.style.getPropertyValue(name).trim(),
+			(name) =>
+				(document.getElementById('nldesign-preview') as HTMLElement).style
+					.getPropertyValue(name)
+					.trim(),
 			tokenName as string,
 		)
 		expect(inlineVal).toBe('')

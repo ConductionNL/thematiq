@@ -378,7 +378,9 @@
 			// design system has a file of its own, every other set the shared one.
 			var option =
 				tokenSetSelect !== null
-					? tokenSetSelect.querySelector('option[value="' + tokenSetId + '"]')
+					? tokenSetSelect.querySelector(
+							'option[value="' + tokenSetId + '"]',
+						)
 					: null
 			var designSystem =
 				option !== null
@@ -386,10 +388,14 @@
 					: 'nldesign'
 			var file =
 				designSystem === 'none' || tokenSetId === STOCK_TOKEN_SET
-					? 'custom-overrides-' + tokenSetId.toLowerCase().replace(/[^a-z0-9-]/g, '')
+					? 'custom-overrides-'
+						+ tokenSetId.toLowerCase().replace(/[^a-z0-9-]/g, '')
 					: 'custom-overrides'
 			var href = OC.filePath('thematiq', 'css', file + '.css')
-			if (LayerSwap.pathnameOf(link.getAttribute('href')) === LayerSwap.pathnameOf(href)) {
+			if (
+				LayerSwap.pathnameOf(link.getAttribute('href'))
+				=== LayerSwap.pathnameOf(href)
+			) {
 				return
 			}
 
@@ -1347,7 +1353,10 @@
 			var captured = Boolean(
 				tokenSetData.theming && tokenSetData.theming.captured === true,
 			)
-			if ((tokenSetData.design_system || 'nldesign') === 'none' && captured === false) {
+			if (
+				(tokenSetData.design_system || 'nldesign') === 'none'
+				&& captured === false
+			) {
 				var resetDiffs = []
 				if (currentTheming.primary_color) {
 					resetDiffs.push({
@@ -1525,7 +1534,8 @@
 				})
 			} else if (
 				mode === 'default'
-				&& (removedNow === true || currentTheming.has_custom_background === true)
+				&& (removedNow === true
+					|| currentTheming.has_custom_background === true)
 			) {
 				diffs.push({
 					label: t('thematiq', 'Background image'),
@@ -2743,7 +2753,10 @@
 				+ '<label>'
 				+ '<input type="checkbox" id="nldesign-confirm-save-theme">'
 				+ escapeHtml(
-					t('thematiq', "Don't ask before saving while a token set is active"),
+					t(
+						'thematiq',
+						"Don't ask before saving while a token set is active",
+					),
 				)
 				+ '</label>'
 				+ '</div>'
@@ -3004,7 +3017,10 @@
 		 * @return {string} The token value.
 		 */
 		function pickerValue(picker) {
-			if (picker.dataset.format === 'rgb' && typeof TT.hexToRgbTriplet === 'function') {
+			if (
+				picker.dataset.format === 'rgb'
+				&& typeof TT.hexToRgbTriplet === 'function'
+			) {
 				return TT.hexToRgbTriplet(picker.value) || picker.value
 			}
 			return picker.value
@@ -3122,8 +3138,15 @@
 						}
 						// A saved value stays on the preview; with none, the
 						// preview falls back to what the theme itself declares.
-						if (typeof state.custom === 'string' && state.custom !== '') {
-							previewTarget().style.setProperty(name, state.custom, 'important')
+						if (
+							typeof state.custom === 'string'
+							&& state.custom !== ''
+						) {
+							previewTarget().style.setProperty(
+								name,
+								state.custom,
+								'important',
+							)
 						} else {
 							previewTarget().style.removeProperty(name)
 						}
@@ -3498,9 +3521,7 @@
 			overlay
 				.querySelector('.nldesign-dialog-confirm')
 				.addEventListener('click', function () {
-					var nameEl = document.getElementById(
-						'nldesign-save-newset-name',
-					)
+					var nameEl = document.getElementById('nldesign-save-newset-name')
 					if (nameEl === null) {
 						return
 					}
@@ -3542,9 +3563,7 @@
 			 * @return {void}
 			 */
 			function showError(message) {
-				var errorEl = document.getElementById(
-					'nldesign-save-newset-error',
-				)
+				var errorEl = document.getElementById('nldesign-save-newset-error')
 				var nameEl = document.getElementById('nldesign-save-newset-name')
 				if (errorEl === null) {
 					return
@@ -3847,8 +3866,10 @@
 			// NL Design System.
 			tokenSetsData[id] = { id: id, name: name, design_system: designSystem }
 
-			if (tokenSetSelect !== null
-				&& tokenSetSelect.querySelector('option[value="' + id + '"]') === null
+			if (
+				tokenSetSelect !== null
+				&& tokenSetSelect.querySelector('option[value="' + id + '"]')
+					=== null
 			) {
 				var option = document.createElement('option')
 				option.value = id
@@ -4037,7 +4058,8 @@
 						// reset button returns to it, and no row is unsaved.
 						Object.keys(tokenEditorState).forEach(function (k) {
 							var state = tokenEditorState[k]
-							state.custom = overrides[k] !== undefined ? overrides[k] : null
+							state.custom =
+								overrides[k] !== undefined ? overrides[k] : null
 							state.saved = state.current
 							state.isDirty = false
 						})
@@ -4451,35 +4473,38 @@
 						newTokenSetId === STOCK_TOKEN_SET
 							? Promise.resolve({ status: 'ok' })
 							: fetch(overridesUrl('', newTokenSetId), {
-								headers: { requesttoken: OC.requestToken },
-							})
-								.then(function (r) {
-									return r.json()
+									headers: { requesttoken: OC.requestToken },
 								})
-								.then(function (existingData) {
-									var merged = Object.assign(
-										{},
-										existingData.overrides || {},
-										toApply,
-									)
-									return fetch(
-										OC.generateUrl('/apps/thematiq/settings/overrides'),
-										{
-											method: 'POST',
-											headers: {
-												'Content-Type': 'application/json',
-												requesttoken: OC.requestToken,
+									.then(function (r) {
+										return r.json()
+									})
+									.then(function (existingData) {
+										var merged = Object.assign(
+											{},
+											existingData.overrides || {},
+											toApply,
+										)
+										return fetch(
+											OC.generateUrl(
+												'/apps/thematiq/settings/overrides',
+											),
+											{
+												method: 'POST',
+												headers: {
+													'Content-Type':
+														'application/json',
+													requesttoken: OC.requestToken,
+												},
+												body: JSON.stringify({
+													overrides: merged,
+													tokenSet: newTokenSetId,
+												}),
 											},
-											body: JSON.stringify({
-												overrides: merged,
-												tokenSet: newTokenSetId,
-											}),
-										},
-									)
-								})
-								.then(function (r) {
-									return r.json()
-								})
+										)
+									})
+									.then(function (r) {
+										return r.json()
+									})
 
 					pinned
 						.then(function (saveData) {
@@ -5745,7 +5770,9 @@
 							.catch(function (err) {
 								resetThemeBtn.disabled = false
 								console.error('Error resetting the theme:', err)
-								notify(t('thematiq', 'The theme could not be reset.'))
+								notify(
+									t('thematiq', 'The theme could not be reset.'),
+								)
 							})
 					},
 					true,

@@ -128,7 +128,9 @@ describe('component instrument: the rows under a component', () => {
 			'--nldesign-component-notecard-border-radius',
 		])
 		expect(
-			groups.slice(1).flatMap((group) => group.tokens.map((token) => token.name)),
+			groups
+				.slice(1)
+				.flatMap((group) => group.tokens.map((token) => token.name)),
 		).not.toContain('--nldesign-component-notecard-border-radius')
 	})
 
@@ -709,14 +711,16 @@ describe('the shipped stylesheets, reached', () => {
 })
 
 describe('the link specimen', () => {
-	it('draws real links, so hover and focus are the browser\'s own', () => {
+	it("draws real links, so hover and focus are the browser's own", () => {
 		// A span has no hover or focus of its own: the stage told the admin to
 		// hover the link for its hover colour, and nothing happened.
 		const markup = playground.STAGES.link(
 			null,
 			inventory.components.find((entry) => entry.id === 'link'),
 		)
-		expect(markup.match(/<a href="#" class="nldesign-pg-link">/g)).toHaveLength(2)
+		expect(markup.match(/<a href="#" class="nldesign-pg-link">/g)).toHaveLength(
+			2,
+		)
 		expect(markup).not.toContain('<span class="nldesign-pg-link">')
 	})
 })
@@ -760,7 +764,9 @@ describe('the login card, against the page it stands for', () => {
 		expect(submit.slice(0, submit.indexOf('>'))).toContain(
 			'data-thematiq-component="login-button"',
 		)
-		expect(markup.split('data-thematiq-component="login-button"')).toHaveLength(2)
+		expect(markup.split('data-thematiq-component="login-button"')).toHaveLength(
+			2,
+		)
 	})
 
 	it('gives a text button no icon span and an icon button no text span', () => {
