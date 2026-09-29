@@ -395,7 +395,11 @@
         "This fully resets the theme to stock Nextcloud: the overrides of the current theme and every change written over the Nextcloud theme are deleted, and the Nextcloud theming colours and logo return to their defaults. Custom token sets, fonts and custom CSS are kept. This cannot be undone.": "This fully resets the theme to stock Nextcloud: the overrides of the current theme and every change written over the Nextcloud theme are deleted, and the Nextcloud theming colours and logo return to their defaults. Custom token sets, fonts and custom CSS are kept. This cannot be undone.",
         "Token editor": "Token editor",
         "Yes, save as a new theme": "Yes, save as a new theme",
-        "You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself. Writing over it changes Nextcloud for everyone; \"Reset theme to Nextcloud\" brings the original back.": "You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself. Writing over it changes Nextcloud for everyone; \"Reset theme to Nextcloud\" brings the original back."
+        "You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself. Writing over it changes Nextcloud for everyone; \"Reset theme to Nextcloud\" brings the original back.": "You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself. Writing over it changes Nextcloud for everyone; \"Reset theme to Nextcloud\" brings the original back.",
+        "Contrast evidence report": "Contrast evidence report",
+        "Download the colour contrast of the active theme tokens as evidence for an accessibility statement. It covers colour contrast of the theme only and is not a full WCAG audit.": "Download the colour contrast of the active theme tokens as evidence for an accessibility statement. It covers colour contrast of the theme only and is not a full WCAG audit.",
+        "Download as JSON": "Download as JSON",
+        "Download as Markdown": "Download as Markdown"
     },
     "plurals": {}
 }
