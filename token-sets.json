@@ -1,7 +1,7 @@
 [
 	{
 		"id": "nextcloud",
-		"name": "Nextcloud (default)",
+		"name": "Nextcloud (Base)",
 		"description": "Stock Nextcloud appearance — system fonts, rounded corners, Nextcloud blue (#00679e)",
 		"design_system": "none",
 		"theming": {

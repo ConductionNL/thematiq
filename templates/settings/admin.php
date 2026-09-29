@@ -85,6 +85,9 @@ if ($_['mockUi'] === true) {
 		<button type="button" id="nldesign-preview-btn" class="button">
 			<?php p($l->t('Preview in my session')); ?>
 		</button>
+		<button type="button" id="nldesign-reset-theme-btn" class="button">
+			<?php p($l->t('Reset theme to Nextcloud')); ?>
+		</button>
 	</div>
 
 	<!-- Active icon pack — read-only indicator (theme-switchable iconography,
@@ -223,7 +226,7 @@ if ($_['mockUi'] === true) {
 					<span class="nl-mini__navspacer"></span>
 					<span class="nl-mini__navglyph"></span>
 					<span class="nl-mini__navglyph"></span>
-					<span class="nl-mini__avatar"></span>
+					<span class="nl-mini__avatar"><i class="nl-mini__avatar-status"></i></span>
 				</div>
 				<div class="nl-mini__body">
 					<nav class="nl-mini__menu">
@@ -235,20 +238,41 @@ if ($_['mockUi'] === true) {
 						<span class="nl-mini__menuitem"><i class="nl-mini__menuicon"></i><?php p($l->t('Settings')); ?></span>
 					</nav>
 					<main class="nl-mini__content">
+						<!-- Breadcrumbs: a link crumb, a hovered one, and the
+						     current one, split by separators. -->
+						<div class="nl-mini__crumbs">
+							<span class="nl-mini__crumb"><?php p($l->t('Home')); ?></span>
+							<span class="nl-mini__crumb-sep">›</span>
+							<span class="nl-mini__crumb nl-mini__crumb--hover"><?php p($l->t('Orders')); ?></span>
+							<span class="nl-mini__crumb-sep">›</span>
+							<span class="nl-mini__crumb nl-mini__crumb--current">2026</span>
+						</div>
 						<div class="nl-mini__widget">
-							<div class="nl-mini__widget-head"><?php p($l->t('Orders')); ?></div>
+							<div class="nl-mini__widget-head"><?php p($l->t('Orders')); ?><span class="nl-mini__star" aria-hidden="true">★</span></div>
+							<!-- A table with its header labels, row rules, a zebra
+							     row and a hovered row. -->
 							<table class="nl-mini__table">
-								<thead><tr><th></th><th></th><th></th></tr></thead>
+								<thead><tr><th scope="col"><?php p($l->t('Name')); ?></th><th scope="col"><?php p($l->t('Date')); ?></th><th scope="col"><?php p($l->t('Status')); ?></th></tr></thead>
 								<tbody>
 									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--primary"></span></td></tr>
-									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--warning"></span></td></tr>
-									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--info"></span></td></tr>
+									<tr class="is-zebra"><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--warning"></span></td></tr>
+									<tr class="is-hover"><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--info"></span></td></tr>
 								</tbody>
 							</table>
+							<!-- A form row: a text field, a checked checkbox and a
+							     progress bar. -->
+							<div class="nl-mini__form">
+								<span class="nl-mini__input"><span class="nl-mini__input-text"></span></span>
+								<span class="nl-mini__check"></span>
+								<span class="nl-mini__progress"><i class="nl-mini__progress-fill"></i></span>
+							</div>
 						</div>
 					</main>
 					<aside class="nl-mini__sidebar">
 						<div class="nl-mini__sidebar-head"><?php p($l->t('Details')); ?><span class="nl-mini__sidebar-close"></span></div>
+						<!-- The tab strip: its rule is the sidebar's divider, the
+						     open tab's underline its active colour. -->
+						<span class="nl-mini__sidebar-tabs"><span class="nl-mini__sidebar-tab nl-mini__sidebar-tab--active"></span><span class="nl-mini__sidebar-tab"></span></span>
 						<span class="nl-mini__line"></span>
 						<span class="nl-mini__line nl-mini__line--short"></span>
 						<span class="nl-mini__line"></span>
@@ -256,19 +280,54 @@ if ($_['mockUi'] === true) {
 				</div>
 				<div class="nl-mini__modal-overlay">
 					<div class="nl-mini__modal">
-						<div class="nl-mini__modal-head"><?php p($l->t('Dialog')); ?></div>
+						<div class="nl-mini__modal-head"><?php p($l->t('Dialog')); ?><span class="nl-mini__counter">12</span></div>
 						<div class="nl-mini__modal-body">
-							<span class="nl-mini__line"></span>
-							<span class="nl-mini__line nl-mini__line--short"></span>
+							<!-- Typography: a heading, body text with a link, then the
+							     muted and status texts, each painted from its own token
+							     (css/admin.css). Plain elements on purpose: a real h3 or
+							     p takes the design system's full-page font sizes. -->
+							<div class="nl-mini__type">
+								<div class="nl-mini__type-heading"><?php p($l->t('Heading')); ?></div>
+								<div class="nl-mini__type-paragraph"><?php p($l->t('Body text of a page, with')); ?> <a href="#" class="nl-mini__type-link"><?php p($l->t('a link')); ?></a>.</div>
+								<div class="nl-mini__type-row">
+									<span class="nl-mini__type-muted"><?php p($l->t('Muted')); ?></span>
+									<span class="nl-mini__type-light"><?php p($l->t('Light')); ?></span>
+									<span class="nl-mini__type-lighter"><?php p($l->t('Lighter')); ?></span>
+								</div>
+								<div class="nl-mini__type-row">
+									<span class="nl-mini__type-error"><?php p($l->t('Error')); ?></span>
+									<span class="nl-mini__type-warning"><?php p($l->t('Warning')); ?></span>
+									<span class="nl-mini__type-success"><?php p($l->t('Success')); ?></span>
+								</div>
+							</div>
+							<!-- One note card of each type, each painted from its own
+							     note card tokens. -->
+							<div class="nl-mini__notes">
+								<span class="nl-mini__note nl-mini__note--info"><i class="nl-mini__note-icon"></i><span class="nl-mini__note-text"></span></span>
+								<span class="nl-mini__note nl-mini__note--warning"><i class="nl-mini__note-icon"></i><span class="nl-mini__note-text"></span></span>
+								<span class="nl-mini__note nl-mini__note--error"><i class="nl-mini__note-icon"></i><span class="nl-mini__note-text"></span></span>
+								<span class="nl-mini__note nl-mini__note--success"><i class="nl-mini__note-icon"></i><span class="nl-mini__note-text"></span></span>
+							</div>
 						</div>
 						<div class="nl-mini__modal-actions">
+							<!-- The five NcButton variants, each painted from its own
+							     component tokens (css/admin.css), so the dialog is a
+							     small overview of every button an admin can theme. -->
 							<button type="button" class="nl-btn nl-btn--primary"><?php p($l->t('Primary')); ?></button>
 							<button type="button" class="nl-btn nl-btn--secondary"><?php p($l->t('Secondary')); ?></button>
-							<button type="button" class="nl-btn nl-btn--warning"><?php p($l->t('Alert')); ?></button>
+							<button type="button" class="nl-btn nl-btn--tertiary"><?php p($l->t('Tertiary')); ?></button>
 							<button type="button" class="nl-btn nl-btn--error"><?php p($l->t('Danger')); ?></button>
-							<button type="button" class="nl-btn nl-btn--info"><?php p($l->t('Info')); ?></button>
+							<button type="button" class="nl-btn nl-btn--success"><?php p($l->t('Success')); ?></button>
 						</div>
 					</div>
+				</div>
+				<!-- Toasts, one of each type, above the dialog as Nextcloud
+				     shows them. -->
+				<div class="nl-mini__toasts" aria-hidden="true">
+					<span class="nl-mini__toast nl-mini__toast--success"><span class="nl-mini__toast-text"></span></span>
+					<span class="nl-mini__toast nl-mini__toast--error"><span class="nl-mini__toast-text"></span></span>
+					<span class="nl-mini__toast nl-mini__toast--warning"><span class="nl-mini__toast-text"></span></span>
+					<span class="nl-mini__toast nl-mini__toast--info"><span class="nl-mini__toast-text"></span></span>
 				</div>
 			</div>
 		</div>
@@ -278,11 +337,11 @@ if ($_['mockUi'] === true) {
 			<div class="nl-login">
 				<div class="nl-login__logo"></div>
 				<div class="nl-login__card">
-					<span class="nl-login__field"></span>
-					<span class="nl-login__field"></span>
+					<span class="nl-login__field"><span class="nl-login__placeholder"></span></span>
+					<span class="nl-login__field"><span class="nl-login__placeholder"></span></span>
 					<button type="button" class="nl-btn nl-btn--primary nl-login__submit"><?php p($l->t('Log in')); ?></button>
 				</div>
-				<div class="nl-login__slogan"></div>
+				<div class="nl-login__slogan"><?php p($l->t('A safe home for all your data')); ?></div>
 			</div>
 		</div>
 	</div>
@@ -412,6 +471,27 @@ if ($_['mockUi'] === true) {
 		<label for="nldesign-show-menu-labels">
 			<?php p($l->t('Show text labels in app menu (hide icons)')); ?>
 		</label>
+	</div>
+
+	<!-- Primary drives every component — the deliberate opt-out of per-component
+	     theming (openspec/specs/component-tokens/spec.md). Off by default, and
+	     that is not a behaviour change: with no per-component value stored the
+	     component tokens already resolve to the brand primary. Turning it on
+	     emits css/primary-lock.css, which forces them back to the brand value,
+	     and locks the colour controls the primary now owns. Stored values are
+	     kept, so turning it off restores them. -->
+	<div class="nldesign-option">
+		<input type="checkbox"
+			   name="nldesign-primary-drives-components"
+			   id="nldesign-primary-drives-components"
+			   class="checkbox"
+			   <?php if ($_['primaryDrivesComponents']): ?>checked<?php endif; ?>>
+		<label for="nldesign-primary-drives-components">
+			<?php p($l->t('Let the primary colour drive every component')); ?>
+		</label>
+		<p class="settings-hint">
+			<?php p($l->t('While this is on, the brand primary overrules any colour set on an individual component, and those controls are locked. Switching it off gives each component its own colour back.')); ?>
+		</p>
 	</div>
 
 	<!-- Dark mode variants — instance-wide toggle for the generated dark

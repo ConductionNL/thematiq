@@ -108,9 +108,30 @@ describe('component instrument: the rows under a component', () => {
 		const groups = playground.rowsByState(component)
 
 		expect(groups.map((group) => group.state.n)).toEqual([1, 2, 3, 4])
+		// The button's OWN background token, not `--color-primary-element`. The
+		// chip named that global until the component-token layer landed, which is
+		// why moving this row also moved the navigation, the sidebar, the
+		// checkbox, the progress bar, the dialog and the counter bubble.
 		expect(groups[0].tokens.map((token) => token.name)).toContain(
-			'--color-primary-element',
+			'--nldesign-component-button-primary-action-background-color',
 		)
+	})
+
+	it('leads with the tokens every variant shares, apart from any one variant', () => {
+		// The note cards' corner used to sit among the info rows, where it read
+		// as belonging to the info card alone.
+		const notes = playground.componentById(inventory, 'note-cards')
+		const groups = playground.rowsByState(notes)
+
+		expect(groups[0].state.id).toBe('all')
+		expect(groups[0].tokens.map((token) => token.name)).toEqual([
+			'--nldesign-component-notecard-border-radius',
+		])
+		expect(
+			groups
+				.slice(1)
+				.flatMap((group) => group.tokens.map((token) => token.name)),
+		).not.toContain('--nldesign-component-notecard-border-radius')
 	})
 
 	it('puts a token-less fact under its own state and nowhere else', () => {
@@ -215,6 +236,43 @@ describe('component instrument: the token set export', () => {
 
 		expect(result.unexpressed).toEqual(['--color-scrollbar'])
 		expect(parseTokens(result.css)).toEqual(tokens)
+	})
+
+	it('writes a component token the admin set by name', () => {
+		// The bug this guards: `sources` runs Nextcloud variable => token, and
+		// every override used to BE a Nextcloud variable. The component layer
+		// added rows named for the token itself, those names matched nothing in
+		// a map keyed by `--color-*`, and every one of them was reported as
+		// inexpressible and left out. An admin who set the header colours and
+		// saved the result as a theme got a theme with no header colours in it.
+		const result = playground.exportCss(
+			tokens,
+			{
+				'--nldesign-component-header-background-color': '#e8eff6',
+				'--nldesign-component-header-color': '#11304e',
+			},
+			sources,
+		)
+		const exported = parseTokens(result.css)
+
+		expect(exported['--nldesign-component-header-background-color']).toBe(
+			'#e8eff6',
+		)
+		expect(exported['--nldesign-component-header-color']).toBe('#11304e')
+		expect(result.unexpressed).toEqual([])
+	})
+
+	it('lets a token set by name beat the same token reached through a variable', () => {
+		const result = playground.exportCss(
+			tokens,
+			{
+				'--color-primary': '#ff0000',
+				'--nldesign-color-primary': '#00ff00',
+			},
+			sources,
+		)
+
+		expect(parseTokens(result.css)['--nldesign-color-primary']).toBe('#00ff00')
 	})
 
 	it('keeps the defining variable when two overrides read one token', () => {
@@ -652,6 +710,21 @@ describe('the shipped stylesheets, reached', () => {
 	})
 })
 
+describe('the link specimen', () => {
+	it("draws real links, so hover and focus are the browser's own", () => {
+		// A span has no hover or focus of its own: the stage told the admin to
+		// hover the link for its hover colour, and nothing happened.
+		const markup = playground.STAGES.link(
+			null,
+			inventory.components.find((entry) => entry.id === 'link'),
+		)
+		expect(markup.match(/<a href="#" class="nldesign-pg-link">/g)).toHaveLength(
+			2,
+		)
+		expect(markup).not.toContain('<span class="nldesign-pg-link">')
+	})
+})
+
 describe('the login card, against the page it stands for', () => {
 	// Transcribed from the rendered DOM of a real Nextcloud 34 login page. The
 	// class names are the contract: they are what core's stylesheet, the
@@ -681,6 +754,19 @@ describe('the login card, against the page it stands for', () => {
 		expect(markup).toContain('button-vue--icon-and-text')
 		expect(markup).toContain('button-vue--wide')
 		expect(markup).toContain('class="button-vue__icon"')
+	})
+
+	it('puts the log-in button in the login button scope, and only that one', () => {
+		// On the real page `#body-login .button-vue--primary` does this; the
+		// specimen cannot carry that id, so it is named instead. Without it the
+		// card's button read the primary button's token, not the login one.
+		const submit = markup.slice(markup.indexOf('button-vue--vue-primary'))
+		expect(submit.slice(0, submit.indexOf('>'))).toContain(
+			'data-thematiq-component="login-button"',
+		)
+		expect(markup.split('data-thematiq-component="login-button"')).toHaveLength(
+			2,
+		)
 	})
 
 	it('gives a text button no icon span and an icon button no text span', () => {

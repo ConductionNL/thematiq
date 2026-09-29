@@ -14,6 +14,7 @@ const {
 	darkenHex,
 	getPreviewColors,
 	normaliseColorForPicker,
+	hexToRgbTriplet,
 	designSystemLabel,
 	groupDiagnosticsByReason,
 } = tokenTransforms
@@ -81,6 +82,29 @@ describe('normaliseColorForPicker', () => {
 		// admin.js resolves these via a canvas; the pure helper signals "not pure".
 		expect(normaliseColorForPicker('red')).toBeNull()
 		expect(normaliseColorForPicker('rgb(1,2,3)')).toBeNull()
+	})
+
+	it('turns an r, g, b triplet into #RRGGBB, so an -rgb token has a swatch', () => {
+		expect(normaliseColorForPicker('255, 243, 205')).toBe('#fff3cd')
+		expect(normaliseColorForPicker('0,0,0')).toBe('#000000')
+		expect(normaliseColorForPicker('300, 0, 0')).toBe('#ff0000')
+	})
+})
+
+describe('hexToRgbTriplet', () => {
+	it('writes a colour as the bare r, g, b triplet', () => {
+		expect(hexToRgbTriplet('#fff3cd')).toBe('255, 243, 205')
+		expect(hexToRgbTriplet('#abc')).toBe('170, 187, 204')
+	})
+
+	it('passes a triplet through in canonical form', () => {
+		expect(hexToRgbTriplet('255,243,205')).toBe('255, 243, 205')
+	})
+
+	it('returns null for an empty value or one it cannot read', () => {
+		expect(hexToRgbTriplet('')).toBeNull()
+		expect(hexToRgbTriplet(null)).toBeNull()
+		expect(hexToRgbTriplet('red')).toBeNull()
 	})
 })
 

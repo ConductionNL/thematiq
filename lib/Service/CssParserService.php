@@ -211,6 +211,34 @@ class CssParserService {
 	}//end parseRootBlock()
 
 	/**
+	 * Read the light values out of a custom-overrides file.
+	 *
+	 * The file custom-overrides.css carries its light values in a `:root` block
+	 * and, for brand colour overrides, the same tokens again in two dark blocks. Reading every
+	 * declaration in the file would let the dark values overwrite the light
+	 * ones on import. So a file with a `:root` block is read from that block
+	 * alone; a file of bare declarations (a hand-written import) is read whole.
+	 *
+	 * @param string $css The raw file content.
+	 *
+	 * @return array<string, string>|null Token => light value, or null when the file declares nothing.
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.2
+	 */
+	public function parseOverridesFile(string $css): ?array {
+		if (preg_match('/:root\s*\{/', $css) === 1) {
+			$root = $this->parseRootBlock(css: $css);
+			if (empty($root) === true) {
+				return null;
+			}
+
+			return $root;
+		}
+
+		return $this->parseDeclarations(content: $css);
+	}//end parseOverridesFile()
+
+	/**
 	 * Parse hand-authored dark-mode declarations from a top-level
 	 * `@media (prefers-color-scheme: dark) { :root { ... } }` block.
 	 *

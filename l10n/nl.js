@@ -357,7 +357,10 @@ OC.L10N.register(
         "Nothing": "Niets",
         "Changed": "Gewijzigd",
         "+%n more": "+nog %n",
-        "Apps, files, messages, and more": "Apps, bestanden, berichten en meer"
+        "Apps, files, messages, and more": "Apps, bestanden, berichten en meer",
+        "The primary colour drives this component. Switch off \"Let the primary colour drive every component\" to set it separately.": "The primary colour drives this component. Switch off \"Let the primary colour drive every component\" to set it separately.",
+        "Let the primary colour drive every component": "Let the primary colour drive every component",
+        "While this is on, the brand primary overrules any colour set on an individual component, and those controls are locked. Switching it off gives each component its own colour back.": "While this is on, the brand primary overrules any colour set on an individual component, and those controls are locked. Switching it off gives each component its own colour back."
     },
     "nplurals=2; plural=(n != 1);"
 )

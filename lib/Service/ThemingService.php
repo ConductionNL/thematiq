@@ -130,7 +130,7 @@ class ThemingService {
 		// theming — Nextcloud core has a single logo slot
 		// (nextcloud/server#47357); the dark logo is delivered by nldesign's
 		// own generated dark stylesheet instead.
-		foreach (['logo', 'background', 'logo_dark'] as $imageKey) {
+		foreach (['logo', 'logoheader', 'favicon', 'background', 'logo_dark'] as $imageKey) {
 			if (isset($params[$imageKey]) === true && $params[$imageKey] !== '') {
 				$error = $this->validateSinglePath(
 					imageKey: $imageKey,
@@ -140,6 +140,11 @@ class ThemingService {
 					return $error;
 				}
 			}
+		}
+
+		$mode = ($params['background_mode'] ?? '');
+		if ($mode !== '' && in_array($mode, ['image', 'color', 'default'], true) === false) {
+			return "Invalid background_mode: $mode";
 		}
 
 		return null;
@@ -196,13 +201,49 @@ class ThemingService {
 			}
 		}
 
-		// A plain background colour only shows when there is no background
-		// IMAGE: core paints its default image blob over the colour until the
-		// admin presses "Remove background image", which is exactly this
-		// app value. Set it here unless the same request also brings a
-		// background image, which applyImages() writes (and whose mime then
-		// overrides this) right after.
-		if (in_array('background_color', $updated, true) === true
+		return $this->applyBackgroundMode(params: $params, updated: $updated);
+	}//end applyColors()
+
+	/**
+	 * Put the background in the state the theme asks for, after its colours.
+	 *
+	 * @param array $params The request parameters.
+	 * @param array $updated The colour keys applyColors() already wrote.
+	 *
+	 * @return array The updated keys, plus `background_mode` when a mode was applied.
+	 *
+	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 */
+	private function applyBackgroundMode(array $params, array $updated): array {
+		// A theme that CAPTURED Nextcloud's branding says which of the three
+		// background states it was saved in, and gets exactly that back:
+		// "Remove background image" (`color`), Nextcloud's own default image
+		// (`default`), or an image of its own (`image`, which applyImages()
+		// writes right after).
+		$mode = ($params['background_mode'] ?? '');
+		if ($mode === 'color') {
+			$this->themingDefaults->set(setting: 'backgroundMime', value: 'backgroundColor');
+			$updated[] = 'background_mode';
+
+			return $updated;
+		}
+
+		if ($mode === 'default') {
+			$this->themingDefaults->undo(setting: 'background');
+			$updated[] = 'background_mode';
+
+			return $updated;
+		}
+
+		// Without a mode — every set that did not capture a panel — a plain
+		// background colour only shows when there is no background IMAGE:
+		// core paints its default image blob over the colour until the admin
+		// presses "Remove background image", which is exactly this app value.
+		// Set it here unless the same request also brings a background image,
+		// which applyImages() writes (and whose mime then overrides this)
+		// right after.
+		if ($mode === ''
+			&& in_array('background_color', $updated, true) === true
 			&& (isset($params['background']) === false || $params['background'] === '')
 		) {
 			$this->themingDefaults->set(setting: 'backgroundMime', value: 'backgroundColor');
@@ -233,7 +274,7 @@ class ThemingService {
 	public function applyImages(array $params): array {
 		$updated = [];
 
-		foreach (['logo', 'background'] as $imageKey) {
+		foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
 			if (isset($params[$imageKey]) === true && $params[$imageKey] !== '') {
 				$appPath = $this->appManager->getAppPath(appId: 'thematiq');
 				$fullPath = $appPath . '/' . $params[$imageKey];
@@ -248,11 +289,12 @@ class ThemingService {
 
 	/**
 	 * The settings a reset to stock Nextcloud undoes, in the order core's own
-	 * panel would: colours first, then the two image slots.
+	 * panel would: colours first, then the image slots. The navigation-bar
+	 * logo and the favicon are among them because a theme can now bring them.
 	 *
 	 * @var string[]
 	 */
-	public const RESETTABLE = ['primary_color', 'background_color', 'logo', 'background'];
+	public const RESETTABLE = ['primary_color', 'background_color', 'logo', 'logoheader', 'favicon', 'background'];
 
 	/**
 	 * Undo everything Thematiq may have synced into Nextcloud theming.

@@ -178,7 +178,7 @@
 	function insertBeforeAnchor(doc) {
 		return (
 			doc.querySelector(
-				'link[rel="stylesheet"][href*="/thematiq/css/custom-overrides.css"]',
+				'link[rel="stylesheet"][href*="/thematiq/css/custom-overrides"]',
 			)
 			|| doc.querySelector('link[rel="stylesheet"].theme')
 			|| null

@@ -25,9 +25,11 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
@@ -120,6 +122,22 @@ class CustomTokenSetController extends Controller {
 	private ThemingService $themingService;
 
 	/**
+	 * The shipped design-system manifest, used to allow-list a claimed id.
+	 *
+	 * @var DesignSystemService
+	 */
+	private DesignSystemService $designSystems;
+
+	/**
+	 * Copies Nextcloud's own branding into a theme saved from the editor.
+	 * Optional so a caller that builds this controller by hand need not know
+	 * about it; the container always injects it.
+	 *
+	 * @var BrandingCaptureService|null
+	 */
+	private ?BrandingCaptureService $brandingCapture;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
@@ -132,6 +150,8 @@ class CustomTokenSetController extends Controller {
 	 * @param IConfig $config The config service.
 	 * @param TokenSetConverterService $converter The theme converter, which runs before the validator.
 	 * @param ThemingService $themingService Core theming, for undoing a deleted set's sync.
+	 * @param DesignSystemService $designSystems The design-system manifest, for allow-listing a claimed id.
+	 * @param BrandingCaptureService|null $brandingCapture Copies Nextcloud's branding into a theme saved from the editor.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else; the
 	 *   alternative is a service locator, which hides exactly these dependencies instead of removing any of them.
@@ -147,6 +167,8 @@ class CustomTokenSetController extends Controller {
 		IConfig $config,
 		TokenSetConverterService $converter,
 		ThemingService $themingService,
+		DesignSystemService $designSystems,
+		?BrandingCaptureService $brandingCapture = null,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->service = $service;
@@ -157,6 +179,8 @@ class CustomTokenSetController extends Controller {
 		$this->config = $config;
 		$this->converter = $converter;
 		$this->themingService = $themingService;
+		$this->designSystems = $designSystems;
+		$this->brandingCapture = $brandingCapture;
 	}//end __construct()
 
 	/**
@@ -216,6 +240,87 @@ class CustomTokenSetController extends Controller {
 			return $read;
 		}
 
+		// ALREADY A TOKEN SET — store it as it arrived.
+		//
+		// The token editor's "save as a new theme" serialises the active set and
+		// the admin's overrides straight into the `css/tokens/*.css` shape, so
+		// there is nothing to convert. Running it through the converter anyway
+		// was actively wrong: the converter's job is to make an incomplete NLDS
+		// document whole, and it does that by filling every unmapped target from
+		// the mapping table's fallbacks. An admin who changed one colour got a
+		// theme carrying 121 component tokens of Rijkshuisstijl defaults they
+		// never chose.
+		//
+		// Uploads are untouched — a file an admin picks off disk is still an
+		// unknown document and still goes through the converter.
+		if ($this->request->getParam('raw', false) === true) {
+			return $this->storeRaw(name: $name, slug: $slug, content: $read['content']);
+		}
+
+		return $this->storeConverted(name: $name, slug: $slug, read: $read);
+	}//end upload()
+
+	/**
+	 * Store a token set that arrived already in the `css/tokens/*.css` shape.
+	 *
+	 * @param string $name The set's display name.
+	 * @param string $slug The slug derived from the name.
+	 * @param string $content The token set CSS, as sent.
+	 *
+	 * @return JSONResponse The persisted set, or the validator's error.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function storeRaw(string $name, string $slug, string $content): JSONResponse {
+		$parsed = $this->mapFromCss(content: $content, slug: $slug);
+		if ($parsed instanceof JSONResponse) {
+			return $parsed;
+		}
+
+		$parsed['css'] = $content;
+
+		// Which design system the editor was looking at when it serialised
+		// this. Allow-listed against the shipped manifest rather than taken
+		// on trust: it decides which stylesheet layers every page load emits.
+		$claimed = trim((string)$this->request->getParam('designSystem', ''));
+		if ($claimed !== '' && isset($this->designSystems->getDesignSystems()[$claimed]) === true) {
+			$parsed['designSystem'] = $claimed;
+		}
+
+		$response = $this->persist(name: $name, parsed: $parsed);
+
+		// A theme saved from the editor keeps the Nextcloud branding that
+		// was on when it was saved — colours, background, logos, favicon —
+		// so applying it later brings that back too. Only once the set is
+		// safely stored: a refused save must not leave copied images behind.
+		if ($this->request->getParam('captureTheming', false) === true
+			&& $this->brandingCapture !== null
+			&& $response->getStatus() === 200
+		) {
+			// The persist() response is always an array; getData() is typed
+			// array|object, so say which before indexing it.
+			$data = $response->getData();
+			if (is_array($data) === true) {
+				$data['theming'] = $this->brandingCapture->capture(setId: (string)$data['id']);
+				$response->setData($data);
+			}
+		}
+
+		return $response;
+	}//end storeRaw()
+
+	/**
+	 * Convert an uploaded design-system document and store the result.
+	 *
+	 * @param string $name The set's display name.
+	 * @param string $slug The slug derived from the name.
+	 * @param array{content: string, sourceName: string|null} $read The payload from readInput().
+	 *
+	 * @return JSONResponse `{ id, imported, skipped, warnings, report, counts, inputKind }` or an error.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function storeConverted(string $name, string $slug, array $read): JSONResponse {
 		try {
 			$converted = $this->converter->convert(
 				content: $read['content'],
@@ -296,7 +401,7 @@ class CustomTokenSetController extends Controller {
 		}
 
 		return $this->persist(name: $name, parsed: $parsed);
-	}//end upload()
+	}//end storeConverted()
 
 	/**
 	 * Read the import payload from either the file picker or the paste box.
@@ -476,7 +581,8 @@ class CustomTokenSetController extends Controller {
 				// block are what lands on disk rather than a flat re-serialise.
 				css: ($parsed['css'] ?? null),
 				theming: ($parsed['theming'] ?? []),
-				logoAsset: ($parsed['logoAsset'] ?? null)
+				logoAsset: ($parsed['logoAsset'] ?? null),
+				designSystem: ($parsed['designSystem'] ?? null)
 			);
 		} catch (RuntimeException $e) {
 			$code = $e->getCode();
@@ -594,6 +700,11 @@ class CustomTokenSetController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
 		}
 
+		// The branding it captured, and the images copied for it, go with it.
+		if ($this->brandingCapture !== null) {
+			$this->brandingCapture->forget(setId: $id);
+		}
+
 		$contentHash = null;
 		if ($servedCss !== null) {
 			$contentHash = 'sha256:' . substr(hash(algo: 'sha256', data: $servedCss), 0, 12);
@@ -609,7 +720,7 @@ class CustomTokenSetController extends Controller {
 			$this->themingService->resetToDefaults();
 
 			// Nothing is synced any more, so nothing is remembered as synced.
-			foreach (['logo', 'background'] as $imageKey) {
+			foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
 				$this->config->deleteAppValue(
 					Application::APP_ID,
 					SettingsController::SYNCED_IMAGE_PREFIX . $imageKey

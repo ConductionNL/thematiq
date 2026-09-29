@@ -481,7 +481,9 @@ class ComplianceReportService {
 			return $entry;
 		}
 
-		$ratio = round($this->contrast->ratio(first: $fgColor, second: $bgColor), 2);
+		// Measured as it renders, so a translucent colour is blended first. Both
+		// values parsed above, so measure() cannot answer null here.
+		$ratio = round(($this->contrast->measure(foreground: (string)$fgResolved['value'], background: (string)$bgResolved['value']) ?? 0.0), 2);
 
 		$entry['ratio'] = $ratio;
 		$entry['verdict'] = 'fail';

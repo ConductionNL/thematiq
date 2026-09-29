@@ -88,12 +88,17 @@ class ContrastService {
 				continue;
 			}
 
-			$fgRgb = $this->parseColor(value: $fgValue);
-			$bgRgb = $this->parseColor(value: $bgValue);
+			// Translucent colours are measured as they render: the background
+			// over the page background, the foreground over that.
+			$ratio = $this->measure(
+				foreground: $fgValue,
+				background: $bgValue,
+				page: ($declarations['--nldesign-color-background'] ?? null)
+			);
 
 			$pairLabel = $pair['fg'] . ' vs ' . $pair['bg'];
 
-			if ($fgRgb === null || $bgRgb === null) {
+			if ($ratio === null) {
 				$warnings[] = [
 					'pair' => $pairLabel,
 					'ratio' => null,
@@ -104,7 +109,6 @@ class ContrastService {
 				continue;
 			}
 
-			$ratio = $this->ratio(first: $fgRgb, second: $bgRgb);
 			if ($ratio < $pair['threshold']) {
 				$warnings[] = [
 					'pair' => $pairLabel,
@@ -142,8 +146,6 @@ class ContrastService {
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
 	public function evaluate(array $candidates, string $background): array {
-		$backgroundRgb = $this->parseColor(value: $background);
-
 		$results = [];
 		foreach ($candidates as $candidate) {
 			$threshold = self::ROLE_UI_THRESHOLD;
@@ -151,9 +153,10 @@ class ContrastService {
 				$threshold = self::ROLE_TEXT_THRESHOLD;
 			}
 
-			$candidateRgb = $this->parseColor(value: (string)$candidate['value']);
+			// A translucent candidate is measured blended over the background.
+			$measured = $this->measure(foreground: (string)$candidate['value'], background: $background);
 
-			if ($candidateRgb === null || $backgroundRgb === null) {
+			if ($measured === null) {
 				$results[] = [
 					'name' => $candidate['name'],
 					'ratio' => null,
@@ -165,7 +168,7 @@ class ContrastService {
 				continue;
 			}
 
-			$ratio = round($this->ratio(first: $candidateRgb, second: $backgroundRgb), 2);
+			$ratio = round($measured, 2);
 
 			$results[] = [
 				'name' => $candidate['name'],
@@ -229,9 +232,11 @@ class ContrastService {
 	/**
 	 * Parse a CSS colour literal into an [r, g, b] triple.
 	 *
-	 * Supports #rgb, #rrggbb, rgb(r, g, b) and rgba(r, g, b, a). Any other
-	 * value (var(), named colours, hsl(), gradients) returns null so the
-	 * caller can mark the pair unevaluated.
+	 * Supports #rgb, #rgba, #rrggbb, #rrggbbaa, rgb() and rgba(). The alpha is
+	 * dropped here, so this answers "which colour", not "what renders"; a
+	 * contrast measurement goes through {@see self::measure()}, which blends.
+	 * Any other value (var(), named colours, hsl(), gradients) returns null so
+	 * the caller can mark the pair unevaluated.
 	 *
 	 * @param string $value The raw CSS colour value.
 	 *
@@ -240,29 +245,140 @@ class ContrastService {
 	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-1.3
 	 */
 	public function parseColor(string $value): ?array {
+		$rgba = $this->parseColorWithAlpha(value: $value);
+		if ($rgba === null) {
+			return null;
+		}
+
+		return [$rgba[0], $rgba[1], $rgba[2]];
+	}//end parseColor()
+
+	/**
+	 * Parse a CSS colour literal into an [r, g, b, a] quadruple.
+	 *
+	 * Supports #rgb, #rgba, #rrggbb, #rrggbbaa, rgb() and rgba() with a number
+	 * or percentage alpha. Alpha is 1.0 for an opaque colour, rounded to three
+	 * decimals.
+	 *
+	 * @param string $value The raw CSS colour value.
+	 *
+	 * @return array{0: int, 1: int, 2: int, 3: float}|null The parsed colour, or null.
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.1
+	 */
+	public function parseColorWithAlpha(string $value): ?array {
 		$value = trim($value);
 
-		if (preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $value, $match) === 1) {
-			$hex = $match[1];
-			if (strlen($hex) === 3) {
-				$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+		if (preg_match('/^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/', $value, $match) === 1) {
+			return $this->parseHex(hex: $match[1]);
+		}
+
+		if (preg_match('/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+)(%?)\s*)?\)$/', $value, $match) === 1) {
+			$alpha = 1.0;
+			if (isset($match[4]) === true && $match[4] !== '') {
+				$alpha = (float)$match[4];
+				if (($match[5] ?? '') === '%') {
+					$alpha = ($alpha / 100);
+				}
 			}
 
 			return [
-				hexdec(substr($hex, 0, 2)),
-				hexdec(substr($hex, 2, 2)),
-				hexdec(substr($hex, 4, 2)),
+				min(255, (int)$match[1]),
+				min(255, (int)$match[2]),
+				min(255, (int)$match[3]),
+				round(max(0.0, min(1.0, $alpha)), 3),
 			];
 		}
 
-		if (preg_match('/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*[\d.]+\s*)?\)$/', $value, $match) === 1) {
-			$red = min(255, (int)$match[1]);
-			$green = min(255, (int)$match[2]);
-			$blue = min(255, (int)$match[3]);
+		return null;
+	}//end parseColorWithAlpha()
 
-			return [$red, $green, $blue];
+	/**
+	 * Expand and parse the digits of a 3, 4, 6 or 8 digit hex colour.
+	 *
+	 * @param string $hex The hex digits without the leading '#'.
+	 *
+	 * @return array{0: int, 1: int, 2: int, 3: float} The parsed colour.
+	 */
+	private function parseHex(string $hex): array {
+		if (strlen($hex) <= 4) {
+			$expanded = '';
+			foreach (str_split($hex) as $digit) {
+				$expanded .= $digit . $digit;
+			}
+
+			$hex = $expanded;
 		}
 
-		return null;
-	}//end parseColor()
+		$alpha = 1.0;
+		if (strlen($hex) === 8) {
+			$alpha = round(hexdec(substr($hex, 6, 2)) / 255, 3);
+		}
+
+		return [
+			(int)hexdec(substr($hex, 0, 2)),
+			(int)hexdec(substr($hex, 2, 2)),
+			(int)hexdec(substr($hex, 4, 2)),
+			$alpha,
+		];
+	}//end parseHex()
+
+	/**
+	 * Composite a colour with alpha over an opaque colour ("source over").
+	 *
+	 * @param array{0: int, 1: int, 2: int, 3: float} $top The colour on top.
+	 * @param array{0: int, 1: int, 2: int} $under The opaque colour underneath.
+	 *
+	 * @return array{0: int, 1: int, 2: int} The opaque colour that renders.
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.1
+	 */
+	public function blend(array $top, array $under): array {
+		$alpha = $top[3];
+		$result = [];
+		foreach ([0, 1, 2] as $index) {
+			$result[] = (int)round(($top[$index] * $alpha) + ($under[$index] * (1 - $alpha)));
+		}
+
+		return [$result[0], $result[1], $result[2]];
+	}//end blend()
+
+	/**
+	 * Measure the contrast of a foreground over a background as it renders.
+	 *
+	 * A translucent background is blended over the page background first (the
+	 * page itself over white), then a translucent foreground over that result.
+	 * Opaque colours measure exactly as {@see self::ratio()} on their channels.
+	 *
+	 * @param string $foreground The foreground colour literal.
+	 * @param string $background The background colour literal.
+	 * @param string|null $page The page background under a translucent background; white when null or unparseable.
+	 *
+	 * @return float|null The unrounded ratio, or null when either colour is not a parseable literal.
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.1
+	 */
+	public function measure(string $foreground, string $background, ?string $page = null): ?float {
+		$fgRgba = $this->parseColorWithAlpha(value: $foreground);
+		$bgRgba = $this->parseColorWithAlpha(value: $background);
+		if ($fgRgba === null || $bgRgba === null) {
+			return null;
+		}
+
+		$white = [255, 255, 255];
+		$pageRgb = $white;
+		$pageRgba = null;
+		if ($page !== null) {
+			$pageRgba = $this->parseColorWithAlpha(value: $page);
+		}
+
+		if ($pageRgba !== null) {
+			$pageRgb = $this->blend(top: $pageRgba, under: $white);
+		}
+
+		$bgRgb = $this->blend(top: $bgRgba, under: $pageRgb);
+		$fgRgb = $this->blend(top: $fgRgba, under: $bgRgb);
+
+		return $this->ratio(first: $fgRgb, second: $bgRgb);
+	}//end measure()
 }//end class

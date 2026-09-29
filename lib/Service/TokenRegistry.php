@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 /**
- * Canonical registry of editable Nextcloud CSS custom properties.
+ * Canonical registry of editable CSS custom properties.
  *
  * This class is the single source of truth for:
  * - Which tokens the editor exposes for editing
@@ -31,11 +31,32 @@ namespace OCA\Thematiq\Service;
  * - Which type of input to render (color picker or text field)
  * - The human-readable label for each token
  *
+ * TWO LAYERS, AND THE DIFFERENCE MATTERS
+ * --------------------------------------
+ * BRAND tokens are Nextcloud's own globals — `--color-primary`,
+ * `--color-background-hover`, `--border-radius-element`. They are hand-listed in
+ * the four methods below, and moving one is MEANT to move every component that
+ * has not been given a value of its own.
+ *
+ * COMPONENT tokens are `--nldesign-component-*`, and they are not listed here at
+ * all: they are read from `scripts/mapping/component-tokens.json`, the same file
+ * `scripts/generate-component-scopes.mjs` turns into `css/component-scopes.css`.
+ * One table, two runtimes, so a token cannot be editable without a stylesheet
+ * that applies it — or applied by a stylesheet with no way to edit it.
+ *
+ * WHY THE COMPONENT LAYER EXISTS. Nextcloud has around sixty globals and every
+ * component draws from them, so `--color-primary-element` paints the primary
+ * button, the selected navigation entry, the sidebar's active tab, a focused
+ * text input, the checked checkbox, the progress bar, the dialog's confirm
+ * button and the counter bubble. Before this layer the editor could only write
+ * that global, so the playground's `Primary button` chip moved all eight.
+ *
  * Tokens marked "intentionally not overridden" in overrides.css MUST NOT appear here.
  * The excluded list covers dark-mode vars, auto-calculated values, and layout constants.
  *
  * Tabs: login | content | status | typography
  * Types: color | text
+ * Groups: `brand`, or the id of the component the token belongs to
  *
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
@@ -43,23 +64,121 @@ namespace OCA\Thematiq\Service;
  */
 class TokenRegistry implements TokenRegistryInterface {
 	/**
+	 * The component-token table, relative to the app root.
+	 *
+	 * Read rather than injected because this class is static by design and the
+	 * table is a shipped file, not configuration. `__DIR__` is `lib/Service`.
+	 */
+	private const COMPONENT_TOKENS_PATH = __DIR__ . '/../../scripts/mapping/component-tokens.json';
+
+	/**
+	 * Decoded component-token table, or null before the first read.
+	 *
+	 * The registry is asked for on every admin page render and the table is
+	 * parsed from disk, so the result is kept for the rest of the request.
+	 *
+	 * @var array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global: string}>|null
+	 */
+	private static ?array $componentTokens = null;
+
+	/**
 	 * Returns the full registry of editable tokens.
 	 *
 	 * Keys are CSS custom property names (e.g. '--color-primary').
-	 * Values are arrays with 'tab', 'type', and 'label' keys.
+	 * Values carry 'tab', 'type', 'label', 'group' and 'primary'.
 	 *
-	 * @return array<string, array{tab: string, type: string, label: string}> The token registry.
+	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global?: string}> The token registry.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
 	public static function getTokens(): array {
-		return array_merge(
+		return array_merge(self::getBrandTokens(), self::getComponentTokens());
+	}//end getTokens()
+
+	/**
+	 * Returns the brand layer: Nextcloud's own global custom properties.
+	 *
+	 * These are the values every component falls back to. They carry no
+	 * component of their own, so they are grouped under `brand` and are never
+	 * locked by the `primary_drives_components` setting — that setting exists to
+	 * make these win, not to freeze them.
+	 *
+	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool}> The brand tokens.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public static function getBrandTokens(): array {
+		$tokens = array_merge(
 			self::getLoginTokens(),
 			self::getContentTokens(),
 			self::getStatusTokens(),
 			self::getTypographyTokens()
 		);
-	}//end getTokens()
+
+		return array_map(
+			static fn (array $meta): array => array_merge($meta, ['group' => 'brand', 'primary' => false]),
+			$tokens
+		);
+	}//end getBrandTokens()
+
+	/**
+	 * Returns the component layer, read from the shared mapping table.
+	 *
+	 * A missing or malformed table degrades to an empty component layer rather
+	 * than an error: the brand tokens still edit, and the instance still renders,
+	 * because `css/component-scopes.css` falls back to the captured global for
+	 * every component token nobody set.
+	 *
+	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global: string}> The component tokens.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public static function getComponentTokens(): array {
+		if (self::$componentTokens !== null) {
+			return self::$componentTokens;
+		}
+
+		self::$componentTokens = [];
+
+		$raw = false;
+		if (is_file(self::COMPONENT_TOKENS_PATH) === true) {
+			$raw = file_get_contents(self::COMPONENT_TOKENS_PATH);
+		}
+
+		if ($raw === false) {
+			return self::$componentTokens;
+		}
+
+		$decoded = json_decode($raw, true);
+		if (is_array($decoded) === false || is_array($decoded['components'] ?? null) === false) {
+			return self::$componentTokens;
+		}
+
+		foreach ($decoded['components'] as $componentId => $component) {
+			if (is_array($component['tokens'] ?? null) === false) {
+				continue;
+			}
+
+			foreach ($component['tokens'] as $name => $meta) {
+				self::$componentTokens[$name] = [
+					'tab' => (string)($component['tab'] ?? 'content'),
+					'type' => (string)($meta['type'] ?? 'text'),
+					'label' => (string)($meta['label'] ?? $name),
+					'group' => (string)$componentId,
+					'primary' => (($meta['primary'] ?? false) === true),
+					// The Nextcloud variable this token replaces inside the
+					// component. A component token is deliberately undeclared
+					// until someone sets one, so `getComputedStyle` reports it
+					// as the empty string — the editor reads this global
+					// instead, and shows the colour the component is ACTUALLY
+					// wearing rather than a blank swatch.
+					'global' => (string)($meta['global'] ?? ''),
+				];
+			}
+		}
+
+		return self::$componentTokens;
+	}//end getComponentTokens()
 
 	/**
 	 * Returns login and branding tab tokens.
@@ -208,7 +327,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	/**
 	 * Returns tokens grouped by tab.
 	 *
-	 * @return array<string, array<string, array{tab: string, type: string, label: string}>> Tokens grouped by tab id.
+	 * @return array<string, array<string, array{tab: string, type: string, label: string, group: string, primary: bool}>> Tokens grouped by tab id.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
 	 */

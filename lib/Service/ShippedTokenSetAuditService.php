@@ -424,13 +424,17 @@ class ShippedTokenSetAuditService {
 			return null;
 		}
 
-		$fgRgb = $this->contrast->parseColor(value: $fgValue);
-		$bgRgb = $this->contrast->parseColor(value: $bgValue);
-		if ($fgRgb === null || $bgRgb === null) {
+		// Measured as it renders, so a translucent colour is blended first.
+		$ratio = $this->contrast->measure(
+			foreground: $fgValue,
+			background: $bgValue,
+			page: ($declarations['--nldesign-color-background'] ?? null)
+		);
+		if ($ratio === null) {
 			return null;
 		}
 
-		return round($this->contrast->ratio(first: $fgRgb, second: $bgRgb), 2);
+		return round($ratio, 2);
 	}//end pairRatio()
 
 	/**

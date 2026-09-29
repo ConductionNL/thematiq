@@ -135,6 +135,13 @@ class FakeAuditFolder implements ISimpleFolder {
 	public function newFolder(string $path): ISimpleFolder {
 		throw new \RuntimeException('not supported by fake');
 	}
+
+	// ISimpleFolder::getOrCreateFolder() is @since 35.0.0. This fake is flat —
+	// the audit log lives in one folder — so it refuses the way newFolder()
+	// does, rather than pretending to nest.
+	public function getOrCreateFolder(string $path, int $maxRetries = 5): ISimpleFolder {
+		throw new \RuntimeException('not supported by fake');
+	}
 }
 
 /**
