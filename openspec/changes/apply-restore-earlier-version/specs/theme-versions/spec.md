@@ -10,12 +10,16 @@ After every theming configuration change that writes an audit entry, the app MUS
 
 #### Scenario: Switching the token set leaves a version
 
+@e2e exclude mutates the shared CI instance's theming configuration (token set, custom sets) that the other e2e specs read; proven by tests/Unit/Service/ThemeVersionServiceTest.php::testCaptureStoresTheBundleAndListsIt and tests/Unit/Service/ThemingAuditServiceTest.php::testAnEntryNamesTheVersionItProduced
+
 - GIVEN an administrator on Settings > Administration > Theming with token set `rijkshuisstijl` active
 - WHEN they switch the token set to `amsterdam`
 - THEN a new version MUST exist whose bundle has `config.tokenSet` equal to `amsterdam`
 - AND the audit entry for the switch MUST carry that version's id
 
 #### Scenario: A full app data folder does not block a change
+
+@e2e exclude needs an unwritable app data folder, which a browser cannot arrange; proven by tests/Unit/Service/ThemeVersionServiceTest.php::testAFailingAppDataFolderReturnsNullAndWarns and tests/Unit/Service/ThemingAuditServiceTest.php::testAThrowingCaptureStillWritesTheEntry
 
 - GIVEN the app data folder cannot be written
 - WHEN an administrator saves token overrides
@@ -28,6 +32,8 @@ The theming audit log panel MUST offer a restore action on every entry that has 
 
 #### Scenario: An administrator restores the version from before a bad change
 
+@e2e exclude mutates the shared CI instance's theming configuration (token set, custom sets) that the other e2e specs read; proven by tests/vitest/admin-version-restore.spec.js (preview, dialog lists the changes, restore on confirm) and tests/Unit/Service/ThemeVersionRestoreServiceTest.php::testARestoreImportsAndIsAudited
+
 - GIVEN an administrator who uploaded a custom token set that turned every button unreadable
 - WHEN they open Settings > Administration > Theming, find the entry before the upload in the audit log and choose restore
 - THEN a dialog MUST list the changes the restore will make, including the active token set going back
@@ -36,12 +42,16 @@ The theming audit log panel MUST offer a restore action on every entry that has 
 
 #### Scenario: Cancelling the dialog changes nothing
 
+@e2e exclude proven by tests/vitest/admin-version-restore.spec.js 'changes nothing on cancel and returns focus to the button', which drives the real admin.js against the dialog callback
+
 - GIVEN the restore dialog is open
 - WHEN the administrator cancels it
 - THEN the active configuration MUST be unchanged
 - AND no audit entry MUST be written
 
 #### Scenario: A version that no longer validates is refused whole
+
+@e2e exclude mutates the shared CI instance's theming configuration (token set, custom sets) that the other e2e specs read; proven by tests/Unit/Service/ThemeVersionRestoreServiceTest.php::testAnInvalidVersionWritesNothing and tests/Unit/Controller/AuditControllerTest.php::testRestoreAnswersByOutcome
 
 - GIVEN a version holding a custom token set that fails today's CSS validation whitelist
 - WHEN the administrator restores it
@@ -54,6 +64,8 @@ A restore MUST store a new version like any other change, so the configuration f
 
 #### Scenario: Undoing a restore
 
+@e2e exclude mutates the shared CI instance's theming configuration (token set, custom sets) that the other e2e specs read; proven by tests/Unit/Service/ThemeVersionRestoreServiceTest.php::testARestoreImportsAndIsAudited (the version_restored entry goes through ThemingAuditService::log, which keeps a version)
+
 - GIVEN an administrator restored an older version
 - WHEN they open the audit log
 - THEN the version from just before the restore MUST be listed with a restore action
@@ -63,6 +75,8 @@ A restore MUST store a new version like any other change, so the configuration f
 `GET /settings/versions`, `POST /settings/versions/{id}/preview` and `POST /settings/versions/{id}/restore` MUST carry `#[AuthorizedAdminSetting(OCA\Thematiq\Settings\Admin::class)]` and MUST be CSRF-protected. An unknown version id MUST answer 404.
 
 #### Scenario: A non-admin cannot list or restore versions
+
+@e2e exclude auth posture, single-admin CI instance; proven by tests/Unit/Controller/AuditControllerTest.php::testBothMethodsAreAdminAnnotated over versions, previewVersion and restoreVersion
 
 - GIVEN a signed-in user who is not an administrator and has no delegated theming setting
 - WHEN they call `POST /apps/thematiq/settings/versions/<id>/restore`
@@ -75,6 +89,8 @@ A restore MUST store a new version like any other change, so the configuration f
 
 #### Scenario: An operator restores on a server without the web interface
 
+@e2e exclude occ, not a page; proven by tests/Unit/Command/ConfigVersionCommandsTest.php::testRestoreDryRunThenApply
+
 - GIVEN an operator with shell access to the server
 - WHEN they run `occ nldesign:config:restore <id> --dry-run` and then without `--dry-run`
 - THEN the first run MUST print the changes and write nothing
@@ -85,6 +101,8 @@ A restore MUST store a new version like any other change, so the configuration f
 A version names custom fonts by metadata only. When a version names a font that is no longer uploaded, the dry run MUST list it as no longer uploaded, and the restore MUST leave that font role on the default font.
 
 #### Scenario: Restoring a version whose heading font was deleted
+
+@e2e exclude mutates the shared CI instance's theming configuration (token set, custom sets) that the other e2e specs read; proven by tests/Unit/Service/ThemeVersionRestoreServiceTest.php::testThePreviewListsTheChangesAndWritesNothing (missingFonts) and the vitest dialog text
 
 - GIVEN a version whose heading font was deleted after the version was kept
 - WHEN the administrator previews the restore
