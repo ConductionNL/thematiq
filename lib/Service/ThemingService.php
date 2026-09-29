@@ -201,6 +201,20 @@ class ThemingService {
 			}
 		}
 
+		return $this->applyBackgroundMode(params: $params, updated: $updated);
+	}//end applyColors()
+
+	/**
+	 * Put the background in the state the theme asks for, after its colours.
+	 *
+	 * @param array $params The request parameters.
+	 * @param array $updated The colour keys applyColors() already wrote.
+	 *
+	 * @return array The updated keys, plus `background_mode` when a mode was applied.
+	 *
+	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 */
+	private function applyBackgroundMode(array $params, array $updated): array {
 		// A theme that CAPTURED Nextcloud's branding says which of the three
 		// background states it was saved in, and gets exactly that back:
 		// "Remove background image" (`color`), Nextcloud's own default image

@@ -254,39 +254,73 @@ class CustomTokenSetController extends Controller {
 		// Uploads are untouched — a file an admin picks off disk is still an
 		// unknown document and still goes through the converter.
 		if ($this->request->getParam('raw', false) === true) {
-			$parsed = $this->mapFromCss(content: $read['content'], slug: $slug);
-			if ($parsed instanceof JSONResponse) {
-				return $parsed;
-			}
+			return $this->storeRaw(name: $name, slug: $slug, content: $read['content']);
+		}
 
-			$parsed['css'] = $read['content'];
+		return $this->storeConverted(name: $name, slug: $slug, read: $read);
+	}//end upload()
 
-			// Which design system the editor was looking at when it serialised
-			// this. Allow-listed against the shipped manifest rather than taken
-			// on trust: it decides which stylesheet layers every page load emits.
-			$claimed = trim((string)$this->request->getParam('designSystem', ''));
-			if ($claimed !== '' && isset($this->designSystems->getDesignSystems()[$claimed]) === true) {
-				$parsed['designSystem'] = $claimed;
-			}
+	/**
+	 * Store a token set that arrived already in the `css/tokens/*.css` shape.
+	 *
+	 * @param string $name The set's display name.
+	 * @param string $slug The slug derived from the name.
+	 * @param string $content The token set CSS, as sent.
+	 *
+	 * @return JSONResponse The persisted set, or the validator's error.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function storeRaw(string $name, string $slug, string $content): JSONResponse {
+		$parsed = $this->mapFromCss(content: $content, slug: $slug);
+		if ($parsed instanceof JSONResponse) {
+			return $parsed;
+		}
 
-			$response = $this->persist(name: $name, parsed: $parsed);
+		$parsed['css'] = $content;
 
-			// A theme saved from the editor keeps the Nextcloud branding that
-			// was on when it was saved — colours, background, logos, favicon —
-			// so applying it later brings that back too. Only once the set is
-			// safely stored: a refused save must not leave copied images behind.
-			if ($this->request->getParam('captureTheming', false) === true
-				&& $this->brandingCapture !== null
-				&& $response->getStatus() === 200
-			) {
-				$data = $response->getData();
+		// Which design system the editor was looking at when it serialised
+		// this. Allow-listed against the shipped manifest rather than taken
+		// on trust: it decides which stylesheet layers every page load emits.
+		$claimed = trim((string)$this->request->getParam('designSystem', ''));
+		if ($claimed !== '' && isset($this->designSystems->getDesignSystems()[$claimed]) === true) {
+			$parsed['designSystem'] = $claimed;
+		}
+
+		$response = $this->persist(name: $name, parsed: $parsed);
+
+		// A theme saved from the editor keeps the Nextcloud branding that
+		// was on when it was saved — colours, background, logos, favicon —
+		// so applying it later brings that back too. Only once the set is
+		// safely stored: a refused save must not leave copied images behind.
+		if ($this->request->getParam('captureTheming', false) === true
+			&& $this->brandingCapture !== null
+			&& $response->getStatus() === 200
+		) {
+			// persist() always answers with an array; getData() is typed
+			// array|object, so say which before indexing it.
+			$data = $response->getData();
+			if (is_array($data) === true) {
 				$data['theming'] = $this->brandingCapture->capture(setId: (string)$data['id']);
 				$response->setData($data);
 			}
-
-			return $response;
 		}
 
+		return $response;
+	}//end storeRaw()
+
+	/**
+	 * Convert an uploaded design-system document and store the result.
+	 *
+	 * @param string $name The set's display name.
+	 * @param string $slug The slug derived from the name.
+	 * @param array{content: string, sourceName: string|null} $read The payload from readInput().
+	 *
+	 * @return JSONResponse `{ id, imported, skipped, warnings, report, counts, inputKind }` or an error.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function storeConverted(string $name, string $slug, array $read): JSONResponse {
 		try {
 			$converted = $this->converter->convert(
 				content: $read['content'],
@@ -367,7 +401,7 @@ class CustomTokenSetController extends Controller {
 		}
 
 		return $this->persist(name: $name, parsed: $parsed);
-	}//end upload()
+	}//end storeConverted()
 
 	/**
 	 * Read the import payload from either the file picker or the paste box.

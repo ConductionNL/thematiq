@@ -238,13 +238,7 @@ class TokenSetService {
 		// BrandingCaptureService). It replaces the set's own theming block:
 		// it is what the admin had on when they saved this theme, which is
 		// what applying the theme is meant to bring back.
-		$captured = json_decode(
-			(string)$this->config->getAppValue(Application::APP_ID, BrandingCaptureService::CAPTURED_KEY, '{}'),
-			true
-		);
-		if (is_array($captured) === false) {
-			$captured = [];
-		}
+		$captured = $this->readCapturedTheming();
 
 		// Scan filesystem for actual CSS files.
 		$tokenSets = [];
@@ -293,6 +287,25 @@ class TokenSetService {
 
 		return $tokenSets;
 	}//end getAvailableTokenSets()
+
+	/**
+	 * The Nextcloud branding each set captured when it was saved, by set id.
+	 *
+	 * @return array<string, mixed> The captured theming blocks; empty when none are stored or the value is unreadable.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	private function readCapturedTheming(): array {
+		$captured = json_decode(
+			(string)$this->config->getAppValue(Application::APP_ID, BrandingCaptureService::CAPTURED_KEY, '{}'),
+			true
+		);
+		if (is_array($captured) === false) {
+			return [];
+		}
+
+		return $captured;
+	}//end readCapturedTheming()
 
 	/**
 	 * Get the token sets an admin may select: `SELECTABLE_SHIPPED_SETS` plus
