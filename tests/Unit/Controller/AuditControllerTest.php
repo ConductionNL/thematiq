@@ -149,7 +149,7 @@ class AuditControllerTest extends TestCase {
 	/**
 	 * The version list is the kept versions, newest first.
 	 *
-	 * @spec openspec/changes/apply-restore-earlier-version/specs/theme-versions/spec.md
+	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	public function testVersionsListsTheKeptVersions(): void {
 		$this->versions->method('list')->willReturn([['id' => '20260929164000-0001']]);
@@ -160,7 +160,7 @@ class AuditControllerTest extends TestCase {
 	/**
 	 * Preview and restore of an unknown id answer 404.
 	 *
-	 * @spec openspec/changes/apply-restore-earlier-version/specs/theme-versions/spec.md
+	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	public function testAnUnknownVersionIs404(): void {
 		$this->restorer->method('preview')->willReturn(null);
@@ -173,7 +173,7 @@ class AuditControllerTest extends TestCase {
 	/**
 	 * A refused restore answers 422 with the errors; an applied one 200.
 	 *
-	 * @spec openspec/changes/apply-restore-earlier-version/specs/theme-versions/spec.md
+	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	public function testRestoreAnswersByOutcome(): void {
 		$this->restorer->method('restore')->willReturnOnConsecutiveCalls(

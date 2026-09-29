@@ -548,7 +548,7 @@ class ThemingAuditServiceTest extends TestCase {
 	/**
 	 * An entry for which a version was kept names it.
 	 *
-	 * @spec openspec/changes/apply-restore-earlier-version/specs/theming-audit/spec.md
+	 * @spec openspec/specs/theming-audit/spec.md
 	 */
 	public function testAnEntryNamesTheVersionItProduced(): void {
 		$versions = $this->createMock(ThemeVersionService::class);
@@ -563,7 +563,7 @@ class ThemingAuditServiceTest extends TestCase {
 	/**
 	 * An entry for which no version was kept omits the field.
 	 *
-	 * @spec openspec/changes/apply-restore-earlier-version/specs/theming-audit/spec.md
+	 * @spec openspec/specs/theming-audit/spec.md
 	 */
 	public function testAnEntryWithoutAVersionOmitsTheField(): void {
 		$versions = $this->createMock(ThemeVersionService::class);
@@ -593,7 +593,7 @@ class ThemingAuditServiceTest extends TestCase {
 	/**
 	 * version_restored is part of the closed vocabulary.
 	 *
-	 * @spec openspec/changes/apply-restore-earlier-version/specs/theming-audit/spec.md
+	 * @spec openspec/specs/theming-audit/spec.md
 	 */
 	public function testVersionRestoredIsAcceptedAction(): void {
 		$service = $this->makeService();

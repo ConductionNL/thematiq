@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/apply-restore-earlier-version/specs/theme-versions/spec.md
+ * @spec openspec/specs/theme-versions/spec.md
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

@@ -1354,21 +1354,20 @@
 			"id": "app-rollback-history",
 			"area": "apply",
 			"name": "Roll back to an earlier version of the theme from a version history.",
-			"thematiq": "no",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "partial",
 			"liferay-dxp": "partial",
 			"tokens-studio": "partial",
 			"built": {
-				"state": "specified",
-				"evidence": "lib/Controller/AuditController.php only exposes list() and export() (both #[AuthorizedAdminSetting]); lib/Service/ThemingAuditService.php has log()/getRecent()/exportAll() but no restore/revert method; grep -rniF 'rollback' in lib/ only turns up comments about the app-id migration rollback, not a theme-version rollback feature",
+				"state": "built",
+				"evidence": "lib/Service/ThemeVersionService.php keeps the ConfigBundleService::export() bundle after every audited change (50 versions, 20 MB); ThemingAuditService::log() adds versionId; ThemeVersionRestoreService previews and restores through ConfigBundleService::import(); AuditController versions/previewVersion/restoreVersion; js/admin.js restore button per audit row; occ nldesign:config:versions and nldesign:config:restore",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor",
-				"note": "Specified in openspec/changes/apply-restore-earlier-version (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/apply-restore-earlier-version"
+				"origin": "own",
+				"change": "apply-restore-earlier-version"
 			},
-			"reachedOn": "nothing reaches it (the audit log at Settings > Administration > Theming shows history but offers no restore action)",
+			"reachedOn": "Settings > Administration > Theming, theming audit log, Restore button on a row; occ nldesign:config:restore",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/ThemingDefaults.php:495-497 undo() deletes the app config key; previous values are not stored anywhere, so there is no history to roll back through",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/organization-assets-library ; https://learn.microsoft.com/en-us/sharepoint/brand-center-overview : brand assets live in ordinary SharePoint document libraries, which carry SharePoint's standard file version history, but the Entra sign-in and M365 org-theme settings themselves have no documented version history",

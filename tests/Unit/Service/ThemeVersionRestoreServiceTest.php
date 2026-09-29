@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/apply-restore-earlier-version/specs/theme-versions/spec.md
+ * @spec openspec/specs/theme-versions/spec.md
  */
 
 declare(strict_types=1);
