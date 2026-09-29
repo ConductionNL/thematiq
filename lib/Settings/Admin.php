@@ -278,9 +278,24 @@ class Admin implements IDelegatedSettings {
 				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
 				// can be screenshotted from a running instance. Nothing else changes.
 				'mockUi' => ($this->request->getParam('mock') === '1'),
-			]
+			] + $this->environmentParams()
 		);
 	}//end getForm()
+
+	/**
+	 * The environment config.php declares, shown read-only, and the command
+	 * that sets it.
+	 *
+	 * @return array{environment: string, environmentCommand: string} The template parameters.
+	 *
+	 * @spec openspec/specs/environment-marker/spec.md
+	 */
+	private function environmentParams(): array {
+		return [
+			'environment' => strtolower(trim($this->config->getSystemValueString(Application::ENVIRONMENT_CONFIG_KEY, ''))),
+			'environmentCommand' => Application::ENVIRONMENT_OCC_COMMAND,
+		];
+	}//end environmentParams()
 
 	/**
 	 * Reads one on/off appconfig flag.

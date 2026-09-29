@@ -16,6 +16,7 @@ namespace OCA\Thematiq\Tests\Unit\Listener;
 use OCA\Thematiq\Listener\ThemeInjectionListener;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\CssInjectionService;
+use OCA\Thematiq\Service\EnvironmentMarkerService;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -59,6 +60,13 @@ class ThemeInjectionListenerTest extends TestCase {
 	private $logger;
 
 	/**
+	 * The environment marker mock.
+	 *
+	 * @var EnvironmentMarkerService&MockObject
+	 */
+	private $environmentMarker;
+
+	/**
 	 * The listener under test.
 	 *
 	 * @var ThemeInjectionListener
@@ -74,11 +82,13 @@ class ThemeInjectionListenerTest extends TestCase {
 		$this->appThemingService = $this->createMock(AppThemingService::class);
 		$this->request = $this->createMock(IRequest::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->environmentMarker = $this->createMock(EnvironmentMarkerService::class);
 		$this->listener = new ThemeInjectionListener(
 			$this->cssInjectionService,
 			$this->appThemingService,
 			$this->request,
-			$this->logger
+			$this->logger,
+			$this->environmentMarker
 		);
 
 		// No blanket `isThemingDisabledFor()` default here: PHPUnit's
@@ -271,4 +281,42 @@ class ThemeInjectionListenerTest extends TestCase {
 		$this->listener->handle($event);
 		$this->listener->handle($event);
 	}//end testDoubleDispatchYieldsNoDuplicatedSideEffectsBeyondInject()
+
+	/**
+	 * The environment marker is a safety signal, not a theme: an app
+	 * excluded from theming still gets it.
+	 *
+	 * @spec openspec/specs/environment-marker/spec.md
+	 */
+	public function testExcludedAppStillGetsTheEnvironmentMarker(): void {
+		$response = new TemplateResponse('calendar', 'index', [], TemplateResponse::RENDER_AS_USER);
+
+		$this->appThemingService->method('isThemingDisabledFor')->with('calendar')->willReturn(true);
+		$this->environmentMarker->expects($this->once())->method('inject');
+		$this->cssInjectionService->expects($this->never())->method('inject');
+
+		$this->listener->handle(new BeforeTemplateRenderedEvent(true, $response));
+	}//end testExcludedAppStillGetsTheEnvironmentMarker()
+
+	/**
+	 * The login page gets the environment marker.
+	 *
+	 * @spec openspec/specs/environment-marker/spec.md
+	 */
+	public function testLoginPageGetsTheEnvironmentMarker(): void {
+		$response = new TemplateResponse('core', 'login', [], TemplateResponse::RENDER_AS_GUEST);
+
+		$this->environmentMarker->expects($this->once())->method('inject');
+
+		$this->listener->handle(new BeforeLoginTemplateRenderedEvent($response));
+	}//end testLoginPageGetsTheEnvironmentMarker()
+
+	/**
+	 * An unrelated event gets no marker.
+	 */
+	public function testUnrelatedEventGetsNoEnvironmentMarker(): void {
+		$this->environmentMarker->expects($this->never())->method('inject');
+
+		$this->listener->handle(new Event());
+	}//end testUnrelatedEventGetsNoEnvironmentMarker()
 }//end class

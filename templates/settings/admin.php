@@ -13,6 +13,8 @@
  * @var string[] $activeIconPacks
  * @var 'design-system'|'override' $iconPackSource
  * @var bool $mockUi
+ * @var string $environment
+ * @var string $environmentCommand
  */
 
 // Load the pure token/colour transforms first so admin.js can consume them via
@@ -62,6 +64,17 @@ if ($_['mockUi'] === true) {
 	<p class="settings-hint">
 		<?php p($l->t('Select a Dutch government design token set as a base, or customize individual Nextcloud CSS tokens below.')); ?>
 	</p>
+
+	<!-- The OTAP environment this server declares in config.php, read-only
+	     (openspec/specs/environment-marker/spec.md). No control writes it. -->
+	<div class="nldesign-environment" id="nldesign-environment">
+		<?php if ($_['environment'] !== ''): ?>
+			<p><?php p($l->t('Environment: {environment}', ['environment' => $_['environment']])); ?></p>
+		<?php else: ?>
+			<p class="settings-hint"><?php p($l->t('No environment is set, so no page is marked. Declare it in config.php with:')); ?></p>
+			<code><?php p($_['environmentCommand']); ?></code>
+		<?php endif; ?>
+	</div>
 
 	<div class="nldesign-token-set-selector">
 		<label for="nldesign-token-set-select"><?php p($l->t('Design token set')); ?></label>

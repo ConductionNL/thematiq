@@ -14,7 +14,9 @@ metadata (id, name, description, theming) and inline CSS content. The bundle MUS
 operational counters (`theming_syncs_total` and similar telemetry), `installed_version`
 (NC-managed), per-user preview state (session-scoped, see change `theme-preview-workflow`), or
 Nextcloud core `theming` app values (owned by the theming app; the theming-sync dialog is the
-supported path to re-apply them after import). Every future instance-wide nldesign configuration
+supported path to re-apply them after import), or the server's declared environment (the
+`thematiq.environment` system value, see capability `environment-marker`: it is the one value
+that must differ between OTAP environments, and it lives in `config.php`, not in app config). Every future instance-wide nldesign configuration
 value MUST be added to the bundle in the same change that introduces the value, with a
 `bundleVersion` bump — a configuration value that exists but is not exported is a spec
 violation, not an accepted gap.
@@ -37,6 +39,12 @@ violation, not an accepted gap.
 - WHEN the bundle is exported
 - THEN the bundle MUST NOT contain the sync counter, `installed_version`, any `preview_*` user
   value, or any `theming` app value
+
+#### Scenario: The declared environment is not exported
+
+- GIVEN a server with `thematiq.environment` set to `test`
+- WHEN an administrator exports the bundle with `occ nldesign:config:export`
+- THEN the bundle MUST NOT contain the environment value or any key naming it
 
 ### Requirement: All-Or-Nothing Validated Import
 

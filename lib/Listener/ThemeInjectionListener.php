@@ -23,6 +23,7 @@ namespace OCA\Thematiq\Listener;
 
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\CssInjectionService;
+use OCA\Thematiq\Service\EnvironmentMarkerService;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -83,23 +84,33 @@ class ThemeInjectionListener implements IEventListener {
 	private LoggerInterface $logger;
 
 	/**
+	 * Marks every page of a non-production server, excluded apps included.
+	 *
+	 * @var EnvironmentMarkerService
+	 */
+	private EnvironmentMarkerService $environmentMarker;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param CssInjectionService $cssInjectionService The CSS injection service.
 	 * @param AppThemingService $appThemingService The per-app theming guard resolver.
 	 * @param IRequest $request The current request.
 	 * @param LoggerInterface $logger The logger for swallowed failures.
+	 * @param EnvironmentMarkerService $environmentMarker The environment marker.
 	 */
 	public function __construct(
 		CssInjectionService $cssInjectionService,
 		AppThemingService $appThemingService,
 		IRequest $request,
 		LoggerInterface $logger,
+		EnvironmentMarkerService $environmentMarker,
 	) {
 		$this->cssInjectionService = $cssInjectionService;
 		$this->appThemingService = $appThemingService;
 		$this->request = $request;
 		$this->logger = $logger;
+		$this->environmentMarker = $environmentMarker;
 	}//end __construct()
 
 	/**
@@ -111,8 +122,16 @@ class ThemeInjectionListener implements IEventListener {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/per-app-theming/spec.md
+	 * @spec openspec/specs/environment-marker/spec.md
 	 */
 	public function handle(Event $event): void {
+		// The environment marker is a safety signal, not a theme: it runs
+		// before the per-app guard, on the login page and on every template
+		// render, and fails open inside its own service.
+		if ($event instanceof BeforeLoginTemplateRenderedEvent || $event instanceof BeforeTemplateRenderedEvent) {
+			$this->environmentMarker->inject();
+		}
+
 		try {
 			if ($event instanceof BeforeLoginTemplateRenderedEvent) {
 				// Login is never an app page — the per-app guard never runs.

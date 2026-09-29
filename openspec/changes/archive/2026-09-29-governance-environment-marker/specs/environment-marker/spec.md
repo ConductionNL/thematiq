@@ -10,6 +10,8 @@ The app MUST read the environment from the system value `thematiq.environment` i
 
 #### Scenario: A restored production database does not label test as production
 
+@e2e exclude needs thematiq.environment in config.php, which the shared CI instance leaves unset and no e2e fixture may write; proven by tests/Unit/Service/EnvironmentMarkerServiceTest.php::testNonProductionValuesResolveToALabel, which reads the value through IConfig::getSystemValueString only
+
 - GIVEN a test server with `thematiq.environment` set to `test` in its `config.php`
 - AND a database restored from production
 - WHEN a user opens the Files app on the test server
@@ -27,12 +29,16 @@ When the environment is `development`, `test` or `acceptance`, every page Nextcl
 
 #### Scenario: A user on acceptance sees the label on the login page
 
+@e2e exclude needs thematiq.environment in config.php, which the shared CI instance leaves unset and no e2e fixture may write; proven by tests/Unit/Listener/ThemeInjectionListenerTest.php::testLoginPageGetsTheEnvironmentMarker and tests/vitest/environment-marker.spec.js (label first, title prefix)
+
 - GIVEN a server with `thematiq.environment` set to `acceptance`
 - WHEN a user opens the login page
 - THEN the page MUST show the text "Acceptance environment" above the login form
 - AND the browser tab title MUST start with "[Acceptance]"
 
 #### Scenario: An app excluded from theming still shows the marker
+
+@e2e exclude needs thematiq.environment in config.php, which the shared CI instance leaves unset and no e2e fixture may write; proven by tests/Unit/Listener/ThemeInjectionListenerTest.php::testExcludedAppStillGetsTheEnvironmentMarker
 
 - GIVEN a server with `thematiq.environment` set to `test`
 - AND the Calendar app excluded from theming in Settings > Administration > Theming
@@ -41,6 +47,8 @@ When the environment is `development`, `test` or `acceptance`, every page Nextcl
 - AND the Calendar page MUST otherwise render unthemed as before
 
 #### Scenario: Production shows nothing
+
+@e2e exclude needs thematiq.environment in config.php, which the shared CI instance leaves unset and no e2e fixture may write; proven by tests/Unit/Service/EnvironmentMarkerServiceTest.php::testInjectDoesNothingOnProduction
 
 - GIVEN a server with `thematiq.environment` set to `production`
 - WHEN a user opens the dashboard
@@ -53,6 +61,8 @@ A value outside the allowed list MUST render the label "Unknown environment" wit
 
 #### Scenario: A typo in config.php stays visible
 
+@e2e exclude needs thematiq.environment in config.php, which the shared CI instance leaves unset and no e2e fixture may write; proven by tests/Unit/Service/EnvironmentMarkerServiceTest.php::testAnUnknownValueIsShownAndLogged
+
 - GIVEN a server with `thematiq.environment` set to `tset`
 - WHEN a user opens the dashboard
 - THEN the page MUST show the label "Unknown environment"
@@ -64,11 +74,15 @@ The label MUST be text inside an element with `role="note"`, placed before the h
 
 #### Scenario: A screen reader user hears the environment first
 
+@e2e exclude needs thematiq.environment in config.php, which the shared CI instance leaves unset and no e2e fixture may write; proven by tests/vitest/environment-marker.spec.js (the stripe is the first role=note in the body)
+
 - GIVEN a server with `thematiq.environment` set to `test`
 - WHEN a screen reader user opens the Files app
 - THEN the first note in the page order MUST read "Test environment"
 
 #### Scenario: A brand colour cannot hide the stripe
+
+@e2e exclude needs thematiq.environment in config.php, which the shared CI instance leaves unset and no e2e fixture may write; proven by tests/Unit/Service/EnvironmentMarkerServiceTest.php::testStripeColoursReachAaAndMatchTheStylesheet (fixed colours, 4.5:1, no token reference)
 
 - GIVEN the active token set's primary colour is the same colour as the test stripe
 - WHEN a user opens the dashboard on a test server
@@ -80,6 +94,8 @@ The label MUST be text inside an element with `role="note"`, placed before the h
 Settings > Administration > Theming MUST show the environment the server declares, or state that none is set together with the `occ config:system:set thematiq.environment --value=<environment>` command. The page MUST NOT offer a control that writes the value.
 
 #### Scenario: An administrator sees which environment the server is
+
+@e2e exclude needs thematiq.environment in config.php, which the shared CI instance leaves unset and no e2e fixture may write; proven by tests/Unit/Settings/AdminInitialStateTest.php::testTheFormCarriesTheDeclaredEnvironment and tests/Unit/Templates/AdminEnvironmentLineTest.php
 
 - GIVEN a server with `thematiq.environment` set to `acceptance`
 - WHEN an administrator opens Settings > Administration > Theming
