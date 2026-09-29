@@ -363,7 +363,17 @@
         "Contrast evidence report": "Contrast evidence report",
         "Download the colour contrast of the active theme tokens as evidence for an accessibility statement. It covers colour contrast of the theme only and is not a full WCAG audit.": "Download the colour contrast of the active theme tokens as evidence for an accessibility statement. It covers colour contrast of the theme only and is not a full WCAG audit.",
         "Download as JSON": "Download as JSON",
-        "Download as Markdown": "Download as Markdown"
+        "Download as Markdown": "Download as Markdown",
+        "Development environment": "Development environment",
+        "Test environment": "Test environment",
+        "Acceptance environment": "Acceptance environment",
+        "Unknown environment": "Unknown environment",
+        "[Development]": "[Development]",
+        "[Test]": "[Test]",
+        "[Acceptance]": "[Acceptance]",
+        "[Unknown]": "[Unknown]",
+        "Environment: {environment}": "Environment: {environment}",
+        "No environment is set, so no page is marked. Declare it in config.php with:": "No environment is set, so no page is marked. Declare it in config.php with:"
     },
     "plurals": {}
 }

@@ -27,6 +27,7 @@ namespace OCA\Thematiq\Settings;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\EnvironmentMarkerService;
 use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
@@ -278,6 +279,10 @@ class Admin implements IDelegatedSettings {
 				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
 				// can be screenshotted from a running instance. Nothing else changes.
 				'mockUi' => ($this->request->getParam('mock') === '1'),
+				// The environment config.php declares, shown read-only
+				// (openspec/specs/environment-marker/spec.md).
+				'environment' => strtolower(trim($this->config->getSystemValueString(EnvironmentMarkerService::CONFIG_KEY, ''))),
+				'environmentCommand' => EnvironmentMarkerService::OCC_SET_COMMAND,
 			]
 		);
 	}//end getForm()

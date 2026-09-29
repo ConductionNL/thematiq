@@ -75,6 +75,7 @@
 !/js/admin.js
 !/js/lib/
 !/js/preview-banner.js
+!/js/environment-marker.js
 !/js/playground.js
 !/js/playground/
 /build/

@@ -1,0 +1,49 @@
+/**
+ * Environment marker (openspec/specs/environment-marker/spec.md).
+ *
+ * A thin stripe across the top of the viewport with a label tab hanging from
+ * its centre. The colours are fixed per environment on purpose: a brand whose
+ * primary colour happens to match must not make test look like the brand.
+ * Each pair reaches 4.5:1, and tests/Unit/Service/EnvironmentMarkerServiceTest
+ * holds these values to EnvironmentMarkerService::STYLES.
+ * pointer-events: none keeps the header's own controls clickable under it.
+ */
+.thematiq-env-marker {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10020;
+	height: 4px;
+	pointer-events: none;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+}
+
+.thematiq-env-marker__label {
+	margin-top: 4px;
+	padding: 0 8px;
+	border-radius: 0 0 4px 4px;
+	font-size: 12px;
+	line-height: 18px;
+	font-weight: bold;
+	white-space: nowrap;
+	background-color: inherit;
+	color: inherit;
+}
+
+.thematiq-env-marker--development {
+	background-color: #5B2A86;
+	color: #FFFFFF;
+}
+
+.thematiq-env-marker--test {
+	background-color: #FFC83D;
+	color: #000000;
+}
+
+.thematiq-env-marker--acceptance {
+	background-color: #0B5CAD;
+	color: #FFFFFF;
+}

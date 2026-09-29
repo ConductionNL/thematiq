@@ -363,7 +363,17 @@
         "Contrast evidence report": "Contrastbewijsrapport",
         "Download the colour contrast of the active theme tokens as evidence for an accessibility statement. It covers colour contrast of the theme only and is not a full WCAG audit.": "Download het kleurcontrast van de actieve thematokens als bewijs bij een toegankelijkheidsverklaring. Het gaat alleen over het kleurcontrast van het thema en is geen volledige WCAG-audit.",
         "Download as JSON": "Downloaden als JSON",
-        "Download as Markdown": "Downloaden als Markdown"
+        "Download as Markdown": "Downloaden als Markdown",
+        "Development environment": "Ontwikkelomgeving",
+        "Test environment": "Testomgeving",
+        "Acceptance environment": "Acceptatieomgeving",
+        "Unknown environment": "Onbekende omgeving",
+        "[Development]": "[Ontwikkeling]",
+        "[Test]": "[Test]",
+        "[Acceptance]": "[Acceptatie]",
+        "[Unknown]": "[Onbekend]",
+        "Environment: {environment}": "Omgeving: {environment}",
+        "No environment is set, so no page is marked. Declare it in config.php with:": "Er is geen omgeving ingesteld, dus geen pagina wordt gemarkeerd. Leg de omgeving vast in config.php met:"
     },
     "plurals": {}
 }
