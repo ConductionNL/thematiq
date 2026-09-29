@@ -252,7 +252,7 @@ if ($_['mockUi'] === true) {
 							<!-- A table with its header labels, row rules, a zebra
 							     row and a hovered row. -->
 							<table class="nl-mini__table">
-								<thead><tr><th><?php p($l->t('Name')); ?></th><th><?php p($l->t('Date')); ?></th><th><?php p($l->t('Status')); ?></th></tr></thead>
+								<thead><tr><th scope="col"><?php p($l->t('Name')); ?></th><th scope="col"><?php p($l->t('Date')); ?></th><th scope="col"><?php p($l->t('Status')); ?></th></tr></thead>
 								<tbody>
 									<tr><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--primary"></span></td></tr>
 									<tr class="is-zebra"><td></td><td></td><td><span class="nl-mini__pill nl-mini__pill--warning"></span></td></tr>
