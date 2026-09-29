@@ -852,18 +852,16 @@
 	margin-block: 0 auto;
 }
 
-/* Login.vue: `.login-box { width: 320px }` — "same size as dashboard panels". */
-#nldesign-preview .nldesign-pg-logincard {
-	width: 320px;
-	max-width: 100%;
-}
+/* Login.vue: `.login-box { width: 320px }` — "same size as dashboard panels".
 
-/* The card's edge, painted from its token the way css/component-scopes.css
+   The card's edge, painted from its token the way css/component-scopes.css
    paints the real login box: Nextcloud's guest box draws no border, so there
    is no variable to redirect. Unset, the declaration is invalid and the card
    has no edge, as in Nextcloud. `!important` because the nldesign theme sets
    `border: none !important` on every guest box. */
 #nldesign-preview .nldesign-pg-logincard {
+	width: 320px;
+	max-width: 100%;
 	border: 1px solid var(--nldesign-component-login-box-border-color) !important;
 }
 

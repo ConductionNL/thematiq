@@ -277,9 +277,6 @@ table,
 
 th {
 	background-color: var(--nldesign-component-table-header-background-color, transparent);
-}
-
-th {
 	font-weight: var(--nldesign-component-table-header-font-weight, normal);
 }
 
@@ -378,11 +375,6 @@ th {
 }
 
 /* avatar */
-.avatardiv,
-.user-status-icon,
-[data-thematiq-component='avatar'] {
-}
-
 .user-status-icon {
 	--user-status-color-online: var(--nldesign-component-avatar-online-status-color, #2D7B41) !important;
 }
@@ -856,10 +848,6 @@ body .notecard.success {
 body [class*='_toast_success_'],
 body .toastify.toast-success {
 	background-color: var(--nldesign-component-toast-success-background-color, var(--color-main-background));
-}
-
-body [class*='_toast_success_'],
-body .toastify.toast-success {
 	--thematiq-contrast-toast-success-color: lch(from var(--nldesign-component-toast-success-background-color) calc((49.44 - l) * infinity) 0 0);
 	color: var(--nldesign-component-toast-success-color, var(--thematiq-contrast-toast-success-color, var(--color-main-text)));
 }
@@ -867,10 +855,6 @@ body .toastify.toast-success {
 body [class*='_toast_error_'],
 body .toastify.toast-error {
 	background-color: var(--nldesign-component-toast-error-background-color, var(--color-main-background));
-}
-
-body [class*='_toast_error_'],
-body .toastify.toast-error {
 	--thematiq-contrast-toast-error-color: lch(from var(--nldesign-component-toast-error-background-color) calc((49.44 - l) * infinity) 0 0);
 	color: var(--nldesign-component-toast-error-color, var(--thematiq-contrast-toast-error-color, var(--color-main-text)));
 }
@@ -878,10 +862,6 @@ body .toastify.toast-error {
 body [class*='_toast_warning_'],
 body .toastify.toast-warning {
 	background-color: var(--nldesign-component-toast-warning-background-color, var(--color-main-background));
-}
-
-body [class*='_toast_warning_'],
-body .toastify.toast-warning {
 	--thematiq-contrast-toast-warning-color: lch(from var(--nldesign-component-toast-warning-background-color) calc((49.44 - l) * infinity) 0 0);
 	color: var(--nldesign-component-toast-warning-color, var(--thematiq-contrast-toast-warning-color, var(--color-main-text)));
 }
@@ -889,10 +869,6 @@ body .toastify.toast-warning {
 body [class*='_toast_info_'],
 body .toastify.toast-info {
 	background-color: var(--nldesign-component-toast-info-background-color, var(--color-main-background));
-}
-
-body [class*='_toast_info_'],
-body .toastify.toast-info {
 	--thematiq-contrast-toast-info-color: lch(from var(--nldesign-component-toast-info-background-color) calc((49.44 - l) * infinity) 0 0);
 	color: var(--nldesign-component-toast-info-color, var(--thematiq-contrast-toast-info-color, var(--color-main-text)));
 }

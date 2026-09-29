@@ -303,18 +303,16 @@ function contrastName(name) {
 }
 
 /**
- * The rule lines one paint emits.
+ * The declaration lines one paint emits.
  *
  * @param {string} name The token being painted from.
  * @param {Object} token Its mapping entry.
- * @param {Array<string>} selectors The component's selectors.
  *
- * @return {Array<string>} The rule, one line per entry.
+ * @return {Array<string>} The declarations, one line per entry.
  */
-function paintRule(name, token, selectors) {
+function paintDeclarations(name, token) {
 	const paint = token.paint
 	const important = paint.important === true ? ' !important' : ''
-	const lines = [(paint.selectors || selectors).join(',\n') + ' {']
 
 	// A `template` wraps the token in the rest of a shorthand, for a property
 	// one colour cannot fill on its own — `1px solid {token}` for an edge
@@ -322,11 +320,10 @@ function paintRule(name, token, selectors) {
 	// declaration is invalid at computed-value time, so the property takes
 	// its initial value, which is exactly "no edge".
 	if (paint.template !== undefined) {
-		lines.push('\t' + paint.property + ': ' + paint.template.replace('{token}', 'var(' + name + ')') + important + ';')
-		lines.push('}', '')
-		return lines
+		return ['\t' + paint.property + ': ' + paint.template.replace('{token}', 'var(' + name + ')') + important + ';']
 	}
 
+	const lines = []
 	let fallback = paint.fallback
 
 	if (paint.contrastWith !== undefined) {
@@ -338,34 +335,66 @@ function paintRule(name, token, selectors) {
 	}
 
 	lines.push('\t' + paint.property + ': var(' + name + ', ' + fallback + ')' + important + ';')
-	lines.push('}', '')
+
+	return lines
+}
+
+/**
+ * A component's paints as rules, one per selector list.
+ *
+ * Paints that land on the same selectors — a toast type's background and its
+ * text — share a rule, so no selector is written twice.
+ *
+ * @param {Object} component The component's mapping entry.
+ *
+ * @return {Array<string>} The rules, one line per entry.
+ */
+function paintRules(component) {
+	const rules = new Map()
+	for (const [name, token] of paintsOf(component)) {
+		const selectors = (token.paint.selectors || component.selectors).join(',\n')
+		if (rules.has(selectors) === false) {
+			rules.set(selectors, [])
+		}
+		rules.get(selectors).push(...paintDeclarations(name, token))
+	}
+
+	const lines = []
+	for (const [selectors, declarations] of rules) {
+		lines.push(selectors + ' {', ...declarations, '}', '')
+	}
 
 	return lines
 }
 
 for (const [id, component] of Object.entries(mapping.components)) {
-	scopes.push('/* ' + id + ' */')
-	scopes.push(component.selectors.concat(specimenSelector(id)).join(',\n') + ' {')
+	const declarations = []
 	for (const [name, token] of Object.entries(component.tokens)) {
 		if (token.paint !== undefined) {
 			continue
 		}
-		scopes.push('\t' + token.global + ': var(')
-		scopes.push('\t\t' + name + ',')
-		scopes.push('\t\tvar(' + captureName(token.global) + ')')
-		scopes.push('\t);')
+		declarations.push('\t' + token.global + ': var(')
+		declarations.push('\t\t' + name + ',')
+		declarations.push('\t\tvar(' + captureName(token.global) + ')')
+		declarations.push('\t);')
 	}
 	for (const [target, source] of Object.entries(aliasesOf(component))) {
-		scopes.push('\t' + target + ': var(')
-		scopes.push('\t\t' + source + ',')
-		scopes.push('\t\tvar(' + aliasCaptureName(target) + ')')
-		scopes.push('\t);')
+		declarations.push('\t' + target + ': var(')
+		declarations.push('\t\t' + source + ',')
+		declarations.push('\t\tvar(' + aliasCaptureName(target) + ')')
+		declarations.push('\t);')
 	}
-	scopes.push('}', '')
 
-	for (const [name, token] of paintsOf(component)) {
-		scopes.push(...paintRule(name, token, component.selectors))
+	scopes.push('/* ' + id + ' */')
+	// A component whose every token is a paint redirects nothing, and an empty
+	// rule would only be noise.
+	if (declarations.length > 0) {
+		scopes.push(component.selectors.concat(specimenSelector(id)).join(',\n') + ' {')
+		scopes.push(...declarations)
+		scopes.push('}', '')
 	}
+
+	scopes.push(...paintRules(component))
 }
 
 const scopesOutput = scopes.join('\n')
