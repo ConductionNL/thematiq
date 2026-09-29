@@ -103,8 +103,14 @@ button.app-navigation-toggle {
  * down the seam between the navigation and the content, as a wedge in the notch
  * of the container's rounded top corner, and as a frame along the right and
  * bottom edges. The two panels are meant to read as one sheet clipped by
- * `#content`; that is only true while both of them are opaque. */
-body #content.app-dashboard #app-content-vue.app-content,
+ * `#content`; that is only true while both of them are opaque.
+ *
+ * `#app-content-vue` is matched without the `.app-content` class: Nextcloud 35
+ * renders the dashboard's panel as a bare `<div id="app-content-vue">` around
+ * `<main id="app-dashboard">`. Requiring the class let the opaque app-content
+ * rule above paint that panel white, and the greeting — which takes the colour
+ * Nextcloud pairs with the page background — came out white on white. */
+body #content.app-dashboard #app-content-vue,
 body #content.app-dashboard main.app-content {
 	background: transparent !important;
 	background-color: transparent !important;
