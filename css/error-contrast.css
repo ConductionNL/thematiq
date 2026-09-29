@@ -27,9 +27,14 @@
  */
 
 /* NcButton type="error" and NcChip variant="error" both render
-   `background: var(--color-error); color: var(--color-error-text)`. */
+   `background: var(--color-error); color: var(--color-error-text)`.
+   The button reads its own label token first, so an admin who sets one — a
+   dark label on a theme whose error colour is pale — is not overruled here. */
 .button-vue--vue-error,
-.button-vue--error,
+.button-vue--error {
+	color: var(--nldesign-component-button-error-color, #fff) !important;
+}
+
 .nc-chip--error {
 	color: #fff !important;
 }

@@ -29,8 +29,8 @@
 
 body {
 	/* header-bar */
-	--nldesign-component-header-background-color: var(--thematiq-global-color-primary) !important;
-	--nldesign-component-header-color: var(--thematiq-global-color-primary-text) !important;
+	--nldesign-component-header-background-color: var(--thematiq-global-color-background-plain) !important;
+	--nldesign-component-header-color: var(--thematiq-global-color-background-plain-text) !important;
 	/* login-button */
 	--nldesign-component-login-button-background-color: var(--thematiq-global-color-primary-element) !important;
 	--nldesign-component-login-button-color: var(--thematiq-global-color-primary-element-text) !important;
@@ -60,9 +60,9 @@ body {
 	--nldesign-component-button-primary-action-color: var(--thematiq-global-color-primary-element-text) !important;
 	--nldesign-component-button-primary-action-hover-background-color: var(--thematiq-global-color-primary-element-hover) !important;
 	/* tertiary-button */
-	--nldesign-component-button-color: var(--thematiq-global-color-primary-element-light-text) !important;
+	--nldesign-component-button-color: var(--thematiq-global-color-main-text) !important;
 	--nldesign-component-button-hover-background-color: var(--thematiq-global-color-primary-element-light) !important;
-	--nldesign-component-button-active-background-color: var(--thematiq-global-color-primary-element-light-hover) !important;
+	--nldesign-component-button-active-background-color: var(--thematiq-global-color-primary-element-light) !important;
 	/* badge-counter */
 	--nldesign-component-badge-background-color: var(--thematiq-global-color-primary-element) !important;
 	--nldesign-component-badge-color: var(--thematiq-global-color-primary-element-text) !important;

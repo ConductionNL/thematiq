@@ -491,6 +491,18 @@ a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
 }
 
 /*
+ * The secondary button paints its label on the button itself (theme.css), but
+ * the label is a `span` inside it, and the blanket rule above claims every span
+ * except a primary button's. So the label wore the body text colour and the
+ * secondary button's label token — saved or previewed — never showed. Its own
+ * token goes on the surface, and the spans take it from there.
+ */
+.button-vue--vue-secondary,
+.button-vue--secondary {
+	--nldesign-color-on-surface: var(--nldesign-component-button-secondary-action-color);
+}
+
+/*
  * The NcNoteCard fill is NOT fixed here — every design system that reads
  * `--nldesign-*` inverts the same contract, so it lives in the shared
  * css/error-contrast.css instead.

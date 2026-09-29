@@ -89,6 +89,27 @@
 					"label": "hovered app entry"
 				}
 			],
+			"versionNotes": [
+				{
+					"versions": [
+						32,
+						33
+					],
+					"text": "the app menu is a row of app icons."
+				},
+				{
+					"versions": [
+						34
+					],
+					"text": "the app menu is a waffle button and the current app."
+				},
+				{
+					"versions": [
+						35
+					],
+					"text": "as 34, with a centre column: the search is a field and the waffle and the current app share one highlight."
+				}
+			],
 			"tokens": [
 				{
 					"name": "--nldesign-component-header-background-color",
@@ -222,6 +243,14 @@
 					"label": "background on hover"
 				}
 			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "labels can also take the light and lighter text colours; from 33 they do not."
+				}
+			],
 			"tokens": [
 				{
 					"name": "--nldesign-component-login-button-background-color",
@@ -345,6 +374,20 @@
 					"n": 3,
 					"id": "hover",
 					"label": "hovered entry"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "parts of the navigation use fully rounded (pill) corners where 33 and later use the element corner."
+				},
+				{
+					"versions": [
+						35
+					],
+					"text": "entries animate their hover and active change."
 				}
 			],
 			"tokens": [
@@ -475,6 +518,16 @@
 					"callout": 1
 				},
 				{
+					"name": "--nldesign-component-table-header-background-color",
+					"paints": "The header row's fill",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-table-header-font-weight",
+					"paints": "How bold the header labels are",
+					"callout": 1
+				},
+				{
 					"name": "--nldesign-component-table-border-color",
 					"paints": "The rule under each row",
 					"callout": 1
@@ -494,7 +547,7 @@
 				{
 					"callout": 1,
 					"what": "Row height and column spacing",
-					"why": "A token set is a reskin: it carries colours and leaves table geometry and header weight to Nextcloud.",
+					"why": "A token set is a reskin: it carries colours and leaves table geometry to Nextcloud.",
 					"code": "geometry-kept-nextcloud"
 				}
 			]
@@ -520,6 +573,27 @@
 					"n": 2,
 					"id": "active",
 					"label": "active tab"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "the sidebar also paints with the dark background colour, the main text colour and the element font weight, and has rounded element corners."
+				},
+				{
+					"versions": [
+						33,
+						34
+					],
+					"text": "no rounded element corners, and the primary colour only marks borders and focus."
+				},
+				{
+					"versions": [
+						35
+					],
+					"text": "rounded element corners are back, the primary colour fills the active tab again, and changes animate."
 				}
 			],
 			"tokens": [
@@ -574,6 +648,22 @@
 					"n": 3,
 					"id": "selected",
 					"label": "selected row"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "a selected item gets no fill of its own."
+				},
+				{
+					"versions": [
+						33,
+						34,
+						35
+					],
+					"text": "a selected item is filled with the light primary element colour (a stronger one on hover), and its text takes the main text colour."
 				}
 			],
 			"tokens": [
@@ -843,6 +933,14 @@
 					"label": "invalid border"
 				}
 			],
+			"versionNotes": [
+				{
+					"versions": [
+						35
+					],
+					"text": "the field label is set in the small font size."
+				}
+			],
 			"tokens": [
 				{
 					"name": "--nldesign-component-textbox-border-color",
@@ -902,7 +1000,21 @@
 				{
 					"n": 2,
 					"id": "open",
-					"label": "hovered option"
+					"label": "options, one hovered"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "the dropdown uses the large corner radius and the lighter text colour."
+				},
+				{
+					"versions": [
+						35
+					],
+					"text": "the dropdown was rebuilt on variables of its own: its border, hover, option and state colours, error and success text, and its animation all come from new places, so a theme made for 33 or 34 can look different here."
 				}
 			],
 			"tokens": [
@@ -917,8 +1029,28 @@
 					"callout": 1
 				},
 				{
+					"name": "--nldesign-component-form-select-color",
+					"paints": "The chosen value",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-form-select-selected-background-color",
+					"paints": "The pill behind the chosen value",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-form-select-option-color",
+					"paints": "The options in the list",
+					"callout": 2
+				},
+				{
 					"name": "--nldesign-component-form-select-option-hover-background-color",
 					"paints": "Hovered option",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-form-select-option-hover-color",
+					"paints": "The hovered option's text",
 					"callout": 2
 				}
 			],
@@ -943,6 +1075,14 @@
 					"n": 2,
 					"id": "checked",
 					"label": "checked"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "the switch track uses the dark background colour and the element corner, and animates; from 33 it does neither."
 				}
 			],
 			"tokens": [
@@ -971,12 +1111,30 @@
 			"subtitle": "NcTextArea",
 			"ground": "content",
 			"classes": [],
-			"radiusToken": "--border-radius",
+			"radiusToken": "--border-radius-element",
 			"states": [
 				{
 					"n": 1,
 					"id": "default",
-					"label": "border · corner"
+					"label": "empty, with its placeholder"
+				},
+				{
+					"n": 2,
+					"id": "focus",
+					"label": "focused border"
+				},
+				{
+					"n": 3,
+					"id": "invalid",
+					"label": "invalid border"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "uses the large corner radius; from 33 it does not."
 				}
 			],
 			"tokens": [
@@ -989,6 +1147,31 @@
 					"name": "--nldesign-component-textarea-border-radius",
 					"paints": "Corner",
 					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-textarea-color",
+					"paints": "The typed text",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-textarea-background-color",
+					"paints": "The field's fill",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-textarea-placeholder-color",
+					"paints": "The placeholder of an empty field",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-textarea-focus-border-color",
+					"paints": "Border while focused",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-textarea-invalid-border-color",
+					"paints": "Border when invalid",
+					"callout": 3
 				}
 			],
 			"fixed": []
@@ -1017,6 +1200,14 @@
 					"n": 2,
 					"id": "buttons",
 					"label": "its button row"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "uses the large and fully rounded corner radius; from 33 the element corner."
 				}
 			],
 			"tokens": [
@@ -1070,6 +1261,22 @@
 					"n": 2,
 					"id": "loading",
 					"label": "the spinner"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "the label is drawn in the primary element colour."
+				},
+				{
+					"versions": [
+						33,
+						34,
+						35
+					],
+					"text": "the label is small text in the normal colour."
 				}
 			],
 			"tokens": [
@@ -1131,6 +1338,14 @@
 					"id": "disabled",
 					"label": "fixed by Nextcloud",
 					"fixed": true
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "labels can also take the light and lighter text colours; from 33 they do not."
 				}
 			],
 			"tokens": [
@@ -1200,6 +1415,14 @@
 					"label": "background on hover"
 				}
 			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "labels can also take the light and lighter text colours; from 33 they do not."
+				}
+			],
 			"tokens": [
 				{
 					"name": "--nldesign-component-button-secondary-action-background-color",
@@ -1253,6 +1476,14 @@
 					"label": "background, pressed"
 				}
 			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "labels can also take the light and lighter text colours; from 33 they do not."
+				}
+			],
 			"tokens": [
 				{
 					"name": "--nldesign-component-button-color",
@@ -1296,6 +1527,14 @@
 					"label": "background on hover"
 				}
 			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "labels can also take the light and lighter text colours; from 33 they do not."
+				}
+			],
 			"tokens": [
 				{
 					"name": "--nldesign-component-button-error-background-color",
@@ -1303,13 +1542,19 @@
 					"callout": 1
 				},
 				{
-					"name": "--nldesign-component-button-error-background-color-rgb",
-					"paints": "Its tinted fill, mixed from the same colour",
+					"name": "--nldesign-component-button-error-color",
+					"paints": "Label",
 					"callout": 1
 				},
 				{
+					"name": "--nldesign-component-button-error-background-color-rgb",
+					"paints": "Its tinted fill, mixed from the same colour",
+					"callout": 1,
+					"until": 32
+				},
+				{
 					"name": "--nldesign-component-button-error-hover-background-color",
-					"paints": "Background on hover",
+					"paints": "Background on hover, and its edge",
 					"callout": 2
 				}
 			],
@@ -1332,6 +1577,19 @@
 					"n": 1,
 					"id": "default",
 					"label": "background · icon"
+				},
+				{
+					"n": 2,
+					"id": "hover",
+					"label": "hover"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "labels can also take the light and lighter text colours; from 33 they do not."
 				}
 			],
 			"tokens": [
@@ -1342,8 +1600,13 @@
 				},
 				{
 					"name": "--nldesign-component-button-success-color",
-					"paints": "Its icon",
+					"paints": "Label",
 					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-button-success-hover-background-color",
+					"paints": "Background on hover, and its edge",
+					"callout": 2
 				}
 			],
 			"fixed": []
@@ -1359,6 +1622,7 @@
 				"notecard"
 			],
 			"radiusToken": "--border-radius",
+			"versioned": true,
 			"states": [
 				{
 					"n": 1,
@@ -1381,79 +1645,115 @@
 					"label": "success"
 				}
 			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "the card is filled with a 10% tint mixed from the fill (Nextcloud 32) colour, the type colour is the stripe, and the corner is the normal radius."
+				},
+				{
+					"versions": [
+						33,
+						34,
+						35
+					],
+					"text": "the type colour is the card fill, and the corner is the small radius."
+				}
+			],
 			"tokens": [
 				{
 					"name": "--nldesign-component-notecard-info-color",
-					"paints": "Info stripe",
+					"paints": "Info card fill (the stripe on Nextcloud 32)",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-notecard-info-text-color",
+					"paints": "Info card text; white or black against its background when unset",
 					"callout": 1
 				},
 				{
 					"name": "--nldesign-component-notecard-info-icon-color",
-					"paints": "Info glyph",
+					"paints": "Info glyph and side stripe",
 					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-notecard-info-color-rgb",
+					"paints": "Info fill on Nextcloud 32, mixed at 10% from this colour",
+					"callout": 1,
+					"until": 32
 				},
 				{
 					"name": "--nldesign-component-notecard-border-radius",
 					"paints": "Card corner",
-					"callout": 1
+					"callout": 0
 				},
 				{
 					"name": "--nldesign-component-notecard-warning-color",
-					"paints": "Warning stripe",
+					"paints": "Warning card fill (the stripe on Nextcloud 32)",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-notecard-warning-text-color",
+					"paints": "Warning card text; white or black against its background when unset",
 					"callout": 2
 				},
 				{
 					"name": "--nldesign-component-notecard-warning-icon-color",
-					"paints": "Warning glyph",
+					"paints": "Warning glyph and side stripe",
 					"callout": 2
 				},
 				{
 					"name": "--nldesign-component-notecard-warning-color-rgb",
-					"paints": "Warning fill, mixed from the same colour",
-					"callout": 2
+					"paints": "Warning fill on Nextcloud 32, mixed at 10% from this colour",
+					"callout": 2,
+					"until": 32
 				},
 				{
 					"name": "--nldesign-component-notecard-error-color",
-					"paints": "Error stripe",
+					"paints": "Error card fill (the stripe on Nextcloud 32)",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-notecard-error-text-color",
+					"paints": "Error card text; white or black against its background when unset",
 					"callout": 3
 				},
 				{
 					"name": "--nldesign-component-notecard-error-icon-color",
-					"paints": "Error glyph",
-					"callout": 3
-				},
-				{
-					"name": "--nldesign-component-notecard-error-border-color",
-					"paints": "Error card border",
+					"paints": "Error glyph and side stripe",
 					"callout": 3
 				},
 				{
 					"name": "--nldesign-component-notecard-error-color-rgb",
-					"paints": "Error fill, mixed from the same colour",
-					"callout": 3
+					"paints": "Error fill on Nextcloud 32, mixed at 10% from this colour",
+					"callout": 3,
+					"until": 32
 				},
 				{
 					"name": "--nldesign-component-notecard-success-color",
-					"paints": "Success stripe",
+					"paints": "Success card fill (the stripe on Nextcloud 32)",
+					"callout": 4
+				},
+				{
+					"name": "--nldesign-component-notecard-success-text-color",
+					"paints": "Success card text; white or black against its background when unset",
 					"callout": 4
 				},
 				{
 					"name": "--nldesign-component-notecard-success-icon-color",
-					"paints": "Success glyph",
-					"callout": 4
-				},
-				{
-					"name": "--nldesign-component-notecard-success-border-color",
-					"paints": "Success card border",
+					"paints": "Success glyph and side stripe",
 					"callout": 4
 				},
 				{
 					"name": "--nldesign-component-notecard-success-color-rgb",
-					"paints": "Success fill, mixed from the same colour",
-					"callout": 4
+					"paints": "Success fill on Nextcloud 32, mixed at 10% from this colour",
+					"callout": 4,
+					"until": 32
 				}
 			],
-			"fixed": []
+			"fixed": [],
+			"separateStates": true
 		},
 		{
 			"id": "badge-counter",
@@ -1473,6 +1773,14 @@
 					"n": 2,
 					"id": "favorite",
 					"label": "favourite star"
+				}
+			],
+			"versionNotes": [
+				{
+					"versions": [
+						32
+					],
+					"text": "the counter has fully rounded (pill) corners; from 33 it does not."
 				}
 			],
 			"tokens": [
@@ -1535,31 +1843,52 @@
 			"tokens": [
 				{
 					"name": "--nldesign-component-toast-success-background-color",
-					"paints": "Success toast",
+					"paints": "Success toast background",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-toast-success-color",
+					"paints": "Success toast text; white or black against its background when unset",
 					"callout": 1
 				},
 				{
 					"name": "--nldesign-component-toast-border-radius",
 					"paints": "Corner",
-					"callout": 1
+					"callout": 0
 				},
 				{
 					"name": "--nldesign-component-toast-error-background-color",
-					"paints": "Error toast",
+					"paints": "Error toast background",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-toast-error-color",
+					"paints": "Error toast text; white or black against its background when unset",
 					"callout": 2
 				},
 				{
 					"name": "--nldesign-component-toast-warning-background-color",
-					"paints": "Warning toast",
+					"paints": "Warning toast background",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-toast-warning-color",
+					"paints": "Warning toast text; white or black against its background when unset",
 					"callout": 3
 				},
 				{
 					"name": "--nldesign-component-toast-info-background-color",
-					"paints": "Info toast",
+					"paints": "Info toast background",
+					"callout": 4
+				},
+				{
+					"name": "--nldesign-component-toast-info-color",
+					"paints": "Info toast text; white or black against its background when unset",
 					"callout": 4
 				}
 			],
-			"fixed": []
+			"fixed": [],
+			"separateStates": true
 		},
 		{
 			"id": "heading",

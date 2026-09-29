@@ -356,13 +356,25 @@ describe('component tokens: the capture block is taken on body', () => {
 	it.each(GENERATED)('%s declares --thematiq-global-* on body', (file) => {
 		const css = fs.readFileSync(path.join(ROOT, file), 'utf8')
 
-		// The selector immediately before the first block that mentions a
-		// capture name — matched off the raw text, so the assertion survives
-		// any reordering inside the block.
-		const block = css.match(/(^|\n)([^\n{}]+)\{[^}]*--thematiq-global-[^}]*\}/)
+		// The selector list of the first block that mentions a capture name —
+		// read off the raw text back to the end of the previous rule or
+		// comment, so a list spanning several lines is read whole.
+		const open = css.search(/\{[^}]*--thematiq-global-/)
+		expect(open, 'no block declaring or reading a capture').toBeGreaterThan(-1)
 
-		expect(block, 'no block declaring or reading a capture').not.toBeNull()
-		expect(block[2].trim()).toBe('body')
+		const head = css.slice(0, open)
+		const start = Math.max(head.lastIndexOf('}') + 1, head.lastIndexOf('*/') + 2)
+		const selectors = head.slice(start).split(',').map((s) => s.trim())
+
+		expect(selectors[0]).toBe('body')
+		// The token editor's preview is captured too: an unsaved edit is
+		// declared there and nowhere else. Only the scopes read captures
+		// inside it; the lock is about the live page.
+		if (file === 'css/component-scopes.css') {
+			expect(selectors).toEqual(['body', '#nldesign-preview'])
+		} else {
+			expect(selectors).toEqual(['body'])
+		}
 	})
 
 	it('leaves no capture stranded on :root', () => {

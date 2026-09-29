@@ -52,7 +52,7 @@
 		"guard honest.",
 		"",
 		"",
-		"`aliases` IS THE ESCAPE HATCH, and it has exactly one user so far. Re-scoping a Nextcloud",
+		"`aliases` IS THE ESCAPE HATCH, used by the login button and the dialog. Re-scoping a Nextcloud",
 		"global only works where a NEXTCLOUD rule reads it. The login button is painted by thematiq",
 		"itself, from the PRIMARY button's tokens, so there is no global left in the chain to redirect.",
 		"Writing a more specific rule does not work either: its label is claimed at (1,3,0) by",
@@ -78,7 +78,8 @@
 			"selectors": ["#header"],
 			"tokens": {
 				"--nldesign-component-header-background-color": {
-					"global": "--color-primary",
+					"global": "--color-background-plain",
+					"paint": { "property": "background-color", "fallback": "transparent" },
 					"label": "Header background",
 					"type": "color",
 					"primary": true,
@@ -86,7 +87,7 @@
 					"callout": 1
 				},
 				"--nldesign-component-header-color": {
-					"global": "--color-primary-text",
+					"global": "--color-background-plain-text",
 					"label": "Header glyphs",
 					"type": "color",
 					"primary": true,
@@ -117,6 +118,7 @@
 				},
 				"--nldesign-component-login-box-border-color": {
 					"global": "--color-border",
+					"paint": { "property": "border", "selectors": ["#body-login .guest-box.login-box"], "template": "1px solid {token}", "important": true },
 					"label": "Login card edge",
 					"type": "color",
 					"primary": false,
@@ -282,6 +284,24 @@
 					"paints": "Header row labels and secondary cells",
 					"callout": 1
 				},
+				"--nldesign-component-table-header-background-color": {
+					"global": "--color-main-background",
+					"paint": { "property": "background-color", "selectors": ["th"], "fallback": "transparent" },
+					"label": "Table header background",
+					"type": "color",
+					"primary": false,
+					"paints": "The header row's fill",
+					"callout": 1
+				},
+				"--nldesign-component-table-header-font-weight": {
+					"global": "--font-weight-default",
+					"paint": { "property": "font-weight", "selectors": ["th"], "fallback": "normal" },
+					"label": "Table header weight",
+					"type": "text",
+					"primary": false,
+					"paints": "How bold the header labels are",
+					"callout": 1
+				},
 				"--nldesign-component-table-border-color": {
 					"global": "--color-border",
 					"label": "Table row rule",
@@ -410,7 +430,7 @@
 		},
 		"empty-content": {
 			"tab": "content",
-			"selectors": [".empty-content"],
+			"selectors": [".empty-content", ".empty-content__name"],
 			"tokens": {
 				"--nldesign-component-empty-content-color": {
 					"global": "--color-main-text",
@@ -474,6 +494,7 @@
 			"tokens": {
 				"--nldesign-component-avatar-online-status-color": {
 					"global": "--color-success",
+					"paint": { "property": "--user-status-color-online", "selectors": [".user-status-icon"], "fallback": "#2D7B41", "important": true },
 					"label": "Avatar online dot",
 					"type": "color",
 					"primary": false,
@@ -514,7 +535,7 @@
 		},
 		"settings-section": {
 			"tab": "content",
-			"selectors": [".settings-section", ".app-settings-section"],
+			"selectors": [".settings-section", ".app-settings-section", ".settings-section__name"],
 			"tokens": {
 				"--nldesign-component-settings-section-heading-color": {
 					"global": "--color-main-text",
@@ -562,6 +583,7 @@
 				},
 				"--nldesign-component-textbox-placeholder-color": {
 					"global": "--color-placeholder-dark",
+					"paint": { "property": "color", "selectors": [".input-field__input::placeholder"], "fallback": "var(--color-text-maxcontrast)", "important": true },
 					"label": "Text input placeholder",
 					"type": "color",
 					"primary": false,
@@ -586,6 +608,7 @@
 				},
 				"--nldesign-component-textbox-focus-border-color": {
 					"global": "--color-primary-element",
+					"paint": { "property": "--input-border-color", "selectors": [".input-field__input:focus:not([disabled])", ".input-field__input:active:not([disabled])"], "fallback": "var(--color-main-text)", "important": true },
 					"label": "Text input focus",
 					"type": "color",
 					"primary": true,
@@ -593,7 +616,7 @@
 					"callout": 2
 				},
 				"--nldesign-component-textbox-invalid-border-color": {
-					"global": "--color-error",
+					"global": "--color-border-error",
 					"label": "Text input invalid",
 					"type": "color",
 					"primary": false,
@@ -604,10 +627,10 @@
 		},
 		"select": {
 			"tab": "content",
-			"selectors": ["select", ".v-select"],
+			"selectors": ["select", ".v-select", ".vs__dropdown-menu"],
 			"tokens": {
 				"--nldesign-component-form-select-border-color": {
-					"global": "--color-border-maxcontrast",
+					"global": "--vs-border-color",
 					"label": "Select border",
 					"type": "color",
 					"primary": false,
@@ -615,19 +638,51 @@
 					"callout": 1
 				},
 				"--nldesign-component-form-select-border-radius": {
-					"global": "--border-radius-element",
+					"global": "--vs-border-radius",
 					"label": "Select corner",
 					"type": "text",
 					"primary": false,
 					"paints": "Corner",
 					"callout": 1
 				},
+				"--nldesign-component-form-select-color": {
+					"global": "--vs-selected-color",
+					"label": "Select text",
+					"type": "color",
+					"primary": false,
+					"paints": "The chosen value",
+					"callout": 1
+				},
+				"--nldesign-component-form-select-selected-background-color": {
+					"global": "--color-primary-element-light",
+					"label": "Select chosen value background",
+					"type": "color",
+					"primary": false,
+					"paints": "The pill behind the chosen value",
+					"callout": 1
+				},
+				"--nldesign-component-form-select-option-color": {
+					"global": "--vs-dropdown-color",
+					"label": "Select option text",
+					"type": "color",
+					"primary": false,
+					"paints": "The options in the list",
+					"callout": 2
+				},
 				"--nldesign-component-form-select-option-hover-background-color": {
-					"global": "--color-background-hover",
+					"global": "--vs-dropdown-option--active-bg",
 					"label": "Select hovered option",
 					"type": "color",
 					"primary": false,
 					"paints": "Hovered option",
+					"callout": 2
+				},
+				"--nldesign-component-form-select-option-hover-color": {
+					"global": "--vs-dropdown-option--active-color",
+					"label": "Select hovered option text",
+					"type": "color",
+					"primary": false,
+					"paints": "The hovered option's text",
 					"callout": 2
 				}
 			}
@@ -642,6 +697,7 @@
 			"tokens": {
 				"--nldesign-component-checkbox-border-color": {
 					"global": "--color-border-maxcontrast",
+					"paint": { "property": "color", "selectors": [".checkbox-radio-switch-checkbox:not(.checkbox-radio-switch--checked) .checkbox-content__icon > *", ".checkbox-radio-switch-radio:not(.checkbox-radio-switch--checked) .checkbox-content__icon > *"], "fallback": "var(--color-primary-element)" },
 					"label": "Checkbox outline",
 					"type": "color",
 					"primary": false,
@@ -668,7 +724,7 @@
 		},
 		"textarea": {
 			"tab": "content",
-			"selectors": ["textarea"],
+			"selectors": ["textarea", ".textarea"],
 			"tokens": {
 				"--nldesign-component-textarea-border-color": {
 					"global": "--color-border-maxcontrast",
@@ -679,17 +735,61 @@
 					"callout": 1
 				},
 				"--nldesign-component-textarea-border-radius": {
-					"global": "--border-radius",
+					"global": "--border-radius-element",
 					"label": "Textarea corner",
 					"type": "text",
 					"primary": false,
 					"paints": "Corner",
 					"callout": 1
+				},
+				"--nldesign-component-textarea-color": {
+					"global": "--color-main-text",
+					"label": "Textarea text",
+					"type": "color",
+					"primary": false,
+					"paints": "The typed text",
+					"callout": 1
+				},
+				"--nldesign-component-textarea-background-color": {
+					"global": "--color-main-background",
+					"label": "Textarea background",
+					"type": "color",
+					"primary": false,
+					"paints": "The field's fill",
+					"callout": 1
+				},
+				"--nldesign-component-textarea-placeholder-color": {
+					"global": "--color-placeholder-dark",
+					"paint": { "property": "color", "selectors": [".textarea__input::placeholder"], "fallback": "var(--color-text-maxcontrast)", "important": true },
+					"label": "Textarea placeholder",
+					"type": "color",
+					"primary": false,
+					"paints": "The placeholder of an empty field",
+					"callout": 1
+				},
+				"--nldesign-component-textarea-focus-border-color": {
+					"global": "--color-primary-element",
+					"paint": { "property": "--input-border-color", "selectors": [".textarea__input:focus:not([disabled])", ".textarea__input:active:not([disabled])"], "fallback": "var(--color-main-text)", "important": true },
+					"label": "Textarea focus",
+					"type": "color",
+					"primary": false,
+					"paints": "Border while focused",
+					"callout": 2
+				},
+				"--nldesign-component-textarea-invalid-border-color": {
+					"global": "--color-border-error",
+					"label": "Textarea invalid",
+					"type": "color",
+					"primary": false,
+					"paints": "Border when invalid",
+					"callout": 3
 				}
 			},
 			"aliases": {
 				"--nldesign-component-textbox-border-color": "--nldesign-component-textarea-border-color",
-				"--nldesign-component-textbox-border-radius": "--nldesign-component-textarea-border-radius"
+				"--nldesign-component-textbox-border-radius": "--nldesign-component-textarea-border-radius",
+				"--nldesign-component-textbox-background-color": "--nldesign-component-textarea-background-color",
+				"--nldesign-component-textbox-focus-border-color": "--nldesign-component-textarea-focus-border-color"
 			}
 		},
 		"dialog": {
@@ -728,6 +828,10 @@
 					"paints": "Its confirm button",
 					"callout": 2
 				}
+			},
+			"aliases": {
+				"--nldesign-component-button-primary-action-background-color": "--nldesign-component-dialog-confirm-background-color",
+				"--nldesign-component-button-primary-action-border-color": "--nldesign-component-dialog-confirm-background-color"
 			}
 		},
 		"progress": {
@@ -835,7 +939,7 @@
 			"selectors": [".button-vue--secondary", ".button-vue--vue-secondary"],
 			"tokens": {
 				"--nldesign-component-button-secondary-action-background-color": {
-					"global": "--color-background-dark",
+					"global": "--color-primary-element-light",
 					"label": "Secondary button background",
 					"type": "color",
 					"primary": false,
@@ -843,7 +947,7 @@
 					"callout": 1
 				},
 				"--nldesign-component-button-secondary-action-color": {
-					"global": "--color-main-text",
+					"global": "--color-primary-element-light-text",
 					"label": "Secondary button label",
 					"type": "color",
 					"primary": false,
@@ -851,7 +955,7 @@
 					"callout": 1
 				},
 				"--nldesign-component-button-secondary-action-hover-background-color": {
-					"global": "--color-background-darker",
+					"global": "--color-primary-element-light-hover",
 					"label": "Secondary button hover",
 					"type": "color",
 					"primary": false,
@@ -880,7 +984,7 @@
 			],
 			"tokens": {
 				"--nldesign-component-button-color": {
-					"global": "--color-primary-element-light-text",
+					"global": "--color-main-text",
 					"label": "Tertiary button label",
 					"type": "color",
 					"primary": true,
@@ -889,6 +993,7 @@
 				},
 				"--nldesign-component-button-hover-background-color": {
 					"global": "--color-primary-element-light",
+					"paint": { "property": "background-color", "selectors": [".button-vue--tertiary:not(.button-vue--tertiary-no-background):not(.button-vue--tertiary-on-primary):hover:not(:disabled)"], "fallback": "color-mix(in srgb, var(--color-primary-element) 8%, transparent)", "important": true },
 					"label": "Tertiary button hover",
 					"type": "color",
 					"primary": true,
@@ -896,7 +1001,7 @@
 					"callout": 2
 				},
 				"--nldesign-component-button-active-background-color": {
-					"global": "--color-primary-element-light-hover",
+					"global": "--color-primary-element-light",
 					"label": "Tertiary button pressed",
 					"type": "color",
 					"primary": true,
@@ -919,8 +1024,8 @@
 				},
 				"--nldesign-component-button-error-background-color-rgb": {
 					"global": "--color-error-rgb",
-					"label": "Error button fill (RGB)",
-					"type": "text",
+					"label": "Error button fill (RGB, Nextcloud 32)",
+					"type": "rgb",
 					"primary": false,
 					"paints": "Its tinted fill, mixed from the same colour",
 					"callout": 1
@@ -930,8 +1035,16 @@
 					"label": "Error button hover",
 					"type": "color",
 					"primary": false,
-					"paints": "Background on hover",
+					"paints": "Background on hover, and its edge",
 					"callout": 2
+				},
+				"--nldesign-component-button-error-color": {
+					"global": "--color-error-text",
+					"label": "Error button label",
+					"type": "color",
+					"primary": false,
+					"paints": "Label",
+					"callout": 1
 				}
 			}
 		},
@@ -948,12 +1061,20 @@
 					"callout": 1
 				},
 				"--nldesign-component-button-success-color": {
-					"global": "--color-element-success",
-					"label": "Success button icon",
+					"global": "--color-success-text",
+					"label": "Success button label",
 					"type": "color",
 					"primary": false,
-					"paints": "Its icon",
+					"paints": "Label",
 					"callout": 1
+				},
+				"--nldesign-component-button-success-hover-background-color": {
+					"global": "--color-success-hover",
+					"label": "Success button hover",
+					"type": "color",
+					"primary": false,
+					"paints": "Background on hover, and its edge",
+					"callout": 2
 				}
 			}
 		},
@@ -963,18 +1084,35 @@
 			"tokens": {
 				"--nldesign-component-notecard-info-color": {
 					"global": "--color-info",
-					"label": "Note card info stripe",
+					"label": "Note card info background",
 					"type": "color",
 					"primary": false,
-					"paints": "Info stripe",
+					"paints": "Info card fill (the stripe on Nextcloud 32)",
+					"callout": 1
+				},
+				"--nldesign-component-notecard-info-text-color": {
+					"global": "--color-main-text",
+					"paint": { "property": "color", "selectors": ["body .notecard.notecard--info", "body .notecard.info"], "important": true, "contrastWith": "--nldesign-component-notecard-info-color", "fallback": "var(--color-main-text)" },
+					"label": "Note card info text",
+					"type": "color",
+					"primary": false,
+					"paints": "Info card text; white or black against its background when unset",
 					"callout": 1
 				},
 				"--nldesign-component-notecard-info-icon-color": {
-					"global": "--color-element-info",
+					"global": "--color-info-text",
 					"label": "Note card info glyph",
 					"type": "color",
 					"primary": false,
 					"paints": "Info glyph",
+					"callout": 1
+				},
+				"--nldesign-component-notecard-info-color-rgb": {
+					"global": "--color-info-rgb",
+					"label": "Note card info fill (Nextcloud 32)",
+					"type": "rgb",
+					"primary": false,
+					"paints": "Info fill on Nextcloud 32, mixed at 10% from this colour",
 					"callout": 1
 				},
 				"--nldesign-component-notecard-border-radius": {
@@ -983,18 +1121,27 @@
 					"type": "text",
 					"primary": false,
 					"paints": "Card corner",
-					"callout": 1
+					"callout": 0
 				},
 				"--nldesign-component-notecard-warning-color": {
 					"global": "--color-warning",
-					"label": "Note card warning stripe",
+					"label": "Note card warning background",
 					"type": "color",
 					"primary": false,
-					"paints": "Warning stripe",
+					"paints": "Warning card fill (the stripe on Nextcloud 32)",
+					"callout": 2
+				},
+				"--nldesign-component-notecard-warning-text-color": {
+					"global": "--color-main-text",
+					"paint": { "property": "color", "selectors": ["body .notecard.notecard--warning", "body .notecard.warning"], "important": true, "contrastWith": "--nldesign-component-notecard-warning-color", "fallback": "var(--color-main-text)" },
+					"label": "Note card warning text",
+					"type": "color",
+					"primary": false,
+					"paints": "Warning card text; white or black against its background when unset",
 					"callout": 2
 				},
 				"--nldesign-component-notecard-warning-icon-color": {
-					"global": "--color-element-warning",
+					"global": "--color-warning-text",
 					"label": "Note card warning glyph",
 					"type": "color",
 					"primary": false,
@@ -1003,74 +1150,76 @@
 				},
 				"--nldesign-component-notecard-warning-color-rgb": {
 					"global": "--color-warning-rgb",
-					"label": "Note card warning fill (RGB)",
-					"type": "text",
+					"label": "Note card warning fill (Nextcloud 32)",
+					"type": "rgb",
 					"primary": false,
-					"paints": "Warning fill, mixed from the same colour",
+					"paints": "Warning fill on Nextcloud 32, mixed at 10% from this colour",
 					"callout": 2
 				},
 				"--nldesign-component-notecard-error-color": {
 					"global": "--color-error",
-					"label": "Note card error stripe",
+					"label": "Note card error background",
 					"type": "color",
 					"primary": false,
-					"paints": "Error stripe",
+					"paints": "Error card fill (the stripe on Nextcloud 32)",
+					"callout": 3
+				},
+				"--nldesign-component-notecard-error-text-color": {
+					"global": "--color-main-text",
+					"paint": { "property": "color", "selectors": ["body .notecard.notecard--error", "body .notecard.error"], "important": true, "contrastWith": "--nldesign-component-notecard-error-color", "fallback": "var(--color-main-text)" },
+					"label": "Note card error text",
+					"type": "color",
+					"primary": false,
+					"paints": "Error card text; white or black against its background when unset",
 					"callout": 3
 				},
 				"--nldesign-component-notecard-error-icon-color": {
-					"global": "--color-element-error",
+					"global": "--color-error-text",
 					"label": "Note card error glyph",
 					"type": "color",
 					"primary": false,
 					"paints": "Error glyph",
 					"callout": 3
 				},
-				"--nldesign-component-notecard-error-border-color": {
-					"global": "--color-border-error",
-					"label": "Note card error border",
-					"type": "color",
-					"primary": false,
-					"paints": "Error card border",
-					"callout": 3
-				},
 				"--nldesign-component-notecard-error-color-rgb": {
 					"global": "--color-error-rgb",
-					"label": "Note card error fill (RGB)",
-					"type": "text",
+					"label": "Note card error fill (Nextcloud 32)",
+					"type": "rgb",
 					"primary": false,
-					"paints": "Error fill, mixed from the same colour",
+					"paints": "Error fill on Nextcloud 32, mixed at 10% from this colour",
 					"callout": 3
 				},
 				"--nldesign-component-notecard-success-color": {
 					"global": "--color-success",
-					"label": "Note card success stripe",
+					"label": "Note card success background",
 					"type": "color",
 					"primary": false,
-					"paints": "Success stripe",
+					"paints": "Success card fill (the stripe on Nextcloud 32)",
+					"callout": 4
+				},
+				"--nldesign-component-notecard-success-text-color": {
+					"global": "--color-main-text",
+					"paint": { "property": "color", "selectors": ["body .notecard.notecard--success", "body .notecard.success"], "important": true, "contrastWith": "--nldesign-component-notecard-success-color", "fallback": "var(--color-main-text)" },
+					"label": "Note card success text",
+					"type": "color",
+					"primary": false,
+					"paints": "Success card text; white or black against its background when unset",
 					"callout": 4
 				},
 				"--nldesign-component-notecard-success-icon-color": {
-					"global": "--color-element-success",
+					"global": "--color-success-text",
 					"label": "Note card success glyph",
 					"type": "color",
 					"primary": false,
 					"paints": "Success glyph",
 					"callout": 4
 				},
-				"--nldesign-component-notecard-success-border-color": {
-					"global": "--color-border-success",
-					"label": "Note card success border",
-					"type": "color",
-					"primary": false,
-					"paints": "Success card border",
-					"callout": 4
-				},
 				"--nldesign-component-notecard-success-color-rgb": {
 					"global": "--color-success-rgb",
-					"label": "Note card success fill (RGB)",
-					"type": "text",
+					"label": "Note card success fill (Nextcloud 32)",
+					"type": "rgb",
 					"primary": false,
-					"paints": "Success fill, mixed from the same colour",
+					"paints": "Success fill on Nextcloud 32, mixed at 10% from this colour",
 					"callout": 4
 				}
 			}
@@ -1119,14 +1268,24 @@
 		},
 		"toast": {
 			"tab": "status",
-			"selectors": [".toastify"],
+			"selectors": [".toastify", "[class^='_toast_']"],
 			"tokens": {
 				"--nldesign-component-toast-success-background-color": {
-					"global": "--color-success",
+					"global": "--color-main-background",
+					"paint": { "property": "background-color", "selectors": ["body [class*='_toast_success_']", "body .toastify.toast-success"], "fallback": "var(--color-main-background)" },
 					"label": "Toast success",
 					"type": "color",
 					"primary": false,
-					"paints": "Success toast",
+					"paints": "Success toast background",
+					"callout": 1
+				},
+				"--nldesign-component-toast-success-color": {
+					"global": "--color-main-text",
+					"paint": { "property": "color", "selectors": ["body [class*='_toast_success_']", "body .toastify.toast-success"], "contrastWith": "--nldesign-component-toast-success-background-color", "fallback": "var(--color-main-text)" },
+					"label": "Toast success text",
+					"type": "color",
+					"primary": false,
+					"paints": "Success toast text; white or black against its background when unset",
 					"callout": 1
 				},
 				"--nldesign-component-toast-border-radius": {
@@ -1135,30 +1294,60 @@
 					"type": "text",
 					"primary": false,
 					"paints": "Corner",
-					"callout": 1
+					"callout": 0
 				},
 				"--nldesign-component-toast-error-background-color": {
-					"global": "--color-error",
+					"global": "--color-main-background",
+					"paint": { "property": "background-color", "selectors": ["body [class*='_toast_error_']", "body .toastify.toast-error"], "fallback": "var(--color-main-background)" },
 					"label": "Toast error",
 					"type": "color",
 					"primary": false,
-					"paints": "Error toast",
+					"paints": "Error toast background",
+					"callout": 2
+				},
+				"--nldesign-component-toast-error-color": {
+					"global": "--color-main-text",
+					"paint": { "property": "color", "selectors": ["body [class*='_toast_error_']", "body .toastify.toast-error"], "contrastWith": "--nldesign-component-toast-error-background-color", "fallback": "var(--color-main-text)" },
+					"label": "Toast error text",
+					"type": "color",
+					"primary": false,
+					"paints": "Error toast text; white or black against its background when unset",
 					"callout": 2
 				},
 				"--nldesign-component-toast-warning-background-color": {
-					"global": "--color-warning",
+					"global": "--color-main-background",
+					"paint": { "property": "background-color", "selectors": ["body [class*='_toast_warning_']", "body .toastify.toast-warning"], "fallback": "var(--color-main-background)" },
 					"label": "Toast warning",
 					"type": "color",
 					"primary": false,
-					"paints": "Warning toast",
+					"paints": "Warning toast background",
+					"callout": 3
+				},
+				"--nldesign-component-toast-warning-color": {
+					"global": "--color-main-text",
+					"paint": { "property": "color", "selectors": ["body [class*='_toast_warning_']", "body .toastify.toast-warning"], "contrastWith": "--nldesign-component-toast-warning-background-color", "fallback": "var(--color-main-text)" },
+					"label": "Toast warning text",
+					"type": "color",
+					"primary": false,
+					"paints": "Warning toast text; white or black against its background when unset",
 					"callout": 3
 				},
 				"--nldesign-component-toast-info-background-color": {
-					"global": "--color-info",
+					"global": "--color-main-background",
+					"paint": { "property": "background-color", "selectors": ["body [class*='_toast_info_']", "body .toastify.toast-info"], "fallback": "var(--color-main-background)" },
 					"label": "Toast info",
 					"type": "color",
 					"primary": false,
-					"paints": "Info toast",
+					"paints": "Info toast background",
+					"callout": 4
+				},
+				"--nldesign-component-toast-info-color": {
+					"global": "--color-main-text",
+					"paint": { "property": "color", "selectors": ["body [class*='_toast_info_']", "body .toastify.toast-info"], "contrastWith": "--nldesign-component-toast-info-background-color", "fallback": "var(--color-main-text)" },
+					"label": "Toast info text",
+					"type": "color",
+					"primary": false,
+					"paints": "Info toast text; white or black against its background when unset",
 					"callout": 4
 				}
 			}

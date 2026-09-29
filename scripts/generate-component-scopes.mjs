@@ -95,6 +95,10 @@ const collisions = []
 for (const [id, component] of Object.entries(mapping.components)) {
 	const seen = new Map()
 	for (const [name, token] of Object.entries(component.tokens)) {
+		// A paint redeclares no global, so it cannot collide with anything.
+		if (token.paint !== undefined) {
+			continue
+		}
 		if (seen.has(token.global) === true) {
 			collisions.push(
 				id
@@ -164,9 +168,15 @@ const scopes = [
 	' * `body` sees both: what it declares itself, and whatever `:root` declares,',
 	' * by inheritance. There is no element between `body` and the components that',
 	' * declares a global, so nothing is missed.',
+	' *',
+	' * The token editor\'s preview is the one exception, and it is captured again.',
+	' * An unsaved edit is declared on `#nldesign-preview` and nowhere else — it is',
+	' * a preview until it is saved — so a capture taken only on `body` would hand',
+	' * the specimens inside the preview the saved value instead of the edit.',
 	' */',
 	'',
-	'body {',
+	'body,',
+	'#nldesign-preview {',
 ]
 
 const captured = []
@@ -249,10 +259,97 @@ if (aliasTargets.length > 0) {
 }
 scopes.push('}', '')
 
+/*
+ * Paints: a token Nextcloud paints with NO variable to redirect.
+ *
+ * Nextcloud's `#header` has no background of its own — the bar is the page
+ * background showing through — so no Nextcloud rule reads a variable a scope
+ * could point at the header token, and a redirect has nothing to reach. A
+ * `paint` entry names the property instead, and the rule paints it from the
+ * token, falling back to what Nextcloud paints there when the theme sets
+ * nothing. Only the real selectors: the playground draws its own specimen of
+ * the component and paints it the same way in css/playground.css.
+ *
+ * A paint may narrow its `selectors` (a toast type, not every toast), carry
+ * `important` where Nextcloud forces the property itself, and name a
+ * `contrastWith` token: the background the text sits on. Then an unset text
+ * token does not fall straight back to Nextcloud — while the theme sets that
+ * background, the text is white on a dark one and black on a light one.
+ *
+ * The contrast colour is kept in a variable declared on the element, and it
+ * reads the background token WITHOUT a fallback. With no background set, the
+ * variable is invalid and the chain goes on to Nextcloud's own value, so an
+ * instance whose theme sets neither paints exactly what Nextcloud paints.
+ *
+ * `lch(from …)` with `(49.44 - l) * infinity` clamps the lightness to 0 or
+ * 100 at the point where white and black have equal WCAG contrast against the
+ * background, so the pick is the more readable of the two.
+ */
+function paintsOf(component) {
+	return Object.entries(component.tokens).filter(
+		([, token]) => token.paint !== undefined,
+	)
+}
+
+/**
+ * The variable a contrast-paired paint keeps its automatic colour in.
+ *
+ * @param {string} name The paint's own token name.
+ *
+ * @return {string} The variable name.
+ */
+function contrastName(name) {
+	return '--thematiq-contrast-' + name.replace(/^--nldesign-component-/, '')
+}
+
+/**
+ * The rule lines one paint emits.
+ *
+ * @param {string} name The token being painted from.
+ * @param {Object} token Its mapping entry.
+ * @param {Array<string>} selectors The component's selectors.
+ *
+ * @return {Array<string>} The rule, one line per entry.
+ */
+function paintRule(name, token, selectors) {
+	const paint = token.paint
+	const important = paint.important === true ? ' !important' : ''
+	const lines = [(paint.selectors || selectors).join(',\n') + ' {']
+
+	// A `template` wraps the token in the rest of a shorthand, for a property
+	// one colour cannot fill on its own — `1px solid {token}` for an edge
+	// Nextcloud does not draw. There is no fallback: with the token unset the
+	// declaration is invalid at computed-value time, so the property takes
+	// its initial value, which is exactly "no edge".
+	if (paint.template !== undefined) {
+		lines.push('\t' + paint.property + ': ' + paint.template.replace('{token}', 'var(' + name + ')') + important + ';')
+		lines.push('}', '')
+		return lines
+	}
+
+	let fallback = paint.fallback
+
+	if (paint.contrastWith !== undefined) {
+		lines.push(
+			'\t' + contrastName(name) + ': lch(from var(' + paint.contrastWith
+				+ ') calc((49.44 - l) * infinity) 0 0);',
+		)
+		fallback = 'var(' + contrastName(name) + ', ' + paint.fallback + ')'
+	}
+
+	lines.push('\t' + paint.property + ': var(' + name + ', ' + fallback + ')' + important + ';')
+	lines.push('}', '')
+
+	return lines
+}
+
 for (const [id, component] of Object.entries(mapping.components)) {
 	scopes.push('/* ' + id + ' */')
 	scopes.push(component.selectors.concat(specimenSelector(id)).join(',\n') + ' {')
 	for (const [name, token] of Object.entries(component.tokens)) {
+		if (token.paint !== undefined) {
+			continue
+		}
 		scopes.push('\t' + token.global + ': var(')
 		scopes.push('\t\t' + name + ',')
 		scopes.push('\t\tvar(' + captureName(token.global) + ')')
@@ -265,6 +362,10 @@ for (const [id, component] of Object.entries(mapping.components)) {
 		scopes.push('\t);')
 	}
 	scopes.push('}', '')
+
+	for (const [name, token] of paintsOf(component)) {
+		scopes.push(...paintRule(name, token, component.selectors))
+	}
 }
 
 const scopesOutput = scopes.join('\n')
