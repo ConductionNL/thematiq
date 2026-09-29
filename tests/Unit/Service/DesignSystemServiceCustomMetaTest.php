@@ -107,4 +107,14 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 
 		$this->assertSame([], $service->getTokenSetMeta(tokenSetId: 'custom-openwoo'));
 	}//end testABrokenManifestDegradesToEmpty()
+
+	/**
+	 * An entry that is not an object is treated as no entry, not handed on
+	 * for a caller to index into.
+	 */
+	public function testAMalformedEntryDegradesToEmpty(): void {
+		$service = $this->build('{"custom-openwoo":"none"}');
+
+		$this->assertSame([], $service->getTokenSetMeta(tokenSetId: 'custom-openwoo'));
+	}//end testAMalformedEntryDegradesToEmpty()
 }//end class
