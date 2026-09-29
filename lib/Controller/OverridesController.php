@@ -70,6 +70,14 @@ use OCP\IRequest;
 class OverridesController extends Controller {
 
 	/**
+	 * The answer to a failed write. The exception text names the absolute file
+	 * path, which is not for the browser.
+	 *
+	 * @var string
+	 */
+	private const WRITE_FAILED = 'The token overrides could not be saved. Check that the web server can write to the app\'s css/ directory.';
+
+	/**
 	 * The custom overrides service.
 	 *
 	 * @var CustomOverridesService
@@ -189,7 +197,8 @@ class OverridesController extends Controller {
 	 * Write new custom token overrides to custom-overrides.css.
 	 *
 	 * Accepts a JSON body with an 'overrides' key containing token name => value pairs.
-	 * Only tokens in the TokenRegistry are accepted; others are silently ignored.
+	 * A save with any token outside the TokenRegistry, or with a value the writer
+	 * would drop, is refused with 400 naming those tokens, and nothing is written.
 	 *
 	 * `reset: true` instead resets the theme to stock Nextcloud — see
 	 * {@see self::resetToStock()}. It shares this endpoint rather than taking a
@@ -215,13 +224,26 @@ class OverridesController extends Controller {
 			return new JSONResponse(['error' => 'overrides must be an object'], 400);
 		}
 
+		// Refuse the whole save when any token would be dropped, so the answer,
+		// the written count and the audit entry all describe what reached the file.
+		$rejected = $this->overridesService->findRejected(tokens: $overrides);
+		if (empty($rejected) === false) {
+			return new JSONResponse(
+				[
+					'error' => 'Some tokens were not saved: ' . implode(', ', array_keys($rejected)),
+					'rejected' => $rejected,
+				],
+				400
+			);
+		}
+
 		$tokenSet = $this->requestedTokenSet();
 		$before = $this->overridesService->read(tokenSet: $tokenSet);
 
 		try {
 			$this->overridesService->write(tokens: $overrides, tokenSet: $tokenSet);
-		} catch (\RuntimeException $e) {
-			return new JSONResponse(['error' => $e->getMessage()], 500);
+		} catch (\RuntimeException) {
+			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}
 
 		$this->auditService->log(
@@ -276,8 +298,8 @@ class OverridesController extends Controller {
 
 			try {
 				$this->overridesService->write(tokens: [], tokenSet: $tokenSet);
-			} catch (\RuntimeException $e) {
-				return new JSONResponse(['error' => $e->getMessage()], 500);
+			} catch (\RuntimeException) {
+				return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 			}
 
 			if ($before !== []) {
@@ -346,7 +368,8 @@ class OverridesController extends Controller {
 			return new JSONResponse(['error' => 'Could not read uploaded file'], 400);
 		}
 
-		$parsed = $this->cssParser->parseDeclarations($content);
+		// The light values only; an exported file also carries the dark blocks.
+		$parsed = $this->cssParser->parseOverridesFile(css: $content);
 		if ($parsed === null) {
 			return new JSONResponse(
 				['error' => 'No CSS custom property declarations found in the uploaded file'],
@@ -441,8 +464,8 @@ class OverridesController extends Controller {
 
 		try {
 			$this->overridesService->write(tokens: $toImport, tokenSet: $this->requestedTokenSet());
-		} catch (\RuntimeException $e) {
-			return new JSONResponse(['error' => $e->getMessage()], 500);
+		} catch (\RuntimeException) {
+			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}
 
 		$this->auditService->log(

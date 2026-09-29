@@ -1,0 +1,522 @@
+[
+	{
+		"row": "gov-environment-marker",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "A tender demand row (TenderNed 407031, Gulpen-Wittem) asks for a clear difference between test and production in the house style; nothing in thematiq marks an environment today.",
+		"change": "governance-environment-marker",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "app-rollback-history",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Core area (apply). No existing change restores an earlier theme: theming-audit is append-only evidence. The 2026-03-03 theme editor listed \"no history\" as a scope limit of that change; the later theming-audit-log change added the history this row restores from, so that limit no longer describes the product.",
+		"change": "apply-restore-earlier-version",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "app-scheduled-switch",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Core area (apply). No change or code schedules a theme change for a date.",
+		"change": "apply-scheduled-theme-switch",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "cat-marketplace",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Core area (catalogue). The only additive path is uploading your own file; no gallery to browse and install from exists. The upstream-freshness non-goal (no auto-download by the background job) does not cover an admin choosing to install a set.",
+		"change": "catalogue-theme-gallery",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-colour-only-ui",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Two competitors rated yes (Nextcloud Theming, Microsoft 365). The core Theming form cannot stand in for it on a thematiq instance, because the active token set overrides the core primary colour (css/systems/nldesign/overrides.css:24).",
+		"change": "authoring-simple-brand-form",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "gov-config-as-code",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Two competitors rated yes (openDesk, Tokens Studio). The bundle file of config-portability exists but nothing applies it declaratively from deployment configuration.",
+		"change": "governance-theme-as-code",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-git-sync",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Two competitors rated yes (openDesk, Tokens Studio). Clustered with gov-config-as-code: the Git-held token source reaches the instance through the same declarative path.",
+		"change": "governance-theme-as-code",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "app-branding-package",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a roadmap demand row (Liferay LPD-91941) for one self-applying package. The missing half is the font binaries (ConfigBundleService exports metadata only) and applying the package from deployment configuration; clustered with gov-config-as-code.",
+		"change": "governance-theme-as-code",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "int-cli-set-theme",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with two competitors rated yes (Microsoft 365, openDesk). The missing half is a single-purpose command; today the theme is set only as one field of a full bundle import.",
+		"change": "integration-occ-set-theme",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "cat-living-token-docs",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a featureRequest demand row (tokens-studio figma-plugin#3355) for generated token documentation, which is the missing half: no per-set token reference is generated.",
+		"change": "catalogue-token-reference-pages",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-generated-documents",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Tender demand (TenderNed 404703, 415897, 298070). Thematiq owns the house style; the change specifies the house style profile that the fleet document generators (filinq huisstijl, openregister PDF export) read, and names their halves.",
+		"change": "surfaces-document-house-style",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-assistant-logo",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Roadmap demand (Microsoft 365 roadmap 555852) plus one competitor yes (Microsoft 365). The fleet assistant is CnAiCompanion in nextcloud-vue; thematiq owns the brand setting and publishes the approved mark, nextcloud-vue renders it (sibling half named in the proposal).",
+		"change": "surfaces-assistant-approved-mark",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-multi-brand-themes",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with three competitors rated yes (Microsoft 365, Liferay, Tokens Studio). The missing half is one token source that holds several brands; today each brand is a separately uploaded set.",
+		"change": "authoring-multi-brand-token-source",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-dtcg-colour-objects",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a featureRequest demand row (tokens-studio figma-plugin#3236) for reading and writing stable DTCG colour objects. The missing half is writing DTCG and colour spaces other than sRGB.",
+		"change": "authoring-dtcg-export",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-alpha-hex",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a changelog demand row (Liferay style books) and Liferay rated yes. The missing half is the editor colour fields; the theming sync fields stay 6 digit because core theming refuses 8 digits, so translucent colours are blended before sync.",
+		"change": "authoring-token-value-types",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-light-dark-values",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a changelog demand row (Liferay LPD-96942). The missing half is a dark value per colour token in the editor; dark values are only derived today.",
+		"change": "authoring-token-value-types",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-motion-tokens",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a changelog demand row (Tokens Studio 2.12.1) and Tokens Studio rated yes. The missing half is easing tokens and typed duration tokens in the token editor; the editor lists two duration tokens as untyped text (lib/Service/TokenRegistry.php:232-233), so the row evidence overstates the gap.",
+		"change": "authoring-token-value-types",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-add-token",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a roadmap demand row (Liferay LPD-80283) for adding a token from the editor, which is exactly the missing half.",
+		"change": "authoring-token-lifecycle",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "gov-token-deprecation",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a changelog demand row (Tokens Studio 2.12.1) and Tokens Studio rated yes. The missing half is authoring a deprecation with a replacement and a removal date; thematiq only reads one on import.",
+		"change": "authoring-token-lifecycle",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-component-preview",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a featureRequest demand row (Liferay LPD-88654). The missing half is a builder's own components; the open component-playground change renders a fixed inventory only.",
+		"change": "authoring-own-markup-preview",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "gov-lock-per-space",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Partial, built, with a roadmap demand row (Microsoft 365 roadmap 526794) and Microsoft 365 rated yes. Every space is locked today; the missing half is letting chosen groups keep their own choice while others stay locked.",
+		"change": "scoping-delegated-group-house-style",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-per-app-brand",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Roadmap demand (Microsoft 365 roadmap 568364) plus one competitor yes (Microsoft 365). Re-read app-token-set-selection: it lets a leaf app's own picker choose a set for its users, not an admin give an app its own colour and logos, so the row stays none.",
+		"change": "surfaces-per-app-brand",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "acc-accessibility-statement",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Recorded decision: openspec/specs/compliance-evidence/spec.md:171-176 says the compliance report is supporting evidence for a toegankelijkheidsverklaring, an expert WCAG-EM evaluation remains required, and no output may claim WCAG compliance of the instance. Generating the statement would make that claim.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "acc-block-inaccessible",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Recorded decision: openspec/specs/custom-token-sets/spec.md:227-253 requires contrast failures to be non-blocking warnings, and app-token-set-selection \"Selection Contrast Is Non-Blocking\" extends that to selection. Blocking publication contradicts both.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sco-per-domain",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Recorded non-goal: openspec/changes/archive/2026-07-23-per-group-theming/design.md:29 names per-domain mapping as a non-goal (the domain theming app's territory).",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sco-per-site",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Partial, built, two competitors yes, so a gap; the missing half (a department's public pages, share links and login carrying its own brand) is excluded by openspec/specs/per-group-theming/spec.md:56, which requires anonymous, public-share, login and error pages to resolve to the instance default. The group half stays built.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sco-per-app-login",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Recorded decision: openspec/specs/per-group-theming/spec.md:56 requires login pages to resolve to the instance default set, so a login page per connected application is excluded.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sco-suite-wide-appearance",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Partial, built, with a roadmap demand row (openDesk baseline requirements); the Nextcloud half is built. The missing half is a separate office editor and chat server, which thematiq cannot reach: its CSS injection only reaches same-origin Nextcloud pages (Collabora runs in a separate-origin frame), so that half belongs to those products.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "ast-branded-reactions",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner corrected to nextcloud/spreed: meeting reactions are the emoji set Nextcloud Talk renders; custom reaction images need Talk to support them, and thematiq only changes colours, fonts and images through CSS. Platform capability outside the fleet.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "int-brand-kit-in-editor",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner corrected to external: the presentation editor is Collabora or OnlyOffice in a separate-origin frame that thematiq cannot reach (see sur-office-suite evidence). A brand kit inside it is the editor's feature. The one reachable piece, publishing the organisation fonts as a remote font configuration, is noted for a later pass.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-block-page",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner corrected to external: the row's own evidence says a block page served by a network gateway is not a Nextcloud page, so it is outside the product.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "acc-toast-timeout",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner corrected to nextcloud/server: the per-user toast timeout is the platform's own theming setting (nextcloud/server v35 UserSectionToastTimeout), and per-user settings are a recorded non-goal of thematiq (openspec/changes/archive/2026-03-21-admin-settings/design.md:8).",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "typ-dyslexia-font",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner filled as nextcloud/server: the per-user dyslexia font is the platform's own theme (nextcloud/server DyslexiaFont), and per-user settings are a recorded non-goal of thematiq (openspec/changes/archive/2026-03-21-admin-settings/design.md:8). Not checked live: whether the house font override in css/systems/nldesign/overrides.css:153 lets the user's choice through.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "gov-enforce-appearance",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner corrected to nextcloud/server: the appearance themes and enforce_theme are the platform's own theming (config.php enforce_theme), and the demand row is a request against nextcloud/server (issue 38966).",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-help-links",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner corrected to nextcloud/server: the help and documentation links are built by core ThemingDefaults (docBaseUrl), and the demand row is a request against nextcloud/server (issue 58909).",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-support-link",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner corrected to nextcloud/server: the legal notice and privacy links are core ThemingDefaults footer links, a third link needs core, and the demand row is a request against nextcloud/server (issue 39047). Thematiq's own email footer could carry one later.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-localised-name",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner corrected to nextcloud/server: the instance name and slogan are single core ThemingDefaults values, and the demand row is a request against nextcloud/server (issue 37550). Thematiq could only change them by rewriting the rendered core page from a script, which breaks with every core release.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-login-wording",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owner corrected to nextcloud/server: the login form and its labels are core, and the demand row is a request against nextcloud/server (issue 38831). Thematiq could only change the labels by rewriting the core login view from a script, which breaks with every core release.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-mobile-desktop-clients",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Owned by nextcloud/server in the matrix: the official clients read core theming capabilities; platform-provided, outside the fleet.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "dem-rm-shared-design-library",
+		"matrix": "portaliq",
+		"decision": "decided-no",
+		"reason": "The shared styles half is built (several portals point at one thematiq set through portaliq PortalThemeResolver). The missing half is a shared page-block library, and page blocks are portaliq widget layouts, so thematiq cannot own it; handed back for re-owning to ConductionNL/portaliq.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "11.14",
+		"matrix": "dossiq",
+		"decision": "existing",
+		"reason": "Thematiq applies the house style to every Nextcloud page, dossiq included (token-sets, css-architecture, per-group-theming; CssInjectionService through ThemeInjectionListener), so the dossiq row stating none is a matrix error to correct in the dossiq matrix. The per-host style bundle xxllnc Zaken has is sco-per-domain, decided no. Dossiq also carries its own TenantBrandingSanitiser (psalm UnusedClass), a parallel branding path to reconcile.",
+		"change": "archive/2026-03-21-token-sets",
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "acc-contrast-in-editor",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Single competitor yes (Microsoft 365), no demand row, outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "acc-forced-colors",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "partial, built, no demand; one competitor yes (Microsoft 365).",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "acc-high-contrast-tokens",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Roadmap demand (Liferay LPD-90810) with no competitor rated yes, outside the core area. The archived high-contrast-token-set change made one separate set, not per house style values.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "ast-brand-images",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Single competitor yes (Microsoft 365), no demand row, outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "ast-icon-contrast",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "partial, built, no demand; one competitor yes (Nextcloud Theming).",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "ast-mobile-logo",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Changelog demand (openDesk 1.17.0) with one competitor yes; changelog alone is not a build trigger and the row is outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-dtcg-bulk-convert",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Changelog demand (Tokens Studio 2.12.0) with one competitor yes, outside the core area. DTCG writing itself is specified under authoring-dtcg-export; the revertible bulk conversion on a branch is a Git tool concern.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-figma-sync",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Single competitor yes (Tokens Studio), no demand row, outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-multi-platform-export",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Single competitor yes (Tokens Studio), no demand row, outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-semantic-aliases",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "partial, built, no demand; one competitor yes (Tokens Studio).",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "aut-token-math",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Single competitor yes (Tokens Studio), no demand row, outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "cat-design-system-docs",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "partial, built, no demand; no competitor yes. Core area, but the addendum rule for partial built rows applies.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "cat-provincial-sets",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "partial, built, no demand; no competitor yes. Core area, but the addendum rule for partial built rows applies.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "cat-searchable-picker",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "partial, built, no demand; no competitor yes. Core area, but the addendum rule for partial built rows applies.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "gov-approval-workflow",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Single competitor yes (Tokens Studio), no demand row, outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "int-rest-api-theme",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Single competitor yes (Microsoft 365), no demand row, outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "int-sovereign-bundle",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "partial, built, no demand; one competitor yes (openDesk). Assembling the bundle is MijnBureau or EDIC packaging.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sco-tenant-isolation",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Single competitor yes (Liferay), no demand row, outside the core area; Nextcloud has one user directory, so tenants would need platform support first.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-coverage-report",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "FeatureRequest demand (openDesk work item 27) with no competitor rated yes, outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "sur-office-suite",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "No competitor yes, no demand row, outside the core area; the office editor runs in a separate-origin frame thematiq cannot reach.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "syn-nightly-pr",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "partial, built, no demand. Upstream-freshness records no auto-download to the instance as a non-goal (openspec/changes/archive/2026-07-23-upstream-token-freshness/design.md section 6).",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "syn-push-to-platform",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Changelog demand (Tokens Studio 2.11.9) with one competitor yes; changelog alone is not a build trigger and the row is outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "typ-org-font-library",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "partial, built, no demand; one competitor yes (Microsoft 365).",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	},
+	{
+		"row": "typ-theme-base-size",
+		"matrix": "thematiq",
+		"decision": "defer",
+		"reason": "Changelog demand (Tokens Studio 2.11.5) with one competitor yes; changelog alone is not a build trigger and the row is outside the core area.",
+		"change": null,
+		"decidedOn": "2026-09-27"
+	}
+]

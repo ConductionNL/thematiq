@@ -65,8 +65,11 @@ class DarkPaletteService {
 	 * {@see self::resolveAlias()}) and classifies text-class tokens by the
 	 * `-color` / `-background-color` convention the utrecht and municipal
 	 * families use, not only by the word "text".
+	 *
+	 * Version 3 keeps a translucent light value's alpha on its dark value
+	 * (`#rrggbbaa`) and darkens 8-digit hex tokens, which it used to skip.
 	 */
-	public const GENERATOR_VERSION = 2;
+	public const GENERATOR_VERSION = 3;
 
 	/**
 	 * The guaranteed-passing near-white snap value (matches NC's own dark
@@ -311,18 +314,43 @@ class DarkPaletteService {
 			// propagates through this alias in dark mode; the alternative is a
 			// dark mode that only ever half-applies.
 			$literal = $this->resolveAlias(value: $value, declarations: $lightDeclarations);
-			$rgb = $this->contrast->parseColor(value: $literal);
-			if ($rgb === null) {
+			$darkValue = $this->deriveDarkValue(token: $token, lightValue: $literal, context: $lightDeclarations);
+			if ($darkValue === null) {
 				// Unparseable (gradient, keyword, size, font stack, url(), an
 				// alias chain with no literal at the end) — skip.
 				continue;
 			}
 
-			$dark[$token] = $this->deriveColorToken(token: $token, rgb: $rgb, lightDeclarations: $lightDeclarations);
+			$dark[$token] = $darkValue;
 		}
 
 		return $this->regenerateRgbCompanions(lightDeclarations: $lightDeclarations, darkDeclarations: $dark);
 	}//end deriveDarkDeclarations()
+
+	/**
+	 * Derive the dark value of one colour literal, as the generated dark
+	 * stylesheets do, so the token editor and the generator never disagree.
+	 *
+	 * The dark channels come from the opaque colour; a translucent light value
+	 * keeps its alpha, so an overlay stays an overlay in dark mode.
+	 *
+	 * @param string $token The token name (decides text-class or surface-class).
+	 * @param string $lightValue The light colour literal.
+	 * @param array<string, string> $context The light declarations around it, for the brand-primary exception.
+	 *
+	 * @return string|null The dark hex value, or null when the value is not a colour literal.
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.3
+	 */
+	public function deriveDarkValue(string $token, string $lightValue, array $context = []): ?string {
+		$rgba = $this->contrast->parseColorWithAlpha(value: $lightValue);
+		if ($rgba === null) {
+			return null;
+		}
+
+		return $this->deriveColorToken(token: $token, rgb: [$rgba[0], $rgba[1], $rgba[2]], lightDeclarations: $context)
+			. $this->alphaSuffix(alpha: $rgba[3]);
+	}//end deriveDarkValue()
 
 	/**
 	 * Follow a `var()` alias chain to the literal it ends at.
@@ -441,13 +469,12 @@ class DarkPaletteService {
 			return true;
 		}
 
-		$bgRgb = $this->contrast->parseColor(value: $background);
-		$fgRgb = $this->contrast->parseColor(value: $foreground);
-		if ($bgRgb === null || $fgRgb === null) {
+		$ratio = $this->contrast->measure(foreground: $foreground, background: $background);
+		if ($ratio === null) {
 			return true;
 		}
 
-		return ($this->contrast->ratio(first: $fgRgb, second: $bgRgb) >= 4.5);
+		return ($ratio >= 4.5);
 	}//end brandPrimaryPasses()
 
 	/**
@@ -1216,6 +1243,23 @@ class DarkPaletteService {
 			$this->clampInt(value: $rgb[2])
 		);
 	}//end rgbToHex()
+
+	/**
+	 * The fourth hex pair for an alpha below 1, or '' for an opaque colour.
+	 *
+	 * @param float $alpha The alpha, 0-1.
+	 *
+	 * @return string Two lowercase hex digits, or an empty string.
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.2
+	 */
+	private function alphaSuffix(float $alpha): string {
+		if ($alpha >= 1.0) {
+			return '';
+		}
+
+		return sprintf('%02x', $this->clampInt(value: (int)round($alpha * 255)));
+	}//end alphaSuffix()
 
 	/**
 	 * Clamp a float into [min, max].

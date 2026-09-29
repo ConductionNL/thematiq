@@ -39,11 +39,15 @@ use RuntimeException;
  * It validates all token names against the TokenRegistry before writing.
  *
  * The CSS file format is strictly controlled:
- * - Single :root {} block
+ * - One :root {} block with the light values, read back by read()
+ * - For every brand-layer colour override, the two dark scopes of the generated dark
+ *   stylesheets with its derived dark value, so a user who chose the dark
+ *   theme (whose colours Nextcloud declares on body) and a user whose system
+ *   is dark see the same colour
  * - One declaration per line
  * - Each declaration carries !important so user overrides win the cascade over
  *   the nldesign design-system stylesheets and Nextcloud core theming
- * - No selectors other than :root
+ * - No selectors other than :root and the two dark scopes
  *
  * A SET ON NO DESIGN SYSTEM NEVER READS THE SHARED FILE.
  *
@@ -70,6 +74,22 @@ use RuntimeException;
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
  */
 class CustomOverridesService {
+
+	/**
+	 * The scope of a user whose system is dark and who chose no theme (as in
+	 * the generated dark stylesheets).
+	 *
+	 * @var string
+	 */
+	private const SYSTEM_DARK_SELECTOR = 'body:not([data-theme-light]):not([data-theme-dark])'
+		. ':not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])';
+
+	/**
+	 * The scope of a user who chose the dark theme (as in the generated dark stylesheets).
+	 *
+	 * @var string
+	 */
+	private const CHOSEN_DARK_SELECTOR = 'body[data-theme-dark],' . PHP_EOL . 'body[data-themes*=dark]';
 
 	/**
 	 * The CSS file header comment.
@@ -100,35 +120,47 @@ class CustomOverridesService {
 	private CssParserService $cssParser;
 
 	/**
+	 * The dark palette, which derives a colour override's dark value exactly
+	 * as the generated dark stylesheets do.
+	 *
+	 * @var DarkPaletteService
+	 */
+	private DarkPaletteService $darkPalette;
+
+	/**
 	 * The app config, for the active set when a caller names none.
 	 *
-	 * @var IConfig
+	 * @var IConfig|null
 	 */
-	private IConfig $config;
+	private ?IConfig $config;
 
 	/**
 	 * Which design system a set wears, for choosing its file.
 	 *
-	 * @var DesignSystemService
+	 * @var DesignSystemService|null
 	 */
-	private DesignSystemService $designSystems;
+	private ?DesignSystemService $designSystems;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager.
 	 * @param CssParserService $cssParser CSS parser for :root block extraction.
-	 * @param IConfig $config The app config.
-	 * @param DesignSystemService $designSystems The token set metadata.
+	 * @param DarkPaletteService $darkPalette Derives each colour override's dark value.
+	 * @param IConfig|null $config The app config. With the next one, what picks a set's own file;
+	 *                             without them every set reads the shared file.
+	 * @param DesignSystemService|null $designSystems The token set metadata.
 	 */
 	public function __construct(
 		IAppManager $appManager,
 		CssParserService $cssParser,
-		IConfig $config,
-		DesignSystemService $designSystems,
+		DarkPaletteService $darkPalette,
+		?IConfig $config = null,
+		?DesignSystemService $designSystems = null,
 	) {
 		$this->appManager = $appManager;
 		$this->cssParser = $cssParser;
+		$this->darkPalette = $darkPalette;
 		$this->config = $config;
 		$this->designSystems = $designSystems;
 	}//end __construct()
@@ -163,6 +195,12 @@ class CustomOverridesService {
 	 * @SuppressWarnings(PHPMD.StaticAccess) - fileFor() is static so CssInjectionService can ask without an instance
 	 */
 	private function getFilePath(?string $tokenSet): string {
+		// Built without the set lookup (a caller that constructs the service
+		// by hand): the shared file, which is every set's on a design system.
+		if ($this->config === null || $this->designSystems === null) {
+			return $this->appManager->getAppPath('thematiq') . '/css/' . self::FILE . '.css';
+		}
+
 		if ($tokenSet === null) {
 			$tokenSet = $this->config->getAppValue(
 				Application::APP_ID,
@@ -246,6 +284,50 @@ class CustomOverridesService {
 	}//end write()
 
 	/**
+	 * List the tokens in a map that write() would not persist, with the reason.
+	 *
+	 * A token is refused when its name is not in the TokenRegistry, when its value
+	 * is not a string, or when its value carries a character the writer strips to
+	 * keep the file a single :root block. Callers that answer an admin use this to
+	 * refuse the whole save instead of reporting tokens that never reached the file.
+	 *
+	 * @param array<array-key, mixed> $tokens Input token map.
+	 *
+	 * @return array<string, string> Map of refused token name => reason; empty when all are accepted.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.1
+	 */
+	public function findRejected(array $tokens): array {
+		$rejected = [];
+		foreach ($tokens as $name => $value) {
+			$name = (string)$name;
+			if (TokenRegistry::isEditable(tokenName: $name) === false) {
+				$rejected[$name] = 'not an editable token';
+				continue;
+			}
+
+			if (is_string($value) === false || $this->isUnsafeValue(value: $value) === true) {
+				$rejected[$name] = 'not an allowed value';
+			}
+		}
+
+		return $rejected;
+	}//end findRejected()
+
+	/**
+	 * Tell whether a value carries a character that would break out of the :root block.
+	 *
+	 * @param string $value The token value.
+	 *
+	 * @return bool True when the writer would drop the value.
+	 */
+	private function isUnsafeValue(string $value): bool {
+		return preg_match('/[{};]|\/\*|\*\//', $value) === 1;
+	}//end isUnsafeValue()
+
+	/**
 	 * Filter a token map to only those present in the registry.
 	 *
 	 * @param array<string, string> $tokens Input token map.
@@ -320,9 +402,61 @@ class CustomOverridesService {
 		}
 
 		$lines = $this->buildDeclarationLines(tokens: $tokens);
+		$css = $header . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
 
-		return $header . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
+		$darkLines = $this->buildDeclarationLines(tokens: $this->darkValues(tokens: $tokens));
+		if (empty($darkLines) === true) {
+			return $css;
+		}
+
+		// The same two scopes the generated dark stylesheets use. A user who
+		// chose the dark theme gets Nextcloud's dark colours declared on body,
+		// which a :root value never reaches; a body-level declaration wins for
+		// both kinds of dark user.
+		$css .= '@media (prefers-color-scheme: dark) {' . PHP_EOL
+			. '	' . self::SYSTEM_DARK_SELECTOR . ' {' . PHP_EOL
+			. '	' . implode(PHP_EOL . '	', $darkLines) . PHP_EOL
+			. '	}' . PHP_EOL
+			. '}' . PHP_EOL
+			. self::CHOSEN_DARK_SELECTOR . ' {' . PHP_EOL
+			. implode(PHP_EOL, $darkLines) . PHP_EOL
+			. '}' . PHP_EOL;
+
+		return $css;
 	}//end buildCss()
+
+	/**
+	 * The dark value of every brand-layer colour override: derived as the
+	 * generated dark stylesheets derive it, or the light value when it is not
+	 * a colour literal, so both kinds of dark user still see the same thing.
+	 *
+	 * Only the brand layer (Nextcloud's own variables) is split today, because
+	 * only those does Nextcloud re-declare on body for a chosen theme. Component
+	 * tokens are left out: both kinds of dark user already get the same body
+	 * value from the generated dark stylesheet, and a body-level copy here would
+	 * outrank the primary-lock layer, which locks them at :root.
+	 *
+	 * @param array<string, string> $tokens Token name => light value.
+	 *
+	 * @return array<string, string> Colour token name => dark value.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.2
+	 */
+	private function darkValues(array $tokens): array {
+		$registry = TokenRegistry::getTokens();
+		$dark = [];
+		foreach ($tokens as $name => $value) {
+			if (($registry[$name]['type'] ?? '') !== 'color' || ($registry[$name]['group'] ?? '') !== 'brand') {
+				continue;
+			}
+
+			$dark[$name] = ($this->darkPalette->deriveDarkValue(token: $name, lightValue: $value, context: $tokens) ?? $value);
+		}
+
+		return $dark;
+	}//end darkValues()
 
 	/**
 	 * Build individual CSS declaration lines from a token map.
@@ -337,7 +471,7 @@ class CustomOverridesService {
 		$lines = [];
 		foreach ($tokens as $name => $value) {
 			// Reject any value containing CSS injection characters.
-			if (preg_match('/[{};]|\/\*|\*\//', $value) === 1) {
+			if ($this->isUnsafeValue(value: $value) === true) {
 				continue;
 			}
 
