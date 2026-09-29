@@ -297,7 +297,7 @@ class CustomTokenSetController extends Controller {
 			&& $this->brandingCapture !== null
 			&& $response->getStatus() === 200
 		) {
-			// persist() always answers with an array; getData() is typed
+			// The persist() response is always an array; getData() is typed
 			// array|object, so say which before indexing it.
 			$data = $response->getData();
 			if (is_array($data) === true) {

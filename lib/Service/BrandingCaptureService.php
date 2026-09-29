@@ -45,6 +45,8 @@ use OCP\IConfig;
  * custom alike — because a shipped set's metadata is a read-only file in the
  * app, and one store for both keeps "what this theme remembers" in one place.
  * {@see TokenSetService} lays it over the set's own theming.
+ *
+ * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
  */
 class BrandingCaptureService {
 
@@ -123,11 +125,11 @@ class BrandingCaptureService {
 	 * ARE those files right now — without it the next apply of this very theme
 	 * would offer to "change" every image to itself.
 	 *
-	 * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
-	 *
 	 * @param string $setId The token set the branding belongs to.
 	 *
 	 * @return array<string, mixed> The captured theming block.
+	 *
+	 * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
 	 */
 	public function capture(string $setId): array {
 		$this->deleteFiles(setId: $setId);
@@ -173,9 +175,9 @@ class BrandingCaptureService {
 	/**
 	 * Every set's captured branding, by set id.
 	 *
-	 * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
-	 *
 	 * @return array<string, array<string, mixed>> The captured blocks.
+	 *
+	 * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
 	 */
 	public function all(): array {
 		$decoded = json_decode((string)$this->config->getAppValue(Application::APP_ID, self::CAPTURED_KEY, '{}'), true);
@@ -189,11 +191,11 @@ class BrandingCaptureService {
 	/**
 	 * Forget a set's captured branding and remove its copied images.
 	 *
-	 * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
-	 *
 	 * @param string $setId The token set.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
 	 */
 	public function forget(string $setId): void {
 		$this->deleteFiles(setId: $setId);
