@@ -2,8 +2,14 @@
  * NL Design System Theme - Admin Settings Styles
  */
 
+/* Wider than the 800px this carried before. Nextcloud's own theming section
+   spans far more of the settings pane, and the component stage below is a
+   drawing of a HEADER — a bar that is the full width of the screen in life and
+   was being judged inside a column narrower than a phone in landscape. Reading
+   width is protected where it matters by `.nldesign-pg-reading`, so the extra
+   room reaches the specimens without turning the prose into a ledger line. */
 #nldesign-settings {
-	max-width: 800px;
+	max-width: 1100px;
 }
 
 #nldesign-settings h2 {
@@ -137,6 +143,16 @@
 	--prev-error: #c0392b;
 	--prev-info: #1f6fd0;
 	--prev-radius: 8px;
+	--prev-radius-container: 12px;
+	--prev-radius-pill: 999px;
+	/* The page background BEHIND Nextcloud's content container, and the header
+	   bar's own colours. Separate roles: a set may paint the header unlike the
+	   primary (Cunningham: a white header over a blue primary), and the plain
+	   background is what shows in the gap around the container. */
+	--prev-plain: #f2f4f7;
+	--prev-header-bg: var(--prev-primary);
+	--prev-header-text: var(--prev-primary-text);
+	--prev-header-border: 0;
 	--prev-login-bg: var(--prev-primary);
 }
 
@@ -207,12 +223,80 @@
 	width: 100%;
 	max-height: 80vh;
 	overflow-y: auto;
+	/* Never scroll the DIALOG sideways. With only `overflow-y: auto` the
+	   x-axis computes to `auto` as well, so a wide token table gave the whole
+	   dialog a horizontal scrollbar — and then the sticky action bar (whose
+	   width is the content box, not the scroll width) scrolled away from the
+	   rows, letting table cells appear beside the buttons. Wide content scrolls
+	   inside its own container instead (see .nldesign-apply-dialog-table). */
+	overflow-x: hidden;
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* The token tables inside the theming-sync and apply dialogs. A token name is
+   long and unbreakable (`--nldesign-component-form-fieldset-legend-margin-block-end`),
+   and there are four columns, so the table is routinely wider than the 700px
+   dialog. It gets its own horizontal scroll container rather than making the
+   dialog scroll sideways — the dialog's sticky action bar cannot follow a
+   horizontal scroll, which is what let cells appear beside the buttons. */
+.nldesign-dialog-table,
+.nldesign-apply-dialog-table {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
+	/* Keep the cells from collapsing to unreadable widths once the table is a
+	   block: the columns size to their content and the container scrolls. */
+	white-space: nowrap;
+}
+
+/* The VALUE columns wrap; the checkbox and token-name columns do not.
+   `white-space: nowrap` sizes every column to its content, and one long value
+   — the font stack, `-apple-system, BlinkMacSystemFont, 'Segoe UI', …` — is
+   wider than the 700px dialog on its own. That pushed the New column out of
+   sight behind a horizontal scrollbar, so the dialog appeared to list only the
+   values already applied and none of the ones being offered. Capping and
+   wrapping the two value columns keeps all four visible without a sideways
+   scroll. */
+.nldesign-dialog-table td:nth-child(n + 3),
+.nldesign-apply-dialog-table td:nth-child(n + 3) {
+	max-width: 230px;
+	white-space: normal;
+	overflow-wrap: anywhere;
 }
 
 /* Dark-logo informational row in the theming-sync dialog (openspec/specs/dark-mode/spec.md) */
 .nldesign-dialog-dark-logo-row {
 	margin-top: 12px;
+}
+
+/* Core theming as a section of the apply dialog (one confirm, no second
+   modal). The table reuses the sync dialog's row styling. */
+.nldesign-apply-theming {
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid var(--color-border, #ddd);
+}
+
+.nldesign-apply-theming__label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 600;
+	margin-bottom: 8px;
+	cursor: pointer;
+}
+
+/* The preview logo is whatever the set or core serves — an SVG with a
+   1369×436 viewBox renders at that size unless told otherwise, which is how a
+   synced wordmark once filled the whole dialog. Fit it to the box. */
+.nldesign-dialog-preview-logo {
+	display: block;
+	max-width: 70%;
+	max-height: 56px;
+	width: auto;
+	height: auto;
+	margin: 0 auto;
+	object-fit: contain;
 }
 
 .nldesign-dialog-preview-box--dark {
@@ -237,14 +321,84 @@
 		-8px 0;
 }
 
+/* Colour chips in front of a hex value, in the theming-sync dialog
+   (`.nldesign-dialog-swatch`, js/admin.js) and the apply dialog
+   (`.nldesign-apply-swatch`). js/admin.js has emitted both spans all along and
+   sets their colour inline, but the rules that give them a box were lost in a
+   stylesheet reorganisation: a span with no width, height or display is zero
+   pixels wide, so both dialogs listed hex strings with no colour next to them.
+   Only css/admin-mock.css still carried a size for them, which is why the
+   colours were visible on the presentation mock and nowhere else. */
+.nldesign-dialog-swatch,
+.nldesign-apply-swatch {
+	display: inline-block;
+	border-radius: 3px;
+	vertical-align: middle;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.nldesign-dialog-swatch {
+	width: 16px;
+	height: 16px;
+	margin-right: 6px;
+}
+
+.nldesign-apply-swatch {
+	width: 14px;
+	height: 14px;
+	margin-right: 5px;
+}
+
+/* A dialog that carries a token table lays out as a column: heading, hint and
+   the select-all row stay put, the table is the only child that scrolls, and
+   the action bar is the last flex item — so it cannot be anywhere but the
+   bottom. The bar used to rely on `position: sticky; bottom: 0` inside the
+   scrolling dialog, which pins it to the bottom of the SCROLLPORT rather than
+   the dialog, so rows kept rendering below the buttons. Scoped with `:has()`
+   because the dialogs without a table (reset, config bundle) are short and
+   should keep growing with their content. */
+.nldesign-dialog:has(.nldesign-dialog-table),
+.nldesign-dialog:has(.nldesign-apply-dialog-table) {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.nldesign-dialog:has(.nldesign-dialog-table) .nldesign-dialog-table,
+.nldesign-dialog:has(.nldesign-apply-dialog-table) .nldesign-apply-dialog-table {
+	/* `min-height: 0` is what allows a flex item to shrink below its content
+	   height; without it the table keeps its full height and pushes the action
+	   bar out of the dialog again. */
+	flex: 0 1 auto;
+	min-height: 0;
+	overflow: auto;
+}
+
+.nldesign-dialog:has(.nldesign-dialog-table) .nldesign-dialog-actions,
+.nldesign-dialog:has(.nldesign-apply-dialog-table) .nldesign-dialog-actions {
+	position: static;
+	flex: 0 0 auto;
+	margin: 0 -24px -24px;
+	padding: 12px 24px 24px;
+	border-top: 1px solid var(--color-border);
+}
+
 .nldesign-dialog-actions {
 	position: sticky;
 	bottom: 0;
 	background: var(--color-main-background);
-	padding-top: 8px;
+	/* The bar sticks to the bottom of the dialog's CONTENT box, which sits 24px
+	   (the dialog's own padding) above its visible bottom edge. With only a
+	   padding-top the bar's background stopped there, so table rows scrolled
+	   through the 24px strip underneath it and appeared below the buttons.
+	   Bleeding the bar into that padding with a negative margin, and paying it
+	   back as padding, makes the background cover the full strip while the
+	   buttons stay where they were. The inline bleed does the same for the left
+	   and right padding, so nothing scrolls past the bar's edges either. */
+	margin: 16px -24px -24px;
+	padding: 8px 24px 24px;
 	display: flex;
 	gap: 8px;
-	margin-top: 16px;
 	justify-content: flex-end;
 }
 
@@ -400,6 +554,17 @@
 	gap: 12px;
 	padding: 7px 0;
 	border-bottom: 1px solid var(--color-border);
+}
+/* A row the "primary drives every component" setting has taken ownership of.
+ *
+ * Dimmed rather than hidden: the stored value is still there and comes back the
+ * moment the setting is switched off, and a row that vanished would read as a
+ * value that was thrown away. `cursor: not-allowed` is on the row rather than
+ * the input because a disabled input does not fire pointer events, so the
+ * cursor would never change over the control itself. */
+.nldesign-token-row--locked {
+	opacity: 0.55;
+	cursor: not-allowed;
 }
 .nldesign-token-label-wrap {
 	flex: 1 1 auto;
@@ -567,14 +732,32 @@
 	display: none;
 }
 
-/* --- mini app shell --- */
+/* --- mini app shell ---
+ *
+ * A scale model of the REAL Nextcloud shell, because that is what an admin
+ * holds it against. The three structural facts it has to get right:
+ *
+ *   1. The header spans the full width and sits on the PAGE background
+ *      (`--color-background-plain`), which stays visible in the gap around the
+ *      content container.
+ *   2. `#content` is one rounded container (`--body-container-radius`) with
+ *      `overflow: clip`, inset by `--body-container-margin`. The navigation and
+ *      the app content are two panels flush inside it — not two cards.
+ *   3. A navigation entry is a FULL-WIDTH pill (`--border-radius-pill`) with an
+ *      icon and a label in the body text colour, and the selected one is filled
+ *      solid with `--color-primary-element` and labelled in
+ *      `--color-primary-element-text`.
+ *
+ * Before this, the shell drew the navigation as a strip of muted mini-labels
+ * and the app sidebar as a second such strip, so the one panel an admin looks
+ * at first — the sidebar — represented nothing that is actually on screen. */
 .nl-mini {
 	position: relative;
 	height: 300px;
 	overflow: hidden;
 	border-radius: var(--border-radius-large);
 	border: 1px solid var(--prev-border);
-	background: var(--prev-bg);
+	background: var(--prev-plain);
 	display: flex;
 	flex-direction: column;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -584,71 +767,153 @@
 	flex: 0 0 30px;
 	display: flex;
 	align-items: center;
-	gap: 14px;
-	padding: 0 12px;
-	background: var(--prev-primary);
+	gap: 10px;
+	padding: 0 10px;
+	/* The header reads its own component tokens first, the way #header does in
+	   systems/nldesign/theme.css, and the set summary only when they are unset. */
+	background: var(
+		--nldesign-component-header-background-color,
+		var(--prev-header-bg)
+	);
+	border-bottom: var(--prev-header-border);
 }
 .nl-mini__logo {
-	width: 16px;
-	height: 16px;
-	border-radius: 50%;
-	background: var(--prev-primary-text);
+	width: 22px;
+	height: 11px;
+	border-radius: 2px;
+	background: var(--nldesign-component-header-color, var(--prev-header-text));
 	opacity: 0.9;
+	flex: none;
 }
 .nl-mini__navitem {
-	width: 26px;
+	position: relative;
+	width: 24px;
 	height: 6px;
 	border-radius: 3px;
-	background: var(--prev-primary-text);
+	background: var(--nldesign-component-header-color, var(--prev-header-text));
 	opacity: 0.45;
+	flex: none;
 }
+/* Nextcloud marks the open app with a bar under its icon, not with opacity
+   alone — see the app-menu rules in systems/nldesign/element-overrides.css. */
 .nl-mini__navitem--active {
-	opacity: 0.9;
+	opacity: 0.95;
+}
+.nl-mini__navitem--active::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -9px;
+	height: 3px;
+	border-radius: 2px;
+	background: var(--nldesign-component-header-color, var(--prev-header-text));
 }
 .nl-mini__navspacer {
 	flex: 1;
 }
-.nl-mini__avatar {
-	width: 16px;
-	height: 16px;
+.nl-mini__navglyph {
+	width: 9px;
+	height: 9px;
 	border-radius: 50%;
-	background: var(--prev-primary-text);
-	opacity: 0.9;
+	background: var(--nldesign-component-header-color, var(--prev-header-text));
+	opacity: 0.7;
+	flex: none;
 }
+.nl-mini__avatar {
+	position: relative;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--nldesign-component-header-color, var(--prev-header-text));
+	opacity: 0.9;
+	flex: none;
+}
+/* The content container: inset from the page background, both panels clipped
+   into one rounded rectangle. */
 .nl-mini__body {
 	flex: 1;
 	display: flex;
 	min-height: 0;
+	margin: 5px;
+	border-radius: var(
+		--nldesign-component-content-card-container-border-radius,
+		var(--prev-radius-container)
+	);
+	overflow: hidden;
+	background: var(--prev-surface);
 }
 .nl-mini__menu {
-	flex: 0 0 78px;
+	flex: 0 0 84px;
 	background: var(--prev-surface);
-	border-right: 1px solid var(--prev-border);
-	padding: 8px 6px;
+	padding: 6px 5px;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 2px;
+	min-width: 0;
+}
+/* An app-navigation caption ("Personal", "Administration") — a bar, like every
+   other run of text in this model. */
+.nl-mini__caption {
+	width: 32px;
+	height: 4px;
+	margin: 5px 0 3px 7px;
+	border-radius: 2px;
+	background: var(--prev-border);
+}
+.nl-mini__caption:first-child {
+	margin-top: 1px;
 }
 .nl-mini__menuitem {
+	display: flex;
+	align-items: center;
+	gap: 5px;
 	font-size: 8px;
-	color: var(--prev-muted);
-	padding: 5px 7px;
-	border-radius: 999px;
+	/* Both, because the entry is a `span`: nldesign's blanket text rule claims
+	   every span with `!important` and reads this property first. */
+	--nldesign-color-on-surface: var(
+		--nldesign-component-navigation-color,
+		var(--prev-text)
+	);
+	color: var(--nldesign-component-navigation-color, var(--prev-text));
+	padding: 4px 7px;
+	border-radius: var(
+		--nldesign-component-navigation-border-radius,
+		var(--prev-radius-pill)
+	);
 	white-space: nowrap;
 	overflow: hidden;
 }
+.nl-mini__menuicon {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: currentColor;
+	opacity: 0.55;
+	flex: none;
+}
 .nl-mini__menuitem--active {
-	background: var(--prev-primary);
+	background: var(
+		--nldesign-component-navigation-active-background-color,
+		var(--prev-primary)
+	);
+	--nldesign-color-on-surface: var(--prev-primary-text);
 	color: var(--prev-primary-text);
+	font-weight: 700;
+}
+.nl-mini__menuitem--active .nl-mini__menuicon {
+	opacity: 0.9;
 }
 .nl-mini__content {
 	flex: 1;
-	padding: 10px;
+	padding: 8px;
 	min-width: 0;
+	background: var(--prev-surface);
 }
 .nl-mini__widget {
 	background: var(--prev-surface);
-	border: 1px solid var(--prev-border);
+	border: 1px solid
+		var(--nldesign-component-content-card-border-color, var(--prev-border));
 	border-radius: var(--prev-radius);
 	overflow: hidden;
 	height: 100%;
@@ -666,12 +931,46 @@
 .nl-mini__table th {
 	height: 5px;
 }
+/* The header row: its fill, label colour and label weight, each from its own
+   table token. The labels are words rather than bars so the weight shows. */
 .nl-mini__table thead th {
-	border-bottom: 1px solid var(--prev-border);
+	padding: 4px 9px;
+	border-bottom: 1px solid
+		var(
+			--nldesign-component-table-border-color,
+			var(--color-border, var(--prev-border))
+		);
+	background-color: var(
+		--nldesign-component-table-header-background-color,
+		transparent
+	);
+	color: var(
+		--nldesign-component-table-header-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
+	font-size: 7px;
+	font-weight: var(--nldesign-component-table-header-font-weight, normal);
+	text-align: left;
 }
 .nl-mini__table td {
 	padding: 6px 9px;
-	border-bottom: 1px solid var(--prev-border);
+	border-bottom: 1px solid
+		var(
+			--nldesign-component-table-border-color,
+			var(--color-border, var(--prev-border))
+		);
+}
+.nl-mini__table tr.is-zebra td {
+	background: var(
+		--nldesign-component-table-zebra-background-color,
+		var(--color-background-dark, var(--prev-bg))
+	);
+}
+.nl-mini__table tr.is-hover td {
+	background: var(
+		--nldesign-component-table-row-hover-background-color,
+		var(--color-background-hover, var(--prev-bg))
+	);
 }
 .nl-mini__table td::after {
 	content: '';
@@ -701,19 +1000,62 @@
 	background: color-mix(in srgb, var(--prev-info) 22%, white);
 	border: 1px solid var(--prev-info);
 }
+/* The app sidebar: a panel with a heading and a close control, the way
+   Nextcloud's own sidebar opens beside the content. */
 .nl-mini__sidebar {
-	flex: 0 0 78px;
+	flex: 0 0 88px;
 	background: var(--prev-surface);
-	border-left: 1px solid var(--prev-border);
-	padding: 10px 8px;
+	border-left: 1px solid
+		var(--nldesign-component-sidebar-border-color, var(--prev-border));
+	padding: 8px;
 	display: flex;
 	flex-direction: column;
 	gap: 7px;
 }
 .nl-mini__sidebar-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
 	font-size: 8px;
 	font-weight: 700;
 	color: var(--prev-text);
+}
+.nl-mini__sidebar-close {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--prev-bg);
+	border: 1px solid var(--prev-border);
+	flex: none;
+}
+/* The sidebar's tab strip: the rule under it is the divider, the open tab's
+   underline the sidebar's active colour. */
+.nl-mini__sidebar-tabs {
+	display: flex;
+	gap: 6px;
+	border-bottom: 1px solid
+		var(--nldesign-component-sidebar-divider-color, var(--prev-border));
+}
+.nl-mini__sidebar-tab {
+	width: 20px;
+	height: 4px;
+	margin-bottom: 3px;
+	border-radius: 2px;
+	background: var(--prev-border);
+}
+.nl-mini__sidebar-tab--active {
+	position: relative;
+	background: var(--prev-muted);
+}
+.nl-mini__sidebar-tab--active::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -4px;
+	height: 2px;
+	background: var(--nldesign-component-sidebar-active-color, var(--prev-primary));
 }
 .nl-mini__line {
 	display: block;
@@ -723,6 +1065,471 @@
 }
 .nl-mini__line--short {
 	width: 60%;
+}
+
+/* The status components in miniature, each painted from its own component
+   tokens and falling back to the Nextcloud colour the component reads when it
+   has none. Text in them is a `span`, so each also sets the on-surface
+   property nldesign's blanket text rule reads first. */
+
+/* Badge: a counter beside the dialog title, and the favourite star. */
+.nl-mini__counter {
+	display: inline-block;
+	margin-left: 5px;
+	vertical-align: middle;
+	min-width: 12px;
+	padding: 0 3px;
+	border-radius: var(--nldesign-component-badge-border-radius, 999px);
+	background: var(
+		--nldesign-component-badge-background-color,
+		var(--prev-primary)
+	);
+	--nldesign-color-on-surface: var(
+		--nldesign-component-badge-color,
+		var(--prev-primary-text)
+	);
+	color: var(--nldesign-component-badge-color, var(--prev-primary-text));
+	font-size: 7px;
+	font-weight: 700;
+	line-height: 10px;
+	text-align: center;
+}
+.nl-mini__star {
+	margin-left: 4px;
+	--nldesign-color-on-surface: var(
+		--nldesign-component-badge-favorite-color,
+		var(--color-favorite, #a08b00)
+	);
+	color: var(
+		--nldesign-component-badge-favorite-color,
+		var(--color-favorite, #a08b00)
+	);
+}
+
+/* Note cards: the type colour is the fill, and the type text colour the
+   stripe and the glyph, as NcNoteCard draws them from Nextcloud 33. */
+.nl-mini__notes {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 5px;
+	margin-top: 2px;
+}
+.nl-mini__note {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 5px;
+	border-inline-start: 2px solid var(--nl-note-icon);
+	border-radius: var(
+		--nldesign-component-notecard-border-radius,
+		var(--border-radius, 3px)
+	);
+	background: var(--nl-note-fill);
+}
+.nl-mini__note-icon {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--nl-note-icon);
+	flex: none;
+}
+.nl-mini__note-text {
+	flex: 1;
+	height: 3px;
+	border-radius: 2px;
+	background: var(--nl-note-text);
+	opacity: 0.6;
+}
+.nl-mini__note--info {
+	--nl-note-fill: var(--nldesign-component-notecard-info-color, var(--color-info));
+	--nl-note-icon: var(
+		--nldesign-component-notecard-info-icon-color,
+		var(--color-info-text, var(--color-element-info))
+	);
+	--nl-note-text: var(
+		--nldesign-component-notecard-info-text-color,
+		var(--prev-text)
+	);
+}
+.nl-mini__note--warning {
+	--nl-note-fill: var(
+		--nldesign-component-notecard-warning-color,
+		var(--color-warning)
+	);
+	--nl-note-icon: var(
+		--nldesign-component-notecard-warning-icon-color,
+		var(--color-warning-text, var(--color-element-warning))
+	);
+	--nl-note-text: var(
+		--nldesign-component-notecard-warning-text-color,
+		var(--prev-text)
+	);
+}
+.nl-mini__note--error {
+	--nl-note-fill: var(
+		--nldesign-component-notecard-error-color,
+		var(--color-error)
+	);
+	--nl-note-icon: var(
+		--nldesign-component-notecard-error-icon-color,
+		var(--color-error-text, var(--color-element-error))
+	);
+	--nl-note-text: var(
+		--nldesign-component-notecard-error-text-color,
+		var(--prev-text)
+	);
+}
+.nl-mini__note--success {
+	--nl-note-fill: var(
+		--nldesign-component-notecard-success-color,
+		var(--color-success)
+	);
+	--nl-note-icon: var(
+		--nldesign-component-notecard-success-icon-color,
+		var(--color-success-text, var(--color-element-success))
+	);
+	--nl-note-text: var(
+		--nldesign-component-notecard-success-text-color,
+		var(--prev-text)
+	);
+}
+
+/* Toasts: a card on its own background with the type colour as a stripe,
+   stacked in the corner above the dialog the way Nextcloud shows them. */
+.nl-mini__toasts {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	width: 70px;
+}
+.nl-mini__toast {
+	display: block;
+	padding: 4px 5px;
+	border-inline-start: 2px solid var(--nl-toast-stripe);
+	border-radius: var(
+		--nldesign-component-toast-border-radius,
+		var(--border-radius, 3px)
+	);
+	background: var(--nl-toast-fill);
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+.nl-mini__toast-text {
+	display: block;
+	height: 3px;
+	border-radius: 2px;
+	background: var(--nl-toast-text);
+	opacity: 0.7;
+}
+.nl-mini__toast--success {
+	--nl-toast-fill: var(
+		--nldesign-component-toast-success-background-color,
+		var(--prev-surface)
+	);
+	--nl-toast-text: var(--nldesign-component-toast-success-color, var(--prev-text));
+	--nl-toast-stripe: var(--color-element-success, var(--color-success));
+}
+.nl-mini__toast--error {
+	--nl-toast-fill: var(
+		--nldesign-component-toast-error-background-color,
+		var(--prev-surface)
+	);
+	--nl-toast-text: var(--nldesign-component-toast-error-color, var(--prev-text));
+	--nl-toast-stripe: var(--color-element-error, var(--color-error));
+}
+.nl-mini__toast--warning {
+	--nl-toast-fill: var(
+		--nldesign-component-toast-warning-background-color,
+		var(--prev-surface)
+	);
+	--nl-toast-text: var(--nldesign-component-toast-warning-color, var(--prev-text));
+	--nl-toast-stripe: var(--color-element-warning, var(--color-warning));
+}
+.nl-mini__toast--info {
+	--nl-toast-fill: var(
+		--nldesign-component-toast-info-background-color,
+		var(--prev-surface)
+	);
+	--nl-toast-text: var(--nldesign-component-toast-info-color, var(--prev-text));
+	--nl-toast-stripe: var(--color-element-info, var(--prev-primary));
+}
+
+/* The avatar's online dot. */
+.nl-mini__avatar-status {
+	position: absolute;
+	right: -1px;
+	bottom: -1px;
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(
+		--nldesign-component-avatar-online-status-color,
+		var(--color-success, #2d7b41)
+	);
+}
+
+/* Breadcrumbs: a link crumb, a hovered one and the current one. They are
+   spans, so each sets the on-surface property nldesign's blanket text rule
+   reads first as well as its colour. */
+.nl-mini__crumbs {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	margin-bottom: 6px;
+	font-size: 8px;
+}
+.nl-mini__crumb {
+	padding: 1px 5px;
+	border-radius: var(--prev-radius-pill);
+	--nldesign-color-on-surface: var(
+		--nldesign-component-breadcrumb-color,
+		var(--color-primary, var(--prev-primary))
+	);
+	color: var(
+		--nldesign-component-breadcrumb-color,
+		var(--color-primary, var(--prev-primary))
+	);
+}
+.nl-mini__crumb--hover {
+	background: var(
+		--nldesign-component-breadcrumb-hover-background-color,
+		var(--color-background-hover, var(--prev-bg))
+	);
+}
+.nl-mini__crumb--current {
+	--nldesign-color-on-surface: var(--prev-text);
+	color: var(--prev-text);
+	font-weight: 700;
+}
+.nl-mini__crumb-sep {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-breadcrumb-separator-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
+	color: var(
+		--nldesign-component-breadcrumb-separator-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
+}
+
+/* A form row: text field, checked checkbox, progress bar. */
+.nl-mini__form {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 9px;
+}
+.nl-mini__input {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	height: 14px;
+	padding: 0 6px;
+	border: 1px solid
+		var(
+			--nldesign-component-textbox-border-color,
+			var(--color-border-maxcontrast, var(--prev-border))
+		);
+	border-radius: var(
+		--nldesign-component-textbox-border-radius,
+		var(--prev-radius)
+	);
+}
+.nl-mini__input-text {
+	width: 50%;
+	height: 4px;
+	border-radius: 2px;
+	background: var(
+		--nldesign-component-textbox-placeholder-color,
+		var(--color-placeholder-dark, var(--prev-muted))
+	);
+}
+.nl-mini__check {
+	flex: none;
+	width: 10px;
+	height: 10px;
+	border-radius: var(
+		--nldesign-component-checkbox-border-radius,
+		var(--border-radius-small, 3px)
+	);
+	background: var(
+		--nldesign-component-checkbox-checked-background-color,
+		var(--color-primary-element, var(--prev-primary))
+	);
+}
+.nl-mini__progress {
+	flex: 0 0 50px;
+	height: 5px;
+	overflow: hidden;
+	border-radius: var(--nldesign-component-progress-border-radius, 999px);
+	background: var(
+		--nldesign-component-progress-track-background-color,
+		var(--color-background-darker, var(--prev-border))
+	);
+}
+.nl-mini__progress-fill {
+	display: block;
+	width: 60%;
+	height: 100%;
+	background: var(
+		--nldesign-component-progress-background-color,
+		var(--color-primary-element, var(--prev-primary))
+	);
+}
+
+/* Typography in the dialog: each text painted from its own token. They are
+   divs and spans, so each sets the on-surface property as well. */
+.nl-mini__type {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.nl-mini__type-heading {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-heading-color,
+		var(--color-main-text, var(--prev-text))
+	);
+	color: var(
+		--nldesign-component-heading-color,
+		var(--color-main-text, var(--prev-text))
+	);
+	font-family: var(
+		--nldesign-component-heading-font-family,
+		var(--font-face, inherit)
+	);
+	font-weight: var(
+		--nldesign-component-heading-font-weight,
+		var(--font-weight-heading, 700)
+	);
+	font-size: 13px;
+	line-height: 1.2;
+}
+.nl-mini__type-paragraph {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-paragraph-color,
+		var(--color-main-text, var(--prev-text))
+	);
+	color: var(
+		--nldesign-component-paragraph-color,
+		var(--color-main-text, var(--prev-text))
+	);
+	font-family: var(
+		--nldesign-component-paragraph-font-family,
+		var(--font-face, inherit)
+	);
+	font-weight: var(
+		--nldesign-component-paragraph-font-weight,
+		var(--font-weight-default, 400)
+	);
+	font-size: 9px;
+}
+.nl-mini__type-link {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-link-color,
+		var(--color-primary, var(--prev-primary))
+	);
+	color: var(
+		--nldesign-component-link-color,
+		var(--color-primary, var(--prev-primary))
+	);
+	text-decoration: underline;
+	cursor: pointer;
+}
+.nl-mini__type-link:hover,
+.nl-mini__type-link:focus-visible {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-link-hover-color,
+		var(--color-primary-hover, var(--prev-primary))
+	);
+	color: var(
+		--nldesign-component-link-hover-color,
+		var(--color-primary-hover, var(--prev-primary))
+	);
+}
+.nl-mini__type-row {
+	display: flex;
+	gap: 10px;
+	font-size: 9px;
+}
+.nl-mini__type-muted {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-muted-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
+	color: var(
+		--nldesign-component-text-muted-color,
+		var(--color-text-maxcontrast, var(--prev-muted))
+	);
+}
+.nl-mini__type-light {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-light-color,
+		var(--color-text-light, var(--prev-muted))
+	);
+	color: var(
+		--nldesign-component-text-light-color,
+		var(--color-text-light, var(--prev-muted))
+	);
+}
+.nl-mini__type-lighter {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-lighter-color,
+		var(--color-text-lighter, var(--prev-muted))
+	);
+	color: var(
+		--nldesign-component-text-lighter-color,
+		var(--color-text-lighter, var(--prev-muted))
+	);
+}
+.nl-mini__type-error {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-error-color,
+		var(--color-text-error, var(--prev-error))
+	);
+	color: var(
+		--nldesign-component-text-error-color,
+		var(--color-text-error, var(--prev-error))
+	);
+}
+.nl-mini__type-warning {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-warning-color,
+		var(--color-text-warning, var(--prev-warning))
+	);
+	color: var(
+		--nldesign-component-text-warning-color,
+		var(--color-text-warning, var(--prev-warning))
+	);
+}
+.nl-mini__type-success {
+	--nldesign-color-on-surface: var(
+		--nldesign-component-text-success-color,
+		var(--color-text-success, #2d7b41)
+	);
+	color: var(
+		--nldesign-component-text-success-color,
+		var(--color-text-success, #2d7b41)
+	);
+}
+
+/* Each tab's full view shows that tab's part of the shell. js/playground.js
+   names the open tab on the preview; with no tab named (the playground not
+   loaded) everything is shown, as before.
+     - Buttons & Status: the dialog with notes, buttons and badge, and the
+       toasts.
+     - Typography: the dialog with the texts instead.
+     - Content area: the app shell itself, with no dialog over it. */
+#nldesign-preview[data-pg-tab='status'] .nl-mini__type,
+#nldesign-preview[data-pg-tab='typography'] .nl-mini__notes,
+#nldesign-preview[data-pg-tab='typography'] .nl-mini__modal-actions,
+#nldesign-preview[data-pg-tab='typography'] .nl-mini__counter,
+#nldesign-preview[data-pg-tab='typography'] .nl-mini__toasts,
+#nldesign-preview[data-pg-tab='content'] .nl-mini__modal-overlay,
+#nldesign-preview[data-pg-tab='content'] .nl-mini__toasts {
+	display: none;
 }
 
 /* modal overlay over the shell */
@@ -737,7 +1544,10 @@
 .nl-mini__modal {
 	width: 78%;
 	background: var(--prev-surface);
-	border-radius: var(--border-radius-large);
+	border-radius: var(
+		--nldesign-component-dialog-border-radius,
+		var(--border-radius-large)
+	);
 	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 	padding: 12px;
 }
@@ -759,10 +1569,13 @@
 	gap: 6px;
 }
 
-/* buttons (shared by modal + login). Scoped under .nldesign-preview (0,2,0) so
-   they beat Nextcloud core's global button chrome (button:not(.button-vue,…) at
-   0,1,1), which would otherwise paint every preview button the same pale tint. */
-.nldesign-preview .nl-btn {
+/* buttons (shared by modal + login). Scoped under the preview's ID so they beat
+   Nextcloud core's chrome for plain buttons. Its `:focus` and `:active` rules
+   (button:not(.button-vue,…):not(:disabled,.primary):not(…):focus, at 0,4,1)
+   out-ranked a class-only scope: a clicked button kept core's blue border and
+   pressed fill until something else took the focus. Keyboard focus keeps core's
+   own `!important` ring. */
+#nldesign-preview .nl-btn {
 	font-size: 9px;
 	font-weight: 700;
 	padding: 5px 10px;
@@ -773,27 +1586,145 @@
 	color: #fff;
 	min-height: 0;
 }
-.nldesign-preview .nl-btn--primary {
-	background: var(--prev-primary);
-	border-color: var(--prev-primary);
-	color: var(--prev-primary-text);
+/* Each button reads the token of the button it stands for, and the set's
+   summary colour only when that token is unset. Painted from the summary
+   alone, every button showed the brand primary whatever its own row said —
+   saved or still being edited, both of which reach this subtree. */
+#nldesign-preview .nl-btn--primary {
+	background: var(
+		--nldesign-component-button-primary-action-background-color,
+		var(--prev-primary)
+	);
+	border-color: var(
+		--nldesign-component-button-primary-action-border-color,
+		var(
+			--nldesign-component-button-primary-action-background-color,
+			var(--prev-primary)
+		)
+	);
+	color: var(
+		--nldesign-component-button-primary-action-color,
+		var(--prev-primary-text)
+	);
 }
-.nldesign-preview .nl-btn--secondary {
-	background: var(--prev-surface);
-	border-color: var(--prev-border);
-	color: var(--prev-text);
+/* Unset, the secondary button is NcButton's own: the light primary fill, its
+   paired text colour and its hover colour as the edge. Falling back to the
+   plain surface drew it white where the real one is a light tint. */
+#nldesign-preview .nl-btn--secondary {
+	background: var(
+		--nldesign-component-button-secondary-action-background-color,
+		var(--color-primary-element-light, var(--prev-surface))
+	);
+	border-color: var(
+		--nldesign-component-button-secondary-action-border-color,
+		var(--color-primary-element-light-hover, var(--prev-border))
+	);
+	color: var(
+		--nldesign-component-button-secondary-action-color,
+		var(--color-primary-element-light-text, var(--prev-text))
+	);
 }
-.nldesign-preview .nl-btn--warning {
-	background: var(--prev-warning);
-	border-color: var(--prev-warning);
+/* NcButton's tertiary: no fill until it is hovered, labelled in the light
+   primary text colour. */
+#nldesign-preview .nl-btn--tertiary {
+	background: transparent;
+	color: var(
+		--nldesign-component-button-color,
+		var(--color-main-text, var(--prev-text))
+	);
 }
-.nldesign-preview .nl-btn--error {
-	background: var(--prev-error);
-	border-color: var(--prev-error);
+/* The error and success buttons as NcButton draws them: the status colour as
+   the fill, its hover colour as the edge, and the status's paired TEXT colour
+   as the label — Nextcloud's `--color-error-text` / `--color-success-text`,
+   which is what makes a pale fill readable. White on every fill assumed a
+   saturated one and lost the label on a set with pale status colours. */
+#nldesign-preview .nl-btn--error {
+	background: var(
+		--nldesign-component-button-error-background-color,
+		var(--prev-error)
+	);
+	border-color: var(
+		--nldesign-component-button-error-hover-background-color,
+		var(--color-error-hover, var(--prev-error))
+	);
+	/* Real error buttons are labelled white by css/error-contrast.css unless
+	   the label token is set, so the mock does the same. */
+	color: var(--nldesign-component-button-error-color, #fff);
 }
-.nldesign-preview .nl-btn--info {
-	background: var(--prev-info);
-	border-color: var(--prev-info);
+#nldesign-preview .nl-btn--success {
+	background: var(
+		--nldesign-component-button-success-background-color,
+		var(--color-success, #2d7b41)
+	);
+	border-color: var(
+		--nldesign-component-button-success-hover-background-color,
+		var(--color-success-hover, var(--color-success, #2d7b41))
+	);
+	color: var(
+		--nldesign-component-button-success-color,
+		var(--color-success-text, #fff)
+	);
+}
+#nldesign-preview .nl-btn--success:hover {
+	background: var(
+		--nldesign-component-button-success-hover-background-color,
+		var(--color-success-hover, var(--color-success, #2d7b41))
+	);
+}
+
+/* Hover, from each button's own hover token. The primary, secondary and error
+   buttons fall back to their resting colour, so a set without a hover token
+   shows no change rather than a colour it never chose. */
+#nldesign-preview .nl-btn--primary:hover {
+	background: var(
+		--nldesign-component-button-primary-action-hover-background-color,
+		var(
+			--nldesign-component-button-primary-action-background-color,
+			var(--prev-primary)
+		)
+	);
+	border-color: var(
+		--nldesign-component-button-primary-action-hover-background-color,
+		var(
+			--nldesign-component-button-primary-action-background-color,
+			var(--prev-primary)
+		)
+	);
+}
+#nldesign-preview .nl-btn--secondary:hover {
+	background: var(
+		--nldesign-component-button-secondary-action-hover-background-color,
+		var(--color-primary-element-light-hover, var(--prev-bg))
+	);
+}
+#nldesign-preview .nl-btn--tertiary:hover {
+	background: var(
+		--nldesign-component-button-hover-background-color,
+		color-mix(
+			in srgb,
+			var(--color-primary-element, var(--prev-primary)) 8%,
+			transparent
+		)
+	);
+}
+#nldesign-preview .nl-btn--tertiary:active {
+	background: var(
+		--nldesign-component-button-active-background-color,
+		var(
+			--color-primary-element-light,
+			color-mix(in srgb, var(--prev-primary) 20%, transparent)
+		)
+	);
+}
+#nldesign-preview .nl-btn--error:hover {
+	background: var(
+		--nldesign-component-button-error-hover-background-color,
+		var(--nldesign-component-button-error-background-color, var(--prev-error))
+	);
+	border-color: var(
+		--nldesign-component-button-error-hover-background-color,
+		var(--nldesign-component-button-error-background-color, var(--prev-error))
+	);
 }
 
 /* --- mini login --- */
@@ -808,40 +1739,126 @@
 	justify-content: center;
 	gap: 14px;
 }
+/* The logo as the login page shows it: the theme's own image. */
 .nl-login__logo {
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
-	background: var(--prev-primary-text);
-	opacity: 0.95;
+	width: 60px;
+	height: 32px;
+	background-image: var(--image-logo, url('../../../core/img/logo/logo.svg'));
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
 }
+/* The login card: its own corner and edge tokens, falling back to what the
+   guest box reads. */
 .nl-login__card {
 	width: 190px;
 	background: var(--prev-surface);
-	border-radius: var(--border-radius-large);
+	border: 1px solid var(--nldesign-component-login-box-border-color, transparent);
+	border-radius: var(
+		--nldesign-component-login-box-border-radius,
+		var(--border-radius-large)
+	);
 	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
 	padding: 16px;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 }
+/* The account and password fields are text inputs, so they wear the text
+   input's border, corner and placeholder colour. */
 .nl-login__field {
-	height: 14px;
-	border-radius: 999px;
-	background: var(--prev-bg);
-	border: 1px solid var(--prev-border);
+	display: flex;
+	align-items: center;
+	height: 16px;
+	padding: 0 7px;
+	border-radius: var(
+		--nldesign-component-textbox-border-radius,
+		var(--prev-radius)
+	);
+	background: var(--prev-surface);
+	border: 1px solid
+		var(
+			--nldesign-component-textbox-border-color,
+			var(--color-border-maxcontrast, var(--prev-border))
+		);
 }
-.nl-login__submit {
+.nl-login__placeholder {
+	width: 55%;
+	height: 4px;
+	border-radius: 2px;
+	background: var(
+		--nldesign-component-textbox-placeholder-color,
+		var(--color-placeholder-dark, var(--prev-muted))
+	);
+}
+/* The login button: its own tokens first, the primary button's behind them,
+   the way #body-login resolves it (css/component-scopes.css). Declared after
+   the shared button rules so it wins at the same specificity. */
+#nldesign-preview .nl-login__submit {
 	align-self: stretch;
 	text-align: center;
 	padding: 7px;
+	background: var(
+		--nldesign-component-login-button-background-color,
+		var(
+			--nldesign-component-button-primary-action-background-color,
+			var(--prev-primary)
+		)
+	);
+	border-color: var(
+		--nldesign-component-login-button-background-color,
+		var(
+			--nldesign-component-button-primary-action-background-color,
+			var(--prev-primary)
+		)
+	);
+	color: var(
+		--nldesign-component-login-button-color,
+		var(
+			--nldesign-component-button-primary-action-color,
+			var(--prev-primary-text)
+		)
+	);
+	border-radius: var(
+		--nldesign-component-login-button-border-radius,
+		var(--nldesign-component-button-border-radius, 999px)
+	);
 }
+#nldesign-preview .nl-login__submit:hover {
+	background: var(
+		--nldesign-component-login-button-hover-background-color,
+		var(
+			--nldesign-component-button-primary-action-hover-background-color,
+			var(
+				--nldesign-component-login-button-background-color,
+				var(--prev-primary)
+			)
+		)
+	);
+	border-color: var(
+		--nldesign-component-login-button-hover-background-color,
+		var(
+			--nldesign-component-button-primary-action-hover-background-color,
+			var(
+				--nldesign-component-login-button-background-color,
+				var(--prev-primary)
+			)
+		)
+	);
+}
+/* The slogan in its own colour and typeface. It is a `div`, so it also sets
+   the on-surface property nldesign's blanket text rule reads first. */
 .nl-login__slogan {
-	width: 130px;
-	height: 6px;
-	border-radius: 3px;
-	background: var(--prev-primary-text);
-	opacity: 0.6;
+	--nldesign-color-on-surface: var(
+		--nldesign-component-logo-slogan-color,
+		var(--prev-primary-text)
+	);
+	color: var(--nldesign-component-logo-slogan-color, var(--prev-primary-text));
+	font-family: var(
+		--nldesign-component-logo-slogan-font-family,
+		var(--font-face, inherit)
+	);
+	font-size: 9px;
 }
 
 /* Theme preview ("proefdraaien") controls in the settings panel. */
@@ -923,6 +1940,135 @@
 }
 
 /* ==========================================================================
+   Theming audit log
+   ==========================================================================
+
+   The panel shipped as a bare <table> with no rules of its own, so it drew at
+   browser defaults: no cell padding, no header weight beyond the UA's bold, no
+   rule anywhere. Beside the rest of this settings page that read as unformatted
+   output rather than as a table, which is the whole point of the panel — it is
+   the evidence an accessibility audit is shown.
+
+   Colours come from Nextcloud's own variables, so the panel follows the active
+   theme and this app's overrides of it rather than pinning greys of its own. */
+/* The panel scrolls SIDEWAYS in its own container at every width, not just on
+   a phone. Six columns of audit evidence do not fit the settings column on a
+   laptop either, and the previous answer — `table-layout: fixed` with declared
+   percentages — did not bound anything: a nowrap timestamp or a set name wider
+   than its 15% simply drew over the cell beside it, so Timestamp overlapped
+   User and From overlapped To on every row.
+
+   So the table sizes to its content (`auto`) and is given a floor wide enough
+   for all six columns to be read; whatever the settings column cannot show is
+   reached by scrolling the container. The container, not the <table>:
+   `display: block` on a table drops its implicit table role in Chrome and
+   Firefox, which unassociates every `th[scope=col]` from its cells, and this
+   is the panel shown to an accessibility auditor.
+
+   The container is focusable because an `overflow-x: auto` element that cannot
+   take focus cannot be scrolled without a pointer (SC 2.1.1). It carries a
+   role and a name so the focus stop announces itself rather than being a
+   silent one. */
+.nldesign-audit-scroll {
+	max-width: 100%;
+	overflow-x: auto;
+	/* The gap to the download button below; the table itself no longer carries
+	   a bottom margin, which would fall inside the container border. */
+	margin-bottom: 1em;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large, 8px);
+	background-color: var(--color-main-background);
+}
+
+.nldesign-audit-scroll:focus-visible {
+	outline: 2px solid var(--color-primary-element);
+	outline-offset: 2px;
+}
+
+.nldesign-audit-table {
+	width: 100%;
+	/* Wide enough that no column has to be squeezed below what it holds. Under
+	   the settings column this is exceeded, which is what the scroller is for. */
+	min-width: 72em;
+	table-layout: auto;
+	margin-bottom: 0;
+	border-collapse: collapse;
+	font-size: 0.9em;
+}
+
+.nldesign-audit-table th,
+.nldesign-audit-table td {
+	padding: 10px 16px;
+	text-align: start;
+	vertical-align: top;
+	border-bottom: 1px solid var(--color-border);
+}
+
+/* The header is a label row over data, a stronger break than the one between
+   two data rows: it gets the darker rule and a tint of its own. */
+.nldesign-audit-table thead th {
+	background-color: var(--color-background-dark);
+	border-bottom: 2px solid var(--color-border-dark, var(--color-border));
+	color: var(--color-text-maxcontrast);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+/* Banding carries the eye across six columns on a row that is wider than the
+   viewport — the case this panel is always in. Hover wins over the band. */
+.nldesign-audit-table tbody tr:nth-child(even) {
+	background-color: var(--color-background-hover);
+}
+
+.nldesign-audit-table tbody tr:hover {
+	background-color: var(--color-background-dark);
+}
+
+/* The last row's rule would double the container's own border. */
+.nldesign-audit-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+/* A timestamp, an actor and an action are identifiers: they are compared down
+   the column, so they hold one line each and the table widens for them rather
+   than breaking them in half. */
+.nldesign-audit-ts,
+.nldesign-audit-actor,
+.nldesign-audit-action {
+	white-space: nowrap;
+}
+
+.nldesign-audit-ts {
+	font-variant-numeric: tabular-nums;
+	color: var(--color-text-maxcontrast);
+}
+
+/* The action is the app's own vocabulary — a key, not prose — so it is set as
+   one. */
+.nldesign-audit-action {
+	font-family: var(--font-face-monospace, monospace);
+	font-size: 0.95em;
+}
+
+/* From and To hold the one thing a reader compares across, so they line up at
+   a common width and wrap inside it: a custom token set name an admin chose or
+   a sha256 digest has nowhere else to break. */
+.nldesign-audit-value {
+	width: 12em;
+	min-width: 9em;
+	overflow-wrap: anywhere;
+}
+
+/* Changed is the unbounded column — every token name a write touched, forty of
+   them on one overrides_written entry. It gets a preferred width and wraps
+   inside it instead of stretching the row past any useful scroll distance. */
+.nldesign-audit-changed {
+	width: 26em;
+	color: var(--color-text-maxcontrast);
+	overflow-wrap: anywhere;
+}
+
+/* ==========================================================================
    Reduced motion — WCAG 2.2 SC 2.3.3
    ==========================================================================
 
@@ -937,4 +2083,91 @@
 		transition: none !important;
 		animation: none !important;
 	}
+}
+
+/* ==========================================================================
+   SAVE CONFIRMATION
+   ========================================================================== */
+
+/* The plain "are you sure" is narrower than the dialogs that carry a table:
+   it holds two lines and three controls, and at the shared width it reads as
+   an emptier version of a bigger question than it is asking. */
+.nldesign-dialog--small {
+	max-width: 420px;
+}
+
+/* The name field in the stock dialog. Stacked rather than inline, because the
+   label is a sentence and a side-by-side field pushes it into two lines at the
+   widths this dialog actually gets. */
+.nldesign-dialog-field {
+	display: block;
+	margin: 16px 0 8px;
+	font-weight: 500;
+}
+
+.nldesign-dialog-field input[type='text'] {
+	display: block;
+	width: 100%;
+	margin-top: 4px;
+	font-weight: normal;
+}
+
+.nldesign-dialog-field input[aria-invalid='true'] {
+	border-color: var(--color-error);
+}
+
+/* "Do not ask again" sits with the question, not with the buttons: it belongs
+   to what is being asked, and putting it in the action bar made it read as a
+   third choice beside Cancel and Save. */
+.nldesign-dialog-dontask-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-top: 16px;
+	color: var(--color-text-maxcontrast);
+}
+
+/* The way back, under the editor. Deliberately quiet — it is a preference
+   about dialogs, not a theming control, and it must not compete with the token
+   rows above it for an admin's attention. */
+.nldesign-confirm-controls {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--color-border);
+	color: var(--color-text-maxcontrast);
+	font-size: 0.9em;
+}
+
+.nldesign-confirm-controls label {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	cursor: pointer;
+}
+
+/* The opt-in to Nextcloud's own base tokens, above the tabs. Quiet for the
+   same reason: the component rows are the everyday control. */
+.nldesign-base-unlock {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin: 8px 0;
+	color: var(--color-text-maxcontrast);
+	font-size: 0.9em;
+	cursor: pointer;
+}
+
+/* The server's refusal, inside the dialog that caused it. `hidden` is honoured
+   explicitly because the flex/block display below would otherwise beat it. */
+.nldesign-dialog-error {
+	margin: 8px 0 0;
+	color: var(--color-error-text, var(--color-error));
+	font-size: 0.9em;
+}
+
+.nldesign-dialog-error[hidden] {
+	display: none;
 }

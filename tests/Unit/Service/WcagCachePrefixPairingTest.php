@@ -21,6 +21,7 @@ use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -89,7 +90,8 @@ class WcagCachePrefixPairingTest extends TestCase {
 			$this->createMock(IConfig::class),
 			$this->createMock(LoggerInterface::class),
 			$audit,
-			$this->recordingFactory()
+			$this->recordingFactory(),
+			$this->createMock(TokenSetVocabularyAuditService::class)
 		);
 		$this->assertCount(1, $this->prefixes, 'TokenSetService must create exactly one distributed cache');
 		$tokenSetPrefix = $this->prefixes[0];
@@ -132,7 +134,8 @@ class WcagCachePrefixPairingTest extends TestCase {
 			$this->createMock(IConfig::class),
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(ShippedTokenSetAuditService::class),
-			$this->recordingFactory()
+			$this->recordingFactory(),
+			$this->createMock(TokenSetVocabularyAuditService::class)
 		);
 
 		$this->assertStringStartsWith(

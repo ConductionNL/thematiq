@@ -1562,15 +1562,29 @@
           }
         },
         {
-          "name": "Upload disallowed selector ERROR: -> 422 (not 500)",
+          "name": "Upload built theme CSS: class block converted, external URL blocked (200)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('disallowed selector -> 422', () => pm.response.to.have.status(422));",
-                  "pm.test('not a 500', () => pm.expect(pm.response.code).to.not.eql(500));"
+                  "// A stylesheet whose declarations are not all under `:root` used to be",
+                  "// refused with 422 by the validator. It is now a SUPPORTED input: the",
+                  "// converter runs first and normalises a built theme stylesheet into a",
+                  "// `:root` token set, so the shape is no longer the thing under test.",
+                  "// What still has to hold is the part that was ever security-relevant —",
+                  "// a value pointing at an external host must not reach the stored file.",
+                  "pm.test('built theme CSS converts (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('not a 500', () => pm.expect(pm.response.code).to.not.eql(500));",
+                  "const b = pm.response.json();",
+                  "pm.test('id is namespaced custom-*', () => pm.expect(b.id).to.match(/^custom-/));",
+                  "pm.test('the :root token was imported', () => pm.expect(b.imported).to.be.above(0));",
+                  "pm.test('external URL reported as blocked', () => {",
+                  "  const blocked = (b.report || []).filter(r => r.reason === 'external-url-blocked');",
+                  "  pm.expect(blocked.length).to.be.above(0);",
+                  "});",
+                  "pm.collectionVariables.set('newmanConvertedId', b.id);"
                 ]
               }
             }
@@ -1629,6 +1643,124 @@
                 "settings",
                 "tokensets",
                 "upload"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Export converted set (200, external URL absent from the served CSS)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// The report saying a URL was blocked is a claim; this is the check.",
+                  "// The bytes the server hands back are the ones a browser loads.",
+                  "pm.test('export (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('external host never reaches the served CSS', () => pm.expect(pm.response.text()).to.not.include('evil.example'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/custom/{{newmanConvertedId}}/export",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "custom",
+                "{{newmanConvertedId}}",
+                "export"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete converted set (200, leaves no drift)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// This upload now SUCCEEDS where it used to be refused, so it creates a",
+                  "// set the collection has to take away again: a second run would",
+                  "// otherwise meet its own leftover and get 409 instead of 200.",
+                  "pm.test('delete (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('status ok', () => pm.expect(pm.response.json().status).to.eql('ok'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/custom/{{newmanConvertedId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "custom",
+                "{{newmanConvertedId}}"
               ]
             }
           }

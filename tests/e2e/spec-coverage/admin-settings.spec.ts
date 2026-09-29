@@ -74,8 +74,21 @@ test.describe('admin-settings', () => {
 		await page.waitForLoadState('domcontentloaded')
 		const select = page.locator('#nldesign-token-set-select')
 		await expect(select).toBeVisible()
-		const options = await select.locator('option').count()
-		expect(options).toBeGreaterThan(5)
+		// The dropdown is the SELECTABLE list, not the catalogue: only brands
+		// that are fully functional are offered, which today is `nextcloud`
+		// alone. This used to assert "more than five options", which described
+		// the catalogue and now describes nothing — an instance running the
+		// stock set offers exactly one.
+		const values = await select
+			.locator('option')
+			.evaluateAll((options) =>
+				options.map((option) => (option as HTMLOptionElement).value),
+			)
+		expect(values).toContain('nextcloud')
+		// Whatever is running is offered too, so the current value is always
+		// one of the options — a dropdown that renders with nothing selected
+		// re-themes the instance on the first save.
+		expect(values).toContain(await select.inputValue())
 		// Each option must have a non-empty text and value
 		const firstOption = select.locator('option').first()
 		const val = await firstOption.getAttribute('value')

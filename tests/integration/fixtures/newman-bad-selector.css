@@ -1,6 +1,7 @@
 :root {
   --nldesign-color-primary: #154273;
+  --nldesign-image-logo: url(https://evil.example/x.png);
 }
 .header {
-  background: url(https://evil.example/x.png);
+  background: url(https://evil.example/y.png);
 }

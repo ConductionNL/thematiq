@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\ThemePreviewBannerService;
 use OCP\IConfig;
 use OCP\IURLGenerator;
@@ -106,6 +107,17 @@ class CssInjectionServiceTest extends TestCase {
 	private $logger;
 
 	/**
+	 * The stock-token resolver mock.
+	 *
+	 * Inert by default — `getCss()` returns null, which is the "could not read
+	 * the instance" answer and therefore the shipped-file behaviour every other
+	 * test in this suite was written against.
+	 *
+	 * @var StockTokensService&MockObject
+	 */
+	private $stockTokens;
+
+	/**
 	 * Set up mocks before each test.
 	 */
 	protected function setUp(): void {
@@ -119,6 +131,8 @@ class CssInjectionServiceTest extends TestCase {
 		$this->groupThemingService = $this->createMock(GroupThemingService::class);
 		$this->previewBannerService = $this->createMock(ThemePreviewBannerService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->stockTokens = $this->createMock(StockTokensService::class);
+		$this->stockTokens->method('getCss')->willReturn(null);
 
 		// Default: no group mapping configured, so the resolver returns the
 		// plain appconfig token set — byte-identical to pre-per-group behaviour.
@@ -158,6 +172,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->groupThemingService,
 					$this->previewBannerService,
 					$this->logger,
+					$this->stockTokens,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitFontLink'])
@@ -250,6 +265,7 @@ class CssInjectionServiceTest extends TestCase {
 				'tokens/rijkshuisstijl',
 				'icon-contrast',
 				'error-contrast',
+				'component-scopes',
 				'custom-overrides',
 			],
 			$styleLog
@@ -258,10 +274,19 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testStandardNldesignOrder()
 
 	/**
-	 * The "none" design system (stock Nextcloud) loads no layer 1-7
-	 * stylesheet and no token/contrast CSS, but custom-overrides still loads.
+	 * The "none" design system (stock Nextcloud) loads no layer 1-7 stylesheet
+	 * and no token/contrast CSS. It DOES load component-scopes, and then
+	 * custom-overrides on top of it.
+	 *
+	 * The component layer is what makes a stock instance themable at all: every
+	 * instance starts on the stock `nextcloud` set, so without it an admin had
+	 * to pick some other theme before the token editor could change anything —
+	 * you needed a theme in order to make one. It only redirects Nextcloud's own
+	 * variables inside a component's subtree and every component token is
+	 * undeclared until somebody sets one, so an untouched stock instance still
+	 * renders byte-identically to stock.
 	 */
-	public function testNoneDesignSystemLoadsNoStylesheets(): void {
+	public function testNoneDesignSystemLoadsOnlyTheComponentLayer(): void {
 		$this->configureAppValues(['token_set' => 'nextcloud']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'none']);
 		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
@@ -278,9 +303,35 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame(['custom-overrides'], $styleLog);
+		$this->assertSame(['component-scopes', 'custom-overrides-nextcloud'], $styleLog);
 		$this->assertSame([], $fontLog);
-	}//end testNoneDesignSystemLoadsNoStylesheets()
+	}//end testNoneDesignSystemLoadsOnlyTheComponentLayer()
+
+	/**
+	 * A custom set saved off stock Nextcloud is on `none` too, but unlike the
+	 * stock set it HAS a file, and that file is where its values live. It is
+	 * loaded before the component layer that reads it, and the set gets an
+	 * overrides file of its own — neither the shared one nor the stock set's.
+	 */
+	public function testACustomSetOnNoneLoadsItsOwnTokenFile(): void {
+		$this->configureAppValues(['token_set' => 'custom-openwoo']);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'none']);
+		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
+			[
+				'id' => 'none',
+				'name' => 'No design system',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$service->inject('user');
+
+		$this->assertSame(['tokens/custom-openwoo', 'component-scopes', 'custom-overrides-custom-openwoo'], $styleLog);
+	}//end testACustomSetOnNoneLoadsItsOwnTokenFile()
 
 	/**
 	 * Custom overrides load after all design-system and token layers, and
@@ -312,7 +363,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertTrue($ensureExistsCalledBeforeStyle);
-		$this->assertSame(end($styleLog), 'custom-overrides');
+		$this->assertSame(end($styleLog), 'custom-overrides-nextcloud');
 	}//end testCustomOverridesAlwaysLoadedLast()
 
 	/**
@@ -337,7 +388,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertSame(
-			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'custom-overrides', 'hide-slogan', 'show-menu-labels'],
+			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'component-scopes', 'custom-overrides-nextcloud', 'hide-slogan', 'show-menu-labels'],
 			$styleLog
 		);
 	}//end testConditionalStylesheetsLoadedWhenEnabled()
@@ -364,7 +415,45 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertNotContains('hide-slogan', $styleLog);
 		$this->assertNotContains('show-menu-labels', $styleLog);
+		$this->assertNotContains('primary-lock', $styleLog);
 	}//end testConditionalStylesheetsAbsentWhenDisabled()
+
+	/**
+	 * `primary-lock` is emitted only while the setting is on, and LAST of all.
+	 *
+	 * It and `custom-overrides.css` both write `--nldesign-component-*` at
+	 * `:root` with `!important`, so the later of the two wins. While the
+	 * setting is on the brand primary is meant to beat a per-component value
+	 * the admin stored earlier, which is only true if this layer comes after
+	 * the overrides — hence the position is asserted, not just the presence.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public function testPrimaryLockEmittedLastWhenTheSettingIsOn(): void {
+		$this->configureAppValues(['primary_drives_components' => '1']);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
+		$this->designSystemService->method('getDesignSystem')->willReturn(
+			[
+				'id' => 'nldesign',
+				'name' => 'NL Design System',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$service->inject('user');
+
+		$this->assertContains('primary-lock', $styleLog);
+		$this->assertSame('primary-lock', end($styleLog), 'primary-lock is the last layer emitted');
+		$this->assertGreaterThan(
+			array_search('custom-overrides-nextcloud', $styleLog, true),
+			array_search('primary-lock', $styleLog, true),
+			'primary-lock must come after custom-overrides, or the stored value would win'
+		);
+	}//end testPrimaryLockEmittedLastWhenTheSettingIsOn()
 
 	/**
 	 * Custom fonts inject a `<link>` header (not a static stylesheet) after
@@ -462,6 +551,7 @@ class CssInjectionServiceTest extends TestCase {
 				'tokens/lasuite',
 				'icon-contrast',
 				'error-contrast',
+				'component-scopes',
 				'custom-overrides',
 			],
 			$styleLog
@@ -546,7 +636,7 @@ class CssInjectionServiceTest extends TestCase {
 			$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 			$service->inject($context);
 
-			$this->assertContains('custom-overrides', $styleLog, 'context ' . $context . ' must be themed');
+			$this->assertContains('custom-overrides-nextcloud', $styleLog, 'context ' . $context . ' must be themed');
 		}
 	}//end testAbsentThemedContextsThemesEveryContext()
 
@@ -576,7 +666,7 @@ class CssInjectionServiceTest extends TestCase {
 		$userFontLog = [];
 		$userService = $this->buildService(styleLog: $userStyleLog, fontLog: $userFontLog);
 		$userService->inject('user');
-		$this->assertContains('custom-overrides', $userStyleLog);
+		$this->assertContains('custom-overrides-nextcloud', $userStyleLog);
 	}//end testConfiguredListExcludesUnlistedContexts()
 
 	/**
@@ -599,7 +689,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('public');
 
-		$this->assertContains('custom-overrides', $styleLog);
+		$this->assertContains('custom-overrides-nextcloud', $styleLog);
 	}//end testInvalidJsonThemedContextsFailsOpen()
 
 	/**
@@ -622,7 +712,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('guest');
 
-		$this->assertContains('custom-overrides', $styleLog);
+		$this->assertContains('custom-overrides-nextcloud', $styleLog);
 	}//end testNonArrayJsonThemedContextsFailsOpen()
 
 	/**
@@ -646,7 +736,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('blank');
 
-		$this->assertContains('custom-overrides', $styleLog);
+		$this->assertContains('custom-overrides-nextcloud', $styleLog);
 	}//end testUnknownContextAlwaysThemed()
 
 	/**
@@ -669,7 +759,7 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertContains('custom-css', $styleLog);
 		$this->assertGreaterThan(
-			array_search('custom-overrides', $styleLog, true),
+			array_search('custom-overrides-nextcloud', $styleLog, true),
 			array_search('custom-css', $styleLog, true),
 			'custom-css must be emitted AFTER custom-overrides so it wins the cascade.'
 		);
@@ -772,7 +862,7 @@ class CssInjectionServiceTest extends TestCase {
 
 		// The layer that failed is the ONLY one missing: there is no file to
 		// link, so emitting the tag would be a guaranteed 404.
-		$this->assertNotContains('custom-overrides', $styleLog);
+		$this->assertNotContains('custom-overrides-nextcloud', $styleLog);
 
 		// Layer 2 ran (it precedes the failure) ...
 		$this->assertContains('systems/nldesign/fonts', $styleLog);
@@ -810,7 +900,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertCount(1, $warnings);
-		$this->assertStringContainsString('custom-overrides.css', $warnings[0]);
+		$this->assertStringContainsString('custom-overrides-nextcloud.css', $warnings[0]);
 	}//end testASkippedOverridesLayerIsLogged()
 
 	/**
@@ -838,7 +928,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertContains('custom-overrides', $styleLog, 'layer 4 was cancelled');
+		$this->assertContains('custom-overrides-nextcloud', $styleLog, 'layer 4 was cancelled');
 		$this->assertContains('hide-slogan', $styleLog, 'layer 5 was cancelled');
 		$this->assertTrue($bannerInjected, 'layer 6 (preview banner) was cancelled');
 	}//end testAFailingDesignSystemLayerDoesNotCancelTheLaterLayers()
@@ -868,7 +958,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertContains('custom-overrides', $styleLog);
+		$this->assertContains('custom-overrides-nextcloud', $styleLog);
 		$this->assertCount(1, $warnings);
 		$this->assertStringContainsString('preview-banner', $warnings[0]);
 	}//end testAFailingPreviewBannerIsContainedAndLogged()
@@ -976,4 +1066,105 @@ class CssInjectionServiceTest extends TestCase {
 		$this->assertContains('tokens/rijkshuisstijl', $emitted);
 		$this->assertNotContains('token-overrides/rijkshuisstijl', $emitted);
 	}//end testASetWithoutElementOverridesLoadsNothingExtra()
+	/**
+	 * The stylesheet manifest is the SAME list `inject()` emits for the
+	 * set-dependent layers — one owner for the cascade. Every file the page
+	 * render adds for a set appears in the manifest, in the same order, as a
+	 * URL under the app's `css/`; the set-independent layers (custom overrides,
+	 * freeform CSS, the toggles) are not in it.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 */
+	public function testStylesheetManifestMatchesInjectedSetLayers(): void {
+		$this->configureAppValues(['token_set' => 'rijkshuisstijl', 'installed_version' => '9.9.9']);
+		$this->designSystemService->method('getTokenSetMeta')->with('rijkshuisstijl')
+			->willReturn(['design_system' => 'nldesign']);
+		$this->designSystemService->method('getDesignSystem')->with('nldesign')->willReturn(
+			[
+				'id' => 'nldesign',
+				'name' => 'NL Design System',
+				'description' => '',
+				'stylesheets' => [
+					'systems/nldesign/fonts',
+					'systems/nldesign/defaults',
+					'systems/nldesign/utrecht-bridge',
+					'systems/nldesign/theme',
+					'systems/nldesign/overrides',
+					'systems/nldesign/element-overrides',
+				],
+			]
+		);
+		$this->urlGenerator->method('linkTo')->willReturnCallback(
+			fn (string $appName, string $file) => '/custom_apps/' . $appName . '/' . $file
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$service->inject('user');
+		$manifest = $service->getStylesheetManifest('rijkshuisstijl');
+
+		$setIndependent = ['custom-overrides', 'custom-css', 'hide-slogan', 'show-menu-labels'];
+		$injectedSetFiles = array_values(
+			array_filter($styleLog, fn (string $file) => in_array($file, $setIndependent, true) === false)
+		);
+
+		$manifestFiles = [];
+		foreach ($manifest['layers'] as $layer) {
+			if ($layer['kind'] === 'file') {
+				$this->assertStringEndsWith('?v=9.9.9', $layer['href'], 'a manifest href carries the installed version as cache-buster');
+				$manifestFiles[] = preg_replace('#^/custom_apps/thematiq/css/(.*)\.css\?v=.*$#', '$1', $layer['href']);
+			} else {
+				$this->assertSame('inline', $layer['kind']);
+				$this->assertSame(CssInjectionService::LOGO_STYLE_ID, $layer['id'], 'the inline logo layer carries the id the client replaces it by');
+				$this->assertStringContainsString('--nldesign-logo-url', $layer['css']);
+			}
+		}
+
+		$this->assertSame($injectedSetFiles, $manifestFiles, 'manifest files equal the injected set layers, in order');
+		$this->assertSame('rijkshuisstijl', $manifest['tokenSet']);
+		$this->assertSame('nldesign', $manifest['designSystem']);
+		$this->assertNotContains('custom-overrides', $manifestFiles);
+	}//end testStylesheetManifestMatchesInjectedSetLayers()
+
+	/**
+	 * Stock Nextcloud (design system `none`) carries exactly one set layer: the
+	 * component scopes.
+	 *
+	 * The manifest is what the client swaps when an admin changes set without a
+	 * reload, so the layer has to be IN it — otherwise switching to stock would
+	 * strip the component layer off the live page and the token editor would go
+	 * inert until the next reload, which is the same trap as not emitting it at
+	 * all. Everything else Thematiq adds is still removed.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 */
+	public function testStylesheetManifestCarriesOnlyComponentScopesForStockNextcloud(): void {
+		$this->configureAppValues();
+		$this->designSystemService->method('getTokenSetMeta')->with('nextcloud')
+			->willReturn(['design_system' => 'none']);
+		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
+			[
+				'id' => 'none',
+				'name' => 'Nextcloud',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$manifest = $service->getStylesheetManifest('nextcloud');
+
+		$this->assertSame('none', $manifest['designSystem']);
+		$this->assertSame(
+			['component-scopes'],
+			array_column($manifest['layers'], 'layer')
+		);
+	}//end testStylesheetManifestCarriesOnlyComponentScopesForStockNextcloud()
 }//end class

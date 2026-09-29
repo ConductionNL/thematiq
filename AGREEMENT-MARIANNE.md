@@ -42,7 +42,7 @@ agrees that:
    becomes inapplicable.
 4. **No warranty from the licence itself.** Per the Etalab Open Licence
    2.0's own liability clause (reproduced in
-   [`LICENSES/Etalab-2.0.txt`](LICENSES/Etalab-2.0.txt)), the font files are
+   [`LICENSES/etalab-2.0.txt`](LICENSES/etalab-2.0.txt)), the font files are
    provided as-is; the French State ("le Concédant") gives no guarantee
    beyond what that licence states.
 

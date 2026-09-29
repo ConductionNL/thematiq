@@ -12,6 +12,11 @@
  * All scenarios are excluded at the spec level.
  */
 import { test, expect } from '@playwright/test'
+import {
+	offerTokenSets,
+	requestToken,
+	withdrawTokenSetOffer,
+} from '../workflows/_helpers'
 
 const THEMING_URL = '/settings/admin/theming'
 
@@ -59,10 +64,24 @@ test.describe('vng-token-set', () => {
 	}) => {
 		await page.goto(THEMING_URL)
 		await page.waitForLoadState('domcontentloaded')
-		const select = page.locator('#nldesign-token-set-select')
-		await expect(select).toBeVisible()
-		// VNG option must exist in the dropdown
-		const vngOption = select.locator('option[value="vng"]')
-		await expect(vngOption).toBeAttached()
+		// A shipped brand is offered only once it is selectable: see
+		// openspec/specs/token-sets/spec.md, "Only Fully Functional Brands Are
+		// Selectable". VNG is not on the allowlist today, so the scenario's
+		// GIVEN is established through a group mapping, which the same
+		// requirement names as one of the paths that keep a set selectable.
+		const token = await requestToken(page)
+		const offer = await offerTokenSets(page, token, ['vng'])
+		try {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			const select = page.locator('#nldesign-token-set-select')
+			await expect(select).toBeVisible()
+			// VNG option must exist in the dropdown
+			const vngOption = select.locator('option[value="vng"]')
+			await expect(vngOption).toBeAttached()
+			await expect(vngOption).toHaveText(/VNG/)
+		} finally {
+			await withdrawTokenSetOffer(page, token, offer)
+		}
 	})
 })

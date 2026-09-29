@@ -173,6 +173,31 @@ class DarkPaletteServiceTest extends TestCase {
 	}//end testHuePreservedForBackgroundToken()
 
 	/**
+	 * Thematiq#696: a translucent surface stays translucent in dark mode. The
+	 * dark channels come from the opaque colour, the light alpha is kept.
+	 */
+	public function testTranslucentSurfaceKeepsAlpha(): void {
+		$derived = $this->service->deriveDarkDeclarations(['--nldesign-hero-cell-background' => 'rgba(255, 255, 255, 0.08)']);
+
+		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6}14$/i', $derived['--nldesign-hero-cell-background']);
+		$opaque = $this->service->deriveDarkDeclarations(['--nldesign-hero-cell-background' => '#ffffff']);
+		$this->assertSame(
+			strtolower($opaque['--nldesign-hero-cell-background']),
+			strtolower(substr($derived['--nldesign-hero-cell-background'], 0, 7))
+		);
+	}//end testTranslucentSurfaceKeepsAlpha()
+
+	/**
+	 * Thematiq#696: an 8-digit hex token is darkened, not skipped, and keeps its alpha.
+	 */
+	public function testEightDigitHexIsDarkenedAndKeepsAlpha(): void {
+		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-overlay' => '#00000080']);
+
+		$this->assertArrayHasKey('--nldesign-color-overlay', $derived);
+		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6}80$/i', $derived['--nldesign-color-overlay']);
+	}//end testEightDigitHexIsDarkenedAndKeepsAlpha()
+
+	/**
 	 * The brand-primary exception keeps `--nldesign-color-primary` at its
 	 * light value (hue delta 0) when the light primary/primary-text pair
 	 * already passes AA — the rijkshuisstijl blue stays recognisable.

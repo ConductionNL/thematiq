@@ -95,7 +95,78 @@
 		var settingsEl = document.getElementById('nldesign-settings')
 		var tokenSetSelect = document.getElementById('nldesign-token-set-select')
 		var hideSloganCheckbox = document.getElementById('nldesign-hide-slogan')
+		var primaryDrivesComponentsCheckbox = document.getElementById(
+			'nldesign-primary-drives-components',
+		)
 		var previewRoot = document.getElementById('nldesign-preview')
+
+		// Whether the brand primary currently overrules the component tokens it
+		// used to drive. Read off the server-rendered checkbox rather than through
+		// initial state: the template already carries the value, and the flag has
+		// to stay in step with the control the admin is looking at.
+		var primaryDrivesComponents =
+			primaryDrivesComponentsCheckbox !== null
+			&& primaryDrivesComponentsCheckbox.checked === true
+
+		/**
+		 * Whether a token's control is locked by the "primary drives every
+		 * component" setting.
+		 *
+		 * Only component tokens carry `primary`. The brand tokens never lock —
+		 * that setting exists to make THEM win, so freezing them would leave the
+		 * admin with no way to change anything at all.
+		 *
+		 * @param {string} name The CSS custom property name.
+		 *
+		 * @return {boolean} True when the row must render disabled.
+		 */
+		function isTokenLocked(name) {
+			var meta = tokenRegistry[name]
+			if (meta === undefined) {
+				return false
+			}
+			if (meta.group === 'brand' && baseTokensUnlocked === false) {
+				return true
+			}
+			return primaryDrivesComponents === true && meta.primary === true
+		}
+
+		/**
+		 * Whether Nextcloud's own base tokens can be edited.
+		 *
+		 * Off until the admin asks, and only for this visit. A base token —
+		 * `--color-main-text`, `--color-primary-element` — is read by far more of
+		 * Nextcloud than any one component, so changing one repaints things an
+		 * admin did not set out to change. The component rows are the everyday
+		 * control; these stay behind a deliberate, warned opt-in.
+		 *
+		 * @type {boolean}
+		 */
+		var baseTokensUnlocked = false
+
+		/**
+		 * Why a locked row is locked, for its tooltip.
+		 *
+		 * @param {string} name The CSS custom property name.
+		 *
+		 * @return {string} The reason, or '' when the row is not locked.
+		 */
+		function lockReason(name) {
+			if (isTokenLocked(name) === false) {
+				return ''
+			}
+			var meta = tokenRegistry[name]
+			if (meta !== undefined && meta.group === 'brand') {
+				return t(
+					'thematiq',
+					'A Nextcloud base colour, read far beyond any one component. Tick "Also edit Nextcloud\'s base tokens" to change it.',
+				)
+			}
+			return t(
+				'thematiq',
+				'The primary colour drives this component. Switch off "Let the primary colour drive every component" to set it separately.',
+			)
+		}
 
 		// Read a live CSS custom property with a fallback. Reads from <body> first
 		// (Nextcloud and the nldesign themes set their token vars there), then :root.
@@ -141,6 +212,505 @@
 		// override, or the token set. When an override is active it always wins,
 		// so the client-side indicator must not be re-derived from the dropdown.
 		var iconPackSource = loadInitialState('iconPackSource', '')
+
+		/* ==========================================================================
+		 * APPLY WITHOUT A RELOAD
+		 *
+		 * A token set reaches the page as a run of <link>/<style> elements the
+		 * server emits (CssInjectionService). Applying a set here means asking
+		 * the server which elements the current set and the new set produce
+		 * (GET /settings/tokenset-stylesheets/{id}) and swapping one run for
+		 * the other — js/lib/layerSwap.js does the DOM work. Nothing in this
+		 * block decides what a set consists of; the manifest does.
+		 * ========================================================================== */
+
+		var LayerSwap =
+			typeof window !== 'undefined' && window.NldesignLayerSwap
+				? window.NldesignLayerSwap
+				: null
+
+		// The set whose stylesheet run is on THIS page right now. Starts as
+		// what the server rendered: an active preview wins, exactly as the
+		// render did.
+		var pageTokenSetId =
+			activePreview !== null
+				? activePreview.tokenSet
+				: loadInitialState('currentTokenSet', '')
+		// Its manifest, so the first swap knows which elements to remove.
+		var pageManifest = null
+
+		function fetchLayerManifest(tokenSetId) {
+			return fetch(
+				OC.generateUrl(
+					'/apps/thematiq/settings/tokenset-stylesheets/'
+						+ encodeURIComponent(tokenSetId),
+				),
+				{ headers: { requesttoken: OC.requestToken } },
+			).then(function (response) {
+				if (response.ok !== true) {
+					throw new Error('Stylesheet manifest: HTTP ' + response.status)
+				}
+				return response.json()
+			})
+		}
+
+		if (LayerSwap !== null && pageTokenSetId !== '') {
+			fetchLayerManifest(pageTokenSetId)
+				.then(function (manifest) {
+					pageManifest = manifest
+				})
+				.catch(function () {
+					// Unknown current run: the first swap inserts without removing,
+					// and the newer run still wins the cascade.
+					pageManifest = null
+				})
+		}
+
+		/**
+		 * Put a token set's stylesheets on this page, replacing the current
+		 * set's. Resolves to true when the swap ran, false when the module is
+		 * absent (the caller then falls back to asking for a reload).
+		 */
+		function applyLayersFor(tokenSetId) {
+			if (LayerSwap === null) {
+				return Promise.resolve(false)
+			}
+
+			var current =
+				pageManifest !== null
+					? Promise.resolve(pageManifest)
+					: pageTokenSetId === ''
+						? Promise.resolve(null)
+						: fetchLayerManifest(pageTokenSetId).catch(function () {
+								return null
+							})
+
+			return Promise.all([current, fetchLayerManifest(tokenSetId)]).then(
+				function (manifests) {
+					return LayerSwap.swap(document, manifests[0], manifests[1]).then(
+						function (result) {
+							// A sheet that 404'd or timed out leaves the page on
+							// the OLD set (swap rolls back), so the page is still
+							// the set it was: do not claim the new one, and let
+							// the caller fall back to asking for a reload.
+							if (result.ok !== true) {
+								return false
+							}
+
+							pageTokenSetId = tokenSetId
+							pageManifest = manifests[1]
+							syncOverridesLink(tokenSetId)
+							return true
+						},
+					)
+				},
+			)
+		}
+
+		/**
+		 * The set whose overrides the editor reads and writes.
+		 *
+		 * The stock set keeps its edits in a file of its own and never loads
+		 * the shared one (CustomOverridesService), so every overrides request
+		 * names the set it means rather than leaving the server to assume the
+		 * instance's active one. Read like onStockSet(): the dropdown first,
+		 * because it can move under the editor without a reload.
+		 *
+		 * @return {string} The token set id, or '' when unknown.
+		 */
+		function editedTokenSetId() {
+			if (tokenSetSelect !== null && tokenSetSelect.value !== '') {
+				return tokenSetSelect.value
+			}
+
+			return pageTokenSetId
+		}
+
+		/**
+		 * An overrides endpoint URL for one token set.
+		 *
+		 * @param {string} path     The path after /settings/overrides ('' or '/export').
+		 * @param {string} tokenSet The token set id.
+		 *
+		 * @return {string} The URL.
+		 */
+		function overridesUrl(path, tokenSet) {
+			return (
+				OC.generateUrl('/apps/thematiq/settings/overrides' + path)
+				+ '?tokenSet='
+				+ encodeURIComponent(tokenSet)
+			)
+		}
+
+		// Both overrides files: the shared one and the stock set's own.
+		var OVERRIDES_LINK_SELECTOR =
+			'link[rel="stylesheet"][href*="/thematiq/css/custom-overrides"]'
+
+		/**
+		 * custom-overrides.css changed under the same URL (the apply dialog or
+		 * the token editor wrote it): make the browser fetch it again.
+		 */
+		function refreshCustomOverridesLink() {
+			if (LayerSwap === null) {
+				return
+			}
+			LayerSwap.refreshStylesheets(document, OVERRIDES_LINK_SELECTOR)
+		}
+
+		/**
+		 * Point the overrides link at the file the given set reads.
+		 *
+		 * The server emits that link after the set's own run, so a swap without
+		 * a reload leaves it on the OLD set's file: a switch to the stock set
+		 * would keep painting the edits of the theme just left.
+		 *
+		 * @param {string} tokenSetId The set now on the page.
+		 *
+		 * @return {void}
+		 */
+		function syncOverridesLink(tokenSetId) {
+			var link = document.querySelector(OVERRIDES_LINK_SELECTOR)
+			if (link === null) {
+				return
+			}
+
+			// The same rule as CustomOverridesService::fileFor(): a set on no
+			// design system has a file of its own, every other set the shared one.
+			var option =
+				tokenSetSelect !== null
+					? tokenSetSelect.querySelector(
+							'option[value="' + tokenSetId + '"]',
+						)
+					: null
+			var designSystem =
+				option !== null
+					? option.getAttribute('data-design-system') || 'nldesign'
+					: 'nldesign'
+			var file =
+				designSystem === 'none' || tokenSetId === STOCK_TOKEN_SET
+					? 'custom-overrides-'
+						+ tokenSetId.toLowerCase().replace(/[^a-z0-9-]/g, '')
+					: 'custom-overrides'
+			var href = OC.filePath('thematiq', 'css', file + '.css')
+			if (
+				LayerSwap.pathnameOf(link.getAttribute('href'))
+				=== LayerSwap.pathnameOf(href)
+			) {
+				return
+			}
+
+			link.setAttribute('href', href + '?v=' + Date.now())
+		}
+
+		/**
+		 * The hide-slogan / show-menu-labels toggles each own one stylesheet
+		 * that the server emits after the set layers. Add or remove it here so
+		 * the toggle is true on this page the moment it is saved.
+		 */
+		function setConditionalLayer(file, enabled) {
+			if (LayerSwap === null) {
+				return
+			}
+			var path = OC.filePath('thematiq', 'css', file + '.css')
+			var existing = null
+			var links = document.querySelectorAll('link[rel="stylesheet"][href]')
+			for (var index = 0; index < links.length; index++) {
+				if (
+					LayerSwap.pathnameOf(links[index].getAttribute('href'))
+					=== LayerSwap.pathnameOf(path)
+				) {
+					existing = links[index]
+				}
+			}
+			if (enabled === true && existing === null) {
+				document.head.appendChild(
+					LayerSwap.createLayerElement(document, {
+						kind: 'file',
+						layer: 'conditional',
+						href: LayerSwap.bumpVersion(path, String(Date.now())),
+					}),
+				)
+			} else if (enabled !== true && existing !== null) {
+				existing.parentNode.removeChild(existing)
+			}
+		}
+
+		/**
+		 * After POST /settings/theming: core theming's generated stylesheets
+		 * carry the new primary, background and logo — re-request them (what
+		 * core's own admin panel does after a save) and write the new values
+		 * into that panel's fields, which sit further up this same page.
+		 * Resolves to the fresh GET /settings/theming snapshot.
+		 */
+		function refreshCoreTheming() {
+			return fetch(OC.generateUrl('/apps/thematiq/settings/theming'), {
+				headers: { requesttoken: OC.requestToken },
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (snapshot) {
+					if (LayerSwap !== null) {
+						LayerSwap.refreshThemeStylesheets(document)
+					}
+					updateCoreThemingPanel(snapshot)
+					return snapshot
+				})
+		}
+
+		/**
+		 * Write synced values into core's Theming panel on this page.
+		 *
+		 * The panel is core's Vue app; these are the `data-admin-theming-*`
+		 * hooks it renders (apps/theming/src/AdminTheming.vue,
+		 * ColorPickerField.vue, FileInputField.vue). Nothing here is fatal: a
+		 * hook that is not on the page is skipped, and the panel keeps its own
+		 * state until the admin interacts with it.
+		 */
+		function updateCoreThemingPanel(snapshot) {
+			if (!snapshot) {
+				return
+			}
+			// After a reset the snapshot values are empty, because the app
+			// values were deleted; the field then shows what core falls back to.
+			setCoreColorField(
+				'[data-admin-theming-setting-primary-color]',
+				snapshot.primary_color || snapshot.default_primary_color,
+			)
+			setCoreColorField(
+				'[data-admin-theming-setting-background-color]',
+				snapshot.background_color || snapshot.default_background_color,
+			)
+
+			var logoPreview = document.querySelector(
+				'[data-admin-theming-preview-logo]',
+			)
+			if (logoPreview !== null && snapshot.logo_url) {
+				logoPreview.style.backgroundImage = 'url(' + snapshot.logo_url + ')'
+			}
+		}
+
+		/**
+		 * Black or white, whichever core would put on this colour.
+		 *
+		 * Mirrors `colord(value).isLight()`, which ColorPickerField uses for
+		 * its `calculatedTextColor`: perceived brightness over 0.5 gets black
+		 * text. Reproduced rather than imported because colord is core's
+		 * dependency, not ours, and this is four lines.
+		 */
+		function contrastTextFor(hex) {
+			var rgb = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(
+				String(hex).trim(),
+			)
+			if (rgb === null) {
+				return '#ffffff'
+			}
+			var r = parseInt(rgb[1], 16)
+			var g = parseInt(rgb[2], 16)
+			var b = parseInt(rgb[3], 16)
+			var brightness = Math.round((r * 299 + g * 587 + b * 114) / 1000) / 255
+
+			return brightness > 0.5 ? '#000000' : '#ffffff'
+		}
+
+		/**
+		 * Write a colour into one of core's Theming colour pickers.
+		 *
+		 * The picker BUTTON is not styled from an attribute or a class: core's
+		 * `ColorPickerField.vue` uses `v-bind('value')` in its scoped style,
+		 * which the build compiles to a hash-named custom property
+		 * (`background-color: var(--6cc639bc)`) that Vue writes inline on the
+		 * field's root element. So updating the label text left the button
+		 * blue — the colour lives in that property, and nothing else does.
+		 *
+		 * The hash is derived from the file at build time and changes with any
+		 * Nextcloud release, so it is DISCOVERED here instead of hard-coded:
+		 * among the inline custom properties on the field root, the one that
+		 * equals the value the button is currently displaying is the colour,
+		 * and the one holding pure black or white is its text colour.
+		 */
+		function setCoreColorField(wrapperSelector, hex) {
+			if (!hex) {
+				return
+			}
+			var wrapper = document.querySelector(wrapperSelector)
+			if (wrapper === null) {
+				return
+			}
+
+			var button = wrapper.querySelector(
+				'[data-admin-theming-setting-color-picker]',
+			)
+			var shown = ''
+			if (button !== null) {
+				shown = (button.textContent || '').trim().toLowerCase()
+			}
+
+			// Rebind the compiled v-bind custom properties. The field root
+			// carries exactly two: the colour and its text colour, in that
+			// order (the order the v-binds appear in core's style block).
+			//
+			// They are told apart by VALUE where possible — the colour is the
+			// one the button is displaying — but a first pass that only did
+			// that could not recover from white-on-white: when both properties
+			// hold the same value, both matched the colour and the text stayed
+			// invisible. So the match is claimed once, and whatever is left is
+			// the text colour.
+			var properties = []
+			for (var index = 0; index < wrapper.style.length; index++) {
+				if (wrapper.style[index].indexOf('--') === 0) {
+					properties.push(wrapper.style[index])
+				}
+			}
+
+			var valueProperty = null
+			var textProperty = null
+			properties.forEach(function (property) {
+				var current = wrapper.style
+					.getPropertyValue(property)
+					.trim()
+					.toLowerCase()
+				if (valueProperty === null && shown !== '' && current === shown) {
+					valueProperty = property
+				} else if (
+					textProperty === null
+					&& (current === '#ffffff' || current === '#000000')
+				) {
+					textProperty = property
+				}
+			})
+			// The field carries exactly these two, in this order (the order the
+			// v-binds appear in core's style block), so anything the value/text
+			// heuristics could not place is settled positionally. Without this
+			// the text colour was only ever corrected when it already held pure
+			// black or white — so a field left in some other state by an
+			// earlier run stayed there, invisible, until a reload.
+			if (properties.length === 2) {
+				if (valueProperty === null) {
+					valueProperty = properties[0]
+				}
+				if (textProperty === null || textProperty === valueProperty) {
+					textProperty =
+						properties[valueProperty === properties[0] ? 1 : 0]
+				}
+			}
+
+			if (valueProperty !== null) {
+				wrapper.style.setProperty(valueProperty, hex)
+			}
+			if (textProperty !== null) {
+				wrapper.style.setProperty(textProperty, contrastTextFor(hex))
+			}
+
+			// The label reads the hex out loud; the separate preview square is
+			// styled from the same property but is set directly too, so the
+			// field is still right if a future core release drops the v-bind.
+			if (button !== null) {
+				var label = button.querySelector('.button-vue__text')
+				if (label !== null) {
+					label.textContent = hex
+				} else {
+					for (var node = 0; node < button.childNodes.length; node++) {
+						var child = button.childNodes[node]
+						if (
+							child.nodeType === 3
+							&& child.textContent.trim() !== ''
+						) {
+							child.textContent = hex
+						}
+					}
+				}
+			}
+			var swatch = wrapper.querySelector('[data-admin-theming-setting-color]')
+			if (swatch !== null) {
+				swatch.style.backgroundColor = hex
+			}
+		}
+
+		/**
+		 * Re-read the selectable catalogue and bring the dropdown and
+		 * tokenSetsData in line with it: an uploaded set gains its <option>,
+		 * without a reload. Existing options keep their identity so a
+		 * selection survives. Resolves to the catalogue list.
+		 */
+		function refreshTokenSetCatalogue() {
+			return fetch(OC.generateUrl('/apps/thematiq/settings/tokensets'), {
+				headers: { requesttoken: OC.requestToken },
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					var sets = (data && data.tokenSets) || []
+					sets.forEach(function (ts) {
+						tokenSetsData[ts.id] = ts
+						upsertTokenSetOption(ts)
+					})
+					return sets
+				})
+		}
+
+		function upsertTokenSetOption(ts) {
+			if (tokenSetSelect === null || !ts || !ts.id) {
+				return
+			}
+			var option = tokenSetSelect.querySelector(
+				'option[value="' + ts.id + '"]',
+			)
+			if (option === null) {
+				option = document.createElement('option')
+				option.value = ts.id
+				// The list is alphabetical by name (token-set-dropdown spec):
+				// insert before the first option that sorts after this one.
+				var before = null
+				var options = tokenSetSelect.options
+				for (var index = 0; index < options.length; index++) {
+					var other = tokenSetsData[options[index].value]
+					var otherName =
+						other && other.name ? other.name : options[index].text
+					if (
+						otherName.localeCompare(ts.name || ts.id, undefined, {
+							sensitivity: 'base',
+						}) > 0
+					) {
+						before = options[index]
+						break
+					}
+				}
+				tokenSetSelect.insertBefore(option, before)
+			}
+			option.textContent = ts.name || ts.id
+			option.setAttribute('data-design-system', ts.design_system || 'nldesign')
+		}
+
+		function removeTokenSetOption(id) {
+			delete tokenSetsData[id]
+			if (tokenSetSelect === null) {
+				return
+			}
+			var option = tokenSetSelect.querySelector('option[value="' + id + '"]')
+			if (option !== null) {
+				option.remove()
+			}
+		}
+
+		/**
+		 * Make the dropdown show a set without opening the apply dialog (the
+		 * change handler does that), and refresh everything that reads the
+		 * selection.
+		 */
+		function reflectSelection(tokenSetId) {
+			if (tokenSetSelect === null) {
+				return
+			}
+			tokenSetSelect.value = tokenSetId
+			tokenSetSelect.dataset.previousValue = tokenSetId
+			updatePreview(tokenSetId)
+			updateDesignSystemBadge(tokenSetId)
+			updateCompletenessBadge(tokenSetId)
+			updateIconPackIndicator(tokenSetId)
+			updateMarianneVisibility(tokenSetId)
+		}
 
 		/**
 		 * Derive preview colors dynamically from the token set's theming metadata
@@ -202,39 +772,100 @@
 		// the live NC token values. Primary comes from the selected set's metadata
 		// (it isn't applied until confirmed); the remaining colours mirror the live
 		// theme, so the token-editor pickers reflect into the preview too.
+		/**
+		 * Repaint the rich preview from the live CSS stack.
+		 *
+		 * READ EVERYTHING, THEN WRITE EVERYTHING — and that split is the whole
+		 * performance of this panel.
+		 *
+		 * This used to interleave the two: read a variable, set a `--prev-*`,
+		 * read the next. Writing to `previewRoot.style` invalidates style for
+		 * the subtree, so the read after it could not be served from the last
+		 * computation and forced a fresh synchronous one. Eighteen properties
+		 * meant eighteen full style recalculations, against a cascade that
+		 * carries theme.css, element-overrides.css, component-scopes.css and
+		 * the vendored guest sheet. The colour picker fires `input` on every
+		 * pixel of a drag, so that ran dozens of times a second — which is what
+		 * made the picker stutter.
+		 *
+		 * Reading first means one recalculation for the batch, and the writes
+		 * afterwards cost nothing until the next frame paints.
+		 *
+		 * @param {string} tokenSet The token set id the preview is drawn for.
+		 *
+		 * @return {void}
+		 */
 		function updatePreview(tokenSet) {
 			if (!previewRoot) {
 				return
 			}
+
 			var colors = getPreviewColors(tokenSet)
-			var s = previewRoot.style
-			s.setProperty('--prev-primary', colors.primary)
-			s.setProperty(
-				'--prev-primary-text',
-				colors.primaryText || readVar('--color-primary-text', '#ffffff'),
-			)
-			s.setProperty(
-				'--prev-surface',
-				readVar('--color-main-background', '#ffffff'),
-			)
-			s.setProperty('--prev-bg', readVar('--color-background-dark', '#f2f4f7'))
-			s.setProperty('--prev-text', readVar('--color-main-text', '#1b2733'))
-			s.setProperty(
-				'--prev-muted',
-				readVar('--color-text-maxcontrast', '#6b7785'),
-			)
-			s.setProperty('--prev-border', readVar('--color-border', '#e3e9f0'))
-			s.setProperty('--prev-warning', readVar('--color-warning', '#c79a00'))
-			s.setProperty('--prev-error', readVar('--color-error', '#c0392b'))
-			s.setProperty(
-				'--prev-info',
-				readVar(
+
+			// ---- read phase -------------------------------------------------
+			// Both declarations are resolved once here instead of per lookup;
+			// `readVar` builds a new pair on every call.
+			// Read on the preview itself: an unsaved edit is declared there,
+			// and everything else reaches it by inheritance.
+			var previewStyle = getComputedStyle(previewRoot)
+
+			function read(name, fallback) {
+				return (previewStyle.getPropertyValue(name) || '').trim() || fallback
+			}
+
+			var primaryText =
+				colors.primaryText || read('--color-primary-text', '#ffffff')
+
+			var values = {
+				'--prev-primary': colors.primary,
+				'--prev-primary-text': primaryText,
+				'--prev-surface': read('--color-main-background', '#ffffff'),
+				'--prev-bg': read('--color-background-dark', '#f2f4f7'),
+				'--prev-text': read('--color-main-text', '#1b2733'),
+				'--prev-muted': read('--color-text-maxcontrast', '#6b7785'),
+				'--prev-border': read('--color-border', '#e3e9f0'),
+				'--prev-warning': read('--color-warning', '#c79a00'),
+				'--prev-error': read('--color-error', '#c0392b'),
+				'--prev-info': read(
 					'--color-info',
-					readVar('--color-primary-element', colors.primary),
+					read('--color-primary-element', colors.primary),
 				),
-			)
-			s.setProperty('--prev-radius', readVar('--border-radius-element', '8px'))
-			s.setProperty('--prev-login-bg', colors.primary)
+				'--prev-radius': read('--border-radius-element', '8px'),
+				// The rounded container Nextcloud clips the navigation and the
+				// app content into, and the pill radius of a navigation entry.
+				'--prev-radius-container': read(
+					'--body-container-radius',
+					read('--border-radius-large', '12px'),
+				),
+				'--prev-radius-pill': read('--border-radius-pill', '999px'),
+				// The page background BEHIND the content container — visible in
+				// the gap around it, which is where a themed instance shows its
+				// plain colour or background image.
+				'--prev-plain': read(
+					'--color-background-plain',
+					read('--color-background-dark', '#f2f4f7'),
+				),
+				// The header is its own role: a set may paint it differently
+				// from the primary (Cunningham and Amsterdam both paint it white
+				// over a blue primary). Fall back to the primary only when the
+				// page carries no header token.
+				'--prev-header-bg': read(
+					'--nldesign-color-header-background',
+					colors.primary,
+				),
+				'--prev-header-text': read(
+					'--nldesign-color-header-text',
+					primaryText,
+				),
+				'--prev-header-border': read('--nldesign-header-border-bottom', '0'),
+				'--prev-login-bg': colors.primary,
+			}
+
+			// ---- write phase ------------------------------------------------
+			var s = previewRoot.style
+			Object.keys(values).forEach(function (name) {
+				s.setProperty(name, values[name])
+			})
 		}
 
 		// App / Login preview switch.
@@ -292,6 +923,104 @@
 				+ (dsId === 'none'
 					? ' nldesign-badge--stock'
 					: ' nldesign-badge--system')
+		}
+
+		// The vocabulary-completeness warning carried on a token set's
+		// `warnings` array, or null when the set is complete. Emitted by
+		// TokenSetVocabularyAuditService::warningsFor() on the SAME channel as
+		// the WCAG contrast warnings, so the two are distinguished by `kind`.
+		function incompleteWarningFor(tokenSetId) {
+			var ts = tokenSetsData[tokenSetId]
+			if (!ts || !ts.warnings) {
+				return null
+			}
+			for (var i = 0; i < ts.warnings.length; i++) {
+				if (ts.warnings[i] && ts.warnings[i].kind === 'incomplete') {
+					return ts.warnings[i]
+				}
+			}
+			return null
+		}
+
+		// How many token names a warning line enumerates before it stops. The
+		// counts already carry the magnitude, and a set like `tilburg` declares
+		// 119 unread names — enumerating them all turned the apply dialog into a
+		// wall of text that pushed the actual token list off screen. The full
+		// enumeration lives in `npm run audit:token-sets --verbose`, which is
+		// where someone who intends to FIX a set is working anyway; an admin
+		// choosing a theme only needs to know that it is incomplete and roughly
+		// in what way.
+		var INCOMPLETE_SAMPLE_LIMIT = 6
+
+		// Comma-joined sample of a token-name list, ellipsised when truncated.
+		// No new translatable string: the "{count}" in the surrounding sentence
+		// is the authoritative total, and the ellipsis reads the same in every
+		// locale.
+		function sampleTokenNames(names) {
+			if (names.length <= INCOMPLETE_SAMPLE_LIMIT) {
+				return names.join(', ')
+			}
+			return names.slice(0, INCOMPLETE_SAMPLE_LIMIT).join(', ') + ', …'
+		}
+
+		// Human-readable lines describing what an "incomplete" warning found.
+		// Shared by the dropdown badge's tooltip and the apply dialog's banner.
+		function incompleteWarningLines(warning) {
+			var lines = []
+			if (warning.missing && warning.missing.length > 0) {
+				lines.push(
+					t(
+						'thematiq',
+						'Does not define {count} required token(s): {tokens}',
+					)
+						.replace('{count}', warning.missing.length)
+						.replace('{tokens}', sampleTokenNames(warning.missing)),
+				)
+			}
+			if (warning.foreign && warning.foreign.length > 0) {
+				lines.push(
+					t(
+						'thematiq',
+						'Declares {count} --nldesign-* name(s) no stylesheet reads: {tokens}',
+					)
+						.replace('{count}', warning.foreign.length)
+						.replace('{tokens}', sampleTokenNames(warning.foreign)),
+				)
+			}
+			if (warning.primaryMismatch === true) {
+				lines.push(
+					t(
+						'thematiq',
+						'Primary colour {css} in the token CSS disagrees with {manifest} in the token set manifest.',
+					)
+						.replace('{css}', warning.cssPrimary || '?')
+						.replace('{manifest}', warning.declaredPrimary || '?'),
+				)
+			}
+			return lines
+		}
+
+		// Update the "Incomplete set" badge for the selected token set — the
+		// third badge state next to the design-system and WCAG badges. Hidden
+		// entirely for a complete set, so a clean catalogue stays quiet.
+		function updateCompletenessBadge(tokenSetId) {
+			var badge = document.getElementById(
+				'nldesign-token-set-completeness-badge',
+			)
+			if (!badge) return
+
+			var warning = incompleteWarningFor(tokenSetId)
+			if (warning === null) {
+				badge.hidden = true
+				badge.textContent = ''
+				badge.removeAttribute('title')
+				return
+			}
+
+			badge.hidden = false
+			badge.className = 'nldesign-badge nldesign-badge--warning'
+			badge.textContent = t('thematiq', 'Incomplete set')
+			badge.setAttribute('title', incompleteWarningLines(warning).join('\n'))
 		}
 
 		// Icon-pack indicator (theme-switchable iconography,
@@ -366,6 +1095,7 @@
 				// Update preview and design system badge optimistically
 				updatePreview(newTokenSet)
 				updateDesignSystemBadge(newTokenSet)
+				updateCompletenessBadge(newTokenSet)
 				updateIconPackIndicator(newTokenSet)
 				updateMarianneVisibility(newTokenSet)
 
@@ -376,6 +1106,7 @@
 			// Set initial preview for selected item and remember initial value.
 			updatePreview(tokenSetSelect.value)
 			updateDesignSystemBadge(tokenSetSelect.value)
+			updateCompletenessBadge(tokenSetSelect.value)
 			updateIconPackIndicator(tokenSetSelect.value)
 			updateMarianneVisibility(tokenSetSelect.value)
 			tokenSetSelect.dataset.previousValue = tokenSetSelect.value
@@ -395,29 +1126,70 @@
 		)
 		var currentTokenSetId = loadInitialState('currentTokenSet', '')
 
+		// The preview panel (server-rendered, hidden when no preview is active)
+		// is toggled here so starting or discarding a preview needs no reload.
+		// The banner on OTHER pages stays server-rendered: it reads the session
+		// state on their next load, which is what that state is for.
+		var previewPanel = document.getElementById('nldesign-active-preview')
+
+		function beginPreviewOnPage(tokenSetId) {
+			var ts = tokenSetsData[tokenSetId]
+			activePreview = {
+				tokenSet: tokenSetId,
+				name: ts && ts.name ? ts.name : tokenSetId,
+			}
+			if (previewPanel !== null) {
+				var status = previewPanel.querySelector('[role="status"]')
+				if (status !== null) {
+					status.textContent = t(
+						'thematiq',
+						'Previewing "{name}" in your session only.',
+						{ name: activePreview.name },
+					)
+				}
+				previewPanel.style.display = ''
+			}
+		}
+
+		function endPreviewOnPage() {
+			activePreview = null
+			if (previewPanel !== null) {
+				previewPanel.style.display = 'none'
+			}
+		}
+
 		// Start a preview of the currently selected token set — session-only,
 		// instance-wide token_set is left untouched.
 		if (previewBtn !== null && tokenSetSelect !== null) {
 			previewBtn.addEventListener('click', function () {
 				previewBtn.disabled = true
+				var previewed = tokenSetSelect.value
 				fetch(OC.generateUrl('/apps/thematiq/settings/preview'), {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 						requesttoken: OC.requestToken,
 					},
-					body: JSON.stringify({ tokenSet: tokenSetSelect.value }),
+					body: JSON.stringify({ tokenSet: previewed }),
 				})
 					.then(function (response) {
 						return response.json()
 					})
 					.then(function (data) {
-						if (data.status === 'ok') {
-							window.location.reload()
-						} else {
+						if (data.status !== 'ok') {
 							previewBtn.disabled = false
 							notify(t('thematiq', 'Failed to start theme preview.'))
+							return
 						}
+						return applyLayersFor(previewed).then(function (swapped) {
+							previewBtn.disabled = false
+							if (swapped !== true) {
+								window.location.reload()
+								return
+							}
+							beginPreviewOnPage(previewed)
+							notify(t('thematiq', 'Previewing in your session only.'))
+						})
 					})
 					.catch(function (error) {
 						previewBtn.disabled = false
@@ -437,7 +1209,19 @@
 					headers: { requesttoken: OC.requestToken },
 				})
 					.then(function () {
-						window.location.reload()
+						// Back to the instance-wide set on this page.
+						return applyLayersFor(currentTokenSetId).then(
+							function (swapped) {
+								previewDiscardBtn.disabled = false
+								if (swapped !== true) {
+									window.location.reload()
+									return
+								}
+								endPreviewOnPage()
+								reflectSelection(currentTokenSetId)
+								notify(t('thematiq', 'Preview discarded.'))
+							},
+						)
 					})
 					.catch(function (error) {
 						previewDiscardBtn.disabled = false
@@ -451,8 +1235,14 @@
 		// when applicable, the theming-sync dialog) for the previewed set;
 		// only on confirmation does POST /settings/preview/publish fire
 		// (publishMode = true), promoting it to the instance-wide active set.
-		if (previewPublishBtn !== null && activePreview !== null) {
+		// Bound whenever the button exists, not only when a preview was active
+		// at page load: a preview started on this page (no reload) must be
+		// publishable from this page too. `activePreview` is read at click time.
+		if (previewPublishBtn !== null) {
 			previewPublishBtn.addEventListener('click', function () {
+				if (activePreview === null) {
+					return
+				}
 				openTokenSetApplyDialog(
 					activePreview.tokenSet,
 					currentTokenSetId,
@@ -489,27 +1279,47 @@
 		function saveTokenSet(tokenSet, publishMode) {
 			commitTokenSetChange(tokenSet, publishMode === true)
 				.then(function (data) {
-					if (data.status === 'ok') {
-						notify(
-							publishMode === true
-								? t(
-										'nldesign',
-										'Theme published instance-wide. Reload the page to see changes.',
-									)
-								: t(
-										'nldesign',
-										'Theme updated successfully. reload the page to see changes.',
-									),
-						)
+					if (data.status !== 'ok') {
+						notify(t('thematiq', 'Failed to update theme.'))
+						return
+					}
 
-						// Check if this token set has theming metadata
+					// The set is saved; now put it on THIS page, then offer the
+					// core theming sync (colours, logo) as the second step of
+					// the same confirmed flow. No reload anywhere.
+					return applyLayersFor(tokenSet).then(function (swapped) {
+						if (swapped === true) {
+							notify(
+								publishMode === true
+									? t(
+											'thematiq',
+											'Theme published instance-wide and applied.',
+										)
+									: t('thematiq', 'Applied.'),
+							)
+						} else {
+							notify(
+								publishMode === true
+									? t(
+											'nldesign',
+											'Theme published instance-wide. Reload the page to see changes.',
+										)
+									: t(
+											'nldesign',
+											'Theme updated successfully. reload the page to see changes.',
+										),
+							)
+						}
+
+						if (publishMode === true) {
+							endPreviewOnPage()
+						}
+
 						var tsData = tokenSetsData[tokenSet]
 						if (tsData && tsData.theming) {
 							checkAndShowThemingDialog(tsData)
 						}
-					} else {
-						notify(t('thematiq', 'Failed to update theme.'))
-					}
+					})
 				})
 				.catch(function (error) {
 					console.error('Error saving token set:', error)
@@ -518,75 +1328,333 @@
 		}
 
 		// Fetch current NC theming values and show dialog if they differ
-		function checkAndShowThemingDialog(tokenSetData) {
-			var url = OC.generateUrl('/apps/thematiq/settings/theming')
+		/**
+		 * What syncing core theming to a set would do, computed once and used
+		 * by both surfaces: the section inside the apply dialog (the normal
+		 * path) and the standalone dialog (when the apply dialog has no token
+		 * changes to show). `mode` is `match` (POST the set's values), `reset`
+		 * (stock Nextcloud: DELETE, undo everything synced) or `none`.
+		 *
+		 * Stock is the ABSENCE of a synced theme, not a manifest to match:
+		 * matching would keep the previous set's logo (the manifest has none)
+		 * and pin a stale primary.
+		 */
+		function computeThemingPlan(tokenSetData, currentTheming) {
+			var none = { mode: 'none', diffs: [], payload: null }
+			if (!tokenSetData || !currentTheming) {
+				return none
+			}
 
-			fetch(url, {
+			var defaultLabel = t('thematiq', 'Nextcloud default')
+
+			// A stock-based theme resets Nextcloud's branding to its defaults —
+			// unless it CAPTURED the branding it was saved with, in which case
+			// that is what it brings back, like any other theme.
+			var captured = Boolean(
+				tokenSetData.theming && tokenSetData.theming.captured === true,
+			)
+			if (
+				(tokenSetData.design_system || 'nldesign') === 'none'
+				&& captured === false
+			) {
+				var resetDiffs = []
+				if (currentTheming.primary_color) {
+					resetDiffs.push({
+						label: t('thematiq', 'Primary color'),
+						key: 'primary_color',
+						kind: 'color',
+						current: currentTheming.primary_color,
+						proposed: currentTheming.default_primary_color || '#00679e',
+						proposedNote: defaultLabel,
+					})
+				}
+				if (currentTheming.background_color) {
+					resetDiffs.push({
+						label: t('thematiq', 'Background color'),
+						key: 'background_color',
+						kind: 'color',
+						current: currentTheming.background_color,
+						proposed:
+							currentTheming.default_background_color || '#00679e',
+						proposedNote: defaultLabel,
+					})
+				}
+				if (currentTheming.has_custom_logo === true) {
+					resetDiffs.push({
+						label: t('thematiq', 'Logo'),
+						key: 'logo',
+						kind: 'text',
+						current: t('thematiq', '(custom logo)'),
+						proposed: t('thematiq', 'Nextcloud logo'),
+					})
+				}
+				if (currentTheming.has_custom_background === true) {
+					resetDiffs.push({
+						label: t('thematiq', 'Background image'),
+						key: 'background',
+						kind: 'text',
+						current: t('thematiq', '(custom)'),
+						proposed: defaultLabel,
+					})
+				}
+				if (resetDiffs.length === 0) {
+					return none
+				}
+				return { mode: 'reset', diffs: resetDiffs, payload: null }
+			}
+
+			var proposed = tokenSetData.theming
+			if (!proposed) {
+				return none
+			}
+			var diffs = []
+			var payload = {}
+
+			if (
+				proposed.primary_color
+				&& proposed.primary_color.toLowerCase()
+					!== (currentTheming.primary_color || '').toLowerCase()
+			) {
+				diffs.push({
+					label: t('thematiq', 'Primary color'),
+					key: 'primary_color',
+					kind: 'color',
+					current: currentTheming.primary_color,
+					proposed: proposed.primary_color,
+				})
+				payload.primary_color = proposed.primary_color
+			}
+
+			if (
+				proposed.background_color
+				&& proposed.background_color.toLowerCase()
+					!== (currentTheming.background_color || '').toLowerCase()
+			) {
+				diffs.push({
+					label: t('thematiq', 'Background color'),
+					key: 'background_color',
+					kind: 'color',
+					current: currentTheming.background_color,
+					proposed: proposed.background_color,
+				})
+				payload.background_color = proposed.background_color
+			}
+
+			// An image is only a difference when the slot does not ALREADY hold
+			// this set's file. Core records just that a custom image exists, not
+			// which one, so the comparison uses `synced_*` — the path Thematiq
+			// itself last applied. Without this the dialog offered the same
+			// unchanged logo on every apply and could never stop appearing.
+			// (An admin who uploads a logo through core's own panel after a sync
+			// leaves `synced_logo` behind; the row is then skipped once, until
+			// the next sync rewrites it.)
+			if (
+				proposed.logo
+				&& !(
+					currentTheming.has_custom_logo === true
+					&& currentTheming.synced_logo === proposed.logo
+				)
+			) {
+				diffs.push({
+					label: t('thematiq', 'Logo'),
+					key: 'logo',
+					kind: 'text',
+					current: currentTheming.has_custom_logo
+						? t('thematiq', '(custom logo)')
+						: t('thematiq', '(default)'),
+					proposed: proposed.logo.split('/').pop(),
+				})
+				payload.logo = proposed.logo
+			}
+
+			// The navigation-bar logo and the favicon, compared the same way as
+			// the logo: by the file Thematiq last put in the slot.
+			;[
+				['logoheader', t('thematiq', 'Navigation bar logo')],
+				['favicon', t('thematiq', 'Favicon')],
+			].forEach(function (slot) {
+				var key = slot[0]
+				if (
+					proposed[key]
+					&& !(
+						currentTheming['has_custom_' + key] === true
+						&& currentTheming['synced_' + key] === proposed[key]
+					)
+				) {
+					diffs.push({
+						label: slot[1],
+						key: key,
+						kind: 'text',
+						current: currentTheming['has_custom_' + key]
+							? t('thematiq', '(custom)')
+							: t('thematiq', '(default)'),
+						proposed: proposed[key].split('/').pop(),
+					})
+					payload[key] = proposed[key]
+				}
+			})
+
+			if (
+				proposed.background
+				&& !(
+					currentTheming.has_custom_background === true
+					&& currentTheming.synced_background === proposed.background
+				)
+			) {
+				diffs.push({
+					label: t('thematiq', 'Background image'),
+					key: 'background',
+					kind: 'text',
+					current: currentTheming.has_custom_background
+						? t('thematiq', '(custom)')
+						: t('thematiq', '(default)'),
+					proposed: proposed.background.split('/').pop(),
+				})
+				payload.background = proposed.background
+			}
+
+			// A captured theme also knows whether the background image had been
+			// removed ("color") or left as Nextcloud's own ("default"). Offered
+			// only when the page is in a different state; an image of the
+			// theme's own is the background row above.
+			var mode = proposed.background_mode
+			var removedNow = currentTheming.background_mime === 'backgroundColor'
+			var currentBackground = removedNow
+				? t('thematiq', 'Removed (plain colour)')
+				: currentTheming.has_custom_background
+					? t('thematiq', '(custom)')
+					: t('thematiq', '(default)')
+			if (mode === 'color' && removedNow === false) {
+				diffs.push({
+					label: t('thematiq', 'Background image'),
+					key: 'background_mode',
+					kind: 'text',
+					current: currentBackground,
+					proposed: t('thematiq', 'Removed (plain colour)'),
+				})
+			} else if (
+				mode === 'default'
+				&& (removedNow === true
+					|| currentTheming.has_custom_background === true)
+			) {
+				diffs.push({
+					label: t('thematiq', 'Background image'),
+					key: 'background_mode',
+					kind: 'text',
+					current: currentBackground,
+					proposed: t('thematiq', 'Nextcloud default'),
+				})
+			}
+
+			if (diffs.length === 0) {
+				return none
+			}
+
+			// Sent with anything that is applied, so a colour change on its own
+			// cannot drop the background image the theme was saved with.
+			if (mode === 'image' || mode === 'color' || mode === 'default') {
+				payload.background_mode = mode
+			}
+
+			return { mode: 'match', diffs: diffs, payload: payload }
+		}
+
+		/** Execute a plan from computeThemingPlan(); resolves after the page reflects it. */
+		function applyThemingPlan(plan) {
+			if (!plan || plan.mode === 'none') {
+				return Promise.resolve(false)
+			}
+			// One endpoint for both: `reset=1` undoes everything the sync ever
+			// applied. A dedicated route or verb would 404/405 on any instance
+			// whose route collection is still cached (an hour), which is what
+			// turned a successful switch into "failed to apply".
+			var body =
+				plan.mode === 'reset'
+					? 'reset=1'
+					: Object.keys(plan.payload)
+							.map(function (key) {
+								return (
+									encodeURIComponent(key)
+									+ '='
+									+ encodeURIComponent(plan.payload[key])
+								)
+							})
+							.join('&')
+
+			return fetch(OC.generateUrl('/apps/thematiq/settings/theming'), {
+				method: 'POST',
 				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
 					requesttoken: OC.requestToken,
 				},
+				body: body,
 			})
 				.then(function (response) {
 					return response.json()
 				})
+				.then(function (data) {
+					if (data.status !== 'ok') {
+						throw new Error(data.error || 'Theming sync failed')
+					}
+					return refreshCoreTheming().then(function () {
+						return true
+					})
+				})
+		}
+
+		/** One table row per diff, swatches for colours — shared by both surfaces. */
+		function themingRowsHtml(diffs) {
+			return diffs
+				.map(function (diff) {
+					var cell = function (value) {
+						if (diff.kind === 'color' && value) {
+							return (
+								'<span class="nldesign-dialog-swatch" style="background:'
+								+ escapeHtml(value)
+								+ '"></span> '
+								+ escapeHtml(value)
+							)
+						}
+						return escapeHtml(value || '')
+					}
+					return (
+						'<tr><td>'
+						+ escapeHtml(diff.label)
+						+ '</td><td>'
+						+ cell(diff.current)
+						+ '</td><td>'
+						+ cell(diff.proposed)
+						+ (diff.proposedNote
+							? ' ' + escapeHtml(diff.proposedNote)
+							: '')
+						+ '</td></tr>'
+					)
+				})
+				.join('')
+		}
+
+		function fetchCurrentTheming() {
+			return fetch(OC.generateUrl('/apps/thematiq/settings/theming'), {
+				headers: { requesttoken: OC.requestToken },
+			}).then(function (response) {
+				return response.json()
+			})
+		}
+
+		// Standalone sync dialog — used only when the apply dialog had no token
+		// changes to show, so this is still the ONE dialog the admin sees.
+		function checkAndShowThemingDialog(tokenSetData) {
+			fetchCurrentTheming()
 				.then(function (currentTheming) {
-					var proposed = tokenSetData.theming
-					var diffs = []
-
-					if (
-						proposed.primary_color
-						&& proposed.primary_color.toLowerCase()
-							!== currentTheming.primary_color.toLowerCase()
-					) {
-						diffs.push({
-							label: t('thematiq', 'Primary color'),
-							key: 'primary_color',
-							current: currentTheming.primary_color,
-							proposed: proposed.primary_color,
-						})
-					}
-
-					if (
-						proposed.background_color
-						&& proposed.background_color.toLowerCase()
-							!== currentTheming.background_color.toLowerCase()
-					) {
-						diffs.push({
-							label: t('thematiq', 'Background color'),
-							key: 'background_color',
-							current: currentTheming.background_color,
-							proposed: proposed.background_color,
-						})
-					}
-
-					if (proposed.logo) {
-						diffs.push({
-							label: t('thematiq', 'Logo'),
-							key: 'logo',
-							current: currentTheming.has_custom_logo
-								? t('thematiq', '(custom logo)')
-								: t('thematiq', '(default)'),
-							proposed: proposed.logo.split('/').pop(),
-						})
-					}
-
-					if (proposed.background) {
-						diffs.push({
-							label: t('thematiq', 'Background image'),
-							key: 'background',
-							current: currentTheming.has_custom_background
-								? t('thematiq', '(custom)')
-								: t('thematiq', '(default)'),
-							proposed: proposed.background.split('/').pop(),
-						})
-					}
-
-					if (diffs.length > 0) {
+					var plan = computeThemingPlan(tokenSetData, currentTheming)
+					if (plan.mode === 'reset') {
+						showThemingResetDialog(tokenSetData, currentTheming)
+					} else if (plan.mode === 'match') {
 						showThemingDialog(
 							tokenSetData,
 							currentTheming,
-							proposed,
-							diffs,
+							tokenSetData.theming,
+							plan.diffs,
 						)
 					}
 				})
@@ -596,6 +1664,201 @@
 		}
 
 		// Show the theming sync dialog
+		// The stock set's version of the sync dialog: "Current" is whatever was
+		// synced before, "Proposed" is Nextcloud's own defaults, and confirming
+		// calls DELETE /settings/theming, which undoes colours, logo and
+		// background the way core's own undo arrows do. Same overlay id as the
+		// match dialog, so the accessibility helpers and the specs that look
+		// for it keep working.
+		function showThemingResetDialog(tokenSetData, currentTheming) {
+			var existing = document.getElementById('nldesign-theming-dialog-overlay')
+			if (existing) existing.remove()
+
+			var defaultPrimary = currentTheming.default_primary_color || '#00679e'
+			var defaultBackground =
+				currentTheming.default_background_color || defaultPrimary
+			var defaultLogo = OC.imagePath('core', 'logo/logo.svg')
+			var currentBg = currentTheming.background_color || defaultBackground
+			var currentLogoUrl = currentTheming.logo_url || ''
+			var defaultLabel = escapeHtml(t('thematiq', 'Nextcloud default'))
+
+			var rows = ''
+			function swatchCell(hex) {
+				return (
+					'<span class="nldesign-dialog-swatch" style="background:'
+					+ escapeHtml(hex)
+					+ '"></span> '
+					+ escapeHtml(hex)
+				)
+			}
+			if (currentTheming.primary_color) {
+				rows +=
+					'<tr><td>'
+					+ escapeHtml(t('thematiq', 'Primary color'))
+					+ '</td><td>'
+					+ swatchCell(currentTheming.primary_color)
+					+ '</td><td>'
+					+ swatchCell(defaultPrimary)
+					+ ' '
+					+ defaultLabel
+					+ '</td></tr>'
+			}
+			if (currentTheming.background_color) {
+				rows +=
+					'<tr><td>'
+					+ escapeHtml(t('thematiq', 'Background color'))
+					+ '</td><td>'
+					+ swatchCell(currentTheming.background_color)
+					+ '</td><td>'
+					+ swatchCell(defaultBackground)
+					+ ' '
+					+ defaultLabel
+					+ '</td></tr>'
+			}
+			if (currentTheming.has_custom_logo === true) {
+				rows +=
+					'<tr><td>'
+					+ escapeHtml(t('thematiq', 'Logo'))
+					+ '</td><td>'
+					+ escapeHtml(t('thematiq', '(custom logo)'))
+					+ '</td><td>'
+					+ escapeHtml(t('thematiq', 'Nextcloud logo'))
+					+ '</td></tr>'
+			}
+			if (currentTheming.has_custom_background === true) {
+				rows +=
+					'<tr><td>'
+					+ escapeHtml(t('thematiq', 'Background image'))
+					+ '</td><td>'
+					+ escapeHtml(t('thematiq', '(custom)'))
+					+ '</td><td>'
+					+ defaultLabel
+					+ '</td></tr>'
+			}
+
+			var dialogHtml =
+				''
+				+ '<div id="nldesign-theming-dialog-overlay" class="nldesign-dialog-overlay">'
+				+ '  <div class="nldesign-dialog">'
+				+ '    <h3>'
+				+ escapeHtml(
+					t('thematiq', 'Reset Nextcloud theming to its defaults?'),
+				)
+				+ '</h3>'
+				+ '    <div class="nldesign-dialog-previews">'
+				+ '      <div class="nldesign-dialog-preview-col">'
+				+ '        <span class="nldesign-dialog-preview-label">'
+				+ escapeHtml(t('thematiq', 'Current'))
+				+ '</span>'
+				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
+				+ escapeHtml(currentBg)
+				+ ';'
+				+ (currentTheming.has_custom_background
+				&& currentTheming.background_url
+					? 'background-image:url('
+						+ escapeHtml(currentTheming.background_url)
+						+ ');background-size:cover;'
+					: '')
+				+ '">'
+				+ (currentLogoUrl
+					? '          <img class="nldesign-dialog-preview-logo" src="'
+						+ escapeHtml(currentLogoUrl)
+						+ '" alt="'
+						+ escapeHtml(t('thematiq', 'Current logo'))
+						+ '">'
+					: '')
+				+ '        </div>'
+				+ '      </div>'
+				+ '      <div class="nldesign-dialog-preview-col">'
+				+ '        <span class="nldesign-dialog-preview-label">'
+				+ escapeHtml(t('thematiq', 'Proposed'))
+				+ '</span>'
+				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
+				+ escapeHtml(defaultBackground)
+				+ ';">'
+				+ '          <img class="nldesign-dialog-preview-logo" src="'
+				+ escapeHtml(defaultLogo)
+				+ '" alt="'
+				+ escapeHtml(t('thematiq', 'Nextcloud logo'))
+				+ '">'
+				+ '        </div>'
+				+ '      </div>'
+				+ '    </div>'
+				+ '    <table class="nldesign-dialog-table">'
+				+ '      <thead><tr><th>'
+				+ escapeHtml(t('thematiq', 'Setting'))
+				+ '</th><th>'
+				+ escapeHtml(t('thematiq', 'Current'))
+				+ '</th><th>'
+				+ escapeHtml(t('thematiq', 'Proposed'))
+				+ '</th></tr></thead>'
+				+ '      <tbody>'
+				+ rows
+				+ '</tbody>'
+				+ '    </table>'
+				+ '    <p class="nldesign-dialog-hint">'
+				+ escapeHtml(
+					t(
+						'thematiq',
+						"Stock Nextcloud means Nextcloud's own colours and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.",
+					),
+				)
+				+ '</p>'
+				+ '    <div class="nldesign-dialog-actions">'
+				+ '      <button class="nldesign-dialog-cancel">'
+				+ escapeHtml(t('thematiq', 'Cancel'))
+				+ '</button>'
+				+ '      <button class="nldesign-dialog-confirm">'
+				+ escapeHtml(t('thematiq', 'Reset theming'))
+				+ '</button>'
+				+ '    </div>'
+				+ '  </div>'
+				+ '</div>'
+
+			document.body.insertAdjacentHTML('beforeend', dialogHtml)
+			var overlay = document.getElementById('nldesign-theming-dialog-overlay')
+
+			makeDialogAccessible(overlay, function () {
+				closeDialogOverlay(overlay)
+			})
+			overlay
+				.querySelector('.nldesign-dialog-cancel')
+				.addEventListener('click', function () {
+					closeDialogOverlay(overlay)
+				})
+			overlay.addEventListener('click', function (e) {
+				if (e.target === overlay) {
+					closeDialogOverlay(overlay)
+				}
+			})
+
+			overlay
+				.querySelector('.nldesign-dialog-confirm')
+				.addEventListener('click', function () {
+					var btn = this
+					btn.disabled = true
+					btn.textContent = t('thematiq', 'Resetting…')
+
+					applyThemingPlan({ mode: 'reset', diffs: [], payload: null })
+						.then(function () {
+							closeDialogOverlay(overlay)
+							notify(
+								t(
+									'thematiq',
+									'Nextcloud theming reset to its defaults.',
+								),
+							)
+						})
+						.catch(function (error) {
+							closeDialogOverlay(overlay)
+							console.error('Error resetting theming:', error)
+							notify(
+								t('thematiq', 'Failed to reset Nextcloud theming.'),
+							)
+						})
+				})
+		}
+
 		function showThemingDialog(tokenSetData, currentTheming, proposed, diffs) {
 			// Remove any existing dialog
 			var existing = document.getElementById('nldesign-theming-dialog-overlay')
@@ -802,11 +2065,25 @@
 							payload[diff.key] = diff.proposed
 						} else if (
 							diff.key === 'logo'
+							|| diff.key === 'logoheader'
+							|| diff.key === 'favicon'
 							|| diff.key === 'background'
 						) {
 							payload[diff.key] = proposed[diff.key]
 						}
 					})
+					// A theme that captured Nextcloud's branding says which
+					// background state it was saved in; see computeThemingPlan().
+					if (
+						Object.keys(payload).length > 0
+						|| diffs.some(function (diff) {
+							return diff.key === 'background_mode'
+						})
+					) {
+						if (proposed.background_mode) {
+							payload.background_mode = proposed.background_mode
+						}
+					}
 
 					var url = OC.generateUrl('/apps/thematiq/settings/theming')
 					fetch(url, {
@@ -831,15 +2108,14 @@
 						.then(function (data) {
 							closeDialogOverlay(overlay)
 							if (data.status === 'ok') {
-								notify(
-									t(
-										'nldesign',
-										'Nextcloud theming updated successfully. reloading page...',
-									),
-								)
-								setTimeout(function () {
-									window.location.reload()
-								}, 1500)
+								// Core regenerates its theme stylesheets from the new
+								// values; re-request them and update core's own panel
+								// fields on this page. No reload.
+								return refreshCoreTheming().then(function () {
+									notify(
+										t('thematiq', 'Nextcloud theming updated.'),
+									)
+								})
 							} else {
 								notify(
 									t(
@@ -998,6 +2274,13 @@
 			})
 		}
 
+		// Handle the "primary drives every component" checkbox
+		if (primaryDrivesComponentsCheckbox) {
+			primaryDrivesComponentsCheckbox.addEventListener('change', function () {
+				savePrimaryDrivesComponentsSetting(this.checked)
+			})
+		}
+
 		// Handle show menu labels checkbox
 		var showMenuLabelsCheckbox = document.getElementById(
 			'nldesign-show-menu-labels',
@@ -1035,11 +2318,20 @@
 				})
 				.then(function (data) {
 					if (data.status === 'ok') {
-						notify(
-							t(
-								'nldesign',
-								'Setting saved successfully. reload the page to see changes.',
-							),
+						// The dark-variant layer is part of the set's manifest and
+						// the manifest reads this toggle: re-applying the current set
+						// adds or drops that one stylesheet.
+						return applyLayersFor(pageTokenSetId).then(
+							function (swapped) {
+								notify(
+									swapped === true
+										? t('thematiq', 'Applied.')
+										: t(
+												'nldesign',
+												'Setting saved successfully. reload the page to see changes.',
+											),
+								)
+							},
 						)
 					} else {
 						notify(t('thematiq', 'Failed to save setting.'))
@@ -1078,11 +2370,19 @@
 				})
 				.then(function (data) {
 					if (data.status === 'ok') {
-						notify(
-							t(
-								'nldesign',
-								'Setting saved successfully. reload the page to see changes.',
-							),
+						// The Marianne layer is gated in the set's manifest by this
+						// toggle: re-applying the current set adds or drops it.
+						return applyLayersFor(pageTokenSetId).then(
+							function (swapped) {
+								notify(
+									swapped === true
+										? t('thematiq', 'Applied.')
+										: t(
+												'nldesign',
+												'Setting saved successfully. reload the page to see changes.',
+											),
+								)
+							},
 						)
 					} else {
 						notify(t('thematiq', 'Failed to save setting.'))
@@ -1111,12 +2411,11 @@
 				})
 				.then(function (data) {
 					if (data.status === 'ok') {
-						notify(
-							t(
-								'nldesign',
-								'Setting saved successfully. reload the login page to see changes.',
-							),
-						)
+						// hide-slogan.css only paints the login page, but it is on this
+						// page's cascade too: add or drop it so the state is true here
+						// as well, and say where it shows.
+						setConditionalLayer('hide-slogan', hideSlogan === true)
+						notify(t('thematiq', 'Applied. Visible on the login page.'))
 					} else {
 						notify(t('thematiq', 'Failed to save setting.'))
 					}
@@ -1124,6 +2423,82 @@
 				.catch(function (error) {
 					console.error('Error saving slogan setting:', error)
 					notify(t('thematiq', 'Failed to save setting.'))
+				})
+		}
+
+		// Save the "primary drives every component" setting to the server, then
+		// bring this page into the state it just asked for: add or drop
+		// primary-lock.css so the specimens and the playground repaint, and
+		// re-render the editor so the rows the primary now owns lock or unlock.
+		function savePrimaryDrivesComponentsSetting(enabled) {
+			var url = OC.generateUrl(
+				'/apps/thematiq/settings/primary-drives-components',
+			)
+
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({ primaryDrivesComponents: enabled }),
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					if (data.status === 'ok') {
+						primaryDrivesComponents = enabled === true
+						setConditionalLayer('primary-lock', primaryDrivesComponents)
+						refreshTokenEditorLocks()
+						notify(t('thematiq', 'Applied.'))
+					} else {
+						notify(t('thematiq', 'Failed to save setting.'))
+					}
+				})
+				.catch(function (error) {
+					console.error(
+						'Error saving primary-drives-components setting:',
+						error,
+					)
+					notify(t('thematiq', 'Failed to save setting.'))
+				})
+		}
+
+		/**
+		 * Lock or unlock the editor rows the primary owns, in place.
+		 *
+		 * Deliberately not a re-render: the editor holds unsaved edits in
+		 * `tokenEditorState`, and rebuilding the panels would drop them and reset
+		 * the open tab. Only the two attributes that express the lock are touched.
+		 *
+		 * @return {void}
+		 */
+		function refreshTokenEditorLocks() {
+			var container = document.getElementById('nldesign-token-editor')
+			if (container === null) {
+				return
+			}
+
+			container
+				.querySelectorAll('.nldesign-token-row')
+				.forEach(function (row) {
+					var locked = isTokenLocked(row.dataset.tokenRow)
+					var reason = lockReason(row.dataset.tokenRow)
+					row.classList.toggle('nldesign-token-row--locked', locked)
+					row.querySelectorAll('input').forEach(function (input) {
+						input.disabled = locked
+						if (reason === '') {
+							input.removeAttribute('title')
+						} else {
+							input.setAttribute('title', reason)
+						}
+					})
+					// The reset button too: resetting a locked row changes it.
+					var reset = row.querySelector('.nldesign-reset-btn')
+					if (reset !== null) {
+						reset.disabled = locked
+					}
 				})
 		}
 
@@ -1144,12 +2519,11 @@
 				})
 				.then(function (data) {
 					if (data.status === 'ok') {
-						notify(
-							t(
-								'nldesign',
-								'Setting saved successfully. reload the page to see changes.',
-							),
+						setConditionalLayer(
+							'show-menu-labels',
+							showMenuLabels === true,
 						)
+						notify(t('thematiq', 'Applied.'))
 					} else {
 						notify(t('thematiq', 'Failed to save setting.'))
 					}
@@ -1172,6 +2546,61 @@
 		var tokenTabLabels = {}
 
 		/**
+		 * The value a token row should show.
+		 *
+		 * A component token is deliberately UNDECLARED until somebody sets one:
+		 * that is what makes `var(--nldesign-component-x, var(--global))` in
+		 * css/component-scopes.css fall through to the brand value, and what
+		 * makes an untouched instance render exactly as it did before the
+		 * component layer existed. The cost is that `getPropertyValue` reports
+		 * it as the empty string, so every one of those rows opened blank —
+		 * a white swatch beside a component that is plainly not white.
+		 *
+		 * So when the token itself is unset, the row shows the Nextcloud
+		 * variable it falls back to: the colour the component is ACTUALLY
+		 * wearing. The registry carries that name as `global`.
+		 *
+		 * This is display only. `saveOverrides()` writes a token only when its
+		 * value differs from `resolved`, and `resolved` is what this returned —
+		 * so showing the inherited colour never writes it, and the fallback
+		 * stays live until the admin actually picks something.
+		 *
+		 * The FALLBACK is read off `<body>` first, for the same reason
+		 * css/component-scopes.css captures it there: the design systems declare
+		 * the Nextcloud globals on `body` and Nextcloud core declares its own on
+		 * `:root`. Reading the global off the document element returned CORE's
+		 * colour, so a row for a token nobody had set opened showing Nextcloud
+		 * blue beside a component wearing the brand colour.
+		 *
+		 * The token's OWN value is still read off `:root` — that is where
+		 * defaults.css and custom-overrides.css declare `--nldesign-*`.
+		 *
+		 * @param {CSSStyleDeclaration} rootStyle Computed style of the document element.
+		 * @param {CSSStyleDeclaration} bodyStyle Computed style of the body element.
+		 * @param {string} name The CSS custom property name.
+		 *
+		 * @return {string} The resolved value, or its fallback, or ''.
+		 */
+		function resolveTokenValue(rootStyle, bodyStyle, name) {
+			var own = rootStyle.getPropertyValue(name).trim()
+			if (own !== '') {
+				return own
+			}
+
+			var meta = tokenRegistry[name]
+			if (meta === undefined || !meta.global) {
+				return ''
+			}
+
+			var inherited = bodyStyle.getPropertyValue(meta.global).trim()
+			if (inherited !== '') {
+				return inherited
+			}
+
+			return rootStyle.getPropertyValue(meta.global).trim()
+		}
+
+		/**
 		 * Initialise and mount the token editor panel into #nldesign-token-editor.
 		 */
 		function initTokenEditor() {
@@ -1180,7 +2609,7 @@
 				return
 			}
 
-			fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
+			fetch(overridesUrl('', editedTokenSetId()), {
 				headers: { requesttoken: OC.requestToken },
 			})
 				.then(function (r) {
@@ -1193,14 +2622,18 @@
 
 					// Read resolved values from the live CSS stack.
 					var rootStyle = getComputedStyle(document.documentElement)
+					var bodyStyle = getComputedStyle(document.body)
 					Object.keys(tokenRegistry).forEach(function (name) {
-						var resolved = rootStyle.getPropertyValue(name).trim()
+						var resolved = resolveTokenValue(rootStyle, bodyStyle, name)
 						var overridden =
 							overrides[name] !== undefined ? overrides[name] : null
 						tokenEditorState[name] = {
 							resolved: resolved,
 							custom: overridden,
 							current: overridden !== null ? overridden : resolved,
+							// What the reset button goes back to: the value as it
+							// was last saved, not the theme's own.
+							saved: overridden !== null ? overridden : resolved,
 							isDirty: false,
 						}
 					})
@@ -1283,6 +2716,14 @@
 				+ '</label>'
 				+ '</div>'
 				+ '</div>'
+				// Nextcloud's own base tokens stay locked until asked for; see
+				// baseTokensUnlocked and confirmBaseUnlock().
+				+ '<label class="nldesign-base-unlock">'
+				+ '<input type="checkbox" id="nldesign-base-unlock"'
+				+ (baseTokensUnlocked === true ? ' checked' : '')
+				+ '>'
+				+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
+				+ '</label>'
 				+ '<div class="nldesign-tabs">'
 				+ tabsHtml
 				+ '</div>'
@@ -1293,6 +2734,31 @@
 				+ escapeHtml(t('thematiq', 'Save overrides'))
 				+ '</button>'
 				+ '</div>'
+				+ '</div>'
+				// The way back. "Do not ask again" lives inside a dialog the
+				// admin has just dismissed, so without these two the offer to
+				// keep a set of changes as its own theme would be gone for good
+				// after one careless click. Worded the same way round as that
+				// dialog: ticked means "stop asking".
+				+ '<div class="nldesign-confirm-controls">'
+				+ '<label>'
+				+ '<input type="checkbox" id="nldesign-confirm-save-stock">'
+				+ escapeHtml(
+					t(
+						'thematiq',
+						"Don't ask before saving while the stock Nextcloud theme is active",
+					),
+				)
+				+ '</label>'
+				+ '<label>'
+				+ '<input type="checkbox" id="nldesign-confirm-save-theme">'
+				+ escapeHtml(
+					t(
+						'thematiq',
+						"Don't ask before saving while a token set is active",
+					),
+				)
+				+ '</label>'
 				+ '</div>'
 				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>'
 
@@ -1321,6 +2787,10 @@
 
 			wireTokenRows(container)
 
+			wireConfirmControls()
+
+			wireBaseUnlock()
+
 			document
 				.getElementById('nldesign-save-btn')
 				.addEventListener('click', saveOverrides)
@@ -1336,6 +2806,88 @@
 					}
 					importOverrides(file)
 					e.target.value = ''
+				})
+		}
+
+		/**
+		 * Wire the "also edit Nextcloud's base tokens" toggle.
+		 *
+		 * Unticking locks the base rows again straight away. Ticking asks
+		 * first, and the box only stays ticked when the admin confirms.
+		 *
+		 * @return {void}
+		 */
+		function wireBaseUnlock() {
+			var box = document.getElementById('nldesign-base-unlock')
+			if (box === null) {
+				return
+			}
+
+			box.addEventListener('change', function () {
+				if (box.checked === false) {
+					baseTokensUnlocked = false
+					refreshTokenEditorLocks()
+					return
+				}
+				box.checked = false
+				confirmBaseUnlock(function () {
+					box.checked = true
+					baseTokensUnlocked = true
+					refreshTokenEditorLocks()
+				})
+			})
+		}
+
+		/**
+		 * Warn before the base tokens are unlocked.
+		 *
+		 * @param {Function} proceed Called when the admin confirms.
+		 *
+		 * @return {void}
+		 */
+		function confirmBaseUnlock(proceed) {
+			var html =
+				'<div class="nldesign-dialog-overlay" id="nldesign-base-unlock-overlay">'
+				+ '<div class="nldesign-dialog nldesign-dialog--small">'
+				+ '<h3>'
+				+ escapeHtml(t('thematiq', "Edit Nextcloud's base tokens?"))
+				+ '</h3>'
+				+ '<p class="settings-hint">'
+				+ escapeHtml(
+					t(
+						'thematiq',
+						'These are the colours and sizes Nextcloud itself is built from, such as the main text colour. Changing one changes every part of Nextcloud that reads it, which is far more than the component you are looking at, and not only what this panel shows. To change one component, use its own rows instead.',
+					),
+				)
+				+ '</p>'
+				+ '<div class="nldesign-dialog-actions">'
+				+ '<button class="nldesign-dialog-cancel">'
+				+ escapeHtml(t('thematiq', 'Cancel'))
+				+ '</button>'
+				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
+				+ escapeHtml(t('thematiq', 'Edit them anyway'))
+				+ '</button>'
+				+ '</div>'
+				+ '</div>'
+				+ '</div>'
+
+			document.body.insertAdjacentHTML('beforeend', html)
+			var overlay = document.getElementById('nldesign-base-unlock-overlay')
+
+			function close() {
+				overlay.remove()
+			}
+
+			makeDialogAccessible(overlay, close)
+
+			overlay
+				.querySelector('.nldesign-dialog-cancel')
+				.addEventListener('click', close)
+			overlay
+				.querySelector('.nldesign-dialog-confirm')
+				.addEventListener('click', function () {
+					close()
+					proceed()
 				})
 		}
 
@@ -1368,25 +2920,46 @@
 				}),
 			)
 
+			// Locked rows render disabled rather than hidden. The value is still
+			// stored and still shown, because turning the setting back off restores
+			// it — hiding the control would make a kept value look like a lost one.
+			// `disabled` also carries to the playground, which clones these rows.
+			var locked = isTokenLocked(name)
+			var lockedAttr = locked
+				? ' disabled title="' + escapeHtml(lockReason(name)) + '"'
+				: ''
+
 			var inputHtml = ''
-			if (meta.type === 'color') {
+			// An `rgb` token holds a bare `r, g, b` triplet (Nextcloud 32 mixes
+			// its note-card fills from one), so it gets the same picker as a
+			// colour and the picker writes the triplet — see wireTokenRows().
+			var format = meta.type === 'rgb' ? ' data-format="rgb"' : ''
+			if (meta.type === 'color' || meta.type === 'rgb') {
 				var pickerVal = normaliseColorForPicker(displayVal)
 				inputHtml =
 					'<div class="nldesign-color-input-wrap">'
 					+ '<input type="color" class="nldesign-color-picker" aria-label="'
 					+ pickerLabel
-					+ '" data-token="'
+					+ '"'
+					+ format
+					+ ' data-token="'
 					+ escapeHtml(name)
 					+ '" value="'
 					+ escapeHtml(pickerVal)
-					+ '">'
+					+ '"'
+					+ lockedAttr
+					+ '>'
 					+ '<input type="text" class="nldesign-color-text" aria-label="'
 					+ inputLabel
-					+ '" data-token="'
+					+ '"'
+					+ format
+					+ ' data-token="'
 					+ escapeHtml(name)
 					+ '" value="'
 					+ escapeHtml(displayVal)
-					+ '">'
+					+ '"'
+					+ lockedAttr
+					+ '>'
 					+ '</div>'
 			} else {
 				inputHtml =
@@ -1396,11 +2969,15 @@
 					+ escapeHtml(name)
 					+ '" value="'
 					+ escapeHtml(displayVal)
-					+ '">'
+					+ '"'
+					+ lockedAttr
+					+ '>'
 			}
 
 			return (
-				'<div class="nldesign-token-row" data-token-row="'
+				'<div class="nldesign-token-row'
+				+ (locked ? ' nldesign-token-row--locked' : '')
+				+ '" data-token-row="'
 				+ escapeHtml(name)
 				+ '">'
 				+ '<div class="nldesign-token-label-wrap">'
@@ -1423,9 +3000,51 @@
 						label: meta.label || name,
 					}),
 				)
-				+ '">↺</button>'
+				+ '"'
+				+ (locked ? ' disabled' : '')
+				+ '>↺</button>'
 				+ '</div>'
 			)
+		}
+
+		/**
+		 * The value a colour picker stands for.
+		 *
+		 * A picker always reports #RRGGBB; on an `rgb` row the token holds the
+		 * bare triplet instead, so the hex is converted before it is written.
+		 *
+		 * @param {HTMLInputElement} picker The colour input.
+		 * @return {string} The token value.
+		 */
+		function pickerValue(picker) {
+			if (
+				picker.dataset.format === 'rgb'
+				&& typeof TT.hexToRgbTriplet === 'function'
+			) {
+				return TT.hexToRgbTriplet(picker.value) || picker.value
+			}
+			return picker.value
+		}
+
+		/**
+		 * Move a picker to a typed value it can show: a hex colour, or on an
+		 * `rgb` row a triplet. Anything else leaves the swatch where it is.
+		 *
+		 * @param {HTMLInputElement} picker The colour input.
+		 * @param {string} value The typed value.
+		 * @return {void}
+		 */
+		function syncPicker(picker, value) {
+			if (/^#[0-9a-fA-F]{6}$/.test(value) === true) {
+				picker.value = value
+				return
+			}
+			if (
+				picker.dataset.format === 'rgb'
+				&& /^\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}$/.test(value) === true
+			) {
+				picker.value = normaliseColorForPicker(value)
+			}
 		}
 
 		/**
@@ -1437,7 +3056,7 @@
 				.forEach(function (picker) {
 					picker.addEventListener('input', function () {
 						var name = picker.dataset.token
-						var value = picker.value
+						var value = pickerValue(picker)
 						var textField = container.querySelector(
 							'.nldesign-color-text[data-token="' + name + '"]',
 						)
@@ -1458,11 +3077,8 @@
 						var picker = container.querySelector(
 							'.nldesign-color-picker[data-token="' + name + '"]',
 						)
-						if (
-							picker !== null
-							&& /^#[0-9a-fA-F]{6}$/.test(value) === true
-						) {
-							picker.value = value
+						if (picker !== null) {
+							syncPicker(picker, value)
 						}
 						applyLivePreview(name, value)
 						markDirty(name, value, container)
@@ -1489,7 +3105,10 @@
 						if (state === undefined) {
 							return
 						}
-						var defaultVal = state.resolved
+						// Back to the saved value, so a reset undoes the edit
+						// rather than a save the admin already made.
+						var defaultVal =
+							state.saved !== undefined ? state.saved : state.resolved
 						var textField = container.querySelector(
 							'.nldesign-color-text[data-token="'
 								+ name
@@ -1517,23 +3136,92 @@
 								badge.remove()
 							}
 						}
-						document.documentElement.style.removeProperty(name)
+						// A saved value stays on the preview; with none, the
+						// preview falls back to what the theme itself declares.
+						if (
+							typeof state.custom === 'string'
+							&& state.custom !== ''
+						) {
+							previewTarget().style.setProperty(
+								name,
+								state.custom,
+								'important',
+							)
+						} else {
+							previewTarget().style.removeProperty(name)
+						}
+						schedulePreviewRepaint()
 						tokenEditorState[name].current = defaultVal
-						tokenEditorState[name].custom = null
-						tokenEditorState[name].isDirty = true
+						tokenEditorState[name].isDirty = false
 						updateSaveStatus()
 					})
 				})
 		}
 
-		function applyLivePreview(name, value) {
-			if (value.trim() === '') {
-				document.documentElement.style.removeProperty(name)
-			} else {
-				document.documentElement.style.setProperty(name, value)
+		// Pending preview repaint, so a drag cannot queue more than one a frame.
+		var previewFrame = null
+
+		/**
+		 * Ask for a preview repaint at the next frame, at most one per frame.
+		 *
+		 * A colour input fires `input` continuously while the pointer is down —
+		 * well above 60 a second on a fast mouse — and each repaint reads the
+		 * computed cascade. Repainting per event did work the frame could never
+		 * show, because several events land between two paints and only the
+		 * last one is visible. Coalescing keeps the preview exactly as current
+		 * while doing a fraction of the work.
+		 *
+		 * @return {void}
+		 */
+		function schedulePreviewRepaint() {
+			if (previewFrame !== null) {
+				return
 			}
-			// Reflect the live token edit into the rich preview.
-			updatePreview(tokenSetSelect ? tokenSetSelect.value : '')
+			previewFrame = requestAnimationFrame(function () {
+				previewFrame = null
+				updatePreview(tokenSetSelect ? tokenSetSelect.value : '')
+			})
+		}
+
+		/**
+		 * Where an unsaved edit is written: the preview, never the page.
+		 *
+		 * An edit is a preview until it is saved — as overrides on the active
+		 * theme, or as a theme of its own that is then selected. Written on
+		 * <html>, every edit repainted the real Nextcloud the admin was working
+		 * in, so the page wore a theme nobody had saved. On the preview it
+		 * reaches exactly the specimens drawn inside it, which read the same
+		 * tokens the real components do (css/component-scopes.css captures the
+		 * Nextcloud values on the preview as well as on body).
+		 *
+		 * @return {Element} The preview root, or <html> on a page without one.
+		 */
+		function previewTarget() {
+			return previewRoot !== null ? previewRoot : document.documentElement
+		}
+
+		function applyLivePreview(name, value) {
+			// The custom property is written immediately, NOT deferred: this is
+			// what repaints the specimens in the preview, and the browser
+			// already batches it into the next frame for free. Only the rich
+			// preview — which has to READ the cascade back — is worth delaying.
+			//
+			// WRITTEN `!important`, and it has to be. CustomOverridesService
+			// emits every stored token as `!important` (see the note in its
+			// write()), so once a token had been saved ONCE, this inline
+			// declaration lost the cascade to custom-overrides.css and dragging
+			// its picker moved nothing on the page. An admin who had already
+			// saved a colour could never preview a different one — which reads
+			// as the editor being dead, not as a cascade nicety.
+			//
+			// Inline `!important` outranks any author stylesheet, so the preview
+			// now wins over the stored value it is about to replace.
+			if (value.trim() === '') {
+				previewTarget().style.removeProperty(name)
+			} else {
+				previewTarget().style.setProperty(name, value, 'important')
+			}
+			schedulePreviewRepaint()
 		}
 
 		function markDirty(name, value, container) {
@@ -1575,7 +3263,664 @@
 				dirtyCount > 0 ? t('thematiq', 'Unsaved changes') : ''
 		}
 
-		function saveOverrides() {
+		/* ==========================================================================
+		 * SAVE CONFIRMATION
+		 *
+		 * Two dialogs, because the two situations ask different questions.
+		 *
+		 * On the stock `nextcloud` set there is a real fork: the edits can be
+		 * kept as a NEW token set, or written straight over the running
+		 * Nextcloud theme. That choice has to be made before anything is
+		 * written, because the two go to different places.
+		 *
+		 * On any other set there is nothing to choose — the overrides belong to
+		 * the set that is on — so it is a plain confirmation.
+		 *
+		 * Both carry "do not ask again", and both flags are turned back on from
+		 * the pair of controls under the editor. A one-way switch buried in a
+		 * dialog is how an admin loses the only offer of the new-set path.
+		 * ========================================================================== */
+
+		// The stock set's id, as CssInjectionService::STOCK_TOKEN_SET spells it.
+		// It is the one set whose "save" has a second route, because it is the
+		// running Nextcloud theme rather than a theme this app ships.
+		var STOCK_TOKEN_SET = 'nextcloud'
+
+		// Server-rendered, and kept in step as the dialogs and the controls
+		// under the editor change them.
+		var confirmSaveStock = loadInitialState('confirmSaveStock', true) === true
+		var confirmSaveTheme = loadInitialState('confirmSaveTheme', true) === true
+
+		/**
+		 * Put the two controls under the editor in step with the flags.
+		 *
+		 * Called after a dialog changes one, so ticking "do not ask again" and
+		 * then looking down at the controls shows the same fact in both places.
+		 *
+		 * @return {void}
+		 */
+		function refreshConfirmControls() {
+			var stockEl = document.getElementById('nldesign-confirm-save-stock')
+			var themeEl = document.getElementById('nldesign-confirm-save-theme')
+			// Ticked is "do not ask", the inverse of the stored flag.
+			if (stockEl !== null) {
+				stockEl.checked = confirmSaveStock === false
+			}
+			if (themeEl !== null) {
+				themeEl.checked = confirmSaveTheme === false
+			}
+		}
+
+		/**
+		 * Wire the two controls under the editor, and set their initial state.
+		 *
+		 * @return {void}
+		 */
+		function wireConfirmControls() {
+			var stockEl = document.getElementById('nldesign-confirm-save-stock')
+			var themeEl = document.getElementById('nldesign-confirm-save-theme')
+			if (stockEl === null || themeEl === null) {
+				return
+			}
+
+			refreshConfirmControls()
+
+			stockEl.addEventListener('change', function () {
+				confirmSaveStock = stockEl.checked === false
+				saveConfirmFlags()
+			})
+			themeEl.addEventListener('change', function () {
+				confirmSaveTheme = themeEl.checked === false
+				saveConfirmFlags()
+			})
+		}
+
+		/**
+		 * Persist both confirmation flags.
+		 *
+		 * Sent as a pair rather than one at a time: the controls under the
+		 * editor render both, and a single round trip cannot leave the two
+		 * halves of the preference disagreeing if one request fails.
+		 *
+		 * @return {Promise} Resolves when the server has stored them.
+		 */
+		function saveConfirmFlags() {
+			return fetch(
+				OC.generateUrl('/apps/thematiq/settings/save-confirmations'),
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						requesttoken: OC.requestToken,
+					},
+					body: JSON.stringify({
+						confirmSaveStock: confirmSaveStock,
+						confirmSaveTheme: confirmSaveTheme,
+					}),
+				},
+			).catch(function (err) {
+				console.error('Error saving the confirmation settings:', err)
+			})
+		}
+
+		/**
+		 * Whether the active set is the stock one, read fresh.
+		 *
+		 * The dropdown can move under the editor without a reload, so the
+		 * server-rendered flag is only the starting point.
+		 *
+		 * @return {boolean} True when the stock Nextcloud set is active.
+		 */
+		function onStockSet() {
+			if (tokenSetSelect !== null && tokenSetSelect.value !== '') {
+				return tokenSetSelect.value === STOCK_TOKEN_SET
+			}
+
+			return pageTokenSetId === STOCK_TOKEN_SET
+		}
+
+		/**
+		 * Put the "do not ask again" row into a dialog and report its state.
+		 *
+		 * @param {Element} overlay The dialog overlay.
+		 * @param {string} which Which flag this dialog controls.
+		 *
+		 * @return {void}
+		 */
+		function wireDoNotAskAgain(overlay, which) {
+			var box = overlay.querySelector('.nldesign-dialog-dontask')
+			if (box === null) {
+				return
+			}
+
+			box.addEventListener('change', function () {
+				if (which === 'stock') {
+					confirmSaveStock = box.checked === false
+				} else {
+					confirmSaveTheme = box.checked === false
+				}
+				saveConfirmFlags().then(refreshConfirmControls)
+			})
+		}
+
+		/**
+		 * The markup both dialogs share for the "do not ask again" row.
+		 *
+		 * @return {string} The row's HTML.
+		 */
+		function dontAskAgainRow() {
+			return (
+				'<label class="nldesign-dialog-dontask-row">'
+				+ '<input type="checkbox" class="nldesign-dialog-dontask">'
+				+ escapeHtml(t('thematiq', 'Do not ask again'))
+				+ '</label>'
+			)
+		}
+
+		/**
+		 * Ask before saving, and run `proceed` with the chosen route.
+		 *
+		 * `proceed` is called with `'new-set'` to keep the edits as a token set
+		 * of their own, or `'overrides'` to write them over the active theme.
+		 * Cancelling calls nothing at all — deliberately, so a dismissed dialog
+		 * can never be mistaken for a save.
+		 *
+		 * @param {Function} proceed Called with the chosen route.
+		 *
+		 * @return {void}
+		 */
+		function confirmSave(proceed) {
+			var stock = onStockSet()
+
+			if (stock === false && confirmSaveTheme === false) {
+				proceed('overrides')
+				return
+			}
+			if (stock === true && confirmSaveStock === false) {
+				proceed('overrides')
+				return
+			}
+
+			if (stock === true) {
+				openStockSaveDialog(proceed)
+				return
+			}
+
+			openThemeSaveDialog(proceed)
+		}
+
+		/**
+		 * The stock-set dialog: new token set, or over the Nextcloud theme.
+		 *
+		 * @param {Function} proceed Called with the chosen route.
+		 *
+		 * @return {void}
+		 */
+		function openStockSaveDialog(proceed) {
+			var html =
+				'<div class="nldesign-dialog-overlay" id="nldesign-save-dialog-overlay">'
+				+ '<div class="nldesign-dialog">'
+				+ '<h3>'
+				+ escapeHtml(t('thematiq', 'Keep these changes as a new theme?'))
+				+ '</h3>'
+				+ '<p class="settings-hint">'
+				+ escapeHtml(
+					t(
+						'thematiq',
+						'You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself. Writing over it changes Nextcloud for everyone; "Reset theme to Nextcloud" brings the original back.',
+					),
+				)
+				+ '</p>'
+				+ '<label class="nldesign-dialog-field">'
+				+ escapeHtml(t('thematiq', 'Name for the new theme'))
+				+ '<input type="text" id="nldesign-save-newset-name" '
+				+ 'placeholder="'
+				+ escapeHtml(t('thematiq', 'My organisation'))
+				+ '">'
+				+ '</label>'
+				// Where the server's refusal lands. In the dialog, beside the
+				// field that caused it, because the one thing an admin needs
+				// after "that name is taken" is the name still being there to
+				// edit. A toast over a closed dialog loses the whole export.
+				+ '<p class="nldesign-dialog-error" id="nldesign-save-newset-error"'
+				+ ' role="alert" hidden></p>'
+				+ dontAskAgainRow()
+				+ '<div class="nldesign-dialog-actions">'
+				+ '<button class="nldesign-dialog-cancel">'
+				+ escapeHtml(t('thematiq', 'Cancel'))
+				+ '</button>'
+				+ '<button class="nldesign-dialog-overwrite">'
+				+ escapeHtml(t('thematiq', 'No, change the Nextcloud theme'))
+				+ '</button>'
+				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
+				+ escapeHtml(t('thematiq', 'Yes, save as a new theme'))
+				+ '</button>'
+				+ '</div>'
+				+ '</div>'
+				+ '</div>'
+
+			document.body.insertAdjacentHTML('beforeend', html)
+			var overlay = document.getElementById('nldesign-save-dialog-overlay')
+
+			function close() {
+				overlay.remove()
+			}
+
+			makeDialogAccessible(overlay, close)
+			wireDoNotAskAgain(overlay, 'stock')
+
+			overlay
+				.querySelector('.nldesign-dialog-cancel')
+				.addEventListener('click', close)
+			overlay
+				.querySelector('.nldesign-dialog-overwrite')
+				.addEventListener('click', function () {
+					close()
+					proceed('overrides')
+				})
+			overlay
+				.querySelector('.nldesign-dialog-confirm')
+				.addEventListener('click', function () {
+					var nameEl = document.getElementById('nldesign-save-newset-name')
+					if (nameEl === null) {
+						return
+					}
+
+					var name = nameEl.value.trim()
+					if (name === '') {
+						// Refused here rather than at the server, because the
+						// name is the one thing this dialog exists to collect,
+						// and a round trip to be told so loses what was typed.
+						showError(t('thematiq', 'Give the new theme a name.'))
+						return
+					}
+
+					// The dialog STAYS OPEN across the request and closes only
+					// once the set exists. A name collision is the expected
+					// failure here — the server answers 409 with the name it
+					// already has — and the admin's next move is to change one
+					// word and try again, which is only possible if the dialog
+					// and everything typed into it are still on screen.
+					busy(true)
+					showError('')
+					proceed('new-set', name, {
+						done: function () {
+							busy(false)
+							close()
+						},
+						fail: function (message) {
+							busy(false)
+							showError(message)
+						},
+					})
+				})
+
+			/**
+			 * Show, or clear, the server's refusal inside the dialog.
+			 *
+			 * @param {string} message The message, or '' to clear it.
+			 *
+			 * @return {void}
+			 */
+			function showError(message) {
+				var errorEl = document.getElementById('nldesign-save-newset-error')
+				var nameEl = document.getElementById('nldesign-save-newset-name')
+				if (errorEl === null) {
+					return
+				}
+
+				errorEl.textContent = message
+				errorEl.hidden = message === ''
+				if (nameEl === null) {
+					return
+				}
+
+				if (message === '') {
+					nameEl.removeAttribute('aria-invalid')
+					return
+				}
+
+				nameEl.setAttribute('aria-invalid', 'true')
+				nameEl.focus()
+				nameEl.select()
+			}
+
+			/**
+			 * Lock the dialog's controls while the set is being created.
+			 *
+			 * @param {boolean} on Whether a request is in flight.
+			 *
+			 * @return {void}
+			 */
+			function busy(on) {
+				overlay
+					.querySelectorAll('button, input')
+					.forEach(function (control) {
+						control.disabled = on
+					})
+			}
+		}
+
+		/**
+		 * The plain confirmation shown on every set that is not stock.
+		 *
+		 * @param {Function} proceed Called with the chosen route.
+		 *
+		 * @return {void}
+		 */
+		function openThemeSaveDialog(proceed) {
+			var setName =
+				tokenSetSelect !== null
+				&& tokenSetsData[tokenSetSelect.value] !== undefined
+					? tokenSetsData[tokenSetSelect.value].name
+					: tokenSetSelect !== null
+						? tokenSetSelect.value
+						: ''
+
+			var html =
+				'<div class="nldesign-dialog-overlay" id="nldesign-save-dialog-overlay">'
+				+ '<div class="nldesign-dialog nldesign-dialog--small">'
+				+ '<h3>'
+				+ escapeHtml(t('thematiq', 'Save these overrides?'))
+				+ '</h3>'
+				+ '<p class="settings-hint">'
+				+ escapeHtml(
+					t('thematiq', 'They are applied on top of {set}.', {
+						set: setName,
+					}),
+				)
+				+ '</p>'
+				+ dontAskAgainRow()
+				+ '<div class="nldesign-dialog-actions">'
+				+ '<button class="nldesign-dialog-cancel">'
+				+ escapeHtml(t('thematiq', 'Cancel'))
+				+ '</button>'
+				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
+				+ escapeHtml(t('thematiq', 'Save overrides'))
+				+ '</button>'
+				+ '</div>'
+				+ '</div>'
+				+ '</div>'
+
+			document.body.insertAdjacentHTML('beforeend', html)
+			var overlay = document.getElementById('nldesign-save-dialog-overlay')
+
+			function close() {
+				overlay.remove()
+			}
+
+			makeDialogAccessible(overlay, close)
+			wireDoNotAskAgain(overlay, 'theme')
+
+			overlay
+				.querySelector('.nldesign-dialog-cancel')
+				.addEventListener('click', close)
+			overlay
+				.querySelector('.nldesign-dialog-confirm')
+				.addEventListener('click', function () {
+					close()
+					proceed('overrides')
+				})
+		}
+
+		/**
+		 * The design system the page is currently wearing.
+		 *
+		 * Read off the selected option's `data-design-system`, which is the same
+		 * attribute the badge reads, so the value saved into a new theme is the
+		 * one the panel is showing the admin.
+		 *
+		 * @return {string} A design-system id, defaulting to nldesign.
+		 */
+		function currentDesignSystemId() {
+			if (tokenSetSelect === null) {
+				return 'nldesign'
+			}
+
+			var option = tokenSetSelect.querySelector(
+				'option[value="' + tokenSetSelect.value + '"]',
+			)
+
+			return option === null
+				? 'nldesign'
+				: option.getAttribute('data-design-system') || 'nldesign'
+		}
+
+		/**
+		 * Serialise what the page is wearing into a new custom token set.
+		 *
+		 * Reuses the playground's exporter — the same function behind "Export as
+		 * token set" — so a set created here and one downloaded there are the
+		 * same file. It is posted to the custom-set upload endpoint rather than
+		 * downloaded, which is what makes this one click instead of a round trip
+		 * through the admin's file manager.
+		 *
+		 * @param {string} name The display name the admin typed.
+		 *
+		 * @return {void}
+		 */
+		function saveAsNewTokenSet(name, report) {
+			var playground = window.ThematiqPlayground
+			if (playground === undefined || playground.exportCss === undefined) {
+				report.fail(
+					t(
+						'thematiq',
+						'The theme exporter is not loaded on this page, so no new theme was created.',
+					),
+				)
+				return
+			}
+
+			// `playgroundExportTokens`, NOT `playgroundTokens`.
+			//
+			// The second is what the instrument DRAWS with: the active set on top
+			// of css/systems/nldesign/defaults.css, so every token has a value to
+			// show. Exporting from it wrote all 200 of them — 115 component
+			// tokens of Rijkshuisstijl defaults — into a theme whose author had
+			// changed one colour. The first is what the set DECLARES, which for
+			// the stock set is resolved from the running instance rather than
+			// from a file. See PlaygroundStateService::getExportTokens().
+			// Captured before the request, so the set is recorded against the
+			// design system the page was wearing when it was serialised, not
+			// whatever the dropdown says by the time the response lands.
+			var designSystem = currentDesignSystemId()
+
+			var result = playground.exportCss(
+				playground.liveTokens(
+					loadInitialState('playgroundExportTokens', {}),
+					function (n, fallback) {
+						return readVar(n, fallback)
+					},
+				),
+				collectSavedAndDirtyOverrides(),
+				loadInitialState('playgroundTokenSources', {}),
+			)
+
+			// An override the exporter could not express is a value the admin
+			// set, saw applied, and would not find in the theme they just saved.
+			// The download path has always said so; this one used to drop them
+			// without a word, which is how a header colour went missing between
+			// the editor and the file.
+			if (result.unexpressed.length > 0) {
+				notify(
+					t(
+						'thematiq',
+						'These values could not be written into a theme and are kept as overrides instead: {names}',
+						{ names: result.unexpressed.join(', ') },
+					),
+				)
+			}
+
+			fetch(OC.generateUrl('/apps/thematiq/settings/tokensets/upload'), {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				// `sourceName` is what the custom-set list shows as the origin.
+				// Saying it came from the editor rather than leaving it blank is
+				// what tells a later admin why a set exists that nobody uploaded.
+				//
+				// `raw` says this is already a token set, so the server stores it
+				// as it arrived instead of running it through the NLDS converter,
+				// whose job is to complete an unknown document and which therefore
+				// fills every token the file leaves out.
+				//
+				// `designSystem` is the one the page is wearing, so a theme saved
+				// off stock Nextcloud stays stock Nextcloud instead of coming back
+				// with the whole nldesign layer on top of it. Allow-listed server
+				// side; this is a claim, not a decision.
+				//
+				// `captureTheming` copies Nextcloud's own branding into the new
+				// theme as well, so it comes back whenever the theme is applied.
+				body: JSON.stringify({
+					name: name,
+					content: result.css,
+					sourceName: t('thematiq', 'Token editor'),
+					raw: true,
+					designSystem: designSystem,
+					captureTheming: true,
+				}),
+			})
+				.then(function (r) {
+					// Read the body whatever the status: the refusals worth
+					// showing an admin — 409 for a name already taken, 422 for a
+					// name with nothing to slugify — all carry their reason in
+					// `error`, and throwing on `!r.ok` would replace every one of
+					// them with "could not be created".
+					return r.json().then(
+						function (data) {
+							return { ok: r.ok, status: r.status, data: data }
+						},
+						function () {
+							return { ok: r.ok, status: r.status, data: {} }
+						},
+					)
+				})
+				.then(function (result) {
+					if (result.data.error) {
+						report.fail(result.data.error)
+						return
+					}
+					if (result.ok === false) {
+						report.fail(
+							t(
+								'thematiq',
+								'The new theme could not be created (HTTP {status}).',
+								{ status: String(result.status) },
+							),
+						)
+						return
+					}
+
+					report.done()
+					applyCreatedTokenSet(result.data.id, name, designSystem)
+					rememberCapturedTheming(result.data.id, result.data.theming)
+				})
+				.catch(function (err) {
+					console.error('Error creating the token set:', err)
+					report.fail(t('thematiq', 'The new theme could not be created.'))
+				})
+		}
+
+		/**
+		 * Put a just-created set in the dropdown, then make it the live theme.
+		 *
+		 * Saving a theme IS choosing it. The admin has just described the thing
+		 * they want the instance to look like and named it; leaving the instance
+		 * on the theme they were editing away from, with a notice telling them to
+		 * go and pick it, made a successful save look like a failed one.
+		 *
+		 * The set is brand new, so the dropdown has no option for it — the server
+		 * rendered that list before it existed. It is inserted here rather than by
+		 * re-rendering the panel, because a re-render would drop every unsaved row
+		 * in the editor.
+		 *
+		 * No apply dialog either. That dialog exists to show what CHANGES when you
+		 * move between two themes; here the page is already wearing these values
+		 * (the editor has been previewing them inline all along), so the only work
+		 * left is to make the server agree and swap the stylesheets under it.
+		 *
+		 * @param {string} id   The new set's id, as the server assigned it.
+		 * @param {string} name The display name the admin typed.
+		 *
+		 * @return {void}
+		 */
+		function applyCreatedTokenSet(id, name, designSystem) {
+			if (typeof id !== 'string' || id === '') {
+				// Created, but we cannot name it — say so rather than silently
+				// leaving the instance on the old theme.
+				notify(
+					t(
+						'thematiq',
+						'Theme "{name}" was created but could not be applied. Pick it in the theme dropdown.',
+						{ name: name },
+					),
+				)
+				return
+			}
+
+			// The set was saved carrying the design system the page was wearing,
+			// so the dropdown entry and the badge say the same thing the server
+			// stored — a theme made from stock Nextcloud reads as stock, not as
+			// NL Design System.
+			tokenSetsData[id] = { id: id, name: name, design_system: designSystem }
+
+			if (
+				tokenSetSelect !== null
+				&& tokenSetSelect.querySelector('option[value="' + id + '"]')
+					=== null
+			) {
+				var option = document.createElement('option')
+				option.value = id
+				option.textContent = name
+				option.dataset.designSystem = designSystem
+				tokenSetSelect.appendChild(option)
+			}
+
+			commitTokenSetChange(id, false)
+				.then(function (data) {
+					if (data.status !== 'ok') {
+						throw new Error(data.error || 'Token set change failed')
+					}
+
+					// reflectSelection() moves the dropdown WITHOUT opening the
+					// apply dialog, which its own change handler would.
+					reflectSelection(id)
+
+					return applyLayersFor(id)
+				})
+				.then(function (swapped) {
+					notify(
+						swapped === true
+							? t('thematiq', 'Theme "{name}" created and applied.', {
+									name: name,
+								})
+							: t(
+									'thematiq',
+									'Theme "{name}" created and set as the active theme. Reload the page to see it.',
+									{ name: name },
+								),
+					)
+				})
+				.catch(function (err) {
+					console.error('Error applying the new token set:', err)
+					notify(
+						t(
+							'thematiq',
+							'Theme "{name}" was created but could not be applied. Pick it in the theme dropdown.',
+							{ name: name },
+						),
+					)
+				})
+		}
+
+		/**
+		 * The dirty tokens, in the shape the overrides endpoint stores.
+		 *
+		 * @return {Object} Token name → value.
+		 */
+		function collectOverrides() {
 			var overrides = {}
 			Object.keys(tokenEditorState).forEach(function (name) {
 				var state = tokenEditorState[name]
@@ -1584,6 +3929,101 @@
 					overrides[name] = value
 				}
 			})
+
+			return overrides
+		}
+
+		/**
+		 * The saved overrides with the unsaved edits on top.
+		 *
+		 * collectOverrides() is what the editor has CHANGED, so a value saved
+		 * earlier — which reads back as the live value — is not in it. A new
+		 * theme made from here has to carry both, or the edits an admin saved
+		 * over the Nextcloud theme would be missing from the theme made of it.
+		 *
+		 * @return {Object} Token name → value.
+		 */
+		function collectSavedAndDirtyOverrides() {
+			var overrides = {}
+			Object.keys(tokenEditorState).forEach(function (name) {
+				var custom = tokenEditorState[name].custom
+				if (typeof custom === 'string' && custom.trim() !== '') {
+					overrides[name] = custom.trim()
+				}
+			})
+
+			return Object.assign(overrides, collectOverrides())
+		}
+
+		/**
+		 * The whole overrides file as it should be after this save.
+		 *
+		 * The endpoint REPLACES the file, so what is sent has to be every value
+		 * that stays saved, not only what changed. collectOverrides() alone was
+		 * not that: a value saved earlier is on the page after a reload, reads
+		 * back as `resolved`, and so never differed from it — every save after a
+		 * reload therefore deleted every earlier one, and each component whose
+		 * own colour had been saved fell back to the primary colour.
+		 *
+		 * An edited row sends its value, and clearing its field is how a value
+		 * stops being saved. A row nobody touched keeps what is stored.
+		 *
+		 * @return {Object} Token name → value.
+		 */
+		function collectOverridesToWrite() {
+			var overrides = {}
+			Object.keys(tokenEditorState).forEach(function (name) {
+				var state = tokenEditorState[name]
+				var saved =
+					typeof state.custom === 'string' && state.custom.trim() !== ''
+						? state.custom.trim()
+						: null
+				if (state.isDirty !== true) {
+					if (saved !== null) {
+						overrides[name] = saved
+					}
+					return
+				}
+				var value = state.current.trim()
+				if (value !== '' && (saved !== null || value !== state.resolved)) {
+					overrides[name] = value
+				}
+			})
+
+			return overrides
+		}
+
+		/**
+		 * Keep a theme's freshly captured branding in the page's copy of the
+		 * set list, so the apply dialog compares against what was just saved
+		 * rather than what the page was rendered with.
+		 *
+		 * @param {string} id The token set id.
+		 * @param {Object|undefined} theming The captured block the server returned.
+		 * @return {void}
+		 */
+		function rememberCapturedTheming(id, theming) {
+			if (!id || !theming || typeof theming !== 'object') {
+				return
+			}
+			if (tokenSetsData[id] === undefined) {
+				tokenSetsData[id] = { id: id }
+			}
+			tokenSetsData[id].theming = theming
+		}
+
+		function saveOverrides() {
+			confirmSave(function (route, name, report) {
+				if (route === 'new-set') {
+					saveAsNewTokenSet(name, report)
+					return
+				}
+				writeOverrides()
+			})
+		}
+
+		function writeOverrides() {
+			var overrides = collectOverridesToWrite()
 
 			var btn = document.getElementById('nldesign-save-btn')
 			if (btn !== null) {
@@ -1596,7 +4036,14 @@
 					'Content-Type': 'application/json',
 					requesttoken: OC.requestToken,
 				},
-				body: JSON.stringify({ overrides: overrides }),
+				// `captureTheming`: the theme also keeps Nextcloud's own branding
+				// as it is now (colours, background, logos, favicon), so applying
+				// it later puts that back. The server skips the stock set.
+				body: JSON.stringify({
+					overrides: overrides,
+					tokenSet: editedTokenSetId(),
+					captureTheming: true,
+				}),
 			})
 				.then(function (r) {
 					return r.json()
@@ -1606,9 +4053,27 @@
 						btn.disabled = false
 					}
 					if (data.status === 'ok') {
+						rememberCapturedTheming(editedTokenSetId(), data.theming)
+						// What was just written is now the saved value: the
+						// reset button returns to it, and no row is unsaved.
 						Object.keys(tokenEditorState).forEach(function (k) {
-							tokenEditorState[k].isDirty = false
+							var state = tokenEditorState[k]
+							state.custom =
+								overrides[k] !== undefined ? overrides[k] : null
+							state.saved = state.current
+							state.isDirty = false
 						})
+						var editor = document.getElementById('nldesign-token-editor')
+						if (editor !== null) {
+							editor
+								.querySelectorAll('.nldesign-token-custom-badge')
+								.forEach(function (badge) {
+									badge.remove()
+								})
+						}
+						// Saved, so applied: the page takes the values from the
+						// file it loads rather than from the preview.
+						refreshCustomOverridesLink()
 						updateSaveStatus()
 						notify(t('thematiq', 'Token overrides saved.'))
 					} else {
@@ -1629,7 +4094,7 @@
 
 		function exportOverrides() {
 			var a = document.createElement('a')
-			a.href = OC.generateUrl('/apps/thematiq/settings/overrides/export')
+			a.href = overridesUrl('/export', editedTokenSetId())
 			a.download = 'custom-overrides.css'
 			document.body.appendChild(a)
 			a.click()
@@ -1640,7 +4105,7 @@
 			var formData = new FormData()
 			formData.append('file', file)
 
-			fetch(OC.generateUrl('/apps/thematiq/settings/overrides/import'), {
+			fetch(overridesUrl('/import', editedTokenSetId()), {
 				method: 'POST',
 				headers: { requesttoken: OC.requestToken },
 				body: formData,
@@ -1687,7 +4152,7 @@
 			prevTokenSetId,
 			publishMode,
 		) {
-			fetch(
+			var preview = fetch(
 				OC.generateUrl(
 					'/apps/thematiq/settings/tokenset-preview/'
 						+ encodeURIComponent(newTokenSetId),
@@ -1695,11 +4160,25 @@
 				{
 					headers: { requesttoken: OC.requestToken },
 				},
-			)
-				.then(function (r) {
-					return r.json()
-				})
-				.then(function (data) {
+			).then(function (r) {
+				return r.json()
+			})
+
+			// Core theming is read alongside the token preview so the apply
+			// dialog can carry the sync as a section of itself — one confirm —
+			// instead of opening a second modal afterwards. A failed read only
+			// means the section is absent; the token apply still works.
+			var theming = fetchCurrentTheming().catch(function () {
+				return null
+			})
+
+			Promise.all([preview, theming])
+				.then(function (results) {
+					var data = results[0]
+					var themingPlan = computeThemingPlan(
+						tokenSetsData[newTokenSetId],
+						results[1],
+					)
 					if (data.error !== undefined) {
 						saveTokenSet(newTokenSetId, publishMode)
 						return
@@ -1727,6 +4206,7 @@
 						prevTokenSetId,
 						changes,
 						publishMode,
+						themingPlan,
 					)
 				})
 				.catch(function (err) {
@@ -1740,7 +4220,9 @@
 			prevTokenSetId,
 			changes,
 			publishMode,
+			themingPlan,
 		) {
+			var plan = themingPlan || { mode: 'none', diffs: [], payload: null }
 			var existing = document.getElementById('nldesign-apply-dialog-overlay')
 			if (existing !== null) {
 				existing.remove()
@@ -1795,7 +4277,7 @@
 					),
 				)
 				+ '</h3>'
-				+ buildContrastWarningHtml(newTokenSetId)
+				+ buildTokenSetWarningsHtml(newTokenSetId)
 				+ '<p class="settings-hint">'
 				+ escapeHtml(
 					t(
@@ -1827,6 +4309,35 @@
 				+ '</tr></thead><tbody>'
 				+ rowsHtml
 				+ '</tbody></table>'
+				// Core theming as a SECTION of this dialog, checked by default,
+				// so there is one confirm — not a second modal afterwards.
+				+ (plan.mode !== 'none'
+					? '<div class="nldesign-apply-theming" id="nldesign-apply-theming">'
+						+ '<label class="nldesign-apply-theming__label">'
+						+ '<input type="checkbox" id="nldesign-apply-theming-check" checked> '
+						+ escapeHtml(
+							plan.mode === 'reset'
+								? t(
+										'thematiq',
+										'Also reset Nextcloud theming to its defaults (login page, e-mails, mobile apps)',
+									)
+								: t(
+										'thematiq',
+										'Also update Nextcloud theming (login page, e-mails, mobile apps)',
+									),
+						)
+						+ '</label>'
+						+ '<table class="nldesign-dialog-table"><thead><tr><th>'
+						+ escapeHtml(t('thematiq', 'Setting'))
+						+ '</th><th>'
+						+ escapeHtml(t('thematiq', 'Current'))
+						+ '</th><th>'
+						+ escapeHtml(t('thematiq', 'Proposed'))
+						+ '</th></tr></thead><tbody>'
+						+ themingRowsHtml(plan.diffs)
+						+ '</tbody></table>'
+						+ '</div>'
+					: '')
 				+ '<div class="nldesign-dialog-actions">'
 				+ '<button class="nldesign-dialog-cancel">'
 				+ escapeHtml(t('thematiq', 'Cancel'))
@@ -1890,7 +4401,16 @@
 					updateApplyPreview()
 				})
 
+			// True from the confirm click until the new theme is on the page.
+			// While it is set, no dismissal path may run: the dialog now stays
+			// up THROUGH the apply, and cancelling half way would put the
+			// dropdown back on the old set while the new one keeps loading.
+			var applying = false
+
 			function cancelDialog() {
+				if (applying === true) {
+					return
+				}
 				changes.forEach(function (c) {
 					document.documentElement.style.removeProperty(c.name)
 				})
@@ -1915,8 +4435,20 @@
 				.querySelector('.nldesign-dialog-confirm')
 				.addEventListener('click', function () {
 					var btn = this
+					var cancelBtn = overlay.querySelector('.nldesign-dialog-cancel')
+					applying = true
 					btn.disabled = true
 					btn.textContent = t('thematiq', 'Applying…')
+					if (cancelBtn !== null) {
+						cancelBtn.disabled = true
+					}
+
+					// Read at click time: what the admin confirmed is what runs,
+					// whatever happens to the dialog while the apply is in flight.
+					var syncEl = overlay.querySelector(
+						'#nldesign-apply-theming-check',
+					)
+					var syncChecked = syncEl !== null && syncEl.checked === true
 
 					var toApply = {}
 					overlay
@@ -1932,33 +4464,49 @@
 							}
 						})
 
-					fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
-						headers: { requesttoken: OC.requestToken },
-					})
-						.then(function (r) {
-							return r.json()
-						})
-						.then(function (existingData) {
-							var merged = Object.assign(
-								{},
-								existingData.overrides || {},
-								toApply,
-							)
-							return fetch(
-								OC.generateUrl('/apps/thematiq/settings/overrides'),
-								{
-									method: 'POST',
-									headers: {
-										'Content-Type': 'application/json',
-										requesttoken: OC.requestToken,
-									},
-									body: JSON.stringify({ overrides: merged }),
-								},
-							)
-						})
-						.then(function (r) {
-							return r.json()
-						})
+					// Nothing is pinned into the stock set. Its overrides file is
+					// the Nextcloud theme ITSELF being changed, which only the
+					// editor does and only past its warning; values pinned here on
+					// the way back to stock are what used to keep a stale blue on
+					// the page through every reset.
+					var pinned =
+						newTokenSetId === STOCK_TOKEN_SET
+							? Promise.resolve({ status: 'ok' })
+							: fetch(overridesUrl('', newTokenSetId), {
+									headers: { requesttoken: OC.requestToken },
+								})
+									.then(function (r) {
+										return r.json()
+									})
+									.then(function (existingData) {
+										var merged = Object.assign(
+											{},
+											existingData.overrides || {},
+											toApply,
+										)
+										return fetch(
+											OC.generateUrl(
+												'/apps/thematiq/settings/overrides',
+											),
+											{
+												method: 'POST',
+												headers: {
+													'Content-Type':
+														'application/json',
+													requesttoken: OC.requestToken,
+												},
+												body: JSON.stringify({
+													overrides: merged,
+													tokenSet: newTokenSetId,
+												}),
+											},
+										)
+									})
+									.then(function (r) {
+										return r.json()
+									})
+
+					pinned
 						.then(function (saveData) {
 							if (saveData.status !== 'ok') {
 								throw new Error(saveData.error || 'Save failed')
@@ -1969,20 +4517,119 @@
 							)
 						})
 						.then(function (tsData) {
-							closeDialogOverlay(overlay)
-							if (
-								tsData.status === 'ok'
-								&& tokenSetSelect !== null
-								&& publishMode !== true
-							) {
+							if (tsData.status !== 'ok') {
+								throw new Error(
+									tsData.error || 'Token set change failed',
+								)
+							}
+							if (tokenSetSelect !== null && publishMode !== true) {
 								tokenSetSelect.dataset.previousValue = newTokenSetId
 							}
-							notify(t('thematiq', 'Token overrides applied.'))
+
+							// The dialog stays open across this step: `swap()` only
+							// settles once every new <link> has fired `load`, so the
+							// admin keeps looking at "Applying…" until the theme they
+							// picked is actually in effect behind the dialog.
+							//
+							// The dialog's live preview wrote the chosen values inline
+							// on <html>; they are KEPT until the swap has settled, so
+							// the page cannot flash back to the old set while the new
+							// stylesheets are still on the wire. The overrides just
+							// written to custom-overrides.css are re-fetched, and the
+							// set's own run is swapped in.
+							refreshCustomOverridesLink()
+							return applyLayersFor(newTokenSetId)
+						})
+						.then(function (swapped) {
+							// The real stylesheets take over from the inline preview.
+							changes.forEach(function (c) {
+								document.documentElement.style.removeProperty(c.name)
+							})
 							initTokenEditor()
+
+							if (publishMode === true) {
+								endPreviewOnPage()
+							}
+
+							// A rolled-back swap has to be said out loud on EVERY
+							// branch below, not only the one with no core-theming work
+							// to report. The POST that changed the active set has
+							// already succeeded and the inline preview values were
+							// stripped just above, so whichever message this step
+							// produces, the admin is looking at the OLD theme until
+							// they reload.
+							//
+							// Appended as a second WHOLE sentence rather than built
+							// from fragments, so it stands on its own in every locale.
+							var reloadHint =
+								swapped === true
+									? ''
+									: ' '
+										+ t(
+											'thematiq',
+											'Reload the page to see changes.',
+										)
+
+							// Core theming rides on the same confirm. The sync used to
+							// be unreachable from this path and, once reachable, was a
+							// second modal;
+							// it is now the checked section above, applied on this same
+							// confirm while the dialog is still up.
+							if (plan.mode !== 'none' && syncChecked === true) {
+								// Its own catch: the token set is already applied by
+								// now, so a theming failure must not be reported as
+								// "Failed to apply token set" — which is exactly what
+								// a 405 on the reset route produced, sending an admin
+								// looking for a problem in the set. It resolves to the
+								// message instead of notifying, because the dialog is
+								// still up and closes on the step after this one.
+								return applyThemingPlan(plan)
+									.then(function () {
+										return (
+											(plan.mode === 'reset'
+												? t(
+														'thematiq',
+														'Applied. Nextcloud theming reset to its defaults.',
+													)
+												: t(
+														'thematiq',
+														'Applied. Nextcloud theming updated.',
+													)) + reloadHint
+										)
+									})
+									.catch(function (themingError) {
+										console.error(
+											'Error syncing Nextcloud theming:',
+											themingError,
+										)
+										return (
+											t(
+												'thematiq',
+												'Theme applied, but updating Nextcloud theming failed.',
+											) + reloadHint
+										)
+									})
+							}
+
+							return t('thematiq', 'Applied.') + reloadHint
+						})
+						.then(function (message) {
+							// Only now: the set's stylesheets have loaded, core
+							// theming is in, and the page behind the dialog is the
+							// theme the admin picked.
+							applying = false
+							closeDialogOverlay(overlay)
+							notify(message)
 						})
 						.catch(function (err) {
+							// The dialog is still open on every failure path, so the
+							// admin can read the error and press Apply again.
+							applying = false
 							btn.disabled = false
 							btn.textContent = t('thematiq', 'Apply selected')
+							if (cancelBtn !== null) {
+								cancelBtn.disabled = false
+							}
 							console.error('Error applying token set:', err)
 							notify(t('thematiq', 'Failed to apply token set.'))
 						})
@@ -2556,6 +5203,49 @@
 		 * CUSTOM TOKEN SETS — upload / list / download / delete (eigen huisstijl)
 		 * ========================================================================== */
 
+		// Build the non-blocking warning banners for a token set, from the
+		// warnings carried on the `tokenSets` initial-state payload: the WCAG
+		// contrast findings and (a separate block, distinguished by
+		// `kind === 'incomplete'`) the vocabulary-completeness finding.
+		function buildTokenSetWarningsHtml(tokenSetId) {
+			return (
+				buildContrastWarningHtml(tokenSetId)
+				+ buildIncompleteWarningHtml(tokenSetId)
+			)
+		}
+
+		// Build the "set does not define the vocabulary the theme reads" banner.
+		// Empty string for a complete set.
+		function buildIncompleteWarningHtml(tokenSetId) {
+			var warning = incompleteWarningFor(tokenSetId)
+			if (warning === null) {
+				return ''
+			}
+			var items = incompleteWarningLines(warning)
+				.map(function (line) {
+					return '<li>' + escapeHtml(line) + '</li>'
+				})
+				.join('')
+			return (
+				'<div class="nldesign-contrast-warning" role="alert">'
+				+ '<strong>'
+				+ escapeHtml(t('thematiq', 'Incomplete set'))
+				+ '</strong>'
+				+ '<p>'
+				+ escapeHtml(
+					t(
+						'thematiq',
+						'This set does not define every token the design system reads, so the missing ones fall back to the Rijkshuisstijl defaults instead of this brand.',
+					),
+				)
+				+ '</p>'
+				+ '<ul>'
+				+ items
+				+ '</ul>'
+				+ '</div>'
+			)
+		}
+
 		// Build the non-blocking contrast-warning banner for a token set, from the
 		// warnings carried on the `tokenSets` initial-state payload.
 		function buildContrastWarningHtml(tokenSetId) {
@@ -2564,6 +5254,11 @@
 				return ''
 			}
 			var items = ts.warnings
+				.filter(function (w) {
+					// The vocabulary finding travels on the same channel but has
+					// no contrast pair; it gets its own banner above.
+					return w && w.kind !== 'incomplete'
+				})
 				.map(function (w) {
 					if (w.unevaluated === true) {
 						return (
@@ -2592,6 +5287,9 @@
 					)
 				})
 				.join('')
+			if (items === '') {
+				return ''
+			}
 			return (
 				'<div class="nldesign-contrast-warning" role="alert">'
 				+ '<strong>'
@@ -2800,13 +5498,32 @@
 						resultEl.appendChild(document.createTextNode(msg))
 						resultEl.appendChild(buildDiagnosticsFragment(res.data))
 					}
-					notify(
-						t(
-							'nldesign',
-							'Token set uploaded. Reload the page to apply it.',
-						),
-					)
 					loadCustomTokenSets()
+					// The dropdown and tokenSetsData were built from initial state
+					// at page load; bring both in line with the catalogue so the
+					// new set can be chosen right away. Deliberately NOT selected
+					// here — selecting is what opens the apply dialog, and an
+					// admin uploading several sets does not want one per upload.
+					refreshTokenSetCatalogue()
+						.then(function () {
+							notify(
+								t(
+									'thematiq',
+									'Token set uploaded — it is now in the dropdown. Select it to apply it.',
+								),
+							)
+							if (tokenSetSelect !== null) {
+								tokenSetSelect.focus()
+							}
+						})
+						.catch(function () {
+							notify(
+								t(
+									'nldesign',
+									'Token set uploaded. Reload the page to apply it.',
+								),
+							)
+						})
 				})
 				.catch(function (err) {
 					console.error('Error uploading custom token set:', err)
@@ -2868,9 +5585,28 @@
 					row.appendChild(versionSpan)
 				}
 
+				// Three states, in order of what the admin most needs to know:
+				// a set that never defines the vocabulary is broken in a way no
+				// contrast ratio can reveal, so "Incomplete set" wins over
+				// "Contrast warning".
+				var warnings = set.warnings || []
+				var incomplete = warnings.filter(function (w) {
+					return w && w.kind === 'incomplete'
+				})
+				var contrast = warnings.filter(function (w) {
+					return w && w.kind !== 'incomplete'
+				})
+
 				var badge = document.createElement('span')
 				badge.className = 'nldesign-badge'
-				if (set.warnings && set.warnings.length > 0) {
+				if (incomplete.length > 0) {
+					badge.classList.add('nldesign-badge--warning')
+					badge.textContent = t('thematiq', 'Incomplete set')
+					badge.setAttribute(
+						'title',
+						incompleteWarningLines(incomplete[0]).join('\n'),
+					)
+				} else if (contrast.length > 0) {
 					badge.classList.add('nldesign-badge--warning')
 					badge.textContent = t('thematiq', 'Contrast warning')
 				} else {
@@ -2931,13 +5667,41 @@
 						})
 						.then(function (data) {
 							if (data && data.status === 'ok') {
-								notify(
-									t(
-										'nldesign',
-										'Custom token set deleted. Reload the page to refresh the dropdown.',
-									),
-								)
 								loadCustomTokenSets()
+								var wasOnPage = pageTokenSetId === id
+								var wasSelected =
+									tokenSetSelect !== null
+									&& tokenSetSelect.value === id
+								removeTokenSetOption(id)
+								// The server reset the active set to `nextcloud` when the
+								// deleted one was active; mirror that on this page.
+								var restore =
+									wasOnPage === true
+										? applyLayersFor('nextcloud')
+										: Promise.resolve(true)
+								restore.then(function () {
+									if (wasSelected === true || wasOnPage === true) {
+										reflectSelection('nextcloud')
+									}
+
+									// Deleting the ACTIVE set made the server undo
+									// what that set had pushed into core theming, so
+									// the panel further up this page is now stale:
+									// re-read it rather than leave the deleted set's
+									// colour and logo showing.
+									if (wasOnPage === true) {
+										refreshCoreTheming().catch(function (error) {
+											console.error(
+												'Error refreshing Nextcloud theming after a delete:',
+												error,
+											)
+										})
+									}
+
+									notify(
+										t('thematiq', 'Custom token set deleted.'),
+									)
+								})
 							} else {
 								notify(
 									t(
@@ -2960,6 +5724,61 @@
 
 		// Initialise the custom token set panel on page load.
 		initCustomTokenSets()
+
+		/* ==========================================================================
+		 * RESET THEME TO NEXTCLOUD
+		 *
+		 * The way back to stock: the active theme's overrides and the edits
+		 * written over the Nextcloud theme are emptied, the stock set becomes
+		 * active and core theming is reset (OverridesController::resetToStock()).
+		 * The page reloads afterwards, because every panel on it — the editor,
+		 * the core-theming fields, the stylesheet run — describes what was reset.
+		 * ========================================================================== */
+
+		var resetThemeBtn = document.getElementById('nldesign-reset-theme-btn')
+		if (resetThemeBtn !== null) {
+			resetThemeBtn.addEventListener('click', function () {
+				OC.dialogs.confirm(
+					t(
+						'thematiq',
+						'This fully resets the theme to stock Nextcloud: the overrides of the current theme and every change written over the Nextcloud theme are deleted, and the Nextcloud theming colours and logo return to their defaults. Custom token sets, fonts and custom CSS are kept. This cannot be undone.',
+					),
+					t('thematiq', 'Reset theme to Nextcloud'),
+					function (confirmed) {
+						if (confirmed !== true) {
+							return
+						}
+
+						resetThemeBtn.disabled = true
+						fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								requesttoken: OC.requestToken,
+							},
+							body: JSON.stringify({ reset: true }),
+						})
+							.then(function (r) {
+								return r.json()
+							})
+							.then(function (data) {
+								if (data.status !== 'ok') {
+									throw new Error(data.error || 'Reset failed')
+								}
+								window.location.reload()
+							})
+							.catch(function (err) {
+								resetThemeBtn.disabled = false
+								console.error('Error resetting the theme:', err)
+								notify(
+									t('thematiq', 'The theme could not be reset.'),
+								)
+							})
+					},
+					true,
+				)
+			})
+		}
 
 		/* ==========================================================================
 		 * CUSTOM FONTS (admin-uploaded, self-hosted webfonts)
@@ -3219,11 +6038,32 @@
 			tableBody.innerHTML = ''
 			var row = document.createElement('tr')
 			var cell = document.createElement('td')
-			cell.colSpan = 4
+			cell.colSpan = 6
 			cell.className = 'settings-hint'
 			cell.textContent = message
 			row.appendChild(cell)
 			tableBody.appendChild(row)
+		}
+
+		/**
+		 * The four pure formatters, from js/lib/auditFormat.js.
+		 *
+		 * Read through a local alias rather than called globally so the panel
+		 * degrades the way the rest of this file does when a module is absent:
+		 * an entry renders its raw value instead of throwing and taking the
+		 * whole table with it.
+		 */
+		var auditFormat = (typeof window !== 'undefined'
+			&& window.ThematiqAuditFormat) || {
+			formatAuditChanged: function (entry) {
+				return String(entry.changed || '')
+			},
+			formatAuditTimestamp: function (ts) {
+				return String(ts || '')
+			},
+			formatAuditValue: function (value) {
+				return value === null || value === undefined ? '' : String(value)
+			},
 		}
 
 		function renderAuditTable(tableBody, entries) {
@@ -3240,59 +6080,41 @@
 			entries.forEach(function (entry) {
 				var row = document.createElement('tr')
 
-				var tsCell = document.createElement('td')
-				tsCell.textContent = entry.ts || ''
-				row.appendChild(tsCell)
-
-				var actorCell = document.createElement('td')
-				actorCell.textContent = entry.actor || ''
-				row.appendChild(actorCell)
-
-				var actionCell = document.createElement('td')
-				actionCell.textContent = entry.action || ''
-				row.appendChild(actionCell)
-
-				var detailsCell = document.createElement('td')
-				detailsCell.textContent = formatAuditDetails(entry)
-				row.appendChild(detailsCell)
+				// One fact per cell. The old single Details column held
+				// "from X to Y" as one string, which meant the two values could
+				// not be lined up down the table — the thing an audit is read
+				// for is what changed, and that is a comparison between two
+				// columns, not a sentence.
+				;[
+					[
+						'nldesign-audit-ts',
+						auditFormat.formatAuditTimestamp(entry.ts),
+					],
+					['nldesign-audit-actor', entry.actor || ''],
+					['nldesign-audit-action', entry.action || ''],
+					[
+						'nldesign-audit-value',
+						auditFormat.formatAuditValue(entry.old),
+					],
+					[
+						'nldesign-audit-value',
+						auditFormat.formatAuditValue(entry.new),
+					],
+					[
+						'nldesign-audit-changed',
+						auditFormat.formatAuditChanged(entry),
+					],
+				].forEach(function (cell) {
+					var td = document.createElement('td')
+					td.className = cell[0]
+					// textContent throughout: an entry can carry an
+					// admin-supplied custom token set name.
+					td.textContent = cell[1]
+					row.appendChild(td)
+				})
 
 				tableBody.appendChild(row)
 			})
-		}
-
-		function formatAuditValue(value) {
-			if (value === null || value === undefined) {
-				return ''
-			}
-			if (typeof value === 'object') {
-				try {
-					return JSON.stringify(value)
-				} catch (e) {
-					return String(value)
-				}
-			}
-			return String(value)
-		}
-
-		function formatAuditDetails(entry) {
-			var parts = []
-			if (entry.old !== undefined && entry.old !== null) {
-				parts.push(
-					t('thematiq', 'from {value}').replace(
-						'{value}',
-						formatAuditValue(entry.old),
-					),
-				)
-			}
-			if (entry.new !== undefined && entry.new !== null) {
-				parts.push(
-					t('thematiq', 'to {value}').replace(
-						'{value}',
-						formatAuditValue(entry.new),
-					),
-				)
-			}
-			return parts.join(' ')
 		}
 
 		initAuditLog()

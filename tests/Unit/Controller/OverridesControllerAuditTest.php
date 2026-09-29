@@ -17,6 +17,8 @@ use OCA\Thematiq\Controller\OverridesController;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\ThemingService;
+use OCP\IConfig;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
 
@@ -56,21 +58,116 @@ class OverridesControllerAuditTest extends TestCase {
 	 */
 	private OverridesController $controller;
 
+	/**
+	 * The mocked app config.
+	 *
+	 * @var IConfig&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private IConfig $config;
+
+	/**
+	 * The mocked theming service.
+	 *
+	 * @var ThemingService&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private ThemingService $themingService;
+
 	protected function setUp(): void {
 		parent::setUp();
 
 		$this->overridesService = $this->createMock(CustomOverridesService::class);
 		$this->auditService = $this->createMock(ThemingAuditService::class);
 		$this->request = $this->createMock(IRequest::class);
+		$this->config = $this->createMock(IConfig::class);
+		$this->themingService = $this->createMock(ThemingService::class);
 
 		$this->controller = new OverridesController(
 			'nldesign',
 			$this->request,
 			$this->overridesService,
 			new CssParserService(),
-			$this->auditService
+			$this->auditService,
+			$this->config,
+			$this->themingService
 		);
 	}//end setUp()
+
+	/**
+	 * Overrides are written to the file of the set the request names, so
+	 * edits made on the stock set land in the stock set's own file.
+	 */
+	public function testSetOverridesWritesTheRequestedSetsFile(): void {
+		$this->request->method('getParams')->willReturn(
+			['overrides' => ['--nldesign-color-primary' => '#007bc7'], 'tokenSet' => 'nextcloud']
+		);
+		$this->request->method('getParam')->willReturnMap([['tokenSet', '', 'nextcloud']]);
+
+		$this->overridesService->expects($this->once())
+			->method('write')
+			->with(['--nldesign-color-primary' => '#007bc7'], 'nextcloud');
+
+		$response = $this->controller->setOverrides();
+
+		$this->assertSame(200, $response->getStatus());
+	}//end testSetOverridesWritesTheRequestedSetsFile()
+
+	/**
+	 * The reset empties the overrides of the set that was active AND of the
+	 * stock set, makes the stock set active, resets core theming, and records
+	 * each change in the audit vocabulary it already has.
+	 */
+	public function testResetEmptiesBothFilesAndReturnsToStock(): void {
+		$this->request->method('getParams')->willReturn(['reset' => true]);
+		$this->config->method('getAppValue')->willReturnCallback(
+			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'amsterdam' : $default)
+		);
+		$this->overridesService->method('read')->willReturnMap(
+			[
+				['amsterdam', ['--nldesign-color-primary' => '#ec0000']],
+				['nextcloud', ['--nldesign-component-header-background-color' => '#e8eff6']],
+			]
+		);
+
+		$written = [];
+		$this->overridesService->method('write')->willReturnCallback(
+			function (array $tokens, ?string $tokenSet) use (&$written): void {
+				$written[$tokenSet] = $tokens;
+			}
+		);
+		$this->config->expects($this->once())->method('setAppValue')->with('thematiq', 'token_set', 'nextcloud');
+		$this->themingService->expects($this->once())->method('resetToDefaults');
+
+		$actions = [];
+		$this->auditService->method('log')->willReturnCallback(
+			function (string $action) use (&$actions): void {
+				$actions[] = $action;
+			}
+		);
+
+		$response = $this->controller->setOverrides();
+
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(['amsterdam' => [], 'nextcloud' => []], $written);
+		$this->assertSame(['overrides_written', 'overrides_written', 'token_set_changed'], $actions);
+	}//end testResetEmptiesBothFilesAndReturnsToStock()
+
+	/**
+	 * A reset whose file write fails changes nothing else and says so.
+	 */
+	public function testResetWriteFailureLeavesTheSetAndThemingAlone(): void {
+		$this->request->method('getParams')->willReturn(['reset' => true]);
+		$this->config->method('getAppValue')->willReturn('amsterdam');
+		$this->overridesService->method('read')->willReturn([]);
+		$this->overridesService->method('write')->willThrowException(new \RuntimeException('read-only'));
+
+		$this->config->expects($this->never())->method('setAppValue');
+		$this->themingService->expects($this->never())->method('resetToDefaults');
+		$this->auditService->expects($this->never())->method('log');
+
+		$response = $this->controller->setOverrides();
+
+		$this->assertSame(500, $response->getStatus());
+	}//end testResetWriteFailureLeavesTheSetAndThemingAlone()
 
 	/**
 	 * A successful setOverrides() logs exactly one overrides_written entry

@@ -613,10 +613,17 @@ class DesignTokensMapper {
 			return ['ok' => false, 'reason' => 'unsupported-color-space', 'detail' => ($value['colorSpace'] ?? 'unknown')];
 		}
 
+		$alphaHex = $this->alphaToHex(alpha: $value['alpha'] ?? null);
+
 		if (isset($value['hex']) === true && is_string($value['hex']) === true) {
 			$hex = $value['hex'];
 			if (str_starts_with($hex, '#') === false) {
 				$hex = '#' . $hex;
+			}
+
+			// The hex member is a 6-digit fallback with no alpha of its own.
+			if (strlen($hex) === 7) {
+				$hex .= $alphaHex;
 			}
 
 			return ['ok' => true, 'value' => $hex];
@@ -626,30 +633,78 @@ class DesignTokensMapper {
 			&& is_array($value['components']) === true
 			&& count($value['components']) >= 3
 		) {
-			return ['ok' => true, 'value' => $this->componentsToHex(components: array_values($value['components']))];
+			$hex = $this->componentsToHex(
+				components: array_values($value['components']),
+				linear: $colorSpace === 'srgb-linear'
+			);
+
+			return ['ok' => true, 'value' => $hex . $alphaHex];
 		}
 
 		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
 	}//end serializeColorObject()
 
 	/**
-	 * Serialize three 0–1 sRGB float components to a `#rrggbb` hex literal.
+	 * Serialize three 0–1 sRGB-family float components to a `#rrggbb` hex literal.
+	 *
+	 * Linear-light (`srgb-linear`) components go through the sRGB transfer
+	 * function first; scaling them straight to 0–255 renders them too dark.
 	 *
 	 * @param array<int, mixed> $components The `[r, g, b]` components (0–1 range, clamped).
+	 * @param bool $linear Whether the components are linear light.
 	 *
 	 * @return string The `#rrggbb` hex literal.
 	 *
-	 * @spec openspec/specs/custom-token-sets/spec.md
+	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.2
 	 */
-	private function componentsToHex(array $components): string {
+	private function componentsToHex(array $components, bool $linear): string {
 		$hex = '#';
 		foreach ([0, 1, 2] as $index) {
 			$channel = max(0.0, min(1.0, (float)$components[$index]));
+			if ($linear === true) {
+				$channel = $this->linearToSrgb(channel: $channel);
+			}
+
 			$hex .= str_pad(dechex((int)round($channel * 255)), 2, '0', STR_PAD_LEFT);
 		}
 
 		return $hex;
 	}//end componentsToHex()
+
+	/**
+	 * Apply the sRGB transfer function (CSS Color 4) to one linear-light channel.
+	 *
+	 * @param float $channel The linear channel, 0–1.
+	 *
+	 * @return float The gamma-encoded sRGB channel, 0–1.
+	 */
+	private function linearToSrgb(float $channel): float {
+		if ($channel <= 0.0031308) {
+			return 12.92 * $channel;
+		}
+
+		return (1.055 * ($channel ** (1 / 2.4))) - 0.055;
+	}//end linearToSrgb()
+
+	/**
+	 * Turn a colour object's `alpha` into the fourth hex pair, or '' when opaque.
+	 *
+	 * @param mixed $alpha The `alpha` member (0–1), absent for an opaque colour.
+	 *
+	 * @return string Two hex digits, or an empty string for an opaque or absent alpha.
+	 */
+	private function alphaToHex(mixed $alpha): string {
+		if (is_int($alpha) === false && is_float($alpha) === false) {
+			return '';
+		}
+
+		$alpha = max(0.0, min(1.0, (float)$alpha));
+		if ($alpha >= 1.0) {
+			return '';
+		}
+
+		return str_pad(dechex((int)round($alpha * 255)), 2, '0', STR_PAD_LEFT);
+	}//end alphaToHex()
 
 	/**
 	 * Serialize a `dimension` value: legacy string passthrough, or the

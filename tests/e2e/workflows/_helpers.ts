@@ -225,3 +225,110 @@ export async function liveCssVar(page: Page, name: string): Promise<string> {
 		name,
 	)
 }
+
+/** One entry of the per-group theming mapping. */
+export type GroupTokenSet = { group: string; tokenSet: string }
+
+/** A token-set offer made by `offerTokenSets`, and what to put back. */
+export type TokenSetOffer = { previousMapping: GroupTokenSet[]; groups: string[] }
+
+/** Replace the whole per-group theming mapping (POST /settings/group-theming). */
+async function setGroupMapping(
+	page: Page,
+	token: string,
+	mapping: GroupTokenSet[],
+): Promise<void> {
+	const res = await page.evaluate(
+		async ({ t, m }) => {
+			const r = await fetch(
+				OC.generateUrl('/apps/thematiq/settings/group-theming'),
+				{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json', requesttoken: t },
+					body: JSON.stringify({ mapping: m }),
+				},
+			)
+			return { status: r.status, body: await r.json() }
+		},
+		{ t: token, m: mapping },
+	)
+	expect(res.status, JSON.stringify(res.body)).toBe(200)
+}
+
+/**
+ * Make shipped token sets selectable in the admin dropdown.
+ *
+ * The dropdown offers only `TokenSetService::SELECTABLE_SHIPPED_SETS` (today
+ * `nextcloud` alone), plus the active set, imported `custom-*` sets and any set
+ * a per-group mapping points at. See openspec/specs/token-sets/spec.md,
+ * "Only Fully Functional Brands Are Selectable". A spec that drives the
+ * dropdown to a shipped brand therefore has to establish that precondition
+ * first, and the mapping is the one path that does not change what the admin
+ * running the test sees: each set is mapped to a fresh, empty group.
+ *
+ * Returns what `withdrawTokenSetOffer` needs to put the instance back.
+ */
+export async function offerTokenSets(
+	page: Page,
+	token: string,
+	tokenSets: string[],
+): Promise<TokenSetOffer> {
+	const previousMapping = await page.evaluate(async (t) => {
+		const r = await fetch(
+			OC.generateUrl('/apps/thematiq/settings/group-theming'),
+			{ headers: { requesttoken: t } },
+		)
+		return ((await r.json()).mapping ?? []) as GroupTokenSet[]
+	}, token)
+
+	const suffix = Date.now().toString(36)
+	const groups = tokenSets.map((set) => `e2e-offer-${set}-${suffix}`)
+	for (const group of groups) {
+		const status = await page.evaluate(
+			async ({ t, g }) => {
+				const r = await fetch('/ocs/v2.php/cloud/groups?format=json', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'OCS-APIRequest': 'true',
+						requesttoken: t,
+					},
+					body: JSON.stringify({ groupid: g }),
+				})
+				return r.status
+			},
+			{ t: token, g: group },
+		)
+		expect(status, `creating the offer group ${group}`).toBe(200)
+	}
+
+	await setGroupMapping(page, token, [
+		...previousMapping,
+		...tokenSets.map((tokenSet, i) => ({ group: groups[i], tokenSet })),
+	])
+
+	return { previousMapping, groups }
+}
+
+/** Undo `offerTokenSets`: restore the mapping, then delete the offer groups. */
+export async function withdrawTokenSetOffer(
+	page: Page,
+	token: string,
+	offer: TokenSetOffer,
+): Promise<void> {
+	await setGroupMapping(page, token, offer.previousMapping)
+	for (const group of offer.groups) {
+		await page.evaluate(
+			async ({ t, g }) => {
+				await fetch(
+					`/ocs/v2.php/cloud/groups/${encodeURIComponent(g)}?format=json`,
+					{
+						method: 'DELETE',
+						headers: { 'OCS-APIRequest': 'true', requesttoken: t },
+					},
+				)
+			},
+			{ t: token, g: group },
+		)
+	}
+}

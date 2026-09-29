@@ -162,8 +162,8 @@ input[type='email']:focus {
    BUTTONS — rounded, smooth, no hard edges
    ============================================ */
 
-.button-vue,
-button,
+.button-vue:not(.action-button),
+button:not(.action-button),
 .button {
 	border-radius: var(--summer-radius) !important;
 	transition:
@@ -487,8 +487,8 @@ body .app-item.active .app-item__circle {
 	input[type='url'],
 	input[type='tel'],
 	.input-field__input,
-	.button-vue,
-	button,
+	.button-vue:not(.action-button),
+	button:not(.action-button),
 	.button {
 		transition: none !important;
 		animation: none !important;

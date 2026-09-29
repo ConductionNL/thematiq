@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -84,7 +85,14 @@ class LasuiteDesignStackTest extends TestCase {
 		$cacheFactory = $this->createMock(ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
 
-		return new TokenSetService($appManager, $config, $this->createMock(LoggerInterface::class), $audit, $cacheFactory);
+		return new TokenSetService(
+			$appManager,
+			$config,
+			$this->createMock(LoggerInterface::class),
+			$audit,
+			$cacheFactory,
+			new TokenSetVocabularyAuditService(new CssParserService())
+		);
 	}//end tokenSetService()
 
 	/**
@@ -205,7 +213,9 @@ class LasuiteDesignStackTest extends TestCase {
 
 		$this->assertSame('cunningham', $meta['design_system'] ?? null);
 		$this->assertSame('#1A509F', $meta['theming']['primary_color'] ?? null);
-		$this->assertSame('#FFFFFF', $meta['theming']['background_color'] ?? null);
+		// Matches the background cunningham.css actually paints
+		// (--nldesign-color-background-dark), corrected in 585ceb7.
+		$this->assertSame('#E1E2E5', $meta['theming']['background_color'] ?? null);
 		$this->assertArrayNotHasKey(
 			'logo',
 			$meta['theming'] ?? [],

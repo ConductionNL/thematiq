@@ -69,6 +69,7 @@ class NLDesignEMailTemplate extends EMailTemplate {
 	 */
 	protected function getEmailThemingService(): ?EmailThemingService {
 		try {
+			// phpcs:ignore CustomSniffs.Nextcloud.NoServiceLocator.GlobalContainerLookup -- Not a DI-built class: the server's Mailer::makeTemplate() constructs this template with a fixed argument list, so there is no constructor to inject a container into.
 			$service = \OCP\Server::get(EmailThemingService::class);
 			if ($service instanceof EmailThemingService === false) {
 				return null;

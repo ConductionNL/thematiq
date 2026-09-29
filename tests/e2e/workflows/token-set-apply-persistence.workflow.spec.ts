@@ -26,6 +26,9 @@ import {
 	setOverrides,
 	getTokenSet,
 	setTokenSet,
+	offerTokenSets,
+	withdrawTokenSetOffer,
+	type TokenSetOffer,
 } from './_helpers'
 
 // Target set to apply (a real municipality set in token-sets.json). Chosen so it
@@ -34,6 +37,7 @@ const TARGET_SET = 'utrecht'
 
 let baselineSet = ''
 let baselineOverrides: Record<string, string> = {}
+let offer: TokenSetOffer | null = null
 
 test.describe('workflow: token-set apply persistence', () => {
 	test.describe.configure({ mode: 'serial', timeout: 90_000 })
@@ -44,6 +48,10 @@ test.describe('workflow: token-set apply persistence', () => {
 		const token = await requestToken(page)
 		baselineSet = await getTokenSet(page, token)
 		baselineOverrides = await getOverrides(page, token)
+		// A shipped brand is only in the dropdown once something makes it
+		// selectable (token-sets spec, "Only Fully Functional Brands Are
+		// Selectable"); a group mapping does so without theming this admin.
+		offer = await offerTokenSets(page, token, [TARGET_SET])
 		await page.close()
 	})
 
@@ -54,6 +62,9 @@ test.describe('workflow: token-set apply persistence', () => {
 		const token = await requestToken(page)
 		await setTokenSet(page, token, baselineSet)
 		await setOverrides(page, token, baselineOverrides)
+		if (offer !== null) {
+			await withdrawTokenSetOffer(page, token, offer)
+		}
 		expect(await getTokenSet(page, token)).toBe(baselineSet)
 		expect(await getOverrides(page, token)).toEqual(baselineOverrides)
 		await page.close()

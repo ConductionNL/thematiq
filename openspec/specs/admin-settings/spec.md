@@ -59,14 +59,14 @@ The settings form MUST return a `TemplateResponse` with all required parameters 
 - AND `showMenuLabels` MUST be `false`
 
 ### Requirement: Token Set Selector Dropdown
-The settings panel MUST provide a searchable dropdown for selecting the active design token set from all available sets.
+The settings panel MUST provide a searchable dropdown for selecting the active design token set from the SELECTABLE sets — the fully functional brands, plus the sets an instance is already using. See the token-sets spec, "Only Fully Functional Brands Are Selectable": the catalogue is unchanged and still holds every shipped set, but a brand that does not declare the vocabulary the design system reads is not offered for selection.
 
 #### Scenario: Dropdown populated with token sets
 - GIVEN the settings panel is loaded
-- AND there are multiple token sets available (discovered from `css/tokens/` directory)
+- AND the selectable sets have been resolved (`TokenSetService::getSelectableTokenSets()`)
 - WHEN the dropdown renders
 - THEN it MUST be a `<select>` element with id `nldesign-token-set-select`
-- AND it MUST contain an `<option>` for each token set
+- AND it MUST contain an `<option>` for each SELECTABLE token set, and none for a set that is not selectable
 - AND each option MUST show the token set `name` as display text
 - AND each option MUST use the token set `id` as the `value` attribute
 - AND each option MUST include a `data-design-system` attribute with the design system id

@@ -94,15 +94,18 @@ administrations) **verbatim**, together with the source URL of the DSFR package 
 system-de-design site and the Etalab licence URL. `AGREEMENT-MARIANNE.md` MUST state that
 enabling Marianne is permitted ONLY when the serving organisation is a French State agency, that
 the operator affirms this eligibility by enabling the acknowledgement gate, and that Conduction
-bundles Marianne solely for that lawful use. `LICENSES/Etalab-2.0.txt` MUST carry the full
-Etalab Open Licence 2.0 text under the `Etalab-2.0` SPDX identifier.
+bundles Marianne solely for that lawful use. `LICENSES/etalab-2.0.txt` MUST carry the full
+Etalab Open Licence 2.0 text under the `etalab-2.0` SPDX identifier — lower-case, because that
+is the identifier the SPDX licence list actually carries and the only spelling `reuse lint`
+accepts in `LICENSES/`. The `Etalab-2.0` spelling stays in `.license-overrides.json`, which is
+a different gate: it matches the licence string the dependency SBOM reports for `@gouvfr/dsfr`.
 
 #### Scenario: Legal artifacts are present and cite the source
 @e2e exclude documentation invariant — PHPUnit asserts file existence and required phrases
 
 - GIVEN the shipped app package
 - WHEN the repository root is inspected
-- THEN `MARIANNE-LICENCE.md`, `AGREEMENT-MARIANNE.md`, and `LICENSES/Etalab-2.0.txt` MUST all
+- THEN `MARIANNE-LICENCE.md`, `AGREEMENT-MARIANNE.md`, and `LICENSES/etalab-2.0.txt` MUST all
   exist
 - AND `MARIANNE-LICENCE.md` MUST contain the Marianne restriction wording and a source URL
 - AND `AGREEMENT-MARIANNE.md` MUST state the French-State-agency eligibility condition
@@ -121,7 +124,7 @@ that cannot carry an inline header.
 - GIVEN `.license-overrides.json` and `LICENSES/`
 - WHEN the Marianne `woff2` paths are resolved
 - THEN each MUST map to the `Etalab-2.0` SPDX identifier
-- AND `LICENSES/Etalab-2.0.txt` MUST exist so the identifier resolves to licence text
+- AND `LICENSES/etalab-2.0.txt` MUST exist so the identifier resolves to licence text
 
 ### Requirement: Restriction Notice Is Unmissable at the Point of Selection
 

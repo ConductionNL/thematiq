@@ -77,7 +77,8 @@ class SettingsControllerGroupThemingTest extends TestCase {
 		);
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
+		// The group picker offers the SELECTABLE list, not the full catalogue.
+		$tokenSetService->method('getSelectableTokenSets')->willReturn(
 			[['id' => 'amsterdam', 'name' => 'Amsterdam']]
 		);
 

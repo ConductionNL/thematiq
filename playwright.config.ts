@@ -3,11 +3,15 @@
  * SPDX-License-Identifier: EUPL-1.2
  *
  * Playwright config for nldesign.
- * Base URL: http://localhost:8080 (override with NEXTCLOUD_URL env var).
+ * Base URL: resolved in tests/e2e/base-url.ts. It still defaults to
+ * http://localhost:8080, but that is the shared dev instance and a run has to
+ * name it before the suite will go there.
  * globalSetup logs in once and saves session to tests/e2e/.auth/admin.json.
  */
 import { defineConfig } from '@playwright/test'
 import * as path from 'path'
+
+import { resolveBaseUrl } from './tests/e2e/base-url'
 
 export default defineConfig({
 	testDir: './tests/e2e',
@@ -34,7 +38,9 @@ export default defineConfig({
 	outputDir: 'tests/e2e/test-results',
 
 	use: {
-		baseURL: process.env.NEXTCLOUD_URL || 'http://localhost:8080',
+		// Resolved in tests/e2e/base-url.ts, which is also where the
+		// shared-instance opt-in is checked. NEXTCLOUD_URL is still read there.
+		baseURL: resolveBaseUrl(),
 		// `on-first-retry` PAIRED WITH `retries: 0` writes zero traces, ever.
 		// There is no first retry to trigger on, so every CI failure in this
 		// repo's history has been debugged from a single screenshot and a stack

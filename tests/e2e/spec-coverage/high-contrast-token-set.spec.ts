@@ -11,6 +11,12 @@
  * media branches carry their @e2e exclude inline in the spec.
  */
 import { test, expect, Page } from '@playwright/test'
+import {
+	offerTokenSets,
+	requestToken,
+	withdrawTokenSetOffer,
+	type TokenSetOffer,
+} from '../workflows/_helpers'
 
 const THEMING_URL = '/settings/admin/theming'
 
@@ -49,10 +55,28 @@ function luminance(hex: string): number {
 }
 
 test.describe('high-contrast-token-set', () => {
+	let offer: TokenSetOffer | null = null
+
+	test.afterEach(async ({ page }) => {
+		if (offer === null) return
+		const token = await requestToken(page)
+		await withdrawTokenSetOffer(page, token, offer)
+		offer = null
+	})
+
 	test(// @e2e openspec/specs/high-contrast-token-set/spec.md#high-contrast-set-is-selectable-and-themes-the-instance
 	'Selecting the high-contrast set is offered and previews an AAA primary/text pair', async ({
 		page,
 	}) => {
+		// A shipped brand is offered only once it is selectable: see
+		// openspec/specs/token-sets/spec.md, "Only Fully Functional Brands Are
+		// Selectable". hoog-contrast is not on the allowlist today, so the
+		// scenario's GIVEN is established through a group mapping, which the
+		// same requirement names as a path that keeps a set selectable.
+		await page.goto(THEMING_URL)
+		await page.waitForSelector('#nldesign-token-set-select', { timeout: 15_000 })
+		const token = await requestToken(page)
+		offer = await offerTokenSets(page, token, ['hoog-contrast'])
 		await page.goto(THEMING_URL)
 		await page.waitForSelector('#nldesign-token-set-select', { timeout: 15_000 })
 		await dismissThemingSyncDialog(page)

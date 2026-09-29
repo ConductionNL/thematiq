@@ -49,17 +49,37 @@ test.describe('extended-token-sets', () => {
 	// @e2e exclude openspec/specs/extended-token-sets/spec.md#settings-page-shows-all-token-sets
 	// Covered by admin-settings spec-coverage dropdown test (options > 5).
 
-	// Smoke: dropdown has many options (verifies extended token set discovery is working)
+	// Smoke: the option list is COMPUTED from what is on disk, not hardcoded.
 	test(// @e2e openspec/specs/extended-token-sets/spec.md#settings-page-shows-all-token-sets
-	'Token set dropdown lists many options (extended token set discovery works)', async ({
+	'Token set dropdown is built from discovery, not a hardcoded list', async ({
 		page,
 	}) => {
 		await page.goto(THEMING_URL)
 		await page.waitForLoadState('domcontentloaded')
 		const select = page.locator('#nldesign-token-set-select')
 		await expect(select).toBeVisible()
-		// Should have many options reflecting extended token set support
-		const count = await select.locator('option').count()
-		expect(count).toBeGreaterThan(10)
+
+		// This asserted "more than ten options", which measured the CATALOGUE.
+		// The dropdown is now the selectable list — fully functional brands
+		// only, which today is `nextcloud` — so a count threshold would only
+		// re-fail whenever that list is correct.
+		//
+		// What the spec actually requires is that the list is resolved at
+		// request time rather than written into the template, and the active
+		// set is the evidence: it is offered ONLY because the instance is
+		// running it, so a set outside the allowlist appearing here cannot
+		// have come from a hardcoded list.
+		const values = await select
+			.locator('option')
+			.evaluateAll((options) =>
+				options.map((option) => (option as HTMLOptionElement).value),
+			)
+		const active = await select.inputValue()
+
+		expect(values).toContain('nextcloud')
+		expect(values).toContain(active)
+		if (active !== 'nextcloud') {
+			expect(values.length).toBeGreaterThan(1)
+		}
 	})
 })

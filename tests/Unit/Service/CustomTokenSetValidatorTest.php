@@ -194,6 +194,75 @@ class CustomTokenSetValidatorTest extends TestCase {
 	}//end testValidateDeclarationsRejectsSemicolonSmugglingEndToEnd()
 
 	/**
+	 * A forbidden value is a hard failure even under a name this validator
+	 * does NOT accept — the split is not a filter on what gets written.
+	 *
+	 * `store()` writes the converter's emitted CSS, not `serialize($accepted)`,
+	 * and the converter parses `--[\w-]+` where this validator accepts only
+	 * `[a-z0-9-]+`. So a name like `--utrecht-colorPrimary` is emitted, lands
+	 * in `skipped` here, and is written anyway. While the value check sat after
+	 * the name check, its value was never judged.
+	 *
+	 * @param string $name The name the validator refuses.
+	 *
+	 * @dataProvider skippedNameProvider
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-1
+	 */
+	public function testForbiddenValueUnderASkippedNameIsAHardFailure(string $name): void {
+		$split = $this->validator->validateDeclarations(
+			declarations: [
+				'--nldesign-color-primary' => '#007bc7',
+				$name => 'expression(alert(1))',
+			],
+			slug: 'gemeente'
+		);
+
+		$this->assertNull(actual: $split, message: 'a skipped name must not exempt its value from the gate');
+
+		$error = $this->validator->getLastError();
+		$this->assertSame(expected: 422, actual: $error['status']);
+		$this->assertSame(expected: $name, actual: $error['property']);
+	}//end testForbiddenValueUnderASkippedNameIsAHardFailure()
+
+	/**
+	 * Names outside the accepted vocabulary, including the shapes the
+	 * converter keeps verbatim.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public static function skippedNameProvider(): array {
+		return [
+			'camelCase component token' => ['--utrecht-colorPrimary'],
+			'snake_case component token' => ['--utrecht-color_secondary'],
+			'a Nextcloud core variable' => ['--color-primary'],
+			'an unknown vendor prefix' => ['--v-some-other'],
+		];
+	}//end skippedNameProvider()
+
+	/**
+	 * A skipped name with an ORDINARY value is still just skipped — the gate
+	 * widened to cover every value, it did not start rejecting names.
+	 *
+	 * @return void
+	 */
+	public function testSkippedNameWithAnOrdinaryValueIsStillOnlySkipped(): void {
+		$split = $this->validator->validateDeclarations(
+			declarations: [
+				'--nldesign-color-primary' => '#007bc7',
+				'--utrecht-colorPrimary' => '#ff0000',
+			],
+			slug: 'gemeente'
+		);
+
+		$this->assertNotNull(actual: $split);
+		$this->assertContains(needle: '--utrecht-colorPrimary', haystack: $split['skipped']);
+		$this->assertArrayNotHasKey(key: '--utrecht-colorPrimary', array: $split['accepted']);
+	}//end testSkippedNameWithAnOrdinaryValueIsStillOnlySkipped()
+
+	/**
 	 * Any selector other than :root (or any at-rule) is rejected pre-parse.
 	 *
 	 * @return void

@@ -1,0 +1,79 @@
+# REUSE / SPDX declaration for thematiq.
+#
+# `quality / REUSE compliance` (fsfe/reuse-action@v5, shared quality.yml) was
+# red on every run. The repo carried SPDX headers on its hand-written source —
+# 250 of 3682 tracked files — but LICENSES/ held only the Etalab text, so every
+# `SPDX-License-Identifier: EUPL-1.2`, `AGPL-3.0-or-later` and `MIT` in the tree
+# pointed at a licence text that was not there, and the ~3430 files carrying no
+# header at all (l10n JSON, openspec specs, the 1038 DSFR icon SVGs, docs,
+# fixtures, lockfiles) had no licensing information by REUSE's definition.
+#
+# Headers on those 3430 files would be the other fix, and it is the wrong one:
+# `l10n/*.json` is machine-generated and an SPDX comment is not valid JSON, the
+# icon SVGs are regenerated wholesale by `scripts/build-icons.js` from the
+# upstream DSFR package, and lockfiles are rewritten by the package managers.
+# The blanket below is what the specification is for.
+version = 1
+SPDX-PackageName = "thematiq"
+SPDX-PackageSupplier = "Conduction B.V. <info@conduction.nl>"
+SPDX-PackageDownloadLocation = "https://github.com/ConductionNL/thematiq"
+
+# Repo-wide default.
+#
+# `precedence = "closest"` means a file's OWN header always wins over this
+# entry — including the files carrying Nextcloud code, which are
+# AGPL-3.0-or-later (`.editorconfig`, `css/playground-guest.css` and its source
+# `scripts/sources/nextcloud-guest.css`), and the La Suite Cunningham token
+# dump `scripts/sources/lasuite-deployed-cunningham-tokens.css`, which is MIT.
+#
+# It also fills in half a header: a file that declares a licence but no
+# copyright takes the missing half from here rather than counting as
+# non-compliant.
+[[annotations]]
+path = "**"
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Conduction B.V. <info@conduction.nl>"
+SPDX-License-Identifier = "EUPL-1.2"
+
+# The bundled French-government assets from @gouvfr/dsfr, which are NOT ours to
+# licence as EUPL: the Marianne typeface (bundled behind the admin
+# acknowledgement gate — see MARIANNE-LICENCE.md and AGREEMENT-MARIANNE.md for
+# the FR-State usage restriction that sits on top of this licence) and the DSFR
+# icon pack that `scripts/build-icons.js` materializes.
+#
+# `precedence = "override"` rather than "closest" because these are binary and
+# generated files that carry no header of their own and must not silently
+# inherit the blanket above. It is also what makes `etalab-2.0` a USED licence;
+# without it REUSE reports the licence text as unused.
+[[annotations]]
+path = [
+    "css/systems/lasuite/fonts/marianne/**",
+    "img/icons/dsfr/**",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2021 Gouvernement français (https://github.com/GouvernementFR/dsfr)"
+SPDX-License-Identifier = "etalab-2.0"
+
+# Prose that QUOTES an SPDX tag rather than carrying one.
+#
+# These five files discuss the licensing invariant in running text — "every PHP
+# file carries `SPDX-License-Identifier: EUPL-1.2`" and the like. REUSE reads
+# the tag out of the sentence, cannot parse the rest of the sentence as a
+# licence expression, and the file counts as having declared its licensing
+# badly rather than not at all — so the blanket above never reaches it.
+#
+# `precedence = "override"` makes this entry win over what the tool thinks it
+# found in the text. The alternative is REUSE-IgnoreStart/End comments inside
+# the prose, which would split a Requirement paragraph and an archived spec in
+# two to satisfy a linter.
+[[annotations]]
+path = [
+    "openspec/specs/claim-accuracy/spec.md",
+    "openspec/changes/archive/2026-07-07-fix-readiness-claims/specs/claim-accuracy/spec.md",
+    "openspec/changes/beta-surface-alignment/proposal.md",
+    "openspec/changes/beta-surface-alignment/specs/beta-alignment/spec.md",
+    "openspec/changes/component-playground/design.md",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Conduction B.V. <info@conduction.nl>"
+SPDX-License-Identifier = "EUPL-1.2"

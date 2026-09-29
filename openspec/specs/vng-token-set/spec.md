@@ -95,7 +95,8 @@ The `token-sets.json` manifest MUST include an entry for VNG.
 - THEN an entry with `"id": "vng"`, `"name": "VNG Vereniging Nederlandse Gemeenten"`, and a description SHALL exist
 
 #### Scenario: VNG appears in admin dropdown
-- GIVEN the admin opens nldesign settings
+- GIVEN the VNG set is selectable (see the token-sets spec, "Only Fully Functional Brands Are Selectable": VNG is not on `SELECTABLE_SHIPPED_SETS` today, so it is offered only while it is active, mapped to a group, or once the vocabulary audit admits it)
+- AND the admin opens nldesign settings
 - WHEN the token set dropdown is rendered
 - THEN "VNG Vereniging Nederlandse Gemeenten" SHALL appear as a selectable option
 

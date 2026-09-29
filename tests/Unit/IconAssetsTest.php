@@ -98,11 +98,26 @@ class IconAssetsTest extends TestCase {
 	 * @return array<string>
 	 */
 	private function diskLogoNames(): array {
-		$files = glob($this->logosDir() . '/*.svg') ?: [];
 		return array_map(
 			static fn (string $p): string => basename($p, '.svg'),
-			$files
+			$this->shippedLogoFiles()
 		);
+	}
+
+	/**
+	 * The logo files the app ships, without the ones an instance writes at
+	 * runtime: a theme saved from the editor keeps a copy of Nextcloud's own
+	 * logos here as `{set}-captured-{slot}.svg` (BrandingCaptureService), and
+	 * those are the admin's uploads, not part of the documented set.
+	 *
+	 * @return array<string>
+	 */
+	private function shippedLogoFiles(): array {
+		$files = glob($this->logosDir() . '/*.svg') ?: [];
+		return array_values(array_filter(
+			$files,
+			static fn (string $p): bool => str_contains(basename($p), '-captured-') === false
+		));
 	}
 
 	/**
@@ -319,7 +334,7 @@ class IconAssetsTest extends TestCase {
 			$icons = array_merge($icons, glob($this->iconsDir() . '/' . $set . '/*.svg') ?: []);
 		}
 		$topLevelAliases = glob($this->iconsDir() . '/*.svg') ?: [];
-		$logos = glob($this->logosDir() . '/*.svg') ?: [];
+		$logos = $this->shippedLogoFiles();
 		$this->assertNotEmpty($icons, 'No icon SVG files found to sample.');
 
 		// Deterministic sample: sort and take a spread across the set, plus all aliases and logos.

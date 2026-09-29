@@ -78,6 +78,13 @@ class DesignSystemService {
 	private ?array $tokenSetMeta = null;
 
 	/**
+	 * The admin-created sets' manifest, decoded once per request.
+	 *
+	 * @var array<string, mixed>|null
+	 */
+	private ?array $customTokenSetMeta = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager for resolving paths.
@@ -157,8 +164,66 @@ class DesignSystemService {
 			$this->tokenSetMeta = $this->readJsonManifest(path: $path);
 		}
 
-		return $this->tokenSetMeta[$tokenSetId] ?? [];
+		if (isset($this->tokenSetMeta[$tokenSetId]) === true) {
+			return $this->tokenSetMeta[$tokenSetId];
+		}
+
+		return $this->getCustomTokenSetMeta(tokenSetId: $tokenSetId);
 	}//end getTokenSetMeta()
+
+	/**
+	 * A custom set's manifest entry, from appconfig rather than a shipped file.
+	 *
+	 * Custom sets used to answer `[]` here, so every one of them fell back to
+	 * `nldesign` — and that quietly decided far more than the token list did. A
+	 * theme saved from the stock Nextcloud set came back wearing Fira Sans,
+	 * `defaults.css` and `element-overrides.css`, because "no metadata" was read
+	 * as "NL Design System". An admin who saved the stock theme with one colour
+	 * changed did not get the stock theme with one colour changed.
+	 *
+	 * So a custom set now carries the design system it was CREATED from, and
+	 * this reads it back. One written before that field existed still has no
+	 * `design_system`, and still resolves to `nldesign` through the same `??` in
+	 * CssInjectionService — which is what those sets have always been, so they
+	 * do not change under an admin who is not expecting it.
+	 *
+	 * Read straight from the appconfig key rather than through
+	 * CustomTokenSetService: that service reaches back into this one, and this
+	 * lookup runs on every themed page render.
+	 *
+	 * @param string $tokenSetId The token set identifier.
+	 *
+	 * @return array<string, mixed> The manifest entry, or [] when there is none.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function getCustomTokenSetMeta(string $tokenSetId): array {
+		if (str_starts_with($tokenSetId, CustomTokenSetService::ID_PREFIX) === false) {
+			return [];
+		}
+
+		if ($this->customTokenSetMeta === null) {
+			$raw = $this->config->getAppValue(
+				Application::APP_ID,
+				CustomTokenSetService::MANIFEST_KEY,
+				'{}'
+			);
+
+			$decoded = json_decode($raw, true);
+			if (is_array($decoded) === false) {
+				$decoded = [];
+			}
+
+			$this->customTokenSetMeta = $decoded;
+		}
+
+		$entry = ($this->customTokenSetMeta[$tokenSetId] ?? []);
+		if (is_array($entry) === false) {
+			return [];
+		}
+
+		return $entry;
+	}//end getCustomTokenSetMeta()
 
 	/**
 	 * Get a design system's icon pack, normalized to an ordered list.

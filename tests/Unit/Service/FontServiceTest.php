@@ -151,6 +151,18 @@ class FontServiceFakeSimpleFolder implements ISimpleFolder {
 	public function newFolder(string $path): ISimpleFolder {
 		return new FontServiceFakeSimpleFolder($this->dir . '/' . $path);
 	}
+
+	// ISimpleFolder::getOrCreateFolder() is @since 35.0.0. The fake implements
+	// it so the suite loads on a stable35 leg; on the older legs it is simply
+	// a method nothing calls.
+	public function getOrCreateFolder(string $path, int $maxRetries = 5): ISimpleFolder {
+		$full = $this->dir . '/' . $path;
+		if (is_dir($full) === false) {
+			mkdir($full, 0777, true);
+		}
+
+		return new FontServiceFakeSimpleFolder($full);
+	}
 }
 
 /**
