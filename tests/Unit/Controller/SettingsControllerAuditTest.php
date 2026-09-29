@@ -154,7 +154,8 @@ class SettingsControllerAuditTest extends TestCase {
 			config: $auditConfig,
 			userSession: $this->createMock(IUserSession::class),
 			timeFactory: $this->createMock(ITimeFactory::class),
-			logger: $this->createMock(LoggerInterface::class)
+			logger: $this->createMock(LoggerInterface::class),
+			versionService: $this->createMock(\OCA\Thematiq\Service\ThemeVersionService::class)
 		);
 
 		$controller = new SettingsController(

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\ThemeVersionService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\AppData\IAppDataFactory;
@@ -262,7 +263,7 @@ class ThemingAuditServiceTest extends TestCase {
 	 *
 	 * @return ThemingAuditService The service under test.
 	 */
-	private function makeService(int $time = 1700000000): ThemingAuditService {
+	private function makeService(int $time = 1700000000, ?ThemeVersionService $versions = null): ThemingAuditService {
 		$config = $this->createMock(IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
@@ -283,7 +284,8 @@ class ThemingAuditServiceTest extends TestCase {
 			config: $config,
 			userSession: $this->userSession,
 			timeFactory: $timeFactory,
-			logger: $this->logger
+			logger: $this->logger,
+			versionService: ($versions ?? $this->createMock(ThemeVersionService::class))
 		);
 	}//end makeService()
 
@@ -532,7 +534,8 @@ class ThemingAuditServiceTest extends TestCase {
 			config: $config,
 			userSession: $this->userSession,
 			timeFactory: $timeFactory,
-			logger: $this->logger
+			logger: $this->logger,
+			versionService: $this->createMock(ThemeVersionService::class)
 		);
 
 		// Must not throw.
@@ -541,4 +544,63 @@ class ThemingAuditServiceTest extends TestCase {
 		// The counter must NOT have been incremented — the append failed.
 		$this->assertSame('0', ($this->appConfig['audit_entries_total'] ?? '0'));
 	}//end testAppdataFailureIsSwallowedAndWarned()
+
+	/**
+	 * An entry for which a version was kept names it.
+	 *
+	 * @spec openspec/changes/apply-restore-earlier-version/specs/theming-audit/spec.md
+	 */
+	public function testAnEntryNamesTheVersionItProduced(): void {
+		$versions = $this->createMock(ThemeVersionService::class);
+		$versions->expects($this->once())->method('capture')->with('token_set_changed', 'cli')->willReturn('20260929164000-0001');
+
+		$service = $this->makeService(versions: $versions);
+		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
+
+		$this->assertSame('20260929164000-0001', $service->getRecent(limit: 1)[0]['versionId']);
+	}//end testAnEntryNamesTheVersionItProduced()
+
+	/**
+	 * An entry for which no version was kept omits the field.
+	 *
+	 * @spec openspec/changes/apply-restore-earlier-version/specs/theming-audit/spec.md
+	 */
+	public function testAnEntryWithoutAVersionOmitsTheField(): void {
+		$versions = $this->createMock(ThemeVersionService::class);
+		$versions->method('capture')->willReturn(null);
+
+		$service = $this->makeService(versions: $versions);
+		$service->log(action: 'toggle_changed', context: ['key' => 'hide_slogan', 'old' => '0', 'new' => '1']);
+
+		$this->assertArrayNotHasKey('versionId', $service->getRecent(limit: 1)[0]);
+	}//end testAnEntryWithoutAVersionOmitsTheField()
+
+	/**
+	 * A capture that throws still writes the entry.
+	 */
+	public function testAThrowingCaptureStillWritesTheEntry(): void {
+		$versions = $this->createMock(ThemeVersionService::class);
+		$versions->method('capture')->willThrowException(new \RuntimeException('boom'));
+
+		$service = $this->makeService(versions: $versions);
+		$service->log(action: 'overrides_written', context: []);
+
+		$entries = $service->getRecent(limit: 1);
+		$this->assertSame('overrides_written', $entries[0]['action']);
+		$this->assertArrayNotHasKey('versionId', $entries[0]);
+	}//end testAThrowingCaptureStillWritesTheEntry()
+
+	/**
+	 * version_restored is part of the closed vocabulary.
+	 *
+	 * @spec openspec/changes/apply-restore-earlier-version/specs/theming-audit/spec.md
+	 */
+	public function testVersionRestoredIsAcceptedAction(): void {
+		$service = $this->makeService();
+		$service->log(action: 'version_restored', context: ['old' => '20260929164000-0002', 'new' => '20260929164000-0001']);
+
+		$entry = $service->getRecent(limit: 1)[0];
+		$this->assertSame('version_restored', $entry['action']);
+		$this->assertSame('20260929164000-0001', $entry['new']);
+	}//end testVersionRestoredIsAcceptedAction()
 }//end class
