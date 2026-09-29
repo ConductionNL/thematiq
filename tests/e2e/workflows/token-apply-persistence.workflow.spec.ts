@@ -56,6 +56,35 @@ async function unlockBaseTokens(page: Page): Promise<void> {
 	await expect(page.locator('#nldesign-base-unlock')).toBeChecked()
 }
 
+/**
+ * Click Save overrides and answer the dialog it may open.
+ *
+ * Saving asks first — on the stock Nextcloud theme whether to keep the changes
+ * as a new theme, on a token set whether to lay the overrides over it. Both
+ * dialogs share one overlay. This spec is about the overrides file, so it takes
+ * the answer that writes it: "change the Nextcloud theme" on stock, "Save
+ * overrides" on a set. "Don't ask again" is left unticked, so the instance's
+ * preference is not changed by the test.
+ *
+ * @param page The Playwright page, on the theming settings.
+ */
+async function saveOverrides(page: Page): Promise<void> {
+	await page.locator('#nldesign-save-btn').click()
+	const dialog = page.locator('#nldesign-save-dialog-overlay')
+	const asked = await dialog
+		.waitFor({ state: 'visible', timeout: 5_000 })
+		.then(() => true)
+		.catch(() => false)
+	if (!asked) return
+	const overwrite = dialog.locator('.nldesign-dialog-overwrite')
+	if ((await overwrite.count()) > 0) {
+		await overwrite.click()
+	} else {
+		await dialog.locator('.nldesign-dialog-confirm').click()
+	}
+	await expect(dialog).toBeHidden()
+}
+
 test.describe('workflow: token-apply persistence', () => {
 	test.describe.configure({ mode: 'serial', timeout: 90_000 })
 
@@ -105,7 +134,7 @@ test.describe('workflow: token-apply persistence', () => {
 		)
 
 		// Click the real Save overrides button.
-		await page.locator('#nldesign-save-btn').click()
+		await saveOverrides(page)
 		// Dirty status clears on success.
 		await expect(page.locator('#nldesign-save-status')).toHaveText('', {
 			timeout: 10_000,
@@ -183,7 +212,7 @@ test.describe('workflow: token-apply persistence', () => {
 		await page
 			.locator(`.nldesign-color-text[data-token="${TEST_TOKEN}"]`)
 			.fill('')
-		await page.locator('#nldesign-save-btn').click()
+		await saveOverrides(page)
 		await expect(page.locator('#nldesign-save-status')).toHaveText('', {
 			timeout: 10_000,
 		})
