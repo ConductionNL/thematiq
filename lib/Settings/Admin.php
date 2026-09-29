@@ -27,7 +27,6 @@ namespace OCA\Thematiq\Settings;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
-use OCA\Thematiq\Service\EnvironmentMarkerService;
 use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
@@ -279,13 +278,24 @@ class Admin implements IDelegatedSettings {
 				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
 				// can be screenshotted from a running instance. Nothing else changes.
 				'mockUi' => ($this->request->getParam('mock') === '1'),
-				// The environment config.php declares, shown read-only
-				// (openspec/specs/environment-marker/spec.md).
-				'environment' => strtolower(trim($this->config->getSystemValueString(EnvironmentMarkerService::CONFIG_KEY, ''))),
-				'environmentCommand' => EnvironmentMarkerService::OCC_SET_COMMAND,
-			]
+			] + $this->environmentParams()
 		);
 	}//end getForm()
+
+	/**
+	 * The environment config.php declares, shown read-only, and the command
+	 * that sets it.
+	 *
+	 * @return array{environment: string, environmentCommand: string} The template parameters.
+	 *
+	 * @spec openspec/specs/environment-marker/spec.md
+	 */
+	private function environmentParams(): array {
+		return [
+			'environment' => strtolower(trim($this->config->getSystemValueString(Application::ENVIRONMENT_CONFIG_KEY, ''))),
+			'environmentCommand' => Application::ENVIRONMENT_OCC_COMMAND,
+		];
+	}//end environmentParams()
 
 	/**
 	 * Reads one on/off appconfig flag.
