@@ -361,6 +361,59 @@ class SettingsController extends Controller {
 	}//end setPrimaryDrivesComponentsSetting()
 
 	/**
+	 * Set whether Save overrides asks for confirmation first.
+	 *
+	 * Two flags, because the two questions are not the same one. On the stock
+	 * `nextcloud` set there is a real choice to make — keep the edits as a new
+	 * token set, or write them over the running Nextcloud theme — and on any
+	 * other set there is only a confirmation. An admin who has stopped wanting
+	 * one has not necessarily stopped wanting the other.
+	 *
+	 * Both default to ON. The dialogs offer "do not ask again", and the pair of
+	 * controls under the token editor turns them back on, so the choice is never
+	 * one-way.
+	 *
+	 * @param bool $confirmSaveStock Whether to ask when the stock set is active.
+	 * @param bool $confirmSaveTheme Whether to ask when a token set is active.
+	 *
+	 * @return JSONResponse The response with the status.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function setSaveConfirmSettings(bool $confirmSaveStock, bool $confirmSaveTheme): JSONResponse {
+		foreach (
+			[
+				'confirm_save_stock' => $confirmSaveStock,
+				'confirm_save_theme' => $confirmSaveTheme,
+			] as $key => $value
+		) {
+			$previous = ($this->config->getAppValue(Application::APP_ID, $key, '1') === '1');
+			if ($previous === $value) {
+				continue;
+			}
+
+			$this->saveBooleanSetting(key: $key, value: $value);
+			$this->auditService->log(
+				action: 'toggle_changed',
+				context: [
+					'key' => $key,
+					'old' => $previous,
+					'new' => $value,
+				]
+			);
+		}
+
+		return new JSONResponse(
+			[
+				'status' => 'ok',
+				'confirmSaveStock' => $confirmSaveStock,
+				'confirmSaveTheme' => $confirmSaveTheme,
+			]
+		);
+	}//end setSaveConfirmSettings()
+
+	/**
 	 * Set the show menu labels setting.
 	 *
 	 * @param bool $showMenuLabels Whether to show text labels in app menu.
@@ -488,7 +541,7 @@ class SettingsController extends Controller {
 		$reset = $this->themingService->resetToDefaults();
 
 		// Nothing is synced any more, so nothing is remembered as synced.
-		foreach (['logo', 'background'] as $imageKey) {
+		foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
 			$this->config->deleteAppValue(Application::APP_ID, self::SYNCED_IMAGE_PREFIX . $imageKey);
 		}
 
@@ -535,7 +588,12 @@ class SettingsController extends Controller {
 			'logo_url' => $imgManager->getImageUrl('logo'),
 			'background_url' => $imgManager->getImageUrl('background'),
 			'has_custom_logo' => $imgManager->hasImage('logo'),
+			'has_custom_logoheader' => $imgManager->hasImage('logoheader'),
+			'has_custom_favicon' => $imgManager->hasImage('favicon'),
 			'has_custom_background' => $imgManager->hasImage('background'),
+			// 'backgroundColor' when "Remove background image" is on — the
+			// state a theme that captured the panel may need to put back.
+			'background_mime' => $this->config->getAppValue('theming', 'backgroundMime', ''),
 			// What a reset lands on, so the stock set's dialog can show it
 			// before it is applied rather than guess.
 			'default_primary_color' => $defaults['primary_color'],
@@ -550,6 +608,16 @@ class SettingsController extends Controller {
 			'synced_background' => $this->config->getAppValue(
 				Application::APP_ID,
 				self::SYNCED_IMAGE_PREFIX . 'background',
+				''
+			),
+			'synced_logoheader' => $this->config->getAppValue(
+				Application::APP_ID,
+				self::SYNCED_IMAGE_PREFIX . 'logoheader',
+				''
+			),
+			'synced_favicon' => $this->config->getAppValue(
+				Application::APP_ID,
+				self::SYNCED_IMAGE_PREFIX . 'favicon',
 				''
 			),
 		];

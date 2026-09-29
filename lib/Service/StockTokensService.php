@@ -220,9 +220,38 @@ class StockTokensService {
 	 * @return string|null The stylesheet body.
 	 */
 	private function build(): ?string {
+		$declarations = $this->getTokens();
+		if ($declarations === []) {
+			return null;
+		}
+
+		$body = '';
+		foreach ($declarations as $name => $value) {
+			$body .= $name . ':' . $value . ';';
+		}
+
+		return ':root{' . $body . '}';
+	}//end build()
+
+	/**
+	 * The running instance's stock theme as a `--nldesign-*` => value map.
+	 *
+	 * The same values {@see getCss()} serialises, as data. The export path needs
+	 * them in this shape: saving the stock theme as a token set has to write what
+	 * THIS Nextcloud is actually wearing, and the shipped `css/tokens/nextcloud.css`
+	 * is only a snapshot of one version.
+	 *
+	 * Not memoised here — `getCss()` owns the caching, and this is called once per
+	 * admin page render at most.
+	 *
+	 * @return array<string, string> Map of `--nldesign-*` token name => stock value, sorted by name.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	public function getTokens(): array {
 		$stock = $this->flatten(vars: $this->stockVariables());
 		if ($stock === []) {
-			return null;
+			return [];
 		}
 
 		// The getTokenSources() map runs --color-X => --nldesign-Y, which is the
@@ -250,19 +279,10 @@ class StockTokensService {
 			$declarations[$nldesignToken] = $stock[$this->canonical(token: $nldesignToken, candidates: $colorTokens)];
 		}
 
-		if ($declarations === []) {
-			return null;
-		}
-
 		ksort($declarations);
 
-		$body = '';
-		foreach ($declarations as $name => $value) {
-			$body .= $name . ':' . $value . ';';
-		}
-
-		return ':root{' . $body . '}';
-	}//end build()
+		return $declarations;
+	}//end getTokens()
 
 	/**
 	 * Which of the variables reading this token holds its defining value.

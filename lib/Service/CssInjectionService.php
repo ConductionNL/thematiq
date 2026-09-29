@@ -281,7 +281,10 @@ class CssInjectionService {
 		);
 
 		// 4/4.1. Custom overrides, then freeform custom CSS.
-		$this->runLayer(layer: 'override-styles', work: fn () => $this->injectOverrideStyles());
+		$this->runLayer(
+			layer: 'override-styles',
+			work: fn () => $this->injectOverrideStyles(tokenSet: $tokenSet, designSystemId: $designSystemId)
+		);
 
 		// 4.5. Custom fonts.
 		$this->runLayer(
@@ -375,7 +378,7 @@ class CssInjectionService {
 
 		// 3. Load token values (only when a design system reads --nldesign-* vars).
 		if ($designSystemId === 'none') {
-			return $layers;
+			return array_merge($layers, $this->noDesignSystemLayers(tokenSet: $tokenSet));
 		}
 
 		// 3a-1. The `nextcloud` set is the one set whose values belong to
@@ -450,6 +453,49 @@ class CssInjectionService {
 
 		return $layers;
 	}//end designSystemLayers()
+
+	/**
+	 * The set layers of a token set on the `none` design system.
+	 *
+	 * STOCK STILL GETS THE COMPONENT LAYER, and that is the difference between
+	 * a themable instance and an inert one.
+	 *
+	 * `none` means "no design system", not "the app does nothing". Every
+	 * instance STARTS on the stock `nextcloud` set, so without this the token
+	 * editor and the playground could not move a single colour until an admin
+	 * had already picked some other theme — you had to have a theme before you
+	 * could make one.
+	 *
+	 * Emitting it costs nothing visually. This layer only REDIRECTS Nextcloud's
+	 * own variables inside a component's subtree, and every component token is
+	 * undeclared until somebody sets one, so an untouched stock instance
+	 * resolves each redirect straight back to the captured global and renders
+	 * byte-identically to stock. What it buys is that the overrides file —
+	 * which is emitted after this list whatever the design system — finally has
+	 * something reading the tokens it writes.
+	 *
+	 * A CUSTOM set on `none` is a theme saved off stock Nextcloud, and its file
+	 * is the only place its values live — the header colour an admin set and
+	 * saved as a theme, for one. The stock set itself has no file to load: it
+	 * IS the running Nextcloud. Leaving the custom file out too put the saved
+	 * theme in the dropdown and none of it on the page.
+	 *
+	 * @param string $tokenSet The token set id.
+	 *
+	 * @return array<int, array{layer: string, kind: string, file: string}> The entries, in cascade order.
+	 *
+	 * @spec openspec/specs/css-architecture/spec.md
+	 */
+	private function noDesignSystemLayers(string $tokenSet): array {
+		$layers = [];
+		if ($tokenSet !== self::STOCK_TOKEN_SET) {
+			$layers[] = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
+		}
+
+		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
+
+		return $layers;
+	}//end noDesignSystemLayers()
 
 	/**
 	 * Emit one entry from {@see self::designSystemLayers()}.
@@ -541,12 +587,23 @@ class CssInjectionService {
 	 * Emit the admin-authored override layers: the always-present
 	 * custom-overrides stylesheet, then the freeform custom CSS.
 	 *
+	 * @param string $tokenSet       The token set this page renders.
+	 * @param string $designSystemId The design system that set wears.
+	 *
 	 * @return void
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - CustomOverridesService::fileFor() is a pure lookup
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 */
-	private function injectOverrideStyles(): void {
+	private function injectOverrideStyles(string $tokenSet, string $designSystemId): void {
 		// 4. Custom overrides — admin-defined token overrides, always loaded last.
+		//
+		// A set on no design system has an overrides file of its own and never
+		// loads the shared one, so nothing pinned on another theme can reach a
+		// page that is meant to be Nextcloud plus that set — see
+		// CustomOverridesService.
+		$overridesFile = CustomOverridesService::fileFor(tokenSet: $tokenSet, designSystemId: $designSystemId);
 		//
 		// `ensureExists()` WRITES `css/custom-overrides.css` INSIDE THE APP
 		// DIRECTORY, which is exactly the write a read-only or
@@ -557,11 +614,11 @@ class CssInjectionService {
 		// runs, and the skip is logged rather than silent.
 		$overridesReady = true;
 		try {
-			$this->overridesService->ensureExists();
+			$this->overridesService->ensureExists(tokenSet: $tokenSet);
 		} catch (Throwable $e) {
 			$overridesReady = false;
 			$this->logger->warning(
-				'nldesign: css/custom-overrides.css is absent and could not be created, so the custom-overrides '
+				'nldesign: css/' . $overridesFile . '.css is absent and could not be created, so the custom-overrides '
 				. 'layer was skipped. The app directory is not writable by the web server; generated CSS belongs '
 				. 'in appdata (see nldesign#264).',
 				[
@@ -572,7 +629,7 @@ class CssInjectionService {
 		}
 
 		if ($overridesReady === true) {
-			$this->emitStyle(file: 'custom-overrides');
+			$this->emitStyle(file: $overridesFile);
 		}
 
 		// 4.1 Freeform custom CSS — admin-authored arbitrary rules. Emitted

@@ -38,11 +38,15 @@
  *
  * because a custom property whose value depends on itself is discarded as
  * invalid — the same cycle `StockTokensService` documents for
- * `--nldesign-color-primary`. So `:root` copies each global under a
+ * `--nldesign-color-primary`. So `body` copies each global under a
  * `--thematiq-global-*` name first and the scopes fall back to the copy. The
- * copy resolves at `:root`, where the global still holds its ordinary value,
- * so there is no cycle and an unset component token is indistinguishable from
- * stock.
+ * copy resolves on `body`, which is where the design systems declare the
+ * globals, so there is no cycle and an unset component token is
+ * indistinguishable from stock.
+ *
+ * `:root` is the wrong element for that copy and was the bug: Nextcloud core
+ * declares the globals there, the design systems declare them on `body`, so a
+ * `:root` capture pinned every fallback to core's palette.
  *
  * Note that the capture is deliberately NOT `!important`. custom-overrides.css
  * writes admin-set globals at `:root` with `!important` and loads later, so the
@@ -91,6 +95,10 @@ const collisions = []
 for (const [id, component] of Object.entries(mapping.components)) {
 	const seen = new Map()
 	for (const [name, token] of Object.entries(component.tokens)) {
+		// A paint redeclares no global, so it cannot collide with anything.
+		if (token.paint !== undefined) {
+			continue
+		}
 		if (seen.has(token.global) === true) {
 			collisions.push(
 				id
@@ -143,12 +151,32 @@ const scopes = [
 	" * when one is set and the brand-wide global when one is not. Nextcloud's own",
 	' * stylesheets keep doing the painting; only the value they see changes.',
 	' *',
-	' * The :root block captures each global under a name the scopes can fall back',
+	' * The capture block copies each global under a name the scopes can fall back',
 	' * to. Falling back to the global directly would be a self-referential custom',
 	' * property, which CSS discards as invalid.',
+	' *',
+	' * IT IS `body`, NOT `:root`, AND THAT IS THE WHOLE POINT.',
+	' *',
+	' * Every design system declares the Nextcloud globals on `body` —',
+	' * css/systems/nldesign/theme.css does, and so do the high-contrast,',
+	' * summer-breeze and lasuite sheets. Nextcloud core declares its OWN on',
+	' * `:root`, because ThemeInjectionService serves the default theme with',
+	" * `plain=true`. So a capture taken on `:root` copied core's value and never",
+	" * the token set's, and every component whose token nobody had set was painted",
+	' * Nextcloud blue instead of the brand colour.',
+	' *',
+	' * `body` sees both: what it declares itself, and whatever `:root` declares,',
+	' * by inheritance. There is no element between `body` and the components that',
+	' * declares a global, so nothing is missed.',
+	' *',
+	' * The token editor\'s preview is the one exception, and it is captured again.',
+	' * An unsaved edit is declared on `#nldesign-preview` and nowhere else — it is',
+	' * a preview until it is saved — so a capture taken only on `body` would hand',
+	' * the specimens inside the preview the saved value instead of the edit.',
 	' */',
 	'',
-	':root {',
+	'body,',
+	'#nldesign-preview {',
 ]
 
 const captured = []
@@ -231,22 +259,142 @@ if (aliasTargets.length > 0) {
 }
 scopes.push('}', '')
 
+/*
+ * Paints: a token Nextcloud paints with NO variable to redirect.
+ *
+ * Nextcloud's `#header` has no background of its own — the bar is the page
+ * background showing through — so no Nextcloud rule reads a variable a scope
+ * could point at the header token, and a redirect has nothing to reach. A
+ * `paint` entry names the property instead, and the rule paints it from the
+ * token, falling back to what Nextcloud paints there when the theme sets
+ * nothing. Only the real selectors: the playground draws its own specimen of
+ * the component and paints it the same way in css/playground.css.
+ *
+ * A paint may narrow its `selectors` (a toast type, not every toast), carry
+ * `important` where Nextcloud forces the property itself, and name a
+ * `contrastWith` token: the background the text sits on. Then an unset text
+ * token does not fall straight back to Nextcloud — while the theme sets that
+ * background, the text is white on a dark one and black on a light one.
+ *
+ * The contrast colour is kept in a variable declared on the element, and it
+ * reads the background token WITHOUT a fallback. With no background set, the
+ * variable is invalid and the chain goes on to Nextcloud's own value, so an
+ * instance whose theme sets neither paints exactly what Nextcloud paints.
+ *
+ * `lch(from …)` with `(49.44 - l) * infinity` clamps the lightness to 0 or
+ * 100 at the point where white and black have equal WCAG contrast against the
+ * background, so the pick is the more readable of the two.
+ */
+function paintsOf(component) {
+	return Object.entries(component.tokens).filter(
+		([, token]) => token.paint !== undefined,
+	)
+}
+
+/**
+ * The variable a contrast-paired paint keeps its automatic colour in.
+ *
+ * @param {string} name The paint's own token name.
+ *
+ * @return {string} The variable name.
+ */
+function contrastName(name) {
+	return '--thematiq-contrast-' + name.replace(/^--nldesign-component-/, '')
+}
+
+/**
+ * The declaration lines one paint emits.
+ *
+ * @param {string} name The token being painted from.
+ * @param {Object} token Its mapping entry.
+ *
+ * @return {Array<string>} The declarations, one line per entry.
+ */
+function paintDeclarations(name, token) {
+	const paint = token.paint
+	const important = paint.important === true ? ' !important' : ''
+
+	// A `template` wraps the token in the rest of a shorthand, for a property
+	// one colour cannot fill on its own — `1px solid {token}` for an edge
+	// Nextcloud does not draw. There is no fallback: with the token unset the
+	// declaration is invalid at computed-value time, so the property takes
+	// its initial value, which is exactly "no edge".
+	if (paint.template !== undefined) {
+		return ['\t' + paint.property + ': ' + paint.template.replace('{token}', 'var(' + name + ')') + important + ';']
+	}
+
+	const lines = []
+	let fallback = paint.fallback
+
+	if (paint.contrastWith !== undefined) {
+		lines.push(
+			'\t' + contrastName(name) + ': lch(from var(' + paint.contrastWith
+				+ ') calc((49.44 - l) * infinity) 0 0);',
+		)
+		fallback = 'var(' + contrastName(name) + ', ' + paint.fallback + ')'
+	}
+
+	lines.push('\t' + paint.property + ': var(' + name + ', ' + fallback + ')' + important + ';')
+
+	return lines
+}
+
+/**
+ * A component's paints as rules, one per selector list.
+ *
+ * Paints that land on the same selectors — a toast type's background and its
+ * text — share a rule, so no selector is written twice.
+ *
+ * @param {Object} component The component's mapping entry.
+ *
+ * @return {Array<string>} The rules, one line per entry.
+ */
+function paintRules(component) {
+	const rules = new Map()
+	for (const [name, token] of paintsOf(component)) {
+		const selectors = (token.paint.selectors || component.selectors).join(',\n')
+		if (rules.has(selectors) === false) {
+			rules.set(selectors, [])
+		}
+		rules.get(selectors).push(...paintDeclarations(name, token))
+	}
+
+	const lines = []
+	for (const [selectors, declarations] of rules) {
+		lines.push(selectors + ' {', ...declarations, '}', '')
+	}
+
+	return lines
+}
+
 for (const [id, component] of Object.entries(mapping.components)) {
-	scopes.push('/* ' + id + ' */')
-	scopes.push(component.selectors.concat(specimenSelector(id)).join(',\n') + ' {')
+	const declarations = []
 	for (const [name, token] of Object.entries(component.tokens)) {
-		scopes.push('\t' + token.global + ': var(')
-		scopes.push('\t\t' + name + ',')
-		scopes.push('\t\tvar(' + captureName(token.global) + ')')
-		scopes.push('\t);')
+		if (token.paint !== undefined) {
+			continue
+		}
+		declarations.push('\t' + token.global + ': var(')
+		declarations.push('\t\t' + name + ',')
+		declarations.push('\t\tvar(' + captureName(token.global) + ')')
+		declarations.push('\t);')
 	}
 	for (const [target, source] of Object.entries(aliasesOf(component))) {
-		scopes.push('\t' + target + ': var(')
-		scopes.push('\t\t' + source + ',')
-		scopes.push('\t\tvar(' + aliasCaptureName(target) + ')')
-		scopes.push('\t);')
+		declarations.push('\t' + target + ': var(')
+		declarations.push('\t\t' + source + ',')
+		declarations.push('\t\tvar(' + aliasCaptureName(target) + ')')
+		declarations.push('\t);')
 	}
-	scopes.push('}', '')
+
+	scopes.push('/* ' + id + ' */')
+	// A component whose every token is a paint redirects nothing, and an empty
+	// rule would only be noise.
+	if (declarations.length > 0) {
+		scopes.push(component.selectors.concat(specimenSelector(id)).join(',\n') + ' {')
+		scopes.push(...declarations)
+		scopes.push('}', '')
+	}
+
+	scopes.push(...paintRules(component))
 }
 
 const scopesOutput = scopes.join('\n')
@@ -267,9 +415,14 @@ const lock = [
 	' * brand primary used to drive before components could be themed separately.',
 	' * A component token for a border radius or a font weight is untouched, and',
 	' * stays editable while the toggle is on.',
+	' *',
+	' * On `body` for the same reason the capture block is: these declarations read',
+	' * `--thematiq-global-*`, which is declared there. Landing on `body` also means',
+	" * they beat custom-overrides.css's `:root` `!important` for every descendant,",
+	' * which is exactly what the toggle is for.',
 	' */',
 	'',
-	':root {',
+	'body {',
 ]
 
 for (const [id, component] of Object.entries(mapping.components)) {

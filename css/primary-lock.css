@@ -20,12 +20,17 @@
  * brand primary used to drive before components could be themed separately.
  * A component token for a border radius or a font weight is untouched, and
  * stays editable while the toggle is on.
+ *
+ * On `body` for the same reason the capture block is: these declarations read
+ * `--thematiq-global-*`, which is declared there. Landing on `body` also means
+ * they beat custom-overrides.css's `:root` `!important` for every descendant,
+ * which is exactly what the toggle is for.
  */
 
-:root {
+body {
 	/* header-bar */
-	--nldesign-component-header-background-color: var(--thematiq-global-color-primary) !important;
-	--nldesign-component-header-color: var(--thematiq-global-color-primary-text) !important;
+	--nldesign-component-header-background-color: var(--thematiq-global-color-background-plain) !important;
+	--nldesign-component-header-color: var(--thematiq-global-color-background-plain-text) !important;
 	/* login-button */
 	--nldesign-component-login-button-background-color: var(--thematiq-global-color-primary-element) !important;
 	--nldesign-component-login-button-color: var(--thematiq-global-color-primary-element-text) !important;
@@ -55,9 +60,9 @@
 	--nldesign-component-button-primary-action-color: var(--thematiq-global-color-primary-element-text) !important;
 	--nldesign-component-button-primary-action-hover-background-color: var(--thematiq-global-color-primary-element-hover) !important;
 	/* tertiary-button */
-	--nldesign-component-button-color: var(--thematiq-global-color-primary-element-light-text) !important;
+	--nldesign-component-button-color: var(--thematiq-global-color-main-text) !important;
 	--nldesign-component-button-hover-background-color: var(--thematiq-global-color-primary-element-light) !important;
-	--nldesign-component-button-active-background-color: var(--thematiq-global-color-primary-element-light-hover) !important;
+	--nldesign-component-button-active-background-color: var(--thematiq-global-color-primary-element-light) !important;
 	/* badge-counter */
 	--nldesign-component-badge-background-color: var(--thematiq-global-color-primary-element) !important;
 	--nldesign-component-badge-color: var(--thematiq-global-color-primary-element-text) !important;

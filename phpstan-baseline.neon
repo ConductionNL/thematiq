@@ -9,8 +9,32 @@ parameters:
 		-
 			message: '#^Call to method hasImage\(\) on an unknown class OCA\\Theming\\ImageManager\.$#'
 			identifier: class.notFound
-			count: 2
+			count: 4
 			path: lib/Controller/SettingsController.php
+
+		-
+			message: '#^Call to method getImage\(\) on an unknown class OCA\\Theming\\ImageManager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: lib/Service/BrandingCaptureService.php
+
+		-
+			message: '#^Call to method hasImage\(\) on an unknown class OCA\\Theming\\ImageManager\.$#'
+			identifier: class.notFound
+			count: 1
+			path: lib/Service/BrandingCaptureService.php
+
+		-
+			message: '#^Parameter \$imageManager of method OCA\\Thematiq\\Service\\BrandingCaptureService\:\:__construct\(\) has invalid type OCA\\Theming\\ImageManager\.$#'
+			identifier: class.notFound
+			count: 2
+			path: lib/Service/BrandingCaptureService.php
+
+		-
+			message: '#^Property OCA\\Thematiq\\Service\\BrandingCaptureService\:\:\$imageManager has unknown class OCA\\Theming\\ImageManager as its type\.$#'
+			identifier: class.notFound
+			count: 2
+			path: lib/Service/BrandingCaptureService.php
 
 		-
 			message: '#^Access to constant DEFAULT_BACKGROUND_COLOR on an unknown class OCA\\Theming\\Service\\BackgroundService\.$#'
@@ -27,13 +51,13 @@ parameters:
 		-
 			message: '#^Call to method set\(\) on an unknown class OCA\\Theming\\ThemingDefaults\.$#'
 			identifier: class.notFound
-			count: 3
+			count: 4
 			path: lib/Service/ThemingService.php
 
 		-
 			message: '#^Call to method undo\(\) on an unknown class OCA\\Theming\\ThemingDefaults\.$#'
 			identifier: class.notFound
-			count: 1
+			count: 2
 			path: lib/Service/ThemingService.php
 
 		-

@@ -23,6 +23,17 @@
 # boot, so it must never be committed (a stray test value here restyles the
 # whole instance the moment the app is activated).
 /css/custom-overrides.css
+# The same, per set, for every set on no design system: the stock Nextcloud
+# theme (custom-overrides-nextcloud.css) and the themes saved off it. Only that
+# set loads its file, so emptying the stock one (the reset) gives stock back.
+/css/custom-overrides-*.css
+
+# Runtime theme state — Nextcloud's own logos, favicon and background image,
+# copied into a theme when it is saved from the editor (BrandingCaptureService)
+# so applying the theme brings them back. They are an admin's uploads on one
+# instance, never part of the app.
+/img/logos/*-captured-*
+/img/backgrounds/*-captured-*
 
 # Runtime theme state — written by the freeform custom-CSS editor at runtime
 # (CustomCssService::write(), atomic temp-file + rename). Unlike

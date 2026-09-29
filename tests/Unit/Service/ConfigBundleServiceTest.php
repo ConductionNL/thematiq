@@ -21,6 +21,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
@@ -136,7 +137,13 @@ class ConfigBundleServiceTest extends TestCase {
 		$customTokenSetValidator = new CustomTokenSetValidator();
 		$logger = $this->createMock(LoggerInterface::class);
 
-		$this->overridesService = new CustomOverridesService($appManager, $cssParser, new DarkPaletteService($contrast, $cssParser, $appManager, $logger));
+		$this->overridesService = new CustomOverridesService(
+			$appManager,
+			$cssParser,
+			new DarkPaletteService($contrast, $cssParser, $appManager, $logger),
+			$config,
+			new DesignSystemService($appManager, $config)
+		);
 		$this->customTokenSetService = new CustomTokenSetService(
 			$appManager,
 			$config,

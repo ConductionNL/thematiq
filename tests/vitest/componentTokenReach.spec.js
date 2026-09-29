@@ -330,3 +330,65 @@ describe('component tokens: does the chip reach its component', () => {
 		expect(stale).toEqual([])
 	})
 })
+
+/*
+ * The capture block's ELEMENT, which decides which palette the fallbacks see.
+ *
+ * `--thematiq-global-*` copies a Nextcloud global so a scope rule can fall back
+ * to it without referring to itself. Which element that copy is taken on is the
+ * whole behaviour: every design system declares the globals on `body`
+ * (css/systems/nldesign/theme.css and the high-contrast, summer-breeze and
+ * lasuite sheets), while Nextcloud core declares its own on `:root`, because
+ * ThemeInjectionService serves the default theme with `plain=true`.
+ *
+ * Taken on `:root`, the copies held CORE's palette, so every component whose
+ * token nobody had set — 91 of the 123 in the mapping — was painted Nextcloud
+ * blue instead of the brand colour, and `primary-lock.css` drove every locked
+ * component to core's primary rather than the set's.
+ *
+ * `body` sees both: what it declares itself, and what `:root` declares, by
+ * inheritance. So this is not a style preference, and a regenerate that moves
+ * it back to `:root` has to fail here.
+ */
+describe('component tokens: the capture block is taken on body', () => {
+	const GENERATED = ['css/component-scopes.css', 'css/primary-lock.css']
+
+	it.each(GENERATED)('%s declares --thematiq-global-* on body', (file) => {
+		const css = fs.readFileSync(path.join(ROOT, file), 'utf8')
+
+		// The selector list of the first block that mentions a capture name —
+		// read off the raw text back to the end of the previous rule or
+		// comment, so a list spanning several lines is read whole.
+		const open = css.search(/\{[^}]*--thematiq-global-/)
+		expect(open, 'no block declaring or reading a capture').toBeGreaterThan(-1)
+
+		const head = css.slice(0, open)
+		const start = Math.max(head.lastIndexOf('}') + 1, head.lastIndexOf('*/') + 2)
+		const selectors = head
+			.slice(start)
+			.split(',')
+			.map((s) => s.trim())
+
+		expect(selectors[0]).toBe('body')
+		// The token editor's preview is captured too: an unsaved edit is
+		// declared there and nowhere else. Only the scopes read captures
+		// inside it; the lock is about the live page.
+		if (file === 'css/component-scopes.css') {
+			expect(selectors).toEqual(['body', '#nldesign-preview'])
+		} else {
+			expect(selectors).toEqual(['body'])
+		}
+	})
+
+	it('leaves no capture stranded on :root', () => {
+		for (const file of GENERATED) {
+			const css = fs.readFileSync(path.join(ROOT, file), 'utf8')
+			const rootBlocks = [...css.matchAll(/(^|\n):root\s*\{([^}]*)\}/g)]
+			const stranded = rootBlocks.filter((m) =>
+				m[2].includes('--thematiq-global-'),
+			)
+
+			expect(stranded.map(() => file)).toEqual([])
+		}
+	})
+})

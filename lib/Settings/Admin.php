@@ -205,6 +205,12 @@ class Admin implements IDelegatedSettings {
 		// colour controls lock.
 		$drivesComponents = $this->isFlagOn(key: 'primary_drives_components');
 
+		// Whether Save overrides asks first. Both default ON: the first save an
+		// admin makes is the one most worth a question, and the dialogs are the
+		// only place the "keep this as a new token set" choice is offered.
+		$confirmSaveStock = $this->isFlagOn(key: 'confirm_save_stock', fallback: '1');
+		$confirmSaveTheme = $this->isFlagOn(key: 'confirm_save_theme', fallback: '1');
+
 		$darkVariantsEnabled = $this->isFlagOn(key: 'dark_variants', fallback: '1');
 		$marianneEnabled = $this->isFlagOn(key: 'marianne_enabled');
 
@@ -236,6 +242,12 @@ class Admin implements IDelegatedSettings {
 		// reads them from.
 		$this->initialState->provideInitialState('tokenSets', $tokenSets);
 		$this->initialState->provideInitialState('currentTokenSet', $currentTokenSet);
+
+		// The save-confirmation flags. Through initial state rather than the
+		// template because the two controls they drive are rendered by
+		// js/admin.js inside the token editor, which the template does not own.
+		$this->initialState->provideInitialState('confirmSaveStock', $confirmSaveStock);
+		$this->initialState->provideInitialState('confirmSaveTheme', $confirmSaveTheme);
 		$this->publishPreviewState(activePreview: $activePreview, iconPackSource: $iconPackSource);
 
 		$this->publishPlaygroundState(

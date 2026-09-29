@@ -16,14 +16,34 @@
  * when one is set and the brand-wide global when one is not. Nextcloud's own
  * stylesheets keep doing the painting; only the value they see changes.
  *
- * The :root block captures each global under a name the scopes can fall back
+ * The capture block copies each global under a name the scopes can fall back
  * to. Falling back to the global directly would be a self-referential custom
  * property, which CSS discards as invalid.
+ *
+ * IT IS `body`, NOT `:root`, AND THAT IS THE WHOLE POINT.
+ *
+ * Every design system declares the Nextcloud globals on `body` —
+ * css/systems/nldesign/theme.css does, and so do the high-contrast,
+ * summer-breeze and lasuite sheets. Nextcloud core declares its OWN on
+ * `:root`, because ThemeInjectionService serves the default theme with
+ * `plain=true`. So a capture taken on `:root` copied core's value and never
+ * the token set's, and every component whose token nobody had set was painted
+ * Nextcloud blue instead of the brand colour.
+ *
+ * `body` sees both: what it declares itself, and whatever `:root` declares,
+ * by inheritance. There is no element between `body` and the components that
+ * declares a global, so nothing is missed.
+ *
+ * The token editor's preview is the one exception, and it is captured again.
+ * An unsaved edit is declared on `#nldesign-preview` and nowhere else — it is
+ * a preview until it is saved — so a capture taken only on `body` would hand
+ * the specimens inside the preview the saved value instead of the edit.
  */
 
-:root {
-	--thematiq-global-color-primary: var(--color-primary);
-	--thematiq-global-color-primary-text: var(--color-primary-text);
+body,
+#nldesign-preview {
+	--thematiq-global-color-background-plain: var(--color-background-plain);
+	--thematiq-global-color-background-plain-text: var(--color-background-plain-text);
 	--thematiq-global-color-background-hover: var(--color-background-hover);
 	--thematiq-global-border-radius-large: var(--border-radius-large);
 	--thematiq-global-color-border: var(--color-border);
@@ -31,12 +51,15 @@
 	--thematiq-global-color-primary-element-text: var(--color-primary-element-text);
 	--thematiq-global-color-primary-element-hover: var(--color-primary-element-hover);
 	--thematiq-global-border-radius-element: var(--border-radius-element);
+	--thematiq-global-color-primary-text: var(--color-primary-text);
 	--thematiq-global-font-face: var(--font-face);
 	--thematiq-global-color-main-text: var(--color-main-text);
 	--thematiq-global-body-container-radius: var(--body-container-radius);
 	--thematiq-global-border-radius-rounded: var(--border-radius-rounded);
 	--thematiq-global-color-scrollbar: var(--color-scrollbar);
 	--thematiq-global-color-text-maxcontrast: var(--color-text-maxcontrast);
+	--thematiq-global-color-main-background: var(--color-main-background);
+	--thematiq-global-font-weight-default: var(--font-weight-default);
 	--thematiq-global-color-background-dark: var(--color-background-dark);
 	--thematiq-global-color-border-dark: var(--color-border-dark);
 	--thematiq-global-animation-quick: var(--animation-quick);
@@ -44,34 +67,41 @@
 	--thematiq-global-color-primary-light-text: var(--color-primary-light-text);
 	--thematiq-global-color-primary-light-hover: var(--color-primary-light-hover);
 	--thematiq-global-color-success: var(--color-success);
+	--thematiq-global-color-primary: var(--color-primary);
 	--thematiq-global-color-border-maxcontrast: var(--color-border-maxcontrast);
 	--thematiq-global-color-placeholder-dark: var(--color-placeholder-dark);
 	--thematiq-global-color-placeholder-light: var(--color-placeholder-light);
-	--thematiq-global-color-error: var(--color-error);
+	--thematiq-global-color-border-error: var(--color-border-error);
+	--thematiq-global-vs-border-color: var(--vs-border-color);
+	--thematiq-global-vs-border-radius: var(--vs-border-radius);
+	--thematiq-global-vs-selected-color: var(--vs-selected-color);
+	--thematiq-global-color-primary-element-light: var(--color-primary-element-light);
+	--thematiq-global-vs-dropdown-color: var(--vs-dropdown-color);
+	--thematiq-global-vs-dropdown-option--active-bg: var(--vs-dropdown-option--active-bg);
+	--thematiq-global-vs-dropdown-option--active-color: var(--vs-dropdown-option--active-color);
 	--thematiq-global-border-radius-small: var(--border-radius-small);
-	--thematiq-global-border-radius: var(--border-radius);
 	--thematiq-global-animation-slow: var(--animation-slow);
 	--thematiq-global-color-background-darker: var(--color-background-darker);
 	--thematiq-global-border-radius-pill: var(--border-radius-pill);
 	--thematiq-global-font-weight-element: var(--font-weight-element);
 	--thematiq-global-color-primary-element-light-text: var(--color-primary-element-light-text);
-	--thematiq-global-color-primary-element-light: var(--color-primary-element-light);
 	--thematiq-global-color-primary-element-light-hover: var(--color-primary-element-light-hover);
+	--thematiq-global-color-error: var(--color-error);
 	--thematiq-global-color-error-rgb: var(--color-error-rgb);
 	--thematiq-global-color-error-hover: var(--color-error-hover);
-	--thematiq-global-color-element-success: var(--color-element-success);
+	--thematiq-global-color-error-text: var(--color-error-text);
+	--thematiq-global-color-success-text: var(--color-success-text);
+	--thematiq-global-color-success-hover: var(--color-success-hover);
 	--thematiq-global-color-info: var(--color-info);
-	--thematiq-global-color-element-info: var(--color-element-info);
+	--thematiq-global-color-info-text: var(--color-info-text);
+	--thematiq-global-color-info-rgb: var(--color-info-rgb);
+	--thematiq-global-border-radius: var(--border-radius);
 	--thematiq-global-color-warning: var(--color-warning);
-	--thematiq-global-color-element-warning: var(--color-element-warning);
+	--thematiq-global-color-warning-text: var(--color-warning-text);
 	--thematiq-global-color-warning-rgb: var(--color-warning-rgb);
-	--thematiq-global-color-element-error: var(--color-element-error);
-	--thematiq-global-color-border-error: var(--color-border-error);
-	--thematiq-global-color-border-success: var(--color-border-success);
 	--thematiq-global-color-success-rgb: var(--color-success-rgb);
 	--thematiq-global-color-favorite: var(--color-favorite);
 	--thematiq-global-font-weight-heading: var(--font-weight-heading);
-	--thematiq-global-font-weight-default: var(--font-weight-default);
 	--thematiq-global-color-primary-hover: var(--color-primary-hover);
 	--thematiq-global-color-text-light: var(--color-text-light);
 	--thematiq-global-color-text-lighter: var(--color-text-lighter);
@@ -87,24 +117,26 @@
 	--thematiq-alias-nldesign-component-button-border-radius: var(--nldesign-component-button-border-radius);
 	--thematiq-alias-nldesign-component-textbox-border-color: var(--nldesign-component-textbox-border-color);
 	--thematiq-alias-nldesign-component-textbox-border-radius: var(--nldesign-component-textbox-border-radius);
+	--thematiq-alias-nldesign-component-textbox-background-color: var(--nldesign-component-textbox-background-color);
+	--thematiq-alias-nldesign-component-textbox-focus-border-color: var(--nldesign-component-textbox-focus-border-color);
 	--thematiq-alias-nldesign-component-button-primary-action-font-weight: var(--nldesign-component-button-primary-action-font-weight);
 }
 
 /* header-bar */
 #header,
 [data-thematiq-component='header-bar'] {
-	--color-primary: var(
-		--nldesign-component-header-background-color,
-		var(--thematiq-global-color-primary)
-	);
-	--color-primary-text: var(
+	--color-background-plain-text: var(
 		--nldesign-component-header-color,
-		var(--thematiq-global-color-primary-text)
+		var(--thematiq-global-color-background-plain-text)
 	);
 	--color-background-hover: var(
 		--nldesign-component-header-hover-background-color,
 		var(--thematiq-global-color-background-hover)
 	);
+}
+
+#header {
+	background-color: var(--nldesign-component-header-background-color, transparent);
 }
 
 /* login-card */
@@ -115,10 +147,10 @@
 		--nldesign-component-login-box-border-radius,
 		var(--thematiq-global-border-radius-large)
 	);
-	--color-border: var(
-		--nldesign-component-login-box-border-color,
-		var(--thematiq-global-color-border)
-	);
+}
+
+#body-login .guest-box.login-box {
+	border: 1px solid var(--nldesign-component-login-box-border-color) !important;
 }
 
 /* login-button */
@@ -243,6 +275,11 @@ table,
 	);
 }
 
+th {
+	background-color: var(--nldesign-component-table-header-background-color, transparent);
+	font-weight: var(--nldesign-component-table-header-font-weight, normal);
+}
+
 /* sidebar */
 #app-sidebar,
 #app-sidebar-vue,
@@ -302,6 +339,7 @@ table,
 
 /* empty-content */
 .empty-content,
+.empty-content__name,
 [data-thematiq-component='empty-content'] {
 	--color-main-text: var(
 		--nldesign-component-empty-content-color,
@@ -337,13 +375,8 @@ table,
 }
 
 /* avatar */
-.avatardiv,
-.user-status-icon,
-[data-thematiq-component='avatar'] {
-	--color-success: var(
-		--nldesign-component-avatar-online-status-color,
-		var(--thematiq-global-color-success)
-	);
+.user-status-icon {
+	--user-status-color-online: var(--nldesign-component-avatar-online-status-color, #2D7B41) !important;
 }
 
 /* breadcrumbs */
@@ -367,6 +400,7 @@ table,
 /* settings-section */
 .settings-section,
 .app-settings-section,
+.settings-section__name,
 [data-thematiq-component='settings-section'] {
 	--color-main-text: var(
 		--nldesign-component-settings-section-heading-color,
@@ -393,10 +427,6 @@ input[type='search'],
 		--nldesign-component-textbox-border-color,
 		var(--thematiq-global-color-border-maxcontrast)
 	);
-	--color-placeholder-dark: var(
-		--nldesign-component-textbox-placeholder-color,
-		var(--thematiq-global-color-placeholder-dark)
-	);
 	--color-placeholder-light: var(
 		--nldesign-component-textbox-placeholder-light-color,
 		var(--thematiq-global-color-placeholder-light)
@@ -405,31 +435,53 @@ input[type='search'],
 		--nldesign-component-textbox-border-radius,
 		var(--thematiq-global-border-radius-element)
 	);
-	--color-primary-element: var(
-		--nldesign-component-textbox-focus-border-color,
-		var(--thematiq-global-color-primary-element)
-	);
-	--color-error: var(
+	--color-border-error: var(
 		--nldesign-component-textbox-invalid-border-color,
-		var(--thematiq-global-color-error)
+		var(--thematiq-global-color-border-error)
 	);
+}
+
+.input-field__input::placeholder {
+	color: var(--nldesign-component-textbox-placeholder-color, var(--color-text-maxcontrast)) !important;
+}
+
+.input-field__input:focus:not([disabled]),
+.input-field__input:active:not([disabled]) {
+	--input-border-color: var(--nldesign-component-textbox-focus-border-color, var(--color-main-text)) !important;
 }
 
 /* select */
 select,
 .v-select,
+.vs__dropdown-menu,
 [data-thematiq-component='select'] {
-	--color-border-maxcontrast: var(
+	--vs-border-color: var(
 		--nldesign-component-form-select-border-color,
-		var(--thematiq-global-color-border-maxcontrast)
+		var(--thematiq-global-vs-border-color)
 	);
-	--border-radius-element: var(
+	--vs-border-radius: var(
 		--nldesign-component-form-select-border-radius,
-		var(--thematiq-global-border-radius-element)
+		var(--thematiq-global-vs-border-radius)
 	);
-	--color-background-hover: var(
+	--vs-selected-color: var(
+		--nldesign-component-form-select-color,
+		var(--thematiq-global-vs-selected-color)
+	);
+	--color-primary-element-light: var(
+		--nldesign-component-form-select-selected-background-color,
+		var(--thematiq-global-color-primary-element-light)
+	);
+	--vs-dropdown-color: var(
+		--nldesign-component-form-select-option-color,
+		var(--thematiq-global-vs-dropdown-color)
+	);
+	--vs-dropdown-option--active-bg: var(
 		--nldesign-component-form-select-option-hover-background-color,
-		var(--thematiq-global-color-background-hover)
+		var(--thematiq-global-vs-dropdown-option--active-bg)
+	);
+	--vs-dropdown-option--active-color: var(
+		--nldesign-component-form-select-option-hover-color,
+		var(--thematiq-global-vs-dropdown-option--active-color)
 	);
 }
 
@@ -438,10 +490,6 @@ select,
 input[type='checkbox'],
 input[type='radio'],
 [data-thematiq-component='checkbox-switch'] {
-	--color-border-maxcontrast: var(
-		--nldesign-component-checkbox-border-color,
-		var(--thematiq-global-color-border-maxcontrast)
-	);
 	--border-radius-small: var(
 		--nldesign-component-checkbox-border-radius,
 		var(--thematiq-global-border-radius-small)
@@ -452,16 +500,34 @@ input[type='radio'],
 	);
 }
 
+.checkbox-radio-switch-checkbox:not(.checkbox-radio-switch--checked) .checkbox-content__icon > *,
+.checkbox-radio-switch-radio:not(.checkbox-radio-switch--checked) .checkbox-content__icon > * {
+	color: var(--nldesign-component-checkbox-border-color, var(--color-primary-element));
+}
+
 /* textarea */
 textarea,
+.textarea,
 [data-thematiq-component='textarea'] {
 	--color-border-maxcontrast: var(
 		--nldesign-component-textarea-border-color,
 		var(--thematiq-global-color-border-maxcontrast)
 	);
-	--border-radius: var(
+	--border-radius-element: var(
 		--nldesign-component-textarea-border-radius,
-		var(--thematiq-global-border-radius)
+		var(--thematiq-global-border-radius-element)
+	);
+	--color-main-text: var(
+		--nldesign-component-textarea-color,
+		var(--thematiq-global-color-main-text)
+	);
+	--color-main-background: var(
+		--nldesign-component-textarea-background-color,
+		var(--thematiq-global-color-main-background)
+	);
+	--color-border-error: var(
+		--nldesign-component-textarea-invalid-border-color,
+		var(--thematiq-global-color-border-error)
 	);
 	--nldesign-component-textbox-border-color: var(
 		--nldesign-component-textarea-border-color,
@@ -471,6 +537,23 @@ textarea,
 		--nldesign-component-textarea-border-radius,
 		var(--thematiq-alias-nldesign-component-textbox-border-radius)
 	);
+	--nldesign-component-textbox-background-color: var(
+		--nldesign-component-textarea-background-color,
+		var(--thematiq-alias-nldesign-component-textbox-background-color)
+	);
+	--nldesign-component-textbox-focus-border-color: var(
+		--nldesign-component-textarea-focus-border-color,
+		var(--thematiq-alias-nldesign-component-textbox-focus-border-color)
+	);
+}
+
+.textarea__input::placeholder {
+	color: var(--nldesign-component-textarea-placeholder-color, var(--color-text-maxcontrast)) !important;
+}
+
+.textarea__input:focus:not([disabled]),
+.textarea__input:active:not([disabled]) {
+	--input-border-color: var(--nldesign-component-textarea-focus-border-color, var(--color-main-text)) !important;
 }
 
 /* dialog */
@@ -493,6 +576,14 @@ textarea,
 	--color-primary-element: var(
 		--nldesign-component-dialog-confirm-background-color,
 		var(--thematiq-global-color-primary-element)
+	);
+	--nldesign-component-button-primary-action-background-color: var(
+		--nldesign-component-dialog-confirm-background-color,
+		var(--thematiq-alias-nldesign-component-button-primary-action-background-color)
+	);
+	--nldesign-component-button-primary-action-border-color: var(
+		--nldesign-component-dialog-confirm-background-color,
+		var(--thematiq-alias-nldesign-component-button-primary-action-border-color)
 	);
 }
 
@@ -559,17 +650,17 @@ input[type='submit'],
 .button-vue--secondary,
 .button-vue--vue-secondary,
 [data-thematiq-component='secondary-button'] {
-	--color-background-dark: var(
+	--color-primary-element-light: var(
 		--nldesign-component-button-secondary-action-background-color,
-		var(--thematiq-global-color-background-dark)
+		var(--thematiq-global-color-primary-element-light)
 	);
-	--color-main-text: var(
+	--color-primary-element-light-text: var(
 		--nldesign-component-button-secondary-action-color,
-		var(--thematiq-global-color-main-text)
+		var(--thematiq-global-color-primary-element-light-text)
 	);
-	--color-background-darker: var(
+	--color-primary-element-light-hover: var(
 		--nldesign-component-button-secondary-action-hover-background-color,
-		var(--thematiq-global-color-background-darker)
+		var(--thematiq-global-color-primary-element-light-hover)
 	);
 	--border-radius-element: var(
 		--nldesign-component-button-secondary-action-border-radius,
@@ -586,18 +677,18 @@ input[type='submit'],
 .button-vue--vue-tertiary,
 .button-vue--tertiary-no-background,
 [data-thematiq-component='tertiary-button'] {
-	--color-primary-element-light-text: var(
+	--color-main-text: var(
 		--nldesign-component-button-color,
-		var(--thematiq-global-color-primary-element-light-text)
+		var(--thematiq-global-color-main-text)
 	);
 	--color-primary-element-light: var(
-		--nldesign-component-button-hover-background-color,
+		--nldesign-component-button-active-background-color,
 		var(--thematiq-global-color-primary-element-light)
 	);
-	--color-primary-element-light-hover: var(
-		--nldesign-component-button-active-background-color,
-		var(--thematiq-global-color-primary-element-light-hover)
-	);
+}
+
+.button-vue--tertiary:not(.button-vue--tertiary-no-background):not(.button-vue--tertiary-on-primary):hover:not(:disabled) {
+	background-color: var(--nldesign-component-button-hover-background-color, color-mix(in srgb, var(--color-primary-element) 8%, transparent)) !important;
 }
 
 /* error-button */
@@ -616,6 +707,10 @@ input[type='submit'],
 		--nldesign-component-button-error-hover-background-color,
 		var(--thematiq-global-color-error-hover)
 	);
+	--color-error-text: var(
+		--nldesign-component-button-error-color,
+		var(--thematiq-global-color-error-text)
+	);
 }
 
 /* success-button */
@@ -626,9 +721,13 @@ input[type='submit'],
 		--nldesign-component-button-success-background-color,
 		var(--thematiq-global-color-success)
 	);
-	--color-element-success: var(
+	--color-success-text: var(
 		--nldesign-component-button-success-color,
-		var(--thematiq-global-color-element-success)
+		var(--thematiq-global-color-success-text)
+	);
+	--color-success-hover: var(
+		--nldesign-component-button-success-hover-background-color,
+		var(--thematiq-global-color-success-hover)
 	);
 }
 
@@ -639,9 +738,13 @@ input[type='submit'],
 		--nldesign-component-notecard-info-color,
 		var(--thematiq-global-color-info)
 	);
-	--color-element-info: var(
+	--color-info-text: var(
 		--nldesign-component-notecard-info-icon-color,
-		var(--thematiq-global-color-element-info)
+		var(--thematiq-global-color-info-text)
+	);
+	--color-info-rgb: var(
+		--nldesign-component-notecard-info-color-rgb,
+		var(--thematiq-global-color-info-rgb)
 	);
 	--border-radius: var(
 		--nldesign-component-notecard-border-radius,
@@ -651,9 +754,9 @@ input[type='submit'],
 		--nldesign-component-notecard-warning-color,
 		var(--thematiq-global-color-warning)
 	);
-	--color-element-warning: var(
+	--color-warning-text: var(
 		--nldesign-component-notecard-warning-icon-color,
-		var(--thematiq-global-color-element-warning)
+		var(--thematiq-global-color-warning-text)
 	);
 	--color-warning-rgb: var(
 		--nldesign-component-notecard-warning-color-rgb,
@@ -663,13 +766,9 @@ input[type='submit'],
 		--nldesign-component-notecard-error-color,
 		var(--thematiq-global-color-error)
 	);
-	--color-element-error: var(
+	--color-error-text: var(
 		--nldesign-component-notecard-error-icon-color,
-		var(--thematiq-global-color-element-error)
-	);
-	--color-border-error: var(
-		--nldesign-component-notecard-error-border-color,
-		var(--thematiq-global-color-border-error)
+		var(--thematiq-global-color-error-text)
 	);
 	--color-error-rgb: var(
 		--nldesign-component-notecard-error-color-rgb,
@@ -679,18 +778,38 @@ input[type='submit'],
 		--nldesign-component-notecard-success-color,
 		var(--thematiq-global-color-success)
 	);
-	--color-element-success: var(
+	--color-success-text: var(
 		--nldesign-component-notecard-success-icon-color,
-		var(--thematiq-global-color-element-success)
-	);
-	--color-border-success: var(
-		--nldesign-component-notecard-success-border-color,
-		var(--thematiq-global-color-border-success)
+		var(--thematiq-global-color-success-text)
 	);
 	--color-success-rgb: var(
 		--nldesign-component-notecard-success-color-rgb,
 		var(--thematiq-global-color-success-rgb)
 	);
+}
+
+body .notecard.notecard--info,
+body .notecard.info {
+	--thematiq-contrast-notecard-info-text-color: lch(from var(--nldesign-component-notecard-info-color) calc((49.44 - l) * infinity) 0 0);
+	color: var(--nldesign-component-notecard-info-text-color, var(--thematiq-contrast-notecard-info-text-color, var(--color-main-text))) !important;
+}
+
+body .notecard.notecard--warning,
+body .notecard.warning {
+	--thematiq-contrast-notecard-warning-text-color: lch(from var(--nldesign-component-notecard-warning-color) calc((49.44 - l) * infinity) 0 0);
+	color: var(--nldesign-component-notecard-warning-text-color, var(--thematiq-contrast-notecard-warning-text-color, var(--color-main-text))) !important;
+}
+
+body .notecard.notecard--error,
+body .notecard.error {
+	--thematiq-contrast-notecard-error-text-color: lch(from var(--nldesign-component-notecard-error-color) calc((49.44 - l) * infinity) 0 0);
+	color: var(--nldesign-component-notecard-error-text-color, var(--thematiq-contrast-notecard-error-text-color, var(--color-main-text))) !important;
+}
+
+body .notecard.notecard--success,
+body .notecard.success {
+	--thematiq-contrast-notecard-success-text-color: lch(from var(--nldesign-component-notecard-success-color) calc((49.44 - l) * infinity) 0 0);
+	color: var(--nldesign-component-notecard-success-text-color, var(--thematiq-contrast-notecard-success-text-color, var(--color-main-text))) !important;
 }
 
 /* badge-counter */
@@ -718,27 +837,40 @@ input[type='submit'],
 
 /* toast */
 .toastify,
+[class^='_toast_'],
 [data-thematiq-component='toast'] {
-	--color-success: var(
-		--nldesign-component-toast-success-background-color,
-		var(--thematiq-global-color-success)
-	);
 	--border-radius: var(
 		--nldesign-component-toast-border-radius,
 		var(--thematiq-global-border-radius)
 	);
-	--color-error: var(
-		--nldesign-component-toast-error-background-color,
-		var(--thematiq-global-color-error)
-	);
-	--color-warning: var(
-		--nldesign-component-toast-warning-background-color,
-		var(--thematiq-global-color-warning)
-	);
-	--color-info: var(
-		--nldesign-component-toast-info-background-color,
-		var(--thematiq-global-color-info)
-	);
+}
+
+body [class*='_toast_success_'],
+body .toastify.toast-success {
+	background-color: var(--nldesign-component-toast-success-background-color, var(--color-main-background));
+	--thematiq-contrast-toast-success-color: lch(from var(--nldesign-component-toast-success-background-color) calc((49.44 - l) * infinity) 0 0);
+	color: var(--nldesign-component-toast-success-color, var(--thematiq-contrast-toast-success-color, var(--color-main-text)));
+}
+
+body [class*='_toast_error_'],
+body .toastify.toast-error {
+	background-color: var(--nldesign-component-toast-error-background-color, var(--color-main-background));
+	--thematiq-contrast-toast-error-color: lch(from var(--nldesign-component-toast-error-background-color) calc((49.44 - l) * infinity) 0 0);
+	color: var(--nldesign-component-toast-error-color, var(--thematiq-contrast-toast-error-color, var(--color-main-text)));
+}
+
+body [class*='_toast_warning_'],
+body .toastify.toast-warning {
+	background-color: var(--nldesign-component-toast-warning-background-color, var(--color-main-background));
+	--thematiq-contrast-toast-warning-color: lch(from var(--nldesign-component-toast-warning-background-color) calc((49.44 - l) * infinity) 0 0);
+	color: var(--nldesign-component-toast-warning-color, var(--thematiq-contrast-toast-warning-color, var(--color-main-text)));
+}
+
+body [class*='_toast_info_'],
+body .toastify.toast-info {
+	background-color: var(--nldesign-component-toast-info-background-color, var(--color-main-background));
+	--thematiq-contrast-toast-info-color: lch(from var(--nldesign-component-toast-info-background-color) calc((49.44 - l) * infinity) 0 0);
+	color: var(--nldesign-component-toast-info-color, var(--thematiq-contrast-toast-info-color, var(--color-main-text)));
 }
 
 /* heading */

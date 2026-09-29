@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\PlaygroundStateService;
+use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCP\App\IAppManager;
@@ -42,6 +43,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	private function build(
 		?TokenSetPreviewService $previewValues = null,
 		?TokenSetConverterService $converter = null,
+		?StockTokensService $stockTokens = null,
 	): PlaygroundStateService {
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->method('getAppPath')->willReturn((string)realpath(__DIR__ . '/../../..'));
@@ -57,7 +59,12 @@ class PlaygroundStateServiceTest extends TestCase {
 			$converter->method('getReasons')->willReturn(['derived-by-nextcloud' => 'Calculated by Nextcloud.']);
 		}
 
-		return new PlaygroundStateService($appManager, $previewValues, $converter);
+		return new PlaygroundStateService(
+			$appManager,
+			$previewValues,
+			$converter,
+			($stockTokens ?? $this->createMock(StockTokensService::class))
+		);
 	}//end build()
 
 	/**
@@ -71,6 +78,7 @@ class PlaygroundStateServiceTest extends TestCase {
 				'playgroundInventory',
 				'playgroundReasons',
 				'playgroundTokens',
+				'playgroundExportTokens',
 				'playgroundTokenSources',
 				'playgroundVersion',
 				'playgroundSet',
@@ -78,6 +86,80 @@ class PlaygroundStateServiceTest extends TestCase {
 			array_keys($state)
 		);
 	}//end testItPublishesTheKeysTheInstrumentReads()
+
+	/**
+	 * What an export writes is what the set DECLARES, never the map the
+	 * instrument draws with.
+	 *
+	 * `getResolvedTokens()` merges `defaults.css` underneath the set so every
+	 * token has a value to show — 200 of them, 115 component tokens carrying
+	 * Rijkshuisstijl values. Exporting from that map wrote all of them into a
+	 * theme whose author had changed one colour, which is the whole reason the
+	 * two keys are separate.
+	 */
+	public function testTheExportBaseIsWhatTheSetDeclares(): void {
+		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues->method('getResolvedTokens')->willReturn(
+			[
+				'--nldesign-color-primary' => '#154273',
+				'--nldesign-component-button-disabled-color' => '#696969',
+			]
+		);
+		$previewValues->method('getDeclaredTokens')->willReturn(
+			['--nldesign-color-primary' => '#154273']
+		);
+		$previewValues->method('getTokenSources')->willReturn([]);
+
+		$state = $this->build($previewValues)->getInitialState(tokenSetId: 'rijkshuisstijl');
+
+		$this->assertSame(['--nldesign-color-primary' => '#154273'], $state['playgroundExportTokens']);
+		$this->assertArrayHasKey('--nldesign-component-button-disabled-color', $state['playgroundTokens']);
+	}//end testTheExportBaseIsWhatTheSetDeclares()
+
+	/**
+	 * The stock set's values come from the RUNNING instance.
+	 *
+	 * `css/tokens/nextcloud.css` is a snapshot of one Nextcloud version, kept as
+	 * a fallback — saving "the Nextcloud theme plus my change" has to write what
+	 * this server is actually wearing.
+	 */
+	public function testTheStockSetExportsWhatTheInstanceIsWearing(): void {
+		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues->method('getResolvedTokens')->willReturn([]);
+		$previewValues->method('getDeclaredTokens')->willReturn(
+			['--nldesign-color-primary' => '#stale-snapshot']
+		);
+		$previewValues->method('getTokenSources')->willReturn([]);
+
+		$stockTokens = $this->createMock(StockTokensService::class);
+		$stockTokens->method('getTokens')->willReturn(['--nldesign-color-primary' => '#00679e']);
+
+		$state = $this->build($previewValues, null, $stockTokens)
+			->getInitialState(tokenSetId: 'nextcloud');
+
+		$this->assertSame(['--nldesign-color-primary' => '#00679e'], $state['playgroundExportTokens']);
+	}//end testTheStockSetExportsWhatTheInstanceIsWearing()
+
+	/**
+	 * When the instance cannot be read, the shipped snapshot answers rather than
+	 * nothing — an export with no tokens is worse than one slightly behind.
+	 */
+	public function testTheStockSetFallsBackToTheShippedSnapshot(): void {
+		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues->method('getResolvedTokens')->willReturn([]);
+		$previewValues->method('getDeclaredTokens')->willReturn(
+			['--nldesign-color-primary' => '#0082c9']
+		);
+		$previewValues->method('getTokenSources')->willReturn([]);
+
+		$stockTokens = $this->createMock(StockTokensService::class);
+		$stockTokens->method('getTokens')->willReturn([]);
+
+		$state = $this->build($previewValues, null, $stockTokens)
+			->getInitialState(tokenSetId: 'nextcloud');
+
+		$this->assertSame(['--nldesign-color-primary' => '#0082c9'], $state['playgroundExportTokens']);
+	}//end testTheStockSetFallsBackToTheShippedSnapshot()
 
 	/**
 	 * The published set id is the one asked for, which is the set the page is
@@ -196,7 +278,8 @@ class PlaygroundStateServiceTest extends TestCase {
 		$service = new PlaygroundStateService(
 			$appManager,
 			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(TokenSetConverterService::class)
+			$this->createMock(TokenSetConverterService::class),
+			$this->createMock(StockTokensService::class)
 		);
 
 		$this->assertSame(['version' => 0, 'tabs' => [], 'components' => []], $service->getInventory());

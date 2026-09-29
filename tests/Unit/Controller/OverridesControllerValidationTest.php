@@ -19,7 +19,9 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\ThemingService;
 use OCP\App\IAppManager;
+use OCP\IConfig;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -99,7 +101,15 @@ class OverridesControllerValidationTest extends TestCase {
 	 * @return OverridesController
 	 */
 	private function controller(CustomOverridesService $service): OverridesController {
-		return new OverridesController('thematiq', $this->request, $service, new CssParserService(), $this->auditService);
+		return new OverridesController(
+			'thematiq',
+			$this->request,
+			$service,
+			new CssParserService(),
+			$this->auditService,
+			$this->createMock(IConfig::class),
+			$this->createMock(ThemingService::class)
+		);
 	}//end controller()
 
 	/**
