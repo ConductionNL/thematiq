@@ -123,6 +123,8 @@ class BrandingCaptureService {
 	 * ARE those files right now — without it the next apply of this very theme
 	 * would offer to "change" every image to itself.
 	 *
+	 * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
+	 *
 	 * @param string $setId The token set the branding belongs to.
 	 *
 	 * @return array<string, mixed> The captured theming block.
@@ -171,6 +173,8 @@ class BrandingCaptureService {
 	/**
 	 * Every set's captured branding, by set id.
 	 *
+	 * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
+	 *
 	 * @return array<string, array<string, mixed>> The captured blocks.
 	 */
 	public function all(): array {
@@ -184,6 +188,8 @@ class BrandingCaptureService {
 
 	/**
 	 * Forget a set's captured branding and remove its copied images.
+	 *
+	 * @spec openspec/specs/theming-sync/spec.md#requirement-theming-metadata-in-token-sets
 	 *
 	 * @param string $setId The token set.
 	 *
