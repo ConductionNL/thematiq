@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/accessibility-evidence-download-and-dark-logo/specs/compliance-evidence/spec.md
+ * @spec openspec/specs/compliance-evidence/spec.md
  */
 
 declare(strict_types=1);

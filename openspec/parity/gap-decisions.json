@@ -542,5 +542,21 @@
 		"reason": "No competitor rated yes, one roadmap demand row but no competitor yes cell, outside the core area (catalogue and apply). Was defer, retired.",
 		"change": null,
 		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "acc-compliance-report",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Ruben reversed the decided-no on 29 Sep 2026 (build-all DECISIONS.md row 11): the half-built plumbing is finished as one small change.",
+		"change": "accessibility-evidence-download-and-dark-logo",
+		"decidedOn": "2026-09-29"
+	},
+	{
+		"row": "ast-dark-logo",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Ruben reversed the decided-no on 29 Sep 2026 (build-all DECISIONS.md row 11): the half-built plumbing is finished as one small change.",
+		"change": "accessibility-evidence-download-and-dark-logo",
+		"decidedOn": "2026-09-29"
 	}
 ]
