@@ -61,9 +61,15 @@
 
 		applyPrefix()
 
+		// One observer per page: a second load of this script replaces the
+		// first, so two observers can never re-prefix each other's title.
+		if (window.thematiqEnvironmentTitleObserver) {
+			window.thematiqEnvironmentTitleObserver.disconnect()
+		}
 		var title = document.querySelector('title')
 		if (title !== null && typeof MutationObserver === 'function') {
-			new MutationObserver(applyPrefix).observe(title, { childList: true, characterData: true, subtree: true })
+			window.thematiqEnvironmentTitleObserver = new MutationObserver(applyPrefix)
+			window.thematiqEnvironmentTitleObserver.observe(title, { childList: true, characterData: true, subtree: true })
 		}
 	}
 })()

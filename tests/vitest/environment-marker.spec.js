@@ -37,6 +37,11 @@ describe('environment marker', () => {
 	})
 
 	afterEach(() => {
+		// A real page loads the script once; each test here loads a fresh copy.
+		if (window.thematiqEnvironmentTitleObserver) {
+			window.thematiqEnvironmentTitleObserver.disconnect()
+			window.thematiqEnvironmentTitleObserver = undefined
+		}
 		document.body.innerHTML = ''
 		vi.restoreAllMocks()
 	})
