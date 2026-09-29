@@ -32,13 +32,19 @@
 		}
 
 		var marker = OCP.InitialState.loadState('thematiq', 'environment', null)
-		if (!marker || !marker.label || document.getElementById('thematiq-env-marker') !== null) {
+		if (
+			!marker
+			|| !marker.label
+			|| document.getElementById('thematiq-env-marker') !== null
+		) {
 			return
 		}
 
 		var stripe = document.createElement('div')
 		stripe.id = 'thematiq-env-marker'
-		stripe.className = 'thematiq-env-marker thematiq-env-marker--' + String(marker.style || 'test')
+		stripe.className =
+			'thematiq-env-marker thematiq-env-marker--'
+			+ String(marker.style || 'test')
 		stripe.setAttribute('role', 'note')
 
 		var label = document.createElement('span')
@@ -68,8 +74,14 @@
 		}
 		var title = document.querySelector('title')
 		if (title !== null && typeof MutationObserver === 'function') {
-			window.thematiqEnvironmentTitleObserver = new MutationObserver(applyPrefix)
-			window.thematiqEnvironmentTitleObserver.observe(title, { childList: true, characterData: true, subtree: true })
+			window.thematiqEnvironmentTitleObserver = new MutationObserver(
+				applyPrefix,
+			)
+			window.thematiqEnvironmentTitleObserver.observe(title, {
+				childList: true,
+				characterData: true,
+				subtree: true,
+			})
 		}
 	}
 })()

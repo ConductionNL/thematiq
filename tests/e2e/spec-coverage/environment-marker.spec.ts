@@ -15,10 +15,15 @@ test.describe('environment marker on a server with no declared environment', () 
 	// @e2e environment-marker::an-unset-value-shows-nothing
 	test('an unset value shows nothing', async ({ page }) => {
 		await page.goto('/apps/files/')
-		await page.locator('#header, header').first().waitFor({ state: 'visible', timeout: 20_000 })
+		await page
+			.locator('#header, header')
+			.first()
+			.waitFor({ state: 'visible', timeout: 20_000 })
 
 		await expect(page.locator('#thematiq-env-marker')).toHaveCount(0)
-		expect(await page.title()).not.toMatch(/^\[(Development|Test|Acceptance|Unknown)\]/)
+		expect(await page.title()).not.toMatch(
+			/^\[(Development|Test|Acceptance|Unknown)\]/,
+		)
 	})
 
 	// @e2e environment-marker::an-administrator-learns-how-to-set-it
@@ -28,7 +33,9 @@ test.describe('environment marker on a server with no declared environment', () 
 		await line.waitFor({ state: 'visible', timeout: 20_000 })
 
 		await expect(line).toContainText('No environment is set')
-		await expect(line.locator('code')).toHaveText('occ config:system:set thematiq.environment --value=<environment>')
+		await expect(line.locator('code')).toHaveText(
+			'occ config:system:set thematiq.environment --value=<environment>',
+		)
 		await expect(line.locator('input, select, textarea, button')).toHaveCount(0)
 	})
 })

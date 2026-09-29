@@ -34,16 +34,16 @@
 }
 
 .thematiq-env-marker--development {
-	background-color: #5B2A86;
-	color: #FFFFFF;
+	background-color: #5b2a86;
+	color: #ffffff;
 }
 
 .thematiq-env-marker--test {
-	background-color: #FFC83D;
+	background-color: #ffc83d;
 	color: #000000;
 }
 
 .thematiq-env-marker--acceptance {
-	background-color: #0B5CAD;
-	color: #FFFFFF;
+	background-color: #0b5cad;
+	color: #ffffff;
 }
