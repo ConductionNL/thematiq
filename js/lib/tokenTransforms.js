@@ -83,7 +83,8 @@
 	/**
 	 * Normalise a colour value into a #RRGGBB string suitable for an
 	 * `<input type="color">` picker. Handles #RRGGBB (passthrough), #RGB
-	 * (expanded), and empty/invalid (→ #000000). Named colours / other CSS
+	 * (expanded), an `r, g, b` triplet (the shape the `-rgb` tokens take),
+	 * and empty/invalid (→ #000000). Named colours / other CSS
 	 * colour syntaxes are NOT resolved here (admin.js does that via a canvas in
 	 * the browser); this pure helper returns the safe fallback for them.
 	 *
@@ -101,7 +102,42 @@
 		if (/^#[0-9a-fA-F]{3}$/.test(v) === true) {
 			return ('#' + v[1] + v[1] + v[2] + v[2] + v[3] + v[3]).toLowerCase()
 		}
+		var triplet = /^(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})$/.exec(v)
+		if (triplet !== null) {
+			return (
+				'#'
+				+ triplet
+					.slice(1)
+					.map(function (channel) {
+						return ('0' + Math.min(255, Number(channel)).toString(16)).slice(-2)
+					})
+					.join('')
+			)
+		}
 		return null
+	}
+
+	/**
+	 * A colour as the `r, g, b` triplet the `-rgb` tokens hold.
+	 *
+	 * Nextcloud 32 mixes its note-card fills from these (`rgba(var(--color-
+	 * success-rgb), 0.1)`), so the value has to be the bare triplet, not a
+	 * colour. The editor offers a colour picker for such a token and writes the
+	 * triplet, so nobody has to work one out by hand.
+	 *
+	 * @param {?string} value A #RRGGBB / #RGB colour, or a triplet already.
+	 * @return {?string} `r, g, b`, or null when the value is not one of those.
+	 */
+	function hexToRgbTriplet(value) {
+		var hex = normaliseColorForPicker(value)
+		if (hex === null || value === undefined || value === null || String(value).trim() === '') {
+			return null
+		}
+		return [1, 3, 5]
+			.map(function (at) {
+				return parseInt(hex.slice(at, at + 2), 16)
+			})
+			.join(', ')
 	}
 
 	/**
@@ -154,6 +190,7 @@
 		darkenHex: darkenHex,
 		getPreviewColors: getPreviewColors,
 		normaliseColorForPicker: normaliseColorForPicker,
+		hexToRgbTriplet: hexToRgbTriplet,
 		designSystemLabel: designSystemLabel,
 		groupDiagnosticsByReason: groupDiagnosticsByReason,
 	}
