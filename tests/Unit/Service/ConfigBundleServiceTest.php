@@ -614,4 +614,27 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertFalse($result['sections']['customFonts']['applied']);
 		$this->assertArrayNotHasKey('custom_fonts', $this->appConfig);
 	}//end testCustomFontsSectionIsNeverApplied()
+
+	/**
+	 * The environment config.php declares never travels in a bundle: it is
+	 * the one value that must differ between OTAP environments.
+	 *
+	 * @spec openspec/changes/governance-environment-marker/specs/config-portability/spec.md
+	 */
+	public function testExportNeverCarriesTheEnvironment(): void {
+		$this->seedConfig();
+
+		$bundle = $this->service->export();
+
+		$keys = [];
+		array_walk_recursive(
+			$bundle,
+			static function ($value, $key) use (&$keys): void {
+				$keys[] = strtolower((string)$key);
+			}
+		);
+		$this->assertNotContains('environment', $keys);
+		$this->assertArrayNotHasKey('environment', $bundle['config']);
+		$this->assertStringNotContainsString('thematiq.environment', (string)json_encode($bundle));
+	}//end testExportNeverCarriesTheEnvironment()
 }//end class
