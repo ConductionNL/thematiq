@@ -2749,19 +2749,20 @@
 			"id": "ast-dark-logo",
 			"area": "assets",
 			"name": "Use a separate logo for dark mode.",
-			"thematiq": "no",
+			"thematiq": "partial",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "no",
 			"tokens-studio": "no",
 			"built": {
-				"state": "decided-no",
-				"evidence": "Plumbing exists in three places -- lib/Service/ThemingService.php:126-146 validates a 'logo_dark' path exactly like 'logo'; lib/Service/DarkPaletteService.php:739,771-802 emits a '--nldesign-logo-url' CSS override when a set's manifest has 'theming.logo_dark'; js/admin.js:1721-1727 shows an informational dark-logo row in the apply dialog when 'proposed.logo_dark' is set -- but grep -F 'logo_dark' token-sets.json (all bundled municipality/organisation sets) and the custom-token-set import/converter code (lib/Service/CustomTokenSetService.php, TokenSetConverterService.php, CustomTokenSetValidator.php) returns zero matches, so no bundled or importable token set can ever populate it.",
+				"state": "built",
+				"evidence": "token-sets.json epe theming.logo_dark img/logos/epe-dark.svg; DarkPaletteService::generateForSet() emits --nldesign-logo-url into css/tokens/dark/epe.css; tests/Unit/Service/ShippedDarkLogoTest.php walks every shipped logo_dark through that path and checks 3:1 on #141414. Partial: shipped sets only, a custom token set upload cannot carry a dark logo yet",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "own",
+				"change": "accessibility-evidence-download-and-dark-logo"
 			},
-			"reachedOn": "nothing reaches it: no shipped token set and no custom-token-set upload path ever sets 'logo_dark', so the dark-logo code path never fires for any real admin",
+			"reachedOn": "the Epe token set with dark variants on: the header logo switches to the light-ink variant when the user is in dark mode",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/ImageManager.php:25 has one logo key; only the background has a dark fallback (ImageManager.php:49-51, 59-68), and an extra logo variant is an open request (github.com/nextcloud/server/issues/47357)",
 				"m365-branding": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding : 'Square logo (dark theme): Select a square PNG or JPG image file of your logo to be used in browsers that are using a dark color theme'; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'Alternate logo: ...optimized for use in Microsoft 365 dark themes'",
@@ -3757,19 +3758,20 @@
 			"id": "acc-compliance-report",
 			"area": "accessibility",
 			"name": "Download an evidence report of the contrast of your active configuration for an audit.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "unknown",
 			"opendesk": "no",
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "decided-no",
-				"evidence": "lib/Controller/SettingsController.php complianceReport() route GET /settings/compliance-report (AuthorizedAdminSetting) calls ComplianceReportService, returns a DataDownloadResponse; api-paths.txt confirms no caller in js/admin.js, js/playground.js or templates/settings/admin.php; grep -F 'compliance' templates/settings/admin.php and js/admin.js found no button/link",
+				"state": "built",
+				"evidence": "templates/settings/admin.php section #nldesign-compliance-report with JSON and Markdown download links; js/admin.js initComplianceReport() points them at GET /settings/compliance-report?format=json|markdown (SettingsController::complianceReport, AuthorizedAdminSetting); tests/Unit/Templates/AdminComplianceReportTest.php, tests/vitest/admin-compliance-report.spec.js",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "accessibility-evidence-download-and-dark-logo"
 			},
-			"reachedOn": "nothing reaches it from the admin UI; the route exists and works if hit directly, but there is no button",
+			"reachedOn": "Theming settings page, section \"Contrast evidence report\", links \"Download as JSON\" and \"Download as Markdown\"",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/appinfo/routes.php:10-97 has no report endpoint; no downloadable contrast evidence exists",
 				"m365-branding": "not checked: unknown: no exportable contrast report of the tenant's active branding in https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme, https://learn.microsoft.com/en-us/sharepoint/site-theme or https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding; not stated absent",

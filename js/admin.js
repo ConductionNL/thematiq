@@ -6119,6 +6119,29 @@
 
 		initAuditLog()
 
+		/**
+		 * Point the contrast evidence report links at the export endpoint, one
+		 * per format. The endpoint answers with Content-Disposition: attachment,
+		 * so the links' download attribute is all the browser needs.
+		 *
+		 * @spec openspec/specs/compliance-evidence/spec.md
+		 */
+		function initComplianceReport() {
+			var base = OC.generateUrl('/apps/thematiq/settings/compliance-report')
+			var links = {
+				'nldesign-compliance-report-json': 'json',
+				'nldesign-compliance-report-markdown': 'markdown',
+			}
+			Object.keys(links).forEach(function (id) {
+				var link = document.getElementById(id)
+				if (link !== null) {
+					link.setAttribute('href', base + '?format=' + links[id])
+				}
+			})
+		}
+
+		initComplianceReport()
+
 		/* ==========================================================================
 		 * CONFIGURATION BUNDLE — complete-config OTAP promotion download/upload
 		 * (config-portability spec). Distinct from the token-editor overrides

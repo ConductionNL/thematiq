@@ -637,6 +637,24 @@ if ($_['mockUi'] === true) {
 		</button>
 	</div>
 
+	<!-- Contrast evidence report: the export endpoint's two formats as
+	     download links. js/admin.js initComplianceReport() fills the hrefs.
+	     (openspec/specs/compliance-evidence/spec.md) -->
+	<div class="nldesign-compliance-report" id="nldesign-compliance-report" style="margin-top:2em">
+		<h3><?php p($l->t('Contrast evidence report')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Download the colour contrast of the active theme tokens as evidence for an accessibility statement. It covers colour contrast of the theme only and is not a full WCAG audit.')); ?>
+		</p>
+		<div class="nldesign-upload-form">
+			<a id="nldesign-compliance-report-json" class="button" download>
+				<?php p($l->t('Download as JSON')); ?>
+			</a>
+			<a id="nldesign-compliance-report-markdown" class="button" download>
+				<?php p($l->t('Download as Markdown')); ?>
+			</a>
+		</div>
+	</div>
+
 	<!-- Complete configuration bundle — OTAP (dev/test/acceptatie/productie)
 	     promotion. Unlike the token-editor overrides download above, this
 	     covers the COMPLETE nldesign configuration (config-portability spec):
