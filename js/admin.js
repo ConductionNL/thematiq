@@ -6038,7 +6038,7 @@
 			tableBody.innerHTML = ''
 			var row = document.createElement('tr')
 			var cell = document.createElement('td')
-			cell.colSpan = 6
+			cell.colSpan = 7
 			cell.className = 'settings-hint'
 			cell.textContent = message
 			row.appendChild(cell)
@@ -6113,8 +6113,148 @@
 					row.appendChild(td)
 				})
 
+				var restoreCell = document.createElement('td')
+				restoreCell.className = 'nldesign-audit-restore-cell'
+				if (typeof entry.versionId === 'string' && entry.versionId !== '') {
+					var restoreBtn = document.createElement('button')
+					restoreBtn.type = 'button'
+					restoreBtn.className = 'button nldesign-audit-restore'
+					restoreBtn.textContent = t('thematiq', 'Restore')
+					restoreBtn.setAttribute(
+						'aria-label',
+						t('thematiq', 'Restore the configuration from {time}', {
+							time: auditFormat.formatAuditTimestamp(entry.ts),
+						}),
+					)
+					restoreBtn.addEventListener('click', function () {
+						restoreVersion(entry.versionId, restoreBtn)
+					})
+					restoreCell.appendChild(restoreBtn)
+				}
+				row.appendChild(restoreCell)
+
 				tableBody.appendChild(row)
 			})
+		}
+
+		/**
+		 * Describe a version preview as plain text lines for the dialog.
+		 *
+		 * @param {object} preview The preview from POST /settings/versions/{id}/preview.
+		 * @return {string} The description.
+		 * @spec openspec/specs/theme-versions/spec.md
+		 */
+		function describeVersionPreview(preview) {
+			var lines = []
+			;(preview.changes || []).forEach(function (change) {
+				lines.push(
+					t('thematiq', '{field}: {from} to {to}', {
+						field: change.field,
+						from: auditFormat.formatAuditValue(change.from),
+						to: auditFormat.formatAuditValue(change.to),
+					}),
+				)
+			})
+			var sets = preview.customTokenSets || { add: [], remove: [] }
+			;(sets.add || []).forEach(function (id) {
+				lines.push(t('thematiq', 'Custom token set added: {id}', { id: id }))
+			})
+			;(sets.remove || []).forEach(function (id) {
+				lines.push(
+					t('thematiq', 'Custom token set removed: {id}', { id: id }),
+				)
+			})
+			;(preview.missingFonts || []).forEach(function (font) {
+				lines.push(
+					t(
+						'thematiq',
+						'The {role} font {name} is no longer uploaded and stays on the default font.',
+						{
+							role: font.role,
+							name: font.name,
+						},
+					),
+				)
+			})
+			if (lines.length === 0) {
+				lines.push(
+					t('thematiq', 'This version matches the current configuration.'),
+				)
+			}
+			return lines.join('\n')
+		}
+
+		/**
+		 * Preview a version, confirm with the changes listed, then restore.
+		 * Nothing is written until the administrator confirms; on cancel the
+		 * focus returns to the button that opened the dialog.
+		 *
+		 * @param {string} versionId The version to restore.
+		 * @param {HTMLElement} button The row's restore button.
+		 * @spec openspec/specs/theme-versions/spec.md
+		 */
+		function restoreVersion(versionId, button) {
+			var base = OC.generateUrl(
+				'/apps/thematiq/settings/versions/' + encodeURIComponent(versionId),
+			)
+			var post = { method: 'POST', headers: { requesttoken: OC.requestToken } }
+			button.disabled = true
+			fetch(base + '/preview', post)
+				.then(function (r) {
+					return r.json()
+				})
+				.then(function (preview) {
+					button.disabled = false
+					if (!preview || preview.valid !== true) {
+						notify(
+							t(
+								'thematiq',
+								'This version does not validate today and cannot be restored.',
+							),
+						)
+						button.focus()
+						return
+					}
+					OC.dialogs.confirm(
+						describeVersionPreview(preview),
+						t('thematiq', 'Restore this version?'),
+						function (confirmed) {
+							if (confirmed !== true) {
+								button.focus()
+								return
+							}
+							fetch(base + '/restore', post)
+								.then(function (r) {
+									return r.json()
+								})
+								.then(function (result) {
+									if (result && result.applied === true) {
+										window.location.reload()
+										return
+									}
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
+									button.focus()
+								})
+						},
+						true,
+					)
+				})
+				.catch(function (err) {
+					console.error('Error restoring a version:', err)
+					button.disabled = false
+					notify(
+						t(
+							'thematiq',
+							'The version was not restored. Nothing was changed.',
+						),
+					)
+					button.focus()
+				})
 		}
 
 		initAuditLog()

@@ -373,7 +373,19 @@
         "[Acceptance]": "[Acceptance]",
         "[Unknown]": "[Unknown]",
         "Environment: {environment}": "Environment: {environment}",
-        "No environment is set, so no page is marked. Declare it in config.php with:": "No environment is set, so no page is marked. Declare it in config.php with:"
+        "No environment is set, so no page is marked. Declare it in config.php with:": "No environment is set, so no page is marked. Declare it in config.php with:",
+        "Version": "Version",
+        "Restore": "Restore",
+        "Restore the configuration from {time}": "Restore the configuration from {time}",
+        "{field}: {from} to {to}": "{field}: {from} to {to}",
+        "Custom token set added: {id}": "Custom token set added: {id}",
+        "Custom token set removed: {id}": "Custom token set removed: {id}",
+        "The {role} font {name} is no longer uploaded and stays on the default font.": "The {role} font {name} is no longer uploaded and stays on the default font.",
+        "This version matches the current configuration.": "This version matches the current configuration.",
+        "This version does not validate today and cannot be restored.": "This version does not validate today and cannot be restored.",
+        "Restore this version?": "Restore this version?",
+        "The version was not restored. Nothing was changed.": "The version was not restored. Nothing was changed.",
+        "Each change keeps the configuration it produced, up to the last 50 changes or 20 MB. Restore shows what will change before anything is written.": "Each change keeps the configuration it produced, up to the last 50 changes or 20 MB. Restore shows what will change before anything is written."
     },
     "plurals": {}
 }

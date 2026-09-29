@@ -87,6 +87,10 @@ return [
 		// #[PublicPage]/#[NoAdminRequired].
 		['name' => 'audit#list', 'url' => '/settings/audit', 'verb' => 'GET'],
 		['name' => 'audit#export', 'url' => '/settings/audit/export', 'verb' => 'GET'],
+		// Kept configuration versions (openspec/specs/theme-versions/spec.md), admin-only.
+		['name' => 'audit#versions', 'url' => '/settings/versions', 'verb' => 'GET'],
+		['name' => 'audit#previewVersion', 'url' => '/settings/versions/{id}/preview', 'verb' => 'POST'],
+		['name' => 'audit#restoreVersion', 'url' => '/settings/versions/{id}/restore', 'verb' => 'POST'],
 		// Email template theming — admin toggle + compliance footer config.
 		['name' => 'settings#getEmailTheming', 'url' => '/settings/email-theming', 'verb' => 'GET'],
 		['name' => 'settings#setEmailTheming', 'url' => '/settings/email-theming', 'verb' => 'POST'],
