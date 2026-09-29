@@ -12,6 +12,7 @@
  * spec file.
  */
 import { test, expect } from '@playwright/test'
+import { openTokenTab } from '../workflows/_helpers'
 
 const THEMING_URL = '/settings/admin/theming'
 
@@ -134,8 +135,12 @@ test.describe('admin-settings', () => {
 		// Live preview is rendered as `.nldesign-preview` (id #nldesign-preview)
 		// containing app/login `.nldesign-preview-stage` shells. The primary
 		// action is the `.nl-btn--primary` button inside the app-shell stage.
+		// That button sits in the shell's dialog, which the playground shows on
+		// the Buttons & Status tab only (css/admin.css, data-pg-tab), so that
+		// tab is opened first.
 		const previewBox = page.locator('#nldesign-preview')
 		await expect(previewBox).toBeVisible()
+		await openTokenTab(page, 'status')
 		const primaryBtn = previewBox.locator('.nl-btn--primary').first()
 		await expect(primaryBtn).toBeVisible()
 	})
