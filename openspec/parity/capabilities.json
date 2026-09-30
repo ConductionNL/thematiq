@@ -882,21 +882,20 @@
 			"id": "cat-marketplace",
 			"area": "catalogue",
 			"name": "Download additional themes from a marketplace or gallery maintained by the vendor or community.",
-			"thematiq": "no",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "no",
 			"liferay-dxp": "yes",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "grep -rniF 'marketplace|gallery' across lib/, js/, docs/GOVERNMENT-FEATURES.md, openspec/specs found nothing; the only additive mechanism is admin-side upload of the admin's own file (customTokenSet#upload, /settings/tokensets/upload), not browsing/downloading themes from a vendor or community-run catalogue",
+				"state": "built",
+				"evidence": "lib/Service/ThemeGalleryService.php reads an opt-in index (gallery_enabled off by default, gallery_index_url for a mirror, 10 s timeout, hourly cache with ETag) and drops entries without an SPDX licence; lib/Service/GalleryInstallService.php downloads, checks the SHA-256, then runs TokenSetConverterService, the CustomTokenSetValidator whitelist and CustomTokenSetService::store() with provenance; GalleryController GET/POST /settings/gallery and POST /settings/gallery/{id}/install (AuthorizedAdminSetting); js/admin.js Theme gallery block with install and update; gallery/index.json, index.schema.json, CONTRIBUTING.md",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/catalogue-theme-gallery (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/catalogue-theme-gallery"
+				"change": "catalogue-theme-gallery"
 			},
-			"reachedOn": "nothing reaches it",
+			"reachedOn": "Settings > Administration > Theming, Theme gallery block",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Service/ThemesService.php:42-50: only default, light, dark, light-highcontrast, dark-highcontrast, opendyslexic and reduced-motion themes are registered in code; no theme gallery or download path exists in apps/theming/lib or src (the separate App Store hosts unrelated apps, not themes for this app)",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview: themes are the fixed set of 'eight light themes and two dark themes' plus custom themes the tenant defines itself; https://learn.microsoft.com/en-us/sharepoint/site-theme: custom themes are created in the tenant's brand center. No vendor or community theme gallery is part of the documented flow",

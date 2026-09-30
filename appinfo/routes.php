@@ -54,6 +54,10 @@ return [
 		['name' => 'settings#getUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'GET'],
 		['name' => 'settings#setUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'POST'],
 		['name' => 'settings#dismissUpstreamNotice', 'url' => '/settings/upstream-freshness/dismiss', 'verb' => 'POST'],
+		// Theme gallery (opt-in index of house styles; openspec/specs/theme-gallery/spec.md).
+		['name' => 'gallery#index', 'url' => '/settings/gallery', 'verb' => 'GET'],
+		['name' => 'gallery#setEnabled', 'url' => '/settings/gallery', 'verb' => 'POST'],
+		['name' => 'gallery#install', 'url' => '/settings/gallery/{id}/install', 'verb' => 'POST'],
 		['name' => 'overrides#getOverrides', 'url' => '/settings/overrides', 'verb' => 'GET'],
 		['name' => 'overrides#setOverrides', 'url' => '/settings/overrides', 'verb' => 'POST'],
 		// Import/export.

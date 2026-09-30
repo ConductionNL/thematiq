@@ -1,0 +1,45 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/ConductionNL/thematiq/development/gallery/index.schema.json",
+	"title": "Thematiq theme gallery index",
+	"description": "The index the Gallery block on Settings > Administration > Theming reads. lib/Service/ThemeGalleryService.php::validateEntry() applies the same rules at runtime; tests/Unit/Gallery/GalleryIndexSchemaTest.php keeps the two in step.",
+	"type": "object",
+	"required": ["entries"],
+	"properties": {
+		"$schema": { "type": "string" },
+		"entries": {
+			"type": "array",
+			"items": { "$ref": "#/$defs/entry" }
+		}
+	},
+	"$defs": {
+		"hex": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+		"https": { "type": "string", "pattern": "^https://[^\\s]+$" },
+		"entry": {
+			"type": "object",
+			"required": ["id", "name", "organisation", "licence", "sourceUrl", "fileUrl", "sha256", "format", "swatches", "addedOn"],
+			"properties": {
+				"id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+				"name": { "type": "string", "pattern": "\\S" },
+				"organisation": { "type": "string", "pattern": "\\S" },
+				"description": { "type": "string" },
+				"licence": { "type": "string", "pattern": "^[A-Za-z0-9.+-]+( (AND|OR|WITH) [A-Za-z0-9.+-]+)*$", "description": "An SPDX licence expression that allows redistribution." },
+				"sourceUrl": { "$ref": "#/$defs/https" },
+				"fileUrl": { "$ref": "#/$defs/https" },
+				"sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+				"format": { "enum": ["css", "dtcg", "design-tokens-css"] },
+				"swatches": {
+					"type": "object",
+					"required": ["primary", "background", "text"],
+					"properties": {
+						"primary": { "$ref": "#/$defs/hex" },
+						"background": { "$ref": "#/$defs/hex" },
+						"text": { "$ref": "#/$defs/hex" }
+					}
+				},
+				"contrast": { "description": "The result of npm run audit:token-sets when the entry was added." },
+				"addedOn": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+			}
+		}
+	}
+}
