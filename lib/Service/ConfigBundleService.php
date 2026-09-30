@@ -785,12 +785,49 @@ class ConfigBundleService {
 			$entry['importWarnings'] = $set['importWarnings'];
 		}
 
+		// The design system the set was created on. Dropped here, a theme saved
+		// off stock Nextcloud came back from a version restore or a bundle as an
+		// NL Design System one, with every layer of that system on top of it.
+		// Allow-listed, like the upload's claim: it decides which stylesheets load.
+		$designSystem = ($set['design_system'] ?? null);
+		if (is_string($designSystem) === true && in_array($designSystem, $this->shippedDesignSystemIds(), true) === true) {
+			$entry['design_system'] = $designSystem;
+		}
+
 		return [
 			'id' => $shape['id'],
 			'entry' => $entry,
 			'css' => $this->customTokenSetValidator->serialize(declarations: $accepted),
 		];
 	}//end buildCustomTokenSetResolvedEntry()
+
+	/**
+	 * The ids of the design systems the app ships, from its design-systems.json.
+	 *
+	 * @return array<int, string> The ids; empty when the manifest is missing or unreadable.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	private function shippedDesignSystemIds(): array {
+		$path = $this->appManager->getAppPath(Application::APP_ID) . '/design-systems.json';
+		if (is_file($path) === false) {
+			return [];
+		}
+
+		$manifest = json_decode((string)file_get_contents($path), true);
+		if (is_array($manifest) === false) {
+			return [];
+		}
+
+		$ids = [];
+		foreach ($manifest as $designSystem) {
+			if (is_array($designSystem) === true && is_string($designSystem['id'] ?? null) === true) {
+				$ids[] = $designSystem['id'];
+			}
+		}
+
+		return $ids;
+	}//end shippedDesignSystemIds()
 
 	/**
 	 * Validate the `customFonts` section shape. Never applied (see class

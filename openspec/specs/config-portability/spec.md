@@ -10,7 +10,7 @@ envelope fields `format: "nldesign-config-bundle"`, `bundleVersion: 1`, `exporte
 and `app: {id, version}` (informational), containing ALL of: the active token set id
 (`token_set`), the hide-slogan toggle, the show-menu-labels toggle, the per-app exclusion list
 (`disabled_apps`), the full `custom-overrides.css` content, and every custom token set with its
-metadata (id, name, description, theming) and inline CSS content. The bundle MUST NOT contain:
+metadata (id, name, description, theming, design system) and inline CSS content. The bundle MUST NOT contain:
 operational counters (`theming_syncs_total` and similar telemetry), `installed_version`
 (NC-managed), per-user preview state (session-scoped, see change `theme-preview-workflow`), or
 Nextcloud core `theming` app values (owned by the theming app; the theming-sync dialog is the
@@ -32,6 +32,15 @@ violation, not an accepted gap.
   `config.showMenuLabels = false`, `config.disabledApps` with both app ids,
   `customOverridesCss` equal to the current `custom-overrides.css` content, and one
   `customTokenSets` entry with the set's metadata and full CSS
+
+#### Scenario: A custom set keeps its design system
+
+@e2e exclude a bundle round trip, not a page; proven by tests/Unit/Service/ConfigBundleServiceTest.php::testACustomSetKeepsItsDesignSystemThroughARoundTrip
+
+- GIVEN a custom token set saved off stock Nextcloud, on design system `none`
+- WHEN the bundle is exported and imported again, as restoring a theme version does
+- THEN the set MUST still be on design system `none`
+- AND a design system the app does not ship MUST NOT be recorded
 
 #### Scenario: Telemetry and platform-owned values are excluded
 
