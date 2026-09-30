@@ -594,7 +594,11 @@
 
 .nldesign-dialog-actions {
 	position: sticky;
-	bottom: 0;
+	/* Minus the dialog's padding, matching the bleed below. At `bottom: 0` the
+	   bar's box, 24px taller than its content through the negative margin, was
+	   held inside the content box, so in a dialog too short to scroll it was
+	   pushed up over the last line of text. */
+	bottom: -24px;
 	background: var(--color-main-background);
 	/* The bar sticks to the bottom of the dialog's CONTENT box, which sits 24px
 	   (the dialog's own padding) above its visible bottom edge. With only a
@@ -614,6 +618,12 @@
 .nldesign-dialog h3 {
 	margin-top: 0;
 	margin-bottom: 0.75em;
+}
+
+/* Core pulls every `.settings-hint` up by 12px to sit under a heading, which
+   ran two hints in one dialog into a single block. */
+.nldesign-dialog .settings-hint + .settings-hint {
+	margin-top: 0;
 }
 
 .nldesign-dialog-cancel,

@@ -17,6 +17,19 @@ defined in the `config-portability` spec (`GET /settings/config/export` /
 `occ nldesign:config:export`), and the overrides UI SHOULD point admins needing whole-config
 promotion (OTAP) at the bundle.
 
+Before downloading, the panel MUST say in a dialog what the file contains and what it does not.
+The download MUST carry the request token: the endpoint is CSRF-protected, so a plain link is
+refused and the browser reports the download as failed.
+
+#### Scenario: Download says what it does first
+
+- GIVEN the admin is on the theming settings with the token editor loaded
+- WHEN the admin clicks Download
+- THEN a dialog MUST open naming the theme, saying the file holds only its saved overrides and
+  not a complete theme, and pointing at Export as token set and the configuration bundle
+- AND nothing MUST be downloaded until the admin confirms
+- AND Cancel MUST close the dialog without downloading
+
 #### Scenario: Admin downloads overrides
 
 - GIVEN `custom-overrides.css` contains `--color-primary: #c00000` and `--color-error: #b30000`
@@ -61,6 +74,19 @@ the active token set, feature toggles, per-app exclusions, or custom token sets 
 complete configuration is the `config-portability` bundle's job
 (`POST /settings/config/import` / `occ nldesign:config:import`), which reuses this capability's
 editable-token whitelist semantics for its overrides section.
+
+Before the file picker opens, the panel MUST say in a dialog that the file replaces every value
+saved for the theme.
+
+#### Scenario: Upload says what it does first
+
+- GIVEN the admin is on the theming settings with the token editor loaded
+- WHEN the admin clicks Upload
+- THEN a dialog MUST open naming the theme and saying the file replaces every value saved for
+  it, that unknown values are skipped and unsaved changes are lost, and pointing at Custom token
+  sets for adding a whole theme
+- AND the file picker MUST only open once the admin confirms
+- AND Cancel MUST close the dialog without opening the file picker
 
 #### Scenario: Admin uploads a valid overrides file
 

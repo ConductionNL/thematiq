@@ -2707,13 +2707,17 @@
 				+ escapeHtml(t('thematiq', 'Custom token overrides'))
 				+ '</h3>'
 				+ '<div class="nldesign-token-editor-actions">'
-				+ '<button class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn">'
+				+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn">'
 				+ escapeHtml(t('thematiq', 'Download'))
 				+ '</button>'
-				+ '<label class="nldesign-btn nldesign-btn--small" style="cursor:pointer">'
+				// A real button, so it is drawn like the ones beside it; the file
+				// input stays hidden and is only opened once the dialog is read.
+				+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-import-btn">'
 				+ escapeHtml(t('thematiq', 'Upload'))
-				+ '<input type="file" id="nldesign-import-input" accept=".css" style="display:none">'
-				+ '</label>'
+				+ '</button>'
+				+ '<input type="file" id="nldesign-import-input" accept=".css" style="display:none" aria-label="'
+				+ escapeHtml(t('thematiq', 'Overrides file to upload (CSS)'))
+				+ '">'
 				+ '</div>'
 				+ '</div>'
 				// Nextcloud's own base tokens stay locked until asked for; see
@@ -2804,7 +2808,10 @@
 				.addEventListener('click', saveOverrides)
 			document
 				.getElementById('nldesign-export-btn')
-				.addEventListener('click', exportOverrides)
+				.addEventListener('click', confirmExportOverrides)
+			document
+				.getElementById('nldesign-import-btn')
+				.addEventListener('click', confirmImportOverrides)
 			document
 				.getElementById('nldesign-import-input')
 				.addEventListener('change', function (e) {
@@ -4127,13 +4134,184 @@
 				})
 		}
 
+		/**
+		 * Download a file from a CSRF-protected endpoint.
+		 *
+		 * Fetched with the request token rather than followed as a link: a
+		 * plain link or `window.location` carries no token, so Nextcloud
+		 * refused it with 412 and the browser reported the download as failed
+		 * ("site not available").
+		 *
+		 * @param {string} url          The endpoint.
+		 * @param {string} fallbackName The file name when the response names none.
+		 * @param {string} failure      What to tell the admin when it fails.
+		 *
+		 * @return {void}
+		 */
+		function downloadWithToken(url, fallbackName, failure) {
+			var name = fallbackName
+			fetch(url, {
+				headers: { requesttoken: OC.requestToken },
+			})
+				.then(function (r) {
+					if (r.ok === false) {
+						throw new Error('download failed: ' + r.status)
+					}
+					var disposition = r.headers
+						? r.headers.get('Content-Disposition') || ''
+						: ''
+					var match = /filename="?([^";]+)"?/.exec(disposition)
+					if (match !== null) {
+						name = match[1]
+					}
+					return r.blob()
+				})
+				.then(function (blob) {
+					var objectUrl = URL.createObjectURL(blob)
+					var a = document.createElement('a')
+					a.href = objectUrl
+					a.download = name
+					document.body.appendChild(a)
+					a.click()
+					document.body.removeChild(a)
+					URL.revokeObjectURL(objectUrl)
+				})
+				.catch(function (err) {
+					console.error('Error downloading ' + url + ':', err)
+					notify(failure)
+				})
+		}
+
+		/**
+		 * The display name of the set the editor works on.
+		 *
+		 * @return {string} Its name, or its id when the page has no name for it.
+		 */
+		function editedTokenSetName() {
+			var id = editedTokenSetId()
+			var ts = tokenSetsData[id]
+			return ts && ts.name ? ts.name : id
+		}
+
+		/**
+		 * Say what an overrides action does before it is taken.
+		 *
+		 * @param {string}        id           The overlay's element id.
+		 * @param {string}        title        The dialog heading.
+		 * @param {Array<string>} paragraphs   What the action does, one paragraph each.
+		 * @param {string}        confirmLabel The label of the button that goes ahead.
+		 * @param {Function}      proceed      Called when the admin confirms.
+		 *
+		 * @return {void}
+		 */
+		function confirmOverridesAction(
+			id,
+			title,
+			paragraphs,
+			confirmLabel,
+			proceed,
+		) {
+			var html =
+				'<div class="nldesign-dialog-overlay" id="'
+				+ id
+				+ '">'
+				+ '<div class="nldesign-dialog nldesign-dialog--small">'
+				+ '<h3>'
+				+ escapeHtml(title)
+				+ '</h3>'
+				+ paragraphs
+					.map(function (text) {
+						return (
+							'<p class="settings-hint">' + escapeHtml(text) + '</p>'
+						)
+					})
+					.join('')
+				+ '<div class="nldesign-dialog-actions">'
+				+ '<button type="button" class="nldesign-dialog-cancel">'
+				+ escapeHtml(t('thematiq', 'Cancel'))
+				+ '</button>'
+				+ '<button type="button" class="nldesign-dialog-confirm nldesign-btn--primary">'
+				+ escapeHtml(confirmLabel)
+				+ '</button>'
+				+ '</div>'
+				+ '</div>'
+				+ '</div>'
+
+			document.body.insertAdjacentHTML('beforeend', html)
+			var overlay = document.getElementById(id)
+
+			function close() {
+				overlay.remove()
+			}
+
+			makeDialogAccessible(overlay, close)
+
+			overlay
+				.querySelector('.nldesign-dialog-cancel')
+				.addEventListener('click', close)
+			overlay
+				.querySelector('.nldesign-dialog-confirm')
+				.addEventListener('click', function () {
+					close()
+					proceed()
+				})
+		}
+
+		function confirmExportOverrides() {
+			confirmOverridesAction(
+				'nldesign-export-overrides-overlay',
+				t('thematiq', 'Download the overrides of {name}?', {
+					name: editedTokenSetName(),
+				}),
+				[
+					t(
+						'thematiq',
+						'This downloads only the values saved for this theme on top of its token set, as custom-overrides.css. Unsaved changes are not in it.',
+					),
+					t(
+						'thematiq',
+						'It is not a complete theme. Use Export as token set to hand the whole theme on, or the configuration bundle to move the complete configuration.',
+					),
+				],
+				t('thematiq', 'Download'),
+				exportOverrides,
+			)
+		}
+
+		function confirmImportOverrides() {
+			confirmOverridesAction(
+				'nldesign-import-overrides-overlay',
+				t('thematiq', 'Upload overrides into {name}?', {
+					name: editedTokenSetName(),
+				}),
+				[
+					t(
+						'thematiq',
+						'The values in the file replace every value saved for this theme, straight away. Values the editor does not know are skipped, and unsaved changes are lost.',
+					),
+					t(
+						'thematiq',
+						'To add a whole theme as a new token set, use Custom token sets further down instead.',
+					),
+				],
+				t('thematiq', 'Choose file'),
+				function () {
+					document.getElementById('nldesign-import-input').click()
+				},
+			)
+		}
+
+		/**
+		 * Download the saved overrides of the edited set.
+		 *
+		 * @return {void}
+		 */
 		function exportOverrides() {
-			var a = document.createElement('a')
-			a.href = overridesUrl('/export', editedTokenSetId())
-			a.download = 'custom-overrides.css'
-			document.body.appendChild(a)
-			a.click()
-			document.body.removeChild(a)
+			downloadWithToken(
+				overridesUrl('/export', editedTokenSetId()),
+				'custom-overrides.css',
+				t('thematiq', 'The overrides could not be downloaded.'),
+			)
 		}
 
 		function importOverrides(file) {
@@ -5775,6 +5953,91 @@
 		}
 
 		/**
+		 * Open a CSRF-protected page in a new tab.
+		 *
+		 * The tab is opened inside the click, so no popup blocker stops it, and
+		 * filled once the page has been fetched with the request token.
+		 *
+		 * @param {string} url     The page.
+		 * @param {string} failure What to tell the admin when it fails.
+		 *
+		 * @return {void}
+		 */
+		function openWithToken(url, failure) {
+			var tab = window.open('', '_blank')
+			fetch(url, {
+				headers: { requesttoken: OC.requestToken },
+			})
+				.then(function (r) {
+					if (r.ok === false) {
+						throw new Error('page failed: ' + r.status)
+					}
+					return r.blob()
+				})
+				.then(function (blob) {
+					var page = URL.createObjectURL(
+						new Blob([blob], { type: 'text/html' }),
+					)
+					if (tab === null) {
+						window.location.assign(page)
+						return
+					}
+					tab.opener = null
+					tab.location.href = page
+					// Long enough for the tab to have loaded it.
+					window.setTimeout(function () {
+						URL.revokeObjectURL(page)
+					}, 60000)
+				})
+				.catch(function (err) {
+					if (tab !== null) {
+						tab.close()
+					}
+					console.error('Error opening ' + url + ':', err)
+					notify(failure)
+				})
+		}
+
+		/**
+		 * Every token reference link on the page, the two by the dropdown and
+		 * the two in each custom set row, fetches with the request token.
+		 *
+		 * The endpoint is CSRF-protected, and following the link carried no
+		 * token, so both the page and the download were refused. Delegated on
+		 * the settings section, because the custom set rows are rendered after
+		 * this runs.
+		 *
+		 * @spec openspec/specs/token-reference/spec.md
+		 */
+		function initTokenReferenceClicks() {
+			if (settingsEl === null) {
+				return
+			}
+			settingsEl.addEventListener('click', function (e) {
+				var link =
+					e.target && e.target.closest
+						? e.target.closest('a.nldesign-token-reference-link')
+						: null
+				if (link === null || !link.getAttribute('href')) {
+					return
+				}
+				e.preventDefault()
+				var href = link.getAttribute('href')
+				var failure = t(
+					'thematiq',
+					'The token reference could not be loaded.',
+				)
+				if (href.indexOf('download=1') !== -1) {
+					downloadWithToken(href, 'token-reference.md', failure)
+					return
+				}
+				openWithToken(href, failure)
+			})
+		}
+
+		initTokenReferenceClicks()
+
+		/**
 		 * Keep the two reference links next to the dropdown on the selected set.
 		 */
 		function initTokenReferenceLinks() {
@@ -5900,10 +6163,14 @@
 				downloadBtn.className = 'nldesign-btn nldesign-btn--small'
 				downloadBtn.textContent = t('thematiq', 'Download')
 				downloadBtn.addEventListener('click', function () {
-					window.location = OC.generateUrl(
-						'/apps/thematiq/settings/tokensets/custom/'
-							+ encodeURIComponent(set.id)
-							+ '/export',
+					downloadWithToken(
+						OC.generateUrl(
+							'/apps/thematiq/settings/tokensets/custom/'
+								+ encodeURIComponent(set.id)
+								+ '/export',
+						),
+						set.id + '.css',
+						t('thematiq', 'The token set could not be downloaded.'),
 					)
 				})
 				row.appendChild(downloadBtn)
@@ -6390,8 +6657,10 @@
 
 			if (downloadBtn !== null) {
 				downloadBtn.addEventListener('click', function () {
-					window.location = OC.generateUrl(
-						'/apps/thematiq/settings/audit/export',
+					downloadWithToken(
+						OC.generateUrl('/apps/thematiq/settings/audit/export'),
+						'nldesign-audit.jsonl',
+						t('thematiq', 'The audit log could not be downloaded.'),
 					)
 				})
 			}
@@ -6624,22 +6893,38 @@
 
 		/**
 		 * Point the contrast evidence report links at the export endpoint, one
-		 * per format. The endpoint answers with Content-Disposition: attachment,
-		 * so the links' download attribute is all the browser needs.
+		 * per format.
+		 *
+		 * The href stays, so each link still says where it leads, but a click
+		 * fetches the file with the request token: the endpoint is
+		 * CSRF-protected, and following the link carried no token.
 		 *
 		 * @spec openspec/specs/compliance-evidence/spec.md
 		 */
 		function initComplianceReport() {
 			var base = OC.generateUrl('/apps/thematiq/settings/compliance-report')
 			var links = {
-				'nldesign-compliance-report-json': 'json',
-				'nldesign-compliance-report-markdown': 'markdown',
+				'nldesign-compliance-report-json': ['json', 'json'],
+				'nldesign-compliance-report-markdown': ['markdown', 'md'],
 			}
 			Object.keys(links).forEach(function (id) {
 				var link = document.getElementById(id)
-				if (link !== null) {
-					link.setAttribute('href', base + '?format=' + links[id])
+				if (link === null) {
+					return
 				}
+				var url = base + '?format=' + links[id][0]
+				link.setAttribute('href', url)
+				link.addEventListener('click', function (e) {
+					e.preventDefault()
+					downloadWithToken(
+						url,
+						'contrast-report.' + links[id][1],
+						t(
+							'thematiq',
+							'The contrast report could not be downloaded.',
+						),
+					)
+				})
 			})
 		}
 
@@ -6886,7 +7171,11 @@
 		 * ========================================================================== */
 
 		function downloadConfigBundle() {
-			window.location = OC.generateUrl('/apps/thematiq/settings/config/export')
+			downloadWithToken(
+				OC.generateUrl('/apps/thematiq/settings/config/export'),
+				'thematiq-config.json',
+				t('thematiq', 'The configuration could not be downloaded.'),
+			)
 		}
 
 		function showConfigBundleResult(message) {

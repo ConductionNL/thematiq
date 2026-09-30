@@ -107,7 +107,7 @@ function installGlobals() {
 function installFetch() {
 	global.fetch = vi.fn((url, options = {}) => {
 		const method = options.method || 'GET'
-		requests.push({ url, method, body: options.body })
+		requests.push({ url, method, body: options.body, headers: options.headers })
 		for (const [m, match, status, body] of routes) {
 			if (m === method && matches(url, match)) {
 				if (body instanceof Error) {
@@ -120,6 +120,7 @@ function installFetch() {
 						body === undefined
 							? Promise.reject(new Error('no body'))
 							: Promise.resolve(body),
+					blob: () => Promise.resolve(new window.Blob([String(body)])),
 				})
 			}
 		}
@@ -1174,19 +1175,109 @@ describe('admin.js token editor', () => {
 	})
 
 	describe('download and upload', () => {
-		it("downloads and uploads the edited set's own file", async () => {
-			await mount({ current: 'nextcloud' })
-			const clicked = vi.fn()
+		/** Stand in for the browser's save: record the file name offered. */
+		function catchDownload() {
+			const saved = vi.fn()
+			URL.createObjectURL = vi.fn(() => 'blob:overrides')
+			URL.revokeObjectURL = vi.fn()
 			vi.spyOn(window.HTMLAnchorElement.prototype, 'click').mockImplementation(
 				function () {
-					clicked(this.getAttribute('href'))
+					saved(this.download)
 				},
 			)
+			return saved
+		}
+
+		it('says what Download holds before downloading, and Cancel downloads nothing', async () => {
+			await mount({ current: 'nextcloud' })
+			const saved = catchDownload()
 
 			click(document.getElementById('nldesign-export-btn'))
-			expect(clicked).toHaveBeenCalledWith(
+			const overlay = document.getElementById(
+				'nldesign-export-overrides-overlay',
+			)
+			expect(overlay.querySelector('h3').textContent).toBe(
+				'Download the overrides of Nextcloud (Base)?',
+			)
+			expect(overlay.textContent).toContain('It is not a complete theme.')
+
+			click(overlay.querySelector('.nldesign-dialog-cancel'))
+			await flush()
+
+			expect(
+				document.getElementById('nldesign-export-overrides-overlay'),
+			).toBeNull()
+			expect(sent('/settings/overrides/export')).toHaveLength(0)
+			expect(saved).not.toHaveBeenCalled()
+		})
+
+		it("downloads the edited set's own file, with the request token", async () => {
+			answer('GET', '/settings/overrides/export', 200, ':root {}')
+			await mount({ current: 'nextcloud' })
+			const saved = catchDownload()
+
+			click(document.getElementById('nldesign-export-btn'))
+			click(
+				document
+					.getElementById('nldesign-export-overrides-overlay')
+					.querySelector('.nldesign-dialog-confirm'),
+			)
+			await flush()
+
+			const request = sent('/settings/overrides/export', 'GET')[0]
+			expect(request.url).toBe(
 				'/apps/thematiq/settings/overrides/export?tokenSet=nextcloud',
 			)
+			expect(request.headers).toEqual({ requesttoken: 'test-token' })
+			expect(saved).toHaveBeenCalledWith('custom-overrides.css')
+		})
+
+		it('says so when the download is refused', async () => {
+			answer('GET', '/settings/overrides/export', 412, {})
+			await mount({ current: 'nextcloud' })
+			const saved = catchDownload()
+			vi.spyOn(console, 'error').mockImplementation(() => {})
+
+			click(document.getElementById('nldesign-export-btn'))
+			click(
+				document
+					.getElementById('nldesign-export-overrides-overlay')
+					.querySelector('.nldesign-dialog-confirm'),
+			)
+			await flush()
+
+			expect(saved).not.toHaveBeenCalled()
+			expect(toasts()).toContain('The overrides could not be downloaded.')
+		})
+
+		it('says what Upload replaces before the file picker opens, and Cancel opens none', async () => {
+			await mount({ current: 'nextcloud' })
+			const input = document.getElementById('nldesign-import-input')
+			const picker = vi.spyOn(input, 'click').mockImplementation(() => {})
+
+			click(document.getElementById('nldesign-import-btn'))
+			const overlay = document.getElementById(
+				'nldesign-import-overrides-overlay',
+			)
+			expect(overlay.querySelector('h3').textContent).toBe(
+				'Upload overrides into Nextcloud (Base)?',
+			)
+			expect(picker).not.toHaveBeenCalled()
+
+			click(overlay.querySelector('.nldesign-dialog-cancel'))
+			expect(picker).not.toHaveBeenCalled()
+
+			click(document.getElementById('nldesign-import-btn'))
+			click(
+				document
+					.getElementById('nldesign-import-overrides-overlay')
+					.querySelector('.nldesign-dialog-confirm'),
+			)
+			expect(picker).toHaveBeenCalledTimes(1)
+		})
+
+		it("uploads into the edited set's own file", async () => {
+			await mount({ current: 'nextcloud' })
 
 			const input = document.getElementById('nldesign-import-input')
 			Object.defineProperty(input, 'files', {
