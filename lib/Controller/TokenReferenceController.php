@@ -64,6 +64,10 @@ class TokenReferenceController extends Controller {
 	 * @return DataDisplayResponse The reference, or 404 for an unknown id.
 	 *
 	 * @spec openspec/specs/token-reference/spec.md#requirement-signed-in-users-read-the-reference-of-any-available-set
+	 *
+	 * @no-admin-idor-exempt token sets are instance-wide, not owned per user: every signed-in user already
+	 *   receives every available set's tokens as the page stylesheet, and the spec grants the reference of
+	 *   any available set to any signed-in user.
 	 */
 	#[NoAdminRequired]
 	public function show(string $id): DataDisplayResponse {
