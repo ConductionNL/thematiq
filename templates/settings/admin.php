@@ -110,7 +110,7 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint"><?php p($l->t('Plan a switch to another token set, for a campaign or a holiday look. With an end time the previous token set comes back by itself.')); ?></p>
 		<p class="settings-hint" id="nldesign-scheduled-status" aria-live="polite"></p>
 		<p class="nldesign-scheduled-cron-warning" id="nldesign-scheduled-cron-warning" role="status" hidden>
-			<?php p($l->t('Background jobs run in AJAX mode, so a planned switch only starts while someone uses the site and may start late. Choose Cron under Administration settings, Basic settings, Background jobs.')); ?>
+			<?php p($l->t('Background jobs run in AJAX mode, so a planned switch may start late. Choose Cron under Administration settings, Basic settings, Background jobs.')); ?>
 		</p>
 		<form id="nldesign-scheduled-form" class="nldesign-scheduled-form">
 			<label for="nldesign-scheduled-set"><?php p($l->t('Token set')); ?></label>
