@@ -25,6 +25,9 @@ use OCA\Thematiq\Tests\Unit\Service\ThemeGalleryServiceTest;
 use Opis\JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
 
+// The entry fixture lives in ThemeGalleryServiceTest; tests/ is not autoloaded.
+require_once __DIR__ . '/../Service/ThemeGalleryServiceTest.php';
+
 /**
  * Tests for gallery/index.json and gallery/index.schema.json.
  */

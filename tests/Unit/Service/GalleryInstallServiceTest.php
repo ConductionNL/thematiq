@@ -45,6 +45,9 @@ use OCP\IL10N;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
+// The entry fixture lives in ThemeGalleryServiceTest; tests/ is not autoloaded.
+require_once __DIR__ . '/ThemeGalleryServiceTest.php';
+
 /**
  * Tests for installing a gallery entry.
  */
@@ -282,12 +285,12 @@ class GalleryInstallServiceTest extends TestCase {
 	}//end testATamperedFileIsRefused()
 
 	/**
-	 * A file nothing in which maps onto a token stores nothing.
+	 * A file the upload path refuses (a stylesheet with selectors, not a theme) stores nothing.
 	 *
 	 * @return void
 	 */
 	public function testAFileTheUploadPathRefusesStoresNothing(): void {
-		$this->body = ":root { --not-a-known-token: 1px; }\n";
+		$this->body = "body { color: red; }\n";
 		$this->entry = ThemeGalleryServiceTest::entry(['sha256' => hash('sha256', $this->body)]);
 
 		try {
@@ -295,6 +298,7 @@ class GalleryInstallServiceTest extends TestCase {
 			$this->fail('A file the upload path refuses was installed.');
 		} catch (GalleryException $e) {
 			$this->assertSame(422, $e->getCode());
+			$this->assertStringContainsString('The file was refused, so nothing was installed', $e->getMessage());
 		}
 
 		$this->assertSame([], $this->customSets->list());
