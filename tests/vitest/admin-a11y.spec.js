@@ -320,7 +320,7 @@ describe('admin.js keyboard accessibility', () => {
 							'--nldesign-color-primary': {
 								tab: 'login',
 								type: 'color',
-								label: 'Primary colour',
+								label: 'Primary color',
 							},
 						},
 						tabs: { login: 'Login' },
@@ -334,7 +334,7 @@ describe('admin.js keyboard accessibility', () => {
 			const resetBtn = document.querySelector('.nldesign-reset-btn')
 			expect(resetBtn).not.toBeNull()
 			expect(resetBtn.getAttribute('aria-label')).toBe(
-				'Reset Primary colour to default',
+				'Reset Primary color to default',
 			)
 		})
 	})

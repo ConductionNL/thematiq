@@ -1689,7 +1689,7 @@
 					'nldesign-pg-pointable',
 					t(
 						'thematiq',
-						'On Nextcloud 32 and 33 the app icons are images, so "Header glyphs" does not recolour them: they stay white. The other header glyphs do follow it. From Nextcloud 34 the app menu follows it too.',
+						'On Nextcloud 32 and 33 the app icons are images, so "Header glyphs" does not recolor them: they stay white. The other header glyphs do follow it. From Nextcloud 34 the app menu follows it too.',
 					),
 				),
 			)
@@ -2690,13 +2690,13 @@
 				// reaches the heading as it does on a real settings page.
 				'<div class="settings-section nldesign-pg-section">'
 				+ '<h2 class="settings-section__name nldesign-pg-section-title">'
-				+ t('thematiq', 'Background and colours')
+				+ t('thematiq', 'Background and colors')
 				+ ''
 				+ '</h2>'
 				+ '<p class="nldesign-pg-muted is-maxcontrast nldesign-pg-reading">'
 				+ t(
 					'thematiq',
-					'Pick a colour that suits your organisation. It is used in the header, on the login page and in emails.',
+					'Pick a color that suits your organisation. It is used in the header, on the login page and in emails.',
 				)
 				+ '</p>'
 				+ button('secondary', 'default', t('thematiq', 'Save changes'))
@@ -2779,7 +2779,7 @@
 				// it shows what that one shows: the values about to change.
 				+ '<ul class="nldesign-pg-changes">'
 				+ [
-					[t('thematiq', 'Primary colour'), '#0082c9', '#23845c'],
+					[t('thematiq', 'Primary color'), '#0082c9', '#23845c'],
 					[t('thematiq', 'Corner radius'), '4px', '8px'],
 					[t('thematiq', 'Heading text'), '#ffffff', '#11304e'],
 				]
@@ -2845,7 +2845,7 @@
 				[
 					'warning',
 					2,
-					t('thematiq', 'Two colours do not meet the WCAG AA threshold.'),
+					t('thematiq', 'Two colors do not meet the WCAG AA threshold.'),
 				],
 				['error', 3, t('thematiq', 'The token set could not be saved.')],
 				[
@@ -2914,7 +2914,7 @@
 				+ ''
 				+ '</h1>'
 				+ '<h2 class="nldesign-pg-h2">'
-				+ t('thematiq', 'Background and colours')
+				+ t('thematiq', 'Background and colors')
 				+ '</h2>'
 				+ '<h3 class="nldesign-pg-h3">'
 				+ t('thematiq', 'Upload your own token set')
@@ -2930,7 +2930,7 @@
 				'<p class="nldesign-pg-paragraph nldesign-pg-reading">'
 				+ t(
 					'thematiq',
-					'Pick a token set as your basis, or adjust individual Nextcloud tokens below. A token set decides the colours, the typography and the shape of every part you see here. What you save applies to everyone on this instance, on every page.',
+					'Pick a token set as your basis, or adjust individual Nextcloud tokens below. A token set decides the colors, the typography and the shape of every part you see here. What you save applies to everyone on this instance, on every page.',
 				)
 				+ '</p>'
 			)

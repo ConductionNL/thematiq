@@ -97,6 +97,7 @@ async function flush(rounds = 10) {
 async function load() {
 	document.body.innerHTML = `
 		<div id="nldesign-settings" class="section">
+			<p id="nldesign-token-set-switch-note" hidden></p>
 			<div id="nldesign-scheduled-switches">
 				<p id="nldesign-scheduled-status"></p>
 				<p id="nldesign-scheduled-cron-warning" hidden>AJAX</p>
@@ -147,6 +148,23 @@ describe('admin.js planned switches', () => {
 		expect(
 			document.getElementById('nldesign-scheduled-status').textContent,
 		).toContain('last ran')
+	})
+
+	it('says beside the dropdown that a running switch puts its set back, and nothing when none runs', async () => {
+		await load()
+		const note = document.getElementById('nldesign-token-set-switch-note')
+		expect(note.hidden).toBe(true)
+
+		state.status.runningTokenSet = 'koningsdag-oranje'
+		state.status.activeUntil = '2027-04-28T06:00:00Z'
+		await load()
+
+		const running = document.getElementById('nldesign-token-set-switch-note')
+		expect(running.hidden).toBe(false)
+		expect(running.textContent).toContain(
+			'A planned switch to koningsdag-oranje is running until',
+		)
+		expect(running.textContent).toContain('put back within five minutes')
 	})
 
 	it('shows what is active until when during a running switch', async () => {

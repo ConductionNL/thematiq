@@ -347,8 +347,9 @@
    one more flex item it sat beside the label and squeezed it to a word per
    line. The indent lines it up with the label text, past the box core's
    checkbox draws in front of it (`.checkbox + label::before`: 3px margin, a
-   14px box with a 1px border, 6px margin). */
-.nldesign-option > .settings-hint {
+   14px box with a 1px border, 6px margin). Under the section id, to outrank
+   `#nldesign-settings .settings-hint` and its bottom margin. */
+#nldesign-settings .nldesign-option > .settings-hint {
 	flex-basis: 100%;
 	margin: 0;
 	padding-inline-start: 25px;
@@ -2449,12 +2450,11 @@
 	font-size: 0.9em;
 }
 
-/* The opt-in to Nextcloud's own base tokens, above the tabs. Quiet for the
-   same reason: the component rows are the everyday control. */
+/* The opt-in to Nextcloud's own base tokens, with the editor's other settings
+   under the rows and styled like them: the component rows are the everyday
+   control. */
 .nldesign-base-unlock {
-	margin: 8px 0;
-	color: var(--color-text-maxcontrast);
-	font-size: 0.9em;
+	margin: 0;
 }
 
 /* The server's refusal, inside the dialog that caused it. `hidden` is honoured
@@ -2474,7 +2474,7 @@
    `<input type="color">` draws. */
 #nldesign-settings .nldesign-brand-colour {
 	width: 64px;
-	height: 36px;
+	height: var(--default-clickable-area, 34px);
 	margin: 0;
 	padding: 2px;
 	border: 1px solid var(--color-border-maxcontrast, var(--color-border));
@@ -2483,9 +2483,25 @@
 	cursor: pointer;
 }
 
-.nldesign-brand-form input[type='file'] {
-	max-width: 100%;
+/* A file pick in a row of fields: Nextcloud's button with the chosen file's
+   name beside it, as tall as the fields next to it so the row lines up. */
+.nldesign-file-pick {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: var(--default-clickable-area, 34px);
+}
+
+.nldesign-file-pick .button {
 	margin: 0;
+}
+
+.nldesign-file-pick__name {
+	max-width: 220px;
+	overflow: hidden;
+	color: var(--color-text-maxcontrast);
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 #nldesign-settings .nldesign-brand-contrast {

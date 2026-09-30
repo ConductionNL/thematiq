@@ -101,6 +101,10 @@ if ($_['mockUi'] === true) {
 			     presented as its own brand. -->
 			<span id="nldesign-token-set-completeness-badge" class="nldesign-badge" hidden></span>
 		</div>
+		<!-- A running planned switch puts its token set back on every job run, so a
+		     set picked here would silently not last. admin.js fills and shows this
+		     while one runs (openspec/specs/scheduled-switch/spec.md). -->
+		<p class="settings-hint" id="nldesign-token-set-switch-note" role="status" hidden></p>
 		<!-- What can be done with the selected set: the buttons act on it, the
 		     links read it. A row of their own, so they no longer wrap into the
 		     select's line at arbitrary points. -->
@@ -153,7 +157,7 @@ if ($_['mockUi'] === true) {
 			     Nextcloud logo and colours included. Without them a switch changed
 			     the token set and nothing anyone could see. -->
 			<p class="settings-hint nldesign-field-hint" id="nldesign-scheduled-applies">
-				<?php p($l->t('The switch applies the token set as you would by hand, including the Nextcloud logo and colours it carries. At the end the previous token set comes back the same way.')); ?>
+				<?php p($l->t('The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.')); ?>
 			</p>
 			<div class="nldesign-form-actions">
 				<button type="submit" class="button primary" id="nldesign-scheduled-submit"><?php p($l->t('Plan switch')); ?></button>
@@ -244,7 +248,7 @@ if ($_['mockUi'] === true) {
 			</button>
 			<button type="button" class="nldesign-create-tab" role="tab" id="nldesign-create-tab-colours"
 					aria-selected="false" aria-controls="nldesign-brand-form" tabindex="-1">
-				<?php p($l->t('Start from your colours')); ?>
+				<?php p($l->t('Start from your colors')); ?>
 			</button>
 		</div>
 		<div class="nldesign-create-panels">
@@ -285,7 +289,7 @@ if ($_['mockUi'] === true) {
 			<div class="nldesign-create-panel nldesign-brand-form" id="nldesign-brand-form" role="tabpanel"
 				 aria-labelledby="nldesign-create-tab-colours" hidden>
 				<p class="settings-hint">
-					<?php p($l->t('Enter a name, your primary colour and your background colour. Thematiq makes a complete token set from them. You can refine it later in the token editor.')); ?>
+					<?php p($l->t('Enter a name, your primary color and your background color. Thematiq makes a complete token set from them. You can refine it later in the token editor.')); ?>
 				</p>
 				<div class="nldesign-fields">
 					<div class="nldesign-field">
@@ -294,16 +298,24 @@ if ($_['mockUi'] === true) {
 							   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>">
 					</div>
 					<div class="nldesign-field">
-						<label for="nldesign-brand-primary"><?php p($l->t('Primary colour')); ?></label>
+						<label for="nldesign-brand-primary"><?php p($l->t('Primary color')); ?></label>
 						<input type="color" id="nldesign-brand-primary" class="nldesign-brand-colour" value="#154273">
 					</div>
 					<div class="nldesign-field">
-						<label for="nldesign-brand-background"><?php p($l->t('Background colour')); ?></label>
+						<label for="nldesign-brand-background"><?php p($l->t('Background color')); ?></label>
 						<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
 					</div>
 					<div class="nldesign-field">
-						<label for="nldesign-brand-logo"><?php p($l->t('Logo (optional)')); ?></label>
-						<input type="file" id="nldesign-brand-logo" accept=".svg,.png,.jpg,.gif,.webp">
+						<label for="nldesign-brand-logo-btn"><?php p($l->t('Logo (optional)')); ?></label>
+						<!-- Nextcloud's own button instead of the browser's file control,
+						     which draws in the browser's language and style. The input is
+						     named for the same reason as the upload's above. -->
+						<div class="nldesign-file-pick">
+							<input type="file" id="nldesign-brand-logo" accept=".svg,.png,.jpg,.gif,.webp" hidden
+								   aria-label="<?php p($l->t('Logo file (SVG, PNG, JPG, GIF or WebP)')); ?>">
+							<button type="button" class="button" id="nldesign-brand-logo-btn"><?php p($l->t('Choose logo')); ?></button>
+							<span class="nldesign-file-pick__name" id="nldesign-brand-logo-name"><?php p($l->t('No file chosen')); ?></span>
+						</div>
 					</div>
 				</div>
 				<div class="nldesign-brand-preview" id="nldesign-brand-preview" aria-hidden="true">
@@ -623,10 +635,10 @@ if ($_['mockUi'] === true) {
 			   class="checkbox"
 			   <?php if ($_['primaryDrivesComponents']): ?>checked<?php endif; ?>>
 		<label for="nldesign-primary-drives-components">
-			<?php p($l->t('Let the primary colour drive every component')); ?>
+			<?php p($l->t('Let the primary color drive every component')); ?>
 		</label>
 		<p class="settings-hint">
-			<?php p($l->t('While this is on, the brand primary overrules any colour set on an individual component, and those controls are locked. Switching it off gives each component its own colour back.')); ?>
+			<?php p($l->t('While this is on, the brand primary overrules any color set on an individual component, and those controls are locked. Switching it off gives each component its own color back.')); ?>
 		</p>
 	</div>
 
@@ -798,7 +810,7 @@ if ($_['mockUi'] === true) {
 	<div class="nldesign-compliance-report" id="nldesign-compliance-report" style="margin-top:2em">
 		<h3><?php p($l->t('Contrast evidence report')); ?></h3>
 		<p class="settings-hint">
-			<?php p($l->t('Download the colour contrast of the active theme tokens as evidence for an accessibility statement. It covers colour contrast of the theme only and is not a full WCAG audit.')); ?>
+			<?php p($l->t('Download the color contrast of the active theme tokens as evidence for an accessibility statement. It covers color contrast of the theme only and is not a full WCAG audit.')); ?>
 		</p>
 		<div class="nldesign-upload-form">
 			<a id="nldesign-compliance-report-json" class="button" download>

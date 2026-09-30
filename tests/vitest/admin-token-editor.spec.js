@@ -183,6 +183,7 @@ async function flush(rounds = 10) {
  * @param {object} [options.state] Extra initial-state keys.
  * @param {boolean} [options.primaryDrives] Whether the primary-drives box starts ticked.
  * @param {boolean} [options.withSelect] Whether the page has the token set dropdown.
+ * @param {string} [options.extraHtml] More of the settings page, inside the section.
  */
 async function mount({
 	current = 'rijkshuisstijl',
@@ -190,6 +191,7 @@ async function mount({
 	state = {},
 	primaryDrives = false,
 	withSelect = true,
+	extraHtml = '',
 } = {}) {
 	installInitialState({
 		tokenSets: TOKEN_SETS,
@@ -208,6 +210,7 @@ async function mount({
 			<span id="nldesign-design-system-badge"></span>
 			<input type="checkbox" id="nldesign-primary-drives-components"${primaryDrives ? ' checked' : ''}>
 			<button type="button" id="nldesign-reset-theme-btn">Reset</button>
+			${extraHtml}
 		</div>
 		<div class="nldesign-preview" id="nldesign-preview"></div>
 		<div id="nldesign-token-editor"></div>
@@ -341,7 +344,7 @@ describe('admin.js token editor', () => {
 			expect(base.picker.disabled).toBe(true)
 			expect(base.reset.disabled).toBe(true)
 			expect(base.text.getAttribute('title')).toContain(
-				'A Nextcloud base colour',
+				'A Nextcloud base color',
 			)
 			expect(row(BUTTON).picker.disabled).toBe(false)
 
@@ -407,7 +410,7 @@ describe('admin.js token editor', () => {
 				true,
 			)
 			expect(button.picker.getAttribute('title')).toContain(
-				'The primary colour drives this component',
+				'The primary color drives this component',
 			)
 		})
 
@@ -1061,6 +1064,30 @@ describe('admin.js token editor', () => {
 			})
 		})
 
+		it('warns in the apply dialog that a running switch will put its set back', async () => {
+			answer('GET', '/settings/scheduled-switches', 200, {
+				switches: [],
+				status: {
+					runningTokenSet: 'nextcloud',
+					activeUntil: '2027-04-28T06:00:00Z',
+				},
+			})
+			await mount({
+				current: 'nextcloud',
+				extraHtml:
+					'<form id="nldesign-scheduled-form"></form><ul id="nldesign-scheduled-list"></ul>',
+			})
+
+			await switchTo('rijkshuisstijl', { [FONT]: 'Arial' }, { overrides: {} })
+
+			const warning = document.querySelector(
+				'#nldesign-apply-dialog-overlay .nldesign-apply-switch-warning',
+			)
+			expect(warning.textContent).toContain(
+				'A planned switch to Nextcloud (Base) is running until',
+			)
+		})
+
 		it('offers the file when what was saved cannot be read', async () => {
 			await mount({ current: 'nextcloud' })
 
@@ -1460,7 +1487,7 @@ describe('admin.js theming sync rows', () => {
 		)
 
 		expect(labels(overlay)).toEqual(['Background image'])
-		expect(overlay.textContent).toContain('Removed (plain colour)')
+		expect(overlay.textContent).toContain('Removed (plain color)')
 
 		const body = await confirm(overlay)
 		expect(body.get('background_mode')).toBe('color')

@@ -107,7 +107,7 @@ class BrandFormController extends Controller {
 				background: (string)$this->request->getParam('background', '')
 			);
 		} catch (InvalidArgumentException $e) {
-			return new JSONResponse(['error' => $this->l->t('Enter both colours as a hex colour, for example #c8102e.')], 400);
+			return new JSONResponse(['error' => $this->l->t('Enter both colors as a hex color, for example #c8102e.')], 400);
 		}
 
 		$logo = $this->readLogo();

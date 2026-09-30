@@ -93,6 +93,11 @@
 		}
 
 		var settingsEl = document.getElementById('nldesign-settings')
+		// The planned switch that is running, as `{ tokenSet, until }`, or null.
+		// It puts its token set back on every job run, so a set picked in the
+		// dropdown meanwhile would not last; the page says so beside the dropdown
+		// and in the apply dialog.
+		var runningSwitch = null
 		var tokenSetSelect = document.getElementById('nldesign-token-set-select')
 		var hideSloganCheckbox = document.getElementById('nldesign-hide-slogan')
 		var primaryDrivesComponentsCheckbox = document.getElementById(
@@ -159,12 +164,12 @@
 			if (meta !== undefined && meta.group === 'brand') {
 				return t(
 					'thematiq',
-					'A Nextcloud base colour, read far beyond any one component. Tick "Also edit Nextcloud\'s base tokens" to change it.',
+					'A Nextcloud base color, read far beyond any one component. Tick "Also edit Nextcloud\'s base tokens" to change it.',
 				)
 			}
 			return t(
 				'thematiq',
-				'The primary colour drives this component. Switch off "Let the primary colour drive every component" to set it separately.',
+				'The primary color drives this component. Switch off "Let the primary color drive every component" to set it separately.',
 			)
 		}
 
@@ -300,6 +305,13 @@
 							pageTokenSetId = tokenSetId
 							pageManifest = manifests[1]
 							syncOverridesLink(tokenSetId)
+							// For what follows the page's theme, such as the
+							// brand form's starting colors.
+							document.dispatchEvent(
+								new CustomEvent('thematiq:theme-applied', {
+									detail: { tokenSet: tokenSetId },
+								}),
+							)
 							return true
 						},
 					)
@@ -991,7 +1003,7 @@
 				lines.push(
 					t(
 						'thematiq',
-						'Primary colour {css} in the token CSS disagrees with {manifest} in the token set manifest.',
+						'Primary color {css} in the token CSS disagrees with {manifest} in the token set manifest.',
 					)
 						.replace('{css}', warning.cssPrimary || '?')
 						.replace('{manifest}', warning.declaredPrimary || '?'),
@@ -1520,7 +1532,7 @@
 			var mode = proposed.background_mode
 			var removedNow = currentTheming.background_mime === 'backgroundColor'
 			var currentBackground = removedNow
-				? t('thematiq', 'Removed (plain colour)')
+				? t('thematiq', 'Removed (plain color)')
 				: currentTheming.has_custom_background
 					? t('thematiq', '(custom)')
 					: t('thematiq', '(default)')
@@ -1530,7 +1542,7 @@
 					key: 'background_mode',
 					kind: 'text',
 					current: currentBackground,
-					proposed: t('thematiq', 'Removed (plain colour)'),
+					proposed: t('thematiq', 'Removed (plain color)'),
 				})
 			} else if (
 				mode === 'default'
@@ -1800,7 +1812,7 @@
 				+ escapeHtml(
 					t(
 						'thematiq',
-						"Stock Nextcloud means Nextcloud's own colours and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.",
+						"Stock Nextcloud means Nextcloud's own colors and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.",
 					),
 				)
 				+ '</p>'
@@ -2720,18 +2732,6 @@
 				+ '">'
 				+ '</div>'
 				+ '</div>'
-				// Nextcloud's own base tokens stay locked until asked for; see
-				// baseTokensUnlocked and confirmBaseUnlock().
-				// Nextcloud's own `input.checkbox` + `label[for]` pair, like every
-				// other checkbox on this page, so it is drawn in the theme's style.
-				+ '<div class="nldesign-base-unlock">'
-				+ '<input type="checkbox" class="checkbox" id="nldesign-base-unlock"'
-				+ (baseTokensUnlocked === true ? ' checked' : '')
-				+ '>'
-				+ '<label for="nldesign-base-unlock">'
-				+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
-				+ '</label>'
-				+ '</div>'
 				+ '<div class="nldesign-tabs">'
 				+ tabsHtml
 				+ '</div>'
@@ -2749,6 +2749,17 @@
 				// after one careless click. Worded the same way round as that
 				// dialog: ticked means "stop asking".
 				+ '<div class="nldesign-confirm-controls">'
+				// Nextcloud's own base tokens stay locked until asked for; see
+				// baseTokensUnlocked and confirmBaseUnlock(). With the editor's
+				// other settings, as a checkbox like them.
+				+ '<div class="nldesign-base-unlock">'
+				+ '<input type="checkbox" class="checkbox" id="nldesign-base-unlock"'
+				+ (baseTokensUnlocked === true ? ' checked' : '')
+				+ '>'
+				+ '<label for="nldesign-base-unlock">'
+				+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
+				+ '</label>'
+				+ '</div>'
 				+ '<div>'
 				+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-stock">'
 				+ '<label for="nldesign-confirm-save-stock">'
@@ -2871,7 +2882,7 @@
 				+ escapeHtml(
 					t(
 						'thematiq',
-						'These are the colours and sizes Nextcloud itself is built from, such as the main text colour. Changing one changes every part of Nextcloud that reads it, which is far more than the component you are looking at, and not only what this panel shows. To change one component, use its own rows instead.',
+						'These are the colors and sizes Nextcloud itself is built from, such as the main text color. Changing one changes every part of Nextcloud that reads it, which is far more than the component you are looking at, and not only what this panel shows. To change one component, use its own rows instead.',
 					),
 				)
 				+ '</p>'
@@ -2930,7 +2941,7 @@
 			// to satisfy WCAG 1.3.1/4.1.2 (axe "label").
 			var inputLabel = escapeHtml(meta.label || name)
 			var pickerLabel = escapeHtml(
-				t('thematiq', 'Colour picker for {label}', {
+				t('thematiq', 'Color picker for {label}', {
 					label: meta.label || name,
 				}),
 			)
@@ -4177,7 +4188,11 @@
 					document.body.appendChild(a)
 					a.click()
 					document.body.removeChild(a)
-					URL.revokeObjectURL(objectUrl)
+					// Not in the same tick: some browsers abort a blob download
+					// whose URL is revoked straight after the click.
+					window.setTimeout(function () {
+						URL.revokeObjectURL(objectUrl)
+					}, 60000)
 				})
 				.catch(function (err) {
 					console.error('Error downloading ' + url + ':', err)
@@ -4263,9 +4278,13 @@
 		function confirmExportOverrides() {
 			confirmOverridesAction(
 				'nldesign-export-overrides-overlay',
-				t('thematiq', 'Download the overrides of {name}?', {
-					name: editedTokenSetName(),
-				}),
+				t(
+					'thematiq',
+					'Download the overrides of {name}?',
+					{ name: editedTokenSetName() },
+					undefined,
+					{ escape: false },
+				),
 				[
 					t(
 						'thematiq',
@@ -4284,9 +4303,13 @@
 		function confirmImportOverrides() {
 			confirmOverridesAction(
 				'nldesign-import-overrides-overlay',
-				t('thematiq', 'Upload overrides into {name}?', {
-					name: editedTokenSetName(),
-				}),
+				t(
+					'thematiq',
+					'Upload overrides into {name}?',
+					{ name: editedTokenSetName() },
+					undefined,
+					{ escape: false },
+				),
 				[
 					t(
 						'thematiq',
@@ -4532,6 +4555,13 @@
 				)
 				+ '</h3>'
 				+ buildTokenSetWarningsHtml(newTokenSetId)
+				// A set other than the running switch's would be put back within
+				// five minutes; say so before it is applied.
+				+ (runningSwitch !== null && runningSwitch.tokenSet !== newTokenSetId
+					? '<p class="settings-hint nldesign-apply-switch-warning">'
+						+ escapeHtml(runningSwitchText())
+						+ '</p>'
+					: '')
 				+ '<p class="settings-hint">'
 				+ escapeHtml(
 					t(
@@ -5520,7 +5550,7 @@
 							+ escapeHtml(
 								t(
 									'nldesign',
-									'{pair}: contrast could not be evaluated (non-literal colour).',
+									'{pair}: contrast could not be evaluated (non-literal color).',
 								).replace('{pair}', w.pair),
 							)
 							+ '</li>'
@@ -5767,8 +5797,58 @@
 				resultEl.textContent = text
 			}
 
-			primaryInput.addEventListener('input', repaint)
-			backgroundInput.addEventListener('input', repaint)
+			// The two colors start as the theme the page is wearing, and follow
+			// it when another theme is applied, until the admin picks their own.
+			var picked = false
+			function followTheme() {
+				if (picked === true) {
+					return
+				}
+				var style = getComputedStyle(document.documentElement)
+				var primary = style.getPropertyValue('--color-primary').trim()
+				var background = style
+					.getPropertyValue('--color-main-background')
+					.trim()
+				// Only what the page actually declares: an empty value would
+				// read as black.
+				if (primary !== '' && TT.normaliseColorForPicker) {
+					primaryInput.value = TT.normaliseColorForPicker(primary)
+				}
+				if (background !== '' && TT.normaliseColorForPicker) {
+					backgroundInput.value = TT.normaliseColorForPicker(background)
+				}
+				repaint()
+			}
+
+			function pick() {
+				picked = true
+				repaint()
+			}
+
+			primaryInput.addEventListener('input', pick)
+			backgroundInput.addEventListener('input', pick)
+			document.addEventListener('thematiq:theme-applied', followTheme)
+			var coloursTab = document.getElementById('nldesign-create-tab-colours')
+			if (coloursTab !== null) {
+				coloursTab.addEventListener('click', followTheme)
+			}
+			followTheme()
+
+			var logoBtn = document.getElementById('nldesign-brand-logo-btn')
+			var logoName = document.getElementById('nldesign-brand-logo-name')
+			if (logoBtn !== null && logoInput !== null) {
+				logoBtn.addEventListener('click', function () {
+					logoInput.click()
+				})
+				logoInput.addEventListener('change', function () {
+					if (logoName !== null) {
+						logoName.textContent =
+							logoInput.files && logoInput.files[0]
+								? logoInput.files[0].name
+								: t('thematiq', 'No file chosen')
+					}
+				})
+			}
 
 			fetch(OC.generateUrl('/apps/thematiq/settings/tokensets/from-colours'), {
 				headers: { requesttoken: OC.requestToken },
@@ -6374,7 +6454,7 @@
 				OC.dialogs.confirm(
 					t(
 						'thematiq',
-						'This fully resets the theme to stock Nextcloud: the overrides of the current theme and every change written over the Nextcloud theme are deleted, and the Nextcloud theming colours and logo return to their defaults. Custom token sets, fonts and custom CSS are kept. This cannot be undone.',
+						'This fully resets the theme to stock Nextcloud: the overrides of the current theme and every change written over the Nextcloud theme are deleted, and the Nextcloud theming colors and logo return to their defaults. Custom token sets, fonts and custom CSS are kept. This cannot be undone.',
 					),
 					t('thematiq', 'Reset theme to Nextcloud'),
 					function (confirmed) {
@@ -6948,6 +7028,52 @@
 		}
 
 		/**
+		 * The name of a token set, or its id when the page has none for it.
+		 *
+		 * @param {string} id The token set id.
+		 * @return {string} The name.
+		 */
+		function tokenSetName(id) {
+			var ts = tokenSetsData[id]
+			return ts && ts.name ? ts.name : id
+		}
+
+		/**
+		 * What a running switch means for the dropdown, or '' when none runs.
+		 *
+		 * @return {string} The sentence.
+		 */
+		function runningSwitchText() {
+			if (runningSwitch === null) {
+				return ''
+			}
+			return t(
+				'thematiq',
+				'A planned switch to {set} is running until {time}. A token set picked here is put back within five minutes; cancel the switch under Planned switches to change the theme before then.',
+				{
+					set: tokenSetName(runningSwitch.tokenSet),
+					time: formatLocalTime(runningSwitch.until),
+				},
+				undefined,
+				{ escape: false },
+			)
+		}
+
+		/**
+		 * Say beside the dropdown that a running switch will put its set back.
+		 *
+		 * @return {void}
+		 */
+		function updateSwitchNote() {
+			var note = document.getElementById('nldesign-token-set-switch-note')
+			if (note === null) {
+				return
+			}
+			note.textContent = runningSwitchText()
+			note.hidden = runningSwitch === null
+		}
+
+		/**
 		 * The "Planned switches" block: status, cron warning, plan form and
 		 * the list with a cancel button per switch. Times are entered and
 		 * shown in the browser's time zone and sent as UTC.
@@ -6973,7 +7099,18 @@
 			}
 
 			function renderStatus(status) {
-				if (statusEl === null || !status) {
+				if (!status) {
+					return
+				}
+				runningSwitch =
+					status.runningTokenSet && status.activeUntil
+						? {
+								tokenSet: status.runningTokenSet,
+								until: status.activeUntil,
+							}
+						: null
+				updateSwitchNote()
+				if (statusEl === null) {
 					return
 				}
 				var lines = []
