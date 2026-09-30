@@ -4207,7 +4207,27 @@
 				return null
 			})
 
-			Promise.all([preview, theming])
+			// What the admin saved for the set outranks its file on the page, so
+			// the comparison is made against the set as saved. Against the file
+			// alone, every switch back to a set pinned the file's values over
+			// the ones saved for it.
+			var saved =
+				newTokenSetId === STOCK_TOKEN_SET
+					? Promise.resolve({})
+					: fetch(overridesUrl('', newTokenSetId), {
+							headers: { requesttoken: OC.requestToken },
+						})
+							.then(function (r) {
+								return r.json()
+							})
+							.then(function (existing) {
+								return existing.overrides || {}
+							})
+							.catch(function () {
+								return {}
+							})
+
+			Promise.all([preview, theming, saved])
 				.then(function (results) {
 					var data = results[0]
 					var themingPlan = computeThemingPlan(
@@ -4218,7 +4238,25 @@
 						saveTokenSet(newTokenSetId, publishMode)
 						return
 					}
-					var newValues = data.resolved || {}
+					var newValues = Object.assign({}, data.resolved || {})
+					Object.keys(results[2]).forEach(function (name) {
+						if (newValues[name] !== undefined) {
+							newValues[name] = results[2][name]
+						}
+					})
+					// A set that carries a primary colour brings it through the
+					// theming sync, and Nextcloud derives the whole primary family
+					// from it. Pinned here as well, the family outranked Nextcloud
+					// with `!important`, so a primary chosen in Nextcloud's own
+					// theming never reached anything painted from it.
+					var setTheming = (tokenSetsData[newTokenSetId] || {}).theming
+					if (setTheming && setTheming.primary_color) {
+						Object.keys(newValues).forEach(function (name) {
+							if (isPrimaryFamily(name) === true) {
+								delete newValues[name]
+							}
+						})
+					}
 					var rootStyle = getComputedStyle(document.documentElement)
 					var changes = []
 					Object.keys(newValues).forEach(function (name) {
