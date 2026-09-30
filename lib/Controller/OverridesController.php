@@ -188,6 +188,7 @@ class OverridesController extends Controller {
 			[
 				'overrides' => $overrides,
 				'darkOverrides' => $this->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
+				'darkDerived' => $this->overridesService->derivedDark(tokenSet: $this->requestedTokenSet()),
 				'registry' => $registry,
 				'tabs' => $tabs,
 			]

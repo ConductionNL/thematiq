@@ -315,6 +315,19 @@ class CustomOverridesService {
 	}//end readDark()
 
 	/**
+	 * The dark value each colour override gets when the administrator sets none.
+	 *
+	 * @param string|null $tokenSet The set whose file to read, or null for the active one.
+	 *
+	 * @return array<string, string> Token => derived dark value.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-each-colour-token-has-an-optional-dark-value
+	 */
+	public function derivedDark(?string $tokenSet = null): array {
+		return $this->darkValues(tokens: $this->read(tokenSet: $tokenSet));
+	}//end derivedDark()
+
+	/**
 	 * Write a new set of token overrides to the overrides file of a token set.
 	 *
 	 * Only tokens present in TokenRegistry are accepted — others are silently ignored.

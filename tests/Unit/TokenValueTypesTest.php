@@ -254,6 +254,7 @@ class TokenValueTypesTest extends TestCase {
 		$derived = $this->darkPalette->deriveDarkValue(token: '--color-primary', lightValue: '#154273');
 		$this->assertStringContainsString('--color-primary: ' . $derived . ' !important;', $this->overrides->getRawContent());
 		$this->assertSame([], $this->overrides->readDark());
+		$this->assertSame(['--color-primary' => $derived], $this->overrides->derivedDark(), 'the editor shows it as the placeholder');
 	}//end testEmptyDarkValueIsDerived()
 
 	/**
