@@ -164,3 +164,15 @@ sync documentation).
 - AND WHEN a later run detects upstream version `1.4.0` for `utrecht`
 - THEN the notice MUST re-appear for `1.4.0`
 
+### Requirement: The settings hint describes every outbound request truthfully
+
+The upstream token updates hint MUST NOT claim that the freshness check is the only outbound request the app makes. It MUST name its own host and cadence, and the settings page MUST name every opt-in outbound request the app can make (the freshness check and the gallery), each with its host.
+
+#### Scenario: An administrator reads which hosts the app can contact
+
+@e2e exclude static copy on the settings page; proven by the template text (templates/settings/admin.php, Upstream token updates and Theme gallery blocks) and tests/vitest/admin-gallery.spec.js 'is off on a fresh install, names the host and lists nothing'
+
+- GIVEN an administrator on Settings > Administration > Theming
+- WHEN they read the Upstream token updates block and the Gallery block
+- THEN each block MUST name the host it contacts and that it is off by default
+- AND no text on the page MUST claim a single outbound request
