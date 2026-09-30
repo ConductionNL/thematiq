@@ -27,6 +27,7 @@ use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCP\App\IAppManager;
@@ -187,6 +188,7 @@ class ConfigBundleServiceTest extends TestCase {
 			$emailThemingService,
 			$this->fontService,
 			$freshnessService,
+			new ScheduledSwitchStore($config),
 			$logger
 		);
 	}//end setUp()
@@ -271,7 +273,7 @@ class ConfigBundleServiceTest extends TestCase {
 		$bundle = $this->service->export();
 
 		$this->assertSame('nldesign-config-bundle', $bundle['format']);
-		$this->assertSame(1, $bundle['bundleVersion']);
+		$this->assertSame(2, $bundle['bundleVersion']);
 		$this->assertSame('utrecht', $bundle['config']['tokenSet']);
 		$this->assertTrue($bundle['config']['hideSlogan']);
 		$this->assertTrue($bundle['config']['showMenuLabels']);
@@ -637,4 +639,133 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertArrayNotHasKey('environment', $bundle['config']);
 		$this->assertStringNotContainsString('thematiq.environment', (string)json_encode($bundle));
 	}//end testExportNeverCarriesTheEnvironment()
+
+	/**
+	 * The planned switches travel in the bundle without their runtime state.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testExportCarriesPlannedSwitchesWithoutRuntimeState(): void {
+		$this->seedConfig();
+		$this->appConfig['scheduled_switches'] = json_encode([
+			[
+				'id' => 'a1',
+				'tokenSet' => 'utrecht',
+				'startAt' => '2027-04-26T16:00:00Z',
+				'endAt' => '2027-04-28T06:00:00Z',
+				'syncCoreTheming' => true,
+				'createdBy' => 'admin',
+				'createdAt' => '2027-04-01T10:00:00Z',
+				'status' => 'running',
+				'revertTo' => 'nextcloud',
+			],
+		]);
+
+		$switches = $this->service->export()['config']['scheduledSwitches'];
+
+		$this->assertSame(
+			[
+				[
+					'id' => 'a1',
+					'tokenSet' => 'utrecht',
+					'startAt' => '2027-04-26T16:00:00Z',
+					'endAt' => '2027-04-28T06:00:00Z',
+					'syncCoreTheming' => true,
+					'createdBy' => 'admin',
+					'createdAt' => '2027-04-01T10:00:00Z',
+				],
+			],
+			$switches
+		);
+	}//end testExportCarriesPlannedSwitchesWithoutRuntimeState()
+
+	/**
+	 * Scenario "A campaign prepared on acceptance goes to production": the
+	 * planned switch names a custom set that only the bundle carries.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testAPlannedSwitchToABundledCustomSetIsImported(): void {
+		$this->seedConfig();
+		$this->appConfig['scheduled_switches'] = json_encode([
+			[
+				'id' => 'a1',
+				'tokenSet' => 'custom-gemeente-x',
+				'startAt' => '2027-04-26T16:00:00Z',
+				'endAt' => null,
+				'syncCoreTheming' => false,
+				'createdBy' => 'admin',
+				'createdAt' => '2027-04-01T10:00:00Z',
+				'status' => 'planned',
+			],
+		]);
+		$bundle = $this->service->export();
+
+		// Production: a fresh config and no custom sets.
+		$this->appConfig = [];
+		$this->rrmdir($this->appDir);
+		mkdir($this->appDir . '/css/tokens', 0777, true);
+		file_put_contents($this->appDir . '/css/tokens/utrecht.css', ":root {\n  --nldesign-color-primary: #000000;\n}\n");
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertTrue($result['valid'], (string)json_encode($result['errors'] ?? []));
+		$stored = json_decode($this->appConfig['scheduled_switches'], true);
+		$this->assertSame('custom-gemeente-x', $stored[0]['tokenSet']);
+		$this->assertSame('planned', $stored[0]['status']);
+		$this->assertSame(1, $result['sections']['scheduledSwitches']['count']);
+	}//end testAPlannedSwitchToABundledCustomSetIsImported()
+
+	/**
+	 * Scenario "An overlapping plan blocks the whole import".
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testOverlappingPlannedSwitchesBlockTheWholeImport(): void {
+		$bundle = $this->baseBundle(['bundleVersion' => 2]);
+		$bundle['config']['hideSlogan'] = true;
+		$bundle['config']['scheduledSwitches'] = [
+			['id' => 'a1', 'tokenSet' => 'utrecht', 'startAt' => '2027-05-01T00:00:00Z', 'endAt' => '2027-05-07T00:00:00Z', 'syncCoreTheming' => false],
+			['id' => 'a2', 'tokenSet' => 'utrecht', 'startAt' => '2027-05-05T00:00:00Z', 'endAt' => '2027-05-10T00:00:00Z', 'syncCoreTheming' => false],
+		];
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertFalse($result['valid']);
+		$this->assertStringContainsString('overlap', (string)json_encode($result['errors']));
+		$this->assertArrayNotHasKey('hide_slogan', $this->appConfig);
+		$this->assertArrayNotHasKey('scheduled_switches', $this->appConfig);
+	}//end testOverlappingPlannedSwitchesBlockTheWholeImport()
+
+	/**
+	 * A planned switch to a set neither installed nor bundled is refused.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testAPlannedSwitchToAnUnknownSetIsRefused(): void {
+		$bundle = $this->baseBundle(['bundleVersion' => 2]);
+		$bundle['config']['scheduledSwitches'] = [
+			['id' => 'a1', 'tokenSet' => 'custom-nergens', 'startAt' => '2027-05-01T00:00:00Z', 'endAt' => null, 'syncCoreTheming' => false],
+		];
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertFalse($result['valid']);
+		$this->assertStringContainsString('custom-nergens', (string)json_encode($result['errors']));
+	}//end testAPlannedSwitchToAnUnknownSetIsRefused()
+
+	/**
+	 * A version 1 bundle (kept versions from before planned switches) still
+	 * imports and leaves the planned switches alone.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testAVersionOneBundleStillImportsAndKeepsPlannedSwitches(): void {
+		$this->appConfig['scheduled_switches'] = '[{"id":"keep"}]';
+
+		$result = $this->service->import(bundle: $this->baseBundle());
+
+		$this->assertTrue($result['valid'], (string)json_encode($result['errors'] ?? []));
+		$this->assertSame('[{"id":"keep"}]', $this->appConfig['scheduled_switches']);
+	}//end testAVersionOneBundleStillImportsAndKeepsPlannedSwitches()
 }//end class

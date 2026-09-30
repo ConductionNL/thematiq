@@ -103,6 +103,34 @@ if ($_['mockUi'] === true) {
 		</button>
 	</div>
 
+	<!-- Planned token set switches (openspec/specs/scheduled-switch).
+	     admin.js fills the status, the list and the time zone hint. -->
+	<div class="nldesign-scheduled-switches" id="nldesign-scheduled-switches">
+		<h3><?php p($l->t('Planned switches')); ?></h3>
+		<p class="settings-hint"><?php p($l->t('Plan a switch to another token set, for a campaign or a holiday look. With an end time the previous token set comes back by itself.')); ?></p>
+		<p class="settings-hint" id="nldesign-scheduled-status" aria-live="polite"></p>
+		<p class="nldesign-scheduled-cron-warning" id="nldesign-scheduled-cron-warning" role="status" hidden>
+			<?php p($l->t('Background jobs run in AJAX mode, so a planned switch may start late. Choose Cron under Administration settings, Basic settings, Background jobs.')); ?>
+		</p>
+		<form id="nldesign-scheduled-form" class="nldesign-scheduled-form">
+			<label for="nldesign-scheduled-set"><?php p($l->t('Token set')); ?></label>
+			<select id="nldesign-scheduled-set" name="tokenSet">
+				<?php foreach ($_['tokenSets'] as $tokenSet): ?>
+					<option value="<?php p($tokenSet['id']); ?>"><?php p($tokenSet['name']); ?></option>
+				<?php endforeach; ?>
+			</select>
+			<label for="nldesign-scheduled-start"><?php p($l->t('Start')); ?></label>
+			<input type="datetime-local" id="nldesign-scheduled-start" name="startAt" required>
+			<label for="nldesign-scheduled-end"><?php p($l->t('End (optional)')); ?></label>
+			<input type="datetime-local" id="nldesign-scheduled-end" name="endAt">
+			<input type="checkbox" class="checkbox" id="nldesign-scheduled-sync" name="syncCoreTheming">
+			<label for="nldesign-scheduled-sync"><?php p($l->t('Also update the Nextcloud logo and colours')); ?></label>
+			<p class="settings-hint" id="nldesign-scheduled-zone"></p>
+			<button type="submit" class="button primary" id="nldesign-scheduled-submit"><?php p($l->t('Plan switch')); ?></button>
+		</form>
+		<ul class="nldesign-scheduled-list" id="nldesign-scheduled-list"></ul>
+	</div>
+
 	<!-- Active icon pack — read-only indicator (theme-switchable iconography,
 	     openspec/specs/icon-packs/spec.md). Reflects the currently PERSISTED
 	     token set (not an unpublished dropdown selection); no write control

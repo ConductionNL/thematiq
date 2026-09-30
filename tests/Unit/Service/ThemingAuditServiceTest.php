@@ -603,4 +603,25 @@ class ThemingAuditServiceTest extends TestCase {
 		$this->assertSame('version_restored', $entry['action']);
 		$this->assertSame('20260929164000-0001', $entry['new']);
 	}//end testVersionRestoredIsAcceptedAction()
+
+	/**
+	 * scheduled_switch_applied is part of the closed vocabulary, and the
+	 * background job's entry carries actor `system` although cron runs in CLI.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md
+	 */
+	public function testScheduledSwitchAppliedIsAcceptedWithSystemActor(): void {
+		$service = $this->makeService();
+		$service->log(
+			action: 'scheduled_switch_applied',
+			context: ['old' => 'rijkshuisstijl', 'new' => 'koningsdag-oranje', 'actor' => 'system', 'switchId' => 'abc123']
+		);
+
+		$entry = $service->getRecent(limit: 1)[0];
+		$this->assertSame('scheduled_switch_applied', $entry['action']);
+		$this->assertSame('system', $entry['actor']);
+		$this->assertSame('rijkshuisstijl', $entry['old']);
+		$this->assertSame('koningsdag-oranje', $entry['new']);
+		$this->assertSame('abc123', $entry['switchId']);
+	}//end testScheduledSwitchAppliedIsAcceptedWithSystemActor()
 }//end class

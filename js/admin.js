@@ -6282,6 +6282,238 @@
 
 		initComplianceReport()
 
+		/**
+		 * Format a UTC ISO time in the administrator's own time zone.
+		 *
+		 * @param {string} iso The UTC time.
+		 * @return {string} The local date and time.
+		 * @spec openspec/specs/scheduled-switch/spec.md
+		 */
+		function formatLocalTime(iso) {
+			return new Date(iso).toLocaleString([], {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+			})
+		}
+
+		/**
+		 * The "Planned switches" block: status, cron warning, plan form and
+		 * the list with a cancel button per switch. Times are entered and
+		 * shown in the browser's time zone and sent as UTC.
+		 *
+		 * @spec openspec/specs/scheduled-switch/spec.md
+		 */
+		function initScheduledSwitches() {
+			var list = document.getElementById('nldesign-scheduled-list')
+			var form = document.getElementById('nldesign-scheduled-form')
+			if (list === null || form === null) {
+				return
+			}
+			var url = OC.generateUrl('/apps/thematiq/settings/scheduled-switches')
+			var statusEl = document.getElementById('nldesign-scheduled-status')
+			var warning = document.getElementById('nldesign-scheduled-cron-warning')
+			var zone = document.getElementById('nldesign-scheduled-zone')
+			if (zone !== null) {
+				zone.textContent = t(
+					'thematiq',
+					'Times are in your time zone ({zone}).',
+					{ zone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+				)
+			}
+
+			function renderStatus(status) {
+				if (statusEl === null || !status) {
+					return
+				}
+				var lines = []
+				if (status.activeUntil) {
+					lines.push(
+						t(
+							'thematiq',
+							'{set} is active until {time}, then {previous} comes back.',
+							{
+								set: status.activeTokenSet,
+								time: formatLocalTime(status.activeUntil),
+								previous: status.revertTo,
+							},
+						),
+					)
+				}
+				lines.push(
+					status.lastRun
+						? t('thematiq', 'The schedule last ran at {time}.', {
+								time: formatLocalTime(status.lastRun),
+							})
+						: t('thematiq', 'The schedule has not run yet.'),
+				)
+				statusEl.textContent = lines.join(' ')
+				if (warning !== null) {
+					warning.hidden = status.cronWarning !== true
+				}
+			}
+
+			function describe(entry) {
+				var text = entry.endAt
+					? t('thematiq', '{set} from {start} to {end}', {
+							set: entry.tokenSet,
+							start: formatLocalTime(entry.startAt),
+							end: formatLocalTime(entry.endAt),
+						})
+					: t('thematiq', '{set} from {start}, no end', {
+							set: entry.tokenSet,
+							start: formatLocalTime(entry.startAt),
+						})
+				if (entry.status === 'running') {
+					return text + ' (' + t('thematiq', 'running') + ')'
+				}
+				if (entry.status === 'failed') {
+					return (
+						text
+						+ '. '
+						+ t('thematiq', 'Failed: {reason}', {
+							reason: entry.failureReason || '',
+						})
+					)
+				}
+				return text
+			}
+
+			function renderList(switches) {
+				list.innerHTML = ''
+				if (!switches || switches.length === 0) {
+					var empty = document.createElement('li')
+					empty.className = 'settings-hint'
+					empty.textContent = t('thematiq', 'No switches are planned.')
+					list.appendChild(empty)
+					return
+				}
+				switches.forEach(function (entry) {
+					var item = document.createElement('li')
+					item.className = 'nldesign-scheduled-item'
+					if (entry.status === 'failed') {
+						item.classList.add('nldesign-scheduled-item--failed')
+					}
+					var label = document.createElement('span')
+					label.textContent = describe(entry)
+					item.appendChild(label)
+					var cancel = document.createElement('button')
+					cancel.type = 'button'
+					cancel.className = 'button nldesign-scheduled-cancel'
+					cancel.textContent = t('thematiq', 'Cancel')
+					cancel.setAttribute(
+						'aria-label',
+						t('thematiq', 'Cancel the switch to {set}', {
+							set: entry.tokenSet,
+						}),
+					)
+					cancel.addEventListener('click', function () {
+						cancelSwitch(entry.id, cancel)
+					})
+					item.appendChild(cancel)
+					list.appendChild(item)
+				})
+			}
+
+			function load() {
+				return fetch(url, { headers: { requesttoken: OC.requestToken } })
+					.then(function (r) {
+						return r.json()
+					})
+					.then(function (data) {
+						renderStatus(data.status)
+						renderList(data.switches)
+					})
+					.catch(function (err) {
+						console.error('Error loading planned switches:', err)
+					})
+			}
+
+			function cancelSwitch(id, button) {
+				button.disabled = true
+				fetch(url + '/' + encodeURIComponent(id), {
+					method: 'DELETE',
+					headers: { requesttoken: OC.requestToken },
+				})
+					.then(function (r) {
+						return r.json().then(function (body) {
+							if (!r.ok) {
+								notify(
+									body.error
+										|| t(
+											'thematiq',
+											'The switch was not cancelled.',
+										),
+								)
+							}
+							return load()
+						})
+					})
+					.catch(function (err) {
+						console.error('Error cancelling a planned switch:', err)
+						button.disabled = false
+						notify(t('thematiq', 'The switch was not cancelled.'))
+					})
+			}
+
+			function toUtc(value) {
+				return value ? new Date(value).toISOString() : ''
+			}
+
+			form.addEventListener('submit', function (event) {
+				event.preventDefault()
+				var start = document.getElementById('nldesign-scheduled-start').value
+				if (!start) {
+					notify(t('thematiq', 'Enter the start as a date and a time.'))
+					return
+				}
+				var params = {
+					tokenSet: document.getElementById('nldesign-scheduled-set')
+						.value,
+					startAt: toUtc(start),
+					endAt: toUtc(
+						document.getElementById('nldesign-scheduled-end').value,
+					),
+					syncCoreTheming: document.getElementById(
+						'nldesign-scheduled-sync',
+					).checked
+						? '1'
+						: '0',
+				}
+				fetch(url, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						requesttoken: OC.requestToken,
+					},
+					body: new URLSearchParams(params).toString(),
+				})
+					.then(function (r) {
+						return r.json().then(function (body) {
+							if (!r.ok) {
+								notify(
+									body.error
+										|| t(
+											'thematiq',
+											'The switch was not planned.',
+										),
+								)
+								return undefined
+							}
+							form.reset()
+							return load()
+						})
+					})
+					.catch(function (err) {
+						console.error('Error planning a switch:', err)
+						notify(t('thematiq', 'The switch was not planned.'))
+					})
+			})
+
+			load()
+		}
+
+		initScheduledSwitches()
+
 		/* ==========================================================================
 		 * CONFIGURATION BUNDLE — complete-config OTAP promotion download/upload
 		 * (config-portability spec). Distinct from the token-editor overrides

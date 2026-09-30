@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OCA\Thematiq\Controller\SettingsController;
+use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingService;
@@ -59,7 +60,8 @@ class SettingsControllerGroupThemingTest extends TestCase {
 			$this->createMock(ThemingAuditService::class),
 			$this->createMock(EmailThemingService::class),
 			$this->createMock(UpstreamFreshnessService::class),
-			$groupThemingService
+			$groupThemingService,
+			$this->createMock(ActiveTokenSetService::class)
 		);
 	}//end makeController()
 

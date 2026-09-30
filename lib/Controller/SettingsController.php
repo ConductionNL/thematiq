@@ -33,6 +33,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingService;
@@ -164,6 +165,13 @@ class SettingsController extends Controller {
 	private GroupThemingService $groupThemingService;
 
 	/**
+	 * The one token set write path, shared with the scheduled switch job.
+	 *
+	 * @var ActiveTokenSetService
+	 */
+	private ActiveTokenSetService $activeTokenSet;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
@@ -178,6 +186,7 @@ class SettingsController extends Controller {
 	 * @param EmailThemingService $emailThemingService The email theming service.
 	 * @param UpstreamFreshnessService $freshnessService The upstream token freshness service.
 	 * @param GroupThemingService $groupThemingService The group theming mapping/resolution service.
+	 * @param ActiveTokenSetService $activeTokenSet The token set write path.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - This is the app's aggregating settings
 	 * controller; each dependency backs one settings endpoint family (token set, theming sync,
@@ -198,6 +207,7 @@ class SettingsController extends Controller {
 		EmailThemingService $emailThemingService,
 		UpstreamFreshnessService $freshnessService,
 		GroupThemingService $groupThemingService,
+		ActiveTokenSetService $activeTokenSet,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->config = $config;
@@ -210,6 +220,7 @@ class SettingsController extends Controller {
 		$this->emailThemingService = $emailThemingService;
 		$this->freshnessService = $freshnessService;
 		$this->groupThemingService = $groupThemingService;
+		$this->activeTokenSet = $activeTokenSet;
 	}//end __construct()
 
 	/**
@@ -221,23 +232,15 @@ class SettingsController extends Controller {
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setTokenSet(string $tokenSet): JSONResponse {
-		if ($this->tokenSetService->isValidTokenSet(tokenSetId: $tokenSet) === false) {
+		try {
+			$this->activeTokenSet->switchTo(tokenSet: $tokenSet);
+		} catch (\InvalidArgumentException $e) {
 			return new JSONResponse(['error' => 'Invalid token set'], 400);
 		}
-
-		$previous = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
-		$this->config->setAppValue(Application::APP_ID, 'token_set', $tokenSet);
-
-		$this->auditService->log(
-			action: 'token_set_changed',
-			context: [
-				'old' => $previous,
-				'new' => $tokenSet,
-			]
-		);
 
 		return new JSONResponse(['status' => 'ok', 'tokenSet' => $tokenSet]);
 	}//end setTokenSet()
