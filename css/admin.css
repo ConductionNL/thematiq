@@ -91,6 +91,17 @@
 	color: var(--color-text-maxcontrast, #767676);
 }
 
+/* A custom set that passes its checks: a badge like the warning one, not
+   loose text beside the buttons. */
+.nldesign-badge--ok {
+	background: color-mix(
+		in srgb,
+		var(--color-success-text, var(--color-success, #2d7b41)) 12%,
+		var(--color-main-background)
+	);
+	color: var(--color-success-text, var(--color-success, #2d7b41));
+}
+
 /* Active icon pack — read-only indicator (theme-switchable iconography,
    openspec/specs/icon-packs/spec.md). */
 .nldesign-icon-pack-indicator {
@@ -119,11 +130,60 @@
 }
 
 .nldesign-scheduled-form {
+	margin-bottom: 12px;
+}
+
+/* ==========================================================================
+ * Shared form layout for the blocks at the top of the page (planned switches,
+ * the two ways to add a custom token set). Each field carries its label ABOVE
+ * the control, so a row of fields reads as label/control pairs rather than as
+ * one run of words and boxes that wraps at arbitrary points.
+ * ========================================================================== */
+.nldesign-fields {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px 16px;
+	margin: 12px 0;
+}
+
+.nldesign-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.nldesign-field label {
+	font-weight: 600;
+}
+
+.nldesign-field input[type='text'],
+.nldesign-field select {
+	min-width: 220px;
+	margin: 0;
+}
+
+.nldesign-field input[type='datetime-local'] {
+	margin: 0;
+}
+
+/* The hint under a row of fields sits with that row, not a paragraph away. */
+#nldesign-settings .nldesign-field-hint {
+	margin: -4px 0 12px;
+}
+
+.nldesign-field-check {
+	display: flex;
 	align-items: center;
-	gap: 8px;
 	margin-bottom: 12px;
+}
+
+.nldesign-form-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 12px;
 }
 
 .nldesign-scheduled-cron-warning {
@@ -148,9 +208,65 @@
 
 /* Token reference links (openspec/specs/token-reference/spec.md). */
 .nldesign-token-reference-link {
-	margin-inline-start: 8px;
 	color: var(--color-main-text);
 	text-decoration: underline;
+}
+
+/* The token set selector: the label over the select and its badges, then a
+   row with what can be done with the selected set. The links sit together at
+   the end of that row, so they wrap as a pair instead of one at a time. */
+.nldesign-token-set-selector {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 1.5em;
+}
+
+.nldesign-token-set-selector > label {
+	font-weight: 600;
+}
+
+.nldesign-token-set-row,
+.nldesign-token-set-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.nldesign-token-set-row select {
+	min-width: 260px;
+	margin: 0;
+}
+
+.nldesign-token-set-row .nldesign-badge {
+	margin-top: 0;
+}
+
+.nldesign-token-set-links {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-inline-start: 8px;
+}
+
+/* The OTAP environment note: a quiet line with the command under it, not a
+   paragraph that runs into the token set label. */
+.nldesign-environment {
+	margin-bottom: 1.5em;
+}
+
+#nldesign-settings .nldesign-environment .settings-hint {
+	margin-bottom: 4px;
+}
+
+.nldesign-environment code {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: var(--border-radius);
+	background: var(--color-background-dark);
+	font-family: var(--font-face-monospace, monospace);
+	font-size: 0.9em;
 }
 
 /* Theme gallery (openspec/specs/theme-gallery/spec.md). */
@@ -541,13 +657,58 @@
 	margin: 12px 0;
 }
 
-.nldesign-upload-name {
-	min-width: 220px;
-	padding: 6px 10px;
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius);
-	background: var(--color-main-background);
+/* The two ways to add a set, as tabs drawn like the token editor's own: an
+   underline on the selected one over a rule under the strip. Scoped under the
+   panel's ID because core paints every plain <button> as a light-primary
+   button. */
+#nldesign-settings .nldesign-create-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	border-bottom: 1px solid var(--color-border-dark);
+}
+
+#nldesign-settings .nldesign-create-tab {
+	min-height: 0;
+	margin: 0 0 -1px;
+	padding: 9px 14px;
+	border: 0;
+	border-bottom: 3px solid transparent;
+	border-radius: 0;
+	background: none;
+	color: var(--color-text-maxcontrast);
+	font-weight: 700;
+	box-shadow: none;
+	cursor: pointer;
+}
+
+#nldesign-settings .nldesign-create-tab:hover {
 	color: var(--color-main-text);
+}
+
+#nldesign-settings .nldesign-create-tab.active {
+	border-bottom-color: var(--color-primary-element);
+	color: var(--color-main-text);
+}
+
+.nldesign-create-panels {
+	padding-top: 12px;
+	margin-bottom: 1.5em;
+}
+
+/* `hidden` is honoured explicitly: nothing may give a panel a display that
+   beats it. */
+.nldesign-create-panel[hidden] {
+	display: none;
+}
+
+#nldesign-settings .nldesign-create-panel > .settings-hint {
+	margin-bottom: 0;
+}
+
+.nldesign-custom-set-heading {
+	margin-bottom: 0;
+	font-weight: 600;
 }
 
 .nldesign-import-result {
@@ -566,9 +727,19 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 8px;
+	gap: 8px 12px;
 	padding: 8px 0;
 	border-top: 1px solid var(--color-border);
+}
+
+.nldesign-custom-set-row .nldesign-badge {
+	margin-top: 0;
+}
+
+/* The per-set links read quieter than the buttons beside them. */
+.nldesign-custom-set-row .nldesign-token-reference-link {
+	color: var(--color-text-maxcontrast);
+	font-size: 0.9em;
 }
 
 .nldesign-custom-set-name {
@@ -1974,10 +2145,6 @@
 }
 
 /* Theme preview ("proefdraaien") controls in the settings panel. */
-#nldesign-preview-btn {
-	margin-left: 12px;
-}
-
 .nldesign-active-preview {
 	display: flex;
 	align-items: center;
@@ -2274,14 +2441,34 @@
 }
 
 /* The simple brand form preview (openspec/specs/simple-brand-form/spec.md). */
-.nldesign-brand-form {
-	margin-top: 1.5em;
+/* A colour well the size of a text field's height, not the sliver a bare
+   `<input type="color">` draws. */
+#nldesign-settings .nldesign-brand-colour {
+	width: 64px;
+	height: 36px;
+	margin: 0;
+	padding: 2px;
+	border: 1px solid var(--color-border-maxcontrast, var(--color-border));
+	border-radius: var(--border-radius);
+	background: var(--color-main-background);
+	cursor: pointer;
+}
+
+.nldesign-brand-form input[type='file'] {
+	max-width: 100%;
+	margin: 0;
+}
+
+#nldesign-settings .nldesign-brand-contrast {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+	font-size: 0.9em;
 }
 
 .nldesign-brand-preview {
 	display: flex;
 	gap: 8px;
-	margin: 1em 0 0.5em;
+	margin: 0 0 0.5em;
 	padding: 12px;
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-large);

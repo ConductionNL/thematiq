@@ -5872,6 +5872,7 @@
 					badge.classList.add('nldesign-badge--warning')
 					badge.textContent = t('thematiq', 'Contrast warning')
 				} else {
+					badge.classList.add('nldesign-badge--ok')
 					badge.textContent = t('thematiq', 'WCAG AA OK')
 				}
 				row.appendChild(badge)
@@ -6029,8 +6030,62 @@
 			)
 		}
 
+		/**
+		 * The two ways to add a custom token set, as tabs: a click or the arrow,
+		 * Home and End keys select a tab and show its panel. Only the selected
+		 * tab is in the tab order, the way a WAI-ARIA tablist moves focus.
+		 */
+		function initCreateTabs() {
+			var tablist = document.querySelector('.nldesign-create-tabs')
+			if (tablist === null) {
+				return
+			}
+			var tabs = Array.prototype.slice.call(
+				tablist.querySelectorAll('.nldesign-create-tab'),
+			)
+
+			function select(tab) {
+				tabs.forEach(function (candidate) {
+					var on = candidate === tab
+					candidate.classList.toggle('active', on)
+					candidate.setAttribute('aria-selected', on ? 'true' : 'false')
+					candidate.tabIndex = on ? 0 : -1
+					var panel = document.getElementById(
+						candidate.getAttribute('aria-controls'),
+					)
+					if (panel !== null) {
+						panel.hidden = !on
+					}
+				})
+			}
+
+			tabs.forEach(function (tab, index) {
+				tab.addEventListener('click', function () {
+					select(tab)
+				})
+				tab.addEventListener('keydown', function (event) {
+					var next = null
+					if (event.key === 'ArrowRight') {
+						next = tabs[(index + 1) % tabs.length]
+					} else if (event.key === 'ArrowLeft') {
+						next = tabs[(index - 1 + tabs.length) % tabs.length]
+					} else if (event.key === 'Home') {
+						next = tabs[0]
+					} else if (event.key === 'End') {
+						next = tabs[tabs.length - 1]
+					}
+					if (next !== null) {
+						event.preventDefault()
+						select(next)
+						next.focus()
+					}
+				})
+			})
+		}
+
 		// Initialise the custom token set panel on page load.
 		initCustomTokenSets()
+		initCreateTabs()
 		initBrandForm()
 
 		/* ==========================================================================

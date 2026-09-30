@@ -500,7 +500,12 @@
         "\"{name}\" is saved and is now in the dropdown. Select it to apply it.": "\"{name}\" is opgeslagen en staat nu in de keuzelijst. Kies de set om hem toe te passen.",
         "Enter both colours as a hex colour, for example #c8102e.": "Vul beide kleuren in als hexkleur, bijvoorbeeld #c8102e.",
         "The logo exceeds the 512 KB size limit.": "Het logo is groter dan de limiet van 512 KB.",
-        "The logo must be an SVG, PNG, JPG, GIF or WebP image.": "Het logo moet een SVG-, PNG-, JPG-, GIF- of WebP-afbeelding zijn."
+        "The logo must be an SVG, PNG, JPG, GIF or WebP image.": "Het logo moet een SVG-, PNG-, JPG-, GIF- of WebP-afbeelding zijn.",
+        "Add your own house style in one of two ways. Both end up in the list below and in the Design token set dropdown above.": "Voeg je eigen huisstijl op een van twee manieren toe. Beide komen in de lijst hieronder en in de keuzelijst Design token set hierboven.",
+        "Upload a file": "Een bestand uploaden",
+        "An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.": "Een NL Design CSS-bestand (--nldesign-*-variabelen) of een W3C Design Tokens JSON-bestand.",
+        "Your custom token sets": "Je eigen token sets",
+        "Add a custom token set": "Een eigen token set toevoegen"
     },
     "plurals": {}
 }

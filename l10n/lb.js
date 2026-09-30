@@ -501,7 +501,12 @@ OC.L10N.register(
         "\"{name}\" is saved and is now in the dropdown. Select it to apply it.": "\"{name}\" is saved and is now in the dropdown. Select it to apply it.",
         "Enter both colours as a hex colour, for example #c8102e.": "Enter both colours as a hex colour, for example #c8102e.",
         "The logo exceeds the 512 KB size limit.": "The logo exceeds the 512 KB size limit.",
-        "The logo must be an SVG, PNG, JPG, GIF or WebP image.": "The logo must be an SVG, PNG, JPG, GIF or WebP image."
+        "The logo must be an SVG, PNG, JPG, GIF or WebP image.": "The logo must be an SVG, PNG, JPG, GIF or WebP image.",
+        "Add your own house style in one of two ways. Both end up in the list below and in the Design token set dropdown above.": "Add your own house style in one of two ways. Both end up in the list below and in the Design token set dropdown above.",
+        "Upload a file": "Upload a file",
+        "An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.": "An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.",
+        "Your custom token sets": "Your custom token sets",
+        "Add a custom token set": "Add a custom token set"
     },
     "nplurals=2; plural=(n != 1);"
 )

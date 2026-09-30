@@ -182,3 +182,62 @@ describe('admin.js simple brand form', () => {
 		).toContain('already exists')
 	})
 })
+
+describe('admin.js custom token set tabs', () => {
+	beforeEach(() => {
+		install()
+	})
+
+	afterEach(() => {
+		document.body.innerHTML = ''
+		delete window.NldesignBrandForm
+		vi.restoreAllMocks()
+	})
+
+	async function loadTabs() {
+		document.body.innerHTML = `
+			<div id="nldesign-settings" class="section">
+				<div class="nldesign-create-tabs" role="tablist">
+					<button class="nldesign-create-tab active" role="tab" id="tab-upload" aria-selected="true" aria-controls="panel-upload">Upload a file</button>
+					<button class="nldesign-create-tab" role="tab" id="tab-colours" aria-selected="false" aria-controls="panel-colours" tabindex="-1">Start from your colours</button>
+				</div>
+				<div id="panel-upload" role="tabpanel"></div>
+				<div id="panel-colours" role="tabpanel" hidden></div>
+				<div id="nldesign-custom-set-list"></div>
+			</div>
+		`
+		vi.resetModules()
+		await import('../../js/admin.js?t=' + Math.random())
+		await flush()
+	}
+
+	it('shows the panel of the tab that is clicked and hides the other', async () => {
+		await loadTabs()
+		document.getElementById('tab-colours').click()
+
+		expect(document.getElementById('panel-colours').hidden).toBe(false)
+		expect(document.getElementById('panel-upload').hidden).toBe(true)
+		expect(
+			document.getElementById('tab-colours').getAttribute('aria-selected'),
+		).toBe('true')
+		expect(document.getElementById('tab-upload').tabIndex).toBe(-1)
+	})
+
+	it('moves to the next tab with the arrow key and wraps around', async () => {
+		await loadTabs()
+		const upload = document.getElementById('tab-upload')
+		upload.dispatchEvent(
+			new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
+		)
+		expect(document.getElementById('panel-colours').hidden).toBe(false)
+		expect(document.activeElement.id).toBe('tab-colours')
+
+		document
+			.getElementById('tab-colours')
+			.dispatchEvent(
+				new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
+			)
+		expect(document.getElementById('panel-upload').hidden).toBe(false)
+		expect(document.activeElement.id).toBe('tab-upload')
+	})
+})
