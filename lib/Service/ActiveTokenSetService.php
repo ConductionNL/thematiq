@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use InvalidArgumentException;
 use OCA\Thematiq\AppInfo\Application;
 use OCP\IConfig;
 
@@ -86,7 +87,7 @@ class ActiveTokenSetService {
 	 */
 	public function switchTo(string $tokenSet, string $auditAction = 'token_set_changed', array $auditContext = []): string {
 		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
-			throw new \InvalidArgumentException('Invalid token set');
+			throw new InvalidArgumentException('Invalid token set');
 		}
 
 		$previous = $this->getActive();

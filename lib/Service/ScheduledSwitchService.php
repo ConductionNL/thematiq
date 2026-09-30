@@ -121,21 +121,21 @@ class ScheduledSwitchService {
 	 */
 	public function create(string $tokenSet, string $startAt, ?string $endAt, bool $syncCoreTheming, string $createdBy): array {
 		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
-			throw new ScheduledSwitchException($this->l10n->t('The token set {set} does not exist.', ['set' => $tokenSet]));
+			throw new ScheduledSwitchException(message: $this->l10n->t('The token set {set} does not exist.', ['set' => $tokenSet]));
 		}
 
-		$start = ScheduledSwitchStore::toUtc(value: $startAt);
+		$start = $this->store->toUtc(value: $startAt);
 		$end = null;
 		if ($endAt !== null) {
-			$end = ScheduledSwitchStore::toUtc(value: $endAt);
+			$end = $this->store->toUtc(value: $endAt);
 		}
 
 		if ($start === null || ($endAt !== null && $end === null)) {
-			throw new ScheduledSwitchException($this->l10n->t('Enter the start and end as a date and a time.'));
+			throw new ScheduledSwitchException(message: $this->l10n->t('Enter the start and end as a date and a time.'));
 		}
 
 		if ($end !== null && strtotime($end) <= strtotime($start)) {
-			throw new ScheduledSwitchException($this->l10n->t('The end must be after the start.'));
+			throw new ScheduledSwitchException(message: $this->l10n->t('The end must be after the start.'));
 		}
 
 		$entry = [
@@ -150,10 +150,13 @@ class ScheduledSwitchService {
 		];
 
 		$entries = $this->store->all();
-		$overlap = ScheduledSwitchStore::findOverlap(candidate: $entry, entries: $entries);
+		$overlap = $this->store->findOverlap(candidate: $entry, entries: $entries);
 		if ($overlap !== null) {
 			throw new ScheduledSwitchException(
-				$this->l10n->t('This window overlaps the planned switch to {set}. Change the times or cancel that switch first.', ['set' => (string)$overlap['tokenSet']])
+				message: $this->l10n->t(
+					'This window overlaps the planned switch to {set}. Change the times or cancel that switch first.',
+					['set' => (string)$overlap['tokenSet']]
+				)
 			);
 		}
 
@@ -184,7 +187,10 @@ class ScheduledSwitchService {
 
 			if (($entry['status'] ?? 'planned') === 'running' && $this->switchBack(entry: $entry) === false) {
 				throw new ScheduledSwitchException(
-					$this->l10n->t('The token set {set} no longer exists, so the switch cannot go back to it. Choose a token set by hand.', ['set' => (string)($entry['revertTo'] ?? '')])
+					message: $this->l10n->t(
+						'The token set {set} no longer exists, so the switch cannot go back to it. Choose a token set by hand.',
+						['set' => (string)($entry['revertTo'] ?? '')]
+					)
 				);
 			}
 
@@ -193,7 +199,7 @@ class ScheduledSwitchService {
 			return;
 		}
 
-		throw new ScheduledSwitchNotFoundException($this->l10n->t('This planned switch does not exist any more.'));
+		throw new ScheduledSwitchNotFoundException(message: $this->l10n->t('This planned switch does not exist any more.'));
 	}//end cancel()
 
 	/**
@@ -276,7 +282,10 @@ class ScheduledSwitchService {
 			}
 
 			$entry['status'] = 'failed';
-			$entry['failureReason'] = $this->l10n->t('The token set {set} no longer exists, so the switch could not go back to it.', ['set' => (string)$entry['revertTo']]);
+			$entry['failureReason'] = $this->l10n->t(
+				'The token set {set} no longer exists, so the switch could not go back to it.',
+				['set' => (string)$entry['revertTo']]
+			);
 		}
 
 		return $entry;
@@ -291,7 +300,8 @@ class ScheduledSwitchService {
 	 */
 	private function start(array $entry): array {
 		$context = ['actor' => 'system', 'switchId' => $entry['id']];
-		if (($entry['syncCoreTheming'] ?? false) === true && $this->tokenSets->isValidTokenSet(tokenSetId: $entry['tokenSet']) === true) {
+		$wantsCoreSync = (($entry['syncCoreTheming'] ?? false) === true);
+		if ($wantsCoreSync === true && $this->tokenSets->isValidTokenSet(tokenSetId: $entry['tokenSet']) === true) {
 			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $entry['tokenSet']);
 		}
 
@@ -299,7 +309,10 @@ class ScheduledSwitchService {
 			$entry['revertTo'] = $this->activeTokenSet->switchTo(tokenSet: $entry['tokenSet'], auditAction: self::AUDIT_ACTION, auditContext: $context);
 		} catch (\InvalidArgumentException $e) {
 			$reason = $this->l10n->t('The token set {set} no longer exists, so the switch was not applied.', ['set' => $entry['tokenSet']]);
-			$this->logger->warning('thematiq: planned switch {id} to {set} failed: the set does not exist', ['id' => $entry['id'], 'set' => $entry['tokenSet']]);
+			$this->logger->warning(
+				'thematiq: planned switch {id} to {set} failed: the set does not exist',
+				['id' => $entry['id'], 'set' => $entry['tokenSet']]
+			);
 			$this->auditService->log(
 				action: self::AUDIT_ACTION,
 				context: ['old' => $this->activeTokenSet->getActive(), 'new' => null, 'actor' => 'system', 'switchId' => $entry['id'], 'reason' => $reason]

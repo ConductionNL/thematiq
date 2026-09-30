@@ -20,6 +20,9 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use DateTimeImmutable;
+use DateTimeZone;
+use Exception;
 use OCA\Thematiq\AppInfo\Application;
 use OCP\IConfig;
 
@@ -122,18 +125,18 @@ class ScheduledSwitchStore {
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
-	public static function toUtc(mixed $value): ?string {
+	public function toUtc(mixed $value): ?string {
 		if (is_string($value) === false || preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/', $value) !== 1) {
 			return null;
 		}
 
 		try {
-			$time = new \DateTimeImmutable($value, new \DateTimeZone('UTC'));
-		} catch (\Exception $e) {
+			$time = new DateTimeImmutable($value, new DateTimeZone('UTC'));
+		} catch (Exception $e) {
 			return null;
 		}
 
-		return $time->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z');
+		return $time->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z');
 	}//end toUtc()
 
 	/**
@@ -147,14 +150,14 @@ class ScheduledSwitchStore {
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
-	public static function findOverlap(array $candidate, array $entries): ?array {
-		[$start, $end] = self::window(entry: $candidate);
+	public function findOverlap(array $candidate, array $entries): ?array {
+		[$start, $end] = $this->window(entry: $candidate);
 		foreach ($entries as $entry) {
 			if (($entry['status'] ?? 'planned') === 'failed' || ($entry['id'] ?? null) === ($candidate['id'] ?? null)) {
 				continue;
 			}
 
-			[$otherStart, $otherEnd] = self::window(entry: $entry);
+			[$otherStart, $otherEnd] = $this->window(entry: $entry);
 			if ($start < $otherEnd && $otherStart < $end) {
 				return $entry;
 			}
@@ -186,7 +189,7 @@ class ScheduledSwitchStore {
 				continue;
 			}
 
-			$overlap = self::findOverlap(candidate: $entry, entries: $entries);
+			$overlap = $this->findOverlap(candidate: $entry, entries: $entries);
 			if ($overlap !== null) {
 				$errors[] = 'Planned switch ' . $index . ' overlaps planned switch ' . (string)$overlap['id'] . '.';
 				continue;
@@ -215,21 +218,13 @@ class ScheduledSwitchStore {
 			return null;
 		}
 
-		$start = self::toUtc(value: ($item['startAt'] ?? null));
+		$start = $this->toUtc(value: ($item['startAt'] ?? null));
 		$end = null;
 		if (($item['endAt'] ?? null) !== null) {
-			$end = self::toUtc(value: $item['endAt']);
+			$end = $this->toUtc(value: $item['endAt']);
 		}
 
-		$message = null;
-		if ($start === null || (($item['endAt'] ?? null) !== null && $end === null)) {
-			$message = 'a time does not parse.';
-		} else if ($end !== null && strtotime($end) <= strtotime($start)) {
-			$message = 'the end is not after the start.';
-		} else if ($setExists($item['tokenSet']) !== true) {
-			$message = 'token set "' . $item['tokenSet'] . '" is neither installed nor in this bundle.';
-		}
-
+		$message = $this->importProblem(item: $item, start: $start, end: $end, setExists: $setExists);
 		if ($message !== null) {
 			$errors[] = $prefix . $message;
 			return null;
@@ -248,13 +243,39 @@ class ScheduledSwitchStore {
 	}//end validateImportEntry()
 
 	/**
+	 * What is wrong with one bundle entry whose id and token set are strings, if anything.
+	 *
+	 * @param array<string, mixed> $item      The entry.
+	 * @param string|null          $start     Its start in UTC, null when it does not parse.
+	 * @param string|null          $end       Its end in UTC, null when absent or unparsable.
+	 * @param callable             $setExists Answers whether a token set id exists.
+	 *
+	 * @return string|null The problem, or null when the entry is fine.
+	 */
+	private function importProblem(array $item, ?string $start, ?string $end, callable $setExists): ?string {
+		if ($start === null || (($item['endAt'] ?? null) !== null && $end === null)) {
+			return 'a time does not parse.';
+		}
+
+		if ($end !== null && strtotime($end) <= strtotime($start)) {
+			return 'the end is not after the start.';
+		}
+
+		if ($setExists($item['tokenSet']) !== true) {
+			return 'token set "' . $item['tokenSet'] . '" is neither installed nor in this bundle.';
+		}
+
+		return null;
+	}//end importProblem()
+
+	/**
 	 * The window of an entry in seconds; no end means forever.
 	 *
 	 * @param array<string, mixed> $entry The entry.
 	 *
 	 * @return array{0: int, 1: int} Start and end.
 	 */
-	private static function window(array $entry): array {
+	private function window(array $entry): array {
 		$start = (int)strtotime((string)($entry['startAt'] ?? ''));
 		$end = PHP_INT_MAX;
 		if (($entry['endAt'] ?? null) !== null) {

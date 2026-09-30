@@ -875,7 +875,9 @@ class ConfigBundleService {
 		$bundledIds = array_column(($resolved['customTokenSets'] ?? []), 'id');
 		$result = $this->scheduledSwitches->validateImport(
 			raw: $config['scheduledSwitches'],
-			setExists: fn (string $id): bool => (in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true)
+			setExists: fn (string $id): bool => (
+				in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
+			)
 		);
 
 		foreach ($result['errors'] as $message) {
