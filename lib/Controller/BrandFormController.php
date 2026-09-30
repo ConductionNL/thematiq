@@ -133,7 +133,10 @@ class BrandFormController extends Controller {
 			return new JSONResponse(['error' => $e->getMessage()], $code);
 		}
 
-		$this->audit->log(action: 'custom_set_uploaded', context: ['id' => $result['id'], 'name' => $name, 'declarationCount' => count($derived['declarations'])]);
+		$this->audit->log(
+			action: 'custom_set_uploaded',
+			context: ['id' => $result['id'], 'name' => $name, 'declarationCount' => count($derived['declarations'])]
+		);
 
 		return new JSONResponse(
 			[

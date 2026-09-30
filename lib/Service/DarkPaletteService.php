@@ -447,7 +447,8 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	private function isBrandPrimaryToken(string $token): bool {
-		return ($token === '--nldesign-color-primary' || $token === '--nldesign-color-primary-hover');
+		// The text on primary stays with it: a kept primary under a remapped grey text fell to 2.2:1.
+		return in_array($token, ['--nldesign-color-primary', '--nldesign-color-primary-hover', '--nldesign-color-primary-text'], true);
 	}//end isBrandPrimaryToken()
 
 	/**

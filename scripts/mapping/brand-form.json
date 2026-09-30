@@ -5,7 +5,12 @@
 		"--nldesign-color-primary-text": ["onColor", "primary"],
 		"--nldesign-color-primary-hover": ["darken", "primary", 0.15],
 		"--nldesign-color-primary-light": ["mix", "primary", "background", 0.12],
-		"--nldesign-color-primary-light-hover": ["mix", "primary", "background", 0.22],
+		"--nldesign-color-primary-light-hover": [
+			"mix",
+			"primary",
+			"background",
+			0.22
+		],
 		"--nldesign-color-header-background": ["from", "primary"],
 		"--nldesign-color-header-text": ["onColor", "primary"],
 		"--nldesign-color-nav-background": ["from", "background"],

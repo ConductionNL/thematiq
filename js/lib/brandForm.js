@@ -63,7 +63,9 @@
 	 * @return {string} The text colour.
 	 */
 	function onColor(background) {
-		return ratio(background, '#ffffff') >= ratio(background, '#000000') ? '#ffffff' : '#000000'
+		return ratio(background, '#ffffff') >= ratio(background, '#000000')
+			? '#ffffff'
+			: '#000000'
 	}
 
 	/**
@@ -80,18 +82,22 @@
 		var fallback = defaults[token] || ''
 
 		switch (rule[0]) {
-		case 'from':
-			return first
-		case 'onColor':
-			return onColor(first)
-		case 'darken':
-			return converter.darken(first, Number(rule[2] || 0))
-		case 'mix':
-			return converter.mix(first, known[rule[2]] || '', Number(rule[3] === undefined ? 1 : rule[3]))
-		case 'legible':
-			return ratio(first, known.background) >= TEXT_MIN ? first : fallback
-		default:
-			return fallback
+			case 'from':
+				return first
+			case 'onColor':
+				return onColor(first)
+			case 'darken':
+				return converter.darken(first, Number(rule[2] || 0))
+			case 'mix':
+				return converter.mix(
+					first,
+					known[rule[2]] || '',
+					Number(rule[3] === undefined ? 1 : rule[3]),
+				)
+			case 'legible':
+				return ratio(first, known.background) >= TEXT_MIN ? first : fallback
+			default:
+				return fallback
 		}
 	}
 

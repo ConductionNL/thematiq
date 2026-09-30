@@ -15,7 +15,10 @@ import { describe, expect, it } from 'vitest'
 
 const require = createRequire(import.meta.url)
 const fixture = JSON.parse(
-	readFileSync(new URL('../Unit/fixtures/brand-form-parity.json', import.meta.url), 'utf8'),
+	readFileSync(
+		new URL('../Unit/fixtures/brand-form-parity.json', import.meta.url),
+		'utf8',
+	),
 )
 
 describe('brandForm.derive', () => {
@@ -24,7 +27,9 @@ describe('brandForm.derive', () => {
 
 		expect(fixture.cases.length).toBeGreaterThan(2)
 		fixture.cases.forEach((c) => {
-			expect(brandForm.derive(fixture.inputs, c.primary, c.background)).toEqual(c.expected)
+			expect(
+				brandForm.derive(fixture.inputs, c.primary, c.background),
+			).toEqual(c.expected)
 		})
 	})
 
@@ -32,7 +37,9 @@ describe('brandForm.derive', () => {
 		const brandForm = require('../../js/lib/brandForm.js')
 		const result = brandForm.derive(fixture.inputs, '#c8102e', '#ffffff')
 
-		expect(Object.keys(result.declarations)).toEqual(Object.keys(fixture.inputs.rules))
+		expect(Object.keys(result.declarations)).toEqual(
+			Object.keys(fixture.inputs.rules),
+		)
 	})
 
 	it('refuses a colour that is not hex', () => {
