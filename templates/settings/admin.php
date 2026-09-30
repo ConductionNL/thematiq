@@ -631,7 +631,7 @@ if ($_['mockUi'] === true) {
 	<div class="nldesign-upstream-freshness" id="nldesign-upstream-freshness" style="margin-top:2em">
 		<h3><?php p($l->t('Upstream token updates')); ?></h3>
 		<p class="settings-hint">
-			<?php p($l->t('Optionally check once a day whether the upstream NL Design System themes have new tokens. This is the only outbound network request this app makes; it contacts api.github.com and never applies anything automatically — you always review and apply updates yourself.')); ?>
+			<?php p($l->t('Check once a day whether the upstream NL Design System themes have new tokens. The check is off by default and contacts api.github.com. It never applies anything: you review and apply updates yourself.')); ?>
 		</p>
 		<div class="nldesign-option">
 			<input type="checkbox"
@@ -646,6 +646,23 @@ if ($_['mockUi'] === true) {
 			 class="nldesign-upstream-freshness-notices"
 			 role="group"
 			 aria-label="<?php p($l->t('Upstream token updates')); ?>"></div>
+	</div>
+
+	<!-- Theme gallery: an opt-in index of house styles others built
+	     (openspec/specs/theme-gallery/spec.md). Off by default; admin.js
+	     puts the index host in the toggle label and fills the list. -->
+	<div class="nldesign-gallery" id="nldesign-gallery" style="margin-top:2em">
+		<h3><?php p($l->t('Theme gallery')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Install a house style that another organisation built. The gallery is off by default. When it is on, this page reads the gallery index while you have it open.')); ?>
+		</p>
+		<div class="nldesign-option">
+			<input type="checkbox" id="nldesign-gallery-toggle" class="checkbox">
+			<label for="nldesign-gallery-toggle" id="nldesign-gallery-toggle-label"><?php p($l->t('Show the theme gallery')); ?></label>
+		</div>
+		<p class="settings-hint" id="nldesign-gallery-status" role="status" aria-live="polite"></p>
+		<ul class="nldesign-gallery-list" id="nldesign-gallery-list"
+			aria-label="<?php p($l->t('Theme gallery')); ?>"></ul>
 	</div>
 
 	<!-- Theming audit log — who changed which theming setting, from what, to

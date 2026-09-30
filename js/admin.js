@@ -5614,6 +5614,20 @@
 				}
 				row.appendChild(badge)
 
+				// A set installed from the theme gallery names its source and
+				// licence (openspec/specs/theme-gallery/spec.md).
+				if (set.provenance && set.provenance.sourceUrl) {
+					var provenance = document.createElement('a')
+					provenance.className = 'nldesign-custom-set-provenance'
+					provenance.href = set.provenance.sourceUrl
+					provenance.target = '_blank'
+					provenance.rel = 'noopener noreferrer'
+					provenance.textContent = t('thematiq', 'From the gallery, licence {licence}', {
+						licence: set.provenance.licence || '',
+					})
+					row.appendChild(provenance)
+				}
+
 				var downloadBtn = document.createElement('button')
 				downloadBtn.type = 'button'
 				downloadBtn.className = 'nldesign-btn nldesign-btn--small'
@@ -6989,6 +7003,192 @@
 
 		// Initialise the upstream freshness panel on page load.
 		initUpstreamFreshness()
+
+		/**
+		 * Theme gallery (openspec/specs/theme-gallery/spec.md): an opt-in
+		 * index of house styles. The toggle label names the index host, the
+		 * list shows each entry with its swatches, licence, source and
+		 * contrast result, and install or update runs the upload path on the
+		 * server. Nothing is fetched from the index while the toggle is off;
+		 * the server makes no request then either.
+		 */
+		function initGallery() {
+			var toggle = document.getElementById('nldesign-gallery-toggle')
+			var label = document.getElementById('nldesign-gallery-toggle-label')
+			var statusEl = document.getElementById('nldesign-gallery-status')
+			var list = document.getElementById('nldesign-gallery-list')
+			if (toggle === null || list === null) {
+				return
+			}
+			var url = OC.generateUrl('/apps/thematiq/settings/gallery')
+
+			function setStatus(text) {
+				if (statusEl !== null) {
+					statusEl.textContent = text
+				}
+			}
+
+			function contrastText(contrast) {
+				if (contrast && typeof contrast === 'object' && contrast.fail !== undefined) {
+					return Number(contrast.fail) === 0
+						? t('thematiq', 'Contrast: all checks pass')
+						: t('thematiq', 'Contrast checks failed: {count}', { count: contrast.fail })
+				}
+				if (typeof contrast === 'string' && contrast !== '') {
+					return t('thematiq', 'Contrast: {result}', { result: contrast })
+				}
+				return t('thematiq', 'Contrast: not checked')
+			}
+
+			function renderEntry(entry) {
+				var item = document.createElement('li')
+				item.className = 'nldesign-gallery-entry'
+				item.setAttribute('data-gallery-id', entry.id)
+
+				var swatches = document.createElement('span')
+				swatches.className = 'nldesign-gallery-swatches'
+				swatches.setAttribute('aria-hidden', 'true')
+				;['primary', 'background', 'text'].forEach(function (key) {
+					var swatch = document.createElement('span')
+					swatch.className = 'nldesign-gallery-swatch'
+					swatch.style.backgroundColor = entry.swatches[key]
+					swatches.appendChild(swatch)
+				})
+				item.appendChild(swatches)
+
+				var text = document.createElement('span')
+				text.className = 'nldesign-gallery-text'
+				var name = document.createElement('strong')
+				name.textContent = entry.name
+				text.appendChild(name)
+				var meta = document.createElement('span')
+				meta.className = 'nldesign-gallery-meta'
+				meta.textContent = t('thematiq', '{organisation}, licence {licence}. {contrast}.', {
+					organisation: entry.organisation,
+					licence: entry.licence,
+					contrast: contrastText(entry.contrast),
+				})
+				text.appendChild(meta)
+				var source = document.createElement('a')
+				source.href = entry.sourceUrl
+				source.target = '_blank'
+				source.rel = 'noopener noreferrer'
+				source.textContent = t('thematiq', 'Source of {name}', { name: entry.name })
+				text.appendChild(source)
+				item.appendChild(text)
+
+				if (entry.installed && !entry.updateAvailable) {
+					var done = document.createElement('span')
+					done.className = 'nldesign-badge'
+					done.textContent = t('thematiq', 'Installed')
+					item.appendChild(done)
+					return item
+				}
+
+				var button = document.createElement('button')
+				button.type = 'button'
+				button.className = 'nldesign-btn nldesign-btn--small'
+				if (entry.updateAvailable) {
+					var badge = document.createElement('span')
+					badge.className = 'nldesign-badge nldesign-badge--warning'
+					badge.textContent = t('thematiq', 'Update available')
+					item.appendChild(badge)
+					button.textContent = t('thematiq', 'Update')
+					button.setAttribute('aria-label', t('thematiq', 'Update {name}', { name: entry.name }))
+				} else {
+					button.textContent = t('thematiq', 'Install')
+					button.setAttribute('aria-label', t('thematiq', 'Install {name}', { name: entry.name }))
+				}
+				button.addEventListener('click', function () {
+					install(entry, button)
+				})
+				item.appendChild(button)
+				return item
+			}
+
+			function render(data) {
+				toggle.checked = data.enabled === true
+				if (label !== null && data.host) {
+					label.textContent = t('thematiq', 'Show the theme gallery (contacts {host})', { host: data.host })
+				}
+				list.innerHTML = ''
+				if (data.enabled !== true) {
+					setStatus('')
+					return
+				}
+				if (data.reachable === false) {
+					setStatus(t('thematiq', 'The gallery could not be reached. You can still upload a token set file under Custom token sets.'))
+					return
+				}
+				var entries = data.entries || []
+				setStatus(entries.length === 0 ? t('thematiq', 'The gallery lists no house styles yet.') : '')
+				entries.forEach(function (entry) {
+					list.appendChild(renderEntry(entry))
+				})
+			}
+
+			function load() {
+				return fetch(url, { headers: { requesttoken: OC.requestToken } })
+					.then(function (r) {
+						return r.json()
+					})
+					.then(render)
+					.catch(function (err) {
+						console.error('Error loading the theme gallery:', err)
+					})
+			}
+
+			function install(entry, button) {
+				button.disabled = true
+				setStatus(t('thematiq', 'Installing {name}…', { name: entry.name }))
+				fetch(
+					OC.generateUrl('/apps/thematiq/settings/gallery/' + encodeURIComponent(entry.id) + '/install'),
+					{ method: 'POST', headers: { requesttoken: OC.requestToken } },
+				)
+					.then(function (r) {
+						return r.json().then(function (body) {
+							return { ok: r.ok, body: body }
+						})
+					})
+					.then(function (result) {
+						if (!result.ok) {
+							button.disabled = false
+							setStatus(result.body.error || t('thematiq', '{name} was not installed.', { name: entry.name }))
+							return
+						}
+						notify(t('thematiq', '{name} is installed. Choose it in the Design token set list.', { name: entry.name }))
+						refreshTokenSetCatalogue()
+						loadCustomTokenSets()
+						load()
+					})
+					.catch(function (err) {
+						console.error('Error installing a gallery entry:', err)
+						button.disabled = false
+						setStatus(t('thematiq', '{name} was not installed.', { name: entry.name }))
+					})
+			}
+
+			toggle.addEventListener('change', function () {
+				var enabled = toggle.checked
+				fetch(url, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json', requesttoken: OC.requestToken },
+					body: JSON.stringify({ enabled: enabled }),
+				})
+					.then(function (r) {
+						return r.json()
+					})
+					.then(render)
+					.catch(function (err) {
+						console.error('Error saving the gallery setting:', err)
+						toggle.checked = !enabled
+					})
+			})
+
+			load()
+		}
+
+		initGallery()
 
 		/**
 		 * Freeform custom CSS panel.
