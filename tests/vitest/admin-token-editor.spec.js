@@ -5,6 +5,10 @@
  * - locked rows: Nextcloud's base tokens behind a warned opt-in, and the rows
  *   "primary drives every component" owns
  * - colour rows that hold an `r, g, b` triplet, and the per-row reset
+ * - where an unsaved edit is shown: the preview, and for the primary family
+ *   the settings section too, so the editor's own controls follow it
+ * - what switching sets offers: the set as saved, without the primary family
+ *   when the set brings its own primary through the theming sync
  * - the two save confirmations (stock: new theme or over Nextcloud; any other
  *   set: a plain confirm), their "do not ask again", and the controls that
  *   turn them back on
@@ -23,6 +27,8 @@
  * @spec openspec/specs/token-editor-ui/spec.md#requirement-save-action
  * @spec openspec/specs/token-editor-ui/spec.md#requirement-per-token-reset
  * @spec openspec/specs/token-editor-ui/spec.md#requirement-editable-token-input
+ * @spec openspec/specs/token-editor-ui/spec.md#requirement-live-preview
+ * @spec openspec/specs/token-set-apply-dialog/spec.md#requirement-resolved-value-comparison
  * @spec openspec/specs/theming-sync/spec.md#requirement-theming-sync-dialog-frontend
  */
 
@@ -258,6 +264,46 @@ function toasts() {
 	return OC.Notification.showTemporary.mock.calls.map((call) => call[0])
 }
 
+/** Tick "Also edit Nextcloud's base tokens" and accept its warning. */
+function unlockBase() {
+	tick(document.getElementById('nldesign-base-unlock'), true)
+	click(
+		document
+			.getElementById('nldesign-base-unlock-overlay')
+			.querySelector('.nldesign-dialog-confirm'),
+	)
+}
+
+/**
+ * Pick another set in the dropdown, with what its file resolves to and what
+ * was saved for it.
+ *
+ * @param {string} id The token set to switch to.
+ * @param {object} resolved What the set's file resolves to.
+ * @param {*} [saved] The overrides answer for the set, or an Error to fail it with.
+ */
+async function switchTo(id, resolved, saved) {
+	answer('GET', 'tokenset-preview', 200, { resolved })
+	if (saved !== undefined) {
+		answer('GET', 'overrides?tokenSet=' + id, 200, saved)
+	}
+	const select = document.getElementById('nldesign-token-set-select')
+	select.value = id
+	select.dispatchEvent(new window.Event('change', { bubbles: true }))
+	await flush()
+}
+
+/** The apply dialog's rows, as `{ token: new value }`. */
+function applyRows() {
+	return Object.fromEntries(
+		[
+			...document.querySelectorAll(
+				'#nldesign-apply-dialog-overlay .nldesign-apply-check',
+			),
+		].map((box) => [box.dataset.token, box.closest('tr').cells[3].textContent]),
+	)
+}
+
 /** The JSON body of the last request to a URL substring. */
 function lastBody(match, method = 'POST') {
 	const matching = sent(match, method)
@@ -278,6 +324,9 @@ describe('admin.js token editor', () => {
 	afterEach(() => {
 		document.head.innerHTML = ''
 		document.body.innerHTML = ''
+		// The apply dialog previews its values inline on <html>, which the
+		// body reset above does not reach.
+		document.documentElement.removeAttribute('style')
 		delete window.NldesignLayerSwap
 		delete window.ThematiqPlayground
 		vi.restoreAllMocks()
@@ -327,6 +376,26 @@ describe('admin.js token editor', () => {
 			expect(
 				document.getElementById('nldesign-base-unlock-overlay'),
 			).toBeNull()
+		})
+
+		it("draws its checkboxes as Nextcloud's own input.checkbox and label pair", async () => {
+			await mount()
+
+			for (const id of [
+				'nldesign-base-unlock',
+				'nldesign-confirm-save-stock',
+				'nldesign-confirm-save-theme',
+			]) {
+				const box = document.getElementById(id)
+				expect(box.classList.contains('checkbox'), id).toBe(true)
+				// A sibling label, not a wrapping one: core hides the input
+				// and draws the box on the label.
+				expect(box.closest('label'), id).toBeNull()
+				expect(
+					document.querySelector('label[for="' + id + '"]'),
+					id,
+				).not.toBeNull()
+			}
 		})
 
 		it('locks the rows the primary drives, and says why', async () => {
@@ -442,6 +511,81 @@ describe('admin.js token editor', () => {
 			click(font.reset)
 
 			expect(preview.style.getPropertyValue(FONT)).toBe('')
+		})
+
+		it("lets the editor's own controls follow an unsaved primary colour", async () => {
+			await mount()
+			unlockBase()
+			const settings = document.getElementById('nldesign-settings')
+			const preview = document.getElementById('nldesign-preview')
+
+			type(row(BASE).text, '#112233')
+
+			expect(preview.style.getPropertyValue(BASE)).toBe('#112233')
+			expect(settings.style.getPropertyValue(BASE)).toBe('#112233')
+			expect(settings.style.getPropertyPriority(BASE)).toBe('important')
+			// The rest of the page still wears only what has been saved.
+			expect(document.documentElement.style.getPropertyValue(BASE)).toBe('')
+
+			type(row(BASE).text, '')
+
+			expect(preview.style.getPropertyValue(BASE)).toBe('')
+			expect(settings.style.getPropertyValue(BASE)).toBe('')
+		})
+
+		it('keeps any other edit on the preview alone', async () => {
+			await mount()
+			const settings = document.getElementById('nldesign-settings')
+
+			type(row(FONT).text, 'Fira Sans')
+			// Painted from the primary, but not one of its family.
+			type(row(BUTTON).picker, '#123456')
+
+			expect(settings.style.getPropertyValue(FONT)).toBe('')
+			expect(settings.style.getPropertyValue(BUTTON)).toBe('')
+		})
+
+		it('resets a primary-family row on the settings section as well', async () => {
+			await mount({ overrides: { [BASE]: '#aa0000' } })
+			unlockBase()
+			const settings = document.getElementById('nldesign-settings')
+
+			type(row(BASE).text, '#00aa00')
+			click(row(BASE).reset)
+
+			expect(settings.style.getPropertyValue(BASE)).toBe('#aa0000')
+		})
+
+		it('drops a never-saved primary-family value from the settings section on reset', async () => {
+			await mount()
+			unlockBase()
+			const settings = document.getElementById('nldesign-settings')
+
+			type(row(BASE).text, '#00aa00')
+			click(row(BASE).reset)
+
+			expect(settings.style.getPropertyValue(BASE)).toBe('')
+		})
+
+		it('writes a primary colour on the page alone when there is no settings section', async () => {
+			installInitialState({})
+			document.body.innerHTML = '<div id="nldesign-token-editor"></div>'
+			answer('GET', '/settings/overrides?', 200, {
+				overrides: {},
+				registry: { [BASE]: REGISTRY[BASE] },
+				tabs: {},
+			})
+			vi.resetModules()
+			await import('../../js/admin.js?t=' + Math.random())
+			await flush()
+			unlockBase()
+
+			type(row(BASE).text, '#112233')
+
+			// Without a preview either, the page root is where an edit is shown.
+			expect(document.documentElement.style.getPropertyValue(BASE)).toBe(
+				'#112233',
+			)
 		})
 	})
 
@@ -893,6 +1037,102 @@ describe('admin.js token editor', () => {
 
 			expect(window.NldesignLayerSwap.swap).toHaveBeenCalled()
 			expect(toasts()).toContain('Applied.')
+		})
+	})
+
+	describe('switching to another set', () => {
+		it('offers what was saved for the set, not what its file says', async () => {
+			await mount({ current: 'nextcloud' })
+
+			await switchTo(
+				'rijkshuisstijl',
+				{ [FONT]: 'Arial', '--color-main-background': '#ffffff' },
+				{ overrides: { [FONT]: 'Fira Sans', '--not-in-file': '#000000' } },
+			)
+
+			expect(sent('overrides?tokenSet=rijkshuisstijl', 'GET')).toHaveLength(1)
+			// A saved value the file does not carry is not a change to offer.
+			expect(applyRows()).toEqual({
+				[FONT]: 'Fira Sans',
+				'--color-main-background': '#ffffff',
+			})
+		})
+
+		it('offers the file when what was saved cannot be read', async () => {
+			await mount({ current: 'nextcloud' })
+
+			await switchTo(
+				'rijkshuisstijl',
+				{ [FONT]: 'Arial' },
+				new Error('offline'),
+			)
+
+			expect(applyRows()).toEqual({ [FONT]: 'Arial' })
+		})
+
+		it('offers the file when nothing was saved for the set', async () => {
+			await mount({ current: 'nextcloud' })
+
+			await switchTo('rijkshuisstijl', { [FONT]: 'Arial' }, { status: 'ok' })
+
+			expect(applyRows()).toEqual({ [FONT]: 'Arial' })
+		})
+
+		it('leaves the primary family to Nextcloud when the set brings its own primary colour', async () => {
+			await mount({ current: 'nextcloud' })
+
+			await switchTo(
+				'rijkshuisstijl',
+				{
+					'--color-primary': '#154273',
+					[BASE]: '#154273',
+					[FONT]: 'Arial',
+				},
+				{ overrides: {} },
+			)
+
+			expect(applyRows()).toEqual({ [FONT]: 'Arial' })
+		})
+
+		it('keeps the primary family of the stock set, and asks nothing saved for it', async () => {
+			await mount()
+			const before = sent('overrides?tokenSet=nextcloud', 'GET').length
+
+			await switchTo('nextcloud', { '--color-primary': '#00679e' })
+
+			expect(applyRows()).toEqual({ '--color-primary': '#00679e' })
+			expect(sent('overrides?tokenSet=nextcloud', 'GET')).toHaveLength(before)
+		})
+
+		it('applies straight away when the file resolves to nothing', async () => {
+			answer('POST', COMMIT, 200, { status: 'ok' })
+			await mount({ current: 'nextcloud' })
+
+			await switchTo('rijkshuisstijl', undefined, { overrides: {} })
+
+			expect(
+				document.getElementById('nldesign-apply-dialog-overlay'),
+			).toBeNull()
+			expect(sent(COMMIT, 'POST')).toHaveLength(1)
+		})
+
+		it('compares a set the page has no details for against what was saved for it', async () => {
+			await mount({ current: 'nextcloud' })
+			const option = document.createElement('option')
+			option.value = 'custom-unknown'
+			document.getElementById('nldesign-token-set-select').appendChild(option)
+
+			await switchTo(
+				'custom-unknown',
+				{ '--color-primary': '#123456', [FONT]: 'Arial' },
+				{ overrides: { [FONT]: 'Fira Sans' } },
+			)
+
+			// No theming to bring a primary, so the family stays in the diff.
+			expect(applyRows()).toEqual({
+				'--color-primary': '#123456',
+				[FONT]: 'Fira Sans',
+			})
 		})
 	})
 
