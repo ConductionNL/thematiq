@@ -14,8 +14,15 @@
  * a fresh page, so any in-memory edits are discarded.
  */
 import { test, expect, Page } from '@playwright/test'
+import { openTokenTab } from '../workflows/_helpers'
 
 const THEMING_URL = '/settings/admin/theming'
+
+// An editable colour field on the Content area tab. Only the open tab's panel
+// is displayed, so each test opens this tab itself (openTokenTab) rather than
+// relying on the tab the editor happens to open on.
+const EDITABLE_FIELD =
+	'.nldesign-tab-panel[data-panel="content"] .nldesign-color-text:not([disabled])'
 
 async function dismissSyncDialog(page: Page): Promise<void> {
 	await page.waitForTimeout(1200)
@@ -57,17 +64,16 @@ test.describe('token-editor-edit-behavior', () => {
 		await page.goto(THEMING_URL)
 		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
 		await dismissSyncDialog(page)
+		await openTokenTab(page, 'content')
 
 		// Pick the first EDITABLE colour text field and read its token name.
 		// Nextcloud's base tokens lead the list and stay locked until the
 		// admin opts in, so the first field overall is a disabled one.
-		const field = page.locator('.nldesign-color-text:not([disabled])').first()
-		await expect(field).toBeAttached()
+		const field = page.locator(EDITABLE_FIELD).first()
+		await expect(field).toBeVisible()
 		const tokenName = await field.getAttribute('data-token')
 		expect(tokenName, 'colour field must carry a data-token').toBeTruthy()
 
-		// Make sure the row that owns this field is on the active tab so it is
-		// editable; the field's containing panel is activated by clicking its tab.
 		const row = page.locator(`[data-token-row="${tokenName}"]`)
 		// Before editing, there must be no custom badge on this row (fresh load).
 		const badge = row.locator('.nldesign-token-custom-badge')
@@ -112,8 +118,9 @@ test.describe('token-editor-edit-behavior', () => {
 		await page.goto(THEMING_URL)
 		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
 		await dismissSyncDialog(page)
+		await openTokenTab(page, 'content')
 
-		const field = page.locator('.nldesign-color-text:not([disabled])').first()
+		const field = page.locator(EDITABLE_FIELD).first()
 		const tokenName = await field.getAttribute('data-token')
 		const picker = page.locator(
 			`.nldesign-color-picker[data-token="${tokenName}"]`,
@@ -135,8 +142,9 @@ test.describe('token-editor-edit-behavior', () => {
 		await page.goto(THEMING_URL)
 		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
 		await dismissSyncDialog(page)
+		await openTokenTab(page, 'content')
 
-		const field = page.locator('.nldesign-color-text:not([disabled])').first()
+		const field = page.locator(EDITABLE_FIELD).first()
 		const tokenName = await field.getAttribute('data-token')
 		const row = page.locator(`[data-token-row="${tokenName}"]`)
 		const badge = row.locator('.nldesign-token-custom-badge')

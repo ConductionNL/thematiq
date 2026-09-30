@@ -43,6 +43,17 @@ class Application extends App implements IBootstrap {
 	public const APP_ID = 'thematiq';
 
 	/**
+	 * The config.php key that declares the server's OTAP environment
+	 * (openspec/specs/environment-marker/spec.md).
+	 */
+	public const ENVIRONMENT_CONFIG_KEY = 'thematiq.environment';
+
+	/**
+	 * The command an administrator runs to declare the environment.
+	 */
+	public const ENVIRONMENT_OCC_COMMAND = 'occ config:system:set thematiq.environment --value=<environment>';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {

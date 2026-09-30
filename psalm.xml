@@ -67,6 +67,7 @@
                 <referencedClass name="OCP\IURLGenerator"/>
                 <referencedClass name="OCP\Http\Client\IClient"/>
                 <referencedClass name="OCP\Http\Client\IClientService"/>
+                <referencedClass name="OCP\AppFramework\Utility\ITimeFactory"/>
                 <referencedClass name="OCP\Notification\IManager"/>
                 <referencedClass name="OCP\Share\IManager"/>
                 <!-- OpenRegister cross-app classes (loaded dynamically) -->

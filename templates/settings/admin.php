@@ -13,6 +13,8 @@
  * @var string[] $activeIconPacks
  * @var 'design-system'|'override' $iconPackSource
  * @var bool $mockUi
+ * @var string $environment
+ * @var string $environmentCommand
  */
 
 // Load the pure token/colour transforms first so admin.js can consume them via
@@ -63,6 +65,17 @@ if ($_['mockUi'] === true) {
 		<?php p($l->t('Select a Dutch government design token set as a base, or customize individual Nextcloud CSS tokens below.')); ?>
 	</p>
 
+	<!-- The OTAP environment this server declares in config.php, read-only
+	     (openspec/specs/environment-marker/spec.md). No control writes it. -->
+	<div class="nldesign-environment" id="nldesign-environment">
+		<?php if ($_['environment'] !== ''): ?>
+			<p><?php p($l->t('Environment: {environment}', ['environment' => $_['environment']])); ?></p>
+		<?php else: ?>
+			<p class="settings-hint"><?php p($l->t('No environment is set, so no page is marked. Declare it in config.php with:')); ?></p>
+			<code><?php p($_['environmentCommand']); ?></code>
+		<?php endif; ?>
+	</div>
+
 	<div class="nldesign-token-set-selector">
 		<label for="nldesign-token-set-select"><?php p($l->t('Design token set')); ?></label>
 		<select id="nldesign-token-set-select" name="nldesign-token-set">
@@ -88,6 +101,34 @@ if ($_['mockUi'] === true) {
 		<button type="button" id="nldesign-reset-theme-btn" class="button">
 			<?php p($l->t('Reset theme to Nextcloud')); ?>
 		</button>
+	</div>
+
+	<!-- Planned token set switches (openspec/specs/scheduled-switch).
+	     admin.js fills the status, the list and the time zone hint. -->
+	<div class="nldesign-scheduled-switches" id="nldesign-scheduled-switches">
+		<h3><?php p($l->t('Planned switches')); ?></h3>
+		<p class="settings-hint"><?php p($l->t('Plan a switch to another token set, for a campaign or a holiday look. With an end time the previous token set comes back by itself.')); ?></p>
+		<p class="settings-hint" id="nldesign-scheduled-status" aria-live="polite"></p>
+		<p class="nldesign-scheduled-cron-warning" id="nldesign-scheduled-cron-warning" role="status" hidden>
+			<?php p($l->t('Background jobs run in AJAX mode, so a planned switch may start late. Choose Cron under Administration settings, Basic settings, Background jobs.')); ?>
+		</p>
+		<form id="nldesign-scheduled-form" class="nldesign-scheduled-form">
+			<label for="nldesign-scheduled-set"><?php p($l->t('Token set')); ?></label>
+			<select id="nldesign-scheduled-set" name="tokenSet">
+				<?php foreach ($_['tokenSets'] as $tokenSet): ?>
+					<option value="<?php p($tokenSet['id']); ?>"><?php p($tokenSet['name']); ?></option>
+				<?php endforeach; ?>
+			</select>
+			<label for="nldesign-scheduled-start"><?php p($l->t('Start')); ?></label>
+			<input type="datetime-local" id="nldesign-scheduled-start" name="startAt" required>
+			<label for="nldesign-scheduled-end"><?php p($l->t('End (optional)')); ?></label>
+			<input type="datetime-local" id="nldesign-scheduled-end" name="endAt">
+			<input type="checkbox" class="checkbox" id="nldesign-scheduled-sync" name="syncCoreTheming">
+			<label for="nldesign-scheduled-sync"><?php p($l->t('Also update the Nextcloud logo and colours')); ?></label>
+			<p class="settings-hint" id="nldesign-scheduled-zone"></p>
+			<button type="submit" class="button primary" id="nldesign-scheduled-submit"><?php p($l->t('Plan switch')); ?></button>
+		</form>
+		<ul class="nldesign-scheduled-list" id="nldesign-scheduled-list"></ul>
 	</div>
 
 	<!-- Active icon pack — read-only indicator (theme-switchable iconography,
@@ -590,7 +631,7 @@ if ($_['mockUi'] === true) {
 	<div class="nldesign-upstream-freshness" id="nldesign-upstream-freshness" style="margin-top:2em">
 		<h3><?php p($l->t('Upstream token updates')); ?></h3>
 		<p class="settings-hint">
-			<?php p($l->t('Optionally check once a day whether the upstream NL Design System themes have new tokens. This is the only outbound network request this app makes; it contacts api.github.com and never applies anything automatically — you always review and apply updates yourself.')); ?>
+			<?php p($l->t('Check once a day whether the upstream NL Design System themes have new tokens. The check is off by default and contacts api.github.com. It never applies anything: you review and apply updates yourself.')); ?>
 		</p>
 		<div class="nldesign-option">
 			<input type="checkbox"
@@ -607,12 +648,30 @@ if ($_['mockUi'] === true) {
 			 aria-label="<?php p($l->t('Upstream token updates')); ?>"></div>
 	</div>
 
+	<!-- Theme gallery: an opt-in index of house styles others built
+	     (openspec/specs/theme-gallery/spec.md). Off by default; admin.js
+	     puts the index host in the toggle label and fills the list. -->
+	<div class="nldesign-gallery" id="nldesign-gallery" style="margin-top:2em">
+		<h3><?php p($l->t('Theme gallery')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Install a house style that another organisation built. The gallery is off by default. When it is on, this page reads the gallery index while you have it open.')); ?>
+		</p>
+		<div class="nldesign-option">
+			<input type="checkbox" id="nldesign-gallery-toggle" class="checkbox">
+			<label for="nldesign-gallery-toggle" id="nldesign-gallery-toggle-label"><?php p($l->t('Show the theme gallery')); ?></label>
+		</div>
+		<p class="settings-hint" id="nldesign-gallery-status" role="status" aria-live="polite"></p>
+		<ul class="nldesign-gallery-list" id="nldesign-gallery-list"
+			aria-label="<?php p($l->t('Theme gallery')); ?>"></ul>
+	</div>
+
 	<!-- Theming audit log — who changed which theming setting, from what, to
 	     what, and when. Evidence for accessibility/WCAG-EM audits. -->
 	<div class="nldesign-audit-log" id="nldesign-audit-log" style="margin-top:2em">
 		<h3><?php p($l->t('Theming audit log')); ?></h3>
 		<p class="settings-hint">
 			<?php p($l->t('A record of theming configuration changes: who changed what, from what, to what, and when. Useful evidence for accessibility audits.')); ?>
+			<?php p($l->t('Each change keeps the configuration it produced, up to the last 50 changes or 20 MB. Restore shows what will change before anything is written.')); ?>
 		</p>
 		<div class="nldesign-audit-scroll" tabindex="0" role="region"
 		     aria-label="<?php p($l->t('Theming audit log')); ?>">
@@ -625,16 +684,35 @@ if ($_['mockUi'] === true) {
 					<th scope="col"><?php p($l->t('From')); ?></th>
 					<th scope="col"><?php p($l->t('To')); ?></th>
 					<th scope="col"><?php p($l->t('Changed')); ?></th>
+					<th scope="col"><?php p($l->t('Version')); ?></th>
 				</tr>
 			</thead>
 			<tbody id="nldesign-audit-table-body">
-				<tr><td colspan="6" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
+				<tr><td colspan="7" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
 			</tbody>
 		</table>
 		</div>
 		<button type="button" id="nldesign-audit-download-btn" class="button">
 			<?php p($l->t('Download full log')); ?>
 		</button>
+	</div>
+
+	<!-- Contrast evidence report: the export endpoint's two formats as
+	     download links. js/admin.js initComplianceReport() fills the hrefs.
+	     (openspec/specs/compliance-evidence/spec.md) -->
+	<div class="nldesign-compliance-report" id="nldesign-compliance-report" style="margin-top:2em">
+		<h3><?php p($l->t('Contrast evidence report')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Download the colour contrast of the active theme tokens as evidence for an accessibility statement. It covers colour contrast of the theme only and is not a full WCAG audit.')); ?>
+		</p>
+		<div class="nldesign-upload-form">
+			<a id="nldesign-compliance-report-json" class="button" download>
+				<?php p($l->t('Download as JSON')); ?>
+			</a>
+			<a id="nldesign-compliance-report-markdown" class="button" download>
+				<?php p($l->t('Download as Markdown')); ?>
+			</a>
+		</div>
 	</div>
 
 	<!-- Complete configuration bundle — OTAP (dev/test/acceptatie/productie)

@@ -20,9 +20,12 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Service\ThemeVersionRestoreService;
+use OCA\Thematiq\Service\ThemeVersionService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\JSONResponse;
@@ -60,15 +63,73 @@ class AuditController extends Controller {
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request object.
 	 * @param ThemingAuditService $auditService The theming audit trail service.
+	 * @param ThemeVersionService $versionService The kept configuration versions.
+	 * @param ThemeVersionRestoreService $restoreService Previews and restores a version.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		ThemingAuditService $auditService,
+		private readonly ThemeVersionService $versionService,
+		private readonly ThemeVersionRestoreService $restoreService,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->auditService = $auditService;
 	}//end __construct()
+
+	/**
+	 * List the kept configuration versions, newest first.
+	 *
+	 * @return JSONResponse `{ versions: [{id, ts, actor, action}] }`.
+	 *
+	 * @spec openspec/specs/theme-versions/spec.md
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function versions(): JSONResponse {
+		return new JSONResponse(['versions' => $this->versionService->list()]);
+	}//end versions()
+
+	/**
+	 * Show what restoring a version will change, writing nothing.
+	 *
+	 * @param string $id The version id.
+	 *
+	 * @return JSONResponse The preview, or 404 for an unknown id.
+	 *
+	 * @spec openspec/specs/theme-versions/spec.md
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function previewVersion(string $id): JSONResponse {
+		$preview = $this->restoreService->preview(id: $id);
+		if ($preview === null) {
+			return new JSONResponse(['error' => 'Unknown version.'], Http::STATUS_NOT_FOUND);
+		}
+
+		return new JSONResponse($preview);
+	}//end previewVersion()
+
+	/**
+	 * Restore a version through the bundle import.
+	 *
+	 * @param string $id The version id.
+	 *
+	 * @return JSONResponse The result: 200 applied, 422 refused whole, 404 unknown id.
+	 *
+	 * @spec openspec/specs/theme-versions/spec.md
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function restoreVersion(string $id): JSONResponse {
+		$result = $this->restoreService->restore(id: $id);
+		if ($result === null) {
+			return new JSONResponse(['error' => 'Unknown version.'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($result['applied'] !== true) {
+			return new JSONResponse($result, Http::STATUS_UNPROCESSABLE_ENTITY);
+		}
+
+		return new JSONResponse($result);
+	}//end restoreVersion()
 
 	/**
 	 * List the most recent audit entries, newest first.

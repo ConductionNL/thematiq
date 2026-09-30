@@ -14,7 +14,9 @@ metadata (id, name, description, theming) and inline CSS content. The bundle MUS
 operational counters (`theming_syncs_total` and similar telemetry), `installed_version`
 (NC-managed), per-user preview state (session-scoped, see change `theme-preview-workflow`), or
 Nextcloud core `theming` app values (owned by the theming app; the theming-sync dialog is the
-supported path to re-apply them after import). Every future instance-wide nldesign configuration
+supported path to re-apply them after import), or the server's declared environment (the
+`thematiq.environment` system value, see capability `environment-marker`: it is the one value
+that must differ between OTAP environments, and it lives in `config.php`, not in app config). Every future instance-wide nldesign configuration
 value MUST be added to the bundle in the same change that introduces the value, with a
 `bundleVersion` bump — a configuration value that exists but is not exported is a spec
 violation, not an accepted gap.
@@ -37,6 +39,12 @@ violation, not an accepted gap.
 - WHEN the bundle is exported
 - THEN the bundle MUST NOT contain the sync counter, `installed_version`, any `preview_*` user
   value, or any `theming` app value
+
+#### Scenario: The declared environment is not exported
+
+- GIVEN a server with `thematiq.environment` set to `test`
+- WHEN an administrator exports the bundle with `occ nldesign:config:export`
+- THEN the bundle MUST NOT contain the environment value or any key naming it
 
 ### Requirement: All-Or-Nothing Validated Import
 
@@ -155,3 +163,23 @@ return the per-section result as JSON — HTTP 400 with the error listing on val
 - WHEN either `/settings/config/*` endpoint is called
 - THEN the request MUST be rejected and nothing MUST be exported or applied
 
+### Requirement: Planned switches travel in the bundle
+
+The bundle MUST carry the planned switches as `config.scheduledSwitches`, with their token set, start, end and core sync option, and the change that adds them MUST bump `bundleVersion`. Import MUST validate every planned switch in phase 1 (token set exists in the bundle or on the target, windows do not overlap, times parse) and MUST write nothing when one fails. Runtime state (`revertTo`, `failed`) MUST NOT be exported.
+
+#### Scenario: A campaign prepared on acceptance goes to production
+
+@e2e exclude needs two servers and a bundle moved between them; proven by tests/Unit/Service/ConfigBundleServiceTest.php::testExportCarriesPlannedSwitchesWithoutRuntimeState and ::testAPlannedSwitchToABundledCustomSetIsImported
+
+- GIVEN an acceptance server with a planned switch to `koningsdag-oranje` and that custom set uploaded
+- WHEN an administrator exports the bundle there and imports it on production
+- THEN production MUST list the same planned switch
+- AND production MUST hold the custom set it names
+
+#### Scenario: An overlapping plan blocks the whole import
+
+@e2e exclude occ, not a page; proven by tests/Unit/Service/ConfigBundleServiceTest.php::testOverlappingPlannedSwitchesBlockTheWholeImport
+
+- GIVEN a bundle whose planned switches overlap
+- WHEN an administrator imports it with `occ nldesign:config:import`
+- THEN the command MUST exit non-zero, name the overlap and write nothing

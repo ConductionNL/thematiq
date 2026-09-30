@@ -96,7 +96,16 @@ class ConfigBundleService {
 	 *
 	 * @var int
 	 */
-	public const BUNDLE_VERSION = 1;
+	public const BUNDLE_VERSION = 2;
+
+	/**
+	 * The bundle versions import accepts. Version 1 predates planned switches
+	 * (`config.scheduledSwitches`); a version 1 bundle, such as a version kept
+	 * before the upgrade, imports and leaves the planned switches alone.
+	 *
+	 * @var array<int, int>
+	 */
+	public const SUPPORTED_VERSIONS = [1, 2];
 
 	/**
 	 * The application configuration service.
@@ -176,6 +185,13 @@ class ConfigBundleService {
 	private UpstreamFreshnessService $freshnessService;
 
 	/**
+	 * The planned token set switches.
+	 *
+	 * @var ScheduledSwitchStore
+	 */
+	private ScheduledSwitchStore $scheduledSwitches;
+
+	/**
 	 * The logger.
 	 *
 	 * @var LoggerInterface
@@ -196,6 +212,7 @@ class ConfigBundleService {
 	 * @param EmailThemingService $emailThemingService The email theming footer service.
 	 * @param FontService $fontService The custom font metadata service.
 	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
+	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
@@ -215,6 +232,7 @@ class ConfigBundleService {
 		EmailThemingService $emailThemingService,
 		FontService $fontService,
 		UpstreamFreshnessService $freshnessService,
+		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
 	) {
 		$this->config = $config;
@@ -228,6 +246,7 @@ class ConfigBundleService {
 		$this->emailThemingService = $emailThemingService;
 		$this->fontService = $fontService;
 		$this->freshnessService = $freshnessService;
+		$this->scheduledSwitches = $scheduledSwitches;
 		$this->logger = $logger;
 	}//end __construct()
 
@@ -254,6 +273,7 @@ class ConfigBundleService {
 				'primaryDrivesComponents' => ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1'),
 				'disabledApps' => $this->appThemingService->getDisabledApps(),
 				'upstreamFreshnessEnabled' => $this->freshnessService->isEnabled(),
+				'scheduledSwitches' => $this->scheduledSwitches->exportable(),
 			],
 			'emailFooter' => $this->emailThemingService->getFooterConfig(),
 			'customOverridesCss' => $this->overridesService->getRawContent(),
@@ -374,6 +394,8 @@ class ConfigBundleService {
 		// custom sets — only meaningful once customTokenSets parsed cleanly.
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
 
+		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
+
 		return [
 			'valid' => empty($errors),
 			'errors' => $errors,
@@ -399,10 +421,10 @@ class ConfigBundleService {
 			];
 		}
 
-		if ((($bundle['bundleVersion'] ?? null) === self::BUNDLE_VERSION) === false) {
+		if (in_array(($bundle['bundleVersion'] ?? null), self::SUPPORTED_VERSIONS, true) === false) {
 			$errors[] = [
 				'section' => 'envelope',
-				'message' => 'Unsupported bundleVersion (expected ' . self::BUNDLE_VERSION . ').',
+				'message' => 'Unsupported bundleVersion (expected ' . implode(' or ', self::SUPPORTED_VERSIONS) . ').',
 			];
 		}
 	}//end validateEnvelope()
@@ -832,6 +854,40 @@ class ConfigBundleService {
 	}//end validateTokenSetResolution()
 
 	/**
+	 * Validate `config.scheduledSwitches`: times parse, windows do not
+	 * overlap, and each set is installed or carried by this bundle. Absent
+	 * (a version 1 bundle) means the planned switches are left alone.
+	 *
+	 * @param array<string, mixed> $bundle The decoded bundle.
+	 * @param array<string, mixed> $resolved The per-section resolved data so far.
+	 * @param array<int, array<string, mixed>> $errors Accumulator, appended to on failure.
+	 *
+	 * @return array<int, array<string, mixed>>|null The entries to store, or null to leave them alone.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	private function validateScheduledSwitches(array $bundle, array $resolved, array &$errors): ?array {
+		$config = ($bundle['config'] ?? []);
+		if (is_array($config) === false || array_key_exists('scheduledSwitches', $config) === false) {
+			return null;
+		}
+
+		$bundledIds = array_column(($resolved['customTokenSets'] ?? []), 'id');
+		$result = $this->scheduledSwitches->validateImport(
+			raw: $config['scheduledSwitches'],
+			setExists: fn (string $id): bool => (
+				in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
+			)
+		);
+
+		foreach ($result['errors'] as $message) {
+			$errors[] = ['section' => 'config', 'message' => $message];
+		}
+
+		return $result['entries'];
+	}//end validateScheduledSwitches()
+
+	/**
 	 * Build the per-section result summary (used for both the dry-run
 	 * report and the post-apply report — identical shape either way).
 	 *
@@ -850,6 +906,10 @@ class ConfigBundleService {
 				'primaryDrivesComponents' => $resolved['config']['primaryDrivesComponents'],
 				'disabledAppsCount' => count($resolved['config']['disabledApps']),
 				'upstreamFreshnessEnabled' => $resolved['config']['upstreamFreshnessEnabled'],
+			],
+			'scheduledSwitches' => [
+				'count' => count(($resolved['scheduledSwitches'] ?? [])),
+				'applied' => ($resolved['scheduledSwitches'] !== null),
 			],
 			'emailFooter' => ['applied' => true],
 			'customOverridesCss' => [
@@ -915,6 +975,10 @@ class ConfigBundleService {
 
 		foreach ($resolved['customTokenSets'] as $set) {
 			$this->customTokenSetService->replace(id: $set['id'], entry: $set['entry'], css: $set['css']);
+		}
+
+		if ($resolved['scheduledSwitches'] !== null) {
+			$this->scheduledSwitches->save(entries: $resolved['scheduledSwitches']);
 		}
 
 		// CustomFonts is deliberately never applied — see class docblock.

@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OCA\Thematiq\Controller\AuditController;
+use OCA\Thematiq\Service\ThemeVersionRestoreService;
+use OCA\Thematiq\Service\ThemeVersionService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -42,14 +44,28 @@ class AuditControllerTest extends TestCase {
 	 */
 	private AuditController $controller;
 
+	/**
+	 * @var ThemeVersionService&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private $versions;
+
+	/**
+	 * @var ThemeVersionRestoreService&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private $restorer;
+
 	protected function setUp(): void {
 		parent::setUp();
 
 		$this->auditService = $this->createMock(ThemingAuditService::class);
+		$this->versions = $this->createMock(ThemeVersionService::class);
+		$this->restorer = $this->createMock(ThemeVersionRestoreService::class);
 		$this->controller = new AuditController(
 			'nldesign',
 			$this->createMock(IRequest::class),
-			$this->auditService
+			$this->auditService,
+			$this->versions,
+			$this->restorer
 		);
 	}//end setUp()
 
@@ -121,7 +137,7 @@ class AuditControllerTest extends TestCase {
 	 * route-auth/semantic-auth gates' expectation for this controller.
 	 */
 	public function testBothMethodsAreAdminAnnotated(): void {
-		foreach (['list', 'export'] as $method) {
+		foreach (['list', 'export', 'versions', 'previewVersion', 'restoreVersion'] as $method) {
 			$reflection = new \ReflectionMethod(AuditController::class, $method);
 			$attributes = $reflection->getAttributes(AuthorizedAdminSetting::class);
 
@@ -129,4 +145,53 @@ class AuditControllerTest extends TestCase {
 			$this->assertSame(Admin::class, $attributes[0]->getArguments()['settings'] ?? $attributes[0]->getArguments()[0]);
 		}
 	}//end testBothMethodsAreAdminAnnotated()
+
+	/**
+	 * The version list is the kept versions, newest first.
+	 *
+	 * @spec openspec/specs/theme-versions/spec.md
+	 */
+	public function testVersionsListsTheKeptVersions(): void {
+		$this->versions->method('list')->willReturn([['id' => '20260929164000-0001']]);
+
+		$this->assertSame(['versions' => [['id' => '20260929164000-0001']]], $this->controller->versions()->getData());
+	}//end testVersionsListsTheKeptVersions()
+
+	/**
+	 * Preview and restore of an unknown id answer 404.
+	 *
+	 * @spec openspec/specs/theme-versions/spec.md
+	 */
+	public function testAnUnknownVersionIs404(): void {
+		$this->restorer->method('preview')->willReturn(null);
+		$this->restorer->method('restore')->willReturn(null);
+
+		$this->assertSame(404, $this->controller->previewVersion(id: 'nope')->getStatus());
+		$this->assertSame(404, $this->controller->restoreVersion(id: 'nope')->getStatus());
+	}//end testAnUnknownVersionIs404()
+
+	/**
+	 * A refused restore answers 422 with the errors; an applied one 200.
+	 *
+	 * @spec openspec/specs/theme-versions/spec.md
+	 */
+	public function testRestoreAnswersByOutcome(): void {
+		$this->restorer->method('restore')->willReturnOnConsecutiveCalls(
+			['applied' => false, 'valid' => false, 'errors' => [['id' => 'custom-x']]],
+			['applied' => true, 'valid' => true]
+		);
+
+		$this->assertSame(422, $this->controller->restoreVersion(id: '20260929164000-0001')->getStatus());
+		$this->assertSame(200, $this->controller->restoreVersion(id: '20260929164000-0001')->getStatus());
+	}//end testRestoreAnswersByOutcome()
+
+	/**
+	 * The three version routes are registered and reach these methods.
+	 */
+	public function testTheVersionRoutesAreRegistered(): void {
+		$routes = (string)file_get_contents(dirname(__DIR__, 3) . '/appinfo/routes.php');
+		$this->assertStringContainsString("['name' => 'audit#versions', 'url' => '/settings/versions', 'verb' => 'GET']", $routes);
+		$this->assertStringContainsString("['name' => 'audit#previewVersion', 'url' => '/settings/versions/{id}/preview', 'verb' => 'POST']", $routes);
+		$this->assertStringContainsString("['name' => 'audit#restoreVersion', 'url' => '/settings/versions/{id}/restore', 'verb' => 'POST']", $routes);
+	}//end testTheVersionRoutesAreRegistered()
 }//end class

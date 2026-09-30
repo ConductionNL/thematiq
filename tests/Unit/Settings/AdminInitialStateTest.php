@@ -77,10 +77,14 @@ class AdminInitialStateTest extends TestCase {
 		string $iconPackOverride,
 		array &$captured,
 		?string &$playgroundSetAsked = null,
+		string $environment = '',
 	): Admin {
 		$captured = [];
 
 		$config = $this->createMock(IConfig::class);
+		$config->method('getSystemValueString')->willReturnCallback(
+			static fn (string $key, string $default = '') => ($key === 'thematiq.environment' ? $environment : $default)
+		);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (string $app, string $key, string $default = '') use ($iconPackOverride) {
 				if ($key === 'icon_pack') {
@@ -278,4 +282,21 @@ class AdminInitialStateTest extends TestCase {
 			);
 		}
 	}//end testTemplateShipsNoServerDataAttributes()
+
+	/**
+	 * The settings page shows the environment config.php declares, and the
+	 * occ command that sets it.
+	 *
+	 * @spec openspec/specs/environment-marker/spec.md
+	 */
+	public function testTheFormCarriesTheDeclaredEnvironment(): void {
+		$captured = [];
+		$params = $this->buildAdmin(null, '', $captured, $unused, 'acceptance')->getForm()->getParams();
+
+		$this->assertSame('acceptance', $params['environment']);
+		$this->assertSame('occ config:system:set thematiq.environment --value=<environment>', $params['environmentCommand']);
+
+		$params = $this->buildAdmin(null, '', $captured)->getForm()->getParams();
+		$this->assertSame('', $params['environment']);
+	}//end testTheFormCarriesTheDeclaredEnvironment()
 }//end class

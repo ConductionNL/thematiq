@@ -30,6 +30,10 @@ return [
 		['name' => 'settings#getAvailableTokenSets', 'url' => '/settings/tokensets', 'verb' => 'GET'],
 		['name' => 'settings#setTokenSet', 'url' => '/settings/tokenset', 'verb' => 'POST'],
 		['name' => 'settings#getTokenSet', 'url' => '/settings/tokenset', 'verb' => 'GET'],
+		// Planned token set switches (openspec/specs/scheduled-switch).
+		['name' => 'scheduledSwitch#index', 'url' => '/settings/scheduled-switches', 'verb' => 'GET'],
+		['name' => 'scheduledSwitch#create', 'url' => '/settings/scheduled-switches', 'verb' => 'POST'],
+		['name' => 'scheduledSwitch#cancel', 'url' => '/settings/scheduled-switches/{id}', 'verb' => 'DELETE'],
 		['name' => 'settings#setSloganSetting', 'url' => '/settings/slogan', 'verb' => 'POST'],
 		['name' => 'settings#setMenuLabelsSetting', 'url' => '/settings/menulabels', 'verb' => 'POST'],
 		['name' => 'settings#setPrimaryDrivesComponentsSetting', 'url' => '/settings/primary-drives-components', 'verb' => 'POST'],
@@ -50,6 +54,10 @@ return [
 		['name' => 'settings#getUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'GET'],
 		['name' => 'settings#setUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'POST'],
 		['name' => 'settings#dismissUpstreamNotice', 'url' => '/settings/upstream-freshness/dismiss', 'verb' => 'POST'],
+		// Theme gallery (opt-in index of house styles; openspec/specs/theme-gallery/spec.md).
+		['name' => 'gallery#index', 'url' => '/settings/gallery', 'verb' => 'GET'],
+		['name' => 'gallery#setEnabled', 'url' => '/settings/gallery', 'verb' => 'POST'],
+		['name' => 'gallery#install', 'url' => '/settings/gallery/{id}/install', 'verb' => 'POST'],
 		['name' => 'overrides#getOverrides', 'url' => '/settings/overrides', 'verb' => 'GET'],
 		['name' => 'overrides#setOverrides', 'url' => '/settings/overrides', 'verb' => 'POST'],
 		// Import/export.
@@ -87,6 +95,10 @@ return [
 		// #[PublicPage]/#[NoAdminRequired].
 		['name' => 'audit#list', 'url' => '/settings/audit', 'verb' => 'GET'],
 		['name' => 'audit#export', 'url' => '/settings/audit/export', 'verb' => 'GET'],
+		// Kept configuration versions (openspec/specs/theme-versions/spec.md), admin-only.
+		['name' => 'audit#versions', 'url' => '/settings/versions', 'verb' => 'GET'],
+		['name' => 'audit#previewVersion', 'url' => '/settings/versions/{id}/preview', 'verb' => 'POST'],
+		['name' => 'audit#restoreVersion', 'url' => '/settings/versions/{id}/restore', 'verb' => 'POST'],
 		// Email template theming — admin toggle + compliance footer config.
 		['name' => 'settings#getEmailTheming', 'url' => '/settings/email-theming', 'verb' => 'GET'],
 		['name' => 'settings#setEmailTheming', 'url' => '/settings/email-theming', 'verb' => 'POST'],

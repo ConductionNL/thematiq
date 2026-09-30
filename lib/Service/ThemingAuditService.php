@@ -103,6 +103,10 @@ class ThemingAuditService {
 	 * `group_theming_changed` added by `openspec/specs/per-group-theming/spec.md`
 	 * (the group→token-set mapping save).
 	 *
+	 * `scheduled_switch_applied` added by change `apply-scheduled-theme-switch`
+	 * (a planned switch applied or failed by the background job; its entries
+	 * pass `actor: system` in the context, because cron runs in CLI).
+	 *
 	 * @var array<int, string>
 	 */
 	private const VOCABULARY = [
@@ -117,6 +121,8 @@ class ThemingAuditService {
 		'config_imported',
 		'preview_published',
 		'group_theming_changed',
+		'version_restored',
+		'scheduled_switch_applied',
 	];
 
 	/**
@@ -142,6 +148,7 @@ class ThemingAuditService {
 	 * @param IUserSession $userSession The user session (actor resolution).
 	 * @param ITimeFactory $timeFactory The time factory (testable timestamps).
 	 * @param LoggerInterface $logger Logger for warnings on unknown actions / write failures.
+	 * @param ThemeVersionService $versionService Keeps the configuration after each change (theme-versions spec).
 	 */
 	public function __construct(
 		private readonly IAppDataFactory $appDataFactory,
@@ -149,6 +156,7 @@ class ThemingAuditService {
 		private readonly IUserSession $userSession,
 		private readonly ITimeFactory $timeFactory,
 		private readonly LoggerInterface $logger,
+		private readonly ThemeVersionService $versionService,
 	) {
 	}//end __construct()
 
@@ -177,7 +185,8 @@ class ThemingAuditService {
 	 *   version (see class docblock for why the service does not read
 	 *   token-sets.json itself).
 	 * - any other key is copied into the entry verbatim (small scalars only
-	 *   — never CSS bodies).
+	 *   — never CSS bodies). `actor` is one of them: it overrides the resolved
+	 *   actor, which the scheduled switch job uses to record `system`.
 	 *
 	 * @param string $action One of the closed vocabulary actions.
 	 * @param array<string, mixed> $context The entry context (see above).
@@ -185,6 +194,7 @@ class ThemingAuditService {
 	 * @return void
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-append-only-audit-entries
+	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	public function log(string $action, array $context = []): void {
 		if (in_array($action, self::VOCABULARY, true) === false) {
@@ -196,6 +206,22 @@ class ThemingAuditService {
 		}
 
 		$entry = $this->buildEntry(action: $action, context: $context);
+
+		// Keep the configuration this change produced, so the entry can be
+		// restored later. A capture that fails leaves the entry without a
+		// versionId and never blocks it (openspec/specs/theme-versions/spec.md).
+		unset($entry['versionId']);
+		try {
+			$versionId = $this->versionService->capture(auditAction: $action, actor: (string)$entry['actor']);
+			if ($versionId !== null) {
+				$entry['versionId'] = $versionId;
+			}
+		} catch (\Throwable $e) {
+			$this->logger->warning(
+				'nldesign audit: no version was kept for action "{action}": {message}',
+				['action' => $action, 'message' => $e->getMessage()]
+			);
+		}
 
 		$line = json_encode($entry, JSON_UNESCAPED_SLASHES);
 		if ($line === false) {
