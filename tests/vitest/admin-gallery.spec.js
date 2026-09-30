@@ -32,8 +32,16 @@ const utrecht = {
 
 function install() {
 	calls = []
-	installAnswer = { status: 200, body: { id: 'custom-provincie-utrecht', updated: false } }
-	gallery = { enabled: false, host: 'raw.githubusercontent.com', reachable: null, entries: [] }
+	installAnswer = {
+		status: 200,
+		body: { id: 'custom-provincie-utrecht', updated: false },
+	}
+	gallery = {
+		enabled: false,
+		host: 'raw.githubusercontent.com',
+		reachable: null,
+		entries: [],
+	}
 	global.t = (app, text, params) =>
 		params === undefined
 			? text
@@ -113,12 +121,18 @@ describe('admin.js theme gallery', () => {
 	it('is off on a fresh install, names the host and lists nothing', async () => {
 		await load()
 
-		expect(document.getElementById('nldesign-gallery-toggle').checked).toBe(false)
-		expect(document.getElementById('nldesign-gallery-toggle-label').textContent).toBe(
-			'Show the theme gallery (contacts raw.githubusercontent.com)',
+		expect(document.getElementById('nldesign-gallery-toggle').checked).toBe(
+			false,
 		)
-		expect(document.getElementById('nldesign-gallery-list').children).toHaveLength(0)
-		expect(galleryCalls().map((c) => c.method + ' ' + c.url)).toEqual(['GET /apps/thematiq/settings/gallery'])
+		expect(
+			document.getElementById('nldesign-gallery-toggle-label').textContent,
+		).toBe('Show the theme gallery (contacts raw.githubusercontent.com)')
+		expect(
+			document.getElementById('nldesign-gallery-list').children,
+		).toHaveLength(0)
+		expect(galleryCalls().map((c) => c.method + ' ' + c.url)).toEqual([
+			'GET /apps/thematiq/settings/gallery',
+		])
 	})
 
 	it('turns the gallery on and lists the entries with swatches, licence and contrast', async () => {
@@ -138,17 +152,26 @@ describe('admin.js theme gallery', () => {
 		expect(item.textContent).toContain('Contrast: all checks pass')
 		expect(item.querySelectorAll('.nldesign-gallery-swatch')).toHaveLength(3)
 		expect(item.querySelector('a').getAttribute('href')).toBe(utrecht.sourceUrl)
-		expect(item.querySelector('button').getAttribute('aria-label')).toBe('Install Provincie Utrecht')
+		expect(item.querySelector('button').getAttribute('aria-label')).toBe(
+			'Install Provincie Utrecht',
+		)
 	})
 
 	it('says so when the gallery cannot be reached', async () => {
-		gallery = { enabled: true, host: 'intranet.example.nl', reachable: false, entries: [] }
+		gallery = {
+			enabled: true,
+			host: 'intranet.example.nl',
+			reachable: false,
+			entries: [],
+		}
 		await load()
 
-		expect(document.getElementById('nldesign-gallery-status').textContent).toContain(
-			'The gallery could not be reached',
-		)
-		expect(document.getElementById('nldesign-gallery-toggle-label').textContent).toContain('intranet.example.nl')
+		expect(
+			document.getElementById('nldesign-gallery-status').textContent,
+		).toContain('The gallery could not be reached')
+		expect(
+			document.getElementById('nldesign-gallery-toggle-label').textContent,
+		).toContain('intranet.example.nl')
 	})
 
 	it('offers an update for an installed set with a new checksum, and marks one that is current', async () => {
@@ -157,13 +180,25 @@ describe('admin.js theme gallery', () => {
 			host: 'h',
 			reachable: true,
 			entries: [
-				{ ...utrecht, installed: 'custom-provincie-utrecht', updateAvailable: true },
-				{ ...utrecht, id: 'gemeente-epe', name: 'Gemeente Epe', installed: 'custom-gemeente-epe', updateAvailable: false },
+				{
+					...utrecht,
+					installed: 'custom-provincie-utrecht',
+					updateAvailable: true,
+				},
+				{
+					...utrecht,
+					id: 'gemeente-epe',
+					name: 'Gemeente Epe',
+					installed: 'custom-gemeente-epe',
+					updateAvailable: false,
+				},
 			],
 		}
 		await load()
 
-		const update = document.querySelector('[data-gallery-id="provincie-utrecht"]')
+		const update = document.querySelector(
+			'[data-gallery-id="provincie-utrecht"]',
+		)
 		expect(update.textContent).toContain('Update available')
 		expect(update.querySelector('button').textContent).toBe('Update')
 		const current = document.querySelector('[data-gallery-id="gemeente-epe"]')
@@ -174,18 +209,40 @@ describe('admin.js theme gallery', () => {
 	it('installs through POST and refreshes the token set list', async () => {
 		gallery = { enabled: true, host: 'h', reachable: true, entries: [utrecht] }
 		await load()
-		document.querySelector('[data-gallery-id="provincie-utrecht"] button').click()
+		document
+			.querySelector('[data-gallery-id="provincie-utrecht"] button')
+			.click()
 		await flush()
 
-		expect(calls.some((c) => c.method === 'POST' && c.url === '/apps/thematiq/settings/gallery/provincie-utrecht/install')).toBe(true)
-		expect(calls.some((c) => c.method === 'GET' && c.url === '/apps/thematiq/settings/tokensets')).toBe(true)
+		expect(
+			calls.some(
+				(c) =>
+					c.method === 'POST'
+					&& c.url
+						=== '/apps/thematiq/settings/gallery/provincie-utrecht/install',
+			),
+		).toBe(true)
+		expect(
+			calls.some(
+				(c) =>
+					c.method === 'GET'
+					&& c.url === '/apps/thematiq/settings/tokensets',
+			),
+		).toBe(true)
 	})
 
 	it('shows why an install was refused', async () => {
 		gallery = { enabled: true, host: 'h', reachable: true, entries: [utrecht] }
-		installAnswer = { status: 422, body: { error: 'The downloaded file does not match the gallery index, so nothing was installed.' } }
+		installAnswer = {
+			status: 422,
+			body: {
+				error: 'The downloaded file does not match the gallery index, so nothing was installed.',
+			},
+		}
 		await load()
-		const button = document.querySelector('[data-gallery-id="provincie-utrecht"] button')
+		const button = document.querySelector(
+			'[data-gallery-id="provincie-utrecht"] button',
+		)
 		button.click()
 		await flush()
 

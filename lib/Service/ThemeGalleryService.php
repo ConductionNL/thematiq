@@ -33,8 +33,7 @@ use Throwable;
  * Off by default. While off, nothing is requested. When on, the index is read when an
  * administrator opens the Gallery block, at most once an hour, and revalidated with its
  * ETag after that. Requests carry no cookies or instance data and time out after 10 s.
- * Entries that fail the check below are not listed; the same rules are in
- * gallery/index.schema.json, and GalleryIndexSchemaTest keeps the two in step.
+ * Entries GalleryEntryValidator refuses are not listed.
  *
  * @spec openspec/specs/theme-gallery/spec.md
  */
@@ -83,18 +82,12 @@ class ThemeGalleryService {
 	public const TIMEOUT_SECONDS = 10;
 
 	/**
-	 * The formats the upload path can convert.
-	 *
-	 * @var array<int, string>
-	 */
-	private const FORMATS = ['css', 'dtcg', 'design-tokens-css'];
-
-	/**
 	 * Constructor.
 	 *
 	 * @param IConfig               $config        App config.
 	 * @param IClientService        $clientService The HTTP client service.
 	 * @param CustomTokenSetService $customSets    The installed custom sets, for provenance.
+	 * @param GalleryEntryValidator $entries       Decides which index entries may be listed.
 	 * @param ITimeFactory          $time          The clock.
 	 * @param LoggerInterface       $logger        The logger.
 	 */
@@ -102,6 +95,7 @@ class ThemeGalleryService {
 		private IConfig $config,
 		private IClientService $clientService,
 		private CustomTokenSetService $customSets,
+		private GalleryEntryValidator $entries,
 		private ITimeFactory $time,
 		private LoggerInterface $logger,
 	) {
@@ -233,81 +227,6 @@ class ThemeGalleryService {
 	}//end installedFor()
 
 	/**
-	 * The normalised entry, or null when it may not be listed. Mirrors gallery/index.schema.json.
-	 *
-	 * @param mixed $raw One element of the index's `entries`.
-	 *
-	 * @return array<string, mixed>|null The entry.
-	 *
-	 * @spec openspec/specs/theme-gallery/spec.md#requirement-an-administrator-browses-the-gallery
-	 */
-	public static function validateEntry(mixed $raw): ?array {
-		if (is_array($raw) === false) {
-			return null;
-		}
-
-		$checks = [
-			'id' => '/^[a-z0-9]+(-[a-z0-9]+)*$/',
-			'licence' => '/^[A-Za-z0-9.+-]+( (AND|OR|WITH) [A-Za-z0-9.+-]+)*$/',
-			'sha256' => '/^[a-f0-9]{64}$/',
-			'sourceUrl' => '#^https://[^\s]+$#',
-			'fileUrl' => '#^https://[^\s]+$#',
-			'addedOn' => '/^\d{4}-\d{2}-\d{2}$/',
-		];
-		foreach ($checks as $field => $pattern) {
-			if (is_string($raw[$field] ?? null) === false || preg_match($pattern, $raw[$field]) !== 1) {
-				return null;
-			}
-		}
-
-		foreach (['name', 'organisation'] as $field) {
-			if (is_string($raw[$field] ?? null) === false || trim($raw[$field]) === '') {
-				return null;
-			}
-		}
-
-		if (in_array(($raw['format'] ?? null), self::FORMATS, true) === false || self::validSwatches(swatches: ($raw['swatches'] ?? null)) === false) {
-			return null;
-		}
-
-		return [
-			'id' => $raw['id'],
-			'name' => $raw['name'],
-			'organisation' => $raw['organisation'],
-			'description' => (string)(is_string($raw['description'] ?? null) === true ? $raw['description'] : ''),
-			'licence' => $raw['licence'],
-			'sourceUrl' => $raw['sourceUrl'],
-			'fileUrl' => $raw['fileUrl'],
-			'sha256' => $raw['sha256'],
-			'format' => $raw['format'],
-			'swatches' => $raw['swatches'],
-			'contrast' => ($raw['contrast'] ?? null),
-			'addedOn' => $raw['addedOn'],
-		];
-	}//end validateEntry()
-
-	/**
-	 * Whether the swatches are three hex colours.
-	 *
-	 * @param mixed $swatches The swatches field.
-	 *
-	 * @return boolean True when primary, background and text are all `#rgb` or `#rrggbb`.
-	 */
-	private static function validSwatches(mixed $swatches): bool {
-		if (is_array($swatches) === false) {
-			return false;
-		}
-
-		foreach (['primary', 'background', 'text'] as $key) {
-			if (is_string($swatches[$key] ?? null) === false || preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $swatches[$key]) !== 1) {
-				return false;
-			}
-		}
-
-		return true;
-	}//end validSwatches()
-
-	/**
 	 * The valid entries of the index, from the cache or the network; null when unreachable.
 	 *
 	 * @return array<int, array<string, mixed>>|null The entries.
@@ -320,7 +239,7 @@ class ThemeGalleryService {
 
 		$entries = [];
 		foreach ($raw as $item) {
-			$entry = self::validateEntry(raw: $item);
+			$entry = $this->entries->validate(raw: $item);
 			if ($entry !== null) {
 				$entries[] = $entry;
 			}
@@ -336,15 +255,75 @@ class ThemeGalleryService {
 	 */
 	private function readIndex(): ?array {
 		$now = $this->time->getTime();
-		$cache = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_CACHE, ''), true);
-		$cacheValid = (is_array($cache) === true && ($cache['url'] ?? null) === $this->getIndexUrl() && is_array($cache['entries'] ?? null) === true);
-		if ($cacheValid === true && ($now - (int)($cache['fetchedAt'] ?? 0)) < self::CACHE_SECONDS) {
+		$cache = $this->readCache();
+		if ($cache !== null && ($now - (int)($cache['fetchedAt'] ?? 0)) < self::CACHE_SECONDS) {
 			return $cache['entries'];
 		}
 
+		$response = $this->fetch(etag: (string)($cache['etag'] ?? ''));
+		if ($response === null) {
+			return null;
+		}
+
+		if ($response['status'] === 304 && $cache !== null) {
+			$cache['fetchedAt'] = $now;
+			$this->writeCache(cache: $cache);
+			return $cache['entries'];
+		}
+
+		$decoded = json_decode($response['body'], true);
+		if ($response['status'] !== 200 || is_array($decoded) === false || is_array($decoded['entries'] ?? null) === false) {
+			$this->logger->info('thematiq gallery: the index answered {status} without an entries list', ['status' => $response['status']]);
+			return null;
+		}
+
+		$cache = [
+			'url' => $this->getIndexUrl(),
+			'fetchedAt' => $now,
+			'etag' => $response['etag'],
+			'entries' => array_values($decoded['entries']),
+		];
+		$this->writeCache(cache: $cache);
+
+		return $cache['entries'];
+	}//end readIndex()
+
+	/**
+	 * The cached index for the current URL, or null.
+	 *
+	 * @return array{url: string, fetchedAt: int, etag: string, entries: array<int, mixed>}|null The cache.
+	 */
+	private function readCache(): ?array {
+		$cache = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_CACHE, ''), true);
+		if (is_array($cache) === false || ($cache['url'] ?? null) !== $this->getIndexUrl() || is_array($cache['entries'] ?? null) === false) {
+			return null;
+		}
+
+		return $cache;
+	}//end readCache()
+
+	/**
+	 * Store the cache.
+	 *
+	 * @param array<string, mixed> $cache The cache.
+	 *
+	 * @return void
+	 */
+	private function writeCache(array $cache): void {
+		$this->config->setAppValue(Application::APP_ID, self::CONFIG_CACHE, (string)json_encode($cache, JSON_UNESCAPED_SLASHES));
+	}//end writeCache()
+
+	/**
+	 * One bounded GET of the index.
+	 *
+	 * @param string $etag The ETag to revalidate, or ''.
+	 *
+	 * @return array{status: int, body: string, etag: string}|null The answer, or null when the host did not answer.
+	 */
+	private function fetch(string $etag): ?array {
 		$headers = ['Accept' => 'application/json'];
-		if ($cacheValid === true && (string)($cache['etag'] ?? '') !== '') {
-			$headers['If-None-Match'] = (string)$cache['etag'];
+		if ($etag !== '') {
+			$headers['If-None-Match'] = $etag;
 		}
 
 		try {
@@ -357,27 +336,10 @@ class ThemeGalleryService {
 			return null;
 		}
 
-		$status = $response->getStatusCode();
-		if ($status === 304 && $cacheValid === true) {
-			$cache['fetchedAt'] = $now;
-			$this->config->setAppValue(Application::APP_ID, self::CONFIG_CACHE, (string)json_encode($cache, JSON_UNESCAPED_SLASHES));
-			return $cache['entries'];
-		}
-
-		$decoded = json_decode((string)$response->getBody(), true);
-		if ($status !== 200 || is_array($decoded) === false || is_array($decoded['entries'] ?? null) === false) {
-			$this->logger->info('thematiq gallery: the index answered {status} without an entries list', ['status' => $status]);
-			return null;
-		}
-
-		$cache = [
-			'url' => $this->getIndexUrl(),
-			'fetchedAt' => $now,
-			'etag' => $response->getHeader('ETag'),
-			'entries' => array_values($decoded['entries']),
+		return [
+			'status' => $response->getStatusCode(),
+			'body' => (string)$response->getBody(),
+			'etag' => (string)$response->getHeader('ETag'),
 		];
-		$this->config->setAppValue(Application::APP_ID, self::CONFIG_CACHE, (string)json_encode($cache, JSON_UNESCAPED_SLASHES));
-
-		return $cache['entries'];
-	}//end readIndex()
+	}//end fetch()
 }//end class

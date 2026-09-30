@@ -5622,9 +5622,13 @@
 					provenance.href = set.provenance.sourceUrl
 					provenance.target = '_blank'
 					provenance.rel = 'noopener noreferrer'
-					provenance.textContent = t('thematiq', 'From the gallery, licence {licence}', {
-						licence: set.provenance.licence || '',
-					})
+					provenance.textContent = t(
+						'thematiq',
+						'From the gallery, licence {licence}',
+						{
+							licence: set.provenance.licence || '',
+						},
+					)
 					row.appendChild(provenance)
 				}
 
@@ -7029,10 +7033,16 @@
 			}
 
 			function contrastText(contrast) {
-				if (contrast && typeof contrast === 'object' && contrast.fail !== undefined) {
+				if (
+					contrast
+					&& typeof contrast === 'object'
+					&& contrast.fail !== undefined
+				) {
 					return Number(contrast.fail) === 0
 						? t('thematiq', 'Contrast: all checks pass')
-						: t('thematiq', 'Contrast checks failed: {count}', { count: contrast.fail })
+						: t('thematiq', 'Contrast checks failed: {count}', {
+								count: contrast.fail,
+							})
 				}
 				if (typeof contrast === 'string' && contrast !== '') {
 					return t('thematiq', 'Contrast: {result}', { result: contrast })
@@ -7063,17 +7073,23 @@
 				text.appendChild(name)
 				var meta = document.createElement('span')
 				meta.className = 'nldesign-gallery-meta'
-				meta.textContent = t('thematiq', '{organisation}, licence {licence}. {contrast}.', {
-					organisation: entry.organisation,
-					licence: entry.licence,
-					contrast: contrastText(entry.contrast),
-				})
+				meta.textContent = t(
+					'thematiq',
+					'{organisation}, licence {licence}. {contrast}.',
+					{
+						organisation: entry.organisation,
+						licence: entry.licence,
+						contrast: contrastText(entry.contrast),
+					},
+				)
 				text.appendChild(meta)
 				var source = document.createElement('a')
 				source.href = entry.sourceUrl
 				source.target = '_blank'
 				source.rel = 'noopener noreferrer'
-				source.textContent = t('thematiq', 'Source of {name}', { name: entry.name })
+				source.textContent = t('thematiq', 'Source of {name}', {
+					name: entry.name,
+				})
 				text.appendChild(source)
 				item.appendChild(text)
 
@@ -7094,10 +7110,16 @@
 					badge.textContent = t('thematiq', 'Update available')
 					item.appendChild(badge)
 					button.textContent = t('thematiq', 'Update')
-					button.setAttribute('aria-label', t('thematiq', 'Update {name}', { name: entry.name }))
+					button.setAttribute(
+						'aria-label',
+						t('thematiq', 'Update {name}', { name: entry.name }),
+					)
 				} else {
 					button.textContent = t('thematiq', 'Install')
-					button.setAttribute('aria-label', t('thematiq', 'Install {name}', { name: entry.name }))
+					button.setAttribute(
+						'aria-label',
+						t('thematiq', 'Install {name}', { name: entry.name }),
+					)
 				}
 				button.addEventListener('click', function () {
 					install(entry, button)
@@ -7109,7 +7131,11 @@
 			function render(data) {
 				toggle.checked = data.enabled === true
 				if (label !== null && data.host) {
-					label.textContent = t('thematiq', 'Show the theme gallery (contacts {host})', { host: data.host })
+					label.textContent = t(
+						'thematiq',
+						'Show the theme gallery (contacts {host})',
+						{ host: data.host },
+					)
 				}
 				list.innerHTML = ''
 				if (data.enabled !== true) {
@@ -7117,11 +7143,20 @@
 					return
 				}
 				if (data.reachable === false) {
-					setStatus(t('thematiq', 'The gallery could not be reached. You can still upload a token set file under Custom token sets.'))
+					setStatus(
+						t(
+							'thematiq',
+							'The gallery could not be reached. You can still upload a token set file under Custom token sets.',
+						),
+					)
 					return
 				}
 				var entries = data.entries || []
-				setStatus(entries.length === 0 ? t('thematiq', 'The gallery lists no house styles yet.') : '')
+				setStatus(
+					entries.length === 0
+						? t('thematiq', 'The gallery lists no house styles yet.')
+						: '',
+				)
 				entries.forEach(function (entry) {
 					list.appendChild(renderEntry(entry))
 				})
@@ -7142,7 +7177,11 @@
 				button.disabled = true
 				setStatus(t('thematiq', 'Installing {name}…', { name: entry.name }))
 				fetch(
-					OC.generateUrl('/apps/thematiq/settings/gallery/' + encodeURIComponent(entry.id) + '/install'),
+					OC.generateUrl(
+						'/apps/thematiq/settings/gallery/'
+							+ encodeURIComponent(entry.id)
+							+ '/install',
+					),
 					{ method: 'POST', headers: { requesttoken: OC.requestToken } },
 				)
 					.then(function (r) {
@@ -7153,10 +7192,21 @@
 					.then(function (result) {
 						if (!result.ok) {
 							button.disabled = false
-							setStatus(result.body.error || t('thematiq', '{name} was not installed.', { name: entry.name }))
+							setStatus(
+								result.body.error
+									|| t('thematiq', '{name} was not installed.', {
+										name: entry.name,
+									}),
+							)
 							return
 						}
-						notify(t('thematiq', '{name} is installed. Choose it in the Design token set list.', { name: entry.name }))
+						notify(
+							t(
+								'thematiq',
+								'{name} is installed. Choose it in the Design token set list.',
+								{ name: entry.name },
+							),
+						)
 						refreshTokenSetCatalogue()
 						loadCustomTokenSets()
 						load()
@@ -7164,7 +7214,11 @@
 					.catch(function (err) {
 						console.error('Error installing a gallery entry:', err)
 						button.disabled = false
-						setStatus(t('thematiq', '{name} was not installed.', { name: entry.name }))
+						setStatus(
+							t('thematiq', '{name} was not installed.', {
+								name: entry.name,
+							}),
+						)
 					})
 			}
 
@@ -7172,7 +7226,10 @@
 				var enabled = toggle.checked
 				fetch(url, {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json', requesttoken: OC.requestToken },
+					headers: {
+						'Content-Type': 'application/json',
+						requesttoken: OC.requestToken,
+					},
 					body: JSON.stringify({ enabled: enabled }),
 				})
 					.then(function (r) {

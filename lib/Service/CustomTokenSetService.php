@@ -176,8 +176,6 @@ class CustomTokenSetService {
 	 * @param string|null $designSystem The design system this set was created FROM, when the caller knows it.
 	 *                                  Decides which stylesheet layers the set emits; left unset for an
 	 *                                  upload of an unknown document, which still resolves to nldesign.
-	 * @param array<string, string>|null $provenance Where a gallery install came from (galleryId, sourceUrl, licence,
-	 *                                  sha256, installedOn); null for an upload.
 	 *
 	 * @return array{id: string, warnings: array<int, array<string, mixed>>} The result.
 	 *
@@ -203,7 +201,6 @@ class CustomTokenSetService {
 		array $theming = [],
 		?array $logoAsset = null,
 		?string $designSystem = null,
-		?array $provenance = null,
 	): array {
 		$slug = $this->slugify(name: $displayName);
 		if ($slug === '') {
@@ -270,13 +267,6 @@ class CustomTokenSetService {
 		// field existed already was.
 		if ($designSystem !== null && $designSystem !== '') {
 			$entry['design_system'] = $designSystem;
-		}
-
-		// Where a set installed from the theme gallery came from
-		// (openspec/specs/theme-gallery/spec.md): gallery id, source, licence,
-		// checksum and install date, shown in the custom token sets list.
-		if ($provenance !== null) {
-			$entry['provenance'] = $provenance;
 		}
 
 		$manifest = $this->getManifest();

@@ -50,7 +50,7 @@ class GalleryController extends Controller {
 		private ThemeGalleryService $gallery,
 		private GalleryInstallService $installer,
 	) {
-		parent::__construct($appName, $request);
+		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
 
 	/**

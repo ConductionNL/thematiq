@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\CustomTokenSetService;
+use OCA\Thematiq\Service\GalleryEntryValidator;
 use OCA\Thematiq\Service\ThemeGalleryService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClient;
@@ -153,7 +154,7 @@ class ThemeGalleryServiceTest extends TestCase {
 		$time = $this->createMock(ITimeFactory::class);
 		$time->method('getTime')->willReturnCallback(fn () => $this->now);
 
-		return new ThemeGalleryService($config, $this->clientService, $customSets, $time, $this->createMock(LoggerInterface::class));
+		return new ThemeGalleryService($config, $this->clientService, $customSets, new GalleryEntryValidator(), $time, $this->createMock(LoggerInterface::class));
 	}//end service()
 
 	/**

@@ -121,18 +121,22 @@ class GalleryInstallService {
 				importWarnings: ($prepared['converted']['importWarnings'] ?? []),
 				css: $prepared['converted']['css'],
 				theming: ($prepared['converted']['manifestEntry']['theming'] ?? []),
-				logoAsset: ($prepared['converted']['logoAsset'] ?? null),
-				provenance: [
-					'galleryId' => $galleryId,
-					'sourceUrl' => (string)$entry['sourceUrl'],
-					'licence' => (string)$entry['licence'],
-					'sha256' => (string)$entry['sha256'],
-					'installedOn' => gmdate('Y-m-d\TH:i:s\Z', $this->time->getTime()),
-				]
+				logoAsset: ($prepared['converted']['logoAsset'] ?? null)
 			);
 		} catch (RuntimeException $e) {
 			throw new GalleryException(message: $e->getMessage(), code: 422, previous: $e);
 		}
+
+		$this->recordProvenance(
+			id: $stored['id'],
+			provenance: [
+				'galleryId' => $galleryId,
+				'sourceUrl' => (string)$entry['sourceUrl'],
+				'licence' => (string)$entry['licence'],
+				'sha256' => (string)$entry['sha256'],
+				'installedOn' => gmdate('Y-m-d\TH:i:s\Z', $this->time->getTime()),
+			]
+		);
 
 		if ($wasActive === true) {
 			$this->config->setAppValue(Application::APP_ID, 'token_set', $stored['id']);
@@ -156,6 +160,26 @@ class GalleryInstallService {
 			'warnings' => $stored['warnings'],
 		];
 	}//end install()
+
+	/**
+	 * Add where the set came from to its manifest entry, which the custom token sets list shows.
+	 * Rewrites the stored file and entry verbatim through CustomTokenSetService::replace().
+	 *
+	 * @param string                $id         The stored custom set id.
+	 * @param array<string, string> $provenance Gallery id, source, licence, checksum, install date.
+	 *
+	 * @return void
+	 */
+	private function recordProvenance(string $id, array $provenance): void {
+		$entry = ($this->customSets->getManifest()[$id] ?? []);
+		$css = $this->customSets->getRawContent(id: $id);
+		if (is_array($entry) === false || $css === null) {
+			return;
+		}
+
+		$entry['provenance'] = $provenance;
+		$this->customSets->replace(id: $id, entry: $entry, css: $css);
+	}//end recordProvenance()
 
 	/**
 	 * Download the entry's file, bounded like an upload.

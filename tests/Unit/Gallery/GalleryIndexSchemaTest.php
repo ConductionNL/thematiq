@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Gallery;
 
-use OCA\Thematiq\Service\ThemeGalleryService;
+use OCA\Thematiq\Service\GalleryEntryValidator;
 use OCA\Thematiq\Tests\Unit\Service\ThemeGalleryServiceTest;
 use Opis\JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
@@ -77,7 +77,7 @@ class GalleryIndexSchemaTest extends TestCase {
 		foreach ($cases as $label => [$entry, $expected]) {
 			$document = json_decode((string)json_encode(['entries' => [$entry]]));
 			$this->assertSame($expected, $this->valid($document), "schema on: {$label}");
-			$this->assertSame($expected, ThemeGalleryService::validateEntry(raw: $entry) !== null, "runtime on: {$label}");
+			$this->assertSame($expected, (new GalleryEntryValidator())->validate(raw: $entry) !== null, "runtime on: {$label}");
 		}
 	}//end testTheSchemaAndTheRuntimeAgree()
 }//end class
