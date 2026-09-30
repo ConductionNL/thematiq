@@ -36,7 +36,8 @@ function install() {
 				startAt: '2027-05-01T00:00:00Z',
 				endAt: null,
 				status: 'failed',
-				failureReason: 'The token set custom-campagne no longer exists, so the switch was not applied.',
+				failureReason:
+					'The token set custom-campagne no longer exists, so the switch was not applied.',
 			},
 		],
 		status: {
@@ -179,9 +180,7 @@ describe('admin.js planned switches', () => {
 		const post = calls.find((c) => c.method === 'POST')
 		const body = new URLSearchParams(post.body)
 		expect(body.get('tokenSet')).toBe('koningsdag-oranje')
-		expect(body.get('startAt')).toBe(
-			new Date('2027-04-26T18:00').toISOString(),
-		)
+		expect(body.get('startAt')).toBe(new Date('2027-04-26T18:00').toISOString())
 		expect(body.get('endAt')).toBe(new Date('2027-04-28T08:00').toISOString())
 		expect(body.get('syncCoreTheming')).toBe('1')
 		// The list is loaded again after planning.
