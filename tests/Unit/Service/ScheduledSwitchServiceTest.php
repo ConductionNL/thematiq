@@ -165,16 +165,13 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * Plan the King's Day switch used by most tests.
 	 *
-	 * @param bool $sync Whether to sync core theming.
-	 *
 	 * @return array<string, mixed> The planned entry.
 	 */
-	private function planKingsDay(bool $sync = false): array {
+	private function planKingsDay(): array {
 		return $this->service->create(
 			tokenSet: 'koningsdag-oranje',
 			startAt: '2027-04-26T18:00:00+02:00',
 			endAt: '2027-04-28T08:00:00+02:00',
-			syncCoreTheming: $sync,
 			createdBy: 'admin'
 		);
 	}//end planKingsDay()
@@ -199,10 +196,10 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * Scenario "Overlapping plans are refused".
 	 */
 	public function testOverlappingPlanIsRefused(): void {
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: '2027-05-07T00:00:00Z', syncCoreTheming: false, createdBy: 'admin');
+		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: '2027-05-07T00:00:00Z', createdBy: 'admin');
 
 		try {
-			$this->service->create(tokenSet: 'custom-campagne', startAt: '2027-05-05T00:00:00Z', endAt: '2027-05-10T00:00:00Z', syncCoreTheming: false, createdBy: 'admin');
+			$this->service->create(tokenSet: 'custom-campagne', startAt: '2027-05-05T00:00:00Z', endAt: '2027-05-10T00:00:00Z', createdBy: 'admin');
 			$this->fail('An overlapping window was accepted.');
 		} catch (ScheduledSwitchException $e) {
 			$this->assertStringContainsString('overlaps', $e->getMessage());
@@ -215,10 +212,10 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * A switch without an end overlaps every later window.
 	 */
 	public function testOpenEndedSwitchOverlapsEveryLaterWindow(): void {
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: null, syncCoreTheming: false, createdBy: 'admin');
+		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: null, createdBy: 'admin');
 
 		$this->expectException(ScheduledSwitchException::class);
-		$this->service->create(tokenSet: 'custom-campagne', startAt: '2027-06-01T00:00:00Z', endAt: '2027-06-02T00:00:00Z', syncCoreTheming: false, createdBy: 'admin');
+		$this->service->create(tokenSet: 'custom-campagne', startAt: '2027-06-01T00:00:00Z', endAt: '2027-06-02T00:00:00Z', createdBy: 'admin');
 	}//end testOpenEndedSwitchOverlapsEveryLaterWindow()
 
 	/**
@@ -227,7 +224,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	public function testUnknownTokenSetIsRefused(): void {
 		$this->expectException(ScheduledSwitchException::class);
 		$this->expectExceptionMessage('does not exist');
-		$this->service->create(tokenSet: 'bestaat-niet', startAt: '2027-05-01T00:00:00Z', endAt: null, syncCoreTheming: false, createdBy: 'admin');
+		$this->service->create(tokenSet: 'bestaat-niet', startAt: '2027-05-01T00:00:00Z', endAt: null, createdBy: 'admin');
 	}//end testUnknownTokenSetIsRefused()
 
 	/**
@@ -236,7 +233,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	public function testEndBeforeStartIsRefused(): void {
 		$this->expectException(ScheduledSwitchException::class);
 		$this->expectExceptionMessage('after the start');
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: '2027-05-01T00:00:00Z', syncCoreTheming: false, createdBy: 'admin');
+		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: '2027-05-01T00:00:00Z', createdBy: 'admin');
 	}//end testEndBeforeStartIsRefused()
 
 	/**
@@ -244,7 +241,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 */
 	public function testUnparsableTimeIsRefused(): void {
 		$this->expectException(ScheduledSwitchException::class);
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: 'next tuesday-ish', endAt: null, syncCoreTheming: false, createdBy: 'admin');
+		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: 'next tuesday-ish', endAt: null, createdBy: 'admin');
 	}//end testUnparsableTimeIsRefused()
 
 	/**
@@ -271,7 +268,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 		$this->assertCount(2, $this->audit);
 		$this->assertSame('scheduled_switch_applied', $this->audit[0][0]);
 		$this->assertSame(
-			['old' => 'rijkshuisstijl', 'new' => 'koningsdag-oranje', 'actor' => 'system', 'switchId' => $entry['id']],
+			['old' => 'rijkshuisstijl', 'new' => 'koningsdag-oranje', 'actor' => 'system', 'switchId' => $entry['id'], 'coreThemingSynced' => []],
 			$this->audit[0][1]
 		);
 		$this->assertSame('scheduled_switch_applied', $this->audit[1][0]);
@@ -279,6 +276,94 @@ class ScheduledSwitchServiceTest extends TestCase {
 		$this->assertSame('rijkshuisstijl', $this->audit[1][1]['new']);
 		$this->assertSame('system', $this->audit[1][1]['actor']);
 	}//end testTheLookStartsAndEndsOnTime()
+
+	/**
+	 * Scenario "A set picked by hand during a running switch does not last":
+	 * the next run puts the switch's set back, and the end still returns to the
+	 * set the switch replaced.
+	 */
+	public function testARunningSwitchKeepsItsSetActive(): void {
+		$entry = $this->planKingsDay();
+		$this->at('2027-04-26T16:03:00Z');
+		$this->service->runDue();
+
+		// An administrator picks another set by hand during the window.
+		$this->store['thematiq/token_set'] = 'nextcloud';
+		$this->at('2027-04-27T10:00:00Z');
+		$this->service->runDue();
+
+		$this->assertSame('koningsdag-oranje', $this->store['thematiq/token_set']);
+		$this->assertSame('rijkshuisstijl', $this->service->list()[0]['revertTo']);
+		$this->assertSame(
+			['old' => 'nextcloud', 'new' => 'koningsdag-oranje', 'actor' => 'system', 'switchId' => $entry['id'], 'reapplied' => true, 'coreThemingSynced' => []],
+			$this->audit[1][1]
+		);
+
+		// Already active: nothing to do and nothing logged.
+		$this->service->runDue();
+		$this->assertCount(2, $this->audit);
+
+		$this->at('2027-04-28T06:02:00Z');
+		$this->service->runDue();
+		$this->assertSame('rijkshuisstijl', $this->store['thematiq/token_set']);
+	}//end testARunningSwitchKeepsItsSetActive()
+
+	/**
+	 * Putting the set back brings its logo and colours back too.
+	 */
+	public function testKeepingASwitchActiveSyncsCoreThemingAgain(): void {
+		$this->planKingsDay();
+		$this->at('2027-04-26T16:03:00Z');
+		$this->service->runDue();
+		$this->store['thematiq/token_set'] = 'nextcloud';
+
+		$this->theming->expects($this->once())
+			->method('applyColors')
+			->with(['primary_color' => '#FF6600', 'background_color' => '#FFFFFF'])
+			->willReturn(['primary_color']);
+
+		$this->at('2027-04-27T10:00:00Z');
+		$this->service->runDue();
+
+		$this->assertSame('koningsdag-oranje', $this->store['thematiq/token_set']);
+	}//end testKeepingASyncedSwitchActiveSyncsCoreThemingAgain()
+
+	/**
+	 * A running switch whose logo and colours were never applied — planned
+	 * before every switch brought them — gets them once, on its set already
+	 * active, and not again on the runs after.
+	 */
+	public function testARunningSwitchWithoutItsColoursGetsThemOnce(): void {
+		$this->store['thematiq/token_set'] = 'koningsdag-oranje';
+		$this->store['thematiq/scheduled_switches'] = json_encode(
+			[
+				[
+					'id' => 'old1',
+					'tokenSet' => 'koningsdag-oranje',
+					'startAt' => '2027-04-26T16:00:00Z',
+					'endAt' => '2027-04-28T06:00:00Z',
+					'syncCoreTheming' => false,
+					'createdBy' => 'admin',
+					'createdAt' => '2027-04-20T12:00:00Z',
+					'status' => 'running',
+					'revertTo' => 'rijkshuisstijl',
+				],
+			]
+		);
+
+		$this->theming->expects($this->once())
+			->method('applyColors')
+			->with(['primary_color' => '#FF6600', 'background_color' => '#FFFFFF'])
+			->willReturn(['primary_color', 'background_color']);
+
+		$this->at('2027-04-27T10:00:00Z');
+		$this->service->runDue();
+		$this->service->runDue();
+
+		$this->assertTrue($this->service->list()[0]['themingApplied']);
+		$this->assertCount(1, $this->audit);
+		$this->assertSame(['primary_color', 'background_color'], $this->audit[0][1]['coreThemingSynced']);
+	}//end testARunningSwitchWithoutItsColoursGetsThemOnce()
 
 	/**
 	 * Before its start a planned switch is left alone.
@@ -298,7 +383,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * A switch without an end is done once applied and leaves the list.
 	 */
 	public function testOpenEndedSwitchLeavesTheListOnceApplied(): void {
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-21T00:00:00Z', endAt: null, syncCoreTheming: false, createdBy: 'admin');
+		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-21T00:00:00Z', endAt: null, createdBy: 'admin');
 
 		$this->at('2027-04-21T00:04:00Z');
 		$this->service->runDue();
@@ -311,7 +396,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * Scenario "A switch to a deleted set fails visibly".
 	 */
 	public function testASwitchToADeletedSetFailsVisibly(): void {
-		$entry = $this->service->create(tokenSet: 'custom-campagne', startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z', syncCoreTheming: false, createdBy: 'admin');
+		$entry = $this->service->create(tokenSet: 'custom-campagne', startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z', createdBy: 'admin');
 		$this->sets = ['rijkshuisstijl', 'koningsdag-oranje', 'nextcloud'];
 
 		$this->at('2027-04-21T00:03:00Z');
@@ -336,27 +421,12 @@ class ScheduledSwitchServiceTest extends TestCase {
 	}//end testASwitchToADeletedSetFailsVisibly()
 
 	/**
-	 * Scenario "A switch without core sync keeps the core logo".
+	 * Scenario "A planned switch brings the set's logo and colours": the set's
+	 * theming block is applied at the start and the previous set's at the end,
+	 * with nothing to tick.
 	 */
-	public function testASwitchWithoutCoreSyncLeavesCoreThemingAlone(): void {
-		$this->planKingsDay(sync: false);
-
-		$this->theming->expects($this->never())->method('applyColors');
-		$this->theming->expects($this->never())->method('applyImages');
-		$this->theming->expects($this->never())->method('resetToDefaults');
-
-		$this->at('2027-04-26T16:03:00Z');
-		$this->service->runDue();
-		$this->at('2027-04-28T06:03:00Z');
-		$this->service->runDue();
-	}//end testASwitchWithoutCoreSyncLeavesCoreThemingAlone()
-
-	/**
-	 * With core sync ticked, the set's theming block is applied at the start
-	 * and the previous set's block at the end.
-	 */
-	public function testASwitchWithCoreSyncAppliesTheSetsThemingBothWays(): void {
-		$this->planKingsDay(sync: true);
+	public function testASwitchAppliesTheSetsThemingBothWays(): void {
+		$this->planKingsDay();
 
 		$applied = [];
 		$this->theming->method('validateColors')->willReturn(null);
@@ -382,7 +452,24 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 		$this->assertSame(['primary_color' => '#154273', 'logo' => 'img/logos/rijkshuisstijl.svg'], $applied[1]);
 		$this->assertSame('img/logos/rijkshuisstijl.svg', $this->store['thematiq/synced_logo']);
-	}//end testASwitchWithCoreSyncAppliesTheSetsThemingBothWays()
+	}//end testASwitchAppliesTheSetsThemingBothWays()
+
+	/**
+	 * A switch back to the stock set resets Nextcloud's theming, as applying it by hand does.
+	 */
+	public function testASwitchBackToStockResetsCoreTheming(): void {
+		$this->store['thematiq/token_set'] = 'nextcloud';
+		$this->planKingsDay();
+		$this->at('2027-04-26T16:03:00Z');
+		$this->service->runDue();
+
+		$this->theming->expects($this->once())->method('resetToDefaults')->willReturn(['primary_color']);
+
+		$this->at('2027-04-28T06:03:00Z');
+		$this->service->runDue();
+
+		$this->assertSame('nextcloud', $this->store['thematiq/token_set']);
+	}//end testASwitchBackToStockResetsCoreTheming()
 
 	/**
 	 * Cancelling a planned switch removes it without touching the active set.

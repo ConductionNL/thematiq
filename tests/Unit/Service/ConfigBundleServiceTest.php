@@ -670,7 +670,6 @@ class ConfigBundleServiceTest extends TestCase {
 					'tokenSet' => 'utrecht',
 					'startAt' => '2027-04-26T16:00:00Z',
 					'endAt' => '2027-04-28T06:00:00Z',
-					'syncCoreTheming' => true,
 					'createdBy' => 'admin',
 					'createdAt' => '2027-04-01T10:00:00Z',
 				],

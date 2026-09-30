@@ -7124,11 +7124,6 @@
 					endAt: toUtc(
 						document.getElementById('nldesign-scheduled-end').value,
 					),
-					syncCoreTheming: document.getElementById(
-						'nldesign-scheduled-sync',
-					).checked
-						? '1'
-						: '0',
 				}
 				fetch(url, {
 					method: 'POST',

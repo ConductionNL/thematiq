@@ -32,7 +32,9 @@ use Psr\Log\LoggerInterface;
  * Plans, applies, reverts and cancels timed token set switches.
  *
  * An entry is `planned` until its start has passed. The background job then
- * switches to its set; with an end it becomes `running` and remembers the
+ * applies its set the way the apply dialog does — the token set and the
+ * Nextcloud logo and colours it carries; with an end it becomes `running`,
+ * keeps that set applied, and remembers the
  * set it replaced as `revertTo`, without an end it is done and leaves the
  * list. At the end the job switches back to `revertTo` and the entry leaves
  * the list. A switch that cannot be applied (its set was deleted) becomes
@@ -66,7 +68,7 @@ class ScheduledSwitchService {
 	 * @param ScheduledSwitchStore     $store          The stored plans.
 	 * @param ActiveTokenSetService    $activeTokenSet The one token set write path.
 	 * @param TokenSetService          $tokenSets      Validates a set on planning.
-	 * @param ScheduledCoreThemingSync $coreSync       Syncs core logo and colours when asked.
+	 * @param ScheduledCoreThemingSync $coreSync       Syncs core logo and colours with every switch.
 	 * @param ThemingAuditService      $auditService   Records a failed switch.
 	 * @param IConfig                  $config         Last run and cron mode.
 	 * @param ITimeFactory             $time           The clock.
@@ -105,21 +107,18 @@ class ScheduledSwitchService {
 	/**
 	 * Plan a switch.
 	 *
-	 * @param string      $tokenSet        The set to switch to.
-	 * @param string      $startAt         The start, ISO 8601 with an offset.
-	 * @param string|null $endAt           The optional end, ISO 8601 with an offset.
-	 * @param bool        $syncCoreTheming Whether to also update the Nextcloud logo and colours.
-	 * @param string      $createdBy       The administrator's uid.
+	 * @param string      $tokenSet  The set to switch to.
+	 * @param string      $startAt   The start, ISO 8601 with an offset.
+	 * @param string|null $endAt     The optional end, ISO 8601 with an offset.
+	 * @param string      $createdBy The administrator's uid.
 	 *
 	 * @return array<string, mixed> The planned entry.
 	 *
 	 * @throws ScheduledSwitchException When the set does not exist, a time does not parse, the end is not after the start, or the window overlaps.
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
-	 *
-	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - the core sync option is the administrator's own checkbox, stored as is.
 	 */
-	public function create(string $tokenSet, string $startAt, ?string $endAt, bool $syncCoreTheming, string $createdBy): array {
+	public function create(string $tokenSet, string $startAt, ?string $endAt, string $createdBy): array {
 		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
 			throw new ScheduledSwitchException(message: $this->l10n->t('The token set {set} does not exist.', ['set' => $tokenSet]));
 		}
@@ -143,7 +142,6 @@ class ScheduledSwitchService {
 			'tokenSet' => $tokenSet,
 			'startAt' => $start,
 			'endAt' => $end,
-			'syncCoreTheming' => $syncCoreTheming,
 			'createdBy' => $createdBy,
 			'createdAt' => $this->nowIso(),
 			'status' => 'planned',
@@ -276,20 +274,75 @@ class ScheduledSwitchService {
 			return null;
 		}
 
-		if ($status === 'running' && $entry['endAt'] !== null && strtotime((string)$entry['endAt']) <= $now) {
-			if ($this->switchBack(entry: $entry) === true) {
-				return null;
-			}
-
-			$entry['status'] = 'failed';
-			$entry['failureReason'] = $this->l10n->t(
-				'The token set {set} no longer exists, so the switch could not go back to it.',
-				['set' => (string)$entry['revertTo']]
-			);
+		if ($status !== 'running') {
+			return $entry;
 		}
+
+		if ($entry['endAt'] === null || strtotime((string)$entry['endAt']) > $now) {
+			return $this->keepApplied(entry: $entry);
+		}
+
+		if ($this->switchBack(entry: $entry) === true) {
+			return null;
+		}
+
+		$entry['status'] = 'failed';
+		$entry['failureReason'] = $this->l10n->t(
+			'The token set {set} no longer exists, so the switch could not go back to it.',
+			['set' => (string)$entry['revertTo']]
+		);
 
 		return $entry;
 	}//end advance()
+
+	/**
+	 * Keep a running switch's token set active until its end.
+	 *
+	 * The start used to be the only moment the switch was applied: a token set
+	 * picked by hand during the window then stayed, and every later run left it
+	 * there, so the campaign look was gone until the end put the old set back.
+	 * Each run now applies the switch's set again when another one is active. It
+	 * does not touch `revertTo`: the end still returns to the set the switch
+	 * replaced.
+	 *
+	 * A switch that has not brought its Nextcloud logo and colours yet — planned
+	 * before every switch did — gets them once, marked `themingApplied`. Not on
+	 * every run: each write of a colour busts Nextcloud's theming cache.
+	 *
+	 * @param array<string, mixed> $entry The running entry.
+	 *
+	 * @return array<string, mixed> The entry, marked once its logo and colours are applied.
+	 *
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-the-app-applies-a-due-switch-and-switches-back
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-a-planned-switch-applies-a-set-like-the-apply-dialog
+	 */
+	private function keepApplied(array $entry): array {
+		$tokenSet = (string)$entry['tokenSet'];
+		$context = ['actor' => 'system', 'switchId' => $entry['id'], 'reapplied' => true];
+		if ($this->activeTokenSet->getActive() === $tokenSet) {
+			if (($entry['themingApplied'] ?? false) === true || $this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
+				return $entry;
+			}
+
+			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $tokenSet);
+			$this->auditService->log(action: self::AUDIT_ACTION, context: array_merge(['old' => $tokenSet, 'new' => $tokenSet], $context));
+			$entry['themingApplied'] = true;
+			return $entry;
+		}
+
+		try {
+			$this->applySet(tokenSet: $tokenSet, context: $context);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->warning(
+				'thematiq: running switch {id} could not keep {set} active: the set does not exist',
+				['id' => $entry['id'], 'set' => $tokenSet]
+			);
+			return $entry;
+		}
+
+		$entry['themingApplied'] = true;
+		return $entry;
+	}//end keepApplied()
 
 	/**
 	 * Apply a due start.
@@ -299,14 +352,8 @@ class ScheduledSwitchService {
 	 * @return array<string, mixed> The entry, now `running`, `done` or `failed`.
 	 */
 	private function start(array $entry): array {
-		$context = ['actor' => 'system', 'switchId' => $entry['id']];
-		$wantsCoreSync = (($entry['syncCoreTheming'] ?? false) === true);
-		if ($wantsCoreSync === true && $this->tokenSets->isValidTokenSet(tokenSetId: $entry['tokenSet']) === true) {
-			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $entry['tokenSet']);
-		}
-
 		try {
-			$entry['revertTo'] = $this->activeTokenSet->switchTo(tokenSet: $entry['tokenSet'], auditAction: self::AUDIT_ACTION, auditContext: $context);
+			$entry['revertTo'] = $this->applySet(tokenSet: (string)$entry['tokenSet'], context: ['actor' => 'system', 'switchId' => $entry['id']]);
 		} catch (\InvalidArgumentException $e) {
 			$reason = $this->l10n->t('The token set {set} no longer exists, so the switch was not applied.', ['set' => $entry['tokenSet']]);
 			$this->logger->warning(
@@ -322,6 +369,7 @@ class ScheduledSwitchService {
 			return $entry;
 		}
 
+		$entry['themingApplied'] = true;
 		$entry['status'] = 'done';
 		if ($entry['endAt'] !== null) {
 			$entry['status'] = 'running';
@@ -339,13 +387,8 @@ class ScheduledSwitchService {
 	 */
 	private function switchBack(array $entry): bool {
 		$revertTo = (string)($entry['revertTo'] ?? '');
-		$context = ['actor' => 'system', 'switchId' => $entry['id']];
-		if (($entry['syncCoreTheming'] ?? false) === true && $this->tokenSets->isValidTokenSet(tokenSetId: $revertTo) === true) {
-			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $revertTo);
-		}
-
 		try {
-			$this->activeTokenSet->switchTo(tokenSet: $revertTo, auditAction: self::AUDIT_ACTION, auditContext: $context);
+			$this->applySet(tokenSet: $revertTo, context: ['actor' => 'system', 'switchId' => $entry['id']]);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->warning('thematiq: planned switch {id} could not go back to {set}', ['id' => $entry['id'], 'set' => $revertTo]);
 			return false;
@@ -353,6 +396,33 @@ class ScheduledSwitchService {
 
 		return true;
 	}//end switchBack()
+
+	/**
+	 * Apply a token set the way the apply dialog does: Nextcloud's logo and
+	 * colours from the set first, then the token set itself.
+	 *
+	 * A switch used to change only the token set unless the administrator had
+	 * ticked a box, and a set's look lives largely in the Nextcloud colours and
+	 * logo it carries — so a switch changed the token set and nothing anyone
+	 * could see. For the stock set the sync resets Nextcloud's theming to its
+	 * defaults, as the dialog does.
+	 *
+	 * @param string               $tokenSet The set to apply.
+	 * @param array<string, mixed> $context  The audit context.
+	 *
+	 * @return string The set that was active before.
+	 *
+	 * @throws \InvalidArgumentException When the set does not exist.
+	 *
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-a-planned-switch-applies-a-set-like-the-apply-dialog
+	 */
+	private function applySet(string $tokenSet, array $context): string {
+		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === true) {
+			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $tokenSet);
+		}
+
+		return $this->activeTokenSet->switchTo(tokenSet: $tokenSet, auditAction: self::AUDIT_ACTION, auditContext: $context);
+	}//end applySet()
 
 	/**
 	 * The current time as UTC ISO 8601.

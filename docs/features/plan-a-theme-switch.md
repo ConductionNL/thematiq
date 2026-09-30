@@ -13,8 +13,7 @@ Open Settings > Administration > Theming and find **Planned switches**, under th
 1. Choose the token set.
 2. Enter the start date and time. Times are in your own time zone; the page names it.
 3. Enter an end date and time if the look should stop again. Leave it empty to keep the new token set.
-4. Tick **Also update the Nextcloud logo and colours** if Nextcloud's own logo and primary colour should follow the token set. Without it, only the token set changes.
-5. Choose **Plan switch**.
+4. Choose **Plan switch**.
 
 The list shows every planned switch with its times. A switch that is running says so, and the block names the token set that comes back at the end.
 
@@ -26,7 +25,7 @@ Choose **Cancel** next to the switch. A switch that has not started disappears. 
 
 ## What happens at the start and the end
 
-A background job checks every five minutes. At the start it switches to the planned token set; at the end it switches back. Users see the new look on their next page load. Each start and each end leaves a `scheduled_switch_applied` entry in the theming audit log, with actor `system`.
+A background job checks every five minutes. At the start it applies the planned token set the way you would by hand, including the Nextcloud logo and colours the set carries; at the end it applies the token set you had before, the same way. Switching back to the stock Nextcloud set resets Nextcloud's own logo and colours to their defaults. While a switch runs, the job puts its token set back if someone picks another one in the meantime. Users see the new look on their next page load. Each start and each end leaves a `scheduled_switch_applied` entry in the theming audit log, with actor `system`.
 
 When the planned token set no longer exists at the start, for example a custom set someone deleted, nothing changes. The switch shows as failed in the list, with the reason, and the audit log records it.
 

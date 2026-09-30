@@ -149,10 +149,12 @@ if ($_['mockUi'] === true) {
 				</div>
 			</div>
 			<p class="settings-hint nldesign-field-hint" id="nldesign-scheduled-zone"></p>
-			<div class="nldesign-field-check">
-				<input type="checkbox" class="checkbox" id="nldesign-scheduled-sync" name="syncCoreTheming">
-				<label for="nldesign-scheduled-sync"><?php p($l->t('Also update the Nextcloud logo and colours')); ?></label>
-			</div>
+			<!-- No option: a switch applies the set as the apply dialog does, the
+			     Nextcloud logo and colours included. Without them a switch changed
+			     the token set and nothing anyone could see. -->
+			<p class="settings-hint nldesign-field-hint" id="nldesign-scheduled-applies">
+				<?php p($l->t('The switch applies the token set as you would by hand, including the Nextcloud logo and colours it carries. At the end the previous token set comes back the same way.')); ?>
+			</p>
 			<div class="nldesign-form-actions">
 				<button type="submit" class="button primary" id="nldesign-scheduled-submit"><?php p($l->t('Plan switch')); ?></button>
 			</div>

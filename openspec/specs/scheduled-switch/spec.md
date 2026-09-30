@@ -29,6 +29,17 @@ Settings > Administration > Theming MUST let an administrator plan a switch to a
 ### Requirement: The app applies a due switch and switches back
 
 A background job MUST run at least every five minutes and apply every planned switch whose start has passed, through the same token set validation as the dropdown. When the switch has an end, the app MUST switch back to the token set that was active just before the switch, once the end has passed. The switch MUST reach every page on the next page load, like a switch from the dropdown.
+Until its end, a running switch MUST stay applied: when another token set is active, each run of the job MUST apply the switch's token set again, and MUST still switch back to the token set it replaced at the end.
+
+#### Scenario: A set picked by hand during a running switch does not last
+
+@e2e exclude depends on the background job and the clock, not on a page; proven by tests/Unit/Service/ScheduledSwitchServiceTest.php::testARunningSwitchKeepsItsSetActive and ::testKeepingASwitchActiveSyncsCoreThemingAgain
+
+- GIVEN a running switch to `koningsdag-oranje` that replaced `rijkshuisstijl`
+- AND an administrator picks `nextcloud` in the dropdown during the window
+- WHEN the background job runs
+- THEN the active token set MUST be `koningsdag-oranje` again
+- AND when the end passes, the active token set MUST be `rijkshuisstijl`
 
 #### Scenario: The look starts and ends on time
 
@@ -49,17 +60,18 @@ A background job MUST run at least every five minutes and apply every planned sw
 - AND the planned switch MUST show as failed in the list with the reason
 - AND the audit log MUST contain a `scheduled_switch_applied` entry with `new` empty and the reason
 
-### Requirement: Core theming is synced only when asked
+### Requirement: A planned switch applies a set like the apply dialog
 
-A planned switch MUST NOT change Nextcloud core theming values (logo, primary colour, background) unless the administrator ticked "also update the Nextcloud logo and colours" when planning it. When ticked, the app MUST apply the theming metadata of the token set that the theming-sync dialog would have offered.
+A planned switch MUST apply its token set the way applying it by hand does: the token set, and the Nextcloud core theming (logo, primary colour, background) that the theming-sync dialog would have offered for that set — the branding a set captured when it was saved, or a reset to Nextcloud's defaults for the stock set. The same MUST hold when a running switch applies its set again and when a switch goes back to the token set it replaced. There MUST be no option to switch the token set alone: without its logo and colours a switch changes the token set and nothing an administrator can see.
 
-#### Scenario: A switch without core sync keeps the core logo
+#### Scenario: A planned switch brings the set's logo and colours
 
-@e2e exclude depends on the background job; proven by tests/Unit/Service/ScheduledSwitchServiceTest.php::testASwitchWithoutCoreSyncLeavesCoreThemingAlone
+@e2e exclude depends on the background job and core theming; proven by tests/Unit/Service/ScheduledSwitchServiceTest.php::testASwitchAppliesTheSetsThemingBothWays and ::testASwitchBackToStockResetsCoreTheming
 
-- GIVEN a planned switch without the core sync option
-- WHEN the switch is applied
-- THEN the Nextcloud core logo and primary colour MUST be unchanged
+- GIVEN a planned switch to `koningsdag-oranje` while `rijkshuisstijl` is active
+- WHEN the switch starts
+- THEN the Nextcloud primary colour MUST be the one `koningsdag-oranje` carries
+- AND when the switch ends, the Nextcloud logo and colours MUST be those of `rijkshuisstijl` again
 
 ### Requirement: An administrator cancels a planned switch
 

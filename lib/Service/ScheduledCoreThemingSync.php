@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/specs/scheduled-switch/spec.md#requirement-core-theming-is-synced-only-when-asked
+ * @spec openspec/specs/scheduled-switch/spec.md#requirement-a-planned-switch-applies-a-set-like-the-apply-dialog
  */
 
 declare(strict_types=1);
@@ -31,7 +31,7 @@ use OCP\IConfig;
  * block (its captured branding when it has one), or reset core theming for
  * the stock `nextcloud` set.
  *
- * @spec openspec/specs/scheduled-switch/spec.md#requirement-core-theming-is-synced-only-when-asked
+ * @spec openspec/specs/scheduled-switch/spec.md#requirement-a-planned-switch-applies-a-set-like-the-apply-dialog
  */
 class ScheduledCoreThemingSync {
 
@@ -70,7 +70,7 @@ class ScheduledCoreThemingSync {
 	 *
 	 * @return array<int, string> The core settings written (empty when the set has no theming or it does not validate).
 	 *
-	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-core-theming-is-synced-only-when-asked
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-a-planned-switch-applies-a-set-like-the-apply-dialog
 	 */
 	public function sync(string $tokenSetId): array {
 		if ($tokenSetId === ActiveTokenSetService::DEFAULT_SET) {

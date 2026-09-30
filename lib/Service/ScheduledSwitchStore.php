@@ -50,11 +50,13 @@ class ScheduledSwitchStore {
 
 	/**
 	 * The fields a planned switch carries in a bundle. Runtime state
-	 * (`status`, `revertTo`, `failureReason`) stays on the server.
+	 * (`status`, `revertTo`, `failureReason`) stays on the server. An older
+	 * bundle's `syncCoreTheming` is ignored: every switch now brings the
+	 * Nextcloud logo and colours along, as the apply dialog does.
 	 *
 	 * @var array<int, string>
 	 */
-	public const PORTABLE_FIELDS = ['id', 'tokenSet', 'startAt', 'endAt', 'syncCoreTheming', 'createdBy', 'createdAt'];
+	public const PORTABLE_FIELDS = ['id', 'tokenSet', 'startAt', 'endAt', 'createdBy', 'createdAt'];
 
 	/**
 	 * Constructor.
@@ -235,7 +237,6 @@ class ScheduledSwitchStore {
 			'tokenSet' => $item['tokenSet'],
 			'startAt' => $start,
 			'endAt' => $end,
-			'syncCoreTheming' => (($item['syncCoreTheming'] ?? false) === true),
 			'createdBy' => (string)($item['createdBy'] ?? ''),
 			'createdAt' => (string)($item['createdAt'] ?? ''),
 			'status' => 'planned',

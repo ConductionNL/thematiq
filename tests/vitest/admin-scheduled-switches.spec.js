@@ -104,7 +104,6 @@ async function load() {
 					<select id="nldesign-scheduled-set"><option value="koningsdag-oranje">Koningsdag</option></select>
 					<input type="datetime-local" id="nldesign-scheduled-start">
 					<input type="datetime-local" id="nldesign-scheduled-end">
-					<input type="checkbox" id="nldesign-scheduled-sync">
 					<p id="nldesign-scheduled-zone"></p>
 					<button type="submit" id="nldesign-scheduled-submit">Plan switch</button>
 				</form>
@@ -171,7 +170,6 @@ describe('admin.js planned switches', () => {
 		document.getElementById('nldesign-scheduled-start').value =
 			'2027-04-26T18:00'
 		document.getElementById('nldesign-scheduled-end').value = '2027-04-28T08:00'
-		document.getElementById('nldesign-scheduled-sync').checked = true
 		document
 			.getElementById('nldesign-scheduled-form')
 			.dispatchEvent(new Event('submit', { cancelable: true }))
@@ -182,7 +180,8 @@ describe('admin.js planned switches', () => {
 		expect(body.get('tokenSet')).toBe('koningsdag-oranje')
 		expect(body.get('startAt')).toBe(new Date('2027-04-26T18:00').toISOString())
 		expect(body.get('endAt')).toBe(new Date('2027-04-28T08:00').toISOString())
-		expect(body.get('syncCoreTheming')).toBe('1')
+		// No option to send: every switch brings the Nextcloud logo and colours.
+		expect(body.has('syncCoreTheming')).toBe(false)
 		// The list is loaded again after planning.
 		expect(calls.filter((c) => c.method === 'GET')).toHaveLength(2)
 	})
