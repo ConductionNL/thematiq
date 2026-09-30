@@ -64,6 +64,8 @@ class ThemeList extends Command {
 	 * @return int Always success.
 	 *
 	 * @spec openspec/specs/theme-cli/spec.md#requirement-operators-list-and-read-token-sets
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - Symfony's execute() signature; this command takes no input.
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		foreach ($this->tokenSets->getAvailableTokenSets() as $set) {
