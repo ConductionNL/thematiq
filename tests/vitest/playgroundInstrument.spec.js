@@ -51,6 +51,9 @@ const REGISTRY = registryFor(['note-cards', 'header-bar', 'sidebar', 'avatar'])
 
 const INFO_RGB = '--nldesign-component-notecard-info-color-rgb'
 
+/** Every URL the page fetched, in order. */
+let requests = []
+
 /** Flush pending promise chains across a few macrotask boundaries. */
 async function flush(rounds = 10) {
 	for (let i = 0; i < rounds; i++) {
@@ -63,13 +66,17 @@ async function flush(rounds = 10) {
  * instrument onto it.
  *
  * @param {number} version The Nextcloud major this instance runs.
+ * @param {object} [options] Fixture options.
+ * @param {object} [options.state] Extra initial-state keys.
+ * @param {object} [options.overrides] The saved overrides the server answers with.
  */
-async function boot(version) {
+async function boot(version, { state: extra = {}, overrides = {} } = {}) {
 	const state = {
 		tokenSets: [],
 		currentTokenSet: 'rijkshuisstijl',
 		playgroundInventory: inventory,
 		playgroundVersion: version,
+		...extra,
 	}
 	global.OCP = {
 		InitialState: {
@@ -95,18 +102,20 @@ async function boot(version) {
 		Notification: { showTemporary: vi.fn() },
 		dialogs: { confirm: vi.fn() },
 	}
-	global.fetch = vi.fn((url) =>
-		Promise.resolve({
+	requests = []
+	global.fetch = vi.fn((url) => {
+		requests.push(url)
+		return Promise.resolve({
 			ok: true,
 			status: 200,
 			json: () =>
 				Promise.resolve(
-					url.indexOf('/settings/overrides?') !== -1
-						? { overrides: {}, registry: REGISTRY, tabs: {} }
+					url.indexOf('/settings/overrides') !== -1
+						? { overrides, registry: REGISTRY, tabs: {} }
 						: {},
 				),
-		}),
-	)
+		})
+	})
 
 	document.body.innerHTML = `
 		<div class="nldesign-preview" id="nldesign-preview">
@@ -332,5 +341,114 @@ describe('the component instrument in the browser', () => {
 		expect(remarks()).toContain(
 			'The preview keeps the styles of Nextcloud 35, the version this instance runs.',
 		)
+	})
+
+	describe('export as token set', () => {
+		/**
+		 * Click the export button and read back the file it offered.
+		 *
+		 * @return {Promise<{name: string, css: string}>} The download.
+		 */
+		async function exportFile() {
+			let blob = null
+			let name = ''
+			URL.createObjectURL = vi.fn((file) => {
+				blob = file
+				return 'blob:export'
+			})
+			URL.revokeObjectURL = vi.fn()
+			vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(
+				function () {
+					name = this.download
+				},
+			)
+
+			document.getElementById('nldesign-pg-export-btn').click()
+			await flush()
+
+			return { name, css: blob === null ? '' : await blob.text() }
+		}
+
+		it('writes what the set declares, not the nldesign defaults drawn under it', async () => {
+			await boot(35, {
+				state: {
+					playgroundSet: 'custom-house',
+					// What the instrument draws with: the set on top of every
+					// nldesign default, spacing included.
+					playgroundTokens: {
+						'--nldesign-color-primary': '#123456',
+						'--nldesign-space-block-md': '24px',
+						'--nldesign-component-button-padding-inline': '32px',
+					},
+					playgroundExportTokens: {
+						'--nldesign-color-primary': '#123456',
+					},
+					playgroundTokenSources: {
+						'--color-primary': '--nldesign-color-primary',
+					},
+				},
+				overrides: { '--color-primary': '#a90061' },
+			})
+
+			const file = await exportFile()
+
+			expect(file.name).toBe('custom-house.css')
+			expect(file.css).toContain('--nldesign-color-primary: #a90061;')
+			expect(file.css).not.toContain('--nldesign-space-block-md')
+			expect(file.css).not.toContain(
+				'--nldesign-component-button-padding-inline',
+			)
+		})
+
+		it('reads the overrides saved for the set it exports', async () => {
+			await boot(35, { state: { playgroundSet: 'custom-house' } })
+
+			await exportFile()
+
+			expect(requests).toContain(
+				'/apps/thematiq/settings/overrides?tokenSet=custom-house',
+			)
+		})
+
+		it('marks the file with the design system the set is worn on', async () => {
+			await boot(35, { state: { playgroundSet: 'custom-house' } })
+			document.body.insertAdjacentHTML(
+				'beforeend',
+				'<select id="nldesign-token-set-select">'
+					+ '<option value="rijkshuisstijl"></option>'
+					+ '<option value="custom-house" data-design-system="none"></option>'
+					+ '</select>',
+			)
+
+			const file = await exportFile()
+
+			expect(file.css).toContain(
+				'/* thematiq-token-set: design-system=none */',
+			)
+		})
+
+		it('marks a listed set without a design system as nldesign, and claims nothing for an unlisted one', async () => {
+			await boot(35, { state: { playgroundSet: 'custom-house' } })
+			document.body.insertAdjacentHTML(
+				'beforeend',
+				'<select id="nldesign-token-set-select"><option value="custom-house"></option></select>',
+			)
+			expect((await exportFile()).css).toContain(
+				'/* thematiq-token-set: design-system=nldesign */',
+			)
+
+			document.getElementById('nldesign-token-set-select').innerHTML =
+				'<option value="other"></option>'
+			expect((await exportFile()).css).not.toContain('thematiq-token-set')
+		})
+
+		it('asks for the active set when the page names none', async () => {
+			await boot(35)
+
+			const file = await exportFile()
+
+			expect(requests).toContain('/apps/thematiq/settings/overrides')
+			expect(file.name).toBe('token-set.css')
+		})
 	})
 })

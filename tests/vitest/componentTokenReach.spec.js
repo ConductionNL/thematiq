@@ -392,3 +392,33 @@ describe('component tokens: the capture block is taken on body', () => {
 		}
 	})
 })
+
+/**
+ * Core's guest layout wraps the login logo in its own `<div id="header">`, so
+ * a bare `#header` in the header-bar scope painted the top bar's colour behind
+ * the login logo — an area that belongs to `logo-slogan`, `login-card` and the
+ * login background. The exclusion sits in `:where()` so the selector keeps the
+ * specificity of a plain `#header`.
+ */
+describe('component tokens: header-bar leaves the login page alone', () => {
+	const LOGGED_IN = ':where(body:not(#body-login)) #header'
+
+	it('maps header-bar onto #header outside the login page only', () => {
+		const selectors = mapping.components['header-bar'].selectors
+		const headers = selectors.filter((s) => s.includes('#header'))
+
+		expect(headers).toEqual([LOGGED_IN])
+	})
+
+	it('generates no bare #header rule', () => {
+		const css = fs.readFileSync(
+			path.join(ROOT, 'css/component-scopes.css'),
+			'utf8',
+		)
+		// `#header` at the start of a selector, i.e. not under the exclusion.
+		const bare = css.match(/(^|[,{}]|\*\/)\s*#header\b/g) || []
+
+		expect(bare).toEqual([])
+		expect(css).toContain(LOGGED_IN + ' {')
+	})
+})

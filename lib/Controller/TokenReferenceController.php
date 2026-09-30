@@ -90,7 +90,15 @@ class TokenReferenceController extends Controller {
 			$type = 'text/markdown; charset=utf-8';
 		}
 
-		$body = $this->reference->render(appPath: $this->apps->getAppPath('thematiq'), set: $set, format: $format);
+		// The Markdown here is a file an administrator hands on and reads as text,
+		// where every swatch image was a long data URL drowning the table. The
+		// value stays in each row as text; the docs pages keep their swatches.
+		$render = $format;
+		if ($format === 'md') {
+			$render = 'md-plain';
+		}
+
+		$body = $this->reference->render(appPath: $this->apps->getAppPath('thematiq'), set: $set, format: $render);
 		$response = new DataDisplayResponse(data: $body, statusCode: 200, headers: ['Content-Type' => $type]);
 		if ((string)$this->request->getParam('download', '') === '1') {
 			$response->addHeader('Content-Disposition', 'attachment; filename="' . $id . '-tokens.' . $format . '"');

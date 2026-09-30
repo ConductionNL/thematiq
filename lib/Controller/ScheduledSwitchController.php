@@ -73,19 +73,16 @@ class ScheduledSwitchController extends Controller {
 	/**
 	 * Plan a switch.
 	 *
-	 * @param string      $tokenSet        The set to switch to.
-	 * @param string      $startAt         The start, ISO 8601 with an offset.
-	 * @param string|null $endAt           The optional end; empty means none.
-	 * @param bool        $syncCoreTheming Also update the Nextcloud logo and colours.
+	 * @param string      $tokenSet The set to switch to.
+	 * @param string      $startAt  The start, ISO 8601 with an offset.
+	 * @param string|null $endAt    The optional end; empty means none.
 	 *
 	 * @return JSONResponse 201 `{switch}`, or 400 `{error}` with the reason.
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
-	 *
-	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - the administrator's checkbox, passed through as is.
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
-	public function create(string $tokenSet, string $startAt, ?string $endAt = null, bool $syncCoreTheming = false): JSONResponse {
+	public function create(string $tokenSet, string $startAt, ?string $endAt = null): JSONResponse {
 		if ($endAt === '') {
 			$endAt = null;
 		}
@@ -97,7 +94,7 @@ class ScheduledSwitchController extends Controller {
 		}
 
 		try {
-			$entry = $this->service->create($tokenSet, $startAt, $endAt, $syncCoreTheming, $createdBy);
+			$entry = $this->service->create(tokenSet: $tokenSet, startAt: $startAt, endAt: $endAt, createdBy: $createdBy);
 		} catch (ScheduledSwitchException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], 400);
 		}

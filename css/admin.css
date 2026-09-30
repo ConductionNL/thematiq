@@ -81,6 +81,13 @@
 	margin-top: 4px;
 }
 
+/* `display` above outranks the browser's own rule for `hidden`, so a hidden
+   badge still drew as an empty pill — the incomplete-set badge left a yellow
+   stripe beside a complete set after switching back to it. */
+.nldesign-badge[hidden] {
+	display: none;
+}
+
 .nldesign-badge--system {
 	background: var(--color-primary-element-light, #e5eff5);
 	color: var(--color-primary-element, #0082c9);
@@ -89,6 +96,17 @@
 .nldesign-badge--stock {
 	background: var(--color-background-dark, #ededed);
 	color: var(--color-text-maxcontrast, #767676);
+}
+
+/* A custom set that passes its checks: a badge like the warning one, not
+   loose text beside the buttons. */
+.nldesign-badge--ok {
+	background: color-mix(
+		in srgb,
+		var(--color-success-text, var(--color-success, #2d7b41)) 12%,
+		var(--color-main-background)
+	);
+	color: var(--color-success-text, var(--color-success, #2d7b41));
 }
 
 /* Active icon pack — read-only indicator (theme-switchable iconography,
@@ -119,11 +137,60 @@
 }
 
 .nldesign-scheduled-form {
+	margin-bottom: 12px;
+}
+
+/* ==========================================================================
+ * Shared form layout for the blocks at the top of the page (planned switches,
+ * the two ways to add a custom token set). Each field carries its label ABOVE
+ * the control, so a row of fields reads as label/control pairs rather than as
+ * one run of words and boxes that wraps at arbitrary points.
+ * ========================================================================== */
+.nldesign-fields {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px 16px;
+	margin: 12px 0;
+}
+
+.nldesign-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.nldesign-field label {
+	font-weight: 600;
+}
+
+.nldesign-field input[type='text'],
+.nldesign-field select {
+	min-width: 220px;
+	margin: 0;
+}
+
+.nldesign-field input[type='datetime-local'] {
+	margin: 0;
+}
+
+/* The hint under a row of fields sits with that row, not a paragraph away. */
+#nldesign-settings .nldesign-field-hint {
+	margin: -4px 0 12px;
+}
+
+.nldesign-field-check {
+	display: flex;
 	align-items: center;
-	gap: 8px;
 	margin-bottom: 12px;
+}
+
+.nldesign-form-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 12px;
 }
 
 .nldesign-scheduled-cron-warning {
@@ -148,9 +215,65 @@
 
 /* Token reference links (openspec/specs/token-reference/spec.md). */
 .nldesign-token-reference-link {
-	margin-inline-start: 8px;
 	color: var(--color-main-text);
 	text-decoration: underline;
+}
+
+/* The token set selector: the label over the select and its badges, then a
+   row with what can be done with the selected set. The links sit together at
+   the end of that row, so they wrap as a pair instead of one at a time. */
+.nldesign-token-set-selector {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 1.5em;
+}
+
+.nldesign-token-set-selector > label {
+	font-weight: 600;
+}
+
+.nldesign-token-set-row,
+.nldesign-token-set-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.nldesign-token-set-row select {
+	min-width: 260px;
+	margin: 0;
+}
+
+.nldesign-token-set-row .nldesign-badge {
+	margin-top: 0;
+}
+
+.nldesign-token-set-links {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-inline-start: 8px;
+}
+
+/* The OTAP environment note: a quiet line with the command under it, not a
+   paragraph that runs into the token set label. */
+.nldesign-environment {
+	margin-bottom: 1.5em;
+}
+
+#nldesign-settings .nldesign-environment .settings-hint {
+	margin-bottom: 4px;
+}
+
+.nldesign-environment code {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: var(--border-radius);
+	background: var(--color-background-dark);
+	font-family: var(--font-face-monospace, monospace);
+	font-size: 0.9em;
 }
 
 /* Theme gallery (openspec/specs/theme-gallery/spec.md). */
@@ -205,6 +328,7 @@
 /* Options section */
 .nldesign-option {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	gap: 12px;
 	padding: 16px;
@@ -217,6 +341,18 @@
 .nldesign-option label {
 	cursor: pointer;
 	flex: 1;
+}
+
+/* An option's own explanation goes UNDER its label, on a line of its own. As
+   one more flex item it sat beside the label and squeezed it to a word per
+   line. The indent lines it up with the label text, past the box core's
+   checkbox draws in front of it (`.checkbox + label::before`: 3px margin, a
+   14px box with a 1px border, 6px margin). Under the section id, to outrank
+   `#nldesign-settings .settings-hint` and its bottom margin. */
+#nldesign-settings .nldesign-option > .settings-hint {
+	flex-basis: 100%;
+	margin: 0;
+	padding-inline-start: 25px;
 }
 
 /* Preview section */
@@ -478,7 +614,11 @@
 
 .nldesign-dialog-actions {
 	position: sticky;
-	bottom: 0;
+	/* Minus the dialog's padding, matching the bleed below. At `bottom: 0` the
+	   bar's box, 24px taller than its content through the negative margin, was
+	   held inside the content box, so in a dialog too short to scroll it was
+	   pushed up over the last line of text. */
+	bottom: -24px;
 	background: var(--color-main-background);
 	/* The bar sticks to the bottom of the dialog's CONTENT box, which sits 24px
 	   (the dialog's own padding) above its visible bottom edge. With only a
@@ -498,6 +638,12 @@
 .nldesign-dialog h3 {
 	margin-top: 0;
 	margin-bottom: 0.75em;
+}
+
+/* Core pulls every `.settings-hint` up by 12px to sit under a heading, which
+   ran two hints in one dialog into a single block. */
+.nldesign-dialog .settings-hint + .settings-hint {
+	margin-top: 0;
 }
 
 .nldesign-dialog-cancel,
@@ -541,13 +687,58 @@
 	margin: 12px 0;
 }
 
-.nldesign-upload-name {
-	min-width: 220px;
-	padding: 6px 10px;
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius);
-	background: var(--color-main-background);
+/* The two ways to add a set, as tabs drawn like the token editor's own: an
+   underline on the selected one over a rule under the strip. Scoped under the
+   panel's ID because core paints every plain <button> as a light-primary
+   button. */
+#nldesign-settings .nldesign-create-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	border-bottom: 1px solid var(--color-border-dark);
+}
+
+#nldesign-settings .nldesign-create-tab {
+	min-height: 0;
+	margin: 0 0 -1px;
+	padding: 9px 14px;
+	border: 0;
+	border-bottom: 3px solid transparent;
+	border-radius: 0;
+	background: none;
+	color: var(--color-text-maxcontrast);
+	font-weight: 700;
+	box-shadow: none;
+	cursor: pointer;
+}
+
+#nldesign-settings .nldesign-create-tab:hover {
 	color: var(--color-main-text);
+}
+
+#nldesign-settings .nldesign-create-tab.active {
+	border-bottom-color: var(--color-primary-element);
+	color: var(--color-main-text);
+}
+
+.nldesign-create-panels {
+	padding-top: 12px;
+	margin-bottom: 1.5em;
+}
+
+/* `hidden` is honoured explicitly: nothing may give a panel a display that
+   beats it. */
+.nldesign-create-panel[hidden] {
+	display: none;
+}
+
+#nldesign-settings .nldesign-create-panel > .settings-hint {
+	margin-bottom: 0;
+}
+
+.nldesign-custom-set-heading {
+	margin-bottom: 0;
+	font-weight: 600;
 }
 
 .nldesign-import-result {
@@ -566,9 +757,19 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 8px;
+	gap: 8px 12px;
 	padding: 8px 0;
 	border-top: 1px solid var(--color-border);
+}
+
+.nldesign-custom-set-row .nldesign-badge {
+	margin-top: 0;
+}
+
+/* The per-set links read quieter than the buttons beside them. */
+.nldesign-custom-set-row .nldesign-token-reference-link {
+	color: var(--color-text-maxcontrast);
+	font-size: 0.9em;
 }
 
 .nldesign-custom-set-name {
@@ -595,8 +796,27 @@
 	color: var(--color-primary-text, #fff);
 }
 
-.nldesign-btn--danger {
-	color: var(--color-error, #c7000a);
+/* Scoped under the panel's ID to beat core's rule for plain buttons
+   (`button:not(.button-vue, [class^=vs__])`), which paints every one of them in
+   the light primary — a delete button then looked like a download button.
+   Painted from `--color-error-text`, the strong red: a set may declare
+   `--color-error` itself as a pale tint. */
+#nldesign-settings .nldesign-btn--danger {
+	background-color: color-mix(
+		in srgb,
+		var(--color-error-text, var(--color-error)) 10%,
+		var(--color-main-background)
+	);
+	color: var(--color-error-text, var(--color-error));
+}
+
+#nldesign-settings .nldesign-btn--danger:hover,
+#nldesign-settings .nldesign-btn--danger:focus {
+	background-color: color-mix(
+		in srgb,
+		var(--color-error-text, var(--color-error)) 18%,
+		var(--color-main-background)
+	);
 }
 
 .nldesign-contrast-warning {
@@ -1955,10 +2175,6 @@
 }
 
 /* Theme preview ("proefdraaien") controls in the settings panel. */
-#nldesign-preview-btn {
-	margin-left: 12px;
-}
-
 .nldesign-active-preview {
 	display: flex;
 	align-items: center;
@@ -2234,23 +2450,11 @@
 	font-size: 0.9em;
 }
 
-.nldesign-confirm-controls label {
-	display: flex;
-	gap: 8px;
-	align-items: center;
-	cursor: pointer;
-}
-
-/* The opt-in to Nextcloud's own base tokens, above the tabs. Quiet for the
-   same reason: the component rows are the everyday control. */
+/* The opt-in to Nextcloud's own base tokens, with the editor's other settings
+   under the rows and styled like them: the component rows are the everyday
+   control. */
 .nldesign-base-unlock {
-	display: flex;
-	gap: 8px;
-	align-items: center;
-	margin: 8px 0;
-	color: var(--color-text-maxcontrast);
-	font-size: 0.9em;
-	cursor: pointer;
+	margin: 0;
 }
 
 /* The server's refusal, inside the dialog that caused it. `hidden` is honoured
@@ -2266,14 +2470,50 @@
 }
 
 /* The simple brand form preview (openspec/specs/simple-brand-form/spec.md). */
-.nldesign-brand-form {
-	margin-top: 1.5em;
+/* A colour well the size of a text field's height, not the sliver a bare
+   `<input type="color">` draws. */
+#nldesign-settings .nldesign-brand-colour {
+	width: 64px;
+	height: var(--default-clickable-area, 34px);
+	margin: 0;
+	padding: 2px;
+	border: 1px solid var(--color-border-maxcontrast, var(--color-border));
+	border-radius: var(--border-radius);
+	background: var(--color-main-background);
+	cursor: pointer;
+}
+
+/* A file pick in a row of fields: Nextcloud's button with the chosen file's
+   name beside it, as tall as the fields next to it so the row lines up. */
+.nldesign-file-pick {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: var(--default-clickable-area, 34px);
+}
+
+.nldesign-file-pick .button {
+	margin: 0;
+}
+
+.nldesign-file-pick__name {
+	max-width: 220px;
+	overflow: hidden;
+	color: var(--color-text-maxcontrast);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#nldesign-settings .nldesign-brand-contrast {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+	font-size: 0.9em;
 }
 
 .nldesign-brand-preview {
 	display: flex;
 	gap: 8px;
-	margin: 1em 0 0.5em;
+	margin: 0 0 0.5em;
 	padding: 12px;
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-large);
