@@ -5001,21 +5001,20 @@
 			"id": "int-cli-set-theme",
 			"area": "integration",
 			"name": "Set the active theme from the command line.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "partial",
 			"m365-branding": "yes",
 			"opendesk": "yes",
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "lib/Service/ConfigBundleService.php:900 import() does $this->config->setAppValue(Application::APP_ID, 'token_set', $config['tokenSet']), so occ nldesign:config:import (lib/Command/ConfigImport.php) does set the active token set as one field of a full bundle import; there is no single-purpose 'occ nldesign:set-theme <name>' command",
+				"state": "built",
+				"evidence": "lib/Command/ThemeList.php, ThemeGet.php and ThemeSet.php: occ nldesign:theme:list (id, shipped or custom, name), nldesign:theme:get (active set and group mappings in priority order), nldesign:theme:set <id> [--sync-core] [--dry-run] through ActiveTokenSetService::switchTo with audit actor cli, unknown id exits 1, same set writes no audit entry, --sync-core via ScheduledCoreThemingSync; tests/Unit/Command/ThemeCommandsTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/integration-occ-set-theme (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/integration-occ-set-theme"
+				"change": "integration-occ-set-theme"
 			},
-			"reachedOn": "occ nldesign:config:import <bundle-file>, where the bundle's tokenSet field becomes the active theme",
+			"reachedOn": "occ nldesign:theme:list, nldesign:theme:get and nldesign:theme:set <id> [--sync-core] [--dry-run]",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Command/UpdateConfig.php:22-24 sets name, colours, URLs and images from the CLI and config/config.sample.php:2471-2476 enforce_theme picks a built-in theme instance-wide via occ config:system:set; there is no house-style id to set",
 				"m365-branding": "https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.identity.directorymanagement/update-mgorganizationbranding : Update-MgOrganizationBranding (Microsoft Graph PowerShell) and PnP PowerShell cmdlets let you set branding/site theme values from the command line",
