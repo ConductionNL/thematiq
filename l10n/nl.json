@@ -505,7 +505,22 @@
         "Upload a file": "Een bestand uploaden",
         "An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.": "Een NL Design CSS-bestand (--nldesign-*-variabelen) of een W3C Design Tokens JSON-bestand.",
         "Your custom token sets": "Je eigen token sets",
-        "Add a custom token set": "Een eigen token set toevoegen"
+        "Add a custom token set": "Een eigen token set toevoegen",
+        "Choose file": "Bestand kiezen",
+        "Download the overrides of {name}?": "De aanpassingen van {name} downloaden?",
+        "It is not a complete theme. Use Export as token set to hand the whole theme on, or the configuration bundle to move the complete configuration.": "Het is geen volledig thema. Gebruik Exporteren als token set om het hele thema door te geven, of de configuratiebundel om de volledige configuratie te verplaatsen.",
+        "Overrides file to upload (CSS)": "Bestand met aanpassingen om te uploaden (CSS)",
+        "The audit log could not be downloaded.": "Het auditlog kon niet worden gedownload.",
+        "The configuration could not be downloaded.": "De configuratie kon niet worden gedownload.",
+        "The contrast report could not be downloaded.": "Het contrastrapport kon niet worden gedownload.",
+        "The overrides could not be downloaded.": "De aanpassingen konden niet worden gedownload.",
+        "The token reference could not be loaded.": "De tokenreferentie kon niet worden geladen.",
+        "The token set could not be downloaded.": "De token set kon niet worden gedownload.",
+        "The values in the file replace every value saved for this theme, straight away. Values the editor does not know are skipped, and unsaved changes are lost.": "De waarden in het bestand vervangen meteen alle waarden die voor dit thema zijn opgeslagen. Waarden die de editor niet kent worden overgeslagen, en niet-opgeslagen wijzigingen gaan verloren.",
+        "This downloads only the values saved for this theme on top of its token set, as custom-overrides.css. Unsaved changes are not in it.": "Dit downloadt alleen de waarden die voor dit thema bovenop de token set zijn opgeslagen, als custom-overrides.css. Niet-opgeslagen wijzigingen staan er niet in.",
+        "To add a whole theme as a new token set, use Custom token sets further down instead.": "Gebruik Eigen token sets verderop om een heel thema als nieuwe token set toe te voegen.",
+        "Upload overrides into {name}?": "Aanpassingen uploaden naar {name}?",
+        "The switch applies the token set as you would by hand, including the Nextcloud logo and colours it carries. At the end the previous token set comes back the same way.": "De wissel past de token set toe zoals je dat met de hand zou doen, inclusief het Nextcloud-logo en de kleuren die erbij horen. Aan het eind komt de vorige token set op dezelfde manier terug."
     },
     "plurals": {}
 }

@@ -506,7 +506,22 @@ OC.L10N.register(
         "Upload a file": "Upload a file",
         "An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.": "An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.",
         "Your custom token sets": "Your custom token sets",
-        "Add a custom token set": "Add a custom token set"
+        "Add a custom token set": "Add a custom token set",
+        "Choose file": "Choose file",
+        "Download the overrides of {name}?": "Download the overrides of {name}?",
+        "It is not a complete theme. Use Export as token set to hand the whole theme on, or the configuration bundle to move the complete configuration.": "It is not a complete theme. Use Export as token set to hand the whole theme on, or the configuration bundle to move the complete configuration.",
+        "Overrides file to upload (CSS)": "Overrides file to upload (CSS)",
+        "The audit log could not be downloaded.": "The audit log could not be downloaded.",
+        "The configuration could not be downloaded.": "The configuration could not be downloaded.",
+        "The contrast report could not be downloaded.": "The contrast report could not be downloaded.",
+        "The overrides could not be downloaded.": "The overrides could not be downloaded.",
+        "The token reference could not be loaded.": "The token reference could not be loaded.",
+        "The token set could not be downloaded.": "The token set could not be downloaded.",
+        "The values in the file replace every value saved for this theme, straight away. Values the editor does not know are skipped, and unsaved changes are lost.": "The values in the file replace every value saved for this theme, straight away. Values the editor does not know are skipped, and unsaved changes are lost.",
+        "This downloads only the values saved for this theme on top of its token set, as custom-overrides.css. Unsaved changes are not in it.": "This downloads only the values saved for this theme on top of its token set, as custom-overrides.css. Unsaved changes are not in it.",
+        "To add a whole theme as a new token set, use Custom token sets further down instead.": "To add a whole theme as a new token set, use Custom token sets further down instead.",
+        "Upload overrides into {name}?": "Upload overrides into {name}?",
+        "The switch applies the token set as you would by hand, including the Nextcloud logo and colours it carries. At the end the previous token set comes back the same way.": "The switch applies the token set as you would by hand, including the Nextcloud logo and colours it carries. At the end the previous token set comes back the same way."
     },
     "nplurals=2; plural=(n != 1);"
 )
