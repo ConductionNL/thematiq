@@ -2718,12 +2718,16 @@
 				+ '</div>'
 				// Nextcloud's own base tokens stay locked until asked for; see
 				// baseTokensUnlocked and confirmBaseUnlock().
-				+ '<label class="nldesign-base-unlock">'
-				+ '<input type="checkbox" id="nldesign-base-unlock"'
+				// Nextcloud's own `input.checkbox` + `label[for]` pair, like every
+				// other checkbox on this page, so it is drawn in the theme's style.
+				+ '<div class="nldesign-base-unlock">'
+				+ '<input type="checkbox" class="checkbox" id="nldesign-base-unlock"'
 				+ (baseTokensUnlocked === true ? ' checked' : '')
 				+ '>'
+				+ '<label for="nldesign-base-unlock">'
 				+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
 				+ '</label>'
+				+ '</div>'
 				+ '<div class="nldesign-tabs">'
 				+ tabsHtml
 				+ '</div>'
@@ -2741,8 +2745,9 @@
 				// after one careless click. Worded the same way round as that
 				// dialog: ticked means "stop asking".
 				+ '<div class="nldesign-confirm-controls">'
-				+ '<label>'
-				+ '<input type="checkbox" id="nldesign-confirm-save-stock">'
+				+ '<div>'
+				+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-stock">'
+				+ '<label for="nldesign-confirm-save-stock">'
 				+ escapeHtml(
 					t(
 						'thematiq',
@@ -2750,8 +2755,10 @@
 					),
 				)
 				+ '</label>'
-				+ '<label>'
-				+ '<input type="checkbox" id="nldesign-confirm-save-theme">'
+				+ '</div>'
+				+ '<div>'
+				+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-theme">'
+				+ '<label for="nldesign-confirm-save-theme">'
 				+ escapeHtml(
 					t(
 						'thematiq',
@@ -2759,6 +2766,7 @@
 					),
 				)
 				+ '</label>'
+				+ '</div>'
 				+ '</div>'
 				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>'
 

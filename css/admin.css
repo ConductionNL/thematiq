@@ -2227,23 +2227,12 @@
 	font-size: 0.9em;
 }
 
-.nldesign-confirm-controls label {
-	display: flex;
-	gap: 8px;
-	align-items: center;
-	cursor: pointer;
-}
-
 /* The opt-in to Nextcloud's own base tokens, above the tabs. Quiet for the
    same reason: the component rows are the everyday control. */
 .nldesign-base-unlock {
-	display: flex;
-	gap: 8px;
-	align-items: center;
 	margin: 8px 0;
 	color: var(--color-text-maxcontrast);
 	font-size: 0.9em;
-	cursor: pointer;
 }
 
 /* The server's refusal, inside the dialog that caused it. `hidden` is honoured
