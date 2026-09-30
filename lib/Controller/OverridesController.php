@@ -234,18 +234,7 @@ class OverridesController extends Controller {
 
 		$rejected = $this->overridesService->findRejected(tokens: $overrides, darkTokens: $darkOverrides);
 		if (empty($rejected) === false) {
-			$named = [];
-			foreach ($rejected as $name => $reason) {
-				$named[] = $name . ' (' . $reason . ')';
-			}
-
-			return new JSONResponse(
-				[
-					'error' => 'Some tokens were not saved: ' . implode(', ', $named),
-					'rejected' => $rejected,
-				],
-				400
-			);
+			return $this->rejectedResponse(rejected: $rejected);
 		}
 
 		$tokenSet = $this->requestedTokenSet();
@@ -281,6 +270,22 @@ class OverridesController extends Controller {
 
 		return new JSONResponse($response);
 	}//end setOverrides()
+
+	/**
+	 * The 400 for a refused save: every token with its reason, which names the type.
+	 *
+	 * @param array<string, string> $rejected Token name => reason.
+	 *
+	 * @return JSONResponse The response.
+	 */
+	private function rejectedResponse(array $rejected): JSONResponse {
+		$named = [];
+		foreach ($rejected as $name => $reason) {
+			$named[] = $name . ' (' . $reason . ')';
+		}
+
+		return new JSONResponse(['error' => 'Some tokens were not saved: ' . implode(', ', $named), 'rejected' => $rejected], 400);
+	}//end rejectedResponse()
 
 	/**
 	 * Reset the theme to stock Nextcloud.

@@ -154,4 +154,81 @@ class TokenValueValidator {
 
 		return max((int)$match[1], (int)$match[2], (int)$match[3]) <= 255;
 	}//end isTriplet()
+
+	/**
+	 * The tokens a save would drop or refuse, with the reason, which names the type.
+	 *
+	 * @param array<string, mixed> $tokens     Token name => light value.
+	 * @param array<string, mixed> $darkTokens Token name => the administrator's own dark value.
+	 *
+	 * @return array<string, string> Token name => reason; empty when everything passes.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-the-server-checks-each-value-against-its-token-type
+	 */
+	public function findRejected(array $tokens, array $darkTokens = []): array {
+		$registry = TokenRegistry::getTokens();
+		$rejected = [];
+		foreach ($tokens as $name => $value) {
+			$name = (string)$name;
+			if (TokenRegistry::isEditable(tokenName: $name) === false) {
+				$rejected[$name] = 'not an editable token';
+				continue;
+			}
+
+			$reason = $this->valueProblem(value: $value, type: (string)($registry[$name]['type'] ?? 'text'));
+			if ($reason !== null) {
+				$rejected[$name] = $reason;
+			}
+		}
+
+		foreach ($darkTokens as $name => $value) {
+			$name = (string)$name;
+			if (isset($tokens[$name]) === false || $this->hasDarkValue(meta: ($registry[$name] ?? [])) === false) {
+				$rejected[$name] = 'no dark value for this token';
+				continue;
+			}
+
+			$reason = $this->valueProblem(value: $value, type: 'color');
+			if ($reason !== null) {
+				$rejected[$name] = 'dark value: ' . $reason;
+			}
+		}
+
+		return $rejected;
+	}//end findRejected()
+
+	/**
+	 * Why a value is refused for its type, or null when it passes.
+	 *
+	 * @param mixed  $value The value.
+	 * @param string $type  The token type.
+	 *
+	 * @return string|null The reason, naming the type.
+	 */
+	private function valueProblem(mixed $value, string $type): ?string {
+		if (is_string($value) === false || preg_match('/[{};]|\\/\\*|\\*\\//', $value) === 1) {
+			return 'not an allowed value';
+		}
+
+		if ($this->isValid(type: $type, value: $value) === false) {
+			return 'not a valid ' . $type . ' value';
+		}
+
+		return null;
+	}//end valueProblem()
+
+	/**
+	 * Whether a token gets a dark copy: a colour of the brand layer (Nextcloud's own variables).
+	 *
+	 * @param array<string, mixed> $meta The registry entry.
+	 *
+	 * @return boolean True when it does.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-each-colour-token-has-an-optional-dark-value
+	 */
+	public function hasDarkValue(array $meta): bool {
+		return ($meta['type'] ?? '') === 'color' && ($meta['group'] ?? '') === 'brand';
+	}//end hasDarkValue()
 }//end class

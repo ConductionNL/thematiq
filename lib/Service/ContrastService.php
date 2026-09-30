@@ -344,6 +344,28 @@ class ContrastService {
 	}//end blend()
 
 	/**
+	 * The opaque `#rrggbb` a translucent colour renders as over a background, or null when the
+	 * colour is opaque or cannot be read.
+	 *
+	 * @param string          $value The colour.
+	 * @param array<int, int> $under The background as `[r, g, b]`.
+	 *
+	 * @return string|null The blend.
+	 *
+	 * @spec openspec/specs/theming-sync/spec.md#requirement-translucent-colours-are-blended-before-they-reach-nextcloud-core
+	 */
+	public function flatten(string $value, array $under): ?string {
+		$rgba = $this->parseColorWithAlpha(value: $value);
+		if ($rgba === null || $rgba[3] >= 1) {
+			return null;
+		}
+
+		$blend = $this->blend(top: $rgba, under: $under);
+
+		return sprintf('#%02x%02x%02x', $blend[0], $blend[1], $blend[2]);
+	}//end flatten()
+
+	/**
 	 * Measure the contrast of a foreground over a background as it renders.
 	 *
 	 * A translucent background is blended over the page background first (the

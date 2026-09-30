@@ -168,6 +168,7 @@ class CustomOverridesService {
 	 * @param IConfig|null $config The app config. With the next one, what picks a set's own file;
 	 *                             without them every set reads the shared file.
 	 * @param DesignSystemService|null $designSystems The token set metadata.
+	 * @param TokenValueValidator|null $values The value grammar per token type.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -321,6 +322,7 @@ class CustomOverridesService {
 	 *
 	 * @param array<string, string> $tokens   Map of token name => value to persist.
 	 * @param string|null           $tokenSet The token set id, or null for the instance's active set.
+	 * @param array<string, string> $darkTokens The administrator's own dark values, by token.
 	 *
 	 * @return void
 	 *
@@ -335,83 +337,18 @@ class CustomOverridesService {
 	}//end write()
 
 	/**
-	 * List the tokens in a map that write() would not persist, with the reason.
+	 * The tokens a save would drop or refuse, with the reason, which names the type.
 	 *
-	 * A token is refused when its name is not in the TokenRegistry, when its value
-	 * is not a string, or when its value carries a character the writer strips to
-	 * keep the file a single :root block. Callers that answer an admin use this to
-	 * refuse the whole save instead of reporting tokens that never reached the file.
+	 * @param array<string, mixed> $tokens     Token name => light value.
+	 * @param array<string, mixed> $darkTokens Token name => the administrator's own dark value.
 	 *
-	 * @param array<array-key, mixed> $tokens Input token map.
+	 * @return array<string, string> Token name => reason; empty when everything passes.
 	 *
-	 * @return array<string, string> Map of refused token name => reason; empty when all are accepted.
-	 *
-	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
-	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.1
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-the-server-checks-each-value-against-its-token-type
 	 */
 	public function findRejected(array $tokens, array $darkTokens = []): array {
-		$registry = TokenRegistry::getTokens();
-		$rejected = [];
-		foreach ($tokens as $name => $value) {
-			$name = (string)$name;
-			if (TokenRegistry::isEditable(tokenName: $name) === false) {
-				$rejected[$name] = 'not an editable token';
-				continue;
-			}
-
-			$reason = $this->valueProblem(value: $value, type: (string)($registry[$name]['type'] ?? 'text'));
-			if ($reason !== null) {
-				$rejected[$name] = $reason;
-			}
-		}
-
-		foreach ($darkTokens as $name => $value) {
-			$name = (string)$name;
-			if (isset($tokens[$name]) === false || $this->hasDarkValue(meta: ($registry[$name] ?? [])) === false) {
-				$rejected[$name] = 'no dark value for this token';
-				continue;
-			}
-
-			$reason = $this->valueProblem(value: $value, type: 'color');
-			if ($reason !== null) {
-				$rejected[$name] = 'dark value: ' . $reason;
-			}
-		}
-
-		return $rejected;
+		return $this->values->findRejected(tokens: $tokens, darkTokens: $darkTokens);
 	}//end findRejected()
-
-	/**
-	 * Why a value is refused for its type, or null when it passes.
-	 *
-	 * @param mixed  $value The value.
-	 * @param string $type  The token type.
-	 *
-	 * @return string|null The reason, naming the type.
-	 */
-	private function valueProblem(mixed $value, string $type): ?string {
-		if (is_string($value) === false || $this->isUnsafeValue(value: $value) === true) {
-			return 'not an allowed value';
-		}
-
-		if ($this->values->isValid(type: $type, value: $value) === false) {
-			return 'not a valid ' . $type . ' value';
-		}
-
-		return null;
-	}//end valueProblem()
-
-	/**
-	 * Whether a token gets a dark copy: a colour of the brand layer (Nextcloud's own variables).
-	 *
-	 * @param array<string, mixed> $meta The registry entry.
-	 *
-	 * @return boolean True when it does.
-	 */
-	private function hasDarkValue(array $meta): bool {
-		return ($meta['type'] ?? '') === 'color' && ($meta['group'] ?? '') === 'brand';
-	}//end hasDarkValue()
 
 	/**
 	 * Tell whether a value carries a character that would break out of the :root block.
@@ -451,6 +388,7 @@ class CustomOverridesService {
 	 *
 	 * @param array<string, string> $tokens Validated token map to write.
 	 * @param string                $path   The file to write.
+	 * @param array<string, string> $darkTokens The administrator's own dark values, by token.
 	 *
 	 * @return void
 	 *
@@ -485,6 +423,7 @@ class CustomOverridesService {
 	 * Build the CSS file content from a token map.
 	 *
 	 * @param array<string, string> $tokens Token name => value pairs.
+	 * @param array<string, string> $darkTokens The administrator's own dark values, by token.
 	 *
 	 * @return string The CSS file content.
 	 *
@@ -545,7 +484,7 @@ class CustomOverridesService {
 		$registry = TokenRegistry::getTokens();
 		$dark = [];
 		foreach ($tokens as $name => $value) {
-			if ($this->hasDarkValue(meta: ($registry[$name] ?? [])) === false) {
+			if ($this->values->hasDarkValue(meta: ($registry[$name] ?? [])) === false) {
 				continue;
 			}
 
