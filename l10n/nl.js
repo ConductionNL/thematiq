@@ -485,7 +485,23 @@ OC.L10N.register(
         "Download token reference": "Tokenreferentie downloaden",
         "Token reference of {name}": "Tokenreferentie van {name}",
         "Download reference": "Referentie downloaden",
-        "Download the token reference of {name}": "De tokenreferentie van {name} downloaden"
+        "Download the token reference of {name}": "De tokenreferentie van {name} downloaden",
+        "Start from your colours": "Begin met je eigen kleuren",
+        "Enter a name, your primary colour and your background colour. Thematiq makes a complete token set from them. You can refine it later in the token editor.": "Vul een naam, je hoofdkleur en je achtergrondkleur in. Thematiq maakt daar een complete tokenset van. Die kun je later verfijnen in de token-editor.",
+        "Background colour": "Achtergrondkleur",
+        "Logo (optional)": "Logo (optioneel)",
+        "Hover": "Hover",
+        "Create house style": "Huisstijl maken",
+        "{label}: {ratio}:1, needs {min}:1.": "{label}: {ratio}:1, minimaal {min}:1 nodig.",
+        "Warning: below the threshold. You can still save.": "Let op: onder de drempel. Opslaan kan wel.",
+        "Text on primary": "Tekst op hoofdkleur",
+        "Primary on background": "Hoofdkleur op achtergrond",
+        "Not saved:": "Niet opgeslagen:",
+        "Not saved.": "Niet opgeslagen.",
+        "\"{name}\" is saved and is now in the dropdown. Select it to apply it.": "\"{name}\" is opgeslagen en staat nu in de keuzelijst. Kies de set om hem toe te passen.",
+        "Enter both colours as a hex colour, for example #c8102e.": "Vul beide kleuren in als hexkleur, bijvoorbeeld #c8102e.",
+        "The logo exceeds the 512 KB size limit.": "Het logo is groter dan de limiet van 512 KB.",
+        "The logo must be an SVG, PNG, JPG, GIF or WebP image.": "Het logo moet een SVG-, PNG-, JPG-, GIF- of WebP-afbeelding zijn."
     },
     "nplurals=2; plural=(n != 1);"
 )

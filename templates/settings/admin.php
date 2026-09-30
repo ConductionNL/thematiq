@@ -29,6 +29,10 @@ script('thematiq', 'lib/layerSwap');
 // functions the panel renders each entry with. A module of its own so they can
 // be unit-tested; admin.js falls back to raw values when it is absent.
 script('thematiq', 'lib/auditFormat');
+// The simple brand form (window.NldesignBrandForm, on window.NldesignTokenConverter): the preview
+// derives the set from two colours exactly as BrandFormService stores it.
+script('thematiq', 'lib/tokenConverter');
+script('thematiq', 'lib/brandForm');
 script('thematiq', 'admin');
 style('thematiq', 'admin');
 // The component playground: the selector / stage / tokens instrument that
@@ -229,6 +233,33 @@ if ($_['mockUi'] === true) {
 			</button>
 		</div>
 		<div id="nldesign-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+		<!-- The simple brand form (openspec/specs/simple-brand-form/spec.md): a complete set from two colours and a logo. -->
+		<div class="nldesign-brand-form" id="nldesign-brand-form">
+			<h4><?php p($l->t('Start from your colours')); ?></h4>
+			<p class="settings-hint">
+				<?php p($l->t('Enter a name, your primary colour and your background colour. Thematiq makes a complete token set from them. You can refine it later in the token editor.')); ?>
+			</p>
+			<div class="nldesign-upload-form">
+				<label for="nldesign-brand-name"><?php p($l->t('Token set name')); ?></label>
+				<input type="text" id="nldesign-brand-name" maxlength="64"
+					   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>">
+				<label for="nldesign-brand-primary"><?php p($l->t('Primary colour')); ?></label>
+				<input type="color" id="nldesign-brand-primary" value="#154273">
+				<label for="nldesign-brand-background"><?php p($l->t('Background colour')); ?></label>
+				<input type="color" id="nldesign-brand-background" value="#ffffff">
+				<label for="nldesign-brand-logo"><?php p($l->t('Logo (optional)')); ?></label>
+				<input type="file" id="nldesign-brand-logo" accept=".svg,.png,.jpg,.gif,.webp">
+			</div>
+			<div class="nldesign-brand-preview" id="nldesign-brand-preview" aria-hidden="true">
+				<span class="nldesign-brand-sample" id="nldesign-brand-sample"><?php p($l->t('Primary button')); ?></span>
+				<span class="nldesign-brand-sample" id="nldesign-brand-sample-hover"><?php p($l->t('Hover')); ?></span>
+			</div>
+			<p id="nldesign-brand-contrast" role="status" aria-live="polite"></p>
+			<button type="button" id="nldesign-brand-save" class="button primary">
+				<?php p($l->t('Create house style')); ?>
+			</button>
+			<div id="nldesign-brand-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+		</div>
 		<div id="nldesign-custom-set-list" class="nldesign-custom-set-list" role="group"
 			 aria-label="<?php p($l->t('Custom token sets')); ?>">
 			<p class="settings-hint"><?php p($l->t('Loading custom token sets…')); ?></p>

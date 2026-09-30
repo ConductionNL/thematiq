@@ -2125,21 +2125,20 @@
 			"id": "aut-colour-only-ui",
 			"area": "authoring",
 			"name": "Set a brand with nothing more than a primary colour, a background colour and a logo in a simple form.",
-			"thematiq": "no",
+			"thematiq": "yes",
 			"nextcloud-theming": "yes",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "No simple 3-field (primary colour + background + logo) brand form exists; the only path to a house style is either uploading a full CSS/DTCG token set (CustomTokenSetController.php:203, requiring a real token document) or hand-editing individual tokens one at a time in the tabbed token editor (js/admin.js:2415 renderTokenEditor); there is a primary-colour-drives-components toggle (admin.php:427) but it locks EXISTING component tokens to the current primary, it is not a brand-creation form",
+				"state": "built",
+				"evidence": "lib/Service/BrandFormService.php derives every REQUIRED_TOKENS entry from a primary and a background colour by scripts/mapping/brand-form.json (hover and tints from primary, black or white text by contrast, link only when legible, the rest from the defaults layer); js/lib/brandForm.js mirrors it, parity fixture tests/Unit/fixtures/brand-form-parity.json checked by PHPUnit and vitest; lib/Controller/BrandFormController.php POST /settings/tokensets/from-colours (AuthorizedAdminSetting) stores through CustomTokenSetService::store with theming colours and the logo; Start from your colours section in the Custom token sets block with live preview and contrast readout",
 				"origin": "competitor",
 				"owner": "ConductionNL/thematiq",
-				"note": "Specified in openspec/changes/authoring-simple-brand-form (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-simple-brand-form"
+				"change": "authoring-simple-brand-form"
 			},
-			"reachedOn": "nothing reaches it as a single simple form; closest is the full token editor, which is not colour-only",
+			"reachedOn": "Settings > Administration > Theming, Custom token sets, Start from your colours",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/src/components/AdminSectionThemingAdvanced.vue:72-116: a simple form with primary colour, background colour, background image, favicon, logo and header logo",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : the theme form is essentially logo + a handful of colour fields (nav bar, accent, text/icon), matching a simple primary-colour/background/logo form",
