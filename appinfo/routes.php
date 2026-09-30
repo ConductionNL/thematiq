@@ -78,6 +78,8 @@ return [
 		['name' => 'layer#getStylesheets', 'url' => '/settings/tokenset-stylesheets/{tokenSetId}', 'verb' => 'GET'],
 		// Custom token set upload lifecycle.
 		['name' => 'customTokenSet#upload', 'url' => '/settings/tokensets/upload', 'verb' => 'POST'],
+		['name' => 'brandForm#inputs', 'url' => '/settings/tokensets/from-colours', 'verb' => 'GET'],
+		['name' => 'brandForm#create', 'url' => '/settings/tokensets/from-colours', 'verb' => 'POST'],
 		['name' => 'customTokenSet#list', 'url' => '/settings/tokensets/custom', 'verb' => 'GET'],
 		['name' => 'customTokenSet#export', 'url' => '/settings/tokensets/custom/{id}/export', 'verb' => 'GET'],
 		['name' => 'customTokenSet#delete', 'url' => '/settings/tokensets/custom/{id}', 'verb' => 'DELETE'],
