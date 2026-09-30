@@ -30,3 +30,7 @@ The web path shows the theming-sync dialog. A script cannot answer a dialog, so 
 ## Out of scope
 
 - Setting group mappings from the command line. `nldesign:config:import` covers them as part of a bundle.
+
+## Design change at build (30 Sep 2026)
+
+Decision 1 was already in place: `lib/Service/ActiveTokenSetService.php` `switchTo()` validates, writes and audits, and `SettingsController::setTokenSet()` calls it. The commands use it with `auditContext: ['actor' => 'cli']`. Decision 2 uses `ScheduledCoreThemingSync::sync()`, which applies the set's theming block (or resets core theming for `nextcloud`) exactly as the scheduled switch does.

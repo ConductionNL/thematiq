@@ -197,6 +197,8 @@ class CssParserService {
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
 	 */
 	public function parseRootBlock(string $css): array {
+		// Comments first: one holding braces (defaults.css has `{normal,bold}`) ended the block early.
+		$css = (string)preg_replace('#/\*.*?\*/#s', '', $css);
 		if (preg_match('/:root\s*\{([^}]*)\}/s', $css, $rootMatch) !== 1) {
 			return [];
 		}

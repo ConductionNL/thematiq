@@ -38,3 +38,11 @@ It is a second tab of the Custom token sets block ("From colours" next to "Uploa
 
 - Deriving a set from a logo image (colour extraction).
 - More than two input colours.
+
+## Design change at build (30 Sep 2026)
+
+- The endpoint is `POST /settings/tokensets/from-colours` on a new `BrandFormController`, not on `CustomTokenSetController`, whose constructor is at its limit and pinned by its tests. It stores through `CustomTokenSetService::store()` as decision 3 says. `GET` on the same URL serves the rules and the defaults to the preview, so the Admin settings class needs no new dependency.
+- Decision 4: the form is a section, "Start from your colours", under the upload form in the Custom token sets block, not a tab. Both still end in the same list.
+- Decision 2: with pure black and pure white, one of the two always reaches at least 4.58:1 (the lowest maximum, at a relative luminance of about 0.18), so "neither reaches 4.5:1" cannot happen. The mid-tone scenario now warns about primary on background under 3:1, which does happen (`#ffd200` on white).
+- Links take the primary colour only when it reaches 4.5:1 on the background, else the defaults layer's link colour (rule `legible`).
+- The defaults layer is read with `CssParserService::parseRootBlock()`, which stopped at a brace inside a comment in `defaults.css`; fixed on the token reference branch (#756) this change stacks on.
