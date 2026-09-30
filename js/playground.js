@@ -371,14 +371,21 @@
 	 * One is chosen by the same rule `StockTokensService::canonical()` applies
 	 * to the same map in the other direction, and the rest are reported.
 	 *
+	 * With a design system named, the file says so in a comment of its own, and
+	 * the custom-set upload recognises it: the file is then stored as it is, on
+	 * that design system, instead of being converted — which filled every token
+	 * the set left out with nldesign fallbacks, so an exported theme came back
+	 * as a different one.
+	 *
 	 * @param {Object<string, string>} tokens The resolved --nldesign-* values of the active set.
 	 * @param {Object<string, string>} overrides The admin's --color-* overrides.
 	 * @param {Object<string, string>} sources Map of --color-* to the --nldesign-* token it reads.
+	 * @param {string} [designSystem] The design system the set is worn on.
 	 * @return {{css: string, unexpressed: Array<string>, overruled: Array<Object>}}
 	 *         The file, the overrides no token could carry, and the ones a
 	 *         competing override took the token from.
 	 */
-	function exportCss(tokens, overrides, sources) {
+	function exportCss(tokens, overrides, sources, designSystem) {
 		var merged = {}
 		Object.keys(tokens || {}).forEach(function (token) {
 			merged[token] = tokens[token]
@@ -447,6 +454,11 @@
 			css:
 				'/* NL Design — custom token set, exported from the component'
 				+ ' playground. Do not edit manually. */\n'
+				+ (designSystem
+					? '/* thematiq-token-set: design-system='
+						+ designSystem
+						+ ' */\n'
+					: '')
 				+ ':root {\n'
 				+ lines.join('\n')
 				+ '\n}\n',
@@ -681,6 +693,12 @@
 			inventory: inventory,
 			reasons: loadState('playgroundReasons', {}),
 			tokens: loadState('playgroundTokens', {}),
+			// What the set DECLARES, which is what an export writes. `tokens`
+			// is what the instrument draws with: the set on top of
+			// css/systems/nldesign/defaults.css, so exporting from it wrote
+			// every nldesign default into a theme that never held them. See
+			// PlaygroundStateService::getExportTokens().
+			exportTokens: loadState('playgroundExportTokens', {}),
 			sources: loadState('playgroundTokenSources', {}),
 			// The set the page is WEARING, which a session preview changes —
 			// so an export is named after the set it actually contains.
@@ -3973,6 +3991,26 @@
 	}
 
 	/**
+	 * The design system a set is worn on, as the token set dropdown records it.
+	 *
+	 * @param {string} tokenSet The token set id.
+	 * @return {string} The design system id, or '' when the page does not list the set.
+	 */
+	function designSystemOf(tokenSet) {
+		var select = document.getElementById('nldesign-token-set-select')
+		if (select === null || !tokenSet) {
+			return ''
+		}
+		var option = [].slice.call(select.options).find(function (entry) {
+			return entry.value === tokenSet
+		})
+		if (option === undefined) {
+			return ''
+		}
+		return option.getAttribute('data-design-system') || 'nldesign'
+	}
+
+	/**
 	 * Fetch the overrides as they are SAVED — not as they are typed — and offer
 	 * the resulting token set as a file.
 	 *
@@ -3980,11 +4018,19 @@
 	 * another instance: exporting unsaved edits would produce a file that no
 	 * instance, including this one, is actually wearing.
 	 *
+	 * The overrides are the ones saved for the set being exported. Without the
+	 * set named, the server answers for the instance's active set, which a
+	 * session preview makes a different one.
+	 *
 	 * @param {Object} state The instrument state.
 	 * @return {void}
 	 */
 	function downloadTokenSet(state) {
-		fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
+		var url = OC.generateUrl('/apps/thematiq/settings/overrides')
+		if (state.tokenSet) {
+			url += '?tokenSet=' + encodeURIComponent(state.tokenSet)
+		}
+		fetch(url, {
 			headers: { requesttoken: OC.requestToken },
 		})
 			.then(function (response) {
@@ -4001,11 +4047,12 @@
 			})
 			.then(function (data) {
 				var result = exportCss(
-					liveTokens(state.tokens, function (name, fallback) {
+					liveTokens(state.exportTokens, function (name, fallback) {
 						return readVar(document.documentElement, name, fallback)
 					}),
 					data.overrides || {},
 					state.sources,
+					designSystemOf(state.tokenSet),
 				)
 
 				var blob = new Blob([result.css], { type: 'text/css' })

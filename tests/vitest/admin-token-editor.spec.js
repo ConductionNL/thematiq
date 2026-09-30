@@ -906,6 +906,8 @@ describe('admin.js token editor', () => {
 			expect(playground.exportCss.mock.calls[0][2]).toEqual({
 				'--color-primary': '--nldesign-color-primary',
 			})
+			// Marked in the file as well, so the stored theme round-trips.
+			expect(playground.exportCss.mock.calls[0][3]).toBe('none')
 
 			expect(lastBody('/settings/tokensets/upload')).toEqual({
 				name: 'OpenWoo',

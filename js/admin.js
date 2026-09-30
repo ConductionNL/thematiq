@@ -3776,6 +3776,9 @@
 				),
 				collectSavedAndDirtyOverrides(),
 				loadInitialState('playgroundTokenSources', {}),
+				// Marked in the file too, so the stored theme, downloaded from
+				// the custom set list and uploaded again, comes back the same.
+				designSystem,
 			)
 
 			// An override the exporter could not express is a value the admin

@@ -28,11 +28,13 @@ use OCP\IL10N;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 /**
  * A theme saved from the editor (a raw upload with `captureTheming`) keeps
  * Nextcloud's branding once it is stored, and deleting a custom theme forgets
- * that branding with it.
+ * that branding with it. A file Thematiq exported is stored the same way, as
+ * it arrived, so an exported theme uploaded again comes back the same.
  */
 class CustomTokenSetControllerCaptureTest extends TestCase {
 
@@ -70,6 +72,13 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	 * @var DesignSystemService&\PHPUnit\Framework\MockObject\MockObject
 	 */
 	private $designSystems;
+
+	/**
+	 * The theme converter mock.
+	 *
+	 * @var TokenSetConverterService&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private $converter;
 
 	/**
 	 * The controller under test.
@@ -111,7 +120,13 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 		$this->capture = $this->createMock(BrandingCaptureService::class);
 		$this->designSystems = $this->createMock(DesignSystemService::class);
-		$this->designSystems->method('getDesignSystems')->willReturn(['nldesign' => ['id' => 'nldesign']]);
+		$this->designSystems->method('getDesignSystems')->willReturn(
+			[
+				'none'     => ['id' => 'none'],
+				'nldesign' => ['id' => 'nldesign'],
+			]
+		);
+		$this->converter = $this->createMock(TokenSetConverterService::class);
 
 		$this->controller = new CustomTokenSetController(
 			'thematiq',
@@ -122,7 +137,7 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 			$l,
 			$this->createMock(ThemingAuditService::class),
 			$config,
-			$this->createMock(TokenSetConverterService::class),
+			$this->converter,
 			$this->createMock(ThemingService::class),
 			$this->designSystems,
 			$this->capture
@@ -269,4 +284,84 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
 		$this->assertArrayNotHasKey('design_system', $manifest['custom-openwoo']);
 	}//end testAnUnknownDesignSystemClaimIsIgnored()
+
+	/**
+	 * Upload a file off disk, the way the custom token set form does.
+	 *
+	 * @param string $content The file's content.
+	 *
+	 * @return void
+	 */
+	private function uploadingAFile(string $content): void {
+		$params = [
+			'name'    => 'Round Trip',
+			'content' => $content,
+		];
+		$this->request->method('getParam')->willReturnCallback(
+			fn (string $key, $default = null) => ($params[$key] ?? $default)
+		);
+		$this->request->method('getUploadedFile')->willReturn(null);
+	}//end uploadingAFile()
+
+	/**
+	 * A file "Export as token set" wrote is stored as it arrived, on the
+	 * design system it names — not converted, which filled every token the set
+	 * left out with nldesign fallbacks.
+	 */
+	public function testAnExportedFileIsStoredAsItArrived(): void {
+		$content = "/* NL Design — custom token set, exported from the component playground. Do not edit manually. */
+"
+			. "/* thematiq-token-set: design-system=none */
+"
+			. ":root {
+  --nldesign-color-primary: #00679e;
+}
+";
+		$this->uploadingAFile(content: $content);
+		$this->converter->expects($this->never())->method('convert');
+
+		$response = $this->controller->upload();
+
+		$this->assertSame(200, $response->getStatus());
+		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
+		$this->assertSame('none', $manifest['custom-round-trip']['design_system']);
+		$this->assertSame($content, file_get_contents($this->appDir . '/css/tokens/custom-round-trip.css'));
+	}//end testAnExportedFileIsStoredAsItArrived()
+
+	/**
+	 * A design system the marker names but the manifest does not ship is not
+	 * recorded, the same as a claim in the request.
+	 */
+	public function testAnExportedFileNamingAnUnknownDesignSystemRecordsNone(): void {
+		$this->uploadingAFile(
+			content: "/* thematiq-token-set: design-system=evil */
+:root {
+  --nldesign-color-primary: #00679e;
+}
+"
+		);
+		$this->converter->expects($this->never())->method('convert');
+
+		$this->controller->upload();
+
+		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
+		$this->assertArrayNotHasKey('design_system', $manifest['custom-round-trip']);
+	}//end testAnExportedFileNamingAnUnknownDesignSystemRecordsNone()
+
+	/**
+	 * A file without the marker is an unknown document and is converted.
+	 */
+	public function testAFileWithoutTheMarkerIsConverted(): void {
+		$this->uploadingAFile(content: ":root {
+  --nldesign-color-primary: #00679e;
+}
+");
+		$this->converter->expects($this->once())
+			->method('convert')
+			->willThrowException(new RuntimeException('converted', 422));
+
+		$response = $this->controller->upload();
+
+		$this->assertSame(422, $response->getStatus());
+	}//end testAFileWithoutTheMarkerIsConverted()
 }//end class
