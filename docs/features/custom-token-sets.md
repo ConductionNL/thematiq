@@ -94,6 +94,23 @@ Properties that are not part of the supported vocabulary (e.g. Nextcloud
 `--color-*` variables) are **skipped and listed** in the response so you can
 move them to `custom-overrides.css` instead.
 
+## Start from your colours
+
+No token file yet? Under **Custom token sets**, fill in **Start from your colours**: a name, your primary colour, your background colour and, if you like, a logo. Choose **Create house style** and the set is stored like an upload. It appears in the dropdown, and you can edit, export, preview and map it to groups.
+
+Thematiq fills in every token a complete set needs:
+
+- the hover shade and the light tints come from your primary colour;
+- the text on your primary colour is black or white, whichever reads better;
+- links take your primary colour when it reaches 4.5:1 on your background, and keep the default link colour when it does not;
+- status colours, greys, fonts and corner radii keep the default values.
+
+While you pick colours, the preview shows a primary button and its hover shade, exactly as they will be stored. Below it you see two contrast ratios: text on primary against 4.5:1, and primary on background against 3:1. A ratio below its threshold is a warning. You can still save.
+
+The logo may be SVG, PNG, JPG, GIF or WebP, up to 512 KB. It becomes the set's logo for the theming-sync dialog, together with your primary colour.
+
+A set made from two colours is plainer than one a designer made. Refine it in the token editor.
+
 ## WCAG 2.1 AA contrast warnings
 
 On upload, the server computes WCAG 2.1 relative-luminance contrast ratios for

@@ -5506,6 +5506,155 @@
 			return fragment
 		}
 
+		/**
+		 * The simple brand form (openspec/specs/simple-brand-form/spec.md): the preview derives the
+		 * set with window.NldesignBrandForm over the server's rules and defaults, so it shows what is
+		 * stored; saving posts to /settings/tokensets/from-colours.
+		 */
+		function initBrandForm() {
+			var form = document.getElementById('nldesign-brand-form')
+			var brandForm = window.NldesignBrandForm
+			if (form === null || !brandForm) {
+				return
+			}
+			var nameInput = document.getElementById('nldesign-brand-name')
+			var primaryInput = document.getElementById('nldesign-brand-primary')
+			var backgroundInput = document.getElementById(
+				'nldesign-brand-background',
+			)
+			var logoInput = document.getElementById('nldesign-brand-logo')
+			var sample = document.getElementById('nldesign-brand-sample')
+			var sampleHover = document.getElementById('nldesign-brand-sample-hover')
+			var readout = document.getElementById('nldesign-brand-contrast')
+			var resultEl = document.getElementById('nldesign-brand-result')
+			var saveBtn = document.getElementById('nldesign-brand-save')
+			var inputs = null
+
+			function ratioLine(label, value, minimum) {
+				var line = t('thematiq', '{label}: {ratio}:1, needs {min}:1.')
+					.replace('{label}', label)
+					.replace('{ratio}', value.toFixed(2))
+					.replace('{min}', String(minimum))
+				if (value < minimum) {
+					line +=
+						' '
+						+ t(
+							'thematiq',
+							'Warning: below the threshold. You can still save.',
+						)
+				}
+				return line
+			}
+
+			function repaint() {
+				if (inputs === null) {
+					return
+				}
+				var result = brandForm.derive(
+					inputs,
+					primaryInput.value,
+					backgroundInput.value,
+				)
+				if (result === null) {
+					return
+				}
+				var d = result.declarations
+				sample.style.background = d['--nldesign-color-primary']
+				sample.style.color = d['--nldesign-color-primary-text']
+				sampleHover.style.background = d['--nldesign-color-primary-hover']
+				sampleHover.style.color = d['--nldesign-color-primary-text']
+				form.style.setProperty(
+					'--brand-form-background',
+					d['--nldesign-color-nav-background'],
+				)
+				readout.textContent =
+					ratioLine(
+						t('thematiq', 'Text on primary'),
+						result.textRatio,
+						brandForm.TEXT_MIN,
+					)
+					+ ' '
+					+ ratioLine(
+						t('thematiq', 'Primary on background'),
+						result.uiRatio,
+						brandForm.UI_MIN,
+					)
+			}
+
+			function showResult(text) {
+				resultEl.style.display = 'block'
+				resultEl.textContent = text
+			}
+
+			primaryInput.addEventListener('input', repaint)
+			backgroundInput.addEventListener('input', repaint)
+
+			fetch(OC.generateUrl('/apps/thematiq/settings/tokensets/from-colours'), {
+				headers: { requesttoken: OC.requestToken },
+			})
+				.then(function (r) {
+					return r.json()
+				})
+				.then(function (data) {
+					inputs = data
+					repaint()
+				})
+				.catch(function (err) {
+					console.error('Error loading the brand form rules:', err)
+				})
+
+			saveBtn.addEventListener('click', function () {
+				var name = nameInput.value.trim()
+				if (name === '') {
+					notify(t('thematiq', 'Enter a token set name first.'))
+					nameInput.focus()
+					return
+				}
+				var formData = new FormData()
+				formData.append('name', name)
+				formData.append('primary', primaryInput.value)
+				formData.append('background', backgroundInput.value)
+				if (logoInput !== null && logoInput.files && logoInput.files[0]) {
+					formData.append('logo', logoInput.files[0])
+				}
+				fetch(
+					OC.generateUrl('/apps/thematiq/settings/tokensets/from-colours'),
+					{
+						method: 'POST',
+						headers: { requesttoken: OC.requestToken },
+						body: formData,
+					},
+				)
+					.then(function (r) {
+						return r.json().then(function (data) {
+							return { status: r.status, data: data }
+						})
+					})
+					.then(function (res) {
+						if (res.status >= 400) {
+							showResult(
+								t('thematiq', 'Not saved:')
+									+ ' '
+									+ (res.data.error || ''),
+							)
+							return
+						}
+						showResult(
+							t(
+								'thematiq',
+								'"{name}" is saved and is now in the dropdown. Select it to apply it.',
+							).replace('{name}', name),
+						)
+						loadCustomTokenSets()
+						refreshTokenSetCatalogue().catch(function () {})
+					})
+					.catch(function (err) {
+						console.error('Error creating the house style:', err)
+						showResult(t('thematiq', 'Not saved.'))
+					})
+			})
+		}
+
 		function uploadCustomTokenSet(name, file) {
 			var resultEl = document.getElementById('nldesign-upload-result')
 			var formData = new FormData()
@@ -5603,6 +5752,46 @@
 					notify(t('thematiq', 'Upload failed.'))
 				})
 		}
+
+		/**
+		 * The URL of a set's token reference (openspec/specs/token-reference/spec.md).
+		 *
+		 * @param {string} id The token set id.
+		 * @param {string} format `html` or `md`.
+		 * @param {boolean} download Whether the browser saves it as a file.
+		 * @return {string} The URL.
+		 */
+		function tokenReferenceUrl(id, format, download) {
+			return (
+				OC.generateUrl(
+					'/apps/thematiq/api/token-sets/'
+						+ encodeURIComponent(id)
+						+ '/reference',
+				)
+				+ '?format='
+				+ format
+				+ (download ? '&download=1' : '')
+			)
+		}
+
+		/**
+		 * Keep the two reference links next to the dropdown on the selected set.
+		 */
+		function initTokenReferenceLinks() {
+			var view = document.getElementById('nldesign-token-reference-link')
+			var save = document.getElementById('nldesign-token-reference-download')
+			if (view === null || save === null || tokenSetSelect === null) {
+				return
+			}
+			function update() {
+				view.href = tokenReferenceUrl(tokenSetSelect.value, 'html', false)
+				save.href = tokenReferenceUrl(tokenSetSelect.value, 'md', true)
+			}
+			tokenSetSelect.addEventListener('change', update)
+			update()
+		}
+
+		initTokenReferenceLinks()
 
 		function loadCustomTokenSets() {
 			var listEl = document.getElementById('nldesign-custom-set-list')
@@ -5718,6 +5907,33 @@
 				})
 				row.appendChild(downloadBtn)
 
+				// The token reference of this set (openspec/specs/token-reference/spec.md).
+				var referenceLink = document.createElement('a')
+				referenceLink.className = 'nldesign-token-reference-link'
+				referenceLink.href = tokenReferenceUrl(set.id, 'html', false)
+				referenceLink.target = '_blank'
+				referenceLink.rel = 'noopener noreferrer'
+				referenceLink.textContent = t('thematiq', 'Token reference')
+				referenceLink.setAttribute(
+					'aria-label',
+					t('thematiq', 'Token reference of {name}', {
+						name: set.name || set.id,
+					}),
+				)
+				row.appendChild(referenceLink)
+
+				var referenceDownload = document.createElement('a')
+				referenceDownload.className = 'nldesign-token-reference-link'
+				referenceDownload.href = tokenReferenceUrl(set.id, 'md', true)
+				referenceDownload.textContent = t('thematiq', 'Download reference')
+				referenceDownload.setAttribute(
+					'aria-label',
+					t('thematiq', 'Download the token reference of {name}', {
+						name: set.name || set.id,
+					}),
+				)
+				row.appendChild(referenceDownload)
+
 				var deleteBtn = document.createElement('button')
 				deleteBtn.type = 'button'
 				deleteBtn.className =
@@ -5815,6 +6031,7 @@
 
 		// Initialise the custom token set panel on page load.
 		initCustomTokenSets()
+		initBrandForm()
 
 		/* ==========================================================================
 		 * RESET THEME TO NEXTCLOUD
