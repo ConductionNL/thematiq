@@ -2,7 +2,7 @@
 
 # VNG Vereniging Nederlandse Gemeenten
 
-Token set `vng`: 1225 declared by this set, 11 from the defaults layer.
+Token set `vng`: 1225 declared by this set, 123 from the defaults layer.
 
 Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 
@@ -48,12 +48,167 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 | `--nldesign-color-text-muted` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235b6e8a%22%2F%3E%3C%2Fsvg%3E) `#5b6e8a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238a9ab2%22%2F%3E%3C%2Fsvg%3E) `#8a9ab2` | this set | Text lighter, Text max contrast |
 | `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d45f01%22%2F%3E%3C%2Fsvg%3E) `#d45f01` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f3862f%22%2F%3E%3C%2Fsvg%3E) `#f3862f` | this set | Element warning, Text warning, Warning color |
 | `--nldesign-color-warning-rgb` | `212, 95, 1` | `243, 134, 47` | this set | `--color-warning-hover` |
+| `--nldesign-component-badge-background-color` | `var(
+		--nldesign-color-primary
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2388c6f9%22%2F%3E%3C%2Fsvg%3E) `#88c6f9` | defaults | |
+| `--nldesign-component-badge-color` | `var(
+		--nldesign-color-primary-text
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+| `--nldesign-component-button-active-background-color` | `var(
+		--nldesign-color-primary-light-hover
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23093f5d%22%2F%3E%3C%2Fsvg%3E) `#093f5d` | defaults | |
+| `--nldesign-component-button-active-color` | `var(
+		--nldesign-color-primary
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239ad2ff%22%2F%3E%3C%2Fsvg%3E) `#9ad2ff` | defaults | |
+| `--nldesign-component-button-background-color` | `transparent` | | defaults | |
+| `--nldesign-component-button-border-color` | `var(
+		--nldesign-color-primary
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2388c6f9%22%2F%3E%3C%2Fsvg%3E) `#88c6f9` | defaults | |
+| `--nldesign-component-button-color` | `var(--nldesign-color-primary)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239ad2ff%22%2F%3E%3C%2Fsvg%3E) `#9ad2ff` | defaults | |
+| `--nldesign-component-button-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | defaults | |
+| `--nldesign-component-button-disabled-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b4b4b4%22%2F%3E%3C%2Fsvg%3E) `#b4b4b4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
+| `--nldesign-component-button-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+| `--nldesign-component-button-focus-border-color` | `var(
+		--nldesign-color-focus
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238c6cc780%22%2F%3E%3C%2Fsvg%3E) `#8c6cc780` | defaults | |
+| `--nldesign-component-button-hover-background-color` | `var(
+		--nldesign-color-primary-light
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2303273b%22%2F%3E%3C%2Fsvg%3E) `#03273b` | defaults | |
+| `--nldesign-component-button-hover-border-color` | `var(
+		--nldesign-color-primary-hover
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2361c4f5%22%2F%3E%3C%2Fsvg%3E) `#61c4f5` | defaults | |
+| `--nldesign-component-button-hover-color` | `var(
+		--nldesign-color-primary
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239ad2ff%22%2F%3E%3C%2Fsvg%3E) `#9ad2ff` | defaults | |
+| `--nldesign-component-button-primary-action-background-color` | `var(
+		--nldesign-color-primary
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2388c6f9%22%2F%3E%3C%2Fsvg%3E) `#88c6f9` | defaults | |
+| `--nldesign-component-button-primary-action-border-color` | `var(
+		--nldesign-color-primary
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2388c6f9%22%2F%3E%3C%2Fsvg%3E) `#88c6f9` | defaults | |
+| `--nldesign-component-button-primary-action-color` | `var(
+		--nldesign-color-primary-text
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+| `--nldesign-component-button-primary-action-hover-background-color` | `var(
+		--nldesign-color-primary-hover
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2361c4f5%22%2F%3E%3C%2Fsvg%3E) `#61c4f5` | defaults | |
+| `--nldesign-component-button-primary-action-hover-color` | `var(
+		--nldesign-color-primary-text
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+| `--nldesign-component-button-secondary-action-background-color` | `transparent` | | defaults | |
+| `--nldesign-component-button-secondary-action-border-color` | `var(
+		--nldesign-color-primary
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2388c6f9%22%2F%3E%3C%2Fsvg%3E) `#88c6f9` | defaults | |
+| `--nldesign-component-button-secondary-action-color` | `var(
+		--nldesign-color-primary
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239ad2ff%22%2F%3E%3C%2Fsvg%3E) `#9ad2ff` | defaults | |
+| `--nldesign-component-button-secondary-action-hover-background-color` | `var(
+		--nldesign-color-primary-light
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2303273b%22%2F%3E%3C%2Fsvg%3E) `#03273b` | defaults | |
+| `--nldesign-component-form-field-label-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-form-fieldset-border-color` | `var(
+		--nldesign-color-border
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e363f%22%2F%3E%3C%2Fsvg%3E) `#2e363f` | defaults | |
+| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e363f%22%2F%3E%3C%2Fsvg%3E) `#2e363f` | defaults | |
+| `--nldesign-component-form-select-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232abbf4%22%2F%3E%3C%2Fsvg%3E) `#2abbf4` | defaults | |
+| `--nldesign-component-heading-1-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-heading-2-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-heading-3-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-heading-4-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-heading-5-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-heading-6-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-heading-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-link-color` | `var(--nldesign-color-link)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2377bbff%22%2F%3E%3C%2Fsvg%3E) `#77bbff` | defaults | |
+| `--nldesign-component-link-hover-color` | `var(--nldesign-color-link-hover)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2377bbff%22%2F%3E%3C%2Fsvg%3E) `#77bbff` | defaults | |
+| `--nldesign-component-link-visited-color` | `var(--nldesign-color-link-visited)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23906fcf%22%2F%3E%3C%2Fsvg%3E) `#906fcf` | defaults | |
+| `--nldesign-component-ordered-list-color` | `var(
+		--nldesign-color-text
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-paragraph-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-separator-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e363f%22%2F%3E%3C%2Fsvg%3E) `#2e363f` | defaults | |
+| `--nldesign-component-table-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e363f%22%2F%3E%3C%2Fsvg%3E) `#2e363f` | defaults | |
+| `--nldesign-component-table-header-background-color` | `var(
+		--nldesign-color-background-dark
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2322262e%22%2F%3E%3C%2Fsvg%3E) `#22262e` | defaults | |
+| `--nldesign-component-table-header-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-table-row-hover-background-color` | `var(
+		--nldesign-color-background-hover
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23191e22%22%2F%3E%3C%2Fsvg%3E) `#191e22` | defaults | |
+| `--nldesign-component-textbox-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9caf%22%2F%3E%3C%2Fsvg%3E) `#8e9caf` | defaults | |
+| `--nldesign-component-textbox-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-textbox-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+| `--nldesign-component-textbox-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+| `--nldesign-component-textbox-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233dc9ff%22%2F%3E%3C%2Fsvg%3E) `#3dc9ff` | defaults | |
+| `--nldesign-component-textbox-hover-border-color` | `var(
+		--nldesign-color-border-dark
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9cae%22%2F%3E%3C%2Fsvg%3E) `#8e9cae` | defaults | |
+| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ee554e%22%2F%3E%3C%2Fsvg%3E) `#ee554e` | defaults | |
+| `--nldesign-component-unordered-list-color` | `var(
+		--nldesign-color-text
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
 
 ## Typography (Typografie)
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--nldesign-component-badge-font-size` | `0.875rem` | | defaults | |
+| `--nldesign-component-badge-font-weight` | `700` | | defaults | |
+| `--nldesign-component-button-font-family` | `var(--nldesign-font-family)` | | defaults | |
+| `--nldesign-component-button-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-button-font-weight` | `700` | | defaults | |
+| `--nldesign-component-form-field-label-font-weight` | `700` | | defaults | |
+| `--nldesign-component-heading-1-font-size` | `2.5rem` | | defaults | |
+| `--nldesign-component-heading-1-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-1-line-height` | `1.2` | | defaults | |
+| `--nldesign-component-heading-2-font-size` | `2rem` | | defaults | |
+| `--nldesign-component-heading-2-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-2-line-height` | `1.25` | | defaults | |
+| `--nldesign-component-heading-3-font-size` | `1.5rem` | | defaults | |
+| `--nldesign-component-heading-3-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-3-line-height` | `1.3` | | defaults | |
+| `--nldesign-component-heading-4-font-size` | `1.25rem` | | defaults | |
+| `--nldesign-component-heading-4-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-4-line-height` | `1.35` | | defaults | |
+| `--nldesign-component-heading-5-font-size` | `1.125rem` | | defaults | |
+| `--nldesign-component-heading-5-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-5-line-height` | `1.4` | | defaults | |
+| `--nldesign-component-heading-6-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-heading-6-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-6-line-height` | `1.5` | | defaults | |
+| `--nldesign-component-heading-font-family` | `var(--nldesign-font-family)` | | defaults | |
+| `--nldesign-component-heading-font-weight` | `var(--nldesign-font-weight-heading)` | | defaults | |
+| `--nldesign-component-link-font-weight` | `var(
+		--nldesign-font-weight-default
+	)` | | defaults | |
+| `--nldesign-component-link-text-decoration` | `underline` | | defaults | |
+| `--nldesign-component-ordered-list-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-ordered-list-line-height` | `1.5` | | defaults | |
+| `--nldesign-component-paragraph-font-family` | `var(--nldesign-font-family)` | | defaults | |
+| `--nldesign-component-paragraph-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-paragraph-font-weight` | `var(--nldesign-font-weight-default)` | | defaults | |
+| `--nldesign-component-paragraph-line-height` | `1.5` | | defaults | |
+| `--nldesign-component-table-header-font-weight` | `700` | | defaults | |
+| `--nldesign-component-textbox-font-family` | `var(--nldesign-font-family)` | | defaults | |
+| `--nldesign-component-textbox-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-unordered-list-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-unordered-list-line-height` | `1.5` | | defaults | |
 | `--nldesign-font-family` | `'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif` | | this set | Font family, `--nldesign-component-button-font-family`, `--nldesign-component-textbox-font-family` |
+| `--nldesign-font-weight-default` | `400` | | defaults | `--default-font-size` |
+| `--nldesign-font-weight-element` | `500` | | defaults | Control font weight |
+| `--nldesign-font-weight-heading` | `700` | | defaults | Heading font weight |
 
 ## Spacing and shape (Ruimte en vorm)
 
@@ -64,6 +219,25 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 | `--nldesign-border-radius-pill` | `999px` | | this set | Badge shape, Border radius pill |
 | `--nldesign-border-radius-rounded` | `999px` | | this set | Border radius rounded |
 | `--nldesign-border-radius-small` | `4px` | | this set | Border radius small |
+| `--nldesign-component-badge-border-radius` | `var(
+		--nldesign-border-radius-pill
+	)` | | defaults | |
+| `--nldesign-component-badge-padding-block` | `0.125rem` | | defaults | |
+| `--nldesign-component-badge-padding-inline` | `0.5rem` | | defaults | |
+| `--nldesign-component-button-border-radius` | `var(--nldesign-border-radius)` | | defaults | |
+| `--nldesign-component-button-border-width` | `1px` | | defaults | |
+| `--nldesign-component-button-padding-block` | `0.5rem` | | defaults | |
+| `--nldesign-component-button-padding-inline` | `1rem` | | defaults | |
+| `--nldesign-component-form-fieldset-border-width` | `1px` | | defaults | |
+| `--nldesign-component-form-select-border-radius` | `var(--nldesign-border-radius)` | | defaults | |
+| `--nldesign-component-separator-border-width` | `1px` | | defaults | |
+| `--nldesign-component-table-border-width` | `1px` | | defaults | |
+| `--nldesign-component-table-cell-padding-block` | `0.5rem` | | defaults | |
+| `--nldesign-component-table-cell-padding-inline` | `0.75rem` | | defaults | |
+| `--nldesign-component-textbox-border-radius` | `var(--nldesign-border-radius)` | | defaults | |
+| `--nldesign-component-textbox-border-width` | `1px` | | defaults | |
+| `--nldesign-component-textbox-padding-block` | `0.5rem` | | defaults | |
+| `--nldesign-component-textbox-padding-inline` | `0.75rem` | | defaults | |
 | `--nldesign-header-border-bottom` | `1px solid #cfd5dd` | | this set | |
 | `--nldesign-logo-height` | `auto` | | defaults | |
 | `--nldesign-logo-width` | `62px` | | defaults | |
