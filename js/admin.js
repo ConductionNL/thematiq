@@ -6287,7 +6287,7 @@
 		 *
 		 * @param {string} iso The UTC time.
 		 * @return {string} The local date and time.
-		 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+		 * @spec openspec/specs/scheduled-switch/spec.md
 		 */
 		function formatLocalTime(iso) {
 			return new Date(iso).toLocaleString([], {
@@ -6301,7 +6301,7 @@
 		 * the list with a cancel button per switch. Times are entered and
 		 * shown in the browser's time zone and sent as UTC.
 		 *
-		 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+		 * @spec openspec/specs/scheduled-switch/spec.md
 		 */
 		function initScheduledSwitches() {
 			var list = document.getElementById('nldesign-scheduled-list')

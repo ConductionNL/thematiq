@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 
 declare(strict_types=1);
@@ -38,7 +38,7 @@ use Psr\Log\LoggerInterface;
  * the list. A switch that cannot be applied (its set was deleted) becomes
  * `failed`, stays listed with the reason, and is not retried.
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - the planner sits between the store, the one
  * token set write path, core theming, the audit trail, the clock and the translator; each is a
@@ -93,7 +93,7 @@ class ScheduledSwitchService {
 	 *
 	 * @return array<int, array<string, mixed>> The entries.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
 	 */
 	public function list(): array {
 		$entries = $this->store->all();
@@ -115,7 +115,7 @@ class ScheduledSwitchService {
 	 *
 	 * @throws ScheduledSwitchException When the set does not exist, a time does not parse, the end is not after the start, or the window overlaps.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
 	 *
 	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - the core sync option is the administrator's own checkbox, stored as is.
 	 */
@@ -173,7 +173,7 @@ class ScheduledSwitchService {
 	 * @throws ScheduledSwitchNotFoundException When no entry has this id.
 	 * @throws ScheduledSwitchException When a running switch cannot switch back.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md#requirement-an-administrator-cancels-a-planned-switch
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-cancels-a-planned-switch
 	 */
 	public function cancel(string $id): void {
 		$entries = $this->store->all();
@@ -201,7 +201,7 @@ class ScheduledSwitchService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md#requirement-the-app-applies-a-due-switch-and-switches-back
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-the-app-applies-a-due-switch-and-switches-back
 	 */
 	public function runDue(): void {
 		$now = $this->time->getTime();
@@ -222,7 +222,7 @@ class ScheduledSwitchService {
 	 *
 	 * @return array<string, mixed> `{activeTokenSet, activeUntil, revertTo, lastRun, cronMode, cronWarning}`.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md#requirement-the-page-warns-when-switches-may-run-late
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-the-page-warns-when-switches-may-run-late
 	 */
 	public function getStatus(): array {
 		$activeUntil = null;

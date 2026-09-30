@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 
 declare(strict_types=1);
@@ -32,7 +32,7 @@ use Psr\Log\LoggerInterface;
  * {@see ScheduledSwitchService::runDue()}; a throw is logged, never passed
  * on to cron.
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 class ScheduledSwitchJob extends TimedJob {
 
@@ -81,7 +81,7 @@ class ScheduledSwitchJob extends TimedJob {
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - required by the abstract Job::run() signature
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
 	protected function run($argument): void {
 		try {

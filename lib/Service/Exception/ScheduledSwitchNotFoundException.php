@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ namespace OCA\Thematiq\Service\Exception;
 /**
  * Thrown when a planned theme switch with the given id does not exist.
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 class ScheduledSwitchNotFoundException extends ScheduledSwitchException {
 }//end class

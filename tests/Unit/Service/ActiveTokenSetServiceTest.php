@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/tasks.md#task-1.1
+ * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
  */
 
 declare(strict_types=1);

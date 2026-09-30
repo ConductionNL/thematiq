@@ -113,7 +113,7 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 	 * Restoring a version that carries other planned switches says so, as a
 	 * count; a version 1 bundle without them names no change there.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function testThePreviewNamesAChangeInPlannedSwitches(): void {
 		$this->bundles->method('import')->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);

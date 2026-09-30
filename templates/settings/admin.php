@@ -103,7 +103,7 @@ if ($_['mockUi'] === true) {
 		</button>
 	</div>
 
-	<!-- Planned token set switches (openspec/changes/apply-scheduled-theme-switch).
+	<!-- Planned token set switches (openspec/specs/scheduled-switch).
 	     admin.js fills the status, the list and the time zone hint. -->
 	<div class="nldesign-scheduled-switches" id="nldesign-scheduled-switches">
 		<h3><?php p($l->t('Planned switches')); ?></h3>

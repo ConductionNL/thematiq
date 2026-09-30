@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ namespace OCA\Thematiq\Service\Exception;
  * not parse, its end is not after its start, or its window overlaps another planned switch.
  * The message is translated and shown to the administrator as is.
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 class ScheduledSwitchException extends \RuntimeException {
 }//end class

@@ -643,7 +643,7 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * The planned switches travel in the bundle without their runtime state.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function testExportCarriesPlannedSwitchesWithoutRuntimeState(): void {
 		$this->seedConfig();
@@ -683,7 +683,7 @@ class ConfigBundleServiceTest extends TestCase {
 	 * Scenario "A campaign prepared on acceptance goes to production": the
 	 * planned switch names a custom set that only the bundle carries.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function testAPlannedSwitchToABundledCustomSetIsImported(): void {
 		$this->seedConfig();
@@ -719,7 +719,7 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * Scenario "An overlapping plan blocks the whole import".
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function testOverlappingPlannedSwitchesBlockTheWholeImport(): void {
 		$bundle = $this->baseBundle(['bundleVersion' => 2]);
@@ -740,7 +740,7 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * A planned switch to a set neither installed nor bundled is refused.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function testAPlannedSwitchToAnUnknownSetIsRefused(): void {
 		$bundle = $this->baseBundle(['bundleVersion' => 2]);
@@ -758,7 +758,7 @@ class ConfigBundleServiceTest extends TestCase {
 	 * A version 1 bundle (kept versions from before planned switches) still
 	 * imports and leaves the planned switches alone.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function testAVersionOneBundleStillImportsAndKeepsPlannedSwitches(): void {
 		$this->appConfig['scheduled_switches'] = '[{"id":"keep"}]';

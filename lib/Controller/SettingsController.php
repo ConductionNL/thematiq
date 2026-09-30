@@ -232,7 +232,7 @@ class SettingsController extends Controller {
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
-	 * @spec openspec/changes/apply-scheduled-theme-switch/tasks.md#task-1.1
+	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setTokenSet(string $tokenSet): JSONResponse {

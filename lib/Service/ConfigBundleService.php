@@ -864,7 +864,7 @@ class ConfigBundleService {
 	 *
 	 * @return array<int, array<string, mixed>>|null The entries to store, or null to leave them alone.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	private function validateScheduledSwitches(array $bundle, array $resolved, array &$errors): ?array {
 		$config = ($bundle['config'] ?? []);

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/tasks.md#task-1.1
+ * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use OCP\IConfig;
  * and the scheduled switch job both go through switchTo(), so both run the
  * same isValidTokenSet() check and both leave an audit entry.
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/tasks.md#task-1.1
+ * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
  */
 class ActiveTokenSetService {
 
@@ -65,7 +65,7 @@ class ActiveTokenSetService {
 	 *
 	 * @return string The id.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/tasks.md#task-1.1
+	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
 	 */
 	public function getActive(): string {
 		return $this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, self::DEFAULT_SET);
@@ -82,7 +82,7 @@ class ActiveTokenSetService {
 	 *
 	 * @throws \InvalidArgumentException When the set does not exist; nothing is written then.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/tasks.md#task-1.1
+	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
 	 */
 	public function switchTo(string $tokenSet, string $auditAction = 'token_set_changed', array $auditContext = []): string {
 		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {

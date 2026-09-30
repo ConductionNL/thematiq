@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 
 declare(strict_types=1);
@@ -33,8 +33,8 @@ use OCP\IConfig;
  * pulling in the audit trail (which itself keeps bundles of the
  * configuration, see ThemeVersionService).
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/config-portability/spec.md
  */
 class ScheduledSwitchStore {
 
@@ -68,7 +68,7 @@ class ScheduledSwitchStore {
 	 *
 	 * @return array<int, array<string, mixed>> The entries.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
 	public function all(): array {
 		$decoded = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, '[]'), true);
@@ -86,7 +86,7 @@ class ScheduledSwitchStore {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
 	public function save(array $entries): void {
 		$this->config->setAppValue(Application::APP_ID, self::CONFIG_KEY, (string)json_encode(array_values($entries), JSON_UNESCAPED_SLASHES));
@@ -97,7 +97,7 @@ class ScheduledSwitchStore {
 	 *
 	 * @return array<int, array<string, mixed>> The entries.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function exportable(): array {
 		$result = [];
@@ -120,7 +120,7 @@ class ScheduledSwitchStore {
 	 *
 	 * @return string|null The UTC time, or null when it does not parse.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
 	public static function toUtc(mixed $value): ?string {
 		if (is_string($value) === false || preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/', $value) !== 1) {
@@ -145,7 +145,7 @@ class ScheduledSwitchStore {
 	 *
 	 * @return array<string, mixed>|null The overlapping entry, or null.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
 	public static function findOverlap(array $candidate, array $entries): ?array {
 		[$start, $end] = self::window(entry: $candidate);
@@ -171,7 +171,7 @@ class ScheduledSwitchStore {
 	 *
 	 * @return array{entries: array<int, array<string, mixed>>, errors: array<int, string>}
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/config-portability/spec.md
+	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function validateImport(mixed $raw, callable $setExists): array {
 		if (is_array($raw) === false || array_is_list($raw) === false) {

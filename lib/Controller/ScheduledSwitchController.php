@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 
 declare(strict_types=1);
@@ -37,7 +37,7 @@ use OCP\IUserSession;
  * A controller of its own rather than more methods on SettingsController,
  * which is already at the coupling limit.
  *
- * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 class ScheduledSwitchController extends Controller {
 
@@ -63,7 +63,7 @@ class ScheduledSwitchController extends Controller {
 	 *
 	 * @return JSONResponse `{switches, status}`.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md#requirement-the-page-warns-when-switches-may-run-late
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-the-page-warns-when-switches-may-run-late
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function index(): JSONResponse {
@@ -80,7 +80,7 @@ class ScheduledSwitchController extends Controller {
 	 *
 	 * @return JSONResponse 201 `{switch}`, or 400 `{error}` with the reason.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
 	 *
 	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - the administrator's checkbox, passed through as is.
 	 */
@@ -112,7 +112,7 @@ class ScheduledSwitchController extends Controller {
 	 *
 	 * @return JSONResponse 200, 404 when it does not exist, 400 when it cannot switch back.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/scheduled-switch/spec.md#requirement-an-administrator-cancels-a-planned-switch
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-cancels-a-planned-switch
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function cancel(string $id): JSONResponse {

@@ -608,7 +608,7 @@ class ThemingAuditServiceTest extends TestCase {
 	 * scheduled_switch_applied is part of the closed vocabulary, and the
 	 * background job's entry carries actor `system` although cron runs in CLI.
 	 *
-	 * @spec openspec/changes/apply-scheduled-theme-switch/specs/theming-audit/spec.md
+	 * @spec openspec/specs/theming-audit/spec.md
 	 */
 	public function testScheduledSwitchAppliedIsAcceptedWithSystemActor(): void {
 		$service = $this->makeService();
