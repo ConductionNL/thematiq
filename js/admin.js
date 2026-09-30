@@ -3146,18 +3146,10 @@
 						}
 						// A saved value stays on the preview; with none, the
 						// preview falls back to what the theme itself declares.
-						if (
-							typeof state.custom === 'string'
-							&& state.custom !== ''
-						) {
-							previewTarget().style.setProperty(
-								name,
-								state.custom,
-								'important',
-							)
-						} else {
-							previewTarget().style.removeProperty(name)
-						}
+						writeLiveToken(
+							name,
+							typeof state.custom === 'string' ? state.custom : '',
+						)
 						schedulePreviewRepaint()
 						tokenEditorState[name].current = defaultVal
 						tokenEditorState[name].isDirty = false
@@ -3208,6 +3200,45 @@
 			return previewRoot !== null ? previewRoot : document.documentElement
 		}
 
+		/**
+		 * Whether a token belongs to the family Nextcloud derives from the
+		 * primary colour (`--color-primary`, `-element`, `-light`, `-hover`…).
+		 *
+		 * @param {string} name The custom property.
+		 * @return {boolean} True for a primary-family token.
+		 */
+		function isPrimaryFamily(name) {
+			return name.indexOf('--color-primary') === 0
+		}
+
+		/**
+		 * Write an unsaved value, or clear it, where an edit is shown.
+		 *
+		 * The editor's own tabs, chips, buttons and badges are drawn in the
+		 * brand primary, so an edit to that family is written on
+		 * #nldesign-settings as well: on the preview alone, the controls around
+		 * it kept the saved colour while everything inside showed the new one.
+		 * The settings section is as far as it reaches — the rest of the page
+		 * still wears only what has been saved.
+		 *
+		 * @param {string} name The custom property.
+		 * @param {string} value The value, or an empty string to clear it.
+		 * @return {void}
+		 */
+		function writeLiveToken(name, value) {
+			var targets = [previewTarget()]
+			if (settingsEl !== null && isPrimaryFamily(name) === true) {
+				targets.push(settingsEl)
+			}
+			targets.forEach(function (node) {
+				if (value.trim() === '') {
+					node.style.removeProperty(name)
+				} else {
+					node.style.setProperty(name, value, 'important')
+				}
+			})
+		}
+
 		function applyLivePreview(name, value) {
 			// The custom property is written immediately, NOT deferred: this is
 			// what repaints the specimens in the preview, and the browser
@@ -3224,11 +3255,7 @@
 			//
 			// Inline `!important` outranks any author stylesheet, so the preview
 			// now wins over the stored value it is about to replace.
-			if (value.trim() === '') {
-				previewTarget().style.removeProperty(name)
-			} else {
-				previewTarget().style.setProperty(name, value, 'important')
-			}
+			writeLiveToken(name, value)
 			schedulePreviewRepaint()
 		}
 
