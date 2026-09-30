@@ -81,6 +81,13 @@
 	margin-top: 4px;
 }
 
+/* `display` above outranks the browser's own rule for `hidden`, so a hidden
+   badge still drew as an empty pill — the incomplete-set badge left a yellow
+   stripe beside a complete set after switching back to it. */
+.nldesign-badge[hidden] {
+	display: none;
+}
+
 .nldesign-badge--system {
 	background: var(--color-primary-element-light, #e5eff5);
 	color: var(--color-primary-element, #0082c9);
@@ -321,6 +328,7 @@
 /* Options section */
 .nldesign-option {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	gap: 12px;
 	padding: 16px;
@@ -333,6 +341,17 @@
 .nldesign-option label {
 	cursor: pointer;
 	flex: 1;
+}
+
+/* An option's own explanation goes UNDER its label, on a line of its own. As
+   one more flex item it sat beside the label and squeezed it to a word per
+   line. The indent lines it up with the label text, past the box core's
+   checkbox draws in front of it (`.checkbox + label::before`: 3px margin, a
+   14px box with a 1px border, 6px margin). */
+.nldesign-option > .settings-hint {
+	flex-basis: 100%;
+	margin: 0;
+	padding-inline-start: 25px;
 }
 
 /* Preview section */
