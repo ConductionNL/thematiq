@@ -62,16 +62,27 @@ Until its end, a running switch MUST stay applied: when another token set is act
 
 ### Requirement: A planned switch applies a set like the apply dialog
 
-A planned switch MUST apply its token set the way applying it by hand does: the token set, and the Nextcloud core theming (logo, primary colour, background) that the theming-sync dialog would have offered for that set — the branding a set captured when it was saved, or a reset to Nextcloud's defaults for the stock set. The same MUST hold when a running switch applies its set again and when a switch goes back to the token set it replaced. There MUST be no option to switch the token set alone: without its logo and colours a switch changes the token set and nothing an administrator can see.
+A planned switch MUST apply its token set the way applying it by hand does: the token set, and the Nextcloud core theming (logo, primary colour, background) that the theming-sync dialog would have offered for that set — the branding a set captured when it was saved, or a reset to Nextcloud's defaults for the stock set. The same MUST hold when a running switch applies its set again. There MUST be no option to switch the token set alone when planning: without its logo and colours a switch changes the token set and nothing an administrator can see.
 
-#### Scenario: A planned switch brings the set's logo and colours
+Before a switch with an end changes core theming, the app MUST keep a snapshot of it (colours, background state and the image slots with their files). When the switch ends or is cancelled, the app MUST put that snapshot back rather than derive core theming from the token set it goes back to: the logo and colours an administrator set in Nextcloud's own Theming app belong to no token set, and would otherwise be reset or left behind. A switch stored while the core sync was an option and with it switched off MUST keep leaving core theming alone.
 
-@e2e exclude depends on the background job and core theming; proven by tests/Unit/Service/ScheduledSwitchServiceTest.php::testASwitchAppliesTheSetsThemingBothWays and ::testASwitchBackToStockResetsCoreTheming
+#### Scenario: A planned switch brings the set's logo and colours, and gives back what it replaced
 
-- GIVEN a planned switch to `koningsdag-oranje` while `rijkshuisstijl` is active
+@e2e exclude depends on the background job and core theming; proven by tests/Unit/Service/ScheduledSwitchServiceTest.php::testASwitchRestoresTheBrandingItReplaced and ::testCancellingARunningCampaignSwitchesBackAtOnce
+
+- GIVEN `rijkshuisstijl` active, with a primary colour the administrator set in Nextcloud's Theming app
+- AND a planned switch to `koningsdag-oranje` with an end
 - WHEN the switch starts
 - THEN the Nextcloud primary colour MUST be the one `koningsdag-oranje` carries
-- AND when the switch ends, the Nextcloud logo and colours MUST be those of `rijkshuisstijl` again
+- AND when the switch ends, the Nextcloud logo and colours MUST be the administrator's own again
+
+#### Scenario: A switch planned with the core sync switched off keeps it off
+
+@e2e exclude a stored plan from before the option was removed; proven by tests/Unit/Service/ScheduledSwitchServiceTest.php::testASwitchStoredWithoutCoreSyncLeavesCoreThemingAlone
+
+- GIVEN a switch stored with `syncCoreTheming` false
+- WHEN it starts, is applied again and ends
+- THEN Nextcloud core theming MUST be unchanged throughout
 
 ### Requirement: An administrator cancels a planned switch
 

@@ -224,17 +224,19 @@ class ScheduledSwitchService {
 	/**
 	 * What the settings page shows above the list.
 	 *
-	 * @return array<string, mixed> `{activeTokenSet, activeUntil, revertTo, lastRun, cronMode, cronWarning}`.
+	 * @return array<string, mixed> `{activeTokenSet, runningTokenSet, activeUntil, revertTo, lastRun, cronMode, cronWarning}`.
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-the-page-warns-when-switches-may-run-late
 	 */
 	public function getStatus(): array {
 		$activeUntil = null;
 		$revertTo = null;
+		$runningTokenSet = null;
 		foreach ($this->store->all() as $entry) {
 			if (($entry['status'] ?? null) === 'running') {
 				$activeUntil = $entry['endAt'];
 				$revertTo = $entry['revertTo'];
+				$runningTokenSet = $entry['tokenSet'];
 			}
 		}
 
@@ -247,6 +249,7 @@ class ScheduledSwitchService {
 
 		return [
 			'activeTokenSet' => $this->activeTokenSet->getActive(),
+			'runningTokenSet' => $runningTokenSet,
 			'activeUntil' => $activeUntil,
 			'revertTo' => $revertTo,
 			'lastRun' => $lastRun,
@@ -302,63 +305,61 @@ class ScheduledSwitchService {
 	 * picked by hand during the window then stayed, and every later run left it
 	 * there, so the campaign look was gone until the end put the old set back.
 	 * Each run now applies the switch's set again when another one is active. It
-	 * does not touch `revertTo`: the end still returns to the set the switch
-	 * replaced.
-	 *
-	 * A switch that has not brought its Nextcloud logo and colours yet — planned
-	 * before every switch did — gets them once, marked `themingApplied`. Not on
-	 * every run: each write of a colour busts Nextcloud's theming cache.
+	 * does not touch `revertTo` or the snapshot: the end still returns to what
+	 * the switch replaced.
 	 *
 	 * @param array<string, mixed> $entry The running entry.
 	 *
-	 * @return array<string, mixed> The entry, marked once its logo and colours are applied.
+	 * @return array<string, mixed> The entry.
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-the-app-applies-a-due-switch-and-switches-back
-	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-a-planned-switch-applies-a-set-like-the-apply-dialog
 	 */
 	private function keepApplied(array $entry): array {
 		$tokenSet = (string)$entry['tokenSet'];
-		$context = ['actor' => 'system', 'switchId' => $entry['id'], 'reapplied' => true];
 		if ($this->activeTokenSet->getActive() === $tokenSet) {
-			if (($entry['themingApplied'] ?? false) === true || $this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
-				return $entry;
-			}
-
-			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $tokenSet);
-			$this->auditService->log(action: self::AUDIT_ACTION, context: array_merge(['old' => $tokenSet, 'new' => $tokenSet], $context));
-			$entry['themingApplied'] = true;
 			return $entry;
 		}
 
 		try {
-			$this->applySet(tokenSet: $tokenSet, context: $context);
+			$this->applySet(entry: $entry, tokenSet: $tokenSet, context: ['actor' => 'system', 'switchId' => $entry['id'], 'reapplied' => true]);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->warning(
 				'thematiq: running switch {id} could not keep {set} active: the set does not exist',
 				['id' => $entry['id'], 'set' => $tokenSet]
 			);
-			return $entry;
 		}
 
-		$entry['themingApplied'] = true;
 		return $entry;
 	}//end keepApplied()
 
 	/**
 	 * Apply a due start.
 	 *
+	 * A switch with an end first takes a snapshot of core theming, which its end
+	 * puts back: the logo and colours it replaces may be an administrator's own,
+	 * which no token set carries.
+	 *
 	 * @param array<string, mixed> $entry The planned entry.
 	 *
 	 * @return array<string, mixed> The entry, now `running`, `done` or `failed`.
 	 */
 	private function start(array $entry): array {
+		$tokenSet = (string)$entry['tokenSet'];
+		if ($entry['endAt'] !== null
+			&& $this->changesCoreTheming(entry: $entry) === true
+			&& $this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === true
+		) {
+			$this->coreSync->snapshot(switchId: (string)$entry['id']);
+			$entry['coreSnapshot'] = true;
+		}
+
 		try {
-			$entry['revertTo'] = $this->applySet(tokenSet: (string)$entry['tokenSet'], context: ['actor' => 'system', 'switchId' => $entry['id']]);
+			$entry['revertTo'] = $this->applySet(entry: $entry, tokenSet: $tokenSet, context: ['actor' => 'system', 'switchId' => $entry['id']]);
 		} catch (\InvalidArgumentException $e) {
-			$reason = $this->l10n->t('The token set {set} no longer exists, so the switch was not applied.', ['set' => $entry['tokenSet']]);
+			$reason = $this->l10n->t('The token set {set} no longer exists, so the switch was not applied.', ['set' => $tokenSet]);
 			$this->logger->warning(
 				'thematiq: planned switch {id} to {set} failed: the set does not exist',
-				['id' => $entry['id'], 'set' => $entry['tokenSet']]
+				['id' => $entry['id'], 'set' => $tokenSet]
 			);
 			$this->auditService->log(
 				action: self::AUDIT_ACTION,
@@ -369,7 +370,6 @@ class ScheduledSwitchService {
 			return $entry;
 		}
 
-		$entry['themingApplied'] = true;
 		$entry['status'] = 'done';
 		if ($entry['endAt'] !== null) {
 			$entry['status'] = 'running';
@@ -381,14 +381,27 @@ class ScheduledSwitchService {
 	/**
 	 * Switch back to the set a running switch replaced.
 	 *
+	 * Core theming goes back to the snapshot the start took, not to whatever
+	 * the previous set carries: an administrator's own logo and colours, or a
+	 * set without branding, would otherwise be lost or leave the campaign's
+	 * look in place. A switch started before snapshots existed keeps what it
+	 * was planned with: synced to the previous set when it asked for that.
+	 *
 	 * @param array<string, mixed> $entry The running entry.
 	 *
 	 * @return bool False when that set no longer exists.
 	 */
 	private function switchBack(array $entry): bool {
 		$revertTo = (string)($entry['revertTo'] ?? '');
+		$context = ['actor' => 'system', 'switchId' => $entry['id']];
+		if (($entry['coreSnapshot'] ?? false) === true) {
+			$context['coreThemingRestored'] = $this->coreSync->restore(switchId: (string)$entry['id']);
+		} else if (($entry['syncCoreTheming'] ?? false) === true) {
+			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $revertTo);
+		}
+
 		try {
-			$this->applySet(tokenSet: $revertTo, context: ['actor' => 'system', 'switchId' => $entry['id']]);
+			$this->activeTokenSet->switchTo(tokenSet: $revertTo, auditAction: self::AUDIT_ACTION, auditContext: $context);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->warning('thematiq: planned switch {id} could not go back to {set}', ['id' => $entry['id'], 'set' => $revertTo]);
 			return false;
@@ -398,8 +411,8 @@ class ScheduledSwitchService {
 	}//end switchBack()
 
 	/**
-	 * Apply a token set the way the apply dialog does: Nextcloud's logo and
-	 * colours from the set first, then the token set itself.
+	 * Apply a switch's token set the way the apply dialog does: Nextcloud's
+	 * logo and colours from the set first, then the token set itself.
 	 *
 	 * A switch used to change only the token set unless the administrator had
 	 * ticked a box, and a set's look lives largely in the Nextcloud colours and
@@ -407,6 +420,7 @@ class ScheduledSwitchService {
 	 * could see. For the stock set the sync resets Nextcloud's theming to its
 	 * defaults, as the dialog does.
 	 *
+	 * @param array<string, mixed> $entry    The switch.
 	 * @param string               $tokenSet The set to apply.
 	 * @param array<string, mixed> $context  The audit context.
 	 *
@@ -416,13 +430,32 @@ class ScheduledSwitchService {
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-a-planned-switch-applies-a-set-like-the-apply-dialog
 	 */
-	private function applySet(string $tokenSet, array $context): string {
-		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === true) {
+	private function applySet(array $entry, string $tokenSet, array $context): string {
+		if ($this->changesCoreTheming(entry: $entry) === true) {
+			// A set that no longer exists has no theming block, so this writes
+			// nothing, and switchTo() below refuses it.
 			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $tokenSet);
 		}
 
 		return $this->activeTokenSet->switchTo(tokenSet: $tokenSet, auditAction: self::AUDIT_ACTION, auditContext: $context);
 	}//end applySet()
+
+	/**
+	 * Whether a switch changes core theming.
+	 *
+	 * Every switch does, except one planned while that was an option and
+	 * stored with it switched off: its administrator chose the token set alone,
+	 * and that choice stands.
+	 *
+	 * @param array<string, mixed> $entry The switch.
+	 *
+	 * @return bool True unless the switch was stored with `syncCoreTheming` false.
+	 *
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-a-planned-switch-applies-a-set-like-the-apply-dialog
+	 */
+	private function changesCoreTheming(array $entry): bool {
+		return ($entry['syncCoreTheming'] ?? true) !== false;
+	}//end changesCoreTheming()
 
 	/**
 	 * The current time as UTC ISO 8601.

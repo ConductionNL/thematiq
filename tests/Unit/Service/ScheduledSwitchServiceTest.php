@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\ActiveTokenSetService;
+use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchNotFoundException;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
@@ -56,6 +57,21 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @var int
 	 */
 	private int $now = 0;
+
+	/**
+	 * The core theming snapshots the capture double keeps, by key.
+	 *
+	 * @var array<string, array<string, mixed>>
+	 */
+	private array $snapshots = [];
+
+	/**
+	 * What core theming holds when a snapshot is taken: an administrator's own
+	 * primary colour, with Nextcloud's default background.
+	 *
+	 * @var array<string, mixed>
+	 */
+	private array $coreTheming = ['captured' => true, 'primary_color' => '#0082C9', 'background_mode' => 'default'];
 
 	/**
 	 * Every audit call: [action, context].
@@ -138,11 +154,25 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 		$this->theming = $this->createMock(ThemingService::class);
 
+		$branding = $this->createMock(BrandingCaptureService::class);
+		$branding->method('capture')->willReturnCallback(
+			function (string $setId): array {
+				$this->snapshots[$setId] = $this->coreTheming;
+				return $this->coreTheming;
+			}
+		);
+		$branding->method('all')->willReturnCallback(fn () => $this->snapshots);
+		$branding->method('forget')->willReturnCallback(
+			function (string $setId): void {
+				unset($this->snapshots[$setId]);
+			}
+		);
+
 		$this->service = new ScheduledSwitchService(
 			new ScheduledSwitchStore($config),
 			new ActiveTokenSetService($config, $tokenSets, $auditService),
 			$tokenSets,
-			new ScheduledCoreThemingSync($this->theming, $tokenSets, $config),
+			new ScheduledCoreThemingSync($this->theming, $tokenSets, $config, $branding),
 			$auditService,
 			$config,
 			$time,
@@ -326,15 +356,14 @@ class ScheduledSwitchServiceTest extends TestCase {
 		$this->service->runDue();
 
 		$this->assertSame('koningsdag-oranje', $this->store['thematiq/token_set']);
-	}//end testKeepingASyncedSwitchActiveSyncsCoreThemingAgain()
+	}//end testKeepingASwitchActiveSyncsCoreThemingAgain()
 
 	/**
-	 * A running switch whose logo and colours were never applied — planned
-	 * before every switch brought them — gets them once, on its set already
-	 * active, and not again on the runs after.
+	 * A switch stored while the core sync was an option, with it switched off,
+	 * keeps the administrator's choice: the token set alone, at the start, on
+	 * every run and at the end.
 	 */
-	public function testARunningSwitchWithoutItsColoursGetsThemOnce(): void {
-		$this->store['thematiq/token_set'] = 'koningsdag-oranje';
+	public function testASwitchStoredWithoutCoreSyncLeavesCoreThemingAlone(): void {
 		$this->store['thematiq/scheduled_switches'] = json_encode(
 			[
 				[
@@ -343,27 +372,118 @@ class ScheduledSwitchServiceTest extends TestCase {
 					'startAt' => '2027-04-26T16:00:00Z',
 					'endAt' => '2027-04-28T06:00:00Z',
 					'syncCoreTheming' => false,
+					'status' => 'planned',
 					'createdBy' => 'admin',
 					'createdAt' => '2027-04-20T12:00:00Z',
-					'status' => 'running',
-					'revertTo' => 'rijkshuisstijl',
 				],
 			]
 		);
 
-		$this->theming->expects($this->once())
-			->method('applyColors')
-			->with(['primary_color' => '#FF6600', 'background_color' => '#FFFFFF'])
-			->willReturn(['primary_color', 'background_color']);
+		$this->theming->expects($this->never())->method('applyColors');
+		$this->theming->expects($this->never())->method('applyImages');
+		$this->theming->expects($this->never())->method('resetToDefaults');
 
+		$this->at('2027-04-26T16:03:00Z');
+		$this->service->runDue();
+		$this->assertSame('koningsdag-oranje', $this->store['thematiq/token_set']);
+		$this->assertSame([], $this->snapshots);
+
+		$this->store['thematiq/token_set'] = 'nextcloud';
 		$this->at('2027-04-27T10:00:00Z');
 		$this->service->runDue();
+		$this->assertSame('koningsdag-oranje', $this->store['thematiq/token_set']);
+
+		$this->at('2027-04-28T06:02:00Z');
+		$this->service->runDue();
+		$this->assertSame('rijkshuisstijl', $this->store['thematiq/token_set']);
+	}//end testASwitchStoredWithoutCoreSyncLeavesCoreThemingAlone()
+
+	/**
+	 * A running switch whose set was deleted mid-window cannot put it back:
+	 * the other set stays, the switch keeps running and says so in the log.
+	 */
+	public function testARunningSwitchWhoseSetIsGoneLeavesTheActiveSetAlone(): void {
+		$this->planKingsDay();
+		$this->at('2027-04-26T16:03:00Z');
 		$this->service->runDue();
 
-		$this->assertTrue($this->service->list()[0]['themingApplied']);
-		$this->assertCount(1, $this->audit);
-		$this->assertSame(['primary_color', 'background_color'], $this->audit[0][1]['coreThemingSynced']);
-	}//end testARunningSwitchWithoutItsColoursGetsThemOnce()
+		$this->store['thematiq/token_set'] = 'nextcloud';
+		$this->sets = ['rijkshuisstijl', 'nextcloud'];
+		$this->at('2027-04-27T10:00:00Z');
+		$this->service->runDue();
+
+		$this->assertSame('nextcloud', $this->store['thematiq/token_set']);
+		$this->assertSame('running', $this->service->list()[0]['status']);
+	}//end testARunningSwitchWhoseSetIsGoneLeavesTheActiveSetAlone()
+
+	/**
+	 * A switch whose previous set was deleted cannot go back to it at its end,
+	 * and shows as failed with the reason.
+	 */
+	public function testAnEndWhosePreviousSetIsGoneFailsVisibly(): void {
+		$this->planKingsDay();
+		$this->at('2027-04-26T16:03:00Z');
+		$this->service->runDue();
+
+		$this->sets = ['koningsdag-oranje', 'nextcloud'];
+		$this->at('2027-04-28T06:02:00Z');
+		$this->service->runDue();
+
+		$listed = $this->service->list()[0];
+		$this->assertSame('failed', $listed['status']);
+		$this->assertStringContainsString('rijkshuisstijl', $listed['failureReason']);
+		$this->assertSame('koningsdag-oranje', $this->store['thematiq/token_set']);
+	}//end testAnEndWhosePreviousSetIsGoneFailsVisibly()
+
+	/**
+	 * Cancelling a running switch whose previous set was deleted says so, and
+	 * keeps the switch.
+	 */
+	public function testCancellingWhenThePreviousSetIsGoneIsRefused(): void {
+		$entry = $this->planKingsDay();
+		$this->at('2027-04-26T16:03:00Z');
+		$this->service->runDue();
+		$this->sets = ['koningsdag-oranje', 'nextcloud'];
+
+		try {
+			$this->service->cancel(id: $entry['id']);
+			$this->fail('Cancelling a switch that cannot go back was accepted.');
+		} catch (ScheduledSwitchException $e) {
+			$this->assertStringContainsString('rijkshuisstijl', $e->getMessage());
+		}
+
+		$this->assertCount(1, $this->service->list());
+	}//end testCancellingWhenThePreviousSetIsGoneIsRefused()
+
+	/**
+	 * A set's theming block that does not validate is not written into core
+	 * theming; the token set still switches.
+	 */
+	public function testAThemingBlockThatDoesNotValidateIsNotWritten(): void {
+		$this->planKingsDay();
+		$this->theming->method('validateColors')->willReturn('Invalid colour');
+		$this->theming->expects($this->never())->method('applyColors');
+
+		$this->at('2027-04-26T16:03:00Z');
+		$this->service->runDue();
+
+		$this->assertSame('koningsdag-oranje', $this->store['thematiq/token_set']);
+		$this->assertSame([], $this->audit[0][1]['coreThemingSynced']);
+	}//end testAThemingBlockThatDoesNotValidateIsNotWritten()
+
+	/**
+	 * A set without a theming block brings no logo or colours.
+	 */
+	public function testASetWithoutThemingWritesNoCoreTheming(): void {
+		$this->service->create(tokenSet: 'custom-campagne', startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z', createdBy: 'admin');
+		$this->theming->expects($this->never())->method('applyColors');
+
+		$this->at('2027-04-21T00:03:00Z');
+		$this->service->runDue();
+
+		$this->assertSame('custom-campagne', $this->store['thematiq/token_set']);
+		$this->assertSame([], $this->audit[0][1]['coreThemingSynced']);
+	}//end testASetWithoutThemingWritesNoCoreTheming()
 
 	/**
 	 * Before its start a planned switch is left alone.
@@ -421,12 +541,13 @@ class ScheduledSwitchServiceTest extends TestCase {
 	}//end testASwitchToADeletedSetFailsVisibly()
 
 	/**
-	 * Scenario "A planned switch brings the set's logo and colours": the set's
-	 * theming block is applied at the start and the previous set's at the end,
-	 * with nothing to tick.
+	 * Scenario "A planned switch brings the set's logo and colours, and gives
+	 * back what it replaced": the set's theming block is applied at the start,
+	 * and the end puts back the snapshot the start took (reset first, then the
+	 * administrator's own values), not the previous set's block.
 	 */
-	public function testASwitchAppliesTheSetsThemingBothWays(): void {
-		$this->planKingsDay();
+	public function testASwitchRestoresTheBrandingItReplaced(): void {
+		$entry = $this->planKingsDay();
 
 		$applied = [];
 		$this->theming->method('validateColors')->willReturn(null);
@@ -437,39 +558,101 @@ class ScheduledSwitchServiceTest extends TestCase {
 				return array_keys(array_intersect_key($params, ['primary_color' => 1, 'background_color' => 1]));
 			}
 		);
-		$this->theming->method('applyImages')->willReturnCallback(
-			fn (array $params): array => array_keys(array_intersect_key($params, ['logo' => 1]))
-		);
+		$this->theming->expects($this->once())->method('resetToDefaults')->willReturn(['primary_color', 'logo']);
 
 		$this->at('2027-04-26T16:03:00Z');
 		$this->service->runDue();
 
 		$this->assertSame(['primary_color' => '#FF6600', 'background_color' => '#FFFFFF'], $applied[0]);
 		$this->assertSame(['primary_color', 'background_color'], $this->audit[0][1]['coreThemingSynced']);
+		$this->assertTrue($this->service->list()[0]['coreSnapshot']);
+		$this->assertArrayHasKey(ScheduledCoreThemingSync::SNAPSHOT_PREFIX . $entry['id'], $this->snapshots);
 
 		$this->at('2027-04-28T06:03:00Z');
 		$this->service->runDue();
 
-		$this->assertSame(['primary_color' => '#154273', 'logo' => 'img/logos/rijkshuisstijl.svg'], $applied[1]);
-		$this->assertSame('img/logos/rijkshuisstijl.svg', $this->store['thematiq/synced_logo']);
-	}//end testASwitchAppliesTheSetsThemingBothWays()
+		$this->assertSame(['primary_color' => '#0082C9', 'background_mode' => 'default'], $applied[1]);
+		$this->assertSame(['primary_color', 'logo'], $this->audit[1][1]['coreThemingRestored']);
+		$this->assertSame([], $this->snapshots);
+		$this->assertSame('rijkshuisstijl', $this->store['thematiq/token_set']);
+	}//end testASwitchRestoresTheBrandingItReplaced()
 
 	/**
-	 * A switch back to the stock set resets Nextcloud's theming, as applying it by hand does.
+	 * A switch without an end never goes back, so it takes no snapshot.
 	 */
-	public function testASwitchBackToStockResetsCoreTheming(): void {
-		$this->store['thematiq/token_set'] = 'nextcloud';
-		$this->planKingsDay();
-		$this->at('2027-04-26T16:03:00Z');
+	public function testAnOpenEndedSwitchTakesNoSnapshot(): void {
+		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-21T00:00:00Z', endAt: null, createdBy: 'admin');
+
+		$this->at('2027-04-21T00:04:00Z');
 		$this->service->runDue();
 
-		$this->theming->expects($this->once())->method('resetToDefaults')->willReturn(['primary_color']);
+		$this->assertSame([], $this->snapshots);
+	}//end testAnOpenEndedSwitchTakesNoSnapshot()
 
-		$this->at('2027-04-28T06:03:00Z');
+	/**
+	 * A switch that ticked the core sync before snapshots existed has none to
+	 * restore, and goes back the way it was planned: synced to the previous set.
+	 */
+	public function testAnOlderSyncedSwitchSyncsThePreviousSetAtItsEnd(): void {
+		$this->store['thematiq/token_set'] = 'koningsdag-oranje';
+		$this->store['thematiq/scheduled_switches'] = json_encode(
+			[
+				[
+					'id' => 'old2',
+					'tokenSet' => 'koningsdag-oranje',
+					'startAt' => '2027-04-26T16:00:00Z',
+					'endAt' => '2027-04-28T06:00:00Z',
+					'syncCoreTheming' => true,
+					'status' => 'running',
+					'revertTo' => 'rijkshuisstijl',
+					'createdBy' => 'admin',
+					'createdAt' => '2027-04-20T12:00:00Z',
+				],
+			]
+		);
+
+		$this->theming->expects($this->never())->method('resetToDefaults');
+		$this->theming->expects($this->once())
+			->method('applyColors')
+			->with(['primary_color' => '#154273', 'logo' => 'img/logos/rijkshuisstijl.svg'])
+			->willReturn(['primary_color']);
+
+		$this->at('2027-04-28T06:02:00Z');
 		$this->service->runDue();
 
-		$this->assertSame('nextcloud', $this->store['thematiq/token_set']);
-	}//end testASwitchBackToStockResetsCoreTheming()
+		$this->assertSame('rijkshuisstijl', $this->store['thematiq/token_set']);
+		$this->assertSame(['primary_color'], $this->audit[0][1]['coreThemingSynced']);
+	}//end testAnOlderSyncedSwitchSyncsThePreviousSetAtItsEnd()
+
+	/**
+	 * A snapshot that is gone restores nothing rather than resetting core theming.
+	 */
+	public function testAMissingSnapshotRestoresNothing(): void {
+		$this->store['thematiq/token_set'] = 'koningsdag-oranje';
+		$this->store['thematiq/scheduled_switches'] = json_encode(
+			[
+				[
+					'id' => 'lost',
+					'tokenSet' => 'koningsdag-oranje',
+					'startAt' => '2027-04-26T16:00:00Z',
+					'endAt' => '2027-04-28T06:00:00Z',
+					'status' => 'running',
+					'revertTo' => 'rijkshuisstijl',
+					'coreSnapshot' => true,
+					'createdBy' => 'admin',
+					'createdAt' => '2027-04-20T12:00:00Z',
+				],
+			]
+		);
+
+		$this->theming->expects($this->never())->method('resetToDefaults');
+
+		$this->at('2027-04-28T06:02:00Z');
+		$this->service->runDue();
+
+		$this->assertSame([], $this->audit[0][1]['coreThemingRestored']);
+		$this->assertSame('rijkshuisstijl', $this->store['thematiq/token_set']);
+	}//end testAMissingSnapshotRestoresNothing()
 
 	/**
 	 * Cancelling a planned switch removes it without touching the active set.
@@ -498,6 +681,9 @@ class ScheduledSwitchServiceTest extends TestCase {
 		$this->assertSame('rijkshuisstijl', $this->store['thematiq/token_set']);
 		$this->assertSame([], $this->service->list());
 		$this->assertSame('rijkshuisstijl', $this->audit[1][1]['new']);
+		// The branding the switch replaced is back, and its snapshot gone.
+		$this->assertArrayHasKey('coreThemingRestored', $this->audit[1][1]);
+		$this->assertSame([], $this->snapshots);
 	}//end testCancellingARunningCampaignSwitchesBackAtOnce()
 
 	/**
@@ -526,6 +712,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 		$this->assertSame('koningsdag-oranje', $status['activeTokenSet']);
 		$this->assertSame('2027-04-28T06:00:00Z', $status['activeUntil']);
 		$this->assertSame('rijkshuisstijl', $status['revertTo']);
+		$this->assertSame('koningsdag-oranje', $status['runningTokenSet']);
 
 		$this->store['core/backgroundjobs_mode'] = 'cron';
 		$this->assertFalse($this->service->getStatus()['cronWarning']);

@@ -25,7 +25,7 @@ Choose **Cancel** next to the switch. A switch that has not started disappears. 
 
 ## What happens at the start and the end
 
-A background job checks every five minutes. At the start it applies the planned token set the way you would by hand, including the Nextcloud logo and colours the set carries; at the end it applies the token set you had before, the same way. Switching back to the stock Nextcloud set resets Nextcloud's own logo and colours to their defaults. While a switch runs, the job puts its token set back if someone picks another one in the meantime. Users see the new look on their next page load. Each start and each end leaves a `scheduled_switch_applied` entry in the theming audit log, with actor `system`.
+A background job checks every five minutes. At the start it keeps a copy of Nextcloud's own logo and colors, then applies the planned token set the way you would by hand, including the Nextcloud logo and colors the set carries. At the end, or when you cancel it, it switches back to the token set you had before and puts that copy back, so a logo and colors you set in Nextcloud's Theming app return exactly as they were. While a switch runs, the job puts its token set back if someone picks another one in the meantime. Users see the new look on their next page load. Each start and each end leaves a `scheduled_switch_applied` entry in the theming audit log, with actor `system`.
 
 When the planned token set no longer exists at the start, for example a custom set someone deleted, nothing changes. The switch shows as failed in the list, with the reason, and the audit log records it.
 
