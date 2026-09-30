@@ -25,6 +25,8 @@ return [
 		// #[PublicPage]); deliberately outside the /settings/* prefix this
 		// app reserves for admin-gated routes, alongside metrics/health.
 		['name' => 'catalog#tokenSets', 'url' => '/api/token-sets', 'verb' => 'GET'],
+		// Token reference of one set, for signed-in users (openspec/specs/token-reference/spec.md).
+		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
 
 		['name' => 'settings#getAvailableTokenSets', 'url' => '/settings/tokensets', 'verb' => 'GET'],

@@ -480,7 +480,12 @@ OC.L10N.register(
         "Theme gallery": "Theme gallery",
         "This house style is not in the gallery.": "This house style is not in the gallery.",
         "it contains a selector other than :root": "it contains a selector other than :root",
-        "nothing in it maps onto a Nextcloud token": "nothing in it maps onto a Nextcloud token"
+        "nothing in it maps onto a Nextcloud token": "nothing in it maps onto a Nextcloud token",
+        "Token reference": "Token reference",
+        "Download token reference": "Download token reference",
+        "Token reference of {name}": "Token reference of {name}",
+        "Download reference": "Download reference",
+        "Download the token reference of {name}": "Download the token reference of {name}"
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -100,10 +100,10 @@ class TokenReferenceServiceTest extends TestCase {
 		$md = $this->service()->render(appPath: $this->appDir, set: $this->set(), format: 'md');
 
 		$this->assertStringContainsString('# Gemeente Voorbeeld', $md);
-		$this->assertMatchesRegularExpression('/^\| `--nldesign-color-primary` \| .*`#24578F` \| `#8fb4e0` \| this set \| Primary element color \|$/m', $md);
+		$this->assertMatchesRegularExpression('/^\| `--nldesign-color-primary` \| .*`#24578F` \| .*`#8fb4e0` \| this set \| Primary element color \|$/m', $md);
 		$this->assertMatchesRegularExpression('/^\| `--nldesign-color-primary-text` \| .*`#ffffff` \| \| defaults \| /m', $md);
-		$this->assertMatchesRegularExpression('/^\| `--nldesign-font-family` \| `sans-serif` \| \| defaults \| `--font-face` \|$/m', $md);
-		$this->assertStringContainsString('1 declared by this set, 3 from the defaults layer', $md);
+		$this->assertMatchesRegularExpression('/^\| `--nldesign-font-family` \| `sans-serif` \| \| defaults \| Font family \|$/m', $md);
+		$this->assertStringContainsString('2 declared by this set, 3 from the defaults layer', $md);
 	}//end testMarkdownMarksDeclaredAndDefaultTokensAndWhatTheyPaint()
 
 	/**

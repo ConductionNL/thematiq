@@ -146,6 +146,13 @@
 	color: var(--color-error-text, var(--color-error));
 }
 
+/* Token reference links (openspec/specs/token-reference/spec.md). */
+.nldesign-token-reference-link {
+	margin-inline-start: 8px;
+	color: var(--color-main-text);
+	text-decoration: underline;
+}
+
 /* Theme gallery (openspec/specs/theme-gallery/spec.md). */
 .nldesign-gallery-list {
 	list-style: none;

@@ -101,6 +101,10 @@ if ($_['mockUi'] === true) {
 		<button type="button" id="nldesign-reset-theme-btn" class="button">
 			<?php p($l->t('Reset theme to Nextcloud')); ?>
 		</button>
+		<!-- Token reference of the selected set (openspec/specs/token-reference/spec.md);
+		     admin.js keeps both links on the selected set. -->
+		<a id="nldesign-token-reference-link" class="nldesign-token-reference-link" target="_blank" rel="noopener noreferrer"><?php p($l->t('Token reference')); ?></a>
+		<a id="nldesign-token-reference-download" class="nldesign-token-reference-link"><?php p($l->t('Download token reference')); ?></a>
 	</div>
 
 	<!-- Planned token set switches (openspec/specs/scheduled-switch).

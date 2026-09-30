@@ -69,6 +69,17 @@ class TokenReferenceControllerTest extends TestCase {
 	}//end controller()
 
 	/**
+	 * The headers the controller set, read without Response::getHeaders(), which needs a server.
+	 *
+	 * @param \OCP\AppFramework\Http\Response $response The response.
+	 *
+	 * @return array<string, string> The headers.
+	 */
+	private function headers(\OCP\AppFramework\Http\Response $response): array {
+		return (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
+	}//end headers()
+
+	/**
 	 * A signed-in user gets the HTML reference of a custom set.
 	 *
 	 * @return void
@@ -80,7 +91,7 @@ class TokenReferenceControllerTest extends TestCase {
 
 		$this->assertSame(200, $response->getStatus());
 		$this->assertSame('html:custom-gemeente-x:/srv/apps/thematiq', $response->render());
-		$this->assertStringStartsWith('text/html', $response->getHeaders()['Content-Type']);
+		$this->assertStringStartsWith('text/html', $this->headers($response)['Content-Type']);
 	}//end testTheHtmlReferenceOfACustomSet()
 
 	/**
@@ -94,8 +105,8 @@ class TokenReferenceControllerTest extends TestCase {
 		$response = $this->controller()->show(id: 'custom-gemeente-x');
 
 		$this->assertSame('md:custom-gemeente-x:/srv/apps/thematiq', $response->render());
-		$this->assertStringStartsWith('text/markdown', $response->getHeaders()['Content-Type']);
-		$this->assertSame('attachment; filename="custom-gemeente-x-tokens.md"', $response->getHeaders()['Content-Disposition']);
+		$this->assertStringStartsWith('text/markdown', $this->headers($response)['Content-Type']);
+		$this->assertSame('attachment; filename="custom-gemeente-x-tokens.md"', $this->headers($response)['Content-Disposition']);
 	}//end testTheMarkdownDownload()
 
 	/**

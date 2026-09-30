@@ -5531,6 +5531,46 @@
 				})
 		}
 
+		/**
+		 * The URL of a set's token reference (openspec/specs/token-reference/spec.md).
+		 *
+		 * @param {string} id The token set id.
+		 * @param {string} format `html` or `md`.
+		 * @param {boolean} download Whether the browser saves it as a file.
+		 * @return {string} The URL.
+		 */
+		function tokenReferenceUrl(id, format, download) {
+			return (
+				OC.generateUrl(
+					'/apps/thematiq/api/token-sets/'
+						+ encodeURIComponent(id)
+						+ '/reference',
+				)
+				+ '?format='
+				+ format
+				+ (download ? '&download=1' : '')
+			)
+		}
+
+		/**
+		 * Keep the two reference links next to the dropdown on the selected set.
+		 */
+		function initTokenReferenceLinks() {
+			var view = document.getElementById('nldesign-token-reference-link')
+			var save = document.getElementById('nldesign-token-reference-download')
+			if (view === null || save === null || tokenSetSelect === null) {
+				return
+			}
+			function update() {
+				view.href = tokenReferenceUrl(tokenSetSelect.value, 'html', false)
+				save.href = tokenReferenceUrl(tokenSetSelect.value, 'md', true)
+			}
+			tokenSetSelect.addEventListener('change', update)
+			update()
+		}
+
+		initTokenReferenceLinks()
+
 		function loadCustomTokenSets() {
 			var listEl = document.getElementById('nldesign-custom-set-list')
 			if (listEl === null) {
@@ -5644,6 +5684,33 @@
 					)
 				})
 				row.appendChild(downloadBtn)
+
+				// The token reference of this set (openspec/specs/token-reference/spec.md).
+				var referenceLink = document.createElement('a')
+				referenceLink.className = 'nldesign-token-reference-link'
+				referenceLink.href = tokenReferenceUrl(set.id, 'html', false)
+				referenceLink.target = '_blank'
+				referenceLink.rel = 'noopener noreferrer'
+				referenceLink.textContent = t('thematiq', 'Token reference')
+				referenceLink.setAttribute(
+					'aria-label',
+					t('thematiq', 'Token reference of {name}', {
+						name: set.name || set.id,
+					}),
+				)
+				row.appendChild(referenceLink)
+
+				var referenceDownload = document.createElement('a')
+				referenceDownload.className = 'nldesign-token-reference-link'
+				referenceDownload.href = tokenReferenceUrl(set.id, 'md', true)
+				referenceDownload.textContent = t('thematiq', 'Download reference')
+				referenceDownload.setAttribute(
+					'aria-label',
+					t('thematiq', 'Download the token reference of {name}', {
+						name: set.name || set.id,
+					}),
+				)
+				row.appendChild(referenceDownload)
 
 				var deleteBtn = document.createElement('button')
 				deleteBtn.type = 'button'
