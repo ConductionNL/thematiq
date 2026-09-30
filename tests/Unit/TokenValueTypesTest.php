@@ -277,7 +277,11 @@ class TokenValueTypesTest extends TestCase {
 	public function testTranslucentPrimaryIsBlendedForCore(): void {
 		$stored = [];
 		$config = $this->createMock(IConfig::class);
-		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($stored[$key] ?? $default));
+		$config->method('getAppValue')->willReturnCallback(
+			function (string $app, string $key, $default = '') use (&$stored) {
+				return ($stored[$key] ?? $default);
+			}
+		);
 		$config->method('setAppValue')->willReturnCallback(
 			function (string $app, string $key, $value) use (&$stored): void {
 				$stored[$key] = (string)$value;

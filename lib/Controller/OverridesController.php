@@ -187,6 +187,7 @@ class OverridesController extends Controller {
 		return new JSONResponse(
 			[
 				'overrides' => $overrides,
+				'darkOverrides' => $this->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
 				'registry' => $registry,
 				'tabs' => $tabs,
 			]
@@ -226,11 +227,21 @@ class OverridesController extends Controller {
 
 		// Refuse the whole save when any token would be dropped, so the answer,
 		// the written count and the audit entry all describe what reached the file.
-		$rejected = $this->overridesService->findRejected(tokens: $overrides);
+		$darkOverrides = ($params['darkOverrides'] ?? []);
+		if (is_array($darkOverrides) === false) {
+			return new JSONResponse(['error' => 'darkOverrides must be an object'], 400);
+		}
+
+		$rejected = $this->overridesService->findRejected(tokens: $overrides, darkTokens: $darkOverrides);
 		if (empty($rejected) === false) {
+			$named = [];
+			foreach ($rejected as $name => $reason) {
+				$named[] = $name . ' (' . $reason . ')';
+			}
+
 			return new JSONResponse(
 				[
-					'error' => 'Some tokens were not saved: ' . implode(', ', array_keys($rejected)),
+					'error' => 'Some tokens were not saved: ' . implode(', ', $named),
 					'rejected' => $rejected,
 				],
 				400
@@ -241,7 +252,7 @@ class OverridesController extends Controller {
 		$before = $this->overridesService->read(tokenSet: $tokenSet);
 
 		try {
-			$this->overridesService->write(tokens: $overrides, tokenSet: $tokenSet);
+			$this->overridesService->write(tokens: $overrides, tokenSet: $tokenSet, darkTokens: $darkOverrides);
 		} catch (\RuntimeException) {
 			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}

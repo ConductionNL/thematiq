@@ -470,12 +470,20 @@ class CustomTokenSetService {
 	 */
 	private function deriveTheming(array $declarations): array {
 		$theming = [];
-		if (isset($declarations['--nldesign-color-primary']) === true) {
-			$theming['primary_color'] = $declarations['--nldesign-color-primary'];
-		}
+		$page = $this->contrast->parseColor(value: (string)($declarations['--nldesign-color-background'] ?? '#ffffff')) ?? [255, 255, 255];
+		foreach (['primary_color' => '--nldesign-color-primary', 'background_color' => '--nldesign-color-background'] as $key => $token) {
+			if (isset($declarations[$token]) === false) {
+				continue;
+			}
 
-		if (isset($declarations['--nldesign-color-background']) === true) {
-			$theming['background_color'] = $declarations['--nldesign-color-background'];
+			$theming[$key] = $declarations[$token];
+			$rgba = $this->contrast->parseColorWithAlpha(value: $declarations[$token]);
+			if ($rgba !== null && $rgba[3] < 1) {
+				// Core theming has no transparency (it refuses 8 digits), so it gets the blend over the page.
+				$blend = $this->contrast->blend(top: $rgba, under: $page);
+				$theming[$key] = sprintf('#%02x%02x%02x', $blend[0], $blend[1], $blend[2]);
+				$theming[$key . '_original'] = $declarations[$token];
+			}
 		}
 
 		return $theming;

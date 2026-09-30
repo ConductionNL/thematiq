@@ -142,6 +142,24 @@ class CustomOverridesService {
 	private ?DesignSystemService $designSystems;
 
 	/**
+	 * The value grammar per token type.
+	 *
+	 * @var TokenValueValidator
+	 */
+	private TokenValueValidator $values;
+
+	/**
+	 * The motion tokens the editor sets, and the thematiq name each one also writes, so both
+	 * Nextcloud's components and anything reading the thematiq name follow the same speed.
+	 *
+	 * @var array<string, string>
+	 */
+	public const MOTION_TWINS = [
+		'--animation-quick' => '--nldesign-animation-quick',
+		'--animation-slow' => '--nldesign-animation-slow',
+	];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager.
@@ -157,12 +175,14 @@ class CustomOverridesService {
 		DarkPaletteService $darkPalette,
 		?IConfig $config = null,
 		?DesignSystemService $designSystems = null,
+		?TokenValueValidator $values = null,
 	) {
 		$this->appManager = $appManager;
 		$this->cssParser = $cssParser;
 		$this->darkPalette = $darkPalette;
 		$this->config = $config;
 		$this->designSystems = $designSystems;
+		$this->values = ($values ?? new TokenValueValidator());
 	}//end __construct()
 
 	/**
@@ -258,8 +278,40 @@ class CustomOverridesService {
 			return [];
 		}
 
-		return $this->parseDeclarations(css: $content);
+		return array_diff_key($this->parseDeclarations(css: $content), array_flip(self::MOTION_TWINS));
 	}//end read()
+
+	/**
+	 * The dark values an administrator set, as opposed to the ones derived from the light value.
+	 *
+	 * @param string|null $tokenSet The set whose file to read, or null for the active one.
+	 *
+	 * @return array<string, string> Token => dark value, only where it differs from the derived value.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-each-colour-token-has-an-optional-dark-value
+	 */
+	public function readDark(?string $tokenSet = null): array {
+		$css = $this->getRawContent(tokenSet: $tokenSet);
+		$start = strpos($css, 'body[data-theme-dark]');
+		if ($start === false) {
+			return [];
+		}
+
+		$open = (int)strpos($css, '{', $start);
+		$close = (int)strpos($css, '}', $open);
+		preg_match_all('/(--[A-Za-z0-9_-]+)\\s*:\\s*([^;]+);/', substr($css, ($open + 1), ($close - $open - 1)), $matches, PREG_SET_ORDER);
+		$light = $this->read(tokenSet: $tokenSet);
+		$derived = $this->darkValues(tokens: $light);
+		$own = [];
+		foreach ($matches as $match) {
+			$value = trim((string)preg_replace('/\\s*!important\\s*$/', '', $match[2]));
+			if (isset($light[$match[1]]) === true && ($derived[$match[1]] ?? null) !== $value) {
+				$own[$match[1]] = $value;
+			}
+		}
+
+		return $own;
+	}//end readDark()
 
 	/**
 	 * Write a new set of token overrides to the overrides file of a token set.
@@ -276,11 +328,10 @@ class CustomOverridesService {
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
 	 */
-	public function write(array $tokens, ?string $tokenSet = null): void {
+	public function write(array $tokens, ?string $tokenSet = null, array $darkTokens = []): void {
 		$validated = $this->filterEditable(tokens: $tokens);
 
-		$this->writeFile(tokens: $validated, path: $this->getFilePath(tokenSet: $tokenSet));
-
+		$this->writeFile(tokens: $validated, path: $this->getFilePath(tokenSet: $tokenSet), darkTokens: $darkTokens);
 	}//end write()
 
 	/**
@@ -299,7 +350,8 @@ class CustomOverridesService {
 	 *
 	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.1
 	 */
-	public function findRejected(array $tokens): array {
+	public function findRejected(array $tokens, array $darkTokens = []): array {
+		$registry = TokenRegistry::getTokens();
 		$rejected = [];
 		foreach ($tokens as $name => $value) {
 			$name = (string)$name;
@@ -308,13 +360,58 @@ class CustomOverridesService {
 				continue;
 			}
 
-			if (is_string($value) === false || $this->isUnsafeValue(value: $value) === true) {
-				$rejected[$name] = 'not an allowed value';
+			$reason = $this->valueProblem(value: $value, type: (string)($registry[$name]['type'] ?? 'text'));
+			if ($reason !== null) {
+				$rejected[$name] = $reason;
+			}
+		}
+
+		foreach ($darkTokens as $name => $value) {
+			$name = (string)$name;
+			if (isset($tokens[$name]) === false || $this->hasDarkValue(meta: ($registry[$name] ?? [])) === false) {
+				$rejected[$name] = 'no dark value for this token';
+				continue;
+			}
+
+			$reason = $this->valueProblem(value: $value, type: 'color');
+			if ($reason !== null) {
+				$rejected[$name] = 'dark value: ' . $reason;
 			}
 		}
 
 		return $rejected;
 	}//end findRejected()
+
+	/**
+	 * Why a value is refused for its type, or null when it passes.
+	 *
+	 * @param mixed  $value The value.
+	 * @param string $type  The token type.
+	 *
+	 * @return string|null The reason, naming the type.
+	 */
+	private function valueProblem(mixed $value, string $type): ?string {
+		if (is_string($value) === false || $this->isUnsafeValue(value: $value) === true) {
+			return 'not an allowed value';
+		}
+
+		if ($this->values->isValid(type: $type, value: $value) === false) {
+			return 'not a valid ' . $type . ' value';
+		}
+
+		return null;
+	}//end valueProblem()
+
+	/**
+	 * Whether a token gets a dark copy: a colour of the brand layer (Nextcloud's own variables).
+	 *
+	 * @param array<string, mixed> $meta The registry entry.
+	 *
+	 * @return boolean True when it does.
+	 */
+	private function hasDarkValue(array $meta): bool {
+		return ($meta['type'] ?? '') === 'color' && ($meta['group'] ?? '') === 'brand';
+	}//end hasDarkValue()
 
 	/**
 	 * Tell whether a value carries a character that would break out of the :root block.
@@ -361,10 +458,9 @@ class CustomOverridesService {
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
 	 */
-	private function writeFile(array $tokens, string $path): void {
+	private function writeFile(array $tokens, string $path, array $darkTokens = []): void {
 		$tmpPath = $path . '.tmp';
-
-		$css = $this->buildCss(tokens: $tokens);
+		$css = $this->buildCss(tokens: $tokens, darkTokens: $darkTokens);
 
 		$result = file_put_contents(filename: $tmpPath, data: $css);
 		if ($result === false) {
@@ -394,17 +490,18 @@ class CustomOverridesService {
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
 	 */
-	private function buildCss(array $tokens): string {
+	private function buildCss(array $tokens, array $darkTokens = []): string {
 		$header = self::CSS_HEADER . PHP_EOL;
 
 		if (empty($tokens) === true) {
 			return $header . ':root {}' . PHP_EOL;
 		}
 
-		$lines = $this->buildDeclarationLines(tokens: $tokens);
+		$lines = $this->buildDeclarationLines(tokens: $this->withMotionTwins(tokens: $tokens));
 		$css = $header . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
 
-		$darkLines = $this->buildDeclarationLines(tokens: $this->darkValues(tokens: $tokens));
+		$derived = $this->darkValues(tokens: $tokens);
+		$darkLines = $this->buildDeclarationLines(tokens: array_merge($derived, array_intersect_key($darkTokens, $derived)));
 		if (empty($darkLines) === true) {
 			return $css;
 		}
@@ -448,7 +545,7 @@ class CustomOverridesService {
 		$registry = TokenRegistry::getTokens();
 		$dark = [];
 		foreach ($tokens as $name => $value) {
-			if (($registry[$name]['type'] ?? '') !== 'color' || ($registry[$name]['group'] ?? '') !== 'brand') {
+			if ($this->hasDarkValue(meta: ($registry[$name] ?? [])) === false) {
 				continue;
 			}
 
@@ -457,6 +554,25 @@ class CustomOverridesService {
 
 		return $dark;
 	}//end darkValues()
+
+	/**
+	 * The tokens plus the thematiq twin of each motion token, with the same value.
+	 *
+	 * @param array<string, string> $tokens The editor's tokens.
+	 *
+	 * @return array<string, string> The tokens to write into `:root`.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-motion-tokens-are-typed-and-reach-every-transition
+	 */
+	private function withMotionTwins(array $tokens): array {
+		foreach (self::MOTION_TWINS as $name => $twin) {
+			if (isset($tokens[$name]) === true) {
+				$tokens[$twin] = $tokens[$name];
+			}
+		}
+
+		return $tokens;
+	}//end withMotionTwins()
 
 	/**
 	 * Build individual CSS declaration lines from a token map.
