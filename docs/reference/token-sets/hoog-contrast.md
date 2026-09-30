@@ -2,7 +2,7 @@
 
 # Hoog contrast (WCAG AAA)
 
-Token set `hoog-contrast`: 29 declared by this set, 25 from the defaults layer.
+Token set `hoog-contrast`: 29 declared by this set, 141 from the defaults layer.
 
 Contrast: primary text on primary 21.00:1, primary on background 21.00:1 (pass).
 
@@ -22,6 +22,7 @@ Contrast: primary text on primary 21.00:1, primary on background 21.00:1 (pass).
 | `--nldesign-color-error` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b30000%22%2F%3E%3C%2Fsvg%3E) `#b30000` | | this set | Border error, Element error, Error color, Text error, Text input invalid |
 | `--nldesign-color-error-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238b1a15%22%2F%3E%3C%2Fsvg%3E) `#8b1a15` | | defaults | Error hover |
 | `--nldesign-color-error-rgb` | `213, 43, 30` | | defaults | `--color-error-text` |
+| `--nldesign-color-favorite` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e17000%22%2F%3E%3C%2Fsvg%3E) `#e17000` | | defaults | `--filter-background-blur` |
 | `--nldesign-color-focus` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | | this set | Button focus ring |
 | `--nldesign-color-focus-rgb` | `0, 123, 199` | | defaults | |
 | `--nldesign-color-header-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | | this set | |
@@ -34,6 +35,7 @@ Contrast: primary text on primary 21.00:1, primary on background 21.00:1 (pass).
 | `--nldesign-color-logo-background` | `transparent` | | defaults | |
 | `--nldesign-color-nav-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | |
 | `--nldesign-color-placeholder-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a1a1a%22%2F%3E%3C%2Fsvg%3E) `#1a1a1a` | | this set | Placeholder dark |
+| `--nldesign-color-placeholder-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | | defaults | Placeholder light |
 | `--nldesign-color-primary` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | | this set | Badge background, Primary button background, Primary color, Primary element color, Primary element light text and 7 more |
 | `--nldesign-color-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | | this set | Primary button hover, Primary element hover, Primary hover color |
 | `--nldesign-color-primary-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | Primary element light, Tertiary button hover, `--color-primary-element-text-dark` |
@@ -46,12 +48,167 @@ Contrast: primary text on primary 21.00:1, primary on background 21.00:1 (pass).
 | `--nldesign-color-text-muted` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a1a1a%22%2F%3E%3C%2Fsvg%3E) `#1a1a1a` | | this set | Text lighter, Text max contrast |
 | `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237a3d00%22%2F%3E%3C%2Fsvg%3E) `#7a3d00` | | this set | Element warning, Text warning, Warning color |
 | `--nldesign-color-warning-rgb` | `225, 112, 0` | | defaults | `--color-warning-hover` |
+| `--nldesign-component-badge-background-color` | `var(
+		--nldesign-color-primary
+	)` | | defaults | |
+| `--nldesign-component-badge-color` | `var(
+		--nldesign-color-primary-text
+	)` | | defaults | |
+| `--nldesign-component-button-active-background-color` | `var(
+		--nldesign-color-primary-light-hover
+	)` | | defaults | |
+| `--nldesign-component-button-active-color` | `var(
+		--nldesign-color-primary
+	)` | | defaults | |
+| `--nldesign-component-button-background-color` | `transparent` | | defaults | |
+| `--nldesign-component-button-border-color` | `var(
+		--nldesign-color-primary
+	)` | | defaults | |
+| `--nldesign-component-button-color` | `var(--nldesign-color-primary)` | | defaults | |
+| `--nldesign-component-button-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | | defaults | |
+| `--nldesign-component-button-disabled-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b4b4b4%22%2F%3E%3C%2Fsvg%3E) `#b4b4b4` | | defaults | |
+| `--nldesign-component-button-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | | defaults | |
+| `--nldesign-component-button-focus-border-color` | `var(
+		--nldesign-color-focus
+	)` | | defaults | |
+| `--nldesign-component-button-hover-background-color` | `var(
+		--nldesign-color-primary-light
+	)` | | defaults | |
+| `--nldesign-component-button-hover-border-color` | `var(
+		--nldesign-color-primary-hover
+	)` | | defaults | |
+| `--nldesign-component-button-hover-color` | `var(
+		--nldesign-color-primary
+	)` | | defaults | |
+| `--nldesign-component-button-primary-action-background-color` | `var(
+		--nldesign-color-primary
+	)` | | defaults | |
+| `--nldesign-component-button-primary-action-border-color` | `var(
+		--nldesign-color-primary
+	)` | | defaults | |
+| `--nldesign-component-button-primary-action-color` | `var(
+		--nldesign-color-primary-text
+	)` | | defaults | |
+| `--nldesign-component-button-primary-action-hover-background-color` | `var(
+		--nldesign-color-primary-hover
+	)` | | defaults | |
+| `--nldesign-component-button-primary-action-hover-color` | `var(
+		--nldesign-color-primary-text
+	)` | | defaults | |
+| `--nldesign-component-button-secondary-action-background-color` | `transparent` | | defaults | |
+| `--nldesign-component-button-secondary-action-border-color` | `var(
+		--nldesign-color-primary
+	)` | | defaults | |
+| `--nldesign-component-button-secondary-action-color` | `var(
+		--nldesign-color-primary
+	)` | | defaults | |
+| `--nldesign-component-button-secondary-action-hover-background-color` | `var(
+		--nldesign-color-primary-light
+	)` | | defaults | |
+| `--nldesign-component-form-field-label-color` | `var(--nldesign-color-text)` | | defaults | |
+| `--nldesign-component-form-fieldset-border-color` | `var(
+		--nldesign-color-border
+	)` | | defaults | |
+| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border)` | | defaults | |
+| `--nldesign-component-form-select-focus-border-color` | `var(--nldesign-color-info)` | | defaults | |
+| `--nldesign-component-heading-1-color` | `var(--nldesign-component-heading-color)` | | defaults | |
+| `--nldesign-component-heading-2-color` | `var(--nldesign-component-heading-color)` | | defaults | |
+| `--nldesign-component-heading-3-color` | `var(--nldesign-component-heading-color)` | | defaults | |
+| `--nldesign-component-heading-4-color` | `var(--nldesign-component-heading-color)` | | defaults | |
+| `--nldesign-component-heading-5-color` | `var(--nldesign-component-heading-color)` | | defaults | |
+| `--nldesign-component-heading-6-color` | `var(--nldesign-component-heading-color)` | | defaults | |
+| `--nldesign-component-heading-color` | `var(--nldesign-color-text)` | | defaults | |
+| `--nldesign-component-link-color` | `var(--nldesign-color-link)` | | defaults | |
+| `--nldesign-component-link-hover-color` | `var(--nldesign-color-link-hover)` | | defaults | |
+| `--nldesign-component-link-visited-color` | `var(--nldesign-color-link-visited)` | | defaults | |
+| `--nldesign-component-ordered-list-color` | `var(
+		--nldesign-color-text
+	)` | | defaults | |
+| `--nldesign-component-paragraph-color` | `var(--nldesign-color-text)` | | defaults | |
+| `--nldesign-component-separator-border-color` | `var(--nldesign-color-border)` | | defaults | |
+| `--nldesign-component-table-border-color` | `var(--nldesign-color-border)` | | defaults | |
+| `--nldesign-component-table-header-background-color` | `var(
+		--nldesign-color-background-dark
+	)` | | defaults | |
+| `--nldesign-component-table-header-color` | `var(--nldesign-color-text)` | | defaults | |
+| `--nldesign-component-table-row-hover-background-color` | `var(
+		--nldesign-color-background-hover
+	)` | | defaults | |
+| `--nldesign-component-textbox-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | defaults | |
+| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | | defaults | |
+| `--nldesign-component-textbox-color` | `var(--nldesign-color-text)` | | defaults | |
+| `--nldesign-component-textbox-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | | defaults | |
+| `--nldesign-component-textbox-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | | defaults | |
+| `--nldesign-component-textbox-focus-border-color` | `var(--nldesign-color-info)` | | defaults | |
+| `--nldesign-component-textbox-hover-border-color` | `var(
+		--nldesign-color-border-dark
+	)` | | defaults | |
+| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | | defaults | |
+| `--nldesign-component-unordered-list-color` | `var(
+		--nldesign-color-text
+	)` | | defaults | |
 
 ## Typography (Typografie)
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--nldesign-component-badge-font-size` | `0.875rem` | | defaults | |
+| `--nldesign-component-badge-font-weight` | `700` | | defaults | |
+| `--nldesign-component-button-font-family` | `var(--nldesign-font-family)` | | defaults | |
+| `--nldesign-component-button-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-button-font-weight` | `700` | | defaults | |
+| `--nldesign-component-form-field-label-font-weight` | `700` | | defaults | |
+| `--nldesign-component-heading-1-font-size` | `2.5rem` | | defaults | |
+| `--nldesign-component-heading-1-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-1-line-height` | `1.2` | | defaults | |
+| `--nldesign-component-heading-2-font-size` | `2rem` | | defaults | |
+| `--nldesign-component-heading-2-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-2-line-height` | `1.25` | | defaults | |
+| `--nldesign-component-heading-3-font-size` | `1.5rem` | | defaults | |
+| `--nldesign-component-heading-3-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-3-line-height` | `1.3` | | defaults | |
+| `--nldesign-component-heading-4-font-size` | `1.25rem` | | defaults | |
+| `--nldesign-component-heading-4-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-4-line-height` | `1.35` | | defaults | |
+| `--nldesign-component-heading-5-font-size` | `1.125rem` | | defaults | |
+| `--nldesign-component-heading-5-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-5-line-height` | `1.4` | | defaults | |
+| `--nldesign-component-heading-6-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-heading-6-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-6-line-height` | `1.5` | | defaults | |
+| `--nldesign-component-heading-font-family` | `var(--nldesign-font-family)` | | defaults | |
+| `--nldesign-component-heading-font-weight` | `var(--nldesign-font-weight-heading)` | | defaults | |
+| `--nldesign-component-link-font-weight` | `var(
+		--nldesign-font-weight-default
+	)` | | defaults | |
+| `--nldesign-component-link-text-decoration` | `underline` | | defaults | |
+| `--nldesign-component-ordered-list-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-ordered-list-line-height` | `1.5` | | defaults | |
+| `--nldesign-component-paragraph-font-family` | `var(--nldesign-font-family)` | | defaults | |
+| `--nldesign-component-paragraph-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-paragraph-font-weight` | `var(--nldesign-font-weight-default)` | | defaults | |
+| `--nldesign-component-paragraph-line-height` | `1.5` | | defaults | |
+| `--nldesign-component-table-header-font-weight` | `700` | | defaults | |
+| `--nldesign-component-textbox-font-family` | `var(--nldesign-font-family)` | | defaults | |
+| `--nldesign-component-textbox-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-unordered-list-font-size` | `1rem` | | defaults | |
+| `--nldesign-component-unordered-list-line-height` | `1.5` | | defaults | |
 | `--nldesign-font-family` | `'Fira Sans', sans-serif` | | this set | Font family, `--nldesign-component-button-font-family`, `--nldesign-component-textbox-font-family` |
+| `--nldesign-font-weight-default` | `400` | | defaults | `--default-font-size` |
+| `--nldesign-font-weight-element` | `500` | | defaults | Control font weight |
+| `--nldesign-font-weight-heading` | `700` | | defaults | Heading font weight |
 
 ## Spacing and shape (Ruimte en vorm)
 
@@ -62,6 +219,25 @@ Contrast: primary text on primary 21.00:1, primary on background 21.00:1 (pass).
 | `--nldesign-border-radius-pill` | `0` | | this set | Badge shape, Border radius pill |
 | `--nldesign-border-radius-rounded` | `0` | | this set | Border radius rounded |
 | `--nldesign-border-radius-small` | `0` | | this set | Border radius small |
+| `--nldesign-component-badge-border-radius` | `var(
+		--nldesign-border-radius-pill
+	)` | | defaults | |
+| `--nldesign-component-badge-padding-block` | `0.125rem` | | defaults | |
+| `--nldesign-component-badge-padding-inline` | `0.5rem` | | defaults | |
+| `--nldesign-component-button-border-radius` | `var(--nldesign-border-radius)` | | defaults | |
+| `--nldesign-component-button-border-width` | `1px` | | defaults | |
+| `--nldesign-component-button-padding-block` | `0.5rem` | | defaults | |
+| `--nldesign-component-button-padding-inline` | `1rem` | | defaults | |
+| `--nldesign-component-form-fieldset-border-width` | `1px` | | defaults | |
+| `--nldesign-component-form-select-border-radius` | `var(--nldesign-border-radius)` | | defaults | |
+| `--nldesign-component-separator-border-width` | `1px` | | defaults | |
+| `--nldesign-component-table-border-width` | `1px` | | defaults | |
+| `--nldesign-component-table-cell-padding-block` | `0.5rem` | | defaults | |
+| `--nldesign-component-table-cell-padding-inline` | `0.75rem` | | defaults | |
+| `--nldesign-component-textbox-border-radius` | `var(--nldesign-border-radius)` | | defaults | |
+| `--nldesign-component-textbox-border-width` | `1px` | | defaults | |
+| `--nldesign-component-textbox-padding-block` | `0.5rem` | | defaults | |
+| `--nldesign-component-textbox-padding-inline` | `0.75rem` | | defaults | |
 | `--nldesign-header-border-bottom` | `0` | | defaults | |
 | `--nldesign-logo-height` | `auto` | | defaults | |
 | `--nldesign-logo-width` | `62px` | | defaults | |
@@ -72,6 +248,8 @@ Contrast: primary text on primary 21.00:1, primary on background 21.00:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--nldesign-animation-quick` | `100ms` | | defaults | `--header-menu-item-height` |
+| `--nldesign-animation-slow` | `300ms` | | defaults | Animation slow |
 | `--nldesign-header-icon-filter` | `invert(1) brightness(0) contrast(100)` | | defaults | |
 | `--nldesign-logo-bottom` | `1px` | | defaults | |
 | `--nldesign-logo-center` | `50%` | | defaults | |
