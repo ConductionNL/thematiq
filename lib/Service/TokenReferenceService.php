@@ -360,8 +360,10 @@ class TokenReferenceService {
 			return $code;
 		}
 
-		$svg = "%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14'%3E%3Crect width='14' height='14' fill='"
-			. rawurlencode(trim($value)) . "'/%3E%3C/svg%3E";
+		// Fully percent-encoded, so the URL holds no space or quote a Markdown link would stop at.
+		$svg = rawurlencode(
+			'<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"><rect width="14" height="14" fill="' . trim($value) . '"/></svg>'
+		);
 
 		return '![](data:image/svg+xml,' . $svg . ') ' . $code;
 	}//end mdValue()

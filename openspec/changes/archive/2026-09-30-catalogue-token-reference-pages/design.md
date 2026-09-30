@@ -20,6 +20,9 @@ A test renders every shipped set and compares with `docs/reference/token-sets/<i
 
 ### 3. In the app, readable by signed-in users
 
+Built on a new `TokenReferenceController` (route `tokenReference#show`) instead of `CatalogController`, whose three-argument constructor its tests pin (changed at archive, 2026-09-30).
+
+
 `GET /api/token-sets/{id}/reference?format=md|html` is `#[NoAdminRequired]` like the catalogue, not public: a custom set is the organisation's own and may not be published yet. The reference opens from a link next to each set in the dropdown and the custom sets list, and offers a download.
 
 Rejected: a public URL. Suppliers without an account get the downloaded file instead.
