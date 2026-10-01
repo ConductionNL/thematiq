@@ -2,7 +2,7 @@
 
 ## Overview
 
-NL Design is a Nextcloud theming app that applies Dutch government design standards (NL Design System) to the Nextcloud interface. It provides 47 token sets covering national government (Rijkshuisstijl), municipalities, organizations, and the European sovereign-workplace La Suite numérique (Cunningham) design system, plus its published blue base as an optional sibling. Admins select a token set via a settings panel, and the app injects a design-system-driven CSS architecture that overrides Nextcloud's default styling with the selected organization's brand identity.
+NL Design is a Nextcloud theming app that applies Dutch government design standards (NL Design System) to the Nextcloud interface. It provides 51 token sets covering national government (Rijkshuisstijl), municipalities, organizations, and the European sovereign-workplace La Suite numérique (Cunningham) design system, plus its published blue base as an optional sibling. Admins select a token set via a settings panel, and the app injects a design-system-driven CSS architecture that overrides Nextcloud's default styling with the selected organization's brand identity.
 
 ## Architecture
 
@@ -34,13 +34,14 @@ NL Design is a Nextcloud theming app that applies Dutch government design standa
 | 6 | `css/overrides.css` | Maps Nextcloud `--color-*` vars to `--nldesign-*` |
 | 7 | `css/element-overrides.css` | Low-level element styling (fonts, containers) |
 
-## Token Sets (47)
+## Token Sets (51)
 
 - **National**: Rijkshuisstijl (default)
 - **Major cities**: Amsterdam, Utrecht, Rotterdam, Den Haag
 - **Municipalities**: 33 others (Haarlem, Leiden, Nijmegen, Tilburg, etc.)
 - **Organizations**: Demodam, Duo, Noaberkracht, VNG, xxllnc
 - **Provinces**: Zuid-Holland
+- **Fictional examples**: (EXAMPLE) Basisschool, (EXAMPLE) Voortgezet onderwijs, (EXAMPLE) College, (EXAMPLE) Opleider, for demos and example data
 - **European sovereign-workplace**: La Suite numérique (Cunningham design system, MinBZK/mijn-bureau EDIC bundles) — deployed violet brand
 - **Published design system**: Cunningham (blue base) — the same Cunningham foundation as La Suite, without the deployed violet override
 

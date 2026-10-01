@@ -1,0 +1,375 @@
+{
+	"id": "example-basisschool",
+	"name": "(EXAMPLE) Basisschool",
+	"description": "Fictional example set for a primary school: warm brick orange, rounded corners, high contrast for parents. Not a real organisation.",
+	"provenance": "an invented palette for a fictional organisation (example data, not a real brand)",
+	"_comment_source": [
+		"A FICTIONAL set for demos and example data. No real school or provider uses it.",
+		"The palette is invented, so there is no upstream package and no captured",
+		"component mapping. Section C fills the whole component vocabulary from the",
+		"shared role layer, re-pointed at the ramp below.",
+		"",
+		"Every ramp step a component can put text on, or under white text, is chosen",
+		"to reach WCAG AA (4.5:1) against white: the 300 and 400 steps of each family,",
+		"gray-500 and darker. gray-400 is the control border and reaches 3:1."
+	],
+	"palette": {
+		"--example-basisschool-color-white": "#ffffff",
+		"--example-basisschool-color-black": "#1A1714",
+		"--example-basisschool-color-black-txt": "#2B2520",
+		"--example-basisschool-color-gray-50": "#FBF8F4",
+		"--example-basisschool-color-gray-100": "#F5F0EA",
+		"--example-basisschool-color-gray-200": "#EAE2D8",
+		"--example-basisschool-color-gray-300": "#D8CCBE",
+		"--example-basisschool-color-gray-400": "#8F8173",
+		"--example-basisschool-color-gray-500": "#6E6257",
+		"--example-basisschool-color-gray-600": "#5A5047",
+		"--example-basisschool-color-gray-700": "#463E37",
+		"--example-basisschool-color-gray-800": "#332D28",
+		"--example-basisschool-color-gray-900": "#221E1A",
+		"--example-basisschool-color-gray-950": "#14110F",
+		"--example-basisschool-color-brand-100": "#FFF1E6",
+		"--example-basisschool-color-brand-200": "#F9C9A8",
+		"--example-basisschool-color-brand-300": "#B03A12",
+		"--example-basisschool-color-brand-400": "#8A2D0E",
+		"--example-basisschool-color-brand-500": "#5C1E09",
+		"--example-basisschool-color-accent-100": "#F3EAF8",
+		"--example-basisschool-color-accent-200": "#D6BDE6",
+		"--example-basisschool-color-accent-300": "#6E3A91",
+		"--example-basisschool-color-accent-400": "#55296F",
+		"--example-basisschool-color-green-100": "#E3F4E1",
+		"--example-basisschool-color-green-200": "#A9D8A3",
+		"--example-basisschool-color-green-300": "#287430",
+		"--example-basisschool-color-green-400": "#1B5E20",
+		"--example-basisschool-color-red-100": "#FDE7E7",
+		"--example-basisschool-color-red-200": "#F5B5B5",
+		"--example-basisschool-color-red-300": "#C62828",
+		"--example-basisschool-color-red-400": "#A11D1D",
+		"--example-basisschool-color-orange-100": "#FFF3D6",
+		"--example-basisschool-color-orange-200": "#FFD98A",
+		"--example-basisschool-color-orange-300": "#9A5B00",
+		"--example-basisschool-color-orange-400": "#7A4700",
+		"--example-basisschool-typography-sans-serif-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+	},
+	"ramp": {
+		"white": {
+			"value": "#ffffff",
+			"from": "white"
+		},
+		"black": {
+			"value": "#1A1714",
+			"from": "black"
+		},
+		"black-txt": {
+			"value": "#2B2520",
+			"from": "black-txt"
+		},
+		"gray-50": {
+			"value": "#FBF8F4",
+			"from": "gray-50"
+		},
+		"gray-100": {
+			"value": "#F5F0EA",
+			"from": "gray-100"
+		},
+		"gray-200": {
+			"value": "#EAE2D8",
+			"from": "gray-200"
+		},
+		"gray-300": {
+			"value": "#D8CCBE",
+			"from": "gray-300"
+		},
+		"gray-400": {
+			"value": "#8F8173",
+			"from": "gray-400"
+		},
+		"gray-500": {
+			"value": "#6E6257",
+			"from": "gray-500"
+		},
+		"gray-600": {
+			"value": "#5A5047",
+			"from": "gray-600"
+		},
+		"gray-700": {
+			"value": "#463E37",
+			"from": "gray-700"
+		},
+		"gray-800": {
+			"value": "#332D28",
+			"from": "gray-800"
+		},
+		"gray-900": {
+			"value": "#221E1A",
+			"from": "gray-900"
+		},
+		"gray-950": {
+			"value": "#14110F",
+			"from": "gray-950"
+		},
+		"blue-100": {
+			"value": "#FFF1E6",
+			"from": "brand-100 (the role layer's brand family is its blue)"
+		},
+		"blue-200": {
+			"value": "#F9C9A8",
+			"from": "brand-200 (the role layer's brand family is its blue)"
+		},
+		"blue-300": {
+			"value": "#B03A12",
+			"from": "brand-300 (the role layer's brand family is its blue)"
+		},
+		"blue-400": {
+			"value": "#8A2D0E",
+			"from": "brand-400 (the role layer's brand family is its blue)"
+		},
+		"blue-500": {
+			"value": "#5C1E09",
+			"from": "brand-500 (the role layer's brand family is its blue)"
+		},
+		"green-100": {
+			"value": "#E3F4E1",
+			"from": "green-100"
+		},
+		"green-200": {
+			"value": "#A9D8A3",
+			"from": "green-200"
+		},
+		"green-300": {
+			"value": "#287430",
+			"from": "green-300"
+		},
+		"green-400": {
+			"value": "#1B5E20",
+			"from": "green-400"
+		},
+		"red-100": {
+			"value": "#FDE7E7",
+			"from": "red-100"
+		},
+		"red-200": {
+			"value": "#F5B5B5",
+			"from": "red-200"
+		},
+		"red-300": {
+			"value": "#C62828",
+			"from": "red-300"
+		},
+		"red-400": {
+			"value": "#A11D1D",
+			"from": "red-400"
+		},
+		"orange-100": {
+			"value": "#FFF3D6",
+			"from": "orange-100"
+		},
+		"orange-200": {
+			"value": "#FFD98A",
+			"from": "orange-200"
+		},
+		"orange-300": {
+			"value": "#9A5B00",
+			"from": "orange-300"
+		},
+		"orange-400": {
+			"value": "#7A4700",
+			"from": "orange-400"
+		},
+		"pink-100": {
+			"value": "#F3EAF8",
+			"from": "accent-100 (the role layer's accent family is its pink)"
+		},
+		"pink-200": {
+			"value": "#D6BDE6",
+			"from": "accent-200 (the role layer's accent family is its pink)"
+		},
+		"pink-300": {
+			"value": "#6E3A91",
+			"from": "accent-300 (the role layer's accent family is its pink)"
+		},
+		"pink-400": {
+			"value": "#55296F",
+			"from": "accent-400 (the role layer's accent family is its pink)"
+		},
+		"extra-purple": {
+			"value": "#6E3A91",
+			"from": "decorative"
+		},
+		"extra-yellow": {
+			"value": "#FFD23F",
+			"from": "decorative"
+		},
+		"extra-limegreen": {
+			"value": "#7DBE3C",
+			"from": "decorative"
+		},
+		"code-background-color": {
+			"value": "#F5F0EA",
+			"from": "gray-100"
+		},
+		"dark-alpha-50": {
+			"value": "#0000000d",
+			"from": "role-layer geometry, unbranded"
+		},
+		"dark-alpha-100": {
+			"value": "#0000001a",
+			"from": "role-layer geometry, unbranded"
+		},
+		"light-alpha-50": {
+			"value": "#ffffff0d",
+			"from": "role-layer geometry, unbranded"
+		},
+		"light-alpha-100": {
+			"value": "#ffffff1a",
+			"from": "role-layer geometry, unbranded"
+		}
+	},
+	"literalOverrides": {
+		"#0277bd": {
+			"value": "#B03A12",
+			"from": "brand-300"
+		},
+		"#0078c8": {
+			"value": "#B03A12",
+			"from": "brand-300"
+		},
+		"#dbebfc": {
+			"value": "#FFF1E6",
+			"from": "brand-100"
+		},
+		"#75757c": {
+			"value": "#6E6257",
+			"from": "gray-500"
+		},
+		"#c9c9d2": {
+			"value": "#D8CCBE",
+			"from": "gray-300"
+		},
+		"#004488": {
+			"value": "#8A2D0E",
+			"from": "brand-400: pagination text, the role layer hard-codes its own blue"
+		},
+		"#004589": {
+			"value": "#8A2D0E",
+			"from": "brand-400: near-duplicate of #004488"
+		},
+		"#034591": {
+			"value": "#8A2D0E",
+			"from": "brand-400: the role layer link blue"
+		},
+		"#e11919": {
+			"value": "#C62828",
+			"from": "red-300: invalid-state red"
+		}
+	},
+	"keepLiterals": {
+		"#000000": "base black",
+		"#ffb612": "role-layer focus and attention yellow, kept for a visible focus ring",
+		"#e9e9e9": "role-layer disabled surface",
+		"#fffefa": "role-layer warning surface",
+		"#ffe6e6": "role-layer error surface",
+		"#e7f9f4": "role-layer success surface"
+	},
+	"upstreamOverrides": {
+		"--tilburg-typography-font-family-primary": {
+			"value": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+			"reason": "the role layer names Avenir, which this app does not ship; Fira Sans is bundled"
+		},
+		"--tilburg-typography-font-family-secondary": {
+			"value": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+			"reason": "same Avenir default as the primary family"
+		},
+		"--tilburg-navigation-font-family": {
+			"value": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+			"reason": "the role layer names Montserrat, which this app does not ship"
+		},
+		"--tilburg-focus-color": {
+			"value": "#5C1E09",
+			"reason": "the role layer pairs two mid blues here (1.7:1); a dark brand step on a light one reaches AA, and stays readable on a white page where no focus background is drawn"
+		},
+		"--tilburg-focus-background-color": {
+			"value": "#FFF1E6",
+			"reason": "pairs with the dark focus colour above"
+		},
+		"--utrecht-alert-warning-color": {
+			"value": "#7A4700",
+			"reason": "the role layer sets warning text in #ffb612 on #fffefa (1.7:1); the border keeps the yellow"
+		},
+		"--denhaag-step-marker-default-color": {
+			"value": "#463E37",
+			"reason": "the role layer puts white on gray-200 (1.3:1)"
+		},
+		"--denhaag-step-marker-not-checked-color": {
+			"value": "#6E6257",
+			"reason": "gray-400 on white is a control-border step, not a text step"
+		},
+		"--denhaag-step-marker-disabled-color": {
+			"value": "#5A5047",
+			"reason": "gray-400 on gray-100 stays under AA"
+		},
+		"--conduction-logo-header-background-image": {
+			"value": "var(--nldesign-logo-url)",
+			"reason": "the role layer bakes in a VNG mark; the logo must follow the token set"
+		},
+		"--conduction-logo-footer-background-image": {
+			"value": "var(--nldesign-logo-url)",
+			"reason": "same VNG mark in the footer band"
+		},
+		"--conduction-logo-navbar-background-image": {
+			"value": "var(--nldesign-logo-url)",
+			"reason": "same VNG mark in the navbar"
+		}
+	},
+	"semantic": {
+		"primary": "#B03A12",
+		"primary-hover": "#8A2D0E",
+		"primary-text": "#ffffff",
+		"primary-light": "#FFF1E6",
+		"primary-light-hover": "#F9C9A8",
+		"text": "#2B2520",
+		"text-muted": "#5A5047",
+		"text-light": "#ffffff",
+		"link": "#8A2D0E",
+		"link-hover": "#5C1E09",
+		"link-visited": "#55296F",
+		"border": "#D8CCBE",
+		"border-dark": "#8F8173",
+		"background-hover": "#FBF8F4",
+		"background-dark": "#F5F0EA",
+		"background-darker": "#EAE2D8",
+		"placeholder-light": "#F5F0EA",
+		"placeholder-dark": "#D8CCBE",
+		"header-background": "#B03A12",
+		"header-text": "#FFFFFF",
+		"nav-background": "#ffffff",
+		"button-primary-background": "#B03A12",
+		"button-primary-border": "#B03A12",
+		"button-primary-hover": "#8A2D0E",
+		"button-primary-text": "#ffffff",
+		"error": "#C62828",
+		"error-rgb": "198, 40, 40",
+		"error-hover": "#A11D1D",
+		"warning": "#9A5B00",
+		"warning-rgb": "154, 91, 0",
+		"success": "#287430",
+		"success-rgb": "40, 116, 48",
+		"info": "#0B6BA8",
+		"info-rgb": "11, 107, 168",
+		"favorite": "#FFD23F",
+		"focus": "#0B6BA8"
+	},
+	"logo": "img/logos/example-basisschool.svg",
+	"typography": {
+		"fontFamily": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+		"from": "Fira Sans, bundled in css/fonts"
+	},
+	"borderRadius": {
+		"default": "8px",
+		"small": "4px",
+		"large": "16px",
+		"rounded": "24px",
+		"pill": "100px"
+	},
+	"headerIconFilter": "none"
+}
