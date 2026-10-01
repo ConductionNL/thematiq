@@ -390,6 +390,12 @@ All notable changes to this project will be documented in this file.
   redistribution, and `scripts/build-icons.js` no longer touches that directory at all.
 
 ### Added
+- **Four fictional example token sets for education demos.** `example-basisschool`,
+  `example-voortgezet`, `example-college` (mbo) and `example-opleider` (a training and
+  coaching provider). Each has its own palette, an original logo, a dark variant and a
+  full component vocabulary from `scripts/generate-brand-set.mjs`. All four pass the
+  vocabulary audit and reach WCAG AA. Their names start with `(EXAMPLE)`, because no
+  real organisation stands behind them.
 - **Token-set vocabulary audit — "the examples look correct" is now a test, not an opinion.**
   A new `TokenSetVocabularyAuditService` answers the question no existing gate could:
   does a shipped token set actually declare the `--nldesign-*` tokens its design system
