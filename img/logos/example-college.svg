@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="College (example)">
+  <!-- Fictional example logo for the example-college token set. Not a real organisation. -->
+  <rect width="240" height="64" rx="6" fill="#ffffff"/>
+  <g transform="translate(12 8)">
+    <polygon points="24,0 44.8,12 44.8,36 24,48 3.2,36 3.2,12" fill="#7a1f6e"/>
+    <path d="M14 24 L22 32 L35 16" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="40" cy="40" r="7" fill="#006e7f"/>
+  </g>
+  <text x="68" y="40" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#3e0f38">College</text>
+</svg>

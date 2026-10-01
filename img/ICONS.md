@@ -273,7 +273,7 @@ PHP/template and other non-Vue consumers.
 These URLs only resolve while the nldesign app is enabled. Consumers must ship a fallback
 icon or declare a dependency on `nldesign`.
 
-## Logos (26 total)
+## Logos (30 total)
 
 Available in: `img/logos/`. Static, checked-in huisstijl assets tied to token sets
 (`token-sets.json` `theming.logo` entries) — organisation marks displayed as that
@@ -286,6 +286,10 @@ organisation's own identity on that organisation's own instance. **Not build out
 - drechterland
 - epe
 - epe-dark
+- example-basisschool
+- example-college
+- example-opleider
+- example-voortgezet
 - frankendesk
 - ggd-amsterdam
 - hoorn

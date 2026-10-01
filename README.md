@@ -8,7 +8,7 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
 
 ## Features
 
-- **47 token sets**: Choose from Dutch government design systems, including:
+- **51 token sets**: Choose from Dutch government design systems, including:
   - Rijkshuisstijl (Dutch national government)
   - Gemeente Utrecht
   - Gemeente Amsterdam
@@ -16,6 +16,7 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
   - Gemeente Rotterdam
   - La Suite numérique (Cunningham design system, European sovereign-workplace / MinBZK-mijn-bureau EDIC bundles) — plus the published Cunningham blue base as an optional sibling set
   - …and a broad set of community-maintained municipality and organization brands
+  - Four fictional example sets for education demos: a primary school, a secondary school, an mbo college and a training provider
 
 - **Open Source Fonts**: Uses **Fira Sans** from `@fontsource/fira-sans` and **Inter** (self-hosted from `@fontsource/inter`) as professional alternatives to proprietary government fonts
 
