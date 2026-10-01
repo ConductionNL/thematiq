@@ -451,5 +451,45 @@
 			"primary_color": "#21468B",
 			"background_color": "#FFFFFF"
 		}
+	},
+	{
+		"id": "example-basisschool",
+		"name": "(EXAMPLE) Basisschool",
+		"description": "Fictional example set for a primary school: warm brick orange, rounded corners, high contrast for parents. Not a real organisation.",
+		"theming": {
+			"primary_color": "#B03A12",
+			"background_color": "#FFFFFF",
+			"logo": "img/logos/example-basisschool.svg"
+		}
+	},
+	{
+		"id": "example-voortgezet",
+		"name": "(EXAMPLE) Voortgezet onderwijs",
+		"description": "Fictional example set for a secondary school: deep indigo with a teal accent. Not a real organisation.",
+		"theming": {
+			"primary_color": "#2D4FA0",
+			"background_color": "#FFFFFF",
+			"logo": "img/logos/example-voortgezet.svg"
+		}
+	},
+	{
+		"id": "example-college",
+		"name": "(EXAMPLE) College",
+		"description": "Fictional example set for an mbo college: plum with a teal accent. Not a real organisation.",
+		"theming": {
+			"primary_color": "#7A1F6E",
+			"background_color": "#FFFFFF",
+			"logo": "img/logos/example-college.svg"
+		}
+	},
+	{
+		"id": "example-opleider",
+		"name": "(EXAMPLE) Opleider",
+		"description": "Fictional example set for a commercial training and coaching provider: corporate petrol with a copper accent. Not a real organisation.",
+		"theming": {
+			"primary_color": "#0E4D5C",
+			"background_color": "#FFFFFF",
+			"logo": "img/logos/example-opleider.svg"
+		}
 	}
 ]
