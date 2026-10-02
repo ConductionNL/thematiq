@@ -21,7 +21,7 @@ This page lists every CSS custom property that Nextcloud 34.0.0.12 and `@conduct
 | icon | 484 | 0 | 0 | 484 |
 | runtime | 36 | 0 | 0 | 36 |
 | slot | 83 | 0 | 0 | 83 |
-| theme | 111 | 66 | 0 | 45 |
+| theme | 111 | 66 | 45 | 0 |
 | unread | 10 | 0 | 0 | 10 |
 
 ## Theme variables
@@ -34,16 +34,16 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 |---|---|---|---|---|---|
 | `--animation-quick` | mapped | `--nldesign-animation-quick` | `100ms` | `100ms` | Quick animation duration (100ms) |
 | `--animation-slow` | mapped | `--nldesign-animation-slow` | `300ms` | `300ms` | Slow animation duration (300ms) |
-| `--filter-background-blur` | excluded |  | `blur(25px)` | `blur(25px)` | Background blur filter; Nextcloud handles browser compat |
+| `--filter-background-blur` | settable | `--nldesign-nc-filter-background-blur` | `blur(25px)` | `blur(25px)` | Background blur filter; Nextcloud handles browser compat |
 
 ### Assistant (AI)
 
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
-| `--color-background-assistant` | excluded |  | `#F6F5FF` | `#221D2B` | AI assistant background; NC-specific feature |
-| `--color-border-assistant` | excluded |  | `linear-gradient(125deg, #7398FE…` | `linear-gradient(125deg, #0C3A65…` | AI assistant border gradient; NC-specific |
-| `--color-element-assistant` | excluded |  | `linear-gradient(214deg, #A569D3…` | `linear-gradient(214deg, #C8A3E8…` | AI assistant element gradient; NC-specific |
-| `--color-element-assistant-icon` | excluded |  | `linear-gradient(214deg, #9669D3…` | `linear-gradient(214deg, #CDACE7…` | AI assistant icon gradient; NC-specific |
+| `--color-background-assistant` | settable | `--nldesign-nc-color-background-assistant` | `#F6F5FF` | `#221D2B` | AI assistant background; NC-specific feature |
+| `--color-border-assistant` | settable | `--nldesign-nc-color-border-assistant` | `linear-gradient(125deg, #7398FE…` | `linear-gradient(125deg, #0C3A65…` | AI assistant border gradient; NC-specific |
+| `--color-element-assistant` | settable | `--nldesign-nc-color-element-assistant` | `linear-gradient(214deg, #A569D3…` | `linear-gradient(214deg, #C8A3E8…` | AI assistant element gradient; NC-specific |
+| `--color-element-assistant-icon` | settable | `--nldesign-nc-color-element-assistant-icon` | `linear-gradient(214deg, #9669D3…` | `linear-gradient(214deg, #CDACE7…` | AI assistant icon gradient; NC-specific |
 
 ### Background States
 
@@ -58,8 +58,8 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
 | `--border-radius` | mapped | `--nldesign-border-radius` | `var(--border-radius-small)` | `var(--border-radius-small)` | Deprecated; default border radius |
-| `--border-radius-container` | excluded |  | `12px` | `12px` | Containers (12px); intentionally not overridden for layout consistency |
-| `--border-radius-container-large` | excluded |  | `16px` | `16px` | Large containers (16px); intentionally not overridden |
+| `--border-radius-container` | settable | `--nldesign-nc-border-radius-container` | `12px` | `12px` | Containers (12px); intentionally not overridden for layout consistency |
+| `--border-radius-container-large` | settable | `--nldesign-nc-border-radius-container-large` | `16px` | `16px` | Large containers (16px); intentionally not overridden |
 | `--border-radius-element` | mapped | `--nldesign-border-radius` | `8px` | `8px` | Interactive elements (8px default) |
 | `--border-radius-large` | mapped | `--nldesign-border-radius-large` | `var(--border-radius-element)` | `var(--border-radius-element)` | Deprecated alias for element radius |
 | `--border-radius-pill` | mapped | `--nldesign-border-radius-pill` | `100px` | `100px` | Pill shape (100px) |
@@ -70,8 +70,8 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
-| `--border-width-input` | excluded |  | `1px` | `1px` | Input border width (1px); standard across all themes |
-| `--border-width-input-focused` | excluded |  | `2px` | `2px` | Focused input border width (2px); standard |
+| `--border-width-input` | settable | `--nldesign-nc-border-width-input` | `1px` | `1px` | Input border width (1px); standard across all themes |
+| `--border-width-input-focused` | settable | `--nldesign-nc-border-width-input-focused` | `2px` | `2px` | Focused input border width (2px); standard |
 | `--color-border` | mapped | `--nldesign-color-border` | `#ededed` | `#292929` | Standard border color |
 | `--color-border-dark` | mapped | `--nldesign-color-border-dark` | `#dbdbdb` | `#3b3b3b` | Dark border variant |
 | `--color-border-maxcontrast` | mapped | `--nldesign-color-border-dark` | `#7d7d7d` | `#7d7d7d` | Max contrast border; maps to dark border |
@@ -81,8 +81,8 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
 | `--background-image-invert-if-bright` | mapped |  | `no` | `no` | Background image inversion; NC theme dependent |
-| `--background-invert-if-bright` | excluded |  | `invert(100%)` | `no` | Bright mode inversion; NC theme dependent |
-| `--background-invert-if-dark` | excluded |  | `no` | `invert(100%)` | Dark mode image inversion; NC theme dependent |
+| `--background-invert-if-bright` | settable | `--nldesign-nc-background-invert-if-bright` | `invert(100%)` | `no` | Bright mode inversion; NC theme dependent |
+| `--background-invert-if-dark` | settable | `--nldesign-nc-background-invert-if-dark` | `no` | `invert(100%)` | Dark mode image inversion; NC theme dependent |
 | `--primary-invert-if-bright` | mapped |  | `no` | `invert(100%)` | Primary color inversion; NC auto-calculates |
 | `--primary-invert-if-dark` | mapped |  | `invert(100%)` | `no` | Primary dark inversion; NC auto-calculates |
 
@@ -103,24 +103,24 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
-| `--body-container-margin` | excluded |  | `calc(var(--default-grid-baselin…` | `calc(var(--default-grid-baselin…` | Body container margin; NC layout dependent |
-| `--body-container-radius` | excluded |  | `var(--border-radius-container-l…` | `var(--border-radius-container-l…` | Body container radius; depends on border-radius-container-large |
-| `--body-height` | excluded |  | `calc(100% - env(safe-area-inset…` | `calc(100% - env(safe-area-inset…` | Body height calculation; NC layout dependent |
-| `--breakpoint-mobile` | excluded |  | `1024px` | `1024px` | Mobile breakpoint (1024px); NC responsive design |
-| `--header-height` | excluded |  | `50px` | `50px` | Header height (50px); overriding breaks NC layout |
+| `--body-container-margin` | settable | `--nldesign-nc-body-container-margin` | `calc(var(--default-grid-baselin…` | `calc(var(--default-grid-baselin…` | Body container margin; NC layout dependent |
+| `--body-container-radius` | settable | `--nldesign-nc-body-container-radius` | `var(--border-radius-container-l…` | `var(--border-radius-container-l…` | Body container radius; depends on border-radius-container-large |
+| `--body-height` | settable | `--nldesign-nc-body-height` | `calc(100% - env(safe-area-inset…` | `calc(100% - env(safe-area-inset…` | Body height calculation; NC layout dependent |
+| `--breakpoint-mobile` | settable | `--nldesign-nc-breakpoint-mobile` | `1024px` | `1024px` | Mobile breakpoint (1024px); NC responsive design |
+| `--header-height` | settable | `--nldesign-nc-header-height` | `50px` | `50px` | Header height (50px); overriding breaks NC layout |
 | `--header-menu-icon-mask` | mapped |  | `linear-gradient(var(--color-bac…` | `linear-gradient(var(--color-bac…` | Icon mask gradient; NC internal |
-| `--header-menu-item-height` | excluded |  | `44px` | `44px` | Header menu item height; NC layout dependent |
-| `--navigation-width` | excluded |  | `300px` | `300px` | Navigation panel width (300px); NC layout dependent |
-| `--sidebar-max-width` | excluded |  | `500px` | `500px` | Sidebar max width; NC layout dependent |
-| `--sidebar-min-width` | excluded |  | `300px` | `300px` | Sidebar min width; NC layout dependent |
+| `--header-menu-item-height` | settable | `--nldesign-nc-header-menu-item-height` | `44px` | `44px` | Header menu item height; NC layout dependent |
+| `--navigation-width` | settable | `--nldesign-nc-navigation-width` | `300px` | `300px` | Navigation panel width (300px); NC layout dependent |
+| `--sidebar-max-width` | settable | `--nldesign-nc-sidebar-max-width` | `500px` | `500px` | Sidebar max width; NC layout dependent |
+| `--sidebar-min-width` | settable | `--nldesign-nc-sidebar-min-width` | `300px` | `300px` | Sidebar min width; NC layout dependent |
 
 ### Main Background
 
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
 | `--color-background-plain` | mapped |  | `#00679e` | `#00679e` | Admin/user configured background; should respect user settings |
-| `--color-background-plain-text` | excluded |  | `#ffffff` | `#ffffff` | Text on plain background; auto-calculated by Nextcloud |
-| `--color-main-background` | excluded |  | `#ffffff` | `#171717` | Core page background; overriding breaks dark mode and accessibility themes |
+| `--color-background-plain-text` | settable | `--nldesign-nc-color-background-plain-text` | `#ffffff` | `#ffffff` | Text on plain background; auto-calculated by Nextcloud |
+| `--color-main-background` | settable | `--nldesign-nc-color-main-background` | `#ffffff` | `#171717` | Core page background; overriding breaks dark mode and accessibility themes |
 | `--color-main-background-blur` | mapped |  | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | Blur variant; depends on --color-main-background-rgb |
 | `--color-main-background-rgb` | mapped |  | `255,255,255` | `23,23,23` | RGB variant for rgba() usage; depends on --color-main-background |
 | `--color-main-background-translucent` | mapped |  | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | Translucent variant; depends on --color-main-background-rgb |
@@ -154,17 +154,17 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
-| `--color-box-shadow` | excluded |  | `rgba(var(--color-box-shadow-rgb…` | `#000000` | Box shadow color; depends on --color-box-shadow-rgb |
-| `--color-box-shadow-rgb` | excluded |  | `77,77,77` | `0,0,0` | Box shadow RGB; auto-calculated from background |
+| `--color-box-shadow` | settable | `--nldesign-nc-color-box-shadow` | `rgba(var(--color-box-shadow-rgb…` | `#000000` | Box shadow color; depends on --color-box-shadow-rgb |
+| `--color-box-shadow-rgb` | settable | `--nldesign-nc-color-box-shadow-rgb` | `77,77,77` | `0,0,0` | Box shadow RGB; auto-calculated from background |
 
 ### Spacing & Clickable Areas
 
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
-| `--clickable-area-large` | excluded |  | `48px` | `48px` | Large touch target (48px); accessibility standard |
-| `--clickable-area-small` | excluded |  | `24px` | `24px` | Small touch target (24px); accessibility standard |
-| `--default-clickable-area` | excluded |  | `34px` | `34px` | Touch target (34px); accessibility standard |
-| `--default-grid-baseline` | excluded |  | `4px` | `4px` | Base grid unit (4px); core layout building block |
+| `--clickable-area-large` | settable | `--nldesign-nc-clickable-area-large` | `48px` | `48px` | Large touch target (48px); accessibility standard |
+| `--clickable-area-small` | settable | `--nldesign-nc-clickable-area-small` | `24px` | `24px` | Small touch target (24px); accessibility standard |
+| `--default-clickable-area` | settable | `--nldesign-nc-default-clickable-area` | `34px` | `34px` | Touch target (34px); accessibility standard |
+| `--default-grid-baseline` | settable | `--nldesign-nc-default-grid-baseline` | `4px` | `4px` | Base grid unit (4px); core layout building block |
 
 ### Special Colors
 
@@ -172,11 +172,11 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 |---|---|---|---|---|---|
 | `--color-background-selection` | mapped |  | `rgb(from var(--color-primary-el…` | `rgb(from var(--color-primary-el…` | Selection wash; new in NC 33/34. Derived from `--color-primary-element` at 20% alpha, and that variable is mapped |
 | `--color-favorite` | mapped | `--nldesign-color-favorite` | `#A37200` | `#ffde00` | Favorite/star color |
-| `--color-loading-dark` | excluded |  | `#444444` | `#CCC` | Loading animation dark; NC internal |
-| `--color-loading-light` | excluded |  | `#cccccc` | `#777` | Loading animation light; NC internal |
-| `--color-mark` | excluded |  | `#fff0c7` | `#4d3800` | `\<mark\>` highlight tint (#fff0c7); new in NC 33/34. No NL Design highlight token, and the tint has to stay legible unde… |
-| `--color-scrollbar` | excluded |  | `var(--color-border-maxcontrast)…` | `var(--color-border-maxcontrast)…` | Scrollbar color; depends on border-maxcontrast |
-| `--color-text-selection` | excluded |  | `var(--color-main-text)` | `var(--color-main-text)` | Selected text; new in NC 33/34. Derived from `--color-main-text`, which is mapped |
+| `--color-loading-dark` | settable | `--nldesign-nc-color-loading-dark` | `#444444` | `#CCC` | Loading animation dark; NC internal |
+| `--color-loading-light` | settable | `--nldesign-nc-color-loading-light` | `#cccccc` | `#777` | Loading animation light; NC internal |
+| `--color-mark` | settable | `--nldesign-nc-color-mark` | `#fff0c7` | `#4d3800` | `\<mark\>` highlight tint (#fff0c7); new in NC 33/34. No NL Design highlight token, and the tint has to stay legible unde… |
+| `--color-scrollbar` | settable | `--nldesign-nc-color-scrollbar` | `var(--color-border-maxcontrast)…` | `var(--color-border-maxcontrast)…` | Scrollbar color; depends on border-maxcontrast |
+| `--color-text-selection` | settable | `--nldesign-nc-color-text-selection` | `var(--color-main-text)` | `var(--color-main-text)` | Selected text; new in NC 33/34. Derived from `--color-main-text`, which is mapped |
 
 ### Status: Error
 
@@ -187,7 +187,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-error` | mapped | `--nldesign-color-error` | `#FFE7E7` | `#552121` | Error background/accent |
 | `--color-error-hover` | mapped | `--nldesign-color-error-hover` | `#ffc3c3` | `#7a2f2f` | Error hover state |
 | `--color-error-rgb` | mapped | `--nldesign-color-error-rgb` | `255,231,231` | `85,33,33` | Deprecated; RGB for rgba() |
-| `--color-error-text` | excluded |  | `#8A0000` | `#FFCCCC` | Error text color; NC auto-calculates for contrast |
+| `--color-error-text` | settable | `--nldesign-nc-color-error-text` | `#8A0000` | `#FFCCCC` | Error text color; NC auto-calculates for contrast |
 
 ### Status: Info
 
@@ -195,9 +195,9 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 |---|---|---|---|---|---|
 | `--color-element-info` | mapped | `--nldesign-color-info` | `#0077C7` | `#0099E0` | Info element accent |
 | `--color-info` | mapped | `--nldesign-color-info` | `#D5F1FA` | `#003553` | Info background/accent |
-| `--color-info-hover` | excluded |  | `#b5e6f6` | `#005686` | Info hover; no NL Design equivalent |
-| `--color-info-rgb` | excluded |  | `213,241,250` | `0,53,83` | Deprecated; RGB for rgba() |
-| `--color-info-text` | excluded |  | `#0066AC` | `#00AEFF` | Info text; NC auto-calculates for contrast |
+| `--color-info-hover` | settable | `--nldesign-nc-color-info-hover` | `#b5e6f6` | `#005686` | Info hover; no NL Design equivalent |
+| `--color-info-rgb` | settable | `--nldesign-nc-color-info-rgb` | `213,241,250` | `0,53,83` | Deprecated; RGB for rgba() |
+| `--color-info-text` | settable | `--nldesign-nc-color-info-text` | `#0066AC` | `#00AEFF` | Info text; NC auto-calculates for contrast |
 
 ### Status: Success
 
@@ -206,9 +206,9 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-border-success` | mapped | `--nldesign-color-success` | `var(--color-element-success)` | `var(--color-element-success)` | Success border; uses success color |
 | `--color-element-success` | mapped | `--nldesign-color-success` | `#099f05` | `#40A330` | Success element accent |
 | `--color-success` | mapped | `--nldesign-color-success` | `#D8F3DA` | `#11321A` | Success background/accent |
-| `--color-success-hover` | excluded |  | `#bdebc0` | `#1e582e` | Success hover; no NL Design equivalent |
+| `--color-success-hover` | settable | `--nldesign-nc-color-success-hover` | `#bdebc0` | `#1e582e` | Success hover; no NL Design equivalent |
 | `--color-success-rgb` | mapped | `--nldesign-color-success-rgb` | `216,243,218` | `17,50,26` | Deprecated; RGB for rgba() |
-| `--color-success-text` | excluded |  | `#005416` | `#D5F2DC` | Success text; NC auto-calculates for contrast |
+| `--color-success-text` | settable | `--nldesign-nc-color-success-text` | `#005416` | `#D5F2DC` | Success text; NC auto-calculates for contrast |
 
 ### Status: Warning
 
@@ -216,9 +216,9 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 |---|---|---|---|---|---|
 | `--color-element-warning` | mapped | `--nldesign-color-warning` | `#BF7900` | `#FFCC00` | Warning element accent |
 | `--color-warning` | mapped | `--nldesign-color-warning` | `#FFEEC5` | `#3D3010` | Warning background/accent |
-| `--color-warning-hover` | excluded |  | `#ffe4a1` | `#65501b` | Warning hover; no NL Design equivalent |
+| `--color-warning-hover` | settable | `--nldesign-nc-color-warning-hover` | `#ffe4a1` | `#65501b` | Warning hover; no NL Design equivalent |
 | `--color-warning-rgb` | mapped | `--nldesign-color-warning-rgb` | `255,238,197` | `61,48,16` | Deprecated; RGB for rgba() |
-| `--color-warning-text` | excluded |  | `#664700` | `#FFEEC5` | Warning text; NC auto-calculates for contrast |
+| `--color-warning-text` | settable | `--nldesign-nc-color-warning-text` | `#664700` | `#FFEEC5` | Warning text; NC auto-calculates for contrast |
 
 ### Text Colors
 
@@ -228,7 +228,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-text-error` | mapped | `--nldesign-color-error` | `#bf0000` | `#ff6f6f` | Error message text |
 | `--color-text-maxcontrast` | mapped | `--nldesign-color-text-muted` | `#6b6b6b` | `#999999` | Muted/secondary text |
 | `--color-text-maxcontrast-background-blur` | mapped |  | `#595959` | `#a8a8a8` | Blur-adjusted maxcontrast; Nextcloud calculates per background |
-| `--color-text-maxcontrast-default` | excluded |  | `#6b6b6b` | `#999999` | Default maxcontrast; auto-calculated by Nextcloud per theme |
+| `--color-text-maxcontrast-default` | settable | `--nldesign-nc-color-text-maxcontrast-default` | `#6b6b6b` | `#999999` | Default maxcontrast; auto-calculated by Nextcloud per theme |
 | `--color-text-success` | mapped | `--nldesign-color-success` | `#066e03` | `#49bb37` | Success message text |
 | `--color-text-warning` | mapped | `--nldesign-color-warning` |  |  | Warning message text |
 
@@ -236,10 +236,10 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
-| `--default-font-size` | excluded |  | `15px` | `15px` | Base font size (15px); standard across themes |
-| `--default-line-height` | excluded |  | `1.5` | `1.5` | Line height (1.5); standard |
+| `--default-font-size` | settable | `--nldesign-nc-default-font-size` | `15px` | `15px` | Base font size (15px); standard across themes |
+| `--default-line-height` | settable | `--nldesign-nc-default-line-height` | `1.5` | `1.5` | Line height (1.5); standard |
 | `--font-face` | mapped | `--nldesign-font-family` | `system-ui, -apple-system, 'Sego…` | `system-ui, -apple-system, 'Sego…` | Font stack |
-| `--font-size-small` | excluded |  | `13px` | `13px` | Small font size (13px); standard |
+| `--font-size-small` | settable | `--nldesign-nc-font-size-small` | `13px` | `13px` | Small font size (13px); standard |
 | `--font-weight-default` | mapped | `--nldesign-font-weight-default` | `400` | `400` | Body weight; new in NC 33/34 |
 | `--font-weight-element` | mapped | `--nldesign-font-weight-element` | `500` | `500` | Weight of controls and button labels; new in NC 33/34. NcButton in @nextcloud/vue 9 reads it on `.button-vue__text`, wh… |
 | `--font-weight-heading` | mapped | `--nldesign-font-weight-heading` | `600` | `600` | Heading weight; new in NC 33/34. The per-level `--nldesign-component-heading-N-font-weight` tokens resolve through it |

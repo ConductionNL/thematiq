@@ -1313,11 +1313,11 @@
 							notify(
 								publishMode === true
 									? t(
-											'nldesign',
+											'thematiq',
 											'Theme published instance-wide. Reload the page to see changes.',
 										)
 									: t(
-											'nldesign',
+											'thematiq',
 											'Theme updated successfully. reload the page to see changes.',
 										),
 							)
@@ -1945,7 +1945,7 @@
 					+ '      <p class="nldesign-dialog-hint">'
 					+ escapeHtml(
 						t(
-							'nldesign',
+							'thematiq',
 							"This token set also ships a dark-surface logo. Nextcloud core has no dark logo slot, so it is applied by nldesign's own dark-mode stylesheet, not synced to Nextcloud theming.",
 						),
 					)
@@ -1960,7 +1960,7 @@
 				+ '    <h3>'
 				+ escapeHtml(
 					t(
-						'nldesign',
+						'thematiq',
 						'Update Nextcloud theming to match {name}?',
 					).replace('{name}', tokenSetName),
 				)
@@ -2021,7 +2021,7 @@
 				+ '    <p class="nldesign-dialog-hint">'
 				+ escapeHtml(
 					t(
-						'nldesign',
+						'thematiq',
 						'Only values that differ are shown. items without a proposed value are left unchanged.',
 					),
 				)
@@ -2131,7 +2131,7 @@
 							} else {
 								notify(
 									t(
-										'nldesign',
+										'thematiq',
 										'Failed to update Nextcloud theming:',
 									) + (data.error || ''),
 								)
@@ -2147,11 +2147,24 @@
 				})
 		}
 
-		// Escape HTML to prevent XSS
+		/**
+		 * Escape a value for HTML text and for a quoted attribute value.
+		 *
+		 * Most call sites put the result inside value="..." or title="...", so
+		 * quotes must be escaped too. The old textContent/innerHTML round trip
+		 * left `"` as is, and a quote in an imported overrides value closed
+		 * the attribute and let the rest parse as new attributes (#622).
+		 *
+		 * @param {*} text The value to escape.
+		 * @return {string} The escaped value.
+		 */
 		function escapeHtml(text) {
-			var div = document.createElement('div')
-			div.textContent = text
-			return div.innerHTML
+			return String(text === null || text === undefined ? '' : text)
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#39;')
 		}
 
 		/* ==========================================================================
@@ -2339,7 +2352,7 @@
 									swapped === true
 										? t('thematiq', 'Applied.')
 										: t(
-												'nldesign',
+												'thematiq',
 												'Setting saved successfully. reload the page to see changes.',
 											),
 								)
@@ -2390,7 +2403,7 @@
 									swapped === true
 										? t('thematiq', 'Applied.')
 										: t(
-												'nldesign',
+												'thematiq',
 												'Setting saved successfully. reload the page to see changes.',
 											),
 								)
@@ -4393,7 +4406,7 @@
 					if (data.status === 'ok') {
 						if (resultEl !== null) {
 							resultEl.textContent = t(
-								'nldesign',
+								'thematiq',
 								'{imported} tokens imported, {skipped} tokens skipped (not recognized)',
 							)
 								.replace('{imported}', data.imported)
@@ -4601,7 +4614,7 @@
 				+ '<p class="settings-hint">'
 				+ escapeHtml(
 					t(
-						'nldesign',
+						'thematiq',
 						'These values would change. check which ones to apply to your custom overrides.',
 					),
 				)
@@ -5079,7 +5092,7 @@
 					}
 				})
 				triggerLabel.textContent = t(
-					'nldesign',
+					'thematiq',
 					'{themed} of {total} apps themed',
 					{ themed: themed, total: boxes.length },
 				)
@@ -5202,13 +5215,13 @@
 					if (data && data.status === 'ok') {
 						if (feedback !== null) {
 							feedback.textContent = t(
-								'nldesign',
+								'thematiq',
 								'App theming saved. Reload an affected app to see changes.',
 							)
 						}
 						notify(
 							t(
-								'nldesign',
+								'thematiq',
 								'App theming saved. Reload an affected app to see changes.',
 							),
 						)
@@ -5262,7 +5275,7 @@
 				.catch(function (err) {
 					console.error('Error loading group theming:', err)
 					listEl.textContent = t(
-						'nldesign',
+						'thematiq',
 						'Failed to load group mappings.',
 					)
 				})
@@ -5553,7 +5566,7 @@
 						renderGroupThemingList()
 						if (feedback !== null) {
 							feedback.textContent = t(
-								'nldesign',
+								'thematiq',
 								'Group theming saved.',
 							)
 						}
@@ -5566,7 +5579,7 @@
 						var entryTokenSet =
 							(data.entry && data.entry.tokenSet) || '?'
 						var message = t(
-							'nldesign',
+							'thematiq',
 							'Could not save mapping for group "{group}" → "{tokenSet}": {reason}',
 							{
 								group: entryGroup,
@@ -5585,7 +5598,7 @@
 
 					if (feedback !== null) {
 						feedback.textContent = t(
-							'nldesign',
+							'thematiq',
 							'Failed to save group theming.',
 						)
 					}
@@ -5666,7 +5679,7 @@
 							'<li>'
 							+ escapeHtml(
 								t(
-									'nldesign',
+									'thematiq',
 									'{pair}: contrast could not be evaluated (non-literal color).',
 								).replace('{pair}', w.pair),
 							)
@@ -5677,7 +5690,7 @@
 						'<li>'
 						+ escapeHtml(
 							t(
-								'nldesign',
+								'thematiq',
 								'{pair}: contrast {ratio}:1 is below the WCAG 2.1 AA threshold of {threshold}:1.',
 							)
 								.replace('{pair}', w.pair)
@@ -5738,11 +5751,11 @@
 		function reasonLabel(reason) {
 			var labels = {
 				'unmapped-path': t(
-					'nldesign',
+					'thematiq',
 					'Not part of the --nldesign-* vocabulary',
 				),
 				'missing-type': t(
-					'nldesign',
+					'thematiq',
 					'No $type could be resolved (never guessed)',
 				),
 				'unsupported-color-space': t('thematiq', 'Unsupported color space'),
@@ -5750,11 +5763,11 @@
 				'alias-cycle': t('thematiq', 'Alias cycle detected'),
 				'alias-target-missing': t('thematiq', 'Alias target does not exist'),
 				'alias-depth-exceeded': t(
-					'nldesign',
+					'thematiq',
 					'Alias chain too deep (more than 10 hops)',
 				),
 				'duplicate-target': t(
-					'nldesign',
+					'thematiq',
 					'Another token already maps to this target',
 				),
 			}
@@ -6106,7 +6119,7 @@
 						return
 					}
 					var msg = t(
-						'nldesign',
+						'thematiq',
 						'{imported} tokens imported, {skipped} skipped.',
 					)
 						.replace('{imported}', res.data.imported)
@@ -6123,7 +6136,7 @@
 						msg +=
 							' '
 							+ t(
-								'nldesign',
+								'thematiq',
 								'{count} WCAG AA contrast warning(s) — see the apply dialog.',
 							).replace('{count}', res.data.warnings.length)
 					}
@@ -6152,7 +6165,7 @@
 						.catch(function () {
 							notify(
 								t(
-									'nldesign',
+									'thematiq',
 									'Token set uploaded. Reload the page to apply it.',
 								),
 							)
@@ -6442,7 +6455,7 @@
 				.catch(function (err) {
 					console.error('Error loading custom token sets:', err)
 					listEl.textContent = t(
-						'nldesign',
+						'thematiq',
 						'Failed to load custom token sets.',
 					)
 				})
@@ -6493,7 +6506,7 @@
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
 				empty.textContent = t(
-					'nldesign',
+					'thematiq',
 					'No custom token sets uploaded yet.',
 				)
 				listEl.appendChild(empty)
@@ -6648,7 +6661,7 @@
 		function deleteCustomSet(id, name) {
 			OC.dialogs.confirm(
 				t(
-					'nldesign',
+					'thematiq',
 					'Delete the custom token set "{name}"? If it is currently active, the theme will fall back to Nextcloud.',
 				).replace('{name}', name),
 				t('thematiq', 'Delete custom token set'),
@@ -6709,7 +6722,7 @@
 							} else {
 								notify(
 									t(
-										'nldesign',
+										'thematiq',
 										'Failed to delete custom token set.',
 									),
 								)
@@ -7004,7 +7017,7 @@
 		function deleteFont(id, name) {
 			OC.dialogs.confirm(
 				t(
-					'nldesign',
+					'thematiq',
 					'Delete the font "{name}"? Pages using it will fall back to Fira Sans.',
 				).replace('{name}', name),
 				t('thematiq', 'Delete font'),
@@ -7029,7 +7042,7 @@
 							if (data && data.status === 'ok') {
 								notify(
 									t(
-										'nldesign',
+										'thematiq',
 										'Font deleted. Reload the page to refresh the styling.',
 									),
 								)
@@ -7686,7 +7699,7 @@
 					if (result.status === 200 && result.data.applied === true) {
 						showConfigBundleResult(
 							t(
-								'nldesign',
+								'thematiq',
 								'Configuration imported successfully. Reloading…',
 							),
 						)
@@ -7863,7 +7876,7 @@
 						renderEmailTheming(data.state, data.footer)
 						if (feedback !== null) {
 							feedback.textContent = t(
-								'nldesign',
+								'thematiq',
 								'Email template settings saved.',
 							)
 						}
@@ -7891,7 +7904,7 @@
 						}
 						notify(
 							t(
-								'nldesign',
+								'thematiq',
 								'config.php is read-only; run the shown occ command manually.',
 							),
 						)
@@ -7904,14 +7917,14 @@
 						renderEmailTheming(null, data.footer)
 						if (foreignNote !== null) {
 							foreignNote.textContent = t(
-								'nldesign',
+								'thematiq',
 								'A different mail template class is already configured ({class}); nldesign will not overwrite it.',
 								{ class: data.class },
 							)
 						}
 						notify(
 							t(
-								'nldesign',
+								'thematiq',
 								'A different mail template class is already configured.',
 							),
 						)
@@ -7921,7 +7934,7 @@
 					if (data && data.error === 'invalid_footer') {
 						notify(
 							t(
-								'nldesign',
+								'thematiq',
 								'Invalid footer URL — use an http:// or https:// address.',
 							),
 						)
@@ -7976,13 +7989,13 @@
 				var ts = tokenSetsData[notice.setId]
 				var name = ts ? ts.name : notice.setId
 				return t(
-					'nldesign',
+					'thematiq',
 					'Token set {name} has upstream update {version} — review & apply',
 					{ name: name, version: version },
 				)
 			}
 			return t(
-				'nldesign',
+				'thematiq',
 				'Upstream token sets have updates ({version}) — review & apply',
 				{ version: version },
 			)
@@ -8098,11 +8111,11 @@
 						notify(
 							enabled
 								? t(
-										'nldesign',
+										'thematiq',
 										'Upstream token update checks enabled.',
 									)
 								: t(
-										'nldesign',
+										'thematiq',
 										'Upstream token update checks disabled.',
 									),
 						)
