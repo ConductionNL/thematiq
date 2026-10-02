@@ -183,7 +183,11 @@ class PlaygroundStateService {
 		}
 
 		$path = $this->appManager->getAppPath(Application::APP_ID) . '/css/tokens/dark/' . $tokenSetId . '.css';
-		$css  = (is_readable($path) === true ? (string)file_get_contents($path) : '');
+		if (is_readable($path) === false) {
+			return [];
+		}
+
+		$css = (string)file_get_contents($path);
 		if (preg_match('/body\[data-theme-dark\][^{]*\{([^}]*)\}/', $css, $block) !== 1) {
 			return [];
 		}

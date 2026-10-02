@@ -73,7 +73,9 @@ class OwnComponentController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('Your components could not be loaded.')], 500);
 		}
 
-		return new JSONResponse(['components' => $components, 'limits' => ['count' => OwnComponentService::MAX_COMPONENTS, 'bytes' => OwnComponentService::MAX_BYTES]]);
+		$limits = ['count' => OwnComponentService::MAX_COMPONENTS, 'bytes' => OwnComponentService::MAX_BYTES];
+
+		return new JSONResponse(['components' => $components, 'limits' => $limits]);
 	}//end list()
 
 	/**
