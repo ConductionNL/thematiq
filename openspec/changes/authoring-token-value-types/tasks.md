@@ -41,7 +41,7 @@ Tick a box when the work is merged to `development`, not when it is started.
       `parseColorWithAlpha()`, blend before `ratio()` (design decision 5). Verify: PHPUnit
       `ContrastServiceTest::testFaintTextFailsAfterBlend`, `testEightDigitHexIsEvaluated`.
 - [ ] 3.2 `DarkPaletteService::deriveColorToken()` keeps alpha, bump the generator version,
-      regenerate with `occ nldesign:generate-dark-variants --force`. Verify: PHPUnit
+      regenerate with `occ thematiq:generate-dark-variants --force`. Verify: PHPUnit
       `DarkPaletteServiceTest::testTranslucentSurfaceKeepsAlpha`, and `git diff --stat css/tokens/dark/`
       in the PR shows every file with the new version header.
 - [ ] 3.3 `CustomTokenSetService::deriveTheming()` blends a translucent primary or background into

@@ -9,7 +9,7 @@ You switch the house style with `occ`, so a deployment script or a configuration
 ## Find the id of a set
 
 ```bash
-occ nldesign:theme:list
+occ thematiq:theme:list
 ```
 
 Each line shows the id, whether the set is `shipped` or `custom`, and its name. Use the id in the other commands.
@@ -17,7 +17,7 @@ Each line shows the id, whether the set is `shipped` or `custom`, and its name. 
 ## See what is active
 
 ```bash
-occ nldesign:theme:get
+occ thematiq:theme:get
 ```
 
 The first line names the active instance-wide set. Below it you see the group mappings, highest priority first, as on the settings page.
@@ -25,7 +25,7 @@ The first line names the active instance-wide set. Below it you see the group ma
 ## Switch the active set
 
 ```bash
-occ nldesign:theme:set amsterdam
+occ thematiq:theme:set amsterdam
 ```
 
 An unknown id stops the command with an error that names the id, and nothing changes. Setting the set that is already active changes nothing and writes no audit entry, so a script can run the command on every deploy.
@@ -40,9 +40,9 @@ Two options:
 ```bash
 #!/usr/bin/env bash
 set -e
-occ nldesign:theme:set "$HOUSE_STYLE" --dry-run
-occ nldesign:theme:set "$HOUSE_STYLE" --sync-core
-occ nldesign:theme:get
+occ thematiq:theme:set "$HOUSE_STYLE" --dry-run
+occ thematiq:theme:set "$HOUSE_STYLE" --sync-core
+occ thematiq:theme:get
 ```
 
-The first call fails the script on a typo before anything changes. Group mappings are not set here: `occ nldesign:config:import` sets them as part of a configuration bundle.
+The first call fails the script on a typo before anything changes. Group mappings are not set here: `occ thematiq:config:import` sets them as part of a configuration bundle.

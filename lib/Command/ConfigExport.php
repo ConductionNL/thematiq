@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 /**
- * `occ nldesign:config:export [file]` — writes the complete nldesign
+ * `occ thematiq:config:export [file]` — writes the complete nldesign
  * configuration bundle (`config-portability` spec) to a file, or stdout
  * when no file is given, for OTAP (dev/test/acceptatie/productie) promotion
  * pipelines.
@@ -66,7 +66,7 @@ class ConfigExport extends Command {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:config:export')
+		$this->setName(name: 'thematiq:config:export')
 			->setDescription(
 				'Export the complete NL Design configuration (token set, toggles, per-app '
 				. 'exclusions, overrides, custom token sets, email footer, custom-font metadata, '

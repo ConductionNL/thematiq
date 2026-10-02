@@ -11,7 +11,7 @@ When the import source is a branding package, the `customFonts` section MUST be 
 #### Scenario: A package with a missing font file is refused whole
 
 - GIVEN a package whose bundle names the font `custom-corporate` but has no `fonts/custom-corporate.woff2`
-- WHEN an operator runs `occ nldesign:config:import` on it
+- WHEN an operator runs `occ thematiq:config:import` on it
 - THEN the command MUST exit non-zero, name the missing file and write nothing
 
 #### Scenario: A bare bundle keeps its old font behaviour

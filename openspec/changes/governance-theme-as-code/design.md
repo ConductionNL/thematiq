@@ -4,7 +4,7 @@
 
 - `lib/Service/ConfigBundleService.php:241` `export()` and `:309` `import(array $bundle, bool $dryRun)`: validate every section, then write; any hard failure writes nothing. Fonts are exported as metadata only and never applied on import (`:50-57`, `binariesIncluded => false` at `:262` and `:865`).
 - `lib/Controller/ConfigBundleController.php:56` caps a web upload at 256 KB, which is why fonts were left out.
-- `lib/Command/ConfigExport.php:69` `nldesign:config:export [file]` and `lib/Command/ConfigImport.php:73` `nldesign:config:import <file> [--dry-run]`; `openspec/specs/config-portability/spec.md:93-126` requires both to reuse `ConfigBundleService`.
+- `lib/Command/ConfigExport.php:69` `thematiq:config:export [file]` and `lib/Command/ConfigImport.php:73` `thematiq:config:import <file> [--dry-run]`; `openspec/specs/config-portability/spec.md:93-126` requires both to reuse `ConfigBundleService`.
 - `lib/Service/FontService.php`: fonts live as `fonts/custom-<slug>.woff2` in app data (`:39`, `:77`), with a manifest in app config `custom_fonts` (`:56`) and a revision key (`:63`).
 - `lib/Service/TokenSetConverterService.php` converts DTCG and other theme inputs into a token set (open change `nlds-theme-converter` widens it).
 - Repair steps are registered in `appinfo/info.xml:182-233`; `lib/BackgroundJob/UpstreamFreshnessJob.php` is the job pattern.
@@ -38,7 +38,7 @@ Rejected: a Git URL and a ref that thematiq clones itself. It needs Git binaries
 
 ### 4. Apply on change, validate first
 
-`ConfigSourceService::applyIfChanged()` hashes the package (sorted file list and contents) and compares it with `config_source_applied_hash`. When they differ it runs the package import. On success it stores the hash and writes a `config_imported` audit entry with actor `system`, context `source: deployment` and the `REVISION` when present. On failure it writes nothing, keeps the old hash, stores the error listing in `config_source_last_error` and logs an error. It runs from a post-migration repair step (so every upgrade applies it), from a background job every 5 minutes, and from `occ nldesign:config:apply` (exit non-zero on failure, for pipelines).
+`ConfigSourceService::applyIfChanged()` hashes the package (sorted file list and contents) and compares it with `config_source_applied_hash`. When they differ it runs the package import. On success it stores the hash and writes a `config_imported` audit entry with actor `system`, context `source: deployment` and the `REVISION` when present. On failure it writes nothing, keeps the old hash, stores the error listing in `config_source_last_error` and logs an error. It runs from a post-migration repair step (so every upgrade applies it), from a background job every 5 minutes, and from `occ thematiq:config:apply` (exit non-zero on failure, for pipelines).
 
 ### 5. Managed notice, drift and an optional lock
 
@@ -46,7 +46,7 @@ While `thematiq.config_source` is set, the configuration bundle block states the
 
 ### 6. Export for the round trip
 
-`occ nldesign:config:export --package <dir>` writes the tree above from the running configuration, fonts included, so a team can start their Git repository from what they have today.
+`occ thematiq:config:export --package <dir>` writes the tree above from the running configuration, fonts included, so a team can start their Git repository from what they have today.
 
 ## Risks
 

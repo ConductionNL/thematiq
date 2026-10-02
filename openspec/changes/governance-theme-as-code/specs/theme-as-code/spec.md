@@ -6,12 +6,12 @@ A new capability. The house style is a package that can live in Git and is appli
 
 ### Requirement: A branding package holds the whole house style
 
-A branding package MUST be a directory, or a ZIP of one, holding `bundle.json` in the existing bundle format, `fonts/<id>.woff2` for every font in the bundle, optional `tokens/<id>.json` DTCG sources, and an optional `REVISION` file. `occ nldesign:config:export --package <dir>` MUST write a package of the running configuration, fonts included. `occ nldesign:config:import` MUST accept a package directory or ZIP as well as a bare bundle file.
+A branding package MUST be a directory, or a ZIP of one, holding `bundle.json` in the existing bundle format, `fonts/<id>.woff2` for every font in the bundle, optional `tokens/<id>.json` DTCG sources, and an optional `REVISION` file. `occ thematiq:config:export --package <dir>` MUST write a package of the running configuration, fonts included. `occ thematiq:config:import` MUST accept a package directory or ZIP as well as a bare bundle file.
 
 #### Scenario: An operator moves the house style with its fonts
 
 - GIVEN a test server with a custom heading font and a custom token set
-- WHEN an operator runs `occ nldesign:config:export --package /srv/branding` there and `occ nldesign:config:import /srv/branding` on production
+- WHEN an operator runs `occ thematiq:config:export --package /srv/branding` there and `occ thematiq:config:import /srv/branding` on production
 - THEN production MUST render headings in the custom font
 - AND no administrator MUST re-upload the font
 
@@ -23,7 +23,7 @@ A branding package MUST be a directory, or a ZIP of one, holding `bundle.json` i
 
 ### Requirement: The server applies the package named in config.php
 
-When `thematiq.config_source` in `config.php` names a package path, the app MUST apply the package whenever its content hash differs from the last applied hash: after every upgrade, from a background job that runs at least every five minutes, and when an operator runs `occ nldesign:config:apply`. The app MUST NOT fetch the package from a network location; the deployment puts it on disk.
+When `thematiq.config_source` in `config.php` names a package path, the app MUST apply the package whenever its content hash differs from the last applied hash: after every upgrade, from a background job that runs at least every five minutes, and when an operator runs `occ thematiq:config:apply`. The app MUST NOT fetch the package from a network location; the deployment puts it on disk.
 
 #### Scenario: A merged pull request reaches production
 
@@ -40,7 +40,7 @@ When `thematiq.config_source` in `config.php` names a package path, the app MUST
 
 ### Requirement: A failing package changes nothing
 
-A package that fails validation MUST change nothing. The app MUST keep the running configuration, log an error once per distinct package hash, and show the error listing on Settings > Administration > Theming. `occ nldesign:config:apply` MUST exit non-zero on a failing package.
+A package that fails validation MUST change nothing. The app MUST keep the running configuration, log an error once per distinct package hash, and show the error listing on Settings > Administration > Theming. `occ thematiq:config:apply` MUST exit non-zero on a failing package.
 
 #### Scenario: A typo in the package does not break production
 

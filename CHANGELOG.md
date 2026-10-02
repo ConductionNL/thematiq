@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### BREAKING
+- **The occ commands moved from `nldesign:*` to `thematiq:*`, with no alias under the old
+  names.** The commands now follow the app id, so `occ list thematiq` finds them. Update any
+  script or pipeline that calls the old names:
+
+  | Old name | New name |
+  | --- | --- |
+  | `nldesign:compliance-report` | `thematiq:compliance-report` |
+  | `nldesign:config:export` | `thematiq:config:export` |
+  | `nldesign:config:import` | `thematiq:config:import` |
+  | `nldesign:config:versions` | `thematiq:config:versions` |
+  | `nldesign:config:restore` | `thematiq:config:restore` |
+  | `nldesign:generate-dark-variants` | `thematiq:generate-dark-variants` |
+  | `nldesign:theme:list` | `thematiq:theme:list` |
+  | `nldesign:theme:get` | `thematiq:theme:get` |
+  | `nldesign:theme:set` | `thematiq:theme:set` |
+
+  An old name now fails with "command not defined". Moving settings from an instance on
+  the old app id is the job of the configuration import and export.
 - **Removed all 344 vendored Amsterdam Design System icon SVGs from `img/icons/`.** The
   upstream `@amsterdam/design-system-assets` `LICENSE.md` declares the icon artwork
   **proprietary to the City of Amsterdam** ("The open-source licence does NOT apply to
