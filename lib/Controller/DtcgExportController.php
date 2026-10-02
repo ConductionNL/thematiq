@@ -58,7 +58,6 @@ class DtcgExportController extends Controller {
 	 * @param DeprecationRecords $deprecations Written as `$deprecated` on deprecated tokens.
 	 * @param IL10N              $l            The error text.
 	 * @param RuntimeFileStore|null $store     Where uploaded sets live; shipped sets come from the release.
-	 * @param SetFileReader      $files        Reads a set's file from the release or the store.
 	 */
 	public function __construct(
 		string $appName,
@@ -70,7 +69,6 @@ class DtcgExportController extends Controller {
 		private DeprecationRecords $deprecations,
 		private IL10N $l,
 		private ?RuntimeFileStore $store = null,
-		private SetFileReader $files = new SetFileReader(),
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
@@ -91,7 +89,7 @@ class DtcgExportController extends Controller {
 		}
 
 		$appPath = $this->appManager->getAppPath(Application::APP_ID);
-		$css     = (string)$this->files->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->store);
+		$css     = (string)(new SetFileReader())->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->store);
 		$name    = $id;
 		foreach ($this->tokenSets->getAvailableTokenSets() as $set) {
 			if (($set['id'] ?? null) === $id) {

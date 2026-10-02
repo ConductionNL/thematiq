@@ -970,7 +970,10 @@ OC.L10N.register(
         "This app is not installed.": "This app is not installed.",
         "This app is excluded from theming. Include it under Theming per app first.": "This app is excluded from theming. Include it under Theming per app first.",
         "This token set is not available.": "This token set is not available.",
-        "The logo is larger than 1 MB.": "The logo is larger than 1 MB."
+        "The logo is larger than 1 MB.": "The logo is larger than 1 MB.",
+        "The document is a Thematiq export, so the value came back under its own name, without conversion.": "The document is a Thematiq export, so the value came back under its own name, without conversion.",
+        "The colour lies outside the sRGB range every part of Nextcloud reads, so the document's own sRGB fallback was used. The original is shown for reference.": "The colour lies outside the sRGB range every part of Nextcloud reads, so the document's own sRGB fallback was used. The original is shown for reference.",
+        "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.": "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference."
     },
     "nplurals=2; plural=(n != 1);"
 )

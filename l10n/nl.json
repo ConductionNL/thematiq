@@ -969,7 +969,10 @@
         "This app is not installed.": "Deze app is niet geïnstalleerd.",
         "This app is excluded from theming. Include it under Theming per app first.": "Deze app is uitgesloten van theming. Neem hem eerst op onder Theming per app.",
         "This token set is not available.": "Deze token set is niet beschikbaar.",
-        "The logo is larger than 1 MB.": "Het logo is groter dan 1 MB."
+        "The logo is larger than 1 MB.": "Het logo is groter dan 1 MB.",
+        "The document is a Thematiq export, so the value came back under its own name, without conversion.": "Het document is een Thematiq-export, dus de waarde kwam terug onder haar eigen naam, zonder omzetting.",
+        "The colour lies outside the sRGB range every part of Nextcloud reads, so the document's own sRGB fallback was used. The original is shown for reference.": "De kleur valt buiten het sRGB-bereik dat elk deel van Nextcloud leest, dus is de sRGB-terugvalwaarde uit het document zelf gebruikt. Het origineel staat erbij ter vergelijking.",
+        "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.": "De kleur valt buiten het sRGB-bereik dat elk deel van Nextcloud leest en het document geeft geen terugvalwaarde, dus is elk kanaal afgekapt op de dichtstbijzijnde sRGB-waarde. Het origineel staat erbij ter vergelijking."
     },
     "plurals": {}
 }
