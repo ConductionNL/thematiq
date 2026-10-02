@@ -33,9 +33,9 @@ In the Thematiq admin settings, find **Configuration bundle (OTAP promotion)**.
 ## From the command line
 
 ```bash
-occ nldesign:config:export bundle.json
-occ nldesign:config:import bundle.json --dry-run
-occ nldesign:config:import bundle.json
+occ thematiq:config:export bundle.json
+occ thematiq:config:import bundle.json --dry-run
+occ thematiq:config:import bundle.json
 ```
 
 Export without a file name writes to standard output. `--dry-run` checks the bundle and writes nothing.

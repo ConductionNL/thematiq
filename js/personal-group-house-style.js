@@ -60,6 +60,7 @@
 			})
 			.then(function (result) {
 				if (!result.ok) {
+					checkActive(group)
 					feedback.textContent =
 						result.body.error
 						|| t('thematiq', 'The house style could not be saved.')
@@ -70,14 +71,32 @@
 					'thematiq',
 					'Saved. Members of {group} see the new house style on their next page.',
 					{ group: group.displayName },
+					undefined,
+					{ escape: false },
 				)
 			})
 			.catch(function () {
+				checkActive(group)
 				feedback.textContent = t(
 					'thematiq',
 					'The house style could not be saved.',
 				)
 			})
+	}
+
+	/**
+	 * Check the radio of the set that is active for a group again, after a
+	 * refused save left the clicked one checked.
+	 *
+	 * @param {object} group The group.
+	 */
+	function checkActive(group) {
+		var input = document.getElementById(
+			'thematiq-my-group-' + group.group + '-' + group.tokenSet,
+		)
+		if (input !== null) {
+			input.checked = true
+		}
 	}
 
 	/**

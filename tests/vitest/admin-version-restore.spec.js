@@ -162,4 +162,30 @@ describe('admin.js version restore', () => {
 		)
 		expect(document.activeElement).toBe(button)
 	})
+
+	it('says so and returns focus when the restore answers with an error page', async () => {
+		confirmAnswer = true
+		await load()
+		const answer = global.fetch.getMockImplementation()
+		global.fetch.mockImplementation((url, options) => {
+			if (url.indexOf('/restore') !== -1) {
+				return Promise.resolve({
+					status: 423,
+					ok: false,
+					json: () => Promise.reject(new SyntaxError('not JSON')),
+				})
+			}
+			return answer(url, options)
+		})
+		vi.spyOn(console, 'error').mockImplementation(() => {})
+
+		const button = document.querySelectorAll('button.nldesign-audit-restore')[1]
+		button.click()
+		await flush()
+
+		expect(OC.Notification.showTemporary).toHaveBeenCalledWith(
+			'The version was not restored. Nothing was changed.',
+		)
+		expect(document.activeElement).toBe(button)
+	})
 })

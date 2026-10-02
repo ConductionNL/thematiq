@@ -1575,6 +1575,29 @@ describe('admin.js theming sync rows', () => {
 		expect(labels(overlay)).toEqual(['Background image'])
 	})
 
+	it('says why Nextcloud gets the blend of a translucent colour', async () => {
+		const overlay = await switchTo(
+			{ primary_color: '#8aa0b9', primary_color_original: '#15427380' },
+			{ primary_color: '#000000' },
+		)
+
+		expect(labels(overlay)).toEqual(['Primary color'])
+		expect(overlay.textContent).toContain('#8aa0b9')
+		expect(overlay.textContent).toContain(
+			"The set says #15427380. Nextcloud's own theming has no transparency. It gets this colour instead.",
+		)
+		expect((await confirm(overlay)).get('primary_color')).toBe('#8aa0b9')
+	})
+
+	it('adds no note to an opaque colour', async () => {
+		const overlay = await switchTo(
+			{ primary_color: '#154273' },
+			{ primary_color: '#000000' },
+		)
+
+		expect(overlay.textContent).not.toContain('no transparency')
+	})
+
 	it('offers nothing when the page already has the saved background state', async () => {
 		const overlay = await switchTo(
 			{ captured: true, background_mode: 'color' },

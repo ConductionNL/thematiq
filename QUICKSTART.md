@@ -27,7 +27,7 @@ Or via web UI: Settings → Apps → search "nldesign" → Enable
 
 1. Login to Nextcloud: http://localhost:8080
 2. Go to: **Settings → Administration → Theming**
-3. Scroll to: **NL Design System Theme** section
+3. Scroll to: **Thematiq** section
 4. Select your organization (Rijkshuisstijl, Utrecht, etc.)
 5. Reload the page
 

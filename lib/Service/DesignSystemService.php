@@ -113,7 +113,15 @@ class DesignSystemService {
 	/**
 	 * Get all available design systems.
 	 *
-	 * @return array<string, array{id: string, name: string, description: string, stylesheets: string[], icon_pack?: string|string[]}> Indexed by id.
+	 * @return array<string, array{
+	 *     id: string,
+	 *     name: string,
+	 *     description: string,
+	 *     stylesheets: string[],
+	 *     versioned_stylesheets?: array<string, string[]>,
+	 *     icon_pack?: string|string[],
+	 *     documentation_url?: string
+	 * }> Indexed by id.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
 	 */
@@ -133,17 +141,39 @@ class DesignSystemService {
 	 *
 	 * Returns a fallback with empty stylesheets if the id is not found.
 	 *
+	 * `stylesheets` also carries the system's version-scoped stylesheets for
+	 * the running Nextcloud major, appended after its own. Shell geometry
+	 * (header, sidebar, content offsets) leans on Nextcloud's markup and
+	 * variables, which move between majors (NC 34 draws a 50px header, NC 35 a
+	 * 44px one), so a design system lists such rules under
+	 * `versioned_stylesheets`, keyed by major. An unlisted major gets none and
+	 * keeps the stock shell.
+	 *
 	 * @param string $id The design system identifier.
 	 *
-	 * @return array{id: string, name: string, description: string, stylesheets: string[], icon_pack?: string|string[]} The design system.
+	 * @return array{
+	 *     id: string,
+	 *     name: string,
+	 *     description: string,
+	 *     stylesheets: string[],
+	 *     versioned_stylesheets?: array<string, string[]>,
+	 *     icon_pack?: string|string[],
+	 *     documentation_url?: string
+	 * } The design system.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
+	 * @spec openspec/changes/lasuite-shell-geometry/specs/lasuite-stack/spec.md
 	 */
 	public function getDesignSystem(string $id): array {
 		$systems = $this->getDesignSystems();
 
 		if (isset($systems[$id]) === true) {
-			return $systems[$id];
+			$system = $systems[$id] + ['stylesheets' => [], 'versioned_stylesheets' => []];
+			$major = explode('.', $this->config->getSystemValueString('version', ''))[0];
+			$versioned = (array)$system['versioned_stylesheets'] + [$major => []];
+			$scoped = array_values(array_filter((array)$versioned[$major], 'is_string'));
+			$system['stylesheets'] = array_merge((array)$system['stylesheets'], $scoped);
+			return $system;
 		}
 
 		// Unknown design system — fall back to no stylesheets for safety.
@@ -428,7 +458,15 @@ class DesignSystemService {
 	/**
 	 * Get all design systems as a flat list (for API responses).
 	 *
-	 * @return array<array{id: string, name: string, description: string, stylesheets: string[], icon_pack?: string|string[]}> List of design systems.
+	 * @return array<array{
+	 *     id: string,
+	 *     name: string,
+	 *     description: string,
+	 *     stylesheets: string[],
+	 *     versioned_stylesheets?: array<string, string[]>,
+	 *     icon_pack?: string|string[],
+	 *     documentation_url?: string
+	 * }> List of design systems.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
 	 */

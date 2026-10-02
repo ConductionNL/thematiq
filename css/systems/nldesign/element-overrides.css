@@ -177,7 +177,6 @@ header#header .header-menu__trigger {
 	-webkit-mask: none !important;
 	mask-image: none !important;
 	-webkit-mask-image: none !important;
-	background-image: none !important;
 	background: transparent !important;
 }
 
@@ -240,7 +239,7 @@ header#header .header-menu__trigger {
 #header
 	[class*='avatar' i]
 	*:not([class*='user-status' i]):not([class*='user-status' i] *) {
-	color: #ffffff !important;
+	color: var(--nldesign-color-text-light) !important;
 }
 
 /* ============================================
@@ -302,7 +301,6 @@ header#header {
 .app-menu .icon,
 header nav [class*='icon-'],
 header nav .icon {
-	background-image: none !important;
 	background: transparent !important;
 }
 
@@ -346,8 +344,8 @@ header nav .icon {
 [class*='widget']:not(#header *),
 #app-content,
 .app-content {
-	background: #ffffff;
-	background-color: #ffffff;
+	background: var(--color-main-background);
+	background-color: var(--color-main-background);
 	opacity: 1;
 	backdrop-filter: none;
 	-webkit-backdrop-filter: none;
@@ -631,7 +629,7 @@ button[class*='primary']:not([data-admin-theming-setting-color-picker]):not(
 #header .popovermenu *,
 #header #expand,
 #header #expand * {
-	color: #000000 !important;
+	color: var(--color-main-text) !important;
 }
 
 /* ============================================
@@ -779,11 +777,6 @@ body {
    chain is what lets the header be moved from the playground without touching
    `--nldesign-color-header-background`, which a token set owns. */
 #header {
-	background-color: var(
-		--nldesign-component-header-background-color,
-		var(--nldesign-color-header-background, #ffffff)
-	) !important;
-	background-image: none !important;
 	background: var(
 		--nldesign-component-header-background-color,
 		var(--nldesign-color-header-background, #ffffff)

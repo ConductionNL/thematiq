@@ -413,7 +413,7 @@ class DarkPaletteService {
 	 *
 	 * @return string|null The dark hex value, or null when the value is not a colour literal.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.3
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-each-colour-token-has-an-optional-dark-value
 	 */
 	public function deriveDarkValue(string $token, string $lightValue, array $context = []): ?string {
 		$rgba = $this->contrast->parseColorWithAlpha(value: $lightValue);
@@ -955,7 +955,7 @@ class DarkPaletteService {
 	 *                                                                                                         The outcome.
 	 *
 	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - `$force` mirrors the standard CLI
-	 * `--force` convention (also `occ nldesign:generate-dark-variants --force`); a
+	 * `--force` convention (also `occ thematiq:generate-dark-variants --force`); a
 	 * skip-if-fresh/force-regenerate toggle on one write path, not two responsibilities.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
@@ -1275,7 +1275,7 @@ class DarkPaletteService {
 	 *
 	 * @return string Two lowercase hex digits, or an empty string.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.2
+	 * @spec openspec/specs/dark-mode/spec.md#requirement-derived-dark-values-keep-the-light-values-alpha
 	 */
 	private function alphaSuffix(float $alpha): string {
 		if ($alpha >= 1.0) {

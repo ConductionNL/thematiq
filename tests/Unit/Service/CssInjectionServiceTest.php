@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\CustomOverridesService;
@@ -132,6 +133,13 @@ class CssInjectionServiceTest extends TestCase {
 	private string $runtimeDir;
 
 	/**
+	 * The brand-per-app mock; no app has a brand unless a test says so.
+	 *
+	 * @var AppBrandService&MockObject
+	 */
+	private $appBrands;
+
+	/**
 	 * Set up mocks before each test.
 	 */
 	protected function setUp(): void {
@@ -146,6 +154,7 @@ class CssInjectionServiceTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->stockTokens = $this->createMock(StockTokensService::class);
 		$this->stockTokens->method('getCss')->willReturn(null);
+		$this->appBrands = $this->createMock(AppBrandService::class);
 
 		$this->runtimeDir = sys_get_temp_dir() . '/thematiq-injection-' . bin2hex(random_bytes(4));
 		// The repository is the app directory, read-only, so shipped files
@@ -240,6 +249,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->stockTokens,
 					$this->runtimeFiles,
 					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink'])
@@ -400,7 +410,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * A set that gives an internal token a value carries the internal scopes,
 	 * inline and directly after the component scopes.
 	 *
-	 * @spec openspec/changes/internal-variable-tokens/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 */
 	public function testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes(): void {
 		$this->configureAppValues(['token_set' => 'custom-openwoo']);
@@ -425,7 +435,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * Saved overrides are the last stylesheet link the page gets, after every
 	 * design-system and token layer.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function testCustomOverridesAlwaysLoadedLast(): void {
 		$this->configureAppValues();
@@ -500,6 +510,85 @@ class CssInjectionServiceTest extends TestCase {
 		$this->assertNotContains('show-menu-labels', $styleLog);
 		$this->assertNotContains('primary-lock', $styleLog);
 	}//end testConditionalStylesheetsAbsentWhenDisabled()
+
+	/**
+	 * With hide_slogan and show_menu_labels never written to IConfig, both
+	 * stylesheets stay off: the injector's own default is '0'.
+	 *
+	 * @spec openspec/specs/hide-slogan/spec.md#default-value-when-not-configured
+	 * @spec openspec/specs/menu-labels/spec.md#default-value-when-not-configured
+	 */
+	public function testTogglesAbsentFromConfigDefaultToOff(): void {
+		// Only the keys a fresh instance has; every other read gets the caller's default.
+		$this->config->method('getAppValue')->willReturnCallback(
+			function (string $app, string $key, string $default) {
+				return ['token_set' => 'nextcloud', 'themed_contexts' => '[]'][$key] ?? $default;
+			}
+		);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
+		$this->designSystemService->method('getDesignSystem')->willReturn(
+			[
+				'id' => 'nldesign',
+				'name' => 'NL Design System',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$service->inject('user');
+
+		$this->assertNotContains('hide-slogan', $styleLog);
+		$this->assertNotContains('show-menu-labels', $styleLog);
+	}//end testTogglesAbsentFromConfigDefaultToOff()
+
+	/**
+	 * Only the exact string '1' turns a toggle on. Loose truthy values that a
+	 * `== true` or `(bool)` reading would accept leave the stylesheet out.
+	 *
+	 * @param string $stored The raw IConfig value.
+	 *
+	 * @dataProvider looseTruthyProvider
+	 *
+	 * @spec openspec/specs/hide-slogan/spec.md#boot-phase-reads-and-compares-correctly
+	 */
+	public function testConditionalStylesheetsIgnoreLooseTruthyValues(string $stored): void {
+		$this->configureAppValues(['hide_slogan' => $stored, 'show_menu_labels' => $stored]);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
+		$this->designSystemService->method('getDesignSystem')->willReturn(
+			[
+				'id' => 'nldesign',
+				'name' => 'NL Design System',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
+		$service->inject('user');
+
+		$this->assertNotContains('hide-slogan', $styleLog);
+		$this->assertNotContains('show-menu-labels', $styleLog);
+	}//end testConditionalStylesheetsIgnoreLooseTruthyValues()
+
+	/**
+	 * Values a loose comparison would read as "on".
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public static function looseTruthyProvider(): array {
+		return [
+			'yes' => ['yes'],
+			'true' => ['true'],
+			'on' => ['on'],
+			'01' => ['01'],
+			'1 with a space' => [' 1'],
+		];
+	}//end looseTruthyProvider()
 
 	/**
 	 * `primary-lock` is emitted only while the setting is on, and LAST of all.
@@ -924,7 +1013,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * directory on every render, which put a code integrity warning on every
 	 * instance and failed outright on a read-only app directory.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function testRenderingWritesNothingAndLaterLayersStillRun(): void {
 		$this->configureAllLaterLayers();
@@ -955,7 +1044,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * No saved overrides is the normal state of a fresh instance, not a
 	 * failure: nothing is logged for it.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function testNoSavedOverridesIsNotAWarning(): void {
 		$this->configureAllLaterLayers();
@@ -1329,6 +1418,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->stockTokens,
 					$this->runtimeFiles,
 					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])

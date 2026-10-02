@@ -136,20 +136,6 @@ class SettingsControllerEndpointsTest extends TestCase {
 	}//end setUp()
 
 	/**
-	 * An instance that has never chosen a set reports the stock one rather
-	 * than an empty string — the panel selects by id, and no id selects
-	 * nothing.
-	 *
-	 * @spec openspec/specs/admin-settings/spec.md
-	 */
-	public function testTheActiveTokenSetDefaultsToStock(): void {
-		$this->assertSame('nextcloud', $this->controller->getTokenSet()->getData()['tokenSet']);
-
-		$this->appConfig['thematiq|token_set'] = 'rijkshuisstijl';
-		$this->assertSame('rijkshuisstijl', $this->controller->getTokenSet()->getData()['tokenSet']);
-	}//end testTheActiveTokenSetDefaultsToStock()
-
-	/**
 	 * A preview is only computed for a set that exists. The resolver reads
 	 * files off disk by id, so an unvalidated id would be answered with an
 	 * empty map that reads like "this theme changes nothing".

@@ -25,16 +25,18 @@ return [
 		// #[PublicPage]); deliberately outside the /settings/* prefix this
 		// app reserves for admin-gated routes, alongside metrics/health.
 		['name' => 'catalog#tokenSets', 'url' => '/api/token-sets', 'verb' => 'GET'],
+		// Token deprecations for consuming apps (authoring-token-lifecycle), signed-in users.
+		['name' => 'catalog#deprecations', 'url' => '/api/token-deprecations', 'verb' => 'GET'],
 		['name' => 'assistantMark#show', 'url' => '/api/assistant-mark', 'verb' => 'GET'],
 		['name' => 'documentStyle#show', 'url' => '/api/document-style', 'verb' => 'GET'],
 		['name' => 'documentStyle#asset', 'url' => '/api/document-style/{kind}', 'verb' => 'GET'],
+		['name' => 'appBrand#logo', 'url' => '/api/app-brands/{appId}/logo/{size}', 'verb' => 'GET'],
 		// Token reference of one set, for signed-in users (openspec/specs/token-reference/spec.md).
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
 
 		['name' => 'settings#getAvailableTokenSets', 'url' => '/settings/tokensets', 'verb' => 'GET'],
 		['name' => 'settings#setTokenSet', 'url' => '/settings/tokenset', 'verb' => 'POST'],
-		['name' => 'settings#getTokenSet', 'url' => '/settings/tokenset', 'verb' => 'GET'],
 		// Planned token set switches (openspec/specs/scheduled-switch).
 		['name' => 'scheduledSwitch#index', 'url' => '/settings/scheduled-switches', 'verb' => 'GET'],
 		['name' => 'scheduledSwitch#create', 'url' => '/settings/scheduled-switches', 'verb' => 'POST'],
@@ -55,6 +57,10 @@ return [
 		// Per-app theming exclusion list.
 		['name' => 'settings#getAppTheming', 'url' => '/settings/app-theming', 'verb' => 'GET'],
 		['name' => 'settings#setAppTheming', 'url' => '/settings/app-theming', 'verb' => 'POST'],
+		['name' => 'appBrand#index', 'url' => '/settings/app-brands', 'verb' => 'GET'],
+		['name' => 'appBrand#save', 'url' => '/settings/app-brands/{appId}', 'verb' => 'POST'],
+		['name' => 'appBrand#remove', 'url' => '/settings/app-brands/{appId}', 'verb' => 'DELETE'],
+		['name' => 'appBrand#uploadLogo', 'url' => '/settings/app-brands/{appId}/logo/{size}', 'verb' => 'POST'],
 		// Upstream token freshness (opt-in daily background job status + dismissal).
 		['name' => 'settings#getUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'GET'],
 		['name' => 'settings#setUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'POST'],
@@ -63,6 +69,15 @@ return [
 		['name' => 'gallery#index', 'url' => '/settings/gallery', 'verb' => 'GET'],
 		['name' => 'gallery#setEnabled', 'url' => '/settings/gallery', 'verb' => 'POST'],
 		['name' => 'gallery#install', 'url' => '/settings/gallery/{id}/install', 'verb' => 'POST'],
+		// Own tokens and token deprecations (authoring-token-lifecycle), admin-only.
+		['name' => 'ownToken#list', 'url' => '/settings/tokens/own', 'verb' => 'GET'],
+		['name' => 'ownToken#create', 'url' => '/settings/tokens/own', 'verb' => 'POST'],
+		['name' => 'ownToken#update', 'url' => '/settings/tokens/own/{name}', 'verb' => 'PUT'],
+		['name' => 'ownToken#delete', 'url' => '/settings/tokens/own/{name}', 'verb' => 'DELETE'],
+		['name' => 'tokenDeprecation#list', 'url' => '/settings/tokens/deprecations', 'verb' => 'GET'],
+		['name' => 'tokenDeprecation#save', 'url' => '/settings/tokens/deprecations', 'verb' => 'POST'],
+		['name' => 'tokenDeprecation#adopt', 'url' => '/settings/tokens/deprecations/adopt', 'verb' => 'POST'],
+		['name' => 'tokenDeprecation#delete', 'url' => '/settings/tokens/deprecations/{token}', 'verb' => 'DELETE'],
 		['name' => 'overrides#getOverrides', 'url' => '/settings/overrides', 'verb' => 'GET'],
 		['name' => 'overrides#setOverrides', 'url' => '/settings/overrides', 'verb' => 'POST'],
 		// Import/export.
@@ -84,6 +99,8 @@ return [
 		['name' => 'brandForm#inputs', 'url' => '/settings/tokensets/from-colours', 'verb' => 'GET'],
 		['name' => 'brandForm#create', 'url' => '/settings/tokensets/from-colours', 'verb' => 'POST'],
 		['name' => 'customTokenSet#list', 'url' => '/settings/tokensets/custom', 'verb' => 'GET'],
+		// Any token set as a W3C Design Tokens (DTCG) download (authoring-dtcg-export), admin-only.
+		['name' => 'dtcgExport#export', 'url' => '/settings/tokensets/{id}/dtcg', 'verb' => 'GET'],
 		['name' => 'customTokenSet#export', 'url' => '/settings/tokensets/custom/{id}/export', 'verb' => 'GET'],
 		['name' => 'customTokenSet#delete', 'url' => '/settings/tokensets/custom/{id}', 'verb' => 'DELETE'],
 		// Active-configuration WCAG contrast compliance evidence report (download).
@@ -98,6 +115,10 @@ return [
 		// session exists.
 		['name' => 'font#serve', 'url' => '/fonts/{id}.woff2', 'verb' => 'GET'],
 		['name' => 'font#css', 'url' => '/fonts/css', 'verb' => 'GET'],
+		// Icon by name from the active pack. Public for the same reason as the
+		// font routes: an <img> or CSS url() load carries no CSRF token.
+		// IconController::show() is the caller of DesignSystemService::resolveIconPath().
+		['name' => 'icon#show', 'url' => '/icons/{name}', 'verb' => 'GET'],
 		// Runtime files (overrides, custom CSS, uploaded sets, captured images),
 		// kept in app data so the signed app directory stays as shipped.
 		// Public for the same reason as the font routes; the name must pass
