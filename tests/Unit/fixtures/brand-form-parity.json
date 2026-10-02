@@ -157,6 +157,7 @@
             "--nldesign-color-favorite": "#e17000",
             "--nldesign-animation-quick": "100ms",
             "--nldesign-animation-slow": "300ms",
+            "--nldesign-animation-easing": "ease",
             "--nldesign-component-button-background-color": "transparent",
             "--nldesign-component-button-color": "var(--nldesign-color-primary)",
             "--nldesign-component-button-border-radius": "var(--nldesign-border-radius)",
