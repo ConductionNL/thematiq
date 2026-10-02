@@ -92,6 +92,8 @@ return [
 		['name' => 'brandForm#inputs', 'url' => '/settings/tokensets/from-colours', 'verb' => 'GET'],
 		['name' => 'brandForm#create', 'url' => '/settings/tokensets/from-colours', 'verb' => 'POST'],
 		['name' => 'customTokenSet#list', 'url' => '/settings/tokensets/custom', 'verb' => 'GET'],
+		// Any token set as a W3C Design Tokens (DTCG) download (authoring-dtcg-export), admin-only.
+		['name' => 'dtcgExport#export', 'url' => '/settings/tokensets/{id}/dtcg', 'verb' => 'GET'],
 		['name' => 'customTokenSet#export', 'url' => '/settings/tokensets/custom/{id}/export', 'verb' => 'GET'],
 		['name' => 'customTokenSet#delete', 'url' => '/settings/tokensets/custom/{id}', 'verb' => 'DELETE'],
 		// Active-configuration WCAG contrast compliance evidence report (download).
