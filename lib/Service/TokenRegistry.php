@@ -94,7 +94,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	/**
 	 * Decoded settable entries, or null before the first read.
 	 *
-	 * @var array<string, array<string, mixed>>|null
+	 * @var array<string, array{tab: string, type: string, label: string, settable: true, token: string, advanced: bool, perScheme: bool}>|null
 	 */
 	private static ?array $settableTokens = null;
 
@@ -133,7 +133,18 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * Keys are CSS custom property names (e.g. '--color-primary').
 	 * Values carry 'tab', 'type', 'label', 'group' and 'primary'.
 	 *
-	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global?: string}> The token registry.
+	 * @return array<string, array{
+	 *     tab: string,
+	 *     type: string,
+	 *     label: string,
+	 *     group: string,
+	 *     primary: bool,
+	 *     global?: string,
+	 *     settable?: true,
+	 *     token?: string,
+	 *     advanced?: bool,
+	 *     perScheme?: bool
+	 * }> The token registry.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
@@ -149,7 +160,17 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * locked by the `primary_drives_components` setting — that setting exists to
 	 * make these win, not to freeze them.
 	 *
-	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool}> The brand tokens.
+	 * @return array<string, array{
+	 *     tab: string,
+	 *     type: string,
+	 *     label: string,
+	 *     group: string,
+	 *     primary: bool,
+	 *     settable?: true,
+	 *     token?: string,
+	 *     advanced?: bool,
+	 *     perScheme?: bool
+	 * }> The brand tokens.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
@@ -175,7 +196,8 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * A missing or malformed table yields none, so the brand tokens still edit.
 	 *
-	 * @return array<string, array<string, mixed>> Name => tab, type, label, settable, token, and advanced / perScheme when set.
+	 * @return array<string, array{tab: string, type: string, label: string, settable: true, token: string, advanced: bool, perScheme: bool}>
+	 *         Name => tab, type, label, settable, token, advanced and perScheme.
 	 *
 	 * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
 	 */
@@ -520,7 +542,19 @@ class TokenRegistry implements TokenRegistryInterface {
 	/**
 	 * Returns tokens grouped by tab.
 	 *
-	 * @return array<string, array<string, array{tab: string, type: string, label: string, group: string, primary: bool}>> Tokens grouped by tab id.
+	 * @return array<string, array<string, array{
+	 *     tab: string,
+	 *     type: string,
+	 *     label: string,
+	 *     group: string,
+	 *     primary: bool,
+	 *     global?: string,
+	 *     settable?: true,
+	 *     token?: string,
+	 *     advanced?: bool,
+	 *     perScheme?: bool
+	 * }>>
+	 *         Tokens grouped by tab id.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
 	 */

@@ -74,8 +74,6 @@ class ScheduledSwitchService {
 	 * @param ITimeFactory             $time           The clock.
 	 * @param IL10N                    $l10n           The translator.
 	 * @param LoggerInterface          $logger         The logger.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - one collaborator per concern listed in the class docblock.
 	 */
 	public function __construct(
 		private readonly ScheduledSwitchStore $store,
