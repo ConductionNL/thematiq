@@ -1,13 +1,13 @@
 {
   "generated_at": "2026-10-02T00:00:00Z",
   "app": "thematiq",
-  "commit": "8ee8720c",
+  "commit": "ed6c69d3",
   "scanner": "hydra-gates gate-16 check_spec_coverage.py, full sweep against an empty-tree base",
   "summary": {
-    "lib_php_files": 150,
-    "files_with_spec": 150,
-    "public_protected_methods": 645,
-    "spec_tags": 1243,
+    "lib_php_files": 152,
+    "files_with_spec": 152,
+    "public_protected_methods": 655,
+    "spec_tags": 1257,
     "spec_excludes": 17,
     "uncovered_methods": 0
   },
