@@ -236,7 +236,7 @@ class ComplianceReportService {
 		if ($designSystemId !== 'none') {
 			$declarations = array_merge(
 				$this->parseCssFile(path: $appPath . '/css/systems/' . $designSystemId . '/defaults.css'),
-				$this->parseCssFile(path: $appPath . '/css/tokens/' . $activeTokenSetId . '.css')
+				($this->cssParser->parseDeclarations(content: (string)$this->setCss(appPath: $appPath, name: 'css/tokens/' . $activeTokenSetId . '.css')) ?? [])
 			);
 		}
 
@@ -794,4 +794,33 @@ class ComplianceReportService {
 	private function formatThreshold(float $threshold): string {
 		return number_format($threshold, 1, '.', '') . ':1';
 	}//end formatThreshold()
+
+	/**
+	 * A set file's CSS: an uploaded (`custom-`) set's from its service, a shipped one's from the release.
+	 *
+	 * @param string $appPath The app directory.
+	 * @param string $name    The app-relative name, such as `css/tokens/utrecht.css`.
+	 *
+	 * @return string|null The CSS, or null when the file does not exist.
+	 *
+	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 */
+	private function setCss(string $appPath, string $name): ?string {
+		// An uploaded set lives in app data; its own service reads it.
+		if (preg_match('#^css/tokens/(custom-[a-z0-9-]+)\.css$#', $name, $match) === 1) {
+			return $this->customSetService->getRawContent(id: $match[1]);
+		}
+
+		$path = $appPath . '/' . $name;
+		if (is_file($path) === false) {
+			return null;
+		}
+
+		$css = file_get_contents($path);
+		if ($css === false) {
+			return null;
+		}
+
+		return $css;
+	}//end setCss()
 }//end class

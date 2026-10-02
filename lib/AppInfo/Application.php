@@ -25,6 +25,8 @@ namespace OCA\Thematiq\AppInfo;
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Listener\ThemeInjectionListener;
 use OCA\Thematiq\Middleware\ConfigSourceLockMiddleware;
+use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -121,6 +123,11 @@ class Application extends App implements IBootstrap {
 		// the AppHost engine by composition — no explicit registration needed.
 		// Public huisstijl capability — see lib/Capabilities.php.
 		$context->registerCapability(Capabilities::class);
+
+		// Runtime files (overrides, custom CSS, uploaded sets, captured images)
+		// live in app data, never in the signed app directory. See
+		// lib/Service/RuntimeFile/RuntimeFileStore.php.
+		$context->registerServiceAlias(RuntimeFileStore::class, AppDataRuntimeFileStore::class);
 
 		// Theme as code (openspec/specs/theme-as-code/spec.md): while
 		// thematiq.config_source_lock is on, configuration setters answer 423.

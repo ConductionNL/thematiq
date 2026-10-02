@@ -24,10 +24,11 @@ use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\FontService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
-use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCP\App\IAppManager;
@@ -139,14 +140,14 @@ class ConfigBundleServiceTest extends TestCase {
 		$logger = $this->createMock(LoggerInterface::class);
 
 		$this->overridesService = new CustomOverridesService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$cssParser,
 			new DarkPaletteService($contrast, $cssParser, $appManager, $logger),
 			$config,
 			new DesignSystemService($appManager, $config)
 		);
 		$this->customTokenSetService = new CustomTokenSetService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$config,
 			$customTokenSetValidator,
 			$contrast,
