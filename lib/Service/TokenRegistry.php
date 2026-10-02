@@ -187,8 +187,14 @@ class TokenRegistry implements TokenRegistryInterface {
 			$decoded = json_decode($raw, true);
 		}
 
+		// The status file also marks the internal variables settable. Those are
+		// edited by their own token name (see getInternalTokens()), not as brand
+		// rows under the Nextcloud name, so they are left out here.
+		$internal = self::getInternalTokens();
 		foreach (($decoded['variables'] ?? []) as $name => $entry) {
-			if (($entry['status'] ?? '') !== 'settable' || is_string($entry['token'] ?? null) === false) {
+			if (($entry['status'] ?? '') !== 'settable' || is_string($entry['token'] ?? null) === false
+				|| isset($internal[$entry['token']]) === true
+			) {
 				continue;
 			}
 
