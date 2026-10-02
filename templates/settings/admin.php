@@ -38,6 +38,9 @@ style('thematiq', 'admin');
 // The component playground: the selector / stage / tokens instrument that
 // admin.js's token editor is rebuilt into. Loaded AFTER admin.js because it
 // attaches to the editor that script renders, and waits for it.
+// The sanitiser and the sandboxed frame of the playground's "Your component" stage.
+script('thematiq', 'lib/markupSanitizer');
+script('thematiq', 'lib/ownComponentFrame');
 script('thematiq', 'playground');
 style('thematiq', 'playground');
 // Nextcloud's own login-page stylesheet, scoped to the playground's login card.
