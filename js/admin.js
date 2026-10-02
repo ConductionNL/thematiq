@@ -6191,12 +6191,11 @@
 				var boxes = optList.querySelectorAll(
 					'input[type="checkbox"][data-app-id]',
 				)
-				var themed = 0
-				boxes.forEach(function (b) {
-					if (b.checked) {
-						themed++
-					}
-				})
+				var themed = window.NldesignAppTheming.countThemed(
+					Array.prototype.map.call(boxes, function (b) {
+						return { checked: b.checked }
+					}),
+				).themed
 				triggerLabel.textContent = t(
 					'thematiq',
 					'{themed} of {total} apps themed',
@@ -6234,9 +6233,10 @@
 				optList
 					.querySelectorAll('.nldesign-app-option')
 					.forEach(function (opt) {
-						opt.hidden =
-							q !== ''
-							&& opt.getAttribute('data-app-name').indexOf(q) === -1
+						opt.hidden = !window.NldesignAppTheming.matchesAppSearch(
+							opt.getAttribute('data-app-name'),
+							q,
+						)
 					})
 			})
 
@@ -6309,14 +6309,17 @@
 				return
 			}
 
-			var disabledApps = []
-			listEl
-				.querySelectorAll('input[type="checkbox"][data-app-id]')
-				.forEach(function (cb) {
-					if (cb.checked === false) {
-						disabledApps.push(cb.getAttribute('data-app-id'))
-					}
-				})
+			var disabledApps = window.NldesignAppTheming.buildDisabledAppsPayload(
+				Array.prototype.map.call(
+					listEl.querySelectorAll('input[type="checkbox"][data-app-id]'),
+					function (cb) {
+						return {
+							id: cb.getAttribute('data-app-id'),
+							checked: cb.checked,
+						}
+					},
+				),
+			)
 
 			fetch(OC.generateUrl('/apps/thematiq/settings/app-theming'), {
 				method: 'POST',
