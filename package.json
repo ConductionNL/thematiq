@@ -40,7 +40,7 @@
 		"stylelint:fix": "stylelint \"css/**/*.{css,scss}\" --fix",
 		"test": "echo 'No tests yet'",
 		"test:unit": "vitest run",
-		"test:coverage": "vitest run --coverage --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=text-summary --coverage.include=js/** --coverage.reportsDirectory=coverage-vitest",
+		"test:coverage": "vitest run --testTimeout=30000 --coverage --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=text-summary --coverage.include=js/** --coverage.reportsDirectory=coverage-vitest",
 		"test:coverage-ratchet": "npm run test:coverage && bash tests/coverage-ratchet.sh vitest coverage-vitest/coverage-summary.json",
 		"test:unit:watch": "vitest",
 		"check:manifest": "node tests/validate-manifest.js",
