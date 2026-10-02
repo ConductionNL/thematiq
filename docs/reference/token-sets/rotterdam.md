@@ -2,7 +2,7 @@
 
 # Gemeente Rotterdam
 
-Token set `rotterdam`: 3161 declared by this set, 126 from the defaults layer.
+Token set `rotterdam`: 3161 declared by this set, 127 from the defaults layer.
 
 Contrast: primary text on primary 5.05:1, primary on background 5.05:1 (pass).
 
@@ -248,6 +248,7 @@ Contrast: primary text on primary 5.05:1, primary on background 5.05:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--nldesign-animation-easing` | `ease` | | defaults | |
 | `--nldesign-animation-quick` | `100ms` | | defaults | Header menu item height |
 | `--nldesign-animation-slow` | `300ms` | | defaults | Animation slow |
 | `--nldesign-header-icon-filter` | `none` | | this set | |
