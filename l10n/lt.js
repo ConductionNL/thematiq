@@ -799,7 +799,18 @@ OC.L10N.register(
         "The last package was not applied. Nothing changed. Fix these errors in the package:": "The last package was not applied. Nothing changed. Fix these errors in the package:",
         "The running configuration differs from the package. The next apply replaces the changes made here.": "The running configuration differs from the package. The next apply replaces the changes made here.",
         "The settings on this page are locked. Change the house style in the package.": "The settings on this page are locked. Change the house style in the package.",
-        "The house style is managed from deployment configuration (%s). Change it there.": "The house style is managed from deployment configuration (%s). Change it there."
+        "The house style is managed from deployment configuration (%s). Change it there.": "The house style is managed from deployment configuration (%s). Change it there.",
+        "Subadmins choose": "Subadmins choose",
+        "Token sets the subadmins of this group can choose": "Token sets the subadmins of this group can choose",
+        "Contrast: WCAG {level}": "Contrast: WCAG {level}",
+        "Contrast: below WCAG AA": "Contrast: below WCAG AA",
+        "The house style could not be saved.": "The house style could not be saved.",
+        "Saved. Members of {group} see the new house style on their next page.": "Saved. Members of {group} see the new house style on their next page.",
+        "None of your groups can choose its own house style.": "None of your groups can choose its own house style.",
+        "House style of my groups": "House style of my groups",
+        "You manage these groups. Choose the house style their members see. An administrator decides which house styles you can choose from.": "You manage these groups. Choose the house style their members see. An administrator decides which house styles you can choose from.",
+        "Loading groups…": "Loading groups…",
+        "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.": "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility."
     },
     "nplurals=2; plural=(n != 1);"
 )

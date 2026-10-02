@@ -799,7 +799,18 @@ OC.L10N.register(
         "The last package was not applied. Nothing changed. Fix these errors in the package:": "Het laatste pakket is niet toegepast. Er is niets veranderd. Herstel deze fouten in het pakket:",
         "The running configuration differs from the package. The next apply replaces the changes made here.": "De actieve configuratie wijkt af van het pakket. De volgende keer dat het pakket wordt toegepast, vervangt het de wijzigingen die hier zijn gemaakt.",
         "The settings on this page are locked. Change the house style in the package.": "De instellingen op deze pagina zijn vergrendeld. Wijzig de huisstijl in het pakket.",
-        "The house style is managed from deployment configuration (%s). Change it there.": "De huisstijl wordt beheerd vanuit de deploymentconfiguratie (%s). Wijzig hem daar."
+        "The house style is managed from deployment configuration (%s). Change it there.": "De huisstijl wordt beheerd vanuit de deploymentconfiguratie (%s). Wijzig hem daar.",
+        "Subadmins choose": "Subbeheerders kiezen",
+        "Token sets the subadmins of this group can choose": "Token sets waaruit de subbeheerders van deze groep kunnen kiezen",
+        "Contrast: WCAG {level}": "Contrast: WCAG {level}",
+        "Contrast: below WCAG AA": "Contrast: onder WCAG AA",
+        "The house style could not be saved.": "De huisstijl kon niet worden opgeslagen.",
+        "Saved. Members of {group} see the new house style on their next page.": "Opgeslagen. Leden van {group} zien de nieuwe huisstijl op hun volgende pagina.",
+        "None of your groups can choose its own house style.": "Geen van je groepen kan een eigen huisstijl kiezen.",
+        "House style of my groups": "Huisstijl van mijn groepen",
+        "You manage these groups. Choose the house style their members see. An administrator decides which house styles you can choose from.": "Je beheert deze groepen. Kies de huisstijl die hun leden zien. Een beheerder bepaalt uit welke huisstijlen je kunt kiezen.",
+        "Loading groups…": "Groepen laden…",
+        "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.": "Vink Subbeheerders kiezen aan om de subbeheerders van een groep de huisstijl te laten kiezen uit de token sets die jij toestaat. Ze kiezen onder Persoonlijke instellingen, Uiterlijk en toegankelijkheid."
     },
     "nplurals=2; plural=(n != 1);"
 )

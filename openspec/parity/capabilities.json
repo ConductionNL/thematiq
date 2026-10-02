@@ -5811,21 +5811,20 @@
 			"id": "gov-lock-per-space",
 			"area": "governance",
 			"name": "Lock the organisation theme on selected sites or spaces, so their owners cannot change the branding, while other spaces keep their freedom.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "nobody but an administrator can change the house style anywhere (gov-admin-only; SettingsController setters are admin routes), so every space is locked; the reverse, letting chosen spaces keep their own freedom, is limited to excluding whole apps (lib/Service/AppThemingService.php disabled_apps list)",
+				"state": "built",
+				"evidence": "every group stays locked to the administrator's choice unless the administrator marks its mapping as delegated (lib/Service/GroupThemingService.php: delegated and allowedTokenSets on an entry, validated); a subadmin of a delegated group picks its set from the allowed list (lib/Service/DelegatedGroupThemingService.php, lib/Controller/MyGroupsController.php #[NoAdminRequired] with a per-group subadmin check through OCP\\Group\\ISubAdmin, audited token_set_changed with the group); lib/Settings/Personal.php shows the choice only to subadmins of a delegated group",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/scoping-delegated-group-house-style (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/scoping-delegated-group-house-style"
+				"change": "scoping-delegated-group-house-style"
 			},
-			"reachedOn": "Settings > Administration > Theming",
+			"reachedOn": "Settings > Administration > Theming, Group theming, Subadmins choose; Personal settings, Appearance and accessibility, House style of my groups",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:132-136 disable-user-theming is one instance-wide boolean; grep of apps/theming/lib for group, folder or space scoped branding finds nothing, so there are no spaces with their own branding to lock or free",
 				"m365-branding": "https://www.microsoft.com/microsoft-365/roadmap?id=526794 (launched 2026-02): admins 'enforce consistent branding, apply enterprise themes to individual sites, disable custom branding on specific sites, and audit branding changes'; https://learn.microsoft.com/en-us/powershell/module/microsoft.online.sharepoint.powershell/set-sposite: -DisableSiteBranding",

@@ -5255,9 +5255,7 @@
 					groupThemingGroups = (data && data.groups) || []
 					groupThemingTokenSets = (data && data.tokenSets) || []
 					groupThemingRows = ((data && data.mapping) || []).map(
-						function (entry) {
-							return { group: entry.group, tokenSet: entry.tokenSet }
-						},
+						toGroupThemingRow,
 					)
 					renderGroupThemingList()
 				})
@@ -5388,6 +5386,7 @@
 
 				rowEl.appendChild(groupSelect)
 				rowEl.appendChild(tokenSetSelect)
+				rowEl.appendChild(renderGroupDelegation(index))
 				rowEl.appendChild(moveUpBtn)
 				rowEl.appendChild(moveDownBtn)
 				rowEl.appendChild(removeBtn)
@@ -5421,6 +5420,88 @@
 			}
 		}
 
+		// A mapping entry as the list keeps it. Delegation (an administrator
+		// lets the group's subadmins choose from allowed sets) is optional:
+		// an entry without it reads as not delegated.
+		// openspec/specs/per-group-theming/spec.md
+		function toGroupThemingRow(entry) {
+			return {
+				group: entry.group,
+				tokenSet: entry.tokenSet,
+				delegated: entry.delegated === true,
+				allowedTokenSets: Array.isArray(entry.allowedTokenSets)
+					? entry.allowedTokenSets.slice()
+					: [],
+			}
+		}
+
+		// The delegate toggle and the allowed sets picker of one mapping row.
+		// Turning delegation on starts the allowed list with the current set,
+		// which the server requires it to hold.
+		function renderGroupDelegation(index) {
+			var row = groupThemingRows[index]
+			if (!Array.isArray(row.allowedTokenSets)) {
+				row.allowedTokenSets = []
+			}
+			var wrap = document.createElement('span')
+			wrap.className = 'nldesign-group-theming-delegation'
+
+			var toggleId = 'nldesign-group-theming-delegate-' + index
+			var toggle = document.createElement('input')
+			toggle.type = 'checkbox'
+			toggle.className = 'checkbox'
+			toggle.id = toggleId
+			toggle.setAttribute('data-field', 'delegated')
+			toggle.checked = row.delegated === true
+			var toggleLabel = document.createElement('label')
+			toggleLabel.setAttribute('for', toggleId)
+			toggleLabel.textContent = t('thematiq', 'Subadmins choose')
+			wrap.appendChild(toggle)
+			wrap.appendChild(toggleLabel)
+
+			var picker = document.createElement('select')
+			picker.multiple = true
+			picker.setAttribute('data-field', 'allowedTokenSets')
+			picker.setAttribute(
+				'aria-label',
+				t('thematiq', 'Token sets the subadmins of this group can choose'),
+			)
+			picker.hidden = row.delegated !== true
+			groupThemingTokenSets.forEach(function (ts) {
+				var opt = document.createElement('option')
+				opt.value = ts.id
+				opt.textContent = ts.name || ts.id
+				opt.selected = row.allowedTokenSets.indexOf(ts.id) !== -1
+				picker.appendChild(opt)
+			})
+			picker.addEventListener('change', function () {
+				groupThemingRows[index].allowedTokenSets = Array.prototype.filter
+					.call(picker.options, function (opt) {
+						return opt.selected
+					})
+					.map(function (opt) {
+						return opt.value
+					})
+			})
+			toggle.addEventListener('change', function () {
+				groupThemingRows[index].delegated = toggle.checked
+				if (
+					toggle.checked
+					&& groupThemingRows[index].allowedTokenSets.length === 0
+				) {
+					groupThemingRows[index].allowedTokenSets = [
+						groupThemingRows[index].tokenSet,
+					]
+					Array.prototype.forEach.call(picker.options, function (opt) {
+						opt.selected = opt.value === groupThemingRows[index].tokenSet
+					})
+				}
+				picker.hidden = !toggle.checked
+			})
+			wrap.appendChild(picker)
+			return wrap
+		}
+
 		// Swap row at `index` with its neighbour `index + direction` (direction
 		// is -1 for up, +1 for down) and keep focus on the moved row's move-up
 		// button at its new position.
@@ -5441,7 +5522,12 @@
 		function saveGroupTheming() {
 			var feedback = document.getElementById('nldesign-group-theming-feedback')
 			var payload = groupThemingRows.map(function (row) {
-				return { group: row.group, tokenSet: row.tokenSet }
+				var entry = { group: row.group, tokenSet: row.tokenSet }
+				if (row.delegated === true) {
+					entry.delegated = true
+					entry.allowedTokenSets = row.allowedTokenSets
+				}
+				return entry
 			})
 
 			fetch(OC.generateUrl('/apps/thematiq/settings/group-theming'), {
@@ -5462,12 +5548,7 @@
 
 					if (result.ok === true && data && data.status === 'ok') {
 						groupThemingRows = (data.mapping || []).map(
-							function (entry) {
-								return {
-									group: entry.group,
-									tokenSet: entry.tokenSet,
-								}
-							},
+							toGroupThemingRow,
 						)
 						renderGroupThemingList()
 						if (feedback !== null) {
