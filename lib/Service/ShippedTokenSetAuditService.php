@@ -179,6 +179,110 @@ class ShippedTokenSetAuditService {
 	}//end auditSet()
 
 	/**
+	 * Nextcloud 34's own light values the pair audit falls back to for a side
+	 * the set leaves alone: `--color-main-text`, `--color-mark` and the
+	 * `--color-primary-element` the selection wash is tinted from.
+	 *
+	 * @var array<string, string>
+	 */
+	private const NEXTCLOUD_LIGHT = [
+		'text' => '#222222',
+		'mark' => '#fff0c7',
+		'primary' => '#00679e',
+	];
+
+	/**
+	 * Audit the selection pair and the highlight pair of one set's declarations.
+	 *
+	 * A pair is evaluated only when the set declares one of its theme-variable
+	 * tokens: an untouched pair is Nextcloud's own and Nextcloud's
+	 * responsibility. A side the set leaves out takes the value Nextcloud gives
+	 * it in light: the selected text is the main text colour, and the selection
+	 * wash is the primary colour at 20% opacity, blended over the set's page
+	 * background as it renders.
+	 *
+	 * @param array<string, string> $declarations The set's resolved `--nldesign-*` declarations.
+	 *
+	 * @return array<int, array{pair: string, foreground: string, background: string, ratio: float|null, threshold: float, pass: bool}>
+	 *         One entry per evaluated pair; `pass` is false for an unevaluable pair.
+	 *
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-3.1
+	 */
+	public function auditThemePairs(array $declarations): array {
+		$text = ($declarations['--nldesign-color-text'] ?? self::NEXTCLOUD_LIGHT['text']);
+		$results = [];
+
+		if (isset($declarations['--nldesign-color-text-selection']) === true
+			|| isset($declarations['--nldesign-color-background-selection']) === true
+		) {
+			$wash = ($declarations['--nldesign-color-background-selection'] ?? $this->tint(
+				hex: ($declarations['--nldesign-color-primary'] ?? self::NEXTCLOUD_LIGHT['primary']),
+				alpha: 0.2
+			));
+			$results[] = $this->themePair(
+				pair: 'selection',
+				foreground: ['--nldesign-color-text-selection', ($declarations['--nldesign-color-text-selection'] ?? $text)],
+				background: ['--nldesign-color-background-selection', $wash],
+				page: ($declarations['--nldesign-color-background'] ?? null)
+			);
+		}
+
+		if (isset($declarations['--nldesign-color-mark']) === true) {
+			$results[] = $this->themePair(
+				pair: 'highlight',
+				foreground: ['--nldesign-color-text', $text],
+				background: ['--nldesign-color-mark', $declarations['--nldesign-color-mark']],
+				page: ($declarations['--nldesign-color-background'] ?? null)
+			);
+		}
+
+		return $results;
+	}//end auditThemePairs()
+
+	/**
+	 * Measure one theme pair against the 4.5:1 text threshold.
+	 *
+	 * @param string                 $pair       The pair id.
+	 * @param array{0:string,1:string} $foreground Token name and value.
+	 * @param array{0:string,1:string} $background Token name and value.
+	 * @param string|null            $page       The page background under a translucent background.
+	 *
+	 * @return array{pair: string, foreground: string, background: string, ratio: float|null, threshold: float, pass: bool}
+	 */
+	private function themePair(string $pair, array $foreground, array $background, ?string $page): array {
+		$ratio = $this->contrast->measure(foreground: $foreground[1], background: $background[1], page: $page);
+		if ($ratio !== null) {
+			$ratio = round($ratio, 2);
+		}
+
+		return [
+			'pair' => $pair,
+			'foreground' => $foreground[0],
+			'background' => $background[0],
+			'ratio' => $ratio,
+			'threshold' => self::AA_TEXT,
+			'pass' => ($ratio !== null && $ratio >= self::AA_TEXT),
+		];
+	}//end themePair()
+
+	/**
+	 * A hex colour as an rgba() literal with the given opacity.
+	 *
+	 * @param string $hex   A #rgb or #rrggbb colour; anything else is returned unchanged.
+	 * @param float  $alpha The opacity.
+	 *
+	 * @return string The rgba() literal.
+	 */
+	private function tint(string $hex, float $alpha): string {
+		$rgb = $this->contrast->parseColorWithAlpha(value: $hex);
+		if ($rgb === null) {
+			return $hex;
+		}
+
+		return 'rgba(' . $rgb[0] . ', ' . $rgb[1] . ', ' . $rgb[2] . ', ' . $alpha . ')';
+	}//end tint()
+
+	/**
 	 * Compute and cache the WCAG level for one token set, sharing the exact
 	 * cache namespace/key/TTL `Capabilities::computeWcagLevel()` uses for the
 	 * active set (`ICache` prefix `thematiq_wcag_level`, key `level-<id>`,
@@ -279,6 +383,7 @@ class ShippedTokenSetAuditService {
 	 * @return array<int, array<string, mixed>> The contrast warnings (empty when compliant).
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-non-compliant-sets-are-surfaced-in-the-apply-dialog
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-3.1
 	 */
 	public function warningsFor(string $appPath, string $id, string $designSystem, array $theming): array {
 		if ($designSystem === 'none') {
@@ -286,8 +391,25 @@ class ShippedTokenSetAuditService {
 		}
 
 		$declarations = $this->resolveDeclarations(appPath: $appPath, id: $id, theming: $theming);
+		$warnings = $this->contrast->check(declarations: $declarations);
 
-		return $this->contrast->check(declarations: $declarations);
+		// The selection and highlight pairs (theme-vocabulary-complete), in the
+		// same shape, for a set that moves either side of one.
+		foreach ($this->auditThemePairs(declarations: $declarations) as $pair) {
+			if ($pair['pass'] === true) {
+				continue;
+			}
+
+			$warnings[] = [
+				'pair' => $pair['foreground'] . ' vs ' . $pair['background'],
+				'ratio' => $pair['ratio'],
+				'threshold' => $pair['threshold'],
+				'level' => 'AA',
+				'unevaluated' => ($pair['ratio'] === null),
+			];
+		}
+
+		return $warnings;
 	}//end warningsFor()
 
 	/**

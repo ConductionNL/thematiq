@@ -260,3 +260,58 @@ export function checkDigests(inventory, digests) {
 	}
 	return []
 }
+
+/**
+ * Every settable entry names its `--nldesign-*` token and what the editor needs.
+ *
+ * @param {object} inventory The parsed nextcloud-variables.json.
+ * @param {object} status    The parsed variable-status.json.
+ * @return {string[]} Findings.
+ *
+ * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-1.1
+ */
+export function checkSettable(inventory, status) {
+	const findings = []
+	for (const [name, own] of Object.entries(status.variables)) {
+		if (own.status !== 'settable') {
+			continue
+		}
+		if (own.token !== `--nldesign-${name.slice(2)}`) {
+			findings.push(`${name} is settable but its token is not --nldesign-${name.slice(2)}`)
+		}
+		if (['login', 'content', 'status', 'typography'].includes(own.tab) === false || ['color', 'text'].includes(own.type) === false || typeof own.label !== 'string') {
+			findings.push(`${name} is settable but lacks a tab, type or label`)
+		}
+		if (['icon', 'runtime'].includes(inventory.variables[name]?.class) === true) {
+			findings.push(`${name} is settable but its class is ${inventory.variables[name].class}`)
+		}
+	}
+	return findings
+}
+
+/**
+ * No defaults.css declares a settable token: a default is one flat value, and a
+ * flat value is the dark-mode breakage a settable token exists to avoid.
+ *
+ * @param {string} root   App root.
+ * @param {object} status The parsed variable-status.json.
+ * @return {string[]} Findings.
+ *
+ * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-2.3
+ */
+export function checkDefaultsLeaveSettableUnset(root, status) {
+	const tokens = new Set(Object.values(status.variables).filter((own) => own.status === 'settable').map((own) => own.token))
+	const findings = []
+	for (const system of fs.readdirSync(path.join(root, 'css/systems'))) {
+		const file = `css/systems/${system}/defaults.css`
+		if (fs.existsSync(path.join(root, file)) === false) {
+			continue
+		}
+		for (const name of scanSource(fs.readFileSync(path.join(root, file), 'utf8')).declared.keys()) {
+			if (tokens.has(name) === true) {
+				findings.push(`${file} declares ${name}, a settable token that must stay without a default`)
+			}
+		}
+	}
+	return findings
+}

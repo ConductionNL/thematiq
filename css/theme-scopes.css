@@ -1,0 +1,192 @@
+/**
+ * GENERATED FILE — do not edit.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Source: scripts/mapping/variable-status.json (settable theme variables)
+ * Regenerate: npm run generate:component-scopes
+ */
+
+/*
+ * Theme scopes: every settable Nextcloud theme variable, redeclared on each
+ * child of body from its capture in component-scopes.css.
+ *
+ * The capture on body reads `var(--nldesign-X, var(X))`: the token when a set
+ * or the admin gives one, otherwise the value Nextcloud declared for the
+ * active theme. The tokens have no default anywhere, so an instance that sets
+ * none of them renders exactly as Nextcloud does, in light, dark and high
+ * contrast. Nothing in Nextcloud declares these variables between body and
+ * its children, so the children see the value they would have inherited.
+ *
+ * The capture is declared on body and #nldesign-preview only, and read only
+ * below them, so no rule reads a property declared on its own element.
+ */
+
+body > *,
+#nldesign-preview > * {
+	--background-invert-if-bright: var(--thematiq-global-background-invert-if-bright);
+	--background-invert-if-dark: var(--thematiq-global-background-invert-if-dark);
+	--body-container-margin: var(--thematiq-global-body-container-margin);
+	--body-container-radius: var(--thematiq-global-body-container-radius);
+	--body-height: var(--thematiq-global-body-height);
+	--border-radius-container: var(--thematiq-global-border-radius-container);
+	--border-radius-container-large: var(--thematiq-global-border-radius-container-large);
+	--border-width-input: var(--thematiq-global-border-width-input);
+	--border-width-input-focused: var(--thematiq-global-border-width-input-focused);
+	--breakpoint-mobile: var(--thematiq-global-breakpoint-mobile);
+	--clickable-area-large: var(--thematiq-global-clickable-area-large);
+	--clickable-area-small: var(--thematiq-global-clickable-area-small);
+	--color-background-assistant: var(--thematiq-global-color-background-assistant);
+	--color-background-selection: var(--thematiq-global-color-background-selection);
+	--color-border-assistant: var(--thematiq-global-color-border-assistant);
+	--color-box-shadow: var(--thematiq-global-color-box-shadow);
+	--color-box-shadow-rgb: var(--thematiq-global-color-box-shadow-rgb);
+	--color-element-assistant: var(--thematiq-global-color-element-assistant);
+	--color-element-assistant-icon: var(--thematiq-global-color-element-assistant-icon);
+	--color-error-text: var(--thematiq-global-color-error-text);
+	--color-info-hover: var(--thematiq-global-color-info-hover);
+	--color-info-rgb: var(--thematiq-global-color-info-rgb);
+	--color-info-text: var(--thematiq-global-color-info-text);
+	--color-loading-dark: var(--thematiq-global-color-loading-dark);
+	--color-loading-light: var(--thematiq-global-color-loading-light);
+	--color-main-background: var(--thematiq-global-color-main-background);
+	--color-main-background-blur: var(--thematiq-global-color-main-background-blur);
+	--color-main-background-rgb: var(--thematiq-global-color-main-background-rgb);
+	--color-main-background-translucent: var(--thematiq-global-color-main-background-translucent);
+	--color-mark: var(--thematiq-global-color-mark);
+	--color-success-hover: var(--thematiq-global-color-success-hover);
+	--color-success-text: var(--thematiq-global-color-success-text);
+	--color-text-maxcontrast-background-blur: var(--thematiq-global-color-text-maxcontrast-background-blur);
+	--color-text-maxcontrast-default: var(--thematiq-global-color-text-maxcontrast-default);
+	--color-text-selection: var(--thematiq-global-color-text-selection);
+	--color-warning-hover: var(--thematiq-global-color-warning-hover);
+	--color-warning-text: var(--thematiq-global-color-warning-text);
+	--default-clickable-area: var(--thematiq-global-default-clickable-area);
+	--default-font-size: var(--thematiq-global-default-font-size);
+	--default-grid-baseline: var(--thematiq-global-default-grid-baseline);
+	--default-line-height: var(--thematiq-global-default-line-height);
+	--filter-background-blur: var(--thematiq-global-filter-background-blur);
+	--font-size-small: var(--thematiq-global-font-size-small);
+	--gradient-main-background: var(--thematiq-global-gradient-main-background);
+	--header-height: var(--thematiq-global-header-height);
+	--header-menu-item-height: var(--thematiq-global-header-menu-item-height);
+	--navigation-width: var(--thematiq-global-navigation-width);
+	--sidebar-max-width: var(--thematiq-global-sidebar-max-width);
+	--sidebar-min-width: var(--thematiq-global-sidebar-min-width);
+}
+
+/*
+ * Dark reset. A set file declares its tokens on :root, and a :root value
+ * applies in dark too: a pale search highlight chosen for light would land in
+ * dark mode. `initial` makes each token guaranteed-invalid in the dark scopes,
+ * so the capture falls back to Nextcloud's dark value. `:where()` gives the
+ * reset zero specificity: a set's dark variant file and an admin dark value,
+ * which name the same scopes, outrank it although this file loads after them.
+ */
+
+@media (prefers-color-scheme: dark) {
+	:where(body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])) {
+		--nldesign-background-invert-if-bright: initial;
+		--nldesign-background-invert-if-dark: initial;
+		--nldesign-body-container-margin: initial;
+		--nldesign-body-container-radius: initial;
+		--nldesign-body-height: initial;
+		--nldesign-border-radius-container: initial;
+		--nldesign-border-radius-container-large: initial;
+		--nldesign-border-width-input: initial;
+		--nldesign-border-width-input-focused: initial;
+		--nldesign-breakpoint-mobile: initial;
+		--nldesign-clickable-area-large: initial;
+		--nldesign-clickable-area-small: initial;
+		--nldesign-color-background-assistant: initial;
+		--nldesign-color-background-selection: initial;
+		--nldesign-color-border-assistant: initial;
+		--nldesign-color-box-shadow: initial;
+		--nldesign-color-box-shadow-rgb: initial;
+		--nldesign-color-element-assistant: initial;
+		--nldesign-color-element-assistant-icon: initial;
+		--nldesign-color-error-text: initial;
+		--nldesign-color-info-hover: initial;
+		--nldesign-color-info-rgb: initial;
+		--nldesign-color-info-text: initial;
+		--nldesign-color-loading-dark: initial;
+		--nldesign-color-loading-light: initial;
+		--nldesign-color-main-background: initial;
+		--nldesign-color-main-background-blur: initial;
+		--nldesign-color-main-background-rgb: initial;
+		--nldesign-color-main-background-translucent: initial;
+		--nldesign-color-mark: initial;
+		--nldesign-color-success-hover: initial;
+		--nldesign-color-success-text: initial;
+		--nldesign-color-text-maxcontrast-background-blur: initial;
+		--nldesign-color-text-maxcontrast-default: initial;
+		--nldesign-color-text-selection: initial;
+		--nldesign-color-warning-hover: initial;
+		--nldesign-color-warning-text: initial;
+		--nldesign-default-clickable-area: initial;
+		--nldesign-default-font-size: initial;
+		--nldesign-default-grid-baseline: initial;
+		--nldesign-default-line-height: initial;
+		--nldesign-filter-background-blur: initial;
+		--nldesign-font-size-small: initial;
+		--nldesign-gradient-main-background: initial;
+		--nldesign-header-height: initial;
+		--nldesign-header-menu-item-height: initial;
+		--nldesign-navigation-width: initial;
+		--nldesign-sidebar-max-width: initial;
+		--nldesign-sidebar-min-width: initial;
+	}
+}
+
+:where(body[data-theme-dark], body[data-themes*=dark]) {
+	--nldesign-background-invert-if-bright: initial;
+	--nldesign-background-invert-if-dark: initial;
+	--nldesign-body-container-margin: initial;
+	--nldesign-body-container-radius: initial;
+	--nldesign-body-height: initial;
+	--nldesign-border-radius-container: initial;
+	--nldesign-border-radius-container-large: initial;
+	--nldesign-border-width-input: initial;
+	--nldesign-border-width-input-focused: initial;
+	--nldesign-breakpoint-mobile: initial;
+	--nldesign-clickable-area-large: initial;
+	--nldesign-clickable-area-small: initial;
+	--nldesign-color-background-assistant: initial;
+	--nldesign-color-background-selection: initial;
+	--nldesign-color-border-assistant: initial;
+	--nldesign-color-box-shadow: initial;
+	--nldesign-color-box-shadow-rgb: initial;
+	--nldesign-color-element-assistant: initial;
+	--nldesign-color-element-assistant-icon: initial;
+	--nldesign-color-error-text: initial;
+	--nldesign-color-info-hover: initial;
+	--nldesign-color-info-rgb: initial;
+	--nldesign-color-info-text: initial;
+	--nldesign-color-loading-dark: initial;
+	--nldesign-color-loading-light: initial;
+	--nldesign-color-main-background: initial;
+	--nldesign-color-main-background-blur: initial;
+	--nldesign-color-main-background-rgb: initial;
+	--nldesign-color-main-background-translucent: initial;
+	--nldesign-color-mark: initial;
+	--nldesign-color-success-hover: initial;
+	--nldesign-color-success-text: initial;
+	--nldesign-color-text-maxcontrast-background-blur: initial;
+	--nldesign-color-text-maxcontrast-default: initial;
+	--nldesign-color-text-selection: initial;
+	--nldesign-color-warning-hover: initial;
+	--nldesign-color-warning-text: initial;
+	--nldesign-default-clickable-area: initial;
+	--nldesign-default-font-size: initial;
+	--nldesign-default-grid-baseline: initial;
+	--nldesign-default-line-height: initial;
+	--nldesign-filter-background-blur: initial;
+	--nldesign-font-size-small: initial;
+	--nldesign-gradient-main-background: initial;
+	--nldesign-header-height: initial;
+	--nldesign-header-menu-item-height: initial;
+	--nldesign-navigation-width: initial;
+	--nldesign-sidebar-max-width: initial;
+	--nldesign-sidebar-min-width: initial;
+}

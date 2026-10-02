@@ -71,8 +71,37 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const MAPPING_PATH = join(ROOT, 'scripts/mapping/component-tokens.json')
 const SCOPES_PATH = join(ROOT, 'css/component-scopes.css')
 const LOCK_PATH = join(ROOT, 'css/primary-lock.css')
+const STATUS_PATH = join(ROOT, 'scripts/mapping/variable-status.json')
+const THEME_SCOPES_PATH = join(ROOT, 'css/theme-scopes.css')
 
 const mapping = JSON.parse(readFileSync(MAPPING_PATH, 'utf-8'))
+
+/*
+ * Settable theme variables (theme-vocabulary-complete): Nextcloud variables a
+ * set or the admin may give a value through an `--nldesign-*` token that has
+ * no default. Name -> token, sorted by name so the output is stable.
+ */
+const settable = new Map(
+	Object.entries(JSON.parse(readFileSync(STATUS_PATH, 'utf-8')).variables)
+		.filter(([, entry]) => entry.status === 'settable' && typeof entry.token === 'string')
+		.sort(([a], [b]) => a.localeCompare(b))
+		.map(([name, entry]) => [name, entry.token]),
+)
+
+/**
+ * What a global's capture reads: the global itself, or for a settable theme
+ * variable its token first, so the capture is the set's value when there is
+ * one and Nextcloud's value for the active theme when there is not.
+ *
+ * @param {string} global A Nextcloud custom property name.
+ *
+ * @return {string} The capture's value.
+ */
+function captureValue(global) {
+	return settable.has(global) === true
+		? 'var(' + settable.get(global) + ', var(' + global + '))'
+		: 'var(' + global + ')'
+}
 
 /**
  * The `--thematiq-global-*` name a global is captured under.
@@ -187,8 +216,13 @@ for (const component of Object.values(mapping.components)) {
 		}
 	}
 }
+for (const name of settable.keys()) {
+	if (captured.includes(name) === false) {
+		captured.push(name)
+	}
+}
 for (const global of captured) {
-	scopes.push('\t' + captureName(global) + ': var(' + global + ');')
+	scopes.push('\t' + captureName(global) + ': ' + captureValue(global) + ';')
 }
 
 /*
@@ -443,11 +477,67 @@ lock.push('}', '')
 
 const lockOutput = lock.join('\n')
 
+/* ------------------------------------------------------------ theme scopes */
+
+/*
+ * The scopes of a user whose system is dark and who chose no theme, and of a
+ * user who chose a dark theme: the two scopes the generated dark token files
+ * and CustomOverridesService write dark values into.
+ */
+const SYSTEM_DARK = 'body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])'
+const CHOSEN_DARK = 'body[data-theme-dark], body[data-themes*=dark]'
+
+const theme = [
+	...BANNER.map((line) => line.replace('Source: scripts/mapping/component-tokens.json', 'Source: scripts/mapping/variable-status.json (settable theme variables)')),
+	'/*',
+	' * Theme scopes: every settable Nextcloud theme variable, redeclared on each',
+	' * child of body from its capture in component-scopes.css.',
+	' *',
+	' * The capture on body reads `var(--nldesign-X, var(X))`: the token when a set',
+	' * or the admin gives one, otherwise the value Nextcloud declared for the',
+	' * active theme. The tokens have no default anywhere, so an instance that sets',
+	' * none of them renders exactly as Nextcloud does, in light, dark and high',
+	' * contrast. Nothing in Nextcloud declares these variables between body and',
+	' * its children, so the children see the value they would have inherited.',
+	' *',
+	' * The capture is declared on body and #nldesign-preview only, and read only',
+	' * below them, so no rule reads a property declared on its own element.',
+	' */',
+	'',
+	'body > *,',
+	'#nldesign-preview > * {',
+	...[...settable.keys()].map((name) => '\t' + name + ': var(' + captureName(name) + ');'),
+	'}',
+	'',
+	'/*',
+	' * Dark reset. A set file declares its tokens on :root, and a :root value',
+	' * applies in dark too: a pale search highlight chosen for light would land in',
+	' * dark mode. `initial` makes each token guaranteed-invalid in the dark scopes,',
+	' * so the capture falls back to Nextcloud\'s dark value. `:where()` gives the',
+	' * reset zero specificity: a set\'s dark variant file and an admin dark value,',
+	' * which name the same scopes, outrank it although this file loads after them.',
+	' */',
+	'',
+	'@media (prefers-color-scheme: dark) {',
+	'\t:where(' + SYSTEM_DARK + ') {',
+	...[...settable.values()].map((token) => '\t\t' + token + ': initial;'),
+	'\t}',
+	'}',
+	'',
+	':where(' + CHOSEN_DARK + ') {',
+	...[...settable.values()].map((token) => '\t' + token + ': initial;'),
+	'}',
+	'',
+]
+
+const themeOutput = theme.join('\n')
+
 /* ------------------------------------------------------------------- write */
 
 const outputs = [
 	{ path: SCOPES_PATH, label: 'css/component-scopes.css', content: scopesOutput },
 	{ path: LOCK_PATH, label: 'css/primary-lock.css', content: lockOutput },
+	{ path: THEME_SCOPES_PATH, label: 'css/theme-scopes.css', content: themeOutput },
 ]
 
 if (process.argv.includes('--check') === false) {
@@ -519,5 +609,5 @@ if (stale === true) {
 	process.exit(1)
 }
 
-process.stdout.write('generate-component-scopes: OK — both committed files match.\n')
+process.stdout.write('generate-component-scopes: OK, every committed file matches.\n')
 process.exit(0)

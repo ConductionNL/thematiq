@@ -47,7 +47,6 @@
 				"--color-background-hover",
 				"--color-background-plain",
 				"--color-background-plain-text",
-				"--color-background-selection",
 				"--color-border",
 				"--color-border-dark",
 				"--color-border-error",
@@ -83,7 +82,6 @@
 				"--color-success-rgb",
 				"--color-text-error",
 				"--color-text-maxcontrast",
-				"--color-text-selection",
 				"--color-text-success",
 				"--color-text-warning",
 				"--color-warning",
@@ -112,6 +110,7 @@
 				"--clickable-area-large",
 				"--clickable-area-small",
 				"--color-background-assistant",
+				"--color-background-selection",
 				"--color-border-assistant",
 				"--color-box-shadow",
 				"--color-box-shadow-rgb",
@@ -132,6 +131,7 @@
 				"--color-success-text",
 				"--color-text-maxcontrast-background-blur",
 				"--color-text-maxcontrast-default",
+				"--color-text-selection",
 				"--color-warning-hover",
 				"--color-warning-text",
 				"--default-clickable-area",
@@ -166,7 +166,10 @@
 			"settable": []
 		}
 	},
-	"removals": {},
+	"removals": {
+		"--color-text-selection": "Moved from mapped (derived by Nextcloud) to settable in theme-vocabulary-complete, so a set can give the selection pair its own values.",
+		"--color-background-selection": "Moved from mapped (derived by Nextcloud) to settable in theme-vocabulary-complete, so a set can give the selection pair its own values."
+	},
 	"variables": {
 		"--account-menu-outline": {
 			"status": "excluded",
@@ -868,9 +871,12 @@
 			"reason": "Nextcloud derives it from the primary or background colour thematiq writes to the theming app."
 		},
 		"--color-background-selection": {
-			"status": "mapped",
-			"via": "nextcloud",
-			"reason": "Nextcloud's own value reads --color-primary-element, which follows the set."
+			"status": "settable",
+			"token": "--nldesign-color-background-selection",
+			"tab": "content",
+			"type": "text",
+			"label": "Selection background",
+			"note": "Nextcloud tints it from the primary colour at 20% opacity, so selected text stays legible. The contrast audit checks it against the selected text."
 		},
 		"--color-border": {
 			"status": "mapped",
@@ -1238,9 +1244,12 @@
 			"note": "Nextcloud's own muted text colour, per theme. thematiq maps --color-text-maxcontrast itself."
 		},
 		"--color-text-selection": {
-			"status": "mapped",
-			"via": "nextcloud",
-			"reason": "Nextcloud's own value reads --color-main-text and --color-primary-element-text, which follows the set."
+			"status": "settable",
+			"token": "--nldesign-color-text-selection",
+			"tab": "typography",
+			"type": "color",
+			"label": "Selected text",
+			"note": "Nextcloud uses the main text colour. It pairs with the selection background, and the contrast audit checks the two together."
 		},
 		"--color-text-success": {
 			"status": "mapped",

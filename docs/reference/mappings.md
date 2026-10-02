@@ -23,41 +23,41 @@ Declared by Nextcloud's theming app, with a value per built-in theme.
 | `--animation-quick` | theme | mapped | `--nldesign-animation-quick` | theming | Set by thematiq. |
 | `--animation-slow` | theme | mapped | `--nldesign-animation-slow` | theming | Set by thematiq. |
 | `--background-image-invert-if-bright` | theme | mapped |  | theming | Nextcloud derives it from the primary or background colour thematiq writes to the theming app. |
-| `--background-invert-if-bright` | theme | excluded |  | theming | intentionally not overridden: bright mode inversion |
-| `--background-invert-if-dark` | theme | excluded |  | theming | intentionally not overridden: dark mode inversion |
-| `--body-container-margin` | theme | excluded |  | theming | intentionally not overridden: NC layout dependent |
-| `--body-container-radius` | theme | excluded |  | theming | intentionally not overridden: it is a CONTAINER radius, like `--border-radius-container` and `-container-large` above, and this used to map it to the brand's CONTROL radius. On a brand whose controls are near-square (Zwolle: 2px) that squared off the whole app shell, because `#content` draws its `border-radius` from this variable. Left to Nextcloud, the shell keeps stock geometry: the base value is 0 and only the two TOP corners are rounded, from `--border-radius-large`: which IS themed above, so the brand still decides how round the shell reads. |
-| `--body-height` | theme | excluded |  | theming | intentionally not overridden: NC layout dependent |
+| `--background-invert-if-bright` | theme | settable | `--nldesign-background-invert-if-bright` | theming | Nextcloud inverts dark icons with this filter when the background is bright. It switches per theme; set it only to change that behaviour. |
+| `--background-invert-if-dark` | theme | settable | `--nldesign-background-invert-if-dark` | theming | Nextcloud inverts dark icons with this filter when the background is dark. It switches per theme; set it only to change that behaviour. |
+| `--body-container-margin` | theme | settable | `--nldesign-body-container-margin` | theming | The gap around the app container. Nextcloud derives it from the grid baseline. |
+| `--body-container-radius` | theme | settable | `--nldesign-body-container-radius` | theming | A container radius, not a control radius: #content draws its corners from it. Nextcloud keeps 0 and rounds the top corners from --border-radius-large. |
+| `--body-height` | theme | settable | `--nldesign-body-height` | theming | Nextcloud calculates it from the header height and the safe area. A wrong value cuts off the bottom of every app. |
 | `--border-radius` | theme | mapped | `--nldesign-border-radius` | theming | Set by thematiq. |
-| `--border-radius-container` | theme | excluded |  | theming | intentionally not overridden: layout consistency |
-| `--border-radius-container-large` | theme | excluded |  | theming | intentionally not overridden: layout consistency |
+| `--border-radius-container` | theme | settable | `--nldesign-border-radius-container` | theming | Radius of containers such as cards and dialogs (12px in Nextcloud). Controls take --border-radius-element. |
+| `--border-radius-container-large` | theme | settable | `--nldesign-border-radius-container-large` | theming | Radius of large containers (16px in Nextcloud). The top corners of the app container follow it. |
 | `--border-radius-element` | theme | mapped | `--nldesign-border-radius` | theming | Set by thematiq. |
 | `--border-radius-large` | theme | mapped | `--nldesign-border-radius-large` | theming | Set by thematiq. |
 | `--border-radius-pill` | theme | mapped | `--nldesign-border-radius-pill` | theming | Set by thematiq. |
 | `--border-radius-rounded` | theme | mapped | `--nldesign-border-radius-rounded` | theming | Set by thematiq. |
 | `--border-radius-small` | theme | mapped | `--nldesign-border-radius-small` | theming | Set by thematiq. |
-| `--border-width-input` | theme | excluded |  | theming | unmapped: standard 1px across all themes |
-| `--border-width-input-focused` | theme | excluded |  | theming | unmapped: standard 2px |
-| `--breakpoint-mobile` | theme | excluded |  | theming | intentionally not overridden: NC responsive design |
-| `--clickable-area-large` | theme | excluded |  | theming | intentionally not overridden: large touch target (48px) |
-| `--clickable-area-small` | theme | excluded |  | theming | intentionally not overridden: small touch target (24px) |
-| `--color-background-assistant` | theme | excluded |  | theming | intentionally not overridden: NC-specific |
+| `--border-width-input` | theme | settable | `--nldesign-border-width-input` | theming | Border width of text inputs (1px in Nextcloud). |
+| `--border-width-input-focused` | theme | settable | `--nldesign-border-width-input-focused` | theming | Border width of a focused text input (2px in Nextcloud). |
+| `--breakpoint-mobile` | theme | settable | `--nldesign-breakpoint-mobile` | theming | Width below which Nextcloud switches to its mobile layout (1024px). Nextcloud reads it in JavaScript too. |
+| `--clickable-area-large` | theme | settable | `--nldesign-clickable-area-large` | theming | Large touch target (48px in Nextcloud). WCAG 2.5.8 asks for at least 24px. |
+| `--clickable-area-small` | theme | settable | `--nldesign-clickable-area-small` | theming | Small touch target (24px in Nextcloud). WCAG 2.5.8 asks for at least 24px. |
+| `--color-background-assistant` | theme | settable | `--nldesign-color-background-assistant` | theming | Background of the assistant. Nextcloud gives it a light and a dark value. |
 | `--color-background-dark` | theme | mapped | `--nldesign-color-background-dark` | theming | Set by thematiq. |
 | `--color-background-darker` | theme | mapped | `--nldesign-color-background-darker` | theming | Set by thematiq. |
 | `--color-background-hover` | theme | mapped | `--nldesign-color-background-hover` | theming | Set by thematiq. |
 | `--color-background-plain` | theme | mapped |  | theming | Nextcloud derives it from the primary or background colour thematiq writes to the theming app. |
 | `--color-background-plain-text` | theme | mapped |  | theming | Nextcloud derives it from the primary or background colour thematiq writes to the theming app. |
-| `--color-background-selection` | theme | mapped |  | theming | Nextcloud's own value reads --color-primary-element, which follows the set. |
+| `--color-background-selection` | theme | settable | `--nldesign-color-background-selection` | theming | Nextcloud tints it from the primary colour at 20% opacity, so selected text stays legible. The contrast audit checks it against the selected text. |
 | `--color-border` | theme | mapped | `--nldesign-color-border` | theming | Set by thematiq. |
-| `--color-border-assistant` | theme | excluded |  | theming | intentionally not overridden: NC-specific |
+| `--color-border-assistant` | theme | settable | `--nldesign-color-border-assistant` | theming | Border of the assistant, a gradient in Nextcloud. |
 | `--color-border-dark` | theme | mapped | `--nldesign-color-border-dark` | theming | Set by thematiq. |
 | `--color-border-error` | theme | mapped | `--nldesign-color-error` | theming | Set by thematiq. |
 | `--color-border-maxcontrast` | theme | mapped | `--nldesign-color-border-dark` | theming | Set by thematiq. |
 | `--color-border-success` | theme | mapped | `--nldesign-color-success` | theming | Set by thematiq. |
-| `--color-box-shadow` | theme | excluded |  | theming | unmapped: depends on --color-box-shadow-rgb |
-| `--color-box-shadow-rgb` | theme | excluded |  | theming | unmapped: auto-calculated from background |
-| `--color-element-assistant` | theme | excluded |  | theming | intentionally not overridden: NC-specific |
-| `--color-element-assistant-icon` | theme | excluded |  | theming | intentionally not overridden: NC-specific |
+| `--color-box-shadow` | theme | settable | `--nldesign-color-box-shadow` | theming | Nextcloud derives it from --color-box-shadow-rgb in light and uses black in dark. |
+| `--color-box-shadow-rgb` | theme | settable | `--nldesign-color-box-shadow-rgb` | theming | The shadow colour as an r,g,b triplet. |
+| `--color-element-assistant` | theme | settable | `--nldesign-color-element-assistant` | theming | Fill of assistant elements, a gradient in Nextcloud. |
+| `--color-element-assistant-icon` | theme | settable | `--nldesign-color-element-assistant-icon` | theming | Fill of the assistant icon, a gradient in Nextcloud. |
 | `--color-element-error` | theme | mapped | `--nldesign-color-error` | theming | Set by thematiq. |
 | `--color-element-info` | theme | mapped | `--nldesign-color-info` | theming | Set by thematiq. |
 | `--color-element-success` | theme | mapped | `--nldesign-color-success` | theming | Set by thematiq. |
@@ -65,20 +65,20 @@ Declared by Nextcloud's theming app, with a value per built-in theme.
 | `--color-error` | theme | mapped | `--nldesign-color-error` | theming | Set by thematiq. |
 | `--color-error-hover` | theme | mapped | `--nldesign-color-error-hover` | theming | Set by thematiq. |
 | `--color-error-rgb` | theme | mapped | `--nldesign-color-error-rgb` | theming | Set by thematiq. |
-| `--color-error-text` | theme | excluded |  | theming | unmapped: auto-calculated for contrast by Nextcloud |
+| `--color-error-text` | theme | settable | `--nldesign-color-error-text` | theming | Nextcloud picks it for contrast against the error colour, per theme. |
 | `--color-favorite` | theme | mapped | `--nldesign-color-favorite` | theming | Set by thematiq. |
 | `--color-info` | theme | mapped | `--nldesign-color-info` | theming | Set by thematiq. |
-| `--color-info-hover` | theme | excluded |  | theming | unmapped: no NL Design equivalent |
-| `--color-info-rgb` | theme | excluded |  | theming | unmapped: deprecated, RGB for rgba() |
-| `--color-info-text` | theme | excluded |  | theming | unmapped: auto-calculated for contrast by Nextcloud |
-| `--color-loading-dark` | theme | excluded |  | theming | unmapped: NC loading animation internal |
-| `--color-loading-light` | theme | excluded |  | theming | unmapped: NC loading animation internal |
-| `--color-main-background` | theme | excluded |  | theming | intentionally not overridden: overriding breaks dark mode |
-| `--color-main-background-blur` | theme | excluded |  | theming | intentionally not overridden: depends on main-background-rgb |
-| `--color-main-background-rgb` | theme | excluded |  | theming | intentionally not overridden: depends on main-background |
-| `--color-main-background-translucent` | theme | excluded |  | theming | intentionally not overridden: depends on main-background-rgb |
+| `--color-info-hover` | theme | settable | `--nldesign-color-info-hover` | theming | Hover tint of info elements. |
+| `--color-info-rgb` | theme | settable | `--nldesign-color-info-rgb` | theming | Deprecated in Nextcloud: the info colour as an r,g,b triplet for rgba(). |
+| `--color-info-text` | theme | settable | `--nldesign-color-info-text` | theming | Nextcloud picks it for contrast against the info colour, per theme. |
+| `--color-loading-dark` | theme | settable | `--nldesign-color-loading-dark` | theming | Dark part of the loading spinner. |
+| `--color-loading-light` | theme | settable | `--nldesign-color-loading-light` | theming | Light part of the loading spinner. |
+| `--color-main-background` | theme | settable | `--nldesign-color-main-background` | theming | Nextcloud sets a different value per theme. An admin value applies to light only; give a dark value through the set's dark file. |
+| `--color-main-background-blur` | theme | settable | `--nldesign-color-main-background-blur` | theming | Nextcloud derives it from --color-main-background-rgb. |
+| `--color-main-background-rgb` | theme | settable | `--nldesign-color-main-background-rgb` | theming | The main background as an r,g,b triplet. Keep it in step with --color-main-background. |
+| `--color-main-background-translucent` | theme | settable | `--nldesign-color-main-background-translucent` | theming | Nextcloud derives it from --color-main-background-rgb. |
 | `--color-main-text` | theme | mapped | `--nldesign-color-text` | theming | Set by thematiq. |
-| `--color-mark` | theme | excluded |  | theming | unmapped: new in NC 33/34. A fixed #fff0c7 highlight tint behind &lt;mark&gt;, for search hits. NL Design has no highlight token, and a brand colour here is the wrong instrument: the tint has to stay legible under --color-main-text, which a saturated primary is not. |
+| `--color-mark` | theme | settable | `--nldesign-color-mark` | theming | The tint behind search hits (&lt;mark&gt;). Text on it uses --color-main-text, so the pair is audited for contrast. |
 | `--color-placeholder-dark` | theme | mapped | `--nldesign-color-placeholder-dark` | theming | Set by thematiq. |
 | `--color-placeholder-light` | theme | mapped | `--nldesign-color-placeholder-light` | theming | Set by thematiq. |
 | `--color-primary` | theme | mapped | `--nldesign-color-primary` | theming | Set by thematiq. |
@@ -96,41 +96,41 @@ Declared by Nextcloud's theming app, with a value per built-in theme.
 | `--color-primary-text` | theme | mapped | `--nldesign-color-primary-text` | theming | Set by thematiq. |
 | `--color-scrollbar` | theme | mapped |  | theming | Nextcloud's own value reads --color-border-maxcontrast, which follows the set. |
 | `--color-success` | theme | mapped | `--nldesign-color-success` | theming | Set by thematiq. |
-| `--color-success-hover` | theme | excluded |  | theming | unmapped: no NL Design equivalent |
+| `--color-success-hover` | theme | settable | `--nldesign-color-success-hover` | theming | Hover tint of success elements. |
 | `--color-success-rgb` | theme | mapped | `--nldesign-color-success-rgb` | theming | Set by thematiq. |
-| `--color-success-text` | theme | excluded |  | theming | unmapped: auto-calculated for contrast by Nextcloud |
+| `--color-success-text` | theme | settable | `--nldesign-color-success-text` | theming | Nextcloud picks it for contrast against the success colour, per theme. |
 | `--color-text-error` | theme | mapped | `--nldesign-color-error` | theming | Set by thematiq. |
 | `--color-text-maxcontrast` | theme | mapped | `--nldesign-color-text-muted` | theming | Set by thematiq. |
-| `--color-text-maxcontrast-background-blur` | theme | excluded |  | theming | unmapped: blur-adjusted maxcontrast, auto-calculated |
-| `--color-text-maxcontrast-default` | theme | excluded |  | theming | unmapped: auto-calculated per theme by Nextcloud |
-| `--color-text-selection` | theme | mapped |  | theming | Nextcloud's own value reads --color-main-text and --color-primary-element-text, which follows the set. |
+| `--color-text-maxcontrast-background-blur` | theme | settable | `--nldesign-color-text-maxcontrast-background-blur` | theming | Muted text on a blurred surface; Nextcloud picks it per theme for contrast. |
+| `--color-text-maxcontrast-default` | theme | settable | `--nldesign-color-text-maxcontrast-default` | theming | Nextcloud's own muted text colour, per theme. thematiq maps --color-text-maxcontrast itself. |
+| `--color-text-selection` | theme | settable | `--nldesign-color-text-selection` | theming | Nextcloud uses the main text colour. It pairs with the selection background, and the contrast audit checks the two together. |
 | `--color-text-success` | theme | mapped | `--nldesign-color-success` | theming | Set by thematiq. |
 | `--color-text-warning` | theme | mapped | `--nldesign-color-warning` | theming | Set by thematiq. |
 | `--color-warning` | theme | mapped | `--nldesign-color-warning` | theming | Set by thematiq. |
-| `--color-warning-hover` | theme | excluded |  | theming | unmapped: no NL Design equivalent |
+| `--color-warning-hover` | theme | settable | `--nldesign-color-warning-hover` | theming | Hover tint of warning elements. |
 | `--color-warning-rgb` | theme | mapped | `--nldesign-color-warning-rgb` | theming | Set by thematiq. |
-| `--color-warning-text` | theme | excluded |  | theming | unmapped: auto-calculated for contrast by Nextcloud |
-| `--default-clickable-area` | theme | excluded |  | theming | intentionally not overridden: touch target (34px) |
-| `--default-font-size` | theme | excluded |  | theming | unmapped: standard 15px |
-| `--default-grid-baseline` | theme | excluded |  | theming | intentionally not overridden: core layout unit (4px) |
-| `--default-line-height` | theme | excluded |  | theming | unmapped: standard 1.5 |
-| `--filter-background-blur` | theme | excluded |  | theming | intentionally not overridden: NC handles browser compat |
+| `--color-warning-text` | theme | settable | `--nldesign-color-warning-text` | theming | Nextcloud picks it for contrast against the warning colour, per theme. |
+| `--default-clickable-area` | theme | settable | `--nldesign-default-clickable-area` | theming | Default touch target (34px in Nextcloud). Many components redeclare it on their own element. |
+| `--default-font-size` | theme | settable | `--nldesign-default-font-size` | theming | Base font size (15px in Nextcloud). |
+| `--default-grid-baseline` | theme | settable | `--nldesign-default-grid-baseline` | theming | Nextcloud's layout unit (4px). Spacing everywhere is a multiple of it. |
+| `--default-line-height` | theme | settable | `--nldesign-default-line-height` | theming | Base line height (1.5 in Nextcloud). |
+| `--filter-background-blur` | theme | settable | `--nldesign-filter-background-blur` | theming | The blur behind translucent surfaces. Nextcloud drops it where a browser cannot render it. |
 | `--font-face` | theme | mapped | `--nldesign-font-family` | theming | Set by thematiq. |
-| `--font-size-small` | theme | excluded |  | theming | unmapped: standard 13px |
+| `--font-size-small` | theme | settable | `--nldesign-font-size-small` | theming | Small font size (13px in Nextcloud). |
 | `--font-weight-default` | theme | mapped | `--nldesign-font-weight-default` | theming | Set by thematiq. |
 | `--font-weight-element` | theme | mapped | `--nldesign-font-weight-element` | theming | Set by thematiq. |
 | `--font-weight-heading` | theme | mapped | `--nldesign-font-weight-heading` | theming | Set by thematiq. |
-| `--gradient-main-background` | theme | excluded |  | theming | intentionally not overridden: depends on main-background vars |
+| `--gradient-main-background` | theme | settable | `--nldesign-gradient-main-background` | theming | Nextcloud derives it from the main background variables. |
 | `--gradient-primary-background` | theme | mapped |  | theming | Nextcloud's own value reads --color-primary and --color-primary-hover, which follows the set. |
-| `--header-height` | theme | excluded |  | theming | intentionally not overridden: Nextcloud sets it per release (50px on 32–34, 44px from 35) and the shell clears it; overriding breaks layout |
+| `--header-height` | theme | settable | `--nldesign-header-height` | theming | Nextcloud sets it per release (50px on 32 to 34, 44px from 35). The app container offsets by it. |
 | `--header-menu-icon-mask` | theme | mapped |  | theming | Nextcloud's own value reads --color-background-plain-text, which follows the set. |
-| `--header-menu-item-height` | theme | excluded |  | theming | intentionally not overridden: NC layout dependent |
+| `--header-menu-item-height` | theme | settable | `--nldesign-header-menu-item-height` | theming | Height of a header menu entry. |
 | `--image-background` | theme | mapped |  | theming | Nextcloud derives it from the primary or background colour thematiq writes to the theming app. |
-| `--navigation-width` | theme | excluded |  | theming | intentionally not overridden: 300px, NC layout dependent |
+| `--navigation-width` | theme | settable | `--nldesign-navigation-width` | theming | Width of the app navigation (300px in Nextcloud). |
 | `--primary-invert-if-bright` | theme | mapped |  | theming | Nextcloud derives it from the primary or background colour thematiq writes to the theming app. |
 | `--primary-invert-if-dark` | theme | mapped |  | theming | Nextcloud derives it from the primary or background colour thematiq writes to the theming app. |
-| `--sidebar-max-width` | theme | excluded |  | theming | intentionally not overridden: NC layout dependent |
-| `--sidebar-min-width` | theme | excluded |  | theming | intentionally not overridden: NC layout dependent |
+| `--sidebar-max-width` | theme | settable | `--nldesign-sidebar-max-width` | theming | Maximum width of the app sidebar. |
+| `--sidebar-min-width` | theme | settable | `--nldesign-sidebar-min-width` | theming | Minimum width of the app sidebar. |
 
 ## Component variables (377)
 

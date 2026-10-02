@@ -20,8 +20,10 @@ import { classify, scanSource } from '../../scripts/inventory/scan.mjs'
 import {
 	assignedByThematiq,
 	checkBaseline,
+	checkDefaultsLeaveSettableUnset,
 	checkDigests,
 	checkMappedAreAssigned,
+	checkSettable,
 	checkStale,
 	checkStatuses,
 	checkUnknownNames,
@@ -124,10 +126,29 @@ describe('the guard on the committed files', () => {
 		expect(checkBaseline(inventory, status)).toEqual([])
 	})
 
-	it('records the measured starting point: 64 theme and 12 component entries mapped', () => {
+	it('records the measured starting point: 62 theme and 12 component entries mapped', () => {
 		const now = coverage(inventory, status)
-		expect(now.theme.mapped).toHaveLength(64)
+		expect(now.theme.mapped).toHaveLength(62)
 		expect(now.component.mapped).toHaveLength(12)
+	})
+
+	it('every theme entry is mapped or settable (theme-vocabulary-complete)', () => {
+		const now = coverage(inventory, status)
+		expect(now.theme.mapped.length + now.theme.settable.length).toBe(inventory.counts.theme)
+		expect(checkSettable(inventory, status)).toEqual([])
+	})
+
+	it('flags exactly the 13 structural variables advanced', () => {
+		const advanced = Object.entries(status.variables).filter(([, own]) => own.advanced === true).map(([name]) => name).sort()
+		expect(advanced).toEqual([
+			'--body-container-margin', '--body-height', '--breakpoint-mobile', '--clickable-area-large',
+			'--clickable-area-small', '--default-clickable-area', '--default-grid-baseline', '--filter-background-blur',
+			'--header-height', '--header-menu-item-height', '--navigation-width', '--sidebar-max-width', '--sidebar-min-width',
+		])
+	})
+
+	it('no defaults.css gives a settable token a value', () => {
+		expect(checkDefaultsLeaveSettableUnset(root, status)).toEqual([])
 	})
 
 	it('thematiq assigns no Nextcloud-looking name the inventory does not know', () => {
@@ -176,7 +197,7 @@ describe('the guard fails, and names the entry', () => {
 		broken.variables['--color-favorite'] = { status: 'excluded', reason: 'x' }
 		const findings = checkBaseline(inventory, broken)
 		expect(findings).toHaveLength(1)
-		expect(findings[0]).toMatch(/^--color-favorite lost its "mapped" status \(theme: 63 now, baseline 64\)/)
+		expect(findings[0]).toMatch(/^--color-favorite lost its "mapped" status \(theme: 61 now, baseline 62\)/)
 	})
 
 	it('but not when the removal is recorded', () => {
@@ -204,6 +225,18 @@ describe('the guard fails, and names the entry', () => {
 		const broken = new Map(assigned)
 		broken.delete('--color-favorite')
 		expect(checkMappedAreAssigned(inventory, status, broken)).toEqual(['--color-favorite is "mapped" via thematiq, but no thematiq stylesheet assigns it'])
+	})
+
+	it('on a settable token declared in a defaults.css', () => {
+		const broken = copy(status)
+		broken.variables['--color-primary'] = { status: 'settable', token: '--nldesign-color-primary', tab: 'login', type: 'color', label: 'x' }
+		expect(checkDefaultsLeaveSettableUnset(root, broken)).toContain('css/systems/nldesign/defaults.css declares --nldesign-color-primary, a settable token that must stay without a default')
+	})
+
+	it('on a settable icon', () => {
+		const broken = copy(status)
+		broken.variables['--icon-download-dark'] = { status: 'settable', token: '--nldesign-icon-download-dark', tab: 'content', type: 'text', label: 'x' }
+		expect(checkSettable(inventory, broken)).toEqual(['--icon-download-dark is settable but its class is icon'])
 	})
 
 	it('on a hand edit of the inventory', () => {
