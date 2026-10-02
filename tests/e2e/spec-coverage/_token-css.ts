@@ -170,13 +170,15 @@ export function declarations(css: string, prefix: string): Map<string, string> {
 }
 
 /**
- * Normalise a CSS value for comparison: lower case, single spaces, no space
- * after a comma or inside parentheses. Browsers keep a custom property's
- * value close to how it was written, but not byte for byte.
+ * Normalise a CSS value for comparison: lower case, one quote style, single
+ * spaces, no space after a comma or inside parentheses. Browsers keep a custom
+ * property's value close to how it was written, but not byte for byte: a
+ * string may come back in double quotes where the file used single ones.
  */
 export function normaliseCss(value: string): string {
 	return value
 		.toLowerCase()
+		.replace(/"/g, "'")
 		.replace(/\s+/g, ' ')
 		.replace(/\s*,\s*/g, ',')
 		.replace(/\(\s*/g, '(')
