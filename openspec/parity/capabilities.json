@@ -5447,21 +5447,20 @@
 			"id": "sur-generated-documents",
 			"area": "surfaces",
 			"name": "Have documents the system generates (letters, PDF exports, reports) carry the house style: logo, cover, footer and fonts.",
-			"thematiq": "no",
+			"thematiq": "partial",
 			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "partial",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "grep -rliE 'pdf|docx|documenttemplate' lib/ src/ finds no document generation; thematiq styles the web interface and emails only (sur-email), document templates belong to a document app",
+				"state": "building",
+				"evidence": "thematiq half built: lib/Service/DocumentStyleService.php publishes the document profile (organisation, logo or uploaded print logo, cover, colours from the user's resolved set incl. group mapping, heading and body fonts with font URLs, footer lines, contrast warning), readable in-process and at GET /api/document-style (#[NoAdminRequired]); Documents block on Settings > Administration > Theming (lib/Service/DocumentAssetService.php, type and size checks, SVG script refused); the documents themselves are the siblings' halves, ConductionNL/filinq#1340 and ConductionNL/openregister#4255, not built yet",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/surfaces-document-house-style (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/surfaces-document-house-style"
+				"change": "surfaces-document-house-style"
 			},
-			"reachedOn": "nothing reaches it",
+			"reachedOn": "Settings > Administration > Theming, Documents; GET /apps/thematiq/api/document-style; OCA\\Thematiq\\Service\\DocumentStyleService",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 grep of apps/theming/lib and src for pdf finds nothing; the only generated output the theme reaches is email (lib/private/Mail/EMailTemplate.php:360-369), not letters, PDF exports or reports",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/organization-assets-library: organization assets libraries publish Office templates (.dotx, .xltx, .potx) so new documents start in the house style; https://learn.microsoft.com/en-us/sharepoint/brand-center-overview: organisation fonts in PowerPoint for the web. System-generated exports are not covered",
