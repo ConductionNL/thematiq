@@ -211,11 +211,11 @@ header#header {
 	border-radius: var(--lasuite-border-radius) !important;
 	color: var(--lasuite-content-primary, var(--lasuite-color-gray-850)) !important;
 	box-shadow: none !important;
-	/* Nextcloud stretches the control to the full 50px header height; La Suite's
+	/* Nextcloud stretches the control to the full header height (50px on NC 34, 44px on NC 35); La Suite's
 	   is a 34px field centred in the bar. Height alone is not enough — the
 	   element is absolutely positioned, so it also has to be re-centred. */
 	block-size: 34px !important;
-	inset-block-start: 8px !important;
+	inset-block-start: calc((var(--header-height, 50px) - 34px) / 2) !important;
 	min-block-size: 0 !important;
 }
 
@@ -609,7 +609,7 @@ header#header {
 	   margin clears the header, bottom 0 reaches the viewport floor. */
 	height: auto !important;
 	inset: 0 !important;
-	margin: 50px 0 0 !important;
+	margin: var(--header-height, 50px) 0 0 !important;
 	width: 100% !important;
 }
 
