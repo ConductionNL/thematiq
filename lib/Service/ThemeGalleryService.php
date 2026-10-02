@@ -23,6 +23,7 @@ namespace OCA\Thematiq\Service;
 use OCA\Thematiq\AppInfo\Application;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -54,11 +55,20 @@ class ThemeGalleryService {
 	public const CONFIG_INDEX_URL = 'gallery_index_url';
 
 	/**
-	 * App config key: the cached index, `{fetchedAt, etag, entries}`.
+	 * App config key: the cached index, `{fetchedAt, etag, entries}`. Lazy, so
+	 * it is not loaded on every request for every user.
 	 *
 	 * @var string
 	 */
 	private const CONFIG_CACHE = 'gallery_index_cache';
+
+	/**
+	 * The largest index that is read, in bytes. The index lists entries, not
+	 * token sets; a few hundred entries fit well inside this.
+	 *
+	 * @var integer
+	 */
+	public const MAX_INDEX_BYTES = (1024 * 1024);
 
 	/**
 	 * The index this repository publishes.
@@ -90,6 +100,7 @@ class ThemeGalleryService {
 	 * @param GalleryEntryValidator $entries       Decides which index entries may be listed.
 	 * @param ITimeFactory          $time          The clock.
 	 * @param LoggerInterface       $logger        The logger.
+	 * @param IAppConfig            $appConfig     Holds the cached index as a lazy value.
 	 */
 	public function __construct(
 		private IConfig $config,
@@ -98,6 +109,7 @@ class ThemeGalleryService {
 		private GalleryEntryValidator $entries,
 		private ITimeFactory $time,
 		private LoggerInterface $logger,
+		private IAppConfig $appConfig,
 	) {
 	}//end __construct()
 
@@ -237,6 +249,19 @@ class ThemeGalleryService {
 			return null;
 		}
 
+		// Validated again: a cache written before only valid entries were
+		// kept still holds the raw list.
+		return $this->validEntries(raw: $raw);
+	}//end entries()
+
+	/**
+	 * The entries GalleryEntryValidator accepts, in index order.
+	 *
+	 * @param array<int, mixed> $raw The raw entries.
+	 *
+	 * @return array<int, array<string, mixed>> The valid entries.
+	 */
+	private function validEntries(array $raw): array {
 		$entries = [];
 		foreach ($raw as $item) {
 			$entry = $this->entries->validate(raw: $item);
@@ -246,12 +271,15 @@ class ThemeGalleryService {
 		}
 
 		return $entries;
-	}//end entries()
+	}//end validEntries()
 
 	/**
-	 * The raw `entries` list: cached for an hour, then revalidated with the ETag.
+	 * The valid entries: cached for an hour, then revalidated with the ETag.
 	 *
-	 * @return array<int, mixed>|null The raw entries, or null when the index cannot be read.
+	 * Only the valid entries are cached, so an index padded with entries the
+	 * validator refuses does not end up in app config.
+	 *
+	 * @return array<int, mixed>|null The entries, or null when the index cannot be read.
 	 */
 	private function readIndex(): ?array {
 		$now = $this->time->getTime();
@@ -281,7 +309,7 @@ class ThemeGalleryService {
 			'url' => $this->getIndexUrl(),
 			'fetchedAt' => $now,
 			'etag' => $response['etag'],
-			'entries' => array_values($decoded['entries']),
+			'entries' => $this->validEntries(raw: array_values($decoded['entries'])),
 		];
 		$this->writeCache(cache: $cache);
 
@@ -294,7 +322,7 @@ class ThemeGalleryService {
 	 * @return array{url: string, fetchedAt: int, etag: string, entries: array<int, mixed>}|null The cache.
 	 */
 	private function readCache(): ?array {
-		$cache = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_CACHE, ''), true);
+		$cache = json_decode($this->appConfig->getValueString(Application::APP_ID, self::CONFIG_CACHE, '', lazy: true), true);
 		if (is_array($cache) === false || ($cache['url'] ?? null) !== $this->getIndexUrl() || is_array($cache['entries'] ?? null) === false) {
 			return null;
 		}
@@ -310,7 +338,7 @@ class ThemeGalleryService {
 	 * @return void
 	 */
 	private function writeCache(array $cache): void {
-		$this->config->setAppValue(Application::APP_ID, self::CONFIG_CACHE, (string)json_encode($cache, JSON_UNESCAPED_SLASHES));
+		$this->appConfig->setValueString(Application::APP_ID, self::CONFIG_CACHE, (string)json_encode($cache, JSON_UNESCAPED_SLASHES), lazy: true);
 	}//end writeCache()
 
 	/**
@@ -318,7 +346,8 @@ class ThemeGalleryService {
 	 *
 	 * @param string $etag The ETag to revalidate, or ''.
 	 *
-	 * @return array{status: int, body: string, etag: string}|null The answer, or null when the host did not answer.
+	 * @return array{status: int, body: string, etag: string}|null The answer, or null when the host did not answer
+	 *                                                              or sent an index larger than MAX_INDEX_BYTES.
 	 */
 	private function fetch(string $etag): ?array {
 		$headers = ['Accept' => 'application/json'];
@@ -336,9 +365,15 @@ class ThemeGalleryService {
 			return null;
 		}
 
+		$body = (string)$response->getBody();
+		if (strlen($body) > self::MAX_INDEX_BYTES) {
+			$this->logger->info('thematiq gallery: the index is larger than {max} bytes and was not read', ['max' => self::MAX_INDEX_BYTES]);
+			return null;
+		}
+
 		return [
 			'status' => $response->getStatusCode(),
-			'body' => (string)$response->getBody(),
+			'body' => $body,
 			'etag' => (string)$response->getHeader('ETag'),
 		];
 	}//end fetch()

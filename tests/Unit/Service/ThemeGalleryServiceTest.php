@@ -26,6 +26,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -154,7 +155,30 @@ class ThemeGalleryServiceTest extends TestCase {
 		$time = $this->createMock(ITimeFactory::class);
 		$time->method('getTime')->willReturnCallback(fn () => $this->now);
 
-		return new ThemeGalleryService($config, $this->clientService, $customSets, new GalleryEntryValidator(), $time, $this->createMock(LoggerInterface::class));
+		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig->method('getValueString')->willReturnCallback(
+			function (string $app, string $key, string $default = '', bool $lazy = false): string {
+				$this->assertTrue($lazy, 'The cached index is a lazy value.');
+				return ($this->appConfig[$key] ?? $default);
+			}
+		);
+		$appConfig->method('setValueString')->willReturnCallback(
+			function (string $app, string $key, string $value, bool $lazy = false): bool {
+				$this->assertTrue($lazy, 'The cached index is a lazy value.');
+				$this->appConfig[$key] = $value;
+				return true;
+			}
+		);
+
+		return new ThemeGalleryService(
+			$config,
+			$this->clientService,
+			$customSets,
+			new GalleryEntryValidator(),
+			$time,
+			$this->createMock(LoggerInterface::class),
+			$appConfig
+		);
 	}//end service()
 
 	/**
@@ -230,7 +254,24 @@ class ThemeGalleryServiceTest extends TestCase {
 		$ids = array_column($this->service()->browse()['entries'], 'id');
 
 		$this->assertSame(['provincie-utrecht'], $ids);
+		$cached = json_decode($this->appConfig['gallery_index_cache'], true);
+		$this->assertSame(['provincie-utrecht'], array_column($cached['entries'], 'id'), 'Only valid entries are cached.');
 	}//end testInvalidEntriesAreNotListed()
+
+	/**
+	 * An index larger than the cap is not read and not cached.
+	 *
+	 * @return void
+	 */
+	public function testAnOversizedIndexIsReportedAsUnreachable(): void {
+		$this->appConfig['gallery_enabled'] = 'yes';
+		$this->answer = [200, '{"entries":[]}' . str_repeat(' ', ThemeGalleryService::MAX_INDEX_BYTES), '"v1"'];
+
+		$result = $this->service()->browse();
+
+		$this->assertFalse($result['reachable']);
+		$this->assertArrayNotHasKey('gallery_index_cache', $this->appConfig);
+	}//end testAnOversizedIndexIsReportedAsUnreachable()
 
 	/**
 	 * An unreachable index is reported, not thrown.
