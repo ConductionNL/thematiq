@@ -14,6 +14,15 @@ All notable changes to this project will be documented in this file.
   dark mode for the 21 variables Nextcloud varies per theme. The token editor lists them,
   the 13 layout variables flagged advanced, and the contrast audit reports the selection
   and highlight pairs. `npm run test:theme-scopes` proves the cascade in a real browser.
+- **A token set can set the variables inside Nextcloud's components and the shared library.**
+  453 internal variables now have a token: `--nldesign-nc-*` for Nextcloud's own (the date
+  picker, the select box, code highlighting, the media player and 80 more groups) and
+  `--nldesign-cn-*` for `@conduction/nextcloud-vue`. The server writes a rule only for a
+  token the set or the overrides give a value, as an inline layer after the component
+  scopes, so nothing changes until one is set and no file is written into the app. Variables
+  Nextcloud's or the library's script writes at render stay excluded, with the reason in
+  `scripts/mapping/variable-status.json`. `docs/reference/internal-tokens.md` lists them per
+  group; `npm run test:internal-scopes` proves the rules in a real browser.
 
 ### Fixed
 - **No more code integrity warning after customising the theme.** thematiq wrote token

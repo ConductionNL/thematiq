@@ -28,6 +28,8 @@ return [
 		// Token deprecations for consuming apps (authoring-token-lifecycle), signed-in users.
 		['name' => 'catalog#deprecations', 'url' => '/api/token-deprecations', 'verb' => 'GET'],
 		['name' => 'assistantMark#show', 'url' => '/api/assistant-mark', 'verb' => 'GET'],
+		['name' => 'documentStyle#show', 'url' => '/api/document-style', 'verb' => 'GET'],
+		['name' => 'documentStyle#asset', 'url' => '/api/document-style/{kind}', 'verb' => 'GET'],
 		// Token reference of one set, for signed-in users (openspec/specs/token-reference/spec.md).
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
@@ -149,5 +151,9 @@ return [
 		['name' => 'assistantMark#save', 'url' => '/settings/assistant-mark', 'verb' => 'POST'],
 		['name' => 'myGroups#index', 'url' => '/api/my-groups/house-style', 'verb' => 'GET'],
 		['name' => 'myGroups#update', 'url' => '/api/my-groups/{group}/house-style', 'verb' => 'POST'],
+		['name' => 'documentStyle#settings', 'url' => '/settings/document-style', 'verb' => 'GET'],
+		['name' => 'documentStyle#saveFooter', 'url' => '/settings/document-style', 'verb' => 'POST'],
+		['name' => 'documentStyle#upload', 'url' => '/settings/document-style/{kind}', 'verb' => 'POST'],
+		['name' => 'documentStyle#remove', 'url' => '/settings/document-style/{kind}', 'verb' => 'DELETE'],
 	],
 ];

@@ -199,6 +199,13 @@ class ConfigBundleService {
 	private AssistantMarkService $assistantMark;
 
 	/**
+	 * The document house style assets and footer line.
+	 *
+	 * @var DocumentAssetService
+	 */
+	private DocumentAssetService $documentAssets;
+
+	/**
 	 * The logger.
 	 *
 	 * @var LoggerInterface
@@ -222,6 +229,7 @@ class ConfigBundleService {
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
 	 * @param AssistantMarkService $assistantMark The approved mark for the AI assistant.
+	 * @param DocumentAssetService $documentAssets The document house style assets and footer line.
 	 * @param TokenLifecycleBundleSection|null $lifecycle The own tokens and deprecations section.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
@@ -244,6 +252,7 @@ class ConfigBundleService {
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
 		AssistantMarkService $assistantMark,
+		DocumentAssetService $documentAssets,
 		private ?TokenLifecycleBundleSection $lifecycle = null,
 	) {
 		$this->config = $config;
@@ -260,6 +269,7 @@ class ConfigBundleService {
 		$this->scheduledSwitches = $scheduledSwitches;
 		$this->logger = $logger;
 		$this->assistantMark = $assistantMark;
+		$this->documentAssets = $documentAssets;
 	}//end __construct()
 
 	/**
@@ -297,6 +307,7 @@ class ConfigBundleService {
 				'manifest' => $this->fontService->getManifest(),
 			],
 			'assistantMark' => $this->assistantMark->exportBundle(),
+			'documentStyle' => $this->documentAssets->exportBundle(),
 		] + ($this->lifecycle?->export() ?? []);
 	}//end export()
 
@@ -416,6 +427,13 @@ class ConfigBundleService {
 		}
 
 		$resolved['assistantMark'] = $assistantMark['value'];
+
+		$documentStyle = $this->documentAssets->validateBundle(section: ($bundle['documentStyle'] ?? null));
+		foreach ($documentStyle['errors'] as $message) {
+			$errors[] = ['section' => 'documentStyle', 'message' => $message];
+		}
+
+		$resolved['documentFooterLine'] = $documentStyle['value'];
 
 		return [
 			'valid' => empty($errors),
@@ -971,6 +989,7 @@ class ConfigBundleService {
 			],
 			'emailFooter' => ['applied' => true],
 			'assistantMark' => ['applied' => (($resolved['assistantMark'] ?? null) !== null)],
+			'documentStyle' => ['footerLineApplied' => (($resolved['documentFooterLine'] ?? null) !== null), 'binariesIncluded' => false],
 			'customOverridesCss' => [
 				'written' => count($resolved['customOverrides']['tokens']),
 				'skipped' => count($resolved['customOverrides']['skipped']),
@@ -1030,11 +1049,8 @@ class ConfigBundleService {
 			privacyUrl: $footer['privacyUrl']
 		);
 
-		// Own tokens first: the overrides file written next renders them, and every other set's file is brought up to date.
-		if ($this->lifecycle?->apply(resolved: ($resolved['lifecycle'] ?? null)) === true) {
-			$this->overridesService->rewriteAll();
-		}
-
+		// Own tokens first: the overrides file written next renders them.
+		$this->lifecycle?->apply(resolved: ($resolved['lifecycle'] ?? null));
 		$this->overridesService->write(tokens: $resolved['customOverrides']['tokens']);
 
 		foreach ($resolved['customTokenSets'] as $set) {
@@ -1047,6 +1063,10 @@ class ConfigBundleService {
 
 		if (($resolved['assistantMark'] ?? null) !== null) {
 			$this->assistantMark->applyBundle(value: $resolved['assistantMark']);
+		}
+
+		if (($resolved['documentFooterLine'] ?? null) !== null) {
+			$this->documentAssets->setFooterLine(line: $resolved['documentFooterLine']);
 		}
 
 		// CustomFonts is deliberately never applied — see class docblock.

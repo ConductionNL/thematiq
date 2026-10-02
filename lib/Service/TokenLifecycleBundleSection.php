@@ -36,12 +36,14 @@ class TokenLifecycleBundleSection {
 	/**
 	 * Constructor.
 	 *
-	 * @param OwnTokenService         $ownTokens    The own tokens.
-	 * @param TokenDeprecationService $deprecations The deprecations.
+	 * @param OwnTokenService             $ownTokens    The own tokens.
+	 * @param TokenDeprecationService     $deprecations The deprecations.
+	 * @param CustomOverridesService|null $overrides    Brought up to date after an apply.
 	 */
 	public function __construct(
 		private readonly OwnTokenService $ownTokens,
 		private readonly TokenDeprecationService $deprecations,
+		private readonly ?CustomOverridesService $overrides = null,
 	) {
 	}//end __construct()
 
@@ -119,7 +121,13 @@ class TokenLifecycleBundleSection {
 			$this->deprecations->replaceAll(records: $resolved['tokenDeprecations']);
 		}
 
-		return $resolved['ownTokens'] !== null || $resolved['tokenDeprecations'] !== null;
+		$applied = $resolved['ownTokens'] !== null || $resolved['tokenDeprecations'] !== null;
+		if ($applied === true) {
+			// Every set's overrides file carries the own tokens and their notices.
+			$this->overrides?->rewriteAll();
+		}
+
+		return $applied;
 	}//end apply()
 
 	/**
