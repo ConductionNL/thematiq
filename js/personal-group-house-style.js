@@ -40,9 +40,9 @@
 		feedback.textContent = ''
 		return fetch(
 			OC.generateUrl(
-				'/apps/thematiq/api/my-groups/' +
-					encodeURIComponent(group.group) +
-					'/house-style',
+				'/apps/thematiq/api/my-groups/'
+					+ encodeURIComponent(group.group)
+					+ '/house-style',
 			),
 			{
 				method: 'POST',
@@ -61,8 +61,8 @@
 			.then(function (result) {
 				if (!result.ok) {
 					feedback.textContent =
-						result.body.error ||
-						t('thematiq', 'The house style could not be saved.')
+						result.body.error
+						|| t('thematiq', 'The house style could not be saved.')
 					return
 				}
 				group.tokenSet = setId
