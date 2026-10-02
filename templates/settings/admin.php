@@ -33,6 +33,9 @@ script('thematiq', 'lib/auditFormat');
 // derives the set from two colours exactly as BrandFormService stores it.
 script('thematiq', 'lib/tokenConverter');
 script('thematiq', 'lib/brandForm');
+// The per-app theming list's search, count and exclusion list
+// (window.NldesignAppTheming); admin.js builds the dropdown from it.
+script('thematiq', 'lib/appTheming');
 script('thematiq', 'admin');
 style('thematiq', 'admin');
 // The component playground: the selector / stage / tokens instrument that
