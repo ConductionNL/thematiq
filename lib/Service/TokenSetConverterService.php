@@ -186,13 +186,6 @@ class TokenSetConverterService {
 	private array $importWarnings = [];
 
 	/**
-	 * Whether the document being converted is one thematiq itself exported.
-	 *
-	 * @var bool
-	 */
-	private bool $thematiqExport = false;
-
-	/**
 	 * DTCG hard mapping errors from the last input-B conversion.
 	 *
 	 * @var array<int, array{path: string, reason: string, detail?: string}>
@@ -260,7 +253,6 @@ class TokenSetConverterService {
 		$report = [];
 		$this->importWarnings = [];
 		$this->mapperErrors = [];
-		$this->thematiqExport = false;
 
 		$inputKind = $this->detectInput(content: $content);
 		$sourceVersion = null;
@@ -286,7 +278,7 @@ class TokenSetConverterService {
 		}
 
 		// Thematiq's own export comes back as it went out, without the conversion rules.
-		if ($this->thematiqExport === true && $declarations !== []) {
+		if ($isJson === true && $declarations !== [] && $this->isThematiqExport(content: $content) === true) {
 			return $this->thematiqExportResult(
 				declarations: $declarations,
 				slug: $slug,
@@ -415,6 +407,22 @@ class TokenSetConverterService {
 			'errors' => $this->mapperErrors,
 		];
 	}//end convert()
+
+	/**
+	 * Whether a document is one thematiq itself exported: its root carries the
+	 * `nl.conduction.thematiq` extension with the set id.
+	 *
+	 * @param string $content The document.
+	 *
+	 * @return bool
+	 *
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
+	 */
+	private function isThematiqExport(string $content): bool {
+		$decoded = json_decode($content, true);
+
+		return is_array($decoded) === true && is_string($decoded['$extensions']['nl.conduction.thematiq']['setId'] ?? null) === true;
+	}//end isThematiqExport()
 
 	/**
 	 * The result for a document thematiq exported: every declaration under its own name,
@@ -768,8 +776,6 @@ class TokenSetConverterService {
 					'original' => (string)json_encode($entry['original']),
 				];
 			}
-
-			$this->thematiqExport = (($mapped['thematiqExport'] ?? false) === true);
 
 			return $mapped['declarations'];
 		}

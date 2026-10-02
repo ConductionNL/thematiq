@@ -260,15 +260,28 @@ class DesignTokensWriter {
 	 * @return void
 	 */
 	private function place(array &$document, array $path, array $token): void {
-		$node = &$document;
-		foreach ($path as $segment) {
-			if (isset($node[$segment]) === false || is_array($node[$segment]) === false) {
-				$node[$segment] = [];
-			}
+		$document = $this->placed(node: $document, path: $path, token: $token);
+	}//end place()
 
-			$node = &$node[$segment];
+	/**
+	 * A node with the token set at the path below it.
+	 *
+	 * @param array<string, mixed> $node  The node.
+	 * @param array<int, string>   $path  The path below it.
+	 * @param array<string, mixed> $token The token.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function placed(array $node, array $path, array $token): array {
+		$segment = (string)array_shift($path);
+		if ($path === []) {
+			$node[$segment] = $token;
+			return $node;
 		}
 
-		$node = $token;
-	}//end place()
+		$child          = (array)($node[$segment] ?? []);
+		$node[$segment] = $this->placed(node: $child, path: $path, token: $token);
+
+		return $node;
+	}//end placed()
 }//end class

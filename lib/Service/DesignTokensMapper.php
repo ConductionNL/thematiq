@@ -167,7 +167,9 @@ class DesignTokensMapper {
 	 *     skipped: array<int, array{path: string, reason: string, detail?: string}>,
 	 *     errors: array<int, array{path: string, reason: string, detail?: string}>,
 	 *     warnings: array<int, array{path: string, message: string|null}>,
-	 *     packageVersion: string|null
+	 *     packageVersion: string|null,
+	 *     adapted: array<int, array<string, mixed>>,
+	 *     thematiqExport: bool
 	 * } The mapped declarations plus structured import accounting.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
