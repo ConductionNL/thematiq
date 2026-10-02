@@ -521,7 +521,18 @@
         "No file chosen": "Geen bestand gekozen",
         "Choose logo": "Logo kiezen",
         "Logo file (SVG, PNG, JPG, GIF or WebP)": "Logobestand (SVG, PNG, JPG, GIF of WebP)",
-        "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "De wissel past de token set toe zoals je dat met de hand zou doen, inclusief het Nextcloud-logo en de kleuren die erbij horen. Aan het eind komen de token set, het logo en de kleuren van vóór de wissel terug."
+        "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "De wissel past de token set toe zoals je dat met de hand zou doen, inclusief het Nextcloud-logo en de kleuren die erbij horen. Aan het eind komen de token set, het logo en de kleuren van vóór de wissel terug.",
+        "Subadmins choose": "Subbeheerders kiezen",
+        "Token sets the subadmins of this group can choose": "Token sets waaruit de subbeheerders van deze groep kunnen kiezen",
+        "Contrast: WCAG {level}": "Contrast: WCAG {level}",
+        "Contrast: below WCAG AA": "Contrast: onder WCAG AA",
+        "The house style could not be saved.": "De huisstijl kon niet worden opgeslagen.",
+        "Saved. Members of {group} see the new house style on their next page.": "Opgeslagen. Leden van {group} zien de nieuwe huisstijl op hun volgende pagina.",
+        "None of your groups can choose its own house style.": "Geen van je groepen kan een eigen huisstijl kiezen.",
+        "House style of my groups": "Huisstijl van mijn groepen",
+        "You manage these groups. Choose the house style their members see. An administrator decides which house styles you can choose from.": "Je beheert deze groepen. Kies de huisstijl die hun leden zien. Een beheerder bepaalt uit welke huisstijlen je kunt kiezen.",
+        "Loading groups…": "Groepen laden…",
+        "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.": "Vink Subbeheerders kiezen aan om de subbeheerders van een groep de huisstijl te laten kiezen uit de token sets die jij toestaat. Ze kiezen onder Persoonlijke instellingen, Uiterlijk en toegankelijkheid."
     },
     "plurals": {}
 }

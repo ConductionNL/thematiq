@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\Service\Exception\DelegationRefusedException;
+use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCP\Group\ISubAdmin;
 use OCP\IGroupManager;
 use OCP\IUserManager;
@@ -135,7 +136,7 @@ class DelegatedGroupThemingService {
 	 */
 	public function requireDelegatedChoice(string $uid, string $group, string $tokenSet): array {
 		if ($this->isSubAdmin(uid: $uid, group: $group) === false) {
-			throw new DelegationRefusedException('You are not a subadmin of this group.');
+			throw new DelegationRefusedException(message: 'You are not a subadmin of this group.');
 		}
 
 		foreach ($this->groupTheming->getMapping() as $entry) {
@@ -144,19 +145,19 @@ class DelegatedGroupThemingService {
 			}
 
 			if (($entry['delegated'] ?? false) !== true) {
-				throw new DelegationRefusedException('The house style of this group is not delegated.');
+				throw new DelegationRefusedException(message: 'The house style of this group is not delegated.');
 			}
 
 			if (in_array($tokenSet, $entry['allowedTokenSets'], true) === false
 				|| $this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false
 			) {
-				throw new DelegationRefusedException('This token set is not allowed for this group.');
+				throw new DelegationRefusedException(message: 'This token set is not allowed for this group.');
 			}
 
 			return $entry;
 		}
 
-		throw new DelegationRefusedException('The house style of this group is not delegated.');
+		throw new DelegationRefusedException(message: 'The house style of this group is not delegated.');
 	}//end requireDelegatedChoice()
 
 	/**
@@ -169,6 +170,7 @@ class DelegatedGroupThemingService {
 	 * @return array<string, mixed> The updated entry.
 	 *
 	 * @throws DelegationRefusedException When the choice is not allowed.
+	 * @throws GroupThemingValidationException When the mapping refuses the change.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */

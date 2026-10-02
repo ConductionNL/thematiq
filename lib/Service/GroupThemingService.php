@@ -144,39 +144,11 @@ class GroupThemingService {
 				continue;
 			}
 
-			$result[] = $this->readDelegation(entry: $entry, clean: ['group' => $group, 'tokenSet' => $tokenSet]);
+			$result[] = (new GroupDelegationRules())->read(entry: $entry, clean: ['group' => $group, 'tokenSet' => $tokenSet]);
 		}
 
 		return $result;
 	}//end getMapping()
-
-	/**
-	 * Carry the delegation fields of a stored entry. An entry stored before
-	 * delegation existed, or one not delegated, reads as `{group, tokenSet}`
-	 * only: not delegated.
-	 *
-	 * @param array<string, mixed> $entry The stored entry.
-	 * @param array{group: string, tokenSet: string} $clean The entry's group and set.
-	 *
-	 * @return array<string, mixed> The entry, with `delegated: true` and `allowedTokenSets` when delegated.
-	 *
-	 * @spec openspec/specs/per-group-theming/spec.md
-	 */
-	private function readDelegation(array $entry, array $clean): array {
-		if (($entry['delegated'] ?? false) !== true || is_array($entry['allowedTokenSets'] ?? null) === false) {
-			return $clean;
-		}
-
-		$allowed = array_values(array_filter($entry['allowedTokenSets'], 'is_string'));
-		if ($allowed === []) {
-			return $clean;
-		}
-
-		$clean['delegated'] = true;
-		$clean['allowedTokenSets'] = $allowed;
-
-		return $clean;
-	}//end readDelegation()
 
 	/**
 	 * Replace the full ordered mapping after validation.
@@ -256,58 +228,12 @@ class GroupThemingService {
 
 		$seenGroups[$group] = true;
 
-		return $this->validateDelegation(entry: $entry, clean: ['group' => $group, 'tokenSet' => $tokenSet]);
+		return (new GroupDelegationRules())->validate(
+			entry: $entry,
+			clean: ['group' => $group, 'tokenSet' => $tokenSet],
+			isAvailable: fn (string $setId): bool => $this->tokenSetService->isValidTokenSet(tokenSetId: $setId)
+		);
 	}//end validateEntry()
-
-	/**
-	 * Validate the delegation fields of an entry. A delegated entry needs a
-	 * non-empty allowed list that holds its current set and names only
-	 * available sets.
-	 *
-	 * @param mixed $entry The submitted entry.
-	 * @param array{group: string, tokenSet: string} $clean The validated group and set.
-	 *
-	 * @return array<string, mixed> The entry to store.
-	 *
-	 * @throws GroupThemingValidationException When the allowed list is invalid.
-	 *
-	 * @spec openspec/specs/per-group-theming/spec.md
-	 */
-	private function validateDelegation(mixed $entry, array $clean): array {
-		$delegated = $this->extractField(entry: $entry, field: 'delegated');
-		if ($delegated !== true && $delegated !== 'true' && $delegated !== '1' && $delegated !== 1) {
-			return $clean;
-		}
-
-		$allowed = $this->extractField(entry: $entry, field: 'allowedTokenSets');
-		if (is_array($allowed) === false || $allowed === []) {
-			throw new GroupThemingValidationException(entry: $entry, reason: 'A delegated group needs at least one allowed token set.');
-		}
-
-		$cleanAllowed = [];
-		foreach ($allowed as $setId) {
-			if (is_string($setId) === false || $this->tokenSetService->isValidTokenSet(tokenSetId: $setId) === false) {
-				throw new GroupThemingValidationException(
-					entry: $entry,
-					reason: sprintf('Allowed token set "%s" is not available.', (string)json_encode($setId))
-				);
-			}
-
-			$cleanAllowed[$setId] = true;
-		}
-
-		if (isset($cleanAllowed[$clean['tokenSet']]) === false) {
-			throw new GroupThemingValidationException(
-				entry: $entry,
-				reason: sprintf('The allowed token sets of group "%s" must include its current set.', $clean['group'])
-			);
-		}
-
-		$clean['delegated'] = true;
-		$clean['allowedTokenSets'] = array_keys($cleanAllowed);
-
-		return $clean;
-	}//end validateDelegation()
 
 	/**
 	 * Extract a string field from a raw, possibly malformed mapping entry.
