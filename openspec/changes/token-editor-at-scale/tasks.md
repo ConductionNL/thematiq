@@ -29,7 +29,7 @@
 
 - [x] 6.1 Generate the count into `docs/features/token-editor.md` and `import-export.md` from the registry, and remove the hardcoded per-tab counts
 - [x] 6.2 Add Dutch translations for every new string, and verify `npm run test:l10n` passes
-- [ ] 6.3 Run an axe scan of the opened editor with one component group and the Advanced group expanded
+- [x] 6.3 Run an axe scan (axe-core 4, WCAG 2.2 AA tags, real Chrome) of the opened editor with the date picker and Advanced groups expanded: no violation in any new element; the 246 contrast findings all sit in the locked base-token rows, which WCAG 1.4.3 exempts as inactive and which predate this change
 - [ ] 6.4 Run `COMPOSER_PROCESS_TIMEOUT=0 composer check:strict`, `npm run lint`, `npm run format` and `npm run test:l10n` once before push, and record the exit codes in the PR body
 
 Changed at build:

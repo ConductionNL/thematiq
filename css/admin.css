@@ -2730,6 +2730,7 @@
 
 .nldesign-token-group-toggle {
 	width: 100%;
+	min-height: var(--default-clickable-area, 44px);
 	text-align: start;
 	font-weight: 600;
 }
