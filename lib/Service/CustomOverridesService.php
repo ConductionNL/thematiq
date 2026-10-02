@@ -447,6 +447,8 @@ class CustomOverridesService {
 	 * @return array<string> List of CSS declaration lines.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 */
 	private function buildDeclarationLines(array $tokens): array {
 		$lines = [];
@@ -490,6 +492,8 @@ class CustomOverridesService {
 	 * @return array<string, string> Map of token name => value.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 */
 	private function parseDeclarations(string $css): array {
 		$byToken = [];

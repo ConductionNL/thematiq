@@ -148,7 +148,15 @@ class ShippedTokenSetAuditService {
 	 *
 	 * The per-set audit result.
 	 *
-	 * @return array{id: string, textRatio: float|null, uiRatio: float|null, textThreshold: float, uiThreshold: float, verdict: string, pairs?: array<int, array<string, mixed>>}
+	 * @return array{
+	 *     id: string,
+	 *     textRatio: float|null,
+	 *     uiRatio: float|null,
+	 *     textThreshold: float,
+	 *     uiThreshold: float,
+	 *     verdict: string,
+	 *     pairs?: array<int, array<string, mixed>>
+	 * }
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
 	 */
@@ -256,7 +264,15 @@ class ShippedTokenSetAuditService {
 	 *
 	 * One audit result per audited set, ordered deterministically by id.
 	 *
-	 * @return array<int, array{id: string, textRatio: float|null, uiRatio: float|null, textThreshold: float, uiThreshold: float, verdict: string, pairs?: array<int, array<string, mixed>>}>
+	 * @return array<int, array{
+	 *     id: string,
+	 *     textRatio: float|null,
+	 *     uiRatio: float|null,
+	 *     textThreshold: float,
+	 *     uiThreshold: float,
+	 *     verdict: string,
+	 *     pairs?: array<int, array<string, mixed>>
+	 * }>
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-reproducible-contrast-report
 	 */
