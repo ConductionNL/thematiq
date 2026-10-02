@@ -33,13 +33,16 @@ identical for all users.
 - THEN the `DesignSystemService` MUST resolve the design system from `design-systems.json`
 - AND CSS files MUST be loaded in the order declared in the design system's `stylesheets` array via `\OCP\Util::addStyle()`
 - AND the standard nldesign order MUST be:
-  1. `systems/nldesign/fonts` (Layer 1 -- @font-face declarations)
-  2. `systems/nldesign/defaults` (Layer 2 -- all `--nldesign-*` token defaults)
-  3. Token set file loaded separately: `tokens/{resolvedTokenSet}` (Layer 3 -- organization overrides)
-  4. `systems/nldesign/utrecht-bridge` (Layer 4 -- `--utrecht-*` to `--nldesign-component-*` mapping)
-  5. `systems/nldesign/theme` (Layer 5 -- `--nldesign-*` to Nextcloud element selectors)
-  6. `systems/nldesign/overrides` (Layer 6 -- Nextcloud `--color-*` variable mappings)
-  7. `systems/nldesign/element-overrides` (Layer 7 -- low-level element styling)
+  1. `systems/nldesign/fonts` (Layer 1: @font-face declarations)
+  2. `systems/nldesign/defaults` (Layer 2: all `--nldesign-*` token defaults)
+  3. `systems/nldesign/utrecht-bridge` (Layer 4: `--utrecht-*` to `--nldesign-component-*` mapping)
+  4. `systems/nldesign/theme` (Layer 5: `--nldesign-*` to Nextcloud element selectors)
+  5. `systems/nldesign/overrides` (Layer 6: Nextcloud `--color-*` variable mappings)
+  6. `systems/nldesign/element-overrides` (Layer 7: low-level element styling)
+  7. `tokens/{resolvedTokenSet}` (Layer 3: organization overrides), emitted by `CssInjectionService::designSystemLayers()` directly after the last bundle stylesheet, not from the bundle
+- AND the layer numbers MUST name each file's role, not its load position: the token file is Layer 3 because it overrides the Layer 2 defaults
+- AND the token file MUST come after `systems/nldesign/defaults`, because both declare the same `--nldesign-*` properties on `:root` and the later declaration wins; the bridge, theme and override layers only read those properties through `var()`, which resolves against the final cascaded value, so they do not need to follow the token file
+- AND the token file MUST stay out of the bundle's `stylesheets` array, because the bundle is shared by every token set on the design system while the token file is the set-dependent layer the admin panel swaps without a reload
 
 #### Scenario: Stock Nextcloud design system loads no stylesheets
 
@@ -104,10 +107,12 @@ The fonts layer MUST declare Fira Sans @font-face rules for all required weights
 - AND font files MUST be in the `css/systems/nldesign/fonts/` directory
 
 #### Scenario: Font licensing compliance
-@e2e exclude licensing is a property of the distributed files, not of a rendered page; and it is NOT met today: css/systems/nldesign/fonts/ ships no OFL text and REUSE.toml labels the Fira Sans binaries EUPL-1.2 (needs a licensing decision, see the #263 PR)
+@e2e exclude licensing is a property of the distributed files, not of a rendered page; vitest tests/vitest/fontLicences.spec.js asserts LICENSES/OFL-1.1.txt, an OFL.txt naming each holder in every font directory, and an OFL-1.1 REUSE.toml annotation for every font file
 - GIVEN Fira Sans is used as the app's primary font
 - WHEN the font is distributed
 - THEN it MUST comply with the SIL Open Font License 1.1
+- AND every font directory that ships Fira Sans (`css/systems/nldesign/fonts/`, `css/fonts/`) MUST carry an `OFL.txt` with the copyright notice and the licence text, because the OFL requires both to travel with the fonts
+- AND `REUSE.toml` MUST label the font files `OFL-1.1` with their upstream copyright holder, overriding the EUPL-1.2 blanket, and `LICENSES/OFL-1.1.txt` MUST hold the licence text
 - AND the font MUST be a suitable open-source alternative to RijksoverheidSansWebText
 
 ### Requirement: Layer 2 -- Default Token Definitions
@@ -267,35 +272,36 @@ The overrides layer MUST map Nextcloud `--color-*` CSS variables to `--nldesign-
 The element-overrides layer MUST apply NL Design styling to specific HTML elements and Nextcloud components.
 
 #### Scenario: Font family forced on all elements
-@e2e exclude spec drift: css/systems/nldesign/element-overrides.css (FONT FORCING) deliberately sets font-family without !important on button, input, textarea, select and label only, and uses no universal selector; the scenario must be rewritten before a browser test can prove it
-- GIVEN Layer 7 (`css/systems/nldesign/element-overrides.css`) is loaded
-- WHEN the font forcing rules are processed
-- THEN `font-family: var(--nldesign-font-family) !important` MUST be applied to specific element selectors (html, body, div, span, p, h1-h6, a, button, input, textarea, select, label, li, ul, ol)
-- AND it MUST also be applied via wildcard descendant selectors (`html body *`, `#body-user *`, `#app *`, `#content *`) to ensure complete coverage
+@e2e exclude browser-observable (computed font-family on a button, input, textarea, select and label, and on an icon-font glyph that must keep its own), but no browser test asserts it yet; the test is owed under #897
+- GIVEN Layer 5 (`css/systems/nldesign/theme.css`) sets `font-family: var(--nldesign-font-family)` on `body`, `#body-user`, `#body-login`, `#body-public`, `#app`, `#content` and `.app-content`, and every other element inherits it
+- AND Layer 7 (`css/systems/nldesign/element-overrides.css`) is loaded
+- WHEN the browser resolves the font of a `button`, `input`, `textarea`, `select` or `label`
+- THEN Layer 7 MUST set `font-family: var(--nldesign-font-family)` on exactly those five element types, without `!important`, because form controls take their font from the browser's own stylesheet instead of inheriting it
+- AND no layer MUST set `font-family` on a universal or wildcard descendant selector (`*`, `html body *`, `#body-user *`, `#app *`, `#content *`), because that clobbers icon fonts, monospace code editors and any component that declares its own font (ADR-CSS-001)
 
 #### Scenario: Header icons visible on themed background
-@e2e exclude spec drift: css/systems/nldesign/element-overrides.css (HEADER GLYPHS) colours header-end SVGs with `color` and sets `filter: none` on purpose, because the filter flattened the avatar; the scenario still asks for the removed filter
-- GIVEN the header has a white or light background from the token set
+@e2e exclude browser-observable (computed color and filter on a header-end svg, and the avatar keeping its own colour), but no browser test asserts it yet; the test is owed under #897
+- GIVEN the header has a white or light background from the token set (Rijkshuisstijl, Amsterdam and Cunningham paint it `#ffffff`), while Nextcloud ships every header glyph white
 - WHEN Layer 7 is loaded
-- THEN `#header .header-end svg` and related selectors MUST have `filter: invert(1) brightness(0) contrast(100)` to make icons visible
-- AND avatar images (`#header .header-end .avatardiv img`) MUST be excluded from the filter
-- AND user-status icons MUST be excluded from the filter
+- THEN the header glyphs (`#header .header-end svg`, `.button-vue__icon`, `.icon-vue`, `.unified-search__button`, the same glyphs in `.header-start`, and `.app-menu__waffle`) MUST take `color: var(--nldesign-component-header-color, var(--nldesign-color-header-text))`, which their `currentColor` fill follows
+- AND those glyphs MUST carry `filter: none`, not `filter: invert(1) brightness(0) contrast(100)`: that filter forced every glyph to pure black whatever the header text token said, and because a filter rasterises its whole subtree it flattened the avatar inside the user menu trigger to a black square that no descendant `filter: none` could undo
+- AND the avatar (`.avatardiv`, `[class*='avatar' i]`) and the user-status icon MUST be excluded from the forced glyph fill and MUST carry `filter: none`, so the avatar keeps its generated colour or photo and the status badge its own status colour
 
 #### Scenario: App navigation styled as card
-@e2e exclude spec drift: css/systems/nldesign/element-overrides.css deliberately sets no margin on #app-navigation (the 30px margin showed the page background as a strip); the scenario still asks for it
-- GIVEN the app navigation sidebar renders
+@e2e exclude browser-observable (computed background and a 0px margin-right on #app-navigation, and no gap between it and #app-content), but no browser test asserts it yet; the test is owed under #897
+- GIVEN the app navigation sidebar renders inside `#content`, which is `display: flex`, clips its children to `--body-container-radius` and has no background of its own
 - WHEN Layer 7 styles are applied
-- THEN `#app-navigation` MUST use `var(--color-main-background)` as background
-- AND it MUST have a right margin of 30px (card layout effect)
-- AND the closed state (`.app-navigation--close`) MUST have 0 margin
+- THEN `#app-navigation`, `.app-navigation` and `#app-navigation-vue` MUST use `var(--color-main-background)` as background
+- AND Layer 7 MUST NOT set a margin or a border-radius on them, so the navigation and the app content sit flush as two panels that `#content` clips into one rounded container
+- AND the former 30px right margin MUST NOT return: it opened empty flex space inside `#content`, and the page background showed through it as a vertical strip between the menu and the content
 
 #### Scenario: App-specific exclusions
-@e2e exclude spec drift: no `.launchpad-widget` rule and no solid-background exclusion exist in css/systems/nldesign/; `.tile-widget` is only excluded from the text-colour rule in element-overrides.css
-- GIVEN certain apps have custom widget styling (e.g., LaunchPad)
-- WHEN solid background rules are applied
-- THEN elements with `.launchpad-widget` or `.tile-widget` classes MUST be excluded
-- AND the LaunchPad container MUST have transparent background
-- AND these exclusions MUST prevent breaking app-specific layouts
+@e2e exclude browser-observable (computed color of a span, div and link inside a .tile-widget against the same element outside one), but no shipped page renders a .tile-widget, so a test needs a fixture element; the test is owed under #897
+- GIVEN Layer 7 forces `color: var(--nldesign-color-on-surface, var(--nldesign-color-text))` with `!important` onto `body`, `#app`, `#content`, `.app-content`, `p`, `span`, `div`, `li` and `a`, and the link colour onto `a`
+- WHEN an element renders that is a `.tile-widget` or sits inside one
+- THEN its `span`, `div` and `a` elements MUST be excluded from both rules, so the tile keeps the colours its app paints
+- AND Layer 7 MUST NOT add other per-app `:not()` exclusions: there is no `.launchpad-widget` rule, and widgets are not excluded from the solid background rule, which paints every panel and widget with `var(--color-main-background)`
+- AND a new surface that needs its own foreground MUST opt out by setting `--nldesign-color-on-surface` on itself, because a `:not()` list only covers the surfaces somebody remembered, while a custom property reaches every descendant without competing on specificity
 
 ### Requirement: Custom Overrides Layer (Layer 8)
 
