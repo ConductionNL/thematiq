@@ -190,8 +190,17 @@ class OverridesController extends Controller {
 				'darkOverrides' => $this->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
 				'darkDerived' => $this->overridesService->derivedDark(tokenSet: $this->requestedTokenSet()),
 				'registry' => $registry,
-				// Listed per component group, below the tabs; see TokenRegistry::getInternalTokens().
-				'internal' => TokenRegistry::getInternalTokens(),
+				// Listed per component group, below the tabs. Only what a row shows:
+				// the selectors the server writes rules for would triple the payload.
+				'internal' => array_map(
+					static fn (array $token): array => [
+						'variable' => $token['variable'],
+						'group' => $token['group'],
+						'type' => $token['type'],
+						'stock' => $token['stock'],
+					],
+					TokenRegistry::getInternalTokens()
+				),
 				'count' => TokenRegistry::countEditable(),
 				'tabs' => $tabs,
 			]

@@ -2974,12 +2974,9 @@
 				+ '</div>'
 				+ '<p class="settings-hint nldesign-token-count" id="nldesign-token-count">'
 				+ escapeHtml(
-					n(
-						'thematiq',
-						'%n editable token',
-						'%n editable tokens',
-						tokenEditableCount,
-					),
+					t('thematiq', '{count} editable tokens', {
+						count: tokenEditableCount,
+					}),
 				)
 				+ '</p>'
 				+ '<div class="nldesign-token-search">'

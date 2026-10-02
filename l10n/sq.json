@@ -940,7 +940,27 @@
         "No file uploaded.": "No file uploaded.",
         "The file is larger than 2 MB.": "The file is larger than 2 MB.",
         "Unknown document image.": "Unknown document image.",
-        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload a PNG, JPEG or WebP image, or an SVG without script."
+        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload a PNG, JPEG or WebP image, or an SVG without script.",
+        "Advanced": "Advanced",
+        "Code highlighting": "Code highlighting",
+        "Component variables": "Component variables",
+        "Conduction apps": "Conduction apps",
+        "Date picker": "Date picker",
+        "Media player": "Media player",
+        "Name, variable or component": "Name, variable or component",
+        "Nextcloud components": "Nextcloud components",
+        "Nextcloud: {value}": "Nextcloud: {value}",
+        "Nextcloud's own dark value": "Nextcloud's own dark value",
+        "No token matches your search.": "No token matches your search.",
+        "Other variables": "Other variables",
+        "PDF viewer": "PDF viewer",
+        "Photos": "Photos",
+        "Search tokens": "Search tokens",
+        "Select box": "Select box",
+        "Teams": "Teams",
+        "Text editor": "Text editor",
+        "These values size Nextcloud's layout. A wrong value can break the layout, not only the look.": "These values size Nextcloud's layout. A wrong value can break the layout, not only the look.",
+        "{count} editable tokens": "{count} editable tokens"
     },
     "plurals": {}
 }

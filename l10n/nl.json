@@ -940,7 +940,27 @@
         "No file uploaded.": "Geen bestand geüpload.",
         "The file is larger than 2 MB.": "Het bestand is groter dan 2 MB.",
         "Unknown document image.": "Onbekende documentafbeelding.",
-        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload een PNG-, JPEG- of WebP-afbeelding, of een SVG zonder script."
+        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload een PNG-, JPEG- of WebP-afbeelding, of een SVG zonder script.",
+        "{count} editable tokens": "{count} bewerkbare tokens",
+        "Advanced": "Geavanceerd",
+        "Code highlighting": "Codemarkering",
+        "Component variables": "Componentvariabelen",
+        "Conduction apps": "Conduction-apps",
+        "Date picker": "Datumkiezer",
+        "Media player": "Mediaspeler",
+        "Name, variable or component": "Naam, variabele of component",
+        "Nextcloud components": "Nextcloud-componenten",
+        "Nextcloud: {value}": "Nextcloud: {value}",
+        "Nextcloud's own dark value": "De eigen donkere waarde van Nextcloud",
+        "No token matches your search.": "Geen token past bij je zoekopdracht.",
+        "Other variables": "Overige variabelen",
+        "PDF viewer": "Pdf-viewer",
+        "Photos": "Foto's",
+        "Search tokens": "Tokens zoeken",
+        "Select box": "Keuzelijst",
+        "Teams": "Teams",
+        "Text editor": "Teksteditor",
+        "These values size Nextcloud's layout. A wrong value can break the layout, not only the look.": "Deze waarden bepalen de opmaak van Nextcloud. Een verkeerde waarde kan de opmaak breken, niet alleen het uiterlijk."
     },
     "plurals": {}
 }
