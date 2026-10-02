@@ -10,7 +10,7 @@ The **Custom Token Overrides** section in the admin settings lets you fine-tune 
 
 The token editor is located in the **NL Design System Theme** section of the Appearance admin settings. It consists of:
 
-- **4 category tabs** grouping the 53 editable tokens by area
+- **4 category tabs** grouping the editable tokens by area
 - **Per-row editing** with a color picker, hex input field, and reset button
 - **Custom value badge** indicating which tokens have been manually overridden
 - **Save overrides** button to persist all current values

@@ -68,6 +68,35 @@ class ShippedDarkLogoTest extends TestCase {
 	}//end testEpeShipsADarkLogo()
 
 	/**
+	 * The shipped sets whose light logo draws dark ink on a transparent
+	 * background, so the mark disappears on a dark header. Each ships a
+	 * mechanically derived dark variant (dark ink recoloured to white).
+	 *
+	 * @return array<string, array{0: string}> Set id per case.
+	 */
+	public static function setsWithDarkInkLogos(): array {
+		return [
+			'nijmegen'               => ['nijmegen'],
+			'noordwijk'              => ['noordwijk'],
+			'provincie-zuid-holland' => ['provincie-zuid-holland'],
+			'vng'                    => ['vng'],
+			'xxllnc'                 => ['xxllnc'],
+		];
+	}//end setsWithDarkInkLogos()
+
+	/**
+	 * A set whose light logo is dark ink on transparent ships a dark logo
+	 * named after its light logo.
+	 *
+	 * @param string $setId The token set id.
+	 *
+	 * @dataProvider setsWithDarkInkLogos
+	 */
+	public function testDarkInkLogoSetShipsADarkLogo(string $setId): void {
+		$this->assertSame("img/logos/{$setId}-dark.svg", ($this->shippedDarkLogos()[$setId] ?? null));
+	}//end testDarkInkLogoSetShipsADarkLogo()
+
+	/**
 	 * Each declared dark logo exists under img/logos/ and reaches both the
 	 * generator output and the committed dark stylesheet.
 	 */
