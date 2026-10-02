@@ -523,6 +523,7 @@ OC.L10N.register(
         "Choose logo": "Choose logo",
         "Logo file (SVG, PNG, JPG, GIF or WebP)": "Logo file (SVG, PNG, JPG, GIF or WebP)",
         "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.",
+        "Country": "Country",
         "Header bar": "Header bar",
         "#header with the app menu and the account glyphs": "#header with the app menu and the account glyphs",
         "Login card": "Login card",

@@ -522,6 +522,7 @@
         "Choose logo": "Logo kiezen",
         "Logo file (SVG, PNG, JPG, GIF or WebP)": "Logobestand (SVG, PNG, JPG, GIF of WebP)",
         "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "De wissel past de token set toe zoals je dat met de hand zou doen, inclusief het Nextcloud-logo en de kleuren die erbij horen. Aan het eind komen de token set, het logo en de kleuren van vóór de wissel terug.",
+        "Country": "Land",
         "Header bar": "Kopbalk",
         "#header with the app menu and the account glyphs": "#header met het app-menu en de accountpictogrammen",
         "Login card": "Inlogkaart",
