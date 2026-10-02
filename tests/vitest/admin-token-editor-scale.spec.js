@@ -18,7 +18,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const REGISTRY = {
-	'--color-primary': { tab: 'login', type: 'color', label: 'Primary', group: 'brand' },
+	'--color-primary': {
+		tab: 'login',
+		type: 'color',
+		label: 'Primary',
+		group: 'brand',
+	},
 	'--color-mark': {
 		tab: 'content',
 		type: 'color',
@@ -42,9 +47,23 @@ const REGISTRY = {
 }
 
 const INTERNAL = {
-	'--nldesign-nc-dp-hover-color': { variable: '--dp-hover-color', group: 'date-picker', type: 'color', stock: '#484848' },
-	'--nldesign-nc-dp-font-size': { variable: '--dp-font-size', group: 'date-picker', type: 'text', stock: '1rem' },
-	'--nldesign-nc-plyr-font-size-base': { variable: '--plyr-font-size-base', group: 'media-player', type: 'text' },
+	'--nldesign-nc-dp-hover-color': {
+		variable: '--dp-hover-color',
+		group: 'date-picker',
+		type: 'color',
+		stock: '#484848',
+	},
+	'--nldesign-nc-dp-font-size': {
+		variable: '--dp-font-size',
+		group: 'date-picker',
+		type: 'text',
+		stock: '1rem',
+	},
+	'--nldesign-nc-plyr-font-size-base': {
+		variable: '--plyr-font-size-base',
+		group: 'media-player',
+		type: 'text',
+	},
 }
 
 const DUTCH = { 'Date picker': 'Datumkiezer' }
@@ -52,12 +71,24 @@ const DUTCH = { 'Date picker': 'Datumkiezer' }
 let requests = []
 
 function installGlobals() {
-	global.OCP = { InitialState: { loadState: (app, key, fallback) => ({ tokenSets: [], currentTokenSet: 'rijkshuisstijl' })[key] ?? fallback } }
+	global.OCP = {
+		InitialState: {
+			loadState: (app, key, fallback) =>
+				({ tokenSets: [], currentTokenSet: 'rijkshuisstijl' })[key]
+				?? fallback,
+		},
+	}
 	global.t = (app, text, params) => {
 		const base = DUTCH[text] ?? text
-		return params === undefined ? base : Object.keys(params).reduce((acc, key) => acc.replace('{' + key + '}', params[key]), base)
+		return params === undefined
+			? base
+			: Object.keys(params).reduce(
+					(acc, key) => acc.replace('{' + key + '}', params[key]),
+					base,
+				)
 	}
-	global.n = (app, singular, plural, count) => (count === 1 ? singular : plural).replace('%n', String(count))
+	global.n = (app, singular, plural, count) =>
+		(count === 1 ? singular : plural).replace('%n', String(count))
 	global.OC = {
 		generateUrl: (url) => url,
 		linkTo: (app, path) => path,
@@ -68,10 +99,26 @@ function installGlobals() {
 	}
 	global.fetch = vi.fn((url, options = {}) => {
 		requests.push({ url, method: options.method || 'GET', body: options.body })
-		const body = String(url).indexOf('/settings/overrides') !== -1 && (options.method || 'GET') === 'GET'
-			? { overrides: {}, registry: REGISTRY, internal: INTERNAL, count: 7, tabs: { login: 'Login', content: 'Content', typography: 'Type' } }
-			: { status: 'ok' }
-		return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(body) })
+		const body =
+			String(url).indexOf('/settings/overrides') !== -1
+			&& (options.method || 'GET') === 'GET'
+				? {
+						overrides: {},
+						registry: REGISTRY,
+						internal: INTERNAL,
+						count: 7,
+						tabs: {
+							login: 'Login',
+							content: 'Content',
+							typography: 'Type',
+						},
+					}
+				: { status: 'ok' }
+		return Promise.resolve({
+			ok: true,
+			status: 200,
+			json: () => Promise.resolve(body),
+		})
 	})
 }
 
@@ -83,14 +130,16 @@ async function flush(rounds = 10) {
 
 async function mount() {
 	installGlobals()
-	document.body.innerHTML = '<div id="nldesign-settings" class="section"></div><div id="nldesign-token-editor"></div>'
+	document.body.innerHTML =
+		'<div id="nldesign-settings" class="section"></div><div id="nldesign-token-editor"></div>'
 	vi.resetModules()
 	await import('../../js/lib/tokenTransforms.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
 
-const group = (id) => document.querySelector('.nldesign-token-group[data-group="' + id + '"]')
+const group = (id) =>
+	document.querySelector('.nldesign-token-group[data-group="' + id + '"]')
 const toggle = (id) => group(id).querySelector('.nldesign-token-group-toggle')
 const rowOf = (name) => document.querySelector('[data-token-row="' + name + '"]')
 
@@ -112,37 +161,54 @@ afterEach(() => {
 
 describe('the token editor at scale', () => {
 	it('states the count the server reports', () => {
-		expect(document.getElementById('nldesign-token-count').textContent).toBe('7 editable tokens')
+		expect(document.getElementById('nldesign-token-count').textContent).toBe(
+			'7 editable tokens',
+		)
 	})
 
 	it('builds no row of a collapsed group on load', () => {
 		expect(rowOf('--color-primary')).not.toBeNull()
 		expect(rowOf('--nldesign-nc-dp-hover-color')).toBeNull()
-		expect(group('date-picker').querySelector('.nldesign-token-group-panel').hidden).toBe(true)
+		expect(
+			group('date-picker').querySelector('.nldesign-token-group-panel').hidden,
+		).toBe(true)
 		expect(toggle('date-picker').getAttribute('aria-expanded')).toBe('false')
 	})
 
-	it('lists the date picker token in its own group, by its Nextcloud name, with Nextcloud\'s value', () => {
+	it("lists the date picker token in its own group, by its Nextcloud name, with Nextcloud's value", () => {
 		toggle('date-picker').click()
 
 		const row = rowOf('--nldesign-nc-dp-hover-color')
 		expect(row).not.toBeNull()
-		expect(row.closest('.nldesign-token-group').dataset.group).toBe('date-picker')
-		expect(row.querySelector('.nldesign-token-label').textContent).toBe('--dp-hover-color')
+		expect(row.closest('.nldesign-token-group').dataset.group).toBe(
+			'date-picker',
+		)
+		expect(row.querySelector('.nldesign-token-label').textContent).toBe(
+			'--dp-hover-color',
+		)
 		const stock = row.querySelector('.nldesign-token-stock')
 		expect(stock.textContent).toBe('Nextcloud: #484848')
-		expect(row.querySelector('.nldesign-color-text').getAttribute('aria-describedby')).toBe(stock.id)
+		expect(
+			row
+				.querySelector('.nldesign-color-text')
+				.getAttribute('aria-describedby'),
+		).toBe(stock.id)
 	})
 
 	it('keeps an edit across closing and opening its group', async () => {
 		toggle('date-picker').click()
-		const field = rowOf('--nldesign-nc-dp-font-size').querySelector('.nldesign-text-input')
+		const field = rowOf('--nldesign-nc-dp-font-size').querySelector(
+			'.nldesign-text-input',
+		)
 		field.value = '1.25rem'
 		field.dispatchEvent(new window.Event('input'))
 		toggle('date-picker').click()
 		toggle('date-picker').click()
 
-		expect(rowOf('--nldesign-nc-dp-font-size').querySelector('.nldesign-text-input').value).toBe('1.25rem')
+		expect(
+			rowOf('--nldesign-nc-dp-font-size').querySelector('.nldesign-text-input')
+				.value,
+		).toBe('1.25rem')
 	})
 
 	it('puts the layout variables in a collapsed Advanced group that warns before the first field', () => {
@@ -152,7 +218,11 @@ describe('the token editor at scale', () => {
 		toggle('advanced').click()
 
 		const panel = group('advanced').querySelector('.nldesign-token-group-panel')
-		expect(panel.firstElementChild.classList.contains('nldesign-token-advanced-warning')).toBe(true)
+		expect(
+			panel.firstElementChild.classList.contains(
+				'nldesign-token-advanced-warning',
+			),
+		).toBe(true)
 		expect(panel.firstElementChild.textContent).toContain('can break the layout')
 		expect(rowOf('--header-height')).not.toBeNull()
 	})
@@ -188,17 +258,27 @@ describe('the token editor at scale', () => {
 		expect(label.textContent).toBe('Search tokens')
 	})
 
-	it('shows the note and Nextcloud\'s dark value on a settable colour', () => {
+	it("shows the note and Nextcloud's dark value on a settable colour", () => {
 		const row = rowOf('--color-mark')
-		expect(row.querySelector('.nldesign-token-note').textContent).toBe('Pairs with the text colour')
-		expect(row.querySelector('.nldesign-dark-text').getAttribute('placeholder')).toBe('Nextcloud: #4d3800')
+		expect(row.querySelector('.nldesign-token-note').textContent).toBe(
+			'Pairs with the text colour',
+		)
+		expect(
+			row.querySelector('.nldesign-dark-text').getAttribute('placeholder'),
+		).toBe('Nextcloud: #4d3800')
 	})
 
 	it('offers a dark value on an internal colour, not on an internal size', () => {
 		toggle('date-picker').click()
 
-		expect(rowOf('--nldesign-nc-dp-hover-color').querySelector('.nldesign-dark-text')).not.toBeNull()
-		expect(rowOf('--nldesign-nc-dp-font-size').querySelector('.nldesign-dark-text')).toBeNull()
+		expect(
+			rowOf('--nldesign-nc-dp-hover-color').querySelector(
+				'.nldesign-dark-text',
+			),
+		).not.toBeNull()
+		expect(
+			rowOf('--nldesign-nc-dp-font-size').querySelector('.nldesign-dark-text'),
+		).toBeNull()
 	})
 
 	it('saves an internal token and its dark value', async () => {
@@ -219,7 +299,10 @@ describe('the token editor at scale', () => {
 			await flush()
 		}
 
-		const post = requests.find((r) => r.method === 'POST' && r.url.indexOf('/settings/overrides') !== -1)
+		const post = requests.find(
+			(r) =>
+				r.method === 'POST' && r.url.indexOf('/settings/overrides') !== -1,
+		)
 		expect(post).toBeDefined()
 		const body = JSON.parse(post.body)
 		expect(body.overrides['--nldesign-nc-dp-hover-color']).toBe('#e8eef5')
