@@ -305,7 +305,7 @@ Contrast: primary text on primary 10.20:1, primary on background 10.20:1 (pass).
 | `--nldesign-custom-checkbox-size` | `24px` | | this set | |
 | `--nldesign-focus-outline-offset` | `2px` | | this set | |
 | `--nldesign-focus-outline-width` | `2px` | | this set | |
-| `--nldesign-logo-url` | `url('../../img/logos/provincie-zuid-holland.svg')` | | this set | |
+| `--nldesign-logo-url` | `url('../../img/logos/provincie-zuid-holland.svg')` | `url('../../../img/logos/provincie-zuid-holland-dark.svg')` | this set | |
 | `--nldesign-space-block-2xl` | `80px` | | this set | |
 | `--nldesign-space-block-lg` | `40px` | | this set | |
 | `--nldesign-space-block-md` | `30px` | | this set | |

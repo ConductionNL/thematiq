@@ -26,6 +26,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\Migration\IOutput;
 use PHPUnit\Framework\TestCase;
@@ -64,7 +65,7 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
 		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
-		$this->overrides = new CustomOverridesService($appManager, $parser, $dark);
+		$this->overrides = new CustomOverridesService(new DirectoryRuntimeFileStore($this->appDir), $parser, $dark);
 
 		// What the editor wrote before typed values: one :root block, no twin, no dark scope.
 		file_put_contents(
@@ -149,12 +150,13 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 	}//end testPerSetFileIsRewritten()
 
 	/**
-	 * An unwritable css directory is reported, not thrown.
+	 * An unwritable overrides file is reported, not thrown.
 	 *
 	 * @return void
 	 */
 	public function testUnwritableDirectoryDoesNotThrow(): void {
-		chmod($this->appDir . '/css', 0555);
+		// The store writes the file in place, so the file itself is what cannot be written.
+		chmod($this->appDir . '/css/custom-overrides.css', 0444);
 		$output = $this->createMock(IOutput::class);
 		$output->expects($this->once())->method('warning');
 
@@ -164,7 +166,7 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 			(new MigrateOverrideValueTypes($this->overrides, $this->createMock(LoggerInterface::class)))->run($output);
 		} finally {
 			restore_error_handler();
-			chmod($this->appDir . '/css', 0777);
+			chmod($this->appDir . '/css/custom-overrides.css', 0644);
 		}
 	}//end testUnwritableDirectoryDoesNotThrow()
 }//end class

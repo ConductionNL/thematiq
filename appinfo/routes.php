@@ -27,6 +27,7 @@ return [
 		['name' => 'catalog#tokenSets', 'url' => '/api/token-sets', 'verb' => 'GET'],
 		// Token deprecations for consuming apps (authoring-token-lifecycle), signed-in users.
 		['name' => 'catalog#deprecations', 'url' => '/api/token-deprecations', 'verb' => 'GET'],
+		['name' => 'assistantMark#show', 'url' => '/api/assistant-mark', 'verb' => 'GET'],
 		// Token reference of one set, for signed-in users (openspec/specs/token-reference/spec.md).
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
@@ -106,6 +107,11 @@ return [
 		// session exists.
 		['name' => 'font#serve', 'url' => '/fonts/{id}.woff2', 'verb' => 'GET'],
 		['name' => 'font#css', 'url' => '/fonts/css', 'verb' => 'GET'],
+		// Runtime files (overrides, custom CSS, uploaded sets, captured images),
+		// kept in app data so the signed app directory stays as shipped.
+		// Public for the same reason as the font routes; the name must pass
+		// RuntimeFileNames::isAllowed() (RuntimeFileController::serve()).
+		['name' => 'runtimeFile#serve', 'url' => '/runtime/{name}', 'verb' => 'GET', 'requirements' => ['name' => '.+']],
 		// Theming audit trail — admin-only (AuthorizedAdminSetting), no
 		// #[PublicPage]/#[NoAdminRequired].
 		['name' => 'audit#list', 'url' => '/settings/audit', 'verb' => 'GET'],
@@ -129,6 +135,7 @@ return [
 		// download/upload, admin-only (AuthorizedAdminSetting).
 		['name' => 'configBundle#export', 'url' => '/settings/config/export', 'verb' => 'GET'],
 		['name' => 'configBundle#import', 'url' => '/settings/config/import', 'verb' => 'POST'],
+		['name' => 'configSource#status', 'url' => '/settings/config-source', 'verb' => 'GET'],
 		// Theme preview ("proefdraaien") — per-session token set trial before
 		// instance-wide publish. Admin-only (AuthorizedAdminSetting), no
 		// #[PublicPage]/#[NoAdminRequired].
@@ -138,5 +145,9 @@ return [
 		// Group theming — group-to-token-set mapping (multi-tenant huisstijl).
 		['name' => 'settings#getGroupTheming', 'url' => '/settings/group-theming', 'verb' => 'GET'],
 		['name' => 'settings#setGroupTheming', 'url' => '/settings/group-theming', 'verb' => 'POST'],
+		['name' => 'assistantMark#settings', 'url' => '/settings/assistant-mark', 'verb' => 'GET'],
+		['name' => 'assistantMark#save', 'url' => '/settings/assistant-mark', 'verb' => 'POST'],
+		['name' => 'myGroups#index', 'url' => '/api/my-groups/house-style', 'verb' => 'GET'],
+		['name' => 'myGroups#update', 'url' => '/api/my-groups/{group}/house-style', 'verb' => 'POST'],
 	],
 ];

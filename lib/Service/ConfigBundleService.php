@@ -192,6 +192,13 @@ class ConfigBundleService {
 	private ScheduledSwitchStore $scheduledSwitches;
 
 	/**
+	 * The approved mark for the AI assistant.
+	 *
+	 * @var AssistantMarkService
+	 */
+	private AssistantMarkService $assistantMark;
+
+	/**
 	 * The logger.
 	 *
 	 * @var LoggerInterface
@@ -214,6 +221,7 @@ class ConfigBundleService {
 	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
+	 * @param AssistantMarkService $assistantMark The approved mark for the AI assistant.
 	 * @param TokenLifecycleBundleSection|null $lifecycle The own tokens and deprecations section.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
@@ -235,6 +243,7 @@ class ConfigBundleService {
 		UpstreamFreshnessService $freshnessService,
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
+		AssistantMarkService $assistantMark,
 		private ?TokenLifecycleBundleSection $lifecycle = null,
 	) {
 		$this->config = $config;
@@ -250,6 +259,7 @@ class ConfigBundleService {
 		$this->freshnessService = $freshnessService;
 		$this->scheduledSwitches = $scheduledSwitches;
 		$this->logger = $logger;
+		$this->assistantMark = $assistantMark;
 	}//end __construct()
 
 	/**
@@ -286,6 +296,7 @@ class ConfigBundleService {
 					. 'Metadata only — re-upload font files by hand on the target environment.',
 				'manifest' => $this->fontService->getManifest(),
 			],
+			'assistantMark' => $this->assistantMark->exportBundle(),
 		] + ($this->lifecycle?->export() ?? []);
 	}//end export()
 
@@ -398,6 +409,13 @@ class ConfigBundleService {
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
 		$resolved['lifecycle'] = $this->lifecycle?->validate(bundle: $bundle, errors: $errors);
+
+		$assistantMark = $this->assistantMark->validateBundle(section: ($bundle['assistantMark'] ?? null));
+		foreach ($assistantMark['errors'] as $message) {
+			$errors[] = ['section' => 'assistantMark', 'message' => $message];
+		}
+
+		$resolved['assistantMark'] = $assistantMark['value'];
 
 		return [
 			'valid' => empty($errors),
@@ -952,6 +970,7 @@ class ConfigBundleService {
 				'applied' => ($resolved['scheduledSwitches'] !== null),
 			],
 			'emailFooter' => ['applied' => true],
+			'assistantMark' => ['applied' => (($resolved['assistantMark'] ?? null) !== null)],
 			'customOverridesCss' => [
 				'written' => count($resolved['customOverrides']['tokens']),
 				'skipped' => count($resolved['customOverrides']['skipped']),
@@ -1021,6 +1040,10 @@ class ConfigBundleService {
 
 		if ($resolved['scheduledSwitches'] !== null) {
 			$this->scheduledSwitches->save(entries: $resolved['scheduledSwitches']);
+		}
+
+		if (($resolved['assistantMark'] ?? null) !== null) {
+			$this->assistantMark->applyBundle(value: $resolved['assistantMark']);
 		}
 
 		// CustomFonts is deliberately never applied — see class docblock.
