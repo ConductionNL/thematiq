@@ -49,15 +49,15 @@ class DtcgExportController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string             $appName      The app name.
-	 * @param IRequest           $request      The request.
-	 * @param TokenSetService    $tokenSets    Says which ids exist, and their names.
-	 * @param IAppManager        $appManager   The app path and version.
-	 * @param CssParserService   $cssParser    Reads the set's declarations.
-	 * @param DesignTokensWriter $writer       Writes the document.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param TokenSetService $tokenSets Says which ids exist, and their names.
+	 * @param IAppManager $appManager The app path and version.
+	 * @param CssParserService $cssParser Reads the set's declarations.
+	 * @param DesignTokensWriter $writer Writes the document.
 	 * @param DeprecationRecords $deprecations Written as `$deprecated` on deprecated tokens.
-	 * @param IL10N              $l            The error text.
-	 * @param RuntimeFileStore|null $store     Where uploaded sets live; shipped sets come from the release.
+	 * @param IL10N $l The error text.
+	 * @param RuntimeFileStore|null $store Where uploaded sets live; shipped sets come from the release.
 	 */
 	public function __construct(
 		string $appName,
@@ -89,8 +89,8 @@ class DtcgExportController extends Controller {
 		}
 
 		$appPath = $this->appManager->getAppPath(Application::APP_ID);
-		$css     = (string)(new SetFileReader())->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->store);
-		$name    = $id;
+		$css = (string)(new SetFileReader())->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->store);
+		$name = $id;
 		foreach ($this->tokenSets->getAvailableTokenSets() as $set) {
 			if (($set['id'] ?? null) === $id) {
 				$name = (string)($set['name'] ?? $id);

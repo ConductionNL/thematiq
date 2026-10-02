@@ -48,12 +48,12 @@ class TokenDeprecationController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string                  $appName      The app name.
-	 * @param IRequest                $request      The request.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
 	 * @param TokenDeprecationService $deprecations The records.
-	 * @param CustomOverridesService  $overrides    Rewrites the overrides files after a change.
-	 * @param ThemingAuditService     $audit        The audit trail.
-	 * @param IL10N                   $l            Translations for the error texts.
+	 * @param CustomOverridesService $overrides Rewrites the overrides files after a change.
+	 * @param ThemingAuditService $audit The audit trail.
+	 * @param IL10N $l Translations for the error texts.
 	 */
 	public function __construct(
 		string $appName,
@@ -80,7 +80,7 @@ class TokenDeprecationController extends Controller {
 		$rows = [];
 		foreach ($this->deprecations->publicList() as $row) {
 			$row['own'] = OwnTokenService::isOwnName(name: $row['token']);
-			$rows[]     = $row;
+			$rows[] = $row;
 		}
 
 		return new JSONResponse(['deprecations' => $rows]);
@@ -96,7 +96,7 @@ class TokenDeprecationController extends Controller {
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function save(): JSONResponse {
 		$token = trim((string)$this->request->getParam('token', ''));
-		$old   = ($this->deprecations->list()[$token] ?? null);
+		$old = ($this->deprecations->list()[$token] ?? null);
 		try {
 			$record = $this->deprecations->deprecate(
 				token: $token,
@@ -164,9 +164,9 @@ class TokenDeprecationController extends Controller {
 	/**
 	 * After a successful change: rewrite the files, audit, answer.
 	 *
-	 * @param string                    $token The token name.
-	 * @param array<string, mixed>|null $old   The record before.
-	 * @param array<string, mixed>|null $new   The record after.
+	 * @param string $token The token name.
+	 * @param array<string, mixed>|null $old The record before.
+	 * @param array<string, mixed>|null $new The record after.
 	 *
 	 * @return JSONResponse
 	 */

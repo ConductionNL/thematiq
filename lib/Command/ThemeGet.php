@@ -37,7 +37,7 @@ class ThemeGet extends Command {
 	 * Constructor.
 	 *
 	 * @param ActiveTokenSetService $active The active set.
-	 * @param GroupThemingService   $groups The group mappings.
+	 * @param GroupThemingService $groups The group mappings.
 	 */
 	public function __construct(
 		private readonly ActiveTokenSetService $active,
@@ -61,7 +61,7 @@ class ThemeGet extends Command {
 	/**
 	 * Print the active set, then one line per mapping.
 	 *
-	 * @param InputInterface  $input  The input.
+	 * @param InputInterface $input The input.
 	 * @param OutputInterface $output The output.
 	 *
 	 * @return int Always success.

@@ -50,7 +50,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 */
 	public function __construct(
 		private readonly IAppData $appData,
-		private readonly RuntimeFileNames $names=new RuntimeFileNames(),
+		private readonly RuntimeFileNames $names = new RuntimeFileNames(),
 	) {
 	}//end __construct()
 
@@ -76,7 +76,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	/**
 	 * Write a file, replacing any earlier content.
 	 *
-	 * @param string $name    An allowed name.
+	 * @param string $name An allowed name.
 	 * @param string $content The content.
 	 *
 	 * @return void

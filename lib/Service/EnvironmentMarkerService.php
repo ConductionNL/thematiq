@@ -65,8 +65,8 @@ class EnvironmentMarkerService {
 	 */
 	public const STYLES = [
 		'development' => ['background' => '#5B2A86', 'text' => '#FFFFFF'],
-		'test'        => ['background' => '#FFC83D', 'text' => '#000000'],
-		'acceptance'  => ['background' => '#0B5CAD', 'text' => '#FFFFFF'],
+		'test' => ['background' => '#FFC83D', 'text' => '#000000'],
+		'acceptance' => ['background' => '#0B5CAD', 'text' => '#FFFFFF'],
 	];
 
 	/**
@@ -100,10 +100,10 @@ class EnvironmentMarkerService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig         $config       The system config.
-	 * @param IInitialState   $initialState The initial state channel.
-	 * @param IL10N           $l10n         The translator.
-	 * @param LoggerInterface $logger       The logger.
+	 * @param IConfig $config The system config.
+	 * @param IInitialState $initialState The initial state channel.
+	 * @param IL10N $l10n The translator.
+	 * @param LoggerInterface $logger The logger.
 	 */
 	public function __construct(
 		IConfig $config,
@@ -146,8 +146,8 @@ class EnvironmentMarkerService {
 
 		$labels = [
 			'development' => [$this->l10n->t('Development environment'), $this->l10n->t('[Development]')],
-			'test'        => [$this->l10n->t('Test environment'), $this->l10n->t('[Test]')],
-			'acceptance'  => [$this->l10n->t('Acceptance environment'), $this->l10n->t('[Acceptance]')],
+			'test' => [$this->l10n->t('Test environment'), $this->l10n->t('[Test]')],
+			'acceptance' => [$this->l10n->t('Acceptance environment'), $this->l10n->t('[Acceptance]')],
 		];
 
 		if (isset($labels[$environment]) === false) {
@@ -155,17 +155,17 @@ class EnvironmentMarkerService {
 
 			return [
 				'environment' => $environment,
-				'style'       => 'test',
-				'label'       => $this->l10n->t('Unknown environment'),
-				'short'       => $this->l10n->t('[Unknown]'),
+				'style' => 'test',
+				'label' => $this->l10n->t('Unknown environment'),
+				'short' => $this->l10n->t('[Unknown]'),
 			];
 		}
 
 		return [
 			'environment' => $environment,
-			'style'       => $environment,
-			'label'       => $labels[$environment][0],
-			'short'       => $labels[$environment][1],
+			'style' => $environment,
+			'label' => $labels[$environment][0],
+			'short' => $labels[$environment][1],
 		];
 	}//end resolve()
 

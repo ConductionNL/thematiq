@@ -60,7 +60,7 @@ class StockTokensServiceTest extends TestCase {
 	 * the theming app, and overriding it is what lets the rest be asserted
 	 * without a server.
 	 *
-	 * @param array<string, string> $stock   What the instance reports.
+	 * @param array<string, string> $stock What the instance reports.
 	 * @param array<string, string> $sources The --color-* => --nldesign-* map.
 	 *
 	 * @return StockTokensService The system under test.
@@ -315,11 +315,11 @@ class StockTokensServiceTest extends TestCase {
 	 * Build the service with a real (in-memory) cache and a config whose two
 	 * key inputs are fixed.
 	 *
-	 * @param ICache                $cache       The cache to use.
-	 * @param string                $version     The instance's Nextcloud version.
-	 * @param string                $cachebuster The theming app's cachebuster.
-	 * @param array<string, string> $stock       What the instance reports.
-	 * @param string                $appVersion  This app's installed version.
+	 * @param ICache $cache The cache to use.
+	 * @param string $version The instance's Nextcloud version.
+	 * @param string $cachebuster The theming app's cachebuster.
+	 * @param array<string, string> $stock What the instance reports.
+	 * @param string $appVersion This app's installed version.
 	 *
 	 * @return StockTokensService The system under test.
 	 */
@@ -328,7 +328,7 @@ class StockTokensServiceTest extends TestCase {
 		string $version,
 		string $cachebuster,
 		array $stock,
-		string $appVersion = '1.2.10'
+		string $appVersion = '1.2.10',
 	): StockTokensService {
 		$preview = $this->createMock(TokenSetPreviewService::class);
 		$preview->method('getTokenSources')->willReturn(
@@ -466,19 +466,13 @@ class StockTokensServiceTest extends TestCase {
 			['--color-primary' => '--nldesign-color-primary']
 		);
 
-		$service = new class(
-			$preview,
-			$this->createMock(LoggerInterface::class),
-			$this->cacheFactory(),
-			$this->createMock(IConfig::class),
-			$theme
-		) extends StockTokensService {
+		$service = new class($preview, $this->createMock(LoggerInterface::class), $this->cacheFactory(), $this->createMock(IConfig::class), $theme) extends StockTokensService {
 			public function __construct(
 				TokenSetPreviewService $sources,
 				LoggerInterface $logger,
 				ICacheFactory $cacheFactory,
 				IConfig $config,
-				private object $theme
+				private object $theme,
 			) {
 				parent::__construct($sources, $logger, $cacheFactory, $config);
 			}
@@ -522,19 +516,13 @@ class StockTokensServiceTest extends TestCase {
 			['--color-primary' => '--nldesign-color-primary']
 		);
 
-		$service = new class(
-			$preview,
-			$this->createMock(LoggerInterface::class),
-			$this->cacheFactory(),
-			$this->createMock(IConfig::class),
-			$theme
-		) extends StockTokensService {
+		$service = new class($preview, $this->createMock(LoggerInterface::class), $this->cacheFactory(), $this->createMock(IConfig::class), $theme) extends StockTokensService {
 			public function __construct(
 				TokenSetPreviewService $sources,
 				LoggerInterface $logger,
 				ICacheFactory $cacheFactory,
 				IConfig $config,
-				private object $theme
+				private object $theme,
 			) {
 				parent::__construct($sources, $logger, $cacheFactory, $config);
 			}

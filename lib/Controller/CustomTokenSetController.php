@@ -28,9 +28,9 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
-use OCA\Thematiq\Service\MultiBrandImportService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\MultiBrandImportService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
@@ -274,9 +274,9 @@ class CustomTokenSetController extends Controller {
 	 * A multi-brand upload: without `brands` the brands are listed and nothing is stored;
 	 * with `brands` the chosen ones are stored together, or none.
 	 *
-	 * @param string                                          $name   The source's display name.
-	 * @param array{content: string, sourceName: string|null} $read   The payload from readInput().
-	 * @param array<int, array<string, mixed>>                $brands The brands the source holds.
+	 * @param string $name The source's display name.
+	 * @param array{content: string, sourceName: string|null} $read The payload from readInput().
+	 * @param array<int, array<string, mixed>> $brands The brands the source holds.
 	 *
 	 * @return JSONResponse `{multiBrand, stored, brands}` or `{multiBrand, stored, sourceId, sets}`, or an error naming the brand.
 	 *
@@ -327,16 +327,16 @@ class CustomTokenSetController extends Controller {
 	/**
 	 * Store a token set that arrived already in the `css/tokens/*.css` shape.
 	 *
-	 * @param string      $name         The set's display name.
-	 * @param string      $slug         The slug derived from the name.
-	 * @param string      $content      The token set CSS, as sent; only its validated declarations are stored.
+	 * @param string $name The set's display name.
+	 * @param string $slug The slug derived from the name.
+	 * @param string $content The token set CSS, as sent; only its validated declarations are stored.
 	 * @param string|null $designSystem The design system the file itself names, which outranks the request's claim.
 	 *
 	 * @return JSONResponse The persisted set, or the validator's error.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
 	 */
-	private function storeRaw(string $name, string $slug, string $content, ?string $designSystem=null): JSONResponse {
+	private function storeRaw(string $name, string $slug, string $content, ?string $designSystem = null): JSONResponse {
 		$parsed = $this->mapFromCss(content: $content, slug: $slug);
 		if ($parsed instanceof JSONResponse) {
 			return $parsed;

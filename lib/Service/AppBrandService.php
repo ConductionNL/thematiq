@@ -54,12 +54,12 @@ class AppBrandService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig           $config     App config.
-	 * @param IAppManager       $appManager Installed apps.
+	 * @param IConfig $config App config.
+	 * @param IAppManager $appManager Installed apps.
 	 * @param AppThemingService $appTheming The exclusion list and the protected ids.
-	 * @param TokenSetService   $tokenSets  Which sets exist.
-	 * @param AppBrandLogoStore $logos      Logo storage.
-	 * @param IURLGenerator     $urls       Logo URLs.
+	 * @param TokenSetService $tokenSets Which sets exist.
+	 * @param AppBrandLogoStore $logos Logo storage.
+	 * @param IURLGenerator $urls Logo URLs.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
@@ -391,7 +391,6 @@ class AppBrandService {
 	public function logoLayer(?array $brand, string $tokenSet, string $styleId): ?array {
 		return $this->logos->layer(brand: $brand, tokenSet: $tokenSet, styleId: $styleId);
 	}//end logoLayer()
-
 
 	/**
 	 * A logo URL, versioned by upload time so a new logo is not served from cache.

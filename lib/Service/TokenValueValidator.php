@@ -17,6 +17,7 @@
  */
 
 declare(strict_types=1);
+
 namespace OCA\Thematiq\Service;
 
 /**
@@ -60,7 +61,7 @@ class TokenValueValidator {
 	/**
 	 * Whether a value is valid for its token type. An unknown type is treated as `text`.
 	 *
-	 * @param string $type  The token type.
+	 * @param string $type The token type.
 	 * @param string $value The value.
 	 *
 	 * @return boolean True when it passes.
@@ -158,7 +159,7 @@ class TokenValueValidator {
 	/**
 	 * The tokens a save would drop or refuse, with the reason, which names the type.
 	 *
-	 * @param array<string, mixed> $tokens     Token name => light value.
+	 * @param array<string, mixed> $tokens Token name => light value.
 	 * @param array<string, mixed> $darkTokens Token name => the administrator's own dark value.
 	 *
 	 * @return array<string, string> Token name => reason; empty when everything passes.
@@ -202,8 +203,8 @@ class TokenValueValidator {
 	/**
 	 * Why a value is refused for its type, or null when it passes.
 	 *
-	 * @param mixed  $value The value.
-	 * @param string $type  The token type.
+	 * @param mixed $value The value.
+	 * @param string $type The token type.
 	 *
 	 * @return string|null The reason, naming the type.
 	 */

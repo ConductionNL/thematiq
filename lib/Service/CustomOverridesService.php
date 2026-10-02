@@ -180,7 +180,7 @@ class CustomOverridesService {
 	/**
 	 * The overrides file a token set reads, under `css/` and without extension.
 	 *
-	 * @param string $tokenSet       The token set id.
+	 * @param string $tokenSet The token set id.
 	 * @param string $designSystemId The design system the set wears.
 	 *
 	 * @return string `custom-overrides-{set}` for a set on `none`, {@see self::FILE} for every other.
@@ -369,8 +369,8 @@ class CustomOverridesService {
 	 * Only tokens present in TokenRegistry are accepted — others are silently ignored.
 	 * The store replaces the whole file in one write, so a reader never sees half of it.
 	 *
-	 * @param array<string, string> $tokens   Map of token name => value to persist.
-	 * @param string|null           $tokenSet The token set id, or null for the instance's active set.
+	 * @param array<string, string> $tokens Map of token name => value to persist.
+	 * @param string|null $tokenSet The token set id, or null for the instance's active set.
 	 * @param array<string, string> $darkTokens The administrator's own dark values, by token.
 	 *
 	 * @return void
@@ -388,7 +388,7 @@ class CustomOverridesService {
 	/**
 	 * The tokens a save would drop or refuse, with the reason, which names the type.
 	 *
-	 * @param array<string, mixed> $tokens     Token name => light value.
+	 * @param array<string, mixed> $tokens Token name => light value.
 	 * @param array<string, mixed> $darkTokens Token name => the administrator's own dark value.
 	 *
 	 * @return array<string, string> Token name => reason; empty when everything passes.
@@ -424,8 +424,8 @@ class CustomOverridesService {
 	/**
 	 * Write the CSS file to the store.
 	 *
-	 * @param array<string, string> $tokens     Validated token map to write.
-	 * @param string                $name       The runtime file name to write.
+	 * @param array<string, string> $tokens Validated token map to write.
+	 * @param string $name The runtime file name to write.
 	 * @param array<string, string> $darkTokens The administrator's own dark values, by token.
 	 *
 	 * @return void

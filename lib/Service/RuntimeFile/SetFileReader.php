@@ -42,9 +42,9 @@ class SetFileReader {
 	/**
 	 * Read a set file.
 	 *
-	 * @param string                $appPath The app directory.
-	 * @param string                $name    The app-relative name, such as `css/tokens/utrecht.css`.
-	 * @param RuntimeFileStore|null $store   The runtime store, or null for the release only.
+	 * @param string $appPath The app directory.
+	 * @param string $name The app-relative name, such as `css/tokens/utrecht.css`.
+	 * @param RuntimeFileStore|null $store The runtime store, or null for the release only.
 	 *
 	 * @return string|null The content, or null when the file does not exist.
 	 *
@@ -71,9 +71,9 @@ class SetFileReader {
 	/**
 	 * Whether a set file exists.
 	 *
-	 * @param string                $appPath The app directory.
-	 * @param string                $name    The app-relative name.
-	 * @param RuntimeFileStore|null $store   The runtime store, or null for the release only.
+	 * @param string $appPath The app directory.
+	 * @param string $name The app-relative name.
+	 * @param RuntimeFileStore|null $store The runtime store, or null for the release only.
 	 *
 	 * @return bool True when it does.
 	 *
@@ -90,9 +90,9 @@ class SetFileReader {
 	/**
 	 * The file names in one directory, shipped and uploaded, without duplicates.
 	 *
-	 * @param string                $appPath   The app directory.
-	 * @param string                $directory An app-relative directory such as `css/tokens`.
-	 * @param RuntimeFileStore|null $store     The runtime store, or null for the release only.
+	 * @param string $appPath The app directory.
+	 * @param string $directory An app-relative directory such as `css/tokens`.
+	 * @param RuntimeFileStore|null $store The runtime store, or null for the release only.
 	 *
 	 * @return array<int, string> Base names such as `utrecht.css`, sorted.
 	 *

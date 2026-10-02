@@ -71,8 +71,8 @@ class OverridesCssBuilder {
 	/**
 	 * Constructor.
 	 *
-	 * @param DarkPaletteService  $darkPalette Derives each colour override's dark value.
-	 * @param TokenValueValidator $values      Says which tokens get a dark value.
+	 * @param DarkPaletteService $darkPalette Derives each colour override's dark value.
+	 * @param TokenValueValidator $values Says which tokens get a dark value.
 	 */
 	public function __construct(
 		private readonly DarkPaletteService $darkPalette,
@@ -83,9 +83,9 @@ class OverridesCssBuilder {
 	/**
 	 * Build the file content.
 	 *
-	 * @param array<string, string> $tokens     Editor token => light value (registry names only).
+	 * @param array<string, string> $tokens Editor token => light value (registry names only).
 	 * @param array<string, string> $darkTokens Editor token => the administrator's own dark value.
-	 * @param OwnTokenCss|null      $own        The administrator's own tokens, rendered after the editor's.
+	 * @param OwnTokenCss|null $own The administrator's own tokens, rendered after the editor's.
 	 *
 	 * @return string The CSS file content.
 	 *
@@ -190,8 +190,8 @@ class OverridesCssBuilder {
 	/**
 	 * Build individual CSS declaration lines from a token map.
 	 *
-	 * @param array<string, string> $tokens    Token name => value pairs.
-	 * @param bool                  $important Whether each line carries `!important`.
+	 * @param array<string, string> $tokens Token name => value pairs.
+	 * @param bool $important Whether each line carries `!important`.
 	 *
 	 * @return array<string> List of CSS declaration lines.
 	 *

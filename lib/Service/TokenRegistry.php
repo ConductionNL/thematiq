@@ -196,8 +196,9 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * A missing or malformed table yields none, so the brand tokens still edit.
 	 *
+	 * Returns name => tab, type, label, settable, token, advanced and perScheme.
+	 *
 	 * @return array<string, array{tab: string, type: string, label: string, settable: true, token: string, advanced: bool, perScheme: bool}>
-	 *         Name => tab, type, label, settable, token, advanced and perScheme.
 	 *
 	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */

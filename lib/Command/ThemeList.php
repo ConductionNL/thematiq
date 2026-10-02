@@ -58,7 +58,7 @@ class ThemeList extends Command {
 	/**
 	 * Print one line per set.
 	 *
-	 * @param InputInterface  $input  The input.
+	 * @param InputInterface $input The input.
 	 * @param OutputInterface $output The output.
 	 *
 	 * @return int Always success.

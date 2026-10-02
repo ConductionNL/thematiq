@@ -65,10 +65,10 @@ class ScheduledCoreThemingSync {
 	/**
 	 * Constructor.
 	 *
-	 * @param ThemingService         $themingService Writes core theming.
-	 * @param TokenSetService        $tokenSets      Reads a set's theming block.
-	 * @param IConfig                $config         Remembers which image was synced.
-	 * @param BrandingCaptureService $branding       Takes and keeps the snapshot of core theming.
+	 * @param ThemingService $themingService Writes core theming.
+	 * @param TokenSetService $tokenSets Reads a set's theming block.
+	 * @param IConfig $config Remembers which image was synced.
+	 * @param BrandingCaptureService $branding Takes and keeps the snapshot of core theming.
 	 */
 	public function __construct(
 		private readonly ThemingService $themingService,

@@ -104,8 +104,8 @@ class BrandingCaptureService {
 	 * Constructor.
 	 *
 	 * @param ImageManager $imageManager Core's theming image store.
-	 * @param IConfig      $config       The app config.
-	 * @param RuntimeFileStore $store    Where captured images are stored.
+	 * @param IConfig $config The app config.
+	 * @param RuntimeFileStore $store Where captured images are stored.
 	 */
 	public function __construct(
 		ImageManager $imageManager,
@@ -218,7 +218,7 @@ class BrandingCaptureService {
 	 * copy can never overwrite a shipped municipality logo or a logo the
 	 * theme converter extracted (`img/logos/{id}.{ext}`).
 	 *
-	 * @param string $setId    The token set.
+	 * @param string $setId The token set.
 	 * @param string $imageKey The image slot.
 	 *
 	 * @return string|null The app-relative path written, or null when the slot holds no image of the admin's.
@@ -288,7 +288,7 @@ class BrandingCaptureService {
 	/**
 	 * The file name (without extension) a set's copy of a slot is kept under.
 	 *
-	 * @param string $setId    The token set.
+	 * @param string $setId The token set.
 	 * @param string $imageKey The image slot.
 	 *
 	 * @return string The file name.

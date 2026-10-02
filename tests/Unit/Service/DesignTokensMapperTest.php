@@ -802,7 +802,7 @@ class DesignTokensMapperTest extends TestCase {
 	 * Map one colour object at `color.primary`.
 	 *
 	 * @param array<string, mixed> $value The colour object.
-	 * @param string               $path  The leaf name under `color`.
+	 * @param string $path The leaf name under `color`.
 	 *
 	 * @return array<string, mixed> The mapper result.
 	 */
@@ -856,7 +856,7 @@ class DesignTokensMapperTest extends TestCase {
 	 */
 	public function testExtensionNamesTheTarget(): void {
 		$document = ['nldesign' => ['color' => ['error' => ['$type' => 'color', '$value' => '#d52b1e', '$extensions' => ['nl.conduction.thematiq' => ['cssVariable' => '--nldesign-color-error']]]]]];
-		$result   = $this->mapper->map(document: $document);
+		$result = $this->mapper->map(document: $document);
 
 		$this->assertSame(['--nldesign-color-error' => '#d52b1e'], $result['declarations']);
 		$this->assertSame([], $result['skipped']);
@@ -873,7 +873,7 @@ class DesignTokensMapperTest extends TestCase {
 			'color' => ['primary' => ['$type' => 'color', '$value' => '#154273']],
 			'$extensions' => ['nl.conduction.thematiq' => ['setId' => 'x', 'cssOnly' => ['--nldesign-header-background' => 'linear-gradient(90deg, #154273, #01689b)', '--nldesign-color-primary' => '#000000', 'not a name' => 'x']]],
 		];
-		$result   = $this->mapper->map(document: $document);
+		$result = $this->mapper->map(document: $document);
 
 		$this->assertSame('linear-gradient(90deg, #154273, #01689b)', $result['declarations']['--nldesign-header-background']);
 		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Unit tests for BrandingCaptureService.
  *
@@ -17,9 +18,9 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
-use OCA\Theming\ImageManager;
 use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Theming\ImageManager;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IConfig;
 use PHPUnit\Framework\TestCase;
@@ -72,7 +73,6 @@ class BrandingCaptureServiceTest extends TestCase {
 
 		$this->appDir = sys_get_temp_dir() . '/thematiq-capture-test-' . uniqid();
 		mkdir($this->appDir, 0777, true);
-
 
 		$config = $this->createMock(IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(

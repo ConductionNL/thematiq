@@ -88,7 +88,7 @@ class OwnComponentService {
 	 */
 	public static function slugFor(string $name): string {
 		$ascii = (string)iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
-		$slug  = trim((string)preg_replace('/[^a-z0-9]+/', '-', strtolower($ascii)), '-');
+		$slug = trim((string)preg_replace('/[^a-z0-9]+/', '-', strtolower($ascii)), '-');
 
 		return substr($slug, 0, 40);
 	}//end slugFor()
@@ -138,7 +138,7 @@ class OwnComponentService {
 	 *
 	 * @param string $name The name.
 	 * @param string $html The HTML, raw.
-	 * @param string $css  The CSS, raw.
+	 * @param string $css The CSS, raw.
 	 *
 	 * @return array{name: string, slug: string, html: string, css: string, updatedAt: string} The stored component.
 	 *
@@ -158,13 +158,13 @@ class OwnComponentService {
 		}
 
 		$folder = $this->folder();
-		$file   = $slug . '.json';
+		$file = $slug . '.json';
 		if ($folder->fileExists($file) === false && count($folder->getDirectoryListing()) >= self::MAX_COMPONENTS) {
 			throw new InvalidArgumentException('count', 400);
 		}
 
 		$component = ['name' => $name, 'slug' => $slug, 'html' => $html, 'css' => $css, 'updatedAt' => gmdate(DATE_ATOM)];
-		$json      = (string)json_encode($component, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		$json = (string)json_encode($component, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 		if ($folder->fileExists($file) === true) {
 			$folder->getFile($file)->putContent($json);
 			return $component;

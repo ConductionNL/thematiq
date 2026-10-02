@@ -202,12 +202,12 @@ class TokenSetConverterService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppManager        $appManager The app manager, for locating the mapping table and the vocabulary stylesheets.
-	 * @param CssParserService   $cssParser  Declaration parsing (shared with every other CSS path in the app).
-	 * @param ContrastService    $contrast   WCAG ratio maths for the contrast guard.
+	 * @param IAppManager $appManager The app manager, for locating the mapping table and the vocabulary stylesheets.
+	 * @param CssParserService $cssParser Declaration parsing (shared with every other CSS path in the app).
+	 * @param ContrastService $contrast WCAG ratio maths for the contrast guard.
 	 * @param DesignTokensMapper $dtcgMapper The existing DTCG mapper, which owns input B.
-	 * @param FontService        $fonts      Bundled/uploaded font lookup for the `fontAvailable` guard.
-	 * @param LoggerInterface    $logger     Logger for a malformed mapping table.
+	 * @param FontService $fonts Bundled/uploaded font lookup for the `fontAvailable` guard.
+	 * @param LoggerInterface $logger Logger for a malformed mapping table.
 	 */
 	public function __construct(
 		private readonly IAppManager $appManager,
@@ -222,15 +222,15 @@ class TokenSetConverterService {
 	/**
 	 * Convert a design-system theme into a Nextcloud token set.
 	 *
-	 * @param string      $content     The raw pasted or uploaded content.
-	 * @param string      $slug        The token set slug, which is also the brand prefix (`--{slug}-*`).
-	 * @param string      $displayName The human-readable set name for the manifest entry.
-	 * @param string|null $sourceName  Optional source label (file name or package) for the provenance block.
-	 * @param string|null $assetName   Base name for an extracted logo, WITHOUT extension. Defaults to
-	 *                                 the slug; the admin upload path passes `custom-{slug}` so an
-	 *                                 uploaded theme can never overwrite a shipped `img/logos/{slug}.svg`.
+	 * @param string $content The raw pasted or uploaded content.
+	 * @param string $slug The token set slug, which is also the brand prefix (`--{slug}-*`).
+	 * @param string $displayName The human-readable set name for the manifest entry.
+	 * @param string|null $sourceName Optional source label (file name or package) for the provenance block.
+	 * @param string|null $assetName Base name for an extracted logo, WITHOUT extension. Defaults to
+	 *                               the slug; the admin upload path passes `custom-{slug}` so an
+	 *                               uploaded theme can never overwrite a shipped `img/logos/{slug}.svg`.
 	 * @param array<int, string> $referenceOnlyPaths Dotted token paths that resolve aliases but are not
-	 *                                 emitted (a Tokens Studio `source` set of one brand).
+	 *                                               emitted (a Tokens Studio `source` set of one brand).
 	 *
 	 * @return array{
 	 *     css: string,
@@ -312,7 +312,6 @@ class TokenSetConverterService {
 			if ($report !== []) {
 				return $this->zeroYieldResult(report: $report, inputKind: $inputKind);
 			}
-
 
 			throw new RuntimeException(
 				'No custom properties were found. Paste a built theme CSS (a class-scoped block of'
@@ -441,12 +440,12 @@ class TokenSetConverterService {
 	 * The result for a document thematiq exported: every declaration under its own name,
 	 * the brand palette moved to the new prefix, no conversion rules.
 	 *
-	 * @param array<string, string>            $declarations  The mapped declarations.
-	 * @param string                           $slug          The new set's slug.
-	 * @param string                           $displayName   The new set's name.
-	 * @param string|null                      $sourceName    The file name.
-	 * @param string|null                      $sourceVersion The document's package version.
-	 * @param array<int, array<string, mixed>> $report        The report so far.
+	 * @param array<string, string> $declarations The mapped declarations.
+	 * @param string $slug The new set's slug.
+	 * @param string $displayName The new set's name.
+	 * @param string|null $sourceName The file name.
+	 * @param string|null $sourceVersion The document's package version.
+	 * @param array<int, array<string, mixed>> $report The report so far.
 	 *
 	 * @return array<string, mixed> The same shape as convert().
 	 *
@@ -501,7 +500,7 @@ class TokenSetConverterService {
 	/**
 	 * A token's value with its var() chain followed inside the set, when it ends in a hex colour.
 	 *
-	 * @param string                $name         The token.
+	 * @param string $name The token.
 	 * @param array<string, string> $declarations The set.
 	 *
 	 * @return string|null
@@ -529,8 +528,8 @@ class TokenSetConverterService {
 	 * The caller decides the HTTP status; this method only refuses to throw the
 	 * findings away.
 	 *
-	 * @param array<int, ReportEntry> $report    What the read produced.
-	 * @param string                  $inputKind The detected input kind.
+	 * @param array<int, ReportEntry> $report What the read produced.
+	 * @param string $inputKind The detected input kind.
 	 *
 	 * @return array<string, mixed> The zero-yield result.
 	 *
@@ -677,8 +676,8 @@ class TokenSetConverterService {
 	/**
 	 * Whether any node in a decoded JSON tree is a DTCG leaf (`$value`).
 	 *
-	 * @param mixed $node  The current node.
-	 * @param int   $depth Current recursion depth.
+	 * @param mixed $node The current node.
+	 * @param int $depth Current recursion depth.
 	 *
 	 * @return bool True when a `$value` key is present anywhere.
 	 */
@@ -707,8 +706,8 @@ class TokenSetConverterService {
 	 * is one flat block of values, so a `@media` branch has nowhere to go. Later
 	 * blocks win over earlier ones, which is what the cascade would do anyway.
 	 *
-	 * @param string                  $content The raw CSS.
-	 * @param array<int, ReportEntry> $report  The report, appended to by reference.
+	 * @param string $content The raw CSS.
+	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
 	 * @return array<string, string> Declaration name => raw value.
 	 */
@@ -753,11 +752,11 @@ class TokenSetConverterService {
 	 * plain Style Dictionary tree, whose leaves are `value` (not `$value`) and
 	 * whose dotted path becomes the token name.
 	 *
-	 * @param array<mixed>            $decoded The decoded JSON.
-	 * @param string                  $kind    `B` or `C`.
-	 * @param string                  $slug    The brand prefix for input C names.
-	 * @param string|null             $version Set to the declared package version when the input carries one.
-	 * @param array<int, ReportEntry> $report  The report, appended to by reference.
+	 * @param array<mixed> $decoded The decoded JSON.
+	 * @param string $kind `B` or `C`.
+	 * @param string $slug The brand prefix for input C names.
+	 * @param string|null $version Set to the declared package version when the input carries one.
+	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
 	 * @return array<string, string> Declaration name => value.
 	 */
@@ -808,11 +807,11 @@ class TokenSetConverterService {
 	 * namespaced under the brand slug, which is the whole point — a raw palette
 	 * step must never end up under the app's own `--nldesign-` vocabulary.
 	 *
-	 * @param mixed                 $node         The current node.
-	 * @param array<int, string>    $path         The path walked so far.
-	 * @param string                $slug         The brand prefix.
+	 * @param mixed $node The current node.
+	 * @param array<int, string> $path The path walked so far.
+	 * @param string $slug The brand prefix.
 	 * @param array<string, string> $declarations Collected declarations, by reference.
-	 * @param int                   $depth        Current recursion depth.
+	 * @param int $depth Current recursion depth.
 	 *
 	 * @return void
 	 *
@@ -873,8 +872,8 @@ class TokenSetConverterService {
 	 * Existing policy from the wave-3 and wave-5 security fixes: Thematiq serves
 	 * only local assets, and a token set reaches every anonymous visitor.
 	 *
-	 * @param array<string, string>   $declarations The parsed declarations.
-	 * @param array<int, ReportEntry> $report       The report, appended to by reference.
+	 * @param array<string, string> $declarations The parsed declarations.
+	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
 	 * @return array<string, string> The declarations without external references.
 	 */
@@ -906,8 +905,8 @@ class TokenSetConverterService {
 	 * NOT emitted: the value would resolve to nothing on the login page and in
 	 * e-mails, where the source theme's stylesheet is not loaded.
 	 *
-	 * @param array<string, string>   $declarations The parsed declarations.
-	 * @param array<int, ReportEntry> $report       The report, appended to by reference.
+	 * @param array<string, string> $declarations The parsed declarations.
+	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
 	 * @return array<string, string> Declarations with every value a literal.
 	 */
@@ -937,10 +936,10 @@ class TokenSetConverterService {
 	/**
 	 * Resolve one value's `var()` references to a literal.
 	 *
-	 * @param string                $value        The raw value.
+	 * @param string $value The raw value.
 	 * @param array<string, string> $declarations The full declaration map.
-	 * @param array<string, bool>   $seen         Names already on this chain (cycle guard).
-	 * @param int                   $depth        Current depth.
+	 * @param array<string, bool> $seen Names already on this chain (cycle guard).
+	 * @param int $depth Current depth.
 	 *
 	 * @return string|null The literal value, or null when a reference cannot be resolved.
 	 *
@@ -1016,13 +1015,14 @@ class TokenSetConverterService {
 	 * token set) is recognised too: no bytes, but the path still reaches the
 	 * manifest so the set gains the `theming.logo` it was missing.
 	 *
-	 * @param array<string, string>   $declarations The resolved declarations.
-	 * @param string                  $slug         The brand slug, substituted for `{p}`.
-	 * @param string                  $assetName    Base name for the written file, without extension.
-	 * @param array<int, ReportEntry> $report       The report, appended to by reference.
+	 * Returns the extracted logo, or null when the theme declares none.
+	 *
+	 * @param array<string, string> $declarations The resolved declarations.
+	 * @param string $slug The brand slug, substituted for `{p}`.
+	 * @param string $assetName Base name for the written file, without extension.
+	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
 	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}|null
-	 *         The extracted logo, or null when the theme declares none.
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
@@ -1100,8 +1100,8 @@ class TokenSetConverterService {
 	 * prefix this app has never seen is still recognised.
 	 *
 	 * @param array<string, string> $declarations The resolved declarations.
-	 * @param string                $slug         The brand slug, substituted for `{p}`.
-	 * @param array<string, mixed>  $spec         The table's `logo` block.
+	 * @param string $slug The brand slug, substituted for `{p}`.
+	 * @param array<string, mixed> $spec The table's `logo` block.
 	 *
 	 * @return array<int, string> The candidate declaration names, in order.
 	 */
@@ -1135,8 +1135,8 @@ class TokenSetConverterService {
 	 * pointed at `--nldesign-logo-url` rather than repeating the payload.
 	 *
 	 * @param array<string, string> $declarations The resolved declarations.
-	 * @param string                $source       The chosen source declaration.
-	 * @param string                $value        The chosen source's value.
+	 * @param string $source The chosen source declaration.
+	 * @param string $value The chosen source's value.
 	 *
 	 * @return array<int, string> The alias declaration names.
 	 */
@@ -1161,7 +1161,7 @@ class TokenSetConverterService {
 	 * an image type Nextcloud's ImageManager does not take — is not a logo this
 	 * converter can store, and the caller reports it as such.
 	 *
-	 * @param string               $uri  The `url()` target.
+	 * @param string $uri The `url()` target.
 	 * @param array<string, mixed> $spec The table's `logo` block.
 	 *
 	 * @return array{extension: string, contents: string}|null The decoded image, or null.
@@ -1203,8 +1203,8 @@ class TokenSetConverterService {
 	 * `theming.logo` is handed to `ThemingService::validateSinglePath()`, which
 	 * rejects traversal and anything outside `img/logos/` and `img/backgrounds/`.
 	 *
-	 * @param string               $target The `url()` target.
-	 * @param array<string, mixed> $spec   The table's `logo` block.
+	 * @param string $target The `url()` target.
+	 * @param array<string, mixed> $spec The table's `logo` block.
 	 *
 	 * @return string|null The app-relative path, or null when it is not one.
 	 */
@@ -1245,9 +1245,9 @@ class TokenSetConverterService {
 	 * Split the resolved input into the palette, component and pre-existing
 	 * semantic sections, applying the table's `never` policy on the way.
 	 *
-	 * @param array<string, string>   $declarations The resolved declarations.
-	 * @param string                  $slug         The brand slug.
-	 * @param array<int, ReportEntry> $report       The report, appended to by reference.
+	 * @param array<string, string> $declarations The resolved declarations.
+	 * @param string $slug The brand slug.
+	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
 	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>}
 	 *
@@ -1629,11 +1629,11 @@ class TokenSetConverterService {
 	 * fallback runs and the entry is `adapted`, never `applied` — an admin has
 	 * to be able to tell the theme's own value from one this app invented.
 	 *
-	 * @param array<string, string>      $declarations The resolved input.
-	 * @param array<string, string>      $existing     Values the input already declared (input D wins).
-	 * @param string                     $slug         The brand slug.
-	 * @param array<string, string>      $manifest     Manifest targets, written by reference.
-	 * @param array<int, ReportEntry>    $report       The report, appended to by reference.
+	 * @param array<string, string> $declarations The resolved input.
+	 * @param array<string, string> $existing Values the input already declared (input D wins).
+	 * @param string $slug The brand slug.
+	 * @param array<string, string> $manifest Manifest targets, written by reference.
+	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
 	 * @return array<string, string> The semantic layer.
 	 *
@@ -1765,7 +1765,7 @@ class TokenSetConverterService {
 	/**
 	 * Evaluate a rule's `when` condition.
 	 *
-	 * @param array<string, mixed>  $when     The condition.
+	 * @param array<string, mixed> $when The condition.
 	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
 	 * @return bool True when the rule should run.
@@ -1804,9 +1804,9 @@ class TokenSetConverterService {
 	/**
 	 * Run a rule's fallback.
 	 *
-	 * @param array<string, mixed>|null $fallback     The fallback spec.
-	 * @param array<string, string>     $semantic     The semantic layer so far.
-	 * @param array<string, string>     $declarations The resolved input.
+	 * @param array<string, mixed>|null $fallback The fallback spec.
+	 * @param array<string, string> $semantic The semantic layer so far.
+	 * @param array<string, string> $declarations The resolved input.
 	 *
 	 * @return array{value: string, source: string, reason: string}|null The derived value, or null when it cannot be derived.
 	 */
@@ -1872,9 +1872,9 @@ class TokenSetConverterService {
 	 * what keeps a converted set looking like its brand instead of like
 	 * Rijkshuisstijl, which is the whole defect this converter exists to fix.
 	 *
-	 * @param array<string, mixed>  $spec         The ramp spec.
+	 * @param array<string, mixed> $spec The ramp spec.
 	 * @param array<string, string> $declarations The resolved input.
-	 * @param array<string, string> $semantic     The semantic layer so far.
+	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
 	 * @return string|null The picked colour, or null when the theme has no usable ramp.
 	 *
@@ -1954,9 +1954,9 @@ class TokenSetConverterService {
 	/**
 	 * Apply one of the closed transform set.
 	 *
-	 * @param string                $kind     The transform name.
-	 * @param string                $value    The input value.
-	 * @param array<string, mixed>  $args     Transform arguments.
+	 * @param string $kind The transform name.
+	 * @param string $value The input value.
+	 * @param array<string, mixed> $args Transform arguments.
 	 * @param array<string, string> $semantic The semantic layer so far (for `mix` against another token).
 	 *
 	 * @return string The transformed value.
@@ -1967,7 +1967,6 @@ class TokenSetConverterService {
 		switch ($kind) {
 			case 'darken':
 				return $this->darken(value: $value, fraction: (float)($args['fraction'] ?? 0.1));
-
 			case 'mix':
 				$with = (string)($args['with'] ?? '#ffffff');
 				if (str_starts_with($with, '--') === true) {
@@ -1975,13 +1974,10 @@ class TokenSetConverterService {
 				}
 
 				return $this->mix(value: $value, with: $with, weight: (float)($args['weight'] ?? 0.5));
-
 			case 'rgbTriplet':
 				return $this->rgbTriplet(value: $value);
-
 			case 'alpha':
 				return $this->alpha(value: $value, fraction: (float)($args['fraction'] ?? 0.5));
-
 			case 'radiusScale':
 				return $this->radiusScale(
 					value: $value,
@@ -2000,7 +1996,6 @@ class TokenSetConverterService {
 				$template = (string)($args['template'] ?? '{value}');
 
 				return str_replace('{value}', $value, $template);
-
 			case 'copy':
 			default:
 				return $value;
@@ -2010,8 +2005,8 @@ class TokenSetConverterService {
 	/**
 	 * Apply a rule's guard.
 	 *
-	 * @param array<string, mixed>  $guard    The guard spec.
-	 * @param string                $value    The value to guard.
+	 * @param array<string, mixed> $guard The guard spec.
+	 * @param string $value The value to guard.
 	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
 	 * @return array{value: string, reason: string|null} The (possibly corrected) value and the reason when it changed.
@@ -2105,8 +2100,8 @@ class TokenSetConverterService {
 	 * Darken a hex colour by a fraction. Mirrors `darkenHex()` in
 	 * `js/lib/tokenTransforms.js` so both runtimes agree to the byte.
 	 *
-	 * @param string $value    The colour.
-	 * @param float  $fraction The fraction to darken by (0 unchanged, 1 black).
+	 * @param string $value The colour.
+	 * @param float $fraction The fraction to darken by (0 unchanged, 1 black).
 	 *
 	 * @return string The darkened colour, or the input when it is not a colour.
 	 */
@@ -2134,9 +2129,9 @@ class TokenSetConverterService {
 	 * `CommonThemeTrait` mixes an element colour with the main background, so a
 	 * derived tint matches what Nextcloud would have computed itself.
 	 *
-	 * @param string $value  The base colour.
-	 * @param string $with   The colour to mix in.
-	 * @param float  $weight The share of the base retained (0-1).
+	 * @param string $value The base colour.
+	 * @param string $with The colour to mix in.
+	 * @param float $weight The share of the base retained (0-1).
 	 *
 	 * @return string The mixed colour, or the input when either side is not a colour.
 	 */
@@ -2177,8 +2172,8 @@ class TokenSetConverterService {
 	/**
 	 * Render a colour as `rgba(r, g, b, a)`.
 	 *
-	 * @param string $value    The colour.
-	 * @param float  $fraction The alpha channel.
+	 * @param string $value The colour.
+	 * @param float $fraction The alpha channel.
 	 *
 	 * @return string The rgba value, or the input when it is not a colour.
 	 */
@@ -2196,9 +2191,9 @@ class TokenSetConverterService {
 	/**
 	 * Scale a px radius by a factor and clamp it.
 	 *
-	 * @param string $value   The radius (e.g. `4px`).
-	 * @param float  $factor  The multiplier.
-	 * @param float  $clampPx The maximum in px.
+	 * @param string $value The radius (e.g. `4px`).
+	 * @param float $factor The multiplier.
+	 * @param float $clampPx The maximum in px.
 	 *
 	 * @return string The scaled radius, or the input when it is not a px length.
 	 */
@@ -2216,8 +2211,8 @@ class TokenSetConverterService {
 	 * Pick the legible foreground for a background colour.
 	 *
 	 * @param string $background The background colour.
-	 * @param string $light      The light foreground candidate.
-	 * @param string $dark       The dark foreground candidate.
+	 * @param string $light The light foreground candidate.
+	 * @param string $dark The dark foreground candidate.
 	 *
 	 * @return string Whichever candidate contrasts better.
 	 */
@@ -2279,14 +2274,14 @@ class TokenSetConverterService {
 	 * the same reason. No at-rules and exactly one selector, which is what
 	 * `TokenCssShapeTest` enforces for every shipped set.
 	 *
-	 * @param array<string, string> $palette       The brand palette section.
-	 * @param array<string, string> $component     The component layer.
-	 * @param array<string, string> $semantic      The semantic layer.
-	 * @param string                $slug          The brand slug.
-	 * @param string                $inputKind     The detected input kind.
-	 * @param string|null           $sourceName    The source label, when known.
-	 * @param string|null           $sourceVersion The source package version, when declared.
-	 * @param array<string, int>    $counts        The action tally.
+	 * @param array<string, string> $palette The brand palette section.
+	 * @param array<string, string> $component The component layer.
+	 * @param array<string, string> $semantic The semantic layer.
+	 * @param string $slug The brand slug.
+	 * @param string $inputKind The detected input kind.
+	 * @param string|null $sourceName The source label, when known.
+	 * @param string|null $sourceVersion The source package version, when declared.
+	 * @param array<string, int> $counts The action tally.
 	 *
 	 * @return string The complete CSS file.
 	 */
@@ -2449,13 +2444,13 @@ class TokenSetConverterService {
 	 * `--color-main-background`, which stays Nextcloud-owned so dark mode keeps
 	 * working.
 	 *
-	 * @param string                $slug          The set slug.
-	 * @param string                $displayName   The display name.
-	 * @param array<string, string> $semantic      The semantic layer.
-	 * @param array<string, string> $manifest      Manifest values produced by the rules.
-	 * @param string|null           $sourceName    The source label, when known.
-	 * @param string|null           $sourceVersion The source version, when declared.
-	 * @param array<string, mixed>|null $logo      The extracted logo, from {@see self::extractLogo()}.
+	 * @param string $slug The set slug.
+	 * @param string $displayName The display name.
+	 * @param array<string, string> $semantic The semantic layer.
+	 * @param array<string, string> $manifest Manifest values produced by the rules.
+	 * @param string|null $sourceName The source label, when known.
+	 * @param string|null $sourceVersion The source version, when declared.
+	 * @param array<string, mixed>|null $logo The extracted logo, from {@see self::extractLogo()}.
 	 *
 	 * @return array<string, mixed> The manifest entry.
 	 */

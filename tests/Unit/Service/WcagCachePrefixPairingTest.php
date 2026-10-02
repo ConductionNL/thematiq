@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pins the WCAG cache prefix shared by Capabilities and TokenSetService.
  *

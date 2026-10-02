@@ -331,7 +331,7 @@ class Admin implements IDelegatedSettings {
 	 * phpmd allows and keeps the default visible at the call site, which is the
 	 * part that differs between them.
 	 *
-	 * @param string $key      The appconfig key.
+	 * @param string $key The appconfig key.
 	 * @param string $fallback The value to assume when the key was never set.
 	 *
 	 * @return bool Whether the flag is on.
@@ -351,8 +351,8 @@ class Admin implements IDelegatedSettings {
 	 * while the server logged a warning on every admin page load. An empty
 	 * array is the same "no preview" fact in a shape the service carries.
 	 *
-	 * @param array<string, mixed>|null $activePreview  The active session preview, or null when there is none.
-	 * @param string                    $iconPackSource Whether the pack list came from the design system or an override.
+	 * @param array<string, mixed>|null $activePreview The active session preview, or null when there is none.
+	 * @param string $iconPackSource Whether the pack list came from the design system or an override.
 	 *
 	 * @return void
 	 *
@@ -378,8 +378,8 @@ class Admin implements IDelegatedSettings {
 	 * Keys are forwarded rather than named here so the service stays the one
 	 * place that decides what the instrument is given.
 	 *
-	 * @param string                    $currentTokenSet The persisted token set id.
-	 * @param array<string, mixed>|null $activePreview   The active session preview, or null when there is none.
+	 * @param string $currentTokenSet The persisted token set id.
+	 * @param array<string, mixed>|null $activePreview The active session preview, or null when there is none.
 	 *
 	 * @return void
 	 *

@@ -49,9 +49,9 @@ class ThemeVersionRestoreService {
 	 * Constructor.
 	 *
 	 * @param ThemeVersionService $versions The kept versions.
-	 * @param ConfigBundleService $bundles  The bundle export and import.
-	 * @param ThemingAuditService $audit    The audit log.
-	 * @param FontService         $fonts    The uploaded fonts.
+	 * @param ConfigBundleService $bundles The bundle export and import.
+	 * @param ThemingAuditService $audit The audit log.
+	 * @param FontService $fonts The uploaded fonts.
 	 */
 	public function __construct(
 		private readonly ThemeVersionService $versions,
@@ -81,19 +81,19 @@ class ThemeVersionRestoreService {
 		$dryRun = $this->bundles->import(bundle: $target, dryRun: true);
 
 		return [
-			'id'              => $id,
-			'valid'           => ($dryRun['valid'] === true),
-			'errors'          => ($dryRun['errors'] ?? []),
-			'changes'         => $this->configChanges(current: $current, target: $target),
+			'id' => $id,
+			'valid' => ($dryRun['valid'] === true),
+			'errors' => ($dryRun['errors'] ?? []),
+			'changes' => $this->configChanges(current: $current, target: $target),
 			'customTokenSets' => $this->customSetChanges(current: $current, target: $target),
-			'missingFonts'    => $this->missingFonts(target: $target),
+			'missingFonts' => $this->missingFonts(target: $target),
 		];
 	}//end preview()
 
 	/**
 	 * Restore a version: dry run, then import, then audit.
 	 *
-	 * @param string      $id    The version id.
+	 * @param string $id The version id.
 	 * @param string|null $actor The actor to record instead of the session user, such as `cli`.
 	 *
 	 * @return array<string, mixed>|null The preview plus `applied`, or null for an unknown id.
@@ -132,7 +132,7 @@ class ThemeVersionRestoreService {
 	 * The scalar and list config fields that differ.
 	 *
 	 * @param array<string, mixed> $current The current bundle.
-	 * @param array<string, mixed> $target  The version's bundle.
+	 * @param array<string, mixed> $target The version's bundle.
 	 *
 	 * @return array<int, array{field: string, from: mixed, to: mixed}> The changes.
 	 */
@@ -179,7 +179,7 @@ class ThemeVersionRestoreService {
 	 * The custom token sets a restore adds and removes.
 	 *
 	 * @param array<string, mixed> $current The current bundle.
-	 * @param array<string, mixed> $target  The version's bundle.
+	 * @param array<string, mixed> $target The version's bundle.
 	 *
 	 * @return array{add: array<int, string>, remove: array<int, string>} The set ids.
 	 */
@@ -188,7 +188,7 @@ class ThemeVersionRestoreService {
 		$to = array_column(($target['customTokenSets'] ?? []), 'id');
 
 		return [
-			'add'    => array_values(array_diff($to, $from)),
+			'add' => array_values(array_diff($to, $from)),
 			'remove' => array_values(array_diff($from, $to)),
 		];
 	}//end customSetChanges()
@@ -206,7 +206,7 @@ class ThemeVersionRestoreService {
 		foreach (($target['customFonts']['manifest'] ?? []) as $id => $entry) {
 			if ($this->fonts->getEntry(id: (string)$id) === null) {
 				$missing[] = [
-					'id'   => (string)$id,
+					'id' => (string)$id,
 					'name' => (string)($entry['name'] ?? $id),
 					'role' => (string)($entry['role'] ?? 'body'),
 				];

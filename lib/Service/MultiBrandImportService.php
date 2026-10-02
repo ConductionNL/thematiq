@@ -54,15 +54,15 @@ class MultiBrandImportService {
 	/**
 	 * Constructor.
 	 *
-	 * @param MultiBrandSource         $source      Finds and cuts brands.
-	 * @param TokenSetConverterService $converter   Converts one brand.
-	 * @param CustomTokenSetValidator  $validator   Judges the converted file.
-	 * @param CustomTokenSetService    $customSets  Stores and replaces sets.
-	 * @param CssParserService         $cssParser   Reads the converted file.
-	 * @param ContrastService          $contrast    Contrast warnings on update.
-	 * @param DarkPaletteService       $darkPalette Dark variants on update.
-	 * @param IConfig                  $config      The source records.
-	 * @param ThemingAuditService      $audit       The audit trail.
+	 * @param MultiBrandSource $source Finds and cuts brands.
+	 * @param TokenSetConverterService $converter Converts one brand.
+	 * @param CustomTokenSetValidator $validator Judges the converted file.
+	 * @param CustomTokenSetService $customSets Stores and replaces sets.
+	 * @param CssParserService $cssParser Reads the converted file.
+	 * @param ContrastService $contrast Contrast warnings on update.
+	 * @param DarkPaletteService $darkPalette Dark variants on update.
+	 * @param IConfig $config The source records.
+	 * @param ThemingAuditService $audit The audit trail.
 	 */
 	public function __construct(
 		private readonly MultiBrandSource $source,
@@ -93,10 +93,10 @@ class MultiBrandImportService {
 	/**
 	 * Store the chosen brands of a source, all or none.
 	 *
-	 * @param string             $sourceName The display name of the source.
-	 * @param string             $content    The uploaded document.
-	 * @param array<int, string> $keys       The chosen brand keys.
-	 * @param string|null        $fileName   The uploaded file's name.
+	 * @param string $sourceName The display name of the source.
+	 * @param string $content The uploaded document.
+	 * @param array<int, string> $keys The chosen brand keys.
+	 * @param string|null $fileName The uploaded file's name.
 	 *
 	 * @return array{sourceId: string, sets: array<int, array<string, mixed>>}
 	 *
@@ -107,7 +107,7 @@ class MultiBrandImportService {
 	 */
 	public function import(string $sourceName, string $content, array $keys, ?string $fileName = null): array {
 		$detected = array_column($this->brands(content: $content), null, 'key');
-		$keys     = $this->checkedKeys(keys: $keys, detected: array_keys($detected));
+		$keys = $this->checkedKeys(keys: $keys, detected: array_keys($detected));
 
 		$sourceId = $this->customSets->slugify(name: $sourceName);
 		if ($sourceId === '' || isset($this->records()[$sourceId]) === true) {
@@ -117,12 +117,12 @@ class MultiBrandImportService {
 		$plans = [];
 		foreach ($keys as $key) {
 			$displayName = $sourceName . ': ' . (string)$detected[$key]['name'];
-			$id          = CustomTokenSetService::ID_PREFIX . $this->customSets->slugify(name: $displayName);
+			$id = CustomTokenSetService::ID_PREFIX . $this->customSets->slugify(name: $displayName);
 			if (isset($this->customSets->getManifest()[$id]) === true || $this->customSets->getRawContent(id: $id) !== null) {
 				throw new RuntimeException('The brand "' . $detected[$key]['name'] . '" would replace the existing set ' . $id . '.', 409);
 			}
 
-			$converted   = $this->convertBrand(content: $content, key: $key, displayName: $displayName, fileName: $fileName);
+			$converted = $this->convertBrand(content: $content, key: $key, displayName: $displayName, fileName: $fileName);
 			$plans[$key] = ['displayName' => $displayName, 'id' => $id] + $converted;
 		}
 
@@ -131,7 +131,7 @@ class MultiBrandImportService {
 			$sets[] = $this->storeBrand(sourceId: $sourceId, key: $key, plan: $plan, fileName: $fileName);
 		}
 
-		$records            = $this->records();
+		$records = $this->records();
 		$records[$sourceId] = [
 			'name' => $sourceName,
 			'inputKind' => (string)reset($plans)['inputKind'],
@@ -147,7 +147,7 @@ class MultiBrandImportService {
 	/**
 	 * The chosen keys, each one the source has, at most MAX_BRANDS.
 	 *
-	 * @param array<int, mixed>  $keys     The chosen keys.
+	 * @param array<int, mixed> $keys The chosen keys.
 	 * @param array<int, string> $detected The keys the source has.
 	 *
 	 * @return array<int, string>
@@ -155,7 +155,7 @@ class MultiBrandImportService {
 	 * @throws RuntimeException 422 naming what is wrong.
 	 */
 	private function checkedKeys(array $keys, array $detected): array {
-		$keys    = array_values(array_unique(array_map('strval', $keys)));
+		$keys = array_values(array_unique(array_map('strval', $keys)));
 		$unknown = array_diff($keys, $detected);
 		if ($keys === [] || $unknown !== []) {
 			throw new RuntimeException('Choose brands this source has: ' . implode(', ', $unknown), 422);
@@ -171,8 +171,8 @@ class MultiBrandImportService {
 	/**
 	 * Replace every brand a source lists from new content, all or none.
 	 *
-	 * @param string      $sourceId The source id.
-	 * @param string      $content  The new document.
+	 * @param string $sourceId The source id.
+	 * @param string $content The new document.
 	 * @param string|null $fileName The uploaded file's name.
 	 *
 	 * @return array{updated: array<int, string>, missing: array<int, string>, new: array<int, string>}
@@ -183,25 +183,25 @@ class MultiBrandImportService {
 	 */
 	public function update(string $sourceId, string $content, ?string $fileName = null): array {
 		$records = $this->records();
-		$record  = ($records[$sourceId] ?? null);
+		$record = ($records[$sourceId] ?? null);
 		if (is_array($record) === false) {
 			throw new RuntimeException('Unknown source.', 404);
 		}
 
 		$detected = array_column($this->brands(content: $content), null, 'key');
-		$listed   = (array)$record['brands'];
-		$present  = array_intersect_key($listed, $detected);
-		$plans    = [];
+		$listed = (array)$record['brands'];
+		$present = array_intersect_key($listed, $detected);
+		$plans = [];
 		foreach ($present as $key => $id) {
-			$manifest     = ($this->customSets->getManifest()[$id] ?? ['name' => $id]);
-			$converted   = $this->convertBrand(content: $content, key: (string)$key, displayName: (string)$manifest['name'], fileName: $fileName);
+			$manifest = ($this->customSets->getManifest()[$id] ?? ['name' => $id]);
+			$converted = $this->convertBrand(content: $content, key: (string)$key, displayName: (string)$manifest['name'], fileName: $fileName);
 			$plans[$key] = ['id' => $id, 'entry' => $manifest] + $converted;
 		}
 
 		foreach ($plans as $plan) {
-			$entry             = $plan['entry'];
+			$entry = $plan['entry'];
 			$entry['warnings'] = $this->contrast->check(declarations: $plan['accepted']);
-			$entry['theming']  = array_merge((array)($entry['theming'] ?? []), $plan['theming']);
+			$entry['theming'] = array_merge((array)($entry['theming'] ?? []), $plan['theming']);
 			$this->customSets->replace(id: $plan['id'], entry: $entry, css: $plan['css']);
 			$this->regenerateDark(id: $plan['id']);
 		}
@@ -212,9 +212,9 @@ class MultiBrandImportService {
 			'new' => array_map('strval', array_keys(array_diff_key($detected, $listed))),
 		];
 
-		$oldHash                          = (string)($record['contentHash'] ?? '');
+		$oldHash = (string)($record['contentHash'] ?? '');
 		$records[$sourceId]['contentHash'] = $this->hash(content: $content);
-		$records[$sourceId]['updatedAt']   = gmdate(DATE_ATOM);
+		$records[$sourceId]['updatedAt'] = gmdate(DATE_ATOM);
 		$this->saveRecords(records: $records);
 
 		$this->audit->log(
@@ -273,10 +273,10 @@ class MultiBrandImportService {
 	/**
 	 * Convert and validate one brand, writing nothing.
 	 *
-	 * @param string      $content     The source.
-	 * @param string      $key         The brand.
-	 * @param string      $displayName The set name the brand gets.
-	 * @param string|null $fileName    The uploaded file's name.
+	 * @param string $content The source.
+	 * @param string $key The brand.
+	 * @param string $displayName The set name the brand gets.
+	 * @param string|null $fileName The uploaded file's name.
 	 *
 	 * @return array{css: string, accepted: array<string, string>, theming: array<string, mixed>, inputKind: string, imported: int}
 	 *
@@ -284,7 +284,7 @@ class MultiBrandImportService {
 	 */
 	private function convertBrand(string $content, string $key, string $displayName, ?string $fileName): array {
 		$slug = $this->customSets->slugify(name: $displayName);
-		$cut  = $this->source->cut(content: $content, key: $key);
+		$cut = $this->source->cut(content: $content, key: $key);
 		try {
 			$converted = $this->converter->convert(
 				content: $cut['content'],
@@ -316,10 +316,10 @@ class MultiBrandImportService {
 	/**
 	 * Store one converted brand, link it to its source, and audit it.
 	 *
-	 * @param string               $sourceId The source id.
-	 * @param string               $key      The brand key.
-	 * @param array<string, mixed> $plan     The converted brand.
-	 * @param string|null          $fileName The uploaded file's name.
+	 * @param string $sourceId The source id.
+	 * @param string $key The brand key.
+	 * @param array<string, mixed> $plan The converted brand.
+	 * @param string|null $fileName The uploaded file's name.
 	 *
 	 * @return array<string, mixed> The brand key, the set id and the warnings.
 	 */
@@ -332,7 +332,7 @@ class MultiBrandImportService {
 			theming: $plan['theming']
 		);
 
-		$entry           = ($this->customSets->getManifest()[$result['id']] ?? []);
+		$entry = ($this->customSets->getManifest()[$result['id']] ?? []);
 		$entry['source'] = ['id' => $sourceId, 'brand' => $key];
 		$this->customSets->replace(id: $result['id'], entry: $entry, css: $plan['css']);
 

@@ -45,11 +45,11 @@ class MyGroupsController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string                       $appName     The app name.
-	 * @param IRequest                     $request     The request.
-	 * @param DelegatedGroupThemingService $delegation  The delegation service.
-	 * @param IUserSession                 $userSession The session.
-	 * @param IL10N                        $l10n        The translator.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param DelegatedGroupThemingService $delegation The delegation service.
+	 * @param IUserSession $userSession The session.
+	 * @param IL10N $l10n The translator.
 	 */
 	public function __construct(
 		string $appName,

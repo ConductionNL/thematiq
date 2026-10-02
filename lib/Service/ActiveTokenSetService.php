@@ -50,8 +50,8 @@ class ActiveTokenSetService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig             $config       The config service.
-	 * @param TokenSetService     $tokenSets    Validates that a set exists.
+	 * @param IConfig $config The config service.
+	 * @param TokenSetService $tokenSets Validates that a set exists.
 	 * @param ThemingAuditService $auditService Records each switch.
 	 */
 	public function __construct(
@@ -75,8 +75,8 @@ class ActiveTokenSetService {
 	/**
 	 * Make a token set the active one and audit the switch.
 	 *
-	 * @param string               $tokenSet     The set to activate.
-	 * @param string               $auditAction  The audit action to record.
+	 * @param string $tokenSet The set to activate.
+	 * @param string $auditAction The audit action to record.
 	 * @param array<string, mixed> $auditContext Extra audit context (for example `actor` and `switchId`).
 	 *
 	 * @return string The set that was active before.

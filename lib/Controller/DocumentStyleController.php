@@ -47,12 +47,12 @@ class DocumentStyleController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string               $appName     The app name.
-	 * @param IRequest             $request     The request.
-	 * @param DocumentStyleService $style       The profile.
-	 * @param DocumentAssetService $assets      The document assets.
-	 * @param IUserSession         $userSession The session.
-	 * @param IL10N                $l10n        Translations.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param DocumentStyleService $style The profile.
+	 * @param DocumentAssetService $assets The document assets.
+	 * @param IUserSession $userSession The session.
+	 * @param IL10N $l10n Translations.
 	 */
 	public function __construct(
 		string $appName,

@@ -58,7 +58,7 @@ class MigrateOverrideValueTypes implements IRepairStep {
 	 * Constructor.
 	 *
 	 * @param CustomOverridesService $overrides The overrides files.
-	 * @param LoggerInterface        $logger    Logger for a file that cannot be written.
+	 * @param LoggerInterface $logger Logger for a file that cannot be written.
 	 */
 	public function __construct(
 		private readonly CustomOverridesService $overrides,
