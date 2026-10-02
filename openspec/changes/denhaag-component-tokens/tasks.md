@@ -10,21 +10,21 @@ Nothing here waits on them; the components only show the result once both land.
 
 ## 1. The mapping
 
-- [ ] 1.1 `scripts/mapping/denhaag-component-tokens.json`: every property read by the pinned
+- [x] 1.1 `scripts/mapping/denhaag-component-tokens.json`: every property read by the pinned
       packages (design D0), colour properties mapped per design D2, geometry copied from
       `@gemeente-denhaag/design-tokens-components` at a pinned version.
   - unit: a vitest reads the pinned package CSS and asserts every `var(--denhaag-…)` and
     `var(--nl-data-badge-…)` name is in the mapping
-- [ ] 1.2 `scripts/generate-denhaag-bridge.mjs` with `--check`; `npm run generate:denhaag-bridge`
+- [x] 1.2 `scripts/generate-denhaag-bridge.mjs` with `--check`; `npm run generate:denhaag-bridge`
       and `npm run test:denhaag-bridge` in `package.json`.
 
 ## 2. The bridge
 
-- [ ] 2.1 Generate the delimited section into `css/public-bridge.css`.
+- [x] 2.1 Generate the delimited section into `css/public-bridge.css`.
   - unit: a vitest resolves the bridge over `denhaag`, `rotterdam` and `example-basisschool`
     and asserts the scenarios of the spec (case card colours, rotterdam keeps its own, the
     current step wears the primary)
-- [ ] 2.2 Replace the stale "46 sets, exactly one" sentence in the bridge header and update
+- [x] 2.2 Replace the stale "46 sets, exactly one" sentence in the bridge header and update
       `docs/features/public-portals-as-consumers.md` with the measured numbers and the
       portaliq change that links the bridge.
   - unit: the coverage test of requirement "The bridge documents the real coverage"

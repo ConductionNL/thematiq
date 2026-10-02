@@ -1,0 +1,617 @@
+{
+	"_comment": [
+		"The Den Haag component properties a portal reads, and where each value comes from.",
+		"Read by scripts/generate-denhaag-bridge.mjs, which writes the generated section of",
+		"css/public-bridge.css. openspec/changes/denhaag-component-tokens, design D1 and D2.",
+		"",
+		"colours: every colour property maps to a --nldesign-* semantic token; its literal fallback",
+		"is read from css/systems/nldesign/defaults.css, so the fallback never drifts from the defaults.",
+		"explicit: geometry the pinned tokens package does not define, with the Den Haag scale step chosen.",
+		"aliases: an older property name that reads the newer one.",
+		"Everything else is copied from @gemeente-denhaag/design-tokens-components, resolved to literals."
+	],
+	"sources": {
+		"components": {
+			"action": "4.4.2",
+			"card": "5.1.4",
+			"contact-timeline": "4.1.3",
+			"data-badge": "2.2.2",
+			"file": "2.5.3",
+			"process-steps": "4.3.3",
+			"side-navigation": "4.2.4",
+			"sidenav": "2.0.0",
+			"step-marker": "3.1.3"
+		},
+		"tokens": {
+			"design-tokens-components": "5.1.0",
+			"design-tokens-common": "4.0.0"
+		},
+		"directory": "scripts/sources/denhaag"
+	},
+	"fontFamily": {
+		"token": "--nldesign-font-family",
+		"from": "Den Haag names TheSans, which this app does not ship; the set font wins"
+	},
+	"radiusToken": "--nldesign-border-radius",
+	"colours": {
+		"--denhaag-action-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "action row background-color"
+		},
+		"--denhaag-action-border-color": {
+			"token": "--nldesign-color-border",
+			"from": "action row border-color"
+		},
+		"--denhaag-action-color": {
+			"token": "--nldesign-color-text",
+			"from": "action row color"
+		},
+		"--denhaag-action-date-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "action row date-color"
+		},
+		"--denhaag-action-date-warning-color": {
+			"token": "--nldesign-color-warning",
+			"from": "action row date-warning-color"
+		},
+		"--denhaag-action-indicator-background-color": {
+			"token": "--nldesign-color-primary",
+			"from": "action row indicator-background-color"
+		},
+		"--denhaag-action-indicator-color": {
+			"token": "--nldesign-color-primary-text",
+			"from": "action row indicator-color"
+		},
+		"--denhaag-action-link-icon-color": {
+			"token": "--nldesign-color-link",
+			"from": "action row link-icon-color"
+		},
+		"--denhaag-action-single-hover-background-color": {
+			"token": "--nldesign-color-background-hover",
+			"from": "action row single-hover-background-color"
+		},
+		"--denhaag-action-warning-icon-color": {
+			"token": "--nldesign-color-warning",
+			"from": "action row warning-icon-color"
+		},
+		"--denhaag-case-card-action-active-color": {
+			"token": "--nldesign-color-link-hover",
+			"from": "case card action-active-color"
+		},
+		"--denhaag-case-card-action-color": {
+			"token": "--nldesign-color-link",
+			"from": "case card action-color"
+		},
+		"--denhaag-case-card-archived-action-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "case card archived-action-color"
+		},
+		"--denhaag-case-card-archived-background-background-color": {
+			"token": "--nldesign-color-background-dark",
+			"from": "case card archived-background-background-color"
+		},
+		"--denhaag-case-card-archived-background-color": {
+			"token": "--nldesign-color-background-dark",
+			"from": "case card archived-background-color"
+		},
+		"--denhaag-case-card-archived-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "case card archived-color"
+		},
+		"--denhaag-case-card-archived-context-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "case card archived-context-color"
+		},
+		"--denhaag-case-card-archived-subtitle-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "case card archived-subtitle-color"
+		},
+		"--denhaag-case-card-archived-title-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "case card archived-title-color"
+		},
+		"--denhaag-case-card-background-background-color": {
+			"token": "--nldesign-color-background-hover",
+			"from": "case card background-background-color"
+		},
+		"--denhaag-case-card-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "case card background-color"
+		},
+		"--denhaag-case-card-background-hover-background-color": {
+			"token": "--nldesign-color-primary-light",
+			"from": "case card background-hover-background-color"
+		},
+		"--denhaag-case-card-border-color": {
+			"token": "--nldesign-color-border",
+			"from": "case card border-color"
+		},
+		"--denhaag-case-card-context-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "case card context-color"
+		},
+		"--denhaag-case-card-list-background-hover-background-color": {
+			"token": "--nldesign-color-background-hover",
+			"from": "case card list-background-hover-background-color"
+		},
+		"--denhaag-case-card-list-border-color": {
+			"token": "--nldesign-color-border",
+			"from": "case card list-border-color"
+		},
+		"--denhaag-case-card-list-context-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "case card list-context-color"
+		},
+		"--denhaag-case-card-list-subtitle-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "case card list-subtitle-color"
+		},
+		"--denhaag-case-card-list-title-color": {
+			"token": "--nldesign-color-text",
+			"from": "case card list-title-color"
+		},
+		"--denhaag-case-card-paper-color": {
+			"token": "--nldesign-color-background",
+			"from": "case card paper-color"
+		},
+		"--denhaag-case-card-subtitle-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "case card subtitle-color"
+		},
+		"--denhaag-case-card-title-color": {
+			"token": "--nldesign-color-text",
+			"from": "case card title-color"
+		},
+		"--denhaag-color-ocher-5": {
+			"token": "--nldesign-color-focus",
+			"from": "Den Haag focus ochre, used for focus outlines"
+		},
+		"--denhaag-contact-timeline-step-header-toggle-active-color": {
+			"token": "--nldesign-color-link",
+			"from": "contact timeline step-header-toggle-active-color"
+		},
+		"--denhaag-contact-timeline-step-header-toggle-focus-color": {
+			"token": "--nldesign-color-focus",
+			"from": "contact timeline step-header-toggle-focus-color"
+		},
+		"--denhaag-contact-timeline-step-header-toggle-hover-color": {
+			"token": "--nldesign-color-link-hover",
+			"from": "contact timeline step-header-toggle-hover-color"
+		},
+		"--denhaag-contact-timeline-step-meta-marker-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "contact timeline step-meta-marker-color"
+		},
+		"--denhaag-file-border-color": {
+			"token": "--nldesign-color-border",
+			"from": "file item border-color"
+		},
+		"--denhaag-file-focus-outline-color": {
+			"token": "--nldesign-color-focus",
+			"from": "file item focus-outline-color"
+		},
+		"--denhaag-file-hover-color": {
+			"token": "--nldesign-color-link-hover",
+			"from": "file item hover-color"
+		},
+		"--denhaag-file-left-background-color": {
+			"token": "--nldesign-color-primary-light",
+			"from": "file item left-background-color"
+		},
+		"--denhaag-file-link-color": {
+			"token": "--nldesign-color-link",
+			"from": "file item link-color"
+		},
+		"--denhaag-focus-border": {
+			"value": "2px dashed {focus}",
+			"from": "Den Haag focus border, in the set focus colour"
+		},
+		"--denhaag-process-steps-step-heading-checked-color": {
+			"token": "--nldesign-color-text",
+			"from": "process steps step-heading-checked-color"
+		},
+		"--denhaag-process-steps-step-heading-color": {
+			"token": "--nldesign-color-text",
+			"from": "process steps step-heading-color"
+		},
+		"--denhaag-process-steps-step-heading-current-color": {
+			"token": "--nldesign-color-text",
+			"from": "process steps step-heading-current-color"
+		},
+		"--denhaag-process-steps-step-heading-error-color": {
+			"token": "--nldesign-color-error",
+			"from": "process steps step-heading-error-color"
+		},
+		"--denhaag-process-steps-step-heading-not-checked-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "process steps step-heading-not-checked-color"
+		},
+		"--denhaag-process-steps-step-heading-warning-color": {
+			"token": "--nldesign-color-warning",
+			"from": "process steps step-heading-warning-color"
+		},
+		"--denhaag-process-steps-step-meta-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "process steps step-meta-color"
+		},
+		"--denhaag-process-steps-step-meta-date-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "process steps step-meta-date-color"
+		},
+		"--denhaag-side-navigation-expand-separator-color": {
+			"token": "--nldesign-color-border",
+			"from": "side navigation expand-separator-color"
+		},
+		"--denhaag-side-navigation-link-active-color": {
+			"token": "--nldesign-color-primary",
+			"from": "side navigation link-active-color"
+		},
+		"--denhaag-side-navigation-link-color": {
+			"token": "--nldesign-color-text",
+			"from": "side navigation link-color"
+		},
+		"--denhaag-side-navigation-link-hover-color": {
+			"token": "--nldesign-color-link-hover",
+			"from": "side navigation link-hover-color"
+		},
+		"--denhaag-sidenav-link-active-color": {
+			"token": "--nldesign-color-primary",
+			"from": "side navigation link-active-color"
+		},
+		"--denhaag-sidenav-link-color": {
+			"token": "--nldesign-color-text",
+			"from": "side navigation link-color"
+		},
+		"--denhaag-sidenav-link-hover-color": {
+			"token": "--nldesign-color-link-hover",
+			"from": "side navigation link-hover-color"
+		},
+		"--denhaag-step-marker-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker base background"
+		},
+		"--denhaag-step-marker-border-color": {
+			"token": "--nldesign-color-border-dark",
+			"from": "step marker base border"
+		},
+		"--denhaag-step-marker-checked-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker checked background"
+		},
+		"--denhaag-step-marker-checked-border-color": {
+			"token": "--nldesign-color-success",
+			"from": "step marker checked border"
+		},
+		"--denhaag-step-marker-checked-color": {
+			"token": "--nldesign-color-success",
+			"from": "step marker checked color"
+		},
+		"--denhaag-step-marker-checked-nested-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker checked background"
+		},
+		"--denhaag-step-marker-checked-nested-border-color": {
+			"token": "--nldesign-color-success",
+			"from": "step marker checked border"
+		},
+		"--denhaag-step-marker-checked-nested-color": {
+			"token": "--nldesign-color-success",
+			"from": "step marker checked color"
+		},
+		"--denhaag-step-marker-color": {
+			"token": "--nldesign-color-text",
+			"from": "step marker base color"
+		},
+		"--denhaag-step-marker-connector-checked-outline-color": {
+			"token": "--nldesign-color-success",
+			"from": "connector line, checked"
+		},
+		"--denhaag-step-marker-connector-color": {
+			"token": "--nldesign-color-border-dark",
+			"from": "connector line, base"
+		},
+		"--denhaag-step-marker-connector-default-outline-color": {
+			"token": "--nldesign-color-border-dark",
+			"from": "connector line, default"
+		},
+		"--denhaag-step-marker-connector-error-outline-color": {
+			"token": "--nldesign-color-error",
+			"from": "connector line, error"
+		},
+		"--denhaag-step-marker-connector-not-checked-outline-color": {
+			"token": "--nldesign-color-border-dark",
+			"from": "connector line, not-checked"
+		},
+		"--denhaag-step-marker-connector-outline-color": {
+			"token": "--nldesign-color-border-dark",
+			"from": "connector line, base"
+		},
+		"--denhaag-step-marker-connector-warning-outline-color": {
+			"token": "--nldesign-color-warning",
+			"from": "connector line, warning"
+		},
+		"--denhaag-step-marker-current-background-color": {
+			"token": "--nldesign-color-primary",
+			"from": "step marker current background"
+		},
+		"--denhaag-step-marker-current-border-color": {
+			"token": "--nldesign-color-primary",
+			"from": "step marker current border"
+		},
+		"--denhaag-step-marker-current-color": {
+			"token": "--nldesign-color-primary-text",
+			"from": "step marker current color"
+		},
+		"--denhaag-step-marker-current-nested-background-color": {
+			"token": "--nldesign-color-primary",
+			"from": "step marker current background"
+		},
+		"--denhaag-step-marker-current-nested-border-color": {
+			"token": "--nldesign-color-primary",
+			"from": "step marker current border"
+		},
+		"--denhaag-step-marker-current-nested-color": {
+			"token": "--nldesign-color-primary-text",
+			"from": "step marker current color"
+		},
+		"--denhaag-step-marker-default-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker default background"
+		},
+		"--denhaag-step-marker-default-border-color": {
+			"token": "--nldesign-color-border-dark",
+			"from": "step marker default border"
+		},
+		"--denhaag-step-marker-default-color": {
+			"token": "--nldesign-color-text",
+			"from": "step marker default color"
+		},
+		"--denhaag-step-marker-default-nested-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker default background"
+		},
+		"--denhaag-step-marker-default-nested-border-color": {
+			"token": "--nldesign-color-border-dark",
+			"from": "step marker default border"
+		},
+		"--denhaag-step-marker-default-nested-color": {
+			"token": "--nldesign-color-text",
+			"from": "step marker default color"
+		},
+		"--denhaag-step-marker-disabled-background-color": {
+			"token": "--nldesign-color-background-dark",
+			"from": "step marker disabled background"
+		},
+		"--denhaag-step-marker-disabled-border-color": {
+			"token": "--nldesign-color-border",
+			"from": "step marker disabled border"
+		},
+		"--denhaag-step-marker-disabled-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "step marker disabled color"
+		},
+		"--denhaag-step-marker-disabled-nested-background-color": {
+			"token": "--nldesign-color-background-dark",
+			"from": "step marker disabled background"
+		},
+		"--denhaag-step-marker-disabled-nested-border-color": {
+			"token": "--nldesign-color-border",
+			"from": "step marker disabled border"
+		},
+		"--denhaag-step-marker-disabled-nested-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "step marker disabled color"
+		},
+		"--denhaag-step-marker-error-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker error background"
+		},
+		"--denhaag-step-marker-error-border-color": {
+			"token": "--nldesign-color-error",
+			"from": "step marker error border"
+		},
+		"--denhaag-step-marker-error-color": {
+			"token": "--nldesign-color-error",
+			"from": "step marker error color"
+		},
+		"--denhaag-step-marker-error-nested-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker error background"
+		},
+		"--denhaag-step-marker-error-nested-border-color": {
+			"token": "--nldesign-color-error",
+			"from": "step marker error border"
+		},
+		"--denhaag-step-marker-error-nested-color": {
+			"token": "--nldesign-color-error",
+			"from": "step marker error color"
+		},
+		"--denhaag-step-marker-not-checked-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker not-checked background"
+		},
+		"--denhaag-step-marker-not-checked-border-color": {
+			"token": "--nldesign-color-border-dark",
+			"from": "step marker not-checked border"
+		},
+		"--denhaag-step-marker-not-checked-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "step marker not-checked color"
+		},
+		"--denhaag-step-marker-not-checked-nested-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker not-checked background"
+		},
+		"--denhaag-step-marker-not-checked-nested-border-color": {
+			"token": "--nldesign-color-border-dark",
+			"from": "step marker not-checked border"
+		},
+		"--denhaag-step-marker-not-checked-nested-color": {
+			"token": "--nldesign-color-text-muted",
+			"from": "step marker not-checked color"
+		},
+		"--denhaag-step-marker-warning-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker warning background"
+		},
+		"--denhaag-step-marker-warning-border-color": {
+			"token": "--nldesign-color-warning",
+			"from": "step marker warning border"
+		},
+		"--denhaag-step-marker-warning-color": {
+			"token": "--nldesign-color-warning",
+			"from": "step marker warning color"
+		},
+		"--denhaag-step-marker-warning-nested-background-color": {
+			"token": "--nldesign-color-background",
+			"from": "step marker warning background"
+		},
+		"--denhaag-step-marker-warning-nested-border-color": {
+			"token": "--nldesign-color-warning",
+			"from": "step marker warning border"
+		},
+		"--denhaag-step-marker-warning-nested-color": {
+			"token": "--nldesign-color-warning",
+			"from": "step marker warning color"
+		},
+		"--nl-data-badge-error-background-color": {
+			"tint": "--nldesign-color-error",
+			"alpha": 0.12,
+			"from": "error badge fill: the status colour at 12%"
+		},
+		"--nl-data-badge-error-color": {
+			"token": "--nldesign-color-error",
+			"from": "error badge text"
+		},
+		"--nl-data-badge-neutral-background-color": {
+			"token": "--nldesign-color-background-dark",
+			"from": "neutral badge fill"
+		},
+		"--nl-data-badge-neutral-color": {
+			"token": "--nldesign-color-text",
+			"from": "neutral badge text"
+		},
+		"--nl-data-badge-success-background-color": {
+			"tint": "--nldesign-color-success",
+			"alpha": 0.12,
+			"from": "success badge fill: the status colour at 12%"
+		},
+		"--nl-data-badge-success-color": {
+			"token": "--nldesign-color-success",
+			"from": "success badge text"
+		},
+		"--nl-data-badge-warning-background-color": {
+			"tint": "--nldesign-color-warning",
+			"alpha": 0.12,
+			"from": "warning badge fill: the status colour at 12%"
+		},
+		"--nl-data-badge-warning-color": {
+			"token": "--nldesign-color-warning",
+			"from": "warning badge text"
+		}
+	},
+	"explicit": {
+		"--denhaag-action-border-radius": {
+			"radius": "3px",
+			"from": "no token in design-tokens-components 5.1.0; Den Haag --denhaag-border-radius"
+		},
+		"--denhaag-file-border-radius": {
+			"radius": "3px",
+			"from": "no token in 5.1.0; Den Haag --denhaag-border-radius"
+		},
+		"--denhaag-action-content-line-height": {
+			"value": "1.5",
+			"from": "no token in 5.1.0; Den Haag typography-scale-base-line-height"
+		},
+		"--denhaag-action-context-gap": {
+			"value": ".5rem",
+			"from": "no token in 5.1.0; Den Haag space-inline-xs, as action-gap"
+		},
+		"--denhaag-action-context-lg-gap": {
+			"value": "1rem",
+			"from": "no token in 5.1.0; Den Haag space-inline-md"
+		},
+		"--denhaag-action-date-gap": {
+			"value": ".25rem",
+			"from": "no token in 5.1.0; Den Haag space-inline-2xs"
+		},
+		"--denhaag-action-indicator-gap": {
+			"value": ".5rem",
+			"from": "no token in 5.1.0; Den Haag space-inline-xs"
+		},
+		"--denhaag-border-style-dashed": {
+			"value": "dashed",
+			"from": "no token in 5.1.0; the name says the value"
+		},
+		"--denhaag-case-card-action-before-padding-block": {
+			"value": ".5rem",
+			"from": "no token in 5.1.0; Den Haag space-block-xs"
+		},
+		"--denhaag-process-steps-step-distance": {
+			"value": "1.5rem",
+			"from": "no token in 5.1.0; Den Haag space-block-xl"
+		},
+		"--denhaag-process-steps-sub-step-distance": {
+			"value": ".75rem",
+			"from": "no token in 5.1.0; Den Haag space-block-sm"
+		},
+		"--denhaag-side-navigation-expand-button-inline-size": {
+			"value": "100%",
+			"from": "no token in 5.1.0; the button spans the navigation"
+		},
+		"--denhaag-side-navigation-list-margin-inline-start": {
+			"value": "0",
+			"from": "no token in 5.1.0; a top-level list is not indented"
+		}
+	},
+	"aliases": {
+		"--denhaag-sidenav-display": {
+			"alias": "--denhaag-side-navigation-display",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-flex-direction": {
+			"alias": "--denhaag-side-navigation-flex-direction",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-item-font-size": {
+			"alias": "--denhaag-side-navigation-item-font-size",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-link-active-font-weight": {
+			"alias": "--denhaag-side-navigation-link-active-font-weight",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-link-label-gap": {
+			"alias": "--denhaag-side-navigation-link-label-gap",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-link-padding-block-end": {
+			"alias": "--denhaag-side-navigation-link-padding-block-end",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-link-padding-block-start": {
+			"alias": "--denhaag-side-navigation-link-padding-block-start",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-min-width": {
+			"alias": "--denhaag-side-navigation-min-width",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-mobile-display": {
+			"alias": "--denhaag-side-navigation-mobile-display",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-row-gap": {
+			"alias": "--denhaag-side-navigation-row-gap",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-item-font-family": {
+			"alias": "--denhaag-side-navigation-item-font-family",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		},
+		"--denhaag-sidenav-item-font-weight": {
+			"alias": "--denhaag-side-navigation-item-font-weight",
+			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		}
+	}
+}
