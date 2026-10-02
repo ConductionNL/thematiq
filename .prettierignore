@@ -59,3 +59,7 @@ tests/integration/fixtures/
 # the var() fallback chains and fail that check on a file nobody edited.
 css/component-scopes.css
 css/primary-lock.css
+
+# Theming stylesheets exactly as a Nextcloud release serves them: inputs to the
+# variable inventory (scripts/inventory/). Reformatting them would change the input.
+scripts/inventory/sources/

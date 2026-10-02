@@ -12,19 +12,19 @@ Provides a complete, audited mapping between all Nextcloud CSS custom properties
 ## Requirements
 
 ### Requirement: Complete Nextcloud Variable Audit
-The system MUST include a mapping for every CSS custom property defined by Nextcloud's theming system (DefaultTheme.php, CommonThemeTrait.php, and core SCSS files).
+The system MUST account for every CSS custom property in the generated Nextcloud variable inventory, covering the theming app's vocabulary, the properties Nextcloud's shipped code reads, and the Conduction `--cn-*` layer.
 
 #### Scenario: All Nextcloud variables are accounted for
-- GIVEN the Nextcloud server defines CSS custom properties in its theming system
-- WHEN the nldesign app is installed
-- THEN the `overrides.css` file MUST contain an entry for every Nextcloud CSS variable
-- AND each entry MUST either map to a `--nldesign-*` token or be commented out with a reason
+- GIVEN the inventory lists every custom property of the supported Nextcloud release
+- WHEN `npm run test:inventory` runs
+- THEN every entry MUST have a status of `mapped`, `settable` or `excluded`
+- AND every `excluded` entry MUST carry a reason
 
 #### Scenario: New Nextcloud variable is added upstream
 - GIVEN Nextcloud adds a new CSS custom property in a future release
-- WHEN the nldesign maintainers review the change
-- THEN the `mappings.md` documentation MUST be updated to include the new variable
-- AND the `overrides.css` MUST be updated with a mapping or commented entry
+- WHEN the inventory is regenerated from that release
+- THEN `npm run test:inventory` MUST fail until the new property has a status
+- AND `mappings.md` MUST be regenerated to include it
 
 ### Requirement: Overrides CSS Structure
 The `overrides.css` file MUST contain ALL Nextcloud CSS variables organized by category, with each variable either mapped to a `--nldesign-*` token or commented out with an explanation.
@@ -66,18 +66,23 @@ The system MUST include a `defaults.css` file that defines sensible default valu
 - AND existing organization token sets MUST continue to work without modification
 
 ### Requirement: Mappings Documentation
-The system MUST include a `mappings.md` file documenting the complete relationship between Nextcloud variables and NL Design tokens.
+The system MUST include a `mappings.md` file, generated from the inventory, documenting the relationship between every inventory entry and thematiq.
 
 #### Scenario: Developer looks up a Nextcloud variable
-- GIVEN a developer wants to know which NL Design token maps to `--color-primary-element`
+- GIVEN a developer wants to know how thematiq handles `--color-primary-element`
 - WHEN they open `mappings.md`
-- THEN they MUST find a table row with the Nextcloud variable name, its `--nldesign-*` mapping, the category, and any notes
+- THEN they MUST find a row with the variable name, its class, its status, its `--nldesign-*` token if any, and the owning component
 
 #### Scenario: Unmapped variable in documentation
-- GIVEN a Nextcloud variable has no NL Design mapping
+- GIVEN an inventory entry has status `excluded`
 - WHEN the developer looks it up in `mappings.md`
-- THEN the table row MUST show "unmapped" in the mapping column
-- AND the notes column MUST explain why
+- THEN the row MUST show `excluded`
+- AND the row MUST show the recorded reason
+
+#### Scenario: The table cannot drift from the inventory
+- GIVEN `mappings.md` was edited by hand
+- WHEN the drift check runs
+- THEN it MUST fail and MUST report the first differing row
 
 ### Requirement: CSS Load Order
 The nldesign app MUST load CSS files in the following order to ensure correct cascading.

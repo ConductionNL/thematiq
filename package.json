@@ -34,7 +34,7 @@
 		"build:fonts": "node scripts/build-fonts.js",
 		"build:fonts:marianne": "node scripts/build-fonts-marianne.js",
 		"build:icons": "node scripts/build-icons.js",
-		"lint": "echo 'No JavaScript to lint - thematiq is CSS/PHP only'",
+		"lint": "npm run test:inventory",
 		"stylelint": "stylelint \"css/**/*.{css,scss}\"",
 		"stylelint:fix": "stylelint \"css/**/*.{css,scss}\" --fix",
 		"test": "echo 'No tests yet'",
@@ -53,7 +53,10 @@
 		"generate:guest-css": "node scripts/generate-guest-css.mjs",
 		"test:guest-css": "node scripts/generate-guest-css.mjs --check",
 		"generate:component-scopes": "node scripts/generate-component-scopes.mjs",
-		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check"
+		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check",
+		"inventory:extract": "node scripts/inventory/extract-nextcloud-variables.mjs",
+		"inventory:mappings": "node scripts/inventory/generate-mappings.mjs",
+		"test:inventory": "vitest run tests/vitest/inventory.spec.js"
 	},
 	"dependencies": {
 		"@fontsource/fira-sans": "^5.0.0"

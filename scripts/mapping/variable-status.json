@@ -1,0 +1,2618 @@
+{
+	"$comment": [
+		"What thematiq does with every entry of nextcloud-variables.json. Edited by hand; the extractor never touches it.",
+		"status: mapped (thematiq sets it, via its own stylesheets or because Nextcloud derives it from a value thematiq writes),",
+		"settable (a token exists and a set or the admin may give it a value), or excluded (with a reason).",
+		"classDefaults gives the status of every icon, runtime and unread entry: the class rule itself is the decision there.",
+		"Every theme, component, slot and conduction entry needs its own line, so a property a new Nextcloud release adds",
+		"fails npm run test:inventory until someone decides what to do with it.",
+		"foreign: names thematiq sets that Nextcloud does not know, each with the reason it is set anyway.",
+		"baseline: the names per class that are mapped or settable. The guard fails when the current list differs in either",
+		"direction; a name that loses its status needs an entry in removals, with a reason, in the same change."
+	],
+	"classDefaults": {
+		"icon": {
+			"status": "excluded",
+			"reason": "Icon image: an --icon-* name or a url() value. Token sets style colours and sizes, not image files."
+		},
+		"runtime": {
+			"status": "excluded",
+			"reason": "Written from JavaScript at render time (setProperty, an inline style binding or a Vue v-bind() in a style block), so a stylesheet value is overwritten."
+		},
+		"unread": {
+			"status": "excluded",
+			"reason": "Declared by Nextcloud but read nowhere in the release, so a value changes nothing."
+		}
+	},
+	"foreign": {
+		"--color-error-light": "summer-breeze sets it for Conduction apps that read it with a fallback (docudesk, the decidiq family). Nextcloud 34 neither declares nor reads it.",
+		"--color-warning-light": "summer-breeze sets it for Conduction apps that read it with a fallback (docudesk, the decidiq family). Nextcloud 34 neither declares nor reads it.",
+		"--color-success-light": "summer-breeze sets it for Conduction apps that read it with a fallback (docudesk, the decidiq family). Nextcloud 34 neither declares nor reads it.",
+		"--color-info-light": "summer-breeze sets it for Conduction apps that read it with a fallback (docudesk, the decidiq family). Nextcloud 34 neither declares nor reads it."
+	},
+	"baseline": {
+		"theme": {
+			"mapped": [
+				"--animation-quick",
+				"--animation-slow",
+				"--background-image-invert-if-bright",
+				"--border-radius",
+				"--border-radius-element",
+				"--border-radius-large",
+				"--border-radius-pill",
+				"--border-radius-rounded",
+				"--border-radius-small",
+				"--color-background-dark",
+				"--color-background-darker",
+				"--color-background-hover",
+				"--color-background-plain",
+				"--color-background-plain-text",
+				"--color-background-selection",
+				"--color-border",
+				"--color-border-dark",
+				"--color-border-error",
+				"--color-border-maxcontrast",
+				"--color-border-success",
+				"--color-element-error",
+				"--color-element-info",
+				"--color-element-success",
+				"--color-element-warning",
+				"--color-error",
+				"--color-error-hover",
+				"--color-error-rgb",
+				"--color-favorite",
+				"--color-info",
+				"--color-main-text",
+				"--color-placeholder-dark",
+				"--color-placeholder-light",
+				"--color-primary",
+				"--color-primary-element",
+				"--color-primary-element-hover",
+				"--color-primary-element-light",
+				"--color-primary-element-light-hover",
+				"--color-primary-element-light-text",
+				"--color-primary-element-text",
+				"--color-primary-element-text-dark",
+				"--color-primary-hover",
+				"--color-primary-light",
+				"--color-primary-light-hover",
+				"--color-primary-light-text",
+				"--color-primary-text",
+				"--color-scrollbar",
+				"--color-success",
+				"--color-success-rgb",
+				"--color-text-error",
+				"--color-text-maxcontrast",
+				"--color-text-selection",
+				"--color-text-success",
+				"--color-text-warning",
+				"--color-warning",
+				"--color-warning-rgb",
+				"--font-face",
+				"--font-weight-default",
+				"--font-weight-element",
+				"--font-weight-heading",
+				"--gradient-primary-background",
+				"--header-menu-icon-mask",
+				"--image-background",
+				"--primary-invert-if-bright",
+				"--primary-invert-if-dark"
+			],
+			"settable": []
+		},
+		"component": {
+			"mapped": [
+				"--color-text-light",
+				"--color-text-lighter",
+				"--input-border-color",
+				"--note-background",
+				"--note-theme",
+				"--user-status-color-online",
+				"--vs-border-color",
+				"--vs-border-radius",
+				"--vs-dropdown-color",
+				"--vs-dropdown-option--active-bg",
+				"--vs-dropdown-option--active-color",
+				"--vs-selected-color"
+			],
+			"settable": []
+		}
+	},
+	"removals": {},
+	"variables": {
+		"--account-menu-outline": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-active-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-active-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-active-fg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-fg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-focus-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-focus-outline-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-hover-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-hover-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-hover-fg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-opacity": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-shadow": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-tooltip-bg": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-tooltip-border": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-tooltip-fg": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--alt-text-tooltip-shadow": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--animation-duration": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--animation-quick": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-animation-quick"
+		},
+		"--animation-slow": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-animation-slow"
+		},
+		"--app-item-circle-size": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-item-col-width": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-item-icon-size": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-item-row-height": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-navigation-item-child-offset": {
+			"status": "excluded",
+			"reason": "Internal to app-navigation: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-navigation-max-width": {
+			"status": "excluded",
+			"reason": "Internal to app-navigation: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-navigation-padding": {
+			"status": "excluded",
+			"reason": "Internal to app-navigation: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-navigation-quota-margin": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-settings-section-content-gap": {
+			"status": "excluded",
+			"reason": "Internal to app-settings: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-settings-section-text-offset": {
+			"status": "excluded",
+			"reason": "Internal to app-settings: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-sidebar-close-button-offset": {
+			"status": "excluded",
+			"reason": "Internal to app-sidebar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-sidebar-padding": {
+			"status": "excluded",
+			"reason": "Internal to app-sidebar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--app-sidebar-width": {
+			"status": "excluded",
+			"reason": "Internal to app-sidebar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--assistant-button-background-color": {
+			"status": "excluded",
+			"reason": "Internal to assistant-button: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--assistant-button-color": {
+			"status": "excluded",
+			"reason": "Internal to assistant-button: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--auto-complete-result-avatar-size": {
+			"status": "excluded",
+			"reason": "Internal to rich-contenteditable: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--auto-complete-result-status-icon-position": {
+			"status": "excluded",
+			"reason": "Internal to rich-contenteditable: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--auto-complete-result-status-icon-size": {
+			"status": "excluded",
+			"reason": "Internal to rich-contenteditable: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--avatar-cell-width": {
+			"status": "excluded",
+			"reason": "Internal to settings: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--avatar-status-icon-position": {
+			"status": "excluded",
+			"reason": "Internal to logreader: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--avatar-status-size": {
+			"status": "excluded",
+			"reason": "Internal to avatar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--avatar-status-size-min": {
+			"status": "excluded",
+			"reason": "Internal to avatar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--avatar-status-size-orbital": {
+			"status": "excluded",
+			"reason": "Internal to avatar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--backdrop-color": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--background-blur": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--background-image-invert-if-bright": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud derives it from the primary or background colour thematiq writes to the theming app."
+		},
+		"--background-invert-if-bright": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: bright mode inversion"
+		},
+		"--background-invert-if-dark": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: dark mode inversion"
+		},
+		"--body-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--body-container-margin": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC layout dependent"
+		},
+		"--body-container-radius": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: it is a CONTAINER radius, like `--border-radius-container` and `-container-large` above, and this used to map it to the brand's CONTROL radius. On a brand whose controls are near-square (Zwolle: 2px) that squared off the whole app shell, because `#content` draws its `border-radius` from this variable. Left to Nextcloud, the shell keeps stock geometry: the base value is 0 and only the two TOP corners are rounded, from `--border-radius-large`: which IS themed above, so the brand still decides how round the shell reads."
+		},
+		"--body-height": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC layout dependent"
+		},
+		"--border-radius": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-border-radius"
+		},
+		"--border-radius-container": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: layout consistency"
+		},
+		"--border-radius-container-large": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: layout consistency"
+		},
+		"--border-radius-element": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-border-radius"
+		},
+		"--border-radius-large": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-border-radius-large"
+		},
+		"--border-radius-pill": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-border-radius-pill"
+		},
+		"--border-radius-rounded": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-border-radius-rounded"
+		},
+		"--border-radius-small": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-border-radius-small"
+		},
+		"--border-width-input": {
+			"status": "excluded",
+			"reason": "unmapped: standard 1px across all themes"
+		},
+		"--border-width-input-focused": {
+			"status": "excluded",
+			"reason": "unmapped: standard 2px"
+		},
+		"--breakpoint-mobile": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC responsive design"
+		},
+		"--button-cancel-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-cancel-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-cancel-fg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-cancel-hover-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-cancel-hover-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-cancel-hover-fg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-hover-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-inner-size": {
+			"status": "excluded",
+			"reason": "Internal to button: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-padding": {
+			"status": "excluded",
+			"reason": "Internal to button: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-padding-default": {
+			"status": "excluded",
+			"reason": "Internal to button: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-radius": {
+			"status": "excluded",
+			"reason": "Internal to button: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-save-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-save-fg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-save-hover-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-save-hover-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-save-hover-fg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--button-size": {
+			"status": "excluded",
+			"reason": "Internal to button: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--callout-background": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--callout-border": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--cell-margin": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--cell-padding": {
+			"status": "excluded",
+			"reason": "Internal to settings: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--cell-width": {
+			"status": "excluded",
+			"reason": "Internal to settings: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--cell-width-groups": {
+			"status": "excluded",
+			"reason": "Internal to settings: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--cell-width-large": {
+			"status": "excluded",
+			"reason": "Internal to settings: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--checkbox-container-size": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--checkbox-padding": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--checkbox-radio-switch--border-radius": {
+			"status": "excluded",
+			"reason": "Internal to checkbox-radio-switch: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--checkbox-radio-switch--border-radius-outer": {
+			"status": "excluded",
+			"reason": "Internal to checkbox-radio-switch: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--checkbox-size": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--chip-radius": {
+			"status": "excluded",
+			"reason": "Internal to chip: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--chip-size": {
+			"status": "excluded",
+			"reason": "Internal to chip: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--clickable-area": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--clickable-area-large": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: large touch target (48px)"
+		},
+		"--clickable-area-small": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: small touch target (24px)"
+		},
+		"--cn-ai-pointer-offset": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-card-active-border": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-color-picker-checker": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-color-swatch-checker": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-ctx-menu-x": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-ctx-menu-y": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-detail-grid-label-width": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-email-accent": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-forms-accent": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-forms-status": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-grid-cols": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-grid-cs": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-grid-cspan": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-grid-cspan-md": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-grid-rs": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-grid-rspan": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-iw-accent": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-iwg-columns": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-iwg-min-height": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-accent": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-gap": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-gap-horizontal": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-grid-gap": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-icon-size": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-icon-size-sm": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-icon-tint": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-label-color": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-label-size": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-padding": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-padding-flat": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-radius": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-section-title-size": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-stack-gap": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-title-size": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-title-weight": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-value-line": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-value-size": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-value-size-compact": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-value-size-stacked": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-value-text-size": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-kpi-value-weight": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-links-widget-cols": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-quicklinks-icon-radius": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-quicklinks-icon-size": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-sidebar-tab-min-width": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-spacing-m": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-table-cell-max-width": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-tile-bg": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-tile-text": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-widget-icon-color": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-xwiki-accent": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--cn-xwiki-accent-soft": {
+			"status": "excluded",
+			"reason": "Not yet a token: internal-variable-tokens makes the --cn-* layer settable."
+		},
+		"--color": {
+			"status": "excluded",
+			"reason": "Internal to related_resources: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--color-background-assistant": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC-specific"
+		},
+		"--color-background-dark": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-background-dark"
+		},
+		"--color-background-darker": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-background-darker"
+		},
+		"--color-background-hover": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-background-hover"
+		},
+		"--color-background-plain": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud derives it from the primary or background colour thematiq writes to the theming app."
+		},
+		"--color-background-plain-text": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud derives it from the primary or background colour thematiq writes to the theming app."
+		},
+		"--color-background-selection": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud's own value reads --color-primary-element, which follows the set."
+		},
+		"--color-border": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-border"
+		},
+		"--color-border-assistant": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC-specific"
+		},
+		"--color-border-dark": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-border-dark"
+		},
+		"--color-border-error": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-error"
+		},
+		"--color-border-maxcontrast": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-border-dark"
+		},
+		"--color-border-success": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-success"
+		},
+		"--color-box-shadow": {
+			"status": "excluded",
+			"reason": "unmapped: depends on --color-box-shadow-rgb"
+		},
+		"--color-box-shadow-rgb": {
+			"status": "excluded",
+			"reason": "unmapped: auto-calculated from background"
+		},
+		"--color-element-assistant": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC-specific"
+		},
+		"--color-element-assistant-icon": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC-specific"
+		},
+		"--color-element-error": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-error"
+		},
+		"--color-element-info": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-info"
+		},
+		"--color-element-success": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-success"
+		},
+		"--color-element-warning": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-warning"
+		},
+		"--color-error": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-error"
+		},
+		"--color-error-hover": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-error-hover"
+		},
+		"--color-error-rgb": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-error-rgb"
+		},
+		"--color-error-text": {
+			"status": "excluded",
+			"reason": "unmapped: auto-calculated for contrast by Nextcloud"
+		},
+		"--color-favorite": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-favorite"
+		},
+		"--color-header": {
+			"status": "excluded",
+			"reason": "Internal to dashboard: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--color-info": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-info"
+		},
+		"--color-info-hover": {
+			"status": "excluded",
+			"reason": "unmapped: no NL Design equivalent"
+		},
+		"--color-info-rgb": {
+			"status": "excluded",
+			"reason": "unmapped: deprecated, RGB for rgba()"
+		},
+		"--color-info-text": {
+			"status": "excluded",
+			"reason": "unmapped: auto-calculated for contrast by Nextcloud"
+		},
+		"--color-loading-dark": {
+			"status": "excluded",
+			"reason": "unmapped: NC loading animation internal"
+		},
+		"--color-loading-light": {
+			"status": "excluded",
+			"reason": "unmapped: NC loading animation internal"
+		},
+		"--color-main-background": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: overriding breaks dark mode"
+		},
+		"--color-main-background-blur": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: depends on main-background-rgb"
+		},
+		"--color-main-background-rgb": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: depends on main-background"
+		},
+		"--color-main-background-translucent": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: depends on main-background-rgb"
+		},
+		"--color-main-text": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-text"
+		},
+		"--color-mark": {
+			"status": "excluded",
+			"reason": "unmapped: new in NC 33/34. A fixed #fff0c7 highlight tint behind <mark>, for search hits. NL Design has no highlight token, and a brand colour here is the wrong instrument: the tint has to stay legible under --color-main-text, which a saturated primary is not."
+		},
+		"--color-norder-error": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--color-placeholder-dark": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-placeholder-dark"
+		},
+		"--color-placeholder-light": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-placeholder-light"
+		},
+		"--color-primary": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary"
+		},
+		"--color-primary-element": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary"
+		},
+		"--color-primary-element-extra-light": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--color-primary-element-extra-light-hover": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--color-primary-element-hover": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary-hover"
+		},
+		"--color-primary-element-light": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary-light"
+		},
+		"--color-primary-element-light-hover": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary-light-hover"
+		},
+		"--color-primary-element-light-text": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary"
+		},
+		"--color-primary-element-text": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary-text"
+		},
+		"--color-primary-element-text-dark": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud derives it from the primary or background colour thematiq writes to the theming app."
+		},
+		"--color-primary-hover": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary-hover"
+		},
+		"--color-primary-light": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary-light"
+		},
+		"--color-primary-light-hover": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary-light-hover"
+		},
+		"--color-primary-light-text": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary"
+		},
+		"--color-primary-text": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-primary-text"
+		},
+		"--color-scrollbar": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud's own value reads --color-border-maxcontrast, which follows the set."
+		},
+		"--color-success": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-success"
+		},
+		"--color-success-hover": {
+			"status": "excluded",
+			"reason": "unmapped: no NL Design equivalent"
+		},
+		"--color-success-rgb": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-success-rgb"
+		},
+		"--color-success-text": {
+			"status": "excluded",
+			"reason": "unmapped: auto-calculated for contrast by Nextcloud"
+		},
+		"--color-text": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--color-text-error": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-error"
+		},
+		"--color-text-light": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-text-light-color"
+		},
+		"--color-text-lighter": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-text-lighter-color"
+		},
+		"--color-text-maxcontrast": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-text-muted"
+		},
+		"--color-text-maxcontrast-background-blur": {
+			"status": "excluded",
+			"reason": "unmapped: blur-adjusted maxcontrast, auto-calculated"
+		},
+		"--color-text-maxcontrast-default": {
+			"status": "excluded",
+			"reason": "unmapped: auto-calculated per theme by Nextcloud"
+		},
+		"--color-text-selection": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud's own value reads --color-main-text and --color-primary-element-text, which follows the set."
+		},
+		"--color-text-success": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-success"
+		},
+		"--color-text-warning": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-warning"
+		},
+		"--color-warning": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-warning"
+		},
+		"--color-warning-hover": {
+			"status": "excluded",
+			"reason": "unmapped: no NL Design equivalent"
+		},
+		"--color-warning-rgb": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-color-warning-rgb"
+		},
+		"--color-warning-text": {
+			"status": "excluded",
+			"reason": "unmapped: auto-calculated for contrast by Nextcloud"
+		},
+		"--contenteditable-block-offset": {
+			"status": "excluded",
+			"reason": "Internal to rich-contenteditable: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--contenteditable-inline-end-offset": {
+			"status": "excluded",
+			"reason": "Internal to rich-contenteditable: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--contenteditable-inline-start-offset": {
+			"status": "excluded",
+			"reason": "Internal to rich-contenteditable: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--counter-bubble-height": {
+			"status": "excluded",
+			"reason": "Internal to counter-bubble: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dark-link-color": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dark-text-color": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--default-clickable-area": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: touch target (34px)"
+		},
+		"--default-font-size": {
+			"status": "excluded",
+			"reason": "unmapped: standard 15px"
+		},
+		"--default-grid-baseline": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: core layout unit (4px)"
+		},
+		"--default-line-height": {
+			"status": "excluded",
+			"reason": "unmapped: standard 1.5"
+		},
+		"--dialog-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dialog-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dialog-button-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dialog-button-border": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dialog-button-hover-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dialog-button-hover-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dialog-shadow": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dir-factor": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--doorhanger-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--doorhanger-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--doorhanger-border-color-whcm": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--doorhanger-hover-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--doorhanger-hover-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--doorhanger-icon-opacity": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--doorhanger-separator-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--doorhanger-triangle-opacity-whcm": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-action-button-height": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-action-buttons-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-action-row-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-action-row-transition": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-action-row-transtion": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-animation-duration": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-background-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-border-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-border-color-focus": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-border-color-hover": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-border-radius": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-button-height": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-button-icon-height": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-calendar-header-cell-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-cell-border-radius": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-cell-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-cell-size": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-common-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-common-transition": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-danger-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-direction": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-disabled-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-disabled-color-text": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-font-family": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-font-size": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-highlight-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-hover-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-hover-icon-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-hover-text-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-icon-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-input-icon-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-input-not-clearable-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-input-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-loader": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-marker-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-menu-border-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-menu-min-width": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-menu-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-month-year-row-button-size": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-month-year-row-height": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-multi-calendars-spacing": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-overlay-col-padding": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-preview-font-size": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-primary-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-primary-disabled-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-primary-text-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-range-between-border-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-range-between-dates-background-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-range-between-dates-text-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-row-margin": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-scroll-bar-background": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-scroll-bar-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-secondary-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-success-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-text-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-time-font-size": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-time-inc-dec-button-size": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-tooltip-color": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-transition-length": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-transition-timing": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dp-transition-timing-general": {
+			"status": "excluded",
+			"reason": "Internal to date-picker: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dropdown-btn-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--dropdown-btn-border": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--field-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--field-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--field-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--figure-size": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--filter-background-blur": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC handles browser compat"
+		},
+		"--fixed-block-start-position": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--focus-outline": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--focus-outline-around": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--focus-ring-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--focus-ring-outline": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--font-face": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-font-family"
+		},
+		"--font-family": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--font-size": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--font-size-small": {
+			"status": "excluded",
+			"reason": "unmapped: standard 13px"
+		},
+		"--font-weight-default": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-font-weight-default"
+		},
+		"--font-weight-element": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-font-weight-element"
+		},
+		"--font-weight-heading": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-font-weight-heading"
+		},
+		"--form-element-label-offset": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--form-element-label-padding": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--form-group-content-gap": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--freetext-line-height": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--freetext-padding": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--gap": {
+			"status": "excluded",
+			"reason": "Internal to theming: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--gradient-main-background": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: depends on main-background vars"
+		},
+		"--gradient-primary-background": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud's own value reads --color-primary and --color-primary-hover, which follows the set."
+		},
+		"--header-height": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: Nextcloud sets it per release (50px on 32–34, 44px from 35) and the shell clears it; overriding breaks layout"
+		},
+		"--header-menu-icon-mask": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud's own value reads --color-background-plain-text, which follows the set."
+		},
+		"--header-menu-item-height": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC layout dependent"
+		},
+		"--highlight-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--highlight-selected-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-background-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-comment-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-constant-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-entity-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-entity-tag-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-keyword-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-markup-bold-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-markup-deleted-background-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-markup-deleted-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-markup-heading-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-markup-inserted-background-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-markup-inserted-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-markup-italic-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-markup-list-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-storage-modifier-import-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-string-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hljs-syntax-variable-color": {
+			"status": "excluded",
+			"reason": "Internal to code-highlighting: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hover-filter": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hover-outline": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hover-outline-around": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hover-outline-around-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--hover-outline-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--image-background": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud derives it from the primary or background colour thematiq writes to the theming app."
+		},
+		"--image-logo": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--image-logoheader": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--image-logoheader-custom": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--inline-end": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--inline-start": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-border-box-shadow": {
+			"status": "excluded",
+			"reason": "Internal to input-field: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-border-box-shadow-dark": {
+			"status": "excluded",
+			"reason": "Internal to input-field: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-border-box-shadow-light": {
+			"status": "excluded",
+			"reason": "Internal to input-field: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-border-color": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-textbox-focus-border-color"
+		},
+		"--input-border-radius": {
+			"status": "excluded",
+			"reason": "Internal to input-field: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-border-width-offset": {
+			"status": "excluded",
+			"reason": "Internal to input-field: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-disabled-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-focus-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-focus-outline": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-hover-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-label-font-size": {
+			"status": "excluded",
+			"reason": "Internal to input-field: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-padding-end": {
+			"status": "excluded",
+			"reason": "Internal to input-field: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-padding-start": {
+			"status": "excluded",
+			"reason": "Internal to input-field: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--input-unfocused-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--invert-if-dark": {
+			"status": "excluded",
+			"reason": "Internal to appstore: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--item-padding": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--level-padding": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--link-outline": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--list-item-border-radius": {
+			"status": "excluded",
+			"reason": "Internal to list-item: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--list-item-height": {
+			"status": "excluded",
+			"reason": "Internal to list-item: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--list-item-padding": {
+			"status": "excluded",
+			"reason": "Internal to list-item: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--loading-icon-delay": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--local-search-width": {
+			"status": "excluded",
+			"reason": "Internal to core: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--main-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--max-icon-size": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--member-list-gap": {
+			"status": "excluded",
+			"reason": "Internal to circles: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--min-size": {
+			"status": "excluded",
+			"reason": "Internal to systemtags: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--mtime-height": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--name-height": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--nav-tint": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--nav-tint-strong": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--navigation-width": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: 300px, NC layout dependent"
+		},
+		"--nc-form-box-item-border-width": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--nc-form-box-item-min-height": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--note-background": {
+			"status": "mapped",
+			"via": "thematiq"
+		},
+		"--note-card-icon-size": {
+			"status": "excluded",
+			"reason": "Internal to note-card: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--note-card-padding": {
+			"status": "excluded",
+			"reason": "Internal to note-card: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--note-theme": {
+			"status": "mapped",
+			"via": "thematiq"
+		},
+		"--open-background-color": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--outline-around-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--outline-around-width": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--outline-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--outline-width": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--padding": {
+			"status": "excluded",
+			"reason": "Internal to files_external: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--padding-inline-start": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--page-border": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--page-margin": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--panel-width": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--pdfViewer-padding-bottom": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--photos-face-width": {
+			"status": "excluded",
+			"reason": "Internal to photos: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--photos-navigation-height": {
+			"status": "excluded",
+			"reason": "Internal to photos: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-audio-control-background-hover": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-audio-control-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-audio-control-color-hover": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-audio-controls-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-audio-progress-buffered-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-audio-range-thumb-active-shadow-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-audio-range-track-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-badge-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-badge-border-radius": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-badge-text-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-button-size": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-captions-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-captions-text-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-color-main": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-control-icon-size": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-control-radius": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-control-spacing": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-control-toggle-checked-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-focus-visible-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-font-family": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-font-size-badge": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-font-size-base": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-font-size-large": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-font-size-menu": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-font-size-small": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-font-size-time": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-font-size-xlarge": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-font-weight-regular": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-line-height": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-menu-arrow-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-menu-arrow-size": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-menu-back-border-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-menu-back-border-shadow-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-menu-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-menu-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-menu-item-arrow-size": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-menu-radius": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-menu-shadow": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-progress-loading-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-progress-loading-size": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-progress-marker-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-progress-marker-width": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-range-fill-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-range-thumb-active-shadow-width": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-range-thumb-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-range-thumb-height": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-range-thumb-shadow": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-range-track-height": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-tooltip-arrow-size": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-tooltip-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-tooltip-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-tooltip-radius": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-tooltip-shadow": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-video-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-video-control-background-hover": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-video-control-color": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-video-control-color-hover": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-video-controls-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-video-progress-buffered-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--plyr-video-range-track-background": {
+			"status": "excluded",
+			"reason": "Internal to viewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--primary-invert-if-bright": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud derives it from the primary or background colour thematiq writes to the theming app."
+		},
+		"--primary-invert-if-dark": {
+			"status": "mapped",
+			"via": "nextcloud",
+			"reason": "Nextcloud derives it from the primary or background colour thematiq writes to the theming app."
+		},
+		"--progress-bar-color": {
+			"status": "excluded",
+			"reason": "Internal to progress-bar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--progressBar-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--progressBar-blend-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--progressBar-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-checked-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-checked-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-group-button--background-color": {
+			"status": "excluded",
+			"reason": "Internal to checkbox-radio-switch: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-group-button--background-color-hover": {
+			"status": "excluded",
+			"reason": "Internal to checkbox-radio-switch: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-group-button--border-radius": {
+			"status": "excluded",
+			"reason": "Internal to checkbox-radio-switch: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-group-button--border-width": {
+			"status": "excluded",
+			"reason": "Internal to checkbox-radio-switch: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-group-button--color": {
+			"status": "excluded",
+			"reason": "Internal to checkbox-radio-switch: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-group-button--icon-size": {
+			"status": "excluded",
+			"reason": "Internal to checkbox-radio-switch: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--radio-group-button--padding": {
+			"status": "excluded",
+			"reason": "Internal to checkbox-radio-switch: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--ratio": {
+			"status": "excluded",
+			"reason": "Internal to theming: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--resizer-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--resizer-shift": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--resizer-size": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--resource-box-size": {
+			"status": "excluded",
+			"reason": "Internal to circles: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--resources-list-gap": {
+			"status": "excluded",
+			"reason": "Internal to circles: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--row-width": {
+			"status": "excluded",
+			"reason": "Internal to files: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--scrollbar-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--scrollbar-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--secondary-margin": {
+			"status": "excluded",
+			"reason": "Internal to nextcloud-vue: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--separator-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--session-max-width": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--sidebar-max-width": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC layout dependent"
+		},
+		"--sidebar-min-width": {
+			"status": "excluded",
+			"reason": "intentionally not overridden: NC layout dependent"
+		},
+		"--sidebar-narrow-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--sidebar-toolbar-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--sidebar-transition-duration": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--sidebar-transition-timing-function": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--sidebar-width": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--size": {
+			"status": "excluded",
+			"reason": "Internal to logreader: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--spreadHorizontalWrapped-margin-LR": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--sticky-column-z-index": {
+			"status": "excluded",
+			"reason": "Internal to settings: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--table-border-radius": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--table-color-background": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--table-color-background-hover": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--table-color-border": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--table-color-heading": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--table-color-heading-border": {
+			"status": "excluded",
+			"reason": "Internal to text: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--text-primary-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--text-secondary-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--textarea-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--textarea-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--textarea-fg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--thumbnail-hover-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--thumbnail-selected-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toggled-btn-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toggled-btn-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toggled-hover-active-btn-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toggled-hover-btn-outline": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toolbar-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toolbar-border-bottom": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toolbar-border-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toolbar-box-shadow": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toolbar-icon-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toolbar-icon-hover-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toolbar-icon-opacity": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toolbarSidebar-border-bottom": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--toolbarSidebar-box-shadow": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--treeitem-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--treeitem-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--treeitem-hover-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--treeitem-selected-bg-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--treeitem-selected-color": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--unfocus-outline": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--user-status-color-away": {
+			"status": "excluded",
+			"reason": "Internal to avatar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--user-status-color-busy": {
+			"status": "excluded",
+			"reason": "Internal to avatar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--user-status-color-offline": {
+			"status": "excluded",
+			"reason": "Internal to avatar: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--user-status-color-online": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-avatar-online-status-color"
+		},
+		"--vs-actions-padding": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-border-color": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-form-select-border-color"
+		},
+		"--vs-border-radius": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-form-select-border-radius"
+		},
+		"--vs-border-style": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-border-width": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-colors--dark": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-colors--darkest": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-colors--light": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-colors--lightest": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-controls--deselect-text-shadow": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-controls--spinner-size": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-controls-color": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-controls-size": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-disabled-bg": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-disabled-cursor": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-bg": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-box-shadow": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-color": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-form-select-option-color"
+		},
+		"--vs-dropdown-max-height": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-min-width": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-option--active-bg": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-form-select-option-hover-background-color"
+		},
+		"--vs-dropdown-option--active-color": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-form-select-option-hover-color"
+		},
+		"--vs-dropdown-option--deselect-bg": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-option--deselect-color": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-option--kb-focus-box-shadow": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-option-color": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-option-padding": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-dropdown-z-index": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-font-size": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-line-height": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-search-input-bg": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-search-input-color": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-search-input-placeholder-color": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-selected-bg": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-selected-border-color": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-selected-border-style": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-selected-border-width": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-selected-color": {
+			"status": "mapped",
+			"via": "thematiq",
+			"token": "--nldesign-component-form-select-color"
+		},
+		"--vs-state-disabled-bg": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-state-disabled-color": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-state-disabled-cursor": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-transition-duration": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--vs-transition-timing-function": {
+			"status": "excluded",
+			"reason": "Internal to select: not yet a token. internal-variable-tokens makes it settable."
+		},
+		"--xfa-focus-outline": {
+			"status": "excluded",
+			"reason": "Internal to files_pdfviewer: not yet a token. internal-variable-tokens makes it settable."
+		}
+	}
+}

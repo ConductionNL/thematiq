@@ -1,0 +1,35 @@
+{
+	"$comment": [
+		"Configuration for scripts/inventory/extract-nextcloud-variables.mjs.",
+		"ownerPrefixes: a variable whose name starts with the prefix belongs to that component,",
+		"whichever bundle carries it. @nextcloud/vue is bundled into many apps, so the file a",
+		"date-picker variable is found in says nothing about who owns it. First match wins.",
+		"forceClass: name -> class, for the rare name the rules in scan.mjs classify wrongly.",
+		"Every entry needs a reason in forceClassReasons."
+	],
+	"ownerPrefixes": {
+		"--dp-": "date-picker",
+		"--vs-": "select",
+		"--hljs-": "code-highlighting",
+		"--plyr-": "media-player",
+		"--checkbox-radio-switch-": "checkbox-radio-switch",
+		"--radio-": "checkbox-radio-switch",
+		"--avatar-": "avatar",
+		"--user-status-": "avatar",
+		"--button-": "button",
+		"--app-sidebar-": "app-sidebar",
+		"--app-navigation-": "app-navigation",
+		"--app-settings-": "app-settings",
+		"--note-": "note-card",
+		"--auto-complete-": "rich-contenteditable",
+		"--contenteditable-": "rich-contenteditable",
+		"--list-item-": "list-item",
+		"--input-": "input-field",
+		"--chip-": "chip",
+		"--counter-bubble-": "counter-bubble",
+		"--assistant-button-": "assistant-button",
+		"--progress-bar-": "progress-bar"
+	},
+	"forceClass": {},
+	"forceClassReasons": {}
+}
