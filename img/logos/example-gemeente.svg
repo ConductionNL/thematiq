@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="Gemeente Esdoornstad (example)">
+  <!-- Fictional example logo for the example-gemeente token set. Not a real organisation. -->
+  <rect width="240" height="64" rx="8" fill="#ffffff"/>
+  <rect x="8" y="8" width="48" height="48" rx="11" fill="#12506b"/>
+  <g transform="translate(14 14) scale(1.5)" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 21V9l8-5 8 5v12"/>
+    <path d="M9 21v-6h6v6"/>
+    <path d="M2 21h20"/>
+  </g>
+  <text x="66" y="29" font-family="Verdana, Arial, Helvetica, sans-serif" font-size="13" fill="#55514c">Gemeente</text>
+  <text x="66" y="48" font-family="Verdana, Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#0b3648">Esdoornstad</text>
+</svg>

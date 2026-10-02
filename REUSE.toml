@@ -77,3 +77,15 @@ path = [
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Conduction B.V. <info@conduction.nl>"
 SPDX-License-Identifier = "EUPL-1.2"
+
+# Source Sans 3, bundled for the (EXAMPLE) Gemeente token set
+# (openspec/changes/example-gemeente-theme, design D3). Binary woff2 files from
+# @fontsource/source-sans-3 5.3.0, latin subset. Not ours to licence as EUPL.
+[[annotations]]
+path = [
+    "css/fonts/source-sans-3-*.woff2",
+    "css/systems/nldesign/fonts/source-sans-3-*.woff2",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2010-2020 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'"
+SPDX-License-Identifier = "OFL-1.1"

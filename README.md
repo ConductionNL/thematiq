@@ -8,7 +8,7 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
 
 ## Features
 
-- **51 token sets**: Choose from Dutch government design systems, including:
+- **52 token sets**: Choose from Dutch government design systems, including:
   - Rijkshuisstijl (Dutch national government)
   - Gemeente Utrecht
   - Gemeente Amsterdam
@@ -17,6 +17,7 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
   - La Suite numérique (Cunningham design system, European sovereign-workplace / MinBZK-mijn-bureau EDIC bundles) — plus the published Cunningham blue base as an optional sibling set
   - …and a broad set of community-maintained municipality and organization brands
   - Four fictional example sets for education demos: a primary school, a secondary school, an mbo college and a training provider
+  - A fictional example municipality, (EXAMPLE) Gemeente, for case portal demos
 
 - **Open Source Fonts**: Uses **Fira Sans** from `@fontsource/fira-sans` and **Inter** (self-hosted from `@fontsource/inter`) as professional alternatives to proprietary government fonts
 
@@ -26,13 +27,13 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
 
 - **No Build Required**: Tokens are pre-compiled CSS and fonts are bundled and self-hosted (no external CDN)
 
-- **NL-Government and French-Government Icons**: Includes 1488 SVG icons sourced from `@conduction/nextcloud-vue`'s EUPL-compatible NL-government packs (RVO, OpenGemeenten, Gemeente Den Haag) plus 1038 SVG icons from the French-government DSFR pack (`@gouvfr/dsfr`, Etalab-2.0) — 2526 icons total — plus 35 organization and example logos, for use across all Nextcloud apps
+- **NL-Government and French-Government Icons**: Includes 1488 SVG icons sourced from `@conduction/nextcloud-vue`'s EUPL-compatible NL-government packs (RVO, OpenGemeenten, Gemeente Den Haag) plus 1038 SVG icons from the French-government DSFR pack (`@gouvfr/dsfr`, Etalab-2.0) — 2526 icons total — plus 36 organization and example logos, for use across all Nextcloud apps
 
 - **Theme-switchable iconography**: The icon pack an app resolves through nldesign travels with the active design system — a French-government (`lasuite`) theme serves the DSFR pack, a Dutch-government theme serves the RVO/OpenGemeenten/Den Haag packs — resolved via `DesignSystemService` and advertised on the public capability (`iconPacks`). See `img/ICONS.md`.
 
 ## Icons
 
-The app includes **2526 icons** across four government icon sets and **35 logos**:
+The app includes **2526 icons** across four government icon sets and **36 logos**:
 
 - RVO, OpenGemeenten, Gemeente Den Haag — **1488 icons** (CC0-1.0 / CC0-1.0 / EUPL-1.2), materialized from `@conduction/nextcloud-vue`
 - DSFR (Système de Design de l'État) — **1038 icons** (**Etalab-2.0**), materialized from `@gouvfr/dsfr`
