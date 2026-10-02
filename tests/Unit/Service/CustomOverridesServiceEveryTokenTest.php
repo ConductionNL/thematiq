@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/token-editor-at-scale/specs/token-import-export/spec.md
- * @spec openspec/changes/token-editor-at-scale/specs/token-editor-ui/spec.md
+ * @spec openspec/specs/token-import-export/spec.md
+ * @spec openspec/specs/token-editor-ui/spec.md
  */
 
 declare(strict_types=1);

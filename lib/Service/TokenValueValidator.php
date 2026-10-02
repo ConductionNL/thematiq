@@ -242,7 +242,7 @@ class TokenValueValidator {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design.
 	 *
-	 * @spec openspec/changes/token-editor-at-scale/specs/token-editor-ui/spec.md
+	 * @spec openspec/specs/token-editor-ui/spec.md
 	 */
 	public function hasDarkValueFor(string $name): bool {
 		$internal = TokenRegistry::getInternalTokens();

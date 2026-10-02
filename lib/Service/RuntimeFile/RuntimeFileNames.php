@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 
 declare(strict_types=1);
@@ -37,7 +37,7 @@ use InvalidArgumentException;
  * That one check is why a request can never name a file outside the set:
  * there is no `..`, no absolute path and no other directory it will match.
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 final class RuntimeFileNames {
 
@@ -81,7 +81,7 @@ final class RuntimeFileNames {
 	 *
 	 * @return bool True when the store may hold it and the route may serve it.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function isAllowed(string $name): bool {
 		foreach (self::PATTERNS as $pattern) {
@@ -102,7 +102,7 @@ final class RuntimeFileNames {
 	 *
 	 * @throws InvalidArgumentException When the name is not a runtime file name.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function assertAllowed(string $name): void {
 		if ($this->isAllowed(name: $name) === false) {
@@ -117,7 +117,7 @@ final class RuntimeFileNames {
 	 *
 	 * @return string The MIME type.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function contentType(string $name): string {
 		$extension = strtolower((string)pathinfo($name, PATHINFO_EXTENSION));
@@ -132,7 +132,7 @@ final class RuntimeFileNames {
 	 *
 	 * @return array{0: string, 1: string} The directory (`css/tokens/dark`) and the file (`example.css`).
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function split(string $name): array {
 		$slash = strrpos($name, '/');
