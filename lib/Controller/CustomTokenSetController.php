@@ -240,7 +240,7 @@ class CustomTokenSetController extends Controller {
 			return $read;
 		}
 
-		// ALREADY A TOKEN SET — store it as it arrived.
+		// ALREADY A TOKEN SET — store it without converting it.
 		//
 		// The token editor's "save as a new theme" serialises the active set and
 		// the admin's overrides straight into the `css/tokens/*.css` shape, so
@@ -291,7 +291,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @param string      $name         The set's display name.
 	 * @param string      $slug         The slug derived from the name.
-	 * @param string      $content      The token set CSS, as sent.
+	 * @param string      $content      The token set CSS, as sent; only its validated declarations are stored.
 	 * @param string|null $designSystem The design system the file itself names, which outranks the request's claim.
 	 *
 	 * @return JSONResponse The persisted set, or the validator's error.
@@ -304,7 +304,12 @@ class CustomTokenSetController extends Controller {
 			return $parsed;
 		}
 
-		$parsed['css'] = $content;
+		// No `css` key: persist() then writes the accepted declarations
+		// re-serialised, as a bundle import does, never the bytes as sent.
+		// The selector guard and the parser strip comments without regard to
+		// strings, while a browser does not treat a `/*` inside `url('…')` as
+		// one, so a crafted file could hide a whole rule between two :root
+		// declarations and still validate.
 
 		// Which design system the editor was looking at when it serialised
 		// this. Allow-listed against the shipped manifest rather than taken
