@@ -159,7 +159,8 @@ class DesignTokensMapper {
 	/**
 	 * Map a parsed DTCG document onto nldesign declarations.
 	 *
-	 * @param array<string, mixed> $document The decoded DTCG JSON document.
+	 * @param array<string, mixed> $document           The decoded DTCG JSON document.
+	 * @param array<int, string>   $referenceOnlyPaths Dotted paths that resolve aliases but are not emitted.
 	 *
 	 * @return array{
 	 *     declarations: array<string, string>,
@@ -174,10 +175,11 @@ class DesignTokensMapper {
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	public function map(array $document): array {
+	public function map(array $document, array $referenceOnlyPaths = []): array {
 		$this->adapted = [];
 		$leaves = [];
 		$this->collectLeaves(node: $document, prefix: '', inheritedType: null, leaves: $leaves);
+		$referenceOnly = array_flip($referenceOnlyPaths);
 
 		$declarations = [];
 		$skipped = [];
@@ -185,6 +187,12 @@ class DesignTokensMapper {
 		$warnings = [];
 
 		foreach ($leaves as $path => $leaf) {
+			// A reference-only leaf (a Tokens Studio `source` set) stays in the alias table
+			// above and is never assigned to a target.
+			if (isset($referenceOnly[$path]) === true) {
+				continue;
+			}
+
 			$this->processLeaf(
 				path: $path,
 				leaf: $leaf,
@@ -275,7 +283,7 @@ class DesignTokensMapper {
 	 * @param string|null $ownType The node's own declared `$type`, if any.
 	 * @param string|null $inheritedType The nearest ancestor's declared `$type`, if any.
 	 *
-	 * @return array{value: mixed, type: string|null, deprecated: mixed} The leaf entry.
+	 * @return array{value: mixed, type: string|null, deprecated: mixed, cssVariable: string|null} The leaf entry.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -472,7 +480,7 @@ class DesignTokensMapper {
 	 *
 	 * @param mixed $value The resolved `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
@@ -495,7 +503,7 @@ class DesignTokensMapper {
 	 *
 	 * @param mixed $value The resolved `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -512,7 +520,7 @@ class DesignTokensMapper {
 	 *
 	 * @param string $path The token's dotted path.
 	 * @param mixed $deprecated The token's raw `$deprecated` value, if any.
-	 * @param array{ok: bool, value?: string, reason?: string, detail?: string} $result The serializer result.
+	 * @param array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} $result The serializer result.
 	 * @param array<string, string> $declarations Accumulated declarations (by reference).
 	 * @param array<int, array<string, string>> $skipped Accumulated skips (by reference).
 	 * @param array<int, array<string, string>> $errors Accumulated errors (by reference).
@@ -691,7 +699,7 @@ class DesignTokensMapper {
 	 *
 	 * @param mixed $value The resolved `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string, detail?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -714,7 +722,7 @@ class DesignTokensMapper {
 	 *
 	 * @param array<string, mixed> $value The object-form `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string, detail?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */

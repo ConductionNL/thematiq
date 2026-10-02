@@ -2002,21 +2002,20 @@
 			"id": "aut-multi-brand-themes",
 			"area": "authoring",
 			"name": "Maintain several brands or themes in one token source and switch between them.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "yes",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "specified",
-				"evidence": "lib/Service/GroupThemingService.php maps Nextcloud groups to token sets, stored as an ordered JSON array under appconfig key group_token_sets (comment at top of file); lib/Controller/SettingsController.php:907 getGroupTheming(), :934 setGroupTheming(); UI at templates/settings/admin.php:339 (#nldesign-group-theming) via js/admin.js:3692/3891. Several house styles CAN coexist (each an independent uploaded/shipped token set) and be switched per group, but there is no single token SOURCE that holds multiple brands together (Style-Dictionary style); each brand is a separate uploaded set.",
+				"state": "built",
+				"evidence": "lib/Service/MultiBrandSource.php finds the brands of one source (Tokens Studio $themes, or built CSS with .{key}-theme blocks) and cuts one brand out (enabled and source sets merged in tokenSetOrder, source-only tokens reference-only); the upload lists the brands first and stores the chosen ones together as custom sets linked to their source (MultiBrandImportService, custom_token_sources); POST /settings/tokensets/sources/{id} updates every brand at once, or none; brand picker and Update source in the admin panel (js/admin.js); JS mirror js/lib/multiBrandSource.js held to PHP by one fixture",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-multi-brand-token-source (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-multi-brand-token-source"
+				"change": "authoring-multi-brand-token-source"
 			},
-			"reachedOn": "Settings > Administration > Theming, 'Per-group theming' section (#nldesign-group-theming)",
+			"reachedOn": "Settings > Administration > Theming, Custom token sets: upload a multi-brand file, then Manage uploaded sets",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/ThemingDefaults.php:237-258 reads one primary_color and one background_color from app config; only one brand exists per instance",
 				"m365-branding": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme : 'you can create multiple themes for the people in your organization... add or update a default theme... and create up to four additional group themes'",

@@ -776,6 +776,26 @@ class DesignTokensMapperTest extends TestCase {
 		];
 	}//end corpusFixtureProvider()
 
+	/**
+	 * A reference-only leaf resolves an alias but is never emitted, nor reported as skipped.
+	 *
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
+	 */
+	public function testReferenceOnlyLeafResolvesAliasButIsNotEmitted(): void {
+		$document = [
+			'color' => [
+				'brand-blue' => ['$type' => 'color', '$value' => '#154273'],
+				'primary' => ['$type' => 'color', '$value' => '{color.brand-blue}'],
+			],
+			'brand' => ['primary' => ['$type' => 'color', '$value' => '#000000']],
+		];
+
+		$result = $this->mapper->map(document: $document, referenceOnlyPaths: ['color.brand-blue', 'brand.primary']);
+
+		$this->assertSame(['--nldesign-color-primary' => '#154273'], $result['declarations']);
+		$this->assertSame([], $result['skipped']);
+	}//end testReferenceOnlyLeafResolvesAliasButIsNotEmitted()
+
 	// -- authoring-dtcg-export: colour spaces and the thematiq extension ---------
 
 	/**

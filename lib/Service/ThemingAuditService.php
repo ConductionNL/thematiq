@@ -123,6 +123,7 @@ class ThemingAuditService {
 		'group_theming_changed',
 		'version_restored',
 		'scheduled_switch_applied',
+		'custom_source_updated',
 		'own_token_changed',
 		'token_deprecation_changed',
 	];

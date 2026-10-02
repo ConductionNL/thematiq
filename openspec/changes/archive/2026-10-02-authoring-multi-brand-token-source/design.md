@@ -96,8 +96,13 @@ brands.
   `collectStyleDictionaryLeaves()` (`lib/Service/TokenSetConverterService.php:684`) takes the same
   list for the legacy format.
 
-Task 1.1 reads `ThemeObject.ts` and the token set status enum at tag 2.12.1 before any code, to
-confirm the three status values and the set order rule. The matrix cites `ThemeObject.ts:3-10`.
+Task 1.1 read them at tokens-studio/figma-plugin tag 2.12.1 (2 Oct 2026):
+`packages/tokens-studio-for-figma/src/types/ThemeObject.ts:3-18` (`id`, `name`, optional `group`,
+`selectedTokenSets: Record<string, TokenSetStatus>`); `src/constants/TokenSetStatus.ts:1-5`
+(`disabled`, `source` "used to resolve references, but excluded from styles creation", `enabled`);
+`src/utils/tokenset/applyTokenSetOrder.ts:3-18` (sets in `$metadata.tokenSetOrder` first, in that
+order, unlisted sets after them by name); `src/utils/tokenHelpers.ts:39-90` (`mergeTokenGroups`: a
+later set replaces a token at the same name). The decision stands as written.
 
 ## Decision 4: a brand is a normal custom set, linked to its source
 

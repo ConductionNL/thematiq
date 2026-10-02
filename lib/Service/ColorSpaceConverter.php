@@ -158,7 +158,7 @@ class ColorSpaceConverter {
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function toSrgb(string $space, array $components): ?array {
-		$c = array_map('floatval', array_values(array_slice($components, 0, 3)));
+		$c = array_map('floatval', array_slice($components, 0, 3));
 		if (count($c) !== 3 || $this->isKnownSpace(space: $space) === false) {
 			return null;
 		}
