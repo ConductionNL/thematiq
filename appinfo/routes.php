@@ -109,6 +109,10 @@ return [
 		// session exists.
 		['name' => 'font#serve', 'url' => '/fonts/{id}.woff2', 'verb' => 'GET'],
 		['name' => 'font#css', 'url' => '/fonts/css', 'verb' => 'GET'],
+		// Icon by name from the active pack. Public for the same reason as the
+		// font routes: an <img> or CSS url() load carries no CSRF token.
+		// IconController::show() is the caller of DesignSystemService::resolveIconPath().
+		['name' => 'icon#show', 'url' => '/icons/{name}', 'verb' => 'GET'],
 		// Runtime files (overrides, custom CSS, uploaded sets, captured images),
 		// kept in app data so the signed app directory stays as shipped.
 		// Public for the same reason as the font routes; the name must pass
