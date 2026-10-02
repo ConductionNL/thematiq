@@ -95,6 +95,10 @@ return [
 		// session exists.
 		['name' => 'font#serve', 'url' => '/fonts/{id}.woff2', 'verb' => 'GET'],
 		['name' => 'font#css', 'url' => '/fonts/css', 'verb' => 'GET'],
+		// Icon by name from the active pack — public for the same reason as the
+		// font routes: an <img> or CSS url() load carries no CSRF token.
+		// IconController::show() is the caller of DesignSystemService::resolveIconPath().
+		['name' => 'icon#show', 'url' => '/icons/{name}', 'verb' => 'GET'],
 		// Theming audit trail — admin-only (AuthorizedAdminSetting), no
 		// #[PublicPage]/#[NoAdminRequired].
 		['name' => 'audit#list', 'url' => '/settings/audit', 'verb' => 'GET'],

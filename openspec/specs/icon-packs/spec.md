@@ -90,6 +90,23 @@ no pack is active). The returned value MUST be consumable directly by
 `IURLGenerator::imagePath('nldesign', <returned path>)`. The resolver MUST reject a name containing a
 path separator (`/`, `\`) or `..` by returning `null` (no path traversal outside `img/icons/`).
 
+The resolver MUST be reachable by other apps and by the theme's CSS through the public route
+`GET /apps/thematiq/icons/{name}` (`IconController::show()`, `#[PublicPage]` + `#[NoCSRFRequired]`,
+like the font routes, because an `<img>` or CSS `url()` load carries no CSRF token). The route MUST
+resolve the token set the way the theme does for that request
+(`GroupThemingService::resolveTokenSetForRequest()`: preview, then group mapping, then the instance
+default), redirect to `imagePath()` of the resolved path, and answer 404 when the resolver returns
+`null`.
+
+#### Scenario: The route serves the active pack's icon
+@e2e exclude route wiring — PHPUnit IconControllerTest drives the real DesignSystemService behind the controller
+- GIVEN the request's token set resolves to the `lasuite` design system (pack `dsfr`)
+- AND `img/icons/dsfr/home.svg` exists
+- WHEN `GET /apps/thematiq/icons/home` is requested
+- THEN it MUST redirect to the `imagePath` of `icons/dsfr/home.svg`
+- AND the same request on an `nldesign` token set MUST redirect to the `rvo` pack's `home.svg`
+- AND a name no active pack has MUST answer 404
+
 #### Scenario: Name resolves within the active pack
 @e2e exclude resolver logic — PHPUnit on DesignSystemService::resolveIconPath
 - GIVEN the active theme resolves to the `["dsfr"]` pack

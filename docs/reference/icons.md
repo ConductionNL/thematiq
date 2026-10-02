@@ -22,6 +22,19 @@ from the public capability (`capabilities.nldesign.iconPacks`) — see
 `openspec/specs/icon-packs/spec.md`. This does **not** replace Nextcloud core's built-in
 icons; it only switches Thematiq's own bundled assets served through `imagePath`.
 
+To show the active pack's icon without resolving it yourself, point at the route
+`/index.php/apps/thematiq/icons/{name}`. It redirects to the file of that name in the pack
+the viewer's theme uses, and answers 404 when that pack has no icon of that name. It works
+without a login, so it is safe in an `<img>` tag or a CSS `url()`:
+
+```html
+<img src="/index.php/apps/thematiq/icons/arrow-right-line" alt="Next">
+```
+
+Ship a fallback for the 404. A design system without a pack, such as stock Nextcloud,
+serves no icons, and each pack names its icons its own way (`rvo-home` in RVO,
+`home-4-line` in DSFR), so one name rarely exists in every pack.
+
 **The proprietary City-of-Amsterdam icon set (`@amsterdam/design-system-assets`) is NOT
 bundled.** Its `LICENSE.md` marks the set proprietary to the City of Amsterdam,
 restricted to contexts where Amsterdam is the main communicator — Thematiq shipping it to
