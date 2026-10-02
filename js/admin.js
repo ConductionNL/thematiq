@@ -5988,6 +5988,10 @@
 				})
 				tokenSetSelect.addEventListener('change', function () {
 					groupThemingRows[index].tokenSet = tokenSetSelect.value
+					keepCurrentSetAllowed(
+						index,
+						rowEl.querySelector('[data-field="allowedTokenSets"]'),
+					)
 				})
 
 				var moveUpBtn = document.createElement('button')
@@ -6077,6 +6081,29 @@
 			}
 		}
 
+		// The server refuses a delegated row whose allowed sets leave out its
+		// current set, so the current set is always on the list and its option
+		// cannot be unticked: changing the row's set adds the new one, and the
+		// picker cannot drop it.
+		function keepCurrentSetAllowed(index, picker) {
+			var row = groupThemingRows[index]
+			if (
+				row.delegated === true
+				&& row.allowedTokenSets.indexOf(row.tokenSet) === -1
+			) {
+				row.allowedTokenSets.push(row.tokenSet)
+			}
+			if (picker === null) {
+				return
+			}
+			Array.prototype.forEach.call(picker.options, function (opt) {
+				opt.disabled = opt.value === row.tokenSet
+				if (opt.value === row.tokenSet && row.delegated === true) {
+					opt.selected = true
+				}
+			})
+		}
+
 		// The delegate toggle and the allowed sets picker of one mapping row.
 		// Turning delegation on starts the allowed list with the current set,
 		// which the server requires it to hold.
@@ -6124,6 +6151,7 @@
 					.map(function (opt) {
 						return opt.value
 					})
+				keepCurrentSetAllowed(index, picker)
 			})
 			toggle.addEventListener('change', function () {
 				groupThemingRows[index].delegated = toggle.checked
@@ -6138,8 +6166,10 @@
 						opt.selected = opt.value === groupThemingRows[index].tokenSet
 					})
 				}
+				keepCurrentSetAllowed(index, picker)
 				picker.hidden = !toggle.checked
 			})
+			keepCurrentSetAllowed(index, picker)
 			wrap.appendChild(picker)
 			return wrap
 		}

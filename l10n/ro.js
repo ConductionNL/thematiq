@@ -942,7 +942,8 @@ OC.L10N.register(
         "The file is larger than 2 MB.": "The file is larger than 2 MB.",
         "Unknown document image.": "Unknown document image.",
         "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload a PNG, JPEG or WebP image, or an SVG without script.",
-        "The end must be in the future.": "The end must be in the future."
+        "The end must be in the future.": "The end must be in the future.",
+        "The house style could not be saved. Ask an administrator to check the house style of this group.": "The house style could not be saved. Ask an administrator to check the house style of this group."
     },
     "nplurals=2; plural=(n != 1);"
 )
