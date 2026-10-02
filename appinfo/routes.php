@@ -25,6 +25,8 @@ return [
 		// #[PublicPage]); deliberately outside the /settings/* prefix this
 		// app reserves for admin-gated routes, alongside metrics/health.
 		['name' => 'catalog#tokenSets', 'url' => '/api/token-sets', 'verb' => 'GET'],
+		['name' => 'documentStyle#show', 'url' => '/api/document-style', 'verb' => 'GET'],
+		['name' => 'documentStyle#asset', 'url' => '/api/document-style/{kind}', 'verb' => 'GET'],
 		// Token reference of one set, for signed-in users (openspec/specs/token-reference/spec.md).
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
@@ -127,5 +129,9 @@ return [
 		// Group theming — group-to-token-set mapping (multi-tenant huisstijl).
 		['name' => 'settings#getGroupTheming', 'url' => '/settings/group-theming', 'verb' => 'GET'],
 		['name' => 'settings#setGroupTheming', 'url' => '/settings/group-theming', 'verb' => 'POST'],
+		['name' => 'documentStyle#settings', 'url' => '/settings/document-style', 'verb' => 'GET'],
+		['name' => 'documentStyle#saveFooter', 'url' => '/settings/document-style', 'verb' => 'POST'],
+		['name' => 'documentStyle#upload', 'url' => '/settings/document-style/{kind}', 'verb' => 'POST'],
+		['name' => 'documentStyle#remove', 'url' => '/settings/document-style/{kind}', 'verb' => 'DELETE'],
 	],
 ];

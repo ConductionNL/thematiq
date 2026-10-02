@@ -192,6 +192,13 @@ class ConfigBundleService {
 	private ScheduledSwitchStore $scheduledSwitches;
 
 	/**
+	 * The document house style assets and footer line.
+	 *
+	 * @var DocumentAssetService
+	 */
+	private DocumentAssetService $documentAssets;
+
+	/**
 	 * The logger.
 	 *
 	 * @var LoggerInterface
@@ -214,6 +221,7 @@ class ConfigBundleService {
 	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
+	 * @param DocumentAssetService $documentAssets The document house style assets and footer line.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
 	 * section's EXISTING validator/service (config-portability's core reuse requirement); NC's DI
@@ -234,6 +242,7 @@ class ConfigBundleService {
 		UpstreamFreshnessService $freshnessService,
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
+		DocumentAssetService $documentAssets,
 	) {
 		$this->config = $config;
 		$this->appManager = $appManager;
@@ -248,6 +257,7 @@ class ConfigBundleService {
 		$this->freshnessService = $freshnessService;
 		$this->scheduledSwitches = $scheduledSwitches;
 		$this->logger = $logger;
+		$this->documentAssets = $documentAssets;
 	}//end __construct()
 
 	/**
@@ -284,6 +294,7 @@ class ConfigBundleService {
 					. 'Metadata only — re-upload font files by hand on the target environment.',
 				'manifest' => $this->fontService->getManifest(),
 			],
+			'documentStyle' => $this->documentAssets->exportBundle(),
 		];
 	}//end export()
 
@@ -395,6 +406,13 @@ class ConfigBundleService {
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
+
+		$documentStyle = $this->documentAssets->validateBundle(section: ($bundle['documentStyle'] ?? null));
+		foreach ($documentStyle['errors'] as $message) {
+			$errors[] = ['section' => 'documentStyle', 'message' => $message];
+		}
+
+		$resolved['documentFooterLine'] = $documentStyle['value'];
 
 		return [
 			'valid' => empty($errors),
@@ -949,6 +967,7 @@ class ConfigBundleService {
 				'applied' => ($resolved['scheduledSwitches'] !== null),
 			],
 			'emailFooter' => ['applied' => true],
+			'documentStyle' => ['footerLineApplied' => (($resolved['documentFooterLine'] ?? null) !== null), 'binariesIncluded' => false],
 			'customOverridesCss' => [
 				'written' => count($resolved['customOverrides']['tokens']),
 				'skipped' => count($resolved['customOverrides']['skipped']),
@@ -1016,6 +1035,10 @@ class ConfigBundleService {
 
 		if ($resolved['scheduledSwitches'] !== null) {
 			$this->scheduledSwitches->save(entries: $resolved['scheduledSwitches']);
+		}
+
+		if (($resolved['documentFooterLine'] ?? null) !== null) {
+			$this->documentAssets->setFooterLine(line: $resolved['documentFooterLine']);
 		}
 
 		// CustomFonts is deliberately never applied — see class docblock.
