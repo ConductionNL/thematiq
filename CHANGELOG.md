@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+- **A token set can set every Nextcloud theme variable.** The 45 that thematiq left alone
+  (selected text, the search highlight, the loading spinner, shadows, status hover and text
+  colours, the main background, the assistant colours, font sizes, input borders, container
+  radii and the 13 layout variables) are settable through `--nldesign-nc-*` tokens with no
+  default. Unset, each keeps the value Nextcloud gives it for the active theme; a new
+  `css/theme-scopes.css` applies them on body's children. A light-only value stays out of
+  dark mode for the 21 variables Nextcloud varies per theme. The token editor lists them,
+  the 13 layout variables flagged advanced, and the contrast audit reports the selection
+  and highlight pairs. `npm run test:theme-scopes` proves the cascade in a real browser.
+- **A token set can set the variables inside Nextcloud's components and the shared library.**
+  453 internal variables now have a token: `--nldesign-nc-*` for Nextcloud's own (the date
+  picker, the select box, code highlighting, the media player and 80 more groups) and
+  `--nldesign-cn-*` for `@conduction/nextcloud-vue`. The server writes a rule only for a
+  token the set or the overrides give a value, as an inline layer after the component
+  scopes, so nothing changes until one is set and no file is written into the app. Variables
+  Nextcloud's or the library's script writes at render stay excluded, with the reason in
+  `scripts/mapping/variable-status.json`. `docs/reference/internal-tokens.md` lists them per
+  group; `npm run test:internal-scopes` proves the rules in a real browser.
+
+### Fixed
+- **No more code integrity warning after customising the theme.** thematiq wrote token
+  overrides, custom CSS, uploaded token sets with their logos and dark variants, and
+  captured logos and backgrounds into its own app directory. Nextcloud's integrity check
+  reported every one of those files. They now live in app data and are served by the
+  `/runtime/{name}` route, so the app directory stays exactly as released and an app
+  update no longer loses them. An upgrade moves an older install's files across. A
+  shipped set's dark variant is never rewritten at runtime any more; a stale one fails
+  the unit suite instead. Rolling back to an older release loses access to the moved
+  files, so download sets and overrides before downgrading.
+
 ### BREAKING
 - **Removed all 344 vendored Amsterdam Design System icon SVGs from `img/icons/`.** The
   upstream `@amsterdam/design-system-assets` `LICENSE.md` declares the icon artwork

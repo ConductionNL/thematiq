@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
+use OCA\Thematiq\Service\BrandingPackageService;
 use OCA\Thematiq\Service\ConfigBundleService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -53,13 +54,22 @@ class ConfigImport extends Command {
 	private ConfigBundleService $service;
 
 	/**
+	 * The branding package service, for a package directory or ZIP.
+	 *
+	 * @var BrandingPackageService
+	 */
+	private BrandingPackageService $packages;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param ConfigBundleService $service The configuration bundle service.
+	 * @param ConfigBundleService    $service  The configuration bundle service.
+	 * @param BrandingPackageService $packages The branding package service.
 	 */
-	public function __construct(ConfigBundleService $service) {
+	public function __construct(ConfigBundleService $service, BrandingPackageService $packages) {
 		parent::__construct();
 		$this->service = $service;
+		$this->packages = $packages;
 	}//end __construct()
 
 	/**
@@ -78,7 +88,7 @@ class ConfigImport extends Command {
 			->addArgument(
 				name: 'file',
 				mode: InputArgument::REQUIRED,
-				description: 'The bundle JSON file path'
+				description: 'The bundle JSON file, or a branding package directory or ZIP'
 			)
 			->addOption(
 				name: 'dry-run',
@@ -100,18 +110,18 @@ class ConfigImport extends Command {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$bundle = $this->readBundle(output: $output, path: (string)$input->getArgument('file'));
-		if ($bundle === null) {
-			return Command::FAILURE;
-		}
-
+		$path = (string)$input->getArgument('file');
 		$dryRun = ($input->getOption('dry-run') === true);
 
 		try {
-			$result = $this->service->import(bundle: $bundle, dryRun: $dryRun);
+			$result = $this->runImport(output: $output, path: $path, dryRun: $dryRun);
 		} catch (Throwable $e) {
 			$output->writeln('<error>Configuration import failed: ' . $e->getMessage() . '</error>');
 
+			return Command::FAILURE;
+		}
+
+		if ($result === null) {
 			return Command::FAILURE;
 		}
 
@@ -125,6 +135,32 @@ class ConfigImport extends Command {
 
 		return Command::SUCCESS;
 	}//end execute()
+
+	/**
+	 * Import a package (directory or ZIP) or a bare bundle file.
+	 *
+	 * @param OutputInterface $output The console output.
+	 * @param string $path The argument.
+	 * @param bool $dryRun Validate only.
+	 *
+	 * @return array<string, mixed>|null The import result, or null when a bare bundle could not be read.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 *
+	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - the --dry-run switch, passed through.
+	 */
+	private function runImport(OutputInterface $output, string $path, bool $dryRun): ?array {
+		if ($this->packages->isPackage(path: $path) === true) {
+			return $this->packages->import(path: $path, dryRun: $dryRun);
+		}
+
+		$bundle = $this->readBundle(output: $output, path: $path);
+		if ($bundle === null) {
+			return null;
+		}
+
+		return $this->service->import(bundle: $bundle, dryRun: $dryRun);
+	}//end runImport()
 
 	/**
 	 * Read and JSON-decode the bundle file.

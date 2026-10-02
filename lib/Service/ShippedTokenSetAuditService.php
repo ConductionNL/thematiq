@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCP\ICache;
 
 /**
@@ -85,8 +87,17 @@ class ShippedTokenSetAuditService {
 	 *
 	 * @param ContrastService $contrast The WCAG contrast service.
 	 * @param CssParserService $parser The CSS custom-property parser.
+	 * @param RuntimeFileStore|null $store Where uploaded sets are kept.
+	 * @param SetFileReader $files Reads a set's file from the release or the store.
+	 * @param SettableContrastPairs $settablePairs Measures the selection and highlight pairs a set moves.
 	 */
-	public function __construct(ContrastService $contrast, CssParserService $parser) {
+	public function __construct(
+		ContrastService $contrast,
+		CssParserService $parser,
+		private readonly ?RuntimeFileStore $store = null,
+		private readonly SetFileReader $files = new SetFileReader(),
+		private readonly SettableContrastPairs $settablePairs = new SettableContrastPairs(),
+	) {
 		$this->contrast = $contrast;
 		$this->parser = $parser;
 	}//end __construct()
@@ -109,9 +120,9 @@ class ShippedTokenSetAuditService {
 	public function resolveDeclarations(string $appPath, string $id, array $theming): array {
 		$declarations = $this->parseFile(filePath: $appPath . '/css/systems/nldesign/defaults.css');
 
-		$tokenFile = $appPath . '/css/tokens/' . $id . '.css';
-		if (is_file($tokenFile) === true) {
-			$declarations = array_merge($declarations, $this->parseFile(filePath: $tokenFile));
+		$tokenCss = $this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/' . $id . '.css');
+		if ($tokenCss !== null) {
+			$declarations = array_merge($declarations, ($this->parser->parseDeclarations(content: $tokenCss) ?? []));
 		}
 
 		// Background is managed by Nextcloud theming for many sets, so it is
@@ -137,7 +148,15 @@ class ShippedTokenSetAuditService {
 	 *
 	 * The per-set audit result.
 	 *
-	 * @return array{id: string, textRatio: float|null, uiRatio: float|null, textThreshold: float, uiThreshold: float, verdict: string}
+	 * @return array{
+	 *     id: string,
+	 *     textRatio: float|null,
+	 *     uiRatio: float|null,
+	 *     textThreshold: float,
+	 *     uiThreshold: float,
+	 *     verdict: string,
+	 *     pairs?: array<int, array<string, mixed>>
+	 * }
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
 	 */
@@ -175,6 +194,7 @@ class ShippedTokenSetAuditService {
 			'textThreshold' => $textThreshold,
 			'uiThreshold' => $uiThreshold,
 			'verdict' => $verdict,
+			'pairs' => $this->settablePairs->pairs(declarations: $declarations),
 		];
 	}//end auditSet()
 
@@ -244,7 +264,15 @@ class ShippedTokenSetAuditService {
 	 *
 	 * One audit result per audited set, ordered deterministically by id.
 	 *
-	 * @return array<int, array{id: string, textRatio: float|null, uiRatio: float|null, textThreshold: float, uiThreshold: float, verdict: string}>
+	 * @return array<int, array{
+	 *     id: string,
+	 *     textRatio: float|null,
+	 *     uiRatio: float|null,
+	 *     textThreshold: float,
+	 *     uiThreshold: float,
+	 *     verdict: string,
+	 *     pairs?: array<int, array<string, mixed>>
+	 * }>
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-reproducible-contrast-report
 	 */
@@ -484,4 +512,5 @@ class ShippedTokenSetAuditService {
 	private function formatThreshold(float $threshold): string {
 		return number_format($threshold, 1, '.', '') . ':1';
 	}//end formatThreshold()
+
 }//end class
