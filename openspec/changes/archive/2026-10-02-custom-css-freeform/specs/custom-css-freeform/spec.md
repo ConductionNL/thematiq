@@ -7,7 +7,7 @@ appconfig value is `'1'`. The default value MUST be `'0'`.
 
 #### Scenario: Feature disabled by default on fresh install
 
-@e2e exclude emission order is server-side, not DOM; proven by tests/Unit/Service/CssInjectionServiceTest.php::testCustomCssNotEmittedWhenDisabled and tests/Unit/Service/CustomCssServiceTest.php::testEnabledFlagLivesInAppConfig
+@e2e exclude emission order is server-side, not DOM; covered by CssInjectionServiceTest::testCustomCssNotEmittedWhenDisabled and covered by CustomCssServiceTest::testEnabledFlagLivesInAppConfig
 
 - GIVEN the nldesign app is freshly installed
 - WHEN Nextcloud loads the theming CSS
@@ -17,7 +17,7 @@ appconfig value is `'1'`. The default value MUST be `'0'`.
 
 #### Scenario: Enabling the feature emits the stylesheet
 
-@e2e exclude emission order is server-side; proven by tests/Unit/Service/CssInjectionServiceTest.php::testCustomCssEmittedLastWhenEnabledAndPresent
+@e2e exclude emission order is server-side; covered by CssInjectionServiceTest::testCustomCssEmittedLastWhenEnabledAndPresent
 
 - GIVEN an admin sets `custom_css_enabled` to `'1'`
 - WHEN the browser next loads the CSS stack
@@ -27,7 +27,7 @@ appconfig value is `'1'`. The default value MUST be `'0'`.
 
 #### Scenario: Missing file with feature enabled does not break the stack
 
-@e2e exclude proven by tests/Unit/Service/CssInjectionServiceTest.php::testCustomCssNotEmittedWhenEmpty and tests/Unit/Service/CustomCssServiceTest.php::testMissingFileReadsAsEmpty
+@e2e exclude covered by CssInjectionServiceTest::testCustomCssNotEmittedWhenEmpty and covered by CustomCssServiceTest::testMissingFileReadsAsEmpty
 
 - GIVEN `custom_css_enabled` is `'1'`
 - AND `custom-css.css` does not exist on disk for any reason
@@ -47,7 +47,7 @@ Load order (final, feature enabled):
 
 #### Scenario: Freeform CSS wins over the token editor
 
-@e2e exclude cascade position is the emission order; proven by tests/Unit/Service/CssInjectionServiceTest.php::testCustomCssEmittedLastWhenEnabledAndPresent
+@e2e exclude cascade position is the emission order; covered by CssInjectionServiceTest::testCustomCssEmittedLastWhenEnabledAndPresent
 
 - GIVEN `custom-overrides.css` sets `--color-primary: #0000FF`
 - AND `custom-css.css` contains `.app-navigation { border-inline-end-color: #0000FF; }`
@@ -71,7 +71,7 @@ list of the specific rules violated, and no part of it may be written to disk.
 
 #### Scenario: Oversized submission rejected
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testRejectsOversizedPayload
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testRejectsOversizedPayload
 
 - GIVEN an admin submits CSS text larger than 64 KB
 - WHEN the save endpoint validates the submission
@@ -81,7 +81,7 @@ list of the specific rules violated, and no part of it may be written to disk.
 
 #### Scenario: Remote import directives rejected
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testRejectsImport and ::testRejectsCharset
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testRejectsImport and covered by CustomCssValidatorTest::testRejectsCharset
 
 - GIVEN the submitted CSS contains an `@import` or `@charset` rule anywhere in the text
 - WHEN the submission is validated
@@ -90,7 +90,7 @@ list of the specific rules violated, and no part of it may be written to disk.
 
 #### Scenario: External url() rejected
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testRejectsExternalUrl and ::testRejectsProtocolRelativeUrl
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testRejectsExternalUrl and covered by CustomCssValidatorTest::testRejectsProtocolRelativeUrl
 
 - GIVEN the submitted CSS contains `url(https://example.invalid/track.png)`, `url(//example.invalid/x)`,
   or any other absolute-scheme or protocol-relative URL
@@ -99,7 +99,7 @@ list of the specific rules violated, and no part of it may be written to disk.
 
 #### Scenario: Same-origin and data URLs permitted
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testAcceptsRelativeUrl, ::testAcceptsDataUri and ::testAcceptsMultipleDataUrisAndRelativePaths
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testAcceptsRelativeUrl, covered by CustomCssValidatorTest::testAcceptsDataUri and covered by CustomCssValidatorTest::testAcceptsMultipleDataUrisAndRelativePaths
 
 - GIVEN the submitted CSS contains `url(../img/logo.png)`, `url(/apps/nldesign/img/logo.png)`, or a
   `url(data:image/png;base64,...)` value
@@ -108,7 +108,7 @@ list of the specific rules violated, and no part of it may be written to disk.
 
 #### Scenario: Script-execution vectors rejected
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testRejectsScriptExecutionVectors
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testRejectsScriptExecutionVectors
 
 - GIVEN the submitted CSS contains `expression(`, `behavior:`, or `-moz-binding:`
 - WHEN the submission is validated
@@ -116,7 +116,7 @@ list of the specific rules violated, and no part of it may be written to disk.
 
 #### Scenario: Markup breakout strings rejected
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testRejectsHtmlBreakout
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testRejectsHtmlBreakout
 
 - GIVEN the submitted CSS contains `</style` or `<script` (case-insensitive)
 - WHEN the submission is validated
@@ -124,7 +124,7 @@ list of the specific rules violated, and no part of it may be written to disk.
 
 #### Scenario: Unbalanced braces rejected
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testRejectsUnbalancedBraces and ::testBracesInStringsAndCommentsAreIgnored
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testRejectsUnbalancedBraces and covered by CustomCssValidatorTest::testBracesInStringsAndCommentsAreIgnored
 
 - GIVEN the submitted CSS has a `{` with no matching `}` (or vice versa), outside of comments and
   string literals
@@ -134,7 +134,7 @@ list of the specific rules violated, and no part of it may be written to disk.
 
 #### Scenario: Well-formed submission accepted
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testAcceptsOrdinaryCss
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testAcceptsOrdinaryCss
 
 - GIVEN the admin submits CSS containing only ordinary selectors, standard properties, balanced
   braces, and no disallowed construct
@@ -152,7 +152,7 @@ block.
 
 #### Scenario: Reserved variable declared at :root is rejected
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testRejectsReservedDarkModeVariables
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testRejectsReservedDarkModeVariables
 
 - GIVEN the submitted CSS contains `:root { --color-main-background: #000000; }`
 - WHEN the submission is validated
@@ -161,7 +161,7 @@ block.
 
 #### Scenario: Reserved variable declared on an arbitrary selector is also rejected
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testRejectsReservedVariableOutsideRoot
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testRejectsReservedVariableOutsideRoot
 
 - GIVEN the submitted CSS contains `body.some-class { --background-invert-if-dark: 0; }`
 - WHEN the submission is validated
@@ -169,7 +169,7 @@ block.
 
 #### Scenario: Non-reserved custom properties are permitted
 
-@e2e exclude validator rule; proven by tests/Unit/Service/CustomCssValidatorTest.php::testAcceptsOrdinaryCss
+@e2e exclude validator rule; covered by CustomCssValidatorTest::testAcceptsOrdinaryCss
 
 - GIVEN the submitted CSS declares a custom property not on the reserved list (for example
   `--my-team-accent: #003366;`)
@@ -183,7 +183,7 @@ toggle) MUST be recorded via the existing theming audit trail before the respons
 
 #### Scenario: Unauthenticated or non-admin request is rejected
 
-@e2e exclude enforced by Nextcloud middleware from the attribute; proven by tests/Unit/Controller/CustomCssControllerAuditTest.php::testEveryEndpointIsAdminOnly
+@e2e exclude enforced by Nextcloud middleware from the attribute; covered by CustomCssControllerAuditTest::testEveryEndpointIsAdminOnly
 
 - GIVEN a request to the custom CSS save endpoint is made without a valid admin (or delegated admin)
   session
@@ -192,7 +192,7 @@ toggle) MUST be recorded via the existing theming audit trail before the respons
 
 #### Scenario: Delegated admin can reach the endpoint
 
-@e2e exclude delegation is granted by the AuthorizedAdminSetting attribute; proven by tests/Unit/Controller/CustomCssControllerAuditTest.php::testEveryEndpointIsAdminOnly and ::testSuccessfulWriteIsAudited
+@e2e exclude delegation is granted by the AuthorizedAdminSetting attribute; covered by CustomCssControllerAuditTest::testEveryEndpointIsAdminOnly and covered by CustomCssControllerAuditTest::testSuccessfulWriteIsAudited
 
 - GIVEN a user has been granted delegated access to the nldesign admin settings section (not full
   instance-admin rights)
@@ -203,7 +203,7 @@ toggle) MUST be recorded via the existing theming audit trail before the respons
 
 #### Scenario: Successful save is audit logged
 
-@e2e exclude proven by tests/Unit/Controller/CustomCssControllerAuditTest.php::testSuccessfulWriteIsAudited
+@e2e exclude covered by CustomCssControllerAuditTest::testSuccessfulWriteIsAudited
 
 - GIVEN an admin submits CSS that passes validation
 - WHEN the write succeeds
@@ -213,7 +213,7 @@ toggle) MUST be recorded via the existing theming audit trail before the respons
 
 #### Scenario: Enabling or disabling the feature is audit logged
 
-@e2e exclude the flag travels in the same save and its new state is in the custom_css_written entry; proven by tests/Unit/Controller/CustomCssControllerAuditTest.php::testSuccessfulWriteIsAudited
+@e2e exclude the flag travels in the same save and its new state is in the custom_css_written entry; covered by CustomCssControllerAuditTest::testSuccessfulWriteIsAudited
 
 - GIVEN an admin changes `custom_css_enabled` from `'0'` to `'1'` or back
 - WHEN the change is saved
@@ -226,7 +226,7 @@ the admin settings JavaScript MUST NOT be used.
 
 #### Scenario: Read current custom CSS
 
-@e2e exclude proven by tests/Unit/Controller/CustomCssControllerAuditTest.php::testReadReturnsTheStoredCssAndState and tests/Unit/Service/CustomCssServiceTest.php::testSavedCssReadsBackExactlyAsWritten
+@e2e exclude covered by CustomCssControllerAuditTest::testReadReturnsTheStoredCssAndState and covered by CustomCssServiceTest::testSavedCssReadsBackExactlyAsWritten
 
 - GIVEN `custom-css.css` exists with admin-authored rules
 - WHEN the admin settings panel loads
@@ -235,7 +235,7 @@ the admin settings JavaScript MUST NOT be used.
 
 #### Scenario: Write new custom CSS
 
-@e2e exclude proven by tests/Unit/Service/CustomCssServiceTest.php::testSavedCssReadsBackExactlyAsWritten and ::testSavingTwiceKeepsOneHeader
+@e2e exclude covered by CustomCssServiceTest::testSavedCssReadsBackExactlyAsWritten and covered by CustomCssServiceTest::testSavingTwiceKeepsOneHeader
 
 - GIVEN an admin submits new CSS text that passes `CustomCssValidator`
 - WHEN a POST request is made to the custom CSS save endpoint
@@ -247,7 +247,7 @@ the admin settings JavaScript MUST NOT be used.
 
 #### Scenario: Write fails due to filesystem permissions
 
-@e2e exclude proven by tests/Unit/Service/CustomCssServiceTest.php::testUnwritableDirectoryThrowsAndKeepsTheOldFile and tests/Unit/Controller/CustomCssControllerAuditTest.php::testUnwritableFileIsAServerError
+@e2e exclude covered by CustomCssServiceTest::testUnwritableDirectoryThrowsAndKeepsTheOldFile and covered by CustomCssControllerAuditTest::testUnwritableFileIsAServerError
 
 - GIVEN the CSS directory is not writable by the web server process
 - WHEN a validated save is attempted
@@ -257,7 +257,7 @@ the admin settings JavaScript MUST NOT be used.
 
 #### Scenario: Validation failure returns a structured error, nothing is written
 
-@e2e exclude proven by tests/Unit/Service/CustomCssServiceTest.php::testValidationFailureWritesNothing and tests/Unit/Controller/CustomCssControllerAuditTest.php::testRejectedSubmissionIsAudited
+@e2e exclude covered by CustomCssServiceTest::testValidationFailureWritesNothing and covered by CustomCssControllerAuditTest::testRejectedSubmissionIsAudited
 
 - GIVEN an admin submits CSS that fails one or more `CustomCssValidator` rules
 - WHEN a POST request is made to the custom CSS save endpoint
@@ -271,7 +271,7 @@ table. The CSS file is the sole content-persistence mechanism; the flag is store
 
 #### Scenario: Enabled flag stored via appconfig, not a database table
 
-@e2e exclude proven by tests/Unit/Service/CustomCssServiceTest.php::testEnabledFlagLivesInAppConfig
+@e2e exclude covered by CustomCssServiceTest::testEnabledFlagLivesInAppConfig
 
 - GIVEN an admin enables the feature
 - WHEN the setting is persisted
