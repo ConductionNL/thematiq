@@ -19,7 +19,7 @@
 ## 4. Documentation and verification
 
 - [x] 4.1 Generate `docs/reference/internal-tokens.md` from the map, add the "Component variables" section to the feature page, and verify the docs site builds
-- [ ] 4.2 Run `COMPOSER_PROCESS_TIMEOUT=0 composer check:strict`, `npm run lint`, `npm run format` and `npm run test:l10n` once before push, and record the exit codes in the PR body
+- [x] 4.2 Run `COMPOSER_PROCESS_TIMEOUT=0 composer check:strict`, `npm run lint`, `npm run format` and `npm run test:l10n` once before push, and record the exit codes in the PR body
 
 Reminders, not tasks:
 - ADR-005: the rules carry only names the map knows and `var()` references; no value from a set or an upload reaches them.

@@ -107,7 +107,15 @@ class TokenRegistry implements TokenRegistryInterface {
 	/**
 	 * Decoded internal tokens, or null before the first read.
 	 *
-	 * @var array<string, array{variable: string, class: string, owner: string, type: string, mode: string, selectors: array<int, string>, stock: string}>|null
+	 * @var array<string, array{
+	 *     variable: string,
+	 *     class: string,
+	 *     owner: string,
+	 *     type: string,
+	 *     mode: string,
+	 *     selectors: array<int, string>,
+	 *     stock: string
+	 * }>|null
 	 */
 	private static ?array $internalTokens = null;
 
@@ -423,7 +431,15 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * tabs, until the editor can list them per component. A missing or malformed
 	 * map yields none.
 	 *
-	 * @return array<string, array{variable: string, class: string, owner: string, type: string, mode: string, selectors: array<int, string>, stock: string}> The internal tokens.
+	 * @return array<string, array{
+	 *     variable: string,
+	 *     class: string,
+	 *     owner: string,
+	 *     type: string,
+	 *     mode: string,
+	 *     selectors: array<int, string>,
+	 *     stock: string
+	 * }> The internal tokens.
 	 *
 	 * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
 	 */
