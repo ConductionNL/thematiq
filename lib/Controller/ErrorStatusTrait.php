@@ -1,18 +1,17 @@
 <?php
 
 /**
- * Thematiq ErrorStatusTrait
+ * Thematiq error status helper for controllers.
  *
- * @category Controller
- * @package  OCA\Thematiq\Controller
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @author    Conduction Development Team <info@conduction.nl>
+ * @category  Controller
+ * @package   OCA\Thematiq
+ * @author    Conduction <info@conduction.nl>
  * @copyright 2026 Conduction B.V.
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
- *
- * @version GIT: <git_id>
- *
- * @link https://conduction.nl
+ * @link      https://github.com/ConductionNL/thematiq
  */
 
 declare(strict_types=1);
