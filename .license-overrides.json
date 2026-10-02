@@ -1,9 +1,4 @@
 {
-	"@gouvfr/dsfr": {
-		"license": "Etalab-2.0",
-		"justification": "Build-time-only devDependency consumed exclusively by scripts/build-icons.js, which materializes the French-government DSFR icon SVGs (dist/icons/**/*.svg) into the committed img/icons/dsfr/ pack. No runtime PHP or JS depends on this package. The Etalab Open Licence 2.0 is a free/open, attribution-only redistribution licence not yet on the general SPDX allowlist in README.md. Icons only — the Marianne typeface files shipped in the same package are FR-state-restricted and are never bundled here (they are bundled separately, gated, by the marianne-font-restricted change). See img/ICONS.md and openspec/specs/icon-assets/spec.md.",
-		"marianne_note": "The Marianne woff2 entries below carry the same Etalab-2.0 licence but are the FR-state-restricted typeface, bundled behind an admin acknowledgement gate — see AGREEMENT-MARIANNE.md / MARIANNE-LICENCE.md."
-	},
 	"css/systems/lasuite/fonts/marianne/Marianne-Light.woff2": "Etalab-2.0",
 	"css/systems/lasuite/fonts/marianne/Marianne-Light_Italic.woff2": "Etalab-2.0",
 	"css/systems/lasuite/fonts/marianne/Marianne-Regular.woff2": "Etalab-2.0",
