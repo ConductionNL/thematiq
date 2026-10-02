@@ -203,15 +203,23 @@ class ConfigSourceService {
 
 		$state = $this->getApp(key: self::KEY_STATE);
 		$lastError = json_decode($this->getApp(key: self::KEY_ERROR), true);
-		$appliedAt = (int)$this->getApp(key: self::KEY_APPLIED_AT);
+		if (is_array($lastError) === false) {
+			$lastError = null;
+		}
+
+		$appliedAt = null;
+		$appliedTime = (int)$this->getApp(key: self::KEY_APPLIED_AT);
+		if ($appliedTime > 0) {
+			$appliedAt = gmdate('c', $appliedTime);
+		}
 
 		return [
 			'managed' => true,
 			'path' => $path,
 			'locked' => $this->isLocked(),
-			'revision' => ($this->getApp(key: self::KEY_REVISION) ?: null),
-			'appliedAt' => ($appliedAt > 0 ? gmdate('c', $appliedAt) : null),
-			'lastError' => (is_array($lastError) === true ? $lastError : null),
+			'revision' => $this->nullIfEmpty(value: $this->getApp(key: self::KEY_REVISION)),
+			'appliedAt' => $appliedAt,
+			'lastError' => $lastError,
 			'drift' => ($state !== '' && $state !== $this->stateFingerprint()),
 		];
 	}//end getStatus()
@@ -244,14 +252,31 @@ class ConfigSourceService {
 			context: [
 				'actor' => 'system',
 				'source' => 'deployment',
-				'revision' => ($revision !== '' ? $revision : null),
+				'revision' => $this->nullIfEmpty(value: $revision),
 				'hash' => $hash,
 			]
 		);
-		$this->logger->info('thematiq: applied the branding package from ' . $path . ' (' . ($revision ?: $hash) . ').');
+		$this->logger->info('thematiq: applied the branding package from ' . $path . ' (' . ($this->nullIfEmpty(value: $revision) ?? $hash) . ').');
 
-		return ['status' => 'applied', 'revision' => ($revision ?: null), 'hash' => $hash];
+		return ['status' => 'applied', 'revision' => $this->nullIfEmpty(value: $revision), 'hash' => $hash];
 	}//end apply()
+
+	/**
+	 * An empty string as null.
+	 *
+	 * @param string $value The value.
+	 *
+	 * @return string|null The value, or null when empty.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function nullIfEmpty(string $value): ?string {
+		if ($value === '') {
+			return null;
+		}
+
+		return $value;
+	}//end nullIfEmpty()
 
 	/**
 	 * Record a failed apply: the error listing for the settings page, and one log line per package hash.

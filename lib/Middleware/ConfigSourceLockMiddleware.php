@@ -89,8 +89,8 @@ class ConfigSourceLockMiddleware extends Middleware {
 			return;
 		}
 
-		$class = get_class($controller);
-		if (str_starts_with($class, 'OCA\\Thematiq\\Controller\\') === false) {
+		$class = $this->appControllerClass(controller: $controller);
+		if ($class === null) {
 			return;
 		}
 
@@ -100,12 +100,31 @@ class ConfigSourceLockMiddleware extends Middleware {
 		}
 
 		throw new ConfigSourceLockedException(
-			$this->l10n->t(
+			message: $this->l10n->t(
 				'The house style is managed from deployment configuration (%s). Change it there.',
 				[(string)$this->source->getSourcePath()]
 			)
 		);
 	}//end beforeController()
+
+	/**
+	 * The thematiq controller class of a controller (itself or a parent), or null for another app's.
+	 *
+	 * @param Controller $controller The controller.
+	 *
+	 * @return string|null The class name.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function appControllerClass(Controller $controller): ?string {
+		for ($class = get_class($controller); $class !== false; $class = get_parent_class($class)) {
+			if (str_starts_with($class, 'OCA\\Thematiq\\Controller\\') === true) {
+				return $class;
+			}
+		}
+
+		return null;
+	}//end appControllerClass()
 
 	/**
 	 * Turn the lock refusal into a 423 response.

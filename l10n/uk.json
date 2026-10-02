@@ -521,7 +521,15 @@
         "No file chosen": "No file chosen",
         "Choose logo": "Choose logo",
         "Logo file (SVG, PNG, JPG, GIF or WebP)": "Logo file (SVG, PNG, JPG, GIF or WebP)",
-        "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back."
+        "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.",
+        "The house style is managed from deployment configuration: {path}.": "The house style is managed from deployment configuration: {path}.",
+        "Last applied: revision {revision}, at {time}.": "Last applied: revision {revision}, at {time}.",
+        "unknown": "unknown",
+        "The package has not been applied yet.": "The package has not been applied yet.",
+        "The last package was not applied. Nothing changed. Fix these errors in the package:": "The last package was not applied. Nothing changed. Fix these errors in the package:",
+        "The running configuration differs from the package. The next apply replaces the changes made here.": "The running configuration differs from the package. The next apply replaces the changes made here.",
+        "The settings on this page are locked. Change the house style in the package.": "The settings on this page are locked. Change the house style in the package.",
+        "The house style is managed from deployment configuration (%s). Change it there.": "The house style is managed from deployment configuration (%s). Change it there."
     },
     "plurals": {}
 }

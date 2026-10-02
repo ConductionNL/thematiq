@@ -77,11 +77,11 @@ class BrandingPackageService {
 			return true;
 		}
 
-		if (is_file($path) === false) {
+		if (is_file($path) === false || is_readable($path) === false) {
 			return false;
 		}
 
-		$handle = @fopen($path, 'rb');
+		$handle = fopen($path, 'rb');
 		if ($handle === false) {
 			return false;
 		}
@@ -244,7 +244,11 @@ class BrandingPackageService {
 	 */
 	private function convertOne(string $id, string $content, ?array $existing, array &$errors): ?array {
 		if ($this->customSets->isCustomId(id: $id) === false) {
-			$errors[] = ['section' => 'tokens', 'id' => $id, 'message' => 'tokens/' . $id . '.json: the file name must be a custom token set id (custom-<name>).'];
+			$errors[] = [
+				'section' => 'tokens',
+				'id' => $id,
+				'message' => 'tokens/' . $id . '.json: the file name must be a custom token set id (custom-<name>).',
+			];
 
 			return null;
 		}
@@ -360,8 +364,12 @@ class BrandingPackageService {
 			return null;
 		}
 
-		$name = (string)(is_array($meta) === true ? ($meta['name'] ?? '') : '');
-		$role = (string)(is_array($meta) === true ? ($meta['role'] ?? '') : '');
+		if (is_array($meta) === false) {
+			$meta = [];
+		}
+
+		$name = (string)($meta['name'] ?? '');
+		$role = (string)($meta['role'] ?? '');
 		try {
 			$this->fontValidator->validateDisplayName(name: $name);
 			$this->fontValidator->validateRole(role: $role);

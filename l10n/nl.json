@@ -521,7 +521,15 @@
         "No file chosen": "Geen bestand gekozen",
         "Choose logo": "Logo kiezen",
         "Logo file (SVG, PNG, JPG, GIF or WebP)": "Logobestand (SVG, PNG, JPG, GIF of WebP)",
-        "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "De wissel past de token set toe zoals je dat met de hand zou doen, inclusief het Nextcloud-logo en de kleuren die erbij horen. Aan het eind komen de token set, het logo en de kleuren van vóór de wissel terug."
+        "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "De wissel past de token set toe zoals je dat met de hand zou doen, inclusief het Nextcloud-logo en de kleuren die erbij horen. Aan het eind komen de token set, het logo en de kleuren van vóór de wissel terug.",
+        "The house style is managed from deployment configuration: {path}.": "De huisstijl wordt beheerd vanuit de deploymentconfiguratie: {path}.",
+        "Last applied: revision {revision}, at {time}.": "Laatst toegepast: revisie {revision}, op {time}.",
+        "unknown": "onbekend",
+        "The package has not been applied yet.": "Het pakket is nog niet toegepast.",
+        "The last package was not applied. Nothing changed. Fix these errors in the package:": "Het laatste pakket is niet toegepast. Er is niets veranderd. Herstel deze fouten in het pakket:",
+        "The running configuration differs from the package. The next apply replaces the changes made here.": "De actieve configuratie wijkt af van het pakket. De volgende keer dat het pakket wordt toegepast, vervangt het de wijzigingen die hier zijn gemaakt.",
+        "The settings on this page are locked. Change the house style in the package.": "De instellingen op deze pagina zijn vergrendeld. Wijzig de huisstijl in het pakket.",
+        "The house style is managed from deployment configuration (%s). Change it there.": "De huisstijl wordt beheerd vanuit de deploymentconfiguratie (%s). Wijzig hem daar."
     },
     "plurals": {}
 }

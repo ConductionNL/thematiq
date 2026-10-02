@@ -107,7 +107,7 @@ class BrandingPackageReader {
 	 */
 	public function write(string $dir, array $bundle, array $fonts): array {
 		$dir = rtrim($dir, '/');
-		if (is_dir($dir . '/fonts') === false && @mkdir($dir . '/fonts', 0770, true) === false) {
+		if (is_dir($dir . '/fonts') === false && mkdir($dir . '/fonts', 0770, true) === false) {
 			throw new RuntimeException('Cannot create the package directory ' . $dir . '.');
 		}
 
@@ -165,7 +165,12 @@ class BrandingPackageReader {
 	private function readDirectory(string $dir): array {
 		$candidates = ['bundle.json', 'REVISION'];
 		foreach (['fonts' => '*.woff2', 'tokens' => '*.json'] as $sub => $pattern) {
-			foreach ((glob($dir . '/' . $sub . '/' . $pattern) ?: []) as $file) {
+			$found = glob($dir . '/' . $sub . '/' . $pattern);
+			if ($found === false) {
+				continue;
+			}
+
+			foreach ($found as $file) {
 				$candidates[] = $sub . '/' . basename($file);
 			}
 		}

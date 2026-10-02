@@ -36,7 +36,7 @@ Three rows ask for the same thing from three sides. openDesk and Tokens Studio r
 ## What changes
 
 - A branding package: a directory (or a ZIP of it) holding the existing `bundle.json`, the font files, and optionally DTCG token sources that thematiq converts on apply. `occ nldesign:config:export --package <dir>` writes one; `occ nldesign:config:import <dir-or-zip>` applies one, fonts included.
-- Declarative mode: `thematiq.config_source` in `config.php` names a package path, for example a volume that Argo CD or Helm fills from Git. Thematiq applies it after upgrades, from a background job, and on `occ nldesign:config:apply`, whenever its content hash changes.
+- Declarative mode: `thematiq.config_source` in `config.php` names a package path, for example a volume that Argo CD or Helm fills from Git. Thematiq applies it after upgrades, from a background job, and on `occ thematiq:config:apply`, whenever its content hash changes.
 - A failed apply changes nothing and says so on the settings page. A successful apply is audited with the package's Git revision when the checkout provides one.
 - While a config source is set, the settings page says the house style is managed from deployment configuration and shows whether the running configuration has drifted from it. An optional lock makes the page read-only.
 

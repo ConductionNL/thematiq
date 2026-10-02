@@ -38,7 +38,7 @@ Rejected: a Git URL and a ref that thematiq clones itself. It needs Git binaries
 
 ### 4. Apply on change, validate first
 
-`ConfigSourceService::applyIfChanged()` hashes the package (sorted file list and contents) and compares it with `config_source_applied_hash`. When they differ it runs the package import. On success it stores the hash and writes a `config_imported` audit entry with actor `system`, context `source: deployment` and the `REVISION` when present. On failure it writes nothing, keeps the old hash, stores the error listing in `config_source_last_error` and logs an error. It runs from a post-migration repair step (so every upgrade applies it), from a background job every 5 minutes, and from `occ nldesign:config:apply` (exit non-zero on failure, for pipelines).
+`ConfigSourceService::applyIfChanged()` hashes the package (sorted file list and contents) and compares it with `config_source_applied_hash`. When they differ it runs the package import. On success it stores the hash and writes a `config_imported` audit entry with actor `system`, context `source: deployment` and the `REVISION` when present. On failure it writes nothing, keeps the old hash, stores the error listing in `config_source_last_error` and logs an error. It runs from a post-migration repair step (so every upgrade applies it), from a background job every 5 minutes, and from `occ thematiq:config:apply` (exit non-zero on failure, for pipelines).
 
 ### 5. Managed notice, drift and an optional lock
 
