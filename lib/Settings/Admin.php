@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
  * @spec openspec/specs/admin-settings/spec.md#requirement-session-preview-controls
  * @spec openspec/specs/icon-packs/spec.md
  */
@@ -44,9 +44,9 @@ use OCP\Settings\IDelegatedSettings;
  * Provides the configuration interface for selecting design token sets.
  * Implements IDelegatedSettings so AuthorizedAdminSetting can reference this class.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
  */
 class Admin implements IDelegatedSettings {
 
@@ -178,7 +178,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return TemplateResponse The settings form template.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
 	 * @spec openspec/specs/dark-mode/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
@@ -436,7 +436,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return string The section identifier (theming).
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
 	 */
 	public function getSection(): string {
 		return 'theming';
@@ -447,7 +447,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return int The priority value (lower = higher priority).
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
 	 */
 	public function getPriority(): int {
 		return 50;
@@ -460,7 +460,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return string|null The settings display name, or null.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
 	 */
 	public function getName(): ?string {
 		return null;
@@ -474,7 +474,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return array<string, string[]> The authorized app config map.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md

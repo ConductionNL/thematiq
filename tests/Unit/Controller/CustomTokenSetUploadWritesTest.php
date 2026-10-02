@@ -259,7 +259,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @dataProvider smuggledValueProvider
 	 *
-	 * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-1
+	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
 	 */
 	public function testAForbiddenValueUnderANameTheValidatorSkipsIsRefused(string $name, string $value): void {
 		$css = ":root {\n  --nldesign-color-primary: #154273;\n  " . $name . ': ' . $value . ";\n}\n";
@@ -316,7 +316,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * The same constructs under an ACCEPTED name are refused too — the gate
 	 * did not move from one set to the other, it widened to cover both.
 	 *
-	 * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-1
+	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
 	 */
 	public function testAForbiddenValueUnderAnAcceptedNameIsStillRefused(): void {
 		$response = $this->upload(":root {\n  --nldesign-color-primary: expression(alert(1));\n}\n");

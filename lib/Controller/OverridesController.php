@@ -13,13 +13,13 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  */
 
@@ -55,13 +55,13 @@ use OCP\IRequest;
  * keeps its edits in a file of its own — see CustomOverridesService. Without
  * it, the instance's active set is meant.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - The reset to stock touches every part a theme
  * is made of: the overrides files, the active set and core theming. Each dependency is one of them;
@@ -176,7 +176,7 @@ class OverridesController extends Controller {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getOverrides(): JSONResponse {
@@ -207,7 +207,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return JSONResponse Status and count of written tokens.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
@@ -332,7 +332,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return DataDownloadResponse The CSS file as a download.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function exportOverrides(): DataDownloadResponse {
@@ -354,7 +354,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return JSONResponse Import result with 'imported' and 'skipped' counts.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function importOverrides(): JSONResponse {
@@ -385,7 +385,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return JSONResponse|null An error response, or null if the file is valid.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
 	 */
 	private function validateUploadedFile(): ?JSONResponse {
 		$file = $this->request->getUploadedFile(key: 'file');
@@ -424,7 +424,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return string|null The file content, or null on failure.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
 	 */
 	private function readUploadedContent(): ?string {
 		$file = $this->request->getUploadedFile(key: 'file');
@@ -447,7 +447,7 @@ class OverridesController extends Controller {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	private function writeImportedTokens(array $parsed, string $rawContent): JSONResponse {

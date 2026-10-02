@@ -13,18 +13,18 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-15
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-16
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-17
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-19
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-20
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-21
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-22
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-23
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-25
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-15
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-16
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-17
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-19
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-20
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-21
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-22
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-23
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-25
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  */
 
@@ -62,18 +62,18 @@ use OCP\IRequest;
  * Handles API requests for managing token sets, theming, and display settings.
  * Override-related endpoints are handled by OverridesController.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-15
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-16
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-17
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-19
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-20
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-21
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-22
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-23
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-25
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-15
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-16
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-17
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-19
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-20
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-21
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-22
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-23
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-25
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - This controller aggregates every settings
  * endpoint of the app (token set, toggles, theming sync, per-app theming, audit trail, email
@@ -230,7 +230,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The response with status and selected token set.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
 	 */
@@ -250,7 +250,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The response with the current token set.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-15
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-15
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getTokenSet(): JSONResponse {
@@ -268,7 +268,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The list of available token sets.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-16
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-16
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getAvailableTokenSets(): JSONResponse {
@@ -288,7 +288,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-17
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-17
 	 */
 	private function saveBooleanSetting(string $key, bool $value): void {
 		$stored = '0';
@@ -306,7 +306,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The response with the status.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
@@ -423,7 +423,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The response with the status.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-19
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-19
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
@@ -448,7 +448,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The response with updated fields.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-22
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-22
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
@@ -564,7 +564,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The current theming values.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-23
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-23
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getThemingValues(): JSONResponse {
@@ -578,7 +578,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return array<string, mixed> The theming snapshot.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
 	 */
 	private function buildThemingSnapshot(): array {
 		$imgManager = $this->themingService->getImageManager();
@@ -636,7 +636,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The resolved color map.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-25
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-25
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getTokenSetPreview(string $tokenSetId): JSONResponse {
@@ -654,7 +654,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The list of { id, name, themed } entries.
 	 *
-	 * @spec openspec/changes/per-app-theming-toggle/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-3.1
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getAppTheming(): JSONResponse {
@@ -671,7 +671,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The persisted state after validation.
 	 *
-	 * @spec openspec/changes/per-app-theming-toggle/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-3.1
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
