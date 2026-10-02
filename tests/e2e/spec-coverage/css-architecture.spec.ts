@@ -172,8 +172,6 @@ test.describe('css-architecture', () => {
 		// Admin settings section must render — proves CSS stack bootstrapped OK
 		await expect(page.locator('#nldesign-settings')).toBeAttached()
 		// The NL Design h2 heading confirms the PHP template rendered (CSS was injected)
-		await expect(
-			page.locator('h2:has-text("Thematiq")'),
-		).toBeVisible()
+		await expect(page.locator('h2:has-text("Thematiq")')).toBeVisible()
 	})
 })

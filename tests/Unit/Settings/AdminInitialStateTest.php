@@ -125,10 +125,12 @@ class AdminInitialStateTest extends TestCase {
 
 		$designSystemService = $this->createMock(DesignSystemService::class);
 		$designSystemService->method('resolveActiveIconPacks')->willReturn(['remixicon']);
-		$designSystemService->method('getDocumentationUrls')->willReturn(
+		$designSystemService->method('getDesignSystems')->willReturn(
 			[
-				'nldesign' => 'https://nldesignsystem.nl',
-				'lasuite' => 'https://github.com/suitenumerique/cunningham',
+				'nldesign' => ['id' => 'nldesign', 'documentation_url' => 'https://nldesignsystem.nl'],
+				'lasuite' => ['id' => 'lasuite', 'documentation_url' => 'https://github.com/suitenumerique/cunningham'],
+				'none' => ['id' => 'none'],
+				'evil' => ['id' => 'evil', 'documentation_url' => 'javascript:alert(1)'],
 			]
 		);
 
@@ -187,7 +189,6 @@ class AdminInitialStateTest extends TestCase {
 			[
 				'tokenSets',
 				'currentTokenSet',
-				'designSystemDocs',
 				'confirmSaveStock',
 				'confirmSaveTheme',
 				'activePreview',
@@ -198,6 +199,7 @@ class AdminInitialStateTest extends TestCase {
 				'playgroundTokenSources',
 				'playgroundVersion',
 				'playgroundSet',
+				'designSystemDocs',
 			],
 			array_keys($captured),
 			'js/admin.js reads the first four and js/playground.js the rest; publishing fewer makes either fall back silently.'
@@ -233,8 +235,11 @@ class AdminInitialStateTest extends TestCase {
 			[
 				'nldesign' => 'https://nldesignsystem.nl',
 				'lasuite' => 'https://github.com/suitenumerique/cunningham',
+				'none' => Admin::DEFAULT_DOCUMENTATION_URL,
+				'evil' => Admin::DEFAULT_DOCUMENTATION_URL,
 			],
-			$captured['designSystemDocs']
+			$captured['designSystemDocs'],
+			'A design system without docs, or with a non-https link, gets the app docs.'
 		);
 
 		$template = (string)file_get_contents(__DIR__ . '/../../../templates/settings/admin.php');

@@ -203,8 +203,8 @@ The settings panel MUST include external links to relevant documentation with pr
 ### Requirement: Documentation Link Follows the Design System
 The header's Documentation link MUST point at the documentation of the design system the admin
 works with, never at another design system's docs. Each design system MAY name its documentation in
-`documentation_url` in `design-systems.json`; `DesignSystemService::getDocumentationUrls()` MUST
-return one https URL per design system and MUST fall back to the app's own documentation
+`documentation_url` in `design-systems.json`; `Admin::getForm()` MUST
+derive one https URL per design system and MUST fall back to the app's own documentation
 (`https://thematiq.conduction.nl`) for a design system that names none or names a non-https URL.
 `Admin::getForm()` MUST render the link for the current token set's design system as the
 `documentationUrl` template parameter and MUST publish the full map as the `designSystemDocs`
@@ -225,7 +225,7 @@ a set of another design system. The section heading MUST read "Thematiq", not a 
 - THEN the Documentation link's href MUST change to the lasuite documentation without a reload
 
 #### Scenario: A design system without docs of its own
-@e2e exclude manifest fallback, covered by DesignSystemDocumentationTest
+@e2e exclude manifest fallback, covered by AdminInitialStateTest
 - GIVEN a design system with no `documentation_url`, or one that is not https
 - WHEN the documentation links are resolved
 - THEN its link MUST be `https://thematiq.conduction.nl`
@@ -559,7 +559,7 @@ path and covers the complete configuration, unlike the overrides-only download.
 - Live preview box with `.nldesign-preview-box`, preview header bar, primary and secondary buttons (`templates/settings/admin.php` lines 63-72)
 - Hide slogan checkbox with id `nldesign-hide-slogan`, checked state from `$_['hideSlogan']`, label text "Hide Nextcloud slogan/payoff on login page" (`templates/settings/admin.php` lines 39-49)
 - Show menu labels checkbox with id `nldesign-show-menu-labels`, checked state from `$_['showMenuLabels']`, label text "Show text labels in app menu (hide icons)" (`templates/settings/admin.php` lines 51-61)
-- Documentation link per design system (`documentation_url` in `design-systems.json`, `DesignSystemService::getDocumentationUrls()`), rendered from `documentationUrl` and kept in step with the dropdown by `js/admin.js` `updateDocumentationLink()`, with `target="_blank"` and `rel="noopener noreferrer"`
+- Documentation link per design system (`documentation_url` in `design-systems.json`, `Admin::getForm()`), rendered from `documentationUrl` and kept in step with the dropdown by `js/admin.js` `updateDocumentationLink()`, with `target="_blank"` and `rel="noopener noreferrer"`
 - External link to `https://nldesignsystem.nl/` with arrow indicator (`templates/settings/admin.php` lines 80-82)
 - Vanilla PHP template loads `script('nldesign', 'admin')` and `style('nldesign', 'admin')` with no Vue/webpack (`templates/settings/admin.php` lines 7-8)
 - XSS prevention via `p()` for every value rendered into the template; structured server data is not hand-encoded into markup at all (`templates/settings/admin.php`)

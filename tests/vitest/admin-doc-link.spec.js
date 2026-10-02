@@ -82,7 +82,8 @@ function href() {
 describe('admin.js documentation link', () => {
 	beforeEach(() => {
 		global.t = (app, text) => text
-		global.n = (app, singular, plural, count) => (count === 1 ? singular : plural)
+		global.n = (app, singular, plural, count) =>
+			count === 1 ? singular : plural
 		global.OC = {
 			generateUrl: (url) => url,
 			linkTo: (app, path) => path,
@@ -92,7 +93,11 @@ describe('admin.js documentation link', () => {
 			dialogs: { confirm: vi.fn() },
 		}
 		global.fetch = vi.fn(() =>
-			Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({}) }),
+			Promise.resolve({
+				ok: true,
+				status: 200,
+				json: () => Promise.resolve({}),
+			}),
 		)
 		if (typeof global.requestAnimationFrame !== 'function') {
 			global.requestAnimationFrame = (cb) => setTimeout(cb, 0)

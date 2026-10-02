@@ -300,9 +300,7 @@ test.describe('admin-settings', () => {
 	'Admin with valid session can access settings page', async ({ page }) => {
 		await page.goto(THEMING_URL)
 		await expect(page).not.toHaveURL(/login/)
-		await expect(
-			page.locator('h2:has-text("Thematiq")'),
-		).toBeVisible()
+		await expect(page.locator('h2:has-text("Thematiq")')).toBeVisible()
 	})
 
 	// -----------------------------------------------------------------------
