@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\App\IAppManager;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\IConfig;
 use RuntimeException;
 
@@ -57,11 +57,11 @@ class CustomTokenSetService {
 	public const ID_PREFIX = 'custom-';
 
 	/**
-	 * The app manager for resolving the app directory.
+	 * Where an uploaded set's stylesheet and logo are stored: app data, never the app directory.
 	 *
-	 * @var IAppManager
+	 * @var RuntimeFileStore
 	 */
-	private IAppManager $appManager;
+	private RuntimeFileStore $store;
 
 	/**
 	 * The config service for the appconfig manifest and active token set.
@@ -97,20 +97,20 @@ class CustomTokenSetService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppManager $appManager The app manager.
+	 * @param RuntimeFileStore $store Where an uploaded set's files are stored.
 	 * @param IConfig $config The config service.
 	 * @param CustomTokenSetValidator $validator The CSS validator.
 	 * @param ContrastService $contrast The contrast service.
 	 * @param DarkPaletteService $darkPalette The dark-variant generation service.
 	 */
 	public function __construct(
-		IAppManager $appManager,
+		RuntimeFileStore $store,
 		IConfig $config,
 		CustomTokenSetValidator $validator,
 		ContrastService $contrast,
 		DarkPaletteService $darkPalette,
 	) {
-		$this->appManager = $appManager;
+		$this->store = $store;
 		$this->config = $config;
 		$this->validator = $validator;
 		$this->contrast = $contrast;
@@ -208,14 +208,14 @@ class CustomTokenSetService {
 		}
 
 		$id = self::ID_PREFIX . $slug;
-		$path = $this->getCssPath(id: $id);
+		$name = $this->getCssPath(id: $id);
 
-		if (file_exists($path) === true || isset($this->getManifest()[$id]) === true) {
+		if ($this->store->exists(name: $name) === true || isset($this->getManifest()[$id]) === true) {
 			throw new RuntimeException(message: 'A custom token set named "' . $displayName . '" already exists. Delete or rename it first.', code: 409);
 		}
 
 		$this->writeFile(
-			path: $path,
+			name: $name,
 			contents: ($css ?? $this->validator->serialize(declarations: $declarations))
 		);
 
@@ -314,7 +314,7 @@ class CustomTokenSetService {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function replace(string $id, array $entry, string $css): void {
-		$this->writeFile(path: $this->getCssPath(id: $id), contents: $css);
+		$this->writeFile(name: $this->getCssPath(id: $id), contents: $css);
 
 		$manifest = $this->getManifest();
 		$manifest[$id] = $entry;
@@ -340,11 +340,11 @@ class CustomTokenSetService {
 			return false;
 		}
 
-		$path = $this->getCssPath(id: $id);
+		$name = $this->getCssPath(id: $id);
 		$removed = false;
 
-		if (file_exists($path) === true) {
-			unlink($path);
+		if ($this->store->exists(name: $name) === true) {
+			$this->store->delete(name: $name);
 			$removed = true;
 		}
 
@@ -379,7 +379,9 @@ class CustomTokenSetService {
 	public function list(): array {
 		$result = [];
 		foreach ($this->getManifest() as $id => $meta) {
-			if (file_exists($this->getCssPath(id: (string)$id)) === false) {
+			if ($this->isCustomId(id: (string)$id) === false
+				|| $this->store->exists(name: $this->getCssPath(id: (string)$id)) === false
+			) {
 				continue;
 			}
 
@@ -411,17 +413,7 @@ class CustomTokenSetService {
 			return null;
 		}
 
-		$path = $this->getCssPath(id: $id);
-		if (file_exists($path) === false) {
-			return null;
-		}
-
-		$content = file_get_contents($path);
-		if ($content === false) {
-			return null;
-		}
-
-		return $content;
+		return $this->store->read(name: $this->getCssPath(id: $id));
 	}//end getRawContent()
 
 	/**
@@ -509,13 +501,9 @@ class CustomTokenSetService {
 		}
 
 		$relative = 'img/logos/' . $id . '.' . $extension;
-		$directory = $this->appManager->getAppPath('thematiq') . '/img/logos';
-
-		if (is_dir($directory) === false && mkdir($directory, 0755, true) === false && is_dir($directory) === false) {
-			return null;
-		}
-
-		if (file_put_contents($directory . '/' . $id . '.' . $extension, (string)$asset['contents']) === false) {
+		try {
+			$this->store->write(name: $relative, content: (string)$asset['contents']);
+		} catch (RuntimeException $e) {
 			return null;
 		}
 
@@ -530,27 +518,22 @@ class CustomTokenSetService {
 	 * @return void
 	 */
 	private function deleteLogoAsset(string $id): void {
-		$directory = $this->appManager->getAppPath('thematiq') . '/img/logos';
-
 		foreach (['svg', 'png', 'jpg', 'gif', 'webp'] as $extension) {
-			$path = $directory . '/' . $id . '.' . $extension;
-			if (is_file($path) === true) {
-				unlink($path);
-			}
+			$this->store->delete(name: 'img/logos/' . $id . '.' . $extension);
 		}
 	}//end deleteLogoAsset()
 
 	/**
-	 * Resolve the absolute CSS path for a custom set id.
+	 * The runtime file name of a custom set's stylesheet.
 	 *
 	 * @param string $id The custom set id (assumed already namespace-checked).
 	 *
-	 * @return string The absolute path under css/tokens/.
+	 * @return string The name in the store, under `css/tokens/`.
 	 *
 	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
 	 */
 	private function getCssPath(string $id): string {
-		return $this->appManager->getAppPath('thematiq') . '/css/tokens/' . $id . '.css';
+		return 'css/tokens/' . $id . '.css';
 	}//end getCssPath()
 
 	/**
@@ -570,33 +553,22 @@ class CustomTokenSetService {
 	}//end isCustomId()
 
 	/**
-	 * Write the CSS file atomically via a temp file + rename.
+	 * Write the CSS file to the store.
 	 *
-	 * @param string $path The destination path.
+	 * @param string $name     The runtime file name.
 	 * @param string $contents The canonical CSS content.
 	 *
 	 * @return void
 	 *
-	 * @throws RuntimeException When the file cannot be written or renamed.
+	 * @throws RuntimeException When the store cannot write the file (code 500).
 	 *
 	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
 	 */
-	private function writeFile(string $path, string $contents): void {
-		$tmpPath = $path . '.tmp';
-
-		if (file_put_contents($tmpPath, $contents) === false) {
-			throw new RuntimeException(
-				message: 'Could not write ' . $tmpPath . '. Ensure the web server has write access to css/tokens/.',
-				code: 500
-			);
-		}
-
-		if (rename($tmpPath, $path) === false) {
-			if (file_exists($tmpPath) === true) {
-				unlink($tmpPath);
-			}
-
-			throw new RuntimeException(message: 'Temp file could not be renamed to ' . $path . '.', code: 500);
+	private function writeFile(string $name, string $contents): void {
+		try {
+			$this->store->write(name: $name, content: $contents);
+		} catch (RuntimeException $e) {
+			throw new RuntimeException(message: 'The token set could not be stored: ' . $e->getMessage(), code: 500, previous: $e);
 		}
 	}//end writeFile()
 }//end class

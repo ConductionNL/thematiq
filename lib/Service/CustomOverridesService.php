@@ -28,7 +28,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\App\IAppManager;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\IConfig;
 use RuntimeException;
 
@@ -106,11 +106,11 @@ class CustomOverridesService {
 	public const FILE = 'custom-overrides';
 
 	/**
-	 * The app manager for resolving the CSS file path.
+	 * Where the overrides files are stored: app data, never the app directory.
 	 *
-	 * @var IAppManager
+	 * @var RuntimeFileStore
 	 */
-	private IAppManager $appManager;
+	private RuntimeFileStore $store;
 
 	/**
 	 * The CSS parser service (shared :root-block parsing, avoids duplication).
@@ -162,7 +162,7 @@ class CustomOverridesService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppManager $appManager The app manager.
+	 * @param RuntimeFileStore $store Where the overrides files are stored.
 	 * @param CssParserService $cssParser CSS parser for :root block extraction.
 	 * @param DarkPaletteService $darkPalette Derives each colour override's dark value.
 	 * @param IConfig|null $config The app config. With the next one, what picks a set's own file;
@@ -171,14 +171,14 @@ class CustomOverridesService {
 	 * @param TokenValueValidator|null $values The value grammar per token type.
 	 */
 	public function __construct(
-		IAppManager $appManager,
+		RuntimeFileStore $store,
 		CssParserService $cssParser,
 		DarkPaletteService $darkPalette,
 		?IConfig $config = null,
 		?DesignSystemService $designSystems = null,
 		?TokenValueValidator $values = null,
 	) {
-		$this->appManager = $appManager;
+		$this->store = $store;
 		$this->cssParser = $cssParser;
 		$this->darkPalette = $darkPalette;
 		$this->config = $config;
@@ -207,11 +207,11 @@ class CustomOverridesService {
 	}//end fileFor()
 
 	/**
-	 * Get the absolute path to the overrides file of a token set.
+	 * The runtime file name of a token set's overrides file.
 	 *
 	 * @param string|null $tokenSet The token set id, or null for the instance's active set.
 	 *
-	 * @return string The CSS file path.
+	 * @return string The name in the store, such as `css/custom-overrides.css`.
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - fileFor() is static so CssInjectionService can ask without an instance
 	 */
@@ -219,7 +219,7 @@ class CustomOverridesService {
 		// Built without the set lookup (a caller that constructs the service
 		// by hand): the shared file, which is every set's on a design system.
 		if ($this->config === null || $this->designSystems === null) {
-			return $this->appManager->getAppPath('thematiq') . '/css/' . self::FILE . '.css';
+			return 'css/' . self::FILE . '.css';
 		}
 
 		if ($tokenSet === null) {
@@ -233,7 +233,7 @@ class CustomOverridesService {
 		$meta = $this->designSystems->getTokenSetMeta(tokenSetId: $tokenSet);
 		$file = self::fileFor(tokenSet: $tokenSet, designSystemId: (string)($meta['design_system'] ?? 'nldesign'));
 
-		return $this->appManager->getAppPath('thematiq') . '/css/' . $file . '.css';
+		return 'css/' . $file . '.css';
 	}//end getFilePath()
 
 	/**
@@ -249,9 +249,9 @@ class CustomOverridesService {
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
 	 */
 	public function ensureExists(?string $tokenSet = null): void {
-		$path = $this->getFilePath(tokenSet: $tokenSet);
-		if (file_exists($path) === false) {
-			$this->writeFile(tokens: [], path: $path);
+		$name = $this->getFilePath(tokenSet: $tokenSet);
+		if ($this->store->exists(name: $name) === false) {
+			$this->writeFile(tokens: [], name: $name);
 		}
 
 	}//end ensureExists()
@@ -269,13 +269,8 @@ class CustomOverridesService {
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
 	 */
 	public function read(?string $tokenSet = null): array {
-		$path = $this->getFilePath(tokenSet: $tokenSet);
-		if (file_exists($path) === false) {
-			return [];
-		}
-
-		$content = file_get_contents($path);
-		if ($content === false) {
+		$content = $this->store->read(name: $this->getFilePath(tokenSet: $tokenSet));
+		if ($content === null) {
 			return [];
 		}
 
@@ -344,10 +339,12 @@ class CustomOverridesService {
 	 */
 	public function rewriteAll(): array {
 		$changed = [];
-		// The filter drops the false that glob() returns on an unreadable directory.
-		$files = array_filter((array)glob($this->appManager->getAppPath('thematiq') . '/css/' . self::FILE . '*.css'));
-		foreach ($files as $path) {
-			$css = (string)file_get_contents($path);
+		$names = array_filter(
+			$this->store->listDirectory(directory: 'css'),
+			static fn (string $name): bool => preg_match('#^css/' . self::FILE . '(-[a-z0-9-]+)?\.css$#', $name) === 1
+		);
+		foreach ($names as $name) {
+			$css = (string)$this->store->read(name: $name);
 			// The editable filter also drops the motion twins: the registry lists only the editor's names.
 			$tokens = $this->filterEditable(tokens: $this->parseDeclarations(css: $css));
 			$own = $this->ownDarkValues(css: $css);
@@ -355,8 +352,8 @@ class CustomOverridesService {
 				continue;
 			}
 
-			$this->writeFile(tokens: $tokens, path: $path, darkTokens: $own);
-			$changed[] = basename($path);
+			$this->writeFile(tokens: $tokens, name: $name, darkTokens: $own);
+			$changed[] = basename($name);
 		}
 
 		return $changed;
@@ -379,7 +376,7 @@ class CustomOverridesService {
 	 * Write a new set of token overrides to the overrides file of a token set.
 	 *
 	 * Only tokens present in TokenRegistry are accepted — others are silently ignored.
-	 * Writes atomically via a temp file + rename to avoid partial writes.
+	 * The store replaces the whole file in one write, so a reader never sees half of it.
 	 *
 	 * @param array<string, string> $tokens   Map of token name => value to persist.
 	 * @param string|null           $tokenSet The token set id, or null for the instance's active set.
@@ -394,7 +391,7 @@ class CustomOverridesService {
 	public function write(array $tokens, ?string $tokenSet = null, array $darkTokens = []): void {
 		$validated = $this->filterEditable(tokens: $tokens);
 
-		$this->writeFile(tokens: $validated, path: $this->getFilePath(tokenSet: $tokenSet), darkTokens: $darkTokens);
+		$this->writeFile(tokens: $validated, name: $this->getFilePath(tokenSet: $tokenSet), darkTokens: $darkTokens);
 	}//end write()
 
 	/**
@@ -445,38 +442,20 @@ class CustomOverridesService {
 	}//end filterEditable()
 
 	/**
-	 * Write the CSS file atomically using a temp file + rename.
+	 * Write the CSS file to the store.
 	 *
-	 * @param array<string, string> $tokens Validated token map to write.
-	 * @param string                $path   The file to write.
+	 * @param array<string, string> $tokens     Validated token map to write.
+	 * @param string                $name       The runtime file name to write.
 	 * @param array<string, string> $darkTokens The administrator's own dark values, by token.
 	 *
 	 * @return void
 	 *
-	 * @throws RuntimeException When the temp file cannot be written or renamed.
+	 * @throws RuntimeException When the store cannot write the file.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
 	 */
-	private function writeFile(array $tokens, string $path, array $darkTokens = []): void {
-		$tmpPath = $path . '.tmp';
-		$css = $this->buildCss(tokens: $tokens, darkTokens: $darkTokens);
-
-		$result = file_put_contents(filename: $tmpPath, data: $css);
-		if ($result === false) {
-			throw new RuntimeException(
-				message: 'Could not write ' . $tmpPath . '. Ensure the web server has write access to the css/ directory.'
-			);
-		}
-
-		if (rename(from: $tmpPath, to: $path) === false) {
-			if (file_exists(filename: $tmpPath) === true) {
-				unlink(filename: $tmpPath);
-			}
-
-			throw new RuntimeException(
-				message: 'Temp file could not be renamed to ' . $path . '.'
-			);
-		}
+	private function writeFile(array $tokens, string $name, array $darkTokens = []): void {
+		$this->store->write(name: $name, content: $this->buildCss(tokens: $tokens, darkTokens: $darkTokens));
 
 	}//end writeFile()
 
@@ -637,14 +616,9 @@ class CustomOverridesService {
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
 	 */
 	public function getRawContent(?string $tokenSet = null): string {
-		$path = $this->getFilePath(tokenSet: $tokenSet);
-		if (file_exists($path) === false) {
+		$content = $this->store->read(name: $this->getFilePath(tokenSet: $tokenSet));
+		if ($content === null) {
 			return self::CSS_HEADER . PHP_EOL . ':root {}' . PHP_EOL;
-		}
-
-		$content = file_get_contents(filename: $path);
-		if ($content === false) {
-			return '';
 		}
 
 		return $content;
