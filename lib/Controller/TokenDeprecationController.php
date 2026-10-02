@@ -150,7 +150,10 @@ class TokenDeprecationController extends Controller {
 
 		$recorded = $this->deprecations->adoptImportNotices(notices: array_values(array_filter($notices, 'is_array')));
 		foreach ($recorded as $token) {
-			$this->audit->log(action: 'token_deprecation_changed', context: ['token' => $token, 'old' => null, 'new' => ($this->deprecations->list()[$token] ?? null)]);
+			$this->audit->log(
+				action: 'token_deprecation_changed',
+				context: ['token' => $token, 'old' => null, 'new' => ($this->deprecations->list()[$token] ?? null)]
+			);
 		}
 
 		$this->rewrite();
@@ -211,6 +214,8 @@ class TokenDeprecationController extends Controller {
 			$status = 404;
 		}
 
-		return new JSONResponse(['error' => ($texts[$exception->getMessage()] ?? $this->l->t('The deprecation was not saved.')), 'field' => $exception->getMessage()], $status);
+		$error = ($texts[$exception->getMessage()] ?? $this->l->t('The deprecation was not saved.'));
+
+		return new JSONResponse(['error' => $error, 'field' => $exception->getMessage()], $status);
 	}//end refused()
 }//end class

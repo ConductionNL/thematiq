@@ -257,7 +257,8 @@ class TokenDeprecationService {
 				throw new InvalidArgumentException('record', 400);
 			}
 
-			$clean[(string)$token] = array_intersect_key($record, array_flip(['severity', 'replacement', 'removalDate', 'message', 'deprecatedAt', 'source', 'state']));
+			$fields = ['severity', 'replacement', 'removalDate', 'message', 'deprecatedAt', 'source', 'state'];
+			$clean[(string)$token] = array_intersect_key($record, array_flip($fields));
 		}
 
 		return $clean;

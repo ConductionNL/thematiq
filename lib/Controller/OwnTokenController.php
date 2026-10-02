@@ -179,7 +179,9 @@ class OwnTokenController extends Controller {
 			$this->overrides->ensureExists();
 			$this->overrides->rewriteAll();
 		} catch (RuntimeException) {
-			return new JSONResponse(['error' => $this->l->t('The token was saved, but the stylesheet could not be written. Save the token editor once to write it.')], 500);
+			$error = $this->l->t('The token was saved, but the stylesheet could not be written. Save the token editor once to write it.');
+
+			return new JSONResponse(['error' => $error], 500);
 		}
 
 		$this->audit->log(action: 'own_token_changed', context: ['token' => $name, 'old' => $old, 'new' => $new]);
@@ -210,6 +212,8 @@ class OwnTokenController extends Controller {
 			$status = 404;
 		}
 
-		return new JSONResponse(['error' => ($texts[$exception->getMessage()] ?? $this->l->t('The token was not saved.')), 'field' => $exception->getMessage()], $status);
+		$error = ($texts[$exception->getMessage()] ?? $this->l->t('The token was not saved.'));
+
+		return new JSONResponse(['error' => $error, 'field' => $exception->getMessage()], $status);
 	}//end refused()
 }//end class
