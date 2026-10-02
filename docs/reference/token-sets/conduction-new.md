@@ -2,7 +2,7 @@
 
 # Conduction 2026
 
-Token set `conduction-new`: 385 declared by this set, 155 from the defaults layer.
+Token set `conduction-new`: 385 declared by this set, 156 from the defaults layer.
 
 Contrast: primary text on primary not evaluated, primary on background not evaluated (unevaluated).
 
@@ -248,6 +248,7 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--nldesign-animation-easing` | `ease` | | defaults | |
 | `--nldesign-animation-quick` | `100ms` | | defaults | `--header-menu-item-height` |
 | `--nldesign-animation-slow` | `300ms` | | defaults | Animation slow |
 | `--nldesign-header-icon-filter` | `invert(1) brightness(0) contrast(100)` | | defaults | |
