@@ -193,4 +193,127 @@ class TokenSetServiceMergeTest extends TestCase {
 
 		$this->assertSame($sorted, $names);
 	}//end testAlphabeticalSortSpansBothGroups()
+
+	/**
+	 * Build a service over the temp app dir with a logger the test can inspect.
+	 *
+	 * @param LoggerInterface $logger The logger to inject.
+	 *
+	 * @return TokenSetService
+	 */
+	private function serviceWithLogger(LoggerInterface $logger): TokenSetService {
+		$appManager = $this->createMock(IAppManager::class);
+		$appManager->method('getAppPath')->willReturn($this->appDir);
+
+		$config = $this->createMock(IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(
+			fn (string $app, string $key, $default = '') => ($key === 'custom_token_sets' ? $this->customManifest : $default)
+		);
+
+		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+
+		return new TokenSetService(
+			$appManager,
+			$config,
+			$logger,
+			new ShippedTokenSetAuditService(new ContrastService(), new CssParserService()),
+			$cacheFactory,
+			new TokenSetVocabularyAuditService(new CssParserService())
+		);
+	}//end serviceWithLogger()
+
+	/**
+	 * The same id in both manifests: the shipped entry wins, and the collision
+	 * is logged at warning level.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-filesystem-based-discovery
+	 */
+	public function testShippedManifestWinsACollisionAndLogsIt(): void {
+		$this->writeTokenFile('custom-dup');
+		file_put_contents(
+			$this->appDir . '/token-sets.json',
+			json_encode([['id' => 'custom-dup', 'name' => 'Shipped Name', 'description' => 'Shipped']])
+		);
+		$this->customManifest = json_encode(['custom-dup' => ['name' => 'Custom Name', 'description' => 'Custom']]);
+
+		$logger = $this->createMock(LoggerInterface::class);
+		$logger->expects($this->once())->method('warning')->with($this->stringContains('custom-dup'));
+
+		$byId = array_column($this->serviceWithLogger($logger)->getAvailableTokenSets(), null, 'id');
+
+		$this->assertSame('Shipped Name', $byId['custom-dup']['name']);
+		$this->assertSame('Shipped', $byId['custom-dup']['description']);
+	}//end testShippedManifestWinsACollisionAndLogsIt()
+
+	/**
+	 * A token-sets.json that is not valid JSON degrades to no metadata: every
+	 * file is still discovered, with an id-derived name and the nldesign default.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-token-set-manifest-structure
+	 */
+	public function testMalformedShippedManifestStillDiscoversFiles(): void {
+		$this->writeTokenFile('gemeente-test');
+		file_put_contents($this->appDir . '/token-sets.json', '[{"id": "gemeente-test", "name": ');
+
+		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
+
+		$this->assertSame('Gemeente Test', $byId['gemeente-test']['name']);
+		$this->assertSame('Design tokens for Gemeente Test', $byId['gemeente-test']['description']);
+		$this->assertSame('nldesign', $byId['gemeente-test']['design_system']);
+	}//end testMalformedShippedManifestStillDiscoversFiles()
+
+	/**
+	 * A token-sets.json the process cannot read degrades the same way.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-token-set-manifest-structure
+	 */
+	public function testUnreadableShippedManifestStillDiscoversFiles(): void {
+		$this->writeTokenFile('gemeente-test');
+		$manifest = $this->appDir . '/token-sets.json';
+		file_put_contents($manifest, json_encode([['id' => 'gemeente-test', 'name' => 'Named']]));
+		chmod($manifest, 0000);
+		if (is_readable($manifest) === true) {
+			chmod($manifest, 0644);
+			$this->markTestSkipped('Running as a user that can read a 0000 file (root); unreadability cannot be produced.');
+		}
+
+		try {
+			// file_get_contents() warns before it returns false; the warning is
+			// the platform's, the false return is what is under test.
+			$sets = @$this->service->getAvailableTokenSets();
+		} finally {
+			chmod($manifest, 0644);
+		}
+
+		$byId = array_column($sets, null, 'id');
+		$this->assertSame('Gemeente Test', $byId['gemeente-test']['name']);
+	}//end testUnreadableShippedManifestStillDiscoversFiles()
+
+	/**
+	 * Manifest entries are indexed by `id`; an entry without one is skipped
+	 * rather than attached to some other set.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-token-set-manifest-structure
+	 */
+	public function testShippedManifestIsIndexedByIdAndSkipsEntriesWithoutOne(): void {
+		$this->writeTokenFile('alpha');
+		$this->writeTokenFile('beta');
+		file_put_contents(
+			$this->appDir . '/token-sets.json',
+			json_encode(
+				[
+					['name' => 'No Id At All', 'description' => 'skipped'],
+					['id' => 'beta', 'name' => 'Beta Named'],
+					['id' => 'alpha', 'name' => 'Alpha Named'],
+				]
+			)
+		);
+
+		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
+
+		$this->assertSame('Alpha Named', $byId['alpha']['name']);
+		$this->assertSame('Beta Named', $byId['beta']['name']);
+		$this->assertNotContains('No Id At All', array_column($byId, 'name'));
+	}//end testShippedManifestIsIndexedByIdAndSkipsEntriesWithoutOne()
 }//end class

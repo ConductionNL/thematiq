@@ -1,0 +1,40 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Conduction B.V.
+ * SPDX-License-Identifier: EUPL-1.2
+ *
+ * La Suite numérique: shell geometry, Nextcloud 35 only.
+ *
+ * Loaded for the `lasuite` design system through `versioned_stylesheets` in
+ * design-systems.json, and only when the server reports major 35. Another
+ * major gets no shell geometry at all and keeps the stock header, so a point
+ * release that reshapes the header degrades to stock instead of breaking.
+ *
+ * REFERENCE: La Suite Docs, suitenumerique/docs at
+ * 9de17b3f820a28ef159e29a372c84fecd6fc45eb (1 Oct 2026):
+ *
+ *   header row      HEADER_ROW_MIN_HEIGHT = '64px'
+ *                   (src/frontend/apps/impress/src/features/header/conf.ts)
+ *   left panel      300px default, 1px border-right, box-shadow
+ *                   10px 0 10px rgba(0, 0, 0, .05)
+ *                   (features/left-panel/components/LeftPanel.tsx)
+ *   main content    flex: 1, full width, padding 0
+ *                   (layouts/MainLayout.tsx)
+ *
+ * What Nextcloud 35 already matches, so this file leaves it alone:
+ *   - the app navigation is 300px wide (NcAppNavigation `width: 300px`);
+ *   - the content area spans the remaining width with no max-width;
+ *   - the spacing grid is 4px (`--default-grid-baseline`), Cunningham's `st`.
+ * The sidebar border and shadow, the flush shell and the grey canvas live in
+ * element-overrides.css (lasuite-wireframe-alignment).
+ *
+ * What differs is the header row: Nextcloud 35 draws it 44px tall
+ * (apps/theming/lib/Themes/DefaultTheme.php `--header-height`), La Suite Docs
+ * 64px. Nextcloud sizes the header, the app menu triggers, the content offset
+ * and `--body-height` from that one variable, so setting it moves all of them
+ * together. Its theme declares the variable on body (`[data-theme-default]`),
+ * hence body and !important here.
+ */
+
+body {
+	--header-height: 64px !important;
+}
