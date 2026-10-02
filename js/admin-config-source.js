@@ -101,7 +101,9 @@
 			list.className = 'nldesign-config-source-errors'
 			status.lastError.errors.forEach(function (error) {
 				var item = document.createElement('li')
-				item.textContent = (error.section ? '[' + error.section + '] ' : '') + (error.message || '')
+				item.textContent =
+					(error.section ? '[' + error.section + '] ' : '')
+					+ (error.message || '')
 				list.appendChild(item)
 			})
 			block.appendChild(list)
