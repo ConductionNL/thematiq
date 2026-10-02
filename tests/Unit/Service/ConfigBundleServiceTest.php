@@ -852,6 +852,60 @@ class ConfigBundleServiceTest extends TestCase {
 	}//end testAPlannedSwitchToABundledCustomSetIsImported()
 
 	/**
+	 * Importing a bundle that holds a running switch, as a version restore
+	 * during a campaign does, keeps the switch running and its way back:
+	 * restarting it would take the campaign look as the one to return to.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testARunningSwitchKeepsItsStateThroughAnImport(): void {
+		$this->seedConfig();
+		$running = [
+			'id' => 'a1',
+			'tokenSet' => 'utrecht',
+			'startAt' => '2026-01-01T00:00:00Z',
+			'endAt' => '2099-01-01T00:00:00Z',
+			'createdBy' => 'admin',
+			'createdAt' => '2025-12-01T10:00:00Z',
+			'status' => 'running',
+			'revertTo' => 'nextcloud',
+			'coreSnapshot' => true,
+		];
+		$this->appConfig['scheduled_switches'] = json_encode([$running]);
+		$bundle = $this->service->export();
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertTrue($result['applied'], (string)json_encode($result['errors'] ?? []));
+		$stored = json_decode($this->appConfig['scheduled_switches'], true);
+		$this->assertCount(1, $stored);
+		$this->assertSame('running', $stored[0]['status']);
+		$this->assertSame('nextcloud', $stored[0]['revertTo']);
+		$this->assertTrue($stored[0]['coreSnapshot']);
+	}//end testARunningSwitchKeepsItsStateThroughAnImport()
+
+	/**
+	 * A stale bundle does not replay a switch whose window has already ended.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testAnEndedSwitchInABundleIsNotReplayed(): void {
+		$this->seedConfig();
+		$bundle = $this->service->export();
+		$bundle['config']['scheduledSwitches'] = [
+			['id' => 'old', 'tokenSet' => 'utrecht', 'startAt' => '2020-04-26T16:00:00Z', 'endAt' => '2020-04-28T06:00:00Z'],
+			['id' => 'new', 'tokenSet' => 'utrecht', 'startAt' => '2099-04-26T16:00:00Z', 'endAt' => '2099-04-28T06:00:00Z'],
+		];
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertTrue($result['applied'], (string)json_encode($result['errors'] ?? []));
+		$stored = json_decode($this->appConfig['scheduled_switches'], true);
+		$this->assertSame(['new'], array_column($stored, 'id'));
+		$this->assertSame('planned', $stored[0]['status']);
+	}//end testAnEndedSwitchInABundleIsNotReplayed()
+
+	/**
 	 * A custom set keeps the design system it was created on through an export
 	 * and an import, which a version restore is: a theme saved off stock
 	 * Nextcloud must not come back as an NL Design System one. A design system

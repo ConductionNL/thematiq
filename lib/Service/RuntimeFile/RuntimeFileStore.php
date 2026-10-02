@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ use RuntimeException;
  * write inside the app directory: that directory is signed, and every file
  * added or changed there is a code integrity warning in the admin overview.
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 interface RuntimeFileStore {
 
@@ -41,7 +41,7 @@ interface RuntimeFileStore {
 	 *
 	 * @return string|null The content, or null when the store holds no such file.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function read(string $name): ?string;
 
@@ -55,7 +55,7 @@ interface RuntimeFileStore {
 	 *
 	 * @throws RuntimeException When the file cannot be written.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function write(string $name, string $content): void;
 
@@ -66,7 +66,7 @@ interface RuntimeFileStore {
 	 *
 	 * @return bool True when it does.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function exists(string $name): bool;
 
@@ -77,7 +77,7 @@ interface RuntimeFileStore {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function delete(string $name): void;
 
@@ -88,7 +88,7 @@ interface RuntimeFileStore {
 	 *
 	 * @return array<int, string> Full names, such as `css/tokens/example.css`.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function listDirectory(string $directory): array;
 
@@ -99,7 +99,7 @@ interface RuntimeFileStore {
 	 *
 	 * @return string The revision, or an empty string when the file is absent.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function revision(string $name): string;
 }//end interface

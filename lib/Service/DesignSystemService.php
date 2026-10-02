@@ -113,7 +113,14 @@ class DesignSystemService {
 	/**
 	 * Get all available design systems.
 	 *
-	 * @return array<string, array{id: string, name: string, description: string, stylesheets: string[], icon_pack?: string|string[]}> Indexed by id.
+	 * @return array<string, array{
+	 *     id: string,
+	 *     name: string,
+	 *     description: string,
+	 *     stylesheets: string[],
+	 *     icon_pack?: string|string[],
+	 *     documentation_url?: string
+	 * }> Indexed by id.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
 	 */
@@ -135,7 +142,14 @@ class DesignSystemService {
 	 *
 	 * @param string $id The design system identifier.
 	 *
-	 * @return array{id: string, name: string, description: string, stylesheets: string[], icon_pack?: string|string[]} The design system.
+	 * @return array{
+	 *     id: string,
+	 *     name: string,
+	 *     description: string,
+	 *     stylesheets: string[],
+	 *     icon_pack?: string|string[],
+	 *     documentation_url?: string
+	 * } The design system.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
 	 */
@@ -428,7 +442,14 @@ class DesignSystemService {
 	/**
 	 * Get all design systems as a flat list (for API responses).
 	 *
-	 * @return array<array{id: string, name: string, description: string, stylesheets: string[], icon_pack?: string|string[]}> List of design systems.
+	 * @return array<array{
+	 *     id: string,
+	 *     name: string,
+	 *     description: string,
+	 *     stylesheets: string[],
+	 *     icon_pack?: string|string[],
+	 *     documentation_url?: string
+	 * }> List of design systems.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
 	 */

@@ -69,7 +69,7 @@ class ConfigVersionCommandsTest extends TestCase {
 			'missingFonts' => [],
 		];
 		$restorer->expects($this->once())->method('preview')->with('20260929164000-0001')->willReturn($preview);
-		$restorer->expects($this->once())->method('restore')->with('20260929164000-0001')->willReturn($preview + ['applied' => true]);
+		$restorer->expects($this->once())->method('restore')->with('20260929164000-0001', 'cli')->willReturn($preview + ['applied' => true]);
 
 		$tester = $this->tester(new ConfigRestore($restorer));
 
