@@ -293,5 +293,6 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 	<settings>
 		<admin>OCA\Thematiq\Settings\Admin</admin>
 		<admin-section>theming</admin-section>
+		<personal>OCA\Thematiq\Settings\Personal</personal>
 	</settings>
 </info>
