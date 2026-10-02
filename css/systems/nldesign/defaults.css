@@ -197,6 +197,7 @@
 
 	--nldesign-animation-quick: 100ms;
 	--nldesign-animation-slow: 300ms;
+	--nldesign-animation-easing: ease;
 
 	/* ===================================================================
 	 * COMPONENT TOKENS — Button

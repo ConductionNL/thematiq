@@ -21,7 +21,7 @@
 		"url": "https://github.com/ConductionNL/thematiq.git"
 	},
 	"scripts": {
-		"test:l10n": "L10N_SRC_DIR=js node tests/l10n/check-l10n.js",
+		"test:l10n": "L10N_SRC_DIR=js node tests/l10n/check-l10n.js && node tests/l10n/check-l10n-completeness.js",
 		"test:l10n:write": "L10N_SRC_DIR=js node tests/l10n/check-l10n.js --write",
 		"test:l10n:completeness": "node tests/l10n/check-l10n-completeness.js",
 		"test:l10n:completeness:write": "node tests/l10n/check-l10n-completeness.js --write",
@@ -53,7 +53,15 @@
 		"generate:guest-css": "node scripts/generate-guest-css.mjs",
 		"test:guest-css": "node scripts/generate-guest-css.mjs --check",
 		"generate:component-scopes": "node scripts/generate-component-scopes.mjs",
-		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check"
+		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check",
+		"test:theme-scopes": "node tests/css/check-theme-scopes-cascade.mjs",
+		"test:internal-scopes": "node tests/css/check-internal-scopes.mjs",
+		"generate:internal-tokens": "node scripts/inventory/generate-internal-tokens.mjs",
+		"inventory:fetch": "bash scripts/inventory/fetch-nextcloud-sources.sh .inventory-sources",
+		"inventory:extract": "node scripts/inventory/extract-nextcloud-variables.mjs --sources .inventory-sources",
+		"inventory:check": "node scripts/inventory/extract-nextcloud-variables.mjs --sources .inventory-sources --check",
+		"generate:mappings": "node scripts/inventory/generate-mappings-doc.mjs",
+		"test:inventory": "vitest run tests/vitest/nextcloudVariableInventory.spec.js && node scripts/inventory/generate-mappings-doc.mjs --check && node scripts/inventory/generate-internal-tokens.mjs --check"
 	},
 	"dependencies": {
 		"@fontsource/fira-sans": "^5.0.0"
@@ -68,14 +76,14 @@
 		"@openfun/cunningham-tokens": "^3.0.0",
 		"@playwright/test": "^1.63.0",
 		"@vitest/coverage-v8": "^5.0.1",
-		"@vitest/ui": "^5.0.0",
+		"@vitest/ui": "^5.0.2",
 		"jsdom": "^30.1.0",
-		"prettier": "^3.9.8",
+		"prettier": "^3.9.9",
 		"stylelint": "^17.15.0",
 		"stylelint-config-standard": "^40.0.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^7.0.2",
-		"vite": "^8.3.0",
+		"vite": "^8.3.1",
 		"vitest": "^5.0.1"
 	},
 	"prettier": "@nextcloud/prettier-config"
