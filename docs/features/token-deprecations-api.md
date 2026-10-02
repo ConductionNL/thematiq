@@ -45,4 +45,6 @@ Read the list once when your app starts, not on every render. For each token you
 1. When it has a `replacement`, read that token instead, with the old one as a fallback: `var(--nldesign-org-brand-accent, var(--nldesign-org-old-accent))`.
 2. When it is `due` or `removed`, log it for your developers, so the next release drops it.
 
+The design tokens download of a token set carries the same notice in `$deprecated`, for design tools.
+
 Next, check which tokens your app reads, and request the list from your test instance.

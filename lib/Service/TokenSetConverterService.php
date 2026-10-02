@@ -278,6 +278,18 @@ class TokenSetConverterService {
 			$declarations = $this->parseCssBlocks(content: $content, report: $report);
 		}
 
+		// Thematiq's own export comes back as it went out, without the conversion rules.
+		if ($isJson === true && $declarations !== [] && $this->isThematiqExport(content: $content) === true) {
+			return $this->thematiqExportResult(
+				declarations: $declarations,
+				slug: $slug,
+				displayName: $displayName,
+				sourceName: $sourceName,
+				sourceVersion: $sourceVersion,
+				report: $report
+			);
+		}
+
 		if (empty($declarations) === true) {
 			// A document we UNDERSTOOD but could map nothing out of is a
 			// reportable OUTCOME, not an exceptional one: the admin made a
@@ -396,6 +408,106 @@ class TokenSetConverterService {
 			'errors' => $this->mapperErrors,
 		];
 	}//end convert()
+
+	/**
+	 * Whether a document is one thematiq itself exported: its root carries the
+	 * `nl.conduction.thematiq` extension with the set id.
+	 *
+	 * @param string $content The document.
+	 *
+	 * @return bool
+	 *
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
+	 */
+	private function isThematiqExport(string $content): bool {
+		$decoded = json_decode($content, true);
+
+		return is_array($decoded) === true && is_string($decoded['$extensions']['nl.conduction.thematiq']['setId'] ?? null) === true;
+	}//end isThematiqExport()
+
+	/**
+	 * The result for a document thematiq exported: every declaration under its own name,
+	 * the brand palette moved to the new prefix, no conversion rules.
+	 *
+	 * @param array<string, string>            $declarations  The mapped declarations.
+	 * @param string                           $slug          The new set's slug.
+	 * @param string                           $displayName   The new set's name.
+	 * @param string|null                      $sourceName    The file name.
+	 * @param string|null                      $sourceVersion The document's package version.
+	 * @param array<int, array<string, mixed>> $report        The report so far.
+	 *
+	 * @return array<string, mixed> The same shape as convert().
+	 *
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
+	 */
+	private function thematiqExportResult(
+		array $declarations,
+		string $slug,
+		string $displayName,
+		?string $sourceName,
+		?string $sourceVersion,
+		array $report,
+	): array {
+		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
+		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $slug, report: $report);
+		$counts = $this->countActions(report: $report);
+		$manifest = [];
+		$primary = $this->literalColour(name: '--nldesign-color-primary', declarations: $layers['palette'] + $layers['component'] + $layers['semantic']);
+		if ($primary !== null) {
+			$manifest['theming.primary_color'] = $primary;
+		}
+
+		return [
+			'css' => $this->buildCss(
+				palette: $layers['palette'],
+				component: $layers['component'],
+				semantic: $layers['semantic'],
+				slug: $slug,
+				inputKind: 'B',
+				sourceName: $sourceName,
+				sourceVersion: $sourceVersion,
+				counts: $counts
+			),
+			'imported' => count($declarations),
+			'manifestEntry' => $this->buildManifestEntry(
+				slug: $slug,
+				displayName: $displayName,
+				semantic: [],
+				manifest: $manifest,
+				sourceName: $sourceName,
+				sourceVersion: $sourceVersion
+			),
+			'report' => $report,
+			'inputKind' => 'B',
+			'counts' => $counts,
+			'logoAsset' => null,
+			'importWarnings' => $this->importWarnings,
+			'errors' => $this->mapperErrors,
+		];
+	}//end thematiqExportResult()
+
+	/**
+	 * A token's value with its var() chain followed inside the set, when it ends in a hex colour.
+	 *
+	 * @param string                $name         The token.
+	 * @param array<string, string> $declarations The set.
+	 *
+	 * @return string|null
+	 */
+	private function literalColour(string $name, array $declarations): ?string {
+		$seen = [];
+		$value = ($declarations[$name] ?? '');
+		while (preg_match('/^var\(\s*(--[A-Za-z0-9_-]+)\s*\)$/', $value, $match) === 1 && isset($seen[$match[1]]) === false) {
+			$seen[$match[1]] = true;
+			$value = ($declarations[$match[1]] ?? '');
+		}
+
+		if (preg_match('/^#[0-9a-fA-F]{6}$/', $value) !== 1) {
+			return null;
+		}
+
+		return strtolower($value);
+	}//end literalColour()
 
 	/**
 	 * A conversion that read the document but mapped nothing out of it.
@@ -651,6 +763,18 @@ class TokenSetConverterService {
 					'action' => 'skipped',
 					'reason' => 'unmapped',
 					'value' => null,
+				];
+			}
+
+			// A colour moved into the sRGB gamut: what it became, and the original.
+			foreach (($mapped['adapted'] ?? []) as $entry) {
+				$report[] = [
+					'source' => (string)$entry['path'],
+					'target' => (string)$entry['target'],
+					'action' => 'adapted',
+					'reason' => (string)$entry['reason'],
+					'value' => (string)$entry['value'],
+					'original' => (string)json_encode($entry['original']),
 				];
 			}
 

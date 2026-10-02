@@ -294,7 +294,7 @@ class DesignTokensMapperTest extends TestCase {
 		$this->assertCount(1, $result['errors']);
 		$this->assertSame('color.accent', $result['errors'][0]['path']);
 		$this->assertSame('unsupported-color-space', $result['errors'][0]['reason']);
-		$this->assertSame('display-p3', $result['errors'][0]['detail']);
+		$this->assertSame('cmyk', $result['errors'][0]['detail']);
 
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'object color/dimension');
 	}//end testObjectFormColorAndDimensionSerializeToCss()
@@ -775,4 +775,89 @@ class DesignTokensMapperTest extends TestCase {
 			['15-amsterdam-real-excerpt.tokens.json'],
 		];
 	}//end corpusFixtureProvider()
+
+	// -- authoring-dtcg-export: colour spaces and the thematiq extension ---------
+
+	/**
+	 * Map one colour object at `color.primary`.
+	 *
+	 * @param array<string, mixed> $value The colour object.
+	 * @param string               $path  The leaf name under `color`.
+	 *
+	 * @return array<string, mixed> The mapper result.
+	 */
+	private function mapColour(array $value, string $path = 'primary'): array {
+		return $this->mapper->map(document: ['color' => [$path => ['$type' => 'color', '$value' => $value]]]);
+	}//end mapColour()
+
+	/**
+	 * Scenario: an oklch brand colour is converted to sRGB and imported.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 */
+	public function testOklchConvertsToSrgb(): void {
+		$result = $this->mapColour(['colorSpace' => 'oklch', 'components' => [0.5, 0.1, 250]]);
+
+		$this->assertSame('#32669a', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(1, $result['imported']);
+		$this->assertSame([], $result['adapted']);
+	}//end testOklchConvertsToSrgb()
+
+	/**
+	 * Out of gamut with a hex: the hex, reported adapted.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 */
+	public function testOutOfGamutUsesHexFallback(): void {
+		$result = $this->mapColour(['colorSpace' => 'display-p3', 'components' => [1, 0, 0], 'hex' => '#fe0000']);
+
+		$this->assertSame('#fe0000', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame('out-of-gamut-hex-fallback', $result['adapted'][0]['reason']);
+	}//end testOutOfGamutUsesHexFallback()
+
+	/**
+	 * Scenario: a display-p3 colour outside sRGB is clipped and reported with the original.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 */
+	public function testOutOfGamutWithoutHexIsClipped(): void {
+		$result = $this->mapColour(['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]);
+
+		$this->assertSame('#ff0000', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame('out-of-gamut-clipped', $result['adapted'][0]['reason']);
+		$this->assertSame(['colorSpace' => 'display-p3', 'components' => [1, 0, 0]], $result['adapted'][0]['original']);
+		$this->assertSame('color.primary', $result['adapted'][0]['path']);
+	}//end testOutOfGamutWithoutHexIsClipped()
+
+	/**
+	 * Scenario: the thematiq extension names the target, where the suffix table has none.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 */
+	public function testExtensionNamesTheTarget(): void {
+		$document = ['nldesign' => ['color' => ['error' => ['$type' => 'color', '$value' => '#d52b1e', '$extensions' => ['nl.conduction.thematiq' => ['cssVariable' => '--nldesign-color-error']]]]]];
+		$result   = $this->mapper->map(document: $document);
+
+		$this->assertSame(['--nldesign-color-error' => '#d52b1e'], $result['declarations']);
+		$this->assertSame([], $result['skipped']);
+		$this->assertFalse($result['thematiqExport'], 'only a root setId marks a thematiq export');
+	}//end testExtensionNamesTheTarget()
+
+	/**
+	 * The root cssOnly map is read as declarations; a token wins over it; a bad name is dropped.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 */
+	public function testCssOnlyMapIsImported(): void {
+		$document = [
+			'color' => ['primary' => ['$type' => 'color', '$value' => '#154273']],
+			'$extensions' => ['nl.conduction.thematiq' => ['setId' => 'x', 'cssOnly' => ['--nldesign-header-background' => 'linear-gradient(90deg, #154273, #01689b)', '--nldesign-color-primary' => '#000000', 'not a name' => 'x']]],
+		];
+		$result   = $this->mapper->map(document: $document);
+
+		$this->assertSame('linear-gradient(90deg, #154273, #01689b)', $result['declarations']['--nldesign-header-background']);
+		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
+		$this->assertCount(2, $result['declarations']);
+		$this->assertTrue($result['thematiqExport']);
+	}//end testCssOnlyMapIsImported()
 }//end class

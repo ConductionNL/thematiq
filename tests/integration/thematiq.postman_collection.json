@@ -3819,6 +3819,172 @@
       ]
     },
     {
+      "name": "8. Design tokens export (authoring-dtcg-export)",
+      "item": [
+        {
+          "name": "Download a shipped set as design tokens (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('downloaded (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('attachment name', () => pm.expect(pm.response.headers.get('Content-Disposition')).to.include('amsterdam.tokens.json'));",
+                  "const doc = pm.response.json();",
+                  "pm.test('names the set', () => pm.expect(doc['$extensions']['nl.conduction.thematiq'].setId).to.eql('amsterdam'));",
+                  "pm.test('a typed token', () => { const t = doc.nldesign.color.primary; pm.expect(t).to.have.property('$type'); pm.expect(t).to.have.property('$value'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/amsterdam/dtcg",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "amsterdam",
+                "dtcg"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Download design tokens ERROR: unknown set -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('unknown -> 404', () => pm.response.to.have.status(404));",
+                  "pm.test('not a 500', () => pm.expect(pm.response.code).to.not.eql(500));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/does-not-exist/dtcg",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "does-not-exist",
+                "dtcg"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Download design tokens AUTHZ: anonymous -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('anonymous rejected 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{noAuthBase}}/index.php/apps/thematiq/settings/tokensets/amsterdam/dtcg",
+              "host": [
+                "{{noAuthBase}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "amsterdam",
+                "dtcg"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "9. Teardown: restore captured state",
       "item": [
         {
