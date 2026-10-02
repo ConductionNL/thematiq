@@ -56,13 +56,13 @@ class ThematiqExportLayers {
 			$target = ($renames[$name] ?? $name);
 			$value  = $this->followRenames(value: $value, renames: $renames);
 			$layers[$this->layerOf(name: $name)][$target] = $value;
-			$report[] = [
-				'source' => $name,
-				'target' => $target,
-				'action' => ($target === $name ? 'kept' : 'adapted'),
-				'reason' => ($target === $name ? 'thematiq-export' : 'palette-reprefixed'),
-				'value' => $value,
-			];
+			$entry = ['source' => $name, 'target' => $target, 'action' => 'kept', 'reason' => 'thematiq-export', 'value' => $value];
+			if ($target !== $name) {
+				$entry['action'] = 'adapted';
+				$entry['reason'] = 'palette-reprefixed';
+			}
+
+			$report[] = $entry;
 		}
 
 		return $layers;
@@ -100,7 +100,7 @@ class ThematiqExportLayers {
 	private function followRenames(string $value, array $renames): string {
 		return (string)preg_replace_callback(
 			'/var\(\s*(--[A-Za-z0-9_-]+)/',
-			static fn (array $m): string => 'var(' . ($renames[$m[1]] ?? $m[1]),
+			static fn (array $match): string => 'var(' . ($renames[$match[1]] ?? $match[1]),
 			$value
 		);
 	}//end followRenames()

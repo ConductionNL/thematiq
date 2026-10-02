@@ -287,7 +287,14 @@ class TokenSetConverterService {
 
 		// Thematiq's own export comes back as it went out, without the conversion rules.
 		if ($this->thematiqExport === true && $declarations !== []) {
-			return $this->thematiqExportResult(declarations: $declarations, slug: $slug, displayName: $displayName, sourceName: $sourceName, sourceVersion: $sourceVersion, report: $report);
+			return $this->thematiqExportResult(
+				declarations: $declarations,
+				slug: $slug,
+				displayName: $displayName,
+				sourceName: $sourceName,
+				sourceVersion: $sourceVersion,
+				report: $report
+			);
 		}
 
 		if (empty($declarations) === true) {
@@ -410,21 +417,6 @@ class TokenSetConverterService {
 	}//end convert()
 
 	/**
-	 * A conversion that read the document but mapped nothing out of it.
-	 *
-	 * Same shape as a successful conversion, with an empty emitted file and a
-	 * report that says what was found and why each token could not be used.
-	 * The caller decides the HTTP status; this method only refuses to throw the
-	 * findings away.
-	 *
-	 * @param array<int, ReportEntry> $report    What the read produced.
-	 * @param string                  $inputKind The detected input kind.
-	 *
-	 * @return array<string, mixed> The zero-yield result.
-	 *
-	 * @spec openspec/specs/custom-token-sets/spec.md
-	 */
-	/**
 	 * The result for a document thematiq exported: every declaration under its own name,
 	 * the brand palette moved to the new prefix, no conversion rules.
 	 *
@@ -439,7 +431,14 @@ class TokenSetConverterService {
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
-	private function thematiqExportResult(array $declarations, string $slug, string $displayName, ?string $sourceName, ?string $sourceVersion, array $report): array {
+	private function thematiqExportResult(
+		array $declarations,
+		string $slug,
+		string $displayName,
+		?string $sourceName,
+		?string $sourceVersion,
+		array $report,
+	): array {
 		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
 		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $slug, report: $report);
 		$counts = $this->countActions(report: $report);
@@ -461,7 +460,14 @@ class TokenSetConverterService {
 				counts: $counts
 			),
 			'imported' => count($declarations),
-			'manifestEntry' => $this->buildManifestEntry(slug: $slug, displayName: $displayName, semantic: [], manifest: $manifest, sourceName: $sourceName, sourceVersion: $sourceVersion),
+			'manifestEntry' => $this->buildManifestEntry(
+				slug: $slug,
+				displayName: $displayName,
+				semantic: [],
+				manifest: $manifest,
+				sourceName: $sourceName,
+				sourceVersion: $sourceVersion
+			),
 			'report' => $report,
 			'inputKind' => 'B',
 			'counts' => $counts,
@@ -494,6 +500,21 @@ class TokenSetConverterService {
 		return strtolower($value);
 	}//end literalColour()
 
+	/**
+	 * A conversion that read the document but mapped nothing out of it.
+	 *
+	 * Same shape as a successful conversion, with an empty emitted file and a
+	 * report that says what was found and why each token could not be used.
+	 * The caller decides the HTTP status; this method only refuses to throw the
+	 * findings away.
+	 *
+	 * @param array<int, ReportEntry> $report    What the read produced.
+	 * @param string                  $inputKind The detected input kind.
+	 *
+	 * @return array<string, mixed> The zero-yield result.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
 	private function zeroYieldResult(array $report, string $inputKind): array {
 		return [
 			'css' => '',

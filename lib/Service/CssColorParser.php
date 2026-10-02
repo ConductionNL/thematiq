@@ -142,7 +142,7 @@ class CssColorParser {
 	 */
 	private function fromHex(string $hex): array {
 		if (strlen($hex) <= 4) {
-			$hex = implode('', array_map(static fn (string $d): string => $d . $d, str_split($hex)));
+			$hex = implode('', array_map(static fn (string $digit): string => $digit . $digit, str_split($hex)));
 		}
 
 		$pairs = array_map('hexdec', str_split($hex, 2));
@@ -211,8 +211,7 @@ class CssColorParser {
 			$alpha = $this->alpha(text: $alphaText);
 		}
 
-		$parts = preg_split('/[\s,]+/', trim($main), -1, PREG_SPLIT_NO_EMPTY);
-		$parts = ($parts === false ? [] : $parts);
+		$parts = (array)preg_split('/[\s,]+/', trim($main), -1, PREG_SPLIT_NO_EMPTY);
 		if ($alpha === null && count($parts) === 4 && str_contains($main, ',') === true) {
 			$alpha = $this->alpha(text: (string)array_pop($parts));
 		}

@@ -316,9 +316,9 @@ class DesignTokensMapper {
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	private function cssOnly(array $document): array {
-		$map = ($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []);
+		$map = (array)($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []);
 		$out = [];
-		foreach ((is_array($map) === true ? $map : []) as $name => $value) {
+		foreach ($map as $name => $value) {
 			if ($this->extensionName(value: (string)$name) !== null && is_scalar($value) === true) {
 				$out[(string)$name] = trim((string)$value);
 			}

@@ -167,7 +167,10 @@ class ColorSpaceConverter {
 			'srgb' => $c,
 			'hsl' => $this->hslToSrgb(hue: $c[0], saturation: ($c[1] / 100), lightness: ($c[2] / 100)),
 			'hwb' => $this->hwbToSrgb(hue: $c[0], white: ($c[1] / 100), black: ($c[2] / 100)),
-			default => array_map(fn (float $v): float => $this->gammaSrgb(value: $v), $this->multiply(matrix: self::XYZ_TO_LINEAR_SRGB, vector: $this->toXyzD65(space: $space, c: $c))),
+			default => array_map(
+				fn (float $v): float => $this->gammaSrgb(value: $v),
+				$this->multiply(matrix: self::XYZ_TO_LINEAR_SRGB, vector: $this->toXyzD65(space: $space, c: $c))
+			),
 		};
 	}//end toSrgb()
 
@@ -225,9 +228,17 @@ class ColorSpaceConverter {
 		return match ($space) {
 			'srgb-linear' => $this->multiply(matrix: self::TO_XYZ['srgb'], vector: $c),
 			'display-p3' => $this->multiply(matrix: self::TO_XYZ['display-p3'], vector: array_map(fn (float $v): float => $this->linearSrgb(value: $v), $c)),
-			'a98-rgb' => $this->multiply(matrix: self::TO_XYZ['a98-rgb'], vector: array_map(static fn (float $v): float => (($v <=> 0) * (abs($v) ** (563 / 256))), $c)),
+			'a98-rgb' => $this->multiply(
+				matrix: self::TO_XYZ['a98-rgb'],
+				vector: array_map(static fn (float $v): float => (($v <=> 0) * (abs($v) ** (563 / 256))), $c)
+			),
 			'rec2020' => $this->multiply(matrix: self::TO_XYZ['rec2020'], vector: array_map(fn (float $v): float => $this->linearRec2020(value: $v), $c)),
-			'prophoto-rgb' => $this->d50ToD65(xyz: $this->multiply(matrix: self::TO_XYZ['prophoto-rgb'], vector: array_map(fn (float $v): float => $this->linearProphoto(value: $v), $c))),
+			'prophoto-rgb' => $this->d50ToD65(
+				xyz: $this->multiply(
+					matrix: self::TO_XYZ['prophoto-rgb'],
+					vector: array_map(fn (float $v): float => $this->linearProphoto(value: $v), $c)
+				)
+			),
 			'xyz-d65' => $c,
 			'xyz-d50' => $this->d50ToD65(xyz: $c),
 			'lab' => $this->d50ToD65(xyz: $this->labToXyzD50(lab: $c)),
@@ -260,15 +271,51 @@ class ColorSpaceConverter {
 	private function labToXyzD50(array $lab): array {
 		$kappa   = (24389 / 27);
 		$epsilon = (216 / 24389);
-		$f1      = (($lab[0] + 16) / 116);
-		$f0      = (($lab[1] / 500) + $f1);
-		$f2      = ($f1 - ($lab[2] / 200));
-		$x       = ($f0 ** 3) > $epsilon ? ($f0 ** 3) : (((116 * $f0) - 16) / $kappa);
-		$y       = $lab[0] > ($kappa * $epsilon) ? ($f1 ** 3) : ($lab[0] / $kappa);
-		$z       = ($f2 ** 3) > $epsilon ? ($f2 ** 3) : (((116 * $f2) - 16) / $kappa);
+		$yRoot   = (($lab[0] + 16) / 116);
+		$xRoot   = (($lab[1] / 500) + $yRoot);
+		$zRoot   = ($yRoot - ($lab[2] / 200));
+		$white   = self::D50_WHITE;
 
-		return [($x * self::D50_WHITE[0]), ($y * self::D50_WHITE[1]), ($z * self::D50_WHITE[2])];
+		return [
+			($this->labInverse(value: $xRoot, kappa: $kappa, epsilon: $epsilon) * $white[0]),
+			($this->labLightness(lightness: (float)$lab[0], kappa: $kappa, epsilon: $epsilon) * $white[1]),
+			($this->labInverse(value: $zRoot, kappa: $kappa, epsilon: $epsilon) * $white[2]),
+		];
 	}//end labToXyzD50()
+
+	/**
+	 * The inverse Lab companding of the x or z channel.
+	 *
+	 * @param float $value   f(x) or f(z).
+	 * @param float $kappa   CIE kappa.
+	 * @param float $epsilon CIE epsilon.
+	 *
+	 * @return float
+	 */
+	private function labInverse(float $value, float $kappa, float $epsilon): float {
+		if (($value ** 3) > $epsilon) {
+			return ($value ** 3);
+		}
+
+		return (((116 * $value) - 16) / $kappa);
+	}//end labInverse()
+
+	/**
+	 * The relative luminance Y of a Lab lightness.
+	 *
+	 * @param float $lightness L, 0..100.
+	 * @param float $kappa     CIE kappa.
+	 * @param float $epsilon   CIE epsilon.
+	 *
+	 * @return float
+	 */
+	private function labLightness(float $lightness, float $kappa, float $epsilon): float {
+		if ($lightness > ($kappa * $epsilon)) {
+			return ((($lightness + 16) / 116) ** 3);
+		}
+
+		return ($lightness / $kappa);
+	}//end labLightness()
 
 	/**
 	 * OKLab to XYZ (D65).
@@ -331,7 +378,10 @@ class ColorSpaceConverter {
 			return [$grey, $grey, $grey];
 		}
 
-		return array_map(static fn (float $v): float => (($v * (1 - $white - $black)) + $white), $this->hslToSrgb(hue: $hue, saturation: 1.0, lightness: 0.5));
+		return array_map(
+			static fn (float $channel): float => (($channel * (1 - $white - $black)) + $white),
+			$this->hslToSrgb(hue: $hue, saturation: 1.0, lightness: 0.5)
+		);
 	}//end hwbToSrgb()
 
 	/**
