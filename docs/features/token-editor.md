@@ -121,6 +121,38 @@ Toasts and note cards have a background and a text colour per type (success, err
 
 From Nextcloud 33 the note card colour is the card's fill. On Nextcloud 32 it is the stripe on the left, and the fill is a light tint mixed from a separate **fill (Nextcloud 32)** colour. Select **32** above the note card preview to see and set those; they are hidden for 33 and later, where Nextcloud does not read them. The automatic text colour compares against the card colour, so on Nextcloud 32 pick the text colour yourself if the automatic one does not suit the light fill.
 
+## Transparency, dark values and motion
+
+### Transparent colours
+
+Every colour row has an opacity control next to the picker: a slider and a number from 0 to 100. The picker sets the colour, the opacity sets how much of it shows. Together they write an 8-digit hex such as `#15427380`. At 100 the editor writes the plain 6-digit hex.
+
+The swatch shows the colour over a checkerboard, so you can see how transparent it is. You can also type any colour into the text field: `#rgba`, `#rrggbbaa`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, a colour name or `transparent`. The picker and the opacity follow what you type.
+
+The contrast check measures what people actually see. A transparent text colour is first blended over its background, and only then compared. Faint text fails, even when its colour alone would pass.
+
+Nextcloud's own theming has no transparency. When a token set with a transparent primary or background colour is synced to Nextcloud's theming, Nextcloud gets the blend over the set's background instead. The sync dialog shows both values.
+
+### A dark value per colour
+
+The brand colours (Nextcloud's own colour variables) have a second line, **Dark**. Leave it empty and thematiq derives a dark value from the light one, the same way it derives the dark variant of a token set. The empty field shows that derived value as its placeholder.
+
+Type your own value to use it instead. Both kinds of dark user see the same colour: a user whose system is set to dark, and a user who chose the dark theme in their Nextcloud settings.
+
+### Animation speed and easing
+
+**Animation quick** and **Animation slow** take a number and a unit, `ms` or `s`. The longest is 5 seconds. Saving one also sets thematiq's own name for it, so Nextcloud's components and thematiq's buttons and fields move at the same speed.
+
+**Animation easing** picks the curve: `linear`, `ease`, `ease-in`, `ease-out`, `ease-in-out`, or **Custom curve**. A custom curve takes four numbers, as in `cubic-bezier(0.2, 0, 0, 1)`. Both x values must lie between 0 and 1. A set that does not declare an easing uses `ease`.
+
+**Preview motion** moves a block with the speed and curve you chose. When your system asks for reduced motion, the block stays still and the preview shows the values as text. Reduced motion always wins over the speeds you set here.
+
+### Values the editor refuses
+
+Each value is checked against its type when you save. A colour field takes only colours, a duration needs a unit, and a curve must stay in range. When a value does not fit, nothing is saved and the message names the token. Fix that field and save again.
+
+Overrides saved before this check keep working. An upgrade adds the dark values and the second animation name to them, and keeps every value as it was.
+
 ## Saving Overrides
 
 Click **Save overrides** at the bottom of the token editor to persist all current values.

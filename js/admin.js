@@ -1351,6 +1351,23 @@
 		 * matching would keep the previous set's logo (the manifest has none)
 		 * and pin a stale primary.
 		 */
+		/**
+		 * The note next to a colour core gets as the blend of a translucent one.
+		 *
+		 * @param {string|undefined} original The set's own value, when it was translucent.
+		 * @return {string} The note, or '' for an opaque colour.
+		 */
+		function opaqueNote(original) {
+			if (!original) {
+				return ''
+			}
+			return t(
+				'thematiq',
+				'The set says {original}. Nextcloud\'s own theming has no transparency. It gets this colour instead.',
+				{ original: original },
+			)
+		}
+
 		function computeThemingPlan(tokenSetData, currentTheming) {
 			var none = { mode: 'none', diffs: [], payload: null }
 			if (!tokenSetData || !currentTheming) {
@@ -1433,6 +1450,7 @@
 					kind: 'color',
 					current: currentTheming.primary_color,
 					proposed: proposed.primary_color,
+					proposedNote: opaqueNote(proposed.primary_color_original),
 				})
 				payload.primary_color = proposed.primary_color
 			}
@@ -1448,6 +1466,7 @@
 					kind: 'color',
 					current: currentTheming.background_color,
 					proposed: proposed.background_color,
+					proposedNote: opaqueNote(proposed.background_color_original),
 				})
 				payload.background_color = proposed.background_color
 			}
@@ -4553,6 +4572,54 @@
 		}
 
 		/**
+		 * The refusal of a save in the administrator's language: each token by its label,
+		 * with why its value does not fit. The server names the reason in English.
+		 *
+		 * @param {Object<string,string>} rejected Token => the server's reason.
+		 * @return {string} The message.
+		 */
+		function rejectedMessage(rejected) {
+			var reasons = {
+				'not an editable token': t('thematiq', 'the editor cannot set this token'),
+				'not an allowed value': t('thematiq', 'this value is not allowed'),
+				'not a valid color value': t('thematiq', 'this is not a colour'),
+				'not a valid rgb value': t('thematiq', 'this is not a colour'),
+				'not a valid duration value': t(
+					'thematiq',
+					'use a number with ms or s, up to 5 seconds',
+				),
+				'not a valid easing value': t(
+					'thematiq',
+					'use an easing keyword or a curve with both x values from 0 to 1',
+				),
+				'no dark value for this token': t(
+					'thematiq',
+					'this token has no dark value',
+				),
+			}
+			var parts = Object.keys(rejected).map(function (name) {
+				var reason = String(rejected[name])
+				var dark = reason.indexOf('dark value: ') === 0
+				var key = dark ? reason.slice('dark value: '.length) : reason
+				var text = reasons[key] || reason
+				var meta = tokenRegistry[name] || {}
+				var label = meta.label ? meta.label + ' (' + name + ')' : name
+				return dark
+					? t('thematiq', '{label}, dark value: {reason}', {
+							label: label,
+							reason: text,
+						})
+					: t('thematiq', '{label}: {reason}', {
+							label: label,
+							reason: text,
+						})
+			})
+			return t('thematiq', 'Nothing was saved. {problems}.', {
+				problems: parts.join('; '),
+			})
+		}
+
+		/**
 		 * The POST body of a save; `darkOverrides` only when there are any.
 		 *
 		 * @param {Object<string,string>} overrides The light values.
@@ -4621,6 +4688,8 @@
 						refreshCustomOverridesLink()
 						updateSaveStatus()
 						notify(t('thematiq', 'Token overrides saved.'))
+					} else if (data.rejected && typeof data.rejected === 'object') {
+						notify(rejectedMessage(data.rejected))
 					} else {
 						notify(
 							t('thematiq', 'Failed to save overrides:')
