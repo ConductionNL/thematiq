@@ -617,7 +617,11 @@ OC.L10N.register(
         "Keep the message under 500 characters, without braces or semicolons.": "Keep the message under 500 characters, without braces or semicolons.",
         "This token has no deprecation.": "This token has no deprecation.",
         "Contrast {ratio}:1 on the page background, below 3:1.": "Contrast {ratio}:1 on the page background, below 3:1.",
-        "Contrast {ratio}:1 on the page background.": "Contrast {ratio}:1 on the page background."
+        "Contrast {ratio}:1 on the page background.": "Contrast {ratio}:1 on the page background.",
+        "Download as design tokens": "Download as design tokens",
+        "Outside sRGB, clipped to the nearest colour": "Outside sRGB, clipped to the nearest colour",
+        "Outside sRGB, the document's own fallback was used": "Outside sRGB, the document's own fallback was used",
+        "The design tokens could not be downloaded.": "The design tokens could not be downloaded."
     },
     "nplurals=2; plural=(n != 1);"
 )

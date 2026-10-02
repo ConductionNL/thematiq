@@ -617,7 +617,11 @@ OC.L10N.register(
         "Keep the message under 500 characters, without braces or semicolons.": "Houd het bericht onder de 500 tekens, zonder accolades of puntkomma's.",
         "This token has no deprecation.": "Deze token heeft geen uitfasering.",
         "Contrast {ratio}:1 on the page background, below 3:1.": "Contrast {ratio}:1 op de achtergrond van de pagina, onder 3:1.",
-        "Contrast {ratio}:1 on the page background.": "Contrast {ratio}:1 op de achtergrond van de pagina."
+        "Contrast {ratio}:1 on the page background.": "Contrast {ratio}:1 op de achtergrond van de pagina.",
+        "Download as design tokens": "Downloaden als design tokens",
+        "The design tokens could not be downloaded.": "De design tokens konden niet worden gedownload.",
+        "Outside sRGB, clipped to the nearest colour": "Buiten sRGB, afgekapt op de dichtstbijzijnde kleur",
+        "Outside sRGB, the document's own fallback was used": "Buiten sRGB, de eigen terugvalwaarde van het document is gebruikt"
     },
     "nplurals=2; plural=(n != 1);"
 )

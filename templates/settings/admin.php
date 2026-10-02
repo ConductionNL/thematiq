@@ -117,6 +117,9 @@ if ($_['mockUi'] === true) {
 			<button type="button" id="nldesign-reset-theme-btn" class="button">
 				<?php p($l->t('Reset theme to Nextcloud')); ?>
 			</button>
+			<button type="button" id="nldesign-dtcg-download" class="button">
+				<?php p($l->t('Download as design tokens')); ?>
+			</button>
 			<!-- Token reference of the selected set (openspec/specs/token-reference/spec.md);
 			     admin.js keeps both links on the selected set. -->
 			<span class="nldesign-token-set-links">
