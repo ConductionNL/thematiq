@@ -569,6 +569,7 @@
 		--nldesign-interaction-color: #723dff;
 		--nldesign-interaction-hover-color: #794df0;
 		--nldesign-line-border-color: #2e363f;
+		--nldesign-logo-url: url('../../../img/logos/nijmegen-dark.svg');
 		--nldesign-nl-avatar-background-color: #460ce1;
 		--nldesign-nl-avatar-color: #9e9e9e;
 		--nldesign-nl-avatar-hover-background-color: #5e2ce2;
@@ -1187,6 +1188,7 @@ body[data-themes*=dark] {
 	--nldesign-interaction-color: #723dff;
 	--nldesign-interaction-hover-color: #794df0;
 	--nldesign-line-border-color: #2e363f;
+	--nldesign-logo-url: url('../../../img/logos/nijmegen-dark.svg');
 	--nldesign-nl-avatar-background-color: #460ce1;
 	--nldesign-nl-avatar-color: #9e9e9e;
 	--nldesign-nl-avatar-hover-background-color: #5e2ce2;

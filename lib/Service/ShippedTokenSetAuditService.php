@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCP\ICache;
 
 /**
@@ -85,8 +87,15 @@ class ShippedTokenSetAuditService {
 	 *
 	 * @param ContrastService $contrast The WCAG contrast service.
 	 * @param CssParserService $parser The CSS custom-property parser.
+	 * @param RuntimeFileStore|null $store Where uploaded sets are kept.
+	 * @param SetFileReader $files Reads a set's file from the release or the store.
 	 */
-	public function __construct(ContrastService $contrast, CssParserService $parser) {
+	public function __construct(
+		ContrastService $contrast,
+		CssParserService $parser,
+		private readonly ?RuntimeFileStore $store = null,
+		private readonly SetFileReader $files = new SetFileReader(),
+	) {
 		$this->contrast = $contrast;
 		$this->parser = $parser;
 	}//end __construct()
@@ -109,9 +118,9 @@ class ShippedTokenSetAuditService {
 	public function resolveDeclarations(string $appPath, string $id, array $theming): array {
 		$declarations = $this->parseFile(filePath: $appPath . '/css/systems/nldesign/defaults.css');
 
-		$tokenFile = $appPath . '/css/tokens/' . $id . '.css';
-		if (is_file($tokenFile) === true) {
-			$declarations = array_merge($declarations, $this->parseFile(filePath: $tokenFile));
+		$tokenCss = $this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/' . $id . '.css');
+		if ($tokenCss !== null) {
+			$declarations = array_merge($declarations, ($this->parser->parseDeclarations(content: $tokenCss) ?? []));
 		}
 
 		// Background is managed by Nextcloud theming for many sets, so it is
@@ -484,4 +493,5 @@ class ShippedTokenSetAuditService {
 	private function formatThreshold(float $threshold): string {
 		return number_format($threshold, 1, '.', '') . ':1';
 	}//end formatThreshold()
+
 }//end class

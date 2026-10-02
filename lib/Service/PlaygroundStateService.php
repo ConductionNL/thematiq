@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCP\App\IAppManager;
 use OCP\IL10N;
 use Throwable;
@@ -88,6 +90,8 @@ class PlaygroundStateService {
 	 * @param TokenSetConverterService $converter     The conversion reason vocabulary.
 	 * @param StockTokensService       $stockTokens   The instance's own stock theme.
 	 * @param IL10N                    $l10n          The app's translations.
+	 * @param RuntimeFileStore|null    $store         Where uploaded sets and their dark files live.
+	 * @param SetFileReader            $files         Reads a set file from the release or the store.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -95,6 +99,8 @@ class PlaygroundStateService {
 		TokenSetConverterService $converter,
 		StockTokensService $stockTokens,
 		IL10N $l10n,
+		private ?RuntimeFileStore $store = null,
+		private SetFileReader $files = new SetFileReader(),
 	) {
 		$this->appManager = $appManager;
 		$this->previewValues = $previewValues;
@@ -182,12 +188,12 @@ class PlaygroundStateService {
 			return [];
 		}
 
-		$path = $this->appManager->getAppPath(Application::APP_ID) . '/css/tokens/dark/' . $tokenSetId . '.css';
-		if (is_readable($path) === false) {
-			return [];
-		}
-
-		$css = (string)file_get_contents($path);
+		// An uploaded set's dark file lives in the runtime store, a shipped one in the release.
+		$css = (string)$this->files->read(
+			appPath: $this->appManager->getAppPath(Application::APP_ID),
+			name: 'css/tokens/dark/' . $tokenSetId . '.css',
+			store: $this->store
+		);
 		if (preg_match('/body\[data-theme-dark\][^{]*\{([^}]*)\}/', $css, $block) !== 1) {
 			return [];
 		}
