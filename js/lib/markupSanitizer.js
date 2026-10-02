@@ -19,7 +19,7 @@
  * Dual-mode like `layerSwap.js`: `module.exports` under Node, `window.NldesignMarkupSanitizer`
  * in the browser.
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-2.1
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-markup-is-cleaned-against-an-allowlist-every-time-it-renders
  */
 ;(function (root, factory) {
 	var api = factory()

@@ -191,7 +191,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	/**
 	 * Task 3.3: the set's dark values are published from its generated dark stylesheet.
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-3.3
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-the-frame-can-show-the-dark-theme
 	 */
 	public function testDarkTokensPublished(): void {
 		$dark = $this->build()->getInitialState(tokenSetId: 'amsterdam')['playgroundDarkTokens'];

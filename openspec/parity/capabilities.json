@@ -6213,21 +6213,20 @@
 			"id": "aut-component-preview",
 			"area": "authoring",
 			"name": "See your own components rendered with the house style tokens while you build them, before publishing.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "specified",
-				"evidence": "the component playground in the token editor (js/playground.js header, templates/settings/admin.php:32-42, lib/Service/PlaygroundStateService.php) renders the inventory in js/playground/components.json with the live tokens before saving; a builder's own new components are not in that inventory",
+				"state": "built",
+				"evidence": "js/playground.js Your component chip in every tab: HTML and CSS fields drawn in an iframe with sandbox allow-same-origin and its own CSP (js/lib/ownComponentFrame.js), markup cleaned against an allowlist with a removal report (js/lib/markupSanitizer.js), token values copied from the preview container so unsaved edits repaint the frame, a dark switch with the set's dark values (playgroundDarkTokens), a token list filtered to the names the code reads, contrast of text pairs via ContrastService; saved by name in app data (OwnComponentService, /settings/playground/components, admin-only), reopened from #preview={tab}/own-{slug}",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-own-markup-preview (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-own-markup-preview"
+				"change": "authoring-own-markup-preview"
 			},
-			"reachedOn": "Settings > Administration > Theming, component playground",
+			"reachedOn": "Settings > Administration > Theming, the component playground: the Your component chip",
 			"evidence": {
 				"nextcloud-theming": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
 				"m365-branding": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",

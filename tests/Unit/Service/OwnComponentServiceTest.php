@@ -14,7 +14,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.1
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
  */
 
 declare(strict_types=1);
@@ -42,7 +42,7 @@ require_once __DIR__ . '/ThemeVersionServiceTest.php';
 /**
  * Over an in-memory app data folder.
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.1
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
  */
 final class OwnComponentServiceTest extends TestCase {
 

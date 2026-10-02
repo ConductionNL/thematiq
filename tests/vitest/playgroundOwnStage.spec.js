@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-3.1
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-the-playground-previews-a-builders-own-component
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest'

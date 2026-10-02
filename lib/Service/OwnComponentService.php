@@ -19,7 +19,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.1
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
  */
 
 declare(strict_types=1);
@@ -35,7 +35,7 @@ use OCP\Files\SimpleFS\ISimpleFolder;
 /**
  * Store and list own components.
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.1
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
  */
 class OwnComponentService {
 
@@ -84,7 +84,7 @@ class OwnComponentService {
 	 *
 	 * @return string The slug; '' when nothing usable is left.
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.1
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
 	public static function slugFor(string $name): string {
 		$ascii = (string)iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
@@ -100,7 +100,7 @@ class OwnComponentService {
 	 *
 	 * @return bool
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.1
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
 	public static function isSlug(string $slug): bool {
 		return preg_match(self::SLUG_PATTERN, $slug) === 1;
@@ -111,7 +111,7 @@ class OwnComponentService {
 	 *
 	 * @return array<int, array{name: string, slug: string, html: string, css: string, updatedAt: string}>
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.1
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
 	public function list(): array {
 		$out = [];
@@ -144,7 +144,7 @@ class OwnComponentService {
 	 *
 	 * @throws InvalidArgumentException 400: `name`, `size` or `count`.
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.1
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
 	public function save(string $name, string $html, string $css): array {
 		$name = trim($name);
@@ -184,7 +184,7 @@ class OwnComponentService {
 	 *
 	 * @throws InvalidArgumentException 404 for an unknown slug.
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.1
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
 	public function delete(string $slug): void {
 		$folder = $this->folder();

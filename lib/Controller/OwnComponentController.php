@@ -17,7 +17,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.2
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
  */
 
 declare(strict_types=1);
@@ -37,7 +37,7 @@ use Throwable;
 /**
  * Own components over HTTP.
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.2
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
  */
 class OwnComponentController extends Controller {
 
@@ -63,7 +63,7 @@ class OwnComponentController extends Controller {
 	 *
 	 * @return JSONResponse {components: [...], limits: {count, bytes}}.
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.2
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function list(): JSONResponse {
@@ -81,7 +81,7 @@ class OwnComponentController extends Controller {
 	 *
 	 * @return JSONResponse The stored component, or 400 naming the rule.
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.2
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function save(): JSONResponse {
@@ -112,7 +112,7 @@ class OwnComponentController extends Controller {
 	 *
 	 * @return JSONResponse {status: ok}, or 404.
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-4.2
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function delete(string $slug): JSONResponse {

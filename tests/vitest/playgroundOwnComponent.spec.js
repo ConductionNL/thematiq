@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-2.2
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-pasted-markup-renders-in-a-sandboxed-frame-without-scripts
  */
 
 import { describe, expect, it } from 'vitest'

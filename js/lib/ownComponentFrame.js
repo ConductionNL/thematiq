@@ -18,7 +18,7 @@
  * Dual-mode like `layerSwap.js`: `module.exports` under Node, `window.NldesignOwnComponentFrame`
  * in the browser.
  *
- * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-2.2
+ * @spec openspec/specs/own-component-preview/spec.md#requirement-pasted-markup-renders-in-a-sandboxed-frame-without-scripts
  */
 ;(function (root, factory) {
 	var api = factory()

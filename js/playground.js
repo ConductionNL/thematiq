@@ -774,7 +774,7 @@
 			tabs: tabs,
 			tab: activeTab(tabs),
 			component: FULL_VIEW,
-			// "Your component" (openspec/changes/authoring-own-markup-preview): the set's
+			// "Your component" (openspec/specs/own-component-preview): the set's
 			// dark values for the frame's dark switch, and the saved components.
 			darkTokens: loadState('playgroundDarkTokens', {}),
 			ownComponents: [],

@@ -175,7 +175,7 @@ class PlaygroundStateService {
 	 *
 	 * @return array<string, string> Token => dark value; empty when the set has no dark file.
 	 *
-	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-3.3
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-the-frame-can-show-the-dark-theme
 	 */
 	private function getDarkTokens(string $tokenSetId): array {
 		if (preg_match('/^[a-z0-9-]+$/', $tokenSetId) !== 1) {
