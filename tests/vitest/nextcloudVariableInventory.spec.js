@@ -220,6 +220,101 @@ describe('a mapping is only claimed where the CSS makes it', () => {
 	})
 })
 
+describe('a settable variable is settable in the CSS, and only when set', () => {
+	const settable = Object.entries(st).filter(
+		([n, e]) => vars[n].class === 'theme' && e.status === 'settable',
+	)
+	const themeScopes = lib.stripComments(read('css/theme-scopes.css'))
+	const captures = lib.stripComments(read('css/component-scopes.css'))
+	const resetBlocks = themeScopes.slice(themeScopes.indexOf('@media'))
+	const escape = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+	it('names a --nldesign-nc-* token for each one', () => {
+		const wrong = settable
+			.filter(([n, e]) => e.token !== '--nldesign-nc-' + n.slice(2))
+			.map(([n]) => n)
+		expect(wrong).toEqual([])
+	})
+
+	it('redeclares each one on body children from its capture', () => {
+		const missing = settable
+			.filter(
+				([n]) =>
+					new RegExp(
+						escape(n)
+							+ '\\s*:\\s*var\\(\\s*--thematiq-global-'
+							+ escape(n.slice(2))
+							+ '\\s*\\)',
+					).test(themeScopes) === false,
+			)
+			.map(([n]) => n)
+		expect(missing).toEqual([])
+	})
+
+	it("captures each one preferring its token, then Nextcloud's own value", () => {
+		const missing = settable
+			.filter(
+				([n, e]) =>
+					new RegExp(
+						'--thematiq-global-'
+							+ escape(n.slice(2))
+							+ '\\s*:\\s*var\\(\\s*'
+							+ escape(e.token)
+							+ '\\s*,\\s*var\\(\\s*'
+							+ escape(n)
+							+ '\\s*\\)\\s*\\)',
+					).test(captures) === false,
+			)
+			.map(([n]) => n)
+		expect(missing).toEqual([])
+	})
+
+	it('resets exactly the variables Nextcloud gives a different dark value', () => {
+		const expected = settable
+			.filter(([, e]) => e.perScheme === true)
+			.map(([, e]) => e.token)
+			.sort()
+		const reset = [
+			...new Set(
+				[
+					...resetBlocks.matchAll(/(--nldesign-nc-[\w-]+)\s*:\s*initial/g),
+				].map((m) => m[1]),
+			),
+		].sort()
+		expect(reset).toEqual(expected)
+	})
+
+	it('gives no settable token a default, so unset means unset', () => {
+		const defaults = lib.assignmentsOf(files('css/systems/*/defaults.css'))
+		const defaulted = settable
+			.filter(([, e]) => defaults.has(e.token))
+			.map(([n]) => n)
+		expect(defaulted).toEqual([])
+	})
+
+	it('flags exactly the thirteen structural variables advanced', () => {
+		const advanced = settable
+			.filter(([, e]) => e.advanced === true)
+			.map(([n]) => n)
+			.sort()
+		expect(advanced).toEqual([
+			'--body-container-margin',
+			'--body-height',
+			'--breakpoint-mobile',
+			'--clickable-area-large',
+			'--clickable-area-small',
+			'--default-clickable-area',
+			'--default-grid-baseline',
+			'--filter-background-blur',
+			'--header-height',
+			'--header-menu-item-height',
+			'--navigation-width',
+			'--sidebar-max-width',
+			'--sidebar-min-width',
+		])
+	})
+})
+
 describe('coverage cannot move without the baseline moving with it', () => {
 	it('matches the baseline exactly, in both directions', () => {
 		const counted = {}
