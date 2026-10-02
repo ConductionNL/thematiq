@@ -86,6 +86,8 @@ The system MUST include a `mappings.md` file, generated from the inventory, docu
 - AND the row MUST show the recorded reason
 
 #### Scenario: The table cannot drift from the inventory
+@e2e exclude Proven by `node scripts/inventory/generate-mappings-doc.mjs --check`, which `npm run test:inventory` runs; a hand edit to a file is not something a browser can observe.
+
 - GIVEN `mappings.md` was edited by hand
 - WHEN the drift check runs
 - THEN it MUST fail and MUST report the first differing row
