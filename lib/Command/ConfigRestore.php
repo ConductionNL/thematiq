@@ -114,7 +114,7 @@ class ConfigRestore extends Command {
 			return $this->restorer->preview(id: $id);
 		}
 
-		return $this->restorer->restore(id: $id);
+		return $this->restorer->restore(id: $id, actor: 'cli');
 	}//end previewOrRestore()
 
 	/**
