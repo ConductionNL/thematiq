@@ -443,12 +443,21 @@ class CustomOverridesService {
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
 	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.2
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-1.5
 	 */
 	private function darkValues(array $tokens): array {
 		$registry = TokenRegistry::getTokens();
 		$dark = [];
 		foreach ($tokens as $name => $value) {
 			if (($registry[$name]['type'] ?? '') !== 'color' || ($registry[$name]['group'] ?? '') !== 'brand') {
+				continue;
+			}
+
+			// A settable theme variable gets no derived dark value: Nextcloud
+			// calculates its own per theme, and the zero-specificity dark reset
+			// in theme-scopes.css leaves that value in place unless a dark one is
+			// given on purpose (theme-vocabulary-complete).
+			if (TokenRegistry::settableToken(name: $name) !== null) {
 				continue;
 			}
 
@@ -465,7 +474,10 @@ class CustomOverridesService {
 	 *
 	 * @return array<string> List of CSS declaration lines.
 	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-1.5
 	 */
 	private function buildDeclarationLines(array $tokens): array {
 		$lines = [];
@@ -476,7 +488,11 @@ class CustomOverridesService {
 			}
 
 			$safeValue = str_replace(["\n", "\r", ';', '{', '}', '/*', '*/'], '', $value);
-			$safeName = preg_replace('/[^a-zA-Z0-9\-]/', '', $name);
+			// A settable theme variable is stored as its `--nldesign-*` token:
+			// theme-scopes.css redeclares the Nextcloud variable on every child
+			// of body from that token, so a `:root` value under the Nextcloud
+			// name would be shadowed and do nothing.
+			$safeName = preg_replace('/[^a-zA-Z0-9\-]/', '', (TokenRegistry::settableToken(name: $name) ?? $name));
 
 			// Strip any pre-existing !important the caller may have included; it is
 			// re-applied uniformly below so the round-trip stays canonical.
@@ -505,10 +521,20 @@ class CustomOverridesService {
 	 *
 	 * @return array<string, string> Map of token name => value.
 	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-1.5
 	 */
 	private function parseDeclarations(string $css): array {
-		return $this->cssParser->parseRootBlock(css: $css);
+		$declarations = [];
+		foreach ($this->cssParser->parseRootBlock(css: $css) as $name => $value) {
+			// Read a stored settable token back under the Nextcloud name the
+			// editor and the registry use.
+			$declarations[(TokenRegistry::settableName(token: $name) ?? $name)] = $value;
+		}
+
+		return $declarations;
 	}//end parseDeclarations()
 
 	/**

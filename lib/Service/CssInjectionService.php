@@ -355,6 +355,7 @@ class CssInjectionService {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-2.2
 	 */
 	private function designSystemLayers(string $designSystemId, string $tokenSet): array {
 		$designSystem = $this->designSystemService->getDesignSystem(id: $designSystemId);
@@ -434,6 +435,12 @@ class CssInjectionService {
 		// to. It rides with the set layers rather than beside them so `none` stays
 		// stock — that branch returns above — and so the manifest carries it, which
 		// is what lets the client add and remove it without a reload.
+		// 3.8. Theme scopes (theme-vocabulary-complete): every child of body takes
+		// each settable Nextcloud variable from its capture, which prefers the
+		// `--nldesign-*` token and otherwise keeps Nextcloud's value for the
+		// active theme. Before the component scopes, whose more specific rules
+		// then fall back to that capture.
+		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
 		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
 		return $layers;
@@ -480,6 +487,7 @@ class CssInjectionService {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-2.2
 	 */
 	private function noDesignSystemLayers(string $tokenSet): array {
 		$layers = [];
@@ -494,6 +502,7 @@ class CssInjectionService {
 			}
 		}
 
+		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
 		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
 		return $layers;

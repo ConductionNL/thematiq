@@ -449,11 +449,15 @@ class OverridesController extends Controller {
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-1.5
 	 */
 	private function writeImportedTokens(array $parsed, string $rawContent): JSONResponse {
 		$toImport = [];
 		$skipped = 0;
 		foreach ($parsed as $name => $value) {
+			// An exported file stores a settable theme variable as its
+			// `--nldesign-*` token; import it under its Nextcloud name.
+			$name = (TokenRegistry::settableName(token: $name) ?? $name);
 			if (TokenRegistry::isEditable(tokenName: $name) === false) {
 				$skipped++;
 				continue;

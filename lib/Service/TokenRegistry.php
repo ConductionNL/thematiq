@@ -51,8 +51,11 @@ namespace OCA\Thematiq\Service;
  * button and the counter bubble. Before this layer the editor could only write
  * that global, so the playground's `Primary button` chip moved all eight.
  *
- * Tokens marked "intentionally not overridden" in overrides.css MUST NOT appear here.
- * The excluded list covers dark-mode vars, auto-calculated values, and layout constants.
+ * SETTABLE theme variables (theme-vocabulary-complete) are Nextcloud variables
+ * that Nextcloud calculates per theme. They are read from
+ * `scripts/mapping/variable-status.json`, edited under their Nextcloud name and
+ * stored as an `--nldesign-*` token with no default, so an unset one keeps
+ * Nextcloud's value for every theme. Icon and runtime variables stay out.
  *
  * Tabs: login | content | status | typography
  * Types: color | text
@@ -70,6 +73,23 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * table is a shipped file, not configuration. `__DIR__` is `lib/Service`.
 	 */
 	private const COMPONENT_TOKENS_PATH = __DIR__ . '/../../scripts/mapping/component-tokens.json';
+
+	/**
+	 * The variable status file, relative to the app root.
+	 *
+	 * Its `settable` theme entries are Nextcloud variables a set or the admin
+	 * may give a value through an `--nldesign-*` token that has no default
+	 * (theme-vocabulary-complete). Read from the same file the inventory guard
+	 * checks, so a variable cannot be settable in the guard and missing here.
+	 */
+	private const VARIABLE_STATUS_PATH = __DIR__ . '/../../scripts/mapping/variable-status.json';
+
+	/**
+	 * Decoded settable theme tokens, or null before the first read.
+	 *
+	 * @var array<string, array{tab: string, type: string, label: string, group: string, primary: bool, token: string, advanced: bool, note: string}>|null
+	 */
+	private static ?array $themeTokens = null;
 
 	/**
 	 * Decoded component-token table, or null before the first read.
@@ -115,11 +135,102 @@ class TokenRegistry implements TokenRegistryInterface {
 			self::getTypographyTokens()
 		);
 
-		return array_map(
+		$brand = array_map(
 			static fn (array $meta): array => array_merge($meta, ['group' => 'brand', 'primary' => false]),
 			$tokens
 		);
+
+		return array_merge($brand, self::getThemeTokens());
 	}//end getBrandTokens()
+
+	/**
+	 * Returns the settable theme variables, read from the variable status file.
+	 *
+	 * Each one is a Nextcloud theme variable that Nextcloud calculates per
+	 * theme, so thematiq gives it no default: the registry key is the Nextcloud
+	 * name, and `token` is the `--nldesign-*` name a set declares and the
+	 * overrides writer stores. `advanced` marks the structural ones (layout
+	 * sizes and widths) and `note` is guidance for theme authors.
+	 *
+	 * A missing or malformed file degrades to no settable tokens, as the
+	 * component table does.
+	 *
+	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool, token: string, advanced: bool, note: string}> The settable theme tokens.
+	 *
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-1.3
+	 */
+	public static function getThemeTokens(): array {
+		if (self::$themeTokens !== null) {
+			return self::$themeTokens;
+		}
+
+		self::$themeTokens = [];
+
+		$raw = false;
+		if (is_file(self::VARIABLE_STATUS_PATH) === true) {
+			$raw = file_get_contents(self::VARIABLE_STATUS_PATH);
+		}
+
+		if ($raw === false) {
+			return self::$themeTokens;
+		}
+
+		$decoded = json_decode($raw, true);
+		if (is_array($decoded) === false || is_array($decoded['variables'] ?? null) === false) {
+			return self::$themeTokens;
+		}
+
+		foreach ($decoded['variables'] as $name => $meta) {
+			if (is_array($meta) === false || ($meta['status'] ?? '') !== 'settable' || is_string($meta['token'] ?? null) === false) {
+				continue;
+			}
+
+			self::$themeTokens[(string)$name] = [
+				'tab' => (string)($meta['tab'] ?? 'content'),
+				'type' => (string)($meta['type'] ?? 'text'),
+				'label' => (string)($meta['label'] ?? $name),
+				'group' => 'brand',
+				'primary' => false,
+				'token' => $meta['token'],
+				'advanced' => (($meta['advanced'] ?? false) === true),
+				'note' => (string)($meta['note'] ?? ''),
+			];
+		}
+
+		return self::$themeTokens;
+	}//end getThemeTokens()
+
+	/**
+	 * The `--nldesign-*` token a settable theme variable is stored as, or null.
+	 *
+	 * @param string $name A registry key (a Nextcloud variable name).
+	 *
+	 * @return string|null The token, or null when the variable is not a settable theme variable.
+	 *
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-1.5
+	 */
+	public static function settableToken(string $name): ?string {
+		return (self::getThemeTokens()[$name]['token'] ?? null);
+	}//end settableToken()
+
+	/**
+	 * The registry key a stored `--nldesign-*` token belongs to, or null.
+	 *
+	 * @param string $token A token name as written in an overrides file.
+	 *
+	 * @return string|null The Nextcloud variable name, or null when no settable variable uses this token.
+	 *
+	 * @spec openspec/changes/theme-vocabulary-complete/tasks.md#task-1.5
+	 */
+	public static function settableName(string $token): ?string {
+		foreach (self::getThemeTokens() as $name => $meta) {
+			if ($meta['token'] === $token) {
+				return $name;
+			}
+		}
+
+		return null;
+	}//end settableName()
 
 	/**
 	 * Returns the component layer, read from the shared mapping table.
