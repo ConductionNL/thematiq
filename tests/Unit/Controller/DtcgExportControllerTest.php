@@ -26,6 +26,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\DesignTokensWriter;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
@@ -167,4 +168,30 @@ final class DtcgExportControllerTest extends TestCase {
 
 		$this->assertSame('Moving to the new palette', $document['nldesign']['color']['primary']['$deprecated']);
 	}//end testDeprecationReachesTheDownload()
+
+	/**
+	 * Scenario: an administrator downloads a custom set from its row; uploaded sets live in the runtime store.
+	 *
+	 * @return void
+	 */
+	public function testExportsACustomSetFromTheStore(): void {
+		$dir = sys_get_temp_dir() . '/thematiq-dtcg-store-' . bin2hex(random_bytes(4));
+		mkdir($dir . '/css/tokens', 0777, true);
+		file_put_contents($dir . '/css/tokens/custom-gemeente-voorbeeld.css', ":root {\n  --nldesign-color-primary: #c8102e;\n}\n");
+		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets->method('isValidTokenSet')->willReturn(true);
+		$tokenSets->method('getAvailableTokenSets')->willReturn([['id' => 'custom-gemeente-voorbeeld', 'name' => 'Gemeente Voorbeeld']]);
+		$appManager = $this->createMock(IAppManager::class);
+		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
+		$appManager->method('getAppVersion')->willReturn('9.9.9');
+		$l = $this->createMock(IL10N::class);
+		$l->method('t')->willReturnArgument(0);
+		$controller = new DtcgExportController('thematiq', $this->createMock(IRequest::class), $tokenSets, $appManager, new CssParserService(), new DesignTokensWriter(), new DeprecationRecords($this->createMock(IConfig::class)), $l, new DirectoryRuntimeFileStore($dir));
+
+		$document = json_decode((string)json_encode($controller->export(id: 'custom-gemeente-voorbeeld')->getData()), true);
+		exec('rm -rf ' . escapeshellarg($dir));
+
+		$this->assertSame('#c8102e', $document['nldesign']['color']['primary']['$value']['hex']);
+		$this->assertSame('Gemeente Voorbeeld', $document['$description']);
+	}//end testExportsACustomSetFromTheStore()
 }//end class
