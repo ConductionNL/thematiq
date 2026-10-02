@@ -8,7 +8,8 @@
 		"is read from css/systems/nldesign/defaults.css, so the fallback never drifts from the defaults.",
 		"explicit: geometry the pinned tokens package does not define, with the Den Haag scale step chosen.",
 		"aliases: an older property name that reads the newer one.",
-		"Everything else is copied from @gemeente-denhaag/design-tokens-components, resolved to literals."
+		"Everything else is copied from @gemeente-denhaag/design-tokens-components, resolved to literals.",
+		"derived: tokens the bridge computes from the set, e.g. darker status text; a set may declare its own to override."
 	],
 	"sources": {
 		"components": {
@@ -51,8 +52,8 @@
 			"from": "action row date-color"
 		},
 		"--denhaag-action-date-warning-color": {
-			"token": "--nldesign-color-warning",
-			"from": "action row date-warning-color"
+			"ref": "--thematiq-status-warning-text",
+			"from": "action row date-warning-color; darker text derived from the status hue"
 		},
 		"--denhaag-action-indicator-background-color": {
 			"token": "--nldesign-color-primary",
@@ -219,16 +220,16 @@
 			"from": "process steps step-heading-current-color"
 		},
 		"--denhaag-process-steps-step-heading-error-color": {
-			"token": "--nldesign-color-error",
-			"from": "process steps step-heading-error-color"
+			"ref": "--thematiq-status-error-text",
+			"from": "process steps step-heading-error-color; darker text derived from the status hue"
 		},
 		"--denhaag-process-steps-step-heading-not-checked-color": {
 			"token": "--nldesign-color-text-muted",
 			"from": "process steps step-heading-not-checked-color"
 		},
 		"--denhaag-process-steps-step-heading-warning-color": {
-			"token": "--nldesign-color-warning",
-			"from": "process steps step-heading-warning-color"
+			"ref": "--thematiq-status-warning-text",
+			"from": "process steps step-heading-warning-color; darker text derived from the status hue"
 		},
 		"--denhaag-process-steps-step-meta-color": {
 			"token": "--nldesign-color-text-muted",
@@ -283,8 +284,8 @@
 			"from": "step marker checked border"
 		},
 		"--denhaag-step-marker-checked-color": {
-			"token": "--nldesign-color-success",
-			"from": "step marker checked color"
+			"ref": "--thematiq-status-success-text",
+			"from": "step marker checked color; the tick is text on the page, so it uses the darker success text"
 		},
 		"--denhaag-step-marker-checked-nested-background-color": {
 			"token": "--nldesign-color-background",
@@ -295,8 +296,8 @@
 			"from": "step marker checked border"
 		},
 		"--denhaag-step-marker-checked-nested-color": {
-			"token": "--nldesign-color-success",
-			"from": "step marker checked color"
+			"ref": "--thematiq-status-success-text",
+			"from": "step marker checked color; the tick is text on the page, so it uses the darker success text"
 		},
 		"--denhaag-step-marker-color": {
 			"token": "--nldesign-color-text",
@@ -480,8 +481,8 @@
 			"from": "error badge fill: the status colour at 12%"
 		},
 		"--nl-data-badge-error-color": {
-			"token": "--nldesign-color-error",
-			"from": "error badge text"
+			"ref": "--thematiq-status-error-text",
+			"from": "error badge text; darker text derived from the status hue"
 		},
 		"--nl-data-badge-neutral-background-color": {
 			"token": "--nldesign-color-background-dark",
@@ -497,8 +498,8 @@
 			"from": "success badge fill: the status colour at 12%"
 		},
 		"--nl-data-badge-success-color": {
-			"token": "--nldesign-color-success",
-			"from": "success badge text"
+			"ref": "--thematiq-status-success-text",
+			"from": "success badge text; darker text derived from the status hue"
 		},
 		"--nl-data-badge-warning-background-color": {
 			"tint": "--nldesign-color-warning",
@@ -506,8 +507,8 @@
 			"from": "warning badge fill: the status colour at 12%"
 		},
 		"--nl-data-badge-warning-color": {
-			"token": "--nldesign-color-warning",
-			"from": "warning badge text"
+			"ref": "--thematiq-status-warning-text",
+			"from": "warning badge text; darker text derived from the status hue"
 		}
 	},
 	"explicit": {
@@ -612,6 +613,23 @@
 		"--denhaag-sidenav-item-font-weight": {
 			"alias": "--denhaag-side-navigation-item-font-weight",
 			"from": "sidenav 2.0.0 is the older name of side-navigation; the tokens package names only the newer one"
+		}
+	},
+	"derived": {
+		"--thematiq-status-warning-text": {
+			"shade": "--nldesign-color-warning",
+			"percent": 50,
+			"from": "warning text: the set warning at 50% over black. 50% is the lightest share that gives every shipped set 4.5:1 on white and on its 12% warning tint (utrecht needs 50, the defaults 75); measured in docs/reference/contrast-report.md"
+		},
+		"--thematiq-status-success-text": {
+			"shade": "--nldesign-color-success",
+			"percent": 70,
+			"from": "success text: the set success at 70% over black. 75% left xxllnc at 4.48:1 on its badge tint once measured through the real cascade; 70% is the lightest share every shipped set passes with"
+		},
+		"--thematiq-status-error-text": {
+			"shade": "--nldesign-color-error",
+			"percent": 85,
+			"from": "error text: the set error at 85% over black, the lightest share every shipped set passes with (amsterdam needs 85)"
 		}
 	}
 }

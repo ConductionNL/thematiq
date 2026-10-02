@@ -151,6 +151,17 @@ export function buildSection(mapping, mappingText, readSource, defaults) {
 		throw new Error(`No literal default for ${token} in css/systems/nldesign/defaults.css`)
 	}
 	const colourExpr = (rule) => {
+		if (rule.ref !== undefined) {
+			if (mapping.derived?.[rule.ref] === undefined) {
+				throw new Error(`${rule.ref} is referenced but not declared under "derived"`)
+			}
+			return `var(${rule.ref})`
+		}
+		if (rule.shade !== undefined) {
+			// Darker text from the set's own hue: the status colour mixed with
+			// black, so the hue stays and only the lightness drops.
+			return `color-mix(in srgb, var(${rule.shade}, ${fallbackOf(rule.shade)}) ${rule.percent}%, #000)`
+		}
 		if (rule.token !== undefined) {
 			return `var(${rule.token}, ${fallbackOf(rule.token)})`
 		}
@@ -162,6 +173,10 @@ export function buildSection(mapping, mappingText, readSource, defaults) {
 	}
 
 	const lines = []
+	// Derived tokens first: the Den Haag properties below read them.
+	for (const [name, rule] of Object.entries(mapping.derived ?? {})) {
+		lines.push(`\t${name}: ${colourExpr(rule)};`)
+	}
 	const problems = []
 	const names = [...needAll].sort()
 	for (const name of names) {

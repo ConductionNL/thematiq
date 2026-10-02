@@ -73,11 +73,13 @@ class DenhaagContrastPairs {
 	 * Constructor.
 	 *
 	 * @param ContrastService $contrast The WCAG contrast service.
+	 * @param ColourFunctionEvaluator $functions Turns hsl() and color-mix() into hex.
 	 *
 	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
 	 */
 	public function __construct(
 		private readonly ContrastService $contrast = new ContrastService(),
+		private readonly ColourFunctionEvaluator $functions = new ColourFunctionEvaluator(),
 	) {
 	}//end __construct()
 
@@ -192,7 +194,12 @@ class DenhaagContrastPairs {
 			return null;
 		}
 
-		return $this->resolveValue(declarations: $declarations, value: $declarations[$name], depth: 0);
+		$literal = $this->resolveValue(declarations: $declarations, value: $declarations[$name], depth: 0);
+		if ($literal === null) {
+			return null;
+		}
+
+		return $this->functions->evaluate(value: $literal);
 	}//end resolve()
 
 	/**

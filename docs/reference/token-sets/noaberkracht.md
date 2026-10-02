@@ -2,7 +2,7 @@
 
 # Noaberkracht
 
-Token set `noaberkracht`: 233 declared by this set, 158 from the defaults layer.
+Token set `noaberkracht`: 237 declared by this set, 158 from the defaults layer.
 
 Contrast: primary text on primary 4.01:1, primary on background 4.01:1 (fail).
 
@@ -261,6 +261,10 @@ Contrast: primary text on primary 4.01:1, primary on background 4.01:1 (fail).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--denhaag-side-navigation-link-active-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e5ed9%22%2F%3E%3C%2Fsvg%3E) `#2e5ed9` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235b81e1%22%2F%3E%3C%2Fsvg%3E) `#5b81e1` | this set | |
+| `--denhaag-sidenav-link-active-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e5ed9%22%2F%3E%3C%2Fsvg%3E) `#2e5ed9` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235b81e1%22%2F%3E%3C%2Fsvg%3E) `#5b81e1` | this set | |
+| `--denhaag-step-marker-current-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--denhaag-step-marker-current-nested-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
 | `--nldesign-action-busy-cursor` | `wait` | | this set | |
 | `--nldesign-action-disabled-cursor` | `not-allowed` | | this set | |
 | `--nldesign-action-submit-cursor` | `pointer` | | this set | |
