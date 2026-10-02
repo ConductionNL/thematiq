@@ -319,6 +319,7 @@ class StockTokensServiceTest extends TestCase {
 	 * @param string                $version     The instance's Nextcloud version.
 	 * @param string                $cachebuster The theming app's cachebuster.
 	 * @param array<string, string> $stock       What the instance reports.
+	 * @param string                $appVersion  This app's installed version.
 	 *
 	 * @return StockTokensService The system under test.
 	 */
@@ -326,7 +327,8 @@ class StockTokensServiceTest extends TestCase {
 		ICache $cache,
 		string $version,
 		string $cachebuster,
-		array $stock
+		array $stock,
+		string $appVersion = '1.2.10'
 	): StockTokensService {
 		$preview = $this->createMock(TokenSetPreviewService::class);
 		$preview->method('getTokenSources')->willReturn(
@@ -338,7 +340,19 @@ class StockTokensServiceTest extends TestCase {
 
 		$config = $this->createMock(IConfig::class);
 		$config->method('getSystemValueString')->willReturn($version);
-		$config->method('getAppValue')->willReturn($cachebuster);
+		$config->method('getAppValue')->willReturnCallback(
+			static function (string $app, string $key, string $default) use ($cachebuster, $appVersion): string {
+				if ($app === 'theming' && $key === 'cachebuster') {
+					return $cachebuster;
+				}
+
+				if ($app === 'thematiq' && $key === 'installed_version') {
+					return $appVersion;
+				}
+
+				return $default;
+			}
+		);
 
 		$service = $this->getMockBuilder(StockTokensService::class)
 			->setConstructorArgs([$preview, $this->createMock(LoggerInterface::class), $factory, $config])
@@ -369,7 +383,7 @@ class StockTokensServiceTest extends TestCase {
 	}//end testAServedBlockComesFromTheCache()
 
 	/**
-	 * A resolved block is written back, under a key made of the two things
+	 * A resolved block is written back, under a key made of the three things
 	 * that can change the answer.
 	 */
 	public function testAResolvedBlockIsCachedUnderVersionAndCachebuster(): void {
@@ -387,16 +401,20 @@ class StockTokensServiceTest extends TestCase {
 		$service = $this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e']);
 		$service->getCss();
 
-		$this->assertArrayHasKey('34.0.4:7', $written);
-		$this->assertStringContainsString('--nldesign-color-primary:#00679e;', $written['34.0.4:7']);
+		$this->assertArrayHasKey('34.0.4:7:1.2.10', $written);
+		$this->assertStringContainsString('--nldesign-color-primary:#00679e;', $written['34.0.4:7:1.2.10']);
 	}//end testAResolvedBlockIsCachedUnderVersionAndCachebuster()
 
 	/**
-	 * An upgrade or a theming edit moves the key, so the old block is not
-	 * served for the new state — the cache invalidates itself rather than
-	 * needing to be cleared by anything.
+	 * A Nextcloud upgrade, a theming edit or a Thematiq upgrade moves the key,
+	 * so the old block is not served for the new state: the cache invalidates
+	 * itself rather than needing to be cleared by anything.
+	 *
+	 * The third input is thematiq#621. The block is built from this app's own
+	 * `overrides.css` mapping, so upgrading Thematiq changes the answer, and a
+	 * key without the app version served the old mapping for a day.
 	 */
-	public function testTheKeyMovesWhenEitherInputMoves(): void {
+	public function testTheKeyMovesWhenAnyInputMoves(): void {
 		$keys = [];
 		$cache = $this->createMock(ICache::class);
 		$cache->method('get')->willReturnCallback(
@@ -410,9 +428,10 @@ class StockTokensServiceTest extends TestCase {
 		$this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e'])->getCss();
 		$this->buildCached($cache, '34.0.5', '7', ['--color-primary' => '#00679e'])->getCss();
 		$this->buildCached($cache, '34.0.4', '8', ['--color-primary' => '#00679e'])->getCss();
+		$this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e'], '1.2.11')->getCss();
 
-		$this->assertSame(['34.0.4:7', '34.0.5:7', '34.0.4:8'], $keys);
-	}//end testTheKeyMovesWhenEitherInputMoves()
+		$this->assertSame(['34.0.4:7:1.2.10', '34.0.5:7:1.2.10', '34.0.4:8:1.2.10', '34.0.4:7:1.2.11'], $keys);
+	}//end testTheKeyMovesWhenAnyInputMoves()
 
 	/**
 	 * The block does not depend on who is asking.
