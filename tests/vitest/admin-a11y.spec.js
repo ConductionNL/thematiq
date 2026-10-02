@@ -24,7 +24,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/admin-js-unit-test-coverage/tasks.md#task-1
+ * @spec openspec/specs/admin-js-test-coverage/spec.md
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
