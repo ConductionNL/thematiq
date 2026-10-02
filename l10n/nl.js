@@ -522,7 +522,20 @@ OC.L10N.register(
         "No file chosen": "Geen bestand gekozen",
         "Choose logo": "Logo kiezen",
         "Logo file (SVG, PNG, JPG, GIF or WebP)": "Logobestand (SVG, PNG, JPG, GIF of WebP)",
-        "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "De wissel past de token set toe zoals je dat met de hand zou doen, inclusief het Nextcloud-logo en de kleuren die erbij horen. Aan het eind komen de token set, het logo en de kleuren van vóór de wissel terug."
+        "The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.": "De wissel past de token set toe zoals je dat met de hand zou doen, inclusief het Nextcloud-logo en de kleuren die erbij horen. Aan het eind komen de token set, het logo en de kleuren van vóór de wissel terug.",
+        "Approved by %s": "Goedgekeurd door %s",
+        "%s logo": "Logo van %s",
+        "Enter the logo as an https address or a path on this server.": "Vul het logo in als https-adres of als pad op deze server.",
+        "Enter the organisation name before you turn on the approved mark.": "Vul de naam van de organisatie in voordat je het goedkeuringsmerk aanzet.",
+        "AI assistant": "AI-assistent",
+        "Show users which AI assistant your organisation approved. The mark appears in the footer of the assistant panel in Conduction apps.": "Laat gebruikers zien welke AI-assistent je organisatie heeft goedgekeurd. Het merk staat onderaan het assistentpaneel in Conduction-apps.",
+        "The mark informs honest users. It is not a security control.": "Het merk informeert eerlijke gebruikers. Het is geen beveiligingsmaatregel.",
+        "Show the approved mark": "Toon het goedkeuringsmerk",
+        "Organisation name": "Naam van de organisatie",
+        "Logo address": "Adres van het logo",
+        "Save AI assistant settings": "AI-assistentinstellingen opslaan",
+        "The AI assistant settings could not be saved.": "De AI-assistentinstellingen konden niet worden opgeslagen.",
+        "AI assistant settings saved.": "AI-assistentinstellingen opgeslagen."
     },
     "nplurals=2; plural=(n != 1);"
 )
