@@ -13,11 +13,11 @@ Our own shared library, `@conduction/nextcloud-vue`, adds 54 `--cn-*` variables 
 
 ## What Changes
 
-- **Every themable internal variable becomes a token.** Each `component` and `slot` inventory entry that is not `runtime` gets an `--nldesign-nc-*` token. Each `--cn-*` entry gets an `--nldesign-cn-*` token. That is roughly 513 Nextcloud tokens and 54 Conduction tokens; the inventory holds the exact list.
+- **Every themable internal variable becomes a token.** Each settable `component` and `slot` inventory entry gets an `--nldesign-nc-*` token, and each settable `--cn-*` entry an `--nldesign-cn-*` token. Measured: 420 Nextcloud tokens and 33 Conduction tokens, 453 in all; the status file holds the exact list and the reason for every exclusion.
 - **Unset changes nothing.** A token nobody sets leaves the component exactly as Nextcloud or the library styles it, including every hardcoded value.
-- **Two ways in, picked per variable.** A variable a component only reads, with its own fallback, is bridged once on `body`. A variable a component declares on its own element gets a rule on that element's selector, written only when a set or the admin gives it a value.
+- **One rule per set token, written at render time.** A variable a component only reads gets its rule on `body`. A variable a component declares on its own element gets a rule on that element's selectors. Either rule is written only when a set or the admin gives the token a value, as an inline layer after the component scopes. No file is written.
 - **Grouped by component.** Each token carries the component that owns it, from the inventory, so the editor in change 4 can list them per component.
-- **Runtime variables stay excluded.** A variable Nextcloud's JavaScript writes on render, such as `--systemtag-color` in Files, keeps status `excluded`, because a stylesheet value would be overwritten. About 15 are written through `setProperty`; the extractor also counts inline style bindings, and the inventory holds the verdict per variable.
+- **Runtime variables stay excluded.** A variable a script writes on render keeps status `excluded`, because a stylesheet value would be overwritten: `--systemtag-color` in Files, 18 Vue `v-bind()` hashes, 18 `--cn-*` names the library writes from style bindings (grid positions, tile colours, the context menu's position), and four more. Six generic slot names (`--color`, `--font-size` and the like) stay excluded too, because a value on body would reach every unrelated reader.
 
 ## Capabilities
 
@@ -28,11 +28,11 @@ None.
 ### Modified Capabilities
 
 - `component-tokens`: the component token layer grows from 123 hand-picked tokens to every themable internal variable of Nextcloud and the shared library.
-- `css-architecture`: two new layers, the body-level internal bridge and the generated internal scopes, with fixed positions.
+- `css-architecture`: one new inline layer, the internal scopes, directly after the component scopes.
 
 ## Impact
 
-- Changed: `scripts/mapping/component-tokens.json` (generated internal section), `scripts/generate-component-scopes.mjs`, a new `css/internal-bridge.css`, `lib/Service/CssInjectionService.php`, `lib/Service/TokenRegistry.php`, the custom-overrides writer.
-- New: a writer for `css/generated/internal-scopes-{set}.css`, built when a set is applied or overrides are saved.
+- Changed: `scripts/mapping/variable-status.json` (453 entries settable, 47 excluded with a reason), `lib/Service/CssInjectionService.php`, `lib/Service/TokenRegistry.php` (`getInternalTokens()`, `isEditable()`).
+- New: `scripts/inventory/generate-internal-tokens.mjs`, the generated `scripts/mapping/internal-tokens.json` the server reads, `lib/Service/InternalScopesService.php`, the generated `docs/reference/internal-tokens.md`.
 - Visual: none until a set or admin sets one of the new tokens.
 - Other Conduction apps: an app whose bundled library is older than the inventory's library version simply lacks some `--cn-*` names; setting one is then a no-op there.

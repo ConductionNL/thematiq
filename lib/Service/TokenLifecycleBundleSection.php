@@ -36,12 +36,14 @@ class TokenLifecycleBundleSection {
 	/**
 	 * Constructor.
 	 *
-	 * @param OwnTokenService         $ownTokens    The own tokens.
-	 * @param TokenDeprecationService $deprecations The deprecations.
+	 * @param OwnTokenService             $ownTokens    The own tokens.
+	 * @param TokenDeprecationService     $deprecations The deprecations.
+	 * @param CustomOverridesService|null $overrides    Brought up to date after an apply.
 	 */
 	public function __construct(
 		private readonly OwnTokenService $ownTokens,
 		private readonly TokenDeprecationService $deprecations,
+		private readonly ?CustomOverridesService $overrides = null,
 	) {
 	}//end __construct()
 
@@ -100,13 +102,17 @@ class TokenLifecycleBundleSection {
 	/**
 	 * Apply the validated keys.
 	 *
-	 * @param array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null} $resolved From validate().
+	 * @param array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null}|null $resolved From validate().
 	 *
 	 * @return bool Whether anything was applied.
 	 *
 	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
-	public function apply(array $resolved): bool {
+	public function apply(?array $resolved): bool {
+		if ($resolved === null) {
+			return false;
+		}
+
 		if ($resolved['ownTokens'] !== null) {
 			$this->ownTokens->replaceAll(tokens: $resolved['ownTokens']);
 		}
@@ -115,19 +121,29 @@ class TokenLifecycleBundleSection {
 			$this->deprecations->replaceAll(records: $resolved['tokenDeprecations']);
 		}
 
-		return $resolved['ownTokens'] !== null || $resolved['tokenDeprecations'] !== null;
+		$applied = $resolved['ownTokens'] !== null || $resolved['tokenDeprecations'] !== null;
+		if ($applied === true) {
+			// Every set's overrides file carries the own tokens and their notices.
+			$this->overrides?->rewriteAll();
+		}
+
+		return $applied;
 	}//end apply()
 
 	/**
 	 * The import summary for the two keys.
 	 *
-	 * @param array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null} $resolved From validate().
+	 * @param array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null}|null $resolved From validate().
 	 *
 	 * @return array<string, array<string, mixed>>
 	 *
 	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
-	public function summary(array $resolved): array {
+	public function summary(?array $resolved): array {
+		if ($resolved === null) {
+			return [];
+		}
+
 		return [
 			'ownTokens' => ['applied' => $resolved['ownTokens'] !== null, 'count' => count(($resolved['ownTokens'] ?? []))],
 			'tokenDeprecations' => ['applied' => $resolved['tokenDeprecations'] !== null, 'count' => count(($resolved['tokenDeprecations'] ?? []))],

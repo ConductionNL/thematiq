@@ -44,8 +44,8 @@ The generated files stay on disk, so turning the setting back on takes effect at
 Variants for shipped sets come with the app. A variant for a custom token set is written when you upload the set and removed when you delete it. To rebuild them by hand:
 
 ```bash
-occ nldesign:generate-dark-variants
-occ nldesign:generate-dark-variants --set=amsterdam --force
+occ thematiq:generate-dark-variants
+occ thematiq:generate-dark-variants --set=amsterdam --force
 ```
 
 Without `--force`, a file that is still current is skipped. Each file records a hash of its source set, so the command knows.

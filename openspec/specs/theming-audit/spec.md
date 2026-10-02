@@ -185,7 +185,7 @@ The closed action vocabulary MUST include `version_restored`. Its entry MUST car
 
 @e2e exclude occ, not a page; proven by tests/Unit/Service/ThemeVersionRestoreServiceTest.php::testARestoreImportsAndIsAudited and tests/Unit/Service/ThemingAuditServiceTest.php::testVersionRestoredIsAcceptedAction
 
-- GIVEN an operator runs `occ nldesign:config:restore <id>`
+- GIVEN an operator runs `occ thematiq:config:restore <id>`
 - WHEN the restore completes
 - THEN the audit log MUST contain one `version_restored` entry with actor `cli` and `new` equal to `<id>`
 

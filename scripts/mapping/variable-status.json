@@ -3,111 +3,111 @@
 	"variables": {
 		"--a475b540": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--a8212066": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--a843d9d2": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--ab21a194": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--account-menu-outline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-account-menu-outline"
 		},
 		"--adec40c8": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--afe18836": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--alt-text-active-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-active-bg-color"
 		},
 		"--alt-text-active-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-active-border-color"
 		},
 		"--alt-text-active-fg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-active-fg-color"
 		},
 		"--alt-text-add-image": {
 			"status": "excluded",
 			"reason": "an image URL, not a design token."
 		},
 		"--alt-text-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-bg-color"
 		},
 		"--alt-text-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-border-color"
 		},
 		"--alt-text-done-image": {
 			"status": "excluded",
 			"reason": "an image URL, not a design token."
 		},
 		"--alt-text-fg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-fg-color"
 		},
 		"--alt-text-focus-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-focus-border-color"
 		},
 		"--alt-text-focus-outline-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-focus-outline-color"
 		},
 		"--alt-text-hover-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-hover-bg-color"
 		},
 		"--alt-text-hover-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-hover-border-color"
 		},
 		"--alt-text-hover-fg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-hover-fg-color"
 		},
 		"--alt-text-opacity": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-opacity"
 		},
 		"--alt-text-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-shadow"
 		},
 		"--alt-text-tooltip-bg": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-tooltip-bg"
 		},
 		"--alt-text-tooltip-border": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-tooltip-border"
 		},
 		"--alt-text-tooltip-fg": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-tooltip-fg"
 		},
 		"--alt-text-tooltip-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-tooltip-shadow"
 		},
 		"--animation-duration": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
 		},
 		"--animation-quick": {
 			"status": "mapped",
@@ -128,112 +128,112 @@
 			"reason": "an image URL, not a design token."
 		},
 		"--app-item-circle-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-item-circle-size"
 		},
 		"--app-item-col-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-item-col-width"
 		},
 		"--app-item-icon-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-item-icon-size"
 		},
 		"--app-item-row-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-item-row-height"
 		},
 		"--app-navigation-item-child-offset": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-navigation-item-child-offset"
 		},
 		"--app-navigation-max-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-navigation-max-width"
 		},
 		"--app-navigation-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-navigation-padding"
 		},
 		"--app-navigation-quota-margin": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-navigation-quota-margin"
 		},
 		"--app-settings-section-content-gap": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-settings-section-content-gap"
 		},
 		"--app-settings-section-text-offset": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-settings-section-text-offset"
 		},
 		"--app-sidebar-close-button-offset": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-sidebar-close-button-offset"
 		},
 		"--app-sidebar-offset": {
 			"status": "excluded",
 			"reason": "declared by Nextcloud, read by nothing it ships."
 		},
 		"--app-sidebar-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-sidebar-padding"
 		},
 		"--app-sidebar-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-app-sidebar-width"
 		},
 		"--assistant-button-background-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-assistant-button-background-color"
 		},
 		"--assistant-button-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-assistant-button-color"
 		},
 		"--auto-complete-result-avatar-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-auto-complete-result-avatar-size"
 		},
 		"--auto-complete-result-status-icon-position": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-auto-complete-result-status-icon-position"
 		},
 		"--auto-complete-result-status-icon-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-auto-complete-result-status-icon-size"
 		},
 		"--avatar-cell-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-cell-width"
 		},
 		"--avatar-size": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--avatar-status-icon-position": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-status-icon-position"
 		},
 		"--avatar-status-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-status-size"
 		},
 		"--avatar-status-size-min": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-status-size-min"
 		},
 		"--avatar-status-size-orbital": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-status-size-orbital"
 		},
 		"--backdrop-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-backdrop-color"
 		},
 		"--background-blur": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-background-blur"
 		},
 		"--background-image-invert-if-bright": {
 			"status": "mapped",
@@ -264,11 +264,11 @@
 		},
 		"--be84d992": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--body-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-body-bg-color"
 		},
 		"--body-container-margin": {
 			"status": "settable",
@@ -392,140 +392,140 @@
 			"category": "Layout & Dimensions"
 		},
 		"--button-cancel-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-bg-color"
 		},
 		"--button-cancel-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-border-color"
 		},
 		"--button-cancel-fg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-fg-color"
 		},
 		"--button-cancel-hover-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-hover-bg-color"
 		},
 		"--button-cancel-hover-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-hover-border-color"
 		},
 		"--button-cancel-hover-fg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-hover-fg-color"
 		},
 		"--button-hover-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-hover-color"
 		},
 		"--button-inner-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-inner-size"
 		},
 		"--button-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-padding"
 		},
 		"--button-padding-default": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-padding-default"
 		},
 		"--button-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-radius"
 		},
 		"--button-save-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-bg-color"
 		},
 		"--button-save-fg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-fg-color"
 		},
 		"--button-save-hover-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-hover-bg-color"
 		},
 		"--button-save-hover-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-hover-border-color"
 		},
 		"--button-save-hover-fg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-hover-fg-color"
 		},
 		"--button-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-button-size"
 		},
 		"--callout-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-callout-background"
 		},
 		"--callout-border": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-callout-border"
 		},
 		"--cell-margin": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-cell-margin"
 		},
 		"--cell-min-width": {
 			"status": "excluded",
 			"reason": "declared by Nextcloud, read by nothing it ships."
 		},
 		"--cell-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-cell-padding"
 		},
 		"--cell-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-cell-width"
 		},
 		"--cell-width-groups": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-cell-width-groups"
 		},
 		"--cell-width-large": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-cell-width-large"
 		},
 		"--cf2ff408": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--checkbox-container-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-container-size"
 		},
 		"--checkbox-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-padding"
 		},
 		"--checkbox-radio-switch--border-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-radio-switch--border-radius"
 		},
 		"--checkbox-radio-switch--border-radius-outer": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-radio-switch--border-radius-outer"
 		},
 		"--checkbox-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-size"
 		},
 		"--chip-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-chip-radius"
 		},
 		"--chip-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-chip-size"
 		},
 		"--clickable-area": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-clickable-area"
 		},
 		"--clickable-area-large": {
 			"status": "settable",
@@ -548,212 +548,212 @@
 			"category": "Spacing & Clickable Areas"
 		},
 		"--cn-ai-pointer-offset": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-ai-pointer-offset"
 		},
 		"--cn-card-active-border": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-color-picker-checker": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-color-picker-checker"
 		},
 		"--cn-color-swatch-checker": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-color-swatch-checker"
 		},
 		"--cn-ctx-menu-x": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-ctx-menu-y": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-detail-grid-label-width": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-email-accent": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-email-accent"
 		},
 		"--cn-forms-accent": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-forms-accent"
 		},
 		"--cn-forms-status": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-forms-status"
 		},
 		"--cn-grid-cols": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-grid-cs": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-grid-cspan": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-grid-cspan-md": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-grid-rs": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-grid-rspan": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-iw-accent": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-iwg-columns": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-iwg-min-height": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-kpi-accent": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-accent"
 		},
 		"--cn-kpi-gap": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-gap"
 		},
 		"--cn-kpi-gap-horizontal": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-gap-horizontal"
 		},
 		"--cn-kpi-grid-gap": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-grid-gap"
 		},
 		"--cn-kpi-icon-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-icon-size"
 		},
 		"--cn-kpi-icon-size-sm": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-icon-size-sm"
 		},
 		"--cn-kpi-icon-tint": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-icon-tint"
 		},
 		"--cn-kpi-label-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-label-color"
 		},
 		"--cn-kpi-label-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-label-size"
 		},
 		"--cn-kpi-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-padding"
 		},
 		"--cn-kpi-padding-flat": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-padding-flat"
 		},
 		"--cn-kpi-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-radius"
 		},
 		"--cn-kpi-section-title-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-section-title-size"
 		},
 		"--cn-kpi-stack-gap": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-stack-gap"
 		},
 		"--cn-kpi-title-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-title-size"
 		},
 		"--cn-kpi-title-weight": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-title-weight"
 		},
 		"--cn-kpi-value-line": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-line"
 		},
 		"--cn-kpi-value-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-size"
 		},
 		"--cn-kpi-value-size-compact": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-size-compact"
 		},
 		"--cn-kpi-value-size-stacked": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-size-stacked"
 		},
 		"--cn-kpi-value-text-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-text-size"
 		},
 		"--cn-kpi-value-weight": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-weight"
 		},
 		"--cn-links-widget-cols": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-quicklinks-icon-size": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-sidebar-tab-min-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-sidebar-tab-min-width"
 		},
 		"--cn-spacing-m": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-spacing-m"
 		},
 		"--cn-table-cell-max-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-table-cell-max-width"
 		},
 		"--cn-tile-bg": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-tile-text": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-widget-icon-color": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
 		},
 		"--cn-xwiki-accent": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-xwiki-accent"
 		},
 		"--cn-xwiki-accent-soft": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-cn-xwiki-accent-soft"
 		},
 		"--color": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
 		},
 		"--color-background-assistant": {
 			"status": "settable",
@@ -969,8 +969,8 @@
 			"note": "Favorite/star color"
 		},
 		"--color-header": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-color-header"
 		},
 		"--color-info": {
 			"status": "mapped",
@@ -1078,8 +1078,8 @@
 			"category": "Special Colors"
 		},
 		"--color-norder-error": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-color-norder-error"
 		},
 		"--color-placeholder-dark": {
 			"status": "mapped",
@@ -1110,12 +1110,12 @@
 			"note": "Interactive element primary color"
 		},
 		"--color-primary-element-extra-light": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-color-primary-element-extra-light"
 		},
 		"--color-primary-element-extra-light-hover": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-color-primary-element-extra-light-hover"
 		},
 		"--color-primary-element-hover": {
 			"status": "mapped",
@@ -1239,7 +1239,7 @@
 		},
 		"--color-text": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
 		},
 		"--color-text-error": {
 			"status": "mapped",
@@ -1343,51 +1343,51 @@
 		},
 		"--confetti-i": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "written per element by the notifications app's script at render, as an index, not a design value."
 		},
 		"--contenteditable-block-offset": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-contenteditable-block-offset"
 		},
 		"--contenteditable-inline-end-offset": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-contenteditable-inline-end-offset"
 		},
 		"--contenteditable-inline-start-offset": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-contenteditable-inline-start-offset"
 		},
 		"--counter-bubble-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-counter-bubble-height"
 		},
 		"--d7eb5974": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--d87c3654": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--d98ce684": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--dad67fa8": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--dark-link-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dark-link-color"
 		},
 		"--dark-text-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dark-text-color"
 		},
 		"--dc9c258c": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--default-cell-min-width": {
 			"status": "excluded",
@@ -1433,355 +1433,355 @@
 		},
 		"--dfb017de": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--dialog-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-bg-color"
 		},
 		"--dialog-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-border-color"
 		},
 		"--dialog-button-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-button-bg-color"
 		},
 		"--dialog-button-border": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-button-border"
 		},
 		"--dialog-button-hover-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-button-hover-bg-color"
 		},
 		"--dialog-button-hover-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-button-hover-color"
 		},
 		"--dialog-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-shadow"
 		},
 		"--dir-factor": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dir-factor"
 		},
 		"--doorhanger-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-bg-color"
 		},
 		"--doorhanger-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-border-color"
 		},
 		"--doorhanger-border-color-whcm": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-border-color-whcm"
 		},
 		"--doorhanger-hover-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-hover-bg-color"
 		},
 		"--doorhanger-hover-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-hover-color"
 		},
 		"--doorhanger-icon-opacity": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-icon-opacity"
 		},
 		"--doorhanger-separator-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-separator-color"
 		},
 		"--doorhanger-triangle-opacity-whcm": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-triangle-opacity-whcm"
 		},
 		"--dp-action-button-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-button-height"
 		},
 		"--dp-action-buttons-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-buttons-padding"
 		},
 		"--dp-action-row-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-row-padding"
 		},
 		"--dp-action-row-transition": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-row-transition"
 		},
 		"--dp-action-row-transtion": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-row-transtion"
 		},
 		"--dp-animation-duration": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-animation-duration"
 		},
 		"--dp-arrow-left": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--dp-background-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-background-color"
 		},
 		"--dp-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-border-color"
 		},
 		"--dp-border-color-focus": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-border-color-focus"
 		},
 		"--dp-border-color-hover": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-border-color-hover"
 		},
 		"--dp-border-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-border-radius"
 		},
 		"--dp-button-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-button-height"
 		},
 		"--dp-button-icon-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-button-icon-height"
 		},
 		"--dp-calendar-header-cell-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-calendar-header-cell-padding"
 		},
 		"--dp-calendar-wrap-padding": {
 			"status": "excluded",
 			"reason": "declared by Nextcloud, read by nothing it ships."
 		},
 		"--dp-cell-border-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-cell-border-radius"
 		},
 		"--dp-cell-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-cell-padding"
 		},
 		"--dp-cell-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-cell-size"
 		},
 		"--dp-common-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-common-padding"
 		},
 		"--dp-common-transition": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-common-transition"
 		},
 		"--dp-danger-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-danger-color"
 		},
 		"--dp-direction": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-direction"
 		},
 		"--dp-disabled-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-disabled-color"
 		},
 		"--dp-disabled-color-text": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-disabled-color-text"
 		},
 		"--dp-font-family": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-font-family"
 		},
 		"--dp-font-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-font-size"
 		},
 		"--dp-highlight-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-highlight-color"
 		},
 		"--dp-hover-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-hover-color"
 		},
 		"--dp-hover-icon-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-hover-icon-color"
 		},
 		"--dp-hover-text-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-hover-text-color"
 		},
 		"--dp-icon-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-icon-color"
 		},
 		"--dp-input-icon-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-input-icon-padding"
 		},
 		"--dp-input-not-clearable-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-input-not-clearable-padding"
 		},
 		"--dp-input-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-input-padding"
 		},
 		"--dp-loader": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-loader"
 		},
 		"--dp-marker-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-marker-color"
 		},
 		"--dp-menu-appear-transition-timing": {
 			"status": "excluded",
 			"reason": "declared by Nextcloud, read by nothing it ships."
 		},
 		"--dp-menu-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-menu-border-color"
 		},
 		"--dp-menu-min-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-menu-min-width"
 		},
 		"--dp-menu-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-menu-padding"
 		},
 		"--dp-menu-width": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--dp-month-year-row-button-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-month-year-row-button-size"
 		},
 		"--dp-month-year-row-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-month-year-row-height"
 		},
 		"--dp-multi-calendars-spacing": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-multi-calendars-spacing"
 		},
 		"--dp-overlay-col-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-overlay-col-padding"
 		},
 		"--dp-overlay-height": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--dp-preview-font-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-preview-font-size"
 		},
 		"--dp-primary-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-primary-color"
 		},
 		"--dp-primary-disabled-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-primary-disabled-color"
 		},
 		"--dp-primary-text-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-primary-text-color"
 		},
 		"--dp-range-between-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-range-between-border-color"
 		},
 		"--dp-range-between-dates-background-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-range-between-dates-background-color"
 		},
 		"--dp-range-between-dates-text-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-range-between-dates-text-color"
 		},
 		"--dp-row-margin": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-row-margin"
 		},
 		"--dp-scroll-bar-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-scroll-bar-background"
 		},
 		"--dp-scroll-bar-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-scroll-bar-color"
 		},
 		"--dp-secondary-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-secondary-color"
 		},
 		"--dp-success-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-success-color"
 		},
 		"--dp-success-color-disabled": {
 			"status": "excluded",
 			"reason": "declared by Nextcloud, read by nothing it ships."
 		},
 		"--dp-text-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-text-color"
 		},
 		"--dp-time-font-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-time-font-size"
 		},
 		"--dp-time-inc-dec-button-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-time-inc-dec-button-size"
 		},
 		"--dp-tooltip-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-tooltip-color"
 		},
 		"--dp-transition-length": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-transition-length"
 		},
 		"--dp-transition-timing": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-transition-timing"
 		},
 		"--dp-transition-timing-general": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dp-transition-timing-general"
 		},
 		"--dropdown-btn-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dropdown-btn-bg-color"
 		},
 		"--dropdown-btn-border": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-dropdown-btn-border"
 		},
 		"--e2fa5f72": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--editorFreeText-editing-cursor": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-editorFreeText-editing-cursor"
 		},
 		"--editorInk-editing-cursor": {
 			"status": "excluded",
@@ -1797,23 +1797,23 @@
 		},
 		"--fb515064": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--field-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-field-bg-color"
 		},
 		"--field-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-field-border-color"
 		},
 		"--field-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-field-color"
 		},
 		"--figure-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-figure-size"
 		},
 		"--filter-background-blur": {
 			"status": "settable",
@@ -1834,24 +1834,24 @@
 			"reason": "an image URL, not a design token."
 		},
 		"--fixed-block-start-position": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-fixed-block-start-position"
 		},
 		"--focus-outline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-focus-outline"
 		},
 		"--focus-outline-around": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-focus-outline-around"
 		},
 		"--focus-ring-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-focus-ring-color"
 		},
 		"--focus-ring-outline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-focus-ring-outline"
 		},
 		"--font-face": {
 			"status": "mapped",
@@ -1862,11 +1862,11 @@
 		},
 		"--font-family": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
 		},
 		"--font-size": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
 		},
 		"--font-size-small": {
 			"status": "settable",
@@ -1904,32 +1904,32 @@
 			"note": "Footer height; NC layout dependent"
 		},
 		"--form-element-label-offset": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-form-element-label-offset"
 		},
 		"--form-element-label-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-form-element-label-padding"
 		},
 		"--form-group-content-gap": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-form-group-content-gap"
 		},
 		"--freetext-line-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-freetext-line-height"
 		},
 		"--freetext-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-freetext-padding"
 		},
 		"--fullwidth": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--gap": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-gap"
 		},
 		"--gradient-main-background": {
 			"status": "mapped",
@@ -1981,104 +1981,104 @@
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--highlight-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-highlight-bg-color"
 		},
 		"--highlight-selected-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-highlight-selected-bg-color"
 		},
 		"--hljs-background-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-background-color"
 		},
 		"--hljs-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-color"
 		},
 		"--hljs-syntax-comment-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-comment-color"
 		},
 		"--hljs-syntax-constant-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-constant-color"
 		},
 		"--hljs-syntax-entity-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-entity-color"
 		},
 		"--hljs-syntax-entity-tag-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-entity-tag-color"
 		},
 		"--hljs-syntax-keyword-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-keyword-color"
 		},
 		"--hljs-syntax-markup-bold-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-bold-color"
 		},
 		"--hljs-syntax-markup-deleted-background-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-deleted-background-color"
 		},
 		"--hljs-syntax-markup-deleted-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-deleted-color"
 		},
 		"--hljs-syntax-markup-heading-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-heading-color"
 		},
 		"--hljs-syntax-markup-inserted-background-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-inserted-background-color"
 		},
 		"--hljs-syntax-markup-inserted-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-inserted-color"
 		},
 		"--hljs-syntax-markup-italic-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-italic-color"
 		},
 		"--hljs-syntax-markup-list-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-list-color"
 		},
 		"--hljs-syntax-storage-modifier-import-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-storage-modifier-import-color"
 		},
 		"--hljs-syntax-string-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-string-color"
 		},
 		"--hljs-syntax-variable-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-variable-color"
 		},
 		"--hover-filter": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hover-filter"
 		},
 		"--hover-outline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hover-outline"
 		},
 		"--hover-outline-around": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hover-outline-around"
 		},
 		"--hover-outline-around-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hover-outline-around-color"
 		},
 		"--hover-outline-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-hover-outline-color"
 		},
 		"--icon-add-dark": {
 			"status": "excluded",
@@ -3001,37 +3001,37 @@
 		},
 		"--image-logo": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable.",
-			"note": "Logo URL; admin setting"
+			"note": "Logo URL; admin setting",
+			"reason": "an image URL, not a design token."
 		},
 		"--image-logoheader": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "an image URL, not a design token."
 		},
 		"--image-logoheader-custom": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable.",
-			"note": "Logo header flag; admin setting"
+			"note": "Logo header flag; admin setting",
+			"reason": "an image URL, not a design token."
 		},
 		"--inline-end": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-inline-end"
 		},
 		"--inline-start": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-inline-start"
 		},
 		"--input-border-box-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-box-shadow"
 		},
 		"--input-border-box-shadow-dark": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-box-shadow-dark"
 		},
 		"--input-border-box-shadow-light": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-box-shadow-light"
 		},
 		"--input-border-color": {
 			"status": "mapped",
@@ -3039,100 +3039,100 @@
 			"token": "--nldesign-component-textarea-focus-border-color"
 		},
 		"--input-border-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-radius"
 		},
 		"--input-border-width-offset": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-width-offset"
 		},
 		"--input-disabled-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-disabled-border-color"
 		},
 		"--input-focus-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-focus-border-color"
 		},
 		"--input-focus-outline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-focus-outline"
 		},
 		"--input-hover-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-hover-border-color"
 		},
 		"--input-label-font-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-label-font-size"
 		},
 		"--input-padding-end": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-padding-end"
 		},
 		"--input-padding-start": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-padding-start"
 		},
 		"--input-unfocused-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-input-unfocused-border-color"
 		},
 		"--invert-if-dark": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
 		},
 		"--item-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-item-padding"
 		},
 		"--level-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-level-padding"
 		},
 		"--link-outline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-link-outline"
 		},
 		"--list-item-border-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-list-item-border-radius"
 		},
 		"--list-item-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-list-item-height"
 		},
 		"--list-item-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-list-item-padding"
 		},
 		"--loading-icon": {
 			"status": "excluded",
 			"reason": "an image URL, not a design token."
 		},
 		"--loading-icon-delay": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-loading-icon-delay"
 		},
 		"--local-search-width": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "its value is a Vue `v-bind()` variable, bound per component instance at render."
 		},
 		"--main-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-main-color"
 		},
 		"--margin": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--max-icon-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-max-icon-size"
 		},
 		"--member-list-gap": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-member-list-gap"
 		},
 		"--members-list-gap": {
 			"status": "excluded",
@@ -3144,11 +3144,11 @@
 		},
 		"--mermaid-font-family": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "inserted by mermaid's script with insertRule at render, so a stylesheet value is replaced."
 		},
 		"--min-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-min-size"
 		},
 		"--mouse-pos-x": {
 			"status": "excluded",
@@ -3159,20 +3159,20 @@
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--mtime-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-mtime-height"
 		},
 		"--name-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-name-height"
 		},
 		"--nav-tint": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-nav-tint"
 		},
 		"--nav-tint-strong": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-nav-tint-strong"
 		},
 		"--navigation-width": {
 			"status": "settable",
@@ -3185,32 +3185,32 @@
 			"category": "Layout & Dimensions"
 		},
 		"--nc-form-box-item-border-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-nc-form-box-item-border-width"
 		},
 		"--nc-form-box-item-min-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-nc-form-box-item-min-height"
 		},
 		"--note-background": {
 			"status": "mapped",
 			"via": "stylesheet"
 		},
 		"--note-card-icon-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-note-card-icon-size"
 		},
 		"--note-card-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-note-card-padding"
 		},
 		"--note-theme": {
 			"status": "mapped",
 			"via": "stylesheet"
 		},
 		"--open-background-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-open-background-color"
 		},
 		"--original-icon-add-dark": {
 			"status": "excluded",
@@ -4053,292 +4053,292 @@
 			"reason": "an image URL, not a design token."
 		},
 		"--outline-around-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-outline-around-color"
 		},
 		"--outline-around-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-outline-around-width"
 		},
 		"--outline-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-outline-color"
 		},
 		"--outline-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-outline-width"
 		},
 		"--padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-padding"
 		},
 		"--padding-inline-start": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-padding-inline-start"
 		},
 		"--page-border": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-page-border"
 		},
 		"--page-margin": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-page-margin"
 		},
 		"--panel-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-panel-width"
 		},
 		"--pdfViewer-padding-bottom": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-pdfViewer-padding-bottom"
 		},
 		"--photos-face-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-photos-face-width"
 		},
 		"--photos-navigation-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-photos-navigation-height"
 		},
 		"--plyr-audio-control-background-hover": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-control-background-hover"
 		},
 		"--plyr-audio-control-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-control-color"
 		},
 		"--plyr-audio-control-color-hover": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-control-color-hover"
 		},
 		"--plyr-audio-controls-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-controls-background"
 		},
 		"--plyr-audio-progress-buffered-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-progress-buffered-background"
 		},
 		"--plyr-audio-range-thumb-active-shadow-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-range-thumb-active-shadow-color"
 		},
 		"--plyr-audio-range-track-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-range-track-background"
 		},
 		"--plyr-badge-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-badge-background"
 		},
 		"--plyr-badge-border-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-badge-border-radius"
 		},
 		"--plyr-badge-text-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-badge-text-color"
 		},
 		"--plyr-button-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-button-size"
 		},
 		"--plyr-captions-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-captions-background"
 		},
 		"--plyr-captions-text-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-captions-text-color"
 		},
 		"--plyr-color-main": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-color-main"
 		},
 		"--plyr-control-icon-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-control-icon-size"
 		},
 		"--plyr-control-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-control-radius"
 		},
 		"--plyr-control-spacing": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-control-spacing"
 		},
 		"--plyr-control-toggle-checked-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-control-toggle-checked-background"
 		},
 		"--plyr-focus-visible-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-focus-visible-color"
 		},
 		"--plyr-font-family": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-family"
 		},
 		"--plyr-font-size-badge": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-badge"
 		},
 		"--plyr-font-size-base": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-base"
 		},
 		"--plyr-font-size-large": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-large"
 		},
 		"--plyr-font-size-menu": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-menu"
 		},
 		"--plyr-font-size-small": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-small"
 		},
 		"--plyr-font-size-time": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-time"
 		},
 		"--plyr-font-size-xlarge": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-xlarge"
 		},
 		"--plyr-font-weight-regular": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-weight-regular"
 		},
 		"--plyr-line-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-line-height"
 		},
 		"--plyr-menu-arrow-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-arrow-color"
 		},
 		"--plyr-menu-arrow-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-arrow-size"
 		},
 		"--plyr-menu-back-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-back-border-color"
 		},
 		"--plyr-menu-back-border-shadow-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-back-border-shadow-color"
 		},
 		"--plyr-menu-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-background"
 		},
 		"--plyr-menu-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-color"
 		},
 		"--plyr-menu-item-arrow-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-item-arrow-size"
 		},
 		"--plyr-menu-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-radius"
 		},
 		"--plyr-menu-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-shadow"
 		},
 		"--plyr-progress-loading-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-progress-loading-background"
 		},
 		"--plyr-progress-loading-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-progress-loading-size"
 		},
 		"--plyr-progress-marker-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-progress-marker-background"
 		},
 		"--plyr-progress-marker-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-progress-marker-width"
 		},
 		"--plyr-range-fill-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-fill-background"
 		},
 		"--plyr-range-thumb-active-shadow-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-thumb-active-shadow-width"
 		},
 		"--plyr-range-thumb-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-thumb-background"
 		},
 		"--plyr-range-thumb-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-thumb-height"
 		},
 		"--plyr-range-thumb-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-thumb-shadow"
 		},
 		"--plyr-range-track-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-track-height"
 		},
 		"--plyr-tooltip-arrow-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-arrow-size"
 		},
 		"--plyr-tooltip-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-background"
 		},
 		"--plyr-tooltip-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-color"
 		},
 		"--plyr-tooltip-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-radius"
 		},
 		"--plyr-tooltip-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-shadow"
 		},
 		"--plyr-video-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-background"
 		},
 		"--plyr-video-control-background-hover": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-control-background-hover"
 		},
 		"--plyr-video-control-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-control-color"
 		},
 		"--plyr-video-control-color-hover": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-control-color-hover"
 		},
 		"--plyr-video-controls-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-controls-background"
 		},
 		"--plyr-video-progress-buffered-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-progress-buffered-background"
 		},
 		"--plyr-video-range-track-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-range-track-background"
 		},
 		"--preview-arrow-offset": {
 			"status": "excluded",
@@ -4360,23 +4360,23 @@
 		},
 		"--progress-bar-color": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "its value is a Vue `v-bind()` variable, bound per component instance at render."
 		},
 		"--progress-bar-height": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--progressBar-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-progressBar-bg-color"
 		},
 		"--progressBar-blend-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-progressBar-blend-color"
 		},
 		"--progressBar-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-progressBar-color"
 		},
 		"--progressBar-end-offset": {
 			"status": "excluded",
@@ -4387,96 +4387,96 @@
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--radio-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-bg-color"
 		},
 		"--radio-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-border-color"
 		},
 		"--radio-checked-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-checked-bg-color"
 		},
 		"--radio-checked-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-checked-border-color"
 		},
 		"--radio-group-button--background-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--background-color"
 		},
 		"--radio-group-button--background-color-hover": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--background-color-hover"
 		},
 		"--radio-group-button--border-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--border-radius"
 		},
 		"--radio-group-button--border-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--border-width"
 		},
 		"--radio-group-button--color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--color"
 		},
 		"--radio-group-button--icon-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--icon-size"
 		},
 		"--radio-group-button--padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--padding"
 		},
 		"--ratio": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-ratio"
 		},
 		"--resizer-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-resizer-bg-color"
 		},
 		"--resizer-shift": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-resizer-shift"
 		},
 		"--resizer-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-resizer-size"
 		},
 		"--resource-box-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-resource-box-size"
 		},
 		"--resources-list-gap": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-resources-list-gap"
 		},
 		"--row-height": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--row-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-row-width"
 		},
 		"--scale-factor": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--scrollbar-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-scrollbar-bg-color"
 		},
 		"--scrollbar-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-scrollbar-color"
 		},
 		"--secondary-margin": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-secondary-margin"
 		},
 		"--secondaryToolbarButton-documentProperties-icon": {
 			"status": "excluded",
@@ -4535,12 +4535,12 @@
 			"reason": "an image URL, not a design token."
 		},
 		"--separator-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-separator-color"
 		},
 		"--session-max-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-session-max-width"
 		},
 		"--sidebar-max-width": {
 			"status": "settable",
@@ -4563,152 +4563,152 @@
 			"category": "Layout & Dimensions"
 		},
 		"--sidebar-narrow-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-narrow-bg-color"
 		},
 		"--sidebar-toolbar-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-toolbar-bg-color"
 		},
 		"--sidebar-transition-duration": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-transition-duration"
 		},
 		"--sidebar-transition-timing-function": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-transition-timing-function"
 		},
 		"--sidebar-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-width"
 		},
 		"--size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-size"
 		},
 		"--slideshow-duration": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--spreadHorizontalWrapped-margin-LR": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-spreadHorizontalWrapped-margin-LR"
 		},
 		"--sticky-column-z-index": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-sticky-column-z-index"
 		},
 		"--systemtag-color": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--table-border-radius": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-table-border-radius"
 		},
 		"--table-color-background": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-background"
 		},
 		"--table-color-background-hover": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-background-hover"
 		},
 		"--table-color-border": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-border"
 		},
 		"--table-color-heading": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-heading"
 		},
 		"--table-color-heading-border": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-heading-border"
 		},
 		"--text-editor-max-width": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--text-primary-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-text-primary-color"
 		},
 		"--text-secondary-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-text-secondary-color"
 		},
 		"--textarea-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-textarea-bg-color"
 		},
 		"--textarea-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-textarea-border-color"
 		},
 		"--textarea-fg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-textarea-fg-color"
 		},
 		"--thumbnail-height": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--thumbnail-hover-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-thumbnail-hover-color"
 		},
 		"--thumbnail-selected-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-thumbnail-selected-color"
 		},
 		"--thumbnail-width": {
 			"status": "excluded",
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--toggled-btn-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toggled-btn-bg-color"
 		},
 		"--toggled-btn-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toggled-btn-color"
 		},
 		"--toggled-hover-active-btn-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toggled-hover-active-btn-color"
 		},
 		"--toggled-hover-btn-outline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toggled-hover-btn-outline"
 		},
 		"--toolbar-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-bg-color"
 		},
 		"--toolbar-border-bottom": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-border-bottom"
 		},
 		"--toolbar-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-border-color"
 		},
 		"--toolbar-box-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-box-shadow"
 		},
 		"--toolbar-icon-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-icon-bg-color"
 		},
 		"--toolbar-icon-hover-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-icon-hover-bg-color"
 		},
 		"--toolbar-icon-opacity": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-icon-opacity"
 		},
 		"--toolbarButton-bookmark-icon": {
 			"status": "excluded",
@@ -4795,12 +4795,12 @@
 			"reason": "an image URL, not a design token."
 		},
 		"--toolbarSidebar-border-bottom": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toolbarSidebar-border-bottom"
 		},
 		"--toolbarSidebar-box-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-toolbarSidebar-box-shadow"
 		},
 		"--tpl-glow-1": {
 			"status": "excluded",
@@ -4823,48 +4823,48 @@
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--treeitem-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-bg-color"
 		},
 		"--treeitem-collapsed-icon": {
 			"status": "excluded",
 			"reason": "an image URL, not a design token."
 		},
 		"--treeitem-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-color"
 		},
 		"--treeitem-expanded-icon": {
 			"status": "excluded",
 			"reason": "an image URL, not a design token."
 		},
 		"--treeitem-hover-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-hover-color"
 		},
 		"--treeitem-selected-bg-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-selected-bg-color"
 		},
 		"--treeitem-selected-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-selected-color"
 		},
 		"--unfocus-outline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-unfocus-outline"
 		},
 		"--user-status-color-away": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-user-status-color-away"
 		},
 		"--user-status-color-busy": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-user-status-color-busy"
 		},
 		"--user-status-color-offline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-user-status-color-offline"
 		},
 		"--user-status-color-online": {
 			"status": "mapped",
@@ -4873,11 +4873,11 @@
 		},
 		"--v6c51c3da": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--v6ca826ea": {
 			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
 		},
 		"--value": {
 			"status": "excluded",
@@ -4888,8 +4888,8 @@
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--vs-actions-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-actions-padding"
 		},
 		"--vs-border-color": {
 			"status": "mapped",
@@ -4902,64 +4902,64 @@
 			"token": "--nldesign-component-form-select-border-radius"
 		},
 		"--vs-border-style": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-border-style"
 		},
 		"--vs-border-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-border-width"
 		},
 		"--vs-colors--dark": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-colors--dark"
 		},
 		"--vs-colors--darkest": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-colors--darkest"
 		},
 		"--vs-colors--light": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-colors--light"
 		},
 		"--vs-colors--lightest": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-colors--lightest"
 		},
 		"--vs-controls--deselect-text-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-controls--deselect-text-shadow"
 		},
 		"--vs-controls--spinner-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-controls--spinner-size"
 		},
 		"--vs-controls-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-controls-color"
 		},
 		"--vs-controls-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-controls-size"
 		},
 		"--vs-disabled-bg": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-disabled-bg"
 		},
 		"--vs-disabled-color": {
 			"status": "excluded",
 			"reason": "declared by Nextcloud, read by nothing it ships."
 		},
 		"--vs-disabled-cursor": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-disabled-cursor"
 		},
 		"--vs-dropdown-bg": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-bg"
 		},
 		"--vs-dropdown-box-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-box-shadow"
 		},
 		"--vs-dropdown-color": {
 			"status": "mapped",
@@ -4967,12 +4967,12 @@
 			"token": "--nldesign-component-form-select-option-color"
 		},
 		"--vs-dropdown-max-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-max-height"
 		},
 		"--vs-dropdown-min-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-min-width"
 		},
 		"--vs-dropdown-option--active-bg": {
 			"status": "mapped",
@@ -4985,68 +4985,68 @@
 			"token": "--nldesign-component-form-select-option-hover-color"
 		},
 		"--vs-dropdown-option--deselect-bg": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option--deselect-bg"
 		},
 		"--vs-dropdown-option--deselect-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option--deselect-color"
 		},
 		"--vs-dropdown-option--kb-focus-box-shadow": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option--kb-focus-box-shadow"
 		},
 		"--vs-dropdown-option-bg": {
 			"status": "excluded",
 			"reason": "declared by Nextcloud, read by nothing it ships."
 		},
 		"--vs-dropdown-option-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option-color"
 		},
 		"--vs-dropdown-option-padding": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option-padding"
 		},
 		"--vs-dropdown-z-index": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-z-index"
 		},
 		"--vs-font-size": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-font-size"
 		},
 		"--vs-line-height": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-line-height"
 		},
 		"--vs-search-input-bg": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-search-input-bg"
 		},
 		"--vs-search-input-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-search-input-color"
 		},
 		"--vs-search-input-placeholder-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-search-input-placeholder-color"
 		},
 		"--vs-selected-bg": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-selected-bg"
 		},
 		"--vs-selected-border-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-selected-border-color"
 		},
 		"--vs-selected-border-style": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-selected-border-style"
 		},
 		"--vs-selected-border-width": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-selected-border-width"
 		},
 		"--vs-selected-color": {
 			"status": "mapped",
@@ -5054,28 +5054,28 @@
 			"token": "--nldesign-component-form-select-color"
 		},
 		"--vs-state-disabled-bg": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-state-disabled-bg"
 		},
 		"--vs-state-disabled-color": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-state-disabled-color"
 		},
 		"--vs-state-disabled-controls-color": {
 			"status": "excluded",
 			"reason": "declared by Nextcloud, read by nothing it ships."
 		},
 		"--vs-state-disabled-cursor": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-state-disabled-cursor"
 		},
 		"--vs-transition-duration": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-transition-duration"
 		},
 		"--vs-transition-timing-function": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-vs-transition-timing-function"
 		},
 		"--widget-full-width": {
 			"status": "excluded",
@@ -5086,8 +5086,8 @@
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--xfa-focus-outline": {
-			"status": "excluded",
-			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+			"status": "settable",
+			"token": "--nldesign-nc-xfa-focus-outline"
 		},
 		"--xfa-unfocused-field-background": {
 			"status": "excluded",

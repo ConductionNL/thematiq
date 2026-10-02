@@ -36,6 +36,8 @@ script('thematiq', 'lib/brandForm');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');
+script('thematiq', 'admin-documents');
+script('thematiq', 'admin-app-brands');
 style('thematiq', 'admin');
 // Your own tokens and the deprecations list (authoring-token-lifecycle).
 script('thematiq', 'ownTokens');
@@ -63,8 +65,8 @@ if ($_['mockUi'] === true) {
      via data-* attributes on this element. See ADR-004. -->
 <div id="nldesign-settings" class="section">
 	<div class="nldesign-settings-header">
-		<h2><?php p($l->t('NL Design System Theme')); ?></h2>
-		<a href="https://nldesign.app" target="_blank" rel="noopener noreferrer" class="nldesign-doc-link">
+		<h2>Thematiq</h2>
+		<a href="<?php p($_['documentationUrl']); ?>" id="nldesign-doc-link" target="_blank" rel="noopener noreferrer" class="nldesign-doc-link">
 			<span class="icon-link-external"></span>
 			<?php p($l->t('Documentation')); ?>
 		</a>
@@ -349,8 +351,8 @@ if ($_['mockUi'] === true) {
 		<div class="nldesign-preview-head">
 			<h3><?php p($l->t('Preview')); ?></h3>
 			<div class="nldesign-preview-switch" role="tablist" aria-label="<?php p($l->t('Preview view')); ?>">
-				<button type="button" class="nldesign-preview-switch-btn active" data-view="app" aria-selected="true"><?php p($l->t('App')); ?></button>
-				<button type="button" class="nldesign-preview-switch-btn" data-view="login" aria-selected="false"><?php p($l->t('Login')); ?></button>
+				<button type="button" class="nldesign-preview-switch-btn active" data-view="app" role="tab" id="nldesign-preview-tab-app" aria-selected="true"><?php p($l->t('App')); ?></button>
+				<button type="button" class="nldesign-preview-switch-btn" data-view="login" role="tab" id="nldesign-preview-tab-login" aria-selected="false" tabindex="-1"><?php p($l->t('Login')); ?></button>
 			</div>
 		</div>
 
@@ -641,6 +643,25 @@ if ($_['mockUi'] === true) {
 		<span id="nldesign-app-theming-feedback" class="nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
 	</div>
 
+	<!-- Brand per app: an app's own token set and logos
+	     (openspec/specs/per-app-theming/spec.md). Filled by js/admin-app-brands.js. -->
+	<div class="nldesign-app-brands" id="nldesign-app-brands" style="margin-top:2em">
+		<h3><?php p($l->t('Brand per app')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Give an app its own house style and logo, for example a knowledge base or a participation platform. On that app\'s pages the brand replaces the house style for everyone. Other pages stay as they are.')); ?>
+			<?php p($l->t('The app\'s name stays as Nextcloud shows it: the app menu and page titles come from Nextcloud.')); ?>
+		</p>
+		<div id="nldesign-app-brands-list" class="nldesign-app-brands-list"></div>
+		<p>
+			<label for="nldesign-app-brands-app"><?php p($l->t('App')); ?></label>
+			<select id="nldesign-app-brands-app"></select>
+			<label for="nldesign-app-brands-set"><?php p($l->t('Token set')); ?></label>
+			<select id="nldesign-app-brands-set"></select>
+			<button type="button" class="button primary" id="nldesign-app-brands-add"><?php p($l->t('Save brand')); ?></button>
+		</p>
+		<span id="nldesign-app-brands-feedback" role="status" aria-live="polite"></span>
+	</div>
+
 	<!-- Group theming — map Nextcloud groups to token sets for shared-instance
 	     multi-tenant huisstijl (openspec/specs/per-group-theming/spec.md).
 	     Row order IS priority order; keyboard-operable move-up/move-down
@@ -833,6 +854,33 @@ if ($_['mockUi'] === true) {
 			<p><code id="nldesign-email-occ-enable"><?php p($_['occEnableCommand']); ?></code></p>
 			<p><code id="nldesign-email-occ-disable"><?php p($_['occDisableCommand']); ?></code></p>
 		</div>
+	</div>
+
+	<!-- Documents: the document house style profile that fleet apps read
+	     for letters and PDF exports (openspec/specs/document-house-style/spec.md).
+	     Filled and saved by js/admin-documents.js. -->
+	<div class="nldesign-documents" id="nldesign-documents" style="margin-top:2em">
+		<h3><?php p($l->t('Documents')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Apps that generate letters and PDF exports use these values, so documents follow the house style. Without uploads they use the house style logo and the email footer.')); ?>
+		</p>
+		<p>
+			<label for="nldesign-documents-logo"><?php p($l->t('Document logo (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label><br>
+			<input type="file" id="nldesign-documents-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+			<button type="button" class="button" id="nldesign-documents-logo-remove"><?php p($l->t('Remove document logo')); ?></button>
+		</p>
+		<p>
+			<label for="nldesign-documents-cover"><?php p($l->t('Cover image (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label><br>
+			<input type="file" id="nldesign-documents-cover" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+			<button type="button" class="button" id="nldesign-documents-cover-remove"><?php p($l->t('Remove cover image')); ?></button>
+		</p>
+		<p>
+			<label for="nldesign-documents-footer-line"><?php p($l->t('Extra footer line')); ?></label><br>
+			<input type="text" id="nldesign-documents-footer-line" maxlength="200">
+			<button type="button" class="button primary" id="nldesign-documents-footer-save"><?php p($l->t('Save footer line')); ?></button>
+		</p>
+		<div class="nldesign-documents-preview" id="nldesign-documents-preview" aria-live="polite"></div>
+		<span id="nldesign-documents-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Upstream token updates — opt-in daily freshness check against

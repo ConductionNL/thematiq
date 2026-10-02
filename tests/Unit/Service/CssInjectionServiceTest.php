@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\CustomOverridesService;
@@ -132,6 +133,13 @@ class CssInjectionServiceTest extends TestCase {
 	private string $runtimeDir;
 
 	/**
+	 * The brand-per-app mock; no app has a brand unless a test says so.
+	 *
+	 * @var AppBrandService&MockObject
+	 */
+	private $appBrands;
+
+	/**
 	 * Set up mocks before each test.
 	 */
 	protected function setUp(): void {
@@ -146,6 +154,7 @@ class CssInjectionServiceTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->stockTokens = $this->createMock(StockTokensService::class);
 		$this->stockTokens->method('getCss')->willReturn(null);
+		$this->appBrands = $this->createMock(AppBrandService::class);
 
 		$this->runtimeDir = sys_get_temp_dir() . '/thematiq-injection-' . bin2hex(random_bytes(4));
 		// The repository is the app directory, read-only, so shipped files
@@ -240,6 +249,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->stockTokens,
 					$this->runtimeFiles,
 					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink'])
@@ -395,6 +405,31 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertSame(['tokens/custom-openwoo', 'theme-scopes', 'component-scopes'], $styleLog);
 	}//end testACustomSetOnNoneLoadsItsOwnTokenFile()
+
+	/**
+	 * A set that gives an internal token a value carries the internal scopes,
+	 * inline and directly after the component scopes.
+	 *
+	 * @spec openspec/changes/internal-variable-tokens/specs/css-architecture/spec.md
+	 */
+	public function testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes(): void {
+		$this->configureAppValues(['token_set' => 'custom-openwoo']);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'none']);
+		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
+			['id' => 'none', 'name' => 'No design system', 'description' => '', 'stylesheets' => []]
+		);
+		$this->runtimeFiles->store()->write('css/tokens/custom-openwoo.css', ":root {\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n");
+
+		$styleLog = [];
+		$fontLog = [];
+		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $fontLog)->getStylesheetManifest('custom-openwoo');
+
+		$this->assertSame(['tokens', 'theme-scopes', 'component-scopes', 'internal-scopes'], array_column($manifest['layers'], 'layer'));
+		$last = end($manifest['layers']);
+		$this->assertSame('inline', $last['kind']);
+		$this->assertSame(CssInjectionService::INTERNAL_SCOPES_STYLE_ID, $last['id']);
+		$this->assertStringContainsString('--dp-hover-color: var(--nldesign-nc-dp-hover-color);', (string)$last['css']);
+	}//end testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes()
 
 	/**
 	 * Saved overrides are the last stylesheet link the page gets, after every
@@ -1304,6 +1339,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->stockTokens,
 					$this->runtimeFiles,
 					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])

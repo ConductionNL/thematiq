@@ -16,7 +16,12 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Service\AssistantMarkService;
+use OCA\Thematiq\Service\AppBrandLogoStore;
+use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\BundleExtraSections;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\DocumentAssetService;
+use OCA\Thematiq\Service\ImageSniffer;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
@@ -42,6 +47,7 @@ use OCP\App\IAppManager;
 use OCP\Http\Client\IClientService;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\Files\IAppData;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
@@ -217,8 +223,19 @@ class ConfigBundleServiceTest extends TestCase {
 			$freshnessService,
 			new ScheduledSwitchStore($config),
 			$logger,
-			new AssistantMarkService($config, $emailThemingService, $this->createMock(Capabilities::class)),
-			new TokenLifecycleBundleSection($this->ownTokens, $this->deprecations)
+			new BundleExtraSections(
+				new AssistantMarkService($config, $emailThemingService, $this->createMock(Capabilities::class)),
+				new DocumentAssetService($this->createMock(IAppData::class), $config),
+				new AppBrandService(
+					$config,
+					$appManager,
+					$appThemingService,
+					$this->tokenSetService,
+					new AppBrandLogoStore($this->createMock(IAppData::class), new ImageSniffer()),
+					$this->createMock(IURLGenerator::class)
+				)
+			),
+			new TokenLifecycleBundleSection($this->ownTokens, $this->deprecations, $this->overridesService)
 		);
 	}//end setUp()
 
@@ -302,7 +319,7 @@ class ConfigBundleServiceTest extends TestCase {
 		$bundle = $this->service->export();
 
 		$this->assertSame('nldesign-config-bundle', $bundle['format']);
-		$this->assertSame(2, $bundle['bundleVersion']);
+		$this->assertSame(3, $bundle['bundleVersion']);
 		$this->assertSame('utrecht', $bundle['config']['tokenSet']);
 		$this->assertTrue($bundle['config']['hideSlogan']);
 		$this->assertTrue($bundle['config']['showMenuLabels']);
@@ -663,6 +680,62 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertSame('emailFooter', $result['errors'][0]['section']);
 		$this->assertArrayNotHasKey('email_footer_org_name', $this->appConfig);
 	}//end testInvalidEmailFooterUrlIsHardError()
+
+	/**
+	 * The document footer line travels as a value, the document images as metadata only.
+	 *
+	 * @spec openspec/specs/document-house-style/spec.md
+	 */
+	public function testDocumentStyleFooterLineSurvivesExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['document_style_footer_line'] = 'Postbus 1, 1234 AB Voorbeeld';
+		$this->appConfig['document_style_assets'] = json_encode(['logo' => ['mime' => 'image/png', 'size' => 10, 'uploadedAt' => 1]]);
+
+		$bundle = $this->service->export();
+		$this->assertSame('Postbus 1, 1234 AB Voorbeeld', $bundle['documentStyle']['footerLine']);
+		$this->assertFalse($bundle['documentStyle']['binariesIncluded']);
+		$this->assertSame('image/png', $bundle['documentStyle']['assets']['logo']['mime']);
+
+		$this->appConfig['document_style_footer_line'] = '';
+		$this->appConfig['document_style_assets'] = '{}';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('Postbus 1, 1234 AB Voorbeeld', $this->appConfig['document_style_footer_line']);
+		$this->assertSame('{}', $this->appConfig['document_style_assets'], 'Image metadata is never applied.');
+
+		$bundle['documentStyle']['footerLine'] = str_repeat('x', 201);
+		$this->assertFalse($this->service->import(bundle: $bundle, dryRun: true)['valid']);
+	}//end testDocumentStyleFooterLineSurvivesExportAndImport()
+
+	/**
+	 * Brands per app travel as app => set, logos as metadata only; a version 2 bundle leaves them alone.
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	public function testAppBrandsSurviveExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['app_brands'] = json_encode(['collectives' => ['tokenSet' => 'utrecht', 'logoLarge' => ['mime' => 'image/png', 'size' => 9, 'uploadedAt' => 1], 'logoSmall' => null]]);
+
+		$bundle = json_decode((string)json_encode($this->service->export()), true);
+		$this->assertSame(3, $bundle['bundleVersion']);
+		$this->assertSame('utrecht', $bundle['appBrands']['collectives']['tokenSet']);
+
+		$this->appConfig['app_brands'] = '{}';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+		$this->assertTrue($result['valid'], json_encode($result['errors'] ?? []));
+		$stored = json_decode($this->appConfig['app_brands'], true);
+		$this->assertSame('utrecht', $stored['collectives']['tokenSet']);
+		$this->assertNull($stored['collectives']['logoLarge'], 'Logo metadata is never applied without its file.');
+
+		$bundle['appBrands']['collectives']['tokenSet'] = 'no-such-set';
+		$this->assertFalse($this->service->import(bundle: $bundle, dryRun: true)['valid']);
+
+		$bundle['bundleVersion'] = 2;
+		unset($bundle['appBrands']);
+		$this->assertTrue($this->service->import(bundle: $bundle, dryRun: false)['valid']);
+		$this->assertSame('utrecht', json_decode($this->appConfig['app_brands'], true)['collectives']['tokenSet']);
+	}//end testAppBrandsSurviveExportAndImport()
 
 	/**
 	 * The customFonts section is exported/reported as metadata only and is

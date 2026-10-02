@@ -880,31 +880,54 @@
 			})
 		}
 
-		// App / Login preview switch.
+		// App / Login preview switch: a WAI-ARIA tablist. A click or the arrow,
+		// Home and End keys select a view; only the selected tab is in the tab
+		// order, the same way the "Add a custom token set" tabs work.
 		if (previewRoot) {
-			previewRoot
-				.querySelectorAll('.nldesign-preview-switch-btn')
-				.forEach(function (btn) {
-					btn.addEventListener('click', function () {
-						var view = btn.getAttribute('data-view')
-						previewRoot
-							.querySelectorAll('.nldesign-preview-switch-btn')
-							.forEach(function (b) {
-								var on = b === btn
-								b.classList.toggle('active', on)
-								b.setAttribute(
-									'aria-selected',
-									on ? 'true' : 'false',
-								)
-							})
-						previewRoot
-							.querySelectorAll('.nldesign-preview-stage')
-							.forEach(function (stage) {
-								stage.hidden =
-									stage.getAttribute('data-view') !== view
-							})
-					})
+			var previewTabs = Array.prototype.slice.call(
+				previewRoot.querySelectorAll('.nldesign-preview-switch-btn'),
+			)
+			var selectPreviewTab = function (btn) {
+				var view = btn.getAttribute('data-view')
+				previewTabs.forEach(function (b) {
+					var on = b === btn
+					b.classList.toggle('active', on)
+					b.setAttribute('aria-selected', on ? 'true' : 'false')
+					b.tabIndex = on ? 0 : -1
 				})
+				previewRoot
+					.querySelectorAll('.nldesign-preview-stage')
+					.forEach(function (stage) {
+						stage.hidden = stage.getAttribute('data-view') !== view
+					})
+			}
+			previewTabs.forEach(function (btn, index) {
+				btn.setAttribute('role', 'tab')
+				btn.tabIndex = btn.classList.contains('active') ? 0 : -1
+				btn.addEventListener('click', function () {
+					selectPreviewTab(btn)
+				})
+				btn.addEventListener('keydown', function (event) {
+					var next = null
+					if (event.key === 'ArrowRight') {
+						next = previewTabs[(index + 1) % previewTabs.length]
+					} else if (event.key === 'ArrowLeft') {
+						next =
+							previewTabs[
+								(index - 1 + previewTabs.length) % previewTabs.length
+							]
+					} else if (event.key === 'Home') {
+						next = previewTabs[0]
+					} else if (event.key === 'End') {
+						next = previewTabs[previewTabs.length - 1]
+					}
+					if (next !== null) {
+						event.preventDefault()
+						selectPreviewTab(next)
+						next.focus()
+					}
+				})
+			})
 		}
 
 		// Design system display names (inline fallback for designSystemLabel()).
@@ -913,17 +936,41 @@
 			nldesign: 'NL Design System',
 		}
 
+		// Documentation link per design system id, from lib/Settings/Admin.php.
+		var designSystemDocs = loadInitialState('designSystemDocs', {})
+
+		/**
+		 * Point the header's Documentation link at the docs of a design system.
+		 *
+		 * The template renders the current set's link; this follows the
+		 * dropdown, so an admin who picks a La Suite set is not sent to NL
+		 * Design System docs (#662). A design system with no entry keeps the
+		 * link it has.
+		 *
+		 * @param {string} dsId The design system id.
+		 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+		 */
+		function updateDocumentationLink(dsId) {
+			var link = document.getElementById('nldesign-doc-link')
+			var url = designSystemDocs[dsId]
+			if (link === null || typeof url !== 'string' || url === '') {
+				return
+			}
+			link.setAttribute('href', url)
+		}
+
 		// Update the design system badge for the selected token set
 		function updateDesignSystemBadge(tokenSetId) {
-			var badge = document.getElementById('nldesign-design-system-badge')
-			if (!badge) return
-
 			var option = tokenSetSelect
 				? tokenSetSelect.querySelector('option[value="' + tokenSetId + '"]')
 				: null
 			var dsId = option
 				? option.getAttribute('data-design-system') || 'nldesign'
 				: 'nldesign'
+			updateDocumentationLink(dsId)
+
+			var badge = document.getElementById('nldesign-design-system-badge')
+			if (!badge) return
 			var dsName =
 				typeof TT.designSystemLabel === 'function'
 					? TT.designSystemLabel(dsId)
@@ -5624,13 +5671,21 @@
 			var trigger = document.createElement('button')
 			trigger.type = 'button'
 			trigger.className = 'nldesign-app-dropdown-trigger'
-			trigger.setAttribute('aria-haspopup', 'true')
+			// The panel holds a search field and a list of checkboxes, so it is
+			// a non-modal dialog, not a menu or a listbox: `aria-haspopup` names
+			// that, and the trigger's own text ("3 of 12 apps themed") labels it.
+			trigger.id = 'nldesign-app-dropdown-trigger'
+			trigger.setAttribute('aria-haspopup', 'dialog')
 			trigger.setAttribute('aria-expanded', 'false')
+			trigger.setAttribute('aria-controls', 'nldesign-app-dropdown-panel')
 			var triggerLabel = document.createElement('span')
 			trigger.appendChild(triggerLabel)
 
 			var panel = document.createElement('div')
 			panel.className = 'nldesign-app-dropdown-panel'
+			panel.id = 'nldesign-app-dropdown-panel'
+			panel.setAttribute('role', 'dialog')
+			panel.setAttribute('aria-labelledby', trigger.id)
 
 			var searchWrap = document.createElement('div')
 			searchWrap.className = 'nldesign-app-dropdown-search'
@@ -5734,6 +5789,18 @@
 				) {
 					e.preventDefault()
 					closeDropdown(true)
+				}
+			})
+
+			// The panel is not modal, so Tab may leave it. When focus moves
+			// outside the dropdown the panel closes, the keyboard twin of the
+			// click-outside handler above, and focus stays where the user sent it.
+			dropdown.addEventListener('focusout', function (e) {
+				if (
+					e.relatedTarget !== null
+					&& !dropdown.contains(e.relatedTarget)
+				) {
+					closeDropdown(false)
 				}
 			})
 
