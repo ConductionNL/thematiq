@@ -327,8 +327,9 @@ class TokenRegistry implements TokenRegistryInterface {
 			'--border-radius-rounded' => ['tab' => 'content', 'type' => 'text',  'label' => 'Border radius rounded'],
 			'--border-radius-pill' => ['tab' => 'content', 'type' => 'text',  'label' => 'Border radius pill'],
 			'--body-container-radius' => ['tab' => 'content', 'type' => 'text',  'label' => 'Body container radius'],
-			'--animation-quick' => ['tab' => 'content', 'type' => 'text',  'label' => 'Animation quick'],
-			'--animation-slow' => ['tab' => 'content', 'type' => 'text',  'label' => 'Animation slow'],
+			'--animation-quick' => ['tab' => 'content', 'type' => 'duration', 'label' => 'Animation quick'],
+			'--animation-slow' => ['tab' => 'content', 'type' => 'duration', 'label' => 'Animation slow'],
+			'--nldesign-animation-easing' => ['tab' => 'content', 'type' => 'easing', 'label' => 'Animation easing'],
 		];
 	}//end getContentTokens()
 

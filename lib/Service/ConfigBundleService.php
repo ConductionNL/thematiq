@@ -224,6 +224,7 @@ class ConfigBundleService {
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
 	 * @param BundleExtraSections $extraSections The approved mark, document style and brand per app sections.
+	 * @param TokenLifecycleBundleSection|null $lifecycle The own tokens and deprecations section.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
 	 * section's EXISTING validator/service (config-portability's core reuse requirement); NC's DI
@@ -245,6 +246,7 @@ class ConfigBundleService {
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
 		BundleExtraSections $extraSections,
+		private ?TokenLifecycleBundleSection $lifecycle = null,
 	) {
 		$this->config = $config;
 		$this->appManager = $appManager;
@@ -296,7 +298,7 @@ class ConfigBundleService {
 					. 'Metadata only — re-upload font files by hand on the target environment.',
 				'manifest' => $this->fontService->getManifest(),
 			],
-		] + $this->extraSections->export();
+		] + $this->extraSections->export() + ($this->lifecycle?->export() ?? []);
 	}//end export()
 
 	/**
@@ -407,6 +409,7 @@ class ConfigBundleService {
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
+		$resolved['lifecycle'] = $this->lifecycle?->validate(bundle: $bundle, errors: $errors);
 
 		$bundledIds = array_column($resolved['customTokenSets'], 'id');
 		$resolved['extra'] = $this->extraSections->validate(
@@ -985,7 +988,8 @@ class ConfigBundleService {
 				'note' => 'Font metadata recorded for information only — binaries are not part of the '
 					. 'bundle and must be re-uploaded by hand on the target environment.',
 			],
-		] + $this->extraSections->summary(resolved: $resolved['extra']);
+		] + $this->extraSections->summary(resolved: $resolved['extra'])
+			+ ($this->lifecycle?->summary(resolved: ($resolved['lifecycle'] ?? null)) ?? []);
 	}//end buildSectionSummary()
 
 	/**
@@ -1029,6 +1033,8 @@ class ConfigBundleService {
 			privacyUrl: $footer['privacyUrl']
 		);
 
+		// Own tokens first: the overrides file written next renders them.
+		$this->lifecycle?->apply(resolved: ($resolved['lifecycle'] ?? null));
 		$this->overridesService->write(tokens: $resolved['customOverrides']['tokens']);
 
 		foreach ($resolved['customTokenSets'] as $set) {

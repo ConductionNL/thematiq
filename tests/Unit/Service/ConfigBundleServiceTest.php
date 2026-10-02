@@ -28,6 +28,11 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\DeprecationRecords;
+use OCA\Thematiq\Service\OwnTokenService;
+use OCA\Thematiq\Service\TokenDeprecationService;
+use OCA\Thematiq\Service\TokenLifecycleBundleSection;
+use OCA\Thematiq\Service\TokenValueValidator;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\FontService;
@@ -105,6 +110,20 @@ class ConfigBundleServiceTest extends TestCase {
 	private TokenSetService $tokenSetService;
 
 	/**
+	 * The (real) own token store.
+	 *
+	 * @var OwnTokenService
+	 */
+	private OwnTokenService $ownTokens;
+
+	/**
+	 * The (real) token deprecations.
+	 *
+	 * @var TokenDeprecationService
+	 */
+	private TokenDeprecationService $deprecations;
+
+	/**
 	 * The mocked font service (manifest passthrough only, see class docblock).
 	 *
 	 * @var FontService&\PHPUnit\Framework\MockObject\MockObject
@@ -147,12 +166,17 @@ class ConfigBundleServiceTest extends TestCase {
 		$customTokenSetValidator = new CustomTokenSetValidator();
 		$logger = $this->createMock(LoggerInterface::class);
 
+		$records = new DeprecationRecords($config);
+		$this->ownTokens = new OwnTokenService($config, new TokenValueValidator(), $records);
+		$this->deprecations = new TokenDeprecationService($records, $this->ownTokens, $appManager, $cssParser);
 		$this->overridesService = new CustomOverridesService(
 			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$cssParser,
 			new DarkPaletteService($contrast, $cssParser, $appManager, $logger),
 			$config,
-			new DesignSystemService($appManager, $config)
+			new DesignSystemService($appManager, $config),
+			null,
+			$this->ownTokens
 		);
 		$this->customTokenSetService = new CustomTokenSetService(
 			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
@@ -210,7 +234,8 @@ class ConfigBundleServiceTest extends TestCase {
 					new AppBrandLogoStore($this->createMock(IAppData::class), new ImageSniffer()),
 					$this->createMock(IURLGenerator::class)
 				)
-			)
+			),
+			new TokenLifecycleBundleSection($this->ownTokens, $this->deprecations, $this->overridesService)
 		);
 	}//end setUp()
 
@@ -920,4 +945,68 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertTrue($result['valid'], (string)json_encode($result['errors'] ?? []));
 		$this->assertSame('[{"id":"keep"}]', $this->appConfig['scheduled_switches']);
 	}//end testAVersionOneBundleStillImportsAndKeepsPlannedSwitches()
+
+	/**
+	 * Scenario: own tokens and their deprecations move from test to production.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
+	 */
+	public function testOwnTokensRoundTrip(): void {
+		$this->seedConfig();
+		$this->ownTokens->create(input: ['slug' => 'brand-accent', 'label' => 'Brand accent', 'type' => 'color', 'value' => '#e17000', 'darkValue' => '#ff9a3c']);
+		$this->ownTokens->create(input: ['slug' => 'gap', 'label' => 'Gap', 'type' => 'text', 'value' => '8px']);
+		$this->deprecations->deprecate(token: '--nldesign-org-gap', input: ['severity' => 'info']);
+		$bundle = json_decode((string)json_encode($this->service->export()), true);
+		$tokens = $this->ownTokens->list();
+
+		unset($this->appConfig[OwnTokenService::CONFIG_KEY], $this->appConfig[DeprecationRecords::CONFIG_KEY]);
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertTrue($result['applied'], json_encode($result));
+		$this->assertSame(['applied' => true, 'count' => 2], $result['sections']['ownTokens']);
+		$this->assertSame($tokens, $this->ownTokens->list());
+		$this->assertSame('info', $this->deprecations->list()['--nldesign-org-gap']['severity']);
+		$this->assertStringContainsString('--nldesign-org-brand-accent: #e17000;', $this->overridesService->getRawContent());
+	}//end testOwnTokensRoundTrip()
+
+	/**
+	 * A bundle without the new keys, as an older release writes, leaves own tokens as they are.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
+	 */
+	public function testBundleWithoutOwnTokensLeavesThemUnchanged(): void {
+		$this->seedConfig();
+		$bundle = json_decode((string)json_encode($this->service->export()), true);
+		unset($bundle['ownTokens'], $bundle['tokenDeprecations']);
+		$this->ownTokens->create(input: ['slug' => 'keep', 'label' => 'Keep', 'type' => 'text', 'value' => 'x']);
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertTrue($result['applied'], json_encode($result));
+		$this->assertArrayHasKey('--nldesign-org-keep', $this->ownTokens->list());
+		$this->assertSame(['applied' => false, 'count' => 0], $result['sections']['ownTokens']);
+	}//end testBundleWithoutOwnTokensLeavesThemUnchanged()
+
+	/**
+	 * A bundle with a bad own token is refused as a whole, before anything is written.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
+	 */
+	public function testBadOwnTokenRefusesTheBundle(): void {
+		$this->seedConfig();
+		$bundle = json_decode((string)json_encode($this->service->export()), true);
+		$bundle['ownTokens'] = ['--nldesign-org-x' => ['label' => 'X', 'type' => 'color', 'value' => 'red; } body {']];
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertFalse($result['valid']);
+		$this->assertSame('ownTokens', $result['errors'][0]['section']);
+		$this->assertSame([], $this->ownTokens->list());
+	}//end testBadOwnTokenRefusesTheBundle()
 }//end class

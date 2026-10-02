@@ -863,6 +863,7 @@
  * ========================================================================== */
 .nldesign-token-row {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	gap: 12px;
 	padding: 7px 0;
@@ -918,6 +919,97 @@
 .nldesign-text-input {
 	width: 180px;
 	flex: 0 0 auto;
+}
+/* Typed values (authoring-token-value-types): opacity, the dark line, motion. */
+/* The swatch shows the colour over a checkerboard, so transparency is visible. */
+.nldesign-color-swatch {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+	background-color: var(--color-main-background);
+	background-image:
+		linear-gradient(45deg, var(--color-border) 25%, transparent 25%),
+		linear-gradient(-45deg, var(--color-border) 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, var(--color-border) 75%),
+		linear-gradient(-45deg, transparent 75%, var(--color-border) 75%);
+	background-size: 8px 8px;
+	background-position:
+		0 0,
+		0 4px,
+		4px -4px,
+		-4px 0;
+	overflow: hidden;
+}
+.nldesign-color-swatch > span {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+.nldesign-color-alpha {
+	width: 80px;
+}
+.nldesign-color-alpha-number {
+	width: 64px;
+}
+.nldesign-token-dark {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex: 1 0 100%;
+	padding-left: 24px;
+}
+.nldesign-token-dark-label {
+	color: var(--color-text-maxcontrast);
+}
+.nldesign-dark-text {
+	width: 104px;
+}
+.nldesign-duration-input,
+.nldesign-easing-input,
+.nldesign-easing-custom {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+.nldesign-easing-custom[hidden] {
+	display: none;
+}
+.nldesign-duration-number,
+.nldesign-easing-point {
+	width: 72px;
+}
+.nldesign-motion-preview {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex: 1 0 100%;
+}
+.nldesign-motion-track {
+	position: relative;
+	width: 160px;
+	height: 16px;
+	border-radius: var(--border-radius);
+	background: var(--color-background-dark);
+}
+.nldesign-motion-block {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 16px;
+	height: 16px;
+	border-radius: var(--border-radius);
+	background: var(--color-primary-element);
+}
+.nldesign-motion-block--moved {
+	transform: translateX(144px);
+}
+/* Reduced motion wins: the block stays put and the readout shows the values. */
+@media (prefers-reduced-motion: reduce) {
+	.nldesign-motion-block {
+		transition: none !important;
+	}
 }
 .nldesign-reset-btn {
 	flex: 0 0 auto;
@@ -2525,4 +2617,70 @@
 	padding: 6px 14px;
 	border-radius: var(--border-radius);
 	font-weight: bold;
+}
+
+/* ==========================================================================
+ * Your own tokens and deprecations (authoring-token-lifecycle)
+ * ========================================================================== */
+.nldesign-own-token-list,
+.nldesign-deprecations {
+	margin: 8px 0 12px;
+	padding: 0;
+	list-style: none;
+}
+.nldesign-own-token-row,
+.nldesign-deprecation-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 0;
+	border-bottom: 1px solid var(--color-border);
+}
+.nldesign-own-token-text {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+.nldesign-own-token-text code,
+.nldesign-deprecation-row code {
+	font-family: var(--font-face-monospace, monospace);
+}
+/* The badge says the severity in words; the border only repeats it. */
+.nldesign-deprecation-badge {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 0 6px;
+	border: 1px solid var(--color-border-dark);
+	border-radius: var(--border-radius-pill, 12px);
+	font-size: 12px;
+	color: var(--color-main-text);
+}
+.nldesign-deprecation-badge--warning {
+	border-color: var(--color-warning);
+}
+.nldesign-deprecation-badge--critical {
+	border-color: var(--color-error);
+}
+.nldesign-own-dialog {
+	max-width: 520px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+}
+.nldesign-own-dialog label {
+	display: block;
+	font-weight: 600;
+}
+.nldesign-own-token-prefix {
+	font-family: var(--font-face-monospace, monospace);
+	color: var(--color-text-maxcontrast);
+}
+.nldesign-own-dialog .nldesign-dialog-error {
+	color: var(--color-text-error, var(--color-error));
+}
+.nldesign-own-dialog .nldesign-dialog-buttons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
 }
