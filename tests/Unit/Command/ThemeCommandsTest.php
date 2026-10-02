@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Tests for the nldesign:theme:* commands.
+ * Tests for the thematiq:theme:* commands.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
@@ -243,4 +243,23 @@ class ThemeCommandsTest extends TestCase {
 		$this->assertSame(Command::SUCCESS, $tester->execute(['token-set' => 'amsterdam', '--sync-core' => true]));
 		$this->assertStringContainsString('Applied to Nextcloud theming: primary_color, background_color, logo.', $tester->getDisplay());
 	}//end testSyncCoreAppliesAndListsTheValues()
+
+	/**
+	 * A set whose theming values do not validate is not reported as having none.
+	 *
+	 * @return void
+	 */
+	public function testSyncCoreSaysWhenTheValuesDidNotValidate(): void {
+		$this->coreSync->method('sync')->willReturn([]);
+		$this->coreSync->method('themingParams')->willReturnCallback(
+			fn (string $tokenSetId): array => ($tokenSetId === 'amsterdam' ? ['primary_color' => 'not a colour'] : [])
+		);
+
+		$tester = $this->setCommand();
+		$tester->execute(['token-set' => 'amsterdam', '--sync-core' => true]);
+		$this->assertStringContainsString('the theming values of amsterdam did not validate', $tester->getDisplay());
+
+		$tester->execute(['token-set' => 'rijkshuisstijl', '--sync-core' => true]);
+		$this->assertStringContainsString('rijkshuisstijl has no theming values to apply', $tester->getDisplay());
+	}//end testSyncCoreSaysWhenTheValuesDidNotValidate()
 }//end class

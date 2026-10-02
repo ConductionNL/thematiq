@@ -9,7 +9,7 @@ enriched_date: 2026-03-20
 ## Purpose
 Defines the "Show Menu Labels" feature that replaces app menu icons in the Nextcloud header with text labels.
 
-@e2e exclude Backend/CSS spec — scenarios cover IConfig storage, PHP boot-time CSS injection, CSS typography/layout rules, and API internals; the admin checkbox UI surface is covered by admin-settings tests. When enabled, the header navigation displays application names (e.g. "Files", "Mail", "Calendar") instead of icons, improving discoverability and accessibility for users unfamiliar with Nextcloud's icon-based navigation. This feature aligns with Dutch government UX guidelines that prioritize clarity and readability over icon recognition.
+When enabled, the header navigation displays application names (e.g. "Files", "Mail", "Calendar") instead of icons, improving discoverability and accessibility for users unfamiliar with Nextcloud's icon-based navigation. This feature aligns with Dutch government UX guidelines that prioritize clarity and readability over icon recognition.
 
 ## Requirements
 
@@ -30,12 +30,14 @@ The show menu labels setting MUST be stored in Nextcloud's `IConfig` as a string
 - AND the response MUST be JSON with `{"status": "ok", "showMenuLabels": false}`
 
 #### Scenario: Default value when not configured
+@e2e exclude a browser cannot remove a stored app value, so it cannot reach the never-configured state on an instance where the setting was ever saved; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testTogglesAbsentFromConfigDefaultToOff asserts an absent key loads no show-menu-labels stylesheet
 - GIVEN no value has been set for `nldesign:show_menu_labels`
 - WHEN the setting is read during boot
 - THEN the default value MUST be `'0'` (disabled)
 - AND menu icons MUST be displayed normally (Nextcloud default behavior)
 
 #### Scenario: Setting persists across restarts
+@e2e exclude a server restart cannot be driven from a browser; the value is the IConfig row, and PHPUnit tests/Unit/Controller/SettingsControllerEndpointsTest.php::testATogglePersistsTheOnValue asserts the endpoint stores the string '1' there
 - GIVEN the admin has enabled menu labels
 - WHEN the Nextcloud server restarts
 - THEN the setting MUST remain `'1'` in IConfig

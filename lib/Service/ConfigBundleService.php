@@ -96,16 +96,18 @@ class ConfigBundleService {
 	 *
 	 * @var int
 	 */
-	public const BUNDLE_VERSION = 2;
+	public const BUNDLE_VERSION = 3;
 
 	/**
 	 * The bundle versions import accepts. Version 1 predates planned switches
 	 * (`config.scheduledSwitches`); a version 1 bundle, such as a version kept
 	 * before the upgrade, imports and leaves the planned switches alone.
+	 * Version 2 predates brands per app (`appBrands`); it imports and leaves
+	 * the brands alone.
 	 *
 	 * @var array<int, int>
 	 */
-	public const SUPPORTED_VERSIONS = [1, 2];
+	public const SUPPORTED_VERSIONS = [1, 2, 3];
 
 	/**
 	 * The application configuration service.
@@ -192,6 +194,13 @@ class ConfigBundleService {
 	private ScheduledSwitchStore $scheduledSwitches;
 
 	/**
+	 * The approved mark, document style and brand per app sections.
+	 *
+	 * @var BundleExtraSections
+	 */
+	private BundleExtraSections $extraSections;
+
+	/**
 	 * The logger.
 	 *
 	 * @var LoggerInterface
@@ -214,6 +223,8 @@ class ConfigBundleService {
 	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
+	 * @param BundleExtraSections $extraSections The approved mark, document style and brand per app sections.
+	 * @param TokenLifecycleBundleSection|null $lifecycle The own tokens and deprecations section.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
 	 * section's EXISTING validator/service (config-portability's core reuse requirement); NC's DI
@@ -234,6 +245,8 @@ class ConfigBundleService {
 		UpstreamFreshnessService $freshnessService,
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
+		BundleExtraSections $extraSections,
+		private ?TokenLifecycleBundleSection $lifecycle = null,
 	) {
 		$this->config = $config;
 		$this->appManager = $appManager;
@@ -248,6 +261,7 @@ class ConfigBundleService {
 		$this->freshnessService = $freshnessService;
 		$this->scheduledSwitches = $scheduledSwitches;
 		$this->logger = $logger;
+		$this->extraSections = $extraSections;
 	}//end __construct()
 
 	/**
@@ -284,7 +298,7 @@ class ConfigBundleService {
 					. 'Metadata only — re-upload font files by hand on the target environment.',
 				'manifest' => $this->fontService->getManifest(),
 			],
-		];
+		] + $this->extraSections->export() + ($this->lifecycle?->export() ?? []);
 	}//end export()
 
 	/**
@@ -323,7 +337,7 @@ class ConfigBundleService {
 	 * @spec openspec/specs/config-portability/spec.md
 	 *
 	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - `$dryRun` IS the spec-required distinction
-	 * between "validate only" and "validate then apply" (`occ nldesign:config:import --dry-run`);
+	 * between "validate only" and "validate then apply" (`occ thematiq:config:import --dry-run`);
 	 * splitting into two public methods would duplicate phase 1 rather than remove a real flag.
 	 */
 	public function import(array $bundle, bool $dryRun = false): array {
@@ -395,6 +409,16 @@ class ConfigBundleService {
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
+		$resolved['lifecycle'] = $this->lifecycle?->validate(bundle: $bundle, errors: $errors);
+
+		$bundledIds = array_column($resolved['customTokenSets'], 'id');
+		$resolved['extra'] = $this->extraSections->validate(
+			bundle: $bundle,
+			setExists: fn (string $id): bool => (
+				in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
+			),
+			errors: $errors
+		);
 
 		return [
 			'valid' => empty($errors),
@@ -964,7 +988,8 @@ class ConfigBundleService {
 				'note' => 'Font metadata recorded for information only — binaries are not part of the '
 					. 'bundle and must be re-uploaded by hand on the target environment.',
 			],
-		];
+		] + $this->extraSections->summary(resolved: $resolved['extra'])
+			+ ($this->lifecycle?->summary(resolved: ($resolved['lifecycle'] ?? null)) ?? []);
 	}//end buildSectionSummary()
 
 	/**
@@ -1008,6 +1033,8 @@ class ConfigBundleService {
 			privacyUrl: $footer['privacyUrl']
 		);
 
+		// Own tokens first: the overrides file written next renders them.
+		$this->lifecycle?->apply(resolved: ($resolved['lifecycle'] ?? null));
 		$this->overridesService->write(tokens: $resolved['customOverrides']['tokens']);
 
 		foreach ($resolved['customTokenSets'] as $set) {
@@ -1015,8 +1042,12 @@ class ConfigBundleService {
 		}
 
 		if ($resolved['scheduledSwitches'] !== null) {
-			$this->scheduledSwitches->save(entries: $resolved['scheduledSwitches']);
+			$this->scheduledSwitches->save(
+				entries: $this->scheduledSwitches->mergeImported(imported: $resolved['scheduledSwitches'], now: time())
+			);
 		}
+
+		$this->extraSections->apply(resolved: $resolved['extra']);
 
 		// CustomFonts is deliberately never applied — see class docblock.
 	}//end apply()

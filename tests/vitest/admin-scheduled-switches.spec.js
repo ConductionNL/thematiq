@@ -182,6 +182,42 @@ describe('admin.js planned switches', () => {
 		).toBe(true)
 	})
 
+	it('names the sets in the status and the list, unescaped', async () => {
+		const tokenSets = [
+			{ id: 'koningsdag-oranje', name: "Koningsdag 's-Hertogenbosch" },
+			{ id: 'rijkshuisstijl', name: 'Rijkshuisstijl' },
+		]
+		global.OCP = {
+			InitialState: {
+				loadState: (app, key, fallback) =>
+					key === 'tokenSets' ? tokenSets : fallback,
+			},
+		}
+		const translate = global.t
+		global.t = vi.fn(translate)
+		state.status.activeTokenSet = 'koningsdag-oranje'
+		state.status.activeUntil = '2027-04-28T06:00:00Z'
+		state.status.revertTo = 'rijkshuisstijl'
+		await load()
+
+		const status = document.getElementById('nldesign-scheduled-status')
+		expect(status.textContent).toContain(
+			"Koningsdag 's-Hertogenbosch is active until",
+		)
+		expect(status.textContent).toContain('then Rijkshuisstijl comes back')
+		const item = document.querySelector('#nldesign-scheduled-list li')
+		expect(item.textContent).toContain("Koningsdag 's-Hertogenbosch from")
+		expect(item.querySelector('button').getAttribute('aria-label')).toBe(
+			"Cancel the switch to Koningsdag 's-Hertogenbosch",
+		)
+		// Nextcloud's t() escapes placeholder values unless told not to, and
+		// these strings go into textContent and aria-label.
+		const cancelCall = global.t.mock.calls.find(
+			(call) => call[1] === 'Cancel the switch to {set}',
+		)
+		expect(cancelCall[4]).toEqual({ escape: false })
+	})
+
 	it('plans a switch with the local times sent as UTC', async () => {
 		await load()
 

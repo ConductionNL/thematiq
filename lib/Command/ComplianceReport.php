@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 /**
- * `occ nldesign:compliance-report` — headless/OTAP export of the
+ * `occ thematiq:compliance-report` — headless/OTAP export of the
  * active-configuration WCAG contrast compliance evidence report.
  *
  * Reuses {@see ComplianceReportService} exclusively, so output is byte-for-byte
@@ -66,7 +66,7 @@ class ComplianceReport extends Command {
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:compliance-report')
+		$this->setName(name: 'thematiq:compliance-report')
 			->setDescription(
 				'Generate the NL Design active-configuration WCAG contrast compliance evidence '
 				. 'report (color-contrast of theme tokens only — NOT a WCAG-EM audit).'

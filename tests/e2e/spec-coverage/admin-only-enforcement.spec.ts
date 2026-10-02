@@ -37,6 +37,7 @@ import {
 	ensureNonAdminUser,
 	loginAs,
 	api,
+	activeTokenSet,
 	adminContext,
 	NONADMIN_USER,
 	NONADMIN_PASS,
@@ -126,16 +127,10 @@ test.describe('admin-only enforcement', () => {
 		await page.goto('/settings/admin/theming')
 
 		// The instance-wide active set before the refused calls.
-		const activeBefore = await statusOf(page, 'GET', `${APP}/settings/tokenset`)
-		expect(activeBefore, 'admin must be able to read the active token set').toBe(
-			200,
+		const before = JSON.stringify(await activeTokenSet(page))
+		expect(before, 'admin must be able to read the active token set').toContain(
+			'"tokenSet":"',
 		)
-		const before = await page.evaluate(async () => {
-			const res = await fetch('/index.php/apps/thematiq/settings/tokenset', {
-				headers: { requesttoken: (window as any).OC.requestToken },
-			})
-			return JSON.stringify(await res.json())
-		})
 
 		await expectAdminOnly(page, 'POST', `${APP}/settings/preview`, {
 			tokenSet: 'amsterdam',
@@ -145,12 +140,7 @@ test.describe('admin-only enforcement', () => {
 
 		// "...and no configuration MUST change" — the spec's second clause. A
 		// refusal that still mutated state would satisfy the status assertions.
-		const after = await page.evaluate(async () => {
-			const res = await fetch('/index.php/apps/thematiq/settings/tokenset', {
-				headers: { requesttoken: (window as any).OC.requestToken },
-			})
-			return JSON.stringify(await res.json())
-		})
+		const after = JSON.stringify(await activeTokenSet(page))
 		expect(
 			after,
 			'refused preview calls must not change the active token set',
