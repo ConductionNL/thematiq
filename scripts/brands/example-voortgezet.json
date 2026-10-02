@@ -1,0 +1,375 @@
+{
+	"id": "example-voortgezet",
+	"name": "(EXAMPLE) Voortgezet onderwijs",
+	"description": "Fictional example set for a secondary school: deep indigo with a teal accent. Not a real organisation.",
+	"provenance": "an invented palette for a fictional organisation (example data, not a real brand)",
+	"_comment_source": [
+		"A FICTIONAL set for demos and example data. No real school or provider uses it.",
+		"The palette is invented, so there is no upstream package and no captured",
+		"component mapping. Section C fills the whole component vocabulary from the",
+		"shared role layer, re-pointed at the ramp below.",
+		"",
+		"Every ramp step a component can put text on, or under white text, is chosen",
+		"to reach WCAG AA (4.5:1) against white: the 300 and 400 steps of each family,",
+		"gray-500 and darker. gray-400 is the control border and reaches 3:1."
+	],
+	"palette": {
+		"--example-voortgezet-color-white": "#ffffff",
+		"--example-voortgezet-color-black": "#14161B",
+		"--example-voortgezet-color-black-txt": "#23272F",
+		"--example-voortgezet-color-gray-50": "#F8F9FB",
+		"--example-voortgezet-color-gray-100": "#F1F3F7",
+		"--example-voortgezet-color-gray-200": "#E2E6EE",
+		"--example-voortgezet-color-gray-300": "#CBD2DE",
+		"--example-voortgezet-color-gray-400": "#8790A3",
+		"--example-voortgezet-color-gray-500": "#5F6878",
+		"--example-voortgezet-color-gray-600": "#4C5463",
+		"--example-voortgezet-color-gray-700": "#3A414E",
+		"--example-voortgezet-color-gray-800": "#2A2F39",
+		"--example-voortgezet-color-gray-900": "#1A1D24",
+		"--example-voortgezet-color-gray-950": "#0E1014",
+		"--example-voortgezet-color-brand-100": "#EAF0FB",
+		"--example-voortgezet-color-brand-200": "#B9C8EA",
+		"--example-voortgezet-color-brand-300": "#2D4FA0",
+		"--example-voortgezet-color-brand-400": "#233F82",
+		"--example-voortgezet-color-brand-500": "#172A57",
+		"--example-voortgezet-color-accent-100": "#E0F4F4",
+		"--example-voortgezet-color-accent-200": "#9BD5D5",
+		"--example-voortgezet-color-accent-300": "#00707A",
+		"--example-voortgezet-color-accent-400": "#005A62",
+		"--example-voortgezet-color-green-100": "#E3F4E1",
+		"--example-voortgezet-color-green-200": "#A9D8A3",
+		"--example-voortgezet-color-green-300": "#287430",
+		"--example-voortgezet-color-green-400": "#1B5E20",
+		"--example-voortgezet-color-red-100": "#FDE7E7",
+		"--example-voortgezet-color-red-200": "#F5B5B5",
+		"--example-voortgezet-color-red-300": "#C62828",
+		"--example-voortgezet-color-red-400": "#A11D1D",
+		"--example-voortgezet-color-orange-100": "#FFF3D6",
+		"--example-voortgezet-color-orange-200": "#FFD98A",
+		"--example-voortgezet-color-orange-300": "#9A5B00",
+		"--example-voortgezet-color-orange-400": "#7A4700",
+		"--example-voortgezet-typography-sans-serif-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+	},
+	"ramp": {
+		"white": {
+			"value": "#ffffff",
+			"from": "white"
+		},
+		"black": {
+			"value": "#14161B",
+			"from": "black"
+		},
+		"black-txt": {
+			"value": "#23272F",
+			"from": "black-txt"
+		},
+		"gray-50": {
+			"value": "#F8F9FB",
+			"from": "gray-50"
+		},
+		"gray-100": {
+			"value": "#F1F3F7",
+			"from": "gray-100"
+		},
+		"gray-200": {
+			"value": "#E2E6EE",
+			"from": "gray-200"
+		},
+		"gray-300": {
+			"value": "#CBD2DE",
+			"from": "gray-300"
+		},
+		"gray-400": {
+			"value": "#8790A3",
+			"from": "gray-400"
+		},
+		"gray-500": {
+			"value": "#5F6878",
+			"from": "gray-500"
+		},
+		"gray-600": {
+			"value": "#4C5463",
+			"from": "gray-600"
+		},
+		"gray-700": {
+			"value": "#3A414E",
+			"from": "gray-700"
+		},
+		"gray-800": {
+			"value": "#2A2F39",
+			"from": "gray-800"
+		},
+		"gray-900": {
+			"value": "#1A1D24",
+			"from": "gray-900"
+		},
+		"gray-950": {
+			"value": "#0E1014",
+			"from": "gray-950"
+		},
+		"blue-100": {
+			"value": "#EAF0FB",
+			"from": "brand-100 (the role layer's brand family is its blue)"
+		},
+		"blue-200": {
+			"value": "#B9C8EA",
+			"from": "brand-200 (the role layer's brand family is its blue)"
+		},
+		"blue-300": {
+			"value": "#2D4FA0",
+			"from": "brand-300 (the role layer's brand family is its blue)"
+		},
+		"blue-400": {
+			"value": "#233F82",
+			"from": "brand-400 (the role layer's brand family is its blue)"
+		},
+		"blue-500": {
+			"value": "#172A57",
+			"from": "brand-500 (the role layer's brand family is its blue)"
+		},
+		"green-100": {
+			"value": "#E3F4E1",
+			"from": "green-100"
+		},
+		"green-200": {
+			"value": "#A9D8A3",
+			"from": "green-200"
+		},
+		"green-300": {
+			"value": "#287430",
+			"from": "green-300"
+		},
+		"green-400": {
+			"value": "#1B5E20",
+			"from": "green-400"
+		},
+		"red-100": {
+			"value": "#FDE7E7",
+			"from": "red-100"
+		},
+		"red-200": {
+			"value": "#F5B5B5",
+			"from": "red-200"
+		},
+		"red-300": {
+			"value": "#C62828",
+			"from": "red-300"
+		},
+		"red-400": {
+			"value": "#A11D1D",
+			"from": "red-400"
+		},
+		"orange-100": {
+			"value": "#FFF3D6",
+			"from": "orange-100"
+		},
+		"orange-200": {
+			"value": "#FFD98A",
+			"from": "orange-200"
+		},
+		"orange-300": {
+			"value": "#9A5B00",
+			"from": "orange-300"
+		},
+		"orange-400": {
+			"value": "#7A4700",
+			"from": "orange-400"
+		},
+		"pink-100": {
+			"value": "#E0F4F4",
+			"from": "accent-100 (the role layer's accent family is its pink)"
+		},
+		"pink-200": {
+			"value": "#9BD5D5",
+			"from": "accent-200 (the role layer's accent family is its pink)"
+		},
+		"pink-300": {
+			"value": "#00707A",
+			"from": "accent-300 (the role layer's accent family is its pink)"
+		},
+		"pink-400": {
+			"value": "#005A62",
+			"from": "accent-400 (the role layer's accent family is its pink)"
+		},
+		"extra-purple": {
+			"value": "#4B3B8F",
+			"from": "decorative"
+		},
+		"extra-yellow": {
+			"value": "#F2C94C",
+			"from": "decorative"
+		},
+		"extra-limegreen": {
+			"value": "#6FBF4A",
+			"from": "decorative"
+		},
+		"code-background-color": {
+			"value": "#F1F3F7",
+			"from": "gray-100"
+		},
+		"dark-alpha-50": {
+			"value": "#0000000d",
+			"from": "role-layer geometry, unbranded"
+		},
+		"dark-alpha-100": {
+			"value": "#0000001a",
+			"from": "role-layer geometry, unbranded"
+		},
+		"light-alpha-50": {
+			"value": "#ffffff0d",
+			"from": "role-layer geometry, unbranded"
+		},
+		"light-alpha-100": {
+			"value": "#ffffff1a",
+			"from": "role-layer geometry, unbranded"
+		}
+	},
+	"literalOverrides": {
+		"#0277bd": {
+			"value": "#2D4FA0",
+			"from": "brand-300"
+		},
+		"#0078c8": {
+			"value": "#2D4FA0",
+			"from": "brand-300"
+		},
+		"#dbebfc": {
+			"value": "#EAF0FB",
+			"from": "brand-100"
+		},
+		"#75757c": {
+			"value": "#5F6878",
+			"from": "gray-500"
+		},
+		"#c9c9d2": {
+			"value": "#CBD2DE",
+			"from": "gray-300"
+		},
+		"#004488": {
+			"value": "#233F82",
+			"from": "brand-400: pagination text, the role layer hard-codes its own blue"
+		},
+		"#004589": {
+			"value": "#233F82",
+			"from": "brand-400: near-duplicate of #004488"
+		},
+		"#034591": {
+			"value": "#233F82",
+			"from": "brand-400: the role layer link blue"
+		},
+		"#e11919": {
+			"value": "#C62828",
+			"from": "red-300: invalid-state red"
+		}
+	},
+	"keepLiterals": {
+		"#000000": "base black",
+		"#ffb612": "role-layer focus and attention yellow, kept for a visible focus ring",
+		"#e9e9e9": "role-layer disabled surface",
+		"#fffefa": "role-layer warning surface",
+		"#ffe6e6": "role-layer error surface",
+		"#e7f9f4": "role-layer success surface"
+	},
+	"upstreamOverrides": {
+		"--tilburg-typography-font-family-primary": {
+			"value": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+			"reason": "the role layer names Avenir, which this app does not ship; Fira Sans is bundled"
+		},
+		"--tilburg-typography-font-family-secondary": {
+			"value": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+			"reason": "same Avenir default as the primary family"
+		},
+		"--tilburg-navigation-font-family": {
+			"value": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+			"reason": "the role layer names Montserrat, which this app does not ship"
+		},
+		"--tilburg-focus-color": {
+			"value": "#172A57",
+			"reason": "the role layer pairs two mid blues here (1.7:1); a dark brand step on a light one reaches AA, and stays readable on a white page where no focus background is drawn"
+		},
+		"--tilburg-focus-background-color": {
+			"value": "#EAF0FB",
+			"reason": "pairs with the dark focus colour above"
+		},
+		"--utrecht-alert-warning-color": {
+			"value": "#7A4700",
+			"reason": "the role layer sets warning text in #ffb612 on #fffefa (1.7:1); the border keeps the yellow"
+		},
+		"--denhaag-step-marker-default-color": {
+			"value": "#3A414E",
+			"reason": "the role layer puts white on gray-200 (1.3:1)"
+		},
+		"--denhaag-step-marker-not-checked-color": {
+			"value": "#5F6878",
+			"reason": "gray-400 on white is a control-border step, not a text step"
+		},
+		"--denhaag-step-marker-disabled-color": {
+			"value": "#4C5463",
+			"reason": "gray-400 on gray-100 stays under AA"
+		},
+		"--conduction-logo-header-background-image": {
+			"value": "var(--nldesign-logo-url)",
+			"reason": "the role layer bakes in a VNG mark; the logo must follow the token set"
+		},
+		"--conduction-logo-footer-background-image": {
+			"value": "var(--nldesign-logo-url)",
+			"reason": "same VNG mark in the footer band"
+		},
+		"--conduction-logo-navbar-background-image": {
+			"value": "var(--nldesign-logo-url)",
+			"reason": "same VNG mark in the navbar"
+		}
+	},
+	"semantic": {
+		"primary": "#2D4FA0",
+		"primary-hover": "#233F82",
+		"primary-text": "#ffffff",
+		"primary-light": "#EAF0FB",
+		"primary-light-hover": "#B9C8EA",
+		"text": "#23272F",
+		"text-muted": "#4C5463",
+		"text-light": "#ffffff",
+		"link": "#2D4FA0",
+		"link-hover": "#172A57",
+		"link-visited": "#4B3B8F",
+		"border": "#CBD2DE",
+		"border-dark": "#8790A3",
+		"background-hover": "#F8F9FB",
+		"background-dark": "#F1F3F7",
+		"background-darker": "#E2E6EE",
+		"placeholder-light": "#F1F3F7",
+		"placeholder-dark": "#CBD2DE",
+		"header-background": "#233F82",
+		"header-text": "#FFFFFF",
+		"nav-background": "#ffffff",
+		"button-primary-background": "#2D4FA0",
+		"button-primary-border": "#2D4FA0",
+		"button-primary-hover": "#233F82",
+		"button-primary-text": "#ffffff",
+		"error": "#C62828",
+		"error-rgb": "198, 40, 40",
+		"error-hover": "#A11D1D",
+		"warning": "#9A5B00",
+		"warning-rgb": "154, 91, 0",
+		"success": "#287430",
+		"success-rgb": "40, 116, 48",
+		"info": "#0B6BA8",
+		"info-rgb": "11, 107, 168",
+		"favorite": "#F2C94C",
+		"focus": "#0B6BA8"
+	},
+	"logo": "img/logos/example-voortgezet.svg",
+	"typography": {
+		"fontFamily": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+		"from": "Fira Sans, bundled in css/fonts"
+	},
+	"borderRadius": {
+		"default": "6px",
+		"small": "3px",
+		"large": "12px",
+		"rounded": "16px",
+		"pill": "100px"
+	},
+	"headerIconFilter": "none"
+}

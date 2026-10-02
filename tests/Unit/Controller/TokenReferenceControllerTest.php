@@ -104,10 +104,23 @@ class TokenReferenceControllerTest extends TestCase {
 
 		$response = $this->controller()->show(id: 'custom-gemeente-x');
 
-		$this->assertSame('md:custom-gemeente-x:/srv/apps/thematiq', $response->render());
+		$this->assertSame('md-plain:custom-gemeente-x:/srv/apps/thematiq', $response->render());
 		$this->assertStringStartsWith('text/markdown', $this->headers($response)['Content-Type']);
 		$this->assertSame('attachment; filename="custom-gemeente-x-tokens.md"', $this->headers($response)['Content-Disposition']);
 	}//end testTheMarkdownDownload()
+
+	/**
+	 * Scenario "The downloaded Markdown reads as text": the file is rendered without swatch images.
+	 *
+	 * @return void
+	 */
+	public function testTheMarkdownDownloadCarriesNoSwatchImages(): void {
+		$this->params = ['format' => 'md', 'download' => '1'];
+
+		$response = $this->controller()->show(id: 'custom-gemeente-x');
+
+		$this->assertStringStartsWith('md-plain:', $response->render());
+	}//end testTheMarkdownDownloadCarriesNoSwatchImages()
 
 	/**
 	 * An unknown id is a 404 and an unknown format falls back to HTML.

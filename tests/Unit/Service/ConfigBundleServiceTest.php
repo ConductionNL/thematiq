@@ -670,7 +670,6 @@ class ConfigBundleServiceTest extends TestCase {
 					'tokenSet' => 'utrecht',
 					'startAt' => '2027-04-26T16:00:00Z',
 					'endAt' => '2027-04-28T06:00:00Z',
-					'syncCoreTheming' => true,
 					'createdBy' => 'admin',
 					'createdAt' => '2027-04-01T10:00:00Z',
 				],
@@ -715,6 +714,48 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertSame('planned', $stored[0]['status']);
 		$this->assertSame(1, $result['sections']['scheduledSwitches']['count']);
 	}//end testAPlannedSwitchToABundledCustomSetIsImported()
+
+	/**
+	 * A custom set keeps the design system it was created on through an export
+	 * and an import, which a version restore is: a theme saved off stock
+	 * Nextcloud must not come back as an NL Design System one. A design system
+	 * the app does not ship is dropped rather than trusted.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testACustomSetKeepsItsDesignSystemThroughARoundTrip(): void {
+		$this->seedConfig();
+		file_put_contents($this->appDir . '/design-systems.json', json_encode([['id' => 'none'], ['id' => 'nldesign']]));
+		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
+		$manifest['custom-gemeente-x']['design_system'] = 'none';
+		$this->appConfig[CustomTokenSetService::MANIFEST_KEY] = json_encode($manifest);
+		$bundle = $this->service->export();
+
+		$this->assertTrue($this->service->import(bundle: $bundle)['applied']);
+		$stored = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
+		$this->assertSame('none', $stored['custom-gemeente-x']['design_system']);
+
+		$bundle['customTokenSets'][0]['design_system'] = 'evil';
+		$this->assertTrue($this->service->import(bundle: $bundle)['applied']);
+		$stored = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
+		$this->assertArrayNotHasKey('design_system', $stored['custom-gemeente-x']);
+	}//end testACustomSetKeepsItsDesignSystemThroughARoundTrip()
+
+	/**
+	 * A design-systems manifest that is not a list of design systems allows none.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testAnUnreadableDesignSystemManifestAllowsNone(): void {
+		$this->seedConfig();
+		file_put_contents($this->appDir . '/design-systems.json', 'not json');
+		$bundle = $this->service->export();
+		$bundle['customTokenSets'][0]['design_system'] = 'none';
+
+		$this->assertTrue($this->service->import(bundle: $bundle)['applied']);
+		$stored = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
+		$this->assertArrayNotHasKey('design_system', $stored['custom-gemeente-x']);
+	}//end testAnUnreadableDesignSystemManifestAllowsNone()
 
 	/**
 	 * Scenario "An overlapping plan blocks the whole import".

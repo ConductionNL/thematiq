@@ -251,27 +251,54 @@ class CustomTokenSetController extends Controller {
 		// theme carrying 121 component tokens of Rijkshuisstijl defaults they
 		// never chose.
 		//
-		// Uploads are untouched — a file an admin picks off disk is still an
-		// unknown document and still goes through the converter.
-		if ($this->request->getParam('raw', false) === true) {
-			return $this->storeRaw(name: $name, slug: $slug, content: $read['content']);
+		// A file an admin picks off disk is an unknown document and goes through
+		// the converter — unless Thematiq exported it. "Export as token set"
+		// marks its file with the design system it was taken from, and that
+		// file is a token set already: converting it filled every token the set
+		// left out with nldesign fallbacks, so an exported theme came back as a
+		// different one.
+		$exported = $this->exportedDesignSystem(content: $read['content']);
+		if ($this->request->getParam('raw', false) === true || $exported !== null) {
+			return $this->storeRaw(name: $name, slug: $slug, content: $read['content'], designSystem: $exported);
 		}
 
 		return $this->storeConverted(name: $name, slug: $slug, read: $read);
 	}//end upload()
 
 	/**
+	 * The design system a file exported by Thematiq says it was taken from.
+	 *
+	 * `js/playground.js` `exportCss()` writes the marker as a comment of its
+	 * own, so the exported file stays a plain token set that any other reader
+	 * can take as it is.
+	 *
+	 * @param string $content The uploaded document.
+	 *
+	 * @return string|null The design system id, or null for a file without the marker.
+	 *
+	 * @spec openspec/specs/token-import-export/spec.md#requirement-token-set-round-trip
+	 */
+	private function exportedDesignSystem(string $content): ?string {
+		if (preg_match('/\/\*\s*thematiq-token-set:\s*design-system=([a-z0-9-]+)\s*\*\//', $content, $match) !== 1) {
+			return null;
+		}
+
+		return $match[1];
+	}//end exportedDesignSystem()
+
+	/**
 	 * Store a token set that arrived already in the `css/tokens/*.css` shape.
 	 *
-	 * @param string $name The set's display name.
-	 * @param string $slug The slug derived from the name.
-	 * @param string $content The token set CSS, as sent.
+	 * @param string      $name         The set's display name.
+	 * @param string      $slug         The slug derived from the name.
+	 * @param string      $content      The token set CSS, as sent.
+	 * @param string|null $designSystem The design system the file itself names, which outranks the request's claim.
 	 *
 	 * @return JSONResponse The persisted set, or the validator's error.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
 	 */
-	private function storeRaw(string $name, string $slug, string $content): JSONResponse {
+	private function storeRaw(string $name, string $slug, string $content, ?string $designSystem=null): JSONResponse {
 		$parsed = $this->mapFromCss(content: $content, slug: $slug);
 		if ($parsed instanceof JSONResponse) {
 			return $parsed;
@@ -282,7 +309,7 @@ class CustomTokenSetController extends Controller {
 		// Which design system the editor was looking at when it serialised
 		// this. Allow-listed against the shipped manifest rather than taken
 		// on trust: it decides which stylesheet layers every page load emits.
-		$claimed = trim((string)$this->request->getParam('designSystem', ''));
+		$claimed = ($designSystem ?? trim((string)$this->request->getParam('designSystem', '')));
 		if ($claimed !== '' && isset($this->designSystems->getDesignSystems()[$claimed]) === true) {
 			$parsed['designSystem'] = $claimed;
 		}

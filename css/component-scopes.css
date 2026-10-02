@@ -123,7 +123,7 @@ body,
 }
 
 /* header-bar */
-#header,
+:where(body:not(#body-login)) #header,
 [data-thematiq-component='header-bar'] {
 	--color-background-plain-text: var(
 		--nldesign-component-header-color,
@@ -135,7 +135,7 @@ body,
 	);
 }
 
-#header {
+:where(body:not(#body-login)) #header {
 	background-color: var(--nldesign-component-header-background-color, transparent);
 }
 

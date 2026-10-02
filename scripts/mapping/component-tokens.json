@@ -65,6 +65,11 @@
 		"rules that already win then resolve to the right value untouched — on the real login page and",
 		"on the playground specimen alike, which is what lets the specimen be honest without a single",
 		"playground-specific selector in the design-system stylesheets.",
+		"",
+		"`header-bar` LEAVES THE LOGIN PAGE ALONE. Core's guest layout wraps the login logo in its own",
+		"`<div id=\"header\">`, so a bare `#header` painted the top bar's colour behind the login logo.",
+		"That area belongs to `logo-slogan`, `login-card` and the login background. The exclusion sits",
+		"in `:where()` so the selector keeps the specificity of a plain `#header`.",
 		"BOTH RUNTIMES READ THIS FILE. lib/Service/TokenRegistry.php builds the editable registry",
 		"from it and js/playground/components.json names the same tokens, so a token cannot exist",
 		"in one and be missing from the other."
@@ -75,7 +80,7 @@
 	"components": {
 		"header-bar": {
 			"tab": "login",
-			"selectors": ["#header"],
+			"selectors": [":where(body:not(#body-login)) #header"],
 			"tokens": {
 				"--nldesign-component-header-background-color": {
 					"global": "--color-background-plain",

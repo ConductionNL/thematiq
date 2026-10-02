@@ -49,6 +49,10 @@ Thematiq includes **39 token sets** — pre-configured themes for Dutch governme
 | **xxllnc** | `#333333` | Yes |
 | **Gemeente Zevenaar** | `#596E28` | |
 | **Gemeente Zwolle** | `#3A4F93` | |
+| **(EXAMPLE) Basisschool** (fictional) | `#B03A12` | Yes |
+| **(EXAMPLE) Voortgezet onderwijs** (fictional) | `#2D4FA0` | Yes |
+| **(EXAMPLE) College** (fictional, mbo) | `#7A1F6E` | Yes |
+| **(EXAMPLE) Opleider** (fictional) | `#0E4D5C` | Yes |
 
 ## Token Set Sources
 

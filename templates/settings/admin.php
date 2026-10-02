@@ -82,33 +82,46 @@ if ($_['mockUi'] === true) {
 
 	<div class="nldesign-token-set-selector">
 		<label for="nldesign-token-set-select"><?php p($l->t('Design token set')); ?></label>
-		<select id="nldesign-token-set-select" name="nldesign-token-set">
-			<?php foreach ($_['tokenSets'] as $tokenSet): ?>
-				<option value="<?php p($tokenSet['id']); ?>"
-						data-design-system="<?php p($tokenSet['design_system'] ?? 'nldesign'); ?>"
-						<?php if ($_['currentTokenSet'] === $tokenSet['id']): ?>selected<?php endif; ?>>
-					<?php p($tokenSet['name']); ?>
-				</option>
-			<?php endforeach; ?>
-		</select>
-		<span id="nldesign-design-system-badge" class="nldesign-badge"></span>
-		<!-- Vocabulary-completeness badge (openspec/specs/token-sets/spec.md's
-		     "Incomplete sets are surfaced in the admin dropdown"). Empty and
-		     hidden until admin.js reads the selected set's `warnings` — the same
-		     channel the WCAG contrast warning already travels on — so a set that
-		     never declares the tokens the design system reads is not silently
-		     presented as its own brand. -->
-		<span id="nldesign-token-set-completeness-badge" class="nldesign-badge" hidden></span>
-		<button type="button" id="nldesign-preview-btn" class="button">
-			<?php p($l->t('Preview in my session')); ?>
-		</button>
-		<button type="button" id="nldesign-reset-theme-btn" class="button">
-			<?php p($l->t('Reset theme to Nextcloud')); ?>
-		</button>
-		<!-- Token reference of the selected set (openspec/specs/token-reference/spec.md);
-		     admin.js keeps both links on the selected set. -->
-		<a id="nldesign-token-reference-link" class="nldesign-token-reference-link" target="_blank" rel="noopener noreferrer"><?php p($l->t('Token reference')); ?></a>
-		<a id="nldesign-token-reference-download" class="nldesign-token-reference-link"><?php p($l->t('Download token reference')); ?></a>
+		<div class="nldesign-token-set-row">
+			<select id="nldesign-token-set-select" name="nldesign-token-set">
+				<?php foreach ($_['tokenSets'] as $tokenSet): ?>
+					<option value="<?php p($tokenSet['id']); ?>"
+							data-design-system="<?php p($tokenSet['design_system'] ?? 'nldesign'); ?>"
+							<?php if ($_['currentTokenSet'] === $tokenSet['id']): ?>selected<?php endif; ?>>
+						<?php p($tokenSet['name']); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+			<span id="nldesign-design-system-badge" class="nldesign-badge"></span>
+			<!-- Vocabulary-completeness badge (openspec/specs/token-sets/spec.md's
+			     "Incomplete sets are surfaced in the admin dropdown"). Empty and
+			     hidden until admin.js reads the selected set's `warnings` — the same
+			     channel the WCAG contrast warning already travels on — so a set that
+			     never declares the tokens the design system reads is not silently
+			     presented as its own brand. -->
+			<span id="nldesign-token-set-completeness-badge" class="nldesign-badge" hidden></span>
+		</div>
+		<!-- A running planned switch puts its token set back on every job run, so a
+		     set picked here would silently not last. admin.js fills and shows this
+		     while one runs (openspec/specs/scheduled-switch/spec.md). -->
+		<p class="settings-hint" id="nldesign-token-set-switch-note" role="status" hidden></p>
+		<!-- What can be done with the selected set: the buttons act on it, the
+		     links read it. A row of their own, so they no longer wrap into the
+		     select's line at arbitrary points. -->
+		<div class="nldesign-token-set-actions">
+			<button type="button" id="nldesign-preview-btn" class="button">
+				<?php p($l->t('Preview in my session')); ?>
+			</button>
+			<button type="button" id="nldesign-reset-theme-btn" class="button">
+				<?php p($l->t('Reset theme to Nextcloud')); ?>
+			</button>
+			<!-- Token reference of the selected set (openspec/specs/token-reference/spec.md);
+			     admin.js keeps both links on the selected set. -->
+			<span class="nldesign-token-set-links">
+				<a id="nldesign-token-reference-link" class="nldesign-token-reference-link" target="_blank" rel="noopener noreferrer"><?php p($l->t('Token reference')); ?></a>
+				<a id="nldesign-token-reference-download" class="nldesign-token-reference-link"><?php p($l->t('Download token reference')); ?></a>
+			</span>
+		</div>
 	</div>
 
 	<!-- Planned token set switches (openspec/specs/scheduled-switch).
@@ -121,20 +134,34 @@ if ($_['mockUi'] === true) {
 			<?php p($l->t('Background jobs run in AJAX mode, so a planned switch may start late. Choose Cron under Administration settings, Basic settings, Background jobs.')); ?>
 		</p>
 		<form id="nldesign-scheduled-form" class="nldesign-scheduled-form">
-			<label for="nldesign-scheduled-set"><?php p($l->t('Token set')); ?></label>
-			<select id="nldesign-scheduled-set" name="tokenSet">
-				<?php foreach ($_['tokenSets'] as $tokenSet): ?>
-					<option value="<?php p($tokenSet['id']); ?>"><?php p($tokenSet['name']); ?></option>
-				<?php endforeach; ?>
-			</select>
-			<label for="nldesign-scheduled-start"><?php p($l->t('Start')); ?></label>
-			<input type="datetime-local" id="nldesign-scheduled-start" name="startAt" required>
-			<label for="nldesign-scheduled-end"><?php p($l->t('End (optional)')); ?></label>
-			<input type="datetime-local" id="nldesign-scheduled-end" name="endAt">
-			<input type="checkbox" class="checkbox" id="nldesign-scheduled-sync" name="syncCoreTheming">
-			<label for="nldesign-scheduled-sync"><?php p($l->t('Also update the Nextcloud logo and colours')); ?></label>
-			<p class="settings-hint" id="nldesign-scheduled-zone"></p>
-			<button type="submit" class="button primary" id="nldesign-scheduled-submit"><?php p($l->t('Plan switch')); ?></button>
+			<div class="nldesign-fields">
+				<div class="nldesign-field">
+					<label for="nldesign-scheduled-set"><?php p($l->t('Token set')); ?></label>
+					<select id="nldesign-scheduled-set" name="tokenSet">
+						<?php foreach ($_['tokenSets'] as $tokenSet): ?>
+							<option value="<?php p($tokenSet['id']); ?>"><?php p($tokenSet['name']); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+				<div class="nldesign-field">
+					<label for="nldesign-scheduled-start"><?php p($l->t('Start')); ?></label>
+					<input type="datetime-local" id="nldesign-scheduled-start" name="startAt" required>
+				</div>
+				<div class="nldesign-field">
+					<label for="nldesign-scheduled-end"><?php p($l->t('End (optional)')); ?></label>
+					<input type="datetime-local" id="nldesign-scheduled-end" name="endAt">
+				</div>
+			</div>
+			<p class="settings-hint nldesign-field-hint" id="nldesign-scheduled-zone"></p>
+			<!-- No option: a switch applies the set as the apply dialog does, the
+			     Nextcloud logo and colours included. Without them a switch changed
+			     the token set and nothing anyone could see. -->
+			<p class="settings-hint nldesign-field-hint" id="nldesign-scheduled-applies">
+				<?php p($l->t('The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.')); ?>
+			</p>
+			<div class="nldesign-form-actions">
+				<button type="submit" class="button primary" id="nldesign-scheduled-submit"><?php p($l->t('Plan switch')); ?></button>
+			</div>
 		</form>
 		<ul class="nldesign-scheduled-list" id="nldesign-scheduled-list"></ul>
 	</div>
@@ -208,58 +235,103 @@ if ($_['mockUi'] === true) {
 	<div class="nldesign-custom-token-sets" id="nldesign-custom-token-sets" style="margin-top:2em">
 		<h3><?php p($l->t('Custom token sets')); ?></h3>
 		<p class="settings-hint">
-			<?php p($l->t('Upload your own house style as a token set, either as an NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file. Uploaded sets appear in the dropdown above.')); ?>
+			<?php p($l->t('Add your own house style in one of two ways. Both end up in the list below and in the Design token set dropdown above.')); ?>
 		</p>
-		<div class="nldesign-upload-form">
-			<label for="nldesign-upload-name"><?php p($l->t('Token set name')); ?></label>
-			<input type="text" id="nldesign-upload-name" class="nldesign-upload-name"
-				   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>"
-				   maxlength="64">
-			<!-- Named, even though it is hidden. The visible <button> below is
-			     the trigger; this input only ever opens the file dialog via
-			     .click(). A `display:none` control is out of the
-			     accessibility tree WHILE hidden — but unlike an
-			     `aria-hidden` one it can be exposed again by a single style
-			     change from script or a user stylesheet, and at that moment
-			     an unnamed file input is a real WCAG 4.1.2 failure. The name
-			     costs nothing while hidden and is correct the instant it is
-			     not. (ConductionNL/.github#273 declines to exempt this shape
-			     for exactly that reason.) -->
-			<input type="file" id="nldesign-upload-input" accept=".css,.json,.tokens.json"
-				   aria-label="<?php p($l->t('Token set file to upload (NL Design CSS or W3C Design Tokens JSON)')); ?>"
-				   style="display:none">
-			<button type="button" id="nldesign-upload-btn" class="button">
-				<?php p($l->t('Choose file and upload')); ?>
+		<!-- Two ways in, as tabs: one form is on screen at a time, so the two
+		     "Token set name" fields can no longer be read as one form, and the
+		     list below belongs to neither. admin.js switches the panels; the
+		     second starts `hidden`, so the first paint shows the upload form. -->
+		<div class="nldesign-create-tabs" role="tablist" aria-label="<?php p($l->t('Add a custom token set')); ?>">
+			<button type="button" class="nldesign-create-tab active" role="tab" id="nldesign-create-tab-upload"
+					aria-selected="true" aria-controls="nldesign-create-panel-upload">
+				<?php p($l->t('Upload a file')); ?>
+			</button>
+			<button type="button" class="nldesign-create-tab" role="tab" id="nldesign-create-tab-colours"
+					aria-selected="false" aria-controls="nldesign-brand-form" tabindex="-1">
+				<?php p($l->t('Start from your colors')); ?>
 			</button>
 		</div>
-		<div id="nldesign-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
-		<!-- The simple brand form (openspec/specs/simple-brand-form/spec.md): a complete set from two colours and a logo. -->
-		<div class="nldesign-brand-form" id="nldesign-brand-form">
-			<h4><?php p($l->t('Start from your colours')); ?></h4>
-			<p class="settings-hint">
-				<?php p($l->t('Enter a name, your primary colour and your background colour. Thematiq makes a complete token set from them. You can refine it later in the token editor.')); ?>
-			</p>
-			<div class="nldesign-upload-form">
-				<label for="nldesign-brand-name"><?php p($l->t('Token set name')); ?></label>
-				<input type="text" id="nldesign-brand-name" maxlength="64"
-					   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>">
-				<label for="nldesign-brand-primary"><?php p($l->t('Primary colour')); ?></label>
-				<input type="color" id="nldesign-brand-primary" value="#154273">
-				<label for="nldesign-brand-background"><?php p($l->t('Background colour')); ?></label>
-				<input type="color" id="nldesign-brand-background" value="#ffffff">
-				<label for="nldesign-brand-logo"><?php p($l->t('Logo (optional)')); ?></label>
-				<input type="file" id="nldesign-brand-logo" accept=".svg,.png,.jpg,.gif,.webp">
+		<div class="nldesign-create-panels">
+			<div class="nldesign-create-panel" id="nldesign-create-panel-upload" role="tabpanel"
+				 aria-labelledby="nldesign-create-tab-upload">
+				<p class="settings-hint">
+					<?php p($l->t('An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.')); ?>
+				</p>
+				<div class="nldesign-fields">
+					<div class="nldesign-field">
+						<label for="nldesign-upload-name"><?php p($l->t('Token set name')); ?></label>
+						<input type="text" id="nldesign-upload-name" class="nldesign-upload-name"
+							   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>"
+							   maxlength="64">
+					</div>
+				</div>
+				<!-- Named, even though it is hidden. The visible <button> below is
+				     the trigger; this input only ever opens the file dialog via
+				     .click(). A `display:none` control is out of the
+				     accessibility tree WHILE hidden — but unlike an
+				     `aria-hidden` one it can be exposed again by a single style
+				     change from script or a user stylesheet, and at that moment
+				     an unnamed file input is a real WCAG 4.1.2 failure. The name
+				     costs nothing while hidden and is correct the instant it is
+				     not. (ConductionNL/.github#273 declines to exempt this shape
+				     for exactly that reason.) -->
+				<input type="file" id="nldesign-upload-input" accept=".css,.json,.tokens.json"
+					   aria-label="<?php p($l->t('Token set file to upload (NL Design CSS or W3C Design Tokens JSON)')); ?>"
+					   style="display:none">
+				<div class="nldesign-form-actions">
+					<button type="button" id="nldesign-upload-btn" class="button primary">
+						<?php p($l->t('Choose file and upload')); ?>
+					</button>
+				</div>
+				<div id="nldesign-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
 			</div>
-			<div class="nldesign-brand-preview" id="nldesign-brand-preview" aria-hidden="true">
-				<span class="nldesign-brand-sample" id="nldesign-brand-sample"><?php p($l->t('Primary button')); ?></span>
-				<span class="nldesign-brand-sample" id="nldesign-brand-sample-hover"><?php p($l->t('Hover')); ?></span>
+			<!-- The simple brand form (openspec/specs/simple-brand-form/spec.md): a complete set from two colours and a logo. -->
+			<div class="nldesign-create-panel nldesign-brand-form" id="nldesign-brand-form" role="tabpanel"
+				 aria-labelledby="nldesign-create-tab-colours" hidden>
+				<p class="settings-hint">
+					<?php p($l->t('Enter a name, your primary color and your background color. Thematiq makes a complete token set from them. You can refine it later in the token editor.')); ?>
+				</p>
+				<div class="nldesign-fields">
+					<div class="nldesign-field">
+						<label for="nldesign-brand-name"><?php p($l->t('Token set name')); ?></label>
+						<input type="text" id="nldesign-brand-name" maxlength="64"
+							   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>">
+					</div>
+					<div class="nldesign-field">
+						<label for="nldesign-brand-primary"><?php p($l->t('Primary color')); ?></label>
+						<input type="color" id="nldesign-brand-primary" class="nldesign-brand-colour" value="#154273">
+					</div>
+					<div class="nldesign-field">
+						<label for="nldesign-brand-background"><?php p($l->t('Background color')); ?></label>
+						<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
+					</div>
+					<div class="nldesign-field">
+						<label for="nldesign-brand-logo-btn"><?php p($l->t('Logo (optional)')); ?></label>
+						<!-- Nextcloud's own button instead of the browser's file control,
+						     which draws in the browser's language and style. The input is
+						     named for the same reason as the upload's above. -->
+						<div class="nldesign-file-pick">
+							<input type="file" id="nldesign-brand-logo" accept=".svg,.png,.jpg,.gif,.webp" hidden
+								   aria-label="<?php p($l->t('Logo file (SVG, PNG, JPG, GIF or WebP)')); ?>">
+							<button type="button" class="button" id="nldesign-brand-logo-btn"><?php p($l->t('Choose logo')); ?></button>
+							<span class="nldesign-file-pick__name" id="nldesign-brand-logo-name"><?php p($l->t('No file chosen')); ?></span>
+						</div>
+					</div>
+				</div>
+				<div class="nldesign-brand-preview" id="nldesign-brand-preview" aria-hidden="true">
+					<span class="nldesign-brand-sample" id="nldesign-brand-sample"><?php p($l->t('Primary button')); ?></span>
+					<span class="nldesign-brand-sample" id="nldesign-brand-sample-hover"><?php p($l->t('Hover')); ?></span>
+				</div>
+				<p class="nldesign-brand-contrast" id="nldesign-brand-contrast" role="status" aria-live="polite"></p>
+				<div class="nldesign-form-actions">
+					<button type="button" id="nldesign-brand-save" class="button primary">
+						<?php p($l->t('Create house style')); ?>
+					</button>
+				</div>
+				<div id="nldesign-brand-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
 			</div>
-			<p id="nldesign-brand-contrast" role="status" aria-live="polite"></p>
-			<button type="button" id="nldesign-brand-save" class="button primary">
-				<?php p($l->t('Create house style')); ?>
-			</button>
-			<div id="nldesign-brand-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
 		</div>
+		<h4 class="nldesign-custom-set-heading"><?php p($l->t('Your custom token sets')); ?></h4>
 		<div id="nldesign-custom-set-list" class="nldesign-custom-set-list" role="group"
 			 aria-label="<?php p($l->t('Custom token sets')); ?>">
 			<p class="settings-hint"><?php p($l->t('Loading custom token sets…')); ?></p>
@@ -563,10 +635,10 @@ if ($_['mockUi'] === true) {
 			   class="checkbox"
 			   <?php if ($_['primaryDrivesComponents']): ?>checked<?php endif; ?>>
 		<label for="nldesign-primary-drives-components">
-			<?php p($l->t('Let the primary colour drive every component')); ?>
+			<?php p($l->t('Let the primary color drive every component')); ?>
 		</label>
 		<p class="settings-hint">
-			<?php p($l->t('While this is on, the brand primary overrules any colour set on an individual component, and those controls are locked. Switching it off gives each component its own colour back.')); ?>
+			<?php p($l->t('While this is on, the brand primary overrules any color set on an individual component, and those controls are locked. Switching it off gives each component its own color back.')); ?>
 		</p>
 	</div>
 
@@ -738,7 +810,7 @@ if ($_['mockUi'] === true) {
 	<div class="nldesign-compliance-report" id="nldesign-compliance-report" style="margin-top:2em">
 		<h3><?php p($l->t('Contrast evidence report')); ?></h3>
 		<p class="settings-hint">
-			<?php p($l->t('Download the colour contrast of the active theme tokens as evidence for an accessibility statement. It covers colour contrast of the theme only and is not a full WCAG audit.')); ?>
+			<?php p($l->t('Download the color contrast of the active theme tokens as evidence for an accessibility statement. It covers color contrast of the theme only and is not a full WCAG audit.')); ?>
 		</p>
 		<div class="nldesign-upload-form">
 			<a id="nldesign-compliance-report-json" class="button" download>

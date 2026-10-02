@@ -48,6 +48,25 @@ class TokenReferenceCells {
 	}//end isColour()
 
 	/**
+	 * A value cell as text alone: the value as code, with no swatch image.
+	 *
+	 * For Markdown read as text, where a swatch is a long data URL drowning the row.
+	 *
+	 * @param string $value The value, or ''.
+	 *
+	 * @return string The cell.
+	 *
+	 * @spec openspec/specs/token-reference/spec.md#requirement-the-reference-does-not-rely-on-colour-alone
+	 */
+	public function mdPlainValue(string $value): string {
+		if ($value === '') {
+			return '';
+		}
+
+		return '`' . str_replace(['`', '|'], ["'", '\\|'], $value) . '`';
+	}//end mdPlainValue()
+
+	/**
 	 * A value cell: a swatch for a colour, then the value as code.
 	 *
 	 * @param string $value The value, or ''.
@@ -57,12 +76,8 @@ class TokenReferenceCells {
 	 * @spec openspec/specs/token-reference/spec.md#requirement-the-reference-does-not-rely-on-colour-alone
 	 */
 	public function mdValue(string $value): string {
-		if ($value === '') {
-			return '';
-		}
-
-		$code = '`' . str_replace(['`', '|'], ["'", '\\|'], $value) . '`';
-		if ($this->isColour(value: $value) === false) {
+		$code = $this->mdPlainValue(value: $value);
+		if ($code === '' || $this->isColour(value: $value) === false) {
 			return $code;
 		}
 

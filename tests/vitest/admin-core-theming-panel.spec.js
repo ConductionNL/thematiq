@@ -169,8 +169,13 @@ async function applyOpenwoo(themingSnapshot, postLog) {
 	installFetchRouter(
 		[
 			// A token diff exists, so the apply dialog (with its theming
-			// section) is what opens — not the standalone sync dialog.
-			['tokenset-preview', { resolved: { '--color-primary': '#23845c' } }],
+			// section) is what opens — not the standalone sync dialog. Not a
+			// primary-family token: OpenWOO brings its primary through the
+			// sync, so that family never shows up as a token diff.
+			[
+				'tokenset-preview',
+				{ resolved: { '--color-main-background': '#fafafa' } },
+			],
 			[
 				'tokenset-stylesheets',
 				{ tokenSet: 'custom-openwoo', designSystem: 'nldesign', layers: [] },

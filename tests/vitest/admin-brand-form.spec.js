@@ -83,7 +83,12 @@ function rgb(hex) {
 	return 'rgb(' + (n >> 16) + ', ' + ((n >> 8) & 255) + ', ' + (n & 255) + ')'
 }
 
-async function load() {
+/**
+ * Render the form and load admin.js.
+ *
+ * @param {boolean} [withTransforms] Whether the token transforms helper is loaded first, as on the page.
+ */
+async function load(withTransforms = false) {
 	document.body.innerHTML = `
 		<div id="nldesign-settings" class="section">
 			<select id="nldesign-token-set-select"><option value="amsterdam" selected>Amsterdam</option></select>
@@ -92,7 +97,9 @@ async function load() {
 				<input id="nldesign-brand-name" />
 				<input type="color" id="nldesign-brand-primary" value="#154273" />
 				<input type="color" id="nldesign-brand-background" value="#ffffff" />
-				<input type="file" id="nldesign-brand-logo" />
+				<input type="file" id="nldesign-brand-logo" hidden />
+				<button type="button" id="nldesign-brand-logo-btn">Choose logo</button>
+				<span id="nldesign-brand-logo-name">No file chosen</span>
 				<span id="nldesign-brand-sample"></span><span id="nldesign-brand-sample-hover"></span>
 				<p id="nldesign-brand-contrast"></p>
 				<button id="nldesign-brand-save">Create house style</button>
@@ -102,6 +109,9 @@ async function load() {
 		</div>
 	`
 	vi.resetModules()
+	if (withTransforms) {
+		await import('../../js/lib/tokenTransforms.js?t=' + Math.random())
+	}
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -159,6 +169,58 @@ describe('admin.js simple brand form', () => {
 		expect(document.getElementById('nldesign-brand-save').disabled).toBe(false)
 	})
 
+	it('starts from the colors the page wears and follows an applied theme until the admin picks one', async () => {
+		const root = document.documentElement
+		root.style.setProperty('--color-primary', '#23845c')
+		root.style.setProperty('--color-main-background', '#fafafa')
+		await load(true)
+		const primary = document.getElementById('nldesign-brand-primary')
+		const background = document.getElementById('nldesign-brand-background')
+
+		expect(primary.value).toBe('#23845c')
+		expect(background.value).toBe('#fafafa')
+
+		root.style.setProperty('--color-primary', '#aa0000')
+		document.dispatchEvent(new CustomEvent('thematiq:theme-applied'))
+		expect(primary.value).toBe('#aa0000')
+
+		setPrimary('#c8102e')
+		root.style.setProperty('--color-primary', '#0000aa')
+		document.dispatchEvent(new CustomEvent('thematiq:theme-applied'))
+		expect(primary.value).toBe('#c8102e')
+
+		root.removeAttribute('style')
+	})
+
+	it('keeps its colors when the page declares none', async () => {
+		await load(true)
+
+		expect(document.getElementById('nldesign-brand-primary').value).toBe(
+			'#154273',
+		)
+	})
+
+	it('opens the file picker from the logo button and names the chosen file', async () => {
+		await load()
+		const input = document.getElementById('nldesign-brand-logo')
+		const picker = vi.spyOn(input, 'click').mockImplementation(() => {})
+
+		document.getElementById('nldesign-brand-logo-btn').click()
+		expect(picker).toHaveBeenCalledTimes(1)
+
+		Object.defineProperty(input, 'files', {
+			value: [new File(['<svg/>'], 'logo.svg')],
+			configurable: true,
+		})
+		input.dispatchEvent(new Event('change'))
+		const name = document.getElementById('nldesign-brand-logo-name')
+		expect(name.textContent).toBe('logo.svg')
+
+		Object.defineProperty(input, 'files', { value: [], configurable: true })
+		input.dispatchEvent(new Event('change'))
+		expect(name.textContent).toBe('No file chosen')
+	})
+
 	it('posts the name and both colours, and reports a taken name', async () => {
 		await load()
 		postResponse = {
@@ -180,5 +242,64 @@ describe('admin.js simple brand form', () => {
 		expect(
 			document.getElementById('nldesign-brand-result').textContent,
 		).toContain('already exists')
+	})
+})
+
+describe('admin.js custom token set tabs', () => {
+	beforeEach(() => {
+		install()
+	})
+
+	afterEach(() => {
+		document.body.innerHTML = ''
+		delete window.NldesignBrandForm
+		vi.restoreAllMocks()
+	})
+
+	async function loadTabs() {
+		document.body.innerHTML = `
+			<div id="nldesign-settings" class="section">
+				<div class="nldesign-create-tabs" role="tablist">
+					<button class="nldesign-create-tab active" role="tab" id="tab-upload" aria-selected="true" aria-controls="panel-upload">Upload a file</button>
+					<button class="nldesign-create-tab" role="tab" id="tab-colours" aria-selected="false" aria-controls="panel-colours" tabindex="-1">Start from your colors</button>
+				</div>
+				<div id="panel-upload" role="tabpanel"></div>
+				<div id="panel-colours" role="tabpanel" hidden></div>
+				<div id="nldesign-custom-set-list"></div>
+			</div>
+		`
+		vi.resetModules()
+		await import('../../js/admin.js?t=' + Math.random())
+		await flush()
+	}
+
+	it('shows the panel of the tab that is clicked and hides the other', async () => {
+		await loadTabs()
+		document.getElementById('tab-colours').click()
+
+		expect(document.getElementById('panel-colours').hidden).toBe(false)
+		expect(document.getElementById('panel-upload').hidden).toBe(true)
+		expect(
+			document.getElementById('tab-colours').getAttribute('aria-selected'),
+		).toBe('true')
+		expect(document.getElementById('tab-upload').tabIndex).toBe(-1)
+	})
+
+	it('moves to the next tab with the arrow key and wraps around', async () => {
+		await loadTabs()
+		const upload = document.getElementById('tab-upload')
+		upload.dispatchEvent(
+			new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
+		)
+		expect(document.getElementById('panel-colours').hidden).toBe(false)
+		expect(document.activeElement.id).toBe('tab-colours')
+
+		document
+			.getElementById('tab-colours')
+			.dispatchEvent(
+				new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
+			)
+		expect(document.getElementById('panel-upload').hidden).toBe(false)
+		expect(document.activeElement.id).toBe('tab-upload')
 	})
 })

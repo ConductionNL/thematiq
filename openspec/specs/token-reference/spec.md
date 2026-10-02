@@ -56,6 +56,17 @@ The documentation site MUST carry one generated page per shipped token set, list
 ### Requirement: The reference does not rely on colour alone
 
 Every colour row MUST show the value as text next to its swatch, and the HTML reference MUST meet WCAG 2.1 AA.
+The Markdown the app serves MUST NOT embed swatch images: it is a file read as text, where each swatch is a long
+data URL, so its colour rows carry the value as text alone. The docs-site pages keep their swatches.
+
+#### Scenario: The downloaded Markdown reads as text
+
+@e2e exclude a file download, not DOM; proven by tests/Unit/Controller/TokenReferenceControllerTest.php::testTheMarkdownDownloadCarriesNoSwatchImages
+
+- GIVEN an administrator downloads the Markdown reference of a set
+- WHEN they open the file as text
+- THEN each colour row MUST show the value as text
+- AND the file MUST NOT contain a `data:` swatch image
 
 #### Scenario: A colour-blind reader reads the palette
 

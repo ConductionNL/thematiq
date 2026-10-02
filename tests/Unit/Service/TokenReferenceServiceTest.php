@@ -118,6 +118,18 @@ class TokenReferenceServiceTest extends TestCase {
 	}//end testAColourRowHasASwatchAndTheValueAsText()
 
 	/**
+	 * As `md-plain` a colour row is the value as text alone, and no data URL is left in the file.
+	 *
+	 * @return void
+	 */
+	public function testWithoutSwatchesAColourRowIsTheValueAsText(): void {
+		$md = $this->service()->render(appPath: $this->appDir, set: $this->set(), format: 'md-plain');
+
+		$this->assertStringContainsString('| `#24578F` |', $md);
+		$this->assertStringNotContainsString('data:image', $md);
+	}//end testWithoutSwatchesAColourRowIsTheValueAsText()
+
+	/**
 	 * A token the set declares that nothing reads is listed on its own.
 	 *
 	 * @return void

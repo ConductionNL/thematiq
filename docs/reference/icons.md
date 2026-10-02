@@ -9,7 +9,7 @@ sidebar_position: 7
 The Thematiq app includes **1488 icons** materialized from `@conduction/nextcloud-vue`'s
 EUPL-compatible NL-government icon packs (RVO, OpenGemeenten, Gemeente Den Haag), plus
 **1038 icons** materialized from `@gouvfr/dsfr`'s French-government DSFR pack
-(**Etalab-2.0**) — **2526 icons** total — plus **23 logos**, making them available for use
+(**Etalab-2.0**) — **2526 icons** total — plus **30 logos**, making them available for use
 across all Nextcloud apps.
 
 ### Theme-switchable iconography
@@ -43,7 +43,7 @@ View all available icons in the [icon documentation](https://github.com/Conducti
 - **NL-government icons:** `img/icons/{rvo,open-gemeenten,den-haag}/` (1488 SVG files across 3 sets)
 - **DSFR (French-government) icons:** `img/icons/dsfr/` (1038 SVG files)
 - **Legacy aliases:** `img/icons/*.svg` (77 one-release compatibility files — see CHANGELOG.md, removed next minor release)
-- **Logos:** `img/logos/` (23 SVG files, static checked-in huisstijl assets — not build output)
+- **Logos:** `img/logos/` (30 SVG files, static checked-in huisstijl assets — not build output)
 
 ## Usage in Nextcloud Apps
 
@@ -114,7 +114,7 @@ release** — do not build new integrations against them; migrate to the set-pre
 
 ## Logos
 
-The 23 logos in `img/logos/` cover government and municipal organizations. A representative sample:
+The 30 logos in `img/logos/` cover government and municipal organizations, plus four fictional example sets. A representative sample:
 - `amsterdam.svg` - City of Amsterdam logo
 - `ggd-amsterdam.svg` - GGD Amsterdam logo
 - `stadsarchief.svg` - Amsterdam City Archives

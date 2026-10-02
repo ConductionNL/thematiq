@@ -17,6 +17,19 @@ defined in the `config-portability` spec (`GET /settings/config/export` /
 `occ nldesign:config:export`), and the overrides UI SHOULD point admins needing whole-config
 promotion (OTAP) at the bundle.
 
+Before downloading, the panel MUST say in a dialog what the file contains and what it does not.
+The download MUST carry the request token: the endpoint is CSRF-protected, so a plain link is
+refused and the browser reports the download as failed.
+
+#### Scenario: Download says what it does first
+
+- GIVEN the admin is on the theming settings with the token editor loaded
+- WHEN the admin clicks Download
+- THEN a dialog MUST open naming the theme, saying the file holds only its saved overrides and
+  not a complete theme, and pointing at Export as token set and the configuration bundle
+- AND nothing MUST be downloaded until the admin confirms
+- AND Cancel MUST close the dialog without downloading
+
 #### Scenario: Admin downloads overrides
 
 - GIVEN `custom-overrides.css` contains `--color-primary: #c00000` and `--color-error: #b30000`
@@ -61,6 +74,19 @@ the active token set, feature toggles, per-app exclusions, or custom token sets 
 complete configuration is the `config-portability` bundle's job
 (`POST /settings/config/import` / `occ nldesign:config:import`), which reuses this capability's
 editable-token whitelist semantics for its overrides section.
+
+Before the file picker opens, the panel MUST say in a dialog that the file replaces every value
+saved for the theme.
+
+#### Scenario: Upload says what it does first
+
+- GIVEN the admin is on the theming settings with the token editor loaded
+- WHEN the admin clicks Upload
+- THEN a dialog MUST open naming the theme and saying the file replaces every value saved for
+  it, that unknown values are skipped and unsaved changes are lost, and pointing at Custom token
+  sets for adding a whole theme
+- AND the file picker MUST only open once the admin confirms
+- AND Cancel MUST close the dialog without opening the file picker
 
 #### Scenario: Admin uploads a valid overrides file
 
@@ -146,3 +172,26 @@ The import MUST be handled by a dedicated POST endpoint that accepts a multipart
 - AND the server MUST parse the file content server-side (not rely on client-side JS parsing)
 - AND the response MUST be JSON with `{ imported: N, skipped: M }`
 
+
+### Requirement: Token Set Round Trip
+A theme exported with **Export as token set** and uploaded again under Custom token sets MUST come
+back the same theme. The export MUST write only the tokens the set itself declares, with the
+overrides saved for that set folded in, and never the design system's defaults that only exist to
+draw the preview. It MUST mark the file with the design system the set is worn on, and the upload
+MUST store a marked file as it arrived, on that design system, instead of converting it.
+
+#### Scenario: Export writes only what the set declares
+@e2e exclude Reads the downloaded file's content — covered by the playground unit tests; a browser download cannot be read from the page.
+- GIVEN a theme saved from the stock Nextcloud set with one colour changed
+- WHEN the admin clicks Export as token set
+- THEN the file MUST contain the set's own tokens with the saved override folded in
+- AND it MUST NOT contain nldesign defaults the set does not declare, such as spacing tokens
+- AND it MUST carry the marker `/* thematiq-token-set: design-system=none */`
+
+#### Scenario: A marked file is stored as it arrived
+@e2e exclude Uploads a token set and inspects the stored file — mutates shared-env custom sets; covered by the controller unit tests.
+- GIVEN a file carrying `/* thematiq-token-set: design-system=none */`
+- WHEN it is uploaded under Custom token sets
+- THEN it MUST be stored as it arrived, without conversion
+- AND the new set MUST be recorded on design system `none`
+- AND a design system the manifest does not ship MUST NOT be recorded

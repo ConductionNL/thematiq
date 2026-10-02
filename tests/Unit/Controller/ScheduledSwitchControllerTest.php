@@ -82,7 +82,6 @@ class ScheduledSwitchControllerTest extends TestCase {
 			'koningsdag-oranje',
 			'2027-04-26T16:00:00Z',
 			'2027-04-28T06:00:00Z',
-			true,
 			'admin'
 		)->willReturn(['id' => 'a1']);
 
@@ -90,7 +89,6 @@ class ScheduledSwitchControllerTest extends TestCase {
 			tokenSet: 'koningsdag-oranje',
 			startAt: '2027-04-26T16:00:00Z',
 			endAt: '2027-04-28T06:00:00Z',
-			syncCoreTheming: true
 		);
 
 		$this->assertSame(201, $response->getStatus());
@@ -105,7 +103,6 @@ class ScheduledSwitchControllerTest extends TestCase {
 			'koningsdag-oranje',
 			'2027-04-26T16:00:00Z',
 			null,
-			false,
 			'admin'
 		)->willReturn(['id' => 'a1']);
 
