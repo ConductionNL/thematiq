@@ -342,8 +342,8 @@ if ($_['mockUi'] === true) {
 		<div class="nldesign-preview-head">
 			<h3><?php p($l->t('Preview')); ?></h3>
 			<div class="nldesign-preview-switch" role="tablist" aria-label="<?php p($l->t('Preview view')); ?>">
-				<button type="button" class="nldesign-preview-switch-btn active" data-view="app" aria-selected="true"><?php p($l->t('App')); ?></button>
-				<button type="button" class="nldesign-preview-switch-btn" data-view="login" aria-selected="false"><?php p($l->t('Login')); ?></button>
+				<button type="button" class="nldesign-preview-switch-btn active" data-view="app" role="tab" id="nldesign-preview-tab-app" aria-selected="true"><?php p($l->t('App')); ?></button>
+				<button type="button" class="nldesign-preview-switch-btn" data-view="login" role="tab" id="nldesign-preview-tab-login" aria-selected="false" tabindex="-1"><?php p($l->t('Login')); ?></button>
 			</div>
 		</div>
 

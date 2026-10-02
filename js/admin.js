@@ -880,31 +880,54 @@
 			})
 		}
 
-		// App / Login preview switch.
+		// App / Login preview switch: a WAI-ARIA tablist. A click or the arrow,
+		// Home and End keys select a view; only the selected tab is in the tab
+		// order, the same way the "Add a custom token set" tabs work.
 		if (previewRoot) {
-			previewRoot
-				.querySelectorAll('.nldesign-preview-switch-btn')
-				.forEach(function (btn) {
-					btn.addEventListener('click', function () {
-						var view = btn.getAttribute('data-view')
-						previewRoot
-							.querySelectorAll('.nldesign-preview-switch-btn')
-							.forEach(function (b) {
-								var on = b === btn
-								b.classList.toggle('active', on)
-								b.setAttribute(
-									'aria-selected',
-									on ? 'true' : 'false',
-								)
-							})
-						previewRoot
-							.querySelectorAll('.nldesign-preview-stage')
-							.forEach(function (stage) {
-								stage.hidden =
-									stage.getAttribute('data-view') !== view
-							})
-					})
+			var previewTabs = Array.prototype.slice.call(
+				previewRoot.querySelectorAll('.nldesign-preview-switch-btn'),
+			)
+			var selectPreviewTab = function (btn) {
+				var view = btn.getAttribute('data-view')
+				previewTabs.forEach(function (b) {
+					var on = b === btn
+					b.classList.toggle('active', on)
+					b.setAttribute('aria-selected', on ? 'true' : 'false')
+					b.tabIndex = on ? 0 : -1
 				})
+				previewRoot
+					.querySelectorAll('.nldesign-preview-stage')
+					.forEach(function (stage) {
+						stage.hidden = stage.getAttribute('data-view') !== view
+					})
+			}
+			previewTabs.forEach(function (btn, index) {
+				btn.setAttribute('role', 'tab')
+				btn.tabIndex = btn.classList.contains('active') ? 0 : -1
+				btn.addEventListener('click', function () {
+					selectPreviewTab(btn)
+				})
+				btn.addEventListener('keydown', function (event) {
+					var next = null
+					if (event.key === 'ArrowRight') {
+						next = previewTabs[(index + 1) % previewTabs.length]
+					} else if (event.key === 'ArrowLeft') {
+						next =
+							previewTabs[
+								(index - 1 + previewTabs.length) % previewTabs.length
+							]
+					} else if (event.key === 'Home') {
+						next = previewTabs[0]
+					} else if (event.key === 'End') {
+						next = previewTabs[previewTabs.length - 1]
+					}
+					if (next !== null) {
+						event.preventDefault()
+						selectPreviewTab(next)
+						next.focus()
+					}
+				})
+			})
 		}
 
 		// Design system display names (inline fallback for designSystemLabel()).
@@ -5013,13 +5036,21 @@
 			var trigger = document.createElement('button')
 			trigger.type = 'button'
 			trigger.className = 'nldesign-app-dropdown-trigger'
-			trigger.setAttribute('aria-haspopup', 'true')
+			// The panel holds a search field and a list of checkboxes, so it is
+			// a non-modal dialog, not a menu or a listbox: `aria-haspopup` names
+			// that, and the trigger's own text ("3 of 12 apps themed") labels it.
+			trigger.id = 'nldesign-app-dropdown-trigger'
+			trigger.setAttribute('aria-haspopup', 'dialog')
 			trigger.setAttribute('aria-expanded', 'false')
+			trigger.setAttribute('aria-controls', 'nldesign-app-dropdown-panel')
 			var triggerLabel = document.createElement('span')
 			trigger.appendChild(triggerLabel)
 
 			var panel = document.createElement('div')
 			panel.className = 'nldesign-app-dropdown-panel'
+			panel.id = 'nldesign-app-dropdown-panel'
+			panel.setAttribute('role', 'dialog')
+			panel.setAttribute('aria-labelledby', trigger.id)
 
 			var searchWrap = document.createElement('div')
 			searchWrap.className = 'nldesign-app-dropdown-search'
@@ -5123,6 +5154,18 @@
 				) {
 					e.preventDefault()
 					closeDropdown(true)
+				}
+			})
+
+			// The panel is not modal, so Tab may leave it. When focus moves
+			// outside the dropdown the panel closes, the keyboard twin of the
+			// click-outside handler above, and focus stays where the user sent it.
+			dropdown.addEventListener('focusout', function (e) {
+				if (
+					e.relatedTarget !== null
+					&& !dropdown.contains(e.relatedTarget)
+				) {
+					closeDropdown(false)
 				}
 			})
 
