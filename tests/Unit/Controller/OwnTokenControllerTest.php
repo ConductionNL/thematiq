@@ -15,7 +15,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.3
+ * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
  */
 
 declare(strict_types=1);
@@ -51,7 +51,7 @@ use ReflectionMethod;
 /**
  * Real services over a temp app dir; the request, the audit trail and l10n are doubles.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.3
+ * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
  */
 final class OwnTokenControllerTest extends TestCase {
 

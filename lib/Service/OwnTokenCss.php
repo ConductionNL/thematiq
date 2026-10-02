@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
+ * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ namespace OCA\Thematiq\Service;
 /**
  * Light values, dark values and the deprecation comment above each deprecated token.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
+ * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
  */
 class OwnTokenCss {
 
@@ -48,7 +48,7 @@ class OwnTokenCss {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - the declaration writer is a pure function shared with the editor overrides
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.3
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-the-served-stylesheet-names-each-deprecated-own-token
 	 */
 	public function lightLines(): array {
 		$lines = [];
@@ -71,7 +71,7 @@ class OwnTokenCss {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - the declaration writer is a pure function shared with the editor overrides
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
 	 */
 	public function darkLines(): array {
 		return OverridesCssBuilder::declarationLines(tokens: $this->dark, important: false);

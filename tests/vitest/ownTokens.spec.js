@@ -8,8 +8,8 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-4.1
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-4.2
+ * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-edits-and-removes-own-tokens
+ * @spec openspec/specs/token-deprecations/spec.md#requirement-a-passed-removal-date-is-flagged-never-acted-on
  */
 
 import { readFileSync } from 'node:fs'
@@ -327,6 +327,34 @@ describe('ownTokens.js', () => {
 		expect(sent('/settings/tokens/deprecations', 'GET').length).toBeGreaterThan(
 			before,
 		)
+	})
+
+	it('shows the contrast of an own colour against the page background', async () => {
+		window.NldesignTokenConverter =
+			await import('../../js/lib/tokenConverter.js')
+		await mount({
+			tokens: [
+				{
+					name: '--nldesign-org-sun',
+					label: 'Sun',
+					type: 'color',
+					value: '#ffff00',
+				},
+				{
+					name: '--nldesign-org-ink',
+					label: 'Ink',
+					type: 'color',
+					value: '#154273',
+				},
+			],
+		})
+		const hints = [
+			...document.querySelectorAll('.nldesign-own-token-contrast'),
+		].map((n) => n.textContent)
+		delete window.NldesignTokenConverter
+
+		expect(hints[0]).toBe('Contrast 1.07:1 on the page background, below 3:1.')
+		expect(hints[1]).toMatch(/^Contrast [0-9.]+:1 on the page background\.$/)
 	})
 
 	it('gives every dialog field a visible label', async () => {

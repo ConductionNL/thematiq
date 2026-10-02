@@ -14,7 +14,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+ * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
  */
 
 declare(strict_types=1);
@@ -34,7 +34,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Over an in-memory app config and this repo's defaults.css.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+ * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
  */
 final class TokenDeprecationServiceTest extends TestCase {
 

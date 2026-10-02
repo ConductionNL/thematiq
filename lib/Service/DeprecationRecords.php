@@ -19,7 +19,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.3
+ * @spec openspec/specs/token-deprecations/spec.md#requirement-the-served-stylesheet-names-each-deprecated-own-token
  */
 
 declare(strict_types=1);
@@ -32,7 +32,7 @@ use OCP\IConfig;
 /**
  * The stored deprecation records.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.3
+ * @spec openspec/specs/token-deprecations/spec.md#requirement-the-served-stylesheet-names-each-deprecated-own-token
  */
 class DeprecationRecords {
 
@@ -58,7 +58,7 @@ class DeprecationRecords {
 	 *
 	 * @return array<string, array<string, mixed>> Token name => record.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
 	 */
 	public function all(): array {
 		$decoded = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, '{}'), true);
@@ -76,7 +76,7 @@ class DeprecationRecords {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
 	 */
 	public function save(array $records): void {
 		ksort($records);
@@ -89,7 +89,7 @@ class DeprecationRecords {
 	 *
 	 * @return array<string, string> Token name => comment text.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.3
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-the-served-stylesheet-names-each-deprecated-own-token
 	 */
 	public function comments(): array {
 		$comments = [];

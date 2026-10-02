@@ -614,7 +614,9 @@
         "The replacement must be an existing token, other than the deprecated one.": "The replacement must be an existing token, other than the deprecated one.",
         "The removal date must be a date, today or later.": "The removal date must be a date, today or later.",
         "Keep the message under 500 characters, without braces or semicolons.": "Keep the message under 500 characters, without braces or semicolons.",
-        "This token has no deprecation.": "This token has no deprecation."
+        "This token has no deprecation.": "This token has no deprecation.",
+        "Contrast {ratio}:1 on the page background, below 3:1.": "Contrast {ratio}:1 on the page background, below 3:1.",
+        "Contrast {ratio}:1 on the page background.": "Contrast {ratio}:1 on the page background."
     },
     "plurals": {}
 }

@@ -615,7 +615,9 @@ OC.L10N.register(
         "The replacement must be an existing token, other than the deprecated one.": "De vervanger moet een bestaande token zijn, een andere dan de uitgefaseerde.",
         "The removal date must be a date, today or later.": "De verwijderdatum moet een datum zijn, vandaag of later.",
         "Keep the message under 500 characters, without braces or semicolons.": "Houd het bericht onder de 500 tekens, zonder accolades of puntkomma's.",
-        "This token has no deprecation.": "Deze token heeft geen uitfasering."
+        "This token has no deprecation.": "Deze token heeft geen uitfasering.",
+        "Contrast {ratio}:1 on the page background, below 3:1.": "Contrast {ratio}:1 op de achtergrond van de pagina, onder 3:1.",
+        "Contrast {ratio}:1 on the page background.": "Contrast {ratio}:1 op de achtergrond van de pagina."
     },
     "nplurals=2; plural=(n != 1);"
 )

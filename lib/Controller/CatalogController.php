@@ -96,7 +96,7 @@ class CatalogController extends Controller {
 	 *
 	 * @return JSONResponse `{ deprecations: [{token, severity, replacement, removalDate, message, deprecatedAt, due, state}] }`.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.2
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-consuming-apps-can-read-every-deprecation
 	 */
 	#[NoAdminRequired]
 	public function deprecations(): JSONResponse {

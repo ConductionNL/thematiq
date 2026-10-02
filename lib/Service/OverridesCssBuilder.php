@@ -20,7 +20,7 @@
  * @link      https://github.com/ConductionNL/thematiq
  *
  * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
+ * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
  */
 
 declare(strict_types=1);
@@ -90,7 +90,7 @@ class OverridesCssBuilder {
 	 * @return string The CSS file content.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
 	 */
 	public function build(array $tokens, array $darkTokens = [], ?OwnTokenCss $own = null): string {
 		$own = ($own ?? new OwnTokenCss());

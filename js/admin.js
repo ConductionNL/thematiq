@@ -6287,7 +6287,7 @@
 
 		/**
 		 * "Record as deprecations": keeps an upload's deprecation notices as deprecation records
-		 * (openspec/changes/authoring-token-lifecycle, design decision 6). Nothing is recorded
+		 * (openspec/specs/token-deprecations/spec.md, imported notices). Nothing is recorded
 		 * without this click.
 		 *
 		 * @param {Array<object>} notices The notices that name a CSS variable.

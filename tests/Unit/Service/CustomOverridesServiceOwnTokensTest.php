@@ -14,7 +14,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
+ * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
  */
 
 declare(strict_types=1);
@@ -37,7 +37,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Real services over a temp app dir and an in-memory app config.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
+ * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
  */
 final class CustomOverridesServiceOwnTokensTest extends TestCase {
 

@@ -17,7 +17,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.1
+ * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
  */
 
 declare(strict_types=1);
@@ -31,7 +31,7 @@ use OCP\IConfig;
 /**
  * Store, check and render own tokens.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.1
+ * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
  */
 class OwnTokenService {
 
@@ -89,7 +89,7 @@ class OwnTokenService {
 	 *
 	 * @return array<string, array<string, string>> Name => {label, type, value, darkValue?, description?, createdAt, updatedAt}.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.1
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	public function list(): array {
 		$decoded = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, '{}'), true);
@@ -107,7 +107,7 @@ class OwnTokenService {
 	 *
 	 * @return bool
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.1
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	public function exists(string $name): bool {
 		return isset($this->list()[$name]);
@@ -122,7 +122,7 @@ class OwnTokenService {
 	 *
 	 * @throws InvalidArgumentException 400 for a wrong field or a name already taken.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.1
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	public function create(array $input): array {
 		$slug = (string)($input['slug'] ?? '');
@@ -153,7 +153,7 @@ class OwnTokenService {
 	 *
 	 * @throws InvalidArgumentException 400 for a wrong field, 404 for an unknown name.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.1
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	public function update(string $name, array $input): array {
 		$tokens = $this->list();
@@ -179,7 +179,7 @@ class OwnTokenService {
 	 *
 	 * @throws InvalidArgumentException 404 for an unknown name.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.1
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	public function remove(string $name): array {
 		$tokens = $this->list();
@@ -203,7 +203,7 @@ class OwnTokenService {
 	 *
 	 * @throws InvalidArgumentException 400 when any token fails its checks.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function checkAll(array $tokens): array {
 		$clean = [];
@@ -231,7 +231,7 @@ class OwnTokenService {
 	 *
 	 * @throws InvalidArgumentException 400 when any token fails its checks; nothing is stored then.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function replaceAll(array $tokens): int {
 		$clean = $this->checkAll(tokens: $tokens);
@@ -245,7 +245,7 @@ class OwnTokenService {
 	 *
 	 * @return OwnTokenCss The light and dark values, with the notices.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
 	 */
 	public function css(): OwnTokenCss {
 		$light = [];
@@ -268,7 +268,7 @@ class OwnTokenService {
 	 *
 	 * @return bool
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-6.7
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	public static function isOwnName(string $name): bool {
 		return str_starts_with($name, self::PREFIX) === true

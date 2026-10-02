@@ -19,7 +19,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+ * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
  */
 
 declare(strict_types=1);
@@ -33,7 +33,7 @@ use OCP\App\IAppManager;
 /**
  * Record, check and publish token deprecations.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+ * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
  */
 class TokenDeprecationService {
 
@@ -81,7 +81,7 @@ class TokenDeprecationService {
 	 *
 	 * @return array<string, array<string, mixed>> Token name => record.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
 	 */
 	public function list(?string $today = null): array {
 		$today   = ($today ?? gmdate('Y-m-d'));
@@ -100,7 +100,7 @@ class TokenDeprecationService {
 	 *
 	 * @return array<int, array<string, mixed>> {token, severity, replacement, removalDate, message, deprecatedAt, due}.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.2
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-consuming-apps-can-read-every-deprecation
 	 */
 	public function publicList(): array {
 		$out = [];
@@ -132,7 +132,7 @@ class TokenDeprecationService {
 	 *
 	 * @throws InvalidArgumentException 400 naming the field that fails.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
 	 */
 	public function deprecate(string $token, array $input, string $source = 'admin', ?string $today = null): array {
 		if (preg_match(self::NAME_PATTERN, $token) !== 1) {
@@ -161,7 +161,7 @@ class TokenDeprecationService {
 	 *
 	 * @throws InvalidArgumentException 404 for a name without a record.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
 	 */
 	public function withdraw(string $token): array {
 		$records = $this->records->all();
@@ -184,7 +184,7 @@ class TokenDeprecationService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
 	 */
 	public function markRemoved(string $token): void {
 		$records = $this->records->all();
@@ -206,7 +206,7 @@ class TokenDeprecationService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - the injection filter is a pure function shared with the CSS writer
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.4
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-imported-deprecation-notices-can-be-recorded
 	 */
 	public function adoptImportNotices(array $notices): array {
 		$records  = $this->records->all();
@@ -246,7 +246,7 @@ class TokenDeprecationService {
 	 *
 	 * @throws InvalidArgumentException 400 for a record that is not one.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function checkAll(array $records): array {
 		$clean = [];
@@ -272,7 +272,7 @@ class TokenDeprecationService {
 	 *
 	 * @throws InvalidArgumentException 400 for a record that is not one; nothing is stored then.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function replaceAll(array $records): int {
 		$clean = $this->checkAll(records: $records);
@@ -287,7 +287,7 @@ class TokenDeprecationService {
 	 *
 	 * @return array<string, string> Token name => comment text.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.3
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-the-served-stylesheet-names-each-deprecated-own-token
 	 */
 	public function comments(): array {
 		return $this->records->comments();
@@ -303,7 +303,7 @@ class TokenDeprecationService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.1
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
 	 */
 	public function isKnownName(string $name): bool {
 		if ($this->ownTokens->exists(name: $name) === true || TokenRegistry::isEditable(tokenName: $name) === true) {

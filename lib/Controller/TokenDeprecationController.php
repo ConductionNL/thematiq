@@ -18,7 +18,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.2
+ * @spec openspec/specs/token-deprecations/spec.md#requirement-consuming-apps-can-read-every-deprecation
  */
 
 declare(strict_types=1);
@@ -41,7 +41,7 @@ use RuntimeException;
 /**
  * Token deprecations over HTTP, for administrators.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.2
+ * @spec openspec/specs/token-deprecations/spec.md#requirement-consuming-apps-can-read-every-deprecation
  */
 class TokenDeprecationController extends Controller {
 
@@ -73,7 +73,7 @@ class TokenDeprecationController extends Controller {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - OwnTokenService::isOwnName() is a pure check
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.2
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-consuming-apps-can-read-every-deprecation
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function list(): JSONResponse {
@@ -91,7 +91,7 @@ class TokenDeprecationController extends Controller {
 	 *
 	 * @return JSONResponse The stored record, or 400 naming the field.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.2
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-consuming-apps-can-read-every-deprecation
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function save(): JSONResponse {
@@ -121,7 +121,7 @@ class TokenDeprecationController extends Controller {
 	 *
 	 * @return JSONResponse {status: ok}, or 404.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.2
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-consuming-apps-can-read-every-deprecation
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function delete(string $token): JSONResponse {
@@ -139,7 +139,7 @@ class TokenDeprecationController extends Controller {
 	 *
 	 * @return JSONResponse {status: ok, recorded: [names]}.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.4
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-imported-deprecation-notices-can-be-recorded
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function adopt(): JSONResponse {

@@ -1034,7 +1034,7 @@ class ConfigBundleService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	private function applyLifecycle(array $resolved): void {
 		if ($this->lifecycle === null || $resolved['lifecycle'] === null) {
@@ -1053,7 +1053,7 @@ class ConfigBundleService {
 	 *
 	 * @return array<string, array<string, mixed>> Empty when the section is not wired.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	private function lifecycleSummary(array $resolved): array {
 		if ($this->lifecycle === null || ($resolved['lifecycle'] ?? null) === null) {

@@ -400,7 +400,7 @@ class DesignTokensMapperTest extends TestCase {
 	 * The warning names the CSS variable the token became, so it can be recorded as a
 	 * deprecation; the Tokens Studio object form carries its message and severity.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.4
+	 * @spec openspec/specs/token-deprecations/spec.md#requirement-imported-deprecation-notices-can-be-recorded
 	 */
 	public function testDeprecatedWarningNamesTheTargetAndReadsTokensStudio(): void {
 		$document = [

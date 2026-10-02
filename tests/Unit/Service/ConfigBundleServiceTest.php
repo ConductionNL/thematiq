@@ -840,7 +840,7 @@ class ConfigBundleServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function testOwnTokensRoundTrip(): void {
 		$this->seedConfig();
@@ -865,7 +865,7 @@ class ConfigBundleServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.3
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function testBundleWithoutOwnTokensLeavesThemUnchanged(): void {
 		$this->seedConfig();
@@ -885,7 +885,7 @@ class ConfigBundleServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function testBadOwnTokenRefusesTheBundle(): void {
 		$this->seedConfig();

@@ -17,7 +17,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+ * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ use InvalidArgumentException;
 /**
  * Bundle section for own tokens and deprecations.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+ * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
  */
 class TokenLifecycleBundleSection {
 
@@ -50,7 +50,7 @@ class TokenLifecycleBundleSection {
 	 *
 	 * @return array{ownTokens: array<string, mixed>, tokenDeprecations: array<string, mixed>}
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function export(): array {
 		$deprecations = [];
@@ -70,7 +70,7 @@ class TokenLifecycleBundleSection {
 	 *
 	 * @return array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null} Null for a key the bundle lacks.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.3
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function validate(array $bundle, array &$errors): array {
 		$resolved = ['ownTokens' => null, 'tokenDeprecations' => null];
@@ -104,7 +104,7 @@ class TokenLifecycleBundleSection {
 	 *
 	 * @return bool Whether anything was applied.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function apply(array $resolved): bool {
 		if ($resolved['ownTokens'] !== null) {
@@ -125,7 +125,7 @@ class TokenLifecycleBundleSection {
 	 *
 	 * @return array<string, array<string, mixed>>
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
 	public function summary(array $resolved): array {
 		return [

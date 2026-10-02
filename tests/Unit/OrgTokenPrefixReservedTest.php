@@ -14,7 +14,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.4
+ * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ use RecursiveIteratorIterator;
 /**
  * Scans `css/` for the reserved prefix.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.4
+ * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
  */
 final class OrgTokenPrefixReservedTest extends TestCase {
 

@@ -17,7 +17,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.3
+ * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
  */
 
 declare(strict_types=1);
@@ -40,7 +40,7 @@ use RuntimeException;
 /**
  * Own tokens over HTTP.
  *
- * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.3
+ * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
  */
 class OwnTokenController extends Controller {
 
@@ -72,7 +72,7 @@ class OwnTokenController extends Controller {
 	 *
 	 * @return JSONResponse {tokens: [{name, label, type, value, darkValue?, description?, deprecation?}], prefix}.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.3
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function list(): JSONResponse {
@@ -95,7 +95,7 @@ class OwnTokenController extends Controller {
 	 *
 	 * @return JSONResponse The stored token, or 400 with a generic text naming the field.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.3
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function create(): JSONResponse {
@@ -115,7 +115,7 @@ class OwnTokenController extends Controller {
 	 *
 	 * @return JSONResponse The stored token, 400 for a wrong field, 404 for an unknown name.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.3
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function update(string $name): JSONResponse {
@@ -136,7 +136,7 @@ class OwnTokenController extends Controller {
 	 *
 	 * @return JSONResponse {status: ok}, or 404 for an unknown name.
 	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.3
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function delete(string $name): JSONResponse {
