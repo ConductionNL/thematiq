@@ -73,11 +73,15 @@ class PlaygroundStateServiceTest extends TestCase {
 	/**
 	 * An IL10N that answers with the English source, as an English locale does.
 	 *
+	 * It runs the text through vsprintf() with no parameters, exactly as
+	 * Nextcloud's L10NString::__toString() does, so a bare `%` in a source
+	 * string fails here the way it fails on a real server (#824).
+	 *
 	 * @return IL10N The stub.
 	 */
 	private function identityL10n(): IL10N {
 		$l10n = $this->createMock(IL10N::class);
-		$l10n->method('t')->willReturnCallback(fn (string $text): string => $text);
+		$l10n->method('t')->willReturnCallback(fn (string $text): string => vsprintf($text, []));
 
 		return $l10n;
 	}//end identityL10n()
@@ -95,7 +99,7 @@ class PlaygroundStateServiceTest extends TestCase {
 			function (string $text) use (&$asked): string {
 				$asked[] = $text;
 
-				return 'NL:' . $text;
+				return 'NL:' . vsprintf($text, []);
 			}
 		);
 
@@ -161,6 +165,14 @@ class PlaygroundStateServiceTest extends TestCase {
 		foreach ($asked as $text) {
 			if (isset($english[$text]) === false || is_string($dutch[$text] ?? null) === false || trim($dutch[$text]) === '') {
 				$missing[] = $text;
+				continue;
+			}
+
+			// The translation goes through vsprintf() too (#824).
+			try {
+				vsprintf($dutch[$text], []);
+			} catch (\ValueError $e) {
+				$missing[] = $text . ' (Dutch value has an unescaped %)';
 			}
 		}
 

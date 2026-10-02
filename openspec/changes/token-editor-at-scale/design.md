@@ -53,7 +53,7 @@ The panel heading states `TokenRegistry::getTokens()`'s count, passed in initial
 
 ## Risks / Trade-offs
 
-- [The registry payload grows from 179 to about 790 entries] → Measure the initial-state size before and after. If it passes 100 KB, send the internal groups on first open instead.
+- [The registry payload grows from 179 to about 790 entries] → Measure the initial-state size before and after. If it passes 100 KB, send the internal groups on first open instead. Measured at build: 47 KB before, 112 KB after (12.7 KB gzipped) once the internal tokens carry only what a row shows. It stays one response: the limit was set for transfer cost, and the transfer is 12.7 KB.
 - [Overlap with `admin-panel-keyboard-accessibility` and the playground fixes another agent is landing (#623 to #627)] → Merge `development` into this branch before each push, and keep the edits to the token editor functions, not the playground.
 - [An admin sets a hardcoded colour that breaks a component's own contrast] → The stock value beside the field makes the change visible. Auditing every component pair is out of scope, as in change 3.
 

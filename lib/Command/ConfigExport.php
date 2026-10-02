@@ -20,15 +20,17 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
+use OCA\Thematiq\Service\BrandingPackageService;
 use OCA\Thematiq\Service\ConfigBundleService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 /**
- * `occ nldesign:config:export [file]` — writes the complete nldesign
+ * `occ thematiq:config:export [file]` — writes the complete nldesign
  * configuration bundle (`config-portability` spec) to a file, or stdout
  * when no file is given, for OTAP (dev/test/acceptatie/productie) promotion
  * pipelines.
@@ -49,13 +51,22 @@ class ConfigExport extends Command {
 	private ConfigBundleService $service;
 
 	/**
+	 * The branding package service, for `--package`.
+	 *
+	 * @var BrandingPackageService
+	 */
+	private BrandingPackageService $packages;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param ConfigBundleService $service The configuration bundle service.
+	 * @param ConfigBundleService    $service  The configuration bundle service.
+	 * @param BrandingPackageService $packages The branding package service.
 	 */
-	public function __construct(ConfigBundleService $service) {
+	public function __construct(ConfigBundleService $service, BrandingPackageService $packages) {
 		parent::__construct();
 		$this->service = $service;
+		$this->packages = $packages;
 	}//end __construct()
 
 	/**
@@ -66,7 +77,7 @@ class ConfigExport extends Command {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:config:export')
+		$this->setName(name: 'thematiq:config:export')
 			->setDescription(
 				'Export the complete NL Design configuration (token set, toggles, per-app '
 				. 'exclusions, overrides, custom token sets, email footer, custom-font metadata, '
@@ -76,6 +87,12 @@ class ConfigExport extends Command {
 				name: 'file',
 				mode: InputArgument::OPTIONAL,
 				description: 'Write the bundle to this file path instead of stdout'
+			)
+			->addOption(
+				name: 'package',
+				shortcut: null,
+				mode: InputOption::VALUE_REQUIRED,
+				description: 'Write a branding package (bundle.json plus the font files) to this directory'
 			);
 	}//end configure()
 
@@ -90,6 +107,11 @@ class ConfigExport extends Command {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$packageDir = $input->getOption('package');
+		if (is_string($packageDir) === true && $packageDir !== '') {
+			return $this->writePackage(output: $output, dir: $packageDir);
+		}
+
 		try {
 			$bundle = $this->service->export();
 		} catch (Throwable $e) {
@@ -114,6 +136,30 @@ class ConfigExport extends Command {
 
 		return Command::SUCCESS;
 	}//end execute()
+
+	/**
+	 * Write a branding package directory, fonts included.
+	 *
+	 * @param OutputInterface $output The console output.
+	 * @param string $dir The target directory.
+	 *
+	 * @return int The exit code.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function writePackage(OutputInterface $output, string $dir): int {
+		try {
+			$written = $this->packages->export(dir: $dir);
+		} catch (Throwable $e) {
+			$output->writeln('<error>Branding package export failed: ' . $e->getMessage() . '</error>');
+
+			return Command::FAILURE;
+		}
+
+		$output->writeln('<info>Branding package written to ' . $dir . ' (' . count($written) . ' files).</info>');
+
+		return Command::SUCCESS;
+	}//end writePackage()
 
 	/**
 	 * Write the exported bundle to a file path, reporting success/failure.

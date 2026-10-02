@@ -1,49 +1,99 @@
-# Thematiq — Features
+# Thematiq features
 
-Thematiq is a Nextcloud theming app that applies Dutch government design standards (Rijkshuisstijl and other NL Design System token sets) to every part of the Nextcloud interface. It functions as a Nextcloud Theme Editor: administrators select a pre-built organization token set or fine-tune individual CSS variables, and the result is propagated to both the NL Design System CSS layer and Nextcloud's built-in theming system.
+Use this page to find a Thematiq feature and to check which standards it supports. Thematiq gives Nextcloud and every app on it a Dutch government house style. You pick a token set, or build your own, and Thematiq maps it onto the CSS variables Nextcloud already uses.
 
-Thematiq has no direct GEMMA component mapping — it is a cross-cutting infrastructure concern that ensures WCAG AA accessibility and Dutch government branding across all Conduction apps.
+Thematiq ships 51 token sets in `token-sets.json`. Of those, 38 are NL Design System house styles, among them Rijkshuisstijl and more than 30 municipalities. The rest are the stock Nextcloud base, a high-contrast set, three La Suite sets, Summer Breeze, three Conduction and supplier sets, and four example school sets.
 
-## Standards Compliance
+## Standards
 
-| Standard | Status | Description |
-|----------|--------|-------------|
-| NL Design System | Beschikbaar | `--nldesign-*` token namespace; 43 organization token sets |
-| Rijkshuisstijl | Beschikbaar | National government visual identity token set |
-| WCAG 2.1 AA | Beschikbaar | Contrast, font size, and spacing tokens enforced per token set |
-| Digitoegankelijk (EN 301 549) | Beschikbaar | Accessible colour and typography via design tokens |
-| DCAT-AP NL | N.v.t. | Not applicable — theming layer only |
+Every claim below rests on code or a test in this repository. Where the app only does part of what a standard asks, the table says which part.
 
-## Features
+### Forum Standaardisatie
 
-| Feature | Description | Docs |
-|---------|-------------|------|
-| [Token Sets](./token-sets.md) | 39+ organization-specific CSS token sets; searchable dropdown; auto-generated from upstream NL Design System | [token-sets.md](./token-sets.md) |
-| [Token Editor UI](./token-editor.md) | Tabbed admin panel for editing all Nextcloud `--color-*` CSS variables with live preview and per-token reset | [token-editor.md](./token-editor.md) |
-| [CSS Architecture](./css-architecture.md) | 7-layer CSS load order: design system → token set → custom overrides; `design-systems.json` controls bundles | [css-architecture.md](./css-architecture.md) |
-| [Custom CSS Overrides](./css-architecture.md) | `custom-overrides.css` — single write target for all edits; loaded last; token set files are read-only | [css-architecture.md](./css-architecture.md) |
-| [Token Set Apply Dialog](./apply-dialog.md) | Before applying a token set, shows old → new value diff per token; admin checks/unchecks individual changes | [apply-dialog.md](./apply-dialog.md) |
-| [Theming Sync](./theming-sync.md) | After token set selection, syncs Nextcloud's primary color and background color via the theming API | [theming-sync.md](./theming-sync.md) |
-| [Token Import/Export](./import-export.md) | Download `custom-overrides.css`; upload a saved file to restore or share a token configuration | [import-export.md](./import-export.md) |
-| [Admin Settings](./admin-settings.md) | Admin panel under Theming: token set selector, toggles (hide slogan, show menu labels), token editor | [admin-settings.md](./admin-settings.md) |
-| [Hide Slogan](./toggles.md) | Removes Nextcloud's default login-page slogan for a clean government-branded login | [toggles.md](./toggles.md) |
-| [Show Menu Labels](./toggles.md) | Replaces header app icons with text labels; improves discoverability per Dutch government UX guidelines | [toggles.md](./toggles.md) |
-| [Component Tokens](./token-sets.md) | `--nldesign-component-*` prefix bridging `--utrecht-*` component tokens to the nldesign namespace | [token-sets.md](./token-sets.md) |
-| [App Compatibility](./app-compatibility.md) | Integration guide for other Nextcloud apps to ensure CSS-variable compatibility with Thematiq | [app-compatibility.md](./app-compatibility.md) |
-| [Prometheus Metrics](./css-architecture.md) | Active token set, custom override count, theming sync operations — in Prometheus text format | — |
+| Standard | List status | What Thematiq does |
+|---|---|---|
+| [Digitoegankelijk (EN 301 549 met WCAG 2.1)](https://www.forumstandaardisatie.nl/open-standaarden/digitoegankelijk-en-301-549-met-wcag-21) | Verplicht (pas toe of leg uit), and a legal duty for government websites and apps since 1 July 2018 | Checks colour contrast at WCAG AA when you upload a set, for every shipped set and for each generated dark variant. Ships a high-contrast set that follows the operating system's forced-colours mode. Produces a [contrast evidence report](./compliance-report.md) for your accessibility statement. |
 
-## Architecture
+Thematiq supports the colour and contrast part of Digitoegankelijk. It does not make an instance conform: that also depends on every app, on your content and on an expert WCAG-EM evaluation.
 
-Thematiq operates as a pure CSS layer — no database tables. Configuration is stored in `IAppConfig`. The CSS stack loads in a defined order:
+The other standards on the list cover data exchange, security and documents. Thematiq exchanges no data between organisations and stores no documents, so they do not apply to it.
 
-1. Design system base CSS (`design-systems.json` bundle)
-2. Organization token set (`css/tokens/{id}.css`)
-3. Custom overrides (`custom-overrides.css`) — always loaded last
+### Design and accessibility standards
 
-The token sync workflow (nightly GitHub Actions) pulls updates from the upstream `nl-design-system/themes` repository and opens PRs when token changes are detected.
+| Standard | What Thematiq does | Limits |
+|---|---|---|
+| NL Design System | 38 house styles under the `--nldesign-*` token names. A nightly workflow proposes upstream changes. | See [token sets](./token-sets.md) for how sets are added. |
+| Rijkshuisstijl | The `rijkshuisstijl` set carries the official colour palette. Fira Sans stands in for the proprietary RijksoverheidSans. | No Rijkslogo ships. See the [Rijkshuisstijl checklist](../reference/compliance.md). |
+| WCAG 2.1 AA, SC 1.4.3 and 1.4.11 | Contrast checks at 4.5:1 for text and 3:1 for UI parts. In the [shipped audit](./contrast-audit.md), 47 of 50 sets pass. | `vng` and `noaberkracht` fail, and `conduction-new` cannot be evaluated. See the [contrast report](../reference/contrast-report.md). |
+| WCAG 2.2 AA, SC 1.4.3 and 1.4.11 | The contrast evidence report classifies 18 colour pairs of the live theme. | Colour contrast only. The report says it is not a full audit. |
+| WCAG AAA, SC 1.4.6 | The [high-contrast set](./high-contrast.md) reaches 21:1 for primary text. | One set only. |
+| W3C Design Tokens format | [Custom token sets](./custom-token-sets.md) accept W3C Design Tokens JSON as well as CSS. | A community group format, not a W3C recommendation. |
 
-## GEMMA Mapping
+### GEMMA
 
-| GEMMA Component | Thematiq Role |
-|-----------------|----------------|
-| N.v.t. | Cross-cutting theming infrastructure for all Conduction Nextcloud apps |
+Thematiq maps to no GEMMA reference component. GEMMA describes the functions of a municipal application landscape, such as case handling or document management. A house style is not one of those functions.
+
+Thematiq is cross-cutting instead. It sits under every Conduction app on a Nextcloud server and gives them all the same house style and contrast checks. When you map your landscape onto GEMMA, list the apps that do the work, not Thematiq.
+
+### TEC
+
+Other Conduction apps describe their scope with the TEC feature framework, for example TEC-DMS codes for document management. No TEC framework covers a theming layer, so Thematiq carries no TEC codes.
+
+## Feature index
+
+### Choose a house style
+
+| Feature | What you do with it | Standards | Page |
+|---|---|---|---|
+| Token sets | Pick one of 51 sets in a searchable list | NL Design System, Rijkshuisstijl | [Token sets](./token-sets.md) |
+| Apply dialog | See every token that changes and untick the ones you want to keep | | [Apply dialog](./apply-dialog.md) |
+| Theming sync | Copy the set's colours and logo into Nextcloud's own theming | | [Theming sync](./theming-sync.md) |
+| Custom token sets | Upload your own set as CSS or W3C Design Tokens JSON, or build one from your colours | WCAG 2.1 AA | [Custom token sets](./custom-token-sets.md) |
+| Theme gallery | Install a house style another organisation built | | [Theme gallery](./theme-gallery.md) |
+| Theme preview | Try a set in your own session before anyone else sees it | | [Theme preview](./theme-preview.md) |
+| Planned switches | Switch the set on a date, and back again | | [Plan a theme switch](./plan-a-theme-switch.md) |
+| Command line | List, read and switch the set with `occ` | | [Command line](./command-line.md) |
+| La Suite stack | Match the French La Suite numérique apps, with Marianne behind a gate | | [La Suite](./la-suite.md) |
+| Summer Breeze | Use a soft, airy theme | | [Summer Breeze](./summer-breeze.md) |
+
+### Tune it
+
+| Feature | What you do with it | Standards | Page |
+|---|---|---|---|
+| Token editor | Change any Nextcloud colour token with a live preview | | [Token editor](./token-editor.md) |
+| Toggles and theming per app | Hide the login slogan, show menu labels, leave single apps unthemed | | [Toggles](./toggles.md) |
+| Group theming | Give each Nextcloud group its own set | | [Group theming](./group-theming.md) |
+| Dark mode | Serve a contrast-checked dark variant of every set | WCAG 2.1 AA | [Dark mode](./dark-mode.md) |
+| High contrast | Offer a set for users who need stronger contrast | WCAG AAA, EN 301 549 | [High contrast](./high-contrast.md) |
+| Custom fonts | Upload your licensed WOFF2 fonts, self-hosted | | [Custom fonts](./custom-fonts.md) |
+| Email template | Brand system emails and link your accessibility statement | | [Email template](./email-theming.md) |
+| Environment marker | Mark test and acceptance servers on every page | | [Environment marker](./environment-marker.md) |
+| Icons | Reuse government icons and logos in any app | | [Icons](../reference/icons.md) |
+
+### Prove and govern it
+
+| Feature | What you do with it | Standards | Page |
+|---|---|---|---|
+| Shipped contrast audit | See how every shipped set scores on contrast | WCAG 2.1 AA, AAA | [Contrast audit](./contrast-audit.md) |
+| Contrast evidence report | Download contrast evidence for the live theme | WCAG 2.2 AA, Digitoegankelijk | [Contrast evidence](./compliance-report.md) |
+| Audit log | See who changed the theme, and when | | [Audit log](./audit-log.md) |
+| Versions | Put an earlier configuration back | | [Restore a version](./restore-a-version.md) |
+| Overrides import and export | Save and reload your token overrides as a CSS file | | [Import and export](./import-export.md) |
+| Configuration bundle | Move the whole configuration from test to production | | [Configuration bundle](./configuration-bundle.md) |
+| Upstream updates | Hear when NL Design System house styles change upstream | NL Design System | [Upstream updates](./upstream-updates.md) |
+
+### Run and integrate it
+
+| Feature | What you do with it | Standards | Page |
+|---|---|---|---|
+| Health and metrics | Probe the app and scrape Prometheus metrics | | [Monitor Thematiq](./metrics-and-health.md) |
+| CSS architecture | Understand the layer order from design system to your overrides | | [CSS architecture](./css-architecture.md) |
+| App compatibility | Make your own Nextcloud app follow the theme | | [App compatibility](./app-compatibility.md) |
+| Public portals | Reuse the token sets on a portal outside Nextcloud | | [Public portals](./public-portals-as-consumers.md) |
+| Admin settings | Find every setting on one page | | [Admin settings](./admin-settings.md) |
+
+Two shipped features have no page yet: freeform custom CSS in the **Custom CSS** section, and **Let the primary color drive every component**. Both sit in the admin settings.
+
+## Start here
+
+New to Thematiq? Pick a set in [token sets](./token-sets.md), then try it on yourself with a [theme preview](./theme-preview.md).
