@@ -153,6 +153,7 @@ class CustomTokenSetController extends Controller {
 	 * @param ThemingService $themingService Core theming, for undoing a deleted set's sync.
 	 * @param DesignSystemService $designSystems The design-system manifest, for allow-listing a claimed id.
 	 * @param BrandingCaptureService|null $brandingCapture Copies Nextcloud's branding into a theme saved from the editor.
+	 * @param MultiBrandImportService|null $multiBrand Lists and imports the brands of a multi-brand source.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else; the
 	 *   alternative is a service locator, which hides exactly these dependencies instead of removing any of them.

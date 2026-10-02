@@ -47,6 +47,16 @@ class MultiBrandSource {
 	private const BRAND_SELECTOR = '/^\.([a-z0-9]+(?:-[a-z0-9]+)*)-theme$/';
 
 	/**
+	 * Constructor.
+	 *
+	 * @param CssBlockReader $reader Reads the blocks of built theme CSS.
+	 */
+	public function __construct(
+		private readonly CssBlockReader $reader = new CssBlockReader(),
+	) {
+	}//end __construct()
+
+	/**
 	 * The brands of a source; fewer than two means "one brand".
 	 *
 	 * @param string $content The uploaded document.
@@ -62,7 +72,7 @@ class MultiBrandSource {
 		}
 
 		$brands = [];
-		foreach ($this->blocks(css: $content) as $block) {
+		foreach ($this->reader->blocks(css: $content) as $block) {
 			if (preg_match(self::BRAND_SELECTOR, $block['selector'], $match) === 1) {
 				$brands[] = [
 					'key' => $match[1],
@@ -72,7 +82,7 @@ class MultiBrandSource {
 			}
 		}
 
-		return count($brands) >= 2 ? $brands : [];
+		return $this->atLeastTwo(brands: $brands);
 	}//end detectBrands()
 
 	/**
@@ -97,7 +107,7 @@ class MultiBrandSource {
 
 		$shared = [];
 		$own    = null;
-		foreach ($this->blocks(css: $content) as $block) {
+		foreach ($this->reader->blocks(css: $content) as $block) {
 			if (preg_match(self::BRAND_SELECTOR, $block['selector'], $match) === 1) {
 				if ($match[1] === $key) {
 					$own = $block;
@@ -120,7 +130,12 @@ class MultiBrandSource {
 
 		$css = '';
 		foreach (array_merge($shared, [$own]) as $block) {
-			$css .= $block['selector'] . " {\n" . implode("\n", array_map(static fn (string $n, string $v): string => '  ' . $n . ': ' . $v . ';', array_keys($block['declarations']), $block['declarations'])) . "\n}\n";
+			$lines = [];
+			foreach ($block['declarations'] as $name => $value) {
+				$lines[] = '  ' . $name . ': ' . $value . ';';
+			}
+
+			$css .= $block['selector'] . " {\n" . implode("\n", $lines) . "\n}\n";
 		}
 
 		return ['content' => $css, 'referenceOnlyPaths' => []];
@@ -157,8 +172,23 @@ class MultiBrandSource {
 			$brands[] = $brand;
 		}
 
-		return count($brands) >= 2 ? $brands : [];
+		return $this->atLeastTwo(brands: $brands);
 	}//end themes()
+
+	/**
+	 * The brands when there are two or more, else none: one brand is an ordinary upload.
+	 *
+	 * @param array<int, array<string, mixed>> $brands The brands found.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function atLeastTwo(array $brands): array {
+		if (count($brands) < 2) {
+			return [];
+		}
+
+		return $brands;
+	}//end atLeastTwo()
 
 	/**
 	 * Cut one theme out of a Tokens Studio document.
@@ -206,14 +236,18 @@ class MultiBrandSource {
 		$names = array_keys($selected);
 		usort(
 			$names,
-			static function (string $a, string $b) use ($order): int {
-				$ia = array_search($a, $order, true);
-				$ib = array_search($b, $order, true);
-				if ($ia === false || $ib === false) {
-					return ($ia === false) <=> ($ib === false) ?: strcmp($a, $b);
+			static function (string $first, string $second) use ($order): int {
+				$firstAt  = array_search($first, $order, true);
+				$secondAt = array_search($second, $order, true);
+				if ($firstAt === false && $secondAt === false) {
+					return strcmp($first, $second);
 				}
 
-				return $ia <=> $ib;
+				if ($firstAt === false || $secondAt === false) {
+					return (int)($firstAt === false) - (int)($secondAt === false);
+				}
+
+				return $firstAt <=> $secondAt;
 			}
 		);
 
@@ -237,7 +271,9 @@ class MultiBrandSource {
 	 */
 	private function replaceTree(array $base, array $over): array {
 		foreach ($over as $key => $node) {
-			if (is_array($node) === true && $this->isToken(node: $node) === false && is_array($base[$key] ?? null) === true && $this->isToken(node: $base[$key]) === false) {
+			$bothGroups = is_array($node) === true && $this->isToken(node: $node) === false
+				&& is_array($base[$key] ?? null) === true && $this->isToken(node: $base[$key]) === false;
+			if ($bothGroups === true) {
 				$base[$key] = $this->replaceTree(base: $base[$key], over: $node);
 				continue;
 			}
@@ -293,27 +329,4 @@ class MultiBrandSource {
 		return count($this->leafPaths(node: $node, prefix: ''));
 	}//end countLeaves()
 
-	/**
-	 * The top-level rule blocks of a stylesheet, comments removed; at-rules are skipped.
-	 *
-	 * @param string $css The stylesheet.
-	 *
-	 * @return array<int, array{selector: string, declarations: array<string, string>}>
-	 */
-	private function blocks(string $css): array {
-		$css = (string)preg_replace('#/\*.*?\*/#s', '', $css);
-		preg_match_all('/([^{}@;]+)\{([^{}]*)\}/', $css, $matches, PREG_SET_ORDER);
-		$blocks = [];
-		foreach ($matches as $match) {
-			preg_match_all('/(--[A-Za-z0-9_-]+)\s*:\s*([^;]+);?/', $match[2], $declarations, PREG_SET_ORDER);
-			$map = [];
-			foreach ($declarations as $declaration) {
-				$map[$declaration[1]] = trim($declaration[2]);
-			}
-
-			$blocks[] = ['selector' => trim($match[1]), 'declarations' => $map];
-		}
-
-		return $blocks;
-	}//end blocks()
 }//end class

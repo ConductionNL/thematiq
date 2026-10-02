@@ -107,14 +107,7 @@ class MultiBrandImportService {
 	 */
 	public function import(string $sourceName, string $content, array $keys, ?string $fileName = null): array {
 		$detected = array_column($this->brands(content: $content), null, 'key');
-		$keys     = array_values(array_unique(array_map('strval', $keys)));
-		if ($keys === [] || array_diff($keys, array_keys($detected)) !== []) {
-			throw new RuntimeException('Choose brands this source has: ' . implode(', ', array_diff($keys, array_keys($detected))), 422);
-		}
-
-		if (count($keys) > self::MAX_BRANDS) {
-			throw new RuntimeException('One import can hold at most ' . self::MAX_BRANDS . ' brands.', 422);
-		}
+		$keys     = $this->checkedKeys(keys: $keys, detected: array_keys($detected));
 
 		$sourceId = $this->customSets->slugify(name: $sourceName);
 		if ($sourceId === '' || isset($this->records()[$sourceId]) === true) {
@@ -129,7 +122,8 @@ class MultiBrandImportService {
 				throw new RuntimeException('The brand "' . $detected[$key]['name'] . '" would replace the existing set ' . $id . '.', 409);
 			}
 
-			$plans[$key] = ['displayName' => $displayName, 'id' => $id] + $this->convertBrand(content: $content, key: $key, displayName: $displayName, fileName: $fileName);
+			$converted   = $this->convertBrand(content: $content, key: $key, displayName: $displayName, fileName: $fileName);
+			$plans[$key] = ['displayName' => $displayName, 'id' => $id] + $converted;
 		}
 
 		$sets = [];
@@ -149,6 +143,30 @@ class MultiBrandImportService {
 
 		return ['sourceId' => $sourceId, 'sets' => $sets];
 	}//end import()
+
+	/**
+	 * The chosen keys, each one the source has, at most MAX_BRANDS.
+	 *
+	 * @param array<int, mixed>  $keys     The chosen keys.
+	 * @param array<int, string> $detected The keys the source has.
+	 *
+	 * @return array<int, string>
+	 *
+	 * @throws RuntimeException 422 naming what is wrong.
+	 */
+	private function checkedKeys(array $keys, array $detected): array {
+		$keys    = array_values(array_unique(array_map('strval', $keys)));
+		$unknown = array_diff($keys, $detected);
+		if ($keys === [] || $unknown !== []) {
+			throw new RuntimeException('Choose brands this source has: ' . implode(', ', $unknown), 422);
+		}
+
+		if (count($keys) > self::MAX_BRANDS) {
+			throw new RuntimeException('One import can hold at most ' . self::MAX_BRANDS . ' brands.', 422);
+		}
+
+		return $keys;
+	}//end checkedKeys()
 
 	/**
 	 * Replace every brand a source lists from new content, all or none.
@@ -176,7 +194,8 @@ class MultiBrandImportService {
 		$plans    = [];
 		foreach ($present as $key => $id) {
 			$manifest     = ($this->customSets->getManifest()[$id] ?? ['name' => $id]);
-			$plans[$key]  = ['id' => $id, 'entry' => $manifest] + $this->convertBrand(content: $content, key: (string)$key, displayName: (string)$manifest['name'], fileName: $fileName);
+			$converted   = $this->convertBrand(content: $content, key: (string)$key, displayName: (string)$manifest['name'], fileName: $fileName);
+			$plans[$key] = ['id' => $id, 'entry' => $manifest] + $converted;
 		}
 
 		foreach ($plans as $plan) {
@@ -244,7 +263,11 @@ class MultiBrandImportService {
 	public function records(): array {
 		$decoded = json_decode($this->config->getAppValue(Application::APP_ID, self::SOURCES_KEY, '{}'), true);
 
-		return is_array($decoded) === true ? array_filter($decoded, 'is_array') : [];
+		if (is_array($decoded) === false) {
+			return [];
+		}
+
+		return array_filter($decoded, 'is_array');
 	}//end records()
 
 	/**
@@ -315,7 +338,14 @@ class MultiBrandImportService {
 
 		$this->audit->log(
 			action: 'custom_set_uploaded',
-			context: ['id' => $result['id'], 'name' => $plan['displayName'], 'declarationCount' => $plan['imported'], 'sourceId' => $sourceId, 'brand' => $key, 'file' => $fileName]
+			context: [
+				'id' => $result['id'],
+				'name' => $plan['displayName'],
+				'declarationCount' => $plan['imported'],
+				'sourceId' => $sourceId,
+				'brand' => $key,
+				'file' => $fileName,
+			]
 		);
 
 		return ['brand' => $key, 'id' => $result['id'], 'warnings' => $result['warnings']];
