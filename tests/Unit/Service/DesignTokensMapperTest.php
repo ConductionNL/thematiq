@@ -294,7 +294,7 @@ class DesignTokensMapperTest extends TestCase {
 		$this->assertCount(1, $result['errors']);
 		$this->assertSame('color.accent', $result['errors'][0]['path']);
 		$this->assertSame('unsupported-color-space', $result['errors'][0]['reason']);
-		$this->assertSame('display-p3', $result['errors'][0]['detail']);
+		$this->assertSame('cmyk', $result['errors'][0]['detail']);
 
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'object color/dimension');
 	}//end testObjectFormColorAndDimensionSerializeToCss()
