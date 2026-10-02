@@ -17,7 +17,7 @@ cannot silently break the shell.
 ## What Changes
 
 - **Version-scoped stylesheets.** `design-systems.json` entries gain an optional
-  `versioned_stylesheets` map, keyed by Nextcloud major. `DesignSystemService::getVersionScopedStylesheets()` picks the entries for the running major, and `CssInjectionService` emits them
+  `versioned_stylesheets` map, keyed by Nextcloud major. `DesignSystemService::getDesignSystem()` appends the entries for the running major to the system's `stylesheets`, so `CssInjectionService` emits them unchanged
   for the running major right after the design system's own stylesheets, and the stylesheet
   manifest carries them, so apply-without-reload swaps them too.
 - **La Suite shell layer, Nextcloud 35 only.** `css/systems/lasuite/shell-nc35.css` sets

@@ -408,10 +408,9 @@ class CssInjectionService {
 		$designSystem = $this->designSystemService->getDesignSystem(id: $designSystemId);
 		$layers = [];
 
-		// 2. Design system stylesheets in declared order (none for "none"), then
-		// its version-scoped ones for the running major (DesignSystemService::getVersionScopedStylesheets()).
-		$stylesheets = array_merge($designSystem['stylesheets'], $this->designSystemService->getVersionScopedStylesheets(designSystem: $designSystem));
-		foreach ($stylesheets as $stylesheet) {
+		// 2. Load design system stylesheets in declared order.
+		// For "none" (stock Nextcloud) this array is empty — no CSS loads.
+		foreach ($designSystem['stylesheets'] as $stylesheet) {
 			$layers[] = ['layer' => 'design-system', 'kind' => 'file', 'file' => $stylesheet];
 		}
 

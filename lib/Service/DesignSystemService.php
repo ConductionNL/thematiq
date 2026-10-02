@@ -102,33 +102,6 @@ class DesignSystemService {
 	}//end __construct()
 
 	/**
-	 * The stylesheets a design system declares for the running Nextcloud major.
-	 *
-	 * Shell geometry (header, sidebar, content offsets) leans on Nextcloud's
-	 * own markup and variables, and those move between majors: NC 34 draws a
-	 * 50px header, NC 35 a 44px one. A design system lists such rules under
-	 * `versioned_stylesheets`, keyed by major, and they load only on a major
-	 * they were written against. An unknown major gets none of them, so a new
-	 * release falls back to stock geometry instead of half-fitting overrides.
-	 *
-	 * @param array<string, mixed> $designSystem The design system entry from design-systems.json.
-	 *
-	 * @return array<int, string> Stylesheet paths under `css/`, without extension.
-	 *
-	 * @spec openspec/changes/lasuite-shell-geometry/specs/lasuite-stack/spec.md
-	 */
-	public function getVersionScopedStylesheets(array $designSystem): array {
-		$major = explode('.', $this->config->getSystemValueString('version', ''))[0];
-		$scoped = ($designSystem['versioned_stylesheets'][$major] ?? []);
-
-		if (is_array($scoped) === false) {
-			return [];
-		}
-
-		return array_values(array_filter($scoped, 'is_string'));
-	}//end getVersionScopedStylesheets()
-
-	/**
 	 * Get the absolute path to the app's directory.
 	 *
 	 * @return string The app directory path.
@@ -140,7 +113,14 @@ class DesignSystemService {
 	/**
 	 * Get all available design systems.
 	 *
-	 * @return array<string, array{id: string, name: string, description: string, stylesheets: string[], icon_pack?: string|string[]}> Indexed by id.
+	 * @return array<string, array{
+	 *     id: string,
+	 *     name: string,
+	 *     description: string,
+	 *     stylesheets: string[],
+	 *     versioned_stylesheets?: array<string, string[]>,
+	 *     icon_pack?: string|string[]
+	 * }> Indexed by id.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
 	 */
@@ -160,17 +140,37 @@ class DesignSystemService {
 	 *
 	 * Returns a fallback with empty stylesheets if the id is not found.
 	 *
+	 * `stylesheets` also carries the system's version-scoped stylesheets for
+	 * the running Nextcloud major, appended after its own. Shell geometry
+	 * (header, sidebar, content offsets) leans on Nextcloud's markup and
+	 * variables, which move between majors (NC 34 draws a 50px header, NC 35 a
+	 * 44px one), so a design system lists such rules under
+	 * `versioned_stylesheets`, keyed by major. An unlisted major gets none and
+	 * keeps the stock shell.
+	 *
 	 * @param string $id The design system identifier.
 	 *
-	 * @return array{id: string, name: string, description: string, stylesheets: string[], icon_pack?: string|string[]} The design system.
+	 * @return array{
+	 *     id: string,
+	 *     name: string,
+	 *     description: string,
+	 *     stylesheets: string[],
+	 *     versioned_stylesheets?: array<string, string[]>,
+	 *     icon_pack?: string|string[]
+	 * } The design system.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
+	 * @spec openspec/changes/lasuite-shell-geometry/specs/lasuite-stack/spec.md
 	 */
 	public function getDesignSystem(string $id): array {
 		$systems = $this->getDesignSystems();
 
 		if (isset($systems[$id]) === true) {
-			return $systems[$id];
+			$system = $systems[$id];
+			$major = explode('.', $this->config->getSystemValueString('version', ''))[0];
+			$scoped = (array)($system['versioned_stylesheets'][$major] ?? []);
+			$system['stylesheets'] = array_merge($system['stylesheets'], array_values(array_filter($scoped, 'is_string')));
+			return $system;
 		}
 
 		// Unknown design system — fall back to no stylesheets for safety.
@@ -455,7 +455,14 @@ class DesignSystemService {
 	/**
 	 * Get all design systems as a flat list (for API responses).
 	 *
-	 * @return array<array{id: string, name: string, description: string, stylesheets: string[], icon_pack?: string|string[]}> List of design systems.
+	 * @return array<array{
+	 *     id: string,
+	 *     name: string,
+	 *     description: string,
+	 *     stylesheets: string[],
+	 *     versioned_stylesheets?: array<string, string[]>,
+	 *     icon_pack?: string|string[]
+	 * }> List of design systems.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
 	 */

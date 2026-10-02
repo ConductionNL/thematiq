@@ -14,16 +14,20 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
-use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\LogoLayerService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\ThemePreviewBannerService;
 use OCP\App\IAppManager;
 use OCP\IConfig;
+use OCP\ITempManager;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -75,17 +79,29 @@ class LasuiteShellGeometryTest extends TestCase {
 		$stockTokens = $this->createMock(StockTokensService::class);
 		$stockTokens->method('getCss')->willReturn(null);
 
+		$routes = $this->createMock(IURLGenerator::class);
+		$routes->method('linkToRoute')->willReturnCallback(static fn (string $route, array $args): string => 'runtime:' . $args['name']);
+		$runtimeFiles = new RuntimeFileLocator(
+			$appManager,
+			new DirectoryRuntimeFileStore(sys_get_temp_dir() . '/thematiq-shell-geometry-' . getmypid()),
+			$routes,
+			$this->createMock(ITempManager::class)
+		);
+		$logger = $this->createMock(LoggerInterface::class);
+
 		return new CssInjectionService(
 			$config,
 			new DesignSystemService($appManager, $config),
-			$this->createMock(CustomOverridesService::class),
 			$this->createMock(CustomCssService::class),
 			$this->createMock(FontService::class),
 			$urlGenerator,
 			$this->createMock(GroupThemingService::class),
 			$this->createMock(ThemePreviewBannerService::class),
-			$this->createMock(LoggerInterface::class),
-			$stockTokens
+			$logger,
+			$stockTokens,
+			$runtimeFiles,
+			new LogoLayerService($config, $urlGenerator, $logger, $runtimeFiles),
+			$this->createMock(AppBrandService::class)
 		);
 	}//end service()
 
