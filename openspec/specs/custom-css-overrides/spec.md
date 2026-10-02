@@ -7,7 +7,7 @@ status: done
 ## Purpose
 Defines the CSS file persistence layer for user-defined token customizations.
 
-@e2e exclude CSS file persistence / backend spec — scenarios cover file write semantics, CSS cascade order, PHP endpoint internals, and filesystem state; no distinct UI surface beyond the token editor already covered by admin-settings and token-editor-ui tests. `custom-overrides.css` is the single write target for all theme editor output. It is loaded last in the CSS stack so user intent always wins. NL Design token set CSS files are read-only presets and are never modified.
+`custom-overrides.css` is the single write target for all theme editor output. It is loaded last in the CSS stack so user intent always wins. NL Design token set CSS files are read-only presets and are never modified.
 
 ## Requirements
 
@@ -15,6 +15,7 @@ Defines the CSS file persistence layer for user-defined token customizations.
 The system MUST maintain a `custom-overrides.css` file in the nldesign app's CSS directory. This file MUST be written exclusively by the theme editor backend — no other write path exists.
 
 #### Scenario: File does not exist on fresh install
+@e2e exclude a browser cannot delete a file from the app directory, and every themed render recreates it; PHPUnit tests/Unit/Service/CustomOverridesServicePerSetTest.php::testNoSetNamedMeansTheActiveSet asserts ensureExists() creates the missing file as an empty block, and tests/Unit/Service/CssInjectionServiceTest.php::testCustomOverridesAlwaysLoadedLast asserts it runs before the link is emitted
 - GIVEN the nldesign app is freshly installed
 - WHEN Nextcloud loads the theming CSS
 - THEN `custom-overrides.css` MUST NOT be required to exist
@@ -43,6 +44,7 @@ fonts.css → defaults.css → tokens/{org}.css → utrecht-bridge.css
 - THEN the resolved value MUST be `#0000FF` (custom override wins)
 
 #### Scenario: Missing file does not break stack
+@e2e exclude a browser cannot make the file absent and uncreatable; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testAFailingOverridesWriteDoesNotCancelTheLaterLayers asserts the other layers still load when the file cannot be created
 - GIVEN `custom-overrides.css` does not exist on disk
 - WHEN Nextcloud loads the CSS stack
 - THEN the remaining CSS layers MUST apply normally
@@ -88,6 +90,7 @@ The backend MUST expose a PHP service that reads the current `custom-overrides.c
 - AND it MUST return HTTP 200 with the final set of written tokens
 
 #### Scenario: Write fails due to filesystem permissions
+@e2e exclude a browser cannot make the app's css directory unwritable; PHPUnit tests/Unit/Controller/OverridesControllerValidationTest.php::testWriteFailureHidesPath asserts the 500 and its message
 - GIVEN the CSS directory is not writable by the web server process
 - WHEN the save endpoint is called
 - THEN the server MUST return HTTP 500
@@ -98,6 +101,7 @@ The backend MUST expose a PHP service that reads the current `custom-overrides.c
 Token overrides MUST NOT be stored in Nextcloud's `appconfig` table or any database table. The CSS file is the sole persistence mechanism.
 
 #### Scenario: Token overrides survive app reinstall if CSS directory is preserved
+@e2e exclude disabling thematiq from the suite takes down the endpoints every test restores state through; PHPUnit tests/Unit/Service/CustomOverridesServicePerSetTest.php::testOverridesLiveInTheFileAndNeverInAppConfig asserts the overrides live in the file alone and never in app config
 - GIVEN `custom-overrides.css` exists in the app's CSS directory
 - WHEN the nldesign app is disabled and re-enabled
 - THEN `custom-overrides.css` MUST still apply after re-enable

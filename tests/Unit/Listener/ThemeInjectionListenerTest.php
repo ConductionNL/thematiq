@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/render-event-injection/tasks.md#task-4.1
+ * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-4.1
  */
 
 declare(strict_types=1);
