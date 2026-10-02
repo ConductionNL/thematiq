@@ -139,3 +139,4 @@ tests/e2e/.auth/
 # its stage numbering. Write the condition instead ("until the converter has
 # regenerated them"), or cite the openspec change the plan produced.
 /MAKEOVER-PLAN.md
+/.inventory-sources/

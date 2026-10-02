@@ -192,6 +192,13 @@ class ConfigBundleService {
 	private ScheduledSwitchStore $scheduledSwitches;
 
 	/**
+	 * The approved mark for the AI assistant.
+	 *
+	 * @var AssistantMarkService
+	 */
+	private AssistantMarkService $assistantMark;
+
+	/**
 	 * The document house style assets and footer line.
 	 *
 	 * @var DocumentAssetService
@@ -221,6 +228,7 @@ class ConfigBundleService {
 	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
+	 * @param AssistantMarkService $assistantMark The approved mark for the AI assistant.
 	 * @param DocumentAssetService $documentAssets The document house style assets and footer line.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
@@ -242,6 +250,7 @@ class ConfigBundleService {
 		UpstreamFreshnessService $freshnessService,
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
+		AssistantMarkService $assistantMark,
 		DocumentAssetService $documentAssets,
 	) {
 		$this->config = $config;
@@ -257,6 +266,7 @@ class ConfigBundleService {
 		$this->freshnessService = $freshnessService;
 		$this->scheduledSwitches = $scheduledSwitches;
 		$this->logger = $logger;
+		$this->assistantMark = $assistantMark;
 		$this->documentAssets = $documentAssets;
 	}//end __construct()
 
@@ -294,6 +304,7 @@ class ConfigBundleService {
 					. 'Metadata only — re-upload font files by hand on the target environment.',
 				'manifest' => $this->fontService->getManifest(),
 			],
+			'assistantMark' => $this->assistantMark->exportBundle(),
 			'documentStyle' => $this->documentAssets->exportBundle(),
 		];
 	}//end export()
@@ -406,6 +417,13 @@ class ConfigBundleService {
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
+
+		$assistantMark = $this->assistantMark->validateBundle(section: ($bundle['assistantMark'] ?? null));
+		foreach ($assistantMark['errors'] as $message) {
+			$errors[] = ['section' => 'assistantMark', 'message' => $message];
+		}
+
+		$resolved['assistantMark'] = $assistantMark['value'];
 
 		$documentStyle = $this->documentAssets->validateBundle(section: ($bundle['documentStyle'] ?? null));
 		foreach ($documentStyle['errors'] as $message) {
@@ -967,6 +985,7 @@ class ConfigBundleService {
 				'applied' => ($resolved['scheduledSwitches'] !== null),
 			],
 			'emailFooter' => ['applied' => true],
+			'assistantMark' => ['applied' => (($resolved['assistantMark'] ?? null) !== null)],
 			'documentStyle' => ['footerLineApplied' => (($resolved['documentFooterLine'] ?? null) !== null), 'binariesIncluded' => false],
 			'customOverridesCss' => [
 				'written' => count($resolved['customOverrides']['tokens']),
@@ -1035,6 +1054,10 @@ class ConfigBundleService {
 
 		if ($resolved['scheduledSwitches'] !== null) {
 			$this->scheduledSwitches->save(entries: $resolved['scheduledSwitches']);
+		}
+
+		if (($resolved['assistantMark'] ?? null) !== null) {
+			$this->assistantMark->applyBundle(value: $resolved['assistantMark']);
 		}
 
 		if (($resolved['documentFooterLine'] ?? null) !== null) {

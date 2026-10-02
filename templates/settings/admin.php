@@ -34,6 +34,8 @@ script('thematiq', 'lib/auditFormat');
 script('thematiq', 'lib/tokenConverter');
 script('thematiq', 'lib/brandForm');
 script('thematiq', 'admin');
+script('thematiq', 'admin-assistant-mark');
+script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
 style('thematiq', 'admin');
 // The component playground: the selector / stage / tokens instrument that
@@ -552,6 +554,9 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint">
 			<?php p($l->t('Logo, mail templates, and other Nextcloud core branding always follow the instance default token set above — they are not per-group. Only this token-set stylesheet layer differs per group.')); ?>
 		</p>
+		<p class="settings-hint">
+			<?php p($l->t('Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.')); ?>
+		</p>
 		<div id="nldesign-group-theming-list" class="nldesign-group-theming-list" role="group"
 			 aria-label="<?php p($l->t('Group theming')); ?>">
 			<p class="settings-hint"><?php p($l->t('Loading group mappings…')); ?></p>
@@ -800,6 +805,31 @@ if ($_['mockUi'] === true) {
 			aria-label="<?php p($l->t('Theme gallery')); ?>"></ul>
 	</div>
 
+	<!-- AI assistant: the approved mark (openspec/specs/assistant-approved-mark/spec.md).
+	     Filled and saved by js/admin-assistant-mark.js. -->
+	<div class="nldesign-assistant-mark" id="nldesign-assistant-mark" style="margin-top:2em">
+		<h3><?php p($l->t('AI assistant')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Show users which AI assistant your organisation approved. The mark appears in the footer of the assistant panel in Conduction apps.')); ?>
+			<?php p($l->t('The mark informs honest users. It is not a security control.')); ?>
+		</p>
+		<div class="nldesign-option">
+			<input type="checkbox" id="nldesign-assistant-mark-enabled" class="checkbox">
+			<label for="nldesign-assistant-mark-enabled"><?php p($l->t('Show the approved mark')); ?></label>
+		</div>
+		<p>
+			<label for="nldesign-assistant-mark-organisation"><?php p($l->t('Organisation name')); ?></label><br>
+			<input type="text" id="nldesign-assistant-mark-organisation" maxlength="120">
+		</p>
+		<p>
+			<label for="nldesign-assistant-mark-logo"><?php p($l->t('Logo address')); ?></label><br>
+			<input type="text" id="nldesign-assistant-mark-logo" maxlength="500">
+		</p>
+		<div class="nldesign-assistant-mark-preview" id="nldesign-assistant-mark-preview" aria-live="polite"></div>
+		<button type="button" id="nldesign-assistant-mark-save" class="button primary"><?php p($l->t('Save AI assistant settings')); ?></button>
+		<span id="nldesign-assistant-mark-feedback" role="status" aria-live="polite"></span>
+	</div>
+
 	<!-- Theming audit log — who changed which theming setting, from what, to
 	     what, and when. Evidence for accessibility/WCAG-EM audits. -->
 	<div class="nldesign-audit-log" id="nldesign-audit-log" style="margin-top:2em">
@@ -872,6 +902,9 @@ if ($_['mockUi'] === true) {
 			</button>
 		</div>
 		<div id="nldesign-config-bundle-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+		<!-- Theme as code (openspec/specs/theme-as-code/spec.md): filled by
+		     js/admin-config-source.js when thematiq.config_source is set. -->
+		<div id="nldesign-config-source" class="nldesign-config-source" role="status" aria-live="polite" hidden></div>
 	</div>
 
 	<p class="nldesign-info">
