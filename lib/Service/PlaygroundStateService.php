@@ -316,7 +316,7 @@ class PlaygroundStateService {
 	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
 	 */
 	private function translate(string $text): string {
-		return (string)$this->l10n->t(str_replace('%', '%%', $text));
+		return $this->l10n->t(str_replace('%', '%%', $text));
 	}//end translate()
 
 	/**

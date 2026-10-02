@@ -39,7 +39,8 @@ class GroupDelegationRules {
 	 * @param array<string, mixed> $entry The stored entry.
 	 * @param array{group: string, tokenSet: string} $clean The entry's group and set.
 	 *
-	 * @return array<string, mixed> The entry, with `delegated: true` and `allowedTokenSets` when delegated.
+	 * @return array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>} The entry, with `delegated: true` and
+	 *         `allowedTokenSets` when delegated.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
@@ -66,7 +67,7 @@ class GroupDelegationRules {
 	 * @param array{group: string, tokenSet: string} $clean The validated group and set.
 	 * @param callable(string): bool $isAvailable Whether a token set id is available.
 	 *
-	 * @return array<string, mixed> The entry to store.
+	 * @return array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>} The entry to store.
 	 *
 	 * @throws GroupThemingValidationException When the allowed list is invalid.
 	 *

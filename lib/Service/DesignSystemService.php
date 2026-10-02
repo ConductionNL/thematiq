@@ -119,7 +119,8 @@ class DesignSystemService {
 	 *     description: string,
 	 *     stylesheets: string[],
 	 *     versioned_stylesheets?: array<string, string[]>,
-	 *     icon_pack?: string|string[]
+	 *     icon_pack?: string|string[],
+	 *     documentation_url?: string
 	 * }> Indexed by id.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
@@ -156,7 +157,8 @@ class DesignSystemService {
 	 *     description: string,
 	 *     stylesheets: string[],
 	 *     versioned_stylesheets?: array<string, string[]>,
-	 *     icon_pack?: string|string[]
+	 *     icon_pack?: string|string[],
+	 *     documentation_url?: string
 	 * } The design system.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
@@ -461,7 +463,8 @@ class DesignSystemService {
 	 *     description: string,
 	 *     stylesheets: string[],
 	 *     versioned_stylesheets?: array<string, string[]>,
-	 *     icon_pack?: string|string[]
+	 *     icon_pack?: string|string[],
+	 *     documentation_url?: string
 	 * }> List of design systems.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35

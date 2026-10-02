@@ -658,8 +658,38 @@
 						tokenSetsData[ts.id] = ts
 						upsertTokenSetOption(ts)
 					})
+					refreshScheduledSetOptions(sets)
 					return sets
 				})
+		}
+
+		/**
+		 * Rebuild the planned-switch set list from the catalogue. The server
+		 * renders it once, so a set added through the brand form, the gallery
+		 * or an upload was missing from it until a reload. The chosen set
+		 * stays chosen when it is still in the catalogue.
+		 *
+		 * @param {Array<object>} sets The catalogue.
+		 */
+		function refreshScheduledSetOptions(sets) {
+			var select = document.getElementById('nldesign-scheduled-set')
+			if (select === null || sets.length === 0) {
+				return
+			}
+			var chosen = select.value
+			select.textContent = ''
+			sets.forEach(function (ts) {
+				var option = document.createElement('option')
+				option.value = ts.id
+				option.textContent = ts.name || ts.id
+				select.appendChild(option)
+			})
+			var stillThere = sets.some(function (ts) {
+				return ts.id === chosen
+			})
+			if (stillThere) {
+				select.value = chosen
+			}
 		}
 
 		function upsertTokenSetOption(ts) {
@@ -6480,6 +6510,10 @@
 				})
 				tokenSetSelect.addEventListener('change', function () {
 					groupThemingRows[index].tokenSet = tokenSetSelect.value
+					keepCurrentSetAllowed(
+						index,
+						rowEl.querySelector('[data-field="allowedTokenSets"]'),
+					)
 				})
 
 				var moveUpBtn = document.createElement('button')
@@ -6569,6 +6603,29 @@
 			}
 		}
 
+		// The server refuses a delegated row whose allowed sets leave out its
+		// current set, so the current set is always on the list and its option
+		// cannot be unticked: changing the row's set adds the new one, and the
+		// picker cannot drop it.
+		function keepCurrentSetAllowed(index, picker) {
+			var row = groupThemingRows[index]
+			if (
+				row.delegated === true
+				&& row.allowedTokenSets.indexOf(row.tokenSet) === -1
+			) {
+				row.allowedTokenSets.push(row.tokenSet)
+			}
+			if (picker === null) {
+				return
+			}
+			Array.prototype.forEach.call(picker.options, function (opt) {
+				opt.disabled = opt.value === row.tokenSet
+				if (opt.value === row.tokenSet && row.delegated === true) {
+					opt.selected = true
+				}
+			})
+		}
+
 		// The delegate toggle and the allowed sets picker of one mapping row.
 		// Turning delegation on starts the allowed list with the current set,
 		// which the server requires it to hold.
@@ -6616,6 +6673,7 @@
 					.map(function (opt) {
 						return opt.value
 					})
+				keepCurrentSetAllowed(index, picker)
 			})
 			toggle.addEventListener('change', function () {
 				groupThemingRows[index].delegated = toggle.checked
@@ -6630,8 +6688,10 @@
 						opt.selected = opt.value === groupThemingRows[index].tokenSet
 					})
 				}
+				keepCurrentSetAllowed(index, picker)
 				picker.hidden = !toggle.checked
 			})
+			keepCurrentSetAllowed(index, picker)
 			wrap.appendChild(picker)
 			return wrap
 		}
@@ -7359,6 +7419,17 @@
 		 */
 		function openWithToken(url, failure) {
 			var tab = window.open('', '_blank')
+			// A blocked popup used to make this navigate the settings page
+			// itself to the page, which lost any unsaved edits on it.
+			if (tab === null) {
+				notify(
+					t(
+						'thematiq',
+						'The browser blocked the new tab, so the page did not open. Allow pop-ups for this site and try again.',
+					),
+				)
+				return
+			}
 			fetch(url, {
 				headers: { requesttoken: OC.requestToken },
 			})
@@ -7372,10 +7443,6 @@
 					var page = URL.createObjectURL(
 						new Blob([blob], { type: 'text/html' }),
 					)
-					if (tab === null) {
-						window.location.assign(page)
-						return
-					}
 					tab.opener = null
 					tab.location.href = page
 					// Long enough for the tab to have loaded it.
@@ -7384,9 +7451,7 @@
 					}, 60000)
 				})
 				.catch(function (err) {
-					if (tab !== null) {
-						tab.close()
-					}
+					tab.close()
 					console.error('Error opening ' + url + ':', err)
 					notify(failure)
 				})
@@ -8174,20 +8239,40 @@
 			var lines = []
 			;(preview.changes || []).forEach(function (change) {
 				lines.push(
-					t('thematiq', '{field}: {from} to {to}', {
-						field: change.field,
-						from: auditFormat.formatAuditValue(change.from),
-						to: auditFormat.formatAuditValue(change.to),
-					}),
+					t(
+						'thematiq',
+						'{field}: {from} to {to}',
+						{
+							field: change.field,
+							from: auditFormat.formatAuditValue(change.from),
+							to: auditFormat.formatAuditValue(change.to),
+						},
+						undefined,
+						{ escape: false },
+					),
 				)
 			})
 			var sets = preview.customTokenSets || { add: [], remove: [] }
 			;(sets.add || []).forEach(function (id) {
-				lines.push(t('thematiq', 'Custom token set added: {id}', { id: id }))
+				lines.push(
+					t(
+						'thematiq',
+						'Custom token set added: {id}',
+						{ id: id },
+						undefined,
+						{ escape: false },
+					),
+				)
 			})
 			;(sets.remove || []).forEach(function (id) {
 				lines.push(
-					t('thematiq', 'Custom token set removed: {id}', { id: id }),
+					t(
+						'thematiq',
+						'Custom token set removed: {id}',
+						{ id: id },
+						undefined,
+						{ escape: false },
+					),
 				)
 			})
 			;(preview.missingFonts || []).forEach(function (font) {
@@ -8199,6 +8284,8 @@
 							role: font.role,
 							name: font.name,
 						},
+						undefined,
+						{ escape: false },
 					),
 				)
 			})
@@ -8258,6 +8345,16 @@
 										window.location.reload()
 										return
 									}
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
+									button.focus()
+								})
+								.catch(function (err) {
+									console.error('Error restoring a version:', err)
 									notify(
 										t(
 											'thematiq',
@@ -8431,18 +8528,24 @@
 							'thematiq',
 							'{set} is active until {time}, then {previous} comes back.',
 							{
-								set: status.activeTokenSet,
+								set: tokenSetName(status.activeTokenSet),
 								time: formatLocalTime(status.activeUntil),
-								previous: status.revertTo,
+								previous: tokenSetName(status.revertTo),
 							},
+							undefined,
+							{ escape: false },
 						),
 					)
 				}
 				lines.push(
 					status.lastRun
-						? t('thematiq', 'The schedule last ran at {time}.', {
-								time: formatLocalTime(status.lastRun),
-							})
+						? t(
+								'thematiq',
+								'The schedule last ran at {time}.',
+								{ time: formatLocalTime(status.lastRun) },
+								undefined,
+								{ escape: false },
+							)
 						: t('thematiq', 'The schedule has not run yet.'),
 				)
 				statusEl.textContent = lines.join(' ')
@@ -8453,15 +8556,27 @@
 
 			function describe(entry) {
 				var text = entry.endAt
-					? t('thematiq', '{set} from {start} to {end}', {
-							set: entry.tokenSet,
-							start: formatLocalTime(entry.startAt),
-							end: formatLocalTime(entry.endAt),
-						})
-					: t('thematiq', '{set} from {start}, no end', {
-							set: entry.tokenSet,
-							start: formatLocalTime(entry.startAt),
-						})
+					? t(
+							'thematiq',
+							'{set} from {start} to {end}',
+							{
+								set: tokenSetName(entry.tokenSet),
+								start: formatLocalTime(entry.startAt),
+								end: formatLocalTime(entry.endAt),
+							},
+							undefined,
+							{ escape: false },
+						)
+					: t(
+							'thematiq',
+							'{set} from {start}, no end',
+							{
+								set: tokenSetName(entry.tokenSet),
+								start: formatLocalTime(entry.startAt),
+							},
+							undefined,
+							{ escape: false },
+						)
 				if (entry.status === 'running') {
 					return text + ' (' + t('thematiq', 'running') + ')'
 				}
@@ -8469,9 +8584,13 @@
 					return (
 						text
 						+ '. '
-						+ t('thematiq', 'Failed: {reason}', {
-							reason: entry.failureReason || '',
-						})
+						+ t(
+							'thematiq',
+							'Failed: {reason}',
+							{ reason: entry.failureReason || '' },
+							undefined,
+							{ escape: false },
+						)
 					)
 				}
 				return text
@@ -8501,9 +8620,13 @@
 					cancel.textContent = t('thematiq', 'Cancel')
 					cancel.setAttribute(
 						'aria-label',
-						t('thematiq', 'Cancel the switch to {set}', {
-							set: entry.tokenSet,
-						}),
+						t(
+							'thematiq',
+							'Cancel the switch to {set}',
+							{ set: tokenSetName(entry.tokenSet) },
+							undefined,
+							{ escape: false },
+						),
 					)
 					cancel.addEventListener('click', function () {
 						cancelSwitch(entry.id, cancel)
@@ -9161,15 +9284,21 @@
 						licence: entry.licence,
 						contrast: contrastText(entry.contrast),
 					},
+					undefined,
+					{ escape: false },
 				)
 				text.appendChild(meta)
 				var source = document.createElement('a')
 				source.href = entry.sourceUrl
 				source.target = '_blank'
 				source.rel = 'noopener noreferrer'
-				source.textContent = t('thematiq', 'Source of {name}', {
-					name: entry.name,
-				})
+				source.textContent = t(
+					'thematiq',
+					'Source of {name}',
+					{ name: entry.name },
+					undefined,
+					{ escape: false },
+				)
 				text.appendChild(source)
 				item.appendChild(text)
 

@@ -979,7 +979,11 @@ OC.L10N.register(
         "Select box": "Select box",
         "Teams": "Teams",
         "Text editor": "Text editor",
-        "These values size Nextcloud's layout. A wrong value can break the layout, not only the look.": "These values size Nextcloud's layout. A wrong value can break the layout, not only the look."
+        "These values size Nextcloud's layout. A wrong value can break the layout, not only the look.": "These values size Nextcloud's layout. A wrong value can break the layout, not only the look.",
+        "The end must be in the future.": "The end must be in the future.",
+        "The house style could not be saved. Ask an administrator to check the house style of this group.": "The house style could not be saved. Ask an administrator to check the house style of this group.",
+        "The running configuration differs from the package. The changes made here stay until the package changes or an operator runs occ thematiq:config:apply --force.": "The running configuration differs from the package. The changes made here stay until the package changes or an operator runs occ thematiq:config:apply --force.",
+        "The browser blocked the new tab, so the page did not open. Allow pop-ups for this site and try again.": "The browser blocked the new tab, so the page did not open. Allow pop-ups for this site and try again."
     },
     "nplurals=2; plural=(n != 1);"
 )

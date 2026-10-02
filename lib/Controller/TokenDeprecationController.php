@@ -69,7 +69,7 @@ class TokenDeprecationController extends Controller {
 	/**
 	 * Every record, each with `own` (an own token, which can be removed) or a notice-only shipped name.
 	 *
-	 * @return JSONResponse {deprecations: [...]}.
+	 * @return JSONResponse Shape: {deprecations: [...]}.
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - OwnTokenService::isOwnName() is a pure check
 	 *
@@ -119,7 +119,7 @@ class TokenDeprecationController extends Controller {
 	 *
 	 * @param string $token The token name.
 	 *
-	 * @return JSONResponse {status: ok}, or 404.
+	 * @return JSONResponse Shape: {status: ok}, or 404.
 	 *
 	 * @spec openspec/specs/token-deprecations/spec.md#requirement-consuming-apps-can-read-every-deprecation
 	 */
@@ -137,7 +137,7 @@ class TokenDeprecationController extends Controller {
 	/**
 	 * Record the deprecation notices an upload returned, on the administrator's click.
 	 *
-	 * @return JSONResponse {status: ok, recorded: [names]}.
+	 * @return JSONResponse Shape: {status: ok, recorded: [names]}.
 	 *
 	 * @spec openspec/specs/token-deprecations/spec.md#requirement-imported-deprecation-notices-can-be-recorded
 	 */

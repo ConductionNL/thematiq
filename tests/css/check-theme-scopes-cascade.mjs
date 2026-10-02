@@ -14,7 +14,7 @@
  *
  * Run: npm run test:theme-scopes   (needs a Chromium; set CHROME_PATH to use a system Chrome)
  *
- * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
+ * @spec openspec/specs/nextcloud-variable-mapping/spec.md
  */
 
 import { chromium } from 'playwright'

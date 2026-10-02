@@ -978,7 +978,11 @@
         "Select box": "Keuzelijst",
         "Teams": "Teams",
         "Text editor": "Teksteditor",
-        "These values size Nextcloud's layout. A wrong value can break the layout, not only the look.": "Deze waarden bepalen de opmaak van Nextcloud. Een verkeerde waarde kan de opmaak breken, niet alleen het uiterlijk."
+        "These values size Nextcloud's layout. A wrong value can break the layout, not only the look.": "Deze waarden bepalen de opmaak van Nextcloud. Een verkeerde waarde kan de opmaak breken, niet alleen het uiterlijk.",
+        "The end must be in the future.": "Het einde moet in de toekomst liggen.",
+        "The house style could not be saved. Ask an administrator to check the house style of this group.": "De huisstijl kon niet worden opgeslagen. Vraag een beheerder om de huisstijl van deze groep te controleren.",
+        "The running configuration differs from the package. The changes made here stay until the package changes or an operator runs occ thematiq:config:apply --force.": "De actieve configuratie wijkt af van het pakket. De wijzigingen die hier zijn gemaakt blijven staan tot het pakket verandert of een beheerder occ thematiq:config:apply --force uitvoert.",
+        "The browser blocked the new tab, so the page did not open. Allow pop-ups for this site and try again.": "De browser heeft het nieuwe tabblad geblokkeerd, dus de pagina is niet geopend. Sta pop-ups voor deze site toe en probeer het opnieuw."
     },
     "plurals": {}
 }

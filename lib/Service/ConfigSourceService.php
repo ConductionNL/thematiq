@@ -22,6 +22,7 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\Lock\ILockingProvider;
 use OCP\Lock\LockedException;
@@ -105,6 +106,7 @@ class ConfigSourceService {
 	 * @param ILockingProvider       $locking        The Nextcloud lock.
 	 * @param ITimeFactory           $time           The clock.
 	 * @param LoggerInterface        $logger         The logger.
+	 * @param IAppConfig             $appConfig      Re-read under the lock, for what another replica applied.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - each collaborator is one step of an apply.
 	 */
@@ -117,6 +119,7 @@ class ConfigSourceService {
 		private readonly ILockingProvider $locking,
 		private readonly ITimeFactory $time,
 		private readonly LoggerInterface $logger,
+		private readonly IAppConfig $appConfig,
 	) {
 	}//end __construct()
 
@@ -172,6 +175,7 @@ class ConfigSourceService {
 		}
 
 		if ($force === false && $hash === $this->getApp(key: self::KEY_HASH)) {
+			$this->clearStaleError(hash: $hash);
 			return ['status' => 'unchanged', 'hash' => $hash];
 		}
 
@@ -182,6 +186,15 @@ class ConfigSourceService {
 		}
 
 		try {
+			// Compared again under the lock: a replica that read the hash while
+			// another one was applying this package would apply it a second
+			// time, with a second `config_imported` entry and version. The
+			// cached app config of this request predates that apply.
+			$this->appConfig->clearCache();
+			if ($force === false && $hash === $this->getApp(key: self::KEY_HASH)) {
+				return ['status' => 'unchanged', 'hash' => $hash];
+			}
+
 			return $this->apply(path: $path, hash: $hash);
 		} finally {
 			$this->locking->releaseLock(self::LOCK_NAME, ILockingProvider::LOCK_EXCLUSIVE);
@@ -301,6 +314,26 @@ class ConfigSourceService {
 
 		return ['status' => 'failed', 'errors' => $errors, 'hash' => $hash];
 	}//end fail()
+
+	/**
+	 * Forget the error of a package that is no longer the one on disk.
+	 *
+	 * The error is otherwise cleared only by a successful apply, so after a
+	 * broken package was pushed and then reverted to the one already applied,
+	 * the page kept showing the broken package's errors.
+	 *
+	 * @param string $hash The hash of the package on disk, which is the applied one.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function clearStaleError(string $hash): void {
+		$error = json_decode($this->getApp(key: self::KEY_ERROR), true);
+		if (is_array($error) === true && ($error['hash'] ?? null) !== $hash) {
+			$this->config->deleteAppValue(Application::APP_ID, self::KEY_ERROR);
+		}
+	}//end clearStaleError()
 
 	/**
 	 * A fingerprint of the running configuration, without the fields that change on every export.

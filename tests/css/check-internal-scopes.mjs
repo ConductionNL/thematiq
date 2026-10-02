@@ -15,7 +15,7 @@
  *
  * Run: npm run test:internal-scopes   (needs php and a Chromium; set CHROME_PATH to use a system Chrome)
  *
- * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  */
 
 import { chromium } from 'playwright'
