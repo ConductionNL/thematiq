@@ -21,7 +21,7 @@
 		"url": "https://github.com/ConductionNL/thematiq.git"
 	},
 	"scripts": {
-		"test:l10n": "L10N_SRC_DIR=js node tests/l10n/check-l10n.js",
+		"test:l10n": "L10N_SRC_DIR=js node tests/l10n/check-l10n.js && node tests/l10n/check-l10n-completeness.js",
 		"test:l10n:write": "L10N_SRC_DIR=js node tests/l10n/check-l10n.js --write",
 		"test:l10n:completeness": "node tests/l10n/check-l10n-completeness.js",
 		"test:l10n:completeness:write": "node tests/l10n/check-l10n-completeness.js --write",
@@ -54,6 +54,7 @@
 		"test:guest-css": "node scripts/generate-guest-css.mjs --check",
 		"generate:component-scopes": "node scripts/generate-component-scopes.mjs",
 		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check",
+		"test:theme-scopes": "node tests/css/check-theme-scopes-cascade.mjs",
 		"inventory:fetch": "bash scripts/inventory/fetch-nextcloud-sources.sh .inventory-sources",
 		"inventory:extract": "node scripts/inventory/extract-nextcloud-variables.mjs --sources .inventory-sources",
 		"inventory:check": "node scripts/inventory/extract-nextcloud-variables.mjs --sources .inventory-sources --check",
