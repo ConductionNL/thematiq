@@ -552,6 +552,9 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint">
 			<?php p($l->t('Logo, mail templates, and other Nextcloud core branding always follow the instance default token set above — they are not per-group. Only this token-set stylesheet layer differs per group.')); ?>
 		</p>
+		<p class="settings-hint">
+			<?php p($l->t('Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.')); ?>
+		</p>
 		<div id="nldesign-group-theming-list" class="nldesign-group-theming-list" role="group"
 			 aria-label="<?php p($l->t('Group theming')); ?>">
 			<p class="settings-hint"><?php p($l->t('Loading group mappings…')); ?></p>

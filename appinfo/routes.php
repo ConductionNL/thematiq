@@ -133,5 +133,7 @@ return [
 		// Group theming — group-to-token-set mapping (multi-tenant huisstijl).
 		['name' => 'settings#getGroupTheming', 'url' => '/settings/group-theming', 'verb' => 'GET'],
 		['name' => 'settings#setGroupTheming', 'url' => '/settings/group-theming', 'verb' => 'POST'],
+		['name' => 'myGroups#index', 'url' => '/api/my-groups/house-style', 'verb' => 'GET'],
+		['name' => 'myGroups#update', 'url' => '/api/my-groups/{group}/house-style', 'verb' => 'POST'],
 	],
 ];
