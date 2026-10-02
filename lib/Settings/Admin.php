@@ -243,6 +243,12 @@ class Admin implements IDelegatedSettings {
 		$this->initialState->provideInitialState('tokenSets', $tokenSets);
 		$this->initialState->provideInitialState('currentTokenSet', $currentTokenSet);
 
+		// The Documentation link follows the design system of the set picked in
+		// the dropdown, so the script needs every design system's link, not
+		// only the current one's (#662).
+		$documentationUrls = $this->designSystemService->getDocumentationUrls();
+		$this->initialState->provideInitialState('designSystemDocs', $documentationUrls);
+
 		// The save-confirmation flags. Through initial state rather than the
 		// template because the two controls they drive are rendered by
 		// js/admin.js inside the token editor, which the template does not own.
@@ -262,6 +268,7 @@ class Admin implements IDelegatedSettings {
 				'tokenSets' => $tokenSets,
 				'currentTokenSet' => $currentTokenSet,
 				'currentDesignSystem' => $currentDesignSystem,
+				'documentationUrl' => ($documentationUrls[$currentDesignSystem] ?? DesignSystemService::DEFAULT_DOCUMENTATION_URL),
 				'hideSlogan' => $hideSlogan,
 				'showMenuLabels' => $showMenuLabels,
 				'primaryDrivesComponents' => $drivesComponents,

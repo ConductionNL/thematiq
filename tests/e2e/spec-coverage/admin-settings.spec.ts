@@ -25,7 +25,7 @@ test.describe('admin-settings', () => {
 	'Settings panel appears in admin area', async ({ page }) => {
 		await page.goto(THEMING_URL)
 		await page.waitForLoadState('domcontentloaded')
-		const heading = page.locator('h2:has-text("NL Design System Theme")')
+		const heading = page.locator('h2:has-text("Thematiq")')
 		await expect(heading).toBeVisible()
 	})
 
@@ -38,7 +38,7 @@ test.describe('admin-settings', () => {
 		const sections = page.locator('main h2')
 		const texts = await sections.allTextContents()
 		const themeIdx = texts.findIndex((t) => /^Theming/.test(t.trim()))
-		const nlIdx = texts.findIndex((t) => /NL Design System Theme/.test(t))
+		const nlIdx = texts.findIndex((t) => /Thematiq/.test(t))
 		expect(themeIdx).toBeGreaterThanOrEqual(0)
 		expect(nlIdx).toBeGreaterThan(themeIdx)
 	})
@@ -251,8 +251,11 @@ test.describe('admin-settings', () => {
 	'Documentation link rendered with correct attributes', async ({ page }) => {
 		await page.goto(THEMING_URL)
 		await page.waitForLoadState('domcontentloaded')
-		const link = page.locator('a[href="https://nldesign.app"]')
+		// The href follows the active design system (#662), so find the link by id.
+		const link = page.locator('#nldesign-doc-link')
 		await expect(link).toBeVisible()
+		await expect(link).toHaveAttribute('href', /^https:\/\//)
+		await expect(link).not.toHaveAttribute('href', /nldesign\.app/)
 		await expect(link).toHaveAttribute('target', '_blank')
 		await expect(link).toHaveAttribute('rel', /noopener/)
 	})
@@ -298,7 +301,7 @@ test.describe('admin-settings', () => {
 		await page.goto(THEMING_URL)
 		await expect(page).not.toHaveURL(/login/)
 		await expect(
-			page.locator('h2:has-text("NL Design System Theme")'),
+			page.locator('h2:has-text("Thematiq")'),
 		).toBeVisible()
 	})
 

@@ -50,6 +50,14 @@ class DesignSystemService {
 	private const ICON_PACK_CONFIG_KEY = 'icon_pack';
 
 	/**
+	 * Where the settings page's Documentation link goes for a design system
+	 * that names no documentation of its own: this app's documentation.
+	 *
+	 * @var string
+	 */
+	public const DEFAULT_DOCUMENTATION_URL = 'https://thematiq.conduction.nl';
+
+	/**
 	 * The app manager for resolving paths.
 	 *
 	 * @var IAppManager
@@ -412,6 +420,32 @@ class DesignSystemService {
 	public function hasGeneratedDarkVariant(string $tokenSetId): bool {
 		return is_file($this->getAppPath() . '/css/tokens/dark/' . $tokenSetId . '.css');
 	}//end hasGeneratedDarkVariant()
+
+	/**
+	 * The documentation link for every design system, by design system id.
+	 *
+	 * A design system names its documentation in `documentation_url` in
+	 * design-systems.json. One that names none, or names something that is not
+	 * an https URL, gets this app's own documentation instead, so the settings
+	 * page never sends an admin to another design system's docs (#662).
+	 *
+	 * @return array<string, string> Documentation URLs indexed by design system id.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+	 */
+	public function getDocumentationUrls(): array {
+		$urls = [];
+		foreach ($this->getDesignSystems() as $id => $designSystem) {
+			$url = ($designSystem['documentation_url'] ?? '');
+			if (is_string($url) === false || str_starts_with($url, 'https://') === false) {
+				$url = self::DEFAULT_DOCUMENTATION_URL;
+			}
+
+			$urls[(string)$id] = $url;
+		}
+
+		return $urls;
+	}//end getDocumentationUrls()
 
 	/**
 	 * Get all design systems as a flat list (for API responses).

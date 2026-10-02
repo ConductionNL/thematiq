@@ -125,6 +125,12 @@ class AdminInitialStateTest extends TestCase {
 
 		$designSystemService = $this->createMock(DesignSystemService::class);
 		$designSystemService->method('resolveActiveIconPacks')->willReturn(['remixicon']);
+		$designSystemService->method('getDocumentationUrls')->willReturn(
+			[
+				'nldesign' => 'https://nldesignsystem.nl',
+				'lasuite' => 'https://github.com/suitenumerique/cunningham',
+			]
+		);
 
 		$initialState = $this->createMock(IInitialState::class);
 		$initialState->method('provideInitialState')->willReturnCallback(
@@ -181,6 +187,7 @@ class AdminInitialStateTest extends TestCase {
 			[
 				'tokenSets',
 				'currentTokenSet',
+				'designSystemDocs',
 				'confirmSaveStock',
 				'confirmSaveTheme',
 				'activePreview',
@@ -209,6 +216,31 @@ class AdminInitialStateTest extends TestCase {
 		// stops that from being reintroduced.
 		$this->assertSame([], $captured['activePreview']);
 	}//end testEveryKeyTheScriptReadsIsProvided()
+
+	/**
+	 * The Documentation link starts at the current set's design system, and
+	 * the script gets every design system's link to follow the dropdown (#662).
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+	 */
+	public function testTheDocumentationLinkFollowsTheDesignSystem(): void {
+		$captured = [];
+		$params = $this->buildAdmin(null, '', $captured)->getForm()->getParams();
+
+		// The stub's active set is `lasuite`, whose design system is lasuite.
+		$this->assertSame('https://github.com/suitenumerique/cunningham', $params['documentationUrl']);
+		$this->assertSame(
+			[
+				'nldesign' => 'https://nldesignsystem.nl',
+				'lasuite' => 'https://github.com/suitenumerique/cunningham',
+			],
+			$captured['designSystemDocs']
+		);
+
+		$template = (string)file_get_contents(__DIR__ . '/../../../templates/settings/admin.php');
+		$this->assertStringNotContainsString('href="https://nldesign.app"', $template);
+		$this->assertStringContainsString("p(\$_['documentationUrl'])", $template);
+	}//end testTheDocumentationLinkFollowsTheDesignSystem()
 
 	/**
 	 * An active preview is published with the token set's DISPLAY NAME

@@ -8,7 +8,7 @@ The **Custom Token Overrides** section in the admin settings lets you fine-tune 
 
 ## Overview
 
-The token editor is located in the **NL Design System Theme** section of the Appearance admin settings. It consists of:
+The token editor is located in the **Thematiq** section of the Appearance admin settings. It consists of:
 
 - **4 category tabs** grouping the 53 editable tokens by area
 - **Per-row editing** with a color picker, hex input field, and reset button

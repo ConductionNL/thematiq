@@ -173,7 +173,7 @@ test.describe('css-architecture', () => {
 		await expect(page.locator('#nldesign-settings')).toBeAttached()
 		// The NL Design h2 heading confirms the PHP template rendered (CSS was injected)
 		await expect(
-			page.locator('h2:has-text("NL Design System Theme")'),
+			page.locator('h2:has-text("Thematiq")'),
 		).toBeVisible()
 	})
 })
