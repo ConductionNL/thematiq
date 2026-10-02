@@ -233,8 +233,9 @@ The theme layer MUST apply `--nldesign-*` tokens to Nextcloud element selectors 
 #### Scenario: Focus states for accessibility
 - GIVEN any interactive element receives keyboard focus
 - WHEN `:focus-visible` is triggered
-- THEN the element MUST show a 2px solid outline using `var(--nldesign-color-focus)`
+- THEN the element MUST show a 2px solid outline in the colour of `--nldesign-color-focus` made opaque (`rgb(from var(--nldesign-color-focus) r g b)`, or `rgb(var(--nldesign-color-focus-rgb))` where relative colour syntax is unsupported)
 - AND the outline offset MUST be 2px
+- AND the translucent `var(--nldesign-color-focus)` MUST surround it as a 6px `box-shadow` halo
 - AND this MUST satisfy WCAG 2.1 AA SC 2.4.7 (Focus Visible)
 
 ### Requirement: Layer 6 -- Nextcloud Variable Overrides
@@ -345,10 +346,11 @@ All color token combinations used for text-on-background MUST meet WCAG 2.1 AA m
 - THEN the contrast ratio MUST be at least 4.5:1 for normal text
 
 #### Scenario: Focus indicator visible
-@e2e exclude known defect, a browser test would fail: the shipped --nldesign-color-focus rgba(0, 123, 199, 0.5) composites to about 2.0:1 on white, below 3:1; the test lands with the token fix (see the #263 PR)
-- GIVEN `--nldesign-color-focus` is used for keyboard focus outlines
+@e2e exclude browser-observable (the computed outline colour against the page background), but no browser test asserts the ratio yet; vitest tests/vitest/focusRingContrast.spec.js resolves every focus-visible outline colour in theme.css for the default set and asserts at least 3:1 on white and on the dark surface
+- GIVEN `--nldesign-color-focus` is translucent on purpose (ADR-CSS-003), and on its own the default rgba(0, 123, 199, 0.5) composites to about 2.0:1 on white
 - WHEN a focus outline appears on any background
-- THEN the outline MUST have at least 3:1 contrast against the adjacent background
+- THEN the 2px outline MUST be the focus colour made opaque, with the translucent token as the halo around it
+- AND the outline MUST have at least 3:1 contrast against the adjacent background: for the default set about 4.4:1 on white, and its dark variant against Nextcloud's dark main background
 
 ### Requirement: Design System Resolution
 
@@ -610,6 +612,10 @@ on both light and dark surfaces with a single token value.
 
 **Revisit if:** the brand rule is updated to explicitly cover focus indicators,
 or if a contrast audit shows the current value fails on specific backgrounds.
+
+**Revisited (#896):** the contrast audit showed the default value at about 2.0:1
+on white. The token stays translucent and becomes the halo; the 2px outline is
+the same colour made opaque, which reaches 3:1 (see "Focus indicator visible").
 
 **References:** Issue #131.
 

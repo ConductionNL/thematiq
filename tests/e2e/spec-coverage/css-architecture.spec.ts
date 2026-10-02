@@ -41,6 +41,7 @@ import {
 	designSystems,
 	layerHref,
 	openLoginPage,
+	parseRgb,
 	PROBE_URL,
 	repoFile,
 	resolveColor,
@@ -775,7 +776,7 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 	})
 
 	test(// @e2e openspec/specs/css-architecture/spec.md#focus-states-for-accessibility
-	'a keyboard-focused element shows a 2px solid focus-token outline offset by 2px', async ({
+	'a keyboard-focused element shows a 2px solid focus-token outline offset by 2px, haloed by the token', async ({
 		page,
 	}) => {
 		await probeLayers(page)
@@ -799,15 +800,32 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 				width: s.outlineWidth,
 				offset: s.outlineOffset,
 				color: s.outlineColor,
+				shadow: s.boxShadow,
 			}
 		})
 		expect(outline.id).toBe('e2e-focus-b')
 		expect(outline.style).toBe('solid')
 		expect(outline.width).toBe('2px')
 		expect(outline.offset).toBe('2px')
-		expect(outline.color).toBe(
-			await resolveColor(page, await rootVar(page, '--nldesign-color-focus')),
+		// Two-tone ring (#896): the outline is the focus token made opaque, and
+		// the translucent token itself is the halo around it.
+		const token = await resolveColor(
+			page,
+			await rootVar(page, '--nldesign-color-focus'),
 		)
+		const [r, g, b] = parseRgb(token)
+		// Normalised through a canvas: a relative colour may serialise as
+		// color(srgb ...) rather than rgb(), depending on the browser version.
+		const asHex = (c: string) =>
+			page.evaluate((v) => {
+				const ctx = document
+					.createElement('canvas')
+					.getContext('2d') as CanvasRenderingContext2D
+				ctx.fillStyle = v
+				return ctx.fillStyle
+			}, c)
+		expect(await asHex(outline.color)).toBe(await asHex(`rgb(${r}, ${g}, ${b})`))
+		expect(outline.shadow).toContain(token)
 	})
 
 	test(// @e2e openspec/specs/css-architecture/spec.md#primary-color-variables-mapped
