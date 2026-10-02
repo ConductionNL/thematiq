@@ -8,9 +8,13 @@ The **Custom Token Overrides** section in the admin settings lets you fine-tune 
 
 ## Overview
 
-The token editor is located in the **NL Design System Theme** section of the Appearance admin settings. It consists of:
+The token editor is located in the **Thematiq** section of the Appearance admin settings. It consists of:
 
-- **4 category tabs** grouping the editable tokens by area
+- **A count** of the editable tokens: <!-- editable-count -->696<!-- /editable-count --> on this release
+- **A search field** that finds any token by its label, its CSS name or its component
+- **4 category tabs** grouping Nextcloud's theme tokens by area
+- **Component groups** for the variables inside Nextcloud's components and the Conduction apps, collapsed until you open one
+- **An Advanced group** for the layout variables, with a warning
 - **Per-row editing** with a color picker, hex input field, and reset button
 - **Custom value badge** indicating which tokens have been manually overridden
 - **Save overrides** button to persist all current values
@@ -23,7 +27,7 @@ Tokens are grouped into 4 tabs. Click a tab to switch between categories. The ac
 
 The tokens listed below are Nextcloud's own base tokens. They are locked until you tick **Also edit Nextcloud's base tokens** above the tabs and confirm the warning: each one is read by far more of Nextcloud than any single component, so changing it changes much more than the part you are looking at. To change one component, use that component's own rows in the preview instead. The base tokens lock again when you untick the box or leave the page.
 
-### Login Page & Branding (12 tokens)
+### Login Page & Branding
 
 Controls the primary brand colors used throughout the interface — buttons, links, highlights, and the login page header.
 
@@ -44,7 +48,7 @@ Controls the primary brand colors used throughout the interface — buttons, lin
 | Primary element light text | `--color-primary-element-light-text` | Text on light element backgrounds |
 | Primary element light hover | `--color-primary-element-light-hover` | Hover state for light elements |
 
-### Content Area (18 tokens)
+### Content Area
 
 Controls background colors, borders, and border radii — the structural appearance of the interface.
 
@@ -52,7 +56,7 @@ Controls background colors, borders, and border radii — the structural appeara
 
 Covers: main background, dark/darker backgrounds, placeholder colors, border colors, border radius values (small, element, body container), scrollbar color.
 
-### Buttons & Status (15 tokens)
+### Buttons & Status
 
 Controls error, warning, success, and info state colors — used in alerts, status badges, validation messages, and notification banners.
 
@@ -60,7 +64,7 @@ Controls error, warning, success, and info state colors — used in alerts, stat
 
 Covers: error color/hover/RGB/element/border, warning color/RGB/element, success color/RGB/element/border, info color/element, and favorite star color.
 
-### Typography (8 tokens)
+### Typography
 
 Controls text colors and the font family stack.
 
@@ -77,6 +81,18 @@ Controls text colors and the font family stack.
 | Text warning | `--color-text-warning` | Warning state text color |
 | Font family | `--font-face` | Full font family stack |
 
+## Search and component groups
+
+Type in **Search tokens** to filter every tab and group at once. The search matches a token's label, its CSS name and the heading of its group, in your language. A group with a match opens; a group without one is hidden. Clear the field and the groups you had open come back.
+
+Below the tabs, **Component variables** lists the variables inside Nextcloud's components and the Conduction apps: the date picker, the select box, the media player, code highlighting, the PDF viewer and more. Each group shows how many tokens it holds. Its rows are built when you open it, so the settings page stays quick to load.
+
+A component row is labelled with the variable's own name, such as `--dp-hover-color`, the name you find in Nextcloud's CSS. [The component variables page](../reference/internal-tokens.md) lists them all.
+
+### Advanced
+
+The **Advanced** group holds the 13 variables that size Nextcloud's layout: the header height, the navigation and sidebar widths, the mobile breakpoint, the grid baseline and the clickable areas. It starts collapsed. Opening it shows a warning first: a wrong value here breaks the layout, not only the look.
+
 ## Token Row Layout
 
 Each token row contains:
@@ -85,6 +101,8 @@ Each token row contains:
 - **CSS variable** — the actual CSS custom property name (e.g., `--color-primary`)
 - **Color picker** — click to open a native color picker (color tokens only)
 - **Hex input** — type a hex value directly (e.g., `#c00000`)
+- **Nextcloud's value**: what Nextcloud itself gives this variable in your current theme, where it is known, so you see what you replace
+- **Note**: a short remark from the variable inventory, where there is one
 - **Reset button** (↺) — undoes unsaved edits: puts back the value you last saved, or the token set's value if you never saved one
 
 The color picker and hex input are always in sync — changing one updates the other instantly.
@@ -133,6 +151,80 @@ Building a component for your own portal or app? See it in the house style befor
 6. Give it a name and click **Save component**. It gets a chip of its own, and a link: `#preview=content/own-{name}`. You can keep 20 components of at most 64 KB each. Only administrators see them, and saving one changes nothing for other users.
 
 Three locks keep pasted code harmless. The frame runs no scripts and cannot submit forms, open windows or move this page. It loads nothing from outside this server. And the code is cleaned before it is drawn: scripts, event handlers, external addresses and elements outside a fixed list are removed, and the stage says what it removed, for example "Removed: 1 script, 2 event handler".
+## Transparency, dark values and motion
+
+### Transparent colours
+
+Every colour row has an opacity control next to the picker: a slider and a number from 0 to 100. The picker sets the colour, the opacity sets how much of it shows. Together they write an 8-digit hex such as `#15427380`. At 100 the editor writes the plain 6-digit hex.
+
+The swatch shows the colour over a checkerboard, so you can see how transparent it is. You can also type any colour into the text field: `#rgba`, `#rrggbbaa`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, a colour name or `transparent`. The picker and the opacity follow what you type.
+
+The contrast check measures what people actually see. A transparent text colour is first blended over its background, and only then compared. Faint text fails, even when its colour alone would pass.
+
+Nextcloud's own theming has no transparency. When a token set with a transparent primary or background colour is synced to Nextcloud's theming, Nextcloud gets the blend over the set's background instead. The sync dialog shows both values.
+
+### A dark value per colour
+
+The brand colours (Nextcloud's own colour variables) have a second line, **Dark**. Leave it empty and thematiq derives a dark value from the light one, the same way it derives the dark variant of a token set. The empty field shows that derived value as its placeholder.
+
+Type your own value to use it instead. Both kinds of dark user see the same colour: a user whose system is set to dark, and a user who chose the dark theme in their Nextcloud settings.
+
+The theme colours Nextcloud varies per theme, such as the search highlight, and the colour rows of the component groups work differently. Nothing is derived for them. Leave **Dark** empty and dark mode keeps Nextcloud's own dark value, which the placeholder shows. Type a value to use yours in dark.
+
+### Animation speed and easing
+
+**Animation quick** and **Animation slow** take a number and a unit, `ms` or `s`. The longest is 5 seconds. Saving one also sets thematiq's own name for it, so Nextcloud's components and thematiq's buttons and fields move at the same speed.
+
+**Animation easing** picks the curve: `linear`, `ease`, `ease-in`, `ease-out`, `ease-in-out`, or **Custom curve**. A custom curve takes four numbers, as in `cubic-bezier(0.2, 0, 0, 1)`. Both x values must lie between 0 and 1. A set that does not declare an easing uses `ease`.
+
+**Preview motion** moves a block with the speed and curve you chose. When your system asks for reduced motion, the block stays still and the preview shows the values as text. Reduced motion always wins over the speeds you set here.
+
+### Values the editor refuses
+
+Each value is checked against its type when you save. A colour field takes only colours, a duration needs a unit, and a curve must stay in range. When a value does not fit, nothing is saved and the message names the token. Fix that field and save again.
+
+Overrides saved before this check keep working. An upgrade adds the dark values and the second animation name to them, and keeps every value as it was.
+
+## Your own tokens
+
+Below the tabs is **Your own tokens**. Add a token there when the house style needs a value that no shipped token holds, such as a brand accent for a campaign banner. No code change and no token set upload is needed.
+
+Click **Add a token** and fill in:
+
+- **Name**: the part after `--nldesign-org-`, in lowercase letters, digits and single dashes, at most 48 characters. `brand-accent` becomes `--nldesign-org-brand-accent`.
+- **Label**: what the list shows.
+- **Type**: colour, text, duration or easing. The value is checked against it, like the editor's own values.
+- **Dark value**: for a colour only. Leave it empty and dark mode uses the light value.
+
+The token is on every page from the next page load, in every token set. Use it straight away in **Custom CSS**, for example `.header-menu { border-color: var(--nldesign-org-brand-accent); }`. Apps that read the house style can use it too.
+
+Shipped tokens never use the `--nldesign-org-` prefix, so an update cannot overwrite yours. Edit a token to change its label, type or value; its name stays. **Remove** asks first, and names the deprecation when the token has one.
+
+## Deprecate a token
+
+When a token is going away, tell the teams that use it before it is gone. Click **Deprecate** on an own token, or **Deprecate a token** under **Deprecated tokens** for any token whose name starts with `--nldesign-`. Choose:
+
+- **Severity**: info, warning or critical.
+- **Replacement token**: optional, and it must exist.
+- **Removal date**: optional, today or later.
+- **Message**: optional, a line of explanation.
+
+A deprecation never changes a value. The token row gets a badge with the severity in words. After the removal date the badge also says **Due for removal**, and still nothing happens by itself: removing an own token stays your decision. Its deprecation is then kept, marked as removed, so an app that missed the date can still read what happened.
+
+A shipped token cannot be removed, because its value comes from the token set. Its deprecation is a notice to the teams that use it, and the list says so.
+
+The served stylesheet writes the notice above each deprecated own token, so a developer who inspects the variable sees it:
+
+```css
+/* deprecated (warning): use --nldesign-org-brand-accent, removal 2027-03-01 */
+--nldesign-org-old-accent: #aa0000;
+```
+
+When an uploaded token file marks tokens as deprecated, the upload result lists them and offers **Record as deprecations**. Nothing is recorded until you click it. Each notice becomes a deprecation with severity warning and the notice text as its message; edit it afterwards to add a replacement or a date.
+
+Own tokens and deprecations travel with the configuration bundle (`ownTokens` and `tokenDeprecations`). Every change is in the theming audit log.
+
+Building an app that reads the house style? See [Read token deprecations from your app](./token-deprecations-api.md).
 
 ## Saving Overrides
 

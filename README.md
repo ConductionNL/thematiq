@@ -79,7 +79,7 @@ docker exec -u 33 nextcloud php occ app:enable nldesign
 
 ## Configuration
 
-Navigate to **Settings → Administration → Theming** and find the "NL Design System Theme" section.
+Navigate to **Settings → Administration → Theming** and find the "Thematiq" section.
 
 Select your preferred design token set and reload the page to see the changes.
 

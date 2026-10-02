@@ -25,6 +25,7 @@ use OCA\Thematiq\Service\ConfigBundleService;
 use OCA\Thematiq\Service\ConfigSourceService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\Lock\ILockingProvider;
 use OCP\Lock\LockedException;
@@ -100,6 +101,13 @@ class ConfigSourceServiceTest extends TestCase {
 	private bool $lockBusy = false;
 
 	/**
+	 * Run while the lock is taken, as another replica finishing its apply.
+	 *
+	 * @var callable|null
+	 */
+	private $whileWaitingForTheLock = null;
+
+	/**
 	 * Set up a package on disk.
 	 *
 	 * @return void
@@ -168,6 +176,10 @@ class ConfigSourceServiceTest extends TestCase {
 				if ($this->lockBusy === true) {
 					throw new LockedException('thematiq-config-source');
 				}
+
+				if ($this->whileWaitingForTheLock !== null) {
+					($this->whileWaitingForTheLock)();
+				}
 			}
 		);
 
@@ -181,7 +193,17 @@ class ConfigSourceServiceTest extends TestCase {
 			}
 		);
 
-		return new ConfigSourceService($config, new BrandingPackageReader(), $packages, $bundles, $audit, $locking, $time, $logger);
+		return new ConfigSourceService(
+			$config,
+			new BrandingPackageReader(),
+			$packages,
+			$bundles,
+			$audit,
+			$locking,
+			$time,
+			$logger,
+			$this->createMock(IAppConfig::class)
+		);
 	}//end service()
 
 	/**
@@ -255,6 +277,45 @@ class ConfigSourceServiceTest extends TestCase {
 		$this->service()->applyIfChanged();
 		$this->assertCount(2, $this->errors, 'A new package hash logs again.');
 	}//end testChangedInvalidPackageChangesNothingAndLogsOnce()
+
+	/**
+	 * Reverting a broken package to the one already applied clears its error.
+	 *
+	 * @return void
+	 */
+	public function testRevertingToTheAppliedPackageClearsTheError(): void {
+		$this->service()->applyIfChanged();
+
+		file_put_contents($this->dir . '/REVISION', 'broken');
+		$this->importResult = ['valid' => false, 'errors' => [['section' => 'package', 'message' => 'Broken.']]];
+		$this->service()->applyIfChanged();
+		$this->assertNotNull($this->service()->getStatus()['lastError']);
+
+		unlink($this->dir . '/REVISION');
+		$result = $this->service()->applyIfChanged();
+
+		$this->assertSame('unchanged', $result['status']);
+		$this->assertNull($this->service()->getStatus()['lastError']);
+	}//end testRevertingToTheAppliedPackageClearsTheError()
+
+	/**
+	 * A package another replica applied while this one waited for the lock is
+	 * not applied a second time.
+	 *
+	 * @return void
+	 */
+	public function testAPackageAppliedWhileWaitingForTheLockIsNotAppliedAgain(): void {
+		$hash = (new BrandingPackageReader())->hash(path: $this->dir);
+		$this->whileWaitingForTheLock = function () use ($hash): void {
+			$this->app['config_source_applied_hash'] = $hash;
+		};
+
+		$result = $this->service()->applyIfChanged();
+
+		$this->assertSame('unchanged', $result['status']);
+		$this->assertSame(0, $this->imports);
+		$this->assertSame([], $this->audited);
+	}//end testAPackageAppliedWhileWaitingForTheLockIsNotAppliedAgain()
 
 	/**
 	 * A path that does not exist fails without an import.

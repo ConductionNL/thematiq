@@ -27,6 +27,7 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
 
@@ -48,12 +49,14 @@ class MyGroupsController extends Controller {
 	 * @param IRequest                     $request     The request.
 	 * @param DelegatedGroupThemingService $delegation  The delegation service.
 	 * @param IUserSession                 $userSession The session.
+	 * @param IL10N                        $l10n        The translator.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		private readonly DelegatedGroupThemingService $delegation,
 		private readonly IUserSession $userSession,
+		private readonly IL10N $l10n,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
@@ -92,7 +95,12 @@ class MyGroupsController extends Controller {
 		} catch (DelegationRefusedException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
 		} catch (GroupThemingValidationException $e) {
-			return new JSONResponse(['error' => $e->getReason()], Http::STATUS_UNPROCESSABLE_ENTITY);
+			// The reason is written for the administrator who keeps the
+			// mapping, not for a subadmin, so the subadmin gets a plain answer.
+			return new JSONResponse(
+				['error' => $this->l10n->t('The house style could not be saved. Ask an administrator to check the house style of this group.')],
+				Http::STATUS_UNPROCESSABLE_ENTITY
+			);
 		}
 
 		return new JSONResponse($entry);

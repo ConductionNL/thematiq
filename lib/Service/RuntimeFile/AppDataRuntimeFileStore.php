@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 
 declare(strict_types=1);
@@ -36,7 +36,7 @@ use Throwable;
  * `css-tokens-dark`. The mapping is fixed by {@see RuntimeFileNames}, so two
  * names can never share a folder and file by accident.
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 class AppDataRuntimeFileStore implements RuntimeFileStore {
 
@@ -46,7 +46,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 * @param IAppData $appData Nextcloud's app data for thematiq.
 	 * @param RuntimeFileNames $names The name policy.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function __construct(
 		private readonly IAppData $appData,
@@ -61,7 +61,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @return string|null The content, or null when the store holds no such file.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function read(string $name): ?string {
 		$this->names->assertAllowed(name: $name);
@@ -83,7 +83,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @throws RuntimeException When the file cannot be written.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function write(string $name, string $content): void {
 		$this->names->assertAllowed(name: $name);
@@ -108,7 +108,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @return bool True when it does.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function exists(string $name): bool {
 		$this->names->assertAllowed(name: $name);
@@ -127,7 +127,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function delete(string $name): void {
 		$this->names->assertAllowed(name: $name);
@@ -146,7 +146,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @return array<int, string> Full names, such as `css/tokens/example.css`.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function listDirectory(string $directory): array {
 		$directory = trim($directory, '/');
@@ -176,7 +176,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @return string The revision, or an empty string when the file is absent.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function revision(string $name): string {
 		$this->names->assertAllowed(name: $name);

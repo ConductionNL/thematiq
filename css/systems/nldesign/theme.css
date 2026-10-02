@@ -94,7 +94,6 @@ header#header {
  * as a postage stamp next to a header that started too early. The ribbon
  * set declares its own geometry tokens; everyone else gets stock. */
 #nextcloud {
-	background-image: none !important;
 	background: transparent !important;
 	position: relative !important;
 	display: flex !important;
@@ -379,7 +378,8 @@ div[class*='login-box__wrapper'] > div {
 	color: var(--nldesign-component-button-primary-action-color) !important;
 	border-radius: var(--nldesign-component-button-border-radius) !important;
 	box-shadow: none !important;
-	transition: background-color var(--animation-quick) ease !important;
+	transition: background-color var(--animation-quick)
+		var(--nldesign-animation-easing, ease) !important;
 }
 
 #body-login .button-vue--vue-primary:hover,
@@ -462,9 +462,10 @@ button:not(.action-button),
 	border-radius: var(--nldesign-component-button-border-radius) !important;
 	border-width: var(--nldesign-component-button-border-width) !important;
 	transition:
-		background-color var(--animation-quick) ease,
-		border-color var(--animation-quick) ease,
-		color var(--animation-quick) ease !important;
+		background-color var(--animation-quick)
+			var(--nldesign-animation-easing, ease),
+		border-color var(--animation-quick) var(--nldesign-animation-easing, ease),
+		color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
 }
 
 /* Primary buttons.
@@ -639,7 +640,7 @@ button.secondary:hover {
 a {
 	color: var(--nldesign-component-link-color) !important;
 	text-decoration: var(--nldesign-component-link-text-decoration) !important;
-	transition: color var(--animation-quick) ease !important;
+	transition: color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
 }
 
 a:hover {
@@ -691,8 +692,8 @@ textarea {
 	font-family: var(--nldesign-component-textbox-font-family) !important;
 	font-size: var(--nldesign-component-textbox-font-size) !important;
 	transition:
-		border-color var(--animation-quick) ease,
-		box-shadow var(--animation-quick) ease !important;
+		border-color var(--animation-quick) var(--nldesign-animation-easing, ease),
+		box-shadow var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
 }
 
 input[type='text']:hover,
@@ -736,7 +737,8 @@ textarea:disabled {
 select {
 	border-color: var(--nldesign-component-form-select-border-color) !important;
 	border-radius: var(--nldesign-component-form-select-border-radius) !important;
-	transition: border-color var(--animation-quick) ease !important;
+	transition: border-color var(--animation-quick)
+		var(--nldesign-animation-easing, ease) !important;
 }
 
 select:focus {

@@ -19,7 +19,7 @@ Three token sets use this stack:
 Pick one in **Design token set** in the Thematiq admin settings, or from the command line:
 
 ```bash
-occ nldesign:theme:set lasuite
+occ thematiq:theme:set lasuite
 ```
 
 ## Where the tokens come from

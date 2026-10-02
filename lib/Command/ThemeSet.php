@@ -30,7 +30,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * `occ nldesign:theme:set <token-set> [--sync-core] [--dry-run]`: switch the active token set
+ * `occ thematiq:theme:set <token-set> [--sync-core] [--dry-run]`: switch the active token set
  * through the same validation and audit as the Design token set dropdown, actor `cli`.
  *
  * @spec openspec/specs/theme-cli/spec.md#requirement-operators-switch-the-active-token-set
@@ -60,9 +60,9 @@ class ThemeSet extends Command {
 	 * @spec openspec/specs/theme-cli/spec.md#requirement-operators-switch-the-active-token-set
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:theme:set')
+		$this->setName(name: 'thematiq:theme:set')
 			->setDescription('Make a token set the active instance-wide set.')
-			->addArgument('token-set', InputArgument::REQUIRED, 'The token set id, as nldesign:theme:list prints it.')
+			->addArgument('token-set', InputArgument::REQUIRED, 'The token set id, as thematiq:theme:list prints it.')
 			->addOption('sync-core', null, InputOption::VALUE_NONE, 'Also apply the set\'s primary colour, background and logo to Nextcloud theming.')
 			->addOption('dry-run', null, InputOption::VALUE_NONE, 'Validate and print what would change, without writing.');
 	}//end configure()
@@ -134,6 +134,11 @@ class ThemeSet extends Command {
 		}
 
 		$applied = $this->coreSync->sync(tokenSetId: $target);
+		if ($applied === [] && $this->coreSync->themingParams(tokenSetId: $target) !== []) {
+			$output->writeln('Nextcloud theming is unchanged: the theming values of ' . $target . ' did not validate, so none were applied.');
+			return;
+		}
+
 		if ($applied === []) {
 			$output->writeln('Nextcloud theming is unchanged: ' . $target . ' has no theming values to apply.');
 			return;

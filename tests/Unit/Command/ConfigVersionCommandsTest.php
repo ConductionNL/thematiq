@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Unit tests for occ nldesign:config:versions and nldesign:config:restore.
+ * Unit tests for occ thematiq:config:versions and thematiq:config:restore.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
@@ -69,7 +69,7 @@ class ConfigVersionCommandsTest extends TestCase {
 			'missingFonts' => [],
 		];
 		$restorer->expects($this->once())->method('preview')->with('20260929164000-0001')->willReturn($preview);
-		$restorer->expects($this->once())->method('restore')->with('20260929164000-0001')->willReturn($preview + ['applied' => true]);
+		$restorer->expects($this->once())->method('restore')->with('20260929164000-0001', 'cli')->willReturn($preview + ['applied' => true]);
 
 		$tester = $this->tester(new ConfigRestore($restorer));
 

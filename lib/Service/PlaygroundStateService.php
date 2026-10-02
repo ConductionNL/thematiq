@@ -335,12 +335,31 @@ class PlaygroundStateService {
 	private function translateFields(array $entry, array $fields): array {
 		foreach ($fields as $field) {
 			if (is_string($entry[$field] ?? null) === true && $entry[$field] !== '') {
-				$entry[$field] = $this->l10n->t($entry[$field]);
+				$entry[$field] = $this->translate(text: $entry[$field]);
 			}
 		}
 
 		return $entry;
 	}//end translateFields()
+
+	/**
+	 * Translate one data-file string.
+	 *
+	 * IL10N::t() runs every string through vsprintf(), so a literal `%` in a
+	 * data-file string ("mixed at 10% from this colour") is read as a format
+	 * specifier and throws, which took down the whole admin form (#824). The
+	 * catalogue keys carry the escaped `%%` form, the way a literal percent
+	 * sign is written in any Nextcloud translation source.
+	 *
+	 * @param string $text The English source string.
+	 *
+	 * @return string The translation, with any `%` back as a single `%`.
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	private function translate(string $text): string {
+		return $this->l10n->t(str_replace('%', '%%', $text));
+	}//end translate()
 
 	/**
 	 * The reason-code vocabulary, so a row with no token and a token an import
@@ -357,7 +376,7 @@ class PlaygroundStateService {
 			$reasons = $this->converter->getReasons();
 			foreach ($reasons as $code => $reason) {
 				if (is_string($reason) === true) {
-					$reasons[$code] = $this->l10n->t($reason);
+					$reasons[$code] = $this->translate(text: $reason);
 				}
 			}
 
