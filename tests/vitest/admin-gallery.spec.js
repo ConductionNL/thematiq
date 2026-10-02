@@ -17,6 +17,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 let calls
 let gallery
 let installAnswer
+let catalogue
 
 const utrecht = {
 	id: 'provincie-utrecht',
@@ -31,6 +32,7 @@ const utrecht = {
 }
 
 function install() {
+	catalogue = []
 	calls = []
 	installAnswer = {
 		status: 200,
@@ -72,7 +74,7 @@ function install() {
 			}
 			body = gallery
 		} else if (url.indexOf('/settings/tokensets') !== -1) {
-			body = { tokenSets: [], sets: [] }
+			body = { tokenSets: catalogue, sets: [] }
 		}
 		return Promise.resolve({
 			status,
@@ -229,6 +231,34 @@ describe('admin.js theme gallery', () => {
 					&& c.url === '/apps/thematiq/settings/tokensets',
 			),
 		).toBe(true)
+	})
+
+	it('adds an installed set to the planned-switch list without a reload', async () => {
+		gallery = { enabled: true, host: 'h', reachable: true, entries: [utrecht] }
+		await load()
+		document
+			.getElementById('nldesign-settings')
+			.insertAdjacentHTML(
+				'beforeend',
+				'<select id="nldesign-scheduled-set"><option value="amsterdam">Amsterdam</option></select>',
+			)
+		const planned = document.getElementById('nldesign-scheduled-set')
+		planned.value = 'amsterdam'
+		catalogue = [
+			{ id: 'amsterdam', name: 'Amsterdam' },
+			{ id: 'custom-provincie-utrecht', name: 'Provincie Utrecht' },
+		]
+
+		document
+			.querySelector('[data-gallery-id="provincie-utrecht"] button')
+			.click()
+		await flush()
+
+		expect(Array.from(planned.options).map((o) => o.value)).toEqual([
+			'amsterdam',
+			'custom-provincie-utrecht',
+		])
+		expect(planned.value).toBe('amsterdam')
 	})
 
 	it('shows why an install was refused', async () => {

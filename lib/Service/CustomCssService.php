@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\App\IAppManager;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\IAppConfig;
 use RuntimeException;
 
@@ -34,8 +34,9 @@ use RuntimeException;
  * mixing hand-authored rules into it would both break that contract and
  * corrupt the editor's round-trip parse.
  *
- * Writes go through CustomCssValidator first and are atomic (temp file +
- * rename) so a partial write can never be served to browsers.
+ * Writes go through CustomCssValidator first. The file is kept in app data
+ * through the RuntimeFileStore, never in the signed app directory, and the
+ * store replaces it in one write.
  *
  * @spec openspec/specs/custom-css-freeform/spec.md
  */
@@ -49,11 +50,29 @@ class CustomCssService {
 	public const ENABLED_KEY = 'custom_css_enabled';
 
 	/**
-	 * The app manager, used to resolve the app's css/ directory.
+	 * The runtime file name of the freeform stylesheet.
 	 *
-	 * @var IAppManager
+	 * @var string
 	 */
-	private IAppManager $appManager;
+	public const FILE = 'css/custom-css.css';
+
+	/**
+	 * The comment written above the administrator's CSS in the file.
+	 *
+	 * It belongs to the file, not to the CSS: read() strips it again, so the
+	 * editor shows exactly what the administrator typed and a second save does
+	 * not stack a second header on top of the first.
+	 *
+	 * @var string
+	 */
+	public const FILE_HEADER = "/* NL Design — freeform custom CSS. Authored by an administrator. */\n";
+
+	/**
+	 * Where the freeform stylesheet is stored.
+	 *
+	 * @var RuntimeFileStore
+	 */
+	private RuntimeFileStore $store;
 
 	/**
 	 * App configuration, backing the enable flag.
@@ -72,29 +91,21 @@ class CustomCssService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppManager $appManager The app manager.
+	 * @param RuntimeFileStore $store Where the freeform stylesheet is stored.
 	 * @param IAppConfig $appConfig App configuration.
 	 * @param CustomCssValidator $validator The freeform CSS sanitiser.
 	 */
 	public function __construct(
-		IAppManager $appManager,
+		RuntimeFileStore $store,
 		IAppConfig $appConfig,
 		CustomCssValidator $validator,
 	) {
-		$this->appManager = $appManager;
+		$this->store = $store;
 		$this->appConfig = $appConfig;
 		$this->validator = $validator;
 
 	}//end __construct()
 
-	/**
-	 * Absolute path to the freeform stylesheet.
-	 *
-	 * @return string The CSS file path.
-	 */
-	private function getFilePath(): string {
-		return $this->appManager->getAppPath(Application::APP_ID) . '/css/custom-css.css';
-	}//end getFilePath()
 
 	/**
 	 * Whether the freeform layer is switched on.
@@ -140,14 +151,17 @@ class CustomCssService {
 	 * @spec openspec/specs/custom-css-freeform/spec.md
 	 */
 	public function read(): string {
-		$path = $this->getFilePath();
-		if (file_exists($path) === false) {
-			return '';
-		}
+		$contents = ($this->store->read(name: self::FILE) ?? '');
 
-		$contents = file_get_contents($path);
-		if ($contents === false) {
-			return '';
+		// Undo what write() added around the CSS. Earlier releases read the
+		// header back as part of the CSS, so every save stacked one more; the
+		// loop peels all of them, and the next save leaves a single one. A file
+		// without the header (hand-edited, or older) is returned as it is.
+		while (str_starts_with($contents, self::FILE_HEADER) === true) {
+			$contents = substr($contents, strlen(self::FILE_HEADER));
+			if (str_ends_with($contents, "\n") === true) {
+				$contents = substr($contents, 0, -1);
+			}
 		}
 
 		return $contents;
@@ -171,30 +185,14 @@ class CustomCssService {
 			return $errors;
 		}
 
-		$path = $this->getFilePath();
-		$tmpPath = $path . '.tmp';
-
-		$document = "/* NL Design — freeform custom CSS. Authored by an administrator. */\n" . $css . "\n";
-
-		if (file_put_contents(filename: $tmpPath, data: $document) === false) {
-			throw new RuntimeException(
-				message: 'Could not write ' . $tmpPath . '. Ensure the web server has write access to the css/ directory.'
-			);
-		}
-
-		if (rename(from: $tmpPath, to: $path) === false) {
-			if (file_exists(filename: $tmpPath) === true) {
-				unlink(filename: $tmpPath);
-			}
-
-			throw new RuntimeException(message: 'Temp file could not be renamed to ' . $path . '.');
-		}
+		$document = self::FILE_HEADER . $css . "\n";
+		$this->store->write(name: self::FILE, content: $document);
 
 		return [];
 	}//end write()
 
 	/**
-	 * Whether a non-empty freeform stylesheet is present on disk.
+	 * Whether a non-empty freeform stylesheet is stored.
 	 *
 	 * Used by the injection layer so an enabled-but-empty configuration does
 	 * not emit a pointless <link>.

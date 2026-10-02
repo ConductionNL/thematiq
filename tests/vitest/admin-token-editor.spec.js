@@ -453,6 +453,33 @@ describe('admin.js token editor', () => {
 			expect(row(BUTTON).text.value).toBe('#23845c')
 		})
 
+		it('keeps a quote in a saved value or label inside its attribute (#622)', async () => {
+			// An imported overrides file can carry a double quote: the save
+			// filter strips newlines and rejects braces and semicolons, not
+			// quotes. Escaped as text only, the quote closed value="..." and the
+			// rest became live attributes (onfocus + autofocus = script on load).
+			const payload = 'Arial" onfocus="alert(1)" autofocus x="'
+			const label = 'Font " onmouseover=\'alert(2)\' y="'
+			installInitialState({})
+			document.body.innerHTML = '<div id="nldesign-token-editor"></div>'
+			answer('GET', '/settings/overrides?', 200, {
+				overrides: { [FONT]: payload },
+				registry: { [FONT]: { ...REGISTRY[FONT], tab: 'content', label } },
+				tabs: {},
+			})
+			vi.resetModules()
+			await import('../../js/admin.js?t=' + Math.random())
+			await flush()
+
+			const input = row(FONT).text
+			expect(input.value).toBe(payload)
+			expect(input.getAttribute('aria-label')).toBe(label)
+			const editor = document.getElementById('nldesign-token-editor')
+			for (const name of ['onfocus', 'autofocus', 'onmouseover', 'x', 'y']) {
+				expect(editor.querySelector('[' + name + ']')).toBeNull()
+			}
+		})
+
 		it('writes an r, g, b triplet from the picker of an rgb row', async () => {
 			await mount()
 			const info = row(INFO_RGB)
@@ -1546,6 +1573,29 @@ describe('admin.js theming sync rows', () => {
 			{ has_custom_background: true },
 		)
 		expect(labels(overlay)).toEqual(['Background image'])
+	})
+
+	it('says why Nextcloud gets the blend of a translucent colour', async () => {
+		const overlay = await switchTo(
+			{ primary_color: '#8aa0b9', primary_color_original: '#15427380' },
+			{ primary_color: '#000000' },
+		)
+
+		expect(labels(overlay)).toEqual(['Primary color'])
+		expect(overlay.textContent).toContain('#8aa0b9')
+		expect(overlay.textContent).toContain(
+			"The set says #15427380. Nextcloud's own theming has no transparency. It gets this colour instead.",
+		)
+		expect((await confirm(overlay)).get('primary_color')).toBe('#8aa0b9')
+	})
+
+	it('adds no note to an opaque colour', async () => {
+		const overlay = await switchTo(
+			{ primary_color: '#154273' },
+			{ primary_color: '#000000' },
+		)
+
+		expect(overlay.textContent).not.toContain('no transparency')
 	})
 
 	it('offers nothing when the page already has the saved background state', async () => {

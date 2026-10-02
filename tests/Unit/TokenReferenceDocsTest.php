@@ -69,4 +69,18 @@ class TokenReferenceDocsTest extends TestCase {
 		$this->assertMatchesRegularExpression('/^\| `--nldesign-color-primary` \| .+ \| this set \| .*Primary element color.* \|$/m', $page);
 		$this->assertStringContainsString('| defaults |', $page);
 	}//end testTheAmsterdamPageListsThePrimaryColour()
+
+	/**
+	 * The user docs state the count the token editor states.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md
+	 */
+	public function testTheDocsStateTheEditableCount(): void {
+		$count = \OCA\Thematiq\Service\TokenRegistry::countEditable();
+		foreach (['docs/features/token-editor.md', 'docs/features/import-export.md'] as $page) {
+			$text = (string)file_get_contents(\dirname(__DIR__, 2) . '/' . $page);
+			$this->assertStringContainsString('<!-- editable-count -->' . $count . '<!-- /editable-count -->', $text, $page . ' states another count. Run: composer docs:token-reference');
+			$this->assertDoesNotMatchRegularExpression('#<!-- editable-count -->(?!' . $count . '<)#', $text, $page);
+		}
+	}
 }//end class

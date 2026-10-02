@@ -17,11 +17,15 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
+use OCA\Thematiq\Service\ThemingService;
 use OCA\Theming\ImageManager;
 use OCA\Theming\Service\BackgroundService;
 use OCA\Theming\ThemingDefaults;
-use OCA\Thematiq\Service\ThemingService;
 use OCP\App\IAppManager;
+use OCP\ITempManager;
+use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -103,10 +107,13 @@ class ThemingServiceTest extends TestCase {
 		$this->imageManager = $this->createMock(ImageManager::class);
 		$this->themingDefaults = $this->createMock(ThemingDefaults::class);
 
+		// A real locator over the temp app dir, with an empty store beside it:
+		// `present.svg` reads as a release file, as a shipped logo does.
+		$urls = $this->createMock(IURLGenerator::class);
 		$this->service = new ThemingService(
 			$this->imageManager,
 			$this->themingDefaults,
-			$appManager
+			new RuntimeFileLocator($appManager, new DirectoryRuntimeFileStore($this->appDir . '/.store'), $urls, $this->createMock(ITempManager::class))
 		);
 	}//end setUp()
 

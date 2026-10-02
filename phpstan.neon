@@ -6,8 +6,9 @@
 # belongs in the base, not here.
 includes:
     - vendor/conduction/hydra-gates/quality-config/phpstan-base.neon
-    # Per-app tracked lint debt (auto-generated via `phpstan --generate-baseline`).
-    - phpstan-baseline.neon
+    # No baseline: it reached zero on 2026-10-02 (16 entries were server-private
+    # OCA\Theming classes, now declared in stubs/nextcloud-theming.php; the
+    # other 3 were fixed in code). Fix a new finding, do not baseline it.
 
 parameters:
     # App-specific only. The base already sets level, paths, bootstrapFiles,
@@ -22,10 +23,6 @@ parameters:
         # excludePaths is the tool's own recommended fix. Mirrors the file's existing
         # @psalm-suppress UndefinedClass rationale.
         - lib/Controller/HealthController.php
-        # Extends the server-private OC\Mail\EMailTemplate (the sanctioned
-        # mail_template_class hook) — same "extends unknown class" shape as
-        # HealthController; behavior is covered by tests/Unit/Mail/.
-        - lib/Mail/NLDesignEMailTemplate.php
 
     scanDirectories:
         # Declaration-only stubs for OpenRegister's federated-config contract
@@ -33,5 +30,9 @@ parameters:
         # runtime dependency absent during analysis. Lets phpstan resolve the
         # interface NlDesignThemeShareableConfigType implements and the event
         # ShareableConfigTypeListener dispatches on — without excludePaths.
-        # See stubs/openregister-config.php. Never autoloaded at runtime.
+        # See stubs/openregister-config.php. The same directory carries the
+        # server-private classes this app touches: OCA\Theming (theming writes)
+        # and OC\Mail\EMailTemplate (the mail template's parent), so
+        # NLDesignEMailTemplate is analysed instead of excluded. Never
+        # autoloaded at runtime.
         - stubs
