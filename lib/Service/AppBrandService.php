@@ -377,25 +377,21 @@ class AppBrandService {
 	}//end save()
 
 	/**
-	 * The logo variable for a branded app's pages: the large logo, and the small
-	 * one below 1024 px, the breakpoint at which Nextcloud's header goes narrow.
-	 * Unquoted, like the other logo URLs of CssInjectionService::logoUrlLayer().
+	 * The logo layer for a page, when the rendered app's brand applies to it.
+	 * See {@see AppBrandLogoStore::layer()}.
 	 *
-	 * @param string $large The large logo URL.
-	 * @param string|null $small The small logo URL, or null to use the large one at every width.
+	 * @param array{tokenSet: string, large: string|null, small: string|null}|null $brand The app's brand.
+	 * @param string $tokenSet The set the page resolved to.
+	 * @param string $styleId The id of the inline logo style block.
 	 *
-	 * @return string The stylesheet body.
+	 * @return array{layer: string, kind: string, css: string, id: string}|null The layer, or null.
 	 *
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
-	public function logoCss(string $large, ?string $small): string {
-		$css = ':root{--nldesign-logo-url:url(' . $large . ');--nldesign-logo-filter:none}';
-		if ($small !== null) {
-			$css .= '@media (max-width:1024px){:root{--nldesign-logo-url:url(' . $small . ')}}';
-		}
+	public function logoLayer(?array $brand, string $tokenSet, string $styleId): ?array {
+		return $this->logos->layer(brand: $brand, tokenSet: $tokenSet, styleId: $styleId);
+	}//end logoLayer()
 
-		return $css;
-	}//end logoCss()
 
 	/**
 	 * A logo URL, versioned by upload time so a new logo is not served from cache.

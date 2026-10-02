@@ -1314,6 +1314,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->stockTokens,
 					$this->runtimeFiles,
 					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])

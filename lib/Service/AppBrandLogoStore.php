@@ -140,6 +140,47 @@ class AppBrandLogoStore {
 	}//end remove()
 
 	/**
+	 * The logo variable for a branded app's pages: the large logo, and the small
+	 * one below 1024 px, the breakpoint at which Nextcloud's header goes narrow.
+	 * Unquoted, like the other logo URLs of LogoLayerService::layer().
+	 *
+	 * @param string $large The large logo URL.
+	 * @param string|null $small The small logo URL, or null to use the large one at every width.
+	 *
+	 * @return string The stylesheet body.
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	public function logoCss(string $large, ?string $small): string {
+		$css = ':root{--nldesign-logo-url:url(' . $large . ');--nldesign-logo-filter:none}';
+		if ($small !== null) {
+			$css .= '@media (max-width:1024px){:root{--nldesign-logo-url:url(' . $small . ')}}';
+		}
+
+		return $css;
+	}//end logoCss()
+
+	/**
+	 * The logo layer for a page, when the rendered app's brand applies to it:
+	 * the brand resolved to the page's set (no preview won) and has a large logo.
+	 *
+	 * @param array{tokenSet: string, large: string|null, small: string|null}|null $brand The app's brand.
+	 * @param string $tokenSet The set the page resolved to.
+	 * @param string $styleId The id of the inline logo style block.
+	 *
+	 * @return array{layer: string, kind: string, css: string, id: string}|null The layer, or null.
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	public function layer(?array $brand, string $tokenSet, string $styleId): ?array {
+		if ($brand === null || $brand['tokenSet'] !== $tokenSet || $brand['large'] === null) {
+			return null;
+		}
+
+		return ['layer' => 'logo-url', 'kind' => 'inline', 'css' => $this->logoCss(large: $brand['large'], small: $brand['small']), 'id' => $styleId];
+	}//end layer()
+
+	/**
 	 * The file name of a logo without extension.
 	 *
 	 * @param string $appId The app id.

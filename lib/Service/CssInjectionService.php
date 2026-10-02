@@ -144,19 +144,11 @@ class CssInjectionService {
 	 */
 	private RuntimeFileLocator $runtimeFiles;
 
-	/**
-	 * The brand per app: its token set and logos.
-	 *
-	 * @var AppBrandService
-	 */
+	/** @var AppBrandService The brand per app (openspec/specs/per-app-theming/spec.md). */
 	private AppBrandService $appBrands;
 
-	/**
-	 * The brand logos of the rendered app for this request, when its brand applies.
-	 *
-	 * @var array{large: string|null, small: string|null}|null
-	 */
-	private ?array $brandLogos = null;
+	/** @var array<string, string>|null The rendered app's logo layer for this request, when its brand applies. */
+	private ?array $brandLogo = null;
 
 	/**
 	 * Constructor.
@@ -280,10 +272,7 @@ class CssInjectionService {
 		try {
 			$brand = $this->appBrands->brandFor(appId: $appId);
 			$tokenSet = $this->groupThemingService->resolveTokenSetForRequest(appBrandSet: ($brand['tokenSet'] ?? null));
-			$this->brandLogos = null;
-			if ($brand !== null && $tokenSet === $brand['tokenSet'] && $brand['large'] !== null) {
-				$this->brandLogos = ['large' => $brand['large'], 'small' => $brand['small']];
-			}
+			$this->brandLogo = $this->appBrands->logoLayer(brand: $brand, tokenSet: $tokenSet, styleId: self::LOGO_STYLE_ID);
 
 			$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 			$designSystemId = $tokenSetMeta['design_system'] ?? 'nldesign';
@@ -445,13 +434,7 @@ class CssInjectionService {
 		// file declares. See LogoLayerService::layer() — a relative url() inside a custom
 		// property is resolved against the stylesheet that USES it, and the use
 		// sites sit at different depths.
-		$logo = $this->logoLayer->layer(tokenSet: $tokenSet);
-		if ($this->brandLogos !== null) {
-			// The rendered app's own logo, when its brand applies (per-app-theming spec).
-			$css = $this->appBrands->logoCss(large: (string)$this->brandLogos['large'], small: $this->brandLogos['small']);
-			$logo = ['layer' => 'logo-url', 'kind' => 'inline', 'css' => $css, 'id' => self::LOGO_STYLE_ID];
-		}
-
+		$logo = ($this->brandLogo ?? $this->logoLayer->layer(tokenSet: $tokenSet));
 		if ($logo !== null) {
 			$layers[] = $logo;
 		}
