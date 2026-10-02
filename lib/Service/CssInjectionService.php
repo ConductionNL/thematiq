@@ -361,8 +361,8 @@ class CssInjectionService {
 		$layers = [];
 
 		// 2. Design system stylesheets in declared order (none for "none"), then
-		// its version-scoped ones for the running major (see versionScopedStylesheets()).
-		$stylesheets = array_merge($designSystem['stylesheets'], $this->versionScopedStylesheets(designSystem: $designSystem));
+		// its version-scoped ones for the running major (DesignSystemService::getVersionScopedStylesheets()).
+		$stylesheets = array_merge($designSystem['stylesheets'], $this->designSystemService->getVersionScopedStylesheets(designSystem: $designSystem));
 		foreach ($stylesheets as $stylesheet) {
 			$layers[] = ['layer' => 'design-system', 'kind' => 'file', 'file' => $stylesheet];
 		}
@@ -439,36 +439,6 @@ class CssInjectionService {
 
 		return $layers;
 	}//end designSystemLayers()
-
-	/**
-	 * The stylesheets a design system declares for the running Nextcloud major.
-	 *
-	 * Shell geometry (header, sidebar, content offsets) leans on Nextcloud's
-	 * own markup and variables, and those move between majors: NC 34 draws a
-	 * 50px header, NC 35 a 44px one. A design system lists such rules under
-	 * `versioned_stylesheets`, keyed by major, and they load only on a major
-	 * they were written against. An unknown major gets none of them, so a new
-	 * release falls back to stock geometry instead of half-fitting overrides.
-	 *
-	 * @param array<string, mixed> $designSystem The design system entry from design-systems.json.
-	 *
-	 * @return array<int, string> Stylesheet paths under `css/`, without extension.
-	 *
-	 * @spec openspec/changes/lasuite-shell-geometry/specs/lasuite-stack/spec.md
-	 */
-	private function versionScopedStylesheets(array $designSystem): array {
-		$scoped = ($designSystem['versioned_stylesheets'] ?? null);
-		if (is_array($scoped) === false) {
-			return [];
-		}
-
-		$major = explode('.', $this->config->getSystemValueString('version', ''))[0];
-		if ($major === '' || isset($scoped[$major]) === false || is_array($scoped[$major]) === false) {
-			return [];
-		}
-
-		return array_values(array_filter($scoped[$major], 'is_string'));
-	}//end versionScopedStylesheets()
 
 	/**
 	 * The set layers of a token set on the `none` design system.

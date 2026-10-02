@@ -4,8 +4,8 @@
 - [x] 1.1 Write proposal and the `lasuite-stack` delta.
 
 ## 2. Server
-- [x] 2.1 `CssInjectionService::versionScopedStylesheets()` reads `versioned_stylesheets` for the running major and `designSystemLayers()` emits them after the design-system stylesheets.
-- [x] 2.2 `versionScopedStylesheets()` reads the optional key defensively (array<string, mixed>), so the `DesignSystemService` return shapes stay as they are.
+- [x] 2.1 `DesignSystemService::getVersionScopedStylesheets()` reads `versioned_stylesheets` for the running major and `designSystemLayers()` emits them after the design-system stylesheets.
+- [x] 2.2 `getVersionScopedStylesheets()` reads the optional key defensively (array<string, mixed>), so the `DesignSystemService` return shapes stay as they are.
 
 ## 3. Stylesheets
 - [x] 3.1 `css/systems/lasuite/shell-nc35.css` sets `--header-height: 64px`, with the La Suite Docs reference in its header.
