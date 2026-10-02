@@ -106,7 +106,16 @@ class Application extends App implements IBootstrap {
 		// process-wide, not only inside this app's own container — required so a
 		// cross-app event listener (e.g. the OpenRegister federated-config type)
 		// can be constructed by another app's dispatcher. Mirrors hermiq.
-		include_once __DIR__ . '/../../vendor/autoload.php';
+		//
+		// Guarded, because an install without `vendor/` (a git checkout nobody
+		// ran composer in) is legitimate: the app has no runtime composer
+		// dependency and Nextcloud autoloads `lib/` itself. Unguarded, the
+		// include_once logged two warnings on every request that booted the
+		// app (thematiq#266).
+		$autoloader = $this->composerAutoloader();
+		if (is_file($autoloader) === true) {
+			include_once $autoloader;
+		}
 
 		// Health endpoint served by Controller\HealthController, which drives
 		// the AppHost engine by composition — no explicit registration needed.
@@ -161,6 +170,19 @@ class Application extends App implements IBootstrap {
 			);
 		}
 	}//end register()
+
+	/**
+	 * The path of this app's composer autoloader, which may not exist.
+	 *
+	 * Its own method so a test can point register() at a missing file.
+	 *
+	 * @return string The absolute path to `vendor/autoload.php`.
+	 *
+	 * @spec openspec/changes/adopt-apphost-2026-06-16/tasks.md#task-2
+	 */
+	protected function composerAutoloader(): string {
+		return dirname(__DIR__, 2) . '/vendor/autoload.php';
+	}//end composerAutoloader()
 
 	/**
 	 * Boot the application.

@@ -1130,8 +1130,9 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testStylesheetManifestMatchesInjectedSetLayers()
 
 	/**
-	 * Stock Nextcloud (design system `none`) carries exactly one set layer: the
-	 * component scopes.
+	 * Stock Nextcloud (design system `none`) whose instance theme could not be
+	 * read carries exactly one set layer: the component scopes. The shipped
+	 * snapshot is not a fallback for it (see the resolved case below).
 	 *
 	 * The manifest is what the client swaps when an admin changes set without a
 	 * reload, so the layer has to be IN it — otherwise switching to stock would
@@ -1167,4 +1168,117 @@ class CssInjectionServiceTest extends TestCase {
 			array_column($manifest['layers'], 'layer')
 		);
 	}//end testStylesheetManifestCarriesOnlyComponentScopesForStockNextcloud()
+
+	/**
+	 * Point the stock set at the `none` design system and make the instance
+	 * answer with a resolved block, the way a running Nextcloud does.
+	 *
+	 * The mock is rebuilt rather than re-stubbed: setUp() already stubs
+	 * `getCss()` to null, and PHPUnit lets the first unconstrained stub win.
+	 *
+	 * @param string $css The block the instance resolves to.
+	 *
+	 * @return void
+	 */
+	private function configureResolvedStockSet(string $css): void {
+		$this->configureAppValues(['token_set' => 'nextcloud']);
+		$this->designSystemService->method('getTokenSetMeta')->with('nextcloud')
+			->willReturn(['design_system' => 'none']);
+		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
+			[
+				'id' => 'none',
+				'name' => 'Nextcloud',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+
+		$this->stockTokens = $this->createMock(StockTokensService::class);
+		$this->stockTokens->expects($this->atLeastOnce())->method('getCss')->willReturn($css);
+	}//end configureResolvedStockSet()
+
+	/**
+	 * The stock set carries the tokens the instance itself resolves, as the
+	 * inline layer the client replaces by id, and never the shipped snapshot.
+	 *
+	 * Regression for thematiq#620: the only call to StockTokensService::getCss()
+	 * sat behind the `none` early return, and the stock set is the one set on
+	 * `none`, so the resolver never ran.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 */
+	public function testStylesheetManifestCarriesTheInstanceResolvedStockTokens(): void {
+		$block = ':root{--nldesign-color-primary:#00679e;}';
+		$this->configureResolvedStockSet(css: $block);
+
+		$styleLog = [];
+		$fontLog = [];
+		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $fontLog)->getStylesheetManifest('nextcloud');
+
+		$this->assertSame(['tokens', 'component-scopes'], array_column($manifest['layers'], 'layer'));
+		$this->assertSame('inline', $manifest['layers'][0]['kind']);
+		$this->assertSame(CssInjectionService::STOCK_TOKENS_STYLE_ID, $manifest['layers'][0]['id']);
+		$this->assertSame($block, $manifest['layers'][0]['css']);
+		foreach ($manifest['layers'] as $layer) {
+			$this->assertStringNotContainsString('tokens/nextcloud', ($layer['href'] ?? ''), 'the shipped snapshot is not loaded');
+		}
+	}//end testStylesheetManifestCarriesTheInstanceResolvedStockTokens()
+
+	/**
+	 * A stock page render emits the resolved block inline, before the component
+	 * layer, and loads no token file.
+	 *
+	 * Asserted through `inject()`, the caller the page actually goes through,
+	 * so the resolver cannot be wired into the manifest alone.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 */
+	public function testInjectEmitsTheInstanceResolvedStockTokensOnAStockPage(): void {
+		$block = ':root{--nldesign-color-primary:#00679e;}';
+		$this->configureResolvedStockSet(css: $block);
+
+		$log = [];
+		$service = $this->getMockBuilder(CssInjectionService::class)
+			->setConstructorArgs(
+				[
+					$this->config,
+					$this->designSystemService,
+					$this->customOverridesService,
+					$this->customCssService,
+					$this->fontService,
+					$this->urlGenerator,
+					$this->groupThemingService,
+					$this->previewBannerService,
+					$this->logger,
+					$this->stockTokens,
+				]
+			)
+			->onlyMethods(['emitStyle', 'emitFontLink', 'emitInlineStyle'])
+			->getMock();
+		$service->method('emitStyle')->willReturnCallback(
+			function (string $file) use (&$log) {
+				$log[] = 'file:' . $file;
+			}
+		);
+		$service->method('emitInlineStyle')->willReturnCallback(
+			function (string $css, ?string $id = null) use (&$log) {
+				$log[] = 'inline:' . (string)$id . ':' . $css;
+			}
+		);
+
+		$service->inject('user');
+
+		$this->assertSame(
+			[
+				'inline:' . CssInjectionService::STOCK_TOKENS_STYLE_ID . ':' . $block,
+				'file:component-scopes',
+				'file:custom-overrides-nextcloud',
+			],
+			$log
+		);
+	}//end testInjectEmitsTheInstanceResolvedStockTokensOnAStockPage()
 }//end class
