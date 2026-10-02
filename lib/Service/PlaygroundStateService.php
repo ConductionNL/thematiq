@@ -312,10 +312,14 @@ class PlaygroundStateService {
 		try {
 			// Translated here, for the panel: the converter's own callers write
 			// the English sentence into import reports.
-			return array_map(
-				fn ($reason) => is_string($reason) === true ? $this->l10n->t($reason) : $reason,
-				$this->converter->getReasons()
-			);
+			$reasons = $this->converter->getReasons();
+			foreach ($reasons as $code => $reason) {
+				if (is_string($reason) === true) {
+					$reasons[$code] = $this->l10n->t($reason);
+				}
+			}
+
+			return $reasons;
 		} catch (Throwable $e) {
 			// The mapping table is the converter's own dependency. Without it
 			// every row still renders; only the explanatory sentence falls back
