@@ -134,6 +134,11 @@ class ThemeSet extends Command {
 		}
 
 		$applied = $this->coreSync->sync(tokenSetId: $target);
+		if ($applied === [] && $this->coreSync->themingParams(tokenSetId: $target) !== []) {
+			$output->writeln('Nextcloud theming is unchanged: the theming values of ' . $target . ' did not validate, so none were applied.');
+			return;
+		}
+
 		if ($applied === []) {
 			$output->writeln('Nextcloud theming is unchanged: ' . $target . ' has no theming values to apply.');
 			return;

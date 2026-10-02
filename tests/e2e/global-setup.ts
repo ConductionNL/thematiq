@@ -9,6 +9,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 
 import { resolveBaseUrl } from './base-url'
+import { waitForCalmInstance } from './instance-load'
 
 const AUTH_DIR = path.resolve(__dirname, '.auth')
 const STORAGE_STATE = path.join(AUTH_DIR, 'admin.json')
@@ -43,6 +44,9 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
 	const password = process.env.NC_ADMIN_PASS ?? 'admin'
 
 	await ensureNextcloudReachable(baseURL)
+	// Do not start inside a load spike: a saturated Apache answers 503 to page
+	// assets while status.php still says 200 (#181).
+	await waitForCalmInstance(baseURL)
 	fs.mkdirSync(AUTH_DIR, { recursive: true })
 
 	const browser = await chromium.launch()

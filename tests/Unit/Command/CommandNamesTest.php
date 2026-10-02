@@ -42,7 +42,10 @@ class CommandNamesTest extends TestCase {
 	 * @return array<string, array{0: class-string<Command>}> One case per class.
 	 */
 	public static function commandClasses(): array {
-		$xml = simplexml_load_file(__DIR__ . '/../../../appinfo/info.xml');
+		// Read the file first: Nextcloud's bootstrap disables libxml's external
+		// entity loader, and simplexml_load_file() loads through it, so under
+		// the server it returns false (CI) while a bare PHP run reads fine.
+		$xml = simplexml_load_string((string)file_get_contents(__DIR__ . '/../../../appinfo/info.xml'));
 		$cases = [];
 		foreach ($xml->commands->command as $command) {
 			$class = trim((string)$command);

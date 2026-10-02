@@ -73,7 +73,7 @@ class TokenReferenceDocsTest extends TestCase {
 	/**
 	 * The user docs state the count the token editor states.
 	 *
-	 * @spec openspec/changes/token-editor-at-scale/specs/token-editor-ui/spec.md
+	 * @spec openspec/specs/token-editor-ui/spec.md
 	 */
 	public function testTheDocsStateTheEditableCount(): void {
 		$count = \OCA\Thematiq\Service\TokenRegistry::countEditable();

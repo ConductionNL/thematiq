@@ -93,13 +93,14 @@ class ThemeVersionRestoreService {
 	/**
 	 * Restore a version: dry run, then import, then audit.
 	 *
-	 * @param string $id The version id.
+	 * @param string      $id    The version id.
+	 * @param string|null $actor The actor to record instead of the session user, such as `cli`.
 	 *
 	 * @return array<string, mixed>|null The preview plus `applied`, or null for an unknown id.
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
-	public function restore(string $id): ?array {
+	public function restore(string $id, ?string $actor = null): ?array {
 		$preview = $this->preview(id: $id);
 		if ($preview === null) {
 			return null;
@@ -117,7 +118,12 @@ class ThemeVersionRestoreService {
 			return array_merge($preview, ['applied' => false, 'errors' => ($result['errors'] ?? [])]);
 		}
 
-		$this->audit->log(action: 'version_restored', context: ['old' => $before, 'new' => $id]);
+		$context = ['old' => $before, 'new' => $id];
+		if ($actor !== null) {
+			$context['actor'] = $actor;
+		}
+
+		$this->audit->log(action: 'version_restored', context: $context);
 
 		return array_merge($preview, ['applied' => true]);
 	}//end restore()

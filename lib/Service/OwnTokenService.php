@@ -284,7 +284,7 @@ class OwnTokenService {
 	 *
 	 * @param array<string, mixed> $input The submitted fields.
 	 *
-	 * @return array<string, string> {label, type, value, darkValue?, description?}.
+	 * @return array<string, string> Shape: {label, type, value, darkValue?, description?}.
 	 *
 	 * @throws InvalidArgumentException 400 naming the field that fails.
 	 */

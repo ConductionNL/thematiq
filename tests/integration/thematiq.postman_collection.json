@@ -98,17 +98,17 @@
       "name": "0. Setup: capture live state",
       "item": [
         {
-          "name": "GET current token set (200, stash original)",
+          "name": "GET current token set from the capability (200, stash original)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('token set read (200)', () => pm.response.to.have.status(200));",
-                  "const b = pm.response.json();",
-                  "pm.test('has tokenSet field', () => pm.expect(b).to.have.property('tokenSet'));",
-                  "pm.collectionVariables.set('origTokenSet', b.tokenSet);"
+                  "pm.test('capabilities read (200)', () => pm.response.to.have.status(200));",
+                  "const cap = pm.response.json().ocs.data.capabilities.nldesign;",
+                  "pm.test('capability carries the active token set', () => pm.expect(cap.tokenSet).to.have.property('id'));",
+                  "pm.collectionVariables.set('origTokenSet', cap.tokenSet.id);"
                 ]
               }
             }
@@ -141,16 +141,21 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokenset",
+              "raw": "{{baseUrl}}/ocs/v2.php/cloud/capabilities?format=json",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "index.php",
-                "apps",
-                "thematiq",
-                "settings",
-                "tokenset"
+                "ocs",
+                "v2.php",
+                "cloud",
+                "capabilities"
+              ],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "json"
+                }
               ]
             }
           }
@@ -3825,7 +3830,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "// The original token_set must be a valid id (it was read live), so this",
-                  "// restore is a 200. If the instance had never set one, getTokenSet",
+                  "// restore is a 200. If the instance had never set one, the capability",
                   "// defaults to 'nextcloud' which is also valid.",
                   "pm.test('token set restored (200)', () => pm.response.to.have.status(200));"
                 ]

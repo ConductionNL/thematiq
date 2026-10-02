@@ -222,7 +222,7 @@ class TokenReferenceService {
 	 *
 	 * @return array<string, string> Name => value.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	private function parseAnyCss(string $css): array {
 		preg_match_all('/(--[A-Za-z0-9_-]+)\s*:\s*([^;{}]+);/', $css, $matches, PREG_SET_ORDER);

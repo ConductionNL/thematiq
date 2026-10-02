@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 
 declare(strict_types=1);
@@ -39,7 +39,7 @@ use OCP\IRequest;
  * server served directly. They moved to app data so the signed app directory
  * stays as shipped, and this route is what serves them now.
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 class RuntimeFileController extends Controller {
 
@@ -50,7 +50,7 @@ class RuntimeFileController extends Controller {
 	 * @param IRequest           $request The request.
 	 * @param RuntimeFileLocator $files   Finds runtime files.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function __construct(
 		string $appName,
@@ -77,7 +77,7 @@ class RuntimeFileController extends Controller {
 	 *
 	 * @return Response The file with an immutable cache header, or a bare 404.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	#[PublicPage]
 	#[NoCSRFRequired]

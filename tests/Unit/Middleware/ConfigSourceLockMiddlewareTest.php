@@ -92,7 +92,7 @@ class ConfigSourceLockMiddlewareTest extends TestCase {
 	 */
 	public function testReadsSessionActionsAndUnlockedPass(): void {
 		$settings = $this->createMock(SettingsController::class);
-		$this->middleware(method: 'GET', locked: true)->beforeController($settings, 'getTokenSet');
+		$this->middleware(method: 'GET', locked: true)->beforeController($settings, 'getTokenSetPreview');
 		$this->middleware(method: 'POST', locked: true)->beforeController($this->createMock(PreviewController::class), 'start');
 		$this->middleware(method: 'POST', locked: false)->beforeController($settings, 'setTokenSet');
 		$this->addToAssertionCount(3);

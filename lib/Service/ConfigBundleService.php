@@ -1042,7 +1042,9 @@ class ConfigBundleService {
 		}
 
 		if ($resolved['scheduledSwitches'] !== null) {
-			$this->scheduledSwitches->save(entries: $resolved['scheduledSwitches']);
+			$this->scheduledSwitches->save(
+				entries: $this->scheduledSwitches->mergeImported(imported: $resolved['scheduledSwitches'], now: time())
+			);
 		}
 
 		$this->extraSections->apply(resolved: $resolved['extra']);
