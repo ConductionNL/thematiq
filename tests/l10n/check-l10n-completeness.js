@@ -9,7 +9,8 @@
  * so a locale can drift further and further behind en.json (new admin-panel
  * strings ship, translators never get a key to translate) without any CI
  * signal. This script closes that gap: every key present in l10n/en.json
- * MUST also be present (as a key — untranslated is fine, MISSING is not) in
+ * MUST also be present with a non-empty value (untranslated is fine, MISSING
+ * or EMPTY is not) in
  * every other l10n/*.json file, so translators always have the full set of
  * keys to work from and no shipped string is silently English-only forever.
  *
@@ -38,7 +39,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/l10n-locale-completeness-check/tasks.md#task-1
+ * @spec openspec/specs/l10n-completeness/spec.md#requirement-the-l10n-check-tool-catches-cross-locale-gaps
  */
 
 'use strict'
@@ -80,7 +81,11 @@ for (const file of localeFiles) {
 	const filePath = path.join(l10nDir, file)
 	const data = readJson(filePath)
 	const translations = data.translations || {}
-	const missingKeys = enKeys.filter((k) => !Object.prototype.hasOwnProperty.call(translations, k))
+	// A key with an empty value is as invisible to the user as a missing one:
+	// Nextcloud shows nothing, not even the English source. Both count.
+	const missingKeys = enKeys.filter((k) => !Object.prototype.hasOwnProperty.call(translations, k)
+		|| typeof translations[k] !== 'string'
+		|| translations[k] === '')
 
 	if (missingKeys.length === 0) {
 		continue
