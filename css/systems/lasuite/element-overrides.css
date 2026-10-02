@@ -380,7 +380,10 @@ header#header {
 
 #header nav.app-menu a:hover,
 #header nav.app-menu .app-menu-entry__link:hover {
-	background-color: var(--lasuite-color-gray-050) !important;
+	background-color: var(
+		--lasuite--contextuals--background--semantic--neutral--tertiary,
+		var(--lasuite-color-gray-050)
+	) !important;
 	color: var(--lasuite-content-brand, var(--lasuite-color-brand-650)) !important;
 }
 
@@ -405,7 +408,11 @@ header#header {
 	) !important;
 	/* gray-100 — matches the sidebar border-right measured on the live La Suite
 	   app (2026-07-27); every structural hairline uses this step. */
-	border-right: 1px solid var(--lasuite-color-gray-100) !important;
+	border-right: 1px solid
+		var(
+			--lasuite--contextuals--border--surface--primary,
+			var(--lasuite-color-gray-100)
+		) !important;
 	/* La Suite's sidebar is flush and square (x=0, y=0, border-radius 0) with a
 	   soft right shadow rather than a rounded card. Pairs with the full-bleed
 	   #content-vue rule below. */
@@ -426,7 +433,10 @@ header#header {
 }
 
 .app-navigation-entry:hover {
-	background-color: var(--lasuite-color-gray-050) !important;
+	background-color: var(
+		--lasuite--contextuals--background--semantic--neutral--tertiary,
+		var(--lasuite-color-gray-050)
+	) !important;
 }
 
 /* ACTIVE NAVIGATION ENTRY
@@ -690,7 +700,11 @@ body > #content-vue,
 #app-content-vue .breadcrumb,
 #app-content-vue [class*='__breadcrumbs'],
 .app-content .breadcrumb {
-	border-bottom: 1px solid var(--lasuite-color-gray-100) !important;
+	border-bottom: 1px solid
+		var(
+			--lasuite--contextuals--border--surface--primary,
+			var(--lasuite-color-gray-100)
+		) !important;
 	padding: 12px 24px !important;
 }
 
@@ -937,7 +951,11 @@ input[type='url'],
 input[type='tel'],
 input[type='password'],
 .input-field__input {
-	border: 1px solid var(--lasuite-color-gray-300) !important;
+	border: 1px solid
+		var(
+			--lasuite--contextuals--border--semantic--neutral--secondary,
+			var(--lasuite-color-gray-300)
+		) !important;
 	border-radius: var(--lasuite-border-radius) !important;
 }
 
@@ -972,7 +990,7 @@ h4,
 h5,
 h6 {
 	font-family: var(--lasuite-font-family);
-	color: var(--lasuite-color-gray-900);
+	color: var(--lasuite-content-primary, var(--lasuite-color-gray-900));
 }
 
 /* ============================================
@@ -999,12 +1017,20 @@ h6 {
    fallback), and this block remaps them. That is why repointing was the first
    half of the fix: a dark block cannot reach a rule that hardcodes `gray-000`.
 
-   RAMP COVERAGE. Our generator emits only gray-850 and gray-900 from the dark
-   end of the ramp — 700, 750 and 800 are unset. The mapping below therefore
-   uses the two steps that exist, preserving the figure/ground relationship that
-   matters (card LIGHTER than the canvas it sits on, mirroring white-on-grey in
-   light mode) rather than inventing values. Emitting the missing steps is a
-   generator change and is tracked separately.
+   THE VALUES ARE UPSTREAM'S. The mapping below is the one in Cunningham's
+   own dark block (css/systems/lasuite/defaults.css, `.cunningham-theme--dark`),
+   read from the full `--lasuite--globals--colors--*` ramp that defaults.css and
+   brand-override.css already emit. An earlier revision used only the short
+   `--lasuite-color-*` aliases, which stop at gray-850/900, and so made up a
+   translucent hairline; the canonical ramp has gray-750 and gray-800, so
+   nothing here is invented any more. The card stays LIGHTER than the canvas it
+   sits on (gray-800 on gray-900), mirroring white on grey in light mode.
+
+   EVERY GROUND-DEPENDENT READ GOES THROUGH A TOKEN REMAPPED HERE. A rule above
+   that read a raw gray step directly would keep its light value in dark mode,
+   because nothing below can reach it. tests/css/check-lasuite-dark-ramp.js
+   fails the build on such a read, and on a contextual token a rule reads that
+   this block does not remap.
 
    SCOPE SELECTORS mirror css/tokens/dark/lasuite.css exactly, so this block
    turns on and off with the rest of the dark layer.
@@ -1015,18 +1041,32 @@ h6 {
 			[data-theme-light-highcontrast]
 		):not([data-theme-dark-highcontrast]) {
 		--lasuite--contextuals--background--surface--primary: var(
-			--lasuite-color-gray-850
+			--lasuite--globals--colors--gray-800
 		);
 		--lasuite--contextuals--background--surface--secondary: var(
-			--lasuite-color-gray-900
+			--lasuite--globals--colors--gray-850
 		);
 		--lasuite--contextuals--background--surface--tertiary: var(
-			--lasuite-color-gray-900
+			--lasuite--globals--colors--gray-900
 		);
-		/* No gray-750/800 is emitted, so the hairline is a translucent white:
-		   it stays visible against both surface steps without inventing a ramp
-		   value that upstream would disagree with. */
-		--lasuite--contextuals--border--surface--primary: rgba(255, 255, 255, 0.12);
+		--lasuite--contextuals--background--semantic--neutral--tertiary: var(
+			--lasuite--globals--colors--gray-750
+		);
+		--lasuite--contextuals--border--surface--primary: var(
+			--lasuite--globals--colors--gray-750
+		);
+		--lasuite--contextuals--border--semantic--neutral--secondary: var(
+			--lasuite--globals--colors--gray-600
+		);
+		--lasuite--contextuals--background--semantic--brand--secondary: var(
+			--lasuite--globals--colors--brand-700
+		);
+		--lasuite--contextuals--content--semantic--brand--secondary: var(
+			--lasuite--globals--colors--brand-100
+		);
+		--lasuite--contextuals--content--semantic--brand--tertiary: var(
+			--lasuite--globals--colors--brand-250
+		);
 		--lasuite-active-row-wash: rgba(255, 255, 255, 0.08);
 		--lasuite-content-primary: var(--lasuite-color-gray-050);
 		--lasuite-content-muted: var(--lasuite-color-gray-200);
@@ -1038,15 +1078,32 @@ h6 {
 body[data-theme-dark],
 body[data-themes*='dark'] {
 	--lasuite--contextuals--background--surface--primary: var(
-		--lasuite-color-gray-850
+		--lasuite--globals--colors--gray-800
 	);
 	--lasuite--contextuals--background--surface--secondary: var(
-		--lasuite-color-gray-900
+		--lasuite--globals--colors--gray-850
 	);
 	--lasuite--contextuals--background--surface--tertiary: var(
-		--lasuite-color-gray-900
+		--lasuite--globals--colors--gray-900
 	);
-	--lasuite--contextuals--border--surface--primary: rgba(255, 255, 255, 0.12);
+	--lasuite--contextuals--background--semantic--neutral--tertiary: var(
+		--lasuite--globals--colors--gray-750
+	);
+	--lasuite--contextuals--border--surface--primary: var(
+		--lasuite--globals--colors--gray-750
+	);
+	--lasuite--contextuals--border--semantic--neutral--secondary: var(
+		--lasuite--globals--colors--gray-600
+	);
+	--lasuite--contextuals--background--semantic--brand--secondary: var(
+		--lasuite--globals--colors--brand-700
+	);
+	--lasuite--contextuals--content--semantic--brand--secondary: var(
+		--lasuite--globals--colors--brand-100
+	);
+	--lasuite--contextuals--content--semantic--brand--tertiary: var(
+		--lasuite--globals--colors--brand-250
+	);
 	--lasuite-active-row-wash: rgba(255, 255, 255, 0.08);
 	--lasuite-content-primary: var(--lasuite-color-gray-050);
 	--lasuite-content-muted: var(--lasuite-color-gray-200);
