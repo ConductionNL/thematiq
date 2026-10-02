@@ -9,8 +9,8 @@
  * @author  Conduction <info@conduction.nl>
  * @license EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-5.1
- * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-2
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-5.1
+ * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-2
  */
 
 declare(strict_types=1);
@@ -145,7 +145,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-2.1
+	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-2.1
 	 */
 	public function testSemicolonSmuggledBackgroundDeclarationIsForbidden(): void {
 		$this->assertTrue(
@@ -160,7 +160,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-2.2
+	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-2.2
 	 */
 	public function testBareCommentMarkerValueIsForbidden(): void {
 		$this->assertTrue(condition: $this->validator->isForbiddenValue(value: 'red /* } */'));
@@ -176,7 +176,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-2.3
+	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-2.3
 	 */
 	public function testValidateDeclarationsRejectsSemicolonSmugglingEndToEnd(): void {
 		$split = $this->validator->validateDeclarations(
@@ -209,7 +209,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-1
+	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
 	 */
 	public function testForbiddenValueUnderASkippedNameIsAHardFailure(string $name): void {
 		$split = $this->validator->validateDeclarations(

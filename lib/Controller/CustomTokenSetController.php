@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.2
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.2
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
  * @spec openspec/specs/custom-token-sets/spec.md
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  */
@@ -51,7 +51,7 @@ use RuntimeException;
  * output is CSS served to every user, so the validation pipeline is strict and
  * the served file is always re-serialised from parsed declarations.
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - one endpoint family (import, list, export, delete) for one resource; the branches
@@ -544,7 +544,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array{accepted: array<string, string>, skipped: string[]}|JSONResponse
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
 	 */
 	private function mapFromCss(string $content, string $slug) {
 		if ($this->validator->hasDisallowedSelector(css: $content) === true) {
@@ -585,7 +585,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The upload result or a collision/storage error.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
@@ -662,7 +662,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The list of custom sets.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function list(): JSONResponse {
@@ -676,7 +676,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return DataDownloadResponse|JSONResponse The CSS download or a 404.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function export(string $id) {
@@ -699,7 +699,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The deletion result.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]

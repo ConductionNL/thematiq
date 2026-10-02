@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-4
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-5
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-6
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-4
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-5
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-6
  */
 
 declare(strict_types=1);
@@ -34,9 +34,9 @@ use Psr\Log\LoggerInterface;
 /**
  * Controller for exposing Prometheus metrics.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-4
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-5
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-6
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-4
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-5
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-6
  */
 class MetricsController extends Controller {
 	/**
@@ -76,7 +76,7 @@ class MetricsController extends Controller {
 	 *
 	 * @NoCSRFRequired
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-4
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-4
 	 * @spec openspec/specs/prometheus-metrics/spec.md
 	 */
 	public function index(): TextPlainResponse {
@@ -131,7 +131,7 @@ class MetricsController extends Controller {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-5
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-5
 	 */
 	private function collectTokenSetMetrics(array &$lines): void {
 		try {
@@ -163,7 +163,7 @@ class MetricsController extends Controller {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-6
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-6
 	 */
 	private function collectOverrideMetrics(array &$lines): void {
 		try {
