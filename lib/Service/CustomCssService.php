@@ -49,6 +49,17 @@ class CustomCssService {
 	public const ENABLED_KEY = 'custom_css_enabled';
 
 	/**
+	 * The comment written above the administrator's CSS in the file.
+	 *
+	 * It belongs to the file, not to the CSS: read() strips it again, so the
+	 * editor shows exactly what the administrator typed and a second save does
+	 * not stack a second header on top of the first.
+	 *
+	 * @var string
+	 */
+	public const FILE_HEADER = "/* NL Design — freeform custom CSS. Authored by an administrator. */\n";
+
+	/**
 	 * The app manager, used to resolve the app's css/ directory.
 	 *
 	 * @var IAppManager
@@ -135,7 +146,8 @@ class CustomCssService {
 	 * A missing file is not an error — it is the fresh-install state — and
 	 * yields an empty string.
 	 *
-	 * @return string The stored CSS, or '' when nothing is stored.
+	 * @return string The CSS as the administrator wrote it, without the file
+	 *                header write() adds, or '' when nothing is stored.
 	 *
 	 * @spec openspec/specs/custom-css-freeform/spec.md
 	 */
@@ -148,6 +160,17 @@ class CustomCssService {
 		$contents = file_get_contents($path);
 		if ($contents === false) {
 			return '';
+		}
+
+		// Undo what write() added around the CSS. Earlier releases read the
+		// header back as part of the CSS, so every save stacked one more; the
+		// loop peels all of them, and the next save leaves a single one. A file
+		// without the header (hand-edited, or older) is returned as it is.
+		while (str_starts_with($contents, self::FILE_HEADER) === true) {
+			$contents = substr($contents, strlen(self::FILE_HEADER));
+			if (str_ends_with($contents, "\n") === true) {
+				$contents = substr($contents, 0, -1);
+			}
 		}
 
 		return $contents;
@@ -174,7 +197,7 @@ class CustomCssService {
 		$path = $this->getFilePath();
 		$tmpPath = $path . '.tmp';
 
-		$document = "/* NL Design — freeform custom CSS. Authored by an administrator. */\n" . $css . "\n";
+		$document = self::FILE_HEADER . $css . "\n";
 
 		if (file_put_contents(filename: $tmpPath, data: $document) === false) {
 			throw new RuntimeException(
