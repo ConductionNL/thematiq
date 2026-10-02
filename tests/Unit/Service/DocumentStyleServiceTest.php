@@ -357,6 +357,25 @@ class DocumentStyleServiceTest extends TestCase {
 	}//end testUploadChecks()
 
 	/**
+	 * The asset endpoint serves an uploaded image and answers 404 for a missing image or an
+	 * unknown kind. (Its headers need a server container to read, so they are checked live.)
+	 *
+	 * @return void
+	 */
+	public function testAssetEndpointServesTheImage(): void {
+		$controller = new DocumentStyleController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->assets(), $this->session(), $this->createMock(IL10N::class));
+		$this->assertSame(404, $controller->asset(kind: 'logo')->getStatus());
+		$this->assertSame(404, $controller->asset(kind: 'nope')->getStatus());
+
+		$png = "\x89PNG\r\n\x1a\n" . str_repeat('0', 16);
+		$this->assets()->store(kind: 'logo', bytes: $png);
+		$response = $controller->asset(kind: 'logo');
+
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame($png, $response->render());
+	}//end testAssetEndpointServesTheImage()
+
+	/**
 	 * Reads need a session; the settings endpoints are admin settings.
 	 *
 	 * @return void

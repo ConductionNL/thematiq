@@ -99,7 +99,7 @@ class DocumentStyleController extends Controller {
 		$response = new DataDisplayResponse($file['bytes'], Http::STATUS_OK, ['Content-Type' => $file['mime']]);
 		$response->addHeader('X-Content-Type-Options', 'nosniff');
 		$response->addHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; img-src data:");
-		$response->cacheFor(3600);
+		$response->addHeader('Cache-Control', 'private, max-age=3600');
 
 		return $response;
 	}//end asset()
