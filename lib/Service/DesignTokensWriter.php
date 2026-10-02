@@ -20,7 +20,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.1
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ namespace OCA\Thematiq\Service;
 /**
  * Declarations to a DTCG document.
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.1
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
  */
 class DesignTokensWriter {
 
@@ -71,7 +71,7 @@ class DesignTokensWriter {
 	 *
 	 * @return array<string, mixed> The DTCG document.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.1
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
 	 */
 	public function write(array $declarations, string $setId, string $setName, string $appVersion, array $deprecations = []): array {
 		$typed   = [];
@@ -129,7 +129,7 @@ class DesignTokensWriter {
 	 *
 	 * @return array<int, string> The path segments.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.1
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
 	 */
 	public function pathOf(string $name): array {
 		$parts = explode('-', ltrim($name, '-'), 3);

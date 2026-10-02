@@ -14,7 +14,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.2
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-any-token-set-can-be-downloaded-as-a-dtcg-document
  */
 
 declare(strict_types=1);
@@ -45,7 +45,7 @@ use ReflectionMethod;
 /**
  * Over this repo's shipped sets.
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.2
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-any-token-set-can-be-downloaded-as-a-dtcg-document
  */
 final class DtcgExportControllerTest extends TestCase {
 

@@ -14,7 +14,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.1
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * The document shape.
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.1
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
  */
 final class DesignTokensWriterTest extends TestCase {
 

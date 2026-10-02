@@ -18,7 +18,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.4
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ namespace OCA\Thematiq\Service;
 /**
  * Split an exported set's declarations into the three emitted layers.
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.4
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
  */
 class ThematiqExportLayers {
 
@@ -41,7 +41,7 @@ class ThematiqExportLayers {
 	 *
 	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>}
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.4
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
 	public function split(array $declarations, string $slug, array &$report): array {
 		$renames = [];

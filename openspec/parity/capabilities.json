@@ -5646,21 +5646,20 @@
 			"id": "aut-dtcg-colour-objects",
 			"area": "sync",
 			"name": "Read and write tokens in the stable DTCG specification, including colour values stored as objects with an explicit colour space.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "no",
 			"liferay-dxp": "no",
 			"tokens-studio": "partial",
 			"built": {
-				"state": "specified",
-				"evidence": "lib/Service/DesignTokensMapper.php:605-630 serializeColorObject() reads DTCG v2025.10 colour objects (hex or components) in the sRGB family and reports other colour spaces as unsupported-color-space (48-56); writing DTCG is not supported (aut-dtcg-bulk-convert)",
+				"state": "built",
+				"evidence": "lib/Service/DesignTokensWriter.php writes any token set as DTCG v2025.10 with colour objects (colorSpace, components, sRGB hex fallback, alpha), dimensions, durations, cubicBezier, fonts, aliases and a cssOnly map; GET /settings/tokensets/{id}/dtcg (DtcgExportController, AuthorizedAdminSetting); the importer converts every DTCG colour space to sRGB (ColorSpaceConverter, CSS Color 4 maths) and reports out-of-gamut colours as adapted; thematiq exports round-trip exactly for all shipped sets (DesignTokensRoundTripTest)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-dtcg-export (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-dtcg-export"
+				"change": "authoring-dtcg-export"
 			},
-			"reachedOn": "Settings > Administration > Theming, custom token set upload of a DTCG JSON file",
+			"reachedOn": "Settings > Administration > Theming: Download as design tokens next to the token set list and in each custom set row; Custom token sets upload",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:115-130 accepts colours only as hex strings for primary and background; grep -rniE 'dtcg|colorSpace|color_space' apps/theming/lib apps/theming/src: no hits",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-json-schema: palette colours 'are specified as 6-digit or 3-digit hexadecimal RGB string values'; no colour objects or colour spaces",

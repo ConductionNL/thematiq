@@ -793,7 +793,7 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * Scenario: an oklch brand colour is converted to sRGB and imported.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.2
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testOklchConvertsToSrgb(): void {
 		$result = $this->mapColour(['colorSpace' => 'oklch', 'components' => [0.5, 0.1, 250]]);
@@ -806,7 +806,7 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * Out of gamut with a hex: the hex, reported adapted.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.2
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testOutOfGamutUsesHexFallback(): void {
 		$result = $this->mapColour(['colorSpace' => 'display-p3', 'components' => [1, 0, 0], 'hex' => '#fe0000']);
@@ -818,7 +818,7 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * Scenario: a display-p3 colour outside sRGB is clipped and reported with the original.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.2
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testOutOfGamutWithoutHexIsClipped(): void {
 		$result = $this->mapColour(['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]);
@@ -832,7 +832,7 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * Scenario: the thematiq extension names the target, where the suffix table has none.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-3.1
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testExtensionNamesTheTarget(): void {
 		$document = ['nldesign' => ['color' => ['error' => ['$type' => 'color', '$value' => '#d52b1e', '$extensions' => ['nl.conduction.thematiq' => ['cssVariable' => '--nldesign-color-error']]]]]];
@@ -846,7 +846,7 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * The root cssOnly map is read as declarations; a token wins over it; a bad name is dropped.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-3.1
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testCssOnlyMapIsImported(): void {
 		$document = [

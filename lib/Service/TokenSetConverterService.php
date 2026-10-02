@@ -437,7 +437,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array<string, mixed> The same shape as convert().
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.4
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
 	private function thematiqExportResult(array $declarations, string $slug, string $displayName, ?string $sourceName, ?string $sourceVersion, array $report): array {
 		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);

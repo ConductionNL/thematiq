@@ -17,7 +17,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.2
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-any-token-set-can-be-downloaded-as-a-dtcg-document
  */
 
 declare(strict_types=1);
@@ -40,7 +40,7 @@ use OCP\IRequest;
 /**
  * Token sets as DTCG documents.
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.2
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-any-token-set-can-be-downloaded-as-a-dtcg-document
  */
 class DtcgExportController extends Controller {
 
@@ -76,7 +76,7 @@ class DtcgExportController extends Controller {
 	 *
 	 * @return JSONResponse The document with an attachment name, or 404.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.2
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-any-token-set-can-be-downloaded-as-a-dtcg-document
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function export(string $id): JSONResponse {

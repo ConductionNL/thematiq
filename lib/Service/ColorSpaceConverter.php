@@ -19,7 +19,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.1
+ * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ namespace OCA\Thematiq\Service;
 /**
  * Colour space maths, CSS Color 4.
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.1
+ * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
  */
 class ColorSpaceConverter {
 
@@ -141,7 +141,7 @@ class ColorSpaceConverter {
 	 *
 	 * @return bool
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.1
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function isKnownSpace(string $space): bool {
 		return in_array($space, self::SPACES, true);
@@ -155,7 +155,7 @@ class ColorSpaceConverter {
 	 *
 	 * @return array<int, float>|null [r, g, b] in 0..1 when in gamut; null for an unknown space.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.1
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function toSrgb(string $space, array $components): ?array {
 		$c = array_map('floatval', array_values(array_slice($components, 0, 3)));
@@ -178,7 +178,7 @@ class ColorSpaceConverter {
 	 *
 	 * @return bool
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.1
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function isInGamut(array $rgb): bool {
 		foreach ($rgb as $channel) {
@@ -198,7 +198,7 @@ class ColorSpaceConverter {
 	 *
 	 * @return string `#rrggbb` or `#rrggbbaa`.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.1
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function toHex(array $rgb, ?float $alpha = null): string {
 		$hex = '#';

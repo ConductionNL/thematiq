@@ -18,7 +18,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.1
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ namespace OCA\Thematiq\Service;
 /**
  * CSS colour text to a colour space and components.
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.1
+ * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
  */
 class CssColorParser {
 
@@ -110,7 +110,7 @@ class CssColorParser {
 	 *
 	 * @return array{space: string, components: array<int, float>, alpha: float|null}|null Null when it is not a colour this reads.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.1
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
 	 */
 	public function parse(string $value): ?array {
 		$value = strtolower(trim($value));

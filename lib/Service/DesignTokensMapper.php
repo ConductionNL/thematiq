@@ -313,7 +313,7 @@ class DesignTokensMapper {
 	 *
 	 * @return array<string, string>
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-3.1
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	private function cssOnly(array $document): array {
 		$map = ($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []);
@@ -472,7 +472,7 @@ class DesignTokensMapper {
 	 *
 	 * @return array{ok: bool, value?: string, reason?: string} The serialization result.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-4.4
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
 	private function serializeCubicBezier($value): array {
 		if (is_string($value) === true) {

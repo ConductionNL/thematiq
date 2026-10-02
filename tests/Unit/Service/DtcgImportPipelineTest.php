@@ -15,7 +15,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-3.1
+ * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
  */
 
 declare(strict_types=1);
@@ -36,7 +36,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Converter, validator, contrast and dark palette over real services.
  *
- * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-3.1
+ * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
  */
 final class DtcgImportPipelineTest extends TestCase {
 
@@ -58,7 +58,7 @@ final class DtcgImportPipelineTest extends TestCase {
 	/**
 	 * Scenario: a display-p3 colour outside sRGB is clipped and the report says so, with the original.
 	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.3
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testAdaptedColourIsReported(): void {
 		$result  = $this->convert(['color' => ['primary' => ['$type' => 'color', '$value' => ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]]]]);
