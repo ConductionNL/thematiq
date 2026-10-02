@@ -2684,3 +2684,78 @@
 	justify-content: flex-end;
 	gap: 8px;
 }
+
+/* --- Token editor at scale: search, count, component groups, row facts ---
+ * openspec/changes/token-editor-at-scale. `hidden` must win over the panels'
+ * own display rules, and a search shows every panel that has a match, so the
+ * tab strip steps aside while one is typed.
+ */
+.nldesign-token-editor [hidden] {
+	display: none !important;
+}
+
+#nldesign-settings
+	.nldesign-token-editor--searching
+	.nldesign-tab-panel:not([hidden]) {
+	display: block;
+}
+
+.nldesign-token-editor--searching .nldesign-tabs {
+	display: none;
+}
+
+.nldesign-token-count {
+	margin: 4px 0 8px;
+}
+
+.nldesign-token-search {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-bottom: 12px;
+	max-width: 420px;
+}
+
+.nldesign-token-search label {
+	font-weight: 600;
+}
+
+.nldesign-token-groups {
+	margin-top: 16px;
+}
+
+.nldesign-token-group-heading {
+	margin: 0;
+}
+
+.nldesign-token-group-toggle {
+	width: 100%;
+	text-align: start;
+	font-weight: 600;
+}
+
+.nldesign-token-group-toggle::before {
+	content: '▸ ';
+}
+
+.nldesign-token-group-toggle[aria-expanded='true']::before {
+	content: '▾ ';
+}
+
+.nldesign-token-group-count {
+	font-weight: 400;
+	color: var(--color-text-maxcontrast);
+}
+
+.nldesign-token-advanced-warning {
+	padding: 8px 12px;
+	border-inline-start: 4px solid var(--color-warning);
+	background: var(--color-background-hover);
+	color: var(--color-main-text);
+}
+
+.nldesign-token-stock,
+.nldesign-token-note {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}

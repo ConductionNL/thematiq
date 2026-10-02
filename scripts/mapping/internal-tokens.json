@@ -6035,5 +6035,187 @@
 			],
 			"stock": "auto"
 		}
+	},
+	"themeStock": {
+		"--background-invert-if-bright": {
+			"light": "invert(100%)",
+			"dark": "no"
+		},
+		"--background-invert-if-dark": {
+			"light": "no",
+			"dark": "invert(100%)"
+		},
+		"--body-container-margin": {
+			"light": "calc(var(--default-grid-baseline) * 2)",
+			"dark": "calc(var(--default-grid-baseline) * 2)"
+		},
+		"--body-container-radius": {
+			"light": "var(--border-radius-container-large)",
+			"dark": "var(--border-radius-container-large)"
+		},
+		"--body-height": {
+			"light": "calc(100% - env(safe-area-inset-bottom) - var(--header-height) - var(--body-container-margin))",
+			"dark": "calc(100% - env(safe-area-inset-bottom) - var(--header-height) - var(--body-container-margin))"
+		},
+		"--border-radius-container": {
+			"light": "12px",
+			"dark": "12px"
+		},
+		"--border-radius-container-large": {
+			"light": "16px",
+			"dark": "16px"
+		},
+		"--border-width-input": {
+			"light": "1px",
+			"dark": "1px"
+		},
+		"--border-width-input-focused": {
+			"light": "2px",
+			"dark": "2px"
+		},
+		"--breakpoint-mobile": {
+			"light": "1024px",
+			"dark": "1024px"
+		},
+		"--clickable-area-large": {
+			"light": "48px",
+			"dark": "48px"
+		},
+		"--clickable-area-small": {
+			"light": "24px",
+			"dark": "24px"
+		},
+		"--color-background-assistant": {
+			"light": "#F6F5FF",
+			"dark": "#221D2B"
+		},
+		"--color-background-plain-text": {
+			"light": "#ffffff",
+			"dark": "#ffffff"
+		},
+		"--color-border-assistant": {
+			"light": "linear-gradient(125deg, #7398FE 50%, #6104A4 125%)",
+			"dark": "linear-gradient(125deg, #0C3A65 50%, #6204A5 125%)"
+		},
+		"--color-box-shadow": {
+			"light": "rgba(var(--color-box-shadow-rgb), 0.5)",
+			"dark": "#000000"
+		},
+		"--color-box-shadow-rgb": {
+			"light": "77,77,77",
+			"dark": "0,0,0"
+		},
+		"--color-element-assistant": {
+			"light": "linear-gradient(214deg, #A569D3 12%, #00679E 39%, #422083 86%)",
+			"dark": "linear-gradient(214deg, #C8A3E8 12%, #007CFF 39%, #C297DD 86%)"
+		},
+		"--color-element-assistant-icon": {
+			"light": "linear-gradient(214deg, #9669D3 15%, #00679E 40%, #492083 80%)",
+			"dark": "linear-gradient(214deg, #CDACE7 15.28%, #008FDB 39.98%, #A180E0 82.05%)"
+		},
+		"--color-error-text": {
+			"light": "#8A0000",
+			"dark": "#FFCCCC"
+		},
+		"--color-info-hover": {
+			"light": "#b5e6f6",
+			"dark": "#005686"
+		},
+		"--color-info-rgb": {
+			"light": "213,241,250",
+			"dark": "0,53,83"
+		},
+		"--color-info-text": {
+			"light": "#0066AC",
+			"dark": "#00AEFF"
+		},
+		"--color-loading-dark": {
+			"light": "#444444",
+			"dark": "#CCC"
+		},
+		"--color-loading-light": {
+			"light": "#cccccc",
+			"dark": "#777"
+		},
+		"--color-main-background": {
+			"light": "#ffffff",
+			"dark": "#171717"
+		},
+		"--color-mark": {
+			"light": "#fff0c7",
+			"dark": "#4d3800"
+		},
+		"--color-scrollbar": {
+			"light": "var(--color-border-maxcontrast) transparent",
+			"dark": "var(--color-border-maxcontrast) transparent"
+		},
+		"--color-success-hover": {
+			"light": "#bdebc0",
+			"dark": "#1e582e"
+		},
+		"--color-success-text": {
+			"light": "#005416",
+			"dark": "#D5F2DC"
+		},
+		"--color-text-maxcontrast-default": {
+			"light": "#6b6b6b",
+			"dark": "#999999"
+		},
+		"--color-text-selection": {
+			"light": "var(--color-main-text)",
+			"dark": "var(--color-main-text)"
+		},
+		"--color-warning-hover": {
+			"light": "#ffe4a1",
+			"dark": "#65501b"
+		},
+		"--color-warning-text": {
+			"light": "#664700",
+			"dark": "#FFEEC5"
+		},
+		"--default-clickable-area": {
+			"light": "34px",
+			"dark": "34px"
+		},
+		"--default-font-size": {
+			"light": "15px",
+			"dark": "15px"
+		},
+		"--default-grid-baseline": {
+			"light": "4px",
+			"dark": "4px"
+		},
+		"--default-line-height": {
+			"light": "1.5",
+			"dark": "1.5"
+		},
+		"--filter-background-blur": {
+			"light": "blur(25px)",
+			"dark": "blur(25px)"
+		},
+		"--font-size-small": {
+			"light": "13px",
+			"dark": "13px"
+		},
+		"--header-height": {
+			"light": "50px",
+			"dark": "50px"
+		},
+		"--header-menu-item-height": {
+			"light": "44px",
+			"dark": "44px"
+		},
+		"--navigation-width": {
+			"light": "300px",
+			"dark": "300px"
+		},
+		"--sidebar-max-width": {
+			"light": "500px",
+			"dark": "500px"
+		},
+		"--sidebar-min-width": {
+			"light": "300px",
+			"dark": "300px"
+		}
 	}
 }

@@ -121,6 +121,13 @@ class TokenRegistry implements TokenRegistryInterface {
 	private static ?array $internalTokens = null;
 
 	/**
+	 * Nextcloud's own light and dark value per settable theme variable, from the same map.
+	 *
+	 * @var array<string, array{light: string, dark: string}>
+	 */
+	private static array $themeStock = [];
+
+	/**
 	 * Returns the full registry of editable tokens.
 	 *
 	 * Keys are CSS custom property names (e.g. '--color-primary').
@@ -208,6 +215,7 @@ class TokenRegistry implements TokenRegistryInterface {
 				'advanced' => (($entry['advanced'] ?? false) === true),
 				'perScheme' => (($entry['perScheme'] ?? false) === true),
 				'note' => (string)($entry['note'] ?? ''),
+				'stock' => (self::$themeStock[$name] ?? ['light' => '', 'dark' => '']),
 			];
 		}
 
@@ -480,6 +488,13 @@ class TokenRegistry implements TokenRegistryInterface {
 		$decoded = [];
 		if ($raw !== false) {
 			$decoded = json_decode($raw, true);
+		}
+
+		self::$themeStock = [];
+		foreach (($decoded['themeStock'] ?? []) as $name => $stock) {
+			if (is_array($stock) === true) {
+				self::$themeStock[(string)$name] = ['light' => (string)($stock['light'] ?? ''), 'dark' => (string)($stock['dark'] ?? '')];
+			}
 		}
 
 		foreach (($decoded['tokens'] ?? []) as $token => $entry) {
