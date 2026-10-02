@@ -273,27 +273,22 @@ jobs:
       # variant under css/tokens/dark/, which the dark-mode specs need.
       # dark_variants already defaults to '1'.
       playwright-seed-command: 'php occ config:app:set thematiq token_set --value rijkshuisstijl'
-      # OpenRegister is required for nldesign to serve ANY route at all today.
+      # OpenRegister is installed here so the E2E job also covers the paths
+      # that only run with it (the AppHost health engine, the shareable
+      # config type). Thematiq itself no longer needs it to serve a route.
       #
-      # lib/Controller/HealthController.php declares
-      #   class HealthController extends
-      #     OCA\OpenRegister\AppHost\Controller\GenericHealthController
-      # and its docblock asserts "OpenRegister is a soft dependency; the parent
-      # class autoloads only on route dispatch, not at bootstrap."
+      # History: HealthController used to extend
+      # OCA\OpenRegister\AppHost\Controller\GenericHealthController. With
+      # OpenRegister absent, `/apps/thematiq/` returned HTTP 500, because
+      # Nextcloud's router reflects every registered controller while MATCHING
+      # a route, so the missing parent took down every route. #208 replaced the
+      # `extends` with composition (thematiq#207).
       #
-      # The first run of this job disproved that: with OpenRegister absent,
-      # `/apps/thematiq/` returned **HTTP 500** — `Class
-      # "OCA\OpenRegister\AppHost\Controller\GenericHealthController" not
-      # found`. Nextcloud's router reflects over every registered controller
-      # while MATCHING a route, so the missing parent takes down every nldesign
-      # route, not just /api/health. The login page then never finished
-      # rendering and global-setup timed out waiting for input[name="user"] —
-      # a failure that names the login form and says nothing about the cause.
-      #
-      # Installing OpenRegister makes the suite able to run. It does NOT fix
-      # the underlying coupling: thematiq is currently broken standalone, and
-      # an `extends` cannot be made lazy by DI because it is resolved by the
-      # autoloader, not the container. That is tracked separately.
+      # Because this job always has OpenRegister, it cannot see that regression
+      # come back. tests/Unit/Controller/ControllersStandaloneTest.php
+      # (testNoControllerNamesAnotherAppsClass) guards it instead, and
+      # tests/Unit/Controller/HealthControllerTest.php asserts the degraded
+      # 200 the probe answers with when the engine is absent.
       additional-apps: '[{"repo":"ConductionNL/openregister","app":"openregister","ref":"development"}]'
 
       # ── Integration tests ────────────────────────────────────────────────
