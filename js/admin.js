@@ -5952,11 +5952,14 @@
 			})
 		}
 
-		function uploadCustomTokenSet(name, file) {
+		function uploadCustomTokenSet(name, file, brands) {
 			var resultEl = document.getElementById('nldesign-upload-result')
 			var formData = new FormData()
 			formData.append('name', name)
 			formData.append('file', file)
+			;(brands || []).forEach(function (key) {
+				formData.append('brands[]', key)
+			})
 
 			fetch(OC.generateUrl('/apps/thematiq/settings/tokensets/upload'), {
 				method: 'POST',
@@ -5989,6 +5992,36 @@
 								+ ' '
 								+ (res.data.error || ''),
 						)
+						return
+					}
+					// One source, several brands: choose first, then the same upload again.
+					if (res.data.multiBrand === true && res.data.stored !== true) {
+						if (resultEl !== null) {
+							renderBrandPicker(
+								resultEl,
+								name,
+								file,
+								res.data.brands || [],
+							)
+						}
+						return
+					}
+					if (res.data.multiBrand === true) {
+						if (resultEl !== null) {
+							resultEl.appendChild(
+								document.createTextNode(
+									n(
+										'thematiq',
+										'{count} brand imported as a token set.',
+										'{count} brands imported as token sets.',
+										(res.data.sets || []).length,
+										{ count: (res.data.sets || []).length },
+									),
+								),
+							)
+						}
+						loadCustomTokenSets()
+						refreshTokenSetCatalogue().catch(function () {})
 						return
 					}
 					var msg = t(
@@ -6047,6 +6080,142 @@
 				.catch(function (err) {
 					console.error('Error uploading custom token set:', err)
 					notify(t('thematiq', 'Upload failed.'))
+				})
+		}
+
+		/**
+		 * The brand picker after a multi-brand upload
+		 * (openspec/changes/authoring-multi-brand-token-source): one labelled checkbox per
+		 * brand, all ticked, with its token count and group; Import repeats the upload with
+		 * the chosen brands, Cancel stores nothing. Focus moves to the picker's heading.
+		 *
+		 * @param {HTMLElement} resultEl The upload result region.
+		 * @param {string} name The source name.
+		 * @param {File} file The uploaded file.
+		 * @param {Array<object>} brands The brands the server found.
+		 * @return {void}
+		 */
+		function renderBrandPicker(resultEl, name, file, brands) {
+			var picker = document.createElement('fieldset')
+			picker.className = 'nldesign-brand-picker'
+			var legend = document.createElement('legend')
+			legend.tabIndex = -1
+			legend.textContent = t(
+				'thematiq',
+				'This file holds {count} brands. Choose the ones to import.',
+				{ count: brands.length },
+			)
+			picker.appendChild(legend)
+			brands.forEach(function (brand, index) {
+				var row = document.createElement('div')
+				var box = document.createElement('input')
+				box.type = 'checkbox'
+				box.checked = true
+				box.value = brand.key
+				box.id = 'nldesign-brand-pick-' + index
+				box.className = 'checkbox'
+				var label = document.createElement('label')
+				label.setAttribute('for', box.id)
+				label.textContent =
+					brand.name
+					+ ' '
+					+ n(
+						'thematiq',
+						'({count} token)',
+						'({count} tokens)',
+						brand.tokenCount,
+						{
+							count: brand.tokenCount,
+						},
+					)
+					+ (brand.group ? ' · ' + brand.group : '')
+				row.appendChild(box)
+				row.appendChild(label)
+				picker.appendChild(row)
+			})
+			var confirm = document.createElement('button')
+			confirm.type = 'button'
+			confirm.className = 'button primary nldesign-brand-import'
+			confirm.textContent = t('thematiq', 'Import the chosen brands')
+			confirm.addEventListener('click', function () {
+				var chosen = Array.prototype.slice
+					.call(picker.querySelectorAll('input[type="checkbox"]:checked'))
+					.map(function (box) {
+						return box.value
+					})
+				if (chosen.length === 0) {
+					notify(t('thematiq', 'Choose at least one brand.'))
+					return
+				}
+				uploadCustomTokenSet(name, file, chosen)
+			})
+			var cancel = document.createElement('button')
+			cancel.type = 'button'
+			cancel.className = 'button nldesign-brand-cancel'
+			cancel.textContent = t('thematiq', 'Cancel')
+			cancel.addEventListener('click', function () {
+				resultEl.innerHTML = ''
+				resultEl.appendChild(
+					document.createTextNode(t('thematiq', 'Nothing was imported.')),
+				)
+			})
+			picker.appendChild(confirm)
+			picker.appendChild(cancel)
+			resultEl.appendChild(picker)
+			legend.focus()
+		}
+
+		/**
+		 * Update a multi-brand source from a new file; the report goes to the result region.
+		 *
+		 * @param {string} sourceId The source id.
+		 * @param {File} file The new file.
+		 * @return {Promise<void>}
+		 */
+		function updateTokenSource(sourceId, file) {
+			var resultEl = document.getElementById('nldesign-upload-result')
+			var formData = new FormData()
+			formData.append('file', file)
+			return fetch(
+				OC.generateUrl(
+					'/apps/thematiq/settings/tokensets/sources/'
+						+ encodeURIComponent(sourceId),
+				),
+				{
+					method: 'POST',
+					headers: { requesttoken: OC.requestToken },
+					body: formData,
+				},
+			)
+				.then(function (r) {
+					return r.json().then(function (data) {
+						return { ok: r.ok, data: data || {} }
+					})
+				})
+				.then(function (res) {
+					var text = res.ok
+						? t(
+								'thematiq',
+								'Updated: {updated}. Missing from the file, kept as they were: {missing}. New in the file, not imported: {new}.',
+								{
+									updated:
+										(res.data.updated || []).join(', ') || '-',
+									missing:
+										(res.data.missing || []).join(', ') || '-',
+									new: (res.data.new || []).join(', ') || '-',
+								},
+							)
+						: t('thematiq', 'The source was not updated:')
+							+ ' '
+							+ (res.data.error || '')
+					if (resultEl !== null) {
+						resultEl.style.display = 'block'
+						resultEl.textContent = text
+					}
+					loadCustomTokenSets()
+				})
+				.catch(function () {
+					notify(t('thematiq', 'The source was not updated.'))
 				})
 		}
 
@@ -6198,6 +6367,45 @@
 				})
 		}
 
+		/**
+		 * The header of a multi-brand source in the custom set list: its name and an
+		 * "Update source" action that takes a new file.
+		 *
+		 * @param {object} set The first brand set of the source.
+		 * @return {HTMLElement} The header.
+		 */
+		function buildSourceHeader(set) {
+			var header = document.createElement('div')
+			header.className = 'nldesign-custom-source'
+			var title = document.createElement('strong')
+			title.textContent = String(set.name || '').split(':')[0]
+			header.appendChild(title)
+			var input = document.createElement('input')
+			input.type = 'file'
+			input.accept = '.css,.json,.tokens.json'
+			input.hidden = true
+			input.addEventListener('change', function () {
+				if (input.files && input.files[0]) {
+					updateTokenSource(set.source.id, input.files[0])
+				}
+			})
+			var button = document.createElement('button')
+			button.type = 'button'
+			button.className =
+				'nldesign-btn nldesign-btn--small nldesign-source-update'
+			button.textContent = t('thematiq', 'Update source')
+			button.setAttribute(
+				'aria-label',
+				t('thematiq', 'Update source {name}', { name: title.textContent }),
+			)
+			button.addEventListener('click', function () {
+				input.click()
+			})
+			header.appendChild(button)
+			header.appendChild(input)
+			return header
+		}
+
 		function renderCustomSetList(listEl, sets) {
 			listEl.innerHTML = ''
 			if (sets.length === 0) {
@@ -6211,128 +6419,149 @@
 				return
 			}
 
-			sets.forEach(function (set) {
-				var row = document.createElement('div')
-				row.className = 'nldesign-custom-set-row'
+			// Brands of one source sit together under its name, with "Update source".
+			var lastSource = null
+			sets.slice()
+				.sort(function (a, b) {
+					var sa = a.source ? a.source.id : ''
+					var sb = b.source ? b.source.id : ''
+					return sa === sb ? 0 : sa < sb ? -1 : 1
+				})
+				.forEach(function (set) {
+					if (set.source && set.source.id !== lastSource) {
+						lastSource = set.source.id
+						listEl.appendChild(buildSourceHeader(set))
+					}
+					if (!set.source) {
+						lastSource = null
+					}
+					var row = document.createElement('div')
+					row.className = 'nldesign-custom-set-row'
+					if (set.source) {
+						row.classList.add('nldesign-custom-set-row--brand')
+					}
 
-				var nameSpan = document.createElement('span')
-				nameSpan.className = 'nldesign-custom-set-name'
-				nameSpan.textContent = set.name || set.id
-				row.appendChild(nameSpan)
+					var nameSpan = document.createElement('span')
+					nameSpan.className = 'nldesign-custom-set-name'
+					nameSpan.textContent = set.name || set.id
+					row.appendChild(nameSpan)
 
-				if (set.version) {
-					var versionSpan = document.createElement('span')
-					versionSpan.className = 'nldesign-custom-set-version'
-					versionSpan.textContent = t('thematiq', 'v{version}', {
-						version: set.version,
+					if (set.version) {
+						var versionSpan = document.createElement('span')
+						versionSpan.className = 'nldesign-custom-set-version'
+						versionSpan.textContent = t('thematiq', 'v{version}', {
+							version: set.version,
+						})
+						row.appendChild(versionSpan)
+					}
+
+					// Three states, in order of what the admin most needs to know:
+					// a set that never defines the vocabulary is broken in a way no
+					// contrast ratio can reveal, so "Incomplete set" wins over
+					// "Contrast warning".
+					var warnings = set.warnings || []
+					var incomplete = warnings.filter(function (w) {
+						return w && w.kind === 'incomplete'
 					})
-					row.appendChild(versionSpan)
-				}
+					var contrast = warnings.filter(function (w) {
+						return w && w.kind !== 'incomplete'
+					})
 
-				// Three states, in order of what the admin most needs to know:
-				// a set that never defines the vocabulary is broken in a way no
-				// contrast ratio can reveal, so "Incomplete set" wins over
-				// "Contrast warning".
-				var warnings = set.warnings || []
-				var incomplete = warnings.filter(function (w) {
-					return w && w.kind === 'incomplete'
-				})
-				var contrast = warnings.filter(function (w) {
-					return w && w.kind !== 'incomplete'
-				})
+					var badge = document.createElement('span')
+					badge.className = 'nldesign-badge'
+					if (incomplete.length > 0) {
+						badge.classList.add('nldesign-badge--warning')
+						badge.textContent = t('thematiq', 'Incomplete set')
+						badge.setAttribute(
+							'title',
+							incompleteWarningLines(incomplete[0]).join('\n'),
+						)
+					} else if (contrast.length > 0) {
+						badge.classList.add('nldesign-badge--warning')
+						badge.textContent = t('thematiq', 'Contrast warning')
+					} else {
+						badge.classList.add('nldesign-badge--ok')
+						badge.textContent = t('thematiq', 'WCAG AA OK')
+					}
+					row.appendChild(badge)
 
-				var badge = document.createElement('span')
-				badge.className = 'nldesign-badge'
-				if (incomplete.length > 0) {
-					badge.classList.add('nldesign-badge--warning')
-					badge.textContent = t('thematiq', 'Incomplete set')
-					badge.setAttribute(
-						'title',
-						incompleteWarningLines(incomplete[0]).join('\n'),
+					// A set installed from the theme gallery names its source and
+					// licence (openspec/specs/theme-gallery/spec.md).
+					if (set.provenance && set.provenance.sourceUrl) {
+						var provenance = document.createElement('a')
+						provenance.className = 'nldesign-custom-set-provenance'
+						provenance.href = set.provenance.sourceUrl
+						provenance.target = '_blank'
+						provenance.rel = 'noopener noreferrer'
+						provenance.textContent = t(
+							'thematiq',
+							'From the gallery, licence {licence}',
+							{
+								licence: set.provenance.licence || '',
+							},
+						)
+						row.appendChild(provenance)
+					}
+
+					var downloadBtn = document.createElement('button')
+					downloadBtn.type = 'button'
+					downloadBtn.className = 'nldesign-btn nldesign-btn--small'
+					downloadBtn.textContent = t('thematiq', 'Download')
+					downloadBtn.addEventListener('click', function () {
+						downloadWithToken(
+							OC.generateUrl(
+								'/apps/thematiq/settings/tokensets/custom/'
+									+ encodeURIComponent(set.id)
+									+ '/export',
+							),
+							set.id + '.css',
+							t('thematiq', 'The token set could not be downloaded.'),
+						)
+					})
+					row.appendChild(downloadBtn)
+
+					// The token reference of this set (openspec/specs/token-reference/spec.md).
+					var referenceLink = document.createElement('a')
+					referenceLink.className = 'nldesign-token-reference-link'
+					referenceLink.href = tokenReferenceUrl(set.id, 'html', false)
+					referenceLink.target = '_blank'
+					referenceLink.rel = 'noopener noreferrer'
+					referenceLink.textContent = t('thematiq', 'Token reference')
+					referenceLink.setAttribute(
+						'aria-label',
+						t('thematiq', 'Token reference of {name}', {
+							name: set.name || set.id,
+						}),
 					)
-				} else if (contrast.length > 0) {
-					badge.classList.add('nldesign-badge--warning')
-					badge.textContent = t('thematiq', 'Contrast warning')
-				} else {
-					badge.classList.add('nldesign-badge--ok')
-					badge.textContent = t('thematiq', 'WCAG AA OK')
-				}
-				row.appendChild(badge)
+					row.appendChild(referenceLink)
 
-				// A set installed from the theme gallery names its source and
-				// licence (openspec/specs/theme-gallery/spec.md).
-				if (set.provenance && set.provenance.sourceUrl) {
-					var provenance = document.createElement('a')
-					provenance.className = 'nldesign-custom-set-provenance'
-					provenance.href = set.provenance.sourceUrl
-					provenance.target = '_blank'
-					provenance.rel = 'noopener noreferrer'
-					provenance.textContent = t(
+					var referenceDownload = document.createElement('a')
+					referenceDownload.className = 'nldesign-token-reference-link'
+					referenceDownload.href = tokenReferenceUrl(set.id, 'md', true)
+					referenceDownload.textContent = t(
 						'thematiq',
-						'From the gallery, licence {licence}',
-						{
-							licence: set.provenance.licence || '',
-						},
+						'Download reference',
 					)
-					row.appendChild(provenance)
-				}
-
-				var downloadBtn = document.createElement('button')
-				downloadBtn.type = 'button'
-				downloadBtn.className = 'nldesign-btn nldesign-btn--small'
-				downloadBtn.textContent = t('thematiq', 'Download')
-				downloadBtn.addEventListener('click', function () {
-					downloadWithToken(
-						OC.generateUrl(
-							'/apps/thematiq/settings/tokensets/custom/'
-								+ encodeURIComponent(set.id)
-								+ '/export',
-						),
-						set.id + '.css',
-						t('thematiq', 'The token set could not be downloaded.'),
+					referenceDownload.setAttribute(
+						'aria-label',
+						t('thematiq', 'Download the token reference of {name}', {
+							name: set.name || set.id,
+						}),
 					)
+					row.appendChild(referenceDownload)
+
+					var deleteBtn = document.createElement('button')
+					deleteBtn.type = 'button'
+					deleteBtn.className =
+						'nldesign-btn nldesign-btn--small nldesign-btn--danger'
+					deleteBtn.textContent = t('thematiq', 'Delete')
+					deleteBtn.addEventListener('click', function () {
+						deleteCustomSet(set.id, set.name || set.id)
+					})
+					row.appendChild(deleteBtn)
+
+					listEl.appendChild(row)
 				})
-				row.appendChild(downloadBtn)
-
-				// The token reference of this set (openspec/specs/token-reference/spec.md).
-				var referenceLink = document.createElement('a')
-				referenceLink.className = 'nldesign-token-reference-link'
-				referenceLink.href = tokenReferenceUrl(set.id, 'html', false)
-				referenceLink.target = '_blank'
-				referenceLink.rel = 'noopener noreferrer'
-				referenceLink.textContent = t('thematiq', 'Token reference')
-				referenceLink.setAttribute(
-					'aria-label',
-					t('thematiq', 'Token reference of {name}', {
-						name: set.name || set.id,
-					}),
-				)
-				row.appendChild(referenceLink)
-
-				var referenceDownload = document.createElement('a')
-				referenceDownload.className = 'nldesign-token-reference-link'
-				referenceDownload.href = tokenReferenceUrl(set.id, 'md', true)
-				referenceDownload.textContent = t('thematiq', 'Download reference')
-				referenceDownload.setAttribute(
-					'aria-label',
-					t('thematiq', 'Download the token reference of {name}', {
-						name: set.name || set.id,
-					}),
-				)
-				row.appendChild(referenceDownload)
-
-				var deleteBtn = document.createElement('button')
-				deleteBtn.type = 'button'
-				deleteBtn.className =
-					'nldesign-btn nldesign-btn--small nldesign-btn--danger'
-				deleteBtn.textContent = t('thematiq', 'Delete')
-				deleteBtn.addEventListener('click', function () {
-					deleteCustomSet(set.id, set.name || set.id)
-				})
-				row.appendChild(deleteBtn)
-
-				listEl.appendChild(row)
-			})
 		}
 
 		function deleteCustomSet(id, name) {

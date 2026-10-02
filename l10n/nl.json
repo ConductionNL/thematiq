@@ -790,7 +790,22 @@
         "The theme does not declare this role, so the value was derived from the theme's own colours (a darkened or mixed brand colour, or a step from its grey ramp).": "Het thema geeft deze rol niet op, dus de waarde is afgeleid van de eigen kleuren van het thema (een donkerder of gemengde merkkleur, of een stap uit de grijsschaal).",
         "The theme declares nothing for this role and nothing could be derived from it, so Nextcloud's own default was used.": "Het thema geeft niets op voor deze rol en er viel niets uit af te leiden, dus de standaardwaarde van Nextcloud is gebruikt.",
         "The theme's logo was decoded out of its token and stored as an image file, so it can drive both the app header and Nextcloud's own logo, name and e-mail branding.": "Het logo van het thema is uit de token gehaald en als afbeeldingsbestand opgeslagen, zodat het zowel de kopbalk van de app als het eigen logo, de naam en de e-mailhuisstijl van Nextcloud kan voeden.",
-        "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead.": "Het logo van het thema kon niet als afbeelding worden opgeslagen: het is geen inline SVG, PNG, JPEG, GIF of WebP, of het is groter dan de limiet van 256 KB. Upload in plaats daarvan een logo in de eigen thema-instellingen van Nextcloud."
+        "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead.": "Het logo van het thema kon niet als afbeelding worden opgeslagen: het is geen inline SVG, PNG, JPEG, GIF of WebP, of het is groter dan de limiet van 256 KB. Upload in plaats daarvan een logo in de eigen thema-instellingen van Nextcloud.",
+        "({count} token)": "({count} token)",
+        "({count} tokens)": "({count} tokens)",
+        "{count} brand imported as a token set.": "{count} merk geïmporteerd als tokenset.",
+        "{count} brands imported as token sets.": "{count} merken geïmporteerd als tokensets.",
+        "Choose at least one brand.": "Kies minstens één merk.",
+        "Import the chosen brands": "De gekozen merken importeren",
+        "Nothing was imported.": "Er is niets geïmporteerd.",
+        "The source was not updated:": "De bron is niet bijgewerkt:",
+        "The source was not updated.": "De bron is niet bijgewerkt.",
+        "This file holds {count} brands. Choose the ones to import.": "Dit bestand bevat {count} merken. Kies welke u importeert.",
+        "Update source": "Bron bijwerken",
+        "Update source {name}": "Bron {name} bijwerken",
+        "Updated: {updated}. Missing from the file, kept as they were: {missing}. New in the file, not imported: {new}.": "Bijgewerkt: {updated}. Niet meer in het bestand, ongewijzigd bewaard: {missing}. Nieuw in het bestand, niet geïmporteerd: {new}.",
+        "There is no token source with this id.": "Er is geen tokenbron met deze id.",
+        "The file exceeds the 512 KB size limit.": "Het bestand is groter dan 512 KB."
     },
     "plurals": {}
 }

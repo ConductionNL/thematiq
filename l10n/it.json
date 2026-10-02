@@ -790,7 +790,22 @@
         "The theme does not declare this role, so the value was derived from the theme's own colours (a darkened or mixed brand colour, or a step from its grey ramp).": "The theme does not declare this role, so the value was derived from the theme's own colours (a darkened or mixed brand colour, or a step from its grey ramp).",
         "The theme declares nothing for this role and nothing could be derived from it, so Nextcloud's own default was used.": "The theme declares nothing for this role and nothing could be derived from it, so Nextcloud's own default was used.",
         "The theme's logo was decoded out of its token and stored as an image file, so it can drive both the app header and Nextcloud's own logo, name and e-mail branding.": "The theme's logo was decoded out of its token and stored as an image file, so it can drive both the app header and Nextcloud's own logo, name and e-mail branding.",
-        "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead.": "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead."
+        "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead.": "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead.",
+        "({count} token)": "({count} token)",
+        "({count} tokens)": "({count} tokens)",
+        "{count} brand imported as a token set.": "{count} brand imported as a token set.",
+        "{count} brands imported as token sets.": "{count} brands imported as token sets.",
+        "Choose at least one brand.": "Choose at least one brand.",
+        "Import the chosen brands": "Import the chosen brands",
+        "Nothing was imported.": "Nothing was imported.",
+        "The source was not updated:": "The source was not updated:",
+        "The source was not updated.": "The source was not updated.",
+        "This file holds {count} brands. Choose the ones to import.": "This file holds {count} brands. Choose the ones to import.",
+        "Update source": "Update source",
+        "Update source {name}": "Update source {name}",
+        "Updated: {updated}. Missing from the file, kept as they were: {missing}. New in the file, not imported: {new}.": "Updated: {updated}. Missing from the file, kept as they were: {missing}. New in the file, not imported: {new}.",
+        "There is no token source with this id.": "There is no token source with this id.",
+        "The file exceeds the 512 KB size limit.": "The file exceeds the 512 KB size limit."
     },
     "plurals": {}
 }
