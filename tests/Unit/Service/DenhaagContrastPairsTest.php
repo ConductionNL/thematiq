@@ -102,16 +102,24 @@ class DenhaagContrastPairsTest extends TestCase {
 	}
 
 	/**
-	 * A set without its own Den Haag values is judged through the bridge, and a
-	 * weak warning colour shows up as a failing pair, not as a pass.
+	 * A set without its own Den Haag values is judged through the bridge, and
+	 * its warning text is its own warning hue, darkened until it reads.
 	 *
 	 * @return void
 	 */
-	public function testABridgedSetWithAWeakWarningFailsThatPair(): void {
-		$result = $this->audit()->auditSet(appPath: $this->repoRoot(), id: 'tilburg', theming: []);
+	public function testABridgedSetReadsItsWarningInADarkerShadeOfItsOwnHue(): void {
+		$audit = $this->audit();
+		$result = $audit->auditSet(appPath: $this->repoRoot(), id: 'tilburg', theming: []);
+		$cascade = $audit->portalCascade(appPath: $this->repoRoot(), id: 'tilburg');
+		$pairs = new DenhaagContrastPairs();
 
-		$this->assertSame('pass', $result['denhaag']['case-title']['verdict']);
-		$this->assertSame('fail', $result['denhaag']['action-date-warning']['verdict']);
+		$this->assertSame('pass', $result['denhaag']['action-date-warning']['verdict']);
+		$this->assertStringContainsString('--thematiq-status-warning-text', $cascade['--denhaag-action-date-warning-color']);
+		$this->assertNotSame(
+			$pairs->resolve(declarations: $cascade, name: '--nldesign-color-warning'),
+			$pairs->resolve(declarations: $cascade, name: '--denhaag-action-date-warning-color'),
+			'The text is derived from the warning colour, not the warning colour itself.'
+		);
 	}
 
 	/**
@@ -136,5 +144,90 @@ class DenhaagContrastPairsTest extends TestCase {
 
 		$this->assertStringContainsString('## Den Haag component pairs', $report);
 		$this->assertMatchesRegularExpression('/^\| example-gemeente \| 13 \| 0 \| 0 \|/m', $report);
+	}
+
+	/**
+	 * A malformed or cyclic chain resolves to nothing, never to a guess.
+	 *
+	 * @return void
+	 */
+	public function testABrokenChainResolvesToNothing(): void {
+		$pairs = new DenhaagContrastPairs();
+
+		$this->assertNull($pairs->resolve(declarations: ['--a' => 'var(--b'], name: '--a'), 'An unclosed var() is malformed.');
+		$this->assertNull($pairs->resolve(declarations: ['--a' => 'var(--a)'], name: '--a'), 'A self-reference ends at the depth limit.');
+		$this->assertNull($pairs->resolve(declarations: [], name: '--a'), 'An undeclared property has no value.');
+		$this->assertSame('#927739', $pairs->resolve(declarations: ['--a' => 'var(--gone, #927739)'], name: '--a'));
+		$this->assertSame('#917036', $pairs->resolve(declarations: ['--a' => 'hsl(38deg 46% 39%)'], name: '--a'), 'An hsl() colour is measured, not left unevaluated.');
+	}
+
+	/**
+	 * The report line names every pair that is not a pass, with its ratio or a dash.
+	 *
+	 * @return void
+	 */
+	public function testTheReportLineNamesFailingAndUnevaluatedPairs(): void {
+		$pairs = new DenhaagContrastPairs();
+		$measured = $pairs->pairs(declarations: [
+			'--nldesign-color-background' => '#ffffff',
+			'--denhaag-step-marker-current-color' => '#ffffff',
+			'--denhaag-step-marker-current-background-color' => '#ffd23f',
+		]);
+
+		$lines = $pairs->reportLines(rows: [['id' => 'fixture', 'denhaag' => $measured]]);
+		$rows = array_values(array_filter($lines, static fn (string $line): bool => str_starts_with($line, '| fixture ')));
+		$this->assertCount(1, $rows);
+		$row = $rows[0];
+
+		$this->assertStringStartsWith('| fixture | 0 | 1 | 12 |', $row);
+		$this->assertStringContainsString('step-current 1.', $row);
+		$this->assertStringContainsString('case-title —', $row);
+	}
+
+	/**
+	 * A page without a declared background is white, as the bridge paints it.
+	 *
+	 * @return void
+	 */
+	public function testAPageWithoutABackgroundIsWhite(): void {
+		$result = (new DenhaagContrastPairs())->pairs(declarations: [
+			'--denhaag-file-link-color' => '#767676',
+		]);
+
+		$this->assertSame('pass', $result['file-link']['verdict'], '#767676 on white is 4.54:1.');
+	}
+
+	/**
+	 * Every shipped set passes every Den Haag pair.
+	 *
+	 * A guard, not the verdict: the report keeps these pairs out of the
+	 * pass/fail column, but a set or a mapping change that drops a pair under
+	 * 4.5:1 fails here, naming the set, the pair and the ratio.
+	 *
+	 * @return void
+	 */
+	public function testEveryShippedSetPassesEveryDenhaagPair(): void {
+		$failing = [];
+		foreach ($this->audit()->auditAll(appPath: $this->repoRoot()) as $row) {
+			foreach ($row['denhaag'] as $pair => $measured) {
+				if ($measured['verdict'] !== 'pass') {
+					$failing[] = $row['id'] . ' ' . $pair . ' ' . var_export($measured['ratio'], true);
+				}
+			}
+		}
+
+		$this->assertSame([], $failing);
+	}
+
+	/**
+	 * An unknown set still gets a portal cascade: defaults, bridge, white page.
+	 *
+	 * @return void
+	 */
+	public function testAnUnknownSetGetsTheBridgeAndAWhitePage(): void {
+		$cascade = $this->audit()->portalCascade(appPath: $this->repoRoot(), id: 'no-such-set');
+
+		$this->assertSame('#ffffff', $cascade['--nldesign-color-background']);
+		$this->assertArrayHasKey('--thematiq-status-warning-text', $cascade);
 	}
 }
