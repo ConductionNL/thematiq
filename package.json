@@ -67,9 +67,6 @@
 	"dependencies": {
 		"@fontsource/fira-sans": "^5.0.0"
 	},
-	"optionalDependencies": {
-		"@gouvfr/dsfr": "^1.15.3"
-	},
 	"devDependencies": {
 		"@conduction/nextcloud-vue": "^2.57.1",
 		"@cyclonedx/cyclonedx-npm": "^6.0.1",
