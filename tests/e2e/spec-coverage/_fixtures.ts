@@ -165,3 +165,52 @@ export async function api(
 export function requireFixture(value: unknown, what: string): void {
 	expect(value, `fixture precondition: ${what}`).toBeTruthy()
 }
+
+/** Every custom set an e2e spec creates gets an id with this prefix. */
+export const E2E_CUSTOM_SET_PREFIX = 'custom-e2e-'
+
+/**
+ * Delete every custom token set an e2e run left behind (#181).
+ *
+ * A spec that creates a set deletes it as its last step, so a test that dies
+ * earlier (a timeout, a 503) leaves the set on the instance, and the next run
+ * sees extra rows. Calling this before and after the specs that upload makes
+ * cleanup independent of how far a test got. It only touches ids starting with
+ * E2E_CUSTOM_SET_PREFIX, so an administrator's own sets are never removed.
+ *
+ * @param browser the worker's browser
+ * @return the ids that were deleted
+ */
+export async function removeE2eCustomSets(browser: Browser): Promise<string[]> {
+	const context = await adminContext(browser)
+	try {
+		const page = await context.newPage()
+		await page.goto('/settings/admin/theming', { waitUntil: 'domcontentloaded' })
+		return await page.evaluate(async (prefix) => {
+			const token = (window as any).OC.requestToken
+			const base = (window as any).OC.generateUrl('/apps/thematiq/settings/tokensets/custom')
+			const res = await fetch(base, { headers: { requesttoken: token } })
+			if (!res.ok) {
+				return []
+			}
+			const sets = ((await res.json()).sets ?? []) as Array<{ id?: string }>
+			const deleted: string[] = []
+			for (const set of sets) {
+				const id = String(set.id ?? '')
+				if (!id.startsWith(prefix)) {
+					continue
+				}
+				const del = await fetch(`${base}/${encodeURIComponent(id)}`, {
+					method: 'DELETE',
+					headers: { requesttoken: token },
+				})
+				if (del.ok) {
+					deleted.push(id)
+				}
+			}
+			return deleted
+		}, E2E_CUSTOM_SET_PREFIX)
+	} finally {
+		await context.close()
+	}
+}
