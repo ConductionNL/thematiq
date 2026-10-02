@@ -97,7 +97,11 @@ class OwnTokenService {
 			return [];
 		}
 
-		return array_filter($decoded, static fn ($token, $name): bool => is_array($token) === true && self::isOwnName(name: (string)$name), ARRAY_FILTER_USE_BOTH);
+		return array_filter(
+			$decoded,
+			static fn ($token, $name): bool => is_array($token) === true && self::isOwnName(name: (string)$name),
+			ARRAY_FILTER_USE_BOTH
+		);
 	}//end list()
 
 	/**
