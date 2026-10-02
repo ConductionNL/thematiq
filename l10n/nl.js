@@ -943,7 +943,8 @@ OC.L10N.register(
         "Unknown document image.": "Onbekende documentafbeelding.",
         "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload een PNG-, JPEG- of WebP-afbeelding, of een SVG zonder script.",
         "The end must be in the future.": "Het einde moet in de toekomst liggen.",
-        "The house style could not be saved. Ask an administrator to check the house style of this group.": "De huisstijl kon niet worden opgeslagen. Vraag een beheerder om de huisstijl van deze groep te controleren."
+        "The house style could not be saved. Ask an administrator to check the house style of this group.": "De huisstijl kon niet worden opgeslagen. Vraag een beheerder om de huisstijl van deze groep te controleren.",
+        "The running configuration differs from the package. The changes made here stay until the package changes or an operator runs occ thematiq:config:apply --force.": "De actieve configuratie wijkt af van het pakket. De wijzigingen die hier zijn gemaakt blijven staan tot het pakket verandert of een beheerder occ thematiq:config:apply --force uitvoert."
     },
     "nplurals=2; plural=(n != 1);"
 )

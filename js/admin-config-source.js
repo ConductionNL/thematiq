@@ -113,7 +113,7 @@
 				block,
 				t(
 					'thematiq',
-					'The running configuration differs from the package. The next apply replaces the changes made here.',
+					'The running configuration differs from the package. The changes made here stay until the package changes or an operator runs occ thematiq:config:apply --force.',
 				),
 				'nldesign-config-source-drift',
 			)
