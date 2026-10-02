@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -184,6 +186,8 @@ class TokenSetService {
 	 * @param ShippedTokenSetAuditService $audit The shipped-set contrast audit service.
 	 * @param ICacheFactory $cacheFactory Creates the distributed WCAG-level cache.
 	 * @param TokenSetVocabularyAuditService $vocabularyAudit The vocabulary-completeness audit service.
+	 * @param RuntimeFileStore|null $store Where uploaded sets are kept (app data).
+	 * @param SetFileReader $files Lists and checks a set's file in the release or the store.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -192,6 +196,8 @@ class TokenSetService {
 		ShippedTokenSetAuditService $audit,
 		ICacheFactory $cacheFactory,
 		TokenSetVocabularyAuditService $vocabularyAudit,
+		private readonly ?RuntimeFileStore $store = null,
+		private readonly SetFileReader $files = new SetFileReader(),
 	) {
 		$this->appManager = $appManager;
 		$this->config = $config;
@@ -225,7 +231,6 @@ class TokenSetService {
 	 */
 	public function getAvailableTokenSets(): array {
 		$appPath = $this->getAppPath();
-		$tokensDir = $appPath . '/css/tokens';
 		$manifestPath = $appPath . '/token-sets.json';
 
 		// Read metadata from token-sets.json (shipped sets).
@@ -240,10 +245,10 @@ class TokenSetService {
 		// what applying the theme is meant to bring back.
 		$captured = $this->readCapturedTheming();
 
-		// Scan filesystem for actual CSS files.
+		// Scan the release for shipped sets and the store for uploaded ones.
 		$tokenSets = [];
-		if (is_dir($tokensDir) === true) {
-			$files = scandir($tokensDir);
+		$files = $this->files->fileNames(appPath: $appPath, directory: 'css/tokens', store: $this->store);
+		if ($files !== []) {
 			foreach ($files as $file) {
 				if (str_ends_with($file, '.css') === true) {
 					$id = basename($file, '.css');
@@ -536,11 +541,9 @@ class TokenSetService {
 			return false;
 		}
 
-		$appPath = $this->getAppPath();
-		$cssFile = $appPath . '/css/tokens/' . $tokenSetId . '.css';
-
-		return file_exists($cssFile);
+		return $this->files->exists(appPath: $this->getAppPath(), name: 'css/tokens/' . $tokenSetId . '.css', store: $this->store);
 	}//end isValidTokenSet()
+
 
 	/**
 	 * Read the token-sets.json manifest and index by id.
