@@ -159,31 +159,91 @@
 	 * do not overlap. The container is named rather than assumed to be the
 	 * parent, because a table row's siblings live in `tbody` and a navigation
 	 * entry's in the column, not in whatever element happens to wrap them.
+	 *
+	 * The rest says how the pick reaches a keyboard and a screen reader, which
+	 * the class alone never did (WCAG 2.1.1 and 4.1.2):
+	 *
+	 *  - `state` is the attribute that carries the pick, with `value` on the
+	 *    picked row. `aria-selected` is only valid on a row whose `role`
+	 *    supports it (a tab, an option, a table row); everything else says it
+	 *    with `aria-current`, which any element may carry.
+	 *  - `role` and `groupRole` give a set the widget semantics it acts out.
+	 *  - `arrows` marks a composite widget: one tab stop for the whole set
+	 *    (roving tabindex) and the arrow keys moving between its rows, which is
+	 *    the contract a tablist or a listbox promises. `follows` moves the pick
+	 *    with the focus, the way tabs do; an option waits for Enter or Space.
+	 *    A set without `arrows` puts every row in the tab order instead.
 	 */
 	var PICKABLE = [
-		{ row: '.nldesign-pg-tab', group: '.nldesign-pg-tabs', on: 'is-active' },
+		{
+			row: '.nldesign-pg-tab',
+			group: '.nldesign-pg-tabs',
+			on: 'is-active',
+			role: 'tab',
+			groupRole: 'tablist',
+			state: 'aria-selected',
+			value: 'true',
+			arrows: 'horizontal',
+			follows: true,
+		},
 		{
 			row: '.nldesign-pg-nav-entry',
 			group: '.nldesign-pg-nav',
 			on: 'is-selected active',
+			role: 'link',
+			state: 'aria-current',
+			value: 'page',
 		},
 		{
 			row: '.nldesign-pg-listitem',
 			group: '.nldesign-pg-list',
 			on: 'is-selected active',
+			state: 'aria-current',
+			value: 'true',
 		},
-		{ row: '.nldesign-pg-rec', group: '.app-content-list', on: 'is-selected' },
+		{
+			row: '.nldesign-pg-rec',
+			group: '.app-content-list',
+			on: 'is-selected',
+			state: 'aria-current',
+			value: 'true',
+		},
 		{
 			row: '.nldesign-pg-table tbody tr',
 			group: '.nldesign-pg-table tbody',
 			on: 'is-selected',
+			state: 'aria-selected',
+			value: 'true',
 		},
 		{
 			row: '.nldesign-pg-crumb',
 			group: '.nldesign-pg-crumbs',
 			on: 'is-current',
+			role: 'link',
+			state: 'aria-current',
+			value: 'page',
 		},
 	]
+
+	/**
+	 * The options of the select specimen, which are chosen rather than picked:
+	 * choosing one writes it into the field (see interact()). They are a
+	 * listbox all the same, and wear their choice the way a picked row does.
+	 */
+	var OPTIONS = {
+		row: '.nldesign-pg-option',
+		group: '.nldesign-pg-options',
+		on: 'is-selected',
+		role: 'option',
+		groupRole: 'listbox',
+		state: 'aria-selected',
+		value: 'true',
+		arrows: 'vertical',
+		follows: false,
+	}
+
+	/** Every set the keyboard and the accessibility tree have to reach. */
+	var SETS = PICKABLE.concat([OPTIONS])
 
 	/**
 	 * What the stage reports when each specimen button is pressed.
@@ -1704,6 +1764,7 @@
 		state.stage.appendChild(saidLine)
 
 		decorateFields(state.stage)
+		decoratePickables(state.stage)
 	}
 
 	/**
@@ -1906,23 +1967,11 @@
 		})
 
 		// The button specimens are real `<button>` elements, which the browser
-		// already activates on Enter and Space by firing a click — so the
-		// handler above covers them. What is still needed is stopping Space
-		// from scrolling the panel out from under the specimen being looked at.
+		// already activates on Enter and Space by firing a click, so the
+		// handler above covers them. The pickable rows are not, and keyOn()
+		// gives them the keys their widget promises.
 		stage.addEventListener('keydown', function (event) {
-			if (event.key !== ' ') {
-				return
-			}
-
-			var target = event.target
-			if (
-				target.closest === undefined
-				|| target.closest('.nldesign-pg-btn') === null
-			) {
-				return
-			}
-
-			event.preventDefault()
+			keyOn(stage, event)
 		})
 	}
 
@@ -1993,6 +2042,10 @@
 			if (field !== null) {
 				setLabel(field, firstLine(option))
 			}
+			var options = option.closest(OPTIONS.group)
+			if (options !== null) {
+				pick(options, option, OPTIONS.row, OPTIONS.on)
+			}
 			// The name is the specimen's own label and stays in the language the
 			// drawing is in; the sentence around it is the instrument speaking.
 			say(
@@ -2017,6 +2070,13 @@
 
 		var choice = target.closest('.nldesign-pg-choice')
 		if (choice !== null) {
+			// A click on the label is followed by the browser's own click on
+			// the input it names, which lands here as well. Answering both
+			// flipped the choice twice and left it where it was.
+			var label = target.closest('label')
+			if (label !== null && choice.contains(label) && label.htmlFor !== '') {
+				return
+			}
 			toggleChoice(choice)
 			say(
 				stage,
@@ -2047,7 +2107,114 @@
 	}
 
 	/**
-	 * Move a state class to the element that was picked.
+	 * The set a row selector belongs to.
+	 *
+	 * @param {string} rowSelector A `row` out of SETS.
+	 * @return {?Object} Its set, or null for a selector no set names.
+	 */
+	function setFor(rowSelector) {
+		for (var i = 0; i < SETS.length; i++) {
+			if (SETS[i].row === rowSelector) {
+				return SETS[i]
+			}
+		}
+
+		return null
+	}
+
+	/**
+	 * The rows of one set that belong to this container and to no nearer one.
+	 *
+	 * @param {Element} group The container the set lives in.
+	 * @param {Object} set Its entry in SETS.
+	 * @return {Array<Element>} The rows, in document order.
+	 */
+	function rowsOf(group, set) {
+		var groupSelector = set.group
+		return Array.prototype.filter.call(
+			group.querySelectorAll(set.row),
+			function (candidate) {
+				return candidate.closest(groupSelector) === group
+			},
+		)
+	}
+
+	/**
+	 * Say on one row whether it is the picked one, in the attributes a keyboard
+	 * and a screen reader read: its state attribute and, in a composite widget,
+	 * whether it is the set's one tab stop.
+	 *
+	 * @param {Element} row The row.
+	 * @param {Object} set Its entry in SETS.
+	 * @param {boolean} picked Whether it is the picked one.
+	 * @param {boolean} stop Whether it holds the set's tab stop.
+	 * @return {void}
+	 */
+	function markRow(row, set, picked, stop) {
+		if (set.role !== undefined) {
+			row.setAttribute('role', set.role)
+		}
+
+		if (set.state === 'aria-current') {
+			if (picked === true) {
+				row.setAttribute('aria-current', set.value)
+			} else {
+				row.removeAttribute('aria-current')
+			}
+		} else {
+			row.setAttribute(set.state, picked === true ? set.value : 'false')
+		}
+
+		if (set.arrows !== undefined) {
+			row.setAttribute('tabindex', stop === true ? '0' : '-1')
+		} else {
+			row.setAttribute('tabindex', '0')
+		}
+	}
+
+	/**
+	 * Give every pickable set on a freshly drawn stage its roles, its tab stops
+	 * and its current pick, read off the classes the specimen was drawn with.
+	 *
+	 * Done once over the drawn markup rather than written into each specimen,
+	 * so SETS is the one place that says how a set is reached, and a specimen
+	 * added later cannot forget it.
+	 *
+	 * @param {Element} root The stage, or any element holding specimens.
+	 * @return {void}
+	 */
+	function decoratePickables(root) {
+		SETS.forEach(function (set) {
+			var marker = set.on.split(' ')[0]
+			Array.prototype.forEach.call(
+				root.querySelectorAll(set.group),
+				function (group) {
+					var rows = rowsOf(group, set)
+					if (rows.length === 0) {
+						return
+					}
+					if (set.groupRole !== undefined) {
+						group.setAttribute('role', set.groupRole)
+					}
+					if (set === OPTIONS) {
+						group.setAttribute('aria-label', t('thematiq', 'Country'))
+					}
+
+					var picked = rows.filter(function (row) {
+						return row.classList.contains(marker)
+					})
+					var stop = picked.length > 0 ? picked[0] : rows[0]
+					rows.forEach(function (row) {
+						markRow(row, set, picked.indexOf(row) !== -1, row === stop)
+					})
+				},
+			)
+		})
+	}
+
+	/**
+	 * Move the pick to the element that was picked: its state classes, its
+	 * state attribute and, in a composite widget, the set's tab stop.
 	 *
 	 * @param {Element} group The container the set lives in.
 	 * @param {Element} row The element that was picked.
@@ -2057,6 +2224,7 @@
 	 */
 	function pick(group, row, rowSelector, on) {
 		var classes = on.split(' ')
+		var set = setFor(rowSelector)
 
 		Array.prototype.forEach.call(
 			group.querySelectorAll(rowSelector),
@@ -2064,12 +2232,108 @@
 				classes.forEach(function (name) {
 					candidate.classList.remove(name)
 				})
+				if (set !== null && candidate.closest(set.group) === group) {
+					markRow(candidate, set, false, false)
+				}
 			},
 		)
 
 		classes.forEach(function (name) {
 			row.classList.add(name)
 		})
+		if (set !== null) {
+			markRow(row, set, true, true)
+		}
+	}
+
+	/**
+	 * The set a focused element is a row of, if it is one.
+	 *
+	 * Only the row ITSELF counts: a key pressed in a field inside a row is the
+	 * field's, not the row's.
+	 *
+	 * @param {Element} target The focused element.
+	 * @return {?Object} Its entry in SETS, or null.
+	 */
+	function rowSetOf(target) {
+		if (target === null || typeof target.matches !== 'function') {
+			return null
+		}
+		for (var i = 0; i < SETS.length; i++) {
+			if (
+				target.matches(SETS[i].row) === true
+				&& target.closest(SETS[i].group) !== null
+			) {
+				return SETS[i]
+			}
+		}
+
+		return null
+	}
+
+	/**
+	 * Answer a key on a stage the way the widget it draws would.
+	 *
+	 * Enter and Space pick the focused row, as a click does. In a composite
+	 * widget the arrow keys, Home and End move between its rows, and in tabs
+	 * the pick follows the focus. Space never scrolls the panel from under a
+	 * row or a specimen button.
+	 *
+	 * @param {Element} stage The stage element.
+	 * @param {KeyboardEvent} event The key event.
+	 * @return {void}
+	 */
+	function keyOn(stage, event) {
+		var target = event.target
+		var set = rowSetOf(target)
+
+		if (set === null) {
+			if (
+				event.key === ' '
+				&& typeof target.closest === 'function'
+				&& target.closest('.nldesign-pg-btn') !== null
+			) {
+				event.preventDefault()
+			}
+			return
+		}
+
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault()
+			interact(stage, target)
+			return
+		}
+
+		if (set.arrows === undefined) {
+			return
+		}
+
+		var back = set.arrows === 'horizontal' ? 'ArrowLeft' : 'ArrowUp'
+		var next = set.arrows === 'horizontal' ? 'ArrowRight' : 'ArrowDown'
+		var rows = rowsOf(target.closest(set.group), set)
+		var index = rows.indexOf(target)
+		var to = -1
+		if (event.key === next) {
+			to = (index + 1) % rows.length
+		} else if (event.key === back) {
+			to = (index - 1 + rows.length) % rows.length
+		} else if (event.key === 'Home') {
+			to = 0
+		} else if (event.key === 'End') {
+			to = rows.length - 1
+		}
+		if (to === -1) {
+			return
+		}
+
+		event.preventDefault()
+		rows.forEach(function (row) {
+			row.setAttribute('tabindex', row === rows[to] ? '0' : '-1')
+		})
+		rows[to].focus()
+		if (set.follows === true) {
+			interact(stage, rows[to])
+		}
 	}
 
 	/**
@@ -3051,13 +3315,14 @@
 		return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase()
 	}
 
-	/** Make a string safe to sit inside a double-quoted HTML attribute. */
+	/** Make a string safe to sit inside a quoted HTML attribute (#622). */
 	function attr(value) {
 		return String(value)
 			.replace(/&/g, '&amp;')
 			.replace(/"/g, '&quot;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')
+			.replace(/'/g, '&#39;')
 	}
 
 	/**
@@ -3809,18 +4074,30 @@
 				? '--icon-size:36px;--icon-height:16px'
 				: '--icon-size:24px;--icon-height:24px'
 
+		// The content is a `<label for>` the way NcCheckboxContent renders it
+		// (`tag="label"`), so the control has a name and clicking its text
+		// reaches it. Drawn as a span, every choice was announced as an
+		// unnamed checkbox (WCAG 4.1.2).
+		var id = specimenId()
+
 		return (
 			'<span style="'
 			+ sizes
 			+ '" class="'
 			+ classes.join(' ')
 			+ '">'
-			+ '<input class="checkbox-radio-switch__input" type="'
+			+ '<input id="'
+			+ id
+			+ '" class="checkbox-radio-switch__input" type="'
 			+ (kind === 'radio' ? 'radio' : 'checkbox')
 			+ '"'
+			// What NcCheckboxRadioSwitch puts on the input of a switch.
+			+ (kind === 'switch' ? ' role="switch"' : '')
 			+ (checked === true ? ' checked' : '')
 			+ '>'
-			+ '<span class="checkbox-content checkbox-radio-switch__content'
+			+ '<label for="'
+			+ id
+			+ '" class="checkbox-content checkbox-radio-switch__content'
 			+ ' checkbox-content-'
 			+ kind
 			+ ' checkbox-content--has-text">'
@@ -3832,7 +4109,7 @@
 			+ '<span class="checkbox-content__wrapper">'
 			+ '<span class="checkbox-content__text checkbox-radio-switch__text">'
 			+ label
-			+ '</span></span></span>'
+			+ '</span></span></label>'
 			+ '</span>'
 		)
 	}
@@ -4132,9 +4409,29 @@
 		componentScopes: componentScopes,
 		applyScopes: applyScopes,
 		PICKABLE: PICKABLE,
+		OPTIONS: OPTIONS,
 		POINTABLE: POINTABLE,
 		STAGES: STAGES,
 		FULL_VIEW: FULL_VIEW,
+		// The interaction layer, driven under jsdom by
+		// tests/vitest/playgroundInteraction.spec.js. Exported for that
+		// alone: the browser reaches all of it through boot().
+		build: build,
+		setTab: setTab,
+		select: select,
+		enterComponent: enterComponent,
+		exitComponent: exitComponent,
+		renderStage: renderStage,
+		cloneRow: cloneRow,
+		wireReset: wireReset,
+		bindStage: bindStage,
+		interact: interact,
+		pick: pick,
+		decoratePickables: decoratePickables,
+		toggleChoice: toggleChoice,
+		setChoice: setChoice,
+		pressButton: pressButton,
+		say: say,
 		// The browser entry point.
 		boot: boot,
 	}

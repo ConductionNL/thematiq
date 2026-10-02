@@ -9,7 +9,7 @@ enriched_date: 2026-03-20
 ## Purpose
 Defines the "Hide Slogan" feature that removes the Nextcloud slogan/payoff text from the login page.
 
-@e2e exclude Backend/CSS/login-page spec — scenarios cover IConfig storage, PHP boot-time CSS injection, CSS selector behaviour on the login page, and API internals; the admin checkbox UI surface is covered by admin-settings tests. Dutch government organizations typically need to present a clean, branded login page without Nextcloud's default slogan ("a safe home for all your data"). When enabled, the footer element on the login page that contains this slogan is completely hidden via a conditionally loaded CSS file.
+Dutch government organizations typically need to present a clean, branded login page without Nextcloud's default slogan ("a safe home for all your data"). When enabled, the footer element on the login page that contains this slogan is completely hidden via a conditionally loaded CSS file.
 
 ## Requirements
 
@@ -29,12 +29,14 @@ The hide slogan setting MUST be stored in Nextcloud's `IConfig` as a string valu
 - AND the response MUST be JSON with `{"status": "ok", "hideSlogan": false}`
 
 #### Scenario: Default value when not configured
+@e2e exclude a browser cannot remove a stored app value, so it cannot reach the never-configured state on an instance where the setting was ever saved; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testTogglesAbsentFromConfigDefaultToOff asserts an absent key loads no hide-slogan stylesheet
 - GIVEN no value has been set for `nldesign:hide_slogan`
 - WHEN the setting is read during boot
 - THEN the default value MUST be `'0'` (disabled)
 - AND the slogan MUST be visible on the login page
 
 #### Scenario: Setting persists across app restarts
+@e2e exclude a server restart cannot be driven from a browser; the value is the IConfig row, and PHPUnit tests/Unit/Controller/SettingsControllerEndpointsTest.php::testATogglePersistsTheOnValue asserts the endpoint stores the string '1' there
 - GIVEN the admin has enabled the hide slogan setting
 - WHEN the Nextcloud server is restarted
 - THEN the setting MUST still be `'1'` in IConfig
@@ -128,6 +130,7 @@ The controller MUST correctly convert the boolean API parameter to a string for 
 - AND the value stored in IConfig MUST be the string `'0'`
 
 #### Scenario: Boot phase reads and compares correctly
+@e2e exclude the endpoint binds a boolean, so a browser can only ever store '1' or '0', never the loose values this scenario is about; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testConditionalStylesheetsIgnoreLooseTruthyValues asserts 'yes', 'true', 'on', '01' and ' 1' load nothing
 - GIVEN `IConfig` stores `'1'` for `hide_slogan`
 - WHEN `Application::injectThemeCSS()` reads the value
 - THEN it MUST compare with `=== '1'` to get boolean `true`

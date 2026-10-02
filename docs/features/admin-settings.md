@@ -11,9 +11,9 @@ Thematiq provides an admin settings panel for configuring the active theme, opti
 1. Log in as a Nextcloud administrator
 2. Go to **Administration Settings** (click your avatar, then "Administration settings")
 3. Navigate to **Appearance** in the left sidebar
-4. Scroll down to the **NL Design System Theme** section
+4. Scroll down to the **Thematiq** section
 
-![NL Design System Theme admin panel showing the token set dropdown, display option checkboxes, and preview section](../img/nl-design-section-top.png)
+![Thematiq admin panel showing the token set dropdown, display option checkboxes, and preview section](../img/nl-design-section-top.png)
 
 ## Token Set Selector
 

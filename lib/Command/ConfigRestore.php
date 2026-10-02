@@ -26,7 +26,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * `occ nldesign:config:restore <id> [--dry-run]`: restore a kept version.
+ * `occ thematiq:config:restore <id> [--dry-run]`: restore a kept version.
  *
  * @spec openspec/specs/theme-versions/spec.md
  */
@@ -51,9 +51,9 @@ class ConfigRestore extends Command {
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:config:restore')
+		$this->setName(name: 'thematiq:config:restore')
 			->setDescription('Restore a kept configuration version through the validated bundle import.')
-			->addArgument(name: 'id', mode: InputArgument::REQUIRED, description: 'The version id (see nldesign:config:versions)')
+			->addArgument(name: 'id', mode: InputArgument::REQUIRED, description: 'The version id (see thematiq:config:versions)')
 			->addOption(name: 'dry-run', shortcut: null, mode: InputOption::VALUE_NONE, description: 'Print the changes, write nothing');
 	}//end configure()
 
@@ -106,15 +106,13 @@ class ConfigRestore extends Command {
 	 * @param bool   $dryRun Whether to write nothing.
 	 *
 	 * @return array<string, mixed>|null The result, or null for an unknown id.
-	 *
-	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - mirrors the --dry-run option.
 	 */
 	private function previewOrRestore(string $id, bool $dryRun): ?array {
 		if ($dryRun === true) {
 			return $this->restorer->preview(id: $id);
 		}
 
-		return $this->restorer->restore(id: $id);
+		return $this->restorer->restore(id: $id, actor: 'cli');
 	}//end previewOrRestore()
 
 	/**

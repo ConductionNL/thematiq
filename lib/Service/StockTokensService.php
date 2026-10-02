@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\AppInfo\Application;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -114,7 +115,7 @@ class StockTokensService {
 	private ICache $cache;
 
 	/**
-	 * Reads the two values the cache key is made of.
+	 * Reads the three values the cache key is made of.
 	 *
 	 * @var IConfig
 	 */
@@ -198,20 +199,23 @@ class StockTokensService {
 	/**
 	 * Everything that can change the resolved block, in one string.
 	 *
-	 * The inputs are the installed Nextcloud version — the theme's variables
-	 * are that release's code — and the theming app's cachebuster, which core
-	 * bumps whenever an admin changes anything in its own theming settings.
-	 * That is precisely the pair that makes this answer go stale, and both are
-	 * cheap reads, so the cache invalidates itself rather than needing to be
-	 * cleared by anything.
+	 * The inputs are the installed Nextcloud version (the theme's variables
+	 * are that release's code), the theming app's cachebuster, which core
+	 * bumps whenever an admin changes anything in its own theming settings,
+	 * and this app's installed version, because the `--color-*` to
+	 * `--nldesign-*` mapping is read from this app's own `overrides.css` and
+	 * an upgrade can add, rename or remap a token (thematiq#621). Those three
+	 * are what make this answer go stale, and all are cheap reads, so the
+	 * cache invalidates itself rather than needing to be cleared by anything.
 	 *
 	 * @return string The cache key.
 	 */
 	private function cacheKey(): string {
 		$version = $this->config->getSystemValueString('version', '0.0.0');
 		$cachebuster = $this->config->getAppValue('theming', 'cachebuster', '0');
+		$appVersion = $this->config->getAppValue(Application::APP_ID, 'installed_version', '0');
 
-		return $version . ':' . $cachebuster;
+		return $version . ':' . $cachebuster . ':' . $appVersion;
 	}//end cacheKey()
 
 	/**
@@ -458,11 +462,6 @@ class StockTokensService {
 	 * stand in for that only if it is overridable.
 	 *
 	 * @return array<string, string> Variable name => declared value.
-	 *
-	 * @SuppressWarnings(PHPMD.StaticAccess) - another app's class, see the note
-	 *                                         on DEFAULT_THEME: a constructor
-	 *                                         type-hint would make this file
-	 *                                         unloadable without the theming app.
 	 *
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */

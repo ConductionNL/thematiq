@@ -24,7 +24,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/admin-js-unit-test-coverage/tasks.md#task-1
+ * @spec openspec/specs/admin-js-test-coverage/spec.md
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -127,6 +127,8 @@ async function flush(rounds = 8) {
 /** (Re-)import js/admin.js as a fresh module instance, running its IIFE against the current DOM. */
 async function loadAdminScript() {
 	vi.resetModules()
+	// The page loads js/lib/appTheming.js before admin.js; so does the fixture.
+	await import('../../js/lib/appTheming.js')
 	await import('../../js/admin.js?t=' + Math.random())
 	// admin.js's fetch-driven init calls (initAppTheming, etc.) resolve
 	// asynchronously; flush them before assertions run.
@@ -302,6 +304,227 @@ describe('admin.js keyboard accessibility', () => {
 			expect(dropdown.classList.contains('open')).toBe(false)
 			expect(trigger.getAttribute('aria-expanded')).toBe('false')
 			expect(document.activeElement).toBe(trigger)
+		})
+	})
+
+	describe('app-theming dropdown semantics', () => {
+		async function renderDropdown() {
+			buildDom(TOKEN_SETS, 'rijkshuisstijl')
+			document.body.insertAdjacentHTML(
+				'beforeend',
+				'<button type="button" id="outside">Elsewhere</button>',
+			)
+			installFetchRouter([
+				[
+					'/settings/app-theming',
+					{ apps: [{ id: 'files', name: 'Files', themed: true }] },
+				],
+			])
+			await loadAdminScript()
+			return {
+				trigger: document.querySelector('.nldesign-app-dropdown-trigger'),
+				dropdown: document.querySelector('.nldesign-app-dropdown'),
+				panel: document.querySelector('.nldesign-app-dropdown-panel'),
+			}
+		}
+
+		it('names the panel a dialog that the trigger controls and labels', async () => {
+			const { trigger, panel } = await renderDropdown()
+
+			expect(trigger.getAttribute('aria-haspopup')).toBe('dialog')
+			expect(panel.getAttribute('role')).toBe('dialog')
+			expect(trigger.getAttribute('aria-controls')).toBe(panel.id)
+			expect(panel.getAttribute('aria-labelledby')).toBe(trigger.id)
+			expect(trigger.textContent).toBe('1 of 1 apps themed')
+		})
+
+		it('closes when Tab moves focus out of the dropdown, without pulling focus back', async () => {
+			const { trigger, dropdown } = await renderDropdown()
+			trigger.click()
+			expect(dropdown.classList.contains('open')).toBe(true)
+
+			const outside = document.getElementById('outside')
+			const search = dropdown.querySelector('input[type="search"]')
+			search.dispatchEvent(
+				new window.FocusEvent('focusout', {
+					bubbles: true,
+					relatedTarget: outside,
+				}),
+			)
+			outside.focus()
+
+			expect(dropdown.classList.contains('open')).toBe(false)
+			expect(trigger.getAttribute('aria-expanded')).toBe('false')
+			expect(document.activeElement).toBe(outside)
+		})
+
+		it('stays open while focus moves between its own controls', async () => {
+			const { trigger, dropdown } = await renderDropdown()
+			trigger.click()
+
+			const search = dropdown.querySelector('input[type="search"]')
+			const checkbox = dropdown.querySelector('input[type="checkbox"]')
+			search.dispatchEvent(
+				new window.FocusEvent('focusout', {
+					bubbles: true,
+					relatedTarget: checkbox,
+				}),
+			)
+
+			expect(dropdown.classList.contains('open')).toBe(true)
+		})
+	})
+
+	describe('apply token set dialog', () => {
+		// The dialog previews the checked values on <html>; a value left there by
+		// an earlier test would match the proposed one and no dialog would open.
+		beforeEach(() => {
+			document.documentElement.removeAttribute('style')
+		})
+
+		async function openApplyDialog(beforeTrigger) {
+			buildDom(TOKEN_SETS, 'rijkshuisstijl')
+			installFetchRouter([
+				// One token differs from what the page shows, so the switch
+				// asks which values to apply.
+				[
+					'tokenset-preview',
+					{ resolved: { '--nldesign-color-text': '#123456' } },
+				],
+				['/settings/overrides', { overrides: {} }],
+				[
+					'/settings/theming',
+					{
+						primary_color: '#0000ff',
+						background_color: '#ffff00',
+						has_custom_logo: false,
+						has_custom_background: false,
+					},
+				],
+			])
+			await loadAdminScript()
+
+			const select = document.getElementById('nldesign-token-set-select')
+			if (typeof beforeTrigger === 'function') {
+				beforeTrigger(select)
+			}
+			select.value = 'gemeente-demo'
+			select.dispatchEvent(new window.Event('change', { bubbles: true }))
+			await flush()
+
+			return {
+				select,
+				overlay: document.getElementById('nldesign-apply-dialog-overlay'),
+			}
+		}
+
+		it('opens as a modal dialog with focus on its first control', async () => {
+			const { overlay } = await openApplyDialog()
+			expect(overlay).not.toBeNull()
+
+			const dialogEl = overlay.querySelector('.nldesign-dialog')
+			expect(dialogEl.getAttribute('role')).toBe('dialog')
+			expect(dialogEl.getAttribute('aria-modal')).toBe('true')
+			expect(dialogEl.getAttribute('aria-labelledby')).toBeTruthy()
+			expect(dialogEl.contains(document.activeElement)).toBe(true)
+		})
+
+		it('closes on Escape the way Cancel does: the old set comes back and focus returns', async () => {
+			const { select, overlay } = await openApplyDialog((el) => el.focus())
+			expect(overlay).not.toBeNull()
+
+			overlay.dispatchEvent(
+				new window.KeyboardEvent('keydown', {
+					key: 'Escape',
+					bubbles: true,
+				}),
+			)
+
+			expect(
+				document.getElementById('nldesign-apply-dialog-overlay'),
+			).toBeNull()
+			expect(select.value).toBe('rijkshuisstijl')
+			expect(
+				document.documentElement.style.getPropertyValue(
+					'--nldesign-color-text',
+				),
+			).toBe('')
+			expect(document.activeElement).toBe(select)
+		})
+
+		it('keeps Tab inside the dialog, with Select all and the checkboxes reachable', async () => {
+			const { overlay } = await openApplyDialog()
+			const dialogEl = overlay.querySelector('.nldesign-dialog')
+			const focusable = dialogEl.querySelectorAll('button, input')
+			expect(
+				dialogEl.querySelector('#nldesign-apply-select-all'),
+			).not.toBeNull()
+			expect(dialogEl.querySelector('.nldesign-apply-check')).not.toBeNull()
+
+			const first = focusable[0]
+			const last = focusable[focusable.length - 1]
+			first.focus()
+			overlay.dispatchEvent(
+				new window.KeyboardEvent('keydown', {
+					key: 'Tab',
+					shiftKey: true,
+					bubbles: true,
+					cancelable: true,
+				}),
+			)
+			expect(document.activeElement).toBe(last)
+		})
+	})
+
+	describe('preview view switch', () => {
+		async function renderSwitch() {
+			buildDom(TOKEN_SETS, 'rijkshuisstijl')
+			document.getElementById('nldesign-preview').innerHTML = `
+				<div class="nldesign-preview-switch" role="tablist" aria-label="Preview view">
+					<button type="button" class="nldesign-preview-switch-btn active" data-view="app" aria-selected="true">App</button>
+					<button type="button" class="nldesign-preview-switch-btn" data-view="login" aria-selected="false">Login</button>
+				</div>
+				<div class="nldesign-preview-stage" data-view="app"></div>
+				<div class="nldesign-preview-stage" data-view="login" hidden></div>
+			`
+			installFetchRouter([])
+			await loadAdminScript()
+			return Array.from(
+				document.querySelectorAll('.nldesign-preview-switch-btn'),
+			)
+		}
+
+		it('gives each view button the tab role, with only the selected one in the tab order', async () => {
+			const [app, login] = await renderSwitch()
+			expect(app.getAttribute('role')).toBe('tab')
+			expect(login.getAttribute('role')).toBe('tab')
+			expect(app.tabIndex).toBe(0)
+			expect(login.tabIndex).toBe(-1)
+		})
+
+		it('moves to the next view with the right arrow and shows its stage', async () => {
+			const [app, login] = await renderSwitch()
+			app.focus()
+			app.dispatchEvent(
+				new window.KeyboardEvent('keydown', {
+					key: 'ArrowRight',
+					bubbles: true,
+					cancelable: true,
+				}),
+			)
+
+			expect(document.activeElement).toBe(login)
+			expect(login.getAttribute('aria-selected')).toBe('true')
+			expect(app.getAttribute('aria-selected')).toBe('false')
+			expect(login.tabIndex).toBe(0)
+			expect(
+				document.querySelector('.nldesign-preview-stage[data-view="login"]')
+					.hidden,
+			).toBe(false)
+			expect(
+				document.querySelector('.nldesign-preview-stage[data-view="app"]')
+					.hidden,
+			).toBe(true)
 		})
 	})
 

@@ -11,7 +11,10 @@
  * is checked against the Nextcloud version under test, not against a list
  * copied into this file. The mapping is read from the served overrides.css.
  * The documentation table, docs/reference/mappings.md, is not served by
- * Nextcloud, so it is read from the checkout the instance runs.
+ * Nextcloud, so it is read from the checkout the instance runs. It is
+ * generated from the variable inventory (scripts/mapping/), and
+ * `npm run test:inventory` fails when the two drift, so the inventory is read
+ * alongside it for the classes the page lists by count rather than by row.
  *
  * Cascade claims run two ways: in an isolated document built from the served
  * stylesheets (no instance state touched), and on a live page with Gemeente
@@ -38,6 +41,14 @@ import {
 const DEFAULTS = 'systems/nldesign/defaults.css'
 const OVERRIDES = 'systems/nldesign/overrides.css'
 const MAPPINGS_MD = path.resolve(__dirname, '../../../docs/reference/mappings.md')
+const INVENTORY = path.resolve(
+	__dirname,
+	'../../../scripts/mapping/nextcloud-variables.json',
+)
+const STATUSES = path.resolve(
+	__dirname,
+	'../../../scripts/mapping/variable-status.json',
+)
 
 /** Amsterdam's primary, from css/tokens/amsterdam.css. */
 const AMSTERDAM_PRIMARY = '#004699'
@@ -72,30 +83,75 @@ function parseOverrides(css: string): Entries {
 	return { mapped, mappedValues, commented }
 }
 
-/** The rows of docs/reference/mappings.md: variable to { mapping, category, notes }. */
-function mappingRows(): Map<
-	string,
-	{ mapping: string; category: string; notes: string }
-> {
-	const rows = new Map<
-		string,
-		{ mapping: string; category: string; notes: string }
-	>()
-	const md = fs.readFileSync(MAPPINGS_MD, 'utf8')
-	for (const line of md.split('\n')) {
-		const m =
-			/^\|\s*`(--[\w-]+)`\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*$/.exec(
-				line,
-			)
-		if (m !== null) {
-			rows.set(m[1], {
-				mapping: m[2].replace(/`/g, ''),
-				category: m[3],
-				notes: m[4],
-			})
+type DocRow = {
+	/** `mapped`, `settable` or `excluded`. */
+	status: string
+	/** The `--nldesign-*` token, empty when the row names none. */
+	token: string
+	/** The Note cell; null in tables that have no Note column. */
+	note: string | null
+	/** The `###` (or `##`) heading the row sits under. */
+	section: string
+}
+
+/**
+ * Every row of every variable table in docs/reference/mappings.md. The page
+ * has two table shapes (theme: Variable, Status, Token, Default, Dark, Note;
+ * component, slot and library: Variable, Family, Status, Token, Value), so
+ * cells are read by their header, not by position.
+ */
+function mappingRows(): Map<string, DocRow> {
+	const rows = new Map<string, DocRow>()
+	const cells = (line: string) =>
+		line
+			.split('|')
+			.slice(1, -1)
+			.map((c) => c.trim().replace(/`/g, ''))
+	let header: string[] | null = null
+	let section = ''
+	for (const line of fs.readFileSync(MAPPINGS_MD, 'utf8').split('\n')) {
+		const heading = /^#{2,3}\s+(.*)$/.exec(line)
+		if (heading !== null) {
+			section = heading[1].trim()
+			header = null
+			continue
 		}
+		if (/^\|\s*Variable\s*\|/.test(line)) {
+			header = cells(line)
+			continue
+		}
+		const name = /^\|\s*`(--[\w-]+)`/.exec(line)
+		if (name === null || header === null) continue
+		const row = cells(line)
+		const cell = (h: string) => {
+			const i = header?.indexOf(h) ?? -1
+			return i === -1 ? null : (row[i] ?? '')
+		}
+		rows.set(name[1], {
+			status: cell('Status') ?? '',
+			token: cell('Token') ?? '',
+			note: cell('Note'),
+			section,
+		})
 	}
 	return rows
+}
+
+/** Every name the inventory records, whether or not it has its own row. */
+function inventoryNames(): Set<string> {
+	const inv = JSON.parse(fs.readFileSync(INVENTORY, 'utf8'))
+	return new Set(Object.keys(inv.variables))
+}
+
+/** The recorded status and reason of every inventory entry. */
+function inventoryStatuses(): Map<string, { status: string; reason: string }> {
+	const raw = JSON.parse(fs.readFileSync(STATUSES, 'utf8'))
+	const out = new Map<string, { status: string; reason: string }>()
+	for (const [name, v] of Object.entries(raw.variables)) {
+		const e = v as { status?: string; reason?: string }
+		out.set(name, { status: e.status ?? '', reason: e.reason ?? '' })
+	}
+	return out
 }
 
 /**
@@ -192,8 +248,11 @@ test.describe('nextcloud-variable-mapping', () => {
 		expect(ncVars.length).toBeGreaterThanOrEqual(50)
 		const entries = parseOverrides(await servedCss(page, OVERRIDES))
 		const rows = mappingRows()
+		// The icon, runtime and unread classes are listed by count, not by row.
+		const inventory = inventoryNames()
+		const documented = (n: string) => rows.has(n) || inventory.has(n)
 
-		const notInDocs = ncVars.filter((n) => rows.has(n) === false)
+		const notInDocs = ncVars.filter((n) => documented(n) === false)
 		expect(
 			notInDocs,
 			`missing from mappings.md: ${notInDocs.join(', ')}`,
@@ -211,7 +270,7 @@ test.describe('nextcloud-variable-mapping', () => {
 		const cssOnly = [
 			...entries.mapped.keys(),
 			...entries.commented.keys(),
-		].filter((n) => rows.has(n) === false)
+		].filter((n) => documented(n) === false)
 		expect(
 			cssOnly,
 			`in overrides.css but not in mappings.md: ${cssOnly.join(', ')}`,
@@ -322,37 +381,52 @@ test.describe('nextcloud-variable-mapping', () => {
 		const entries = parseOverrides(await servedCss(page, OVERRIDES))
 		const rows = mappingRows()
 		const row = rows.get('--color-primary-element')
-		expect(row?.mapping).toBe('--nldesign-color-primary')
-		expect(row?.category).toBe('Primary')
-		expect(row?.notes ?? '').toMatch(/\w{3,}/)
-		expect(entries.mapped.get('--color-primary-element')).toBe(row?.mapping)
+		expect(row?.status).toBe('mapped')
+		expect(row?.token).toBe('--nldesign-color-primary')
+		expect(row?.section).toBe('Primary Colors')
+		expect(row?.note ?? '').toMatch(/\w{3,}/)
+		expect(entries.mapped.get('--color-primary-element')).toBe(row?.token)
 
-		// Every other mapped variable is documented the same way.
+		// Every other mapped variable is documented as mapped, and a theme
+		// row (the tables with a Note column) names the token overrides.css
+		// uses. A component row may name the component-level token that
+		// resolves through it instead.
 		const wrong = [...entries.mapped]
-			.filter(([n, token]) => rows.get(n)?.mapping !== token)
-			.map(([n, token]) => `${n}: css ${token}, docs ${rows.get(n)?.mapping}`)
+			.filter(([n, token]) => {
+				const r = rows.get(n)
+				if (r === undefined || r.status !== 'mapped') return true
+				return r.note !== null && r.token !== token
+			})
+			.map(
+				([n, token]) =>
+					`${n}: css ${token}, docs ${rows.get(n)?.status} ${rows.get(n)?.token}`,
+			)
 		expect(wrong, wrong.join('; ')).toEqual([])
 	})
 
 	test(// @e2e openspec/specs/nextcloud-variable-mapping/spec.md#unmapped-variable-in-documentation
-	'every commented variable is documented with the same kind and a note', async ({
+	'every excluded entry shows excluded in mappings.md and has a recorded reason', async ({
 		page,
 	}) => {
 		await openThemedPage(page)
-		const entries = parseOverrides(await servedCss(page, OVERRIDES))
 		const rows = mappingRows()
-		const unmapped = [...entries.commented].filter(
-			([, c]) => c.kind === 'unmapped',
+		const excluded = [...inventoryStatuses()].filter(
+			([, e]) => e.status === 'excluded',
 		)
-		expect(unmapped.length).toBeGreaterThan(0)
+		expect(excluded.length).toBeGreaterThan(0)
 
-		const wrong = [...entries.commented]
-			.filter(
-				([n, c]) =>
-					rows.get(n)?.mapping !== c.kind
-					|| (rows.get(n)?.notes ?? '').length < 3,
-			)
-			.map(([n, c]) => `${n}: css "${c.kind}", docs "${rows.get(n)?.mapping}"`)
+		// The reason is recorded in variable-status.json, the source the page
+		// is generated from. Only theme tables carry a Note column, so the
+		// reason is checked on the row itself where the row has one.
+		const wrong = excluded
+			.filter(([n, e]) => {
+				if (e.reason.length < 3) return true
+				const r = rows.get(n)
+				if (r === undefined) return false
+				if (r.status !== 'excluded') return true
+				return r.note !== null && r.note.length < 3
+			})
+			.map(([n]) => `${n}: docs "${rows.get(n)?.status}"`)
 		expect(wrong, wrong.join('; ')).toEqual([])
 	})
 

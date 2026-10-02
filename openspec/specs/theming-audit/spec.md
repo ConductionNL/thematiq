@@ -2,7 +2,9 @@
 
 ## Purpose
 TBD - created by archiving change theming-audit-log. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Append-Only Audit Entries
 
 The app MUST record every theming configuration change as an append-only audit entry written by
@@ -183,7 +185,7 @@ The closed action vocabulary MUST include `version_restored`. Its entry MUST car
 
 @e2e exclude occ, not a page; proven by tests/Unit/Service/ThemeVersionRestoreServiceTest.php::testARestoreImportsAndIsAudited and tests/Unit/Service/ThemingAuditServiceTest.php::testVersionRestoredIsAcceptedAction
 
-- GIVEN an operator runs `occ nldesign:config:restore <id>`
+- GIVEN an operator runs `occ thematiq:config:restore <id>`
 - WHEN the restore completes
 - THEN the audit log MUST contain one `version_restored` entry with actor `cli` and `new` equal to `<id>`
 
@@ -198,3 +200,23 @@ The closed action vocabulary MUST include `scheduled_switch_applied`. Its entry 
 - GIVEN a planned switch with a start and an end
 - WHEN both have passed and the job has run
 - THEN the audit log MUST contain two `scheduled_switch_applied` entries with actor `system`, the first to the planned set and the second back
+
+### Requirement: Own tokens and deprecations are audited
+
+The closed action vocabulary MUST include `own_token_changed` and `token_deprecation_changed`.
+Adding, editing or removing an own token MUST write one `own_token_changed` entry with the token
+name and the old and new value. Adding, editing or removing a deprecation MUST write one
+`token_deprecation_changed` entry with the token name and the old and new record. A refused
+request MUST write no entry.
+
+#### Scenario: Adding an own token is recorded
+@e2e exclude Audit record content, covered by PHPUnit on OwnTokenController
+- GIVEN the administrator `admin` adds `--nldesign-org-brand-accent`
+- WHEN the request succeeds
+- THEN one `own_token_changed` entry MUST be appended with actor `admin` and the new value
+
+#### Scenario: A refused deprecation writes nothing
+@e2e exclude Audit record content, covered by PHPUnit on the controller
+- GIVEN a deprecation request refused with 400
+- WHEN the request completes
+- THEN no audit entry MUST have been written

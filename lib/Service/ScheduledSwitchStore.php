@@ -59,6 +59,14 @@ class ScheduledSwitchStore {
 	public const PORTABLE_FIELDS = ['id', 'tokenSet', 'startAt', 'endAt', 'createdBy', 'createdAt'];
 
 	/**
+	 * The server-side state a running switch keeps when a bundle carrying it
+	 * is imported: where it goes back to, and how.
+	 *
+	 * @var array<int, string>
+	 */
+	private const RUNNING_FIELDS = ['status', 'revertTo', 'coreSnapshot', 'syncCoreTheming'];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -96,6 +104,71 @@ class ScheduledSwitchStore {
 	public function save(array $entries): void {
 		$this->config->setAppValue(Application::APP_ID, self::CONFIG_KEY, (string)json_encode(array_values($entries), JSON_UNESCAPED_SLASHES));
 	}//end save()
+
+	/**
+	 * The entries an import stores: the bundle's, merged with the running ones.
+	 *
+	 * A bundle carries portable fields only, so every entry arrives as
+	 * `planned`. Storing that as it is put a running switch back to planned,
+	 * and the next run started it again: it took its snapshot from the
+	 * campaign look and set the campaign's own set as the one to return to.
+	 * Every version kept during a campaign holds the switch, so restoring any
+	 * of them lost the branding from before the campaign. A stored running
+	 * entry with the same id therefore keeps its runtime state, and an entry
+	 * whose window has already ended is dropped rather than replayed.
+	 *
+	 * @param array<int, array<string, mixed>> $imported The validated bundle entries.
+	 * @param int                              $now      The current time.
+	 *
+	 * @return array<int, array<string, mixed>> The entries to store.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function mergeImported(array $imported, int $now): array {
+		$running = [];
+		foreach ($this->all() as $entry) {
+			if (($entry['status'] ?? null) === 'running' && is_string($entry['id'] ?? null) === true) {
+				$running[$entry['id']] = $entry;
+			}
+		}
+
+		$result = [];
+		foreach ($imported as $entry) {
+			$stored = ($running[$entry['id']] ?? null);
+			if ($stored !== null) {
+				foreach (self::RUNNING_FIELDS as $field) {
+					if (array_key_exists($field, $stored) === true) {
+						$entry[$field] = $stored[$field];
+					}
+				}
+
+				$result[] = $entry;
+				continue;
+			}
+
+			if ($this->hasEnded(end: $entry['endAt'], now: $now) === true) {
+				continue;
+			}
+
+			$result[] = $entry;
+		}
+
+		return $result;
+	}//end mergeImported()
+
+	/**
+	 * Whether a window's end has passed. A window without an end never ends.
+	 *
+	 * @param string|null $end The end in UTC, or null.
+	 * @param int         $now The current time.
+	 *
+	 * @return bool True when the end is at or before now.
+	 *
+	 * @spec openspec/specs/scheduled-switch/spec.md
+	 */
+	public function hasEnded(?string $end, int $now): bool {
+		return $end !== null && strtotime($end) <= $now;
+	}//end hasEnded()
 
 	/**
 	 * The entries as a bundle carries them: portable fields only.

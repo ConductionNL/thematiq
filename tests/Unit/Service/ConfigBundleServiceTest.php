@@ -14,26 +14,40 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppThemingService;
+use OCA\Thematiq\Capabilities;
+use OCA\Thematiq\Service\AssistantMarkService;
+use OCA\Thematiq\Service\AppBrandLogoStore;
+use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\BundleExtraSections;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\DocumentAssetService;
+use OCA\Thematiq\Service\ImageSniffer;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\DeprecationRecords;
+use OCA\Thematiq\Service\OwnTokenService;
+use OCA\Thematiq\Service\TokenDeprecationService;
+use OCA\Thematiq\Service\TokenLifecycleBundleSection;
+use OCA\Thematiq\Service\TokenValueValidator;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\FontService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
-use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCP\App\IAppManager;
 use OCP\Http\Client\IClientService;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\Files\IAppData;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
@@ -96,6 +110,20 @@ class ConfigBundleServiceTest extends TestCase {
 	private TokenSetService $tokenSetService;
 
 	/**
+	 * The (real) own token store.
+	 *
+	 * @var OwnTokenService
+	 */
+	private OwnTokenService $ownTokens;
+
+	/**
+	 * The (real) token deprecations.
+	 *
+	 * @var TokenDeprecationService
+	 */
+	private TokenDeprecationService $deprecations;
+
+	/**
 	 * The mocked font service (manifest passthrough only, see class docblock).
 	 *
 	 * @var FontService&\PHPUnit\Framework\MockObject\MockObject
@@ -138,15 +166,20 @@ class ConfigBundleServiceTest extends TestCase {
 		$customTokenSetValidator = new CustomTokenSetValidator();
 		$logger = $this->createMock(LoggerInterface::class);
 
+		$records = new DeprecationRecords($config);
+		$this->ownTokens = new OwnTokenService($config, new TokenValueValidator(), $records);
+		$this->deprecations = new TokenDeprecationService($records, $this->ownTokens, $appManager, $cssParser);
 		$this->overridesService = new CustomOverridesService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$cssParser,
 			new DarkPaletteService($contrast, $cssParser, $appManager, $logger),
 			$config,
-			new DesignSystemService($appManager, $config)
+			new DesignSystemService($appManager, $config),
+			null,
+			$this->ownTokens
 		);
 		$this->customTokenSetService = new CustomTokenSetService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$config,
 			$customTokenSetValidator,
 			$contrast,
@@ -189,7 +222,20 @@ class ConfigBundleServiceTest extends TestCase {
 			$this->fontService,
 			$freshnessService,
 			new ScheduledSwitchStore($config),
-			$logger
+			$logger,
+			new BundleExtraSections(
+				new AssistantMarkService($config, $emailThemingService, $this->createMock(Capabilities::class)),
+				new DocumentAssetService($this->createMock(IAppData::class), $config),
+				new AppBrandService(
+					$config,
+					$appManager,
+					$appThemingService,
+					$this->tokenSetService,
+					new AppBrandLogoStore($this->createMock(IAppData::class), new ImageSniffer()),
+					$this->createMock(IURLGenerator::class)
+				)
+			),
+			new TokenLifecycleBundleSection($this->ownTokens, $this->deprecations, $this->overridesService)
 		);
 	}//end setUp()
 
@@ -273,7 +319,7 @@ class ConfigBundleServiceTest extends TestCase {
 		$bundle = $this->service->export();
 
 		$this->assertSame('nldesign-config-bundle', $bundle['format']);
-		$this->assertSame(2, $bundle['bundleVersion']);
+		$this->assertSame(3, $bundle['bundleVersion']);
 		$this->assertSame('utrecht', $bundle['config']['tokenSet']);
 		$this->assertTrue($bundle['config']['hideSlogan']);
 		$this->assertTrue($bundle['config']['showMenuLabels']);
@@ -415,6 +461,40 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertFalse($result['valid']);
 		$this->assertStringContainsString('atlantis', $result['errors'][0]['message']);
 	}//end testNonexistentTokenSetIsHardError()
+
+	/**
+	 * The approved mark's three values travel in the bundle; an unsafe logo is refused, and an
+	 * older bundle without the section leaves the mark alone.
+	 *
+	 * @spec openspec/specs/assistant-approved-mark/spec.md
+	 */
+	public function testAssistantMarkSurvivesExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['assistant_mark_enabled'] = '1';
+		$this->appConfig['assistant_mark_organisation'] = 'Gemeente Voorbeeld';
+		$this->appConfig['assistant_mark_logo'] = 'https://example.org/logo.svg';
+
+		$bundle = $this->service->export();
+		$this->assertSame(['enabled' => true, 'organisation' => 'Gemeente Voorbeeld', 'logo' => 'https://example.org/logo.svg'], $bundle['assistantMark']);
+
+		$this->appConfig['assistant_mark_enabled'] = '0';
+		$this->appConfig['assistant_mark_organisation'] = '';
+		$this->appConfig['assistant_mark_logo'] = '';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('1', $this->appConfig['assistant_mark_enabled']);
+		$this->assertSame('Gemeente Voorbeeld', $this->appConfig['assistant_mark_organisation']);
+		$this->assertSame('https://example.org/logo.svg', $this->appConfig['assistant_mark_logo']);
+
+		$bundle['assistantMark']['logo'] = 'javascript:alert(1)';
+		$this->assertFalse($this->service->import(bundle: $bundle, dryRun: true)['valid']);
+
+		unset($bundle['assistantMark']);
+		$this->appConfig['assistant_mark_enabled'] = '0';
+		$this->assertTrue($this->service->import(bundle: $bundle, dryRun: false)['valid']);
+		$this->assertSame('0', $this->appConfig['assistant_mark_enabled'], 'An older bundle leaves the mark alone.');
+	}//end testAssistantMarkSurvivesExportAndImport()
 
 	/**
 	 * `primaryDrivesComponents` travels in the bundle, so an OTAP promotion
@@ -602,6 +682,62 @@ class ConfigBundleServiceTest extends TestCase {
 	}//end testInvalidEmailFooterUrlIsHardError()
 
 	/**
+	 * The document footer line travels as a value, the document images as metadata only.
+	 *
+	 * @spec openspec/specs/document-house-style/spec.md
+	 */
+	public function testDocumentStyleFooterLineSurvivesExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['document_style_footer_line'] = 'Postbus 1, 1234 AB Voorbeeld';
+		$this->appConfig['document_style_assets'] = json_encode(['logo' => ['mime' => 'image/png', 'size' => 10, 'uploadedAt' => 1]]);
+
+		$bundle = $this->service->export();
+		$this->assertSame('Postbus 1, 1234 AB Voorbeeld', $bundle['documentStyle']['footerLine']);
+		$this->assertFalse($bundle['documentStyle']['binariesIncluded']);
+		$this->assertSame('image/png', $bundle['documentStyle']['assets']['logo']['mime']);
+
+		$this->appConfig['document_style_footer_line'] = '';
+		$this->appConfig['document_style_assets'] = '{}';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('Postbus 1, 1234 AB Voorbeeld', $this->appConfig['document_style_footer_line']);
+		$this->assertSame('{}', $this->appConfig['document_style_assets'], 'Image metadata is never applied.');
+
+		$bundle['documentStyle']['footerLine'] = str_repeat('x', 201);
+		$this->assertFalse($this->service->import(bundle: $bundle, dryRun: true)['valid']);
+	}//end testDocumentStyleFooterLineSurvivesExportAndImport()
+
+	/**
+	 * Brands per app travel as app => set, logos as metadata only; a version 2 bundle leaves them alone.
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	public function testAppBrandsSurviveExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['app_brands'] = json_encode(['collectives' => ['tokenSet' => 'utrecht', 'logoLarge' => ['mime' => 'image/png', 'size' => 9, 'uploadedAt' => 1], 'logoSmall' => null]]);
+
+		$bundle = json_decode((string)json_encode($this->service->export()), true);
+		$this->assertSame(3, $bundle['bundleVersion']);
+		$this->assertSame('utrecht', $bundle['appBrands']['collectives']['tokenSet']);
+
+		$this->appConfig['app_brands'] = '{}';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+		$this->assertTrue($result['valid'], json_encode($result['errors'] ?? []));
+		$stored = json_decode($this->appConfig['app_brands'], true);
+		$this->assertSame('utrecht', $stored['collectives']['tokenSet']);
+		$this->assertNull($stored['collectives']['logoLarge'], 'Logo metadata is never applied without its file.');
+
+		$bundle['appBrands']['collectives']['tokenSet'] = 'no-such-set';
+		$this->assertFalse($this->service->import(bundle: $bundle, dryRun: true)['valid']);
+
+		$bundle['bundleVersion'] = 2;
+		unset($bundle['appBrands']);
+		$this->assertTrue($this->service->import(bundle: $bundle, dryRun: false)['valid']);
+		$this->assertSame('utrecht', json_decode($this->appConfig['app_brands'], true)['collectives']['tokenSet']);
+	}//end testAppBrandsSurviveExportAndImport()
+
+	/**
 	 * The customFonts section is exported/reported as metadata only and is
 	 * never applied — no custom_fonts app value is ever written by import().
 	 */
@@ -716,6 +852,60 @@ class ConfigBundleServiceTest extends TestCase {
 	}//end testAPlannedSwitchToABundledCustomSetIsImported()
 
 	/**
+	 * Importing a bundle that holds a running switch, as a version restore
+	 * during a campaign does, keeps the switch running and its way back:
+	 * restarting it would take the campaign look as the one to return to.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testARunningSwitchKeepsItsStateThroughAnImport(): void {
+		$this->seedConfig();
+		$running = [
+			'id' => 'a1',
+			'tokenSet' => 'utrecht',
+			'startAt' => '2026-01-01T00:00:00Z',
+			'endAt' => '2099-01-01T00:00:00Z',
+			'createdBy' => 'admin',
+			'createdAt' => '2025-12-01T10:00:00Z',
+			'status' => 'running',
+			'revertTo' => 'nextcloud',
+			'coreSnapshot' => true,
+		];
+		$this->appConfig['scheduled_switches'] = json_encode([$running]);
+		$bundle = $this->service->export();
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertTrue($result['applied'], (string)json_encode($result['errors'] ?? []));
+		$stored = json_decode($this->appConfig['scheduled_switches'], true);
+		$this->assertCount(1, $stored);
+		$this->assertSame('running', $stored[0]['status']);
+		$this->assertSame('nextcloud', $stored[0]['revertTo']);
+		$this->assertTrue($stored[0]['coreSnapshot']);
+	}//end testARunningSwitchKeepsItsStateThroughAnImport()
+
+	/**
+	 * A stale bundle does not replay a switch whose window has already ended.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	public function testAnEndedSwitchInABundleIsNotReplayed(): void {
+		$this->seedConfig();
+		$bundle = $this->service->export();
+		$bundle['config']['scheduledSwitches'] = [
+			['id' => 'old', 'tokenSet' => 'utrecht', 'startAt' => '2020-04-26T16:00:00Z', 'endAt' => '2020-04-28T06:00:00Z'],
+			['id' => 'new', 'tokenSet' => 'utrecht', 'startAt' => '2099-04-26T16:00:00Z', 'endAt' => '2099-04-28T06:00:00Z'],
+		];
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertTrue($result['applied'], (string)json_encode($result['errors'] ?? []));
+		$stored = json_decode($this->appConfig['scheduled_switches'], true);
+		$this->assertSame(['new'], array_column($stored, 'id'));
+		$this->assertSame('planned', $stored[0]['status']);
+	}//end testAnEndedSwitchInABundleIsNotReplayed()
+
+	/**
 	 * A custom set keeps the design system it was created on through an export
 	 * and an import, which a version restore is: a theme saved off stock
 	 * Nextcloud must not come back as an NL Design System one. A design system
@@ -809,4 +999,68 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertTrue($result['valid'], (string)json_encode($result['errors'] ?? []));
 		$this->assertSame('[{"id":"keep"}]', $this->appConfig['scheduled_switches']);
 	}//end testAVersionOneBundleStillImportsAndKeepsPlannedSwitches()
+
+	/**
+	 * Scenario: own tokens and their deprecations move from test to production.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
+	 */
+	public function testOwnTokensRoundTrip(): void {
+		$this->seedConfig();
+		$this->ownTokens->create(input: ['slug' => 'brand-accent', 'label' => 'Brand accent', 'type' => 'color', 'value' => '#e17000', 'darkValue' => '#ff9a3c']);
+		$this->ownTokens->create(input: ['slug' => 'gap', 'label' => 'Gap', 'type' => 'text', 'value' => '8px']);
+		$this->deprecations->deprecate(token: '--nldesign-org-gap', input: ['severity' => 'info']);
+		$bundle = json_decode((string)json_encode($this->service->export()), true);
+		$tokens = $this->ownTokens->list();
+
+		unset($this->appConfig[OwnTokenService::CONFIG_KEY], $this->appConfig[DeprecationRecords::CONFIG_KEY]);
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertTrue($result['applied'], json_encode($result));
+		$this->assertSame(['applied' => true, 'count' => 2], $result['sections']['ownTokens']);
+		$this->assertSame($tokens, $this->ownTokens->list());
+		$this->assertSame('info', $this->deprecations->list()['--nldesign-org-gap']['severity']);
+		$this->assertStringContainsString('--nldesign-org-brand-accent: #e17000;', $this->overridesService->getRawContent());
+	}//end testOwnTokensRoundTrip()
+
+	/**
+	 * A bundle without the new keys, as an older release writes, leaves own tokens as they are.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
+	 */
+	public function testBundleWithoutOwnTokensLeavesThemUnchanged(): void {
+		$this->seedConfig();
+		$bundle = json_decode((string)json_encode($this->service->export()), true);
+		unset($bundle['ownTokens'], $bundle['tokenDeprecations']);
+		$this->ownTokens->create(input: ['slug' => 'keep', 'label' => 'Keep', 'type' => 'text', 'value' => 'x']);
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertTrue($result['applied'], json_encode($result));
+		$this->assertArrayHasKey('--nldesign-org-keep', $this->ownTokens->list());
+		$this->assertSame(['applied' => false, 'count' => 0], $result['sections']['ownTokens']);
+	}//end testBundleWithoutOwnTokensLeavesThemUnchanged()
+
+	/**
+	 * A bundle with a bad own token is refused as a whole, before anything is written.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
+	 */
+	public function testBadOwnTokenRefusesTheBundle(): void {
+		$this->seedConfig();
+		$bundle = json_decode((string)json_encode($this->service->export()), true);
+		$bundle['ownTokens'] = ['--nldesign-org-x' => ['label' => 'X', 'type' => 'color', 'value' => 'red; } body {']];
+
+		$result = $this->service->import(bundle: $bundle);
+
+		$this->assertFalse($result['valid']);
+		$this->assertSame('ownTokens', $result['errors'][0]['section']);
+		$this->assertSame([], $this->ownTokens->list());
+	}//end testBadOwnTokenRefusesTheBundle()
 }//end class

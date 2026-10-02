@@ -26,7 +26,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * `occ nldesign:theme:list`: every available token set with its id, name and kind.
+ * `occ thematiq:theme:list`: every available token set with its id, name and kind.
  *
  * @spec openspec/specs/theme-cli/spec.md#requirement-operators-list-and-read-token-sets
  */
@@ -51,7 +51,7 @@ class ThemeList extends Command {
 	 * @spec openspec/specs/theme-cli/spec.md#requirement-operators-list-and-read-token-sets
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:theme:list')
+		$this->setName(name: 'thematiq:theme:list')
 			->setDescription('List every available token set: id, kind (shipped or custom) and name.');
 	}//end configure()
 
