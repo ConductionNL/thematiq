@@ -356,6 +356,18 @@ function allowedReason(selector: string): string | null {
  * STILL OPEN, and deliberately not smuggled in here: the table above also says
  * the La Suite header treatment does not reach NC 32 at all — its own change.
  */
+/*
+ * NOT SURVEYED HERE: css/show-menu-labels.css. The survey reads the lasuite
+ * element-overrides.css only, and that sheet loads only with the setting on.
+ * It carries the same two halves as this file (#895): the NC 32 `app-menu-entry*`
+ * rules that ALLOWED excuses above, and NC 33+ rules on `#header nav.app-menu
+ * .app-menu__current-app*` and on the popover's `.app-menu__popover
+ * .app-item__label`, a transient overlay. Neither NC 33+ selector fits the
+ * first SINCE pattern below, which expects `#header .app-menu__…` with nothing
+ * in between, so adding the sheet to this survey needs its own entries. Until
+ * then its liveness is proven by the last two tests of menu-labels.spec.ts,
+ * on the real header.
+ */
 const SINCE: Array<{ pattern: RegExp; since: number; reason: string }> = [
 	{
 		pattern:
