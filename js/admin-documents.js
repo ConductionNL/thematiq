@@ -54,11 +54,7 @@
 		row(list, t('thematiq', 'House style'), profile.tokenSet.name)
 		row(list, t('thematiq', 'Primary color'), profile.colours.primary || '')
 		row(list, t('thematiq', 'Text color'), profile.colours.text || '')
-		row(
-			list,
-			t('thematiq', 'Heading font'),
-			profile.fonts.heading.family || '',
-		)
+		row(list, t('thematiq', 'Heading font'), profile.fonts.heading.family || '')
 		row(list, t('thematiq', 'Body font'), profile.fonts.body.family || '')
 		row(list, t('thematiq', 'Footer'), profile.footer.lines.join(' · '))
 		preview.appendChild(list)
@@ -95,7 +91,10 @@
 
 		function send(url, options, done) {
 			feedback.textContent = ''
-			options.headers = Object.assign({ requesttoken: OC.requestToken }, options.headers || {})
+			options.headers = Object.assign(
+				{ requesttoken: OC.requestToken },
+				options.headers || {},
+			)
 			return fetch(url, options)
 				.then(function (res) {
 					return res.json().then(function (body) {
@@ -105,8 +104,11 @@
 				.then(function (result) {
 					if (!result.ok) {
 						feedback.textContent =
-							result.body.error ||
-							t('thematiq', 'The document settings could not be saved.')
+							result.body.error
+							|| t(
+								'thematiq',
+								'The document settings could not be saved.',
+							)
 						return
 					}
 					show(result.body)
