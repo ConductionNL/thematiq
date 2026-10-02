@@ -153,6 +153,47 @@ Each value is checked against its type when you save. A colour field takes only 
 
 Overrides saved before this check keep working. An upgrade adds the dark values and the second animation name to them, and keeps every value as it was.
 
+## Your own tokens
+
+Below the tabs is **Your own tokens**. Add a token there when the house style needs a value that no shipped token holds, such as a brand accent for a campaign banner. No code change and no token set upload is needed.
+
+Click **Add a token** and fill in:
+
+- **Name**: the part after `--nldesign-org-`, in lowercase letters, digits and single dashes, at most 48 characters. `brand-accent` becomes `--nldesign-org-brand-accent`.
+- **Label**: what the list shows.
+- **Type**: colour, text, duration or easing. The value is checked against it, like the editor's own values.
+- **Dark value**: for a colour only. Leave it empty and dark mode uses the light value.
+
+The token is on every page from the next page load, in every token set. Use it straight away in **Custom CSS**, for example `.header-menu { border-color: var(--nldesign-org-brand-accent); }`. Apps that read the house style can use it too.
+
+Shipped tokens never use the `--nldesign-org-` prefix, so an update cannot overwrite yours. Edit a token to change its label, type or value; its name stays. **Remove** asks first, and names the deprecation when the token has one.
+
+## Deprecate a token
+
+When a token is going away, tell the teams that use it before it is gone. Click **Deprecate** on an own token, or **Deprecate a token** under **Deprecated tokens** for any token whose name starts with `--nldesign-`. Choose:
+
+- **Severity**: info, warning or critical.
+- **Replacement token**: optional, and it must exist.
+- **Removal date**: optional, today or later.
+- **Message**: optional, a line of explanation.
+
+A deprecation never changes a value. The token row gets a badge with the severity in words. After the removal date the badge also says **Due for removal**, and still nothing happens by itself: removing an own token stays your decision. Its deprecation is then kept, marked as removed, so an app that missed the date can still read what happened.
+
+A shipped token cannot be removed, because its value comes from the token set. Its deprecation is a notice to the teams that use it, and the list says so.
+
+The served stylesheet writes the notice above each deprecated own token, so a developer who inspects the variable sees it:
+
+```css
+/* deprecated (warning): use --nldesign-org-brand-accent, removal 2027-03-01 */
+--nldesign-org-old-accent: #aa0000;
+```
+
+When an uploaded token file marks tokens as deprecated, the upload result lists them and offers **Record as deprecations**. Nothing is recorded until you click it. Each notice becomes a deprecation with severity warning and the notice text as its message; edit it afterwards to add a replacement or a date.
+
+Own tokens and deprecations travel with the configuration bundle (`ownTokens` and `tokenDeprecations`). Every change is in the theming audit log.
+
+Building an app that reads the house style? See [Read token deprecations from your app](./token-deprecations-api.md).
+
 ## Saving Overrides
 
 Click **Save overrides** at the bottom of the token editor to persist all current values.
