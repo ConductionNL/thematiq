@@ -9,7 +9,7 @@ enriched_date: 2026-03-20
 ## Purpose
 Defines how the NL Design app synchronizes design token values with Nextcloud's built-in theming system.
 
-@e2e exclude Backend/API theming-sync spec — scenarios cover PHP service logic, validation methods, IConfig/ImageManager API calls, and route config; the frontend dialog surface is covered by theming-sync-dialog tests. When a token set includes theming metadata (primary color, background color, logo, background image), the app can update Nextcloud's `ThemingDefaults` and `ImageManager` to ensure consistency between the NL Design CSS layer and Nextcloud's core theming (which controls background images, server branding, and email templates). This prevents a split-brain state where CSS tokens show one color scheme but Nextcloud's internal theming references another.
+When a token set includes theming metadata (primary color, background color, logo, background image), the app can update Nextcloud's `ThemingDefaults` and `ImageManager` to ensure consistency between the NL Design CSS layer and Nextcloud's core theming (which controls background images, server branding, and email templates). This prevents a split-brain state where CSS tokens show one color scheme but Nextcloud's internal theming references another.
 ## Requirements
 ### Requirement: Theming Metadata in Token Sets
 
@@ -279,17 +279,23 @@ The theming sync feature MUST depend on the Nextcloud `theming` app for `Theming
 - THEN it MUST receive `ImageManager`, `ThemingDefaults`, and `IAppManager` via constructor injection
 - AND it MUST NOT instantiate these dependencies directly
 
+@e2e exclude Constructor wiring with no HTTP surface. tests/Unit/Service/ThemingServiceTest.php::setUp builds ThemingService from three injected doubles (ImageManager, ThemingDefaults, IAppManager), and every test in that file runs through them.
+
 #### Scenario: ImageManager accessible via getter
 - GIVEN the `ThemingService` is constructed
 - WHEN `getImageManager()` is called
 - THEN it MUST return the injected `ImageManager` instance
 - AND the `SettingsController` can use this to build theming snapshots
 
+@e2e exclude A PHP getter with no HTTP surface of its own. tests/Unit/Service/ThemingServiceTest.php::testGetImageManagerReturnsTheInjectedInstance asserts it returns the injected instance; the snapshot it feeds is browser-tested under values-built-from-buildthemingsnapshot.
+
 #### Scenario: Theming app must be enabled
 - GIVEN the theming app is not enabled in Nextcloud
 - WHEN the `ThemingService` dependencies are resolved
 - THEN Nextcloud's DI container MUST handle the missing dependency
 - AND the nldesign app SHOULD declare `theming` as a dependency in `info.xml`
+
+@e2e exclude The GIVEN cannot be produced on any instance: Nextcloud's core/shipped.json lists theming under alwaysEnabled, so the server refuses to disable it.
 
 ### Requirement: Validation Order
 The theming sync endpoint MUST validate all inputs before applying any changes, ensuring atomicity of the validation phase.
