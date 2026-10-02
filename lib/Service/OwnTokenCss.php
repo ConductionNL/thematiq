@@ -46,6 +46,8 @@ class OwnTokenCss {
 	 *
 	 * @return array<string> CSS lines.
 	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - the declaration writer is a pure function shared with the editor overrides
+	 *
 	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.3
 	 */
 	public function lightLines(): array {
@@ -66,6 +68,8 @@ class OwnTokenCss {
 	 * The dark-scope lines.
 	 *
 	 * @return array<string> CSS lines.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - the declaration writer is a pure function shared with the editor overrides
 	 *
 	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
 	 */

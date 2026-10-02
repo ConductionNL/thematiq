@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Service\TokenDeprecationService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -54,11 +55,13 @@ class CatalogController extends Controller {
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request object.
 	 * @param TokenSetService $tokenSetService The token set discovery/projection service.
+	 * @param TokenDeprecationService|null $deprecations The token deprecations consuming apps read.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		TokenSetService $tokenSetService,
+		private ?TokenDeprecationService $deprecations = null,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->tokenSetService = $tokenSetService;
@@ -83,4 +86,20 @@ class CatalogController extends Controller {
 	public function tokenSets(): JSONResponse {
 		return new JSONResponse(['tokenSets' => $this->tokenSetService->getPublicCatalogue()]);
 	}//end tokenSets()
+
+	/**
+	 * GET /api/token-deprecations — every token deprecation, for consuming apps.
+	 *
+	 * Token names and dates only, the same for every user, so there is no
+	 * per-object check to make; a request without a session is refused by
+	 * the absence of `#[PublicPage]`.
+	 *
+	 * @return JSONResponse `{ deprecations: [{token, severity, replacement, removalDate, message, deprecatedAt, due, state}] }`.
+	 *
+	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.2
+	 */
+	#[NoAdminRequired]
+	public function deprecations(): JSONResponse {
+		return new JSONResponse(['deprecations' => ($this->deprecations?->publicList() ?? [])]);
+	}//end deprecations()
 }//end class

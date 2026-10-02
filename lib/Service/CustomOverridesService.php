@@ -119,13 +119,6 @@ class CustomOverridesService {
 	private ?OwnTokenService $ownTokens;
 
 	/**
-	 * The deprecation notices written above deprecated own tokens.
-	 *
-	 * @var TokenDeprecationService|null
-	 */
-	private ?TokenDeprecationService $deprecations;
-
-	/**
 	 * The app config, for the active set when a caller names none.
 	 *
 	 * @var IConfig|null
@@ -165,7 +158,6 @@ class CustomOverridesService {
 	 * @param DesignSystemService|null $designSystems The token set metadata.
 	 * @param TokenValueValidator|null $values The value grammar per token type.
 	 * @param OwnTokenService|null $ownTokens The administrator's own tokens; without it the file holds none.
-	 * @param TokenDeprecationService|null $deprecations The notices written above deprecated own tokens.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -175,7 +167,6 @@ class CustomOverridesService {
 		?DesignSystemService $designSystems = null,
 		?TokenValueValidator $values = null,
 		?OwnTokenService $ownTokens = null,
-		?TokenDeprecationService $deprecations = null,
 	) {
 		$this->appManager = $appManager;
 		$this->cssParser = $cssParser;
@@ -184,7 +175,6 @@ class CustomOverridesService {
 		$this->values = ($values ?? new TokenValueValidator());
 		$this->css = new OverridesCssBuilder(darkPalette: $darkPalette, values: $this->values);
 		$this->ownTokens = $ownTokens;
-		$this->deprecations = $deprecations;
 	}//end __construct()
 
 	/**
@@ -280,7 +270,8 @@ class CustomOverridesService {
 			return [];
 		}
 
-		return array_diff_key($this->parseDeclarations(css: $content), array_flip(self::MOTION_TWINS));
+		// Only the editor's names: the motion twins and own tokens share the block.
+		return $this->filterEditable(tokens: $this->parseDeclarations(css: $content));
 	}//end read()
 
 	/**
@@ -314,8 +305,8 @@ class CustomOverridesService {
 		$open = (int)strpos($css, '{', $start);
 		$close = (int)strpos($css, '}', $open);
 		preg_match_all('/(--[A-Za-z0-9_-]+)\\s*:\\s*([^;]+);/', substr($css, ($open + 1), ($close - $open - 1)), $matches, PREG_SET_ORDER);
-		// The motion twins are not colours, so they never meet a dark line.
-		$light = $this->parseDeclarations(css: $css);
+		// Only the editor's names: own tokens keep their dark values in their own store.
+		$light = $this->filterEditable(tokens: $this->parseDeclarations(css: $css));
 		$derived = $this->css->darkValues(tokens: $light);
 		$own = [];
 		foreach ($matches as $match) {
@@ -481,19 +472,8 @@ class CustomOverridesService {
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
 	 */
 	private function buildCss(array $tokens, array $darkTokens = []): string {
-		return $this->css->build(tokens: $tokens, darkTokens: $darkTokens, own: $this->ownTokenCss());
+		return $this->css->build(tokens: $tokens, darkTokens: $darkTokens, own: $this->ownTokens?->css());
 	}//end buildCss()
-
-	/**
-	 * The administrator's own tokens for the file, with the notice above each deprecated one.
-	 *
-	 * @return OwnTokenCss|null Null when the service was built without the own token store.
-	 *
-	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
-	 */
-	private function ownTokenCss(): ?OwnTokenCss {
-		return $this->ownTokens?->css(comments: $this->deprecations?->comments() ?? []);
-	}//end ownTokenCss()
 
 	/**
 	 * Parse CSS custom property declarations from a :root {} block.

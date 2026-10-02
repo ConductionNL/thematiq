@@ -73,12 +73,14 @@ class OwnTokenService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig             $config The app config store.
-	 * @param TokenValueValidator $values The value grammar per type.
+	 * @param IConfig             $config  The app config store.
+	 * @param TokenValueValidator $values  The value grammar per type.
+	 * @param DeprecationRecords  $records The deprecations, written as a comment above a deprecated token.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
 		private readonly TokenValueValidator $values,
+		private readonly DeprecationRecords $records,
 	) {
 	}//end __construct()
 
@@ -118,7 +120,7 @@ class OwnTokenService {
 	 *
 	 * @return array<string, string> The stored token, with its `name`.
 	 *
-	 * @throws InvalidArgumentException 400 for a wrong field, 409 for a name already taken.
+	 * @throws InvalidArgumentException 400 for a wrong field or a name already taken.
 	 *
 	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.1
 	 */
@@ -131,7 +133,7 @@ class OwnTokenService {
 		$name   = self::PREFIX . $slug;
 		$tokens = $this->list();
 		if (isset($tokens[$name]) === true) {
-			throw new InvalidArgumentException('duplicate', 409);
+			throw new InvalidArgumentException('duplicate', 400);
 		}
 
 		$now = gmdate(DATE_ATOM);
@@ -193,6 +195,34 @@ class OwnTokenService {
 	}//end remove()
 
 	/**
+	 * Check a whole store, as a configuration bundle carries it, without storing it.
+	 *
+	 * @param array<string, mixed> $tokens Name => token.
+	 *
+	 * @return array<string, array<string, string>> The checked tokens.
+	 *
+	 * @throws InvalidArgumentException 400 when any token fails its checks.
+	 *
+	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 */
+	public function checkAll(array $tokens): array {
+		$clean = [];
+		$now   = gmdate(DATE_ATOM);
+		foreach ($tokens as $name => $token) {
+			if (self::isOwnName(name: (string)$name) === false || is_array($token) === false) {
+				throw new InvalidArgumentException('name', 400);
+			}
+
+			$clean[(string)$name] = array_merge(
+				$this->checked(input: $token),
+				['createdAt' => (string)($token['createdAt'] ?? $now), 'updatedAt' => (string)($token['updatedAt'] ?? $now)]
+			);
+		}
+
+		return $clean;
+	}//end checkAll()
+
+	/**
 	 * Replace the whole store, as a configuration bundle import does. Each token is checked.
 	 *
 	 * @param array<string, mixed> $tokens Name => token.
@@ -204,33 +234,20 @@ class OwnTokenService {
 	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
 	 */
 	public function replaceAll(array $tokens): int {
-		$clean = [];
-		foreach ($tokens as $name => $token) {
-			if (self::isOwnName(name: (string)$name) === false || is_array($token) === false) {
-				throw new InvalidArgumentException('name', 400);
-			}
-
-			$now = gmdate(DATE_ATOM);
-			$clean[(string)$name] = array_merge(
-				$this->checked(input: $token),
-				['createdAt' => (string)($token['createdAt'] ?? $now), 'updatedAt' => (string)($token['updatedAt'] ?? $now)]
-			);
-		}
-
+		$clean = $this->checkAll(tokens: $tokens);
 		$this->persist(tokens: $clean);
+
 		return count($clean);
 	}//end replaceAll()
 
 	/**
-	 * The tokens as they go into an overrides file.
-	 *
-	 * @param array<string, string> $comments Token name => deprecation notice.
+	 * The tokens as they go into an overrides file, each deprecated one with its notice.
 	 *
 	 * @return OwnTokenCss The light and dark values, with the notices.
 	 *
 	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-2.2
 	 */
-	public function css(array $comments = []): OwnTokenCss {
+	public function css(): OwnTokenCss {
 		$light = [];
 		$dark  = [];
 		foreach ($this->list() as $name => $token) {
@@ -240,7 +257,7 @@ class OwnTokenService {
 			}
 		}
 
-		return new OwnTokenCss(light: $light, dark: $dark, comments: array_intersect_key($comments, $light));
+		return new OwnTokenCss(light: $light, dark: $dark, comments: array_intersect_key($this->records->comments(), $light));
 	}//end css()
 
 	/**
@@ -311,6 +328,8 @@ class OwnTokenService {
 	 * @return string The trimmed value.
 	 *
 	 * @throws InvalidArgumentException 400 naming the field.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - the injection filter is a pure function shared with the CSS writer
 	 */
 	private function checkedValue(mixed $value, string $type, string $field): string {
 		if (is_string($value) === false || OverridesCssBuilder::isUnsafeValue(value: $value) === true || str_contains($value, "\n") === true) {

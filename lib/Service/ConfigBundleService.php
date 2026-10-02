@@ -214,6 +214,7 @@ class ConfigBundleService {
 	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
+	 * @param TokenLifecycleBundleSection|null $lifecycle The own tokens and deprecations section.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
 	 * section's EXISTING validator/service (config-portability's core reuse requirement); NC's DI
@@ -234,6 +235,7 @@ class ConfigBundleService {
 		UpstreamFreshnessService $freshnessService,
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
+		private ?TokenLifecycleBundleSection $lifecycle = null,
 	) {
 		$this->config = $config;
 		$this->appManager = $appManager;
@@ -284,7 +286,7 @@ class ConfigBundleService {
 					. 'Metadata only — re-upload font files by hand on the target environment.',
 				'manifest' => $this->fontService->getManifest(),
 			],
-		];
+		] + ($this->lifecycle?->export() ?? []);
 	}//end export()
 
 	/**
@@ -395,6 +397,7 @@ class ConfigBundleService {
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
+		$resolved['lifecycle'] = $this->lifecycle?->validate(bundle: $bundle, errors: $errors);
 
 		return [
 			'valid' => empty($errors),
@@ -964,7 +967,7 @@ class ConfigBundleService {
 				'note' => 'Font metadata recorded for information only — binaries are not part of the '
 					. 'bundle and must be re-uploaded by hand on the target environment.',
 			],
-		];
+		] + $this->lifecycleSummary(resolved: $resolved);
 	}//end buildSectionSummary()
 
 	/**
@@ -1008,6 +1011,8 @@ class ConfigBundleService {
 			privacyUrl: $footer['privacyUrl']
 		);
 
+		// Own tokens first: the overrides file written next renders them.
+		$this->applyLifecycle(resolved: $resolved);
 		$this->overridesService->write(tokens: $resolved['customOverrides']['tokens']);
 
 		foreach ($resolved['customTokenSets'] as $set) {
@@ -1020,4 +1025,41 @@ class ConfigBundleService {
 
 		// CustomFonts is deliberately never applied — see class docblock.
 	}//end apply()
+
+	/**
+	 * Apply the own tokens and deprecations a bundle carries, then bring every
+	 * overrides file up to date with them.
+	 *
+	 * @param array<string, mixed> $resolved Phase-1 output.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 */
+	private function applyLifecycle(array $resolved): void {
+		if ($this->lifecycle === null || $resolved['lifecycle'] === null) {
+			return;
+		}
+
+		if ($this->lifecycle->apply(resolved: $resolved['lifecycle']) === true) {
+			$this->overridesService->rewriteAll();
+		}
+	}//end applyLifecycle()
+
+	/**
+	 * The summary rows of the own tokens and deprecations.
+	 *
+	 * @param array<string, mixed> $resolved Phase-1 output.
+	 *
+	 * @return array<string, array<string, mixed>> Empty when the section is not wired.
+	 *
+	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-5.2
+	 */
+	private function lifecycleSummary(array $resolved): array {
+		if ($this->lifecycle === null || ($resolved['lifecycle'] ?? null) === null) {
+			return [];
+		}
+
+		return $this->lifecycle->summary(resolved: $resolved['lifecycle']);
+	}//end lifecycleSummary()
 }//end class

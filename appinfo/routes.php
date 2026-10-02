@@ -25,6 +25,8 @@ return [
 		// #[PublicPage]); deliberately outside the /settings/* prefix this
 		// app reserves for admin-gated routes, alongside metrics/health.
 		['name' => 'catalog#tokenSets', 'url' => '/api/token-sets', 'verb' => 'GET'],
+		// Token deprecations for consuming apps (authoring-token-lifecycle), signed-in users.
+		['name' => 'catalog#deprecations', 'url' => '/api/token-deprecations', 'verb' => 'GET'],
 		// Token reference of one set, for signed-in users (openspec/specs/token-reference/spec.md).
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
@@ -60,6 +62,15 @@ return [
 		['name' => 'gallery#index', 'url' => '/settings/gallery', 'verb' => 'GET'],
 		['name' => 'gallery#setEnabled', 'url' => '/settings/gallery', 'verb' => 'POST'],
 		['name' => 'gallery#install', 'url' => '/settings/gallery/{id}/install', 'verb' => 'POST'],
+		// Own tokens and token deprecations (authoring-token-lifecycle), admin-only.
+		['name' => 'ownToken#list', 'url' => '/settings/tokens/own', 'verb' => 'GET'],
+		['name' => 'ownToken#create', 'url' => '/settings/tokens/own', 'verb' => 'POST'],
+		['name' => 'ownToken#update', 'url' => '/settings/tokens/own/{name}', 'verb' => 'PUT'],
+		['name' => 'ownToken#delete', 'url' => '/settings/tokens/own/{name}', 'verb' => 'DELETE'],
+		['name' => 'tokenDeprecation#list', 'url' => '/settings/tokens/deprecations', 'verb' => 'GET'],
+		['name' => 'tokenDeprecation#save', 'url' => '/settings/tokens/deprecations', 'verb' => 'POST'],
+		['name' => 'tokenDeprecation#adopt', 'url' => '/settings/tokens/deprecations/adopt', 'verb' => 'POST'],
+		['name' => 'tokenDeprecation#delete', 'url' => '/settings/tokens/deprecations/{token}', 'verb' => 'DELETE'],
 		['name' => 'overrides#getOverrides', 'url' => '/settings/overrides', 'verb' => 'GET'],
 		['name' => 'overrides#setOverrides', 'url' => '/settings/overrides', 'verb' => 'POST'],
 		// Import/export.
