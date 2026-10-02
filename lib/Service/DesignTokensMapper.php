@@ -469,7 +469,7 @@ class DesignTokensMapper {
 		}
 
 		$declarations[$target] = $result['value'];
-		$this->maybeWarnDeprecated(path: $path, deprecated: $deprecated, warnings: $warnings);
+		$this->maybeWarnDeprecated(path: $path, deprecated: $deprecated, warnings: $warnings, token: $target);
 	}//end assignSingleTarget()
 
 	/**
@@ -549,29 +549,46 @@ class DesignTokensMapper {
 	/**
 	 * Record a deprecation warning for a successfully imported token.
 	 *
-	 * `$deprecated` may be boolean `true` (no message) or a string message;
-	 * per the ADDED requirement, the warning is only ever surfaced for a
-	 * token that was actually imported.
+	 * `$deprecated` may be boolean `true` (no message), a string message, or
+	 * the object Tokens Studio writes (`{severity: warning|error, message}`,
+	 * EditTokenForm.tsx:444-489 at 2.12.1); per the ADDED requirement, the
+	 * warning is only ever surfaced for a token that was actually imported.
+	 * A single-target token also names the CSS variable it became, so the
+	 * notice can be recorded as a deprecation of that name.
 	 *
 	 * @param string $path The token's dotted path.
 	 * @param mixed $deprecated The raw `$deprecated` value.
 	 * @param array<int, array<string, mixed>> $warnings Accumulated warnings (by reference).
+	 * @param string|null $token The CSS variable the token became, when it became one.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function maybeWarnDeprecated(string $path, $deprecated, array &$warnings): void {
+	private function maybeWarnDeprecated(string $path, $deprecated, array &$warnings, ?string $token = null): void {
 		if ($deprecated === null || $deprecated === false) {
 			return;
 		}
 
-		$message = null;
-		if (is_string($deprecated) === true && trim($deprecated) !== '') {
-			$message = $deprecated;
+		$warning = ['path' => $path, 'message' => null];
+		if (is_array($deprecated) === true) {
+			$warning['severity'] = 'warning';
+			if (($deprecated['severity'] ?? '') === 'error') {
+				$warning['severity'] = 'critical';
+			}
+
+			$deprecated = ($deprecated['message'] ?? null);
 		}
 
-		$warnings[] = ['path' => $path, 'message' => $message];
+		if (is_string($deprecated) === true && trim($deprecated) !== '') {
+			$warning['message'] = $deprecated;
+		}
+
+		if ($token !== null) {
+			$warning['token'] = $token;
+		}
+
+		$warnings[] = $warning;
 	}//end maybeWarnDeprecated()
 
 	/**

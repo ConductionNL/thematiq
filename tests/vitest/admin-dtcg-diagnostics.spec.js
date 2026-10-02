@@ -196,6 +196,62 @@ describe('admin.js DTCG import diagnostics', () => {
 		)
 	})
 
+	it('offers to record notices that name a variable, and records them only on the click', async () => {
+		buildDom()
+		installFetchRouter([
+			[
+				'/settings/tokensets/upload',
+				'POST',
+				{
+					id: 'custom-eigen-huisstijl',
+					imported: 1,
+					importWarnings: [
+						{
+							path: 'color.primary',
+							message: 'Use color.brand.primary instead',
+							token: '--nldesign-color-primary',
+						},
+						{ path: 'typography.body', message: null },
+					],
+					warnings: [],
+				},
+			],
+			[
+				'/settings/tokens/deprecations/adopt',
+				'POST',
+				{ status: 'ok', recorded: ['--nldesign-color-primary'] },
+			],
+		])
+		const changed = vi.fn()
+		document.addEventListener('thematiq:deprecations-changed', changed)
+
+		await loadAdminScript()
+		document.getElementById('nldesign-upload-name').value = 'Eigen huisstijl'
+		await selectUploadFile('theme.tokens.json', '{}')
+
+		const adoptCalls = () =>
+			global.fetch.mock.calls.filter(
+				(c) => c[0].indexOf('/settings/tokens/deprecations/adopt') !== -1,
+			)
+		const button = document.querySelector('.nldesign-adopt-notices')
+		expect(button.textContent).toBe('Record as deprecations')
+		expect(adoptCalls()).toHaveLength(0)
+
+		button.dispatchEvent(new window.MouseEvent('click', { bubbles: true }))
+		await flush()
+
+		expect(adoptCalls()).toHaveLength(1)
+		expect(JSON.parse(adoptCalls()[0][1].body).notices).toEqual([
+			{
+				path: 'color.primary',
+				message: 'Use color.brand.primary instead',
+				token: '--nldesign-color-primary',
+			},
+		])
+		expect(changed).toHaveBeenCalled()
+		document.removeEventListener('thematiq:deprecations-changed', changed)
+	})
+
 	it('renders no diagnostics markup when skipped/errors/importWarnings are absent (CSS upload, backward compat)', async () => {
 		buildDom()
 		installFetchRouter([

@@ -13,7 +13,7 @@ Every `theme` entry in the Nextcloud variable inventory MUST be either mapped to
 #### Scenario: Unmapped variable
 - GIVEN a Nextcloud CSS variable that has no NL Design equivalent, such as `--color-mark`
 - WHEN the theme stylesheets are loaded
-- THEN the variable MUST be redeclared from a `--nldesign-*` token that has no default value
+- THEN the variable MUST be redeclared from an `--nldesign-nc-*` token that has no default value
 - AND the redeclaration MUST fall back to the value Nextcloud declared for the current theme
 
 #### Scenario: Intentionally unoverridden variable
@@ -33,14 +33,16 @@ Every `theme` entry in the Nextcloud variable inventory MUST be either mapped to
 ### Requirement: A settable variable keeps Nextcloud's value until set
 A settable Nextcloud variable MUST resolve to exactly the value Nextcloud declares for the active theme whenever no token set and no admin override provides its `--nldesign-*` token.
 
+@e2e exclude Proven in a real Chrome by `tests/css/check-theme-scopes-cascade.mjs` (`npm run test:theme-scopes`), which loads Nextcloud's per-theme values from the inventory and thematiq's real stylesheets; no live instance is needed.
+
 #### Scenario: Unset under the dark theme
-- GIVEN the active token set does not declare `--nldesign-color-text-selection`
+- GIVEN the active token set does not declare `--nldesign-nc-color-text-selection`
 - AND the user has chosen Nextcloud's dark theme
 - WHEN a page renders
 - THEN the computed `--color-text-selection` MUST equal the value Nextcloud's dark theme declares
 
 #### Scenario: Unset under high contrast
-- GIVEN no token set declares `--nldesign-color-loading-light`
+- GIVEN no token set declares `--nldesign-nc-color-loading-light`
 - AND the user has chosen the high-contrast theme
 - WHEN a page renders
 - THEN the computed `--color-loading-light` MUST equal Nextcloud's high-contrast value
@@ -53,19 +55,27 @@ A settable Nextcloud variable MUST resolve to exactly the value Nextcloud declar
 ### Requirement: A set value reaches the page
 When a token set or an admin override provides a settable variable's `--nldesign-*` token, the Nextcloud variable MUST take that value everywhere Nextcloud does not redeclare it in a deeper element. An admin override of a settable variable MUST be stored as its `--nldesign-*` token.
 
+@e2e exclude Proven in a real Chrome by `tests/css/check-theme-scopes-cascade.mjs` (`npm run test:theme-scopes`), which loads Nextcloud's per-theme values from the inventory and thematiq's real stylesheets; no live instance is needed.
+
 #### Scenario: A set gives the search highlight a colour
-- GIVEN a token set declares `--nldesign-color-mark: #ffe08a`
+- GIVEN a token set declares `--nldesign-nc-color-mark: #ffe08a`
 - WHEN a search result page renders
 - THEN the background of a `<mark>` element MUST be `#ffe08a`
 
 #### Scenario: A set gives a light value only
-- GIVEN a token set declares `--nldesign-color-warning-hover` in its light file only
+- GIVEN a token set declares `--nldesign-nc-color-warning-hover` in its light file only
 - AND the user has chosen the dark theme
 - WHEN a page renders
 - THEN the computed `--color-warning-hover` MUST equal Nextcloud's dark value
 
+#### Scenario: A size applies in both schemes
+- GIVEN a token set declares `--nldesign-nc-header-height: 56px` in its light file only
+- AND Nextcloud gives `--header-height` the same value in light and dark
+- WHEN the user switches between light and dark
+- THEN the computed `--header-height` MUST be `56px` in both
+
 #### Scenario: A set gives a light and a dark value
-- GIVEN a token set declares `--nldesign-color-box-shadow` in its light file and in its dark variant file
+- GIVEN a token set declares `--nldesign-nc-color-box-shadow` in its light file and in its dark variant file
 - WHEN the user switches between light and dark
 - THEN the computed `--color-box-shadow` MUST follow the set's value for each scheme
 

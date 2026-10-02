@@ -207,13 +207,18 @@ class ScheduledSwitchService {
 	 */
 	public function runDue(): void {
 		$now = $this->time->getTime();
-		$kept = [];
-		foreach ($this->store->all() as $entry) {
-			$entry = $this->advance(entry: $entry, now: $now);
-			if ($entry !== null) {
-				$kept[] = $entry;
-			}
+		$entries = array_values($this->store->all());
+
+		// Ends before starts, in due order, not stored order (#825).
+		$order = (new ScheduledSwitchOrder())->dueOrder(entries: $entries);
+
+		$advanced = [];
+		foreach ($order as $index) {
+			$advanced[$index] = $this->advance(entry: $entries[$index], now: $now);
 		}
+
+		ksort($advanced);
+		$kept = array_values(array_filter($advanced, fn (?array $entry): bool => $entry !== null));
 
 		$this->store->save(entries: $kept);
 		$this->config->setAppValue(Application::APP_ID, self::LAST_RUN_KEY, $this->nowIso());

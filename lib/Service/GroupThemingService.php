@@ -144,7 +144,7 @@ class GroupThemingService {
 				continue;
 			}
 
-			$result[] = ['group' => $group, 'tokenSet' => $tokenSet];
+			$result[] = (new GroupDelegationRules())->read(entry: $entry, clean: ['group' => $group, 'tokenSet' => $tokenSet]);
 		}
 
 		return $result;
@@ -228,7 +228,11 @@ class GroupThemingService {
 
 		$seenGroups[$group] = true;
 
-		return ['group' => $group, 'tokenSet' => $tokenSet];
+		return (new GroupDelegationRules())->validate(
+			entry: $entry,
+			clean: ['group' => $group, 'tokenSet' => $tokenSet],
+			isAvailable: fn (string $setId): bool => $this->tokenSetService->isValidTokenSet(tokenSetId: $setId)
+		);
 	}//end validateEntry()
 
 	/**
@@ -280,13 +284,19 @@ class GroupThemingService {
 	 * broken group backend, cache, or malformed stored mapping must never
 	 * brick theming or escape into `Application::boot()`.
 	 *
+	 * On a page of a branded app the caller passes the app's set: it wins over
+	 * the group mapping, an admin preview still wins over it, and a sessionless
+	 * page ignores it (openspec/specs/per-app-theming/spec.md).
+	 *
+	 * @param string|null $appBrandSet The token set of the rendered app's brand, or null.
+	 *
 	 * @return string The resolved token set id.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
-	public function resolveTokenSetForRequest(): string {
+	public function resolveTokenSetForRequest(?string $appBrandSet = null): string {
 		try {
-			return $this->resolveTokenSetForRequestUnsafe();
+			return $this->resolveTokenSetForRequestUnsafe(appBrandSet: $appBrandSet);
 		} catch (\Throwable $e) {
 			// Fail open: presentation, not security. A broken group backend,
 			// cache, or malformed mapping must not strip theming or crash
@@ -299,11 +309,13 @@ class GroupThemingService {
 	 * The un-guarded resolution pipeline; see {@see resolveTokenSetForRequest()}
 	 * for the fail-open wrapper.
 	 *
+	 * @param string|null $appBrandSet The token set of the rendered app's brand, or null.
+	 *
 	 * @return string The resolved token set id.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
-	private function resolveTokenSetForRequestUnsafe(): string {
+	private function resolveTokenSetForRequestUnsafe(?string $appBrandSet): string {
 		// 1. Admin preview wins over group mapping for the previewing admin.
 		// No-op stub until change `theme-preview-workflow` lands (its
 		// ThemePreviewService does not exist in this codebase yet) — this is
@@ -319,6 +331,12 @@ class GroupThemingService {
 		$user = $this->userSession->getUser();
 		if ($user === null) {
 			return $this->getDefaultTokenSet();
+		}
+
+		// 2b. The rendered app's own brand wins over the group mapping, so a
+		// branded app looks the same for every group (per-app-theming spec).
+		if ($appBrandSet !== null) {
+			return $appBrandSet;
 		}
 
 		// 3. Empty mapping fast path: no cache access, no group lookup —

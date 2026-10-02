@@ -2,7 +2,9 @@
 
 ## Purpose
 TBD - created by archiving change shipped-token-set-contrast-audit. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Automated Contrast Audit Over All Shipped Token Sets
 For every token set declared in `token-sets.json` whose design system reads `--nldesign-*` tokens (i.e. `design_system` is not `none`), the app MUST compute WCAG relative-luminance contrast ratios for the fixed pairs using the existing `ContrastService`: `--nldesign-color-primary` vs `--nldesign-color-primary-text` against the 4.5:1 AA text threshold, and `--nldesign-color-primary` vs the set background (`--nldesign-color-background`, or `theming.background_color` when the token is absent) against the 3:1 AA non-text threshold. The values MUST be resolved from the set's `css/tokens/{id}.css` layered over `css/defaults.css`. A pair whose values cannot be resolved to literals MUST be reported as `unevaluated` and MUST NOT be treated as passing.
 
@@ -75,3 +77,24 @@ same per-set verdict to a leaf app's own non-admin picker, and its "Selection
 Contrast Is Non-Blocking" requirement extends the non-blocking policy this
 spec already applies in the apply dialog to that new consumption path.
 
+### Requirement: Translucent colours are measured as they render
+
+`ContrastService` MUST read `#rgba`, `#rrggbbaa`, and the alpha of `rgba()` and `hsla()`. Before a
+ratio is computed, a translucent foreground MUST be blended over its background, and a translucent
+background over the page background (`--nldesign-color-background`, else white). This MUST stay
+inside the one contrast implementation this spec requires, and a colour that cannot be parsed MUST
+stay `unevaluated`.
+
+#### Scenario: Faint text fails even though its opaque colour would pass
+@e2e exclude Contrast arithmetic, covered by PHPUnit on ContrastService
+- GIVEN text `rgba(0, 0, 0, 0.2)` on background `#ffffff`
+- WHEN the pair is evaluated
+- THEN the ratio MUST be computed for the blend `#cccccc` on `#ffffff`
+- AND the pair MUST fail AA
+
+#### Scenario: An 8-digit hex is evaluated, not skipped
+@e2e exclude Contrast arithmetic, covered by PHPUnit on ContrastService
+- GIVEN text `#000000cc` on background `#ffffff`
+- WHEN the pair is evaluated
+- THEN the pair MUST get a ratio and a verdict
+- AND it MUST NOT be `unevaluated`
