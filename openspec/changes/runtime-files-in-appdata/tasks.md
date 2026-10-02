@@ -35,7 +35,7 @@
 ## 7. Documentation and verification
 
 - [x] 7.1 Document the storage move and the rollback caveat in the admin docs and `CHANGELOG.md`, and verify the docs site builds
-- [ ] 7.2 Run `COMPOSER_PROCESS_TIMEOUT=0 composer check:strict`, PHPUnit in the installed container, vitest with two workers, `npm run format` and `npm run test:l10n` once before push, and record the results in the PR body
+- [x] 7.2 Run `COMPOSER_PROCESS_TIMEOUT=0 composer check:strict`, PHPUnit in the installed container, vitest with two workers, `npm run format` and `npm run test:l10n` once before push, and record the results in the PR body
 
 Reminders, not tasks:
 - ADR-005: the public routes serve only names the store accepts; no listing, no path from the request reaches the filesystem.
