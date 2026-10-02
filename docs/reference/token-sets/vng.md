@@ -2,7 +2,7 @@
 
 # VNG Vereniging Nederlandse Gemeenten
 
-Token set `vng`: 1225 declared by this set, 123 from the defaults layer.
+Token set `vng`: 1225 declared by this set, 124 from the defaults layer.
 
 Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 
@@ -248,6 +248,7 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--nldesign-animation-easing` | `ease` | | defaults | |
 | `--nldesign-animation-quick` | `100ms` | | this set | `--header-menu-item-height` |
 | `--nldesign-animation-slow` | `300ms` | | this set | Animation slow |
 | `--nldesign-header-icon-filter` | `invert(1) brightness(0) contrast(100)` | | defaults | |

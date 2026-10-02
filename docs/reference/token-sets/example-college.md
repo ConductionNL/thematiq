@@ -2,7 +2,7 @@
 
 # (EXAMPLE) College
 
-Token set `example-college`: 1258 declared by this set, 126 from the defaults layer.
+Token set `example-college`: 1258 declared by this set, 127 from the defaults layer.
 
 Contrast: primary text on primary 9.34:1, primary on background 9.34:1 (pass).
 
@@ -248,6 +248,7 @@ Contrast: primary text on primary 9.34:1, primary on background 9.34:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--nldesign-animation-easing` | `ease` | | defaults | |
 | `--nldesign-animation-quick` | `100ms` | | defaults | `--header-menu-item-height` |
 | `--nldesign-animation-slow` | `300ms` | | defaults | Animation slow |
 | `--nldesign-header-icon-filter` | `none` | | this set | |
