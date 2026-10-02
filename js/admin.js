@@ -2147,11 +2147,24 @@
 				})
 		}
 
-		// Escape HTML to prevent XSS
+		/**
+		 * Escape a value for HTML text and for a quoted attribute value.
+		 *
+		 * Most call sites put the result inside value="..." or title="...", so
+		 * quotes must be escaped too. The old textContent/innerHTML round trip
+		 * left `"` as is, and a quote in an imported overrides value closed
+		 * the attribute and let the rest parse as new attributes (#622).
+		 *
+		 * @param {*} text The value to escape.
+		 * @return {string} The escaped value.
+		 */
 		function escapeHtml(text) {
-			var div = document.createElement('div')
-			div.textContent = text
-			return div.innerHTML
+			return String(text === null || text === undefined ? '' : text)
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#39;')
 		}
 
 		/* ==========================================================================

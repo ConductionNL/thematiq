@@ -3051,13 +3051,14 @@
 		return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase()
 	}
 
-	/** Make a string safe to sit inside a double-quoted HTML attribute. */
+	/** Make a string safe to sit inside a quoted HTML attribute (#622). */
 	function attr(value) {
 		return String(value)
 			.replace(/&/g, '&amp;')
 			.replace(/"/g, '&quot;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')
+			.replace(/'/g, '&#39;')
 	}
 
 	/**
