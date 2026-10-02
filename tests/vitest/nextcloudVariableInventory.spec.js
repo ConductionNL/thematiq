@@ -365,6 +365,25 @@ describe('an internal variable is settable through its token, and only when set'
 		expect(declared).toEqual([])
 	})
 
+	it('types a whole colour as a colour, and a shadow, border or gradient that contains one as text', () => {
+		const typeOf = (variable) =>
+			Object.values(map).find((t) => t.variable === variable).type
+		expect(typeOf('--dp-hover-color')).toBe('color')
+		expect(typeOf('--button-save-bg-color')).toBe('color')
+		expect(typeOf('--backdrop-color')).toBe('rgb')
+		expect(typeOf('--input-border-box-shadow-light')).toBe('text')
+		expect(typeOf('--account-menu-outline')).toBe('text')
+		expect(typeOf('--cn-color-picker-checker')).toBe('text')
+		expect(typeOf('--dp-loader')).toBe('text')
+	})
+
+	it('carries no source-map fragment as a selector', () => {
+		const fragments = [
+			...new Set(Object.values(map).flatMap((t) => t.selectors ?? [])),
+		].filter((s) => /^[A-Za-z][A-Za-z0-9]*$/.test(s) && s !== 'body')
+		expect(fragments).toEqual([])
+	})
+
 	it('excludes every variable written at render time', () => {
 		const vueBound = Object.keys(vars).filter((n) => /^--v?[0-9a-f]{8}$/.test(n))
 		expect(vueBound.filter((n) => st[n].status !== 'excluded')).toEqual([])
