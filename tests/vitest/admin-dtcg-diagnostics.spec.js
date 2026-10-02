@@ -196,6 +196,147 @@ describe('admin.js DTCG import diagnostics', () => {
 		)
 	})
 
+	it('offers to record notices that name a variable, and records them only on the click', async () => {
+		buildDom()
+		installFetchRouter([
+			[
+				'/settings/tokensets/upload',
+				'POST',
+				{
+					id: 'custom-eigen-huisstijl',
+					imported: 1,
+					importWarnings: [
+						{
+							path: 'color.primary',
+							message: 'Use color.brand.primary instead',
+							token: '--nldesign-color-primary',
+						},
+						{ path: 'typography.body', message: null },
+					],
+					warnings: [],
+				},
+			],
+			[
+				'/settings/tokens/deprecations/adopt',
+				'POST',
+				{ status: 'ok', recorded: ['--nldesign-color-primary'] },
+			],
+		])
+		const changed = vi.fn()
+		document.addEventListener('thematiq:deprecations-changed', changed)
+
+		await loadAdminScript()
+		document.getElementById('nldesign-upload-name').value = 'Eigen huisstijl'
+		await selectUploadFile('theme.tokens.json', '{}')
+
+		const adoptCalls = () =>
+			global.fetch.mock.calls.filter(
+				(c) => c[0].indexOf('/settings/tokens/deprecations/adopt') !== -1,
+			)
+		const button = document.querySelector('.nldesign-adopt-notices')
+		expect(button.textContent).toBe('Record as deprecations')
+		expect(adoptCalls()).toHaveLength(0)
+
+		button.dispatchEvent(new window.MouseEvent('click', { bubbles: true }))
+		await flush()
+
+		expect(adoptCalls()).toHaveLength(1)
+		expect(JSON.parse(adoptCalls()[0][1].body).notices).toEqual([
+			{
+				path: 'color.primary',
+				message: 'Use color.brand.primary instead',
+				token: '--nldesign-color-primary',
+			},
+		])
+		expect(changed).toHaveBeenCalled()
+		document.removeEventListener('thematiq:deprecations-changed', changed)
+	})
+
+	it('lists a colour clipped into sRGB with its reason', async () => {
+		buildDom()
+		installFetchRouter([
+			[
+				'/settings/tokensets/upload',
+				'POST',
+				{
+					id: 'custom-p3',
+					imported: 1,
+					report: [
+						{
+							source: 'color.primary',
+							target: '--nldesign-color-primary',
+							action: 'adapted',
+							reason: 'out-of-gamut-clipped',
+							value: '#ff0000',
+						},
+					],
+					warnings: [],
+				},
+			],
+		])
+		await loadAdminScript()
+		document.getElementById('nldesign-upload-name').value = 'P3'
+		await selectUploadFile('p3.tokens.json', '{}')
+
+		const items = document.querySelectorAll(
+			'#nldesign-upload-result .nldesign-diagnostics-list li',
+		)
+		expect(items).toHaveLength(1)
+		expect(items[0].textContent).toBe(
+			'Outside sRGB, clipped to the nearest colour (1): color.primary',
+		)
+	})
+
+	it('downloads the selected set as design tokens from the button next to the dropdown', async () => {
+		buildDom()
+		document.getElementById('nldesign-settings').innerHTML =
+			'<select id="nldesign-token-set-select"><option value="amsterdam" selected>Amsterdam</option></select>'
+			+ '<button type="button" id="nldesign-dtcg-download" class="button">Download as design tokens</button>'
+		installFetchRouter([])
+		await loadAdminScript()
+		document
+			.getElementById('nldesign-dtcg-download')
+			.dispatchEvent(new window.MouseEvent('click', { bubbles: true }))
+		await flush()
+
+		expect(
+			global.fetch.mock.calls.some((c) =>
+				c[0].endsWith('/settings/tokensets/amsterdam/dtcg'),
+			),
+		).toBe(true)
+	})
+
+	it('offers a design tokens download in each custom set row', async () => {
+		buildDom()
+		installFetchRouter([
+			[
+				'/settings/tokensets/custom',
+				'GET',
+				{
+					sets: [
+						{
+							id: 'custom-gemeente-voorbeeld',
+							name: 'Gemeente Voorbeeld',
+						},
+					],
+				},
+			],
+		])
+		await loadAdminScript()
+		await flush()
+
+		const button = document.querySelector('.nldesign-dtcg-row-download')
+		expect(button.textContent).toBe('Download as design tokens')
+		expect(button.tagName).toBe('BUTTON')
+		button.dispatchEvent(new window.MouseEvent('click', { bubbles: true }))
+		await flush()
+		expect(
+			global.fetch.mock.calls.some((c) =>
+				c[0].endsWith('/settings/tokensets/custom-gemeente-voorbeeld/dtcg'),
+			),
+		).toBe(true)
+	})
+
 	it('renders no diagnostics markup when skipped/errors/importWarnings are absent (CSS upload, backward compat)', async () => {
 		buildDom()
 		installFetchRouter([

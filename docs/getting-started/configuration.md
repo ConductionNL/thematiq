@@ -13,9 +13,9 @@ After installing Thematiq, navigate to:
 1. Click your **avatar** (top-right corner)
 2. Choose **Administration settings**
 3. Click **Appearance** in the left sidebar
-4. Scroll down until you see the **NL Design System Theme** section
+4. Scroll down until you see the **Thematiq** section
 
-![The NL Design System Theme section in Nextcloud admin settings, showing the Design token set dropdown, two checkboxes, and the preview area](../img/guide-nl-design-section.png)
+![The Thematiq section in Nextcloud admin settings, showing the Design token set dropdown, two checkboxes, and the preview area](../img/guide-nl-design-section.png)
 
 ## Step 1 — Pick your organisation
 

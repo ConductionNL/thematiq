@@ -1,0 +1,5103 @@
+{
+	"$comment": "What thematiq does with each inventory entry. Human decisions: edit by hand, then run npm run test:unit. See docs/reference/variable-inventory.md.",
+	"variables": {
+		"--a475b540": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--a8212066": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--a843d9d2": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--ab21a194": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--account-menu-outline": {
+			"status": "settable",
+			"token": "--nldesign-nc-account-menu-outline"
+		},
+		"--adec40c8": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--afe18836": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--alt-text-active-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-active-bg-color"
+		},
+		"--alt-text-active-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-active-border-color"
+		},
+		"--alt-text-active-fg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-active-fg-color"
+		},
+		"--alt-text-add-image": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--alt-text-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-bg-color"
+		},
+		"--alt-text-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-border-color"
+		},
+		"--alt-text-done-image": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--alt-text-fg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-fg-color"
+		},
+		"--alt-text-focus-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-focus-border-color"
+		},
+		"--alt-text-focus-outline-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-focus-outline-color"
+		},
+		"--alt-text-hover-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-hover-bg-color"
+		},
+		"--alt-text-hover-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-hover-border-color"
+		},
+		"--alt-text-hover-fg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-hover-fg-color"
+		},
+		"--alt-text-opacity": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-opacity"
+		},
+		"--alt-text-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-shadow"
+		},
+		"--alt-text-tooltip-bg": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-tooltip-bg"
+		},
+		"--alt-text-tooltip-border": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-tooltip-border"
+		},
+		"--alt-text-tooltip-fg": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-tooltip-fg"
+		},
+		"--alt-text-tooltip-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-alt-text-tooltip-shadow"
+		},
+		"--animation-duration": {
+			"status": "excluded",
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
+		},
+		"--animation-quick": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-animation-quick",
+			"category": "Animations",
+			"note": "Quick animation duration (100ms)"
+		},
+		"--animation-slow": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-animation-slow",
+			"category": "Animations",
+			"note": "Slow animation duration (300ms)"
+		},
+		"--annotation-unfocused-field-background": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--app-item-circle-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-item-circle-size"
+		},
+		"--app-item-col-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-item-col-width"
+		},
+		"--app-item-icon-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-item-icon-size"
+		},
+		"--app-item-row-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-item-row-height"
+		},
+		"--app-navigation-item-child-offset": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-navigation-item-child-offset"
+		},
+		"--app-navigation-max-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-navigation-max-width"
+		},
+		"--app-navigation-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-navigation-padding"
+		},
+		"--app-navigation-quota-margin": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-navigation-quota-margin"
+		},
+		"--app-settings-section-content-gap": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-settings-section-content-gap"
+		},
+		"--app-settings-section-text-offset": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-settings-section-text-offset"
+		},
+		"--app-sidebar-close-button-offset": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-sidebar-close-button-offset"
+		},
+		"--app-sidebar-offset": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--app-sidebar-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-sidebar-padding"
+		},
+		"--app-sidebar-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-app-sidebar-width"
+		},
+		"--assistant-button-background-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-assistant-button-background-color"
+		},
+		"--assistant-button-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-assistant-button-color"
+		},
+		"--auto-complete-result-avatar-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-auto-complete-result-avatar-size"
+		},
+		"--auto-complete-result-status-icon-position": {
+			"status": "settable",
+			"token": "--nldesign-nc-auto-complete-result-status-icon-position"
+		},
+		"--auto-complete-result-status-icon-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-auto-complete-result-status-icon-size"
+		},
+		"--avatar-cell-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-cell-width"
+		},
+		"--avatar-size": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--avatar-status-icon-position": {
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-status-icon-position"
+		},
+		"--avatar-status-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-status-size"
+		},
+		"--avatar-status-size-min": {
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-status-size-min"
+		},
+		"--avatar-status-size-orbital": {
+			"status": "settable",
+			"token": "--nldesign-nc-avatar-status-size-orbital"
+		},
+		"--backdrop-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-backdrop-color"
+		},
+		"--background-blur": {
+			"status": "settable",
+			"token": "--nldesign-nc-background-blur"
+		},
+		"--background-image-invert-if-bright": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Filters & Inversion",
+			"note": "Background image inversion; NC theme dependent"
+		},
+		"--background-invert-if-bright": {
+			"status": "settable",
+			"token": "--nldesign-nc-background-invert-if-bright",
+			"tab": "content",
+			"type": "text",
+			"label": "Invert filter on a bright background",
+			"perScheme": true,
+			"note": "Bright mode inversion; NC theme dependent",
+			"category": "Filters & Inversion"
+		},
+		"--background-invert-if-dark": {
+			"status": "settable",
+			"token": "--nldesign-nc-background-invert-if-dark",
+			"tab": "content",
+			"type": "text",
+			"label": "Invert filter on a dark background",
+			"perScheme": true,
+			"note": "Dark mode image inversion; NC theme dependent",
+			"category": "Filters & Inversion"
+		},
+		"--be84d992": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--body-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-body-bg-color"
+		},
+		"--body-container-margin": {
+			"status": "settable",
+			"token": "--nldesign-nc-body-container-margin",
+			"tab": "content",
+			"type": "text",
+			"label": "Body container margin",
+			"advanced": true,
+			"note": "Body container margin; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--body-container-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-body-container-radius",
+			"tab": "content",
+			"type": "text",
+			"label": "Body container radius",
+			"note": "Body container radius; depends on border-radius-container-large",
+			"category": "Layout & Dimensions"
+		},
+		"--body-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-body-height",
+			"tab": "content",
+			"type": "text",
+			"label": "Body height",
+			"advanced": true,
+			"note": "Body height calculation; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--border": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--border-radius": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius",
+			"category": "Border Radius",
+			"note": "Deprecated; default border radius"
+		},
+		"--border-radius-container": {
+			"status": "settable",
+			"token": "--nldesign-nc-border-radius-container",
+			"tab": "content",
+			"type": "text",
+			"label": "Container radius",
+			"note": "Containers (12px); intentionally not overridden for layout consistency",
+			"category": "Border Radius"
+		},
+		"--border-radius-container-large": {
+			"status": "settable",
+			"token": "--nldesign-nc-border-radius-container-large",
+			"tab": "content",
+			"type": "text",
+			"label": "Large container radius",
+			"note": "Large containers (16px); intentionally not overridden",
+			"category": "Border Radius"
+		},
+		"--border-radius-element": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius",
+			"category": "Border Radius",
+			"note": "Interactive elements (8px default)"
+		},
+		"--border-radius-large": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius-large",
+			"category": "Border Radius",
+			"note": "Deprecated alias for element radius"
+		},
+		"--border-radius-pill": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius-pill",
+			"category": "Border Radius",
+			"note": "Pill shape (100px)"
+		},
+		"--border-radius-rounded": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius-rounded",
+			"category": "Border Radius",
+			"note": "Rounded elements (28px default)"
+		},
+		"--border-radius-small": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius-small",
+			"category": "Border Radius",
+			"note": "Small elements (4px default)"
+		},
+		"--border-width-input": {
+			"status": "settable",
+			"token": "--nldesign-nc-border-width-input",
+			"tab": "content",
+			"type": "text",
+			"label": "Input border width",
+			"note": "Input border width (1px); standard across all themes",
+			"category": "Borders"
+		},
+		"--border-width-input-focused": {
+			"status": "settable",
+			"token": "--nldesign-nc-border-width-input-focused",
+			"tab": "content",
+			"type": "text",
+			"label": "Focused input border width",
+			"note": "Focused input border width (2px); standard",
+			"category": "Borders"
+		},
+		"--breakpoint-mobile": {
+			"status": "settable",
+			"token": "--nldesign-nc-breakpoint-mobile",
+			"tab": "content",
+			"type": "text",
+			"label": "Mobile breakpoint",
+			"advanced": true,
+			"note": "Mobile breakpoint (1024px); NC responsive design",
+			"category": "Layout & Dimensions"
+		},
+		"--button-cancel-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-bg-color"
+		},
+		"--button-cancel-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-border-color"
+		},
+		"--button-cancel-fg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-fg-color"
+		},
+		"--button-cancel-hover-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-hover-bg-color"
+		},
+		"--button-cancel-hover-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-hover-border-color"
+		},
+		"--button-cancel-hover-fg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-cancel-hover-fg-color"
+		},
+		"--button-hover-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-hover-color"
+		},
+		"--button-inner-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-inner-size"
+		},
+		"--button-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-padding"
+		},
+		"--button-padding-default": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-padding-default"
+		},
+		"--button-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-radius"
+		},
+		"--button-save-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-bg-color"
+		},
+		"--button-save-fg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-fg-color"
+		},
+		"--button-save-hover-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-hover-bg-color"
+		},
+		"--button-save-hover-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-hover-border-color"
+		},
+		"--button-save-hover-fg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-save-hover-fg-color"
+		},
+		"--button-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-button-size"
+		},
+		"--callout-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-callout-background"
+		},
+		"--callout-border": {
+			"status": "settable",
+			"token": "--nldesign-nc-callout-border"
+		},
+		"--cell-margin": {
+			"status": "settable",
+			"token": "--nldesign-nc-cell-margin"
+		},
+		"--cell-min-width": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--cell-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-cell-padding"
+		},
+		"--cell-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-cell-width"
+		},
+		"--cell-width-groups": {
+			"status": "settable",
+			"token": "--nldesign-nc-cell-width-groups"
+		},
+		"--cell-width-large": {
+			"status": "settable",
+			"token": "--nldesign-nc-cell-width-large"
+		},
+		"--cf2ff408": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--checkbox-container-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-container-size"
+		},
+		"--checkbox-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-padding"
+		},
+		"--checkbox-radio-switch--border-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-radio-switch--border-radius"
+		},
+		"--checkbox-radio-switch--border-radius-outer": {
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-radio-switch--border-radius-outer"
+		},
+		"--checkbox-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-checkbox-size"
+		},
+		"--chip-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-chip-radius"
+		},
+		"--chip-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-chip-size"
+		},
+		"--clickable-area": {
+			"status": "settable",
+			"token": "--nldesign-nc-clickable-area"
+		},
+		"--clickable-area-large": {
+			"status": "settable",
+			"token": "--nldesign-nc-clickable-area-large",
+			"tab": "content",
+			"type": "text",
+			"label": "Large clickable area",
+			"advanced": true,
+			"note": "Large touch target (48px); accessibility standard",
+			"category": "Spacing & Clickable Areas"
+		},
+		"--clickable-area-small": {
+			"status": "settable",
+			"token": "--nldesign-nc-clickable-area-small",
+			"tab": "content",
+			"type": "text",
+			"label": "Small clickable area",
+			"advanced": true,
+			"note": "Small touch target (24px); accessibility standard",
+			"category": "Spacing & Clickable Areas"
+		},
+		"--cn-ai-pointer-offset": {
+			"status": "settable",
+			"token": "--nldesign-cn-ai-pointer-offset"
+		},
+		"--cn-card-active-border": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-color-picker-checker": {
+			"status": "settable",
+			"token": "--nldesign-cn-color-picker-checker"
+		},
+		"--cn-color-swatch-checker": {
+			"status": "settable",
+			"token": "--nldesign-cn-color-swatch-checker"
+		},
+		"--cn-ctx-menu-x": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-ctx-menu-y": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-detail-grid-label-width": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-email-accent": {
+			"status": "settable",
+			"token": "--nldesign-cn-email-accent"
+		},
+		"--cn-forms-accent": {
+			"status": "settable",
+			"token": "--nldesign-cn-forms-accent"
+		},
+		"--cn-forms-status": {
+			"status": "settable",
+			"token": "--nldesign-cn-forms-status"
+		},
+		"--cn-grid-cols": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-grid-cs": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-grid-cspan": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-grid-cspan-md": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-grid-rs": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-grid-rspan": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-iw-accent": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-iwg-columns": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-iwg-min-height": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-kpi-accent": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-accent"
+		},
+		"--cn-kpi-gap": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-gap"
+		},
+		"--cn-kpi-gap-horizontal": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-gap-horizontal"
+		},
+		"--cn-kpi-grid-gap": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-grid-gap"
+		},
+		"--cn-kpi-icon-size": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-icon-size"
+		},
+		"--cn-kpi-icon-size-sm": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-icon-size-sm"
+		},
+		"--cn-kpi-icon-tint": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-icon-tint"
+		},
+		"--cn-kpi-label-color": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-label-color"
+		},
+		"--cn-kpi-label-size": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-label-size"
+		},
+		"--cn-kpi-padding": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-padding"
+		},
+		"--cn-kpi-padding-flat": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-padding-flat"
+		},
+		"--cn-kpi-radius": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-radius"
+		},
+		"--cn-kpi-section-title-size": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-section-title-size"
+		},
+		"--cn-kpi-stack-gap": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-stack-gap"
+		},
+		"--cn-kpi-title-size": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-title-size"
+		},
+		"--cn-kpi-title-weight": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-title-weight"
+		},
+		"--cn-kpi-value-line": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-line"
+		},
+		"--cn-kpi-value-size": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-size"
+		},
+		"--cn-kpi-value-size-compact": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-size-compact"
+		},
+		"--cn-kpi-value-size-stacked": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-size-stacked"
+		},
+		"--cn-kpi-value-text-size": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-text-size"
+		},
+		"--cn-kpi-value-weight": {
+			"status": "settable",
+			"token": "--nldesign-cn-kpi-value-weight"
+		},
+		"--cn-links-widget-cols": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-quicklinks-icon-size": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-sidebar-tab-min-width": {
+			"status": "settable",
+			"token": "--nldesign-cn-sidebar-tab-min-width"
+		},
+		"--cn-spacing-m": {
+			"status": "settable",
+			"token": "--nldesign-cn-spacing-m"
+		},
+		"--cn-table-cell-max-width": {
+			"status": "settable",
+			"token": "--nldesign-cn-table-cell-max-width"
+		},
+		"--cn-tile-bg": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-tile-text": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-widget-icon-color": {
+			"status": "excluded",
+			"reason": "the shared library writes it from a style binding at render, which outranks any stylesheet value."
+		},
+		"--cn-xwiki-accent": {
+			"status": "settable",
+			"token": "--nldesign-cn-xwiki-accent"
+		},
+		"--cn-xwiki-accent-soft": {
+			"status": "settable",
+			"token": "--nldesign-cn-xwiki-accent-soft"
+		},
+		"--color": {
+			"status": "excluded",
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
+		},
+		"--color-background-assistant": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-background-assistant",
+			"tab": "content",
+			"type": "color",
+			"label": "Assistant background color",
+			"perScheme": true,
+			"note": "AI assistant background; NC-specific feature",
+			"category": "Assistant (AI)"
+		},
+		"--color-background-dark": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-background-dark",
+			"category": "Background States",
+			"note": "Darker background variant"
+		},
+		"--color-background-darker": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-background-darker",
+			"category": "Background States",
+			"note": "Darkest background variant"
+		},
+		"--color-background-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-background-hover",
+			"category": "Background States",
+			"note": "Hover state background"
+		},
+		"--color-background-plain": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Main Background",
+			"note": "Admin/user configured background; should respect user settings"
+		},
+		"--color-background-plain-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-background-plain-text",
+			"tab": "login",
+			"type": "color",
+			"label": "Text on the plain background",
+			"note": "Text on plain background; auto-calculated by Nextcloud",
+			"category": "Main Background"
+		},
+		"--color-background-selection": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Special Colors",
+			"note": "Selection wash; new in NC 33/34. Derived from `--color-primary-element` at 20% alpha, and that variable is mapped"
+		},
+		"--color-border": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-border",
+			"category": "Borders",
+			"note": "Standard border color"
+		},
+		"--color-border-assistant": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-border-assistant",
+			"tab": "content",
+			"type": "text",
+			"label": "Assistant border",
+			"perScheme": true,
+			"note": "AI assistant border gradient; NC-specific",
+			"category": "Assistant (AI)"
+		},
+		"--color-border-dark": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-border-dark",
+			"category": "Borders",
+			"note": "Dark border variant"
+		},
+		"--color-border-error": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error",
+			"category": "Status: Error",
+			"note": "Error border; uses error color"
+		},
+		"--color-border-maxcontrast": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-border-dark",
+			"category": "Borders",
+			"note": "Max contrast border; maps to dark border"
+		},
+		"--color-border-success": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success",
+			"category": "Status: Success",
+			"note": "Success border; uses success color"
+		},
+		"--color-box-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-box-shadow",
+			"tab": "content",
+			"type": "text",
+			"label": "Box shadow color",
+			"perScheme": true,
+			"note": "Box shadow color; depends on --color-box-shadow-rgb",
+			"category": "Shadows"
+		},
+		"--color-box-shadow-rgb": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-box-shadow-rgb",
+			"tab": "content",
+			"type": "text",
+			"label": "Box shadow RGB",
+			"perScheme": true,
+			"note": "Box shadow RGB; auto-calculated from background",
+			"category": "Shadows"
+		},
+		"--color-circle-icon": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--color-content": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--color-element-assistant": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-element-assistant",
+			"tab": "content",
+			"type": "text",
+			"label": "Assistant element background",
+			"perScheme": true,
+			"note": "AI assistant element gradient; NC-specific",
+			"category": "Assistant (AI)"
+		},
+		"--color-element-assistant-icon": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-element-assistant-icon",
+			"tab": "content",
+			"type": "text",
+			"label": "Assistant icon background",
+			"perScheme": true,
+			"note": "AI assistant icon gradient; NC-specific",
+			"category": "Assistant (AI)"
+		},
+		"--color-element-error": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error",
+			"category": "Status: Error",
+			"note": "Error element accent"
+		},
+		"--color-element-info": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-info",
+			"category": "Status: Info",
+			"note": "Info element accent"
+		},
+		"--color-element-success": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success",
+			"category": "Status: Success",
+			"note": "Success element accent"
+		},
+		"--color-element-warning": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-warning",
+			"category": "Status: Warning",
+			"note": "Warning element accent"
+		},
+		"--color-error": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error",
+			"category": "Status: Error",
+			"note": "Error background/accent"
+		},
+		"--color-error-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error-hover",
+			"category": "Status: Error",
+			"note": "Error hover state"
+		},
+		"--color-error-rgb": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error-rgb",
+			"category": "Status: Error",
+			"note": "Deprecated; RGB for rgba()"
+		},
+		"--color-error-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-error-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Error text color",
+			"perScheme": true,
+			"note": "Error text color; NC auto-calculates for contrast",
+			"category": "Status: Error"
+		},
+		"--color-favorite": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-favorite",
+			"category": "Special Colors",
+			"note": "Favorite/star color"
+		},
+		"--color-header": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-header"
+		},
+		"--color-info": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-info",
+			"category": "Status: Info",
+			"note": "Info background/accent"
+		},
+		"--color-info-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-info-hover",
+			"tab": "status",
+			"type": "color",
+			"label": "Info hover color",
+			"perScheme": true,
+			"note": "Info hover; no NL Design equivalent",
+			"category": "Status: Info"
+		},
+		"--color-info-rgb": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-info-rgb",
+			"tab": "status",
+			"type": "text",
+			"label": "Info RGB",
+			"perScheme": true,
+			"note": "Deprecated; RGB for rgba()",
+			"category": "Status: Info"
+		},
+		"--color-info-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-info-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Info text color",
+			"perScheme": true,
+			"note": "Info text; NC auto-calculates for contrast",
+			"category": "Status: Info"
+		},
+		"--color-loading-dark": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-loading-dark",
+			"tab": "content",
+			"type": "color",
+			"label": "Loading spinner dark color",
+			"perScheme": true,
+			"note": "Loading animation dark; NC internal",
+			"category": "Special Colors"
+		},
+		"--color-loading-light": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-loading-light",
+			"tab": "content",
+			"type": "color",
+			"label": "Loading spinner light color",
+			"perScheme": true,
+			"note": "Loading animation light; NC internal",
+			"category": "Special Colors"
+		},
+		"--color-main-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-main-background",
+			"tab": "content",
+			"type": "color",
+			"label": "Main background color",
+			"perScheme": true,
+			"note": "Core page background; overriding breaks dark mode and accessibility themes",
+			"category": "Main Background"
+		},
+		"--color-main-background-blur": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Main Background",
+			"note": "Blur variant; depends on --color-main-background-rgb"
+		},
+		"--color-main-background-rgb": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Main Background",
+			"note": "RGB variant for rgba() usage; depends on --color-main-background"
+		},
+		"--color-main-background-translucent": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Main Background",
+			"note": "Translucent variant; depends on --color-main-background-rgb"
+		},
+		"--color-main-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-text",
+			"category": "Text Colors",
+			"note": "Main body text color"
+		},
+		"--color-mark": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-mark",
+			"tab": "content",
+			"type": "color",
+			"label": "Search highlight color",
+			"perScheme": true,
+			"note": "`<mark>` highlight tint (#fff0c7); new in NC 33/34. No NL Design highlight token, and the tint has to stay legible under the text colour",
+			"category": "Special Colors"
+		},
+		"--color-norder-error": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-norder-error"
+		},
+		"--color-placeholder-dark": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-placeholder-dark",
+			"category": "Placeholder Colors",
+			"note": "Dark placeholder"
+		},
+		"--color-placeholder-light": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-placeholder-light",
+			"category": "Placeholder Colors",
+			"note": "Light placeholder (e.g., empty states)"
+		},
+		"--color-primary": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary",
+			"category": "Primary Colors",
+			"note": "Main brand color"
+		},
+		"--color-primary-element": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary",
+			"category": "Primary Colors",
+			"note": "Interactive element primary color"
+		},
+		"--color-primary-element-extra-light": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-primary-element-extra-light"
+		},
+		"--color-primary-element-extra-light-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-primary-element-extra-light-hover"
+		},
+		"--color-primary-element-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-hover",
+			"category": "Primary Colors",
+			"note": "Interactive element hover"
+		},
+		"--color-primary-element-light": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-light",
+			"category": "Primary Colors",
+			"note": "Deprecated alias for primary-light"
+		},
+		"--color-primary-element-light-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-light-hover",
+			"category": "Primary Colors",
+			"note": "Deprecated alias"
+		},
+		"--color-primary-element-light-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary",
+			"category": "Primary Colors",
+			"note": "Deprecated alias"
+		},
+		"--color-primary-element-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-text",
+			"category": "Primary Colors",
+			"note": "Text on primary element"
+		},
+		"--color-primary-element-text-dark": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Primary Colors",
+			"note": "Dark variant of primary element text; no NL Design equivalent"
+		},
+		"--color-primary-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-hover",
+			"category": "Primary Colors",
+			"note": "Primary hover state"
+		},
+		"--color-primary-light": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-light",
+			"category": "Primary Colors",
+			"note": "Light variant of primary"
+		},
+		"--color-primary-light-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-light-hover",
+			"category": "Primary Colors",
+			"note": "Light primary hover"
+		},
+		"--color-primary-light-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary",
+			"category": "Primary Colors",
+			"note": "Text on light primary; uses brand color"
+		},
+		"--color-primary-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-text",
+			"category": "Primary Colors",
+			"note": "Text on primary background"
+		},
+		"--color-scrollbar": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-scrollbar",
+			"tab": "content",
+			"type": "color",
+			"label": "Scrollbar color",
+			"note": "Scrollbar color; depends on border-maxcontrast",
+			"category": "Special Colors"
+		},
+		"--color-success": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success",
+			"category": "Status: Success",
+			"note": "Success background/accent"
+		},
+		"--color-success-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-success-hover",
+			"tab": "status",
+			"type": "color",
+			"label": "Success hover color",
+			"perScheme": true,
+			"note": "Success hover; no NL Design equivalent",
+			"category": "Status: Success"
+		},
+		"--color-success-rgb": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success-rgb",
+			"category": "Status: Success",
+			"note": "Deprecated; RGB for rgba()"
+		},
+		"--color-success-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-success-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Success text color",
+			"perScheme": true,
+			"note": "Success text; NC auto-calculates for contrast",
+			"category": "Status: Success"
+		},
+		"--color-text": {
+			"status": "excluded",
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
+		},
+		"--color-text-error": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error",
+			"category": "Text Colors",
+			"note": "Error message text"
+		},
+		"--color-text-light": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-text-light-color",
+			"note": "Light-colored text (deprecated in NC)"
+		},
+		"--color-text-lighter": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-text-lighter-color",
+			"note": "Lighter text (deprecated alias)"
+		},
+		"--color-text-maxcontrast": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-text-muted",
+			"category": "Text Colors",
+			"note": "Muted/secondary text"
+		},
+		"--color-text-maxcontrast-background-blur": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Text Colors",
+			"note": "Blur-adjusted maxcontrast; Nextcloud calculates per background"
+		},
+		"--color-text-maxcontrast-default": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-text-maxcontrast-default",
+			"tab": "typography",
+			"type": "color",
+			"label": "Muted text default color",
+			"perScheme": true,
+			"note": "Default maxcontrast; auto-calculated by Nextcloud per theme",
+			"category": "Text Colors"
+		},
+		"--color-text-selection": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-text-selection",
+			"tab": "typography",
+			"type": "color",
+			"label": "Selected text color",
+			"note": "Selected text; new in NC 33/34. Derived from `--color-main-text`, which is mapped",
+			"category": "Special Colors"
+		},
+		"--color-text-success": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success",
+			"category": "Text Colors",
+			"note": "Success message text"
+		},
+		"--color-text-warning": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-warning",
+			"category": "Text Colors",
+			"note": "Warning message text"
+		},
+		"--color-warning": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-warning",
+			"category": "Status: Warning",
+			"note": "Warning background/accent"
+		},
+		"--color-warning-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-warning-hover",
+			"tab": "status",
+			"type": "color",
+			"label": "Warning hover color",
+			"perScheme": true,
+			"note": "Warning hover; no NL Design equivalent",
+			"category": "Status: Warning"
+		},
+		"--color-warning-rgb": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-warning-rgb",
+			"category": "Status: Warning",
+			"note": "Deprecated; RGB for rgba()"
+		},
+		"--color-warning-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-warning-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Warning text color",
+			"perScheme": true,
+			"note": "Warning text; NC auto-calculates for contrast",
+			"category": "Status: Warning"
+		},
+		"--confetti-i": {
+			"status": "excluded",
+			"reason": "written per element by the notifications app's script at render, as an index, not a design value."
+		},
+		"--contenteditable-block-offset": {
+			"status": "settable",
+			"token": "--nldesign-nc-contenteditable-block-offset"
+		},
+		"--contenteditable-inline-end-offset": {
+			"status": "settable",
+			"token": "--nldesign-nc-contenteditable-inline-end-offset"
+		},
+		"--contenteditable-inline-start-offset": {
+			"status": "settable",
+			"token": "--nldesign-nc-contenteditable-inline-start-offset"
+		},
+		"--counter-bubble-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-counter-bubble-height"
+		},
+		"--d7eb5974": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--d87c3654": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--d98ce684": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--dad67fa8": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--dark-link-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dark-link-color"
+		},
+		"--dark-text-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dark-text-color"
+		},
+		"--dc9c258c": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--default-cell-min-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--default-clickable-area": {
+			"status": "settable",
+			"token": "--nldesign-nc-default-clickable-area",
+			"tab": "content",
+			"type": "text",
+			"label": "Default clickable area",
+			"advanced": true,
+			"note": "Touch target (34px); accessibility standard",
+			"category": "Spacing & Clickable Areas"
+		},
+		"--default-font-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-default-font-size",
+			"tab": "typography",
+			"type": "text",
+			"label": "Base font size",
+			"note": "Base font size (15px); standard across themes",
+			"category": "Typography"
+		},
+		"--default-grid-baseline": {
+			"status": "settable",
+			"token": "--nldesign-nc-default-grid-baseline",
+			"tab": "content",
+			"type": "text",
+			"label": "Grid baseline",
+			"advanced": true,
+			"note": "Base grid unit (4px); core layout building block",
+			"category": "Spacing & Clickable Areas"
+		},
+		"--default-line-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-default-line-height",
+			"tab": "typography",
+			"type": "text",
+			"label": "Base line height",
+			"note": "Line height (1.5); standard",
+			"category": "Typography"
+		},
+		"--dfb017de": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--dialog-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-bg-color"
+		},
+		"--dialog-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-border-color"
+		},
+		"--dialog-button-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-button-bg-color"
+		},
+		"--dialog-button-border": {
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-button-border"
+		},
+		"--dialog-button-hover-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-button-hover-bg-color"
+		},
+		"--dialog-button-hover-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-button-hover-color"
+		},
+		"--dialog-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-dialog-shadow"
+		},
+		"--dir-factor": {
+			"status": "settable",
+			"token": "--nldesign-nc-dir-factor"
+		},
+		"--doorhanger-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-bg-color"
+		},
+		"--doorhanger-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-border-color"
+		},
+		"--doorhanger-border-color-whcm": {
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-border-color-whcm"
+		},
+		"--doorhanger-hover-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-hover-bg-color"
+		},
+		"--doorhanger-hover-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-hover-color"
+		},
+		"--doorhanger-icon-opacity": {
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-icon-opacity"
+		},
+		"--doorhanger-separator-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-separator-color"
+		},
+		"--doorhanger-triangle-opacity-whcm": {
+			"status": "settable",
+			"token": "--nldesign-nc-doorhanger-triangle-opacity-whcm"
+		},
+		"--dp-action-button-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-button-height"
+		},
+		"--dp-action-buttons-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-buttons-padding"
+		},
+		"--dp-action-row-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-row-padding"
+		},
+		"--dp-action-row-transition": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-row-transition"
+		},
+		"--dp-action-row-transtion": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-action-row-transtion"
+		},
+		"--dp-animation-duration": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-animation-duration"
+		},
+		"--dp-arrow-left": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--dp-background-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-background-color"
+		},
+		"--dp-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-border-color"
+		},
+		"--dp-border-color-focus": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-border-color-focus"
+		},
+		"--dp-border-color-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-border-color-hover"
+		},
+		"--dp-border-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-border-radius"
+		},
+		"--dp-button-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-button-height"
+		},
+		"--dp-button-icon-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-button-icon-height"
+		},
+		"--dp-calendar-header-cell-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-calendar-header-cell-padding"
+		},
+		"--dp-calendar-wrap-padding": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--dp-cell-border-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-cell-border-radius"
+		},
+		"--dp-cell-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-cell-padding"
+		},
+		"--dp-cell-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-cell-size"
+		},
+		"--dp-common-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-common-padding"
+		},
+		"--dp-common-transition": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-common-transition"
+		},
+		"--dp-danger-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-danger-color"
+		},
+		"--dp-direction": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-direction"
+		},
+		"--dp-disabled-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-disabled-color"
+		},
+		"--dp-disabled-color-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-disabled-color-text"
+		},
+		"--dp-font-family": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-font-family"
+		},
+		"--dp-font-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-font-size"
+		},
+		"--dp-highlight-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-highlight-color"
+		},
+		"--dp-hover-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-hover-color"
+		},
+		"--dp-hover-icon-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-hover-icon-color"
+		},
+		"--dp-hover-text-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-hover-text-color"
+		},
+		"--dp-icon-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-icon-color"
+		},
+		"--dp-input-icon-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-input-icon-padding"
+		},
+		"--dp-input-not-clearable-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-input-not-clearable-padding"
+		},
+		"--dp-input-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-input-padding"
+		},
+		"--dp-loader": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-loader"
+		},
+		"--dp-marker-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-marker-color"
+		},
+		"--dp-menu-appear-transition-timing": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--dp-menu-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-menu-border-color"
+		},
+		"--dp-menu-min-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-menu-min-width"
+		},
+		"--dp-menu-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-menu-padding"
+		},
+		"--dp-menu-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--dp-month-year-row-button-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-month-year-row-button-size"
+		},
+		"--dp-month-year-row-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-month-year-row-height"
+		},
+		"--dp-multi-calendars-spacing": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-multi-calendars-spacing"
+		},
+		"--dp-overlay-col-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-overlay-col-padding"
+		},
+		"--dp-overlay-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--dp-preview-font-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-preview-font-size"
+		},
+		"--dp-primary-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-primary-color"
+		},
+		"--dp-primary-disabled-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-primary-disabled-color"
+		},
+		"--dp-primary-text-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-primary-text-color"
+		},
+		"--dp-range-between-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-range-between-border-color"
+		},
+		"--dp-range-between-dates-background-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-range-between-dates-background-color"
+		},
+		"--dp-range-between-dates-text-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-range-between-dates-text-color"
+		},
+		"--dp-row-margin": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-row-margin"
+		},
+		"--dp-scroll-bar-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-scroll-bar-background"
+		},
+		"--dp-scroll-bar-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-scroll-bar-color"
+		},
+		"--dp-secondary-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-secondary-color"
+		},
+		"--dp-success-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-success-color"
+		},
+		"--dp-success-color-disabled": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--dp-text-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-text-color"
+		},
+		"--dp-time-font-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-time-font-size"
+		},
+		"--dp-time-inc-dec-button-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-time-inc-dec-button-size"
+		},
+		"--dp-tooltip-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-tooltip-color"
+		},
+		"--dp-transition-length": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-transition-length"
+		},
+		"--dp-transition-timing": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-transition-timing"
+		},
+		"--dp-transition-timing-general": {
+			"status": "settable",
+			"token": "--nldesign-nc-dp-transition-timing-general"
+		},
+		"--dropdown-btn-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-dropdown-btn-bg-color"
+		},
+		"--dropdown-btn-border": {
+			"status": "settable",
+			"token": "--nldesign-nc-dropdown-btn-border"
+		},
+		"--e2fa5f72": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--editorFreeText-editing-cursor": {
+			"status": "settable",
+			"token": "--nldesign-nc-editorFreeText-editing-cursor"
+		},
+		"--editorInk-editing-cursor": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--editorParams-stampAddImage-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--fallback-icon": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--fb515064": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--field-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-field-bg-color"
+		},
+		"--field-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-field-border-color"
+		},
+		"--field-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-field-color"
+		},
+		"--figure-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-figure-size"
+		},
+		"--filter-background-blur": {
+			"status": "settable",
+			"token": "--nldesign-nc-filter-background-blur",
+			"tab": "content",
+			"type": "text",
+			"label": "Background blur filter",
+			"advanced": true,
+			"note": "Background blur filter; Nextcloud handles browser compat",
+			"category": "Animations"
+		},
+		"--findbarButton-next-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--findbarButton-previous-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--fixed-block-start-position": {
+			"status": "settable",
+			"token": "--nldesign-nc-fixed-block-start-position"
+		},
+		"--focus-outline": {
+			"status": "settable",
+			"token": "--nldesign-nc-focus-outline"
+		},
+		"--focus-outline-around": {
+			"status": "settable",
+			"token": "--nldesign-nc-focus-outline-around"
+		},
+		"--focus-ring-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-focus-ring-color"
+		},
+		"--focus-ring-outline": {
+			"status": "settable",
+			"token": "--nldesign-nc-focus-ring-outline"
+		},
+		"--font-face": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-font-family",
+			"category": "Typography",
+			"note": "Font stack"
+		},
+		"--font-family": {
+			"status": "excluded",
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
+		},
+		"--font-size": {
+			"status": "excluded",
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
+		},
+		"--font-size-small": {
+			"status": "settable",
+			"token": "--nldesign-nc-font-size-small",
+			"tab": "typography",
+			"type": "text",
+			"label": "Small font size",
+			"note": "Small font size (13px); standard",
+			"category": "Typography"
+		},
+		"--font-weight-default": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-font-weight-default",
+			"category": "Typography",
+			"note": "Body weight; new in NC 33/34"
+		},
+		"--font-weight-element": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-font-weight-element",
+			"category": "Typography",
+			"note": "Weight of controls and button labels; new in NC 33/34. NcButton in @nextcloud/vue 9 reads it on `.button-vue__text`, where NC 32 hard-coded `bold`"
+		},
+		"--font-weight-heading": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-font-weight-heading",
+			"category": "Typography",
+			"note": "Heading weight; new in NC 33/34. The per-level `--nldesign-component-heading-N-font-weight` tokens resolve through it"
+		},
+		"--footer-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten.",
+			"note": "Footer height; NC layout dependent"
+		},
+		"--form-element-label-offset": {
+			"status": "settable",
+			"token": "--nldesign-nc-form-element-label-offset"
+		},
+		"--form-element-label-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-form-element-label-padding"
+		},
+		"--form-group-content-gap": {
+			"status": "settable",
+			"token": "--nldesign-nc-form-group-content-gap"
+		},
+		"--freetext-line-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-freetext-line-height"
+		},
+		"--freetext-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-freetext-padding"
+		},
+		"--fullwidth": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--gap": {
+			"status": "settable",
+			"token": "--nldesign-nc-gap"
+		},
+		"--gradient-main-background": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Gradients",
+			"note": "Main background gradient; depends on main-background vars"
+		},
+		"--gradient-primary-background": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Gradients",
+			"note": "Primary gradient; depends on primary color"
+		},
+		"--hcm-highligh-filter": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--header-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-header-height",
+			"tab": "content",
+			"type": "text",
+			"label": "Header height",
+			"advanced": true,
+			"note": "Header height (50px); overriding breaks NC layout",
+			"category": "Layout & Dimensions"
+		},
+		"--header-menu-icon-mask": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Layout & Dimensions",
+			"note": "Icon mask gradient; NC internal"
+		},
+		"--header-menu-item-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-header-menu-item-height",
+			"tab": "content",
+			"type": "text",
+			"label": "Header menu item height",
+			"advanced": true,
+			"note": "Header menu item height; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--highlight-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-highlight-bg-color"
+		},
+		"--highlight-selected-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-highlight-selected-bg-color"
+		},
+		"--hljs-background-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-background-color"
+		},
+		"--hljs-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-color"
+		},
+		"--hljs-syntax-comment-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-comment-color"
+		},
+		"--hljs-syntax-constant-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-constant-color"
+		},
+		"--hljs-syntax-entity-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-entity-color"
+		},
+		"--hljs-syntax-entity-tag-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-entity-tag-color"
+		},
+		"--hljs-syntax-keyword-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-keyword-color"
+		},
+		"--hljs-syntax-markup-bold-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-bold-color"
+		},
+		"--hljs-syntax-markup-deleted-background-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-deleted-background-color"
+		},
+		"--hljs-syntax-markup-deleted-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-deleted-color"
+		},
+		"--hljs-syntax-markup-heading-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-heading-color"
+		},
+		"--hljs-syntax-markup-inserted-background-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-inserted-background-color"
+		},
+		"--hljs-syntax-markup-inserted-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-inserted-color"
+		},
+		"--hljs-syntax-markup-italic-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-italic-color"
+		},
+		"--hljs-syntax-markup-list-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-markup-list-color"
+		},
+		"--hljs-syntax-storage-modifier-import-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-storage-modifier-import-color"
+		},
+		"--hljs-syntax-string-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-string-color"
+		},
+		"--hljs-syntax-variable-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hljs-syntax-variable-color"
+		},
+		"--hover-filter": {
+			"status": "settable",
+			"token": "--nldesign-nc-hover-filter"
+		},
+		"--hover-outline": {
+			"status": "settable",
+			"token": "--nldesign-nc-hover-outline"
+		},
+		"--hover-outline-around": {
+			"status": "settable",
+			"token": "--nldesign-nc-hover-outline-around"
+		},
+		"--hover-outline-around-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hover-outline-around-color"
+		},
+		"--hover-outline-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-hover-outline-color"
+		},
+		"--icon-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-add-folder-description-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-address-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-address-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-alert-outline-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-alert-outline-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-audio-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-audio-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-audio-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-audio-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-calendar-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-calendar-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-caret-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-caret-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-app-bundles-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-app-bundles-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-auth-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-auth-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-customization-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-customization-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-dashboard-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-dashboard-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-files-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-files-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-games-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-games-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-integration-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-integration-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-monitoring-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-monitoring-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-multimedia-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-multimedia-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-office-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-office-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-organization-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-organization-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-social-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-social-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-workflow-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-workflow-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-change-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-change-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-checkmark-color-green": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-checkmark-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-checkmark-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-circles-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-circles-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-clippy-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-clippy-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-close-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-close-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-comment-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-comment-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-confirm-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-confirm-fade-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-confirm-fade-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-confirm-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-contacts-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-contacts-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-delete-color-red": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-delete-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-delete-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-desktop-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-desktop-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-details-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-details-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-disabled-user-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-disabled-user-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-disabled-users-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-disabled-users-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-download-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-download-fff": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-download-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-edit-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-edit-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-encryption-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-encryption-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-error-color-red": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-error-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-error-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-external-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-external-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-favorite-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-favorite-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-file-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-file-text-black": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-files-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-files-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filetype-file-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filetype-folder-drag-accept-primary": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filetype-folder-primary": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filetype-text-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filter-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filter-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-folder-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-folder-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-fullscreen-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-fullscreen-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-group-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-group-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-height": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-history-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-history-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-home-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-home-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-info-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-info-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-link-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-link-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-logout-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-logout-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-mail-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-mail-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-menu-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-menu-sidebar-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-menu-sidebar-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-menu-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-more-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-more-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-music-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-music-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-password-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-password-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-pause-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-pause-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-phone-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-phone-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-picture-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-picture-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-next-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-next-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-previous-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-previous-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-preview-size": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-projects-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-projects-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-public-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-public-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-quota-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-quota-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-recent-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-recent-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-rename-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-rename-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-screen-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-screen-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-screen-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-screen-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-search-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-search-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-settings-black": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-settings-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-settings-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-share-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-share-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-shared-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-shared-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-size": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-sound-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-sound-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-sound-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-sound-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-rounded-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-rounded-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-starred": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-starred-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-starred-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-starred-yellow": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-tablet-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-tablet-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-tag-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-tag-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-talk-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-talk-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-teams-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-teams-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-template-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-template-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-timezone-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-timezone-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-background-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-background-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-filelist-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-filelist-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-pictures-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-pictures-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-e-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-e-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-n-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-n-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-s-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-s-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-unshare-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-unshare-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-upload-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-upload-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-user-admin-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-user-admin-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-user-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-user-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-switch-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-switch-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-close-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-close-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-download-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-download-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-next-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-next-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-pause-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-pause-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-play-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-play-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-previous-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-previous-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--image-background": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Images & Resources",
+			"note": "Background image; admin/user configured"
+		},
+		"--image-logo": {
+			"status": "excluded",
+			"note": "Logo URL; admin setting",
+			"reason": "an image URL, not a design token."
+		},
+		"--image-logoheader": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--image-logoheader-custom": {
+			"status": "excluded",
+			"note": "Logo header flag; admin setting",
+			"reason": "an image URL, not a design token."
+		},
+		"--inline-end": {
+			"status": "settable",
+			"token": "--nldesign-nc-inline-end"
+		},
+		"--inline-start": {
+			"status": "settable",
+			"token": "--nldesign-nc-inline-start"
+		},
+		"--input-border-box-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-box-shadow"
+		},
+		"--input-border-box-shadow-dark": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-box-shadow-dark"
+		},
+		"--input-border-box-shadow-light": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-box-shadow-light"
+		},
+		"--input-border-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-textarea-focus-border-color"
+		},
+		"--input-border-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-radius"
+		},
+		"--input-border-width-offset": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-border-width-offset"
+		},
+		"--input-disabled-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-disabled-border-color"
+		},
+		"--input-focus-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-focus-border-color"
+		},
+		"--input-focus-outline": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-focus-outline"
+		},
+		"--input-hover-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-hover-border-color"
+		},
+		"--input-label-font-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-label-font-size"
+		},
+		"--input-padding-end": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-padding-end"
+		},
+		"--input-padding-start": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-padding-start"
+		},
+		"--input-unfocused-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-input-unfocused-border-color"
+		},
+		"--invert-if-dark": {
+			"status": "excluded",
+			"reason": "a generic name read by several unrelated components: a value on body would reach all of them, not one."
+		},
+		"--item-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-item-padding"
+		},
+		"--level-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-level-padding"
+		},
+		"--link-outline": {
+			"status": "settable",
+			"token": "--nldesign-nc-link-outline"
+		},
+		"--list-item-border-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-list-item-border-radius"
+		},
+		"--list-item-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-list-item-height"
+		},
+		"--list-item-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-list-item-padding"
+		},
+		"--loading-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--loading-icon-delay": {
+			"status": "settable",
+			"token": "--nldesign-nc-loading-icon-delay"
+		},
+		"--local-search-width": {
+			"status": "excluded",
+			"reason": "its value is a Vue `v-bind()` variable, bound per component instance at render."
+		},
+		"--main-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-main-color"
+		},
+		"--margin": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--max-icon-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-max-icon-size"
+		},
+		"--member-list-gap": {
+			"status": "settable",
+			"token": "--nldesign-nc-member-list-gap"
+		},
+		"--members-list-gap": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--mermaid-alt-font-family": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--mermaid-font-family": {
+			"status": "excluded",
+			"reason": "inserted by mermaid's script with insertRule at render, so a stylesheet value is replaced."
+		},
+		"--min-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-min-size"
+		},
+		"--mouse-pos-x": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--mouse-pos-y": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--mtime-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-mtime-height"
+		},
+		"--name-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-name-height"
+		},
+		"--nav-tint": {
+			"status": "settable",
+			"token": "--nldesign-nc-nav-tint"
+		},
+		"--nav-tint-strong": {
+			"status": "settable",
+			"token": "--nldesign-nc-nav-tint-strong"
+		},
+		"--navigation-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-navigation-width",
+			"tab": "content",
+			"type": "text",
+			"label": "Navigation width",
+			"advanced": true,
+			"note": "Navigation panel width (300px); NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--nc-form-box-item-border-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-nc-form-box-item-border-width"
+		},
+		"--nc-form-box-item-min-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-nc-form-box-item-min-height"
+		},
+		"--note-background": {
+			"status": "mapped",
+			"via": "stylesheet"
+		},
+		"--note-card-icon-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-note-card-icon-size"
+		},
+		"--note-card-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-note-card-padding"
+		},
+		"--note-theme": {
+			"status": "mapped",
+			"via": "stylesheet"
+		},
+		"--open-background-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-open-background-color"
+		},
+		"--original-icon-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-address-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-address-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-alert-outline-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-alert-outline-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-audio-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-audio-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-audio-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-audio-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-calendar-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-calendar-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-caret-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-caret-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-app-bundles-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-app-bundles-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-auth-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-auth-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-customization-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-customization-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-dashboard-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-dashboard-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-files-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-files-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-games-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-games-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-integration-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-integration-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-monitoring-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-monitoring-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-multimedia-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-multimedia-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-office-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-office-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-organization-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-organization-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-social-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-social-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-workflow-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-workflow-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-change-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-change-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-checkmark-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-checkmark-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-circles-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-circles-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-clippy-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-clippy-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-close-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-close-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-comment-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-comment-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-confirm-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-confirm-fade-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-confirm-fade-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-confirm-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-contacts-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-contacts-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-delete-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-delete-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-desktop-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-desktop-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-details-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-details-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-disabled-user-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-disabled-user-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-disabled-users-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-disabled-users-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-download-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-download-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-edit-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-edit-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-encryption-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-encryption-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-error-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-error-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-external-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-external-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-favorite-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-favorite-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-files-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-files-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-filter-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-filter-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-folder-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-folder-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-fullscreen-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-fullscreen-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-group-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-group-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-history-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-history-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-home-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-home-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-info-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-info-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-link-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-link-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-logout-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-logout-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-mail-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-mail-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-menu-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-menu-sidebar-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-menu-sidebar-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-menu-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-more-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-more-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-music-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-music-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-password-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-password-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-pause-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-pause-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-phone-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-phone-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-picture-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-picture-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-next-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-next-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-previous-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-previous-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-projects-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-projects-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-public-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-public-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-quota-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-quota-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-recent-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-recent-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-rename-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-rename-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-screen-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-screen-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-screen-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-screen-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-search-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-search-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-settings-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-settings-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-share-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-share-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-shared-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-shared-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-sound-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-sound-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-sound-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-sound-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-star-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-star-rounded-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-star-rounded-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-star-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-starred-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-starred-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-tablet-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-tablet-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-tag-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-tag-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-talk-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-talk-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-teams-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-teams-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-template-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-template-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-timezone-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-timezone-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-background-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-background-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-filelist-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-filelist-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-pictures-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-pictures-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-e-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-e-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-n-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-n-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-s-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-s-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-unshare-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-unshare-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-upload-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-upload-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-user-admin-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-user-admin-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-user-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-user-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-switch-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-switch-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-close-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-close-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-download-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-download-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-next-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-next-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-pause-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-pause-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-play-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-play-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-previous-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-previous-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--outline-around-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-outline-around-color"
+		},
+		"--outline-around-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-outline-around-width"
+		},
+		"--outline-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-outline-color"
+		},
+		"--outline-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-outline-width"
+		},
+		"--padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-padding"
+		},
+		"--padding-inline-start": {
+			"status": "settable",
+			"token": "--nldesign-nc-padding-inline-start"
+		},
+		"--page-border": {
+			"status": "settable",
+			"token": "--nldesign-nc-page-border"
+		},
+		"--page-margin": {
+			"status": "settable",
+			"token": "--nldesign-nc-page-margin"
+		},
+		"--panel-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-panel-width"
+		},
+		"--pdfViewer-padding-bottom": {
+			"status": "settable",
+			"token": "--nldesign-nc-pdfViewer-padding-bottom"
+		},
+		"--photos-face-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-photos-face-width"
+		},
+		"--photos-navigation-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-photos-navigation-height"
+		},
+		"--plyr-audio-control-background-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-control-background-hover"
+		},
+		"--plyr-audio-control-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-control-color"
+		},
+		"--plyr-audio-control-color-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-control-color-hover"
+		},
+		"--plyr-audio-controls-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-controls-background"
+		},
+		"--plyr-audio-progress-buffered-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-progress-buffered-background"
+		},
+		"--plyr-audio-range-thumb-active-shadow-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-range-thumb-active-shadow-color"
+		},
+		"--plyr-audio-range-track-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-audio-range-track-background"
+		},
+		"--plyr-badge-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-badge-background"
+		},
+		"--plyr-badge-border-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-badge-border-radius"
+		},
+		"--plyr-badge-text-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-badge-text-color"
+		},
+		"--plyr-button-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-button-size"
+		},
+		"--plyr-captions-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-captions-background"
+		},
+		"--plyr-captions-text-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-captions-text-color"
+		},
+		"--plyr-color-main": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-color-main"
+		},
+		"--plyr-control-icon-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-control-icon-size"
+		},
+		"--plyr-control-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-control-radius"
+		},
+		"--plyr-control-spacing": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-control-spacing"
+		},
+		"--plyr-control-toggle-checked-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-control-toggle-checked-background"
+		},
+		"--plyr-focus-visible-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-focus-visible-color"
+		},
+		"--plyr-font-family": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-family"
+		},
+		"--plyr-font-size-badge": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-badge"
+		},
+		"--plyr-font-size-base": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-base"
+		},
+		"--plyr-font-size-large": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-large"
+		},
+		"--plyr-font-size-menu": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-menu"
+		},
+		"--plyr-font-size-small": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-small"
+		},
+		"--plyr-font-size-time": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-time"
+		},
+		"--plyr-font-size-xlarge": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-size-xlarge"
+		},
+		"--plyr-font-weight-regular": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-font-weight-regular"
+		},
+		"--plyr-line-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-line-height"
+		},
+		"--plyr-menu-arrow-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-arrow-color"
+		},
+		"--plyr-menu-arrow-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-arrow-size"
+		},
+		"--plyr-menu-back-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-back-border-color"
+		},
+		"--plyr-menu-back-border-shadow-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-back-border-shadow-color"
+		},
+		"--plyr-menu-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-background"
+		},
+		"--plyr-menu-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-color"
+		},
+		"--plyr-menu-item-arrow-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-item-arrow-size"
+		},
+		"--plyr-menu-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-radius"
+		},
+		"--plyr-menu-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-menu-shadow"
+		},
+		"--plyr-progress-loading-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-progress-loading-background"
+		},
+		"--plyr-progress-loading-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-progress-loading-size"
+		},
+		"--plyr-progress-marker-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-progress-marker-background"
+		},
+		"--plyr-progress-marker-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-progress-marker-width"
+		},
+		"--plyr-range-fill-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-fill-background"
+		},
+		"--plyr-range-thumb-active-shadow-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-thumb-active-shadow-width"
+		},
+		"--plyr-range-thumb-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-thumb-background"
+		},
+		"--plyr-range-thumb-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-thumb-height"
+		},
+		"--plyr-range-thumb-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-thumb-shadow"
+		},
+		"--plyr-range-track-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-range-track-height"
+		},
+		"--plyr-tooltip-arrow-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-arrow-size"
+		},
+		"--plyr-tooltip-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-background"
+		},
+		"--plyr-tooltip-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-color"
+		},
+		"--plyr-tooltip-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-radius"
+		},
+		"--plyr-tooltip-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-tooltip-shadow"
+		},
+		"--plyr-video-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-background"
+		},
+		"--plyr-video-control-background-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-control-background-hover"
+		},
+		"--plyr-video-control-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-control-color"
+		},
+		"--plyr-video-control-color-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-control-color-hover"
+		},
+		"--plyr-video-controls-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-controls-background"
+		},
+		"--plyr-video-progress-buffered-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-progress-buffered-background"
+		},
+		"--plyr-video-range-track-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-plyr-video-range-track-background"
+		},
+		"--preview-arrow-offset": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--primary-invert-if-bright": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Filters & Inversion",
+			"note": "Primary color inversion; NC auto-calculates"
+		},
+		"--primary-invert-if-dark": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Filters & Inversion",
+			"note": "Primary dark inversion; NC auto-calculates"
+		},
+		"--progress-bar-color": {
+			"status": "excluded",
+			"reason": "its value is a Vue `v-bind()` variable, bound per component instance at render."
+		},
+		"--progress-bar-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--progressBar-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-progressBar-bg-color"
+		},
+		"--progressBar-blend-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-progressBar-blend-color"
+		},
+		"--progressBar-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-progressBar-color"
+		},
+		"--progressBar-end-offset": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--progressBar-percent": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--radio-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-bg-color"
+		},
+		"--radio-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-border-color"
+		},
+		"--radio-checked-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-checked-bg-color"
+		},
+		"--radio-checked-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-checked-border-color"
+		},
+		"--radio-group-button--background-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--background-color"
+		},
+		"--radio-group-button--background-color-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--background-color-hover"
+		},
+		"--radio-group-button--border-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--border-radius"
+		},
+		"--radio-group-button--border-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--border-width"
+		},
+		"--radio-group-button--color": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--color"
+		},
+		"--radio-group-button--icon-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--icon-size"
+		},
+		"--radio-group-button--padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-radio-group-button--padding"
+		},
+		"--ratio": {
+			"status": "settable",
+			"token": "--nldesign-nc-ratio"
+		},
+		"--resizer-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-resizer-bg-color"
+		},
+		"--resizer-shift": {
+			"status": "settable",
+			"token": "--nldesign-nc-resizer-shift"
+		},
+		"--resizer-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-resizer-size"
+		},
+		"--resource-box-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-resource-box-size"
+		},
+		"--resources-list-gap": {
+			"status": "settable",
+			"token": "--nldesign-nc-resources-list-gap"
+		},
+		"--row-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--row-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-row-width"
+		},
+		"--scale-factor": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--scrollbar-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-scrollbar-bg-color"
+		},
+		"--scrollbar-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-scrollbar-color"
+		},
+		"--secondary-margin": {
+			"status": "settable",
+			"token": "--nldesign-nc-secondary-margin"
+		},
+		"--secondaryToolbarButton-documentProperties-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-firstPage-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-handTool-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-lastPage-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-rotateCcw-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-rotateCw-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-scrollHorizontal-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-scrollPage-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-scrollVertical-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-scrollWrapped-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-selectTool-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-spreadEven-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-spreadNone-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-spreadOdd-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--separator-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-separator-color"
+		},
+		"--session-max-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-session-max-width"
+		},
+		"--sidebar-max-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-max-width",
+			"tab": "content",
+			"type": "text",
+			"label": "Sidebar maximum width",
+			"advanced": true,
+			"note": "Sidebar max width; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--sidebar-min-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-min-width",
+			"tab": "content",
+			"type": "text",
+			"label": "Sidebar minimum width",
+			"advanced": true,
+			"note": "Sidebar min width; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--sidebar-narrow-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-narrow-bg-color"
+		},
+		"--sidebar-toolbar-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-toolbar-bg-color"
+		},
+		"--sidebar-transition-duration": {
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-transition-duration"
+		},
+		"--sidebar-transition-timing-function": {
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-transition-timing-function"
+		},
+		"--sidebar-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-width"
+		},
+		"--size": {
+			"status": "settable",
+			"token": "--nldesign-nc-size"
+		},
+		"--slideshow-duration": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--spreadHorizontalWrapped-margin-LR": {
+			"status": "settable",
+			"token": "--nldesign-nc-spreadHorizontalWrapped-margin-LR"
+		},
+		"--sticky-column-z-index": {
+			"status": "settable",
+			"token": "--nldesign-nc-sticky-column-z-index"
+		},
+		"--systemtag-color": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--table-border-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-table-border-radius"
+		},
+		"--table-color-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-background"
+		},
+		"--table-color-background-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-background-hover"
+		},
+		"--table-color-border": {
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-border"
+		},
+		"--table-color-heading": {
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-heading"
+		},
+		"--table-color-heading-border": {
+			"status": "settable",
+			"token": "--nldesign-nc-table-color-heading-border"
+		},
+		"--text-editor-max-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--text-primary-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-text-primary-color"
+		},
+		"--text-secondary-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-text-secondary-color"
+		},
+		"--textarea-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-textarea-bg-color"
+		},
+		"--textarea-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-textarea-border-color"
+		},
+		"--textarea-fg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-textarea-fg-color"
+		},
+		"--thumbnail-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--thumbnail-hover-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-thumbnail-hover-color"
+		},
+		"--thumbnail-selected-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-thumbnail-selected-color"
+		},
+		"--thumbnail-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--toggled-btn-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-toggled-btn-bg-color"
+		},
+		"--toggled-btn-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-toggled-btn-color"
+		},
+		"--toggled-hover-active-btn-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-toggled-hover-active-btn-color"
+		},
+		"--toggled-hover-btn-outline": {
+			"status": "settable",
+			"token": "--nldesign-nc-toggled-hover-btn-outline"
+		},
+		"--toolbar-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-bg-color"
+		},
+		"--toolbar-border-bottom": {
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-border-bottom"
+		},
+		"--toolbar-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-border-color"
+		},
+		"--toolbar-box-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-box-shadow"
+		},
+		"--toolbar-icon-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-icon-bg-color"
+		},
+		"--toolbar-icon-hover-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-icon-hover-bg-color"
+		},
+		"--toolbar-icon-opacity": {
+			"status": "settable",
+			"token": "--nldesign-nc-toolbar-icon-opacity"
+		},
+		"--toolbarButton-bookmark-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-currentOutlineItem-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-download-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-editorFreeText-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-editorInk-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-editorStamp-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-menuArrow-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-openFile-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-pageDown-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-pageUp-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-presentationMode-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-print-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-search-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-secondaryToolbarToggle-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-sidebarToggle-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-viewAttachments-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-viewLayers-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-viewOutline-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-viewThumbnail-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-zoomIn-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-zoomOut-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarSidebar-border-bottom": {
+			"status": "settable",
+			"token": "--nldesign-nc-toolbarSidebar-border-bottom"
+		},
+		"--toolbarSidebar-box-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-toolbarSidebar-box-shadow"
+		},
+		"--tpl-glow-1": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--tpl-glow-2": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--tpl-glow-3": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--tpl-glow-4": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--tpl-preview-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--treeitem-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-bg-color"
+		},
+		"--treeitem-collapsed-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--treeitem-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-color"
+		},
+		"--treeitem-expanded-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--treeitem-hover-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-hover-color"
+		},
+		"--treeitem-selected-bg-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-selected-bg-color"
+		},
+		"--treeitem-selected-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-treeitem-selected-color"
+		},
+		"--unfocus-outline": {
+			"status": "settable",
+			"token": "--nldesign-nc-unfocus-outline"
+		},
+		"--user-status-color-away": {
+			"status": "settable",
+			"token": "--nldesign-nc-user-status-color-away"
+		},
+		"--user-status-color-busy": {
+			"status": "settable",
+			"token": "--nldesign-nc-user-status-color-busy"
+		},
+		"--user-status-color-offline": {
+			"status": "settable",
+			"token": "--nldesign-nc-user-status-color-offline"
+		},
+		"--user-status-color-online": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-avatar-online-status-color"
+		},
+		"--v6c51c3da": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--v6ca826ea": {
+			"status": "excluded",
+			"reason": "a Vue `v-bind()` style variable: Vue writes it on each component instance at render, so a stylesheet value never shows."
+		},
+		"--value": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--viewer-container-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--vs-actions-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-actions-padding"
+		},
+		"--vs-border-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-border-color"
+		},
+		"--vs-border-radius": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-border-radius"
+		},
+		"--vs-border-style": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-border-style"
+		},
+		"--vs-border-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-border-width"
+		},
+		"--vs-colors--dark": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-colors--dark"
+		},
+		"--vs-colors--darkest": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-colors--darkest"
+		},
+		"--vs-colors--light": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-colors--light"
+		},
+		"--vs-colors--lightest": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-colors--lightest"
+		},
+		"--vs-controls--deselect-text-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-controls--deselect-text-shadow"
+		},
+		"--vs-controls--spinner-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-controls--spinner-size"
+		},
+		"--vs-controls-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-controls-color"
+		},
+		"--vs-controls-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-controls-size"
+		},
+		"--vs-disabled-bg": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-disabled-bg"
+		},
+		"--vs-disabled-color": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--vs-disabled-cursor": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-disabled-cursor"
+		},
+		"--vs-dropdown-bg": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-bg"
+		},
+		"--vs-dropdown-box-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-box-shadow"
+		},
+		"--vs-dropdown-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-option-color"
+		},
+		"--vs-dropdown-max-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-max-height"
+		},
+		"--vs-dropdown-min-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-min-width"
+		},
+		"--vs-dropdown-option--active-bg": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-option-hover-background-color"
+		},
+		"--vs-dropdown-option--active-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-option-hover-color"
+		},
+		"--vs-dropdown-option--deselect-bg": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option--deselect-bg"
+		},
+		"--vs-dropdown-option--deselect-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option--deselect-color"
+		},
+		"--vs-dropdown-option--kb-focus-box-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option--kb-focus-box-shadow"
+		},
+		"--vs-dropdown-option-bg": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--vs-dropdown-option-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option-color"
+		},
+		"--vs-dropdown-option-padding": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-option-padding"
+		},
+		"--vs-dropdown-z-index": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-dropdown-z-index"
+		},
+		"--vs-font-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-font-size"
+		},
+		"--vs-line-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-line-height"
+		},
+		"--vs-search-input-bg": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-search-input-bg"
+		},
+		"--vs-search-input-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-search-input-color"
+		},
+		"--vs-search-input-placeholder-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-search-input-placeholder-color"
+		},
+		"--vs-selected-bg": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-selected-bg"
+		},
+		"--vs-selected-border-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-selected-border-color"
+		},
+		"--vs-selected-border-style": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-selected-border-style"
+		},
+		"--vs-selected-border-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-selected-border-width"
+		},
+		"--vs-selected-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-color"
+		},
+		"--vs-state-disabled-bg": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-state-disabled-bg"
+		},
+		"--vs-state-disabled-color": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-state-disabled-color"
+		},
+		"--vs-state-disabled-controls-color": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--vs-state-disabled-cursor": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-state-disabled-cursor"
+		},
+		"--vs-transition-duration": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-transition-duration"
+		},
+		"--vs-transition-timing-function": {
+			"status": "settable",
+			"token": "--nldesign-nc-vs-transition-timing-function"
+		},
+		"--widget-full-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--xfa-focus-outline": {
+			"status": "settable",
+			"token": "--nldesign-nc-xfa-focus-outline"
+		},
+		"--xfa-unfocused-field-background": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		}
+	},
+	"deadAssignments": {
+		"--color-error-light": "systems/summer-breeze/theme.css assigns it, but Nextcloud 34 has no such variable, so the line does nothing.",
+		"--color-info-light": "systems/summer-breeze/theme.css assigns it, but Nextcloud 34 has no such variable, so the line does nothing.",
+		"--color-success-light": "systems/summer-breeze/theme.css assigns it, but Nextcloud 34 has no such variable, so the line does nothing.",
+		"--color-warning-light": "systems/summer-breeze/theme.css assigns it, but Nextcloud 34 has no such variable, so the line does nothing."
+	}
+}

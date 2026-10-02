@@ -78,7 +78,6 @@ Scanner: opsx-coverage-scan v1
 | File | Method | REQ | Confidence | Signal |
 |---|---|---|---|---|
 | lib/Controller/SettingsController.php | setTokenSet | REQ-TSET-003/004/006 | 0.96 | POST /settings/tokenset |
-| lib/Controller/SettingsController.php | getTokenSet | REQ-TSET-003/006 | 0.95 | GET /settings/tokenset |
 | lib/Controller/SettingsController.php | getAvailableTokenSets | REQ-TSET-001/006 + REQ-ASET-002 | 0.96 | GET /settings/tokensets |
 | lib/Controller/SettingsController.php | getTokenSetPreview | REQ-TSET-009 + apply-dialog comparison | 0.96 | GET /settings/tokenset-preview/{id} |
 | lib/Service/TokenSetService.php | getAvailableTokenSets | REQ-TSET-001/002/008 + dropdown sort + extended discovery | 0.97 | FS scan + manifest merge + alphabetical sort |
@@ -99,10 +98,6 @@ Scanner: opsx-coverage-scan v1
 
 | File | Method | REQ | Confidence | Signal |
 |---|---|---|---|---|
-| lib/Service/ContentTokens.php | getTokens | Functional Tab Groups (Content area) | 0.93 | Static map matches REQ tokens |
-| lib/Service/LoginTokens.php | getTokens | Functional Tab Groups (Login & Branding) | 0.96 | Matches primary-color token list verbatim |
-| lib/Service/StatusTokens.php | getTokens | Functional Tab Groups (Buttons & Status) | 0.96 | Matches error/warning/success list |
-| lib/Service/TypographyTokens.php | getTokens | Functional Tab Groups (Typography) | 0.96 | Matches text colors + font-face |
 | lib/Service/TokenRegistry.php | getTokens | Tab Groups + Excluded Token Registry | 0.97 | Canonical registry of all 4 tabs |
 | lib/Service/TokenRegistry.php | getTabLabels | Tab Groups | 0.95 | Returns Login/Content/Status/Typography |
 | lib/Service/TokenRegistry.php | isEditable | Excluded Token Registry + Write Validation | 0.97 | Gate used by both Overrides controllers |
@@ -195,18 +190,14 @@ Files:
 - lib/Controller/MetricsController.php
 - lib/Controller/OverridesController.php
 - lib/Controller/SettingsController.php
-- lib/Service/ContentTokens.php
 - lib/Service/CssParserService.php
 - lib/Service/CustomOverridesService.php
 - lib/Service/DesignSystemService.php
-- lib/Service/LoginTokens.php
-- lib/Service/StatusTokens.php
 - lib/Service/ThemingService.php
 - lib/Service/TokenRegistry.php
 - lib/Service/TokenRegistryInterface.php
 - lib/Service/TokenSetPreviewService.php
 - lib/Service/TokenSetService.php
-- lib/Service/TypographyTokens.php
 - lib/Settings/Admin.php
 
 ### Other ADR conformance

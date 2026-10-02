@@ -23,7 +23,6 @@ use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Settings\IDelegatedSettings;
@@ -65,7 +64,6 @@ class AdminDelegationTest extends TestCase {
 	private function admin(): Admin {
 		return new Admin(
 			$this->createMock(IConfig::class),
-			$this->createMock(IL10N::class),
 			$this->createMock(TokenSetService::class),
 			$this->createMock(EmailThemingService::class),
 			$this->createMock(ThemePreviewService::class),

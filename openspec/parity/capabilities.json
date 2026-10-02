@@ -1360,12 +1360,12 @@
 			"tokens-studio": "partial",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Service/ThemeVersionService.php keeps the ConfigBundleService::export() bundle after every audited change (50 versions, 20 MB); ThemingAuditService::log() adds versionId; ThemeVersionRestoreService previews and restores through ConfigBundleService::import(); AuditController versions/previewVersion/restoreVersion; js/admin.js restore button per audit row; occ nldesign:config:versions and nldesign:config:restore",
+				"evidence": "lib/Service/ThemeVersionService.php keeps the ConfigBundleService::export() bundle after every audited change (50 versions, 20 MB); ThemingAuditService::log() adds versionId; ThemeVersionRestoreService previews and restores through ConfigBundleService::import(); AuditController versions/previewVersion/restoreVersion; js/admin.js restore button per audit row; occ thematiq:config:versions and thematiq:config:restore",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"change": "apply-restore-earlier-version"
 			},
-			"reachedOn": "Settings > Administration > Theming, theming audit log, Restore button on a row; occ nldesign:config:restore",
+			"reachedOn": "Settings > Administration > Theming, theming audit log, Restore button on a row; occ thematiq:config:restore",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/ThemingDefaults.php:495-497 undo() deletes the app config key; previous values are not stored anywhere, so there is no history to roll back through",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/organization-assets-library ; https://learn.microsoft.com/en-us/sharepoint/brand-center-overview : brand assets live in ordinary SharePoint document libraries, which carry SharePoint's standard file version history, but the Entra sign-in and M365 org-theme settings themselves have no documented version history",
@@ -2064,21 +2064,20 @@
 			"id": "aut-git-sync",
 			"area": "authoring",
 			"name": "Store and version the token source in a Git repository with pull requests.",
-			"thematiq": "no",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "yes",
 			"liferay-dxp": "partial",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "specified",
-				"evidence": "grep -rniF for a git-backed token source (pull request workflow, git clone/push in lib/Service or lib/Command) found nothing; token sets are uploaded as files (CustomTokenSetController.php:203) or shipped as static CSS in css/tokens/, never sourced from a Git remote",
+				"state": "built",
+				"evidence": "the token source can live in a Git repository as a branding package (lib/Service/BrandingPackageReader.php: bundle.json, fonts/, tokens/<id>.json DTCG sources converted on apply by TokenSetConverterService, REVISION); the deployment syncs the checkout to disk and lib/Service/ConfigSourceService.php applies it, auditing the revision; pull requests are the Git host's, the app itself never talks to Git (by design, openspec/specs/theme-as-code/spec.md)",
 				"origin": "competitor",
 				"owner": "ConductionNL/thematiq",
-				"note": "Specified in openspec/changes/governance-theme-as-code (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/governance-theme-as-code"
+				"change": "governance-theme-as-code"
 			},
-			"reachedOn": "nothing reaches it",
+			"reachedOn": "a Git repository synced to the path in thematiq.config_source; occ thematiq:config:export --package writes the starting tree",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 values live in app config (apps/theming/lib/ThemingDefaults.php:461-475), not a Git-backed token source",
 				"m365-branding": "https://microsoft365dsc.com/resources/sharepoint/SPOTheme/: the Microsoft-led open-source Microsoft365DSC declares SharePoint themes (SPOTheme with Palette) as configuration that can be versioned and deployed, with an Azure DevOps integration guide; Entra sign-in branding and the M365 org theme are not among its resources, and there is no built-in git flow",
@@ -2366,7 +2365,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Service/TypographyTokens.php:39-46 exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
+				"evidence": "lib/Service/TokenRegistry.php getTypographyTokens() exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own"
 			},
@@ -3181,7 +3180,7 @@
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
 			"featureConfidence": "high",
-			"note": "lib/Service/StatusTokens.php (a separate PHP class with the same token list) has zero callers anywhere (grep -rn 'StatusTokens::' found nothing); the token editor actually uses a hardcoded duplicate list in lib/Service/TokenRegistry.php:244-262. StatusTokens.php looks like dead/orphaned code, but it is not on the path that makes this capability work."
+			"note": "The status token list lives once, in lib/Service/TokenRegistry.php getStatusTokens(). The orphaned duplicate lib/Service/StatusTokens.php, and its Login/Content/Typography siblings, were removed for #665."
 		},
 		{
 			"id": "sur-mobile-desktop-clients",
@@ -3793,11 +3792,11 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Command/ComplianceReport.php registered in appinfo/info.xml:235 as OCA\\Thematiq\\Command\\ComplianceReport; occ nldesign:compliance-report --format=json|markdown [--output=path]; reuses ComplianceReportService exclusively so output is byte-identical to the HTTP endpoint per the command's own docblock",
+				"evidence": "lib/Command/ComplianceReport.php registered in appinfo/info.xml:235 as OCA\\Thematiq\\Command\\ComplianceReport; occ thematiq:compliance-report --format=json|markdown [--output=path]; reuses ComplianceReportService exclusively so output is byte-identical to the HTTP endpoint per the command's own docblock",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own"
 			},
-			"reachedOn": "occ nldesign:compliance-report",
+			"reachedOn": "occ thematiq:compliance-report",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Command/UpdateConfig.php is the only theming command (theming:config); it manages values, not reports",
 				"m365-branding": "not checked: unknown: https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-powershell lists Add/Get/Remove-SPOTheme and hide-default cmdlets only; no contrast report cmdlet found, not stated absent",
@@ -3911,11 +3910,11 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Command/GenerateDarkVariants.php registered in appinfo/info.xml:236; occ nldesign:generate-dark-variants uses DarkPaletteService to write css/tokens/dark/{id}.css for eligible sets at build/install time (never per-request per the command's docblock)",
+				"evidence": "lib/Command/GenerateDarkVariants.php registered in appinfo/info.xml:236; occ thematiq:generate-dark-variants uses DarkPaletteService to write css/tokens/dark/{id}.css for eligible sets at build/install time (never per-request per the command's docblock)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own"
 			},
-			"reachedOn": "occ nldesign:generate-dark-variants",
+			"reachedOn": "occ thematiq:generate-dark-variants",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Command holds only UpdateConfig.php; no dark-variant command exists (the dark palette is computed on each stylesheet request by lib/Themes/DarkTheme.php:52-78, so none is needed)",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-json-schema: 'displayMode ... Currently, only light mode is supported' and secondaryColors 'dark' is empty; dark variants are never generated (see aut-dark-variant-auto), so there is nothing to regenerate",
@@ -4326,11 +4325,11 @@
 			"tokens-studio": "partial",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Command/ConfigExport.php and lib/Command/ConfigImport.php registered in appinfo/info.xml:237-238; occ nldesign:config:export [file] / nldesign:config:import [file]; ConfigExport's docblock states it reuses ConfigBundleService::export() exclusively so output is byte-identical to the HTTP endpoint",
+				"evidence": "lib/Command/ConfigExport.php and lib/Command/ConfigImport.php registered in appinfo/info.xml:237-238; occ thematiq:config:export [file] / thematiq:config:import [file]; ConfigExport's docblock states it reuses ConfigBundleService::export() exclusively so output is byte-identical to the HTTP endpoint",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own"
 			},
-			"reachedOn": "occ nldesign:config:export / occ nldesign:config:import",
+			"reachedOn": "occ thematiq:config:export / occ thematiq:config:import",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Command/UpdateConfig.php:22-24,58-130 occ theming:config lists and sets each text key and image (absolute path) for scripted deployments, but not as one export/import unit",
 				"m365-branding": "https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.identity.directorymanagement/update-mgorganizationbranding : Microsoft Graph PowerShell cmdlets (Get-MgOrganizationBranding/Update-MgOrganizationBranding) let you script reading and writing the branding configuration, usable for promoting settings between tenants",
@@ -4377,21 +4376,20 @@
 			"id": "gov-config-as-code",
 			"area": "governance",
 			"name": "Declare the theme in deployment configuration (for example Helm values) so it is versioned with the infrastructure.",
-			"thematiq": "no",
+			"thematiq": "yes",
 			"nextcloud-theming": "partial",
 			"m365-branding": "partial",
 			"opendesk": "yes",
 			"liferay-dxp": "partial",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "specified",
-				"evidence": "grep -rli 'helm|values.yaml|config-as-code|infrastructure as code' across the repo (docs, openspec, appinfo) found only two openspec files, and reading them showed the 'helm' hit was a substring match inside the unrelated word 'overwhelm' (openspec/specs/lasuite-parity/spec.md:172); no Helm chart, values file, Kubernetes manifest or IaC integration exists anywhere in this repo",
+				"state": "built",
+				"evidence": "lib/Service/ConfigSourceService.php applies the branding package named in config.php key thematiq.config_source whenever its content hash changes: from lib/Repair/ApplyConfigSource.php (post-migration), lib/BackgroundJob/ConfigSourceJob.php (every 300 s) and occ thematiq:config:apply (lib/Command/ConfigApply.php, non-zero exit on failure); thematiq.config_source_lock makes lib/Middleware/ConfigSourceLockMiddleware.php answer 423 to configuration changes; docs/features/theme-as-code.md has a Helm values and an Argo CD example",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/governance-theme-as-code (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/governance-theme-as-code"
+				"change": "governance-theme-as-code"
 			},
-			"reachedOn": "nothing reaches it; no such capability exists",
+			"reachedOn": "config.php thematiq.config_source, occ thematiq:config:apply, and the configuration bundle block on Settings > Administration > Theming",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 config/config.sample.php:2463-2484 keys theme, enforce_theme and theming.standalone_window.enabled live in config.php, and occ theming:config (apps/theming/lib/Command/UpdateConfig.php) can be run from Helm or Ansible hooks, but colours, name and images live in the database, not declarative config",
 				"m365-branding": "https://microsoft365dsc.com/resources/sharepoint/SPOTheme/: SPOTheme is a declarative Microsoft365DSC resource (Name, IsInverted, Palette) that can be versioned with infrastructure; Entra sign-in branding and the M365 org theme have Graph APIs but no declarative resource in that list",
@@ -4994,7 +4992,7 @@
 			"providerHow": "read-from-code",
 			"feature": "config-portability",
 			"featureConfidence": "high",
-			"note": "Decided no 2026-09-28: Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). Was defer, retired. origin:competitor row, answered no: the closest documented, scriptable path to changing the theme is occ nldesign:config:import (see int-cli-set-theme / gov-otap-cli), not a REST API."
+			"note": "Decided no 2026-09-28: Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). Was defer, retired. origin:competitor row, answered no: the closest documented, scriptable path to changing the theme is occ thematiq:config:import (see int-cli-set-theme / gov-otap-cli), not a REST API."
 		},
 		{
 			"id": "int-cli-set-theme",
@@ -5008,12 +5006,12 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Command/ThemeList.php, ThemeGet.php and ThemeSet.php: occ nldesign:theme:list (id, shipped or custom, name), nldesign:theme:get (active set and group mappings in priority order), nldesign:theme:set <id> [--sync-core] [--dry-run] through ActiveTokenSetService::switchTo with audit actor cli, unknown id exits 1, same set writes no audit entry, --sync-core via ScheduledCoreThemingSync; tests/Unit/Command/ThemeCommandsTest.php",
+				"evidence": "lib/Command/ThemeList.php, ThemeGet.php and ThemeSet.php: occ thematiq:theme:list (id, shipped or custom, name), thematiq:theme:get (active set and group mappings in priority order), thematiq:theme:set <id> [--sync-core] [--dry-run] through ActiveTokenSetService::switchTo with audit actor cli, unknown id exits 1, same set writes no audit entry, --sync-core via ScheduledCoreThemingSync; tests/Unit/Command/ThemeCommandsTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"change": "integration-occ-set-theme"
 			},
-			"reachedOn": "occ nldesign:theme:list, nldesign:theme:get and nldesign:theme:set <id> [--sync-core] [--dry-run]",
+			"reachedOn": "occ thematiq:theme:list, thematiq:theme:get and thematiq:theme:set <id> [--sync-core] [--dry-run]",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Command/UpdateConfig.php:22-24 sets name, colours, URLs and images from the CLI and config/config.sample.php:2471-2476 enforce_theme picks a built-in theme instance-wide via occ config:system:set; there is no house-style id to set",
 				"m365-branding": "https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.identity.directorymanagement/update-mgorganizationbranding : Update-MgOrganizationBranding (Microsoft Graph PowerShell) and PnP PowerShell cmdlets let you set branding/site theme values from the command line",
@@ -5197,7 +5195,7 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "decided-no",
-				"evidence": "lib/Service/LoginTokens.php:39 getTokens() returns colour and typography tokens for the login page only; no login text or label is configurable",
+				"evidence": "lib/Service/TokenRegistry.php getLoginTokens() returns colour and typography tokens for the login page only; no login text or label is configurable",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/server: the login form and its labels are core, and the demand row is a request against nextcloud/server (issue 38831). Thematiq could only change the labels by rewriting the core login view from a script, which breaks with every core release."
@@ -5450,21 +5448,20 @@
 			"id": "sur-generated-documents",
 			"area": "surfaces",
 			"name": "Have documents the system generates (letters, PDF exports, reports) carry the house style: logo, cover, footer and fonts.",
-			"thematiq": "no",
+			"thematiq": "partial",
 			"nextcloud-theming": "no",
 			"m365-branding": "partial",
 			"opendesk": "partial",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "grep -rliE 'pdf|docx|documenttemplate' lib/ src/ finds no document generation; thematiq styles the web interface and emails only (sur-email), document templates belong to a document app",
+				"state": "building",
+				"evidence": "thematiq half built: lib/Service/DocumentStyleService.php publishes the document profile (organisation, logo or uploaded print logo, cover, colours from the user's resolved set incl. group mapping, heading and body fonts with font URLs, footer lines, contrast warning), readable in-process and at GET /api/document-style (#[NoAdminRequired]); Documents block on Settings > Administration > Theming (lib/Service/DocumentAssetService.php, type and size checks, SVG script refused); the documents themselves are the siblings' halves, ConductionNL/filinq#1340 and ConductionNL/openregister#4255, not built yet",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/surfaces-document-house-style (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/surfaces-document-house-style"
+				"change": "surfaces-document-house-style"
 			},
-			"reachedOn": "nothing reaches it",
+			"reachedOn": "Settings > Administration > Theming, Documents; GET /apps/thematiq/api/document-style; OCA\\Thematiq\\Service\\DocumentStyleService",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 grep of apps/theming/lib and src for pdf finds nothing; the only generated output the theme reaches is email (lib/private/Mail/EMailTemplate.php:360-369), not letters, PDF exports or reports",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/organization-assets-library: organization assets libraries publish Office templates (.dotx, .xltx, .potx) so new documents start in the house style; https://learn.microsoft.com/en-us/sharepoint/brand-center-overview: organisation fonts in PowerPoint for the web. System-generated exports are not covered",
@@ -5484,21 +5481,20 @@
 			"id": "gov-token-deprecation",
 			"area": "governance",
 			"name": "Mark a token as deprecated with a severity, a replacement token and a removal date, so teams that consume the house style see it before it disappears.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "specified",
-				"evidence": "thematiq reads a DTCG $deprecated notice on import and shows it to the admin (lib/Controller/CustomTokenSetController.php:288-291, js/admin.js:4186-4189, lib/Service/TokenSetConverterService.php:177-181), but cannot author a deprecation with a replacement and a removal date",
+				"state": "built",
+				"evidence": "lib/Service/TokenDeprecationService.php records severity (info, warning, critical), a replacement that must exist and a removal date not in the past, never changing a value; lib/Controller/TokenDeprecationController.php on /settings/tokens/deprecations (AuthorizedAdminSetting, token_deprecation_changed audit); GET /api/token-deprecations for signed-in users (CatalogController::deprecations) with due and state; a comment above each deprecated own token in the served stylesheet; badges and the Deprecated tokens list (js/ownTokens.js); Record as deprecations on an upload's notices",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-token-lifecycle (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-token-lifecycle"
+				"change": "authoring-token-lifecycle"
 			},
-			"reachedOn": "Settings > Administration > Theming, custom token set upload, import warnings list",
+			"reachedOn": "Settings > Administration > Theming, under the token editor: Deprecated tokens; apps read /apps/thematiq/api/token-deprecations",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/css/default.css:48-54 and lib/Themes/DefaultTheme.php:180,230 mark some of Nextcloud's own variables deprecated in code comments ('@deprecated use css color functions'), with no severity or removal date; an admin cannot mark a token (ThemingController.php:74-147 accepts no such field)",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-json-schema: the full theme schema is isInverted, backgroundImageUri, palette, secondaryColors, displayMode and version fields, with no per-slot metadata such as deprecation or replacement",
@@ -5582,21 +5578,20 @@
 			"id": "aut-motion-tokens",
 			"area": "authoring",
 			"name": "Define motion, duration and easing as tokens of the house style.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "no",
 			"liferay-dxp": "partial",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "specified",
-				"evidence": "shipped sets carry upstream motion values where the design system defines them (css/tokens/rotterdam.css:741 --utrecht-backdrop-fade-in-animation-duration), the token editor lists two duration tokens as untyped text fields (lib/Service/TokenRegistry.php:232-233, --animation-quick and --animation-slow) and no easing token; reduced motion is handled separately (acc-reduced-motion) Corrections round 8 (2026-09-28), thematiq#697: the editor duration tokens reach Nextcloud components only, while the theme transitions read nldesign-animation-quick, which the editor never sets, css/systems/nldesign/overrides.css:212-213 and css/systems/nldesign/theme.css:382 at fd992ea.",
+				"state": "built",
+				"evidence": "lib/Service/TokenRegistry.php types --animation-quick and --animation-slow as duration and adds --nldesign-animation-easing (easing); lib/Service/TokenValueValidator.php checks 0-5000 ms / 0-5 s and a keyword or cubic-bezier with x in 0..1, 400 on save naming the token; saving a duration also writes the thematiq twin (CustomOverridesService::MOTION_TWINS); defaults.css declares --nldesign-animation-easing: ease and every theme.css transition reads it; editor number plus unit, easing select with a custom curve, and a motion preview that stays still under reduced motion (js/admin.js buildDurationInput, buildEasingInput, buildMotionPreview); repair step MigrateOverrideValueTypes adds the twin to existing overrides",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-token-value-types (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-token-value-types"
+				"change": "authoring-token-value-types"
 			},
-			"reachedOn": "any page styled by a set whose upstream defines motion tokens",
+			"reachedOn": "Settings > Administration > Theming, token editor, Content tab: Animation quick, Animation slow, Animation easing",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Themes/DefaultTheme.php:216-217 hard-codes --animation-quick 100ms and --animation-slow 200ms (ReducedMotion.php:59-60 zeroes them); these are Nextcloud's own fixed variables, and no admin setting defines duration or easing (ThemingController.php:74-147)",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-json-schema: theme values are colours only; https://learn.microsoft.com/en-us/entra/fundamentals/reference-company-branding-css-template: Entra is retiring transform, opacity and similar properties from custom CSS",
@@ -5624,7 +5619,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "decided-no",
-				"evidence": "lib/Service/TypographyTokens.php:39-46 exposes font family only; no per-theme root or base font size token exists (grep -niE 'font-size|rem' lib/Service/TypographyTokens.php finds nothing)",
+				"evidence": "lib/Service/TokenRegistry.php getTypographyTokens() exposes font family only; no per-theme root or base font size token exists (grep -niE 'font-size|rem' lib/Service/TypographyTokens.php finds nothing)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
 			},
@@ -5648,21 +5643,20 @@
 			"id": "aut-dtcg-colour-objects",
 			"area": "sync",
 			"name": "Read and write tokens in the stable DTCG specification, including colour values stored as objects with an explicit colour space.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "no",
 			"liferay-dxp": "no",
 			"tokens-studio": "partial",
 			"built": {
-				"state": "specified",
-				"evidence": "lib/Service/DesignTokensMapper.php:605-630 serializeColorObject() reads DTCG v2025.10 colour objects (hex or components) in the sRGB family and reports other colour spaces as unsupported-color-space (48-56); writing DTCG is not supported (aut-dtcg-bulk-convert)",
+				"state": "built",
+				"evidence": "lib/Service/DesignTokensWriter.php writes any token set as DTCG v2025.10 with colour objects (colorSpace, components, sRGB hex fallback, alpha), dimensions, durations, cubicBezier, fonts, aliases and a cssOnly map; GET /settings/tokensets/{id}/dtcg (DtcgExportController, AuthorizedAdminSetting); the importer converts every DTCG colour space to sRGB (ColorSpaceConverter, CSS Color 4 maths) and reports out-of-gamut colours as adapted; thematiq exports round-trip exactly for all shipped sets (DesignTokensRoundTripTest)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-dtcg-export (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-dtcg-export"
+				"change": "authoring-dtcg-export"
 			},
-			"reachedOn": "Settings > Administration > Theming, custom token set upload of a DTCG JSON file",
+			"reachedOn": "Settings > Administration > Theming: Download as design tokens next to the token set list and in each custom set row; Custom token sets upload",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:115-130 accepts colours only as hex strings for primary and background; grep -rniE 'dtcg|colorSpace|color_space' apps/theming/lib apps/theming/src: no hits",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-json-schema: palette colours 'are specified as 6-digit or 3-digit hexadecimal RGB string values'; no colour objects or colour spaces",
@@ -5813,21 +5807,20 @@
 			"id": "gov-lock-per-space",
 			"area": "governance",
 			"name": "Lock the organisation theme on selected sites or spaces, so their owners cannot change the branding, while other spaces keep their freedom.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "nobody but an administrator can change the house style anywhere (gov-admin-only; SettingsController setters are admin routes), so every space is locked; the reverse, letting chosen spaces keep their own freedom, is limited to excluding whole apps (lib/Service/AppThemingService.php disabled_apps list)",
+				"state": "built",
+				"evidence": "every group stays locked to the administrator's choice unless the administrator marks its mapping as delegated (lib/Service/GroupThemingService.php: delegated and allowedTokenSets on an entry, validated); a subadmin of a delegated group picks its set from the allowed list (lib/Service/DelegatedGroupThemingService.php, lib/Controller/MyGroupsController.php #[NoAdminRequired] with a per-group subadmin check through OCP\\Group\\ISubAdmin, audited token_set_changed with the group); lib/Settings/Personal.php shows the choice only to subadmins of a delegated group",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/scoping-delegated-group-house-style (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/scoping-delegated-group-house-style"
+				"change": "scoping-delegated-group-house-style"
 			},
-			"reachedOn": "Settings > Administration > Theming",
+			"reachedOn": "Settings > Administration > Theming, Group theming, Subadmins choose; Personal settings, Appearance and accessibility, House style of my groups",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:132-136 disable-user-theming is one instance-wide boolean; grep of apps/theming/lib for group, folder or space scoped branding finds nothing, so there are no spaces with their own branding to lock or free",
 				"m365-branding": "https://www.microsoft.com/microsoft-365/roadmap?id=526794 (launched 2026-02): admins 'enforce consistent branding, apply enterprise themes to individual sites, disable custom branding on specific sites, and audit branding changes'; https://learn.microsoft.com/en-us/powershell/module/microsoft.online.sharepoint.powershell/set-sposite: -DisableSiteBranding",
@@ -5847,21 +5840,20 @@
 			"id": "sur-assistant-logo",
 			"area": "surfaces",
 			"name": "Show the organisation's logo as an approved mark inside the AI assistant, so users can see the assistant is the one their organisation sanctioned.",
-			"thematiq": "no",
+			"thematiq": "partial",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "grep -rniF assistant lib templates js finds no hook into the Nextcloud Assistant; thematiq restyles its colours through the shared CSS variables like any app (sur-all-pages) but shows no organisation mark inside it",
+				"state": "building",
+				"evidence": "thematiq half built: lib/Service/AssistantMarkService.php (off by default, organisation name defaulting to the email footer, logo defaulting to logos.default of the active set, in the configuration bundle) and GET /api/assistant-mark (lib/Controller/AssistantMarkController.php, #[NoAdminRequired], label translated per user) with the AI assistant block on Settings > Administration > Theming; the panel that draws it is the nextcloud-vue half, ConductionNL/nextcloud-vue#1298, not built yet",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/surfaces-assistant-approved-mark (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/surfaces-assistant-approved-mark"
+				"change": "surfaces-assistant-approved-mark"
 			},
-			"reachedOn": "nothing reaches it",
+			"reachedOn": "Settings > Administration > Theming, AI assistant; GET /apps/thematiq/api/assistant-mark",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 grep -rliF assistant in apps/theming, core and lib (php) finds nothing; the Assistant is a separate app outside server and the theming app exposes no hook that places the organisation logo in it beyond the shared CSS variables (lib/Service/ThemeInjectionService.php via lib/Listener/BeforeTemplateRenderedListener.php:56) Caveat: the server clone read was sparse (apps/theming, settings, admin_audit, core, lib/private/Mail); the Assistant app was not read, so this no covers server and the theming app only.",
 				"m365-branding": "https://www.microsoft.com/microsoft-365/roadmap?id=555852 (rolling out, GA 2026-08): the Microsoft 365 Copilot app shows the logo 'already managed in the Microsoft Admin Center theming settings' in the chat footer 'paired with a fixed label: Approved by'",
@@ -5979,21 +5971,20 @@
 			"id": "sur-per-app-brand",
 			"area": "surfaces",
 			"name": "Give a collaboration or social app of the suite its own brand name, large and small logo and theme colour from a central brand center.",
-			"thematiq": "no",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "partial",
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "thematiq applies one house style instance wide (or per group, sco-per-group) and can only exclude an app (lib/Service/AppThemingService.php disabled_apps); no app can carry its own brand name, logo and colour",
+				"state": "built",
+				"evidence": "lib/Service/AppBrandService.php maps an installed, themed, unprotected app to a token set and a large and a small logo (app data app-brands/); ThemeInjectionListener passes the app id to CssInjectionService::inject(), which resolves preview, app brand, group, default through GroupThemingService::resolveTokenSetForRequest(appBrandSet) and sets --nldesign-logo-url to the app's logo (small under 1024 px); Brand per app block (js/admin-app-brands.js, lib/Controller/AppBrandController.php, #[AuthorizedAdminSetting]); appBrands in the configuration bundle (version 3); the app name stays Nextcloud's",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/surfaces-per-app-brand (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/surfaces-per-app-brand"
+				"change": "surfaces-per-app-brand"
 			},
-			"reachedOn": "nothing reaches it",
+			"reachedOn": "Settings > Administration > Theming, Brand per app",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:459-510 getManifest gives each app only its appinfo name plus the one instance name and the one primary colour (themingDefaults getName, getColorPrimary); grep of apps/theming/lib finds no per app brand name, logo or colour setting",
 				"m365-branding": "https://www.microsoft.com/microsoft-365/roadmap?id=568364 (rolling out, 2026-08): Viva Engage admins 'configure a brand name, add large and small logos, and a theme color that is applied consistently for all users', managed from a Brand Center in the Engage admin center",
@@ -6045,21 +6036,20 @@
 			"id": "app-branding-package",
 			"area": "apply",
 			"name": "Ship the tokens, templates and the theme stylesheet as one branding package that applies itself when a site is connected.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "specified",
-				"evidence": "lib/Service/ConfigBundleService.php (header comment) exports every instance-wide thematiq value as one bundle for OTAP promotion and applies it on import, but font binaries are not embedded (metadata only; the admin re-uploads fonts on the target), so the package is not complete; overlaps gov-otap-bundle, kept for the self-applying package angle",
+				"state": "built",
+				"evidence": "lib/Service/BrandingPackageService.php imports and exports a package directory or ZIP holding bundle.json, the font binaries (fonts/<id>.woff2, checked by FontValidator and stored through FontService) and optional DTCG sources, validate-everything-first; occ thematiq:config:export --package and occ thematiq:config:import <dir-or-zip>; applied by itself from config.php by ConfigSourceService",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/governance-theme-as-code (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/governance-theme-as-code"
+				"change": "governance-theme-as-code"
 			},
-			"reachedOn": "Settings > Administration > Theming, configuration bundle export and import",
+			"reachedOn": "occ thematiq:config:export --package, occ thematiq:config:import <dir-or-zip>, config.php thematiq.config_source",
 			"evidence": {
 				"nextcloud-theming": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
 				"m365-branding": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
@@ -6111,21 +6101,20 @@
 			"id": "aut-light-dark-values",
 			"area": "authoring",
 			"name": "Give a colour token separate light and dark values in the house style editor.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "specified",
-				"evidence": "each shipped set has a separate dark stylesheet (css/tokens/dark/amsterdam.css) derived by lib/Service/DarkPaletteService.php:289 deriveDarkDeclarations(); the token editor overrides hold one value per token with no dark field (grep -n dark lib/Service/CustomOverridesService.php lib/Controller/OverridesController.php finds nothing)",
+				"state": "built",
+				"evidence": "Every brand-layer colour row has a Dark line (js/admin.js buildDarkInput); POST /settings/overrides takes darkOverrides, CustomOverridesService writes them in the two dark scopes (prefers-color-scheme dark and body[data-theme-dark]) and reads them back; an empty one is derived by DarkPaletteService::deriveDarkValue and shown as the placeholder (GET darkDerived); TokenValueTypesTest testOwnDarkValueIsWrittenAndReadBack, testEmptyDarkValueIsDerived",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-token-value-types (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-token-value-types"
+				"change": "authoring-token-value-types"
 			},
-			"reachedOn": "Settings > Administration > Theming, token editor",
+			"reachedOn": "Settings > Administration > Theming, token editor, the Dark line under each brand colour",
 			"evidence": {
 				"nextcloud-theming": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
 				"m365-branding": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
@@ -6145,21 +6134,20 @@
 			"id": "aut-add-token",
 			"area": "authoring",
 			"name": "Add a new design token from the house style editor without changing the theme code.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "specified",
-				"evidence": "the token editor only edits tokens that already exist; a new token is added without code by uploading a token set that declares it (aut-upload-css, lib/Controller/CustomTokenSetController.php), not from the editor",
+				"state": "built",
+				"evidence": "lib/Service/OwnTokenService.php stores own tokens under --nldesign-org- (slug rule, duplicate check, value checked by type via TokenValueValidator) in appconfig own_tokens; lib/Controller/OwnTokenController.php list/create/update/delete on /settings/tokens/own (AuthorizedAdminSetting, own_token_changed audit); CustomOverridesService renders them after the editor values without !important, light in :root and dark in both dark scopes, in every set's file; Your own tokens section with an Add a token dialog (js/ownTokens.js); travels in the configuration bundle (ownTokens)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-token-lifecycle (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-token-lifecycle"
+				"change": "authoring-token-lifecycle"
 			},
-			"reachedOn": "Settings > Administration > Theming, custom token set upload",
+			"reachedOn": "Settings > Administration > Theming, under the token editor: Your own tokens",
 			"evidence": {
 				"nextcloud-theming": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
 				"m365-branding": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
@@ -6179,21 +6167,20 @@
 			"id": "aut-alpha-hex",
 			"area": "authoring",
 			"name": "Set colour tokens with transparency using 8-digit hex values.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "yes",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "specified",
-				"evidence": "the settings colour fields accept only 3 or 6 digit hex (lib/Service/ThemingService.php:91-93 isValidHexColor, called from lib/Controller/SettingsController.php:410; js/admin.js:3421 editor check); an uploaded token set is validated on token names, not values (lib/Service/CustomTokenSetValidator.php:64,113), so 8 digit hex in an uploaded set passes through",
+				"state": "built",
+				"evidence": "TokenValueValidator accepts #rgba and #rrggbbaa; the colour row has an opacity range and number next to the picker over a checkerboard swatch, joined into 8-digit hex (js/lib/tokenTransforms.js splitAlpha and joinAlpha, parity fixture tests/Unit/fixtures/token-value-grammar.json); ContrastService blends a translucent colour before the ratio; dark variants keep alpha (DarkPaletteService v3); core theming gets the blend over the background, the sync dialog shows the original (CustomTokenSetService::deriveTheming, primary_color_original)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-token-value-types (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-token-value-types"
+				"change": "authoring-token-value-types"
 			},
-			"reachedOn": "Settings > Administration > Theming, custom token set upload",
+			"reachedOn": "Settings > Administration > Theming, token editor, the opacity control on each colour row",
 			"evidence": {
 				"nextcloud-theming": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
 				"m365-branding": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",

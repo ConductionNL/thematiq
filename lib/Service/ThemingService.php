@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Theming\ImageManager;
 use OCA\Theming\Service\BackgroundService;
 use OCA\Theming\ThemingDefaults;
-use OCP\App\IAppManager;
 
 /**
  * Service for managing Nextcloud theming values.
@@ -56,27 +56,27 @@ class ThemingService {
 	private ThemingDefaults $themingDefaults;
 
 	/**
-	 * The app manager for resolving paths.
+	 * Finds a set's images, shipped in the release or stored at runtime.
 	 *
-	 * @var IAppManager
+	 * @var RuntimeFileLocator
 	 */
-	private IAppManager $appManager;
+	private RuntimeFileLocator $files;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param ImageManager $imageManager The theming image manager.
 	 * @param ThemingDefaults $themingDefaults The theming defaults service.
-	 * @param IAppManager $appManager The app manager for resolving paths.
+	 * @param RuntimeFileLocator $files Finds a set's images, shipped or stored at runtime.
 	 */
 	public function __construct(
 		ImageManager $imageManager,
 		ThemingDefaults $themingDefaults,
-		IAppManager $appManager,
+		RuntimeFileLocator $files,
 	) {
 		$this->imageManager = $imageManager;
 		$this->themingDefaults = $themingDefaults;
-		$this->appManager = $appManager;
+		$this->files = $files;
 	}//end __construct()
 
 	/**
@@ -173,9 +173,7 @@ class ThemingService {
 			return "Invalid image path for $imageKey: must be in img/logos/ or img/backgrounds/";
 		}
 
-		$appPath = $this->appManager->getAppPath(appId: 'thematiq');
-		$fullPath = $appPath . '/' . $imagePath;
-		if (file_exists(filename: $fullPath) === false) {
+		if ($this->files->exists(name: $imagePath) === false) {
 			return "Image file not found: $imagePath";
 		}
 
@@ -276,8 +274,14 @@ class ThemingService {
 
 		foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
 			if (isset($params[$imageKey]) === true && $params[$imageKey] !== '') {
-				$appPath = $this->appManager->getAppPath(appId: 'thematiq');
-				$fullPath = $appPath . '/' . $params[$imageKey];
+				// Core reads the image from a path. A shipped image has one; a
+				// captured or uploaded one lives in app data and is handed over
+				// as a temporary copy.
+				$fullPath = $this->files->localPath(name: (string)$params[$imageKey]);
+				if ($fullPath === null) {
+					continue;
+				}
+
 				$mime = $this->imageManager->updateImage(key: $imageKey, tmpFile: $fullPath);
 				$this->themingDefaults->set(setting: $imageKey . 'Mime', value: $mime);
 				$updated[] = $imageKey;

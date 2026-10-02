@@ -9,7 +9,8 @@ enriched_date: 2026-03-20
 ## Purpose
 Expose application metrics in Prometheus text exposition format at `GET /api/metrics` for monitoring, alerting, and operational dashboards.
 
-@e2e exclude API/backend metrics spec — all scenarios describe HTTP response format, metric values, and controller dependency injection; no admin UI surface. The nldesign app is a CSS-only theming layer with no database tables, so metrics focus on configuration state (active token set, custom overrides count, theming sync operations) and standard application health signals.
+The app is a CSS-only theming layer with no database tables, so metrics focus on configuration state (active token set, custom overrides count, theming sync operations) and standard application health signals. The metric names keep their `nldesign_` prefix from before the app was renamed to thematiq.
+
 ## Requirements
 ### Requirement: Metrics Endpoint
 
@@ -24,7 +25,7 @@ previous "publicly accessible without CSRF" wording, which incorrectly conflated
 
 #### Scenario: Metrics endpoint rejects unauthenticated requests
 
-- GIVEN an anonymous (non-admin-authenticated) caller requests `GET /index.php/apps/nldesign/api/metrics`
+- GIVEN an anonymous (non-admin-authenticated) caller requests `GET /index.php/apps/thematiq/api/metrics`
 - WHEN the request reaches `MetricsController::index()`
 - THEN Nextcloud's `SecurityMiddleware` MUST reject the request (no session / non-admin session)
   because the method carries neither `#[PublicPage]` nor `#[NoAdminRequired]`
@@ -35,7 +36,7 @@ previous "publicly accessible without CSRF" wording, which incorrectly conflated
 
 - GIVEN an authenticated admin session (or an admin app-password via HTTP Basic, as configured for
   a Prometheus scrape target)
-- WHEN `GET /index.php/apps/nldesign/api/metrics` is called without a CSRF token
+- WHEN `GET /index.php/apps/thematiq/api/metrics` is called without a CSRF token
 - THEN the request MUST succeed (CSRF exemption still applies for admin-authenticated callers)
 - AND the response MUST have content type `text/plain; version=0.0.4; charset=utf-8`
 
@@ -73,7 +74,7 @@ The app MUST expose an info gauge with version labels for identification.
 #### Scenario: Versions read from correct sources
 - GIVEN the metrics controller is initialized
 - WHEN version values are collected
-- THEN the app version MUST come from `IConfig::getAppValue('nldesign', 'installed_version', '0.0.0')`
+- THEN the app version MUST come from `IConfig::getAppValue('thematiq', 'installed_version', '0.0.0')`
 - AND the PHP version MUST come from the `PHP_VERSION` constant
 - AND the Nextcloud version MUST come from `IConfig::getSystemValueString('version', '0.0.0')`
 
@@ -103,18 +104,20 @@ The app MUST expose an up gauge indicating overall application health.
 The app MUST expose the total number of available token sets as a gauge.
 
 #### Scenario: Token sets counted from filesystem
-- GIVEN there are 39 CSS files in `css/tokens/`
+- GIVEN `css/tokens/` holds N CSS files (52 shipped sets in October 2026, plus any uploaded custom set)
 - WHEN the token set metric is collected via `TokenSetService::getAvailableTokenSets()`
-- THEN `nldesign_token_sets_total` MUST be a gauge with value `39`
+- THEN `nldesign_token_sets_total` MUST be a gauge with value N
+- AND N MUST equal the number of entries in the public catalogue (`GET /api/token-sets`), which is built from the same scan
 
 #### Scenario: Token set metric with HELP and TYPE
 - GIVEN the metrics are generated
 - THEN the output MUST include:
   - `# HELP nldesign_token_sets_total Total number of available token sets`
   - `# TYPE nldesign_token_sets_total gauge`
-  - `nldesign_token_sets_total 39`
+  - `nldesign_token_sets_total N`, where N is the count from the scenario above
 
 #### Scenario: Token set count error handled gracefully
+@e2e exclude a failing TokenSetService cannot be induced from a browser; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testTokenSetFailureFallsBackToZeroAndLogs asserts the 0 fallback, the warning and the intact response
 - GIVEN `TokenSetService::getAvailableTokenSets()` throws an exception
 - WHEN the metrics are collected
 - THEN `nldesign_token_sets_total` MUST be reported as `0`
@@ -136,11 +139,13 @@ The app MUST expose which token set is currently active as a labeled gauge.
   - `# TYPE nldesign_active_token_set gauge`
 
 #### Scenario: Default token set reported when not configured
+@e2e exclude no endpoint unsets the token_set app value and the CI seed sets it; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testActiveTokenSetDefaultWhenUnset asserts the default and the gauge line
 - GIVEN no token set has been explicitly configured
-- WHEN the metric is collected from `IConfig::getAppValue('nldesign', 'token_set', 'rijkshuisstijl')`
+- WHEN the metric is collected from `IConfig::getAppValue('thematiq', 'token_set', 'rijkshuisstijl')`
 - THEN `nldesign_active_token_set{name="rijkshuisstijl"}` MUST have value `1`
 
 #### Scenario: Active token set in error recovery
+@e2e exclude a failing TokenSetService cannot be induced from a browser; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testTokenSetFailureOmitsTheActiveTokenSetGauge asserts the gauge is omitted
 - GIVEN the token set metrics collection fails
 - WHEN the error is caught
 - THEN the active token set metric MUST be omitted (it is inside the try block)
@@ -166,6 +171,7 @@ The app MUST expose the number of admin-defined custom CSS overrides as a gauge.
   - `# TYPE nldesign_custom_overrides_total gauge`
 
 #### Scenario: Override count error handled gracefully
+@e2e exclude a failing CustomOverridesService cannot be induced from a browser; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testOverrideFailureFallsBackToZeroAndLogs asserts the 0 fallback, the warning and the intact response
 - GIVEN `CustomOverridesService::read()` throws an exception
 - WHEN the metrics are collected
 - THEN `nldesign_custom_overrides_total` MUST be reported as `0`
@@ -177,11 +183,12 @@ The app MUST expose the total number of theming sync operations as a counter.
 
 #### Scenario: Theming syncs counter reported
 - GIVEN the admin has performed 3 theming sync operations
-- AND `IConfig::getAppValue('nldesign', 'theming_syncs_total', '0')` returns `'3'`
+- AND `IConfig::getAppValue('thematiq', 'theming_syncs_total', '0')` returns `'3'`
 - WHEN the sync metric is collected
 - THEN `nldesign_theming_syncs_total` MUST be a counter with value `3`
 
 #### Scenario: No theming syncs performed
+@e2e exclude a fresh-install state: the counter only goes up, so a browser cannot return it to unset; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testThemingSyncsCounterDefaultsToZeroAndIsCastToInt asserts 0 when unset
 - GIVEN no theming sync has been performed
 - WHEN the metric is collected
 - THEN `nldesign_theming_syncs_total` MUST be `0`
@@ -193,6 +200,7 @@ The app MUST expose the total number of theming sync operations as a counter.
   - `# TYPE nldesign_theming_syncs_total counter`
 
 #### Scenario: Syncs counter is read from IConfig
+@e2e exclude the cast and the default are PHP-level reads; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testThemingSyncsCounterDefaultsToZeroAndIsCastToInt asserts the '0' default and the string '3' rendered as 3
 - GIVEN the syncs counter is stored in IConfig
 - WHEN the value is read
 - THEN it MUST be cast to integer via `(int)` to handle string storage
@@ -202,6 +210,7 @@ The app MUST expose the total number of theming sync operations as a counter.
 The metrics endpoint MUST be resilient to individual metric collection failures without failing the entire response.
 
 #### Scenario: Token set metrics fail, other metrics succeed
+@e2e exclude a failing TokenSetService cannot be induced from a browser; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testTokenSetFailureFallsBackToZeroAndLogs
 - GIVEN the token set service throws an exception
 - WHEN the metrics are collected
 - THEN info, up, custom overrides, and theming syncs metrics MUST still be present
@@ -209,6 +218,7 @@ The metrics endpoint MUST be resilient to individual metric collection failures 
 - AND a warning MUST be logged
 
 #### Scenario: Custom overrides fail, other metrics succeed
+@e2e exclude a failing CustomOverridesService cannot be induced from a browser; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testOverrideFailureFallsBackToZeroAndLogs
 - GIVEN the custom overrides service throws an exception
 - WHEN the metrics are collected
 - THEN info, up, token sets, and theming syncs metrics MUST still be present
@@ -216,6 +226,7 @@ The metrics endpoint MUST be resilient to individual metric collection failures 
 - AND a warning MUST be logged
 
 #### Scenario: Multiple failures handled independently
+@e2e exclude two failing services cannot be induced from a browser; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testBothFailuresAreHandledIndependently
 - GIVEN both token set and custom overrides services throw exceptions
 - WHEN the metrics are collected
 - THEN info, up, and theming syncs MUST still be present
@@ -223,20 +234,23 @@ The metrics endpoint MUST be resilient to individual metric collection failures 
 - AND both warnings MUST be logged independently
 
 ### Requirement: Health Check Endpoint
-The app MUST expose a public health check endpoint at `GET /api/health` for monitoring and load balancers. The endpoint MUST be served by the OpenRegister AppHost observability engine's `GenericHealthController` (ADR-040), via a thin `OCA\Thematiq\Controller\HealthController` subclass so that the route name (`health#index`) and URL are unchanged. The checks MUST be declared in `src/manifest.json` using only the OpenRegister-independent primitives (`database`, `filesystem`, `appEnabled`) — never `orAvailable` — because nldesign has no OpenRegister dependency.
+The app MUST expose a public health check endpoint at `GET /api/health` for monitoring and load balancers. `OCA\Thematiq\Controller\HealthController` (route `health#index`) MUST run the checks through the OpenRegister AppHost observability engine (ADR-040) by composition: it resolves the engine's `ManifestLoader` and `HealthCheckExecutor` from the container by class-name string at dispatch time, and never extends or imports an OpenRegister class. The checks MUST be declared in `src/manifest.json` using only the OpenRegister-independent primitives (`database`, `filesystem`, `appEnabled`), never `orAvailable`, because thematiq has no OpenRegister dependency. The `appEnabled` check MUST name the app's own id, `thematiq`.
 
 #### Scenario: Health check returns the canonical envelope
 - GIVEN the app configuration is accessible and the database and filesystem are healthy
-- WHEN `GET /index.php/apps/nldesign/api/health` is called
+- WHEN `GET /index.php/apps/thematiq/api/health` is called
 - THEN the response MUST be JSON with the ADR-006 envelope `{"status", "app", "version", "checks"}`
-- AND `status` MUST be `"ok"` with `checks.database`, `checks.filesystem`, and `checks.nldesign` all `"ok"`
+- AND `status` MUST be `"ok"` with `checks.database`, `checks.filesystem`, and `checks.thematiq` all `"ok"`
+- AND the keys of `checks` MUST be exactly the check ids declared in `src/manifest.json`
 
 #### Scenario: Critical check failure yields 503 under adr006 policy
+@e2e exclude a failing database or appEnabled check cannot be induced from a browser; PHPUnit tests/Unit/Controller/HealthControllerEngineResultTest.php::testCriticalEngineFailureIsServedAs503 asserts the 503 envelope, and openregister tests/Unit/AppHost/HealthCheckExecutorTest.php::testCriticalFailureUnderAdr006Yields503 asserts the engine policy
 - GIVEN a `severity: "critical"` check (database or appEnabled) fails
 - WHEN the health endpoint is called
 - THEN the response MUST be HTTP 503 with `status: "error"` and the failing check value starting with `failed`
 
 #### Scenario: Degraded filesystem check does not error the overall status
+@e2e exclude a failing filesystem check cannot be induced from a browser; PHPUnit tests/Unit/Controller/HealthControllerEngineResultTest.php::testDegradedFilesystemIsServedAs200Degraded asserts the 200 degraded envelope
 - GIVEN the `filesystem` check (`severity: "degraded"`) fails while critical checks pass
 - WHEN the health endpoint is called
 - THEN the response MUST be HTTP 200 with `status: "degraded"` and `checks.filesystem` starting with `failed`
@@ -244,13 +258,14 @@ The app MUST expose a public health check endpoint at `GET /api/health` for moni
 #### Scenario: Health endpoint is publicly accessible without CSRF
 - GIVEN a monitoring system calls the health endpoint
 - WHEN the request is made
-- THEN the engine's `#[PublicPage]` + `#[NoCSRFRequired]` posture MUST allow access without a session or CSRF token
+- THEN the `#[PublicPage]` + `#[NoCSRFRequired]` attributes on `HealthController::index()` MUST allow access without a session or CSRF token
 
 #### Scenario: Nextcloud boots when OpenRegister is absent
+@e2e exclude the CI E2E instance always installs OpenRegister, so a browser there cannot reach this state; PHPUnit tests/Unit/Controller/HealthControllerEngineResultTest.php::testControllerNamesNoOpenRegisterClassInCode asserts the boot half and tests/Unit/Controller/HealthControllerEngineResultTest.php::testEngineAbsentDegradesTo200 asserts the response half
 - GIVEN OpenRegister is disabled or not installed
 - WHEN Nextcloud boots and `Application::register()` runs
-- THEN no OpenRegister class MUST be loaded (the thin `HealthController` subclass autoloads its OpenRegister parent only on route dispatch, never at bootstrap), so nldesign still loads and themes
-- AND only a request to `/api/health` would surface a degraded 5xx
+- THEN no OpenRegister class MUST be loaded: `HealthController` extends only `OCP\AppFramework\Controller` and names the engine classes as strings, so thematiq still loads and themes
+- AND `/api/health` MUST answer HTTP 200 with `status: "degraded"` and `checks.openregister: "unavailable"`
 
 #### Scenario: Route registration
 - GIVEN the app's routes configuration
@@ -274,30 +289,32 @@ All metrics MUST strictly comply with the Prometheus text exposition format spec
 - AND each metric MUST have exactly one TYPE line
 
 #### Scenario: Label values properly escaped
-- GIVEN the active token set name contains special characters (e.g., quotes)
-- WHEN the label value is output
-- THEN double quotes in label values MUST be escaped
-- AND backslashes MUST be escaped
-- AND newlines MUST be escaped
+- GIVEN the label values the endpoint emits: the active token set id and three version strings
+- WHEN they are output
+- THEN they are written unescaped, so none of them MAY contain a double quote, a backslash or a newline
+- AND the token set id cannot: `TokenSetService::isValidTokenSet()` only accepts the basename of a file in `css/tokens/`, and uploaded custom set ids are slugged to `[a-z0-9-]`
 
 ### Requirement: Controller Dependencies
 The MetricsController MUST receive all required dependencies via constructor injection.
 
 #### Scenario: Dependencies injected
+@e2e exclude constructor shape is a PHP property; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testDependenciesArePrivateReadonlyPromotedParameters
 - GIVEN the MetricsController is constructed
 - THEN it MUST receive: `IConfig` (for reading config values), `TokenSetService` (for counting token sets), `CustomOverridesService` (for counting overrides), `LoggerInterface` (for error logging)
 - AND all dependencies MUST be declared as `private readonly` promoted constructor parameters
 
 #### Scenario: No direct service instantiation
+@e2e exclude a source invariant; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testSourceHasNoDirectServiceInstantiation asserts no `new ...Service`, `\OC::$server` or `Server::get(` in the controller
 - GIVEN the MetricsController processes a request
 - WHEN metrics are collected
 - THEN it MUST use the injected services
 - AND it MUST NOT use `new TokenSetService()` or similar direct instantiation
 
 #### Scenario: Health controller is engine-owned
-- GIVEN the health endpoint is dispatched
-- THEN it MUST be served by `OCA\OpenRegister\AppHost\Controller\GenericHealthController` (via the thin `OCA\Thematiq\Controller\HealthController` subclass), NOT by a bespoke nldesign health implementation
-- AND nldesign MUST NOT hand-roll the health checks or the response envelope
+- GIVEN the health endpoint is dispatched with OpenRegister installed
+- THEN the checks MUST be executed by the AppHost `HealthCheckExecutor` from the `observability.health` block of `src/manifest.json`, so the keys of `checks` are exactly the declared check ids
+- AND the status and HTTP code MUST be the ones the engine's `statusCodePolicy` resolved
+- AND thematiq owns only the `{status, app, version, checks}` envelope and the OpenRegister-absent fallback in `OCA\Thematiq\Controller\HealthController`; it MUST NOT hand-roll the checks
 
 ### Requirement: Audit Entries Counter Metric
 
@@ -319,6 +336,7 @@ existing admin-auth posture and error-resilience requirements unchanged.
   - `nldesign_audit_entries_total 12`
 
 #### Scenario: Counter survives log rotation
+@e2e exclude rotation needs a 1 MB audit file; PHPUnit tests/Unit/Service/ThemingAuditServiceTest.php::testCounterKeepsCountingAcrossRotation asserts the counter keeps counting while the fresh audit.jsonl is empty
 
 - GIVEN the audit file has rotated and the current `audit.jsonl` holds fewer lines than the
   lifetime total
@@ -327,9 +345,10 @@ existing admin-auth posture and error-resilience requirements unchanged.
   NOT decrease
 
 #### Scenario: Counter defaults to zero
+@e2e exclude a fresh-install state the counter cannot return to; PHPUnit tests/Unit/Controller/MetricsControllerTest.php::testAuditCounterDefaultsToZero
 
 - GIVEN a fresh installation where no audit entry has been written
-- WHEN the metric is collected from `IConfig::getAppValue('nldesign', 'audit_entries_total', '0')`
+- WHEN the metric is collected from `IConfig::getAppValue('thematiq', 'audit_entries_total', '0')`
 - THEN `nldesign_audit_entries_total 0` MUST be emitted (cast to int from string storage)
 
 ## Current Implementation Status
@@ -348,9 +367,9 @@ existing admin-auth posture and error-resilience requirements unchanged.
 - Content-Type header: `text/plain; version=0.0.4; charset=utf-8`
 - Error resilience: independent try/catch blocks for token set and override metrics
 - Warning logging on metric collection failures
-- HealthController at `lib/Controller/HealthController.php` is a thin subclass of the OpenRegister AppHost `GenericHealthController` (ADR-040); `index()` delegates to `parent::index()` and re-declares `#[PublicPage]` + `#[NoCSRFRequired]`
-- Health checks are declarative in `src/manifest.json` (`observability.health`): `database` (critical), `filesystem` (degraded), `appEnabled: nldesign` (critical), `adr006` status-code policy — OR-independent primitives only, no `orAvailable`, no OR-object metrics
-- Health response envelope: ADR-006 `{status, app, version, checks}`, engine-owned
+- HealthController at `lib/Controller/HealthController.php` extends only `OCP\AppFramework\Controller` and drives the OpenRegister AppHost engine by composition (ADR-040): it resolves `ManifestLoader` and `HealthCheckExecutor` by class-name string at dispatch time and carries `#[PublicPage]` + `#[NoCSRFRequired]` itself. Without OpenRegister it answers 200 `degraded` with `checks.openregister: unavailable`
+- Health checks are declarative in `src/manifest.json` (`observability.health`): `database` (critical), `filesystem` (degraded), `appEnabled: thematiq` (critical), `adr006` status-code policy. OR-independent primitives only, no `orAvailable`, no OR-object metrics
+- Health response envelope: ADR-006 `{status, app, version, checks}`, rendered by HealthController from the engine's result
 - Routes: `/api/metrics` -> `metrics#index`, `/api/health` -> `health#index`
 - Constructor injection of IConfig, TokenSetService, CustomOverridesService, LoggerInterface (promoted parameters with `private readonly`)
 
