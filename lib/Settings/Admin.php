@@ -33,7 +33,6 @@ use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Settings\IDelegatedSettings;
@@ -63,13 +62,6 @@ class Admin implements IDelegatedSettings {
 	 * @var IConfig
 	 */
 	private IConfig $config;
-
-	/**
-	 * The localization service (kept for future i18n use).
-	 *
-	 * @var IL10N
-	 */
-	private IL10N $l;
 
 	/**
 	 * The token set service.
@@ -143,7 +135,6 @@ class Admin implements IDelegatedSettings {
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
-	 * @param IL10N $l The localization service.
 	 * @param TokenSetService $tokenSetService The token set service.
 	 * @param EmailThemingService $emailThemingService The email theming service.
 	 * @param ThemePreviewService $previewService The theme preview service.
@@ -152,13 +143,9 @@ class Admin implements IDelegatedSettings {
 	 * @param IInitialState $initialState Carries server state to admin.js.
 	 * @param IRequest $request The current request (presentation-mock switch).
 	 * @param PlaygroundStateService $playgroundState What the component playground reads at boot.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - this is the app's one admin settings form, and Nextcloud's container injects
-	 *   through the constructor and nothing else; the parameter count is the number of things the panel renders.
 	 */
 	public function __construct(
 		IConfig $config,
-		IL10N $l,
 		TokenSetService $tokenSetService,
 		EmailThemingService $emailThemingService,
 		ThemePreviewService $previewService,
@@ -169,7 +156,6 @@ class Admin implements IDelegatedSettings {
 		PlaygroundStateService $playgroundState,
 	) {
 		$this->config = $config;
-		$this->l = $l;
 		$this->tokenSetService = $tokenSetService;
 		$this->emailThemingService = $emailThemingService;
 		$this->previewService = $previewService;

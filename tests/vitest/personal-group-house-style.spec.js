@@ -134,6 +134,7 @@ describe('house style of my groups', () => {
 		await loadScript()
 
 		const radios = document.querySelectorAll('input[type="radio"]')
+		radios[1].checked = true
 		radios[1].dispatchEvent(new Event('change'))
 		await new Promise((resolve) => setTimeout(resolve, 0))
 		await new Promise((resolve) => setTimeout(resolve, 0))
@@ -141,6 +142,9 @@ describe('house style of my groups', () => {
 		expect(
 			document.getElementById('thematiq-my-groups-feedback').textContent,
 		).toBe('This token set is not allowed for this group.')
+		// The page shows the set that is still active, not the refused one.
+		expect(radios[0].checked).toBe(true)
+		expect(radios[1].checked).toBe(false)
 	})
 
 	it('says when no group can choose', async () => {

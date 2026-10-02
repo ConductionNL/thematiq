@@ -410,7 +410,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * A set that gives an internal token a value carries the internal scopes,
 	 * inline and directly after the component scopes.
 	 *
-	 * @spec openspec/changes/internal-variable-tokens/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 */
 	public function testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes(): void {
 		$this->configureAppValues(['token_set' => 'custom-openwoo']);
@@ -435,7 +435,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * Saved overrides are the last stylesheet link the page gets, after every
 	 * design-system and token layer.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function testCustomOverridesAlwaysLoadedLast(): void {
 		$this->configureAppValues();
@@ -934,7 +934,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * directory on every render, which put a code integrity warning on every
 	 * instance and failed outright on a read-only app directory.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function testRenderingWritesNothingAndLaterLayersStillRun(): void {
 		$this->configureAllLaterLayers();
@@ -965,7 +965,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * No saved overrides is the normal state of a fresh instance, not a
 	 * failure: nothing is logged for it.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function testNoSavedOverridesIsNotAWarning(): void {
 		$this->configureAllLaterLayers();

@@ -74,8 +74,6 @@ class ScheduledSwitchService {
 	 * @param ITimeFactory             $time           The clock.
 	 * @param IL10N                    $l10n           The translator.
 	 * @param LoggerInterface          $logger         The logger.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - one collaborator per concern listed in the class docblock.
 	 */
 	public function __construct(
 		private readonly ScheduledSwitchStore $store,
@@ -114,7 +112,8 @@ class ScheduledSwitchService {
 	 *
 	 * @return array<string, mixed> The planned entry.
 	 *
-	 * @throws ScheduledSwitchException When the set does not exist, a time does not parse, the end is not after the start, or the window overlaps.
+	 * @throws ScheduledSwitchException When the set does not exist, a time does not parse, the end is not after the start
+	 *                                   or not in the future, or the window overlaps.
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
 	 */
@@ -123,19 +122,7 @@ class ScheduledSwitchService {
 			throw new ScheduledSwitchException(message: $this->l10n->t('The token set {set} does not exist.', ['set' => $tokenSet]));
 		}
 
-		$start = $this->store->toUtc(value: $startAt);
-		$end = null;
-		if ($endAt !== null) {
-			$end = $this->store->toUtc(value: $endAt);
-		}
-
-		if ($start === null || ($endAt !== null && $end === null)) {
-			throw new ScheduledSwitchException(message: $this->l10n->t('Enter the start and end as a date and a time.'));
-		}
-
-		if ($end !== null && strtotime($end) <= strtotime($start)) {
-			throw new ScheduledSwitchException(message: $this->l10n->t('The end must be after the start.'));
-		}
+		[$start, $end] = $this->parseWindow(startAt: $startAt, endAt: $endAt);
 
 		$entry = [
 			'id' => bin2hex(random_bytes(8)),
@@ -163,6 +150,39 @@ class ScheduledSwitchService {
 
 		return $entry;
 	}//end create()
+
+	/**
+	 * Parse a planned window to UTC and check it.
+	 *
+	 * @param string      $startAt The start, ISO 8601 with an offset.
+	 * @param string|null $endAt   The optional end, ISO 8601 with an offset.
+	 *
+	 * @return array{0: string, 1: string|null} The start and end in UTC.
+	 *
+	 * @throws ScheduledSwitchException When a time does not parse, or the end is not after the start or not in the future.
+	 *
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
+	 */
+	private function parseWindow(string $startAt, ?string $endAt): array {
+		$start = $this->store->toUtc(value: $startAt);
+		$end = $this->store->toUtc(value: $endAt);
+		if ($start === null || ($endAt !== null && $end === null)) {
+			throw new ScheduledSwitchException(message: $this->l10n->t('Enter the start and end as a date and a time.'));
+		}
+
+		if ($end !== null && strtotime($end) <= strtotime($start)) {
+			throw new ScheduledSwitchException(message: $this->l10n->t('The end must be after the start.'));
+		}
+
+		// A window that is already over would be applied and reverted on the
+		// next run: a core theming reset, two audit entries and two versions
+		// for a switch nobody sees.
+		if ($this->store->hasEnded(end: $end, now: $this->time->getTime()) === true) {
+			throw new ScheduledSwitchException(message: $this->l10n->t('The end must be in the future.'));
+		}
+
+		return [$start, $end];
+	}//end parseWindow()
 
 	/**
 	 * Cancel a switch. A running one switches back at once.

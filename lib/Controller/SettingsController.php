@@ -246,24 +246,6 @@ class SettingsController extends Controller {
 	}//end setTokenSet()
 
 	/**
-	 * Get the currently active design token set.
-	 *
-	 * @return JSONResponse The response with the current token set.
-	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-15
-	 */
-	#[AuthorizedAdminSetting(Admin::class)]
-	public function getTokenSet(): JSONResponse {
-		$tokenSet = $this->config->getAppValue(
-			Application::APP_ID,
-			'token_set',
-			'nextcloud'
-		);
-
-		return new JSONResponse(['tokenSet' => $tokenSet]);
-	}//end getTokenSet()
-
-	/**
 	 * Get all available token sets.
 	 *
 	 * @return JSONResponse The list of available token sets.

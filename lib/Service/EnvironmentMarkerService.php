@@ -52,6 +52,13 @@ class EnvironmentMarkerService {
 	public const OCC_SET_COMMAND = Application::ENVIRONMENT_OCC_COMMAND;
 
 	/**
+	 * App config key holding the unknown value last logged, so a typo is
+	 * logged once and not on every render. Only that note lives in app
+	 * config; the environment itself is never read from there.
+	 */
+	private const WARNED_KEY = 'environment_unknown_logged';
+
+	/**
 	 * Fixed stripe and label colours per style. Each pair reaches 4.5:1 and
 	 * is mirrored in css/environment-marker.css (a unit test holds the two
 	 * together). The stripe does not follow the colour scheme.
@@ -125,7 +132,7 @@ class EnvironmentMarkerService {
 	 * Resolve the marker for this server, or null on production or unset.
 	 *
 	 * A value outside the allowed list is shown as "Unknown environment" with
-	 * the test styling and logged, so a typo never looks like production.
+	 * the test styling and logged once, so a typo never looks like production.
 	 *
 	 * @return array{environment: string, style: string, label: string, short: string}|null The marker.
 	 *
@@ -144,10 +151,7 @@ class EnvironmentMarkerService {
 		];
 
 		if (isset($labels[$environment]) === false) {
-			$this->logger->warning(
-				'thematiq: unknown environment {value} in config.php; allowed are development, test, acceptance and production.',
-				['app' => Application::APP_ID, 'value' => $environment]
-			);
+			$this->logUnknownOnce(environment: $environment);
 
 			return [
 				'environment' => $environment,
@@ -164,6 +168,30 @@ class EnvironmentMarkerService {
 			'short'       => $labels[$environment][1],
 		];
 	}//end resolve()
+
+	/**
+	 * Log an unknown environment value once, not on every render.
+	 *
+	 * The marker is resolved on every rendered page, the login and public pages
+	 * included, so a typo in config.php wrote one warning per request.
+	 *
+	 * @param string $environment The unknown value.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/environment-marker/spec.md
+	 */
+	private function logUnknownOnce(string $environment): void {
+		if ($this->config->getAppValue(Application::APP_ID, self::WARNED_KEY, '') === $environment) {
+			return;
+		}
+
+		$this->logger->warning(
+			'thematiq: unknown environment {value} in config.php; allowed are development, test, acceptance and production.',
+			['app' => Application::APP_ID, 'value' => $environment]
+		);
+		$this->config->setAppValue(Application::APP_ID, self::WARNED_KEY, $environment);
+	}//end logUnknownOnce()
 
 	/**
 	 * Emit the marker assets and state for this render. Fails open: an error

@@ -716,6 +716,13 @@
 	color: var(--color-main-text);
 }
 
+/* The rule above drops core's border and shadow, which drew the focus ring,
+   so keyboard users need one of their own on these roving-tabindex tabs. */
+#nldesign-settings .nldesign-create-tab:focus-visible {
+	outline: 2px solid var(--color-main-text);
+	outline-offset: -2px;
+}
+
 #nldesign-settings .nldesign-create-tab.active {
 	border-bottom-color: var(--color-primary-element);
 	color: var(--color-main-text);

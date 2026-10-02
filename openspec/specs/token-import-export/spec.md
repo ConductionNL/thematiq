@@ -6,7 +6,9 @@ status: in-progress
 
 ## Purpose
 Allows admins to download the current `custom-overrides.css` as a portable file and upload a previously saved file to restore or share a token configuration. Only known, editable Nextcloud `--color-*` tokens are accepted on import — unknown variables are silently rejected and their count is reported.
+
 ## Requirements
+
 ### Requirement: Export Current Overrides
 
 The admin settings panel MUST provide a **Download** button that exports the current
@@ -115,7 +117,7 @@ saved for the theme.
 
 ### Requirement: Import Validation
 On upload, the importer MUST validate each CSS custom property against the canonical editable token registry. Only tokens on the editable list MUST be written.
-@e2e exclude All import-validation scenarios require file upload + server-side parse response assertions — backend validation logic, not testable via DOM; would mutate shared-env custom-overrides.css.
+@e2e exclude All import-validation scenarios require a file upload and assertions on the server's parse response: backend validation logic with no DOM surface, and a run would change the shared environment's custom-overrides.css.
 
 #### Scenario: File contains unknown tokens
 - GIVEN an uploaded CSS file contains `--color-primary: #aa0000` (known) and `--my-custom-var: red` (unknown)
@@ -132,10 +134,16 @@ On upload, the importer MUST validate each CSS custom property against the canon
 - AND no error MUST be thrown (it is valid to import a file that contributes no tokens)
 
 #### Scenario: File contains excluded tokens
-- GIVEN an uploaded CSS file contains `--color-main-background: #ffffff` (excluded)
+- GIVEN an uploaded CSS file contains `--icon-download-dark: url(x.svg)` (excluded, class `icon`)
 - WHEN the file is imported
-- THEN `--color-main-background` MUST be silently rejected
+- THEN `--icon-download-dark` MUST be silently rejected
 - AND it MUST be counted in the "skipped" total
+
+#### Scenario: File contains a formerly excluded token
+- GIVEN an uploaded CSS file contains `--color-main-background: #fdfcf8`
+- WHEN the file is imported
+- THEN `--color-main-background` MUST be written to `custom-overrides.css`
+- AND it MUST be counted in the "imported" total
 
 #### Scenario: File is not valid CSS
 - GIVEN the admin uploads a file that is not parseable CSS (e.g. a JSON file or empty file)
@@ -172,7 +180,6 @@ The import MUST be handled by a dedicated POST endpoint that accepts a multipart
 - AND the server MUST parse the file content server-side (not rely on client-side JS parsing)
 - AND the response MUST be JSON with `{ imported: N, skipped: M }`
 
-
 ### Requirement: Token Set Round Trip
 A theme exported with **Export as token set** and uploaded again under Custom token sets MUST come
 back the same theme. The export MUST write only the tokens the set itself declares, with the
@@ -195,3 +202,23 @@ MUST store a marked file as it arrived, on that design system, instead of conver
 - THEN it MUST be stored as it arrived, without conversion
 - AND the new set MUST be recorded on design system `none`
 - AND a design system the manifest does not ship MUST NOT be recorded
+
+### Requirement: Overrides round-trip every registry token
+Exporting the overrides and importing the file again MUST restore every override, for every registry token, including dark values.
+
+@e2e exclude File download and upload with assertions on the stored overrides; the visible effect of an imported internal token is covered by `component-tokens` ("A variable the component declares itself is reached").
+
+#### Scenario: An internal token survives the round trip
+- GIVEN the admin has set `--nldesign-nc-dp-hover-color` to `#e8eef5`
+- WHEN the admin downloads the overrides and uploads the same file
+- THEN the override MUST be restored with the same value
+
+#### Scenario: A dark value survives the round trip
+- GIVEN the admin has set `--color-mark` with a dark value `#5c4a00`
+- WHEN the overrides are exported and imported
+- THEN the dark value MUST be restored for the dark scopes only
+
+#### Scenario: A file from before this change still imports
+- GIVEN an overrides file exported before this change, holding only brand tokens
+- WHEN the admin imports it
+- THEN every token in it MUST be imported as before

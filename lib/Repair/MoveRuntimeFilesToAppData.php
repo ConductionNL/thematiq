@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 
 declare(strict_types=1);
@@ -43,7 +43,7 @@ use Throwable;
  * `custom-` sets and their dark variants, `custom-` logos, and captured
  * images. A shipped file is never moved or deleted.
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 class MoveRuntimeFilesToAppData implements IRepairStep {
 
@@ -72,7 +72,7 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 	 * @param LoggerInterface  $logger     Logs what was moved and what could not be removed.
 	 * @param RuntimeFileNames $names      The name policy.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function __construct(
 		private readonly IAppManager $appManager,
@@ -87,7 +87,7 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 	 *
 	 * @return string The name.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function getName(): string {
 		return 'Move thematiq runtime files out of the app directory into app data';
@@ -103,7 +103,7 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function run(IOutput $output): void {
 		$appPath = rtrim($this->appManager->getAppPath(Application::APP_ID), '/');

@@ -8,7 +8,7 @@
  * works end-to-end through the UI:
  *   - changing the token-set dropdown opens the apply dialog (when the set would
  *     change resolved values) and confirming it persists the active set, and
- *   - the active set survives a fresh reload (GET /settings/tokenset + the
+ *   - the active set survives a fresh reload (the capability's tokenSet + the
  *     dropdown's selected <option>), and
  *   - the design-system badge reflects the newly-selected set.
  * Then it RESTORES the prior set.

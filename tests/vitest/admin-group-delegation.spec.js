@@ -219,4 +219,61 @@ describe('admin.js group delegation', () => {
 			},
 		])
 	})
+
+	it('keeps the current set allowed when the row changes its set', async () => {
+		buildDom()
+		installFetchRouter([
+			[
+				'/settings/group-theming',
+				'GET',
+				{
+					mapping: [
+						{
+							group: 'gemeente-a',
+							tokenSet: 'amsterdam',
+							delegated: true,
+							allowedTokenSets: ['amsterdam'],
+						},
+					],
+					groups: GROUPS,
+					tokenSets: TOKEN_SETS,
+				},
+			],
+			['/settings/group-theming', 'POST', { status: 'ok', mapping: [] }],
+		])
+
+		await loadAdminScript()
+
+		const row = document.querySelector('.nldesign-group-theming-row')
+		const picker = row.querySelector('[data-field="allowedTokenSets"]')
+		const option = (value) =>
+			Array.from(picker.options).find((o) => o.value === value)
+		expect(option('amsterdam').disabled).toBe(true)
+
+		const tokenSet = row.querySelector('[data-field="tokenSet"]')
+		tokenSet.value = 'utrecht'
+		tokenSet.dispatchEvent(new Event('change'))
+		expect(option('utrecht').selected).toBe(true)
+		expect(option('utrecht').disabled).toBe(true)
+		expect(option('amsterdam').disabled).toBe(false)
+
+		option('utrecht').selected = false
+		picker.dispatchEvent(new Event('change'))
+		expect(option('utrecht').selected).toBe(true)
+
+		document.getElementById('nldesign-group-theming-save').click()
+		await flush()
+
+		const post = global.fetch.mock.calls.find(
+			(call) => call[1] && call[1].method === 'POST',
+		)
+		expect(JSON.parse(post[1].body).mapping).toEqual([
+			{
+				group: 'gemeente-a',
+				tokenSet: 'utrecht',
+				delegated: true,
+				allowedTokenSets: ['amsterdam', 'utrecht'],
+			},
+		])
+	})
 })

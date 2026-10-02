@@ -463,11 +463,6 @@ class StockTokensService {
 	 *
 	 * @return array<string, string> Variable name => declared value.
 	 *
-	 * @SuppressWarnings(PHPMD.StaticAccess) - another app's class, see the note
-	 *                                         on DEFAULT_THEME: a constructor
-	 *                                         type-hint would make this file
-	 *                                         unloadable without the theming app.
-	 *
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
 	protected function stockVariables(): array {
