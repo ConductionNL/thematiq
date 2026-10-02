@@ -9,7 +9,7 @@ sidebar_position: 7
 The Thematiq app includes **1488 icons** materialized from `@conduction/nextcloud-vue`'s
 EUPL-compatible NL-government icon packs (RVO, OpenGemeenten, Gemeente Den Haag), plus
 **1038 icons** materialized from `@gouvfr/dsfr`'s French-government DSFR pack
-(**Etalab-2.0**) — **2526 icons** total — plus **30 logos**, making them available for use
+(**Etalab-2.0**) — **2526 icons** total — plus **35 logos**, making them available for use
 across all Nextcloud apps.
 
 ### Theme-switchable iconography
@@ -114,7 +114,7 @@ release** — do not build new integrations against them; migrate to the set-pre
 
 ## Logos
 
-The 30 logos in `img/logos/` cover government and municipal organizations, plus four fictional example sets. A representative sample:
+The 35 logos in `img/logos/` cover government and municipal organizations, plus four fictional example sets. A representative sample:
 - `amsterdam.svg` - City of Amsterdam logo
 - `ggd-amsterdam.svg` - GGD Amsterdam logo
 - `stadsarchief.svg` - Amsterdam City Archives

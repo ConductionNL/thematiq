@@ -1,0 +1,5103 @@
+{
+	"$comment": "What thematiq does with each inventory entry. Human decisions: edit by hand, then run npm run test:unit. See docs/reference/variable-inventory.md.",
+	"variables": {
+		"--a475b540": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--a8212066": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--a843d9d2": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--ab21a194": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--account-menu-outline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--adec40c8": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--afe18836": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-active-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-active-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-active-fg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-add-image": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--alt-text-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-done-image": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--alt-text-fg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-focus-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-focus-outline-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-hover-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-hover-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-hover-fg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-opacity": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-tooltip-bg": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-tooltip-border": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-tooltip-fg": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--alt-text-tooltip-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--animation-duration": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--animation-quick": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-animation-quick",
+			"category": "Animations",
+			"note": "Quick animation duration (100ms)"
+		},
+		"--animation-slow": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-animation-slow",
+			"category": "Animations",
+			"note": "Slow animation duration (300ms)"
+		},
+		"--annotation-unfocused-field-background": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--app-item-circle-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-item-col-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-item-icon-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-item-row-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-navigation-item-child-offset": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-navigation-max-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-navigation-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-navigation-quota-margin": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-settings-section-content-gap": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-settings-section-text-offset": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-sidebar-close-button-offset": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-sidebar-offset": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--app-sidebar-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--app-sidebar-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--assistant-button-background-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--assistant-button-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--auto-complete-result-avatar-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--auto-complete-result-status-icon-position": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--auto-complete-result-status-icon-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--avatar-cell-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--avatar-size": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--avatar-status-icon-position": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--avatar-status-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--avatar-status-size-min": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--avatar-status-size-orbital": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--backdrop-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--background-blur": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--background-image-invert-if-bright": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Filters & Inversion",
+			"note": "Background image inversion; NC theme dependent"
+		},
+		"--background-invert-if-bright": {
+			"status": "settable",
+			"token": "--nldesign-nc-background-invert-if-bright",
+			"tab": "content",
+			"type": "text",
+			"label": "Invert filter on a bright background",
+			"perScheme": true,
+			"note": "Bright mode inversion; NC theme dependent",
+			"category": "Filters & Inversion"
+		},
+		"--background-invert-if-dark": {
+			"status": "settable",
+			"token": "--nldesign-nc-background-invert-if-dark",
+			"tab": "content",
+			"type": "text",
+			"label": "Invert filter on a dark background",
+			"perScheme": true,
+			"note": "Dark mode image inversion; NC theme dependent",
+			"category": "Filters & Inversion"
+		},
+		"--be84d992": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--body-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--body-container-margin": {
+			"status": "settable",
+			"token": "--nldesign-nc-body-container-margin",
+			"tab": "content",
+			"type": "text",
+			"label": "Body container margin",
+			"advanced": true,
+			"note": "Body container margin; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--body-container-radius": {
+			"status": "settable",
+			"token": "--nldesign-nc-body-container-radius",
+			"tab": "content",
+			"type": "text",
+			"label": "Body container radius",
+			"note": "Body container radius; depends on border-radius-container-large",
+			"category": "Layout & Dimensions"
+		},
+		"--body-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-body-height",
+			"tab": "content",
+			"type": "text",
+			"label": "Body height",
+			"advanced": true,
+			"note": "Body height calculation; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--border": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--border-radius": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius",
+			"category": "Border Radius",
+			"note": "Deprecated; default border radius"
+		},
+		"--border-radius-container": {
+			"status": "settable",
+			"token": "--nldesign-nc-border-radius-container",
+			"tab": "content",
+			"type": "text",
+			"label": "Container radius",
+			"note": "Containers (12px); intentionally not overridden for layout consistency",
+			"category": "Border Radius"
+		},
+		"--border-radius-container-large": {
+			"status": "settable",
+			"token": "--nldesign-nc-border-radius-container-large",
+			"tab": "content",
+			"type": "text",
+			"label": "Large container radius",
+			"note": "Large containers (16px); intentionally not overridden",
+			"category": "Border Radius"
+		},
+		"--border-radius-element": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius",
+			"category": "Border Radius",
+			"note": "Interactive elements (8px default)"
+		},
+		"--border-radius-large": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius-large",
+			"category": "Border Radius",
+			"note": "Deprecated alias for element radius"
+		},
+		"--border-radius-pill": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius-pill",
+			"category": "Border Radius",
+			"note": "Pill shape (100px)"
+		},
+		"--border-radius-rounded": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius-rounded",
+			"category": "Border Radius",
+			"note": "Rounded elements (28px default)"
+		},
+		"--border-radius-small": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-border-radius-small",
+			"category": "Border Radius",
+			"note": "Small elements (4px default)"
+		},
+		"--border-width-input": {
+			"status": "settable",
+			"token": "--nldesign-nc-border-width-input",
+			"tab": "content",
+			"type": "text",
+			"label": "Input border width",
+			"note": "Input border width (1px); standard across all themes",
+			"category": "Borders"
+		},
+		"--border-width-input-focused": {
+			"status": "settable",
+			"token": "--nldesign-nc-border-width-input-focused",
+			"tab": "content",
+			"type": "text",
+			"label": "Focused input border width",
+			"note": "Focused input border width (2px); standard",
+			"category": "Borders"
+		},
+		"--breakpoint-mobile": {
+			"status": "settable",
+			"token": "--nldesign-nc-breakpoint-mobile",
+			"tab": "content",
+			"type": "text",
+			"label": "Mobile breakpoint",
+			"advanced": true,
+			"note": "Mobile breakpoint (1024px); NC responsive design",
+			"category": "Layout & Dimensions"
+		},
+		"--button-cancel-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-cancel-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-cancel-fg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-cancel-hover-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-cancel-hover-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-cancel-hover-fg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-hover-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-inner-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-padding-default": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-save-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-save-fg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-save-hover-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-save-hover-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-save-hover-fg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--button-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--callout-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--callout-border": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cell-margin": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cell-min-width": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--cell-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cell-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cell-width-groups": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cell-width-large": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cf2ff408": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--checkbox-container-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--checkbox-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--checkbox-radio-switch--border-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--checkbox-radio-switch--border-radius-outer": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--checkbox-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--chip-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--chip-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--clickable-area": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--clickable-area-large": {
+			"status": "settable",
+			"token": "--nldesign-nc-clickable-area-large",
+			"tab": "content",
+			"type": "text",
+			"label": "Large clickable area",
+			"advanced": true,
+			"note": "Large touch target (48px); accessibility standard",
+			"category": "Spacing & Clickable Areas"
+		},
+		"--clickable-area-small": {
+			"status": "settable",
+			"token": "--nldesign-nc-clickable-area-small",
+			"tab": "content",
+			"type": "text",
+			"label": "Small clickable area",
+			"advanced": true,
+			"note": "Small touch target (24px); accessibility standard",
+			"category": "Spacing & Clickable Areas"
+		},
+		"--cn-ai-pointer-offset": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-card-active-border": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-color-picker-checker": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-color-swatch-checker": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-ctx-menu-x": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-ctx-menu-y": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-detail-grid-label-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-email-accent": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-forms-accent": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-forms-status": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-grid-cols": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-grid-cs": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-grid-cspan": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-grid-cspan-md": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-grid-rs": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-grid-rspan": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-iw-accent": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-iwg-columns": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-iwg-min-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-accent": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-gap": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-gap-horizontal": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-grid-gap": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-icon-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-icon-size-sm": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-icon-tint": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-label-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-label-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-padding-flat": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-section-title-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-stack-gap": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-title-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-title-weight": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-value-line": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-value-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-value-size-compact": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-value-size-stacked": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-value-text-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-kpi-value-weight": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-links-widget-cols": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-quicklinks-icon-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-sidebar-tab-min-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-spacing-m": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-table-cell-max-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-tile-bg": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-tile-text": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-widget-icon-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-xwiki-accent": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--cn-xwiki-accent-soft": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--color-background-assistant": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-background-assistant",
+			"tab": "content",
+			"type": "color",
+			"label": "Assistant background color",
+			"perScheme": true,
+			"note": "AI assistant background; NC-specific feature",
+			"category": "Assistant (AI)"
+		},
+		"--color-background-dark": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-background-dark",
+			"category": "Background States",
+			"note": "Darker background variant"
+		},
+		"--color-background-darker": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-background-darker",
+			"category": "Background States",
+			"note": "Darkest background variant"
+		},
+		"--color-background-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-background-hover",
+			"category": "Background States",
+			"note": "Hover state background"
+		},
+		"--color-background-plain": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Main Background",
+			"note": "Admin/user configured background; should respect user settings"
+		},
+		"--color-background-plain-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-background-plain-text",
+			"tab": "login",
+			"type": "color",
+			"label": "Text on the plain background",
+			"note": "Text on plain background; auto-calculated by Nextcloud",
+			"category": "Main Background"
+		},
+		"--color-background-selection": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Special Colors",
+			"note": "Selection wash; new in NC 33/34. Derived from `--color-primary-element` at 20% alpha, and that variable is mapped"
+		},
+		"--color-border": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-border",
+			"category": "Borders",
+			"note": "Standard border color"
+		},
+		"--color-border-assistant": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-border-assistant",
+			"tab": "content",
+			"type": "text",
+			"label": "Assistant border",
+			"perScheme": true,
+			"note": "AI assistant border gradient; NC-specific",
+			"category": "Assistant (AI)"
+		},
+		"--color-border-dark": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-border-dark",
+			"category": "Borders",
+			"note": "Dark border variant"
+		},
+		"--color-border-error": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error",
+			"category": "Status: Error",
+			"note": "Error border; uses error color"
+		},
+		"--color-border-maxcontrast": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-border-dark",
+			"category": "Borders",
+			"note": "Max contrast border; maps to dark border"
+		},
+		"--color-border-success": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success",
+			"category": "Status: Success",
+			"note": "Success border; uses success color"
+		},
+		"--color-box-shadow": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-box-shadow",
+			"tab": "content",
+			"type": "text",
+			"label": "Box shadow color",
+			"perScheme": true,
+			"note": "Box shadow color; depends on --color-box-shadow-rgb",
+			"category": "Shadows"
+		},
+		"--color-box-shadow-rgb": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-box-shadow-rgb",
+			"tab": "content",
+			"type": "text",
+			"label": "Box shadow RGB",
+			"perScheme": true,
+			"note": "Box shadow RGB; auto-calculated from background",
+			"category": "Shadows"
+		},
+		"--color-circle-icon": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--color-content": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--color-element-assistant": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-element-assistant",
+			"tab": "content",
+			"type": "text",
+			"label": "Assistant element background",
+			"perScheme": true,
+			"note": "AI assistant element gradient; NC-specific",
+			"category": "Assistant (AI)"
+		},
+		"--color-element-assistant-icon": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-element-assistant-icon",
+			"tab": "content",
+			"type": "text",
+			"label": "Assistant icon background",
+			"perScheme": true,
+			"note": "AI assistant icon gradient; NC-specific",
+			"category": "Assistant (AI)"
+		},
+		"--color-element-error": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error",
+			"category": "Status: Error",
+			"note": "Error element accent"
+		},
+		"--color-element-info": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-info",
+			"category": "Status: Info",
+			"note": "Info element accent"
+		},
+		"--color-element-success": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success",
+			"category": "Status: Success",
+			"note": "Success element accent"
+		},
+		"--color-element-warning": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-warning",
+			"category": "Status: Warning",
+			"note": "Warning element accent"
+		},
+		"--color-error": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error",
+			"category": "Status: Error",
+			"note": "Error background/accent"
+		},
+		"--color-error-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error-hover",
+			"category": "Status: Error",
+			"note": "Error hover state"
+		},
+		"--color-error-rgb": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error-rgb",
+			"category": "Status: Error",
+			"note": "Deprecated; RGB for rgba()"
+		},
+		"--color-error-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-error-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Error text color",
+			"perScheme": true,
+			"note": "Error text color; NC auto-calculates for contrast",
+			"category": "Status: Error"
+		},
+		"--color-favorite": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-favorite",
+			"category": "Special Colors",
+			"note": "Favorite/star color"
+		},
+		"--color-header": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--color-info": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-info",
+			"category": "Status: Info",
+			"note": "Info background/accent"
+		},
+		"--color-info-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-info-hover",
+			"tab": "status",
+			"type": "color",
+			"label": "Info hover color",
+			"perScheme": true,
+			"note": "Info hover; no NL Design equivalent",
+			"category": "Status: Info"
+		},
+		"--color-info-rgb": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-info-rgb",
+			"tab": "status",
+			"type": "text",
+			"label": "Info RGB",
+			"perScheme": true,
+			"note": "Deprecated; RGB for rgba()",
+			"category": "Status: Info"
+		},
+		"--color-info-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-info-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Info text color",
+			"perScheme": true,
+			"note": "Info text; NC auto-calculates for contrast",
+			"category": "Status: Info"
+		},
+		"--color-loading-dark": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-loading-dark",
+			"tab": "content",
+			"type": "color",
+			"label": "Loading spinner dark color",
+			"perScheme": true,
+			"note": "Loading animation dark; NC internal",
+			"category": "Special Colors"
+		},
+		"--color-loading-light": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-loading-light",
+			"tab": "content",
+			"type": "color",
+			"label": "Loading spinner light color",
+			"perScheme": true,
+			"note": "Loading animation light; NC internal",
+			"category": "Special Colors"
+		},
+		"--color-main-background": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-main-background",
+			"tab": "content",
+			"type": "color",
+			"label": "Main background color",
+			"perScheme": true,
+			"note": "Core page background; overriding breaks dark mode and accessibility themes",
+			"category": "Main Background"
+		},
+		"--color-main-background-blur": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Main Background",
+			"note": "Blur variant; depends on --color-main-background-rgb"
+		},
+		"--color-main-background-rgb": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Main Background",
+			"note": "RGB variant for rgba() usage; depends on --color-main-background"
+		},
+		"--color-main-background-translucent": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Main Background",
+			"note": "Translucent variant; depends on --color-main-background-rgb"
+		},
+		"--color-main-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-text",
+			"category": "Text Colors",
+			"note": "Main body text color"
+		},
+		"--color-mark": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-mark",
+			"tab": "content",
+			"type": "color",
+			"label": "Search highlight color",
+			"perScheme": true,
+			"note": "`<mark>` highlight tint (#fff0c7); new in NC 33/34. No NL Design highlight token, and the tint has to stay legible under the text colour",
+			"category": "Special Colors"
+		},
+		"--color-norder-error": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--color-placeholder-dark": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-placeholder-dark",
+			"category": "Placeholder Colors",
+			"note": "Dark placeholder"
+		},
+		"--color-placeholder-light": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-placeholder-light",
+			"category": "Placeholder Colors",
+			"note": "Light placeholder (e.g., empty states)"
+		},
+		"--color-primary": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary",
+			"category": "Primary Colors",
+			"note": "Main brand color"
+		},
+		"--color-primary-element": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary",
+			"category": "Primary Colors",
+			"note": "Interactive element primary color"
+		},
+		"--color-primary-element-extra-light": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--color-primary-element-extra-light-hover": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--color-primary-element-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-hover",
+			"category": "Primary Colors",
+			"note": "Interactive element hover"
+		},
+		"--color-primary-element-light": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-light",
+			"category": "Primary Colors",
+			"note": "Deprecated alias for primary-light"
+		},
+		"--color-primary-element-light-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-light-hover",
+			"category": "Primary Colors",
+			"note": "Deprecated alias"
+		},
+		"--color-primary-element-light-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary",
+			"category": "Primary Colors",
+			"note": "Deprecated alias"
+		},
+		"--color-primary-element-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-text",
+			"category": "Primary Colors",
+			"note": "Text on primary element"
+		},
+		"--color-primary-element-text-dark": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Primary Colors",
+			"note": "Dark variant of primary element text; no NL Design equivalent"
+		},
+		"--color-primary-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-hover",
+			"category": "Primary Colors",
+			"note": "Primary hover state"
+		},
+		"--color-primary-light": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-light",
+			"category": "Primary Colors",
+			"note": "Light variant of primary"
+		},
+		"--color-primary-light-hover": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-light-hover",
+			"category": "Primary Colors",
+			"note": "Light primary hover"
+		},
+		"--color-primary-light-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary",
+			"category": "Primary Colors",
+			"note": "Text on light primary; uses brand color"
+		},
+		"--color-primary-text": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-primary-text",
+			"category": "Primary Colors",
+			"note": "Text on primary background"
+		},
+		"--color-scrollbar": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-scrollbar",
+			"tab": "content",
+			"type": "color",
+			"label": "Scrollbar color",
+			"note": "Scrollbar color; depends on border-maxcontrast",
+			"category": "Special Colors"
+		},
+		"--color-success": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success",
+			"category": "Status: Success",
+			"note": "Success background/accent"
+		},
+		"--color-success-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-success-hover",
+			"tab": "status",
+			"type": "color",
+			"label": "Success hover color",
+			"perScheme": true,
+			"note": "Success hover; no NL Design equivalent",
+			"category": "Status: Success"
+		},
+		"--color-success-rgb": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success-rgb",
+			"category": "Status: Success",
+			"note": "Deprecated; RGB for rgba()"
+		},
+		"--color-success-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-success-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Success text color",
+			"perScheme": true,
+			"note": "Success text; NC auto-calculates for contrast",
+			"category": "Status: Success"
+		},
+		"--color-text": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--color-text-error": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-error",
+			"category": "Text Colors",
+			"note": "Error message text"
+		},
+		"--color-text-light": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-text-light-color",
+			"note": "Light-colored text (deprecated in NC)"
+		},
+		"--color-text-lighter": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-text-lighter-color",
+			"note": "Lighter text (deprecated alias)"
+		},
+		"--color-text-maxcontrast": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-text-muted",
+			"category": "Text Colors",
+			"note": "Muted/secondary text"
+		},
+		"--color-text-maxcontrast-background-blur": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Text Colors",
+			"note": "Blur-adjusted maxcontrast; Nextcloud calculates per background"
+		},
+		"--color-text-maxcontrast-default": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-text-maxcontrast-default",
+			"tab": "typography",
+			"type": "color",
+			"label": "Muted text default color",
+			"perScheme": true,
+			"note": "Default maxcontrast; auto-calculated by Nextcloud per theme",
+			"category": "Text Colors"
+		},
+		"--color-text-selection": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-text-selection",
+			"tab": "typography",
+			"type": "color",
+			"label": "Selected text color",
+			"note": "Selected text; new in NC 33/34. Derived from `--color-main-text`, which is mapped",
+			"category": "Special Colors"
+		},
+		"--color-text-success": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-success",
+			"category": "Text Colors",
+			"note": "Success message text"
+		},
+		"--color-text-warning": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-warning",
+			"category": "Text Colors",
+			"note": "Warning message text"
+		},
+		"--color-warning": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-warning",
+			"category": "Status: Warning",
+			"note": "Warning background/accent"
+		},
+		"--color-warning-hover": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-warning-hover",
+			"tab": "status",
+			"type": "color",
+			"label": "Warning hover color",
+			"perScheme": true,
+			"note": "Warning hover; no NL Design equivalent",
+			"category": "Status: Warning"
+		},
+		"--color-warning-rgb": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-warning-rgb",
+			"category": "Status: Warning",
+			"note": "Deprecated; RGB for rgba()"
+		},
+		"--color-warning-text": {
+			"status": "settable",
+			"token": "--nldesign-nc-color-warning-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Warning text color",
+			"perScheme": true,
+			"note": "Warning text; NC auto-calculates for contrast",
+			"category": "Status: Warning"
+		},
+		"--confetti-i": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--contenteditable-block-offset": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--contenteditable-inline-end-offset": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--contenteditable-inline-start-offset": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--counter-bubble-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--d7eb5974": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--d87c3654": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--d98ce684": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dad67fa8": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dark-link-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dark-text-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dc9c258c": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--default-cell-min-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--default-clickable-area": {
+			"status": "settable",
+			"token": "--nldesign-nc-default-clickable-area",
+			"tab": "content",
+			"type": "text",
+			"label": "Default clickable area",
+			"advanced": true,
+			"note": "Touch target (34px); accessibility standard",
+			"category": "Spacing & Clickable Areas"
+		},
+		"--default-font-size": {
+			"status": "settable",
+			"token": "--nldesign-nc-default-font-size",
+			"tab": "typography",
+			"type": "text",
+			"label": "Base font size",
+			"note": "Base font size (15px); standard across themes",
+			"category": "Typography"
+		},
+		"--default-grid-baseline": {
+			"status": "settable",
+			"token": "--nldesign-nc-default-grid-baseline",
+			"tab": "content",
+			"type": "text",
+			"label": "Grid baseline",
+			"advanced": true,
+			"note": "Base grid unit (4px); core layout building block",
+			"category": "Spacing & Clickable Areas"
+		},
+		"--default-line-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-default-line-height",
+			"tab": "typography",
+			"type": "text",
+			"label": "Base line height",
+			"note": "Line height (1.5); standard",
+			"category": "Typography"
+		},
+		"--dfb017de": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dialog-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dialog-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dialog-button-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dialog-button-border": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dialog-button-hover-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dialog-button-hover-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dialog-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dir-factor": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--doorhanger-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--doorhanger-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--doorhanger-border-color-whcm": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--doorhanger-hover-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--doorhanger-hover-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--doorhanger-icon-opacity": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--doorhanger-separator-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--doorhanger-triangle-opacity-whcm": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-action-button-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-action-buttons-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-action-row-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-action-row-transition": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-action-row-transtion": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-animation-duration": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-arrow-left": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--dp-background-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-border-color-focus": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-border-color-hover": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-border-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-button-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-button-icon-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-calendar-header-cell-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-calendar-wrap-padding": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--dp-cell-border-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-cell-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-cell-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-common-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-common-transition": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-danger-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-direction": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-disabled-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-disabled-color-text": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-font-family": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-font-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-highlight-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-hover-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-hover-icon-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-hover-text-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-icon-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-input-icon-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-input-not-clearable-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-input-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-loader": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-marker-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-menu-appear-transition-timing": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--dp-menu-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-menu-min-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-menu-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-menu-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--dp-month-year-row-button-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-month-year-row-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-multi-calendars-spacing": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-overlay-col-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-overlay-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--dp-preview-font-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-primary-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-primary-disabled-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-primary-text-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-range-between-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-range-between-dates-background-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-range-between-dates-text-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-row-margin": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-scroll-bar-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-scroll-bar-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-secondary-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-success-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-success-color-disabled": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--dp-text-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-time-font-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-time-inc-dec-button-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-tooltip-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-transition-length": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-transition-timing": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dp-transition-timing-general": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dropdown-btn-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--dropdown-btn-border": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--e2fa5f72": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--editorFreeText-editing-cursor": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--editorInk-editing-cursor": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--editorParams-stampAddImage-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--fallback-icon": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--fb515064": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--field-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--field-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--field-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--figure-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--filter-background-blur": {
+			"status": "settable",
+			"token": "--nldesign-nc-filter-background-blur",
+			"tab": "content",
+			"type": "text",
+			"label": "Background blur filter",
+			"advanced": true,
+			"note": "Background blur filter; Nextcloud handles browser compat",
+			"category": "Animations"
+		},
+		"--findbarButton-next-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--findbarButton-previous-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--fixed-block-start-position": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--focus-outline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--focus-outline-around": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--focus-ring-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--focus-ring-outline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--font-face": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-font-family",
+			"category": "Typography",
+			"note": "Font stack"
+		},
+		"--font-family": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--font-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--font-size-small": {
+			"status": "settable",
+			"token": "--nldesign-nc-font-size-small",
+			"tab": "typography",
+			"type": "text",
+			"label": "Small font size",
+			"note": "Small font size (13px); standard",
+			"category": "Typography"
+		},
+		"--font-weight-default": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-font-weight-default",
+			"category": "Typography",
+			"note": "Body weight; new in NC 33/34"
+		},
+		"--font-weight-element": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-font-weight-element",
+			"category": "Typography",
+			"note": "Weight of controls and button labels; new in NC 33/34. NcButton in @nextcloud/vue 9 reads it on `.button-vue__text`, where NC 32 hard-coded `bold`"
+		},
+		"--font-weight-heading": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-font-weight-heading",
+			"category": "Typography",
+			"note": "Heading weight; new in NC 33/34. The per-level `--nldesign-component-heading-N-font-weight` tokens resolve through it"
+		},
+		"--footer-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten.",
+			"note": "Footer height; NC layout dependent"
+		},
+		"--form-element-label-offset": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--form-element-label-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--form-group-content-gap": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--freetext-line-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--freetext-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--fullwidth": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--gap": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--gradient-main-background": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Gradients",
+			"note": "Main background gradient; depends on main-background vars"
+		},
+		"--gradient-primary-background": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Gradients",
+			"note": "Primary gradient; depends on primary color"
+		},
+		"--hcm-highligh-filter": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--header-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-header-height",
+			"tab": "content",
+			"type": "text",
+			"label": "Header height",
+			"advanced": true,
+			"note": "Header height (50px); overriding breaks NC layout",
+			"category": "Layout & Dimensions"
+		},
+		"--header-menu-icon-mask": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Layout & Dimensions",
+			"note": "Icon mask gradient; NC internal"
+		},
+		"--header-menu-item-height": {
+			"status": "settable",
+			"token": "--nldesign-nc-header-menu-item-height",
+			"tab": "content",
+			"type": "text",
+			"label": "Header menu item height",
+			"advanced": true,
+			"note": "Header menu item height; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--highlight-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--highlight-selected-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-background-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-comment-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-constant-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-entity-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-entity-tag-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-keyword-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-markup-bold-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-markup-deleted-background-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-markup-deleted-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-markup-heading-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-markup-inserted-background-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-markup-inserted-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-markup-italic-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-markup-list-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-storage-modifier-import-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-string-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hljs-syntax-variable-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hover-filter": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hover-outline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hover-outline-around": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hover-outline-around-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--hover-outline-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--icon-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-add-folder-description-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-address-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-address-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-alert-outline-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-alert-outline-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-audio-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-audio-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-audio-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-audio-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-calendar-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-calendar-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-caret-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-caret-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-app-bundles-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-app-bundles-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-auth-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-auth-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-customization-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-customization-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-dashboard-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-dashboard-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-files-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-files-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-games-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-games-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-integration-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-integration-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-monitoring-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-monitoring-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-multimedia-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-multimedia-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-office-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-office-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-organization-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-organization-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-social-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-social-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-workflow-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-category-workflow-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-change-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-change-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-checkmark-color-green": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-checkmark-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-checkmark-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-circles-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-circles-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-clippy-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-clippy-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-close-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-close-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-comment-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-comment-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-confirm-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-confirm-fade-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-confirm-fade-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-confirm-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-contacts-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-contacts-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-delete-color-red": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-delete-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-delete-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-desktop-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-desktop-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-details-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-details-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-disabled-user-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-disabled-user-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-disabled-users-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-disabled-users-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-download-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-download-fff": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-download-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-edit-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-edit-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-encryption-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-encryption-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-error-color-red": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-error-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-error-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-external-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-external-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-favorite-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-favorite-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-file-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-file-text-black": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-files-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-files-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filetype-file-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filetype-folder-drag-accept-primary": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filetype-folder-primary": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filetype-text-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filter-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-filter-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-folder-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-folder-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-fullscreen-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-fullscreen-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-group-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-group-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-height": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-history-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-history-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-home-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-home-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-info-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-info-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-link-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-link-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-logout-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-logout-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-mail-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-mail-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-menu-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-menu-sidebar-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-menu-sidebar-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-menu-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-more-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-more-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-music-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-music-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-password-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-password-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-pause-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-pause-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-phone-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-phone-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-picture-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-picture-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-next-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-next-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-previous-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-previous-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-play-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-preview-size": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-projects-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-projects-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-public-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-public-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-quota-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-quota-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-recent-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-recent-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-rename-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-rename-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-screen-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-screen-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-screen-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-screen-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-search-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-search-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-settings-black": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-settings-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-settings-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-share-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-share-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-shared-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-shared-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-size": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-sound-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-sound-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-sound-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-sound-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-grey": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-rounded-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-rounded-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-star-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-starred": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-starred-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-starred-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-starred-yellow": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-tablet-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-tablet-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-tag-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-tag-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-talk-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-talk-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-teams-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-teams-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-template-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-template-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-timezone-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-timezone-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-background-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-background-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-filelist-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-filelist-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-pictures-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-pictures-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-toggle-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-e-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-e-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-n-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-n-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-s-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-triangle-s-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-unshare-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-unshare-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-upload-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-upload-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-user-admin-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-user-admin-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-user-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-user-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-switch-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-switch-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-video-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-close-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-close-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-download-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-download-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-next-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-next-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-pause-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-pause-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-play-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-play-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-previous-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--icon-view-previous-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--image-background": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Images & Resources",
+			"note": "Background image; admin/user configured"
+		},
+		"--image-logo": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable.",
+			"note": "Logo URL; admin setting"
+		},
+		"--image-logoheader": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--image-logoheader-custom": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable.",
+			"note": "Logo header flag; admin setting"
+		},
+		"--inline-end": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--inline-start": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-border-box-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-border-box-shadow-dark": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-border-box-shadow-light": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-border-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-textarea-focus-border-color"
+		},
+		"--input-border-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-border-width-offset": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-disabled-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-focus-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-focus-outline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-hover-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-label-font-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-padding-end": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-padding-start": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--input-unfocused-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--invert-if-dark": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--item-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--level-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--link-outline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--list-item-border-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--list-item-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--list-item-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--loading-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--loading-icon-delay": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--local-search-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--main-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--margin": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--max-icon-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--member-list-gap": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--members-list-gap": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--mermaid-alt-font-family": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--mermaid-font-family": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--min-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--mouse-pos-x": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--mouse-pos-y": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--mtime-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--name-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--nav-tint": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--nav-tint-strong": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--navigation-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-navigation-width",
+			"tab": "content",
+			"type": "text",
+			"label": "Navigation width",
+			"advanced": true,
+			"note": "Navigation panel width (300px); NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--nc-form-box-item-border-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--nc-form-box-item-min-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--note-background": {
+			"status": "mapped",
+			"via": "stylesheet"
+		},
+		"--note-card-icon-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--note-card-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--note-theme": {
+			"status": "mapped",
+			"via": "stylesheet"
+		},
+		"--open-background-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--original-icon-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-address-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-address-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-alert-outline-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-alert-outline-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-audio-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-audio-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-audio-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-audio-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-calendar-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-calendar-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-caret-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-caret-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-app-bundles-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-app-bundles-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-auth-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-auth-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-customization-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-customization-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-dashboard-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-dashboard-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-files-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-files-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-games-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-games-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-integration-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-integration-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-monitoring-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-monitoring-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-multimedia-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-multimedia-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-office-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-office-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-organization-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-organization-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-social-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-social-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-workflow-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-category-workflow-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-change-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-change-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-checkmark-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-checkmark-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-circles-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-circles-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-clippy-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-clippy-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-close-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-close-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-comment-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-comment-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-confirm-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-confirm-fade-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-confirm-fade-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-confirm-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-contacts-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-contacts-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-delete-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-delete-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-desktop-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-desktop-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-details-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-details-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-disabled-user-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-disabled-user-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-disabled-users-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-disabled-users-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-download-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-download-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-edit-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-edit-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-encryption-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-encryption-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-error-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-error-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-external-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-external-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-favorite-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-favorite-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-files-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-files-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-filter-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-filter-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-folder-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-folder-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-fullscreen-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-fullscreen-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-group-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-group-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-history-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-history-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-home-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-home-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-info-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-info-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-link-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-link-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-logout-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-logout-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-mail-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-mail-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-menu-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-menu-sidebar-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-menu-sidebar-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-menu-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-more-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-more-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-music-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-music-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-password-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-password-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-pause-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-pause-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-phone-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-phone-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-picture-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-picture-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-next-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-next-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-previous-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-previous-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-play-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-projects-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-projects-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-public-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-public-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-quota-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-quota-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-recent-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-recent-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-rename-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-rename-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-screen-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-screen-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-screen-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-screen-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-search-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-search-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-settings-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-settings-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-share-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-share-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-shared-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-shared-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-sound-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-sound-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-sound-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-sound-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-star-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-star-rounded-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-star-rounded-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-star-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-starred-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-starred-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-tablet-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-tablet-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-tag-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-tag-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-talk-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-talk-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-teams-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-teams-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-template-add-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-template-add-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-timezone-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-timezone-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-background-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-background-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-filelist-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-filelist-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-pictures-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-pictures-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-toggle-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-e-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-e-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-n-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-n-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-s-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-triangle-s-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-unshare-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-unshare-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-upload-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-upload-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-user-admin-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-user-admin-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-user-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-user-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-off-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-off-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-switch-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-switch-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-video-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-close-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-close-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-download-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-download-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-next-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-next-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-pause-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-pause-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-play-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-play-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-previous-dark": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--original-icon-view-previous-white": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--outline-around-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--outline-around-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--outline-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--outline-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--padding-inline-start": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--page-border": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--page-margin": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--panel-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--pdfViewer-padding-bottom": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--photos-face-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--photos-navigation-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-audio-control-background-hover": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-audio-control-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-audio-control-color-hover": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-audio-controls-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-audio-progress-buffered-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-audio-range-thumb-active-shadow-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-audio-range-track-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-badge-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-badge-border-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-badge-text-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-button-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-captions-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-captions-text-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-color-main": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-control-icon-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-control-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-control-spacing": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-control-toggle-checked-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-focus-visible-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-font-family": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-font-size-badge": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-font-size-base": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-font-size-large": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-font-size-menu": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-font-size-small": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-font-size-time": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-font-size-xlarge": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-font-weight-regular": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-line-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-menu-arrow-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-menu-arrow-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-menu-back-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-menu-back-border-shadow-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-menu-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-menu-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-menu-item-arrow-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-menu-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-menu-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-progress-loading-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-progress-loading-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-progress-marker-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-progress-marker-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-range-fill-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-range-thumb-active-shadow-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-range-thumb-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-range-thumb-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-range-thumb-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-range-track-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-tooltip-arrow-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-tooltip-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-tooltip-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-tooltip-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-tooltip-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-video-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-video-control-background-hover": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-video-control-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-video-control-color-hover": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-video-controls-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-video-progress-buffered-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--plyr-video-range-track-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--preview-arrow-offset": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--primary-invert-if-bright": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Filters & Inversion",
+			"note": "Primary color inversion; NC auto-calculates"
+		},
+		"--primary-invert-if-dark": {
+			"status": "mapped",
+			"via": "nextcloud-theming",
+			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"category": "Filters & Inversion",
+			"note": "Primary dark inversion; NC auto-calculates"
+		},
+		"--progress-bar-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--progress-bar-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--progressBar-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--progressBar-blend-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--progressBar-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--progressBar-end-offset": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--progressBar-percent": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--radio-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-checked-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-checked-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-group-button--background-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-group-button--background-color-hover": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-group-button--border-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-group-button--border-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-group-button--color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-group-button--icon-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--radio-group-button--padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--ratio": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--resizer-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--resizer-shift": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--resizer-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--resource-box-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--resources-list-gap": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--row-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--row-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--scale-factor": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--scrollbar-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--scrollbar-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--secondary-margin": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--secondaryToolbarButton-documentProperties-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-firstPage-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-handTool-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-lastPage-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-rotateCcw-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-rotateCw-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-scrollHorizontal-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-scrollPage-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-scrollVertical-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-scrollWrapped-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-selectTool-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-spreadEven-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-spreadNone-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--secondaryToolbarButton-spreadOdd-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--separator-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--session-max-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--sidebar-max-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-max-width",
+			"tab": "content",
+			"type": "text",
+			"label": "Sidebar maximum width",
+			"advanced": true,
+			"note": "Sidebar max width; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--sidebar-min-width": {
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-min-width",
+			"tab": "content",
+			"type": "text",
+			"label": "Sidebar minimum width",
+			"advanced": true,
+			"note": "Sidebar min width; NC layout dependent",
+			"category": "Layout & Dimensions"
+		},
+		"--sidebar-narrow-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--sidebar-toolbar-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--sidebar-transition-duration": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--sidebar-transition-timing-function": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--sidebar-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--slideshow-duration": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--spreadHorizontalWrapped-margin-LR": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--sticky-column-z-index": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--systemtag-color": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--table-border-radius": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--table-color-background": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--table-color-background-hover": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--table-color-border": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--table-color-heading": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--table-color-heading-border": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--text-editor-max-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--text-primary-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--text-secondary-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--textarea-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--textarea-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--textarea-fg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--thumbnail-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--thumbnail-hover-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--thumbnail-selected-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--thumbnail-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--toggled-btn-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toggled-btn-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toggled-hover-active-btn-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toggled-hover-btn-outline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toolbar-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toolbar-border-bottom": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toolbar-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toolbar-box-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toolbar-icon-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toolbar-icon-hover-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toolbar-icon-opacity": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toolbarButton-bookmark-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-currentOutlineItem-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-download-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-editorFreeText-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-editorInk-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-editorStamp-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-menuArrow-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-openFile-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-pageDown-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-pageUp-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-presentationMode-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-print-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-search-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-secondaryToolbarToggle-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-sidebarToggle-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-viewAttachments-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-viewLayers-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-viewOutline-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-viewThumbnail-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-zoomIn-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarButton-zoomOut-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--toolbarSidebar-border-bottom": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--toolbarSidebar-box-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--tpl-glow-1": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--tpl-glow-2": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--tpl-glow-3": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--tpl-glow-4": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--tpl-preview-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--treeitem-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--treeitem-collapsed-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--treeitem-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--treeitem-expanded-icon": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		},
+		"--treeitem-hover-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--treeitem-selected-bg-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--treeitem-selected-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--unfocus-outline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--user-status-color-away": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--user-status-color-busy": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--user-status-color-offline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--user-status-color-online": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-avatar-online-status-color"
+		},
+		"--v6c51c3da": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--v6ca826ea": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--value": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--viewer-container-height": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--vs-actions-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-border-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-border-color"
+		},
+		"--vs-border-radius": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-border-radius"
+		},
+		"--vs-border-style": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-border-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-colors--dark": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-colors--darkest": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-colors--light": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-colors--lightest": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-controls--deselect-text-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-controls--spinner-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-controls-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-controls-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-disabled-bg": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-disabled-color": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--vs-disabled-cursor": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-bg": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-box-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-option-color"
+		},
+		"--vs-dropdown-max-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-min-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-option--active-bg": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-option-hover-background-color"
+		},
+		"--vs-dropdown-option--active-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-option-hover-color"
+		},
+		"--vs-dropdown-option--deselect-bg": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-option--deselect-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-option--kb-focus-box-shadow": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-option-bg": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--vs-dropdown-option-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-option-padding": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-dropdown-z-index": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-font-size": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-line-height": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-search-input-bg": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-search-input-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-search-input-placeholder-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-selected-bg": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-selected-border-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-selected-border-style": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-selected-border-width": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-selected-color": {
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-component-form-select-color"
+		},
+		"--vs-state-disabled-bg": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-state-disabled-color": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-state-disabled-controls-color": {
+			"status": "excluded",
+			"reason": "declared by Nextcloud, read by nothing it ships."
+		},
+		"--vs-state-disabled-cursor": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-transition-duration": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--vs-transition-timing-function": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--widget-full-width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--width": {
+			"status": "excluded",
+			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
+		},
+		"--xfa-focus-outline": {
+			"status": "excluded",
+			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
+		},
+		"--xfa-unfocused-field-background": {
+			"status": "excluded",
+			"reason": "an image URL, not a design token."
+		}
+	},
+	"deadAssignments": {
+		"--color-error-light": "systems/summer-breeze/theme.css assigns it, but Nextcloud 34 has no such variable, so the line does nothing.",
+		"--color-info-light": "systems/summer-breeze/theme.css assigns it, but Nextcloud 34 has no such variable, so the line does nothing.",
+		"--color-success-light": "systems/summer-breeze/theme.css assigns it, but Nextcloud 34 has no such variable, so the line does nothing.",
+		"--color-warning-light": "systems/summer-breeze/theme.css assigns it, but Nextcloud 34 has no such variable, so the line does nothing."
+	}
+}
