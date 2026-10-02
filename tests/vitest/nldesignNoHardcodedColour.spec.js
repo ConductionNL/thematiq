@@ -81,7 +81,9 @@ export function hardcodedColours(css, file) {
 			return
 		}
 		if (HARDCODED.test(stripVars(decl.value))) {
-			offenders.push(`${file}:${decl.source.start.line} ${decl.prop}: ${decl.value}`)
+			offenders.push(
+				`${file}:${decl.source.start.line} ${decl.prop}: ${decl.value}`,
+			)
 		}
 	})
 

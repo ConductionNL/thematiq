@@ -20,7 +20,12 @@
  */
 
 import { test, expect } from '@playwright/test'
-import { THEMING_URL, getTokenSet, requestToken, setTokenSet } from '../workflows/_helpers'
+import {
+	THEMING_URL,
+	getTokenSet,
+	requestToken,
+	setTokenSet,
+} from '../workflows/_helpers'
 
 const HARDCODED = /#[0-9a-f]{3,8}\b|\b(rgba?|hsla?)\(/i
 
@@ -51,7 +56,10 @@ function hardcoded(css: string): string[] {
 	const out: string[] = []
 	for (const match of text.matchAll(/(^|[;{])\s*([a-z-]+)\s*:\s*([^;{}]+)/gi)) {
 		const [, , prop, value] = match
-		if (prop.startsWith('--') === false && HARDCODED.test(stripVars(value)) === true) {
+		if (
+			prop.startsWith('--') === false
+			&& HARDCODED.test(stripVars(value)) === true
+		) {
 			out.push(`${prop}: ${value.trim()}`)
 		}
 	}
@@ -78,7 +86,9 @@ test.describe('nl-design: served system stylesheets use tokens for colour', () =
 		await page.close()
 	})
 
-	test('Component uses color: no served nldesign stylesheet hardcodes a colour', async ({ page }) => {
+	test('Component uses color: no served nldesign stylesheet hardcodes a colour', async ({
+		page,
+	}) => {
 		await page.goto('/apps/files/', { waitUntil: 'domcontentloaded' })
 		const hrefs = await page.evaluate(() =>
 			[...document.querySelectorAll('link[rel="stylesheet"]')]
@@ -89,7 +99,9 @@ test.describe('nl-design: served system stylesheets use tokens for colour', () =
 
 		// A guard that finds no stylesheet has measured nothing: fail, do not pass.
 		expect(hrefs.some((href) => href.includes('/theme.css'))).toBe(true)
-		expect(hrefs.some((href) => href.includes('/element-overrides.css'))).toBe(true)
+		expect(hrefs.some((href) => href.includes('/element-overrides.css'))).toBe(
+			true,
+		)
 
 		const offenders: string[] = []
 		for (const href of hrefs) {
