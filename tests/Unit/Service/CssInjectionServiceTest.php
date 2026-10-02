@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\CustomOverridesService;
@@ -118,6 +119,13 @@ class CssInjectionServiceTest extends TestCase {
 	private $stockTokens;
 
 	/**
+	 * The brand-per-app mock; no app has a brand unless a test says so.
+	 *
+	 * @var AppBrandService&MockObject
+	 */
+	private $appBrands;
+
+	/**
 	 * Set up mocks before each test.
 	 */
 	protected function setUp(): void {
@@ -133,6 +141,7 @@ class CssInjectionServiceTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->stockTokens = $this->createMock(StockTokensService::class);
 		$this->stockTokens->method('getCss')->willReturn(null);
+		$this->appBrands = $this->createMock(AppBrandService::class);
 
 		// Default: no group mapping configured, so the resolver returns the
 		// plain appconfig token set — byte-identical to pre-per-group behaviour.
@@ -173,6 +182,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->previewBannerService,
 					$this->logger,
 					$this->stockTokens,
+					$this->appBrands,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitFontLink'])

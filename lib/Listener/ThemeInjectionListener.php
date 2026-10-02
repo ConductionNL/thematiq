@@ -146,7 +146,10 @@ class ThemeInjectionListener implements IEventListener {
 					return;
 				}
 
-				$this->cssInjectionService->inject(context: $this->resolveContext(response: $response));
+				$this->cssInjectionService->inject(
+					context: $this->resolveContext(response: $response),
+					appId: $this->resolveAppId(response: $response)
+				);
 			}
 		} catch (Throwable $e) {
 			// Fail open: a listener failure must never break page rendering
@@ -208,16 +211,35 @@ class ThemeInjectionListener implements IEventListener {
 	 */
 	private function isThemingDisabledForResponse(TemplateResponse $response): bool {
 		try {
-			$appId = $response->getApp();
-			if ($appId === '' || $appId === 'core') {
-				$appId = $this->appThemingService->resolveAppIdFromPath(pathInfo: $this->request->getPathInfo());
-			}
-
-			return $this->appThemingService->isThemingDisabledFor(appId: $appId);
+			return $this->appThemingService->isThemingDisabledFor(appId: $this->resolveAppId(response: $response));
 		} catch (Throwable $e) {
 			// Fail open: presentation, not security — a broken resolve must
 			// not strip theming everywhere, nor crash the render path.
 			return false;
 		}
 	}//end isThemingDisabledForResponse()
+
+	/**
+	 * The app being rendered: the response's own `getApp()`, or the request
+	 * path when that is empty or `core`. Null when neither names an app or the
+	 * resolution fails (fail open: no brand, default theming).
+	 *
+	 * @param TemplateResponse $response The response being rendered.
+	 *
+	 * @return string|null The app id.
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	private function resolveAppId(TemplateResponse $response): ?string {
+		try {
+			$appId = $response->getApp();
+			if ($appId === '' || $appId === 'core') {
+				$appId = $this->appThemingService->resolveAppIdFromPath(pathInfo: $this->request->getPathInfo());
+			}
+
+			return $appId;
+		} catch (Throwable $e) {
+			return null;
+		}
+	}//end resolveAppId()
 }//end class

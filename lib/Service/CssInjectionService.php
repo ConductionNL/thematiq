@@ -146,6 +146,20 @@ class CssInjectionService {
 	private StockTokensService $stockTokens;
 
 	/**
+	 * The brand per app: its token set and logos.
+	 *
+	 * @var AppBrandService
+	 */
+	private AppBrandService $appBrands;
+
+	/**
+	 * The brand logos of the rendered app for this request, when its brand applies.
+	 *
+	 * @var array{large: string|null, small: string|null}|null
+	 */
+	private ?array $brandLogos = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -158,6 +172,7 @@ class CssInjectionService {
 	 * @param ThemePreviewBannerService $previewBannerService The theme-preview banner injector.
 	 * @param LoggerInterface $logger The logger for skipped layers.
 	 * @param StockTokensService $stockTokens Resolves the `nextcloud` set from the running instance.
+	 * @param AppBrandService $appBrands The brand per app.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -173,6 +188,7 @@ class CssInjectionService {
 		ThemePreviewBannerService $previewBannerService,
 		LoggerInterface $logger,
 		StockTokensService $stockTokens,
+		AppBrandService $appBrands,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
@@ -184,6 +200,7 @@ class CssInjectionService {
 		$this->previewBannerService = $previewBannerService;
 		$this->logger = $logger;
 		$this->stockTokens = $stockTokens;
+		$this->appBrands = $appBrands;
 	}//end __construct()
 
 	/**
@@ -237,14 +254,16 @@ class CssInjectionService {
 	 *
 	 * @param string $context One of `user`/`login`/`guest`/`public`/`error`,
 	 *                        or any other value (always themed — fail open).
+	 * @param string|null $appId The rendered app, for its brand (openspec/specs/per-app-theming/spec.md).
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
-	public function inject(string $context): void {
+	public function inject(string $context, ?string $appId = null): void {
 		if ($this->isContextThemed(context: $context) === false) {
 			return;
 		}
@@ -258,7 +277,13 @@ class CssInjectionService {
 		// It is still isolated, so a resolver failure logs and renders the
 		// page unthemed instead of throwing into the listener's catch-all.
 		try {
-			$tokenSet = $this->groupThemingService->resolveTokenSetForRequest();
+			$brand = $this->appBrands->brandFor(appId: $appId);
+			$tokenSet = $this->groupThemingService->resolveTokenSetForRequest(appBrandSet: ($brand['tokenSet'] ?? null));
+			$this->brandLogos = null;
+			if ($brand !== null && $tokenSet === $brand['tokenSet'] && $brand['large'] !== null) {
+				$this->brandLogos = ['large' => $brand['large'], 'small' => $brand['small']];
+			}
+
 			$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 			$designSystemId = $tokenSetMeta['design_system'] ?? 'nldesign';
 		} catch (Throwable $e) {
@@ -758,6 +783,12 @@ class CssInjectionService {
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
 	private function logoUrlLayer(string $tokenSet): ?array {
+		// The rendered app's own logo, when its brand applies: the large one,
+		// and the small one under Nextcloud's narrow-screen breakpoint.
+		if ($this->brandLogos !== null) {
+			return $this->inlineLayer(css: $this->brandLogoCss(large: (string)$this->brandLogos['large'], small: $this->brandLogos['small']));
+		}
+
 		// A converter-extracted logo may be any raster or vector type Nextcloud's
 		// ImageManager accepts; a shipped set's is an .svg. First match wins.
 		$relative = null;
@@ -850,6 +881,27 @@ class CssInjectionService {
 	 * @var string
 	 */
 	public const STOCK_TOKENS_STYLE_ID = 'nldesign-stock-tokens';
+
+	/**
+	 * The logo variable for a branded app: the large logo, and the small one
+	 * below 1024 px, the breakpoint at which Nextcloud's header goes narrow.
+	 * Unquoted, like the other logo URLs here (see logoUrlLayer()).
+	 *
+	 * @param string $large The large logo URL.
+	 * @param string|null $small The small logo URL, or null to use the large one at every width.
+	 *
+	 * @return string The stylesheet body.
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	private function brandLogoCss(string $large, ?string $small): string {
+		$css = ':root{--nldesign-logo-url:url(' . $large . ');--nldesign-logo-filter:none}';
+		if ($small !== null) {
+			$css .= '@media (max-width:1024px){:root{--nldesign-logo-url:url(' . $small . ')}}';
+		}
+
+		return $css;
+	}//end brandLogoCss()
 
 	/**
 	 * Build the logo layer entry.

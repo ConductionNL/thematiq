@@ -96,16 +96,18 @@ class ConfigBundleService {
 	 *
 	 * @var int
 	 */
-	public const BUNDLE_VERSION = 2;
+	public const BUNDLE_VERSION = 3;
 
 	/**
 	 * The bundle versions import accepts. Version 1 predates planned switches
 	 * (`config.scheduledSwitches`); a version 1 bundle, such as a version kept
 	 * before the upgrade, imports and leaves the planned switches alone.
+	 * Version 2 predates brands per app (`appBrands`); it imports and leaves
+	 * the brands alone.
 	 *
 	 * @var array<int, int>
 	 */
-	public const SUPPORTED_VERSIONS = [1, 2];
+	public const SUPPORTED_VERSIONS = [1, 2, 3];
 
 	/**
 	 * The application configuration service.
@@ -192,6 +194,13 @@ class ConfigBundleService {
 	private ScheduledSwitchStore $scheduledSwitches;
 
 	/**
+	 * The brand per app.
+	 *
+	 * @var AppBrandService
+	 */
+	private AppBrandService $appBrands;
+
+	/**
 	 * The logger.
 	 *
 	 * @var LoggerInterface
@@ -214,6 +223,7 @@ class ConfigBundleService {
 	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
+	 * @param AppBrandService $appBrands The brand per app.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
 	 * section's EXISTING validator/service (config-portability's core reuse requirement); NC's DI
@@ -234,6 +244,7 @@ class ConfigBundleService {
 		UpstreamFreshnessService $freshnessService,
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
+		AppBrandService $appBrands,
 	) {
 		$this->config = $config;
 		$this->appManager = $appManager;
@@ -248,6 +259,7 @@ class ConfigBundleService {
 		$this->freshnessService = $freshnessService;
 		$this->scheduledSwitches = $scheduledSwitches;
 		$this->logger = $logger;
+		$this->appBrands = $appBrands;
 	}//end __construct()
 
 	/**
@@ -284,6 +296,7 @@ class ConfigBundleService {
 					. 'Metadata only — re-upload font files by hand on the target environment.',
 				'manifest' => $this->fontService->getManifest(),
 			],
+			'appBrands' => (object)$this->appBrands->exportBundle(),
 		];
 	}//end export()
 
@@ -395,6 +408,17 @@ class ConfigBundleService {
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
+
+		$bundledIds = array_column(($resolved['customTokenSets'] ?? []), 'id');
+		$appBrands = $this->appBrands->validateBundle(
+			section: ($bundle['appBrands'] ?? null),
+			setExists: fn (string $id): bool => (in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true)
+		);
+		foreach ($appBrands['errors'] as $message) {
+			$errors[] = ['section' => 'appBrands', 'message' => $message];
+		}
+
+		$resolved['appBrands'] = $appBrands['value'];
 
 		return [
 			'valid' => empty($errors),
@@ -949,6 +973,7 @@ class ConfigBundleService {
 				'applied' => ($resolved['scheduledSwitches'] !== null),
 			],
 			'emailFooter' => ['applied' => true],
+			'appBrands' => ['count' => count(($resolved['appBrands'] ?? [])), 'applied' => (($resolved['appBrands'] ?? null) !== null), 'logosIncluded' => false],
 			'customOverridesCss' => [
 				'written' => count($resolved['customOverrides']['tokens']),
 				'skipped' => count($resolved['customOverrides']['skipped']),
@@ -1016,6 +1041,10 @@ class ConfigBundleService {
 
 		if ($resolved['scheduledSwitches'] !== null) {
 			$this->scheduledSwitches->save(entries: $resolved['scheduledSwitches']);
+		}
+
+		if (($resolved['appBrands'] ?? null) !== null) {
+			$this->appBrands->applyBundle(value: $resolved['appBrands']);
 		}
 
 		// CustomFonts is deliberately never applied — see class docblock.
