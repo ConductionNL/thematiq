@@ -791,7 +791,15 @@ OC.L10N.register(
         "The theme does not declare this role, so the value was derived from the theme's own colours (a darkened or mixed brand colour, or a step from its grey ramp).": "The theme does not declare this role, so the value was derived from the theme's own colours (a darkened or mixed brand colour, or a step from its grey ramp).",
         "The theme declares nothing for this role and nothing could be derived from it, so Nextcloud's own default was used.": "The theme declares nothing for this role and nothing could be derived from it, so Nextcloud's own default was used.",
         "The theme's logo was decoded out of its token and stored as an image file, so it can drive both the app header and Nextcloud's own logo, name and e-mail branding.": "The theme's logo was decoded out of its token and stored as an image file, so it can drive both the app header and Nextcloud's own logo, name and e-mail branding.",
-        "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead.": "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead."
+        "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead.": "The theme's logo could not be stored as an image: it is not an inline SVG, PNG, JPEG, GIF or WebP, or it is larger than the 256 KB limit. Upload a logo under Nextcloud's own theming settings instead.",
+        "The house style is managed from deployment configuration: {path}.": "The house style is managed from deployment configuration: {path}.",
+        "Last applied: revision {revision}, at {time}.": "Last applied: revision {revision}, at {time}.",
+        "unknown": "unknown",
+        "The package has not been applied yet.": "The package has not been applied yet.",
+        "The last package was not applied. Nothing changed. Fix these errors in the package:": "The last package was not applied. Nothing changed. Fix these errors in the package:",
+        "The running configuration differs from the package. The next apply replaces the changes made here.": "The running configuration differs from the package. The next apply replaces the changes made here.",
+        "The settings on this page are locked. Change the house style in the package.": "The settings on this page are locked. Change the house style in the package.",
+        "The house style is managed from deployment configuration (%s). Change it there.": "The house style is managed from deployment configuration (%s). Change it there."
     },
     "nplurals=2; plural=(n != 1);"
 )

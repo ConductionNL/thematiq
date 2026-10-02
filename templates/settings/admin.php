@@ -34,6 +34,7 @@ script('thematiq', 'lib/auditFormat');
 script('thematiq', 'lib/tokenConverter');
 script('thematiq', 'lib/brandForm');
 script('thematiq', 'admin');
+script('thematiq', 'admin-config-source');
 style('thematiq', 'admin');
 // The component playground: the selector / stage / tokens instrument that
 // admin.js's token editor is rebuilt into. Loaded AFTER admin.js because it
@@ -844,6 +845,9 @@ if ($_['mockUi'] === true) {
 			</button>
 		</div>
 		<div id="nldesign-config-bundle-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+		<!-- Theme as code (openspec/specs/theme-as-code/spec.md): filled by
+		     js/admin-config-source.js when thematiq.config_source is set. -->
+		<div id="nldesign-config-source" class="nldesign-config-source" role="status" aria-live="polite" hidden></div>
 	</div>
 
 	<p class="nldesign-info">

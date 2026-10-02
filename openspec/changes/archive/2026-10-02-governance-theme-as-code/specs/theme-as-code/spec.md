@@ -23,7 +23,7 @@ A branding package MUST be a directory, or a ZIP of one, holding `bundle.json` i
 
 ### Requirement: The server applies the package named in config.php
 
-When `thematiq.config_source` in `config.php` names a package path, the app MUST apply the package whenever its content hash differs from the last applied hash: after every upgrade, from a background job that runs at least every five minutes, and when an operator runs `occ nldesign:config:apply`. The app MUST NOT fetch the package from a network location; the deployment puts it on disk.
+When `thematiq.config_source` in `config.php` names a package path, the app MUST apply the package whenever its content hash differs from the last applied hash: after every upgrade, from a background job that runs at least every five minutes, and when an operator runs `occ thematiq:config:apply`. The app MUST NOT fetch the package from a network location; the deployment puts it on disk.
 
 #### Scenario: A merged pull request reaches production
 
@@ -40,7 +40,7 @@ When `thematiq.config_source` in `config.php` names a package path, the app MUST
 
 ### Requirement: A failing package changes nothing
 
-A package that fails validation MUST change nothing. The app MUST keep the running configuration, log an error once per distinct package hash, and show the error listing on Settings > Administration > Theming. `occ nldesign:config:apply` MUST exit non-zero on a failing package.
+A package that fails validation MUST change nothing. The app MUST keep the running configuration, log an error once per distinct package hash, and show the error listing on Settings > Administration > Theming. `occ thematiq:config:apply` MUST exit non-zero on a failing package.
 
 #### Scenario: A typo in the package does not break production
 
