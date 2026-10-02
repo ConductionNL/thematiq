@@ -8,7 +8,7 @@ Keep what thematiq writes at runtime out of its app directory, so Nextcloud's co
 ### Requirement: The app directory stays as shipped
 thematiq MUST NOT create, change or delete any file inside its own app directory during install, upgrade, a web request or an `occ` command.
 
-@e2e exclude Asserted by hashing the app directory before and after a full admin session in `tests/integration/AppDirectoryUnchangedTest.php`; a browser cannot observe file hashes.
+@e2e exclude Asserted by hashing the app directory before and after a full admin session in `tests/Unit/Service/RuntimeFile/RuntimeFileWiringTest.php` (`RuntimeFileWiringTest::testACustomHouseStyleLeavesTheAppDirectoryUnchanged`), and by `testNothingInLibWritesFilesOutsideTheKnownPlaces` in the same file; checked live on 8080 on 2026-10-02 (13,396 files, unchanged). A browser cannot observe file hashes.
 
 #### Scenario: A custom house style leaves the directory unchanged
 - GIVEN the hash of every file in the app directory is recorded
