@@ -284,4 +284,35 @@ class DesignSystemServiceTest extends TestCase {
 	public function testResolveIconPathNoActivePackReturnsNull(): void {
 		$this->assertNull($this->service()->resolveIconPath('rvo-home', 'nextcloud'));
 	}//end testResolveIconPathNoActivePackReturnsNull()
+
+	/**
+	 * An id design-systems.json does not ship resolves to an empty bundle,
+	 * so no design-system stylesheet is loaded and nothing throws.
+	 *
+	 * @spec openspec/specs/css-architecture/spec.md#unknown-design-system-falls-back-safely
+	 */
+	public function testGetDesignSystemUnknownIdFallsBackToNoStylesheets(): void {
+		$system = $this->service()->getDesignSystem('does-not-exist');
+
+		$this->assertSame('does-not-exist', $system['id']);
+		$this->assertSame([], $system['stylesheets']);
+	}//end testGetDesignSystemUnknownIdFallsBackToNoStylesheets()
+
+	/**
+	 * design-systems.json is read once per service instance (one request):
+	 * a second call answers from the cache even after the file changed.
+	 *
+	 * @spec openspec/specs/css-architecture/spec.md#design-systems-are-cached-per-request
+	 */
+	public function testGetDesignSystemsReadsTheManifestOncePerInstance(): void {
+		$service = $this->service();
+		$first = $service->getDesignSystems();
+		$this->assertArrayHasKey('nldesign', $first);
+
+		file_put_contents($this->appDir . '/design-systems.json', '[]');
+
+		$this->assertSame($first, $service->getDesignSystems());
+		// A fresh instance (a new request) does read the changed file.
+		$this->assertSame([], $this->service()->getDesignSystems());
+	}//end testGetDesignSystemsReadsTheManifestOncePerInstance()
 }//end class
