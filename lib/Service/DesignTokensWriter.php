@@ -202,7 +202,11 @@ class DesignTokensWriter {
 		}
 
 		$n = '\s*(' . self::NUMBER . ')\s*';
-		if (preg_match('/^cubic-bezier\(' . $n . ',' . $n . ',' . $n . ',' . $n . '\)$/', $value, $match) === 1 && $this->exact(numbers: array_slice($match, 1, 4)) === true) {
+		// DTCG 2025.10 section 8.6: both x values lie in 0..1; a curve outside that stays CSS only.
+		if (preg_match('/^cubic-bezier\(' . $n . ',' . $n . ',' . $n . ',' . $n . '\)$/', $value, $match) === 1
+			&& $this->exact(numbers: array_slice($match, 1, 4)) === true
+			&& min((float)$match[1], (float)$match[3]) >= 0 && max((float)$match[1], (float)$match[3]) <= 1
+		) {
 			return ['$type' => 'cubicBezier', '$value' => array_map(fn (string $v): int|float => $this->toNumber(text: $v), array_slice($match, 1, 4))];
 		}
 

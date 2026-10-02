@@ -83,6 +83,24 @@ The import/export only operates on the 53 tokens shown in the token editor tabs.
 
 Attempting to import an excluded token via the API returns an HTTP 400 error. During file upload, excluded tokens are counted as skipped.
 
+## Download as design tokens
+
+Take a token set to Tokens Studio, Figma or any other tool that reads W3C Design Tokens (DTCG, version 2025.10). Choose the set in the **Design token set** list and click **Download as design tokens**, next to **Reset theme to Nextcloud**. Every custom set has the same button in its row under **Custom token sets**. You get `{set}.tokens.json`.
+
+The file holds what the set itself declares. The defaults under it and your token editor overrides stay out: they belong to this instance, not to the set.
+
+Each value gets a DTCG type by its shape: colours, `px` and `rem` sizes, `ms` and `s` durations, easing curves, font stacks, font weights and plain numbers. A `var()` to another token in the set becomes an alias. Values DTCG has no type for, such as gradients, `em` or `%`, go into a `cssOnly` block of the file, which design tools ignore and thematiq reads back. A deprecated token carries its notice in `$deprecated`.
+
+### Colours
+
+A colour is written as a colour object with its colour space and an sRGB `hex` fallback. A hex, `rgb()`, `hsl()` or named colour is written in `srgb`. A colour in `oklch()`, `oklab()`, `lab()`, `lch()`, `hwb()` or `color()` keeps its own colour space.
+
+When you upload a design tokens file, every colour space DTCG lists is converted to sRGB, because the contrast check, the dark palette and Nextcloud's own theming all read sRGB. A colour outside the sRGB range uses the file's own `hex` when it has one, or is clipped to the nearest sRGB colour. The upload result lists each colour that changed this way.
+
+### Out and back in
+
+Upload a file thematiq exported, under a new name, and every `--nldesign-*` value comes back as it was. Brand palette names move to the new set's prefix; tokens that point at them follow. The round trip is exact from thematiq to thematiq. Another tool may drop the `nl.conduction.thematiq` extension, and then names fall back to the standard mapping table.
+
 ## Command Line Alternative
 
 You can also manage overrides directly via the filesystem or Nextcloud's `occ` command:

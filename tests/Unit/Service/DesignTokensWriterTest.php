@@ -110,12 +110,13 @@ final class DesignTokensWriterTest extends TestCase {
 	 */
 	public function testUntypedValuesGoToCssOnly(): void {
 		$gradient = 'linear-gradient(90deg, #154273, #01689b)';
-		$doc      = $this->write(['--nldesign-header-background' => $gradient, '--nldesign-color-text' => 'var(--color-main-text)', '--nldesign-gap' => '1.0rem']);
+		$doc      = $this->write(['--nldesign-header-background' => $gradient, '--nldesign-color-text' => 'var(--color-main-text)', '--nldesign-gap' => '1.0rem', '--nldesign-animation-bounce' => 'cubic-bezier(1.5, 0, 0, 1)']);
 		$cssOnly  = $doc['$extensions']['nl.conduction.thematiq']['cssOnly'];
 
 		$this->assertSame($gradient, $cssOnly['--nldesign-header-background']);
 		$this->assertSame('var(--color-main-text)', $cssOnly['--nldesign-color-text']);
 		$this->assertSame('1.0rem', $cssOnly['--nldesign-gap'], 'written as 1rem it would not come back the same');
+		$this->assertSame('cubic-bezier(1.5, 0, 0, 1)', $cssOnly['--nldesign-animation-bounce'], 'DTCG allows x only in 0..1');
 		$this->assertArrayNotHasKey('header', $doc['nldesign'] ?? []);
 	}//end testUntypedValuesGoToCssOnly()
 

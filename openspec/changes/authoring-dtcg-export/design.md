@@ -83,9 +83,18 @@ Anything else has no DTCG type: `em`, `%`, `vh`, gradients, `url()`, keywords, `
 as `{name: value}`. A DTCG tool ignores that block. Thematiq's import reads it back through the
 validator.
 
-Task 1.1 checks the table against the DTCG format and colour module text (v2025.10) before code.
-In particular: that `dimension` allows only `px` and `rem`, the `duration` object form, and the
-list of colour space identifiers.
+Task 1.1 checked the table against the DTCG text (v2025.10, read 2 Oct 2026):
+
+- Format Module §8.2 "Dimension": `{value, unit}`, units `px` and `rem` only.
+- §8.5 "Duration": `{value, unit}`, units `ms` and `s` only.
+- §8.6 "Cubic Bézier": `[P1x, P1y, P2x, P2y]`, both x in 0..1 (a curve outside that is written to `cssOnly`).
+- §8.3 "Font family" (string or array), §8.4 "Font weight" (1 to 1000, or a keyword), §8.7 "Number".
+- §5.2.3 "Extensions": reverse domain names recommended, hence `nl.conduction.thematiq`.
+- §5.2.4 "Deprecated": `true`, `false` or a string.
+- Color Module §4.1 "Format": `colorSpace` and `components` required, `alpha` and `hex` optional;
+  §4.2 "Supported color spaces": srgb, srgb-linear, hsl, hwb, lab, lch, oklab, oklch, display-p3,
+  a98-rgb, prophoto-rgb, rec2020, xyz-d65, xyz-d50 (`ColorSpaceConverter::SPACES`), with hsl and hwb
+  components 0..100 and oklab/oklch lightness 0..1.
 
 Rejected: writing a token without `$type` for untyped values. The document would be invalid DTCG,
 and the mapper refuses such tokens with `missing-type` by its own spec.
