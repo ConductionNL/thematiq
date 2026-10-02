@@ -107,10 +107,12 @@ The fonts layer MUST declare Fira Sans @font-face rules for all required weights
 - AND font files MUST be in the `css/systems/nldesign/fonts/` directory
 
 #### Scenario: Font licensing compliance
-@e2e exclude licensing is a property of the distributed files, not of a rendered page; and it is NOT met today: css/systems/nldesign/fonts/ ships no OFL text and REUSE.toml labels the Fira Sans binaries EUPL-1.2 (needs a licensing decision, see the #263 PR)
+@e2e exclude licensing is a property of the distributed files, not of a rendered page; vitest tests/vitest/fontLicences.spec.js asserts LICENSES/OFL-1.1.txt, an OFL.txt naming each holder in every font directory, and an OFL-1.1 REUSE.toml annotation for every font file
 - GIVEN Fira Sans is used as the app's primary font
 - WHEN the font is distributed
 - THEN it MUST comply with the SIL Open Font License 1.1
+- AND every font directory that ships Fira Sans (`css/systems/nldesign/fonts/`, `css/fonts/`) MUST carry an `OFL.txt` with the copyright notice and the licence text, because the OFL requires both to travel with the fonts
+- AND `REUSE.toml` MUST label the font files `OFL-1.1` with their upstream copyright holder, overriding the EUPL-1.2 blanket, and `LICENSES/OFL-1.1.txt` MUST hold the licence text
 - AND the font MUST be a suitable open-source alternative to RijksoverheidSansWebText
 
 ### Requirement: Layer 2 -- Default Token Definitions
