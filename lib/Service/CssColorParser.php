@@ -201,7 +201,7 @@ class CssColorParser {
 	 *
 	 * @param string $arguments What is between the parentheses.
 	 *
-	 * @return array{0: array<int, string>, 1: float|null}
+	 * @return array{0: list<string>, 1: float|null}
 	 */
 	private function split(string $arguments): array {
 		$alpha = null;
@@ -211,7 +211,11 @@ class CssColorParser {
 			$alpha = $this->alpha(text: $alphaText);
 		}
 
-		$parts = (array)preg_split('/[\s,]+/', trim($main), -1, PREG_SPLIT_NO_EMPTY);
+		$parts = preg_split('/[\s,]+/', trim($main), -1, PREG_SPLIT_NO_EMPTY);
+		if ($parts === false) {
+			$parts = [];
+		}
+
 		if ($alpha === null && count($parts) === 4 && str_contains($main, ',') === true) {
 			$alpha = $this->alpha(text: (string)array_pop($parts));
 		}

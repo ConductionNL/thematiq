@@ -283,7 +283,7 @@ class DesignTokensMapper {
 	 * @param string|null $ownType The node's own declared `$type`, if any.
 	 * @param string|null $inheritedType The nearest ancestor's declared `$type`, if any.
 	 *
-	 * @return array{value: mixed, type: string|null, deprecated: mixed} The leaf entry.
+	 * @return array{value: mixed, type: string|null, deprecated: mixed, cssVariable: string|null} The leaf entry.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -480,7 +480,7 @@ class DesignTokensMapper {
 	 *
 	 * @param mixed $value The resolved `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
@@ -503,7 +503,7 @@ class DesignTokensMapper {
 	 *
 	 * @param mixed $value The resolved `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -520,7 +520,7 @@ class DesignTokensMapper {
 	 *
 	 * @param string $path The token's dotted path.
 	 * @param mixed $deprecated The token's raw `$deprecated` value, if any.
-	 * @param array{ok: bool, value?: string, reason?: string, detail?: string} $result The serializer result.
+	 * @param array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} $result The serializer result.
 	 * @param array<string, string> $declarations Accumulated declarations (by reference).
 	 * @param array<int, array<string, string>> $skipped Accumulated skips (by reference).
 	 * @param array<int, array<string, string>> $errors Accumulated errors (by reference).
@@ -699,7 +699,7 @@ class DesignTokensMapper {
 	 *
 	 * @param mixed $value The resolved `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string, detail?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -722,7 +722,7 @@ class DesignTokensMapper {
 	 *
 	 * @param array<string, mixed> $value The object-form `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string, detail?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
