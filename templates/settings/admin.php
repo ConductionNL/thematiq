@@ -64,8 +64,8 @@ if ($_['mockUi'] === true) {
      via data-* attributes on this element. See ADR-004. -->
 <div id="nldesign-settings" class="section">
 	<div class="nldesign-settings-header">
-		<h2><?php p($l->t('NL Design System Theme')); ?></h2>
-		<a href="https://nldesign.app" target="_blank" rel="noopener noreferrer" class="nldesign-doc-link">
+		<h2>Thematiq</h2>
+		<a href="<?php p($_['documentationUrl']); ?>" id="nldesign-doc-link" target="_blank" rel="noopener noreferrer" class="nldesign-doc-link">
 			<span class="icon-link-external"></span>
 			<?php p($l->t('Documentation')); ?>
 		</a>

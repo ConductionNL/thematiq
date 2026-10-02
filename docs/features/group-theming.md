@@ -8,7 +8,7 @@ Several organisations can share one Nextcloud and still each see their own house
 
 ## Add a mapping
 
-1. Open **Administration settings**, then **Theming**. Under **NL Design System Theme**, find **Group theming**.
+1. Open **Administration settings**, then **Theming**. Under **Thematiq**, find **Group theming**.
 2. Click **Add mapping**. Pick a group and a token set.
 3. Put the rows in order. The top row has the highest priority.
 4. Click **Save group theming**.
