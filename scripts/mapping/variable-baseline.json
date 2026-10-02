@@ -1,0 +1,18 @@
+{
+	"$comment": "Exact counts the inventory guard expects. A change that moves a variable to mapped or settable updates these numbers in the same commit; a change that lowers one adds the name and why under removals.",
+	"counts": {
+		"component/excluded": 4,
+		"component/mapped": 12,
+		"component/settable": 364,
+		"conduction/excluded": 18,
+		"conduction/settable": 33,
+		"icon/excluded": 484,
+		"runtime/excluded": 36,
+		"slot/excluded": 27,
+		"slot/settable": 56,
+		"theme/mapped": 66,
+		"theme/settable": 45,
+		"unread/excluded": 10
+	},
+	"removals": {}
+}

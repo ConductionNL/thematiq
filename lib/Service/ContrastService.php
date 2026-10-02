@@ -264,7 +264,7 @@ class ContrastService {
 	 *
 	 * @return array{0: int, 1: int, 2: int, 3: float}|null The parsed colour, or null.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.1
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
 	 */
 	public function parseColorWithAlpha(string $value): ?array {
 		$value = trim($value);
@@ -331,7 +331,7 @@ class ContrastService {
 	 *
 	 * @return array{0: int, 1: int, 2: int} The opaque colour that renders.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.1
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
 	 */
 	public function blend(array $top, array $under): array {
 		$alpha = $top[3];
@@ -342,6 +342,28 @@ class ContrastService {
 
 		return [$result[0], $result[1], $result[2]];
 	}//end blend()
+
+	/**
+	 * The opaque `#rrggbb` a translucent colour renders as over a background, or null when the
+	 * colour is opaque or cannot be read.
+	 *
+	 * @param string          $value The colour.
+	 * @param array<int, int> $under The background as `[r, g, b]`.
+	 *
+	 * @return string|null The blend.
+	 *
+	 * @spec openspec/specs/theming-sync/spec.md#requirement-translucent-colours-are-blended-before-they-reach-nextcloud-core
+	 */
+	public function flatten(string $value, array $under): ?string {
+		$rgba = $this->parseColorWithAlpha(value: $value);
+		if ($rgba === null || $rgba[3] >= 1) {
+			return null;
+		}
+
+		$blend = $this->blend(top: $rgba, under: $under);
+
+		return sprintf('#%02x%02x%02x', $blend[0], $blend[1], $blend[2]);
+	}//end flatten()
 
 	/**
 	 * Measure the contrast of a foreground over a background as it renders.
@@ -356,7 +378,7 @@ class ContrastService {
 	 *
 	 * @return float|null The unrounded ratio, or null when either colour is not a parseable literal.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.1
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
 	 */
 	public function measure(string $foreground, string $background, ?string $page = null): ?float {
 		$fgRgba = $this->parseColorWithAlpha(value: $foreground);

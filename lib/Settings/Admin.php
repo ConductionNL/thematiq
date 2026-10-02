@@ -51,6 +51,13 @@ use OCP\Settings\IDelegatedSettings;
 class Admin implements IDelegatedSettings {
 
 	/**
+	 * Where the Documentation link goes for a design system without docs of its own.
+	 *
+	 * @var string
+	 */
+	public const DEFAULT_DOCUMENTATION_URL = 'https://thematiq.conduction.nl';
+
+	/**
 	 * The application configuration service.
 	 *
 	 * @var IConfig
@@ -278,7 +285,7 @@ class Admin implements IDelegatedSettings {
 				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
 				// can be screenshotted from a running instance. Nothing else changes.
 				'mockUi' => ($this->request->getParam('mock') === '1'),
-			] + $this->environmentParams()
+			] + $this->environmentParams() + $this->documentationParams(designSystem: $currentDesignSystem)
 		);
 	}//end getForm()
 
@@ -296,6 +303,38 @@ class Admin implements IDelegatedSettings {
 			'environmentCommand' => Application::ENVIRONMENT_OCC_COMMAND,
 		];
 	}//end environmentParams()
+
+	/**
+	 * The Documentation link for the current design system, as a template
+	 * parameter, and every design system's link for js/admin.js.
+	 *
+	 * A design system names its docs in `documentation_url` in
+	 * design-systems.json; one that names none gets this app's docs. The link
+	 * follows the design system of the set picked in the dropdown, so the
+	 * script needs every design system's link, not only the current one's (#662).
+	 *
+	 * @param string $designSystem The current token set's design system.
+	 *
+	 * @return array{documentationUrl: string} The template parameter.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+	 */
+	private function documentationParams(string $designSystem): array {
+		$urls = [];
+		foreach ($this->designSystemService->getDesignSystems() as $id => $entry) {
+			$url = ($entry['documentation_url'] ?? '');
+			// Only an https link: the manifest must not put a javascript: URL in the header.
+			if (is_string($url) === false || str_starts_with($url, 'https://') === false) {
+				$url = self::DEFAULT_DOCUMENTATION_URL;
+			}
+
+			$urls[(string)$id] = $url;
+		}
+
+		$this->initialState->provideInitialState('designSystemDocs', $urls);
+
+		return ['documentationUrl' => ($urls[$designSystem] ?? self::DEFAULT_DOCUMENTATION_URL)];
+	}//end documentationParams()
 
 	/**
 	 * Reads one on/off appconfig flag.

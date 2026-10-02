@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Unit tests for occ nldesign:config:versions and nldesign:config:restore.
+ * Unit tests for occ thematiq:config:versions and thematiq:config:restore.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.

@@ -225,7 +225,7 @@ class CssParserService {
 	 *
 	 * @return array<string, string>|null Token => light value, or null when the file declares nothing.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.2
+	 * @spec openspec/specs/dark-mode/spec.md#requirement-editor-overrides-apply-the-same-way-for-every-dark-user
 	 */
 	public function parseOverridesFile(string $css): ?array {
 		if (preg_match('/:root\s*\{/', $css) === 1) {

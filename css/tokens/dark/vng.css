@@ -112,7 +112,7 @@
 		--nldesign-color-primary-hover: #026596;
 		--nldesign-color-primary-light: #03273b;
 		--nldesign-color-primary-light-hover: #093f5d;
-		--nldesign-color-primary-text: #dedede;
+		--nldesign-color-primary-text: #ffffff;
 		--nldesign-color-success: #7cf7db;
 		--nldesign-color-success-rgb: 124, 247, 219;
 		--nldesign-color-text: #cccccc;
@@ -171,6 +171,7 @@
 		--nldesign-component-textbox-hover-border-color: #8e9cae;
 		--nldesign-component-textbox-invalid-border-color: #ee554e;
 		--nldesign-component-unordered-list-color: #cccccc;
+		--nldesign-logo-url: url('../../../img/logos/vng-dark.svg');
 		--tilburg-color-black: #d5d5d5;
 		--tilburg-color-black-txt: #c0c0c0;
 		--tilburg-color-blue-100: #03273b;
@@ -686,7 +687,7 @@ body[data-themes*=dark] {
 	--nldesign-color-primary-hover: #026596;
 	--nldesign-color-primary-light: #03273b;
 	--nldesign-color-primary-light-hover: #093f5d;
-	--nldesign-color-primary-text: #dedede;
+	--nldesign-color-primary-text: #ffffff;
 	--nldesign-color-success: #7cf7db;
 	--nldesign-color-success-rgb: 124, 247, 219;
 	--nldesign-color-text: #cccccc;
@@ -745,6 +746,7 @@ body[data-themes*=dark] {
 	--nldesign-component-textbox-hover-border-color: #8e9cae;
 	--nldesign-component-textbox-invalid-border-color: #ee554e;
 	--nldesign-component-unordered-list-color: #cccccc;
+	--nldesign-logo-url: url('../../../img/logos/vng-dark.svg');
 	--tilburg-color-black: #d5d5d5;
 	--tilburg-color-black-txt: #c0c0c0;
 	--tilburg-color-blue-100: #03273b;
