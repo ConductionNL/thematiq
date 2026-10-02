@@ -23,7 +23,7 @@ This document provides a complete mapping between every Nextcloud CSS custom pro
 | `--color-primary-element` | `--nldesign-color-primary` | Primary | Interactive element primary color |
 | `--color-primary-element-hover` | `--nldesign-color-primary-hover` | Primary | Interactive element hover |
 | `--color-primary-element-text` | `--nldesign-color-primary-text` | Primary | Text on primary element |
-| `--color-primary-element-text-dark` | unmapped | Primary | Dark variant of primary element text; no NL Design equivalent |
+| `--color-primary-element-text-dark` | intentionally not overridden | Primary | Dark variant of primary element text; no NL Design equivalent |
 | `--color-primary-light` | `--nldesign-color-primary-light` | Primary | Light variant of primary |
 | `--color-primary-light-hover` | `--nldesign-color-primary-light-hover` | Primary | Light primary hover |
 | `--color-primary-light-text` | `--nldesign-color-primary` | Primary | Text on light primary; uses brand color |
@@ -130,8 +130,8 @@ This document provides a complete mapping between every Nextcloud CSS custom pro
 | `--border-radius` | `--nldesign-border-radius` | Border Radius | Deprecated; default border radius |
 | `--border-radius-small` | `--nldesign-border-radius-small` | Border Radius | Small elements (4px default) |
 | `--border-radius-element` | `--nldesign-border-radius` | Border Radius | Interactive elements (8px default) |
-| `--border-radius-container` | unmapped | Border Radius | Containers (12px); intentionally not overridden for layout consistency |
-| `--border-radius-container-large` | unmapped | Border Radius | Large containers (16px); intentionally not overridden |
+| `--border-radius-container` | intentionally not overridden | Border Radius | Containers (12px); intentionally not overridden for layout consistency |
+| `--border-radius-container-large` | intentionally not overridden | Border Radius | Large containers (16px); intentionally not overridden |
 | `--border-radius-large` | `--nldesign-border-radius-large` | Border Radius | Deprecated alias for element radius |
 | `--border-radius-rounded` | `--nldesign-border-radius-rounded` | Border Radius | Rounded elements (28px default) |
 | `--border-radius-pill` | `--nldesign-border-radius-pill` | Border Radius | Pill shape (100px) |
@@ -152,10 +152,10 @@ This document provides a complete mapping between every Nextcloud CSS custom pro
 
 | Nextcloud Variable | NL Design Mapping | Category | Notes |
 |---|---|---|---|
-| `--default-clickable-area` | unmapped | Spacing | Touch target (34px); accessibility standard |
-| `--clickable-area-large` | unmapped | Spacing | Large touch target (48px); accessibility standard |
-| `--clickable-area-small` | unmapped | Spacing | Small touch target (24px); accessibility standard |
-| `--default-grid-baseline` | unmapped | Spacing | Base grid unit (4px); core layout building block |
+| `--default-clickable-area` | intentionally not overridden | Spacing | Touch target (34px); accessibility standard |
+| `--clickable-area-large` | intentionally not overridden | Spacing | Large touch target (48px); accessibility standard |
+| `--clickable-area-small` | intentionally not overridden | Spacing | Small touch target (24px); accessibility standard |
+| `--default-grid-baseline` | intentionally not overridden | Spacing | Base grid unit (4px); core layout building block |
 
 ## Layout & Dimensions
 
@@ -231,6 +231,8 @@ This document provides a complete mapping between every Nextcloud CSS custom pro
 | `--image-background` | intentionally not overridden | Image | Background image; admin/user configured |
 | `--image-logoheader-custom` | intentionally not overridden | Image | Logo header flag; admin setting |
 | `--image-logo` | intentionally not overridden | Image | Logo URL; admin setting |
+| `--image-logoheader` | intentionally not overridden | Image | Header logo URL; only set when an admin uploads one |
+| `--image-favicon` | intentionally not overridden | Image | Favicon URL; only set when an admin uploads one |
 
 ## Assistant (AI)
 

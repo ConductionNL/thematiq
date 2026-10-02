@@ -7,8 +7,6 @@ status: done
 ## Purpose
 Provides a complete, audited mapping between all Nextcloud CSS custom properties and `--nldesign-*` design tokens, with comprehensive documentation and a defaults layer that ensures all tokens always have a value.
 
-@e2e exclude CSS-variable mapping / documentation spec — all scenarios describe CSS file content, variable mapping tables, and cascade ordering; no testable UI surface in the admin settings page.
-
 ## Requirements
 
 ### Requirement: Complete Nextcloud Variable Audit
@@ -51,13 +49,13 @@ The system MUST include a `defaults.css` file that defines sensible default valu
 
 #### Scenario: Token has no organization-specific override
 - GIVEN an organization token set that does not define `--nldesign-color-favorite`
-- WHEN the CSS is loaded in order (defaults → tokens → theme → overrides)
+- WHEN the CSS is loaded in order (defaults, then the token set)
 - THEN `--nldesign-color-favorite` MUST have the default value from `defaults.css`
 
 #### Scenario: Token is overridden by organization
-- GIVEN an organization token set that defines `--nldesign-color-primary: #ec0000`
+- GIVEN an organization token set that defines `--nldesign-color-primary` (e.g. Gemeente Amsterdam: `#004699`)
 - WHEN the CSS is loaded in order
-- THEN `--nldesign-color-primary` MUST have the value `#ec0000` (from the token set, overriding the default)
+- THEN `--nldesign-color-primary` MUST have the token set's value (`#004699`), overriding the default
 
 #### Scenario: New nldesign token is added
 - GIVEN a developer adds a new `--nldesign-*` token
@@ -85,5 +83,6 @@ The nldesign app MUST load CSS files in the following order to ensure correct ca
 #### Scenario: CSS files load in correct order
 - GIVEN the nldesign app is enabled
 - WHEN the page loads
-- THEN CSS files MUST be injected in this order: fonts → defaults → tokens/{org} → utrecht-bridge → theme → overrides
-- AND later files MUST be able to override values from earlier files
+- THEN the design system's stylesheets MUST be injected first, in the order `design-systems.json` declares: fonts, defaults, utrecht-bridge, theme, overrides, element-overrides
+- AND the token set file `tokens/{org}` MUST follow them, and the admin's `custom-overrides` MUST come after the token set
+- AND later files MUST be able to override values from earlier files (the token set's `--nldesign-*` values win over `defaults.css`)
