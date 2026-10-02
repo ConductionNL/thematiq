@@ -28,7 +28,7 @@
 
 - [x] 5.1 Regenerate `mappings.md` and update `docs/features/token-editor.md` and `import-export.md` to the registry's real count, and verify no docs page still says 53
 - [x] 5.2 Add a theme-author page listing the 45 new tokens with their notes and the two audited pairs, and verify the docs site builds
-- [ ] 5.3 Run `COMPOSER_PROCESS_TIMEOUT=0 composer check:strict`, `npm run lint`, `npm run format` and `npm run test:l10n` once before push, and record the exit codes in the PR body
+- [x] 5.3 Run `COMPOSER_PROCESS_TIMEOUT=0 composer check:strict`, `npm run lint`, `npm run format` and `npm run test:l10n` once before push, and record the exit codes in the PR body
 
 Reminders, not tasks:
 - ADR-005: the editor still refuses unregistered names; nothing new is writable beyond the 45.
