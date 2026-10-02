@@ -1,9 +1,9 @@
-# Beta Cross-Surface Alignment
+# beta-alignment Specification
 
-**Spec refs**: ADR-007 (i18n / localisation), app-icon convention
-**Standards**: n/a (metadata/marketing consistency, not a runtime contract)
+## Purpose
+The store listing, the product page and the docs describe the same app: a localised manifest, the real licence, one feature vocabulary and no claim the code does not back. Created by archiving change beta-surface-alignment.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: info.xml localisation
 
@@ -12,6 +12,8 @@
 a copy of the English text.
 
 #### Scenario: Dutch summary is a translation, not a copy
+
+@e2e exclude manifest metadata, no page; covered by ClaimAccuracyTest::testManifestTextIsPairedInEnglishAndDutch
 
 - GIVEN `appinfo/info.xml`
 - WHEN `<summary lang="nl">` is read
@@ -25,7 +27,9 @@ a copy of the English text.
 
 #### Scenario: Licence tag matches SPDX headers
 
-- GIVEN `appinfo/info.xml` declares `<licence>eupl</licence>`
+@e2e exclude manifest metadata, no page; covered by ClaimAccuracyTest::testManifestLicenceMatchesBundledLicence and ClaimAccuracyTest::testSpdxHeadersAgreeWithManifest
+
+- GIVEN `appinfo/info.xml` declares `<licence>EUPL-1.2</licence>` (or the bare `eupl`)
 - AND every PHP file under `lib/` carries `SPDX-License-Identifier: EUPL-1.2`
 - AND `composer.json` declares `"license": "EUPL-1.2"`
 - THEN the three MUST agree on EUPL-1.2 as the license
@@ -38,6 +42,8 @@ so a reader moving between the app store listing, the product page, and the docs
 same feature under the same name.
 
 #### Scenario: A shipped feature appears under the same name everywhere it is mentioned
+
+@e2e exclude the product page lives in another repository (conduction-website); a copy review, not app behaviour
 
 - GIVEN a feature exists in `docs/features.json` (e.g. "Custom Token Sets")
 - AND the same feature is mentioned in `info.xml`'s description or the product page
@@ -53,6 +59,8 @@ beta release.
 
 #### Scenario: An unverifiable capability claim is removed
 
+@e2e exclude the product page lives in another repository (conduction-website); a copy review, not app behaviour
+
 - GIVEN the product page claims a capability (e.g. "switchable per user or organisation")
 - WHEN no corresponding code path exists in `lib/` (e.g. no per-user or per-organisation theming
   toggle, only a per-app exclusion mechanism)
@@ -61,9 +69,11 @@ beta release.
 
 #### Scenario: A partially-implemented compliance claim is not asserted as complete
 
+@e2e exclude the product page lives in another repository (conduction-website); a copy review, not app behaviour
+
 - GIVEN `docs/reference/compliance.md` (or an equivalent verification artefact) records a
   standard as partially implemented (e.g. Rijkshuisstijl typography: font declared but webfont
   files not bundled)
 - THEN the product page MUST NOT assert blanket compliance with that standard's full scope
-  (e.g. MUST NOT say "government-compliant typography") — it MAY describe the part that is
+  (e.g. MUST NOT say "government-compliant typography"); it MAY describe the part that is
   verified (e.g. "official NLDS type tokens")

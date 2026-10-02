@@ -8,10 +8,9 @@ declared at `1px` but transparent, matching the measured live chrome), horizonta
 `18px`, and zero visible gap between the bottom of `#header` and the top of `#content-vue` (the
 header MUST NOT have its `position` forced into normal document flow — it keeps Nextcloud's own
 out-of-flow positioning so the layout's existing top margin closes the gap exactly, as it does on
-stock Nextcloud). The main app area (`#app-content-vue`/`.app-content`) MUST render a grey
-(`--lasuite-color-gray-025`) canvas, with the content list rendering on a white
-(`--lasuite-color-gray-000`), `border-radius: var(--lasuite-border-radius)`, no-shadow card on top
-of that canvas. The content shell (`#content-vue`) MUST render full-bleed (`border-radius: 0`,
+stock Nextcloud). The content shell (`#content-vue`) MUST paint a grey canvas
+(`gray-025` in light mode), and the app content (`#app-content`/`.app-content`) MUST render on it as
+a white (`gray-000` in light mode), `border-radius: var(--lasuite-border-radius)`, no-shadow card. The content shell (`#content-vue`) MUST render full-bleed (`border-radius: 0`,
 `margin: 0`), and the sidebar (`#app-navigation-vue`/`.app-navigation`) MUST render full-bleed
 (`border-radius: 0`) with its depth expressed via `box-shadow: 10px 0 10px rgba(0,0,0,.05)` in
 addition to its existing hairline `border-right`. The layer MUST also keep flat navigation
@@ -22,6 +21,8 @@ heights, nav-item font sizes, and list/detail pane counts are unaffected by this
 are Nextcloud component metrics and information architecture, not design-system theming.
 
 #### Scenario: Controls carry La Suite radii
+
+@e2e exclude partly asserted by tests/e2e/spec-coverage/lasuite-parity.spec.ts ('primary button' row: brand fill, brand-050 text, 4px radius) and lasuite-radius-scale.spec.ts; the hover step is static CSS in css/systems/lasuite/element-overrides.css, verified by the live side-by-side capture of task 5.3 (2026-07-30)
 
 - GIVEN the lasuite system is active
 - WHEN a primary button renders
@@ -36,24 +37,30 @@ are Nextcloud component metrics and information architecture, not design-system 
 
 #### Scenario: Header sits flush against content with no visible chrome
 
+@e2e exclude partly asserted by tests/e2e/spec-coverage/lasuite-parity.spec.ts ('header bar' row: white surface, 1px solid bottom border); the 0px gap, 18px padding and no position override are static CSS in css/systems/lasuite/element-overrides.css, verified by the live side-by-side capture of task 5.3 (2026-07-30)
+
 - GIVEN the lasuite system is active
 - WHEN `#header` and `#content-vue` render
 - THEN `#header` MUST NOT declare an overriding `position` value (it remains Nextcloud's own
   out-of-flow positioning)
 - AND the visible gap between the bottom of `#header` and the top of `#content-vue` MUST be `0px`
-- AND `#header` MUST have `background-color: #ffffff`, `box-shadow: none`, a `border-bottom` at
+- AND `#header` MUST have a white background in light mode, `box-shadow: none`, a `border-bottom` at
   `1px` with a transparent colour (no visible rule), and horizontal padding of `18px`
 
 #### Scenario: Grey canvas separates the main area from a white content card
 
+@e2e exclude static CSS in css/systems/lasuite/element-overrides.css, verified by the live side-by-side capture of task 5.3 (2026-07-30)
+
 - GIVEN the lasuite system is active
 - WHEN the main app area renders
-- THEN `#app-content-vue`/`.app-content` MUST use `var(--lasuite-color-gray-025)` as its background
-- AND the content list container within it MUST render on a white
-  (`var(--lasuite-color-gray-000)`) card with `border-radius: var(--lasuite-border-radius)` and no
+- THEN the shell (`#content-vue`) MUST paint the grey canvas (`gray-025` in light mode)
+- AND the app content (`#app-content`/`#app-content-vue`/`.app-content`) MUST render on it as a
+  white (`gray-000` in light mode) card with `border-radius: var(--lasuite-border-radius)` and no
   box-shadow
 
 #### Scenario: Shell and sidebar render full-bleed
+
+@e2e exclude partly asserted by tests/e2e/spec-coverage/lasuite-parity.spec.ts ('app navigation sidebar' row: white surface, radius 0); the shadow and the shell margins are static CSS in css/systems/lasuite/element-overrides.css, verified by the live side-by-side capture of task 5.3 (2026-07-30)
 
 - GIVEN the lasuite system is active
 - WHEN `#content-vue` and the sidebar render
@@ -73,6 +80,8 @@ surface tones. The comparison artifact MUST be produced as part of verification,
 acceptance bar is pixel-adjacent (same visual family at a glance), not pixel-identical.
 
 #### Scenario: Side-by-side capture passes the parity checklist
+
+@e2e exclude a manual visual comparison against a live La Suite app, recorded in the change (task 5.3); not a repeatable page assertion
 
 - GIVEN the lasuite token set is active on the 8080 dev instance
 - WHEN Playwright captures the themed Files view and login page next to a La Suite Docs page
