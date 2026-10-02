@@ -119,6 +119,7 @@ return [
 		// download/upload, admin-only (AuthorizedAdminSetting).
 		['name' => 'configBundle#export', 'url' => '/settings/config/export', 'verb' => 'GET'],
 		['name' => 'configBundle#import', 'url' => '/settings/config/import', 'verb' => 'POST'],
+		['name' => 'configSource#status', 'url' => '/settings/config-source', 'verb' => 'GET'],
 		// Theme preview ("proefdraaien") — per-session token set trial before
 		// instance-wide publish. Admin-only (AuthorizedAdminSetting), no
 		// #[PublicPage]/#[NoAdminRequired].
@@ -130,5 +131,7 @@ return [
 		['name' => 'settings#setGroupTheming', 'url' => '/settings/group-theming', 'verb' => 'POST'],
 		['name' => 'assistantMark#settings', 'url' => '/settings/assistant-mark', 'verb' => 'GET'],
 		['name' => 'assistantMark#save', 'url' => '/settings/assistant-mark', 'verb' => 'POST'],
+		['name' => 'myGroups#index', 'url' => '/api/my-groups/house-style', 'verb' => 'GET'],
+		['name' => 'myGroups#update', 'url' => '/api/my-groups/{group}/house-style', 'verb' => 'POST'],
 	],
 ];
