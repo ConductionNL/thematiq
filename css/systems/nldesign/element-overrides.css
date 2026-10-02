@@ -240,7 +240,7 @@ header#header .header-menu__trigger {
 #header
 	[class*='avatar' i]
 	*:not([class*='user-status' i]):not([class*='user-status' i] *) {
-	color: #ffffff !important;
+	color: var(--nldesign-color-text-light) !important;
 }
 
 /* ============================================
@@ -346,8 +346,8 @@ header nav .icon {
 [class*='widget']:not(#header *),
 #app-content,
 .app-content {
-	background: #ffffff;
-	background-color: #ffffff;
+	background: var(--color-main-background);
+	background-color: var(--color-main-background);
 	opacity: 1;
 	backdrop-filter: none;
 	-webkit-backdrop-filter: none;
@@ -631,7 +631,7 @@ button[class*='primary']:not([data-admin-theming-setting-color-picker]):not(
 #header .popovermenu *,
 #header #expand,
 #header #expand * {
-	color: #000000 !important;
+	color: var(--color-main-text) !important;
 }
 
 /* ============================================
