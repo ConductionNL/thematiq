@@ -166,7 +166,8 @@ function contrast(a, b) {
 }
 
 const SHELL = [
-	['#header', 'background-color'],
+	// The shorthand: #868 dropped the dead background-color longhand before it.
+	['#header', 'background'],
 	['#content-vue', 'background-color'],
 	['#app-content', 'background'],
 	['#app-navigation', 'background'],
