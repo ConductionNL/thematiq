@@ -38,7 +38,7 @@ merged to `development`.
 
 ## 4. Validation
 
-- [ ] 4.1 `openspec validate example-gemeente-theme --strict`, `npm run lint`,
+- [x] 4.1 `openspec validate example-gemeente-theme --strict`, `npm run lint`,
       `composer check:strict` once before push.
 - [ ] 4.2 Live: apply the set on a test instance and open portaliq `/site` with a dossiq
       contribution; the header, buttons and links wear `#12506B`.

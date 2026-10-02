@@ -3,9 +3,9 @@
 Tier: V1. Kind: code. Programme: portal-design (2026-10-02). Tick a box when the work is
 merged to `development`.
 
-Depends on, outside this repo: the portaliq lane's change that links `css/public-bridge.css`
-in `templates/site.php` (planned in portaliq `portal-theme-blocks-and-contributed-pages`
-task 2) and `site-mijn-omgeving-components`, which adds the Den Haag CSS to portaliq.
+Depends on, outside this repo: portaliq `site-links-the-theme-bridge`, which links
+`css/public-bridge.css` in `templates/site.php`, and `site-mijn-omgeving-components`, which adds
+the Den Haag CSS to portaliq (both in portaliq#1110, not merged).
 Nothing here waits on them; the components only show the result once both land.
 
 ## 1. The mapping
@@ -47,7 +47,7 @@ Nothing here waits on them; the components only show the result once both land.
 
 ## 4. Validation
 
-- [ ] 4.1 `openspec validate denhaag-component-tokens --strict`, `npm run lint`,
+- [x] 4.1 `openspec validate denhaag-component-tokens --strict`, `npm run lint`,
       `npm run test:unit`, `composer check:strict` once before push.
 - [ ] 4.2 Live, after the portaliq link lands: `/site` with the `denhaag` set shows a case
       card, process steps and a badge in Den Haag's colours, and with `example-gemeente` in
