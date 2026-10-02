@@ -708,13 +708,20 @@ body > #content-vue,
    rest made our button-at-rest match La Suite's HOVER — one step too dark.
    ============================================ */
 
-.button-vue--vue-primary,
-.button-vue--primary,
+/* Nextcloud 33 and later render each Settings › Theming colour field as a
+   primary NcButton whose background IS the colour being chosen, set inline as
+   its own --color-primary-element, and mark it only with the CSS-module class
+   `_colorPickerField__button_<hash>`. Excluded by that class; `:where()` keeps
+   the exclusion at zero specificity so the fill outranks what it did before. */
+.button-vue--vue-primary:not(:where([class*='_colorPickerField__button'])),
+.button-vue--primary:not(:where([class*='_colorPickerField__button'])),
 button.primary,
 input.primary,
-.button-vue.button-vue--vue-primary,
-.button-vue.button-vue--primary,
-button[class*='primary'] {
+.button-vue.button-vue--vue-primary:not(
+		:where([class*='_colorPickerField__button'])
+	),
+.button-vue.button-vue--primary:not(:where([class*='_colorPickerField__button'])),
+button[class*='primary']:not(:where([class*='_colorPickerField__button'])) {
 	background-color: var(
 		--lasuite-content-brand-icon,
 		var(--lasuite-color-brand-550)
@@ -726,20 +733,40 @@ button[class*='primary'] {
 	border-radius: var(--lasuite-border-radius) !important;
 }
 
-/* `:not([data-admin-theming-setting-color-picker])`: Nextcloud's own colour
-   pickers paint their button with the colour being chosen and compute a
-   readable text colour for it, so brand-050 lettering would vanish on a pale
-   swatch. See the longer note in css/systems/nldesign/theme.css. */
-.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]),
-.button-vue--primary:not([data-admin-theming-setting-color-picker]),
-.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) *,
-.button-vue--primary:not([data-admin-theming-setting-color-picker]) *,
-.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]) span,
-.button-vue--primary:not([data-admin-theming-setting-color-picker]) span,
+/* The `:not()` exclusions: Nextcloud's own colour pickers paint their button
+   with the colour being chosen and compute a readable text colour for it, so
+   brand-050 lettering would vanish on a pale swatch. Nextcloud 32 marks them
+   with `data-admin-theming-setting-color-picker`; 33 and later only with the
+   CSS-module class `_colorPickerField__button_<hash>`. See the longer note in
+   css/systems/nldesign/theme.css. */
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	),
+.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	),
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
+	*,
+.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
+	*,
+.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
+	span,
+.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
+	span,
 button.primary,
 button.primary *,
 input.primary,
-button[class*='primary']:not([data-admin-theming-setting-color-picker]) {
+button[class*='primary']:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	) {
 	/* La Suite's on-brand button text is brand-050 (#eef1fa), a pale violet-white,
 	   not pure white — matched to the shipped Cunningham CSS (2026-07-26).
 	   Selector kept symmetric with the fill rule above so any primary-classed
@@ -753,16 +780,21 @@ button[class*='primary']:not([data-admin-theming-setting-color-picker]) {
    invisible on a pale swatch. Same fix as the nldesign layer; see the longer
    note in css/systems/nldesign/element-overrides.css. */
 [data-admin-theming-setting-color-picker] *,
-[data-admin-theming-setting-color-reset] * {
+[data-admin-theming-setting-color-reset] *,
+[class*='_colorPickerField__button'] * {
 	color: inherit !important;
 	fill: currentcolor !important;
 }
 
-.button-vue--vue-primary:hover,
-.button-vue--primary:hover,
+.button-vue--vue-primary:hover:not(:where([class*='_colorPickerField__button'])),
+.button-vue--primary:hover:not(:where([class*='_colorPickerField__button'])),
 button.primary:hover,
-.button-vue.button-vue--primary:hover,
-.button-vue.button-vue--vue-primary:hover {
+.button-vue.button-vue--primary:hover:not(
+		:where([class*='_colorPickerField__button'])
+	),
+.button-vue.button-vue--vue-primary:hover:not(
+		:where([class*='_colorPickerField__button'])
+	) {
 	background-color: var(
 		--lasuite-content-brand,
 		var(--lasuite-color-brand-650)

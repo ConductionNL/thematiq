@@ -284,14 +284,14 @@ const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 	{
 		pattern: /^\[data-admin-theming-setting-color-(picker|reset)\] \*$/,
 		reason:
-			'NC 32/33 colour-picker markup. Those releases render the admin colour fields as '
-			+ 'NcButtons carrying data-admin-theming-setting-color-picker / -color-reset. NC 34 '
-			+ 'rewrote Settings > Theming as a Vue 3 app with CSS-module classes '
-			+ '(_colorPickerField__button_<hash>) and no data attribute: MEASURED on run '
-			+ '35051300741, whose admin-theming DOM snapshot has neither attribute anywhere. '
-			+ 'The rule is still what keeps the picker label legible on the NC 32 floor. The NC 34 '
-			+ 'picker is not excluded by any rule yet; that gap is tracked separately rather than '
-			+ 'hidden here.',
+			'NC 32 colour-picker markup. That release renders the admin colour fields as '
+			+ 'NcButtons carrying data-admin-theming-setting-color-picker / -color-reset. The Vue 3 '
+			+ 'rewrite of Settings > Theming (in the server source from v33.0.0beta1, still so in '
+			+ '35.0.1) gives the picker only a CSS-module class (_colorPickerField__button_<hash>) '
+			+ 'and no data attribute: MEASURED on run 35051300741, whose admin-theming DOM snapshot '
+			+ 'has neither attribute anywhere. The rule is still what keeps the picker label legible '
+			+ 'on the NC 32 floor. Its NC 33+ counterpart is the [class*="_colorPickerField__button"] '
+			+ 'rule in SINCE below (thematiq#611).',
 	},
 ]
 
@@ -372,6 +372,14 @@ const SINCE: Array<{ pattern: RegExp; since: number; reason: string }> = [
 		reason:
 			'NC33+ header markup (waffle / current-app / inline unified-search). NC32 renders '
 			+ 'app-menu-entry* + unified-search-menu instead, so these cannot match there.',
+	},
+	{
+		pattern: /^\[class\*=["']_colorPickerField__button["']\] \*$/,
+		since: 33,
+		reason:
+			'NC33+ colour-picker markup (thematiq#611). The Vue 3 Settings > Theming renders each '
+			+ 'colour field as a primary NcButton with the CSS-module class '
+			+ '_colorPickerField__button_<hash>; NC32 renders the data attribute in ALLOWED above.',
 	},
 ]
 
