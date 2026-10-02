@@ -57,6 +57,17 @@ class CustomCssService {
 	public const FILE = 'css/custom-css.css';
 
 	/**
+	 * The comment written above the administrator's CSS in the file.
+	 *
+	 * It belongs to the file, not to the CSS: read() strips it again, so the
+	 * editor shows exactly what the administrator typed and a second save does
+	 * not stack a second header on top of the first.
+	 *
+	 * @var string
+	 */
+	public const FILE_HEADER = "/* NL Design — freeform custom CSS. Authored by an administrator. */\n";
+
+	/**
 	 * Where the freeform stylesheet is stored.
 	 *
 	 * @var RuntimeFileStore
@@ -140,7 +151,20 @@ class CustomCssService {
 	 * @spec openspec/specs/custom-css-freeform/spec.md
 	 */
 	public function read(): string {
-		return ($this->store->read(name: self::FILE) ?? '');
+		$contents = ($this->store->read(name: self::FILE) ?? '');
+
+		// Undo what write() added around the CSS. Earlier releases read the
+		// header back as part of the CSS, so every save stacked one more; the
+		// loop peels all of them, and the next save leaves a single one. A file
+		// without the header (hand-edited, or older) is returned as it is.
+		while (str_starts_with($contents, self::FILE_HEADER) === true) {
+			$contents = substr($contents, strlen(self::FILE_HEADER));
+			if (str_ends_with($contents, "\n") === true) {
+				$contents = substr($contents, 0, -1);
+			}
+		}
+
+		return $contents;
 	}//end read()
 
 	/**
@@ -161,7 +185,7 @@ class CustomCssService {
 			return $errors;
 		}
 
-		$document = "/* NL Design — freeform custom CSS. Authored by an administrator. */\n" . $css . "\n";
+		$document = self::FILE_HEADER . $css . "\n";
 		$this->store->write(name: self::FILE, content: $document);
 
 		return [];
