@@ -81,6 +81,9 @@ return [
 		['name' => 'brandForm#inputs', 'url' => '/settings/tokensets/from-colours', 'verb' => 'GET'],
 		['name' => 'brandForm#create', 'url' => '/settings/tokensets/from-colours', 'verb' => 'POST'],
 		['name' => 'customTokenSet#list', 'url' => '/settings/tokensets/custom', 'verb' => 'GET'],
+		// Multi-brand token sources (authoring-multi-brand-token-source), admin-only.
+		['name' => 'tokenSource#list', 'url' => '/settings/tokensets/sources', 'verb' => 'GET'],
+		['name' => 'tokenSource#update', 'url' => '/settings/tokensets/sources/{sourceId}', 'verb' => 'POST'],
 		['name' => 'customTokenSet#export', 'url' => '/settings/tokensets/custom/{id}/export', 'verb' => 'GET'],
 		['name' => 'customTokenSet#delete', 'url' => '/settings/tokensets/custom/{id}', 'verb' => 'DELETE'],
 		// Active-configuration WCAG contrast compliance evidence report (download).

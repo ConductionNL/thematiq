@@ -28,6 +28,7 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
+use OCA\Thematiq\Service\MultiBrandImportService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ThemingAuditService;
@@ -169,6 +170,7 @@ class CustomTokenSetController extends Controller {
 		ThemingService $themingService,
 		DesignSystemService $designSystems,
 		?BrandingCaptureService $brandingCapture = null,
+		private ?MultiBrandImportService $multiBrand = null,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->service = $service;
@@ -240,6 +242,12 @@ class CustomTokenSetController extends Controller {
 			return $read;
 		}
 
+		// One source, several brands: listed first, stored on the admin's choice.
+		$brands = ($this->multiBrand?->brands(content: $read['content']) ?? []);
+		if ($brands !== []) {
+			return $this->uploadBrands(name: $name, read: $read, brands: $brands);
+		}
+
 		// ALREADY A TOKEN SET — store it as it arrived.
 		//
 		// The token editor's "save as a new theme" serialises the active set and
@@ -264,6 +272,38 @@ class CustomTokenSetController extends Controller {
 
 		return $this->storeConverted(name: $name, slug: $slug, read: $read);
 	}//end upload()
+
+	/**
+	 * A multi-brand upload: without `brands` the brands are listed and nothing is stored;
+	 * with `brands` the chosen ones are stored together, or none.
+	 *
+	 * @param string                                          $name   The source's display name.
+	 * @param array{content: string, sourceName: string|null} $read   The payload from readInput().
+	 * @param array<int, array<string, mixed>>                $brands The brands the source holds.
+	 *
+	 * @return JSONResponse `{multiBrand, stored, brands}` or `{multiBrand, stored, sourceId, sets}`, or an error naming the brand.
+	 *
+	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.1
+	 */
+	private function uploadBrands(string $name, array $read, array $brands): JSONResponse {
+		$chosen = $this->request->getParam('brands', null);
+		if ($chosen === null || $this->multiBrand === null) {
+			return new JSONResponse(['multiBrand' => true, 'stored' => false, 'brands' => $brands]);
+		}
+
+		try {
+			$result = $this->multiBrand->import(sourceName: $name, content: $read['content'], keys: (array)$chosen, fileName: $read['sourceName']);
+		} catch (RuntimeException $e) {
+			$code = $e->getCode();
+			if ($code < 400 || $code > 599) {
+				$code = 422;
+			}
+
+			return new JSONResponse(['error' => $e->getMessage()], $code);
+		}
+
+		return new JSONResponse(['multiBrand' => true, 'stored' => true] + $result);
+	}//end uploadBrands()
 
 	/**
 	 * The design system a file exported by Thematiq says it was taken from.
@@ -726,6 +766,9 @@ class CustomTokenSetController extends Controller {
 		if ($this->service->delete(id: $id) === false) {
 			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
 		}
+
+		// The source record of a multi-brand import goes with its last brand.
+		$this->multiBrand?->forgetSet(id: $id);
 
 		// The branding it captured, and the images copied for it, go with it.
 		if ($this->brandingCapture !== null) {
