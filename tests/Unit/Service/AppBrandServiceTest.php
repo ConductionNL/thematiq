@@ -31,12 +31,14 @@ use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
-use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\ImageSniffer;
+use OCA\Thematiq\Service\LogoLayerService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\ThemePreviewBannerService;
 use OCA\Thematiq\Service\ThemePreviewService;
@@ -50,6 +52,7 @@ use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\ITempManager;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -204,23 +207,34 @@ class AppBrandServiceTest extends TestCase {
 		$stock = $this->createMock(StockTokensService::class);
 		$stock->method('getCss')->willReturn(null);
 
+		$repo = $this->createMock(IAppManager::class);
+		$repo->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
+		$runtimeFiles = new RuntimeFileLocator(
+			$repo,
+			new DirectoryRuntimeFileStore(sys_get_temp_dir() . '/thematiq-brand-' . bin2hex(random_bytes(4))),
+			$urls,
+			$this->createMock(ITempManager::class)
+		);
+		$logger = $this->createMock(LoggerInterface::class);
+
 		$service = $this->getMockBuilder(CssInjectionService::class)
 			->setConstructorArgs(
 				[
 					$this->config(),
 					$designSystem,
-					$this->createMock(CustomOverridesService::class),
 					$this->createMock(CustomCssService::class),
 					$this->createMock(FontService::class),
 					$urls,
 					$groupTheming,
 					$this->createMock(ThemePreviewBannerService::class),
-					$this->createMock(LoggerInterface::class),
+					$logger,
 					$stock,
+					$runtimeFiles,
+					new LogoLayerService($this->config(), $urls, $logger, $runtimeFiles),
 					$this->brands(),
 				]
 			)
-			->onlyMethods(['emitStyle', 'emitFontLink', 'emitInlineStyle'])
+			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
 			->getMock();
 		$service->method('emitStyle')->willReturnCallback(
 			function (string $file) use (&$styles): void {

@@ -120,6 +120,7 @@
 		--nldesign-component-textbox-hover-border-color: #9e9e9e;
 		--nldesign-component-textbox-invalid-border-color: #e25a67;
 		--nldesign-component-unordered-list-color: #cccccc;
+		--nldesign-logo-url: url('../../../img/logos/noordwijk-dark.svg');
 		--noordwijk-color-alert-error: #db838b;
 		--noordwijk-color-alert-error-background: #420f13;
 		--noordwijk-color-alert-info: #6eb0f7;
@@ -275,6 +276,7 @@ body[data-themes*=dark] {
 	--nldesign-component-textbox-hover-border-color: #9e9e9e;
 	--nldesign-component-textbox-invalid-border-color: #e25a67;
 	--nldesign-component-unordered-list-color: #cccccc;
+	--nldesign-logo-url: url('../../../img/logos/noordwijk-dark.svg');
 	--noordwijk-color-alert-error: #db838b;
 	--noordwijk-color-alert-error-background: #420f13;
 	--noordwijk-color-alert-info: #6eb0f7;

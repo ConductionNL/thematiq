@@ -7,16 +7,19 @@ depends_on: []
 
 Nobody can check whether thematiq supports "all" Nextcloud variables, because nothing records what "all" is. The `nextcloud-variable-mapping` spec asks for an entry per theming variable in `overrides.css`, and that list is kept by hand. It covers the 111 variables Nextcloud's theming app declares. It says nothing about the 1,027 more that Nextcloud's own code reads. It also misses the 54 `--cn-*` variables of our shared `@conduction/nextcloud-vue` library.
 
-Measured on 2 October 2026 against Nextcloud 34.0.0.12 on the dev instance:
+Extracted on 2 October 2026 from Nextcloud 34.0.0.12 and `@conduction/nextcloud-vue` 2.57.1:
 
 | Class | Count |
 |---|---|
 | Theme vocabulary (declared by the theming app) | 111 |
-| Internal to one component (set and read in shipped code) | 438 |
-| Icon images (`--icon-*`, `--original-icon-*`) | 438 |
-| Read with a fallback, declared nowhere | 140 |
-| Declared, never read | 11 |
-| Conduction `--cn-*` (shared library) | 54 |
+| Internal to one component (set and read in shipped code) | 380 |
+| Icon images | 484 |
+| Read with a fallback, declared nowhere | 83 |
+| Written by JavaScript at render time | 36 |
+| Declared, never read | 10 |
+| Conduction `--cn-*` (shared library) | 51 |
+
+A first hand count put components at 438, slots at 140 and `--cn-*` at 54. The extractor classes more carefully. Values that are `url()` count as icons, JavaScript writes count as runtime, and template-string fragments such as `--cn-kpi-` are not names. Its numbers replace the hand count.
 
 This change makes that table a committed, regenerable file and puts a guard on it. It is the head of a four-change chain that takes thematiq from 66 of 111 theme variables to all of them, plus the internal and `--cn-*` layers:
 

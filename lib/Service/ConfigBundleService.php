@@ -194,6 +194,13 @@ class ConfigBundleService {
 	private ScheduledSwitchStore $scheduledSwitches;
 
 	/**
+	 * The approved mark for the AI assistant.
+	 *
+	 * @var AssistantMarkService
+	 */
+	private AssistantMarkService $assistantMark;
+
+	/**
 	 * The brand per app.
 	 *
 	 * @var AppBrandService
@@ -223,6 +230,7 @@ class ConfigBundleService {
 	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
+	 * @param AssistantMarkService $assistantMark The approved mark for the AI assistant.
 	 * @param AppBrandService $appBrands The brand per app.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
@@ -244,6 +252,7 @@ class ConfigBundleService {
 		UpstreamFreshnessService $freshnessService,
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
+		AssistantMarkService $assistantMark,
 		AppBrandService $appBrands,
 	) {
 		$this->config = $config;
@@ -259,6 +268,7 @@ class ConfigBundleService {
 		$this->freshnessService = $freshnessService;
 		$this->scheduledSwitches = $scheduledSwitches;
 		$this->logger = $logger;
+		$this->assistantMark = $assistantMark;
 		$this->appBrands = $appBrands;
 	}//end __construct()
 
@@ -296,6 +306,7 @@ class ConfigBundleService {
 					. 'Metadata only — re-upload font files by hand on the target environment.',
 				'manifest' => $this->fontService->getManifest(),
 			],
+			'assistantMark' => $this->assistantMark->exportBundle(),
 			'appBrands' => (object)$this->appBrands->exportBundle(),
 		];
 	}//end export()
@@ -408,6 +419,13 @@ class ConfigBundleService {
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
+
+		$assistantMark = $this->assistantMark->validateBundle(section: ($bundle['assistantMark'] ?? null));
+		foreach ($assistantMark['errors'] as $message) {
+			$errors[] = ['section' => 'assistantMark', 'message' => $message];
+		}
+
+		$resolved['assistantMark'] = $assistantMark['value'];
 
 		$bundledIds = array_column($resolved['customTokenSets'], 'id');
 		$appBrands = $this->appBrands->validateBundle(
@@ -975,6 +993,7 @@ class ConfigBundleService {
 				'applied' => ($resolved['scheduledSwitches'] !== null),
 			],
 			'emailFooter' => ['applied' => true],
+			'assistantMark' => ['applied' => (($resolved['assistantMark'] ?? null) !== null)],
 			'appBrands' => [
 				'count' => count(($resolved['appBrands'] ?? [])),
 				'applied' => (($resolved['appBrands'] ?? null) !== null),
@@ -1047,6 +1066,10 @@ class ConfigBundleService {
 
 		if ($resolved['scheduledSwitches'] !== null) {
 			$this->scheduledSwitches->save(entries: $resolved['scheduledSwitches']);
+		}
+
+		if (($resolved['assistantMark'] ?? null) !== null) {
+			$this->assistantMark->applyBundle(value: $resolved['assistantMark']);
 		}
 
 		if (($resolved['appBrands'] ?? null) !== null) {
