@@ -246,7 +246,7 @@ class TokenSetConverterService {
 	 * @throws RuntimeException When the content matches none of the four accepted shapes (code 422).
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.3
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
 	 *
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
 	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per accepted input shape and per optional stage of the pipeline.

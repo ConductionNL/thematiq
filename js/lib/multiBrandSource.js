@@ -12,7 +12,7 @@
  * Dual-mode like `layerSwap.js`: `module.exports` under Node, `window.NldesignMultiBrandSource`
  * in the browser.
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.4
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-multi-brand-source-is-recognised-by-its-content
  */
 ;(function (root, factory) {
 	var api = factory()

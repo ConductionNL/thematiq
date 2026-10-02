@@ -19,7 +19,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.2
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
  */
 
 declare(strict_types=1);
@@ -33,7 +33,7 @@ use RuntimeException;
 /**
  * Import and update multi-brand sources.
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.2
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
  */
 class MultiBrandImportService {
 
@@ -84,7 +84,7 @@ class MultiBrandImportService {
 	 *
 	 * @return array<int, array<string, mixed>>
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.1
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
 	 */
 	public function brands(string $content): array {
 		return $this->source->detectBrands(content: $content);
@@ -103,7 +103,7 @@ class MultiBrandImportService {
 	 * @throws RuntimeException 422 for an unknown or too many keys or a brand that fails
 	 *                          validation, 409 for a set or source that already exists.
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.2
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
 	 */
 	public function import(string $sourceName, string $content, array $keys, ?string $fileName = null): array {
 		$detected = array_column($this->brands(content: $content), null, 'key');
@@ -161,7 +161,7 @@ class MultiBrandImportService {
 	 *
 	 * @throws RuntimeException 404 for an unknown source, 422 for a brand that fails validation.
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.3
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-new-version-of-a-source-updates-every-brand-together
 	 */
 	public function update(string $sourceId, string $content, ?string $fileName = null): array {
 		$records = $this->records();
@@ -213,7 +213,7 @@ class MultiBrandImportService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.4
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-new-version-of-a-source-updates-every-brand-together
 	 */
 	public function forgetSet(string $id): void {
 		$records = $this->records();
@@ -239,7 +239,7 @@ class MultiBrandImportService {
 	 *
 	 * @return array<string, array<string, mixed>>
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.2
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
 	 */
 	public function records(): array {
 		$decoded = json_decode($this->config->getAppValue(Application::APP_ID, self::SOURCES_KEY, '{}'), true);

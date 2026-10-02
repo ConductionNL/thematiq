@@ -283,7 +283,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse `{multiBrand, stored, brands}` or `{multiBrand, stored, sourceId, sets}`, or an error naming the brand.
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.1
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
 	 */
 	private function uploadBrands(string $name, array $read, array $brands): JSONResponse {
 		$chosen = $this->request->getParam('brands', null);

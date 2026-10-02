@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-4.1
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-the-administrator-chooses-which-brands-to-import
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

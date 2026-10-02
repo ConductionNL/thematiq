@@ -15,7 +15,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.2
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
  */
 
 declare(strict_types=1);
@@ -52,7 +52,7 @@ use RuntimeException;
 /**
  * Real services over a temp app dir.
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.2
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
  */
 final class MultiBrandImportServiceTest extends TestCase {
 

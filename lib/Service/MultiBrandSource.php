@@ -23,7 +23,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.1
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-multi-brand-source-is-recognised-by-its-content
  */
 
 declare(strict_types=1);
@@ -35,7 +35,7 @@ use RuntimeException;
 /**
  * Detect and cut brands.
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.1
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-multi-brand-source-is-recognised-by-its-content
  */
 class MultiBrandSource {
 
@@ -53,7 +53,7 @@ class MultiBrandSource {
 	 *
 	 * @return array<int, array{key: string, name: string, tokenCount: int, group?: string}>
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.1
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-multi-brand-source-is-recognised-by-its-content
 	 */
 	public function detectBrands(string $content): array {
 		$decoded = json_decode($content, true);
@@ -87,7 +87,7 @@ class MultiBrandSource {
 	 *
 	 * @throws RuntimeException 422 for a key the source does not have.
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.2
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
 	 */
 	public function cut(string $content, string $key): array {
 		$decoded = json_decode($content, true);

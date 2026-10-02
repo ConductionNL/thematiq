@@ -16,7 +16,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.3
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-new-version-of-a-source-updates-every-brand-together
  */
 
 declare(strict_types=1);
@@ -36,7 +36,7 @@ use RuntimeException;
 /**
  * Multi-brand sources over HTTP.
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.3
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-new-version-of-a-source-updates-every-brand-together
  */
 class TokenSourceController extends Controller {
 
@@ -62,7 +62,7 @@ class TokenSourceController extends Controller {
 	 *
 	 * @return JSONResponse {sources: {id: record}}.
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-4.2
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-the-administrator-chooses-which-brands-to-import
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function list(): JSONResponse {
@@ -76,7 +76,7 @@ class TokenSourceController extends Controller {
 	 *
 	 * @return JSONResponse {updated, missing, new}, or an error naming the brand.
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-3.3
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-new-version-of-a-source-updates-every-brand-together
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function update(string $sourceId): JSONResponse {

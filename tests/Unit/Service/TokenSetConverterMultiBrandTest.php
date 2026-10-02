@@ -14,7 +14,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.1
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-multi-brand-source-is-recognised-by-its-content
  */
 
 declare(strict_types=1);
@@ -34,7 +34,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Over the fixtures in tests/Unit/fixtures/multi-brand.
  *
- * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.1
+ * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-multi-brand-source-is-recognised-by-its-content
  */
 final class TokenSetConverterMultiBrandTest extends TestCase {
 

@@ -758,7 +758,7 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * A reference-only leaf resolves an alias but is never emitted, nor reported as skipped.
 	 *
-	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.3
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
 	 */
 	public function testReferenceOnlyLeafResolvesAliasButIsNotEmitted(): void {
 		$document = [

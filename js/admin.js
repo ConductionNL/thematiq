@@ -6085,7 +6085,7 @@
 
 		/**
 		 * The brand picker after a multi-brand upload
-		 * (openspec/changes/authoring-multi-brand-token-source): one labelled checkbox per
+		 * (openspec/specs/multi-brand-token-sources): one labelled checkbox per
 		 * brand, all ticked, with its token count and group; Import repeats the upload with
 		 * the chosen brands, Cancel stores nothing. Focus moves to the picker's heading.
 		 *
