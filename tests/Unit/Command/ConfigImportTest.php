@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Command;
 
 use OCA\Thematiq\Command\ConfigImport;
+use OCA\Thematiq\Service\BrandingPackageService;
 use OCA\Thematiq\Service\ConfigBundleService;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -56,7 +57,7 @@ class ConfigImportTest extends TestCase {
 
 		$this->service = $this->createMock(ConfigBundleService::class);
 
-		$command = new ConfigImport($this->service);
+		$command = new ConfigImport($this->service, $this->createMock(BrandingPackageService::class));
 		$application = new Application();
 		$application->add($command);
 

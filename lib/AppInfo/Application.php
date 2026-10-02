@@ -24,6 +24,7 @@ namespace OCA\Thematiq\AppInfo;
 
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Listener\ThemeInjectionListener;
+use OCA\Thematiq\Middleware\ConfigSourceLockMiddleware;
 use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\AppFramework\App;
@@ -127,6 +128,10 @@ class Application extends App implements IBootstrap {
 		// live in app data, never in the signed app directory. See
 		// lib/Service/RuntimeFile/RuntimeFileStore.php.
 		$context->registerServiceAlias(RuntimeFileStore::class, AppDataRuntimeFileStore::class);
+
+		// Theme as code (openspec/specs/theme-as-code/spec.md): while
+		// thematiq.config_source_lock is on, configuration setters answer 423.
+		$context->registerMiddleware(ConfigSourceLockMiddleware::class);
 
 		// Event-driven CSS injection — see lib/Listener/ThemeInjectionListener.php.
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, ThemeInjectionListener::class);

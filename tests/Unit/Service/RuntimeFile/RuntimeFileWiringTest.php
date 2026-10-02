@@ -292,6 +292,7 @@ class RuntimeFileWiringTest extends TestCase {
 			'Repair/MoveRuntimeFilesToAppData.php' => 'removes an older install\'s runtime files from the app directory',
 			'Command/ComplianceReport.php' => 'writes the report to the path the admin passes on the command line',
 			'Command/ConfigExport.php' => 'writes the export to the path the admin passes on the command line',
+			'Service/BrandingPackageReader.php' => 'writes a branding package into the directory the admin names, to keep a house style in Git',
 		];
 		$lib = \dirname(__DIR__, 4) . '/lib';
 		$offenders = [];

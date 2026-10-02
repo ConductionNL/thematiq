@@ -123,6 +123,7 @@ return [
 		// download/upload, admin-only (AuthorizedAdminSetting).
 		['name' => 'configBundle#export', 'url' => '/settings/config/export', 'verb' => 'GET'],
 		['name' => 'configBundle#import', 'url' => '/settings/config/import', 'verb' => 'POST'],
+		['name' => 'configSource#status', 'url' => '/settings/config-source', 'verb' => 'GET'],
 		// Theme preview ("proefdraaien") — per-session token set trial before
 		// instance-wide publish. Admin-only (AuthorizedAdminSetting), no
 		// #[PublicPage]/#[NoAdminRequired].

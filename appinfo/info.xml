@@ -110,7 +110,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 		which quoted the grep command in order to WARN about the problem —
 		made it read ")[^". The warning reproduced the bug it described.
 	-->
-	<version>1.2.10</version>
+	<version>1.2.12</version>
 	<licence>EUPL-1.2</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
 	<namespace>Thematiq</namespace>
@@ -179,6 +179,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 	<background-jobs>
 		<job>OCA\Thematiq\BackgroundJob\UpstreamFreshnessJob</job>
 		<job>OCA\Thematiq\BackgroundJob\ScheduledSwitchJob</job>
+		<job>OCA\Thematiq\BackgroundJob\ConfigSourceJob</job>
 	</background-jobs>
 
 	<!--
@@ -266,6 +267,10 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 			     when the app directory is read-only. -->
 			<step>OCA\Thematiq\Repair\MoveRuntimeFilesToAppData</step>
 			<step>OCA\Thematiq\Migration\GenerateDarkVariantsRepairStep</step>
+			<!-- Theme as code (openspec/specs/theme-as-code/spec.md): apply the
+			     branding package named in thematiq.config_source when it
+			     changed. Last, after the configuration rescue above. -->
+			<step>OCA\Thematiq\Repair\ApplyConfigSource</step>
 		</post-migration>
 		<install>
 			<step>OCA\Thematiq\Repair\MigrateAppConfigKeys</step>
@@ -286,6 +291,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 		<command>OCA\Thematiq\Command\GenerateDarkVariants</command>
 		<command>OCA\Thematiq\Command\ConfigExport</command>
 		<command>OCA\Thematiq\Command\ConfigImport</command>
+		<command>OCA\Thematiq\Command\ConfigApply</command>
 		<command>OCA\Thematiq\Command\ConfigVersions</command>
 		<command>OCA\Thematiq\Command\ConfigRestore</command>
 		<command>OCA\Thematiq\Command\ThemeList</command>
