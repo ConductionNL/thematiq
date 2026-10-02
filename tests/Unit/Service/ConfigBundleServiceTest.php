@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppThemingService;
+use OCA\Thematiq\Capabilities;
+use OCA\Thematiq\Service\AssistantMarkService;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\DocumentAssetService;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
@@ -24,16 +27,18 @@ use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\FontService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
-use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCP\App\IAppManager;
 use OCP\Http\Client\IClientService;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\Files\IAppData;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
@@ -139,14 +144,14 @@ class ConfigBundleServiceTest extends TestCase {
 		$logger = $this->createMock(LoggerInterface::class);
 
 		$this->overridesService = new CustomOverridesService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$cssParser,
 			new DarkPaletteService($contrast, $cssParser, $appManager, $logger),
 			$config,
 			new DesignSystemService($appManager, $config)
 		);
 		$this->customTokenSetService = new CustomTokenSetService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$config,
 			$customTokenSetValidator,
 			$contrast,
@@ -189,7 +194,9 @@ class ConfigBundleServiceTest extends TestCase {
 			$this->fontService,
 			$freshnessService,
 			new ScheduledSwitchStore($config),
-			$logger
+			$logger,
+			new AssistantMarkService($config, $emailThemingService, $this->createMock(Capabilities::class)),
+			new DocumentAssetService($this->createMock(IAppData::class), $config)
 		);
 	}//end setUp()
 
@@ -417,6 +424,40 @@ class ConfigBundleServiceTest extends TestCase {
 	}//end testNonexistentTokenSetIsHardError()
 
 	/**
+	 * The approved mark's three values travel in the bundle; an unsafe logo is refused, and an
+	 * older bundle without the section leaves the mark alone.
+	 *
+	 * @spec openspec/specs/assistant-approved-mark/spec.md
+	 */
+	public function testAssistantMarkSurvivesExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['assistant_mark_enabled'] = '1';
+		$this->appConfig['assistant_mark_organisation'] = 'Gemeente Voorbeeld';
+		$this->appConfig['assistant_mark_logo'] = 'https://example.org/logo.svg';
+
+		$bundle = $this->service->export();
+		$this->assertSame(['enabled' => true, 'organisation' => 'Gemeente Voorbeeld', 'logo' => 'https://example.org/logo.svg'], $bundle['assistantMark']);
+
+		$this->appConfig['assistant_mark_enabled'] = '0';
+		$this->appConfig['assistant_mark_organisation'] = '';
+		$this->appConfig['assistant_mark_logo'] = '';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('1', $this->appConfig['assistant_mark_enabled']);
+		$this->assertSame('Gemeente Voorbeeld', $this->appConfig['assistant_mark_organisation']);
+		$this->assertSame('https://example.org/logo.svg', $this->appConfig['assistant_mark_logo']);
+
+		$bundle['assistantMark']['logo'] = 'javascript:alert(1)';
+		$this->assertFalse($this->service->import(bundle: $bundle, dryRun: true)['valid']);
+
+		unset($bundle['assistantMark']);
+		$this->appConfig['assistant_mark_enabled'] = '0';
+		$this->assertTrue($this->service->import(bundle: $bundle, dryRun: false)['valid']);
+		$this->assertSame('0', $this->appConfig['assistant_mark_enabled'], 'An older bundle leaves the mark alone.');
+	}//end testAssistantMarkSurvivesExportAndImport()
+
+	/**
 	 * `primaryDrivesComponents` travels in the bundle, so an OTAP promotion
 	 * carries the toggle instead of silently resetting it to off.
 	 *
@@ -600,6 +641,33 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertSame('emailFooter', $result['errors'][0]['section']);
 		$this->assertArrayNotHasKey('email_footer_org_name', $this->appConfig);
 	}//end testInvalidEmailFooterUrlIsHardError()
+
+	/**
+	 * The document footer line travels as a value, the document images as metadata only.
+	 *
+	 * @spec openspec/specs/document-house-style/spec.md
+	 */
+	public function testDocumentStyleFooterLineSurvivesExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['document_style_footer_line'] = 'Postbus 1, 1234 AB Voorbeeld';
+		$this->appConfig['document_style_assets'] = json_encode(['logo' => ['mime' => 'image/png', 'size' => 10, 'uploadedAt' => 1]]);
+
+		$bundle = $this->service->export();
+		$this->assertSame('Postbus 1, 1234 AB Voorbeeld', $bundle['documentStyle']['footerLine']);
+		$this->assertFalse($bundle['documentStyle']['binariesIncluded']);
+		$this->assertSame('image/png', $bundle['documentStyle']['assets']['logo']['mime']);
+
+		$this->appConfig['document_style_footer_line'] = '';
+		$this->appConfig['document_style_assets'] = '{}';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('Postbus 1, 1234 AB Voorbeeld', $this->appConfig['document_style_footer_line']);
+		$this->assertSame('{}', $this->appConfig['document_style_assets'], 'Image metadata is never applied.');
+
+		$bundle['documentStyle']['footerLine'] = str_repeat('x', 201);
+		$this->assertFalse($this->service->import(bundle: $bundle, dryRun: true)['valid']);
+	}//end testDocumentStyleFooterLineSurvivesExportAndImport()
 
 	/**
 	 * The customFonts section is exported/reported as metadata only and is

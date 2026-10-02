@@ -34,6 +34,9 @@ script('thematiq', 'lib/auditFormat');
 script('thematiq', 'lib/tokenConverter');
 script('thematiq', 'lib/brandForm');
 script('thematiq', 'admin');
+script('thematiq', 'admin-assistant-mark');
+script('thematiq', 'admin-config-source');
+script('thematiq', 'admin-documents');
 style('thematiq', 'admin');
 // The component playground: the selector / stage / tokens instrument that
 // admin.js's token editor is rebuilt into. Loaded AFTER admin.js because it
@@ -551,6 +554,9 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint">
 			<?php p($l->t('Logo, mail templates, and other Nextcloud core branding always follow the instance default token set above — they are not per-group. Only this token-set stylesheet layer differs per group.')); ?>
 		</p>
+		<p class="settings-hint">
+			<?php p($l->t('Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.')); ?>
+		</p>
 		<div id="nldesign-group-theming-list" class="nldesign-group-theming-list" role="group"
 			 aria-label="<?php p($l->t('Group theming')); ?>">
 			<p class="settings-hint"><?php p($l->t('Loading group mappings…')); ?></p>
@@ -730,6 +736,33 @@ if ($_['mockUi'] === true) {
 		</div>
 	</div>
 
+	<!-- Documents: the document house style profile that fleet apps read
+	     for letters and PDF exports (openspec/specs/document-house-style/spec.md).
+	     Filled and saved by js/admin-documents.js. -->
+	<div class="nldesign-documents" id="nldesign-documents" style="margin-top:2em">
+		<h3><?php p($l->t('Documents')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Apps that generate letters and PDF exports use these values, so documents follow the house style. Without uploads they use the house style logo and the email footer.')); ?>
+		</p>
+		<p>
+			<label for="nldesign-documents-logo"><?php p($l->t('Document logo (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label><br>
+			<input type="file" id="nldesign-documents-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+			<button type="button" class="button" id="nldesign-documents-logo-remove"><?php p($l->t('Remove document logo')); ?></button>
+		</p>
+		<p>
+			<label for="nldesign-documents-cover"><?php p($l->t('Cover image (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label><br>
+			<input type="file" id="nldesign-documents-cover" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+			<button type="button" class="button" id="nldesign-documents-cover-remove"><?php p($l->t('Remove cover image')); ?></button>
+		</p>
+		<p>
+			<label for="nldesign-documents-footer-line"><?php p($l->t('Extra footer line')); ?></label><br>
+			<input type="text" id="nldesign-documents-footer-line" maxlength="200">
+			<button type="button" class="button primary" id="nldesign-documents-footer-save"><?php p($l->t('Save footer line')); ?></button>
+		</p>
+		<div class="nldesign-documents-preview" id="nldesign-documents-preview" aria-live="polite"></div>
+		<span id="nldesign-documents-feedback" role="status" aria-live="polite"></span>
+	</div>
+
 	<!-- Upstream token updates — opt-in daily freshness check against
 	     nl-design-system/themes (openspec/specs/upstream-freshness/spec.md).
 	     Disabled by default; the toggle label discloses the contacted host.
@@ -770,6 +803,31 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint" id="nldesign-gallery-status" role="status" aria-live="polite"></p>
 		<ul class="nldesign-gallery-list" id="nldesign-gallery-list"
 			aria-label="<?php p($l->t('Theme gallery')); ?>"></ul>
+	</div>
+
+	<!-- AI assistant: the approved mark (openspec/specs/assistant-approved-mark/spec.md).
+	     Filled and saved by js/admin-assistant-mark.js. -->
+	<div class="nldesign-assistant-mark" id="nldesign-assistant-mark" style="margin-top:2em">
+		<h3><?php p($l->t('AI assistant')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Show users which AI assistant your organisation approved. The mark appears in the footer of the assistant panel in Conduction apps.')); ?>
+			<?php p($l->t('The mark informs honest users. It is not a security control.')); ?>
+		</p>
+		<div class="nldesign-option">
+			<input type="checkbox" id="nldesign-assistant-mark-enabled" class="checkbox">
+			<label for="nldesign-assistant-mark-enabled"><?php p($l->t('Show the approved mark')); ?></label>
+		</div>
+		<p>
+			<label for="nldesign-assistant-mark-organisation"><?php p($l->t('Organisation name')); ?></label><br>
+			<input type="text" id="nldesign-assistant-mark-organisation" maxlength="120">
+		</p>
+		<p>
+			<label for="nldesign-assistant-mark-logo"><?php p($l->t('Logo address')); ?></label><br>
+			<input type="text" id="nldesign-assistant-mark-logo" maxlength="500">
+		</p>
+		<div class="nldesign-assistant-mark-preview" id="nldesign-assistant-mark-preview" aria-live="polite"></div>
+		<button type="button" id="nldesign-assistant-mark-save" class="button primary"><?php p($l->t('Save AI assistant settings')); ?></button>
+		<span id="nldesign-assistant-mark-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Theming audit log — who changed which theming setting, from what, to
@@ -844,6 +902,9 @@ if ($_['mockUi'] === true) {
 			</button>
 		</div>
 		<div id="nldesign-config-bundle-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+		<!-- Theme as code (openspec/specs/theme-as-code/spec.md): filled by
+		     js/admin-config-source.js when thematiq.config_source is set. -->
+		<div id="nldesign-config-source" class="nldesign-config-source" role="status" aria-live="polite" hidden></div>
 	</div>
 
 	<p class="nldesign-info">

@@ -39,7 +39,7 @@
 		var text = document.createElement('span')
 		text.className = 'nldesign-preview-banner-text'
 		text.textContent = t(
-			'nldesign',
+			'thematiq',
 			'Preview: {name} — this is only visible to you',
 			{ name: name },
 		)
