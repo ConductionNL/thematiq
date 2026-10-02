@@ -188,6 +188,40 @@ class GroupThemingService {
 	}//end setMapping()
 
 	/**
+	 * Replace the stored entry of one group, validating that entry only.
+	 *
+	 * The delegated choice of a subadmin goes through here rather than
+	 * through setMapping(): that validates every entry again, so one deleted
+	 * group or removed set anywhere in the mapping refused every delegated
+	 * save, and told a non-admin about groups that are not theirs. The other
+	 * entries are written back as they are stored.
+	 *
+	 * @param array<string, mixed> $entry The group's new entry.
+	 *
+	 * @return array<string, mixed> The persisted entry.
+	 *
+	 * @throws GroupThemingValidationException When the entry fails validation or the group has no entry.
+	 *
+	 * @spec openspec/specs/per-group-theming/spec.md
+	 */
+	public function replaceEntry(array $entry): array {
+		$seenGroups = [];
+		$clean = $this->validateEntry(entry: $entry, seenGroups: $seenGroups);
+
+		$mapping = $this->getMapping();
+		$index = array_search($clean['group'], array_column($mapping, 'group'), true);
+		if ($index === false) {
+			throw new GroupThemingValidationException(entry: $entry, reason: 'The group has no mapping entry.');
+		}
+
+		$mapping[$index] = $clean;
+		$this->config->setAppValue(appName: Application::APP_ID, key: self::CONFIG_KEY, value: json_encode($mapping));
+		$this->bumpGeneration();
+
+		return $clean;
+	}//end replaceEntry()
+
+	/**
 	 * Validate one raw mapping entry against the group/token-set/duplicate
 	 * rules, tracking groups already seen in this batch by reference so a
 	 * duplicate anywhere in the payload is caught.
