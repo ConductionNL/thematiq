@@ -187,7 +187,7 @@ class AssistantMarkService {
 	 *
 	 * @param mixed $section The section, or null when absent.
 	 *
-	 * @return array{errors: array<int, string>, value: array{enabled: bool, organisation: string, logo: string}|null} The errors and the values to apply.
+	 * @return array{errors: array<int, string>, value: array{enabled: bool, organisation: string, logo: string}|null} Errors and values.
 	 *
 	 * @spec openspec/specs/assistant-approved-mark/spec.md
 	 */
