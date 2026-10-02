@@ -51,20 +51,14 @@ header#header {
 	display: none !important;
 }
 
-/* Header foreground — dark text/icons on the white bar. */
-#header .header-appname,
-#header .header-left a {
+/* Header foreground: the instance name on public pages, which render
+   `<div id="nextcloud" class="header-appname">` in the header (NC 32 to 35).
+   The pre-Vue header classes this block also listed (.header-left,
+   .header-right, .menutoggle, .unified-search__button) are rendered by no
+   supported server, so they are gone (thematiq#270). */
+#header .header-appname {
 	color: var(--lasuite-content-brand, var(--lasuite-color-brand-650)) !important;
 	font-weight: 600 !important;
-}
-
-#header .header-right a,
-#header .header-right button,
-#header .menutoggle,
-#header .unified-search__button {
-	color: var(--lasuite-content-primary, var(--lasuite-color-gray-900)) !important;
-	filter: none !important;
-	opacity: 1 !important;
 }
 
 /* Nextcloud ships every header glyph WHITE, because its own header is normally
@@ -94,7 +88,6 @@ header#header {
 #header .header-end .icon-vue,
 #header .header-end svg,
 #header .header-start .button-vue__icon,
-#header .header-start .icon-vue,
 #header .header-start svg,
 #header .app-menu__waffle,
 #header .app-menu__waffle svg {
@@ -210,8 +203,7 @@ header#header {
    #d3d4e0 — that value falls between two ramp steps and consistency with the
    rest of the theme is worth more than matching one control exactly. */
 #header .unified-search-input,
-#header .unified-search-input__button,
-#header .unified-search__input {
+#header .unified-search-input__button {
 	background-color: var(
 		--lasuite--contextuals--background--surface--tertiary,
 		var(--lasuite-color-gray-025)
