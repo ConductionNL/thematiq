@@ -34,6 +34,7 @@ script('thematiq', 'lib/auditFormat');
 script('thematiq', 'lib/tokenConverter');
 script('thematiq', 'lib/brandForm');
 script('thematiq', 'admin');
+script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');
 style('thematiq', 'admin');
 // The component playground: the selector / stage / tokens instrument that
@@ -774,6 +775,31 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint" id="nldesign-gallery-status" role="status" aria-live="polite"></p>
 		<ul class="nldesign-gallery-list" id="nldesign-gallery-list"
 			aria-label="<?php p($l->t('Theme gallery')); ?>"></ul>
+	</div>
+
+	<!-- AI assistant: the approved mark (openspec/specs/assistant-approved-mark/spec.md).
+	     Filled and saved by js/admin-assistant-mark.js. -->
+	<div class="nldesign-assistant-mark" id="nldesign-assistant-mark" style="margin-top:2em">
+		<h3><?php p($l->t('AI assistant')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Show users which AI assistant your organisation approved. The mark appears in the footer of the assistant panel in Conduction apps.')); ?>
+			<?php p($l->t('The mark informs honest users. It is not a security control.')); ?>
+		</p>
+		<div class="nldesign-option">
+			<input type="checkbox" id="nldesign-assistant-mark-enabled" class="checkbox">
+			<label for="nldesign-assistant-mark-enabled"><?php p($l->t('Show the approved mark')); ?></label>
+		</div>
+		<p>
+			<label for="nldesign-assistant-mark-organisation"><?php p($l->t('Organisation name')); ?></label><br>
+			<input type="text" id="nldesign-assistant-mark-organisation" maxlength="120">
+		</p>
+		<p>
+			<label for="nldesign-assistant-mark-logo"><?php p($l->t('Logo address')); ?></label><br>
+			<input type="text" id="nldesign-assistant-mark-logo" maxlength="500">
+		</p>
+		<div class="nldesign-assistant-mark-preview" id="nldesign-assistant-mark-preview" aria-live="polite"></div>
+		<button type="button" id="nldesign-assistant-mark-save" class="button primary"><?php p($l->t('Save AI assistant settings')); ?></button>
+		<span id="nldesign-assistant-mark-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Theming audit log — who changed which theming setting, from what, to
