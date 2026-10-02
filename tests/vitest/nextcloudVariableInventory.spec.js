@@ -27,6 +27,7 @@ const json = (p) => JSON.parse(read(p))
 
 const lib = await import(join(ROOT, 'scripts/inventory/lib.mjs'))
 const docs = await import(join(ROOT, 'scripts/inventory/generate-mappings-doc.mjs'))
+const internalGen = await import(join(ROOT, 'scripts/inventory/generate-internal-tokens.mjs'))
 
 const inventory = json('scripts/mapping/nextcloud-variables.json')
 const status = json('scripts/mapping/variable-status.json')
@@ -312,6 +313,45 @@ describe('a settable variable is settable in the CSS, and only when set', () => 
 			'--sidebar-max-width',
 			'--sidebar-min-width',
 		])
+	})
+})
+
+describe('an internal variable is settable through its token, and only when set', () => {
+	const internal = Object.entries(st).filter(
+		([n, e]) => internalGen.INTERNAL_CLASSES.includes(vars[n].class) && e.status === 'settable',
+	)
+	const map = json('scripts/mapping/internal-tokens.json').tokens
+
+	it('names --nldesign-nc-* for Nextcloud and --nldesign-cn-* for the shared library', () => {
+		const wrong = internal
+			.filter(([n, e]) => e.token !== (n.startsWith('--cn-') ? '--nldesign-cn-' + n.slice(5) : '--nldesign-nc-' + n.slice(2)))
+			.map(([n]) => n)
+		expect(wrong).toEqual([])
+	})
+
+	it('gives every one a token in the map the server reads, and nothing else', () => {
+		expect(Object.keys(map).sort()).toEqual(internal.map(([, e]) => e.token).sort())
+		expect(json('scripts/mapping/internal-tokens.json')).toEqual(internalGen.build(inventory, status))
+	})
+
+	it('reaches each declared variable on the selectors that declare it', () => {
+		// A declared variable falls back to body only when none of its recorded
+		// selectors is valid CSS; none does today, so the list must stay empty.
+		const lost = Object.values(map)
+			.filter((t) => vars[t.variable].selectors?.length > 0 && t.mode !== 'selectors')
+			.map((t) => t.variable)
+		expect(lost).toEqual([])
+	})
+
+	it('ships no value for any internal token, so unset means unset', () => {
+		const declared = Object.keys(map).filter((token) => allCss.has(token))
+		expect(declared).toEqual([])
+	})
+
+	it('excludes every variable written at render time', () => {
+		const vueBound = Object.keys(vars).filter((n) => /^--v?[0-9a-f]{8}$/.test(n))
+		expect(vueBound.filter((n) => st[n].status !== 'excluded')).toEqual([])
+		expect(Object.values(map).filter((t) => vars[t.variable].class === 'runtime')).toEqual([])
 	})
 })
 
