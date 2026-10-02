@@ -99,7 +99,7 @@ default), redirect to `imagePath()` of the resolved path, and answer 404 when th
 `null`.
 
 #### Scenario: The route serves the active pack's icon
-@e2e exclude route wiring — PHPUnit IconControllerTest drives the real DesignSystemService behind the controller
+@e2e exclude route wiring, covered by PHPUnit IconControllerTest which drives the real DesignSystemService behind the controller
 - GIVEN the request's token set resolves to the `lasuite` design system (pack `dsfr`)
 - AND `img/icons/dsfr/home.svg` exists
 - WHEN `GET /apps/thematiq/icons/home` is requested

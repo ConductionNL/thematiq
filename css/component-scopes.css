@@ -43,7 +43,7 @@
 body,
 #nldesign-preview {
 	--thematiq-global-color-background-plain: var(--color-background-plain);
-	--thematiq-global-color-background-plain-text: var(--color-background-plain-text);
+	--thematiq-global-color-background-plain-text: var(--nldesign-nc-color-background-plain-text, var(--color-background-plain-text));
 	--thematiq-global-color-background-hover: var(--color-background-hover);
 	--thematiq-global-border-radius-large: var(--border-radius-large);
 	--thematiq-global-color-border: var(--color-border);
@@ -54,11 +54,11 @@ body,
 	--thematiq-global-color-primary-text: var(--color-primary-text);
 	--thematiq-global-font-face: var(--font-face);
 	--thematiq-global-color-main-text: var(--color-main-text);
-	--thematiq-global-body-container-radius: var(--body-container-radius);
+	--thematiq-global-body-container-radius: var(--nldesign-nc-body-container-radius, var(--body-container-radius));
 	--thematiq-global-border-radius-rounded: var(--border-radius-rounded);
-	--thematiq-global-color-scrollbar: var(--color-scrollbar);
+	--thematiq-global-color-scrollbar: var(--nldesign-nc-color-scrollbar, var(--color-scrollbar));
 	--thematiq-global-color-text-maxcontrast: var(--color-text-maxcontrast);
-	--thematiq-global-color-main-background: var(--color-main-background);
+	--thematiq-global-color-main-background: var(--nldesign-nc-color-main-background, var(--color-main-background));
 	--thematiq-global-font-weight-default: var(--font-weight-default);
 	--thematiq-global-color-background-dark: var(--color-background-dark);
 	--thematiq-global-color-border-dark: var(--color-border-dark);
@@ -89,15 +89,15 @@ body,
 	--thematiq-global-color-error: var(--color-error);
 	--thematiq-global-color-error-rgb: var(--color-error-rgb);
 	--thematiq-global-color-error-hover: var(--color-error-hover);
-	--thematiq-global-color-error-text: var(--color-error-text);
-	--thematiq-global-color-success-text: var(--color-success-text);
-	--thematiq-global-color-success-hover: var(--color-success-hover);
+	--thematiq-global-color-error-text: var(--nldesign-nc-color-error-text, var(--color-error-text));
+	--thematiq-global-color-success-text: var(--nldesign-nc-color-success-text, var(--color-success-text));
+	--thematiq-global-color-success-hover: var(--nldesign-nc-color-success-hover, var(--color-success-hover));
 	--thematiq-global-color-info: var(--color-info);
-	--thematiq-global-color-info-text: var(--color-info-text);
-	--thematiq-global-color-info-rgb: var(--color-info-rgb);
+	--thematiq-global-color-info-text: var(--nldesign-nc-color-info-text, var(--color-info-text));
+	--thematiq-global-color-info-rgb: var(--nldesign-nc-color-info-rgb, var(--color-info-rgb));
 	--thematiq-global-border-radius: var(--border-radius);
 	--thematiq-global-color-warning: var(--color-warning);
-	--thematiq-global-color-warning-text: var(--color-warning-text);
+	--thematiq-global-color-warning-text: var(--nldesign-nc-color-warning-text, var(--color-warning-text));
 	--thematiq-global-color-warning-rgb: var(--color-warning-rgb);
 	--thematiq-global-color-success-rgb: var(--color-success-rgb);
 	--thematiq-global-color-favorite: var(--color-favorite);
@@ -108,6 +108,41 @@ body,
 	--thematiq-global-color-text-error: var(--color-text-error);
 	--thematiq-global-color-text-warning: var(--color-text-warning);
 	--thematiq-global-color-text-success: var(--color-text-success);
+	--thematiq-global-background-invert-if-bright: var(--nldesign-nc-background-invert-if-bright, var(--background-invert-if-bright));
+	--thematiq-global-background-invert-if-dark: var(--nldesign-nc-background-invert-if-dark, var(--background-invert-if-dark));
+	--thematiq-global-body-container-margin: var(--nldesign-nc-body-container-margin, var(--body-container-margin));
+	--thematiq-global-body-height: var(--nldesign-nc-body-height, var(--body-height));
+	--thematiq-global-border-radius-container: var(--nldesign-nc-border-radius-container, var(--border-radius-container));
+	--thematiq-global-border-radius-container-large: var(--nldesign-nc-border-radius-container-large, var(--border-radius-container-large));
+	--thematiq-global-border-width-input: var(--nldesign-nc-border-width-input, var(--border-width-input));
+	--thematiq-global-border-width-input-focused: var(--nldesign-nc-border-width-input-focused, var(--border-width-input-focused));
+	--thematiq-global-breakpoint-mobile: var(--nldesign-nc-breakpoint-mobile, var(--breakpoint-mobile));
+	--thematiq-global-clickable-area-large: var(--nldesign-nc-clickable-area-large, var(--clickable-area-large));
+	--thematiq-global-clickable-area-small: var(--nldesign-nc-clickable-area-small, var(--clickable-area-small));
+	--thematiq-global-color-background-assistant: var(--nldesign-nc-color-background-assistant, var(--color-background-assistant));
+	--thematiq-global-color-border-assistant: var(--nldesign-nc-color-border-assistant, var(--color-border-assistant));
+	--thematiq-global-color-box-shadow: var(--nldesign-nc-color-box-shadow, var(--color-box-shadow));
+	--thematiq-global-color-box-shadow-rgb: var(--nldesign-nc-color-box-shadow-rgb, var(--color-box-shadow-rgb));
+	--thematiq-global-color-element-assistant: var(--nldesign-nc-color-element-assistant, var(--color-element-assistant));
+	--thematiq-global-color-element-assistant-icon: var(--nldesign-nc-color-element-assistant-icon, var(--color-element-assistant-icon));
+	--thematiq-global-color-info-hover: var(--nldesign-nc-color-info-hover, var(--color-info-hover));
+	--thematiq-global-color-loading-dark: var(--nldesign-nc-color-loading-dark, var(--color-loading-dark));
+	--thematiq-global-color-loading-light: var(--nldesign-nc-color-loading-light, var(--color-loading-light));
+	--thematiq-global-color-mark: var(--nldesign-nc-color-mark, var(--color-mark));
+	--thematiq-global-color-text-maxcontrast-default: var(--nldesign-nc-color-text-maxcontrast-default, var(--color-text-maxcontrast-default));
+	--thematiq-global-color-text-selection: var(--nldesign-nc-color-text-selection, var(--color-text-selection));
+	--thematiq-global-color-warning-hover: var(--nldesign-nc-color-warning-hover, var(--color-warning-hover));
+	--thematiq-global-default-clickable-area: var(--nldesign-nc-default-clickable-area, var(--default-clickable-area));
+	--thematiq-global-default-font-size: var(--nldesign-nc-default-font-size, var(--default-font-size));
+	--thematiq-global-default-grid-baseline: var(--nldesign-nc-default-grid-baseline, var(--default-grid-baseline));
+	--thematiq-global-default-line-height: var(--nldesign-nc-default-line-height, var(--default-line-height));
+	--thematiq-global-filter-background-blur: var(--nldesign-nc-filter-background-blur, var(--filter-background-blur));
+	--thematiq-global-font-size-small: var(--nldesign-nc-font-size-small, var(--font-size-small));
+	--thematiq-global-header-height: var(--nldesign-nc-header-height, var(--header-height));
+	--thematiq-global-header-menu-item-height: var(--nldesign-nc-header-menu-item-height, var(--header-menu-item-height));
+	--thematiq-global-navigation-width: var(--nldesign-nc-navigation-width, var(--navigation-width));
+	--thematiq-global-sidebar-max-width: var(--nldesign-nc-sidebar-max-width, var(--sidebar-max-width));
+	--thematiq-global-sidebar-min-width: var(--nldesign-nc-sidebar-min-width, var(--sidebar-min-width));
 
 	/* Component tokens that a component redirects onto its own. */
 	--thematiq-alias-nldesign-component-button-primary-action-background-color: var(--nldesign-component-button-primary-action-background-color);

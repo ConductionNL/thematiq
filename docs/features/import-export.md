@@ -75,25 +75,24 @@ The import accepts standard CSS files with a `:root {}` block:
 
 ## Editable vs. Excluded Tokens
 
-The import/export only operates on the 53 tokens shown in the token editor tabs. Some Nextcloud CSS variables are system-managed and cannot be overridden:
+Import and export cover every token the token editor shows. A few Nextcloud variables stay out of reach:
 
-- `--color-main-background` — managed by Nextcloud theming
-- `--color-main-text` — managed by Nextcloud theming
-- Other internal Nextcloud variables
+- image variables such as `--image-logo`, which carry a picture, not a design value;
+- variables Nextcloud's own JavaScript writes on every render, which a stylesheet value cannot hold.
+
+The [variable inventory](../reference/variable-inventory.md) lists each one with its reason.
 
 Attempting to import an excluded token via the API returns an HTTP 400 error. During file upload, excluded tokens are counted as skipped.
 
 ## Command Line Alternative
 
-You can also manage overrides directly via the filesystem or Nextcloud's `occ` command:
+Your overrides are kept in Nextcloud's app data. To read them on the server:
 
 ```bash
-# View current overrides file
-cat /var/www/html/custom_apps/thematiq/css/custom-overrides.css
-
-# Reset all overrides
-echo ':root {}' > /var/www/html/custom_apps/thematiq/css/custom-overrides.css
+cat "$(occ config:system:get datadirectory)/appdata_$(occ config:system:get instanceid)/thematiq/css/custom-overrides.css"
 ```
+
+Do not edit that file by hand. Nextcloud keeps a file cache for app data, and it does not see a change made outside it. Reset or replace your overrides on the admin page, or through the REST API.
 
 Or via the REST API:
 

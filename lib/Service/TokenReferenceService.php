@@ -19,6 +19,9 @@
 declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
+
 /**
  * Renders the token reference of one token set, as Markdown (the docs site and the download)
  * or as an HTML page (the in-app view): every token the set declares or inherits from the
@@ -63,11 +66,15 @@ class TokenReferenceService {
 	 * @param ShippedTokenSetAuditService $audit  The contrast audit, for the summary line.
 	 * @param CssParserService            $parser The CSS parser.
 	 * @param TokenReferenceCells         $cells  The cell formatter.
+	 * @param RuntimeFileStore|null       $store  Where uploaded sets are kept.
+	 * @param SetFileReader               $files  Reads a set's file from the release or the store.
 	 */
 	public function __construct(
 		private ShippedTokenSetAuditService $audit,
 		private CssParserService $parser,
 		private TokenReferenceCells $cells=new TokenReferenceCells(),
+		private ?RuntimeFileStore $store=null,
+		private SetFileReader $files=new SetFileReader(),
 	) {
 	}//end __construct()
 
@@ -154,8 +161,8 @@ class TokenReferenceService {
 	private function model(string $appPath, array $set): array {
 		$id = (string)$set['id'];
 		$defaults = $this->parseFile(path: $appPath . '/css/systems/nldesign/defaults.css');
-		$own = $this->parseFile(path: $appPath . '/css/tokens/' . $id . '.css');
-		$dark = $this->parseAny(path: $appPath . '/css/tokens/dark/' . $id . '.css');
+		$own = $this->parser->parseRootBlock(css: (string)$this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/' . $id . '.css'));
+		$dark = $this->parseAnyCss(css: (string)$this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/dark/' . $id . '.css'));
 		$consumers = $this->consumers(appPath: $appPath);
 
 		$names = array_unique(array_merge(array_keys($defaults), array_keys($own)));
@@ -209,19 +216,16 @@ class TokenReferenceService {
 	}//end parseFile()
 
 	/**
-	 * Every custom property in a file, whatever block holds it; the first declaration wins.
-	 * A dark variant keeps its tokens in an `@media` block and a `[data-theme-dark]` block, not in `:root`.
+	 * Every declaration in a stylesheet, first one wins, whatever block it sits in.
 	 *
-	 * @param string $path The file.
+	 * @param string $css The stylesheet.
 	 *
 	 * @return array<string, string> Name => value.
+	 *
+	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
-	private function parseAny(string $path): array {
-		if (is_file($path) === false) {
-			return [];
-		}
-
-		preg_match_all('/(--[A-Za-z0-9_-]+)\s*:\s*([^;{}]+);/', (string)file_get_contents($path), $matches, PREG_SET_ORDER);
+	private function parseAnyCss(string $css): array {
+		preg_match_all('/(--[A-Za-z0-9_-]+)\s*:\s*([^;{}]+);/', $css, $matches, PREG_SET_ORDER);
 		$result = [];
 		foreach ($matches as $match) {
 			if (isset($result[$match[1]]) === false) {
@@ -230,7 +234,7 @@ class TokenReferenceService {
 		}
 
 		return $result;
-	}//end parseAny()
+	}//end parseAnyCss()
 
 	/**
 	 * Which properties read each `--nldesign-*` token, with the registry label where there is one.
@@ -414,4 +418,5 @@ class TokenReferenceService {
 
 		return $out . '</tbody>' . "\n" . '</table>' . "\n";
 	}//end htmlTable()
+
 }//end class

@@ -285,6 +285,20 @@
 	cursor: pointer;
 }
 
+/* The same rows, reached from the keyboard: each is a tab stop (or, in the
+   tabs and the select, the arrows move between them), so each needs a ring
+   that says where the focus is (WCAG 2.4.7). */
+#nldesign-preview .nldesign-pg-option:focus-visible,
+#nldesign-preview .nldesign-pg-nav-entry:focus-visible,
+#nldesign-preview .nldesign-pg-listitem:focus-visible,
+#nldesign-preview .nldesign-pg-crumb:focus-visible,
+#nldesign-preview .nldesign-pg-tab:focus-visible,
+#nldesign-preview .nldesign-pg-rec:focus-visible,
+#nldesign-preview .nldesign-pg-table tbody tr:focus-visible {
+	outline: 2px solid var(--color-primary-element);
+	outline-offset: -2px;
+}
+
 /* A picked table row. The zebra and hover states are drawn by their own
    classes; this is the one the admin puts there. */
 #nldesign-preview .nldesign-pg-table tbody tr.is-selected {
