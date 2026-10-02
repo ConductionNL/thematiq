@@ -191,8 +191,6 @@ class CustomOverridesService {
 	 * @param string|null $tokenSet The token set id, or null for the instance's active set.
 	 *
 	 * @return string The CSS file path.
-	 *
-	 * @SuppressWarnings(PHPMD.StaticAccess) - fileFor() is static so CssInjectionService can ask without an instance
 	 */
 	private function getFilePath(?string $tokenSet): string {
 		// Built without the set lookup (a caller that constructs the service
