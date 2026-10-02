@@ -173,7 +173,7 @@ test.describe('theme preview', () => {
 		page,
 	}) => {
 		await page.goto(THEMING_URL)
-		const activeBefore = (await activeTokenSet(page))
+		const activeBefore = await activeTokenSet(page)
 
 		const start = await api(page, 'POST', `${APP}/settings/preview`, {
 			tokenSet: PREVIEW_SET,
@@ -191,7 +191,7 @@ test.describe('theme preview', () => {
 		expect(start.json.expiresAt).toBeLessThan(nowSec + 86_800)
 
 		// The instance-wide value must be untouched — this is the whole claim.
-		const activeAfter = (await activeTokenSet(page))
+		const activeAfter = await activeTokenSet(page)
 		expect(
 			activeAfter,
 			'a preview must not change the instance-wide active set',
@@ -500,11 +500,11 @@ test.describe('theme preview', () => {
 		await page.goto(THEMING_URL)
 		await api(page, 'DELETE', `${APP}/settings/preview`)
 
-		const before = (await activeTokenSet(page))
+		const before = await activeTokenSet(page)
 		const res = await api(page, 'POST', `${APP}/settings/preview/publish`)
 		expect(res.status, 'publish without a preview must be a 400').toBe(400)
 
-		const after = (await activeTokenSet(page))
+		const after = await activeTokenSet(page)
 		expect(after, 'a refused publish must not change the active set').toEqual(
 			before,
 		)
@@ -520,7 +520,7 @@ test.describe('theme preview', () => {
 		// lib/Controller/SettingsController.php rather than guessed, because this value is what the finally block
 		// restores. Asserting it is present means a shape change breaks this
 		// test loudly instead of silently restoring `undefined`.
-		const before = (await activeTokenSet(page))
+		const before = await activeTokenSet(page)
 		expect(
 			before?.tokenSet,
 			'the active token set must be readable before publishing',
@@ -543,7 +543,7 @@ test.describe('theme preview', () => {
 			expect(pub.json.tokenSet).toBe(PREVIEW_SET)
 
 			// Instance-wide now, not just for this session.
-			const after = (await activeTokenSet(page))
+			const after = await activeTokenSet(page)
 			expect(JSON.stringify(after)).toContain(PREVIEW_SET)
 
 			// ...and the caller's preview values are cleared, so no banner.
