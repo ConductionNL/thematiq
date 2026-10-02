@@ -57,32 +57,67 @@ class MetricsControllerTest extends TestCase {
 	private MetricsController $controller;
 
 	/**
+	 * The default each `getAppValue()` key was read with: key => default.
+	 *
+	 * @var array<string, mixed>
+	 */
+	private array $defaults = [];
+
+	/**
 	 * Set up the controller with mocked dependencies.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 
+		$this->controller = $this->buildController();
+	}//end setUp()
+
+	/**
+	 * Build a controller whose collaborators can be made to fail.
+	 *
+	 * @param \Exception|null       $tokenSetError  Thrown by `TokenSetService::getAvailableTokenSets()`.
+	 * @param \Exception|null       $overridesError Thrown by `CustomOverridesService::read()`.
+	 * @param LoggerInterface|null  $logger         The logger, so a test can expect warnings.
+	 *
+	 * @return MetricsController
+	 */
+	private function buildController(
+		?\Exception $tokenSetError = null,
+		?\Exception $overridesError = null,
+		?LoggerInterface $logger = null,
+	): MetricsController {
 		$config = $this->createMock(IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
+			function (string $app, string $key, $default = '') {
+				$this->defaults[$key] = $default;
+				return ($this->appConfig[$key] ?? $default);
+			}
 		);
 		$config->method('getSystemValueString')->willReturn('34.0.0');
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn([]);
+		if ($tokenSetError !== null) {
+			$tokenSetService->method('getAvailableTokenSets')->willThrowException($tokenSetError);
+		} else {
+			$tokenSetService->method('getAvailableTokenSets')->willReturn([]);
+		}
 
 		$overridesService = $this->createMock(CustomOverridesService::class);
-		$overridesService->method('read')->willReturn([]);
+		if ($overridesError !== null) {
+			$overridesService->method('read')->willThrowException($overridesError);
+		} else {
+			$overridesService->method('read')->willReturn([]);
+		}
 
-		$this->controller = new MetricsController(
+		return new MetricsController(
 			'nldesign',
 			$this->createMock(IRequest::class),
 			$config,
 			$tokenSetService,
 			$overridesService,
-			$this->createMock(LoggerInterface::class)
+			($logger ?? $this->createMock(LoggerInterface::class))
 		);
-	}//end setUp()
+	}//end buildController()
 
 	/**
 	 * `index()` MUST NOT carry `#[PublicPage]` — its presence would make the
@@ -179,4 +214,184 @@ class MetricsControllerTest extends TestCase {
 		$this->assertStringContainsString('nldesign_up 1', $body);
 		$this->assertStringContainsString('# TYPE nldesign_theming_syncs_total counter', $body);
 	}//end testAuditCounterIsAdditiveToExistingFamilies()
+
+	/**
+	 * A failing token-set service reports `nldesign_token_sets_total 0`, logs
+	 * one warning with the exception message, and leaves every other family
+	 * in place.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenarios "Token set
+	 * count error handled gracefully" and "Token set metrics fail, other
+	 * metrics succeed".
+	 */
+	public function testTokenSetFailureFallsBackToZeroAndLogs(): void {
+		$logger = $this->createMock(LoggerInterface::class);
+		$logger->expects($this->once())->method('warning')->with(
+			'Could not collect token set metrics',
+			['exception' => 'token dir unreadable']
+		);
+
+		$body = $this->buildController(
+			tokenSetError: new \RuntimeException('token dir unreadable'),
+			logger: $logger
+		)->index()->render();
+
+		$this->assertStringContainsString("\nnldesign_token_sets_total 0\n", $body);
+		$this->assertStringContainsString('nldesign_info{', $body);
+		$this->assertStringContainsString("\nnldesign_up 1\n", $body);
+		$this->assertStringContainsString("\nnldesign_custom_overrides_total 0\n", $body);
+		$this->assertStringContainsString("\nnldesign_theming_syncs_total 0\n", $body);
+	}//end testTokenSetFailureFallsBackToZeroAndLogs()
+
+	/**
+	 * The active-token-set gauge sits inside the same try block as the count,
+	 * so a failing token-set service omits it entirely.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Active token
+	 * set in error recovery".
+	 */
+	public function testTokenSetFailureOmitsTheActiveTokenSetGauge(): void {
+		$body = $this->buildController(tokenSetError: new \RuntimeException('boom'))->index()->render();
+
+		$this->assertStringNotContainsString('nldesign_active_token_set', $body);
+		$this->assertSame(1, substr_count($body, 'nldesign_token_sets_total 0'));
+	}//end testTokenSetFailureOmitsTheActiveTokenSetGauge()
+
+	/**
+	 * A failing overrides service reports `nldesign_custom_overrides_total 0`,
+	 * logs one warning, and leaves every other family in place.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenarios "Override
+	 * count error handled gracefully" and "Custom overrides fail, other
+	 * metrics succeed".
+	 */
+	public function testOverrideFailureFallsBackToZeroAndLogs(): void {
+		$logger = $this->createMock(LoggerInterface::class);
+		$logger->expects($this->once())->method('warning')->with(
+			'Could not collect override metrics',
+			['exception' => 'overrides unreadable']
+		);
+
+		$body = $this->buildController(
+			overridesError: new \RuntimeException('overrides unreadable'),
+			logger: $logger
+		)->index()->render();
+
+		$this->assertStringContainsString("\nnldesign_custom_overrides_total 0\n", $body);
+		$this->assertStringContainsString('nldesign_info{', $body);
+		$this->assertStringContainsString("\nnldesign_up 1\n", $body);
+		$this->assertStringContainsString("\nnldesign_token_sets_total 0\n", $body);
+		$this->assertStringContainsString('nldesign_active_token_set{name="rijkshuisstijl"} 1', $body);
+		$this->assertStringContainsString("\nnldesign_theming_syncs_total 0\n", $body);
+	}//end testOverrideFailureFallsBackToZeroAndLogs()
+
+	/**
+	 * Both collectors failing are handled independently: two warnings, two
+	 * zero fallbacks, and info, up and the syncs counter still present.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Multiple
+	 * failures handled independently".
+	 */
+	public function testBothFailuresAreHandledIndependently(): void {
+		$warnings = [];
+		$logger = $this->createMock(LoggerInterface::class);
+		$logger->expects($this->exactly(2))->method('warning')->willReturnCallback(
+			function (string $message) use (&$warnings): void {
+				$warnings[] = $message;
+			}
+		);
+
+		$body = $this->buildController(
+			tokenSetError: new \RuntimeException('a'),
+			overridesError: new \RuntimeException('b'),
+			logger: $logger
+		)->index()->render();
+
+		$this->assertSame(
+			['Could not collect token set metrics', 'Could not collect override metrics'],
+			$warnings
+		);
+		$this->assertStringContainsString("\nnldesign_token_sets_total 0\n", $body);
+		$this->assertStringContainsString("\nnldesign_custom_overrides_total 0\n", $body);
+		$this->assertStringContainsString('nldesign_info{', $body);
+		$this->assertStringContainsString("\nnldesign_up 1\n", $body);
+		$this->assertStringContainsString("\nnldesign_theming_syncs_total 0\n", $body);
+	}//end testBothFailuresAreHandledIndependently()
+
+	/**
+	 * With no `token_set` app value the gauge reports the default this
+	 * controller reads with, `rijkshuisstijl`.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Default
+	 * token set reported when not configured". Note: the rest of the app
+	 * defaults `token_set` to `nextcloud`; the spec records that mismatch.
+	 */
+	public function testActiveTokenSetDefaultWhenUnset(): void {
+		$body = $this->controller->index()->render();
+
+		$this->assertSame('rijkshuisstijl', $this->defaults['token_set']);
+		$this->assertStringContainsString('nldesign_active_token_set{name="rijkshuisstijl"} 1', $body);
+	}//end testActiveTokenSetDefaultWhenUnset()
+
+	/**
+	 * The syncs counter is read with default `'0'` and cast to int.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenarios "No theming
+	 * syncs performed" and "Syncs counter is read from IConfig".
+	 */
+	public function testThemingSyncsCounterDefaultsToZeroAndIsCastToInt(): void {
+		$unset = $this->controller->index()->render();
+		$this->assertSame('0', $this->defaults['theming_syncs_total']);
+		$this->assertStringContainsString("\nnldesign_theming_syncs_total 0\n", $unset);
+
+		$this->appConfig['theming_syncs_total'] = '3';
+		$set = $this->controller->index()->render();
+		$this->assertStringContainsString("\nnldesign_theming_syncs_total 3\n", $set);
+	}//end testThemingSyncsCounterDefaultsToZeroAndIsCastToInt()
+
+	/**
+	 * The four collaborators arrive as private readonly promoted constructor
+	 * parameters of the expected types.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Dependencies
+	 * injected".
+	 */
+	public function testDependenciesArePrivateReadonlyPromotedParameters(): void {
+		$expected = [
+			'config' => IConfig::class,
+			'tokenSetService' => TokenSetService::class,
+			'overridesSvc' => CustomOverridesService::class,
+			'logger' => LoggerInterface::class,
+		];
+
+		$constructor = new \ReflectionMethod(MetricsController::class, '__construct');
+		$params = [];
+		foreach ($constructor->getParameters() as $param) {
+			$params[$param->getName()] = $param;
+		}
+
+		foreach ($expected as $name => $type) {
+			$this->assertArrayHasKey($name, $params, "constructor parameter \${$name}");
+			$this->assertTrue($params[$name]->isPromoted(), "\${$name} must be promoted");
+			$this->assertSame($type, (string)$params[$name]->getType());
+
+			$property = new \ReflectionProperty(MetricsController::class, $name);
+			$this->assertTrue($property->isPrivate(), "\${$name} must be private");
+			$this->assertTrue($property->isReadOnly(), "\${$name} must be readonly");
+		}
+	}//end testDependenciesArePrivateReadonlyPromotedParameters()
+
+	/**
+	 * The controller never builds or looks up its services itself.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "No direct
+	 * service instantiation".
+	 */
+	public function testSourceHasNoDirectServiceInstantiation(): void {
+		$source = (string)file_get_contents(__DIR__ . '/../../../lib/Controller/MetricsController.php');
+
+		$this->assertDoesNotMatchRegularExpression('/\bnew\s+\\\\?[\w\\\\]*Service\b/', $source);
+		$this->assertStringNotContainsString('\\OC::$server', $source);
+		$this->assertStringNotContainsString('Server::get(', $source);
+	}//end testSourceHasNoDirectServiceInstantiation()
 }//end class
