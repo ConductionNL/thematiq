@@ -35,7 +35,7 @@ After installation, you're ready to choose your organisation's theme. Go to the 
 1. Click your **avatar** (top-right corner)
 2. Choose **Administration settings**
 3. Click **Appearance** in the left sidebar
-4. Scroll down to the **NL Design System Theme** section
+4. Scroll down to the **Thematiq** section
 
 → Continue to [Choose your theme](configuration) to pick your organisation.
 

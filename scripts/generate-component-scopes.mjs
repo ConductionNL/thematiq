@@ -71,8 +71,25 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const MAPPING_PATH = join(ROOT, 'scripts/mapping/component-tokens.json')
 const SCOPES_PATH = join(ROOT, 'css/component-scopes.css')
 const LOCK_PATH = join(ROOT, 'css/primary-lock.css')
+const THEME_SCOPES_PATH = join(ROOT, 'css/theme-scopes.css')
+const STATUS_PATH = join(ROOT, 'scripts/mapping/variable-status.json')
+const INVENTORY_PATH = join(ROOT, 'scripts/mapping/nextcloud-variables.json')
 
 const mapping = JSON.parse(readFileSync(MAPPING_PATH, 'utf-8'))
+
+/*
+ * The settable theme variables: Nextcloud's own theme vocabulary that a token
+ * set may now set without forcing a value on every theme that does not. Each
+ * has an `--nldesign-nc-*` token with NO default, so unset it resolves to the
+ * value Nextcloud declared for the active theme.
+ */
+const inventory = JSON.parse(readFileSync(INVENTORY_PATH, 'utf-8')).variables
+const status = JSON.parse(readFileSync(STATUS_PATH, 'utf-8')).variables
+const settable = Object.entries(status)
+	.filter(([name, entry]) => entry.status === 'settable' && inventory[name]?.class === 'theme')
+	.map(([name, entry]) => ({ name, token: entry.token, perScheme: entry.perScheme === true }))
+	.sort((a, b) => a.name.localeCompare(b.name))
+const settableToken = Object.fromEntries(settable.map((entry) => [entry.name, entry.token]))
 
 /**
  * The `--thematiq-global-*` name a global is captured under.
@@ -187,8 +204,18 @@ for (const component of Object.values(mapping.components)) {
 		}
 	}
 }
+// A settable variable is captured too, preferring its token: the theme
+// scopes below and every component scope then fall back to the theme's value
+// when one is set, and to Nextcloud's own when it is not.
+for (const entry of settable) {
+	if (captured.includes(entry.name) === false) {
+		captured.push(entry.name)
+	}
+}
 for (const global of captured) {
-	scopes.push('\t' + captureName(global) + ': var(' + global + ');')
+	const own = 'var(' + global + ')'
+	const value = settableToken[global] === undefined ? own : 'var(' + settableToken[global] + ', ' + own + ')'
+	scopes.push('\t' + captureName(global) + ': ' + value + ';')
 }
 
 /*
@@ -443,11 +470,55 @@ lock.push('}', '')
 
 const lockOutput = lock.join('\n')
 
+/* ------------------------------------------------------------ theme scopes */
+
+// The two dark scopes the generated dark stylesheets and the overrides writer
+// use: a user who chose the dark theme, and a user on the system default
+// whose system is dark.
+const SYSTEM_DARK = 'body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])'
+const CHOSEN_DARK = 'body[data-theme-dark], body[data-themes*=dark]'
+
+const reset = settable.filter((entry) => entry.perScheme)
+const themeScopes = [
+	...BANNER,
+	'/*',
+	' * Settable theme variables.',
+	' *',
+	" * Each variable below is redeclared on body's children from its capture,",
+	' * which is the theme\'s `--nldesign-nc-*` token when one is set and',
+	' * Nextcloud\'s own value for the active theme when it is not. Nothing in',
+	' * Nextcloud declares a theme variable between body and its children, so an',
+	' * instance that sets none of these tokens renders exactly as before.',
+	' *',
+	' * The reset block makes a light-only value stay out of dark mode for the',
+	' * variables Nextcloud gives a different dark value. `:where()` gives it no',
+	' * specificity, so a dark variant file or a dark override outranks it.',
+	' */',
+	'',
+	'body > *,',
+	'#nldesign-preview > * {',
+	...settable.map((entry) => '\t' + entry.name + ': var(' + captureName(entry.name) + ');'),
+	'}',
+	'',
+	'@media (prefers-color-scheme: dark) {',
+	'\t:where(' + SYSTEM_DARK + ') {',
+	...reset.map((entry) => '\t\t' + entry.token + ': initial;'),
+	'\t}',
+	'}',
+	'',
+	':where(' + CHOSEN_DARK + ') {',
+	...reset.map((entry) => '\t' + entry.token + ': initial;'),
+	'}',
+	'',
+]
+const themeScopesOutput = themeScopes.join('\n')
+
 /* ------------------------------------------------------------------- write */
 
 const outputs = [
 	{ path: SCOPES_PATH, label: 'css/component-scopes.css', content: scopesOutput },
 	{ path: LOCK_PATH, label: 'css/primary-lock.css', content: lockOutput },
+	{ path: THEME_SCOPES_PATH, label: 'css/theme-scopes.css', content: themeScopesOutput },
 ]
 
 if (process.argv.includes('--check') === false) {
@@ -519,5 +590,5 @@ if (stale === true) {
 	process.exit(1)
 }
 
-process.stdout.write('generate-component-scopes: OK — both committed files match.\n')
+process.stdout.write('generate-component-scopes: OK, every committed file matches.\n')
 process.exit(0)

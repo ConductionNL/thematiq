@@ -52,7 +52,7 @@ violation, not an accepted gap.
 #### Scenario: The declared environment is not exported
 
 - GIVEN a server with `thematiq.environment` set to `test`
-- WHEN an administrator exports the bundle with `occ nldesign:config:export`
+- WHEN an administrator exports the bundle with `occ thematiq:config:export`
 - THEN the bundle MUST NOT contain the environment value or any key naming it
 
 ### Requirement: All-Or-Nothing Validated Import
@@ -110,8 +110,8 @@ applying the same bundle twice MUST yield identical configuration state, files i
 ### Requirement: occ Commands For OTAP Automation
 
 The app MUST register two occ commands in `appinfo/info.xml` (`<commands>`):
-`nldesign:config:export [file]` MUST write the bundle JSON to the given file, or stdout when
-omitted, and exit 0. `nldesign:config:import <file> [--dry-run]` MUST read and validate the
+`thematiq:config:export [file]` MUST write the bundle JSON to the given file, or stdout when
+omitted, and exit 0. `thematiq:config:import <file> [--dry-run]` MUST read and validate the
 bundle; with `--dry-run` it MUST perform phase 1 only, print the per-section results, write
 nothing, and exit 0 when valid; without `--dry-run` it MUST apply and exit 0; on any hard
 validation failure (or unreadable/undecodable file) it MUST print the full error listing and
@@ -122,7 +122,7 @@ validation path.
 
 #### Scenario: Export to stdout for pipeline use
 
-- GIVEN an operator runs `occ nldesign:config:export` with no argument
+- GIVEN an operator runs `occ thematiq:config:export` with no argument
 - WHEN the command completes
 - THEN the bundle JSON MUST be written to stdout with exit code 0 (usable in OTAP pipelines via
   redirection)
@@ -130,14 +130,14 @@ validation path.
 #### Scenario: Dry-run validates without writing
 
 - GIVEN a valid bundle file and a differing live configuration
-- WHEN `occ nldesign:config:import bundle.json --dry-run` runs
+- WHEN `occ thematiq:config:import bundle.json --dry-run` runs
 - THEN it MUST print the sections that would change, exit 0, and change no configuration value
   or file
 
 #### Scenario: Validation failure exits non-zero
 
 - GIVEN a bundle file with a hard validation error
-- WHEN `occ nldesign:config:import bundle.json` runs
+- WHEN `occ thematiq:config:import bundle.json` runs
 - THEN it MUST exit non-zero, print every section error, and apply nothing (so an OTAP pipeline
   step fails loudly instead of half-configuring production)
 
@@ -190,5 +190,26 @@ The bundle MUST carry the planned switches as `config.scheduledSwitches`, with t
 @e2e exclude occ, not a page; proven by tests/Unit/Service/ConfigBundleServiceTest.php::testOverlappingPlannedSwitchesBlockTheWholeImport
 
 - GIVEN a bundle whose planned switches overlap
-- WHEN an administrator imports it with `occ nldesign:config:import`
+- WHEN an administrator imports it with `occ thematiq:config:import`
 - THEN the command MUST exit non-zero, name the overlap and write nothing
+
+### Requirement: A package import applies fonts
+
+When the import source is a branding package, the `customFonts` section MUST be applied: every font file MUST pass the existing font validator and be stored through `FontService` with its role. A `customFonts` entry without a matching file in the package MUST be a hard validation error, so no manifest entry points at a missing file. When the source is a bare bundle file, font metadata MUST stay informational, as before.
+
+#### Scenario: A package with a missing font file is refused whole
+
+@e2e exclude occ, not a page; proven by tests/Unit/Service/BrandingPackageServiceTest.php::testMissingFontFileRefusesThePackageWhole
+
+- GIVEN a package whose bundle names the font `custom-corporate` but has no `fonts/custom-corporate.woff2`
+- WHEN an operator runs `occ thematiq:config:import` on it
+- THEN the command MUST exit non-zero, name the missing file and write nothing
+
+#### Scenario: A bare bundle keeps its old font behaviour
+
+@e2e exclude upload result text; proven by tests/Unit/Service/BrandingPackageServiceTest.php::testBareBundleFileIsNotAPackage and the unchanged ConfigBundleService font note
+
+- GIVEN a bundle file uploaded on Settings > Administration > Theming with two fonts in its metadata
+- WHEN the import completes
+- THEN no font MUST be added or removed
+- AND the import result MUST state that fonts in a bare bundle are informational

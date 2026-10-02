@@ -19,7 +19,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Theming\ImageManager;
 use OCA\Thematiq\Service\BrandingCaptureService;
-use OCP\App\IAppManager;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IConfig;
 use PHPUnit\Framework\TestCase;
@@ -73,8 +73,6 @@ class BrandingCaptureServiceTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-capture-test-' . uniqid();
 		mkdir($this->appDir, 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
-		$appManager->method('getAppPath')->willReturn($this->appDir);
 
 		$config = $this->createMock(IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
@@ -88,7 +86,9 @@ class BrandingCaptureServiceTest extends TestCase {
 
 		$this->imageManager = $this->createMock(ImageManager::class);
 
-		$this->service = new BrandingCaptureService($this->imageManager, $config, $appManager);
+		// The store keeps names exactly as the app-relative paths they replace,
+		// so the files this test inspects sit where they always did.
+		$this->service = new BrandingCaptureService($this->imageManager, $config, new DirectoryRuntimeFileStore($this->appDir));
 	}//end setUp()
 
 	/**

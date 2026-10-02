@@ -27,7 +27,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * `occ nldesign:theme:get`: the active instance-wide token set and the group mappings in priority order.
+ * `occ thematiq:theme:get`: the active instance-wide token set and the group mappings in priority order.
  *
  * @spec openspec/specs/theme-cli/spec.md#requirement-operators-list-and-read-token-sets
  */
@@ -54,7 +54,7 @@ class ThemeGet extends Command {
 	 * @spec openspec/specs/theme-cli/spec.md#requirement-operators-list-and-read-token-sets
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:theme:get')
+		$this->setName(name: 'thematiq:theme:get')
 			->setDescription('Print the active token set and every group mapping, highest priority first.');
 	}//end configure()
 

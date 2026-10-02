@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 
@@ -89,8 +90,13 @@ class DesignSystemService {
 	 *
 	 * @param IAppManager $appManager The app manager for resolving paths.
 	 * @param IConfig $config Reads the appconfig icon-pack override.
+	 * @param RuntimeFileStore|null $store Where an uploaded set's dark variant is kept.
 	 */
-	public function __construct(IAppManager $appManager, IConfig $config) {
+	public function __construct(
+		IAppManager $appManager,
+		IConfig $config,
+		private readonly ?RuntimeFileStore $store = null,
+	) {
 		$this->appManager = $appManager;
 		$this->config = $config;
 	}//end __construct()
@@ -437,6 +443,12 @@ class DesignSystemService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	public function hasGeneratedDarkVariant(string $tokenSetId): bool {
+		// An uploaded set's dark variant lives in app data; a shipped set's
+		// ships with the release.
+		if ($this->store !== null && str_starts_with($tokenSetId, 'custom-') === true) {
+			return $this->store->exists(name: 'css/tokens/dark/' . $tokenSetId . '.css');
+		}
+
 		return is_file($this->getAppPath() . '/css/tokens/dark/' . $tokenSetId . '.css');
 	}//end hasGeneratedDarkVariant()
 

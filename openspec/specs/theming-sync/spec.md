@@ -10,7 +10,9 @@ enriched_date: 2026-03-20
 Defines how the NL Design app synchronizes design token values with Nextcloud's built-in theming system.
 
 @e2e exclude Backend/API theming-sync spec — scenarios cover PHP service logic, validation methods, IConfig/ImageManager API calls, and route config; the frontend dialog surface is covered by theming-sync-dialog tests. When a token set includes theming metadata (primary color, background color, logo, background image), the app can update Nextcloud's `ThemingDefaults` and `ImageManager` to ensure consistency between the NL Design CSS layer and Nextcloud's core theming (which controls background images, server branding, and email templates). This prevents a split-brain state where CSS tokens show one color scheme but Nextcloud's internal theming references another.
+
 ## Requirements
+
 ### Requirement: Theming Metadata in Token Sets
 
 The system MUST support an optional `theming` object in a token set manifest that defines values
@@ -387,6 +389,27 @@ The theming sync endpoints MUST be registered in the app's route configuration.
 #### Scenario: Both routes admin-only
 - GIVEN both theming routes
 - THEN both corresponding controller methods MUST have `@AuthorizedAdminSetting` annotations
+
+### Requirement: Translucent colours are blended before they reach Nextcloud core
+
+When a set's primary or background colour has an alpha below 1, the theming values sent to
+Nextcloud core MUST be that colour blended over the set's background colour (white when the set
+declares none), as 6-digit hex. The theming sync dialog MUST show the original value and the
+blended value, with the note "Nextcloud's own theming has no transparency. It gets this colour
+instead." The existing color validation for the sync request MUST stay as it is.
+
+#### Scenario: A translucent primary colour is synced as its blend
+- GIVEN an administrator on Settings > Administration > Theming
+- AND a custom set whose `--nldesign-color-primary` is `#15427380` and background `#ffffff`
+- WHEN the administrator applies the set and confirms the theming sync
+- THEN Nextcloud core theming MUST receive the primary colour `#8aa0b9`
+- AND the dialog MUST have shown `#15427380` next to `#8aa0b9` with the note
+
+#### Scenario: An opaque colour is synced unchanged
+@e2e exclude Blend arithmetic, covered by PHPUnit on CustomTokenSetService
+- GIVEN a set whose primary colour is `#154273`
+- WHEN its theming values are derived
+- THEN `primary_color` MUST be `#154273`
 
 ## Current Implementation Status
 
