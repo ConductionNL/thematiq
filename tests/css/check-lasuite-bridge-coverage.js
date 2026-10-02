@@ -34,6 +34,9 @@ const path = require('path')
 const ROOT = path.resolve(__dirname, '..', '..')
 const AUDITED_FILE = path.join(ROOT, 'css', 'systems', 'nldesign', 'overrides.css')
 const BRIDGE_FILE = path.join(ROOT, 'css', 'systems', 'lasuite', 'bridge.css')
+const STATUS_FILE = path.join(ROOT, 'scripts', 'mapping', 'variable-status.json')
+const THEME_SCOPES_FILE = path.join(ROOT, 'css', 'theme-scopes.css')
+const DESIGN_SYSTEMS_FILE = path.join(ROOT, 'design-systems.json')
 
 // REQ-CSS-007: Nextcloud derives dark-mode calculations from these — the
 // bridge must never actively set them, only ever leave them as a reasoned
@@ -111,9 +114,27 @@ function main() {
 		}
 	}
 
+	// theme-vocabulary-complete: the settable theme variables reach lasuite
+	// through css/theme-scopes.css, which CssInjectionService loads for every
+	// design system. Each one must be redeclared there. A bridge mapping of one
+	// (lasuite maps the three hover colours) stays valid: it is declared on
+	// body, so the capture reads it as the value to fall back to.
+	const settable = Object.entries(JSON.parse(readFile(STATUS_FILE)).variables)
+		.filter(([, entry]) => entry.status === 'settable')
+		.map(([name]) => name)
+	const themeScopes = readFile(THEME_SCOPES_FILE)
+	const notScoped = settable.filter((name) => new RegExp('^\\t' + name + ': var\\(--thematiq-global-', 'm').test(themeScopes) === false)
+	const lasuiteLoaded = JSON.parse(readFile(DESIGN_SYSTEMS_FILE)).some((system) => system.id === 'lasuite')
+	if (notScoped.length > 0 || lasuiteLoaded === false) {
+		failed = true
+		console.error(`[lasuite-bridge-coverage] FAIL: settable theme variables not redeclared in theme-scopes.css: ${notScoped.join(', ') || 'none'}`)
+	}
+
 	if (failed) {
 		process.exit(1)
 	}
+
+	console.log(`[lasuite-bridge-coverage] OK: ${settable.length} settable theme variables reach lasuite through css/theme-scopes.css.`)
 
 	console.log(
 		`[lasuite-bridge-coverage] OK — all ${audited.all.size} audited --color-* variables are accounted for in bridge.css (${bridge.mapped.size} mapped, ${bridge.commented.size} reasoned comments), and no dark-mode-compat variable is actively overridden.`,

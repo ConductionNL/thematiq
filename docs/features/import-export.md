@@ -75,11 +75,12 @@ The import accepts standard CSS files with a `:root {}` block:
 
 ## Editable vs. Excluded Tokens
 
-The import/export only operates on the 53 tokens shown in the token editor tabs. Some Nextcloud CSS variables are system-managed and cannot be overridden:
+The import/export only operates on the tokens the token editor shows, which are the tokens in the token registry. Since Nextcloud 34 that covers every theme variable Nextcloud declares. These stay out:
 
-- `--color-main-background` — managed by Nextcloud theming
-- `--color-main-text` — managed by Nextcloud theming
-- Other internal Nextcloud variables
+- icon variables, such as `--icon-download-dark`, which hold image URLs
+- variables Nextcloud's own JavaScript writes while the page renders
+
+A theme variable that Nextcloud calculates per theme, such as `--color-main-background` or `--color-mark`, is stored as its `--nldesign-*` token. An exported file therefore holds `--nldesign-color-mark`, and importing it sets `--color-mark` again. A value you give it applies to the light theme only; dark keeps Nextcloud's value unless the set's dark file gives one.
 
 Attempting to import an excluded token via the API returns an HTTP 400 error. During file upload, excluded tokens are counted as skipped.
 

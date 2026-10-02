@@ -29,7 +29,7 @@ import {
 	checkUnknownNames,
 	coverage,
 } from '../../scripts/inventory/guard.mjs'
-import { firstDifferentRow, renderMappings, MAPPINGS } from '../../scripts/inventory/generate-mappings.mjs'
+import { firstDifferentRow, renderMappings, renderSettable, MAPPINGS, SETTABLE } from '../../scripts/inventory/generate-mappings.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8')
@@ -165,6 +165,10 @@ describe('the guard on the committed files', () => {
 
 	it('mappings.md is generated from the inventory', () => {
 		expect(firstDifferentRow(renderMappings(inventory, status), fs.readFileSync(MAPPINGS, 'utf8'))).toBeNull()
+	})
+
+	it('the settable theme variables page is generated from the status file', () => {
+		expect(firstDifferentRow(renderSettable(inventory, status), fs.readFileSync(SETTABLE, 'utf8'))).toBeNull()
 	})
 
 	it('mappings.md shows class, status, token and owner for --color-primary-element', () => {
