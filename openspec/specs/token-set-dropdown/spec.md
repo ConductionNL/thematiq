@@ -7,8 +7,6 @@ status: done
 ## Purpose
 Replace the radio button list for token set selection with a searchable dropdown (`<select>`) that scales to 400+ entries, improving usability as the number of available token sets grows.
 
-@e2e exclude Dropdown-UI spec covered by admin-settings tests — all scenarios (dropdown render, alphabetical sort, selection save, preview update) are exercised in admin-settings spec-coverage tests.
-
 ## Requirements
 
 ### Requirement: Dropdown Token Set Selector
@@ -29,7 +27,7 @@ The admin settings page MUST use a `<select>` dropdown instead of radio buttons 
 
 #### Scenario: Token set selection triggers save
 - GIVEN the admin selects a different token set from the dropdown
-- WHEN the selection changes
+- WHEN the selection changes, and the admin confirms the apply dialog when one is shown
 - THEN the token set SHALL be saved via `POST /settings/tokenset`
 - AND a success or error notification SHALL be displayed
 
