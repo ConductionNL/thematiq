@@ -1,6 +1,6 @@
 # Spec coverage report: thematiq
 
-Measured: 2 October 2026, on `development` at `0d36da67`.
+Measured: 2 October 2026, on `development` at `a9c6db53`.
 This replaces the report generated on 24 May 2026 for `nldesign`, before the retrofit annotation
 landed. Every number in that report is obsolete.
 
@@ -10,8 +10,8 @@ landed. Every number in that report is obsolete.
 |---|---|---|
 | PHP files in `lib/` | 99 | `find lib -name '*.php'` |
 | Files carrying at least one `@spec` | 99 | each file grepped for `@spec` |
-| Public and protected methods in `lib/` | 421 | `grep -E '^\s*(public\|protected)( static)? function'` |
-| `@spec` tags in `lib/` | 874 | `grep -rh '@spec openspec' lib` |
+| Public and protected methods in `lib/` | 422 | `grep -E '^\s*(public\|protected)( static)? function'` |
+| `@spec` tags in `lib/` | 879 | `grep -rh '@spec openspec' lib` |
 | `@spec exclude` reasons in `lib/` | 16 | `grep -rh '@spec exclude' lib` |
 | Methods without a tag (gate-16) | **0** | `check_spec_coverage.py` with `HYDRA_GATE_BASE_REF` set to an empty-tree commit, so every line of `lib/` and `src/` is in scope |
 
@@ -27,9 +27,12 @@ landed. Every number in that report is obsolete.
 
 ## Stale anchors fixed
 
-267 `@spec` tags named `openspec/changes/<change>/tasks.md` for six changes that have since moved to
-`openspec/changes/archive/`. Gate-46 resolves an archived change by itself, so none of them was red,
-but a reader following the path found nothing. They now name the archive path.
+311 `@spec` tags named `openspec/changes/<change>/...` for fourteen changes that have since moved to
+`openspec/changes/archive/`: 139 in `lib/Service` (sibling PR) and 172 in the rest of `lib/` and
+`tests/` (this PR). Gate-46 resolves an archived change by itself, so none of them was red, but a
+reader following the path found nothing. They now name the archive path. One tag still names
+`openspec/specs/custom-css-freeform/spec.md`, which exists once the open `custom-css-freeform`
+change is archived.
 
 ## Re-measure
 
