@@ -190,6 +190,9 @@ class OverridesController extends Controller {
 				'darkOverrides' => $this->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
 				'darkDerived' => $this->overridesService->derivedDark(tokenSet: $this->requestedTokenSet()),
 				'registry' => $registry,
+				// Listed per component group, below the tabs; see TokenRegistry::getInternalTokens().
+				'internal' => TokenRegistry::getInternalTokens(),
+				'count' => TokenRegistry::countEditable(),
 				'tabs' => $tabs,
 			]
 		);

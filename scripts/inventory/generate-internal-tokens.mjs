@@ -86,6 +86,38 @@ export function isSelector(text) {
 	}
 }
 
+/**
+ * The editor group a token is listed under: a named component where the
+ * variables carry one, else the app they come from, else "other". Headings
+ * are translated in js/admin.js, keyed by these ids.
+ */
+export const GROUPS = {
+	'date-picker': 'Date picker',
+	select: 'Select box',
+	'media-player': 'Media player',
+	'code-highlighting': 'Code highlighting',
+	conduction: 'Conduction apps',
+	'pdf-viewer': 'PDF viewer',
+	'text-editor': 'Text editor',
+	files: 'Files',
+	photos: 'Photos',
+	teams: 'Teams',
+	components: 'Nextcloud components',
+	other: 'Other variables',
+}
+const BY_OWNER = { dp: 'date-picker', vs: 'select', plyr: 'media-player', hljs: 'code-highlighting', photos: 'photos' }
+const BY_APP = { files_pdfviewer: 'pdf-viewer', text: 'text-editor', files: 'files', circles: 'teams' }
+const COMPONENTS = ['app', 'assistant', 'auto', 'avatar', 'checkbox', 'chip', 'contenteditable', 'counter', 'figure', 'form', 'input', 'list', 'nc', 'note', 'open', 'radio', 'secondary', 'size', 'user']
+const appOf = (source) => source.replace(/^dist\/([a-z_]+)-.*/, '$1').replace(/^apps\/([a-z_]+).*/, '$1')
+
+export function groupOf(entry) {
+	if (entry.class === 'conduction') return 'conduction'
+	if (BY_OWNER[entry.owner]) return BY_OWNER[entry.owner]
+	const apps = [...new Set((entry.sources ?? []).map(appOf))]
+	if (apps.length === 1 && BY_APP[apps[0]]) return BY_APP[apps[0]]
+	return COMPONENTS.includes(entry.owner) ? 'components' : 'other'
+}
+
 export function build(inventory, status) {
 	const tokens = {}
 	for (const [name, entry] of Object.entries(inventory.variables)) {
@@ -97,6 +129,7 @@ export function build(inventory, status) {
 			variable: name,
 			class: entry.class,
 			owner: entry.owner,
+			group: groupOf(entry),
 			type: typeOf(name, values),
 			mode: selectors.length > 0 ? 'selectors' : 'body',
 			...(selectors.length > 0 ? { selectors } : {}),
@@ -124,7 +157,7 @@ const code = (v, n) => {
 
 export function renderDoc(map) {
 	const byOwner = {}
-	for (const [token, t] of Object.entries(map.tokens)) (byOwner[t.class === 'conduction' ? 'cn' : t.owner] ||= []).push([token, t])
+	for (const [token, t] of Object.entries(map.tokens)) (byOwner[t.group] ||= []).push([token, t])
 	const lines = ['---', 'sidebar_position: 2.5', '---', '']
 	lines.push('# Component variables', '')
 	lines.push(
@@ -141,8 +174,8 @@ export function renderDoc(map) {
 	lines.push('')
 	lines.push('An internal token applies in light and dark alike. Give it a value in the dark file to differ in dark.', '')
 	lines.push(`${Object.keys(map.tokens).length} tokens in ${Object.keys(byOwner).length} groups.`, '')
-	for (const owner of Object.keys(byOwner).sort()) {
-		lines.push('## `' + owner + '`', '')
+	for (const owner of Object.keys(GROUPS).filter((g) => byOwner[g])) {
+		lines.push('## ' + GROUPS[owner], '')
 		lines.push('| Token | Variable | Reaches | Nextcloud\'s value |', '|---|---|---|---|')
 		for (const [token, t] of byOwner[owner]) {
 			lines.push(`| ${code(token)} | ${code(t.variable)} | ${t.mode === 'body' ? 'every reader' : 'its component'} | ${code(t.stock, 60)} |`)

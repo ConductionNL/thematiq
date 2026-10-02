@@ -104,9 +104,15 @@ class OverridesCssBuilder {
 
 		$css = self::CSS_HEADER . PHP_EOL . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
 
-		$derived = $this->darkValues(tokens: $tokens);
+		// The administrator's own dark value replaces a derived one, and is the
+		// only dark value of a settable or internal colour, which derive none.
+		$ownDark = array_filter(
+			$darkTokens,
+			fn (string $name): bool => isset($tokens[$name]) === true && $this->values->hasDarkValueFor(name: $name) === true,
+			ARRAY_FILTER_USE_KEY
+		);
 		$darkLines = array_merge(
-			$this->declarationLines(tokens: array_merge($derived, array_intersect_key($darkTokens, $derived)), important: true),
+			$this->declarationLines(tokens: array_merge($this->darkValues(tokens: $tokens), $ownDark), important: true),
 			$own->darkLines()
 		);
 		if ($darkLines === []) {
