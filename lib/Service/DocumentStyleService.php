@@ -96,6 +96,10 @@ class DocumentStyleService {
 		$tokens = $this->preview->getResolvedTokens(tokenSetId: $setId);
 		$footer = $this->emailTheming->getFooterConfig();
 		$colours = $this->colours(tokens: $tokens);
+		$lines = array_filter(
+			[(string)($footer['orgName'] ?? ''), $this->assets->getFooterLine()],
+			static fn (string $line): bool => $line !== ''
+		);
 
 		return [
 			'tokenSet' => ['id' => $setId, 'name' => $this->setName(setId: $setId)],
@@ -108,7 +112,7 @@ class DocumentStyleService {
 				'body' => $this->font(role: 'body', fallback: ($tokens['--nldesign-font-family'] ?? null), tokens: $tokens),
 			],
 			'footer' => [
-				'lines' => array_values(array_filter([(string)($footer['orgName'] ?? ''), $this->assets->getFooterLine()], 'strlen')),
+				'lines' => array_values($lines),
 				'accessibilityUrl' => (string)($footer['accessibilityUrl'] ?? ''),
 				'privacyUrl' => (string)($footer['privacyUrl'] ?? ''),
 			],
