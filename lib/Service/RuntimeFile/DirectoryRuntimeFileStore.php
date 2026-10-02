@@ -38,11 +38,13 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	 * Constructor.
 	 *
 	 * @param string $root The directory every name is stored under.
+	 * @param RuntimeFileNames $names The name policy.
 	 *
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function __construct(
 		private readonly string $root,
+		private readonly RuntimeFileNames $names=new RuntimeFileNames(),
 	) {
 	}//end __construct()
 
@@ -56,7 +58,7 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function read(string $name): ?string {
-		RuntimeFileNames::assertAllowed(name: $name);
+		$this->names->assertAllowed(name: $name);
 		$path = $this->path(name: $name);
 		if (is_file($path) === false) {
 			return null;
@@ -83,7 +85,7 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function write(string $name, string $content): void {
-		RuntimeFileNames::assertAllowed(name: $name);
+		$this->names->assertAllowed(name: $name);
 		$path = $this->path(name: $name);
 		$directory = dirname($path);
 		if (is_dir($directory) === false && mkdir($directory, 0775, true) === false && is_dir($directory) === false) {
@@ -105,7 +107,7 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function exists(string $name): bool {
-		RuntimeFileNames::assertAllowed(name: $name);
+		$this->names->assertAllowed(name: $name);
 
 		return is_file($this->path(name: $name));
 	}//end exists()
@@ -120,7 +122,7 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function delete(string $name): void {
-		RuntimeFileNames::assertAllowed(name: $name);
+		$this->names->assertAllowed(name: $name);
 		$path = $this->path(name: $name);
 		if (is_file($path) === true) {
 			unlink($path);
@@ -146,7 +148,7 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 
 		foreach ($paths as $path) {
 			$name = $directory . '/' . basename($path);
-			if (is_file($path) === true && RuntimeFileNames::isAllowed(name: $name) === true) {
+			if (is_file($path) === true && $this->names->isAllowed(name: $name) === true) {
 				$names[] = $name;
 			}
 		}

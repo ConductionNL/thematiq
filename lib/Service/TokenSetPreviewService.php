@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCP\App\IAppManager;
 
 /**
@@ -68,10 +69,12 @@ class TokenSetPreviewService {
 	 *
 	 * @param IAppManager $appManager The app manager.
 	 * @param RuntimeFileStore|null $store Where uploaded sets are kept.
+	 * @param SetFileReader $files Reads a set's file from the release or the store.
 	 */
 	public function __construct(
 		IAppManager $appManager,
 		private readonly ?RuntimeFileStore $store = null,
+		private readonly SetFileReader $files = new SetFileReader(),
 	) {
 		$this->appManager = $appManager;
 	}//end __construct()
@@ -124,7 +127,7 @@ class TokenSetPreviewService {
 	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
 	 */
 	public function getDeclaredTokens(string $tokenSetId): array {
-		$css = $this->setCss(appPath: $this->appManager->getAppPath('thematiq'), name: 'css/tokens/' . $tokenSetId . '.css');
+		$css = $this->files->read(store: $this->store, appPath: $this->appManager->getAppPath('thematiq'), name: 'css/tokens/' . $tokenSetId . '.css');
 		if ($css === null) {
 			return [];
 		}
@@ -203,7 +206,7 @@ class TokenSetPreviewService {
 		);
 
 		// Step 2: parse tokens/{id}.css → overrides.
-		$tokenSetCss = $this->setCss(appPath: $appPath, name: 'css/tokens/' . $tokenSetId . '.css');
+		$tokenSetCss = $this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/' . $tokenSetId . '.css');
 		if ($tokenSetCss !== null) {
 			$nldesignVars = array_merge($nldesignVars, $this->parseCssVarsFrom(content: $tokenSetCss));
 		}
@@ -350,31 +353,4 @@ class TokenSetPreviewService {
 		return $ref;
 	}//end resolveVarReference()
 
-	/**
-	 * A set file's CSS: an uploaded (`custom-`) set's from the store, a shipped one's from the release.
-	 *
-	 * @param string $appPath The app directory.
-	 * @param string $name    The app-relative name, such as `css/tokens/utrecht.css`.
-	 *
-	 * @return string|null The CSS, or null when the file does not exist.
-	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
-	 */
-	private function setCss(string $appPath, string $name): ?string {
-		if ($this->store !== null && preg_match('#^css/tokens/(?:dark/)?custom-[a-z0-9-]+\.css$#', $name) === 1) {
-			return $this->store->read(name: $name);
-		}
-
-		$path = $appPath . '/' . $name;
-		if (is_file($path) === false) {
-			return null;
-		}
-
-		$css = file_get_contents($path);
-		if ($css === false) {
-			return null;
-		}
-
-		return $css;
-	}//end setCss()
 }//end class

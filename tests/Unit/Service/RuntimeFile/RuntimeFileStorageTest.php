@@ -95,6 +95,7 @@ class RuntimeFileStorageTest extends TestCase {
 			'its dark variant' => ['css/tokens/dark/gemeente-voorbeeld.css', true],
 			'captured logo' => ['img/logos/utrecht-captured-logoheader.png', true],
 			'captured background' => ['img/backgrounds/utrecht-captured-background.jpg', true],
+			'captured favicon' => ['img/logos/utrecht-captured-favicon.ico', true],
 			'traversal' => ['css/tokens/../../config/config.php', false],
 			'absolute' => ['/etc/passwd', false],
 			'other directory' => ['lib/Service/Foo.php', false],
@@ -109,7 +110,7 @@ class RuntimeFileStorageTest extends TestCase {
 	 * @dataProvider names
 	 */
 	public function testOnlyRuntimeNamesAreAllowed(string $name, bool $allowed): void {
-		$this->assertSame($allowed, RuntimeFileNames::isAllowed($name), $name);
+		$this->assertSame($allowed, (new RuntimeFileNames())->isAllowed($name), $name);
 	}//end testOnlyRuntimeNamesAreAllowed()
 
 	public function testTheStoreRefusesANameOutsideTheSet(): void {

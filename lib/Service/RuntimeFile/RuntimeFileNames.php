@@ -32,6 +32,8 @@ use InvalidArgumentException;
  * in those paths keep working, but it is stored in app data instead.
  *
  * Every name the store accepts and the public route serves passes {@see self::isAllowed()}.
+ * It is an ordinary instance rather than static calls so every user can be
+ * given one; it has no state.
  * That one check is why a request can never name a file outside the set:
  * there is no `..`, no absolute path and no other directory it will match.
  *
@@ -54,7 +56,7 @@ final class RuntimeFileNames {
 		'#^css/custom-css\.css$#',
 		'#^css/tokens/' . self::ID . '\.css$#',
 		'#^css/tokens/dark/' . self::ID . '\.css$#',
-		'#^img/(logos|backgrounds)/' . self::ID . '\.(svg|png|jpg|gif|webp)$#',
+		'#^img/(logos|backgrounds)/' . self::ID . '\.(svg|png|jpg|gif|webp|ico)$#',
 	];
 
 	/**
@@ -69,6 +71,7 @@ final class RuntimeFileNames {
 		'jpg' => 'image/jpeg',
 		'gif' => 'image/gif',
 		'webp' => 'image/webp',
+		'ico' => 'image/x-icon',
 	];
 
 	/**
@@ -80,7 +83,7 @@ final class RuntimeFileNames {
 	 *
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
-	public static function isAllowed(string $name): bool {
+	public function isAllowed(string $name): bool {
 		foreach (self::PATTERNS as $pattern) {
 			if (preg_match($pattern, $name) === 1) {
 				return true;
@@ -101,8 +104,8 @@ final class RuntimeFileNames {
 	 *
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
-	public static function assertAllowed(string $name): void {
-		if (self::isAllowed(name: $name) === false) {
+	public function assertAllowed(string $name): void {
+		if ($this->isAllowed(name: $name) === false) {
 			throw new InvalidArgumentException('Not a runtime file name: ' . $name);
 		}
 	}//end assertAllowed()
@@ -116,7 +119,7 @@ final class RuntimeFileNames {
 	 *
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
-	public static function contentType(string $name): string {
+	public function contentType(string $name): string {
 		$extension = strtolower((string)pathinfo($name, PATHINFO_EXTENSION));
 
 		return (self::CONTENT_TYPES[$extension] ?? 'application/octet-stream');
@@ -131,7 +134,7 @@ final class RuntimeFileNames {
 	 *
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
-	public static function split(string $name): array {
+	public function split(string $name): array {
 		$slash = strrpos($name, '/');
 
 		return [substr($name, 0, (int)$slash), substr($name, ((int)$slash + 1))];

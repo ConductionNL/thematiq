@@ -44,11 +44,13 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 * Constructor.
 	 *
 	 * @param IAppData $appData Nextcloud's app data for thematiq.
+	 * @param RuntimeFileNames $names The name policy.
 	 *
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function __construct(
 		private readonly IAppData $appData,
+		private readonly RuntimeFileNames $names=new RuntimeFileNames(),
 	) {
 	}//end __construct()
 
@@ -62,8 +64,8 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function read(string $name): ?string {
-		RuntimeFileNames::assertAllowed(name: $name);
-		[$directory, $file] = RuntimeFileNames::split(name: $name);
+		$this->names->assertAllowed(name: $name);
+		[$directory, $file] = $this->names->split(name: $name);
 		try {
 			return $this->appData->getFolder($this->folderName(directory: $directory))->getFile($file)->getContent();
 		} catch (NotFoundException|NotPermittedException $e) {
@@ -84,8 +86,8 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function write(string $name, string $content): void {
-		RuntimeFileNames::assertAllowed(name: $name);
-		[$directory, $file] = RuntimeFileNames::split(name: $name);
+		$this->names->assertAllowed(name: $name);
+		[$directory, $file] = $this->names->split(name: $name);
 		try {
 			$folder = $this->folder(directory: $directory);
 			if ($folder->fileExists($file) === true) {
@@ -109,8 +111,8 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function exists(string $name): bool {
-		RuntimeFileNames::assertAllowed(name: $name);
-		[$directory, $file] = RuntimeFileNames::split(name: $name);
+		$this->names->assertAllowed(name: $name);
+		[$directory, $file] = $this->names->split(name: $name);
 		try {
 			return $this->appData->getFolder($this->folderName(directory: $directory))->fileExists($file);
 		} catch (NotFoundException $e) {
@@ -128,8 +130,8 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function delete(string $name): void {
-		RuntimeFileNames::assertAllowed(name: $name);
-		[$directory, $file] = RuntimeFileNames::split(name: $name);
+		$this->names->assertAllowed(name: $name);
+		[$directory, $file] = $this->names->split(name: $name);
 		try {
 			$this->appData->getFolder($this->folderName(directory: $directory))->getFile($file)->delete();
 		} catch (NotFoundException $e) {
@@ -157,7 +159,7 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 		$names = [];
 		foreach ($files as $file) {
 			$name = $directory . '/' . $file->getName();
-			if (RuntimeFileNames::isAllowed(name: $name) === true) {
+			if ($this->names->isAllowed(name: $name) === true) {
 				$names[] = $name;
 			}
 		}
@@ -177,8 +179,8 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function revision(string $name): string {
-		RuntimeFileNames::assertAllowed(name: $name);
-		[$directory, $file] = RuntimeFileNames::split(name: $name);
+		$this->names->assertAllowed(name: $name);
+		[$directory, $file] = $this->names->split(name: $name);
 		try {
 			$simple = $this->appData->getFolder($this->folderName(directory: $directory))->getFile($file);
 		} catch (NotFoundException $e) {

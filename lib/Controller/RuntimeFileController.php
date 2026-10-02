@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
-use OCA\Thematiq\Service\RuntimeFile\RuntimeFileNames;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
@@ -58,7 +57,7 @@ class RuntimeFileController extends Controller {
 		IRequest $request,
 		private readonly RuntimeFileLocator $files,
 	) {
-		parent::__construct($appName, $request);
+		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
 
 	/**
@@ -67,7 +66,7 @@ class RuntimeFileController extends Controller {
 	 * Public on purpose, like the font route: the login page and public share
 	 * pages are themed too, and a stylesheet `<link>` carries no session or
 	 * CSRF token. What keeps it safe is that the name must pass
-	 * {@see RuntimeFileNames::isAllowed()}, a closed set of patterns with no
+	 * {@see \OCA\Thematiq\Service\RuntimeFile\RuntimeFileNames::isAllowed()}, a closed set of patterns with no
 	 * `..`, no absolute path and no other directory, and that only the runtime
 	 * store is read: a shipped file is never served from here.
 	 *
@@ -84,7 +83,7 @@ class RuntimeFileController extends Controller {
 	#[NoCSRFRequired]
 	#[AnonRateLimit(limit: 480, period: 60)]
 	public function serve(string $name): Response {
-		if (RuntimeFileNames::isAllowed(name: $name) === false || $this->files->isProtected(name: $name) === true) {
+		if ($this->files->inStore(name: $name) === false) {
 			return new Response(Http::STATUS_NOT_FOUND);
 		}
 
@@ -93,7 +92,7 @@ class RuntimeFileController extends Controller {
 			return new Response(Http::STATUS_NOT_FOUND);
 		}
 
-		$response = new DataDisplayResponse($content, Http::STATUS_OK, ['Content-Type' => RuntimeFileNames::contentType(name: $name)]);
+		$response = new DataDisplayResponse($content, Http::STATUS_OK, ['Content-Type' => $this->files->contentType(name: $name)]);
 		$response->addHeader('Cache-Control', 'public, max-age=31536000, immutable');
 		$response->addHeader('X-Content-Type-Options', 'nosniff');
 		$response->setETag($this->files->store()->revision(name: $name));

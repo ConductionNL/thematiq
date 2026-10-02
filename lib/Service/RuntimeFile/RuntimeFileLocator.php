@@ -54,6 +54,7 @@ class RuntimeFileLocator {
 	 * @param RuntimeFileStore $store        Where runtime files live.
 	 * @param IURLGenerator    $urlGenerator Builds file and route URLs.
 	 * @param ITempManager     $tempManager  Hands out temporary files for consumers that need a path.
+	 * @param RuntimeFileNames $names        The name policy.
 	 *
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
@@ -62,6 +63,7 @@ class RuntimeFileLocator {
 		private readonly RuntimeFileStore $store,
 		private readonly IURLGenerator $urlGenerator,
 		private readonly ITempManager $tempManager,
+		private readonly RuntimeFileNames $names=new RuntimeFileNames(),
 	) {
 	}//end __construct()
 
@@ -147,14 +149,16 @@ class RuntimeFileLocator {
 	}//end shippedIds()
 
 	/**
-	 * Whether the store holds a name, for names the store may hold at all.
+	 * Whether a name is a runtime file the store holds, and not a protected shipped one.
 	 *
 	 * @param string $name An app-relative name.
 	 *
-	 * @return bool True when it does.
+	 * @return bool True when the store holds it and it may be served from there.
+	 *
+	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
-	private function inStore(string $name): bool {
-		return RuntimeFileNames::isAllowed(name: $name) === true
+	public function inStore(string $name): bool {
+		return $this->names->isAllowed(name: $name) === true
 			&& $this->isProtected(name: $name) === false
 			&& $this->store->exists(name: $name) === true;
 	}//end inStore()
@@ -315,6 +319,19 @@ class RuntimeFileLocator {
 
 		return $path;
 	}//end localPath()
+
+	/**
+	 * The content type a runtime file is served with.
+	 *
+	 * @param string $name An allowed name.
+	 *
+	 * @return string The MIME type.
+	 *
+	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 */
+	public function contentType(string $name): string {
+		return $this->names->contentType(name: $name);
+	}//end contentType()
 
 	/**
 	 * The app directory.

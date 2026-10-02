@@ -981,8 +981,7 @@ class DarkPaletteService {
 		}
 
 		$sourceHash = 'sha256:' . hash(algo: 'sha256', data: $tokenCss);
-		$existing = $this->store->read(name: $darkName);
-		if ($force === false && $existing !== null && $this->isFresh(darkCss: $existing, sourceHash: $sourceHash) === true) {
+		if ($force === false && $this->isFresh(darkCss: $this->store->read(name: $darkName), sourceHash: $sourceHash) === true) {
 			return ['written' => false, 'skipped' => true, 'reason' => 'fresh', 'warnings' => []];
 		}
 
@@ -1056,14 +1055,18 @@ class DarkPaletteService {
 	 * still on disk were the ones the fix was written to replace — a silent
 	 * no-op that reads exactly like a successful run.
 	 *
-	 * @param string $darkCss    The existing dark stylesheet.
+	 * @param string|null $darkCss The existing dark stylesheet, or null when there is none.
 	 * @param string $sourceHash The current `sha256:...` source hash.
 	 *
 	 * @return bool True when the file is fresh.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function isFresh(string $darkCss, string $sourceHash): bool {
+	private function isFresh(?string $darkCss, string $sourceHash): bool {
+		if ($darkCss === null) {
+			return false;
+		}
+
 		$header = substr($darkCss, 0, 512);
 		if (str_contains($header, 'DarkPaletteService v' . self::GENERATOR_VERSION . ' ') === false) {
 			return false;

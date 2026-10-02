@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 
 /**
  * Renders the token reference of one token set, as Markdown (the docs site and the download)
@@ -66,12 +67,14 @@ class TokenReferenceService {
 	 * @param CssParserService            $parser The CSS parser.
 	 * @param TokenReferenceCells         $cells  The cell formatter.
 	 * @param RuntimeFileStore|null       $store  Where uploaded sets are kept.
+	 * @param SetFileReader               $files  Reads a set's file from the release or the store.
 	 */
 	public function __construct(
 		private ShippedTokenSetAuditService $audit,
 		private CssParserService $parser,
 		private TokenReferenceCells $cells=new TokenReferenceCells(),
 		private ?RuntimeFileStore $store=null,
+		private SetFileReader $files=new SetFileReader(),
 	) {
 	}//end __construct()
 
@@ -158,8 +161,8 @@ class TokenReferenceService {
 	private function model(string $appPath, array $set): array {
 		$id = (string)$set['id'];
 		$defaults = $this->parseFile(path: $appPath . '/css/systems/nldesign/defaults.css');
-		$own = $this->parser->parseRootBlock(css: (string)$this->setCss(appPath: $appPath, name: 'css/tokens/' . $id . '.css'));
-		$dark = $this->parseAnyCss(css: (string)$this->setCss(appPath: $appPath, name: 'css/tokens/dark/' . $id . '.css'));
+		$own = $this->parser->parseRootBlock(css: (string)$this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/' . $id . '.css'));
+		$dark = $this->parseAnyCss(css: (string)$this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/dark/' . $id . '.css'));
 		$consumers = $this->consumers(appPath: $appPath);
 
 		$names = array_unique(array_merge(array_keys($defaults), array_keys($own)));
@@ -211,22 +214,6 @@ class TokenReferenceService {
 
 		return $this->parser->parseRootBlock(css: (string)file_get_contents($path));
 	}//end parseFile()
-
-	/**
-	 * Every custom property in a file, whatever block holds it; the first declaration wins.
-	 * A dark variant keeps its tokens in an `@media` block and a `[data-theme-dark]` block, not in `:root`.
-	 *
-	 * @param string $path The file.
-	 *
-	 * @return array<string, string> Name => value.
-	 */
-	private function parseAny(string $path): array {
-		if (is_file($path) === false) {
-			return [];
-		}
-
-		return $this->parseAnyCss(css: (string)file_get_contents($path));
-	}//end parseAny()
 
 	/**
 	 * Every declaration in a stylesheet, first one wins, whatever block it sits in.
@@ -432,31 +419,4 @@ class TokenReferenceService {
 		return $out . '</tbody>' . "\n" . '</table>' . "\n";
 	}//end htmlTable()
 
-	/**
-	 * A set file's CSS: an uploaded (`custom-`) set's from the store, a shipped one's from the release.
-	 *
-	 * @param string $appPath The app directory.
-	 * @param string $name    The app-relative name, such as `css/tokens/utrecht.css`.
-	 *
-	 * @return string|null The CSS, or null when the file does not exist.
-	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
-	 */
-	private function setCss(string $appPath, string $name): ?string {
-		if ($this->store !== null && preg_match('#^css/tokens/(?:dark/)?custom-[a-z0-9-]+\.css$#', $name) === 1) {
-			return $this->store->read(name: $name);
-		}
-
-		$path = $appPath . '/' . $name;
-		if (is_file($path) === false) {
-			return null;
-		}
-
-		$css = file_get_contents($path);
-		if ($css === false) {
-			return null;
-		}
-
-		return $css;
-	}//end setCss()
 }//end class
