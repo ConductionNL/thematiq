@@ -77,3 +77,13 @@ path = [
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Conduction B.V. <info@conduction.nl>"
 SPDX-License-Identifier = "EUPL-1.2"
+
+# The theming stylesheets a stock Nextcloud serves at /apps/theming/theme/{id}.css,
+# saved byte for byte as input to the variable inventory (scripts/inventory/).
+# They are Nextcloud output, so Nextcloud's licence, and they carry no header
+# because a header would change the input the drift check compares.
+[[annotations]]
+path = "scripts/inventory/sources/**"
+precedence = "override"
+SPDX-FileCopyrightText = "Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
