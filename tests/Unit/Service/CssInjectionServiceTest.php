@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\CustomOverridesService;
@@ -132,6 +133,13 @@ class CssInjectionServiceTest extends TestCase {
 	private string $runtimeDir;
 
 	/**
+	 * The brand-per-app mock; no app has a brand unless a test says so.
+	 *
+	 * @var AppBrandService&MockObject
+	 */
+	private $appBrands;
+
+	/**
 	 * Set up mocks before each test.
 	 */
 	protected function setUp(): void {
@@ -146,6 +154,7 @@ class CssInjectionServiceTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->stockTokens = $this->createMock(StockTokensService::class);
 		$this->stockTokens->method('getCss')->willReturn(null);
+		$this->appBrands = $this->createMock(AppBrandService::class);
 
 		$this->runtimeDir = sys_get_temp_dir() . '/thematiq-injection-' . bin2hex(random_bytes(4));
 		// The repository is the app directory, read-only, so shipped files
@@ -240,6 +249,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->stockTokens,
 					$this->runtimeFiles,
 					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink'])
@@ -1329,6 +1339,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->stockTokens,
 					$this->runtimeFiles,
 					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])

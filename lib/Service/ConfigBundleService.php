@@ -96,16 +96,18 @@ class ConfigBundleService {
 	 *
 	 * @var int
 	 */
-	public const BUNDLE_VERSION = 2;
+	public const BUNDLE_VERSION = 3;
 
 	/**
 	 * The bundle versions import accepts. Version 1 predates planned switches
 	 * (`config.scheduledSwitches`); a version 1 bundle, such as a version kept
 	 * before the upgrade, imports and leaves the planned switches alone.
+	 * Version 2 predates brands per app (`appBrands`); it imports and leaves
+	 * the brands alone.
 	 *
 	 * @var array<int, int>
 	 */
-	public const SUPPORTED_VERSIONS = [1, 2];
+	public const SUPPORTED_VERSIONS = [1, 2, 3];
 
 	/**
 	 * The application configuration service.
@@ -192,18 +194,11 @@ class ConfigBundleService {
 	private ScheduledSwitchStore $scheduledSwitches;
 
 	/**
-	 * The approved mark for the AI assistant.
+	 * The approved mark, document style and brand per app sections.
 	 *
-	 * @var AssistantMarkService
+	 * @var BundleExtraSections
 	 */
-	private AssistantMarkService $assistantMark;
-
-	/**
-	 * The document house style assets and footer line.
-	 *
-	 * @var DocumentAssetService
-	 */
-	private DocumentAssetService $documentAssets;
+	private BundleExtraSections $extraSections;
 
 	/**
 	 * The logger.
@@ -228,8 +223,7 @@ class ConfigBundleService {
 	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
 	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
 	 * @param LoggerInterface $logger The logger.
-	 * @param AssistantMarkService $assistantMark The approved mark for the AI assistant.
-	 * @param DocumentAssetService $documentAssets The document house style assets and footer line.
+	 * @param BundleExtraSections $extraSections The approved mark, document style and brand per app sections.
 	 * @param TokenLifecycleBundleSection|null $lifecycle The own tokens and deprecations section.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
@@ -251,8 +245,7 @@ class ConfigBundleService {
 		UpstreamFreshnessService $freshnessService,
 		ScheduledSwitchStore $scheduledSwitches,
 		LoggerInterface $logger,
-		AssistantMarkService $assistantMark,
-		DocumentAssetService $documentAssets,
+		BundleExtraSections $extraSections,
 		private ?TokenLifecycleBundleSection $lifecycle = null,
 	) {
 		$this->config = $config;
@@ -268,8 +261,7 @@ class ConfigBundleService {
 		$this->freshnessService = $freshnessService;
 		$this->scheduledSwitches = $scheduledSwitches;
 		$this->logger = $logger;
-		$this->assistantMark = $assistantMark;
-		$this->documentAssets = $documentAssets;
+		$this->extraSections = $extraSections;
 	}//end __construct()
 
 	/**
@@ -306,9 +298,7 @@ class ConfigBundleService {
 					. 'Metadata only — re-upload font files by hand on the target environment.',
 				'manifest' => $this->fontService->getManifest(),
 			],
-			'assistantMark' => $this->assistantMark->exportBundle(),
-			'documentStyle' => $this->documentAssets->exportBundle(),
-		] + ($this->lifecycle?->export() ?? []);
+		] + $this->extraSections->export() + ($this->lifecycle?->export() ?? []);
 	}//end export()
 
 	/**
@@ -421,19 +411,14 @@ class ConfigBundleService {
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
 		$resolved['lifecycle'] = $this->lifecycle?->validate(bundle: $bundle, errors: $errors);
 
-		$assistantMark = $this->assistantMark->validateBundle(section: ($bundle['assistantMark'] ?? null));
-		foreach ($assistantMark['errors'] as $message) {
-			$errors[] = ['section' => 'assistantMark', 'message' => $message];
-		}
-
-		$resolved['assistantMark'] = $assistantMark['value'];
-
-		$documentStyle = $this->documentAssets->validateBundle(section: ($bundle['documentStyle'] ?? null));
-		foreach ($documentStyle['errors'] as $message) {
-			$errors[] = ['section' => 'documentStyle', 'message' => $message];
-		}
-
-		$resolved['documentFooterLine'] = $documentStyle['value'];
+		$bundledIds = array_column($resolved['customTokenSets'], 'id');
+		$resolved['extra'] = $this->extraSections->validate(
+			bundle: $bundle,
+			setExists: fn (string $id): bool => (
+				in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
+			),
+			errors: $errors
+		);
 
 		return [
 			'valid' => empty($errors),
@@ -988,8 +973,6 @@ class ConfigBundleService {
 				'applied' => ($resolved['scheduledSwitches'] !== null),
 			],
 			'emailFooter' => ['applied' => true],
-			'assistantMark' => ['applied' => (($resolved['assistantMark'] ?? null) !== null)],
-			'documentStyle' => ['footerLineApplied' => (($resolved['documentFooterLine'] ?? null) !== null), 'binariesIncluded' => false],
 			'customOverridesCss' => [
 				'written' => count($resolved['customOverrides']['tokens']),
 				'skipped' => count($resolved['customOverrides']['skipped']),
@@ -1005,7 +988,8 @@ class ConfigBundleService {
 				'note' => 'Font metadata recorded for information only — binaries are not part of the '
 					. 'bundle and must be re-uploaded by hand on the target environment.',
 			],
-		] + ($this->lifecycle?->summary(resolved: ($resolved['lifecycle'] ?? null)) ?? []);
+		] + $this->extraSections->summary(resolved: $resolved['extra'])
+			+ ($this->lifecycle?->summary(resolved: ($resolved['lifecycle'] ?? null)) ?? []);
 	}//end buildSectionSummary()
 
 	/**
@@ -1061,13 +1045,7 @@ class ConfigBundleService {
 			$this->scheduledSwitches->save(entries: $resolved['scheduledSwitches']);
 		}
 
-		if (($resolved['assistantMark'] ?? null) !== null) {
-			$this->assistantMark->applyBundle(value: $resolved['assistantMark']);
-		}
-
-		if (($resolved['documentFooterLine'] ?? null) !== null) {
-			$this->documentAssets->setFooterLine(line: $resolved['documentFooterLine']);
-		}
+		$this->extraSections->apply(resolved: $resolved['extra']);
 
 		// CustomFonts is deliberately never applied — see class docblock.
 	}//end apply()
