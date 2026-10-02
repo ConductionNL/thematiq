@@ -186,6 +186,13 @@ class TokenSetConverterService {
 	private array $importWarnings = [];
 
 	/**
+	 * Dotted token paths of the document being converted that resolve aliases but are not emitted.
+	 *
+	 * @var array<int, string>
+	 */
+	private array $referenceOnlyPaths = [];
+
+	/**
 	 * DTCG hard mapping errors from the last input-B conversion.
 	 *
 	 * @var array<int, array{path: string, reason: string, detail?: string}>
@@ -222,6 +229,8 @@ class TokenSetConverterService {
 	 * @param string|null $assetName   Base name for an extracted logo, WITHOUT extension. Defaults to
 	 *                                 the slug; the admin upload path passes `custom-{slug}` so an
 	 *                                 uploaded theme can never overwrite a shipped `img/logos/{slug}.svg`.
+	 * @param array<int, string> $referenceOnlyPaths Dotted token paths that resolve aliases but are not
+	 *                                 emitted (a Tokens Studio `source` set of one brand).
 	 *
 	 * @return array{
 	 *     css: string,
@@ -237,6 +246,7 @@ class TokenSetConverterService {
 	 * @throws RuntimeException When the content matches none of the four accepted shapes (code 422).
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.3
 	 *
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
 	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
@@ -249,7 +259,9 @@ class TokenSetConverterService {
 		string $displayName,
 		?string $sourceName = null,
 		?string $assetName = null,
+		array $referenceOnlyPaths = [],
 	): array {
+		$this->referenceOnlyPaths = $referenceOnlyPaths;
 		$report = [];
 		$this->importWarnings = [];
 		$this->mapperErrors = [];
@@ -638,7 +650,7 @@ class TokenSetConverterService {
 	 */
 	private function declarationsFromJson(array $decoded, string $kind, string $slug, ?string &$version, array &$report): array {
 		if ($kind === 'B') {
-			$mapped = $this->dtcgMapper->map(document: $decoded);
+			$mapped = $this->dtcgMapper->map(document: $decoded, referenceOnlyPaths: $this->referenceOnlyPaths);
 			$version = $mapped['packageVersion'];
 			$this->importWarnings = $mapped['warnings'];
 			$this->mapperErrors = $mapped['errors'];
@@ -687,6 +699,11 @@ class TokenSetConverterService {
 		}
 
 		if (array_key_exists('value', $node) === true && is_array($node['value']) === false) {
+			// A reference-only token (a Tokens Studio `source` set) is not part of the brand.
+			if (in_array(implode('.', $path), $this->referenceOnlyPaths, true) === true) {
+				return;
+			}
+
 			$segments = array_map(
 				static fn (string $segment): string => strtolower((string)preg_replace('/[^A-Za-z0-9]+/', '-', $segment)),
 				$path

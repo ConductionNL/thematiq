@@ -140,7 +140,8 @@ class DesignTokensMapper {
 	/**
 	 * Map a parsed DTCG document onto nldesign declarations.
 	 *
-	 * @param array<string, mixed> $document The decoded DTCG JSON document.
+	 * @param array<string, mixed> $document           The decoded DTCG JSON document.
+	 * @param array<int, string>   $referenceOnlyPaths Dotted paths that resolve aliases but are not emitted.
 	 *
 	 * @return array{
 	 *     declarations: array<string, string>,
@@ -153,9 +154,10 @@ class DesignTokensMapper {
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	public function map(array $document): array {
+	public function map(array $document, array $referenceOnlyPaths = []): array {
 		$leaves = [];
 		$this->collectLeaves(node: $document, prefix: '', inheritedType: null, leaves: $leaves);
+		$referenceOnly = array_flip($referenceOnlyPaths);
 
 		$declarations = [];
 		$skipped = [];
@@ -163,6 +165,12 @@ class DesignTokensMapper {
 		$warnings = [];
 
 		foreach ($leaves as $path => $leaf) {
+			// A reference-only leaf (a Tokens Studio `source` set) stays in the alias table
+			// above and is never assigned to a target.
+			if (isset($referenceOnly[$path]) === true) {
+				continue;
+			}
+
 			$this->processLeaf(
 				path: $path,
 				leaf: $leaf,

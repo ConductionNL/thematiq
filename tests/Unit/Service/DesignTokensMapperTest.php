@@ -754,4 +754,24 @@ class DesignTokensMapperTest extends TestCase {
 			['15-amsterdam-real-excerpt.tokens.json'],
 		];
 	}//end corpusFixtureProvider()
+
+	/**
+	 * A reference-only leaf resolves an alias but is never emitted, nor reported as skipped.
+	 *
+	 * @spec openspec/changes/authoring-multi-brand-token-source/tasks.md#task-2.3
+	 */
+	public function testReferenceOnlyLeafResolvesAliasButIsNotEmitted(): void {
+		$document = [
+			'color' => [
+				'brand-blue' => ['$type' => 'color', '$value' => '#154273'],
+				'primary' => ['$type' => 'color', '$value' => '{color.brand-blue}'],
+			],
+			'brand' => ['primary' => ['$type' => 'color', '$value' => '#000000']],
+		];
+
+		$result = $this->mapper->map(document: $document, referenceOnlyPaths: ['color.brand-blue', 'brand.primary']);
+
+		$this->assertSame(['--nldesign-color-primary' => '#154273'], $result['declarations']);
+		$this->assertSame([], $result['skipped']);
+	}//end testReferenceOnlyLeafResolvesAliasButIsNotEmitted()
 }//end class
