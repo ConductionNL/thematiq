@@ -186,7 +186,9 @@ final class DtcgExportControllerTest extends TestCase {
 		$appManager->method('getAppVersion')->willReturn('9.9.9');
 		$l = $this->createMock(IL10N::class);
 		$l->method('t')->willReturnArgument(0);
-		$controller = new DtcgExportController('thematiq', $this->createMock(IRequest::class), $tokenSets, $appManager, new CssParserService(), new DesignTokensWriter(), new DeprecationRecords($this->createMock(IConfig::class)), $l, new DirectoryRuntimeFileStore($dir));
+		$config = $this->createMock(IConfig::class);
+		$config->method('getAppValue')->willReturnArgument(2);
+		$controller = new DtcgExportController('thematiq', $this->createMock(IRequest::class), $tokenSets, $appManager, new CssParserService(), new DesignTokensWriter(), new DeprecationRecords($config), $l, new DirectoryRuntimeFileStore($dir));
 
 		$document = json_decode((string)json_encode($controller->export(id: 'custom-gemeente-voorbeeld')->getData()), true);
 		exec('rm -rf ' . escapeshellarg($dir));
