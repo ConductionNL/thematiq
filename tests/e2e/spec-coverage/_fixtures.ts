@@ -188,7 +188,9 @@ export async function removeE2eCustomSets(browser: Browser): Promise<string[]> {
 		await page.goto('/settings/admin/theming', { waitUntil: 'domcontentloaded' })
 		return await page.evaluate(async (prefix) => {
 			const token = (window as any).OC.requestToken
-			const base = (window as any).OC.generateUrl('/apps/thematiq/settings/tokensets/custom')
+			const base = (window as any).OC.generateUrl(
+				'/apps/thematiq/settings/tokensets/custom',
+			)
 			const res = await fetch(base, { headers: { requesttoken: token } })
 			if (!res.ok) {
 				return []

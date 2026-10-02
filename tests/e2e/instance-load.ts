@@ -50,7 +50,10 @@ export async function waitForCalmInstance(
 			const statuses: number[] = []
 			for (const probe of PROBE_PATHS) {
 				const res = await ctx
-					.get(`${baseURL}${probe}`, { failOnStatusCode: false, timeout: 15_000 })
+					.get(`${baseURL}${probe}`, {
+						failOnStatusCode: false,
+						timeout: 15_000,
+					})
 					.catch(() => null)
 				statuses.push(res === null ? 0 : res.status())
 			}
@@ -76,10 +79,12 @@ export async function waitForCalmInstance(
 /**
  * The retry count for this run.
  *
- * @param {NodeJS.ProcessEnv} env The environment to read.
+ * @param {Record<string, string | undefined>} env The environment to read.
  * @return {number} 0 in CI, else PW_RETRIES (default 1).
  */
-export function retriesFor(env: NodeJS.ProcessEnv = process.env): number {
+export function retriesFor(
+	env: Record<string, string | undefined> = process.env,
+): number {
 	if (Boolean(env.CI) || Boolean(env.GITHUB_ACTIONS)) {
 		return 0
 	}
