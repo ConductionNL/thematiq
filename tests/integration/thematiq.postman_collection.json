@@ -2802,6 +2802,566 @@
       ]
     },
     {
+      "name": "8. Multi-brand token sources (authoring-multi-brand-token-source)",
+      "item": [
+        {
+          "name": "Upload a two-brand source: lists the brands, stores nothing (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('listed (200)', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('multi-brand, not stored', () => { pm.expect(b.multiBrand).to.eql(true); pm.expect(b.stored).to.eql(false); });",
+                  "pm.test('both brands', () => pm.expect(b.brands.map(x => x.key)).to.eql(['noord','zuid']));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "upload"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Newman merken\",\n  \"content\": \":root { --newman-radius: 4px; }\\n.noord-theme { --newman-color-primary: #154273; }\\n.zuid-theme { --newman-color-primary: #c8102e; }\\n\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Upload ERROR: unknown brand -> 422",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('unknown brand -> 422', () => pm.response.to.have.status(422));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "upload"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Newman merken\",\n  \"content\": \":root { --newman-radius: 4px; }\\n.noord-theme { --newman-color-primary: #154273; }\\n.zuid-theme { --newman-color-primary: #c8102e; }\\n\",\n  \"brands\": [\n    \"west\"\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Upload the chosen brands (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('stored (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('two sets', () => pm.expect(pm.response.json().sets.map(s => s.id)).to.eql(['custom-newman-merken-noord','custom-newman-merken-zuid']));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "upload"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Newman merken\",\n  \"content\": \":root { --newman-radius: 4px; }\\n.noord-theme { --newman-color-primary: #154273; }\\n.zuid-theme { --newman-color-primary: #c8102e; }\\n\",\n  \"brands\": [\n    \"noord\",\n    \"zuid\"\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Upload again ERROR: the source exists -> 409",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('exists -> 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "upload"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Newman merken\",\n  \"content\": \":root { --newman-radius: 4px; }\\n.noord-theme { --newman-color-primary: #154273; }\\n.zuid-theme { --newman-color-primary: #c8102e; }\\n\",\n  \"brands\": [\n    \"noord\"\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Update the source (200, report)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('updated (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('both updated', () => pm.expect(pm.response.json().updated).to.eql(['noord','zuid']));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/sources/newman-merken",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "sources",
+                "newman-merken"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \":root { --newman-radius: 4px; }\\n.noord-theme { --newman-color-primary: #0b2a4a; }\\n.zuid-theme { --newman-color-primary: #c8102e; }\\n\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update source ERROR: unknown source -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('unknown -> 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/sources/does-not-exist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "sources",
+                "does-not-exist"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \":root { --newman-radius: 4px; }\\n.noord-theme { --newman-color-primary: #154273; }\\n.zuid-theme { --newman-color-primary: #c8102e; }\\n\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update source AUTHZ: anonymous -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('anonymous rejected 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{noAuthBase}}/index.php/apps/thematiq/settings/tokensets/sources/newman-merken",
+              "host": [
+                "{{noAuthBase}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "sources",
+                "newman-merken"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \":root { --newman-radius: 4px; }\\n.noord-theme { --newman-color-primary: #154273; }\\n.zuid-theme { --newman-color-primary: #c8102e; }\\n\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete brand noord (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('deleted (200)', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/custom/custom-newman-merken-noord",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "custom",
+                "custom-newman-merken-noord"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete brand zuid (200, the source goes with it)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('deleted (200)', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokensets/custom/custom-newman-merken-zuid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokensets",
+                "custom",
+                "custom-newman-merken-zuid"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "9. Teardown: restore captured state",
       "item": [
         {
