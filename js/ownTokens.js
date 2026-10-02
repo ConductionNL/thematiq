@@ -276,10 +276,7 @@
 			}
 			if (record.own === false) {
 				details.push(
-					t(
-						'thematiq',
-						'Notice only: the value comes from the token set',
-					),
+					t('thematiq', 'Notice only: the value comes from the token set'),
 				)
 			}
 			if (record.message) {
@@ -334,9 +331,7 @@
 				old.remove()
 			})
 		state.deprecations.forEach(function (record) {
-			var row = editor.querySelector(
-				'[data-token-row="' + record.token + '"]',
-			)
+			var row = editor.querySelector('[data-token-row="' + record.token + '"]')
 			if (row === null) {
 				return
 			}
@@ -351,10 +346,7 @@
 	 * @return {Promise<void>} Done.
 	 */
 	function load() {
-		return Promise.all([
-			request('GET', '/own'),
-			request('GET', '/deprecations'),
-		])
+		return Promise.all([request('GET', '/own'), request('GET', '/deprecations')])
 			.then(function (answers) {
 				state.tokens = answers[0].data.tokens || []
 				state.prefix = answers[0].data.prefix || state.prefix
@@ -437,10 +429,9 @@
 			form.elements.darkValue.value = token.darkValue || ''
 			form.elements.description.value = token.description || ''
 		}
-		el.tokenDialog.querySelector('.nldesign-dialog-title').textContent =
-			token
-				? t('thematiq', 'Edit {name}', { name: token.name })
-				: t('thematiq', 'Add a token')
+		el.tokenDialog.querySelector('.nldesign-dialog-title').textContent = token
+			? t('thematiq', 'Edit {name}', { name: token.name })
+			: t('thematiq', 'Add a token')
 		syncDarkField()
 		openDialog(el.tokenDialog, from)
 	}
@@ -570,13 +561,12 @@
 	 * @return {Promise<void>} Done.
 	 */
 	function withdraw(name) {
-		return request(
-			'DELETE',
-			'/deprecations/' + encodeURIComponent(name),
-		).then(function () {
-			say(t('thematiq', 'Deprecation withdrawn.'))
-			return load()
-		})
+		return request('DELETE', '/deprecations/' + encodeURIComponent(name)).then(
+			function () {
+				say(t('thematiq', 'Deprecation withdrawn.'))
+				return load()
+			},
+		)
 	}
 
 	/**
@@ -617,9 +607,7 @@
 		el.deprecationList = document.getElementById('nldesign-deprecation-list')
 		el.status = document.getElementById('nldesign-own-tokens-status')
 		el.tokenDialog = document.getElementById('nldesign-own-token-dialog')
-		el.deprecationDialog = document.getElementById(
-			'nldesign-deprecation-dialog',
-		)
+		el.deprecationDialog = document.getElementById('nldesign-deprecation-dialog')
 
 		document
 			.getElementById('nldesign-own-token-add')
@@ -643,12 +631,17 @@
 		if (editor !== null && typeof MutationObserver === 'function') {
 			new MutationObserver(function (changes) {
 				var added = changes.some(function (change) {
-					return Array.prototype.some.call(change.addedNodes, function (node) {
-						return (
-							node.nodeType === 1
-							&& !node.classList.contains('nldesign-deprecation-badge')
-						)
-					})
+					return Array.prototype.some.call(
+						change.addedNodes,
+						function (node) {
+							return (
+								node.nodeType === 1
+								&& !node.classList.contains(
+									'nldesign-deprecation-badge',
+								)
+							)
+						},
+					)
 				})
 				if (added) {
 					markEditorRows()
