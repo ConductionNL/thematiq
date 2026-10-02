@@ -42,6 +42,7 @@ use RuntimeException;
  * @spec openspec/specs/simple-brand-form/spec.md
  */
 class BrandFormController extends Controller {
+	use ErrorStatusTrait;
 
 	/**
 	 * Logo file types, as CustomTokenSetService writes them.
@@ -125,12 +126,7 @@ class BrandFormController extends Controller {
 				logoAsset: $logo
 			);
 		} catch (RuntimeException $e) {
-			$code = $e->getCode();
-			if ($code < 400 || $code > 599) {
-				$code = 500;
-			}
-
-			return new JSONResponse(['error' => $e->getMessage()], $code);
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
 
 		$this->audit->log(

@@ -132,8 +132,6 @@ class ThemeGalleryService {
 	 * @return void
 	 *
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-the-gallery-is-opt-in-and-disclosed
-	 *
-	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - the administrator's toggle, stored as is.
 	 */
 	public function setEnabled(bool $enabled): void {
 		$value = 'no';
@@ -374,7 +372,7 @@ class ThemeGalleryService {
 		return [
 			'status' => $response->getStatusCode(),
 			'body' => $body,
-			'etag' => (string)$response->getHeader('ETag'),
+			'etag' => $response->getHeader('ETag'),
 		];
 	}//end fetch()
 }//end class

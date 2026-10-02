@@ -78,7 +78,6 @@ Scanner: opsx-coverage-scan v1
 | File | Method | REQ | Confidence | Signal |
 |---|---|---|---|---|
 | lib/Controller/SettingsController.php | setTokenSet | REQ-TSET-003/004/006 | 0.96 | POST /settings/tokenset |
-| lib/Controller/SettingsController.php | getTokenSet | REQ-TSET-003/006 | 0.95 | GET /settings/tokenset |
 | lib/Controller/SettingsController.php | getAvailableTokenSets | REQ-TSET-001/006 + REQ-ASET-002 | 0.96 | GET /settings/tokensets |
 | lib/Controller/SettingsController.php | getTokenSetPreview | REQ-TSET-009 + apply-dialog comparison | 0.96 | GET /settings/tokenset-preview/{id} |
 | lib/Service/TokenSetService.php | getAvailableTokenSets | REQ-TSET-001/002/008 + dropdown sort + extended discovery | 0.97 | FS scan + manifest merge + alphabetical sort |

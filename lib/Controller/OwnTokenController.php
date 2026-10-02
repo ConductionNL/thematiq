@@ -70,7 +70,7 @@ class OwnTokenController extends Controller {
 	/**
 	 * Every own token, with its deprecation when it has one.
 	 *
-	 * @return JSONResponse {tokens: [{name, label, type, value, darkValue?, description?, deprecation?}], prefix}.
+	 * @return JSONResponse Shape: {tokens: [{name, label, type, value, darkValue?, description?, deprecation?}], prefix}.
 	 *
 	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
@@ -134,7 +134,7 @@ class OwnTokenController extends Controller {
 	 *
 	 * @param string $name The full token name.
 	 *
-	 * @return JSONResponse {status: ok}, or 404 for an unknown name.
+	 * @return JSONResponse Shape: {status: ok}, or 404 for an unknown name.
 	 *
 	 * @spec openspec/specs/own-tokens/spec.md#requirement-an-administrator-adds-an-own-token-from-the-token-editor
 	 */
