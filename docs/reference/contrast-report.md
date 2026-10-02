@@ -65,3 +65,66 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | zevenaar | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | zwolle | 5.06:1 | 4.5:1 | 5.06:1 | 3.0:1 | pass |
 
+## Den Haag component pairs
+
+The text the Den Haag mijn-omgeving components draw, measured as a portal sees it:
+`css/systems/nldesign/defaults.css`, then `css/public-bridge.css`, then the set.
+Threshold 4.5:1 for every pair. These pairs are reported; they are not part of
+the verdict above.
+
+Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, action-date-warning, badge-neutral, badge-success, badge-warning, badge-error, nav-link, nav-link-active, file-link.
+
+| Token set | pass | fail | unevaluated | Below 4.5:1 or unevaluated |
+|-----------|-----:|-----:|------------:|----------------------------|
+| amsterdam | 9 | 4 | 0 | action-date-warning 2.26:1, badge-success 3.86:1, badge-warning 2.05:1, badge-error 3.70:1 |
+| bodegraven-reeuwijk | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| borne | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| buren | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| conduction-new | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| cunningham | 7 | 6 | 0 | step-not-checked 4.49:1, case-subtitle 4.49:1, action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| demodam | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| denhaag | 10 | 3 | 0 | action-date-warning 3.10:1, badge-warning 2.72:1, badge-error 4.13:1 |
+| dinkelland | 9 | 4 | 0 | action-date-warning 1.63:1, badge-success 3.89:1, badge-warning 1.43:1, badge-error 3.77:1 |
+| drechterland | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| duiven | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| duo | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| enkhuizen | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| epe | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| example-basisschool | 13 | 0 | 0 |  |
+| example-college | 13 | 0 | 0 |  |
+| example-gemeente | 13 | 0 | 0 |  |
+| example-opleider | 13 | 0 | 0 |  |
+| example-voortgezet | 13 | 0 | 0 |  |
+| frankendesk | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| groningen | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| haarlem | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| haarlemmermeer | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| hoog-contrast | 13 | 0 | 0 |  |
+| hoorn | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| horstaandemaas | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| lasuite | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| leiden | 9 | 4 | 0 | action-date-warning 1.63:1, badge-success 3.89:1, badge-warning 1.43:1, badge-error 4.25:1 |
+| leidschendam-voorburg | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| nijmegen | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| noaberkracht | 7 | 6 | 0 | step-current 4.01:1, action-date-warning 1.63:1, badge-success 3.89:1, badge-warning 1.43:1, badge-error 3.77:1, nav-link-active 4.01:1 |
+| noordoostpolder | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| noordwijk | 9 | 4 | 0 | action-date-warning 1.63:1, badge-success 3.89:1, badge-warning 1.43:1, badge-error 3.77:1 |
+| opencatalogi | 7 | 6 | 0 | step-current 3.11:1, step-checked 4.41:1, action-date-warning 3.72:1, badge-success 4.35:1, badge-warning 3.26:1, badge-error 4.43:1 |
+| provincie-zuid-holland | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| riddeliemers | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| ridderkerk | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| rijkshuisstijl | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| rotterdam | 11 | 2 | 0 | badge-success 4.27:1, badge-error 4.31:1 |
+| stedebroec | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| summer-breeze | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| tilburg | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| tubbergen | 9 | 4 | 0 | action-date-warning 1.63:1, badge-success 3.89:1, badge-warning 1.43:1, badge-error 4.25:1 |
+| utrecht | 11 | 2 | 0 | action-date-warning 1.51:1, badge-warning 1.43:1 |
+| venray | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| vng | 10 | 3 | 0 | step-not-checked 2.52:1, action-date-warning 3.86:1, badge-warning 3.34:1 |
+| vught | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| westervoort | 9 | 2 | 2 | action-date-warning —, badge-success 3.89:1, badge-warning —, badge-error 4.17:1 |
+| xxllnc | 8 | 5 | 0 | step-checked 3.13:1, action-date-warning 1.63:1, badge-success 2.70:1, badge-warning 1.43:1, badge-error 3.77:1 |
+| zevenaar | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+| zwolle | 9 | 4 | 0 | action-date-warning 3.22:1, badge-success 3.89:1, badge-warning 2.82:1, badge-error 4.17:1 |
+

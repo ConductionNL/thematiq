@@ -90,6 +90,7 @@ class ShippedTokenSetAuditService {
 	 * @param RuntimeFileStore|null $store Where uploaded sets are kept.
 	 * @param SetFileReader $files Reads a set's file from the release or the store.
 	 * @param SettableContrastPairs $settablePairs Measures the selection and highlight pairs a set moves.
+	 * @param DenhaagContrastPairs $denhaagPairs Measures the text pairs of the Den Haag components.
 	 */
 	public function __construct(
 		ContrastService $contrast,
@@ -97,6 +98,7 @@ class ShippedTokenSetAuditService {
 		private readonly ?RuntimeFileStore $store = null,
 		private readonly SetFileReader $files = new SetFileReader(),
 		private readonly SettableContrastPairs $settablePairs = new SettableContrastPairs(),
+		private readonly DenhaagContrastPairs $denhaagPairs = new DenhaagContrastPairs(),
 	) {
 		$this->contrast = $contrast;
 		$this->parser = $parser;
@@ -155,10 +157,12 @@ class ShippedTokenSetAuditService {
 	 *     textThreshold: float,
 	 *     uiThreshold: float,
 	 *     verdict: string,
-	 *     pairs?: array<int, array<string, mixed>>
+	 *     pairs?: array<int, array<string, mixed>>,
+	 *     denhaag?: array<string, array<string, mixed>>
 	 * }
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
+	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
 	 */
 	public function auditSet(string $appPath, string $id, array $theming, string $level = 'AA'): array {
 		$declarations = $this->resolveDeclarations(appPath: $appPath, id: $id, theming: $theming);
@@ -195,8 +199,45 @@ class ShippedTokenSetAuditService {
 			'uiThreshold' => $uiThreshold,
 			'verdict' => $verdict,
 			'pairs' => $this->settablePairs->pairs(declarations: $declarations),
+			// Reported, not part of the verdict: the Den Haag pairs judge what a
+			// portal draws, and the verdict above stays what the apply dialog
+			// and the capabilities document have always meant by it.
+			'denhaag' => $this->denhaagPairs->pairs(
+				declarations: $this->portalCascade(appPath: $appPath, id: $id)
+			),
 		];
 	}//end auditSet()
+
+	/**
+	 * The declarations a portal sees for a set: defaults, the public bridge, the set.
+	 *
+	 * The bridge is linked before the set, so a set's own value wins over the
+	 * bridge, and the bridge's over the defaults.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param string $id The token set id.
+	 *
+	 * @return array<string, string> The merged declarations.
+	 *
+	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 */
+	public function portalCascade(string $appPath, string $id): array {
+		$declarations = array_merge(
+			$this->parseFile(filePath: $appPath . '/css/systems/nldesign/defaults.css'),
+			$this->parseFile(filePath: $appPath . '/css/public-bridge.css')
+		);
+
+		// An unknown set has no file: an empty one parses to no declarations.
+		$tokenCss = ($this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/' . $id . '.css') ?? '');
+		$declarations = array_merge($declarations, ($this->parser->parseDeclarations(content: $tokenCss) ?? []));
+
+		// NOT theming.background_color, which resolveDeclarations() falls back
+		// to: that is Nextcloud's login background (vng's is #0277BD), and a
+		// portal never paints its page with it. The bridge paints the page from
+		// --nldesign-color-background with a white fallback, so that is what
+		// a component sits on.
+		return $declarations + ['--nldesign-color-background' => '#ffffff'];
+	}//end portalCascade()
 
 	/**
 	 * Compute and cache the WCAG level for one token set, sharing the exact
@@ -271,7 +312,8 @@ class ShippedTokenSetAuditService {
 	 *     textThreshold: float,
 	 *     uiThreshold: float,
 	 *     verdict: string,
-	 *     pairs?: array<int, array<string, mixed>>
+	 *     pairs?: array<int, array<string, mixed>>,
+	 *     denhaag?: array<string, array<string, mixed>>
 	 * }>
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-reproducible-contrast-report
@@ -361,7 +403,7 @@ class ShippedTokenSetAuditService {
 
 		$lines[] = '';
 
-		return implode("\n", $lines) . "\n";
+		return implode("\n", array_merge($lines, $this->denhaagPairs->reportLines(rows: $rows))) . "\n";
 	}//end renderReport()
 
 	/**

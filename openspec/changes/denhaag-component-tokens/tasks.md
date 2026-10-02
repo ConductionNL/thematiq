@@ -31,10 +31,17 @@ Nothing here waits on them; the components only show the result once both land.
 
 ## 3. The guardrail
 
-- [ ] 3.1 `ShippedTokenSetAuditService`: resolve the generated section under each set and
+- [x] 3.1 `ShippedTokenSetAuditService`: resolve the generated section under each set and
       check the pairs of design D3 through `ContrastService`.
   - unit: PHPUnit with a fixture set that fails the current step pair, and one that passes
-- [ ] 3.2 Regenerate `docs/reference/contrast-report.md`. A set that fails gets a set-level
+- [ ] 3.2 STOPPED (2026-10-02, build wave 1). The report is regenerated and the Den Haag pairs
+      are in it, but 45 of the 51 audited sets fail at least one pair. Only the five example sets
+      and `hoog-contrast` pass all 13. Most failures share one cause: the sets inherit the
+      defaults' warning `#e17000` (2.8:1 to 3.2:1 as text) and the success and error colours,
+      which drop under 4.5:1 on their own 12% badge tint. Hand-tuning 45 sets is not this
+      change's to do; the choice (fix the defaults, darken the badge text, or tune per set) is
+      Ruben's. The original task text follows.
+      Regenerate `docs/reference/contrast-report.md`. A set that fails gets a set-level
       override in its brand or token file, never a change to the shared mapping. List every
       such override in the PR.
 
