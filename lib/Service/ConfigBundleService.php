@@ -409,10 +409,12 @@ class ConfigBundleService {
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
 
-		$bundledIds = array_column(($resolved['customTokenSets'] ?? []), 'id');
+		$bundledIds = array_column($resolved['customTokenSets'], 'id');
 		$appBrands = $this->appBrands->validateBundle(
 			section: ($bundle['appBrands'] ?? null),
-			setExists: fn (string $id): bool => (in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true)
+			setExists: fn (string $id): bool => (
+				in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
+			)
 		);
 		foreach ($appBrands['errors'] as $message) {
 			$errors[] = ['section' => 'appBrands', 'message' => $message];
@@ -973,7 +975,11 @@ class ConfigBundleService {
 				'applied' => ($resolved['scheduledSwitches'] !== null),
 			],
 			'emailFooter' => ['applied' => true],
-			'appBrands' => ['count' => count(($resolved['appBrands'] ?? [])), 'applied' => (($resolved['appBrands'] ?? null) !== null), 'logosIncluded' => false],
+			'appBrands' => [
+				'count' => count(($resolved['appBrands'] ?? [])),
+				'applied' => (($resolved['appBrands'] ?? null) !== null),
+				'logosIncluded' => false,
+			],
 			'customOverridesCss' => [
 				'written' => count($resolved['customOverrides']['tokens']),
 				'skipped' => count($resolved['customOverrides']['skipped']),

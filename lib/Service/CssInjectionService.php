@@ -786,7 +786,9 @@ class CssInjectionService {
 		// The rendered app's own logo, when its brand applies: the large one,
 		// and the small one under Nextcloud's narrow-screen breakpoint.
 		if ($this->brandLogos !== null) {
-			return $this->inlineLayer(css: $this->brandLogoCss(large: (string)$this->brandLogos['large'], small: $this->brandLogos['small']));
+			return $this->inlineLayer(
+				css: $this->appBrands->logoCss(large: (string)$this->brandLogos['large'], small: $this->brandLogos['small'])
+			);
 		}
 
 		// A converter-extracted logo may be any raster or vector type Nextcloud's
@@ -881,27 +883,6 @@ class CssInjectionService {
 	 * @var string
 	 */
 	public const STOCK_TOKENS_STYLE_ID = 'nldesign-stock-tokens';
-
-	/**
-	 * The logo variable for a branded app: the large logo, and the small one
-	 * below 1024 px, the breakpoint at which Nextcloud's header goes narrow.
-	 * Unquoted, like the other logo URLs here (see logoUrlLayer()).
-	 *
-	 * @param string $large The large logo URL.
-	 * @param string|null $small The small logo URL, or null to use the large one at every width.
-	 *
-	 * @return string The stylesheet body.
-	 *
-	 * @spec openspec/specs/per-app-theming/spec.md
-	 */
-	private function brandLogoCss(string $large, ?string $small): string {
-		$css = ':root{--nldesign-logo-url:url(' . $large . ');--nldesign-logo-filter:none}';
-		if ($small !== null) {
-			$css .= '@media (max-width:1024px){:root{--nldesign-logo-url:url(' . $small . ')}}';
-		}
-
-		return $css;
-	}//end brandLogoCss()
 
 	/**
 	 * Build the logo layer entry.

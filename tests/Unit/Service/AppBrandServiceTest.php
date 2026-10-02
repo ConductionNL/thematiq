@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Controller\AppBrandController;
+use OCA\Thematiq\Service\AppBrandLogoStore;
 use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\CssInjectionService;
@@ -35,6 +36,7 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\ImageSniffer;
 use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\ThemePreviewBannerService;
 use OCA\Thematiq\Service\ThemePreviewService;
@@ -159,7 +161,14 @@ class AppBrandServiceTest extends TestCase {
 		$urls = $this->createMock(IURLGenerator::class);
 		$urls->method('linkToRoute')->willReturnCallback(fn (string $route, array $params): string => '/brand/' . $params['appId'] . '/' . $params['size']);
 
-		return new AppBrandService($this->config(), $appManager, new AppThemingService($this->config(), $appManager), $this->tokenSets(), $appData, $urls);
+		return new AppBrandService(
+			$this->config(),
+			$appManager,
+			new AppThemingService($this->config(), $appManager),
+			$this->tokenSets(),
+			new AppBrandLogoStore($appData, new ImageSniffer()),
+			$urls
+		);
 	}//end brands()
 
 	/**
@@ -351,7 +360,7 @@ class AppBrandServiceTest extends TestCase {
 		$this->brands()->setBrand(appId: 'collectives', tokenSet: 'kennisbank');
 		$cases = [
 			['<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>', 422],
-			[str_repeat('x', AppBrandService::MAX_BYTES + 1), 413],
+			[str_repeat('x', AppBrandLogoStore::MAX_BYTES + 1), 413],
 			['GIF89a', 422],
 		];
 		foreach ($cases as [$bytes, $status]) {

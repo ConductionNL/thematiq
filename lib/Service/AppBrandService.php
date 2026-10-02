@@ -23,9 +23,6 @@ namespace OCA\Thematiq\Service;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCP\App\IAppManager;
-use OCP\Files\IAppData;
-use OCP\Files\NotFoundException;
-use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 
@@ -48,32 +45,11 @@ class AppBrandService {
 	public const CONFIG_KEY = 'app_brands';
 
 	/**
-	 * The app data folder for logos.
-	 *
-	 * @var string
-	 */
-	public const FOLDER = 'app-brands';
-
-	/**
 	 * The logo sizes.
 	 *
 	 * @var array<int, string>
 	 */
 	public const SIZES = ['large', 'small'];
-
-	/**
-	 * The largest logo.
-	 *
-	 * @var int
-	 */
-	public const MAX_BYTES = (1024 * 1024);
-
-	/**
-	 * Accepted types and their extension.
-	 *
-	 * @var array<string, string>
-	 */
-	private const TYPES = ['image/png' => 'png', 'image/jpeg' => 'jpg', 'image/webp' => 'webp', 'image/svg+xml' => 'svg'];
 
 	/**
 	 * Constructor.
@@ -82,7 +58,7 @@ class AppBrandService {
 	 * @param IAppManager       $appManager Installed apps.
 	 * @param AppThemingService $appTheming The exclusion list and the protected ids.
 	 * @param TokenSetService   $tokenSets  Which sets exist.
-	 * @param IAppData          $appData    Logo storage.
+	 * @param AppBrandLogoStore $logos      Logo storage.
 	 * @param IURLGenerator     $urls       Logo URLs.
 	 */
 	public function __construct(
@@ -90,7 +66,7 @@ class AppBrandService {
 		private readonly IAppManager $appManager,
 		private readonly AppThemingService $appTheming,
 		private readonly TokenSetService $tokenSets,
-		private readonly IAppData $appData,
+		private readonly AppBrandLogoStore $logos,
 		private readonly IURLGenerator $urls,
 	) {
 	}//end __construct()
@@ -98,7 +74,7 @@ class AppBrandService {
 	/**
 	 * Every stored brand, keyed by app id, with a `stale` flag for one that no longer applies.
 	 *
-	 * @return array<string, array{tokenSet: string, logoLarge: array<string, mixed>|null, logoSmall: array<string, mixed>|null, stale: bool}> The brands.
+	 * @return array<string, array{tokenSet: string, logoLarge: array<string, mixed>|null, logoSmall: array<string, mixed>|null, stale: bool}> Brands.
 	 *
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
@@ -157,7 +133,7 @@ class AppBrandService {
 		}
 
 		foreach (self::SIZES as $size) {
-			$this->removeFiles(name: $this->fileBase(appId: $appId, size: $size));
+			$this->logos->remove(appId: $appId, size: $size);
 		}
 
 		unset($brands[$appId]);
@@ -183,20 +159,7 @@ class AppBrandService {
 			throw new AppBrandException(reason: AppBrandException::NOT_INSTALLED, status: 404);
 		}
 
-		if (strlen($bytes) > self::MAX_BYTES) {
-			throw new AppBrandException(reason: AppBrandException::TOO_LARGE, status: 413);
-		}
-
-		$mime = ImageSniffer::type(bytes: $bytes);
-		if ($mime === null || ($mime === 'image/svg+xml' && ImageSniffer::isSafeSvg(svg: $bytes) === false)) {
-			throw new AppBrandException(reason: AppBrandException::BAD_IMAGE);
-		}
-
-		$base = $this->fileBase(appId: $appId, size: $size);
-		$this->removeFiles(name: $base);
-		$this->folder()->newFile($base . '.' . self::TYPES[$mime], $bytes);
-
-		$brands[$appId]['logo' . ucfirst($size)] = ['mime' => $mime, 'size' => strlen($bytes), 'uploadedAt' => time()];
+		$brands[$appId]['logo' . ucfirst($size)] = $this->logos->store(appId: $appId, size: $size, bytes: $bytes);
 		$this->save(brands: $brands);
 
 		return $brands[$appId];
@@ -214,17 +177,16 @@ class AppBrandService {
 	 */
 	public function readLogo(string $appId, string $size): ?array {
 		$meta = ($this->stored()[$appId]['logo' . ucfirst($size)] ?? null);
-		if (in_array($size, self::SIZES, true) === false || is_array($meta) === false || isset(self::TYPES[$meta['mime'] ?? '']) === false) {
+		if (in_array($size, self::SIZES, true) === false || is_array($meta) === false) {
 			return null;
 		}
 
-		try {
-			$file = $this->folder()->getFile($this->fileBase(appId: $appId, size: $size) . '.' . self::TYPES[$meta['mime']]);
-
-			return ['bytes' => $file->getContent(), 'mime' => $meta['mime']];
-		} catch (NotFoundException $e) {
+		$bytes = $this->logos->read(appId: $appId, size: $size, mime: (string)$meta['mime']);
+		if ($bytes === null) {
 			return null;
 		}
+
+		return ['bytes' => $bytes, 'mime' => (string)$meta['mime']];
 	}//end readLogo()
 
 	/**
@@ -280,7 +242,7 @@ class AppBrandService {
 		}
 
 		if ($section instanceof \stdClass) {
-			// export() writes an empty map as an object, so it reads back as `{}`.
+			// The export writes an empty map as an object, so it reads back as `{}`.
 			$section = (array)$section;
 		}
 
@@ -290,7 +252,7 @@ class AppBrandService {
 
 		$value = [];
 		foreach ($section as $appId => $brand) {
-			$tokenSet = (is_array($brand) === true) ? ($brand['tokenSet'] ?? null) : null;
+			$tokenSet = ($this->arrayOrNull(value: $brand)['tokenSet'] ?? null);
 			if (is_string($tokenSet) === false || $setExists($tokenSet) === false) {
 				return ['errors' => ['"appBrands.' . $appId . '" names no available token set.'], 'value' => null];
 			}
@@ -376,13 +338,30 @@ class AppBrandService {
 
 			$brands[(string)$appId] = [
 				'tokenSet' => $brand['tokenSet'],
-				'logoLarge' => (is_array($brand['logoLarge'] ?? null) === true ? $brand['logoLarge'] : null),
-				'logoSmall' => (is_array($brand['logoSmall'] ?? null) === true ? $brand['logoSmall'] : null),
+				'logoLarge' => $this->arrayOrNull(value: ($brand['logoLarge'] ?? null)),
+				'logoSmall' => $this->arrayOrNull(value: ($brand['logoSmall'] ?? null)),
 			];
 		}
 
 		return $brands;
 	}//end stored()
+
+	/**
+	 * An array, or null for anything else.
+	 *
+	 * @param mixed $value The value.
+	 *
+	 * @return array<string, mixed>|null The array, or null.
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	private function arrayOrNull(mixed $value): ?array {
+		if (is_array($value) === true) {
+			return $value;
+		}
+
+		return null;
+	}//end arrayOrNull()
 
 	/**
 	 * Persist the brands.
@@ -396,6 +375,27 @@ class AppBrandService {
 	private function save(array $brands): void {
 		$this->config->setAppValue(Application::APP_ID, self::CONFIG_KEY, (string)json_encode((object)$brands));
 	}//end save()
+
+	/**
+	 * The logo variable for a branded app's pages: the large logo, and the small
+	 * one below 1024 px, the breakpoint at which Nextcloud's header goes narrow.
+	 * Unquoted, like the other logo URLs of CssInjectionService::logoUrlLayer().
+	 *
+	 * @param string $large The large logo URL.
+	 * @param string|null $small The small logo URL, or null to use the large one at every width.
+	 *
+	 * @return string The stylesheet body.
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	public function logoCss(string $large, ?string $small): string {
+		$css = ':root{--nldesign-logo-url:url(' . $large . ');--nldesign-logo-filter:none}';
+		if ($small !== null) {
+			$css .= '@media (max-width:1024px){:root{--nldesign-logo-url:url(' . $small . ')}}';
+		}
+
+		return $css;
+	}//end logoCss()
 
 	/**
 	 * A logo URL, versioned by upload time so a new logo is not served from cache.
@@ -418,51 +418,4 @@ class AppBrandService {
 			['appId' => $appId, 'size' => $size, 'v' => (int)($meta['uploadedAt'] ?? 0)]
 		);
 	}//end logoUrl()
-
-	/**
-	 * The file name of a logo without extension.
-	 *
-	 * @param string $appId The app id.
-	 * @param string $size The size.
-	 *
-	 * @return string The name.
-	 *
-	 * @spec openspec/specs/per-app-theming/spec.md
-	 */
-	private function fileBase(string $appId, string $size): string {
-		return preg_replace('/[^a-z0-9_]/i', '', $appId) . '-' . $size;
-	}//end fileBase()
-
-	/**
-	 * Remove a logo whatever its extension.
-	 *
-	 * @param string $name The file name without extension.
-	 *
-	 * @return void
-	 *
-	 * @spec openspec/specs/per-app-theming/spec.md
-	 */
-	private function removeFiles(string $name): void {
-		$folder = $this->folder();
-		foreach (self::TYPES as $extension) {
-			if ($folder->fileExists($name . '.' . $extension) === true) {
-				$folder->getFile($name . '.' . $extension)->delete();
-			}
-		}
-	}//end removeFiles()
-
-	/**
-	 * The app data folder, created on first use.
-	 *
-	 * @return ISimpleFolder The folder.
-	 *
-	 * @spec openspec/specs/per-app-theming/spec.md
-	 */
-	private function folder(): ISimpleFolder {
-		try {
-			return $this->appData->getFolder(self::FOLDER);
-		} catch (NotFoundException $e) {
-			return $this->appData->newFolder(self::FOLDER);
-		}
-	}//end folder()
 }//end class

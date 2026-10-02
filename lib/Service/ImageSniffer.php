@@ -37,7 +37,7 @@ class ImageSniffer {
 	 *
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
-	public static function type(string $bytes): ?string {
+	public function type(string $bytes): ?string {
 		if (str_starts_with($bytes, "\x89PNG\r\n\x1a\n") === true) {
 			return 'image/png';
 		}
@@ -66,7 +66,7 @@ class ImageSniffer {
 	 *
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
-	public static function isSafeSvg(string $svg): bool {
+	public function isSafeSvg(string $svg): bool {
 		$patterns = ['/<\s*script/i', '/<\s*foreignObject/i', '/\son[a-z]+\s*=/i', '/javascript\s*:/i', '/<!ENTITY/i', '/data:text\/html/i'];
 		foreach ($patterns as $pattern) {
 			if (preg_match($pattern, $svg) === 1) {

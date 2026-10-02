@@ -14,8 +14,10 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppThemingService;
+use OCA\Thematiq\Service\AppBrandLogoStore;
 use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ImageSniffer;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
@@ -192,7 +194,14 @@ class ConfigBundleServiceTest extends TestCase {
 			$freshnessService,
 			new ScheduledSwitchStore($config),
 			$logger,
-			new AppBrandService($config, $appManager, $appThemingService, $this->tokenSetService, $this->createMock(IAppData::class), $this->createMock(IURLGenerator::class))
+			new AppBrandService(
+				$config,
+				$appManager,
+				$appThemingService,
+				$this->tokenSetService,
+				new AppBrandLogoStore($this->createMock(IAppData::class), new ImageSniffer()),
+				$this->createMock(IURLGenerator::class)
+			)
 		);
 	}//end setUp()
 
