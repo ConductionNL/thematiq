@@ -18,7 +18,9 @@ use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Service\AssistantMarkService;
 use OCA\Thematiq\Service\AppBrandLogoStore;
 use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\BundleExtraSections;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\DocumentAssetService;
 use OCA\Thematiq\Service\ImageSniffer;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
@@ -197,14 +199,17 @@ class ConfigBundleServiceTest extends TestCase {
 			$freshnessService,
 			new ScheduledSwitchStore($config),
 			$logger,
-			new AssistantMarkService($config, $emailThemingService, $this->createMock(Capabilities::class)),
-			new AppBrandService(
-				$config,
-				$appManager,
-				$appThemingService,
-				$this->tokenSetService,
-				new AppBrandLogoStore($this->createMock(IAppData::class), new ImageSniffer()),
-				$this->createMock(IURLGenerator::class)
+			new BundleExtraSections(
+				new AssistantMarkService($config, $emailThemingService, $this->createMock(Capabilities::class)),
+				new DocumentAssetService($this->createMock(IAppData::class), $config),
+				new AppBrandService(
+					$config,
+					$appManager,
+					$appThemingService,
+					$this->tokenSetService,
+					new AppBrandLogoStore($this->createMock(IAppData::class), new ImageSniffer()),
+					$this->createMock(IURLGenerator::class)
+				)
 			)
 		);
 	}//end setUp()
@@ -650,6 +655,33 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertSame('emailFooter', $result['errors'][0]['section']);
 		$this->assertArrayNotHasKey('email_footer_org_name', $this->appConfig);
 	}//end testInvalidEmailFooterUrlIsHardError()
+
+	/**
+	 * The document footer line travels as a value, the document images as metadata only.
+	 *
+	 * @spec openspec/specs/document-house-style/spec.md
+	 */
+	public function testDocumentStyleFooterLineSurvivesExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['document_style_footer_line'] = 'Postbus 1, 1234 AB Voorbeeld';
+		$this->appConfig['document_style_assets'] = json_encode(['logo' => ['mime' => 'image/png', 'size' => 10, 'uploadedAt' => 1]]);
+
+		$bundle = $this->service->export();
+		$this->assertSame('Postbus 1, 1234 AB Voorbeeld', $bundle['documentStyle']['footerLine']);
+		$this->assertFalse($bundle['documentStyle']['binariesIncluded']);
+		$this->assertSame('image/png', $bundle['documentStyle']['assets']['logo']['mime']);
+
+		$this->appConfig['document_style_footer_line'] = '';
+		$this->appConfig['document_style_assets'] = '{}';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('Postbus 1, 1234 AB Voorbeeld', $this->appConfig['document_style_footer_line']);
+		$this->assertSame('{}', $this->appConfig['document_style_assets'], 'Image metadata is never applied.');
+
+		$bundle['documentStyle']['footerLine'] = str_repeat('x', 201);
+		$this->assertFalse($this->service->import(bundle: $bundle, dryRun: true)['valid']);
+	}//end testDocumentStyleFooterLineSurvivesExportAndImport()
 
 	/**
 	 * Brands per app travel as app => set, logos as metadata only; a version 2 bundle leaves them alone.

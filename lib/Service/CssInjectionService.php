@@ -151,6 +151,13 @@ class CssInjectionService {
 	private ?array $brandLogo = null;
 
 	/**
+	 * Builds the rules that carry a set's internal tokens onto their components.
+	 *
+	 * @var InternalScopesService
+	 */
+	private InternalScopesService $internalScopes;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -165,6 +172,7 @@ class CssInjectionService {
 	 * @param RuntimeFileLocator $runtimeFiles Finds files thematiq wrote at runtime, which live in app data.
 	 * @param LogoLayerService $logoLayer Resolves the active set's logo layer.
 	 * @param AppBrandService $appBrands The brand per app.
+	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -182,6 +190,7 @@ class CssInjectionService {
 		RuntimeFileLocator $runtimeFiles,
 		private readonly LogoLayerService $logoLayer,
 		AppBrandService $appBrands,
+		?InternalScopesService $internalScopes = null,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
@@ -194,6 +203,7 @@ class CssInjectionService {
 		$this->stockTokens = $stockTokens;
 		$this->runtimeFiles = $runtimeFiles;
 		$this->appBrands = $appBrands;
+		$this->internalScopes = ($internalScopes ?? new InternalScopesService(files: $runtimeFiles));
 	}//end __construct()
 
 	/**
@@ -452,7 +462,8 @@ class CssInjectionService {
 		// so its media-query/attribute-scoped rules override it — only
 		// when the toggle is on AND a generated file exists for this set.
 		// A disabled toggle or a set without a variant adds nothing.
-		if ($this->hasDarkVariantLayer(tokenSet: $tokenSet) === true) {
+		$withDark = $this->hasDarkVariantLayer(tokenSet: $tokenSet);
+		if ($withDark === true) {
 			$layers[] = $this->fileLayer(layer: 'dark-variant', file: 'tokens/dark/' . $tokenSet);
 		}
 
@@ -475,7 +486,10 @@ class CssInjectionService {
 		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
 		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
-		return $layers;
+		return array_merge(
+			$layers,
+			$this->internalScopesLayer(tokenSet: $tokenSet, designSystemId: $designSystemId, withDark: $withDark)
+		);
 	}//end designSystemLayers()
 
 	/**
@@ -536,8 +550,44 @@ class CssInjectionService {
 		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
 		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
-		return $layers;
+		return array_merge(
+			$layers,
+			// This branch injects no dark variant, so none is read for the scopes either.
+			$this->internalScopesLayer(tokenSet: $tokenSet, designSystemId: 'none', withDark: false)
+		);
 	}//end noDesignSystemLayers()
+
+	/**
+	 * The internal scopes as an inline layer, after the component scopes, or
+	 * nothing when the set and the overrides give no internal token a value.
+	 *
+	 * Its own failure degrades only itself: the set's other layers still emit.
+	 *
+	 * @param string $tokenSet       The token set.
+	 * @param string $designSystemId The design system the set wears.
+	 * @param bool   $withDark       Whether the set's dark variant is part of the cascade.
+	 *
+	 * @return array<int, array{layer: string, kind: string, css: string, id: string}> Zero or one entry.
+	 *
+	 * @spec openspec/changes/internal-variable-tokens/specs/css-architecture/spec.md
+	 */
+	private function internalScopesLayer(string $tokenSet, string $designSystemId, bool $withDark): array {
+		try {
+			$css = $this->internalScopes->forSet(tokenSet: $tokenSet, designSystemId: $designSystemId, withDark: $withDark);
+		} catch (Throwable $e) {
+			$this->logger->warning(
+				'thematiq: the internal scopes layer was skipped; the rest of the cascade still ran.',
+				['app' => Application::APP_ID, 'exception' => $e]
+			);
+			return [];
+		}
+
+		if ($css === '') {
+			return [];
+		}
+
+		return [['layer' => 'internal-scopes', 'kind' => 'inline', 'css' => $css, 'id' => self::INTERNAL_SCOPES_STYLE_ID]];
+	}//end internalScopesLayer()
 
 	/**
 	 * The `nextcloud` set's token layer, resolved from the running instance.
@@ -803,6 +853,11 @@ class CssInjectionService {
 	 * @var string
 	 */
 	public const STOCK_TOKENS_STYLE_ID = 'nldesign-stock-tokens';
+
+	/**
+	 * The id of the inline `<style>` carrying the internal scopes.
+	 */
+	public const INTERNAL_SCOPES_STYLE_ID = 'thematiq-internal-scopes';
 
 	/**
 	 * Emit one inline `<style>` block into the page head.

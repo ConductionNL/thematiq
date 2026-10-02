@@ -36,6 +36,7 @@ script('thematiq', 'lib/brandForm');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');
+script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
 style('thematiq', 'admin');
 // The component playground: the selector / stage / tokens instrument that
@@ -753,6 +754,33 @@ if ($_['mockUi'] === true) {
 			<p><code id="nldesign-email-occ-enable"><?php p($_['occEnableCommand']); ?></code></p>
 			<p><code id="nldesign-email-occ-disable"><?php p($_['occDisableCommand']); ?></code></p>
 		</div>
+	</div>
+
+	<!-- Documents: the document house style profile that fleet apps read
+	     for letters and PDF exports (openspec/specs/document-house-style/spec.md).
+	     Filled and saved by js/admin-documents.js. -->
+	<div class="nldesign-documents" id="nldesign-documents" style="margin-top:2em">
+		<h3><?php p($l->t('Documents')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Apps that generate letters and PDF exports use these values, so documents follow the house style. Without uploads they use the house style logo and the email footer.')); ?>
+		</p>
+		<p>
+			<label for="nldesign-documents-logo"><?php p($l->t('Document logo (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label><br>
+			<input type="file" id="nldesign-documents-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+			<button type="button" class="button" id="nldesign-documents-logo-remove"><?php p($l->t('Remove document logo')); ?></button>
+		</p>
+		<p>
+			<label for="nldesign-documents-cover"><?php p($l->t('Cover image (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label><br>
+			<input type="file" id="nldesign-documents-cover" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+			<button type="button" class="button" id="nldesign-documents-cover-remove"><?php p($l->t('Remove cover image')); ?></button>
+		</p>
+		<p>
+			<label for="nldesign-documents-footer-line"><?php p($l->t('Extra footer line')); ?></label><br>
+			<input type="text" id="nldesign-documents-footer-line" maxlength="200">
+			<button type="button" class="button primary" id="nldesign-documents-footer-save"><?php p($l->t('Save footer line')); ?></button>
+		</p>
+		<div class="nldesign-documents-preview" id="nldesign-documents-preview" aria-live="polite"></div>
+		<span id="nldesign-documents-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Upstream token updates — opt-in daily freshness check against

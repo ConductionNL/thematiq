@@ -407,6 +407,31 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testACustomSetOnNoneLoadsItsOwnTokenFile()
 
 	/**
+	 * A set that gives an internal token a value carries the internal scopes,
+	 * inline and directly after the component scopes.
+	 *
+	 * @spec openspec/changes/internal-variable-tokens/specs/css-architecture/spec.md
+	 */
+	public function testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes(): void {
+		$this->configureAppValues(['token_set' => 'custom-openwoo']);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'none']);
+		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
+			['id' => 'none', 'name' => 'No design system', 'description' => '', 'stylesheets' => []]
+		);
+		$this->runtimeFiles->store()->write('css/tokens/custom-openwoo.css', ":root {\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n");
+
+		$styleLog = [];
+		$fontLog = [];
+		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $fontLog)->getStylesheetManifest('custom-openwoo');
+
+		$this->assertSame(['tokens', 'theme-scopes', 'component-scopes', 'internal-scopes'], array_column($manifest['layers'], 'layer'));
+		$last = end($manifest['layers']);
+		$this->assertSame('inline', $last['kind']);
+		$this->assertSame(CssInjectionService::INTERNAL_SCOPES_STYLE_ID, $last['id']);
+		$this->assertStringContainsString('--dp-hover-color: var(--nldesign-nc-dp-hover-color);', (string)$last['css']);
+	}//end testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes()
+
+	/**
 	 * Saved overrides are the last stylesheet link the page gets, after every
 	 * design-system and token layer.
 	 *
