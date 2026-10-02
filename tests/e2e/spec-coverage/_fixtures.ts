@@ -161,6 +161,16 @@ export async function api(
 	)
 }
 
+/**
+ * The instance-wide active token set, as `{ tokenSet }`, read from the public
+ * capability: the supported read path since GET /settings/tokenset was removed
+ * for #664.
+ */
+export async function activeTokenSet(page: Page): Promise<{ tokenSet: string }> {
+	const res = await api(page, 'GET', '/ocs/v2.php/cloud/capabilities?format=json')
+	return { tokenSet: res.json?.ocs?.data?.capabilities?.nldesign?.tokenSet?.id }
+}
+
 /** Assert a fixture precondition loudly rather than letting it fail obscurely later. */
 export function requireFixture(value: unknown, what: string): void {
 	expect(value, `fixture precondition: ${what}`).toBeTruthy()
