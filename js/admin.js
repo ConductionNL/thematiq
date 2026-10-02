@@ -936,17 +936,41 @@
 			nldesign: 'NL Design System',
 		}
 
+		// Documentation link per design system id, from lib/Settings/Admin.php.
+		var designSystemDocs = loadInitialState('designSystemDocs', {})
+
+		/**
+		 * Point the header's Documentation link at the docs of a design system.
+		 *
+		 * The template renders the current set's link; this follows the
+		 * dropdown, so an admin who picks a La Suite set is not sent to NL
+		 * Design System docs (#662). A design system with no entry keeps the
+		 * link it has.
+		 *
+		 * @param {string} dsId The design system id.
+		 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+		 */
+		function updateDocumentationLink(dsId) {
+			var link = document.getElementById('nldesign-doc-link')
+			var url = designSystemDocs[dsId]
+			if (link === null || typeof url !== 'string' || url === '') {
+				return
+			}
+			link.setAttribute('href', url)
+		}
+
 		// Update the design system badge for the selected token set
 		function updateDesignSystemBadge(tokenSetId) {
-			var badge = document.getElementById('nldesign-design-system-badge')
-			if (!badge) return
-
 			var option = tokenSetSelect
 				? tokenSetSelect.querySelector('option[value="' + tokenSetId + '"]')
 				: null
 			var dsId = option
 				? option.getAttribute('data-design-system') || 'nldesign'
 				: 'nldesign'
+			updateDocumentationLink(dsId)
+
+			var badge = document.getElementById('nldesign-design-system-badge')
+			if (!badge) return
 			var dsName =
 				typeof TT.designSystemLabel === 'function'
 					? TT.designSystemLabel(dsId)

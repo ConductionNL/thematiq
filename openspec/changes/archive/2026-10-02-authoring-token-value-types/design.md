@@ -151,7 +151,7 @@ WCAG measures what renders. A colour that cannot be parsed stays `unevaluated`, 
 
 `deriveColorToken()` derives the dark colour from the opaque channels, and the result keeps the
 light value's alpha: `#rrggbbaa` when alpha is below 1. Every `css/tokens/dark/*.css` is
-regenerated with `occ nldesign:generate-dark-variants --force`. The generator version constant
+regenerated with `occ thematiq:generate-dark-variants --force`. The generator version constant
 bumps so stale files are spotted by their header.
 
 ## Decision 7: core theming gets opaque colours

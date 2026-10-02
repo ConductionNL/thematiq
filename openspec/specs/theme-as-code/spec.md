@@ -6,14 +6,14 @@ The house style is a branding package that can live in Git and is applied from d
 ## Requirements
 ### Requirement: A branding package holds the whole house style
 
-A branding package MUST be a directory, or a ZIP of one, holding `bundle.json` in the existing bundle format, `fonts/<id>.woff2` for every font in the bundle, optional `tokens/<id>.json` DTCG sources, and an optional `REVISION` file. `occ nldesign:config:export --package <dir>` MUST write a package of the running configuration, fonts included. `occ nldesign:config:import` MUST accept a package directory or ZIP as well as a bare bundle file.
+A branding package MUST be a directory, or a ZIP of one, holding `bundle.json` in the existing bundle format, `fonts/<id>.woff2` for every font in the bundle, optional `tokens/<id>.json` DTCG sources, and an optional `REVISION` file. `occ thematiq:config:export --package <dir>` MUST write a package of the running configuration, fonts included. `occ thematiq:config:import` MUST accept a package directory or ZIP as well as a bare bundle file.
 
 #### Scenario: An operator moves the house style with its fonts
 
 @e2e exclude occ on two servers, not a page; proven by tests/Unit/Service/BrandingPackageServiceTest.php::testPackageRoundTripsWithTwoFontsAndOneDtcgSource
 
 - GIVEN a test server with a custom heading font and a custom token set
-- WHEN an operator runs `occ nldesign:config:export --package /srv/branding` there and `occ nldesign:config:import /srv/branding` on production
+- WHEN an operator runs `occ thematiq:config:export --package /srv/branding` there and `occ thematiq:config:import /srv/branding` on production
 - THEN production MUST render headings in the custom font
 - AND no administrator MUST re-upload the font
 

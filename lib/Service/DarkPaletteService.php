@@ -955,7 +955,7 @@ class DarkPaletteService {
 	 *                                                                                                         The outcome.
 	 *
 	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - `$force` mirrors the standard CLI
-	 * `--force` convention (also `occ nldesign:generate-dark-variants --force`); a
+	 * `--force` convention (also `occ thematiq:generate-dark-variants --force`); a
 	 * skip-if-fresh/force-regenerate toggle on one write path, not two responsibilities.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md

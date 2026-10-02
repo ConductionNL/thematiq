@@ -107,7 +107,7 @@ override set (never error) for sets without such a block or with malformed CSS.
 
 Dark variants MUST be materialised as static files `css/tokens/dark/<set>.css` at build,
 install, or upgrade time — never derived per request. Generation MUST be available as an occ
-command (`nldesign:generate-dark-variants`, with `--set` and `--force` options) and as an
+command (`thematiq:generate-dark-variants`, with `--set` and `--force` options) and as an
 `IRepairStep` that regenerates missing or stale files and logs-and-skips when the target
 directory is not writable. Each generated file MUST carry a header comment with the generator
 version and a hash of the source token set so freshness can be checked. Generation MUST skip
@@ -119,7 +119,7 @@ sets MUST be generated at upload time and removed when the custom set is deleted
 #### Scenario: occ command generates a variant
 
 - GIVEN the `amsterdam` token set exists
-- WHEN `occ nldesign:generate-dark-variants --set=amsterdam` runs
+- WHEN `occ thematiq:generate-dark-variants --set=amsterdam` runs
 - THEN `css/tokens/dark/amsterdam.css` MUST be written
 - AND the output MUST list the set and any contrast warnings
 

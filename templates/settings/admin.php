@@ -40,6 +40,7 @@ script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
+script('thematiq', 'admin-app-brands');
 style('thematiq', 'admin');
 // Your own tokens and the deprecations list (authoring-token-lifecycle).
 script('thematiq', 'ownTokens');
@@ -67,8 +68,8 @@ if ($_['mockUi'] === true) {
      via data-* attributes on this element. See ADR-004. -->
 <div id="nldesign-settings" class="section">
 	<div class="nldesign-settings-header">
-		<h2><?php p($l->t('NL Design System Theme')); ?></h2>
-		<a href="https://nldesign.app" target="_blank" rel="noopener noreferrer" class="nldesign-doc-link">
+		<h2>Thematiq</h2>
+		<a href="<?php p($_['documentationUrl']); ?>" id="nldesign-doc-link" target="_blank" rel="noopener noreferrer" class="nldesign-doc-link">
 			<span class="icon-link-external"></span>
 			<?php p($l->t('Documentation')); ?>
 		</a>
@@ -640,6 +641,25 @@ if ($_['mockUi'] === true) {
 			<?php p($l->t('Save app theming')); ?>
 		</button>
 		<span id="nldesign-app-theming-feedback" class="nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- Brand per app: an app's own token set and logos
+	     (openspec/specs/per-app-theming/spec.md). Filled by js/admin-app-brands.js. -->
+	<div class="nldesign-app-brands" id="nldesign-app-brands" style="margin-top:2em">
+		<h3><?php p($l->t('Brand per app')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Give an app its own house style and logo, for example a knowledge base or a participation platform. On that app\'s pages the brand replaces the house style for everyone. Other pages stay as they are.')); ?>
+			<?php p($l->t('The app\'s name stays as Nextcloud shows it: the app menu and page titles come from Nextcloud.')); ?>
+		</p>
+		<div id="nldesign-app-brands-list" class="nldesign-app-brands-list"></div>
+		<p>
+			<label for="nldesign-app-brands-app"><?php p($l->t('App')); ?></label>
+			<select id="nldesign-app-brands-app"></select>
+			<label for="nldesign-app-brands-set"><?php p($l->t('Token set')); ?></label>
+			<select id="nldesign-app-brands-set"></select>
+			<button type="button" class="button primary" id="nldesign-app-brands-add"><?php p($l->t('Save brand')); ?></button>
+		</p>
+		<span id="nldesign-app-brands-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Group theming — map Nextcloud groups to token sets for shared-instance
