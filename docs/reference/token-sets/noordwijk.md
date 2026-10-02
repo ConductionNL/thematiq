@@ -413,7 +413,7 @@ Contrast: primary text on primary 10.20:1, primary on background 10.20:1 (pass).
 | `--nldesign-font-size-sm` | `14px` | | this set | |
 | `--nldesign-font-size-xl` | `24px` | | this set | |
 | `--nldesign-font-size-xs` | `12px` | | this set | |
-| `--nldesign-logo-url` | `url('../../img/logos/noordwijk.svg')` | | this set | |
+| `--nldesign-logo-url` | `url('../../img/logos/noordwijk.svg')` | `url('../../../img/logos/noordwijk-dark.svg')` | this set | |
 | `--nldesign-size-2xl` | `48px` | | this set | |
 | `--nldesign-size-2xs` | `4px` | | this set | |
 | `--nldesign-size-3xl` | `72px` | | this set | |

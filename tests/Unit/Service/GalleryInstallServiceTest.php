@@ -32,6 +32,7 @@ use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\Exception\GalleryException;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GalleryInstallService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemeGalleryService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenSetConverterService;
@@ -134,7 +135,7 @@ class GalleryInstallServiceTest extends TestCase {
 		$this->config = $config;
 
 		$this->customSets = new CustomTokenSetService(
-			$tempApp,
+			new DirectoryRuntimeFileStore($this->appDir),
 			$config,
 			new CustomTokenSetValidator(),
 			new ContrastService(),

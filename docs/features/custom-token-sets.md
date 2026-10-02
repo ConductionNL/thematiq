@@ -148,12 +148,14 @@ Each uploaded set in the **Custom token sets** list offers:
 - **Delete** — removes the file and its metadata. Deleting the **active** set
   resets the active token set to `nextcloud` in the same operation.
 
-## ⚠️ Upgrade caveat
+## Where your uploads are kept
 
-Uploaded sets are stored as files in the app directory
-(`css/tokens/custom-{slug}.css`), the same accepted trade-off as
-`custom-overrides.css`. An app-store upgrade that replaces the app directory
-**removes** uploaded sets. **Export your custom sets (Download) before
-upgrading** and re-upload them afterwards. Set metadata lives in the `thematiq`
-appconfig key `custom_token_sets` and survives the upgrade, but a manifest entry
-without a backing file is ignored by discovery.
+Your uploaded sets, their logos and their dark variants are kept in Nextcloud's app data, not in the app directory. So are your token overrides, your custom CSS and the logos and backgrounds a saved theme captures.
+
+- An app update leaves them in place.
+- Nextcloud's code integrity check stays clean, because the app directory keeps exactly the files the release shipped.
+- A server with a read-only app directory can use every one of these features.
+
+Updating from an older version moves the files it finds in the app directory into app data, and removes them there. If the app directory is read-only, the update logs each file it could not remove. Remove those by hand to clear the integrity warning.
+
+Going back to an older version? That version looks for these files in the app directory and does not find them. Download your sets and your overrides first, so you can upload them again.
