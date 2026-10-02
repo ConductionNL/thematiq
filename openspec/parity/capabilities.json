@@ -5844,21 +5844,20 @@
 			"id": "sur-assistant-logo",
 			"area": "surfaces",
 			"name": "Show the organisation's logo as an approved mark inside the AI assistant, so users can see the assistant is the one their organisation sanctioned.",
-			"thematiq": "no",
+			"thematiq": "partial",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "grep -rniF assistant lib templates js finds no hook into the Nextcloud Assistant; thematiq restyles its colours through the shared CSS variables like any app (sur-all-pages) but shows no organisation mark inside it",
+				"state": "building",
+				"evidence": "thematiq half built: lib/Service/AssistantMarkService.php (off by default, organisation name defaulting to the email footer, logo defaulting to logos.default of the active set, in the configuration bundle) and GET /api/assistant-mark (lib/Controller/AssistantMarkController.php, #[NoAdminRequired], label translated per user) with the AI assistant block on Settings > Administration > Theming; the panel that draws it is the nextcloud-vue half, ConductionNL/nextcloud-vue#1298, not built yet",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/surfaces-assistant-approved-mark (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/surfaces-assistant-approved-mark"
+				"change": "surfaces-assistant-approved-mark"
 			},
-			"reachedOn": "nothing reaches it",
+			"reachedOn": "Settings > Administration > Theming, AI assistant; GET /apps/thematiq/api/assistant-mark",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 grep -rliF assistant in apps/theming, core and lib (php) finds nothing; the Assistant is a separate app outside server and the theming app exposes no hook that places the organisation logo in it beyond the shared CSS variables (lib/Service/ThemeInjectionService.php via lib/Listener/BeforeTemplateRenderedListener.php:56) Caveat: the server clone read was sparse (apps/theming, settings, admin_audit, core, lib/private/Mail); the Assistant app was not read, so this no covers server and the theming app only.",
 				"m365-branding": "https://www.microsoft.com/microsoft-365/roadmap?id=555852 (rolling out, GA 2026-08): the Microsoft 365 Copilot app shows the logo 'already managed in the Microsoft Admin Center theming settings' in the chat footer 'paired with a fixed label: Approved by'",

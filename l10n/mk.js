@@ -810,7 +810,20 @@ OC.L10N.register(
         "House style of my groups": "House style of my groups",
         "You manage these groups. Choose the house style their members see. An administrator decides which house styles you can choose from.": "You manage these groups. Choose the house style their members see. An administrator decides which house styles you can choose from.",
         "Loading groups…": "Loading groups…",
-        "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.": "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility."
+        "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.": "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.",
+        "Approved by %s": "Approved by %s",
+        "%s logo": "%s logo",
+        "Enter the logo as an https address or a path on this server.": "Enter the logo as an https address or a path on this server.",
+        "Enter the organisation name before you turn on the approved mark.": "Enter the organisation name before you turn on the approved mark.",
+        "AI assistant": "AI assistant",
+        "Show users which AI assistant your organisation approved. The mark appears in the footer of the assistant panel in Conduction apps.": "Show users which AI assistant your organisation approved. The mark appears in the footer of the assistant panel in Conduction apps.",
+        "The mark informs honest users. It is not a security control.": "The mark informs honest users. It is not a security control.",
+        "Show the approved mark": "Show the approved mark",
+        "Organisation name": "Organisation name",
+        "Logo address": "Logo address",
+        "Save AI assistant settings": "Save AI assistant settings",
+        "The AI assistant settings could not be saved.": "The AI assistant settings could not be saved.",
+        "AI assistant settings saved.": "AI assistant settings saved."
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -810,7 +810,20 @@ OC.L10N.register(
         "House style of my groups": "Huisstijl van mijn groepen",
         "You manage these groups. Choose the house style their members see. An administrator decides which house styles you can choose from.": "Je beheert deze groepen. Kies de huisstijl die hun leden zien. Een beheerder bepaalt uit welke huisstijlen je kunt kiezen.",
         "Loading groups…": "Groepen laden…",
-        "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.": "Vink Subbeheerders kiezen aan om de subbeheerders van een groep de huisstijl te laten kiezen uit de token sets die jij toestaat. Ze kiezen onder Persoonlijke instellingen, Uiterlijk en toegankelijkheid."
+        "Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.": "Vink Subbeheerders kiezen aan om de subbeheerders van een groep de huisstijl te laten kiezen uit de token sets die jij toestaat. Ze kiezen onder Persoonlijke instellingen, Uiterlijk en toegankelijkheid.",
+        "Approved by %s": "Goedgekeurd door %s",
+        "%s logo": "Logo van %s",
+        "Enter the logo as an https address or a path on this server.": "Vul het logo in als https-adres of als pad op deze server.",
+        "Enter the organisation name before you turn on the approved mark.": "Vul de naam van de organisatie in voordat je het goedkeuringsmerk aanzet.",
+        "AI assistant": "AI-assistent",
+        "Show users which AI assistant your organisation approved. The mark appears in the footer of the assistant panel in Conduction apps.": "Laat gebruikers zien welke AI-assistent je organisatie heeft goedgekeurd. Het merk staat onderaan het assistentpaneel in Conduction-apps.",
+        "The mark informs honest users. It is not a security control.": "Het merk informeert eerlijke gebruikers. Het is geen beveiligingsmaatregel.",
+        "Show the approved mark": "Toon het goedkeuringsmerk",
+        "Organisation name": "Naam van de organisatie",
+        "Logo address": "Adres van het logo",
+        "Save AI assistant settings": "AI-assistentinstellingen opslaan",
+        "The AI assistant settings could not be saved.": "De AI-assistentinstellingen konden niet worden opgeslagen.",
+        "AI assistant settings saved.": "AI-assistentinstellingen opgeslagen."
     },
     "nplurals=2; plural=(n != 1);"
 )
