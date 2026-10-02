@@ -326,6 +326,38 @@ class ScheduledSwitchServiceTest extends TestCase {
 	}//end testTheLookStartsAndEndsOnTime()
 
 	/**
+	 * Two back-to-back campaigns planned out of order (#825): the later one is
+	 * stored first. When the first one's end and the second one's start are
+	 * due in the same run, the end must go first, so the second campaign
+	 * snapshots and returns to the administrator's own look, not the first
+	 * campaign's.
+	 */
+	public function testBackToBackSwitchesPlannedOutOfOrderReturnToTheOriginalLook(): void {
+		$later = $this->service->create(tokenSet: 'custom-campagne', startAt: '2027-05-01T17:00:00Z', endAt: '2027-05-01T19:00:00Z', createdBy: 'admin');
+		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T15:00:00Z', endAt: '2027-05-01T17:00:00Z', createdBy: 'admin');
+
+		$this->at('2027-05-01T15:01:00Z');
+		$this->service->runDue();
+		$this->assertSame('koningsdag-oranje', $this->store['thematiq/token_set']);
+
+		// One run, both due: the first campaign's end and the second one's start.
+		$this->at('2027-05-01T17:05:00Z');
+		$this->service->runDue();
+
+		$this->assertSame('custom-campagne', $this->store['thematiq/token_set']);
+		$running = $this->service->list();
+		$this->assertCount(1, $running);
+		$this->assertSame($later['id'], $running[0]['id']);
+		$this->assertSame('rijkshuisstijl', $running[0]['revertTo']);
+
+		$this->at('2027-05-01T19:05:00Z');
+		$this->service->runDue();
+
+		$this->assertSame('rijkshuisstijl', $this->store['thematiq/token_set']);
+		$this->assertSame([], $this->service->list());
+	}//end testBackToBackSwitchesPlannedOutOfOrderReturnToTheOriginalLook()
+
+	/**
 	 * Scenario "A set picked by hand during a running switch does not last":
 	 * the next run puts the switch's set back, and the end still returns to the
 	 * set the switch replaced.

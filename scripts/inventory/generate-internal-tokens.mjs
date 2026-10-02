@@ -34,12 +34,60 @@ export const MAP = join(ROOT, 'scripts/mapping/internal-tokens.json')
 export const DOC = join(ROOT, 'docs/reference/internal-tokens.md')
 export const INTERNAL_CLASSES = ['component', 'slot', 'conduction']
 
-const COLOUR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|color-mix)\(|var\(--color-/i
+// Keywords that are a colour: the common names, and the CSS system colours the
+// PDF viewer uses for its forced-colours variant.
+const NAMED = new RegExp(
+	'^(?:transparent|currentcolor|inherit|white|black|red|green|blue|gray|grey|'
+		+ 'accentcolor|accentcolortext|activetext|buttonborder|buttonface|buttontext|canvas|canvastext|field|fieldtext|'
+		+ 'graytext|highlight|highlighttext|linktext|mark|marktext|selecteditem|selecteditemtext|visitedtext)$',
+	'i',
+)
+const TRIPLET = /^\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}$/
+const COLOUR_CALL =
+	/^(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color-mix|light-dark|color)\(.*\)$/is
+const COLOUR_VAR =
+	/^var\(\s*--[\w-]*(?:color|colour|background|bg|fg)[\w-]*\s*(?:,.*)?\)$/is
 
-/** A colour when Nextcloud's own value is one, so the editor can show a swatch. */
-function typeOf(name, values) {
-	if (values.some((v) => COLOUR.test(v))) return 'color'
-	return /(?:^|-)(?:color|background|bg|fg)(?:-|$)/.test(name.slice(2)) ? 'color' : 'text'
+/** Whether a value has a space outside parentheses: a shadow, a border, a list. */
+function hasTopLevelSpace(value) {
+	let depth = 0
+	for (const c of value) {
+		if (c === '(') depth++
+		else if (c === ')') depth--
+		else if (/\s/.test(c) && depth === 0) return true
+	}
+	return false
+}
+
+/** Whether a whole value is one colour, not a shadow or border that contains one. */
+export function isColourValue(raw) {
+	const value = raw.replace(/\s+/g, ' ').trim()
+	if (
+		value === ''
+		|| hasTopLevelSpace(value)
+		|| (value.includes(',') && !/\(/.test(value))
+	)
+		return false
+	return (
+		/^#[0-9a-f]{3,8}$/i.test(value)
+		|| NAMED.test(value)
+		|| COLOUR_CALL.test(value)
+		|| COLOUR_VAR.test(value)
+	)
+}
+
+/**
+ * A colour when every one of Nextcloud's own values is a colour, so the editor
+ * shows a picker and the server checks a colour; a shadow or border that only
+ * contains a colour stays text. With no recorded value, the name decides.
+ */
+export function typeOf(name, values) {
+	if (values.length > 0 && values.every((v) => TRIPLET.test(v.trim())))
+		return 'rgb'
+	if (values.length > 0) return values.every(isColourValue) ? 'color' : 'text'
+	return /(?:^|-)(?:color|background|bg|fg)(?:-|$)/.test(name.slice(2))
+		? 'color'
+		: 'text'
 }
 
 /**
@@ -68,6 +116,12 @@ export function splitSelectors(list) {
 	return out.filter((s) => s !== '' && isSelector(s))
 }
 
+const HTML_ELEMENTS = new Set(
+	'html body div span p a button input select textarea label ul ol li table tr td th thead tbody tfoot img svg path form fieldset legend nav header footer main section article aside h1 h2 h3 h4 h5 h6 pre code mark figure figcaption details summary dialog video audio canvas iframe hr strong em small'.split(
+		' ',
+	),
+)
+
 const probe = new JSDOM('<!doctype html><body></body>').window.document
 
 /**
@@ -78,6 +132,12 @@ const probe = new JSDOM('<!doctype html><body></body>').window.document
  */
 export function isSelector(text) {
 	if (/["']$|^["']|:host\b|sourcesContent|=>/.test(text)) return false
+	// Source-map fragments such as `AAqD` parse as element names and match nothing.
+	if (
+		/^[A-Za-z][A-Za-z0-9]*$/.test(text)
+		&& !HTML_ELEMENTS.has(text.toLowerCase())
+	)
+		return false
 	try {
 		probe.querySelector(text)
 		return true
@@ -86,30 +146,131 @@ export function isSelector(text) {
 	}
 }
 
+/**
+ * The editor group a token is listed under: a named component where the
+ * variables carry one, else the app they come from, else "other". Headings
+ * are translated in js/admin.js, keyed by these ids.
+ */
+export const GROUPS = {
+	'date-picker': 'Date picker',
+	select: 'Select box',
+	'media-player': 'Media player',
+	'code-highlighting': 'Code highlighting',
+	conduction: 'Conduction apps',
+	'pdf-viewer': 'PDF viewer',
+	'text-editor': 'Text editor',
+	files: 'Files',
+	photos: 'Photos',
+	teams: 'Teams',
+	components: 'Nextcloud components',
+	other: 'Other variables',
+}
+const BY_OWNER = {
+	dp: 'date-picker',
+	vs: 'select',
+	plyr: 'media-player',
+	hljs: 'code-highlighting',
+	photos: 'photos',
+}
+const BY_APP = {
+	files_pdfviewer: 'pdf-viewer',
+	text: 'text-editor',
+	files: 'files',
+	circles: 'teams',
+}
+const COMPONENTS = [
+	'app',
+	'assistant',
+	'auto',
+	'avatar',
+	'checkbox',
+	'chip',
+	'contenteditable',
+	'counter',
+	'figure',
+	'form',
+	'input',
+	'list',
+	'nc',
+	'note',
+	'open',
+	'radio',
+	'secondary',
+	'size',
+	'user',
+]
+const appOf = (source) =>
+	source.replace(/^dist\/([a-z_]+)-.*/, '$1').replace(/^apps\/([a-z_]+).*/, '$1')
+
+export function groupOf(entry) {
+	if (entry.class === 'conduction') return 'conduction'
+	if (BY_OWNER[entry.owner]) return BY_OWNER[entry.owner]
+	const apps = [...new Set((entry.sources ?? []).map(appOf))]
+	if (apps.length === 1 && BY_APP[apps[0]]) return BY_APP[apps[0]]
+	return COMPONENTS.includes(entry.owner) ? 'components' : 'other'
+}
+
 export function build(inventory, status) {
 	const tokens = {}
 	for (const [name, entry] of Object.entries(inventory.variables)) {
 		const decision = status.variables[name]
-		if (!INTERNAL_CLASSES.includes(entry.class) || decision?.status !== 'settable') continue
-		const selectors = [...new Set((entry.selectors ?? []).flatMap(splitSelectors).map((s) => (s === ':root' ? 'body' : s)))].sort()
+		if (
+			!INTERNAL_CLASSES.includes(entry.class)
+			|| decision?.status !== 'settable'
+		)
+			continue
+		const selectors = [
+			...new Set(
+				(entry.selectors ?? [])
+					.flatMap(splitSelectors)
+					.map((s) => (s === ':root' ? 'body' : s)),
+			),
+		].sort()
 		const values = entry.values ?? []
 		tokens[decision.token] = {
 			variable: name,
 			class: entry.class,
 			owner: entry.owner,
+			group: groupOf(entry),
 			type: typeOf(name, values),
 			mode: selectors.length > 0 ? 'selectors' : 'body',
 			...(selectors.length > 0 ? { selectors } : {}),
-			...(values.length > 0 ? { stock: values[0].replace(/\s+/g, ' ').trim() } : {}),
+			...(values.length > 0
+				? { stock: values[0].replace(/\s+/g, ' ').trim() }
+				: {}),
 		}
 	}
 
-	const sorted = Object.fromEntries(Object.keys(tokens).sort().map((k) => [k, tokens[k]]))
+	const sorted = Object.fromEntries(
+		Object.keys(tokens)
+			.sort()
+			.map((k) => [k, tokens[k]]),
+	)
+
+	// Nextcloud's own value per theme for the settable theme variables, so the
+	// editor can show what a row replaces without the server reading the inventory.
+	const themeStock = {}
+	for (const name of Object.keys(status.variables).sort()) {
+		const entry = inventory.variables[name]
+		if (
+			entry?.class === 'theme'
+			&& status.variables[name].status === 'settable'
+			&& entry.stock
+		) {
+			themeStock[name] = {
+				light: entry.stock.default,
+				dark: entry.stock.dark ?? entry.stock.default,
+			}
+		}
+	}
+
 	return {
-		$comment: 'GENERATED by scripts/inventory/generate-internal-tokens.mjs from nextcloud-variables.json and variable-status.json. Edit those, not this file.',
+		$comment:
+			'GENERATED by scripts/inventory/generate-internal-tokens.mjs from nextcloud-variables.json and variable-status.json. Edit those, not this file.',
 		nextcloud: inventory.nextcloud,
 		conductionNextcloudVue: inventory.conductionNextcloudVue,
 		tokens: sorted,
+		themeStock,
 	}
 }
 
@@ -124,7 +285,8 @@ const code = (v, n) => {
 
 export function renderDoc(map) {
 	const byOwner = {}
-	for (const [token, t] of Object.entries(map.tokens)) (byOwner[t.class === 'conduction' ? 'cn' : t.owner] ||= []).push([token, t])
+	for (const [token, t] of Object.entries(map.tokens))
+		(byOwner[t.group] ||= []).push([token, t])
 	const lines = ['---', 'sidebar_position: 2.5', '---', '']
 	lines.push('# Component variables', '')
 	lines.push(
@@ -136,16 +298,31 @@ export function renderDoc(map) {
 		'',
 	)
 	lines.push('**Reaches** says how a value gets there:', '')
-	lines.push('- *every reader*: components only read the variable, so one value on the page reaches them all.')
-	lines.push('- *its component*: the component declares the variable itself, so the value is written onto that element.')
+	lines.push(
+		'- *every reader*: components only read the variable, so one value on the page reaches them all.',
+	)
+	lines.push(
+		'- *its component*: the component declares the variable itself, so the value is written onto that element.',
+	)
 	lines.push('')
-	lines.push('An internal token applies in light and dark alike. Give it a value in the dark file to differ in dark.', '')
-	lines.push(`${Object.keys(map.tokens).length} tokens in ${Object.keys(byOwner).length} groups.`, '')
-	for (const owner of Object.keys(byOwner).sort()) {
-		lines.push('## `' + owner + '`', '')
-		lines.push('| Token | Variable | Reaches | Nextcloud\'s value |', '|---|---|---|---|')
+	lines.push(
+		'An internal token applies in light and dark alike. Give it a value in the dark file to differ in dark.',
+		'',
+	)
+	lines.push(
+		`${Object.keys(map.tokens).length} tokens in ${Object.keys(byOwner).length} groups.`,
+		'',
+	)
+	for (const owner of Object.keys(GROUPS).filter((g) => byOwner[g])) {
+		lines.push('## ' + GROUPS[owner], '')
+		lines.push(
+			"| Token | Variable | Reaches | Nextcloud's value |",
+			'|---|---|---|---|',
+		)
 		for (const [token, t] of byOwner[owner]) {
-			lines.push(`| ${code(token)} | ${code(t.variable)} | ${t.mode === 'body' ? 'every reader' : 'its component'} | ${code(t.stock, 60)} |`)
+			lines.push(
+				`| ${code(token)} | ${code(t.variable)} | ${t.mode === 'body' ? 'every reader' : 'its component'} | ${code(t.stock, 60)} |`,
+			)
 		}
 		lines.push('')
 	}
@@ -154,22 +331,39 @@ export function renderDoc(map) {
 
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]
 if (isMain) {
-	const inventory = JSON.parse(readFileSync(join(ROOT, 'scripts/mapping/nextcloud-variables.json'), 'utf8'))
-	const status = JSON.parse(readFileSync(join(ROOT, 'scripts/mapping/variable-status.json'), 'utf8'))
+	const inventory = JSON.parse(
+		readFileSync(join(ROOT, 'scripts/mapping/nextcloud-variables.json'), 'utf8'),
+	)
+	const status = JSON.parse(
+		readFileSync(join(ROOT, 'scripts/mapping/variable-status.json'), 'utf8'),
+	)
 	const map = build(inventory, status)
 	const files = [
 		[MAP, JSON.stringify(map, null, '\t') + '\n'],
 		[DOC, renderDoc(map)],
 	]
 	if (process.argv.includes('--check')) {
-		const stale = files.filter(([path, text]) => !existsSync(path) || readFileSync(path, 'utf8') !== text)
+		const stale = files.filter(
+			([path, text]) =>
+				!existsSync(path) || readFileSync(path, 'utf8') !== text,
+		)
 		if (stale.length > 0) {
-			process.stderr.write('Stale: ' + stale.map(([p]) => p.slice(ROOT.length + 1)).join(', ') + '. Run: npm run generate:internal-tokens\n')
+			process.stderr.write(
+				'Stale: '
+					+ stale.map(([p]) => p.slice(ROOT.length + 1)).join(', ')
+					+ '. Run: npm run generate:internal-tokens\n',
+			)
 			process.exit(1)
 		}
-		process.stdout.write('internal tokens: OK, ' + Object.keys(map.tokens).length + ' tokens match the inventory\n')
+		process.stdout.write(
+			'internal tokens: OK, '
+				+ Object.keys(map.tokens).length
+				+ ' tokens match the inventory\n',
+		)
 	} else {
 		for (const [path, text] of files) writeFileSync(path, text)
-		process.stdout.write('Wrote ' + Object.keys(map.tokens).length + ' internal tokens.\n')
+		process.stdout.write(
+			'Wrote ' + Object.keys(map.tokens).length + ' internal tokens.\n',
+		)
 	}
 }

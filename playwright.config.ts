@@ -12,14 +12,22 @@ import { defineConfig } from '@playwright/test'
 import * as path from 'path'
 
 import { resolveBaseUrl } from './tests/e2e/base-url'
+import { retriesFor } from './tests/e2e/instance-load'
 
 export default defineConfig({
 	testDir: './tests/e2e',
 	globalSetup: path.resolve(__dirname, 'tests/e2e/global-setup.ts'),
 	timeout: 30_000,
 	expect: { timeout: 10_000 },
+	// One worker, in order: parallel runs against one instance interfere with
+	// each other (measured in #181: 64 failures in parallel against 12 serially).
+	// Do not override with --workers.
 	fullyParallel: false,
-	retries: 0,
+	// 0 in CI, so a flaky test fails the run there. 1 on a developer box
+	// (PW_RETRIES overrides), where the shared instance is busy and a single 503
+	// is the likeliest reason a passing test fails. The list reporter marks a
+	// test that needed the retry as flaky, so it stays visible (#181).
+	retries: retriesFor(),
 	workers: 1,
 	// The shared CI job caps this suite at `timeout-minutes: 45`, and a job
 	// cancelled by that cap produces NO verdict at all: Playwright never prints

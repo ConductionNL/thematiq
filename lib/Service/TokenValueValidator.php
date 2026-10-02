@@ -168,7 +168,7 @@ class TokenValueValidator {
 	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-the-server-checks-each-value-against-its-token-type
 	 */
 	public function findRejected(array $tokens, array $darkTokens = []): array {
-		$registry = TokenRegistry::getTokens();
+		$registry = array_merge(TokenRegistry::getInternalTokens(), TokenRegistry::getTokens());
 		$rejected = [];
 		foreach ($tokens as $name => $value) {
 			$name = (string)$name;
@@ -185,7 +185,7 @@ class TokenValueValidator {
 
 		foreach ($darkTokens as $name => $value) {
 			$name = (string)$name;
-			if (isset($tokens[$name]) === false || $this->hasDarkValue(meta: ($registry[$name] ?? [])) === false) {
+			if (isset($tokens[$name]) === false || $this->hasDarkValueFor(name: $name) === false) {
 				$rejected[$name] = 'no dark value for this token';
 				continue;
 			}
@@ -231,4 +231,25 @@ class TokenValueValidator {
 	public function hasDarkValue(array $meta): bool {
 		return ($meta['type'] ?? '') === 'color' && ($meta['group'] ?? '') === 'brand';
 	}//end hasDarkValue()
+
+	/**
+	 * Whether a token takes the administrator's own dark value: a brand-layer
+	 * colour, including the settable theme colours, or an internal colour.
+	 *
+	 * @param string $name The token name.
+	 *
+	 * @return boolean True when it does.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design.
+	 *
+	 * @spec openspec/changes/token-editor-at-scale/specs/token-editor-ui/spec.md
+	 */
+	public function hasDarkValueFor(string $name): bool {
+		$internal = TokenRegistry::getInternalTokens();
+		if (isset($internal[$name]) === true) {
+			return $internal[$name]['type'] === 'color';
+		}
+
+		return $this->hasDarkValue(meta: (TokenRegistry::getTokens()[$name] ?? []));
+	}//end hasDarkValueFor()
 }//end class

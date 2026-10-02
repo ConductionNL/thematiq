@@ -1,7 +1,7 @@
 ## MODIFIED Requirements
 
 ### Requirement: Functional Tab Groups
-The token editor MUST organize theme tokens into four functional tabs, and MUST list every component, internal and Conduction token in a group named after the component that owns it.
+The token editor MUST organize theme tokens and the curated component tokens into four functional tabs, and MUST list every internal and Conduction token in a group named after the component or app that owns it.
 
 Tabs and their primary tokens:
 
@@ -13,7 +13,7 @@ Tabs and their primary tokens:
 
 **Typography**: `--color-main-text`, `--color-text-maxcontrast`, `--color-text-light`, `--color-text-lighter`, `--color-text-error`, `--color-text-success`, `--color-text-warning`, `--font-face`, `--default-font-size`, `--font-size-small`, `--default-line-height`
 
-Component groups follow the tabs, one per owning component, each under a translated heading. An Advanced group holds every token the registry flags `advanced`.
+Component groups follow the tabs, one per owning component or app, each under a translated heading. An Advanced group holds every token the registry flags `advanced`, and those tokens leave their tab.
 
 #### Scenario: Admin selects Login page tab
 - GIVEN the token editor is open
@@ -82,7 +82,7 @@ Each row MUST show the value Nextcloud gives the variable under the admin's curr
 - THEN the note MUST be shown with the row
 
 ### Requirement: Settable rows take a separate dark value
-Rows for the 45 settable theme tokens and for internal colour tokens MUST offer an optional dark value, and brand rows MUST keep the dark value the overrides writer derives.
+Rows for the 45 settable theme tokens and for internal colour tokens MUST offer an optional dark value that, left empty, keeps Nextcloud's own dark value. Brand rows MUST keep the optional dark value from `authoring-token-value-types` (#809), which, left empty, is derived.
 
 #### Scenario: Admin gives a dark value
 - GIVEN the admin sets `--color-mark` to `#ffe08a` and its dark value to `#5c4a00`
@@ -94,23 +94,28 @@ Rows for the 45 settable theme tokens and for internal colour tokens MUST offer 
 - WHEN the admin switches to Nextcloud's dark theme
 - THEN a search highlight MUST show Nextcloud's own dark value
 
-#### Scenario: Brand rows have no dark field
+#### Scenario: A brand row's empty dark field is derived
 - GIVEN the "Login page & Branding" tab is open
 - WHEN the `--color-primary` row renders
+- THEN its dark field MUST show the derived dark value as its placeholder
+
+#### Scenario: An internal size has no dark field
+- GIVEN the "Date picker" group is open
+- WHEN the `--dp-font-size` row renders
 - THEN it MUST NOT offer a separate dark value
 
 ### Requirement: Groups render their rows when opened
 The editor MUST NOT build the rows of a collapsed group until the admin opens it or a search matches it.
 
-#### Scenario: Page load renders the open tab only
-- GIVEN the registry holds about 790 tokens
+#### Scenario: Page load builds no group's rows
+- GIVEN the registry holds 453 internal tokens
 - WHEN the settings page loads
-- THEN only the rows of the open tab MUST be in the document
+- THEN no row of a collapsed group MUST be in the document
 
 ### Requirement: The editor states the registry's count
 The editor MUST show the number of editable tokens the registry reports, and the user documentation MUST state the same number.
 
 #### Scenario: The count matches the registry
-- GIVEN `TokenRegistry::getTokens()` returns N tokens
+- GIVEN `TokenRegistry::countEditable()` returns N tokens
 - WHEN the editor renders
 - THEN the editor MUST state N editable tokens
