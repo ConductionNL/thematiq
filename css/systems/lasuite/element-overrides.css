@@ -30,11 +30,6 @@
 
 #header,
 header#header {
-	background-color: var(
-		--lasuite--contextuals--background--surface--primary,
-		var(--lasuite-color-gray-000)
-	) !important;
-	background-image: none !important;
 	background: var(
 		--lasuite--contextuals--background--surface--primary,
 		var(--lasuite-color-gray-000)

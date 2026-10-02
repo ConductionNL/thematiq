@@ -94,7 +94,6 @@ header#header {
  * as a postage stamp next to a header that started too early. The ribbon
  * set declares its own geometry tokens; everyone else gets stock. */
 #nextcloud {
-	background-image: none !important;
 	background: transparent !important;
 	position: relative !important;
 	display: flex !important;
