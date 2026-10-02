@@ -53,7 +53,6 @@
       {"file": "lib/Controller/SettingsController.php", "method": "buildThemingSnapshot", "capability": "theming-sync", "req_id": "REQ-SYNC-002", "confidence": 0.92, "needs_review": false, "signal": "scenario explicitly names buildThemingSnapshot()", "inherits_from": "getThemingValues"},
       {"file": "lib/Controller/SettingsController.php", "method": "getTokenSetPreview", "capability": "token-sets + token-set-apply-dialog", "req_id": "REQ-TSET-009 + REQ from token-set-apply-dialog Resolved Value Comparison", "confidence": 0.96, "needs_review": false, "signal": "GET /settings/tokenset-preview/{id} feeds apply-dialog comparison"},
 
-      {"file": "lib/Service/ContentTokens.php", "method": "getTokens", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups (Content area)", "confidence": 0.93, "needs_review": false, "signal": "static map of Content area tab tokens matching REQ scenario"},
 
       {"file": "lib/Service/CssParserService.php", "method": "parseDeclarations", "capability": "token-import-export", "req_id": "REQ from token-import-export Import Validation (parse CSS)", "confidence": 0.92, "needs_review": false, "signal": "Extracts --token: value pairs server-side, used by importOverrides"},
       {"file": "lib/Service/CssParserService.php", "method": "parseRootBlock", "capability": "token-import-export", "req_id": "REQ from token-import-export Import Validation", "confidence": 0.78, "needs_review": true, "signal": "Helper for parsing :root {} blocks — currently no caller found in lib/; possible unused public helper"},
@@ -74,9 +73,7 @@
       {"file": "lib/Service/DesignSystemService.php", "method": "getDesignSystemsList", "capability": "css-architecture", "req_id": "REQ-CSS-011", "confidence": 0.72, "needs_review": true, "signal": "Public list helper — no caller in lib/, possibly dead public API for future endpoint"},
       {"file": "lib/Service/DesignSystemService.php", "method": "readJsonManifest", "capability": "css-architecture", "req_id": "REQ-CSS-011 + REQ-TSET-002", "confidence": 0.9, "needs_review": false, "signal": "Shared JSON parser with malformed-input tolerance", "inherits_from": "getDesignSystems + getTokenSetMeta"},
 
-      {"file": "lib/Service/LoginTokens.php", "method": "getTokens", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups (Login page & Branding)", "confidence": 0.96, "needs_review": false, "signal": "Static map matches spec's primary-color token list verbatim"},
 
-      {"file": "lib/Service/StatusTokens.php", "method": "getTokens", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups (Buttons & Status)", "confidence": 0.96, "needs_review": false, "signal": "Static map matches spec's status/error/warning/success tokens"},
 
       {"file": "lib/Service/ThemingService.php", "method": "isValidHexColor", "capability": "theming-sync", "req_id": "REQ-SYNC-003", "confidence": 0.96, "needs_review": false, "signal": "Hex regex exactly matches spec"},
       {"file": "lib/Service/ThemingService.php", "method": "validateColors", "capability": "theming-sync", "req_id": "REQ-SYNC-003", "confidence": 0.96, "needs_review": false, "signal": "Iterates primary_color + background_color, returns first error"},
@@ -101,7 +98,6 @@
       {"file": "lib/Service/TokenSetService.php", "method": "readManifest", "capability": "token-sets", "req_id": "REQ-TSET-002", "confidence": 0.95, "needs_review": false, "signal": "Indexed-by-id, malformed/missing/unreadable tolerance", "inherits_from": "getAvailableTokenSets"},
       {"file": "lib/Service/TokenSetService.php", "method": "formatName", "capability": "token-sets", "req_id": "REQ-TSET-001 (Auto-generated name for CSS files without manifest)", "confidence": 0.92, "needs_review": false, "signal": "ucwords + str_replace per scenario", "inherits_from": "getAvailableTokenSets"},
 
-      {"file": "lib/Service/TypographyTokens.php", "method": "getTokens", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups (Typography)", "confidence": 0.96, "needs_review": false, "signal": "Static map matches text colors + font-face token list"},
 
       {"file": "lib/Settings/Admin.php", "method": "getForm", "capability": "admin-settings", "req_id": "REQ-ASET-002 + REQ-ASET-001", "confidence": 0.97, "needs_review": false, "signal": "Returns TemplateResponse settings/admin with all four required parameters"},
       {"file": "lib/Settings/Admin.php", "method": "getSection", "capability": "admin-settings", "req_id": "REQ-ASET-001 (theming section)", "confidence": 0.97, "needs_review": false, "signal": "Returns 'theming' per scenario"},
@@ -179,18 +175,14 @@
         {"file": "lib/Controller/MetricsController.php"},
         {"file": "lib/Controller/OverridesController.php"},
         {"file": "lib/Controller/SettingsController.php"},
-        {"file": "lib/Service/ContentTokens.php"},
         {"file": "lib/Service/CssParserService.php"},
         {"file": "lib/Service/CustomOverridesService.php"},
         {"file": "lib/Service/DesignSystemService.php"},
-        {"file": "lib/Service/LoginTokens.php"},
-        {"file": "lib/Service/StatusTokens.php"},
         {"file": "lib/Service/ThemingService.php"},
         {"file": "lib/Service/TokenRegistry.php"},
         {"file": "lib/Service/TokenRegistryInterface.php"},
         {"file": "lib/Service/TokenSetPreviewService.php"},
         {"file": "lib/Service/TokenSetService.php"},
-        {"file": "lib/Service/TypographyTokens.php"},
         {"file": "lib/Settings/Admin.php"}
       ],
       "missing-license-or-copyright-in-docblock": [],

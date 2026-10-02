@@ -2365,7 +2365,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Service/TypographyTokens.php:39-46 exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
+				"evidence": "lib/Service/TokenRegistry.php getTypographyTokens() exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own"
 			},
@@ -3180,7 +3180,7 @@
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
 			"featureConfidence": "high",
-			"note": "lib/Service/StatusTokens.php (a separate PHP class with the same token list) has zero callers anywhere (grep -rn 'StatusTokens::' found nothing); the token editor actually uses a hardcoded duplicate list in lib/Service/TokenRegistry.php:244-262. StatusTokens.php looks like dead/orphaned code, but it is not on the path that makes this capability work."
+			"note": "The status token list lives once, in lib/Service/TokenRegistry.php getStatusTokens(). The orphaned duplicate lib/Service/StatusTokens.php, and its Login/Content/Typography siblings, were removed for #665."
 		},
 		{
 			"id": "sur-mobile-desktop-clients",
@@ -5195,7 +5195,7 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "decided-no",
-				"evidence": "lib/Service/LoginTokens.php:39 getTokens() returns colour and typography tokens for the login page only; no login text or label is configurable",
+				"evidence": "lib/Service/TokenRegistry.php getLoginTokens() returns colour and typography tokens for the login page only; no login text or label is configurable",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/server: the login form and its labels are core, and the demand row is a request against nextcloud/server (issue 38831). Thematiq could only change the labels by rewriting the core login view from a script, which breaks with every core release."
@@ -5619,7 +5619,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "decided-no",
-				"evidence": "lib/Service/TypographyTokens.php:39-46 exposes font family only; no per-theme root or base font size token exists (grep -niE 'font-size|rem' lib/Service/TypographyTokens.php finds nothing)",
+				"evidence": "lib/Service/TokenRegistry.php getTypographyTokens() exposes font family only; no per-theme root or base font size token exists (grep -niE 'font-size|rem' lib/Service/TypographyTokens.php finds nothing)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
 			},
