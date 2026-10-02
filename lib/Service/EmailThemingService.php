@@ -22,6 +22,7 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Mail\NLDesignEMailTemplate;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
@@ -138,12 +139,14 @@ class EmailThemingService {
 	 * @param TokenSetService $tokenSetService The token set service.
 	 * @param TokenSetPreviewService $previewService The token set preview service.
 	 * @param IURLGenerator $urlGenerator The URL generator.
+	 * @param RuntimeFileLocator|null $files Finds an uploaded set's logo, which lives in app data.
 	 */
 	public function __construct(
 		IConfig $config,
 		TokenSetService $tokenSetService,
 		TokenSetPreviewService $previewService,
 		IURLGenerator $urlGenerator,
+		private readonly ?RuntimeFileLocator $files = null,
 	) {
 		$this->config = $config;
 		$this->tokenSetService = $tokenSetService;
@@ -354,6 +357,17 @@ class EmailThemingService {
 	private function resolveLogoUrl(?string $logoPath): ?string {
 		if ($logoPath === null || $logoPath === '') {
 			return null;
+		}
+
+		// An uploaded or captured logo lives in app data and is served by the
+		// runtime file route; a mail client needs that URL absolute.
+		if ($this->files !== null && $this->files->isShipped(name: $logoPath) === false) {
+			$url = $this->files->url(name: $logoPath);
+			if ($url === null) {
+				return null;
+			}
+
+			return $this->urlGenerator->getAbsoluteURL($url);
 		}
 
 		// IURLGenerator::imagePath() resolves relative to the app's img/

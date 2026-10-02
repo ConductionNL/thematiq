@@ -130,7 +130,7 @@ class TokenRegistryTest extends TestCase {
 		$tokens = TokenRegistry::getTokens();
 		// `rgb`: a bare `r, g, b` triplet (the note cards' Nextcloud 32 fills),
 		// edited with a colour picker that writes the triplet.
-		$validTypes = ['color', 'text', 'rgb'];
+		$validTypes = ['color', 'text', 'rgb', 'duration', 'easing'];
 
 		foreach ($tokens as $name => $meta) {
 			$this->assertContains(

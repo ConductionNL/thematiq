@@ -20,8 +20,8 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Controller\SettingsController;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCA\Theming\ImageManager;
-use OCP\App\IAppManager;
 use OCP\IConfig;
 
 /**
@@ -90,27 +90,31 @@ class BrandingCaptureService {
 	private IConfig $config;
 
 	/**
-	 * The app manager, for the app's own image directories.
+	 * Where captured images are stored: app data, never the app directory.
 	 *
-	 * @var IAppManager
+	 * Copying them into `img/` inside the app was what put a code integrity
+	 * warning in front of every admin who applied their own logo or
+	 * background: each copy was a file the release signature does not know.
+	 *
+	 * @var RuntimeFileStore
 	 */
-	private IAppManager $appManager;
+	private RuntimeFileStore $store;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param ImageManager $imageManager Core's theming image store.
 	 * @param IConfig      $config       The app config.
-	 * @param IAppManager  $appManager   The app manager.
+	 * @param RuntimeFileStore $store    Where captured images are stored.
 	 */
 	public function __construct(
 		ImageManager $imageManager,
 		IConfig $config,
-		IAppManager $appManager,
+		RuntimeFileStore $store,
 	) {
 		$this->imageManager = $imageManager;
 		$this->config = $config;
-		$this->appManager = $appManager;
+		$this->store = $store;
 	}//end __construct()
 
 	/**
@@ -239,18 +243,14 @@ class BrandingCaptureService {
 			return null;
 		}
 
-		$directory = $this->directoryFor(imageKey: $imageKey);
-		$absolute = $this->appManager->getAppPath(Application::APP_ID) . '/' . $directory;
-		if (is_dir($absolute) === false && mkdir($absolute, 0755, true) === false && is_dir($absolute) === false) {
+		$name = $this->directoryFor(imageKey: $imageKey) . '/' . $this->fileName(setId: $setId, imageKey: $imageKey) . '.' . $extension;
+		try {
+			$this->store->write(name: $name, content: $contents);
+		} catch (\Throwable $e) {
 			return null;
 		}
 
-		$file = $this->fileName(setId: $setId, imageKey: $imageKey) . '.' . $extension;
-		if (file_put_contents($absolute . '/' . $file, $contents) === false) {
-			return null;
-		}
-
-		return $directory . '/' . $file;
+		return $name;
 	}//end copyImage()
 
 	/**
@@ -261,20 +261,16 @@ class BrandingCaptureService {
 	 * @return void
 	 */
 	private function deleteFiles(string $setId): void {
-		$appPath = $this->appManager->getAppPath(Application::APP_ID);
-
 		foreach (self::IMAGE_KEYS as $imageKey) {
-			$base = $appPath . '/' . $this->directoryFor(imageKey: $imageKey) . '/' . $this->fileName(setId: $setId, imageKey: $imageKey);
+			$base = $this->directoryFor(imageKey: $imageKey) . '/' . $this->fileName(setId: $setId, imageKey: $imageKey);
 			foreach (array_unique(array_values(self::EXTENSIONS)) as $extension) {
-				if (is_file($base . '.' . $extension) === true) {
-					unlink($base . '.' . $extension);
-				}
+				$this->store->delete(name: $base . '.' . $extension);
 			}
 		}
 	}//end deleteFiles()
 
 	/**
-	 * The app directory an image slot is copied into: the two ThemingService
+	 * The directory an image slot is copied into: the two ThemingService
 	 * accepts a sync from.
 	 *
 	 * @param string $imageKey The image slot.

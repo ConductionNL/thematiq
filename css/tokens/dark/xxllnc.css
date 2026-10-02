@@ -60,7 +60,7 @@
 		--nldesign-color-primary-hover: #333333;
 		--nldesign-color-primary-light: #112131;
 		--nldesign-color-primary-light-hover: #172d41;
-		--nldesign-color-primary-text: #5e5e5e;
+		--nldesign-color-primary-text: #111111;
 		--nldesign-color-success: #58cf73;
 		--nldesign-color-success-rgb: 88, 207, 115;
 		--nldesign-color-text: #cccccc;
@@ -122,6 +122,7 @@
 		--nldesign-component-textbox-hover-border-color: #9e9e9e;
 		--nldesign-component-textbox-invalid-border-color: #e25a67;
 		--nldesign-component-unordered-list-color: #cccccc;
+		--nldesign-logo-url: url('../../../img/logos/xxllnc-dark.svg');
 		--xxllnc-color-alert-error: #db838b;
 		--xxllnc-color-alert-error-background: #420f13;
 		--xxllnc-color-alert-success: #99e1aa;
@@ -222,7 +223,7 @@ body[data-themes*=dark] {
 	--nldesign-color-primary-hover: #333333;
 	--nldesign-color-primary-light: #112131;
 	--nldesign-color-primary-light-hover: #172d41;
-	--nldesign-color-primary-text: #5e5e5e;
+	--nldesign-color-primary-text: #111111;
 	--nldesign-color-success: #58cf73;
 	--nldesign-color-success-rgb: 88, 207, 115;
 	--nldesign-color-text: #cccccc;
@@ -284,6 +285,7 @@ body[data-themes*=dark] {
 	--nldesign-component-textbox-hover-border-color: #9e9e9e;
 	--nldesign-component-textbox-invalid-border-color: #e25a67;
 	--nldesign-component-unordered-list-color: #cccccc;
+	--nldesign-logo-url: url('../../../img/logos/xxllnc-dark.svg');
 	--xxllnc-color-alert-error: #db838b;
 	--xxllnc-color-alert-error-background: #420f13;
 	--xxllnc-color-alert-success: #99e1aa;

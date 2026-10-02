@@ -17,9 +17,9 @@ A restore is itself a change, so it keeps a version too. If the restore was the 
 ## From the command line
 
 ```bash
-occ nldesign:config:versions
-occ nldesign:config:restore 20260929164000-0001 --dry-run
-occ nldesign:config:restore 20260929164000-0001
+occ thematiq:config:versions
+occ thematiq:config:restore 20260929164000-0001 --dry-run
+occ thematiq:config:restore 20260929164000-0001
 ```
 
 The first command lists the kept versions, newest first. `--dry-run` prints the changes and writes nothing. The audit log records a command-line restore with actor `cli`.

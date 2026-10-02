@@ -54,17 +54,23 @@ When a set or the admin gives an internal token a value, the component MUST rend
 - WHEN a Conduction app shows a KPI tile
 - THEN the tile's accent MUST be `#24578f`
 
-### Requirement: Internal scopes are written only for set tokens
-The generated internal scopes stylesheet MUST contain a rule only for internal tokens that the active set or the admin overrides give a value, and MUST be rebuilt when either changes.
+### Requirement: Internal scopes are built only for set tokens
+The internal scopes MUST contain a rule only for internal tokens that the active set or the admin overrides give a value, MUST be built from the set's files and the overrides at render time, and MUST contain no value from either, only `var()` references to the token.
 
-@e2e exclude Generated-file content; the rebuild's visible effect is covered by "A variable the component declares itself is reached".
+@e2e exclude Rule content; the visible effect is covered by "A variable the component declares itself is reached".
 
-#### Scenario: Applying a set rebuilds its scopes
-- GIVEN the internal scopes file for set `utrecht` holds one rule
-- WHEN the admin saves an override for `--nldesign-nc-dp-hover-color`
-- THEN the file MUST be rebuilt to hold both rules
+#### Scenario: Saving an override changes the next render
+- GIVEN the active set gives one internal token a value
+- WHEN the admin saves an override for `--nldesign-cn-kpi-accent`
+- THEN the next render's internal scopes MUST hold both rules
 
-#### Scenario: Nothing set means an empty file
+#### Scenario: Nothing set means no rule
 - GIVEN neither the active set nor the overrides declare an internal token
-- WHEN the internal scopes file is built
-- THEN it MUST contain no rule
+- WHEN the internal scopes are built
+- THEN they MUST be empty
+
+#### Scenario: A token set only in the dark file leaves light alone
+- GIVEN the set's dark variant gives `--nldesign-nc-dp-hover-color` a value and its light file does not
+- WHEN the page renders in the light theme
+- THEN the date picker MUST keep its own hover colour
+- AND in the dark theme it MUST use the set's value

@@ -60,7 +60,7 @@ class ComplianceReportTest extends TestCase {
 		$application = new Application();
 		$application->add($command);
 
-		$this->tester = new CommandTester($application->find('nldesign:compliance-report'));
+		$this->tester = new CommandTester($application->find('thematiq:compliance-report'));
 	}//end setUp()
 
 	/**
@@ -130,7 +130,7 @@ class ComplianceReportTest extends TestCase {
 		$command = new ComplianceReport($this->service);
 		$application = new Application();
 		$application->add($command);
-		$tester = new CommandTester($application->find('nldesign:compliance-report'));
+		$tester = new CommandTester($application->find('thematiq:compliance-report'));
 
 		$exitCode = $tester->execute([]);
 
@@ -147,7 +147,7 @@ class ComplianceReportTest extends TestCase {
 		$command = new ComplianceReport($failingService);
 		$application = new Application();
 		$application->add($command);
-		$tester = new CommandTester($application->find('nldesign:compliance-report'));
+		$tester = new CommandTester($application->find('thematiq:compliance-report'));
 
 		$exitCode = $tester->execute([]);
 
