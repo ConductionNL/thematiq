@@ -1,19 +1,19 @@
 /* Built theme CSS with a shared :root and two brand classes. */
 :root {
-  --voorbeeld-radius: 4px;
-  --voorbeeld-color-white: #ffffff;
+	--voorbeeld-radius: 4px;
+	--voorbeeld-color-white: #ffffff;
 }
 
 .noord-theme {
-  --voorbeeld-color-primary: #154273;
-  --voorbeeld-color-primary-text: #ffffff;
+	--voorbeeld-color-primary: #154273;
+	--voorbeeld-color-primary-text: #ffffff;
 }
 
 .zuid-theme {
-  --voorbeeld-color-primary: #c8102e;
-  --voorbeeld-color-primary-text: #ffffff;
+	--voorbeeld-color-primary: #c8102e;
+	--voorbeeld-color-primary-text: #ffffff;
 }
 
 .noord-theme--dark {
-  --voorbeeld-color-primary: #5b9bd5;
+	--voorbeeld-color-primary: #5b9bd5;
 }
