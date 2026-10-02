@@ -29,7 +29,7 @@ Read the feature documentation:
 ### Testing Flow
 
 1. Navigate to `/settings/admin/theming`
-2. Find the "NL Design System Theme" section
+2. Find the "Thematiq" section
 3. **Token set**: Change from current to "Amsterdam" → preview should update → note if sync dialog appears
 4. **Token set**: Change to "Rotterdam" → preview should update with different color
 5. **Hide slogan**: Toggle checkbox → navigate to login page (log out and check) → verify slogan hidden/shown
@@ -41,7 +41,7 @@ Read the feature documentation:
 - **Dropdown change**: Select different token set → preview updates → POST to server
 - **Theming sync dialog**: Modal with "Current" vs "Proposed" preview → "Update theming" or "Cancel"
 - **Checkbox toggles**: Each saves immediately on change
-- **Documentation link**: Top-right link should open nldesign.app
+- **Documentation link**: Top-right link should open the documentation of the selected design system
 
 ## What NOT to Test
 

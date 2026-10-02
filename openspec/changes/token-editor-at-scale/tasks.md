@@ -1,5 +1,6 @@
 ## 1. Data for the editor
 
+- [ ] 1.0 Bring `TokenRegistry::getInternalTokens()` into the editor payload (change 3 kept the 453 internal tokens out of `getTokens()` until this editor can list them), with a translated heading and Dutch entry per owner component (moved here from change 3 task 1.3), and verify `npm run test:l10n` passes
 - [ ] 1.1 Add owner, translated group heading, `advanced`, per-theme stock values and note to the registry payload in initial state, and verify its size before and after, recording both in the PR body
 - [ ] 1.2 Pass the registry count in initial state, and verify a PHPUnit test that it equals `count(TokenRegistry::getTokens())`
 

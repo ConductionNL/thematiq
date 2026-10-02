@@ -2,7 +2,7 @@
 
 # Nextcloud (Base)
 
-Token set `nextcloud`: 52 declared by this set, 118 from the defaults layer.
+Token set `nextcloud`: 52 declared by this set, 119 from the defaults layer.
 
 Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 
@@ -12,7 +12,7 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 |---|---|---|---|---|
 | `--nldesign-color-background-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ededed%22%2F%3E%3C%2Fsvg%3E) `#ededed` | | this set | Background dark, Table header background |
 | `--nldesign-color-background-darker` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dbdbdb%22%2F%3E%3C%2Fsvg%3E) `#dbdbdb` | | this set | Background darker |
-| `--nldesign-color-background-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5f5f5%22%2F%3E%3C%2Fsvg%3E) `#f5f5f5` | | this set | `--color-main-background` |
+| `--nldesign-color-background-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5f5f5%22%2F%3E%3C%2Fsvg%3E) `#f5f5f5` | | this set | Main background color |
 | `--nldesign-color-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d9d9d9%22%2F%3E%3C%2Fsvg%3E) `#d9d9d9` | | this set | Border color, Select border, Table row rule, Text input border, `--nldesign-component-separator-border-color` |
 | `--nldesign-color-border-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23767676%22%2F%3E%3C%2Fsvg%3E) `#767676` | | this set | Border dark, Border max contrast |
 | `--nldesign-color-button-primary-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | |
@@ -21,13 +21,13 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 | `--nldesign-color-button-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | |
 | `--nldesign-color-error` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d32f2f%22%2F%3E%3C%2Fsvg%3E) `#d32f2f` | | this set | Border error, Element error, Error color, Text error, Text input invalid |
 | `--nldesign-color-error-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c12c27%22%2F%3E%3C%2Fsvg%3E) `#c12c27` | | this set | Error hover |
-| `--nldesign-color-error-rgb` | `211, 47, 47` | | this set | `--color-error-text` |
-| `--nldesign-color-favorite` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f9cf00%22%2F%3E%3C%2Fsvg%3E) `#f9cf00` | | this set | `--filter-background-blur` |
+| `--nldesign-color-error-rgb` | `211, 47, 47` | | this set | Error text color |
+| `--nldesign-color-favorite` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f9cf00%22%2F%3E%3C%2Fsvg%3E) `#f9cf00` | | this set | Background blur filter |
 | `--nldesign-color-focus` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%20130%2C%20201%2C%200.5%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 130, 201, 0.5)` | | this set | Button focus ring |
 | `--nldesign-color-focus-rgb` | `0, 130, 201` | | this set | |
 | `--nldesign-color-header-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | |
 | `--nldesign-color-header-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | |
-| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300598a%22%2F%3E%3C%2Fsvg%3E) `#00598a` | | this set | Info color, Text input focus, `--color-info-hover` |
+| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300598a%22%2F%3E%3C%2Fsvg%3E) `#00598a` | | this set | Info color, Info hover color, Text input focus |
 | `--nldesign-color-info-rgb` | `0, 89, 138` | | this set | |
 | `--nldesign-color-link` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | Link colour |
 | `--nldesign-color-link-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300507a%22%2F%3E%3C%2Fsvg%3E) `#00507a` | | this set | Link hover colour |
@@ -42,12 +42,12 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 | `--nldesign-color-primary-light-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cfe0ec%22%2F%3E%3C%2Fsvg%3E) `#cfe0ec` | | this set | Primary element light hover, Primary light hover, Tertiary button pressed |
 | `--nldesign-color-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | Badge number, Primary button label, Primary element text, Primary text color |
 | `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2346ba61%22%2F%3E%3C%2Fsvg%3E) `#46ba61` | | this set | Border success, Element success, Success color, Text success |
-| `--nldesign-color-success-rgb` | `70, 186, 97` | | this set | `--color-success-hover` |
+| `--nldesign-color-success-rgb` | `70, 186, 97` | | this set | Success hover color |
 | `--nldesign-color-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23222222%22%2F%3E%3C%2Fsvg%3E) `#222222` | | this set | Body text colour, Main text color, Table header label, `--nldesign-component-form-field-label-color`, `--nldesign-component-heading-1-color` and 8 more |
-| `--nldesign-color-text-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | `--color-text-maxcontrast-default` |
+| `--nldesign-color-text-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | Muted text default color |
 | `--nldesign-color-text-muted` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23767676%22%2F%3E%3C%2Fsvg%3E) `#767676` | | this set | Text lighter, Text max contrast |
 | `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23eca700%22%2F%3E%3C%2Fsvg%3E) `#eca700` | | this set | Element warning, Text warning, Warning color |
-| `--nldesign-color-warning-rgb` | `236, 167, 0` | | this set | `--color-warning-hover` |
+| `--nldesign-color-warning-rgb` | `236, 167, 0` | | this set | Warning hover color |
 | `--nldesign-component-badge-background-color` | `var(
 		--nldesign-color-primary
 	)` | | defaults | |
@@ -206,7 +206,7 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 | `--nldesign-component-unordered-list-font-size` | `1rem` | | defaults | |
 | `--nldesign-component-unordered-list-line-height` | `1.5` | | defaults | |
 | `--nldesign-font-family` | `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif` | | this set | Font family, `--nldesign-component-button-font-family`, `--nldesign-component-textbox-font-family` |
-| `--nldesign-font-weight-default` | `400` | | defaults | `--default-font-size` |
+| `--nldesign-font-weight-default` | `400` | | defaults | Base font size |
 | `--nldesign-font-weight-element` | `500` | | defaults | Control font weight |
 | `--nldesign-font-weight-heading` | `700` | | defaults | Heading font weight |
 
@@ -214,8 +214,8 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
-| `--nldesign-border-radius` | `8px` | | this set | Border radius element, Button corner, Select corner, Text input corner, `--border-width-input` |
-| `--nldesign-border-radius-large` | `8px` | | this set | `--border-radius-container` |
+| `--nldesign-border-radius` | `8px` | | this set | Border radius element, Button corner, Input border width, Select corner, Text input corner |
+| `--nldesign-border-radius-large` | `8px` | | this set | Container radius |
 | `--nldesign-border-radius-pill` | `100px` | | this set | Badge shape, Border radius pill |
 | `--nldesign-border-radius-rounded` | `28px` | | this set | Border radius rounded |
 | `--nldesign-border-radius-small` | `4px` | | this set | Border radius small |
@@ -248,7 +248,8 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
-| `--nldesign-animation-quick` | `100ms` | | this set | `--header-menu-item-height` |
+| `--nldesign-animation-easing` | `ease` | | defaults | |
+| `--nldesign-animation-quick` | `100ms` | | this set | Header menu item height |
 | `--nldesign-animation-slow` | `300ms` | | this set | Animation slow |
 | `--nldesign-header-icon-filter` | `invert(1) brightness(0) contrast(100)` | | defaults | |
 | `--nldesign-logo-bottom` | `1px` | | defaults | |
