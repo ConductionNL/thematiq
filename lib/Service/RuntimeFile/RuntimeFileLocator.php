@@ -273,7 +273,7 @@ class RuntimeFileLocator {
 	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
 	 */
 	public function routeUrl(string $name): string {
-		return $this->urlGenerator->linkToRoute('thematiq.runtime_file.serve', ['name' => $name])
+		return $this->urlGenerator->linkToRoute('thematiq.runtimeFile.serve', ['name' => $name])
 			. '?v=' . $this->store->revision(name: $name);
 	}//end routeUrl()
 

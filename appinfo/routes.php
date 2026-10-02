@@ -99,7 +99,7 @@ return [
 		// kept in app data so the signed app directory stays as shipped.
 		// Public for the same reason as the font routes; the name must pass
 		// RuntimeFileNames::isAllowed() (RuntimeFileController::serve()).
-		['name' => 'runtime_file#serve', 'url' => '/runtime/{name}', 'verb' => 'GET', 'requirements' => ['name' => '.+']],
+		['name' => 'runtimeFile#serve', 'url' => '/runtime/{name}', 'verb' => 'GET', 'requirements' => ['name' => '.+']],
 		// Theming audit trail — admin-only (AuthorizedAdminSetting), no
 		// #[PublicPage]/#[NoAdminRequired].
 		['name' => 'audit#list', 'url' => '/settings/audit', 'verb' => 'GET'],
