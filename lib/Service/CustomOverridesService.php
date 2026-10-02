@@ -292,7 +292,19 @@ class CustomOverridesService {
 	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-each-colour-token-has-an-optional-dark-value
 	 */
 	public function readDark(?string $tokenSet = null): array {
-		$css = $this->getRawContent(tokenSet: $tokenSet);
+		return $this->ownDarkValues(css: $this->getRawContent(tokenSet: $tokenSet));
+	}//end readDark()
+
+	/**
+	 * The administrator's own dark values in one overrides file's content.
+	 *
+	 * @param string $css The content of an overrides file.
+	 *
+	 * @return array<string, string> Token => dark value, only where it differs from the derived value.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-each-colour-token-has-an-optional-dark-value
+	 */
+	private function ownDarkValues(string $css): array {
 		$start = strpos($css, 'body[data-theme-dark]');
 		if ($start === false) {
 			return [];
@@ -301,7 +313,8 @@ class CustomOverridesService {
 		$open = (int)strpos($css, '{', $start);
 		$close = (int)strpos($css, '}', $open);
 		preg_match_all('/(--[A-Za-z0-9_-]+)\\s*:\\s*([^;]+);/', substr($css, ($open + 1), ($close - $open - 1)), $matches, PREG_SET_ORDER);
-		$light = $this->read(tokenSet: $tokenSet);
+		// The motion twins are not colours, so they never meet a dark line.
+		$light = $this->parseDeclarations(css: $css);
 		$derived = $this->darkValues(tokens: $light);
 		$own = [];
 		foreach ($matches as $match) {
@@ -312,7 +325,42 @@ class CustomOverridesService {
 		}
 
 		return $own;
-	}//end readDark()
+	}//end ownDarkValues()
+
+	/**
+	 * Write every overrides file again in today's shape, keeping its values.
+	 *
+	 * A file written before typed values gains the thematiq twin of each motion
+	 * override and a dark value for each colour override (the administrator's own,
+	 * else the derived one). Values are not type-checked here: a value that saved
+	 * before keeps saving, so an upgrade never drops what an administrator set.
+	 * Running it twice changes nothing the second time.
+	 *
+	 * @return array<string> The files that changed, by basename.
+	 *
+	 * @throws RuntimeException When a file cannot be written.
+	 *
+	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.5
+	 */
+	public function rewriteAll(): array {
+		$changed = [];
+		// The filter drops the false that glob() returns on an unreadable directory.
+		$files = array_filter((array)glob($this->appManager->getAppPath('thematiq') . '/css/' . self::FILE . '*.css'));
+		foreach ($files as $path) {
+			$css = (string)file_get_contents($path);
+			// The editable filter also drops the motion twins: the registry lists only the editor's names.
+			$tokens = $this->filterEditable(tokens: $this->parseDeclarations(css: $css));
+			$own = $this->ownDarkValues(css: $css);
+			if ($this->buildCss(tokens: $tokens, darkTokens: $own) === $css) {
+				continue;
+			}
+
+			$this->writeFile(tokens: $tokens, path: $path, darkTokens: $own);
+			$changed[] = basename($path);
+		}
+
+		return $changed;
+	}//end rewriteAll()
 
 	/**
 	 * The dark value each colour override gets when the administrator sets none.
