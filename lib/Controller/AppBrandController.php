@@ -170,7 +170,7 @@ class AppBrandController extends Controller {
 		$response = new DataDisplayResponse($logo['bytes'], Http::STATUS_OK, ['Content-Type' => $logo['mime']]);
 		$response->addHeader('X-Content-Type-Options', 'nosniff');
 		$response->addHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; img-src data:");
-		$response->cacheFor(86400);
+		$response->addHeader('Cache-Control', 'private, max-age=86400');
 
 		return $response;
 	}//end logo()
