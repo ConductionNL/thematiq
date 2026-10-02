@@ -26,7 +26,7 @@ For each settable variable `X`, the capture block in `component-scopes.css` and 
 
 ```css
 /* capture, on body and #nldesign-preview */
---thematiq-global-X: var(--nldesign-X, var(X));
+--thematiq-global-X: var(--nldesign-nc-X, var(X));
 
 /* theme-scopes.css */
 body > *, #nldesign-preview > * {
@@ -46,9 +46,13 @@ Alternatives considered:
 - *Take a second capture on `body > *`.* Rejected: a component scope on a direct child of `body`, such as `#header`, would then read a capture that points back at its own declaration, which is a cycle.
 - *Emit declarations from PHP only for tokens the active set declares.* It works, but the injection service would have to parse every set and every override on each request. The generated stylesheet does the same job once at build time.
 
+### The tokens are named `--nldesign-nc-*`
+
+Each settable variable's token is `--nldesign-nc-` plus the variable name, such as `--nldesign-nc-color-mark`. A plain `--nldesign-color-*` name was the first choice, and two of the 45 already exist in that namespace with another meaning: `--nldesign-color-info-rgb` has a default in `defaults.css` and in sets, so it would always be set, and `--nldesign-header-height` is one set's own token. The separate prefix keeps "a semantic NL Design token with a default" apart from "a value for Nextcloud's own variable, absent until set". The internal variables of `internal-variable-tokens` use the same prefix.
+
 ### The generator is the component-scopes generator, extended
 
-`scripts/generate-component-scopes.mjs` gains a theme section that reads the `settable` theme entries from the inventory, writes `theme-scopes.css`, and adds `var(--nldesign-X, …)` to each matching capture. One generator, one drift check (`npm run test:component-scopes`), and the existing rule that refuses two tokens claiming one variable.
+`scripts/generate-component-scopes.mjs` gains a theme section that reads the `settable` theme entries from the inventory, writes `theme-scopes.css`, and adds `var(--nldesign-nc-X, …)` to each matching capture. One generator, one drift check (`npm run test:component-scopes`), and the existing rule that refuses two tokens claiming one variable.
 
 ### Load position
 
@@ -60,13 +64,25 @@ A set's `css/tokens/dark/{id}.css` already declares `--nldesign-*` values inside
 
 ```css
 :where(<the dark scopes #705 uses>) {
-	--nldesign-X: initial;
+	--nldesign-nc-X: initial;
 }
 ```
 
 `initial` makes the token guaranteed-invalid, so the capture falls back to Nextcloud's dark value. The `:where()` gives the reset zero specificity, so a dark variant file or an override that names the dark scopes outranks it, although `theme-scopes.css` loads after both. Checked in Chrome on 2 October 2026: a light-only value stays out of dark, a dark file still sets dark, and an override with dark scopes still wins in dark. The scenario "A set gives a light value only" pins this down.
 
 Admin overrides are written by `CustomOverridesService` as Nextcloud variable names on `:root`. For the 45 that cannot work: the `body > *` redeclaration gives each child its own value, and an inherited `:root` value loses to it. So an override of a settable variable is stored as its `--nldesign-*` token, which the capture reads. Brand overrides keep the #705 behaviour: the writer also puts a derived dark value into the two dark scopes. A settable token gets a dark value only when the admin gives one (change 4); otherwise the dark reset leaves Nextcloud's dark value in place. There is one exception to the brand rule as well. The six dark-mode-compatibility variables of REQ-CSS-007 (`--color-main-background` and its `-rgb` and `-translucent` variants, `--color-background-plain`, `--background-invert-if-dark` and `--background-invert-if-bright`) take a single admin value in light only, because one value in dark is precisely the breakage REQ-CSS-007 guards against. Change 4 adds a dark value per row.
+
+### The reset covers only what Nextcloud varies per theme
+
+21 of the 45 have a different stock value in Nextcloud's dark theme: the status hover and text colours, the highlight, the loading colours, the box shadow, the main background, the assistant colours, the muted default and the two invert filters. Only those are reset in the dark scopes. Resetting a size such as `--header-height` would make a set's header change height when the user switches theme, so a set's value for the other 24 applies in light and dark alike. `perScheme` in `variable-status.json` records which is which; the inventory guard checks the reset list against it.
+
+### The registry reads the same status table
+
+`TokenRegistry::getSettableTokens()` reads the `settable` entries of `scripts/mapping/variable-status.json`, as it already reads `component-tokens.json`. The generator reads the same table, so the editor and the stylesheet cannot disagree. `--color-scrollbar` and `--body-container-radius` were editable before; they keep their tab and label and gain a token.
+
+### Stylesheet order and the runtime layers
+
+Nextcloud prints every `addStyle()` stylesheet before every header. `theme-scopes.css` is a static layer in the set-dependent list, so when an uploaded set's file is a runtime header (`runtime-files-in-appdata`), the theme scopes after it are emitted as a header too, and the order holds.
 
 ### The recorded reasons become guidance
 

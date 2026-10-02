@@ -89,12 +89,14 @@ class ShippedTokenSetAuditService {
 	 * @param CssParserService $parser The CSS custom-property parser.
 	 * @param RuntimeFileStore|null $store Where uploaded sets are kept.
 	 * @param SetFileReader $files Reads a set's file from the release or the store.
+	 * @param SettableContrastPairs $settablePairs Measures the selection and highlight pairs a set moves.
 	 */
 	public function __construct(
 		ContrastService $contrast,
 		CssParserService $parser,
 		private readonly ?RuntimeFileStore $store = null,
 		private readonly SetFileReader $files = new SetFileReader(),
+		private readonly SettableContrastPairs $settablePairs = new SettableContrastPairs(),
 	) {
 		$this->contrast = $contrast;
 		$this->parser = $parser;
@@ -146,7 +148,15 @@ class ShippedTokenSetAuditService {
 	 *
 	 * The per-set audit result.
 	 *
-	 * @return array{id: string, textRatio: float|null, uiRatio: float|null, textThreshold: float, uiThreshold: float, verdict: string}
+	 * @return array{
+	 *     id: string,
+	 *     textRatio: float|null,
+	 *     uiRatio: float|null,
+	 *     textThreshold: float,
+	 *     uiThreshold: float,
+	 *     verdict: string,
+	 *     pairs?: array<int, array<string, mixed>>
+	 * }
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
 	 */
@@ -184,6 +194,7 @@ class ShippedTokenSetAuditService {
 			'textThreshold' => $textThreshold,
 			'uiThreshold' => $uiThreshold,
 			'verdict' => $verdict,
+			'pairs' => $this->settablePairs->pairs(declarations: $declarations),
 		];
 	}//end auditSet()
 
@@ -253,7 +264,15 @@ class ShippedTokenSetAuditService {
 	 *
 	 * One audit result per audited set, ordered deterministically by id.
 	 *
-	 * @return array<int, array{id: string, textRatio: float|null, uiRatio: float|null, textThreshold: float, uiThreshold: float, verdict: string}>
+	 * @return array<int, array{
+	 *     id: string,
+	 *     textRatio: float|null,
+	 *     uiRatio: float|null,
+	 *     textThreshold: float,
+	 *     uiThreshold: float,
+	 *     verdict: string,
+	 *     pairs?: array<int, array<string, mixed>>
+	 * }>
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-reproducible-contrast-report
 	 */
