@@ -61,7 +61,7 @@ class OwnComponentController extends Controller {
 	/**
 	 * Every saved component.
 	 *
-	 * @return JSONResponse {components: [...], limits: {count, bytes}}.
+	 * @return JSONResponse The saved components and the count and size limits.
 	 *
 	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
@@ -112,7 +112,7 @@ class OwnComponentController extends Controller {
 	 *
 	 * @param string $slug The component slug.
 	 *
-	 * @return JSONResponse {status: ok}, or 404.
+	 * @return JSONResponse Status ok, or 404.
 	 *
 	 * @spec openspec/specs/own-component-preview/spec.md#requirement-an-administrator-saves-own-components
 	 */
