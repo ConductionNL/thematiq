@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+- **A token set can set every Nextcloud theme variable.** The 45 that thematiq left alone
+  (selected text, the search highlight, the loading spinner, shadows, status hover and text
+  colours, the main background, the assistant colours, font sizes, input borders, container
+  radii and the 13 layout variables) are settable through `--nldesign-nc-*` tokens with no
+  default. Unset, each keeps the value Nextcloud gives it for the active theme; a new
+  `css/theme-scopes.css` applies them on body's children. A light-only value stays out of
+  dark mode for the 21 variables Nextcloud varies per theme. The token editor lists them,
+  the 13 layout variables flagged advanced, and the contrast audit reports the selection
+  and highlight pairs. `npm run test:theme-scopes` proves the cascade in a real browser.
+
 ### Fixed
 - **No more code integrity warning after customising the theme.** thematiq wrote token
   overrides, custom CSS, uploaded token sets with their logos and dark variants, and

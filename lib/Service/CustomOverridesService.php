@@ -424,7 +424,12 @@ class CustomOverridesService {
 		$registry = TokenRegistry::getTokens();
 		$dark = [];
 		foreach ($tokens as $name => $value) {
-			if (($registry[$name]['type'] ?? '') !== 'color' || ($registry[$name]['group'] ?? '') !== 'brand') {
+			// A settable variable gets no derived dark value: it keeps
+			// Nextcloud's own in dark unless a dark value is given.
+			if (($registry[$name]['type'] ?? '') !== 'color'
+				|| ($registry[$name]['group'] ?? '') !== 'brand'
+				|| ($registry[$name]['settable'] ?? false) === true
+			) {
 				continue;
 			}
 
@@ -452,7 +457,10 @@ class CustomOverridesService {
 			}
 
 			$safeValue = str_replace(["\n", "\r", ';', '{', '}', '/*', '*/'], '', $value);
-			$safeName = preg_replace('/[^a-zA-Z0-9\-]/', '', $name);
+			// A settable Nextcloud variable is stored as its `--nldesign-nc-*`
+			// token: the theme scopes read the token, and a plain declaration
+			// of the variable on :root would lose to their body-level one.
+			$safeName = preg_replace('/[^a-zA-Z0-9\-]/', '', (TokenRegistry::settableToken(tokenName: $name) ?? $name));
 
 			// Strip any pre-existing !important the caller may have included; it is
 			// re-applied uniformly below so the round-trip stays canonical.
@@ -484,7 +492,18 @@ class CustomOverridesService {
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
 	 */
 	private function parseDeclarations(string $css): array {
-		return $this->cssParser->parseRootBlock(css: $css);
+		$byToken = [];
+		foreach (TokenRegistry::getSettableTokens() as $name => $meta) {
+			$byToken[$meta['token']] = $name;
+		}
+
+		// Read a stored token back under the Nextcloud name the editor uses.
+		$tokens = [];
+		foreach ($this->cssParser->parseRootBlock(css: $css) as $name => $value) {
+			$tokens[($byToken[$name] ?? $name)] = $value;
+		}
+
+		return $tokens;
 	}//end parseDeclarations()
 
 	/**

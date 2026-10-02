@@ -243,16 +243,24 @@
 			"note": "Background image inversion; NC theme dependent"
 		},
 		"--background-invert-if-bright": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: bright mode inversion",
-			"category": "Filters & Inversion",
-			"note": "Bright mode inversion; NC theme dependent"
+			"status": "settable",
+			"token": "--nldesign-nc-background-invert-if-bright",
+			"tab": "content",
+			"type": "text",
+			"label": "Invert filter on a bright background",
+			"perScheme": true,
+			"note": "Bright mode inversion; NC theme dependent",
+			"category": "Filters & Inversion"
 		},
 		"--background-invert-if-dark": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: dark mode inversion",
-			"category": "Filters & Inversion",
-			"note": "Dark mode image inversion; NC theme dependent"
+			"status": "settable",
+			"token": "--nldesign-nc-background-invert-if-dark",
+			"tab": "content",
+			"type": "text",
+			"label": "Invert filter on a dark background",
+			"perScheme": true,
+			"note": "Dark mode image inversion; NC theme dependent",
+			"category": "Filters & Inversion"
 		},
 		"--be84d992": {
 			"status": "excluded",
@@ -263,22 +271,33 @@
 			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
 		},
 		"--body-container-margin": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC layout dependent",
-			"category": "Layout & Dimensions",
-			"note": "Body container margin; NC layout dependent"
+			"status": "settable",
+			"token": "--nldesign-nc-body-container-margin",
+			"tab": "content",
+			"type": "text",
+			"label": "Body container margin",
+			"advanced": true,
+			"note": "Body container margin; NC layout dependent",
+			"category": "Layout & Dimensions"
 		},
 		"--body-container-radius": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: it is a CONTAINER radius, like `--border-radius-container` and `-container-large` above, and this used to map it to the brand's CONTROL radius. On a brand whose controls are near-square (Zwolle: 2px) that squared off the whole app shell, because `#content` draws its `border-radius` from this variable. Left to Nextcloud, the shell keeps stock geometry: the base value is 0 and only the two TOP corners are rounded, from `--border-radius-large`: which IS themed above, so the brand still decides how round the shell reads.",
-			"category": "Layout & Dimensions",
-			"note": "Body container radius; depends on border-radius-container-large"
+			"status": "settable",
+			"token": "--nldesign-nc-body-container-radius",
+			"tab": "content",
+			"type": "text",
+			"label": "Body container radius",
+			"note": "Body container radius; depends on border-radius-container-large",
+			"category": "Layout & Dimensions"
 		},
 		"--body-height": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC layout dependent",
-			"category": "Layout & Dimensions",
-			"note": "Body height calculation; NC layout dependent"
+			"status": "settable",
+			"token": "--nldesign-nc-body-height",
+			"tab": "content",
+			"type": "text",
+			"label": "Body height",
+			"advanced": true,
+			"note": "Body height calculation; NC layout dependent",
+			"category": "Layout & Dimensions"
 		},
 		"--border": {
 			"status": "excluded",
@@ -292,16 +311,22 @@
 			"note": "Deprecated; default border radius"
 		},
 		"--border-radius-container": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: layout consistency",
-			"category": "Border Radius",
-			"note": "Containers (12px); intentionally not overridden for layout consistency"
+			"status": "settable",
+			"token": "--nldesign-nc-border-radius-container",
+			"tab": "content",
+			"type": "text",
+			"label": "Container radius",
+			"note": "Containers (12px); intentionally not overridden for layout consistency",
+			"category": "Border Radius"
 		},
 		"--border-radius-container-large": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: layout consistency",
-			"category": "Border Radius",
-			"note": "Large containers (16px); intentionally not overridden"
+			"status": "settable",
+			"token": "--nldesign-nc-border-radius-container-large",
+			"tab": "content",
+			"type": "text",
+			"label": "Large container radius",
+			"note": "Large containers (16px); intentionally not overridden",
+			"category": "Border Radius"
 		},
 		"--border-radius-element": {
 			"status": "mapped",
@@ -339,22 +364,32 @@
 			"note": "Small elements (4px default)"
 		},
 		"--border-width-input": {
-			"status": "excluded",
-			"reason": "unmapped: standard 1px across all themes",
-			"category": "Borders",
-			"note": "Input border width (1px); standard across all themes"
+			"status": "settable",
+			"token": "--nldesign-nc-border-width-input",
+			"tab": "content",
+			"type": "text",
+			"label": "Input border width",
+			"note": "Input border width (1px); standard across all themes",
+			"category": "Borders"
 		},
 		"--border-width-input-focused": {
-			"status": "excluded",
-			"reason": "unmapped: standard 2px",
-			"category": "Borders",
-			"note": "Focused input border width (2px); standard"
+			"status": "settable",
+			"token": "--nldesign-nc-border-width-input-focused",
+			"tab": "content",
+			"type": "text",
+			"label": "Focused input border width",
+			"note": "Focused input border width (2px); standard",
+			"category": "Borders"
 		},
 		"--breakpoint-mobile": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC responsive design",
-			"category": "Layout & Dimensions",
-			"note": "Mobile breakpoint (1024px); NC responsive design"
+			"status": "settable",
+			"token": "--nldesign-nc-breakpoint-mobile",
+			"tab": "content",
+			"type": "text",
+			"label": "Mobile breakpoint",
+			"advanced": true,
+			"note": "Mobile breakpoint (1024px); NC responsive design",
+			"category": "Layout & Dimensions"
 		},
 		"--button-cancel-bg-color": {
 			"status": "excluded",
@@ -493,16 +528,24 @@
 			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
 		},
 		"--clickable-area-large": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: large touch target (48px)",
-			"category": "Spacing & Clickable Areas",
-			"note": "Large touch target (48px); accessibility standard"
+			"status": "settable",
+			"token": "--nldesign-nc-clickable-area-large",
+			"tab": "content",
+			"type": "text",
+			"label": "Large clickable area",
+			"advanced": true,
+			"note": "Large touch target (48px); accessibility standard",
+			"category": "Spacing & Clickable Areas"
 		},
 		"--clickable-area-small": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: small touch target (24px)",
-			"category": "Spacing & Clickable Areas",
-			"note": "Small touch target (24px); accessibility standard"
+			"status": "settable",
+			"token": "--nldesign-nc-clickable-area-small",
+			"tab": "content",
+			"type": "text",
+			"label": "Small clickable area",
+			"advanced": true,
+			"note": "Small touch target (24px); accessibility standard",
+			"category": "Spacing & Clickable Areas"
 		},
 		"--cn-ai-pointer-offset": {
 			"status": "excluded",
@@ -713,10 +756,14 @@
 			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
 		},
 		"--color-background-assistant": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC-specific",
-			"category": "Assistant (AI)",
-			"note": "AI assistant background; NC-specific feature"
+			"status": "settable",
+			"token": "--nldesign-nc-color-background-assistant",
+			"tab": "content",
+			"type": "color",
+			"label": "Assistant background color",
+			"perScheme": true,
+			"note": "AI assistant background; NC-specific feature",
+			"category": "Assistant (AI)"
 		},
 		"--color-background-dark": {
 			"status": "mapped",
@@ -747,10 +794,13 @@
 			"note": "Admin/user configured background; should respect user settings"
 		},
 		"--color-background-plain-text": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: auto-calculated by Nextcloud",
-			"category": "Main Background",
-			"note": "Text on plain background; auto-calculated by Nextcloud"
+			"status": "settable",
+			"token": "--nldesign-nc-color-background-plain-text",
+			"tab": "login",
+			"type": "color",
+			"label": "Text on the plain background",
+			"note": "Text on plain background; auto-calculated by Nextcloud",
+			"category": "Main Background"
 		},
 		"--color-background-selection": {
 			"status": "mapped",
@@ -767,10 +817,14 @@
 			"note": "Standard border color"
 		},
 		"--color-border-assistant": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC-specific",
-			"category": "Assistant (AI)",
-			"note": "AI assistant border gradient; NC-specific"
+			"status": "settable",
+			"token": "--nldesign-nc-color-border-assistant",
+			"tab": "content",
+			"type": "text",
+			"label": "Assistant border",
+			"perScheme": true,
+			"note": "AI assistant border gradient; NC-specific",
+			"category": "Assistant (AI)"
 		},
 		"--color-border-dark": {
 			"status": "mapped",
@@ -801,16 +855,24 @@
 			"note": "Success border; uses success color"
 		},
 		"--color-box-shadow": {
-			"status": "excluded",
-			"reason": "unmapped: depends on --color-box-shadow-rgb",
-			"category": "Shadows",
-			"note": "Box shadow color; depends on --color-box-shadow-rgb"
+			"status": "settable",
+			"token": "--nldesign-nc-color-box-shadow",
+			"tab": "content",
+			"type": "text",
+			"label": "Box shadow color",
+			"perScheme": true,
+			"note": "Box shadow color; depends on --color-box-shadow-rgb",
+			"category": "Shadows"
 		},
 		"--color-box-shadow-rgb": {
-			"status": "excluded",
-			"reason": "unmapped: auto-calculated from background",
-			"category": "Shadows",
-			"note": "Box shadow RGB; auto-calculated from background"
+			"status": "settable",
+			"token": "--nldesign-nc-color-box-shadow-rgb",
+			"tab": "content",
+			"type": "text",
+			"label": "Box shadow RGB",
+			"perScheme": true,
+			"note": "Box shadow RGB; auto-calculated from background",
+			"category": "Shadows"
 		},
 		"--color-circle-icon": {
 			"status": "excluded",
@@ -821,16 +883,24 @@
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--color-element-assistant": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC-specific",
-			"category": "Assistant (AI)",
-			"note": "AI assistant element gradient; NC-specific"
+			"status": "settable",
+			"token": "--nldesign-nc-color-element-assistant",
+			"tab": "content",
+			"type": "text",
+			"label": "Assistant element background",
+			"perScheme": true,
+			"note": "AI assistant element gradient; NC-specific",
+			"category": "Assistant (AI)"
 		},
 		"--color-element-assistant-icon": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC-specific",
-			"category": "Assistant (AI)",
-			"note": "AI assistant icon gradient; NC-specific"
+			"status": "settable",
+			"token": "--nldesign-nc-color-element-assistant-icon",
+			"tab": "content",
+			"type": "text",
+			"label": "Assistant icon background",
+			"perScheme": true,
+			"note": "AI assistant icon gradient; NC-specific",
+			"category": "Assistant (AI)"
 		},
 		"--color-element-error": {
 			"status": "mapped",
@@ -882,10 +952,14 @@
 			"note": "Deprecated; RGB for rgba()"
 		},
 		"--color-error-text": {
-			"status": "excluded",
-			"reason": "unmapped: auto-calculated for contrast by Nextcloud",
-			"category": "Status: Error",
-			"note": "Error text color; NC auto-calculates for contrast"
+			"status": "settable",
+			"token": "--nldesign-nc-color-error-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Error text color",
+			"perScheme": true,
+			"note": "Error text color; NC auto-calculates for contrast",
+			"category": "Status: Error"
 		},
 		"--color-favorite": {
 			"status": "mapped",
@@ -906,40 +980,64 @@
 			"note": "Info background/accent"
 		},
 		"--color-info-hover": {
-			"status": "excluded",
-			"reason": "unmapped: no NL Design equivalent",
-			"category": "Status: Info",
-			"note": "Info hover; no NL Design equivalent"
+			"status": "settable",
+			"token": "--nldesign-nc-color-info-hover",
+			"tab": "status",
+			"type": "color",
+			"label": "Info hover color",
+			"perScheme": true,
+			"note": "Info hover; no NL Design equivalent",
+			"category": "Status: Info"
 		},
 		"--color-info-rgb": {
-			"status": "excluded",
-			"reason": "unmapped: deprecated, RGB for rgba()",
-			"category": "Status: Info",
-			"note": "Deprecated; RGB for rgba()"
+			"status": "settable",
+			"token": "--nldesign-nc-color-info-rgb",
+			"tab": "status",
+			"type": "text",
+			"label": "Info RGB",
+			"perScheme": true,
+			"note": "Deprecated; RGB for rgba()",
+			"category": "Status: Info"
 		},
 		"--color-info-text": {
-			"status": "excluded",
-			"reason": "unmapped: auto-calculated for contrast by Nextcloud",
-			"category": "Status: Info",
-			"note": "Info text; NC auto-calculates for contrast"
+			"status": "settable",
+			"token": "--nldesign-nc-color-info-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Info text color",
+			"perScheme": true,
+			"note": "Info text; NC auto-calculates for contrast",
+			"category": "Status: Info"
 		},
 		"--color-loading-dark": {
-			"status": "excluded",
-			"reason": "unmapped: NC loading animation internal",
-			"category": "Special Colors",
-			"note": "Loading animation dark; NC internal"
+			"status": "settable",
+			"token": "--nldesign-nc-color-loading-dark",
+			"tab": "content",
+			"type": "color",
+			"label": "Loading spinner dark color",
+			"perScheme": true,
+			"note": "Loading animation dark; NC internal",
+			"category": "Special Colors"
 		},
 		"--color-loading-light": {
-			"status": "excluded",
-			"reason": "unmapped: NC loading animation internal",
-			"category": "Special Colors",
-			"note": "Loading animation light; NC internal"
+			"status": "settable",
+			"token": "--nldesign-nc-color-loading-light",
+			"tab": "content",
+			"type": "color",
+			"label": "Loading spinner light color",
+			"perScheme": true,
+			"note": "Loading animation light; NC internal",
+			"category": "Special Colors"
 		},
 		"--color-main-background": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: overriding breaks dark mode",
-			"category": "Main Background",
-			"note": "Core page background; overriding breaks dark mode and accessibility themes"
+			"status": "settable",
+			"token": "--nldesign-nc-color-main-background",
+			"tab": "content",
+			"type": "color",
+			"label": "Main background color",
+			"perScheme": true,
+			"note": "Core page background; overriding breaks dark mode and accessibility themes",
+			"category": "Main Background"
 		},
 		"--color-main-background-blur": {
 			"status": "mapped",
@@ -970,10 +1068,14 @@
 			"note": "Main body text color"
 		},
 		"--color-mark": {
-			"status": "excluded",
-			"reason": "unmapped: new in NC 33/34. A fixed #fff0c7 highlight tint behind <mark>, for search hits. NL Design has no highlight token, and a brand colour here is the wrong instrument: the tint has to stay legible under --color-main-text, which a saturated primary is not.",
-			"category": "Special Colors",
-			"note": "`<mark>` highlight tint (#fff0c7); new in NC 33/34. No NL Design highlight token, and the tint has to stay legible under the text colour"
+			"status": "settable",
+			"token": "--nldesign-nc-color-mark",
+			"tab": "content",
+			"type": "color",
+			"label": "Search highlight color",
+			"perScheme": true,
+			"note": "`<mark>` highlight tint (#fff0c7); new in NC 33/34. No NL Design highlight token, and the tint has to stay legible under the text colour",
+			"category": "Special Colors"
 		},
 		"--color-norder-error": {
 			"status": "excluded",
@@ -1093,10 +1195,13 @@
 			"note": "Text on primary background"
 		},
 		"--color-scrollbar": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: depends on border-maxcontrast",
-			"category": "Special Colors",
-			"note": "Scrollbar color; depends on border-maxcontrast"
+			"status": "settable",
+			"token": "--nldesign-nc-color-scrollbar",
+			"tab": "content",
+			"type": "color",
+			"label": "Scrollbar color",
+			"note": "Scrollbar color; depends on border-maxcontrast",
+			"category": "Special Colors"
 		},
 		"--color-success": {
 			"status": "mapped",
@@ -1106,10 +1211,14 @@
 			"note": "Success background/accent"
 		},
 		"--color-success-hover": {
-			"status": "excluded",
-			"reason": "unmapped: no NL Design equivalent",
-			"category": "Status: Success",
-			"note": "Success hover; no NL Design equivalent"
+			"status": "settable",
+			"token": "--nldesign-nc-color-success-hover",
+			"tab": "status",
+			"type": "color",
+			"label": "Success hover color",
+			"perScheme": true,
+			"note": "Success hover; no NL Design equivalent",
+			"category": "Status: Success"
 		},
 		"--color-success-rgb": {
 			"status": "mapped",
@@ -1119,10 +1228,14 @@
 			"note": "Deprecated; RGB for rgba()"
 		},
 		"--color-success-text": {
-			"status": "excluded",
-			"reason": "unmapped: auto-calculated for contrast by Nextcloud",
-			"category": "Status: Success",
-			"note": "Success text; NC auto-calculates for contrast"
+			"status": "settable",
+			"token": "--nldesign-nc-color-success-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Success text color",
+			"perScheme": true,
+			"note": "Success text; NC auto-calculates for contrast",
+			"category": "Status: Success"
 		},
 		"--color-text": {
 			"status": "excluded",
@@ -1162,16 +1275,23 @@
 			"note": "Blur-adjusted maxcontrast; Nextcloud calculates per background"
 		},
 		"--color-text-maxcontrast-default": {
-			"status": "excluded",
-			"reason": "unmapped: auto-calculated per theme by Nextcloud",
-			"category": "Text Colors",
-			"note": "Default maxcontrast; auto-calculated by Nextcloud per theme"
+			"status": "settable",
+			"token": "--nldesign-nc-color-text-maxcontrast-default",
+			"tab": "typography",
+			"type": "color",
+			"label": "Muted text default color",
+			"perScheme": true,
+			"note": "Default maxcontrast; auto-calculated by Nextcloud per theme",
+			"category": "Text Colors"
 		},
 		"--color-text-selection": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: new in NC 33/34. Its value is `var(--color-main-text)`, which is mapped to --nldesign-color-text above, so selected text already takes the set's text colour. It is a contrast PAIR with the wash above; the two have to be decided together or not at all.",
-			"category": "Special Colors",
-			"note": "Selected text; new in NC 33/34. Derived from `--color-main-text`, which is mapped"
+			"status": "settable",
+			"token": "--nldesign-nc-color-text-selection",
+			"tab": "typography",
+			"type": "color",
+			"label": "Selected text color",
+			"note": "Selected text; new in NC 33/34. Derived from `--color-main-text`, which is mapped",
+			"category": "Special Colors"
 		},
 		"--color-text-success": {
 			"status": "mapped",
@@ -1195,10 +1315,14 @@
 			"note": "Warning background/accent"
 		},
 		"--color-warning-hover": {
-			"status": "excluded",
-			"reason": "unmapped: no NL Design equivalent",
-			"category": "Status: Warning",
-			"note": "Warning hover; no NL Design equivalent"
+			"status": "settable",
+			"token": "--nldesign-nc-color-warning-hover",
+			"tab": "status",
+			"type": "color",
+			"label": "Warning hover color",
+			"perScheme": true,
+			"note": "Warning hover; no NL Design equivalent",
+			"category": "Status: Warning"
 		},
 		"--color-warning-rgb": {
 			"status": "mapped",
@@ -1208,10 +1332,14 @@
 			"note": "Deprecated; RGB for rgba()"
 		},
 		"--color-warning-text": {
-			"status": "excluded",
-			"reason": "unmapped: auto-calculated for contrast by Nextcloud",
-			"category": "Status: Warning",
-			"note": "Warning text; NC auto-calculates for contrast"
+			"status": "settable",
+			"token": "--nldesign-nc-color-warning-text",
+			"tab": "status",
+			"type": "color",
+			"label": "Warning text color",
+			"perScheme": true,
+			"note": "Warning text; NC auto-calculates for contrast",
+			"category": "Status: Warning"
 		},
 		"--confetti-i": {
 			"status": "excluded",
@@ -1266,28 +1394,42 @@
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--default-clickable-area": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: touch target (34px)",
-			"category": "Spacing & Clickable Areas",
-			"note": "Touch target (34px); accessibility standard"
+			"status": "settable",
+			"token": "--nldesign-nc-default-clickable-area",
+			"tab": "content",
+			"type": "text",
+			"label": "Default clickable area",
+			"advanced": true,
+			"note": "Touch target (34px); accessibility standard",
+			"category": "Spacing & Clickable Areas"
 		},
 		"--default-font-size": {
-			"status": "excluded",
-			"reason": "unmapped: standard 15px",
-			"category": "Typography",
-			"note": "Base font size (15px); standard across themes"
+			"status": "settable",
+			"token": "--nldesign-nc-default-font-size",
+			"tab": "typography",
+			"type": "text",
+			"label": "Base font size",
+			"note": "Base font size (15px); standard across themes",
+			"category": "Typography"
 		},
 		"--default-grid-baseline": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: core layout unit (4px)",
-			"category": "Spacing & Clickable Areas",
-			"note": "Base grid unit (4px); core layout building block"
+			"status": "settable",
+			"token": "--nldesign-nc-default-grid-baseline",
+			"tab": "content",
+			"type": "text",
+			"label": "Grid baseline",
+			"advanced": true,
+			"note": "Base grid unit (4px); core layout building block",
+			"category": "Spacing & Clickable Areas"
 		},
 		"--default-line-height": {
-			"status": "excluded",
-			"reason": "unmapped: standard 1.5",
-			"category": "Typography",
-			"note": "Line height (1.5); standard"
+			"status": "settable",
+			"token": "--nldesign-nc-default-line-height",
+			"tab": "typography",
+			"type": "text",
+			"label": "Base line height",
+			"note": "Line height (1.5); standard",
+			"category": "Typography"
 		},
 		"--dfb017de": {
 			"status": "excluded",
@@ -1674,10 +1816,14 @@
 			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
 		},
 		"--filter-background-blur": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC handles browser compat",
-			"category": "Animations",
-			"note": "Background blur filter; Nextcloud handles browser compat"
+			"status": "settable",
+			"token": "--nldesign-nc-filter-background-blur",
+			"tab": "content",
+			"type": "text",
+			"label": "Background blur filter",
+			"advanced": true,
+			"note": "Background blur filter; Nextcloud handles browser compat",
+			"category": "Animations"
 		},
 		"--findbarButton-next-icon": {
 			"status": "excluded",
@@ -1723,10 +1869,13 @@
 			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
 		},
 		"--font-size-small": {
-			"status": "excluded",
-			"reason": "unmapped: standard 13px",
-			"category": "Typography",
-			"note": "Small font size (13px); standard"
+			"status": "settable",
+			"token": "--nldesign-nc-font-size-small",
+			"tab": "typography",
+			"type": "text",
+			"label": "Small font size",
+			"note": "Small font size (13px); standard",
+			"category": "Typography"
 		},
 		"--font-weight-default": {
 			"status": "mapped",
@@ -1801,10 +1950,14 @@
 			"reason": "written by Nextcloud's JavaScript at render time, so a stylesheet value would be overwritten."
 		},
 		"--header-height": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: Nextcloud sets it per release (50px on 32–34, 44px from 35) and the shell clears it; overriding breaks layout",
-			"category": "Layout & Dimensions",
-			"note": "Header height (50px); overriding breaks NC layout"
+			"status": "settable",
+			"token": "--nldesign-nc-header-height",
+			"tab": "content",
+			"type": "text",
+			"label": "Header height",
+			"advanced": true,
+			"note": "Header height (50px); overriding breaks NC layout",
+			"category": "Layout & Dimensions"
 		},
 		"--header-menu-icon-mask": {
 			"status": "mapped",
@@ -1814,10 +1967,14 @@
 			"note": "Icon mask gradient; NC internal"
 		},
 		"--header-menu-item-height": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC layout dependent",
-			"category": "Layout & Dimensions",
-			"note": "Header menu item height; NC layout dependent"
+			"status": "settable",
+			"token": "--nldesign-nc-header-menu-item-height",
+			"tab": "content",
+			"type": "text",
+			"label": "Header menu item height",
+			"advanced": true,
+			"note": "Header menu item height; NC layout dependent",
+			"category": "Layout & Dimensions"
 		},
 		"--height": {
 			"status": "excluded",
@@ -3018,10 +3175,14 @@
 			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
 		},
 		"--navigation-width": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: 300px, NC layout dependent",
-			"category": "Layout & Dimensions",
-			"note": "Navigation panel width (300px); NC layout dependent"
+			"status": "settable",
+			"token": "--nldesign-nc-navigation-width",
+			"tab": "content",
+			"type": "text",
+			"label": "Navigation width",
+			"advanced": true,
+			"note": "Navigation panel width (300px); NC layout dependent",
+			"category": "Layout & Dimensions"
 		},
 		"--nc-form-box-item-border-width": {
 			"status": "excluded",
@@ -4382,16 +4543,24 @@
 			"reason": "not a token yet; the internal-variable-tokens change makes it settable."
 		},
 		"--sidebar-max-width": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC layout dependent",
-			"category": "Layout & Dimensions",
-			"note": "Sidebar max width; NC layout dependent"
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-max-width",
+			"tab": "content",
+			"type": "text",
+			"label": "Sidebar maximum width",
+			"advanced": true,
+			"note": "Sidebar max width; NC layout dependent",
+			"category": "Layout & Dimensions"
 		},
 		"--sidebar-min-width": {
-			"status": "excluded",
-			"reason": "intentionally not overridden: NC layout dependent",
-			"category": "Layout & Dimensions",
-			"note": "Sidebar min width; NC layout dependent"
+			"status": "settable",
+			"token": "--nldesign-nc-sidebar-min-width",
+			"tab": "content",
+			"type": "text",
+			"label": "Sidebar minimum width",
+			"advanced": true,
+			"note": "Sidebar min width; NC layout dependent",
+			"category": "Layout & Dimensions"
 		},
 		"--sidebar-narrow-bg-color": {
 			"status": "excluded",
