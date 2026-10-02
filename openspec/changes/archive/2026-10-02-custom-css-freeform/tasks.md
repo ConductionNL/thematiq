@@ -73,7 +73,7 @@ declarative-vs-imperative notification-dialect distinction does not apply.
 - [x] 6.1 Run `composer check:strict` (PHPCS, PHPMD, Psalm, PHPStan) against all new/changed PHP
       files and fix any findings, including pre-existing issues encountered in touched files.
 - [x] 6.2 Run the full `phpunit` suite and confirm all new and existing tests pass.
-- [ ] 6.3 Add/extend a Playwright spec-coverage test (`tests/e2e/spec-coverage/custom-css-freeform.spec.ts`,
+- [x] 6.3 Add/extend a Playwright spec-coverage test (`tests/e2e/spec-coverage/custom-css-freeform.spec.ts`,
       mirroring `custom-css-overrides.spec.ts`) covering the admin UI save/enable flow, or apply a
       reason-bearing `@e2e exclude` on any scenario that is backend-only file/cascade behaviour
       with no distinct UI surface (matching the precedent set in
@@ -81,6 +81,26 @@ declarative-vs-imperative notification-dialect distinction does not apply.
 - [x] 6.4 Run `npm run test:lasuite-tokens`, `test:lasuite-override`, `test:lasuite-bridge-coverage`,
       `npx stylelint css/systems/lasuite/*.css`, and `npm run test:unit`; confirm all remain green
       (no regression from the new CSS layer or admin.php changes).
+
+## Notes from the build (2 Oct 2026)
+
+- Task 5.2 was ticked but `tests/Unit/Service/CustomCssServiceTest.php` did not exist. Writing it
+  found a bug: `write()` puts a header comment above the CSS and `read()` returned it as part of
+  the CSS. The editor showed the comment, and every save stacked one more header on top
+  (and counted it towards the 64 KB cap). Clearing the textarea left a header-only file that
+  `hasContent()` read as content, so an empty stylesheet was still linked. `read()` now peels
+  every header (which heals a file that already stacked several on the next save), and the test
+  covers the round trip, the stacked case, the empty case, the 422 path and an unwritable
+  file. Since #811 the file lives in the runtime file store (app data) instead of the app's
+  `css/` directory, so the temp-file-and-rename part of task 5.2 belongs to that store now; the
+  test runs on a real `DirectoryRuntimeFileStore`.
+- Task 3.1 shipped with one endpoint pair instead of three methods: `POST /settings/custom-css`
+  carries `enabled` with the CSS, and the single `custom_css_written` entry records the new state.
+  A rejected save is audited too (`custom_css_rejected`), so the log shows attempts as well as
+  writes. The POST answers with the stored size and the enabled state, not the content; the spec
+  says so now.
+- Task 6.3: every scenario carries `@e2e exclude` naming the unit test that proves it. The admin
+  textarea flow is thin relay code; a Playwright pass of save and enable is owed live.
 
 ## Acceptance Criteria
 
