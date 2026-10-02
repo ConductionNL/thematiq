@@ -60,6 +60,7 @@ use RuntimeException;
  *   and — when the deleted set was the active one — undo what it pushed into core theming. Each is called here; none is passed through.
  */
 class CustomTokenSetController extends Controller {
+	use ErrorStatusTrait;
 
 	/**
 	 * The custom token set storage/lifecycle service.
@@ -217,11 +218,6 @@ class CustomTokenSetController extends Controller {
 	 * @return JSONResponse `{ id, imported, skipped, warnings, report, counts, inputKind }` or an error.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one upload endpoint validates name, source, size, kind and logo before it may persist;
-	 *   each check is a branch, and splitting them hides the order they must run in.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - one upload endpoint validates name, source, size, kind and logo before it may persist; each
-	 *   check is a branch, and splitting them hides the order they must run in.
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function upload(): JSONResponse {
@@ -360,12 +356,7 @@ class CustomTokenSetController extends Controller {
 				assetName: CustomTokenSetService::ID_PREFIX . $slug
 			);
 		} catch (RuntimeException $e) {
-			$code = $e->getCode();
-			if ($code < 400 || $code > 599) {
-				$code = 422;
-			}
-
-			return new JSONResponse(['error' => $e->getMessage()], $code);
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 422));
 		}
 
 		// What the ADMIN'S DOCUMENT yielded, reported by the converter from the
@@ -592,9 +583,6 @@ class CustomTokenSetController extends Controller {
 	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - persisting is a sequence of independent optional steps (dark variant, logo, manifest),
-	 *   each guarded.
 	 */
 	private function persist(string $name, array $parsed): JSONResponse {
 		try {
@@ -612,12 +600,7 @@ class CustomTokenSetController extends Controller {
 				designSystem: ($parsed['designSystem'] ?? null)
 			);
 		} catch (RuntimeException $e) {
-			$code = $e->getCode();
-			if ($code < 400 || $code > 599) {
-				$code = 500;
-			}
-
-			return new JSONResponse(['error' => $e->getMessage()], $code);
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
 
 		$servedCss = $this->service->getRawContent(id: $result['id']);
