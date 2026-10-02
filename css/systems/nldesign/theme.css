@@ -210,12 +210,12 @@ header#header {
 	min-height: 100vh !important;
 }
 
-/* Login form container - white background, no shadows */
+/* Login form container - main background, no shadows */
 #body-login form,
 #body-login .login-form,
 #body-login #login-form,
 #body-login .body-login-container > div {
-	background: #ffffff !important;
+	background: var(--color-main-background) !important;
 	box-shadow: none !important;
 	border-radius: var(
 		--nldesign-component-login-box-border-radius,
@@ -229,8 +229,8 @@ header#header {
 #body-login .login-box,
 .guest-box,
 .login-box {
-	background: #ffffff !important;
-	background-color: #ffffff !important;
+	background: var(--color-main-background) !important;
+	background-color: var(--color-main-background) !important;
 	box-shadow: none !important;
 	border-radius: var(
 		--nldesign-component-login-box-border-radius,
@@ -315,7 +315,7 @@ div[class*='login-box__wrapper'],
 div[data-v-48234338][class*='login-box__wrapper'],
 .login-box__wrapper[data-v-48234338] {
 	position: relative !important;
-	background: #ffffff !important;
+	background: var(--color-main-background) !important;
 	/* Use lint height or min 100px for non-lint themes */
 	padding-top: max(var(--nldesign-size-lint-height, 0px), 100px) !important;
 	z-index: 3 !important;
@@ -426,7 +426,7 @@ body.body-login-container header {
 #body-login .input-field {
 	border-radius: var(--nldesign-component-textbox-border-radius) !important;
 	box-shadow: none !important;
-	border: 1px solid #d0d0d0 !important;
+	border: 1px solid var(--nldesign-component-textbox-border-color) !important;
 }
 
 #body-login input[type='text']:focus,
