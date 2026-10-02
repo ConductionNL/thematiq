@@ -168,10 +168,11 @@ class DesignSystemService {
 		$systems = $this->getDesignSystems();
 
 		if (isset($systems[$id]) === true) {
-			$system = $systems[$id];
+			$system = $systems[$id] + ['stylesheets' => [], 'versioned_stylesheets' => []];
 			$major = explode('.', $this->config->getSystemValueString('version', ''))[0];
-			$scoped = (array)($system['versioned_stylesheets'][$major] ?? []);
-			$system['stylesheets'] = array_merge($system['stylesheets'], array_values(array_filter($scoped, 'is_string')));
+			$versioned = (array)$system['versioned_stylesheets'] + [$major => []];
+			$scoped = array_values(array_filter((array)$versioned[$major], 'is_string'));
+			$system['stylesheets'] = array_merge((array)$system['stylesheets'], $scoped);
 			return $system;
 		}
 
