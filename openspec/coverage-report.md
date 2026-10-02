@@ -1,6 +1,6 @@
 # Spec coverage report: thematiq
 
-Measured: 2 October 2026, on `development` at `a1c1a3f7`.
+Measured: 2 October 2026, on `development` at `8ee8720c`.
 This replaces the report generated on 24 May 2026 for `nldesign`, before the retrofit annotation
 landed. Every number in that report is obsolete.
 
@@ -8,11 +8,11 @@ landed. Every number in that report is obsolete.
 
 | Measure | Value | How it was measured |
 |---|---|---|
-| PHP files in `lib/` | 149 | `find lib -name '*.php'` |
-| Files carrying at least one `@spec` | 149 | each file grepped for `@spec` |
-| Public and protected methods in `lib/` | 642 | `grep -E '^\s*(public\|protected)( static)? function'` |
-| `@spec` tags in `lib/` | 1237 | `grep -rh '@spec openspec' lib` |
-| `@spec exclude` reasons in `lib/` | 16 | `grep -rh '@spec exclude' lib` |
+| PHP files in `lib/` | 150 | `find lib -name '*.php'` |
+| Files carrying at least one `@spec` | 150 | each file grepped for `@spec` |
+| Public and protected methods in `lib/` | 645 | `grep -E '^\s*(public\|protected)( static)? function'` |
+| `@spec` tags in `lib/` | 1243 | `grep -rh '@spec openspec' lib` |
+| `@spec exclude` reasons in `lib/` | 17 | `grep -rh '@spec exclude' lib` |
 | Methods without a tag (gate-16) | **0** | `check_spec_coverage.py` with `HYDRA_GATE_BASE_REF` set to an empty-tree commit, so every line of `lib/` and `src/` is in scope |
 
 ## The May buckets, closed
@@ -23,7 +23,7 @@ landed. Every number in that report is obsolete.
 | 2a / 2b, reverse-spec | 0 | 0 |
 | 3a, possibly broken | 1: `theming_syncs_total` never incremented | Fixed. `SettingsController::updateThemingValues()` increments it after a successful sync. |
 | 3b, never implemented | 39 | False alarms of the scanner's scope. The behaviour lives in `templates/`, `js/admin.js` and `css/`, which the scanner did not read. |
-| 4, ADR conformance | 18 files without a file-docblock `@spec` | All 149 files carry one. `@license` and `@copyright` are on every file. |
+| 4, ADR conformance | 18 files without a file-docblock `@spec` | All 150 files carry one. `@license` and `@copyright` are on every file. |
 
 ## Stale anchors fixed
 
