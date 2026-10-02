@@ -169,11 +169,16 @@ class ScheduledCoreThemingSync {
 	/**
 	 * The set's theming block, limited to what the dialog would offer.
 	 *
+	 * Public so `occ thematiq:theme:set --sync-core` can tell a set without
+	 * theming values from one whose values did not validate.
+	 *
 	 * @param string $tokenSetId The set.
 	 *
-	 * @return array<string, string> The params.
+	 * @return array<string, string> The params, empty when the set carries none.
+	 *
+	 * @spec openspec/specs/theme-cli/spec.md#requirement-core-theming-is-changed-only-on-request
 	 */
-	private function themingParams(string $tokenSetId): array {
+	public function themingParams(string $tokenSetId): array {
 		foreach ($this->tokenSets->getAvailableTokenSets() as $set) {
 			if (($set['id'] ?? null) !== $tokenSetId || is_array($set['theming'] ?? null) === false) {
 				continue;

@@ -20,7 +20,7 @@
 			"class": "conduction",
 			"owner": "cn",
 			"group": "conduction",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				".cn-color-picker__swatch[data-v-307491dd]"
@@ -32,7 +32,7 @@
 			"class": "conduction",
 			"owner": "cn",
 			"group": "conduction",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				".cn-advanced-form-dialog__color-swatch[data-v-1884662d]"
@@ -381,7 +381,7 @@
 			"class": "component",
 			"owner": "account",
 			"group": "other",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				".account-menu[data-v-6c007912] button:focus-visible .account-menu__avatar",
@@ -539,7 +539,7 @@
 			"class": "component",
 			"owner": "alt",
 			"group": "pdf-viewer",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				"body"
@@ -587,7 +587,7 @@
 			"class": "component",
 			"owner": "alt",
 			"group": "pdf-viewer",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				".altText .tooltip.show"
@@ -938,7 +938,7 @@
 			"class": "component",
 			"owner": "backdrop",
 			"group": "other",
-			"type": "color",
+			"type": "rgb",
 			"mode": "selectors",
 			"selectors": [
 				".modal-mask--light[data-v-01926ad2]",
@@ -955,7 +955,7 @@
 			"class": "component",
 			"owner": "background",
 			"group": "text-editor",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				".text-menubar[data-v-3396de9b]",
@@ -1623,7 +1623,7 @@
 			"class": "component",
 			"owner": "dialog",
 			"group": "pdf-viewer",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				"#altTextDialog"
@@ -1672,7 +1672,7 @@
 			"class": "component",
 			"owner": "doorhanger",
 			"group": "pdf-viewer",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				"body"
@@ -2234,7 +2234,7 @@
 			"class": "component",
 			"owner": "dp",
 			"group": "date-picker",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				".vue-date-time-picker__wrapper[data-v-02e90461] .dp__theme_dark",
@@ -3321,7 +3321,7 @@
 			"class": "component",
 			"owner": "input",
 			"group": "components",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				".input-field__input[data-v-2bc46a58]",
@@ -3338,7 +3338,7 @@
 			"class": "component",
 			"owner": "input",
 			"group": "components",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				".input-field__input[data-v-2bc46a58]",
@@ -4735,7 +4735,7 @@
 			"class": "component",
 			"owner": "scrollbar",
 			"group": "pdf-viewer",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				"body"
@@ -4747,7 +4747,7 @@
 			"class": "component",
 			"owner": "scrollbar",
 			"group": "pdf-viewer",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				"body"
@@ -5200,7 +5200,7 @@
 			"class": "component",
 			"owner": "toolbarSidebar",
 			"group": "pdf-viewer",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				"body"
@@ -5332,15 +5332,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "0 8px 0 4px"
 		},
@@ -5352,15 +5344,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "solid"
 		},
@@ -5373,15 +5357,7 @@
 			"mode": "selectors",
 			"selectors": [
 				".v-select.select.vs--open",
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--border-width-input, 2px) !important"
 		},
@@ -5393,15 +5369,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "#333"
 		},
@@ -5413,15 +5381,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "rgba(0,0,0,.15)"
 		},
@@ -5433,15 +5393,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "rgba(60,60,60,.5)"
 		},
@@ -5453,15 +5405,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "rgba(60,60,60,.26)"
 		},
@@ -5470,18 +5414,10 @@
 			"class": "component",
 			"owner": "vs",
 			"group": "select",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "0 1px 0 #fff"
 		},
@@ -5501,15 +5437,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--color-main-text)"
 		},
@@ -5521,15 +5449,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "1"
 		},
@@ -5565,15 +5485,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--color-main-background)"
 		},
@@ -5582,18 +5494,10 @@
 			"class": "component",
 			"owner": "vs",
 			"group": "select",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "0px 2px 2px 0px var(--color-box-shadow)"
 		},
@@ -5605,15 +5509,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "350px"
 		},
@@ -5625,15 +5521,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "160px"
 		},
@@ -5645,15 +5533,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--color-error)"
 		},
@@ -5665,15 +5545,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "#fff"
 		},
@@ -5682,10 +5554,9 @@
 			"class": "component",
 			"owner": "vs",
 			"group": "select",
-			"type": "color",
+			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"ACzBA",
 				"body"
 			],
 			"stock": "inset 0px 0px 0px 2px var(--vs-border-color)"
@@ -5698,15 +5569,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--vs-dropdown-color)"
 		},
@@ -5718,15 +5581,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "8px 20px"
 		},
@@ -5738,15 +5593,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "9999"
 		},
@@ -5758,15 +5605,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--default-font-size)"
 		},
@@ -5778,15 +5617,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--default-line-height)"
 		},
@@ -5798,7 +5629,6 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"ACzBA",
 				"body"
 			],
 			"stock": "var(--color-main-background)"
@@ -5811,15 +5641,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--color-main-text)"
 		},
@@ -5831,15 +5653,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--color-text-maxcontrast)"
 		},
@@ -5851,15 +5665,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--color-background-hover)"
 		},
@@ -5871,15 +5677,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--vs-border-color)"
 		},
@@ -5891,15 +5689,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--vs-border-style)"
 		},
@@ -5911,15 +5701,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--vs-border-width)"
 		},
@@ -5931,15 +5713,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--color-background-hover)"
 		},
@@ -5951,15 +5725,7 @@
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "var(--color-text-maxcontrast)"
 		},
@@ -5971,15 +5737,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "not-allowed"
 		},
@@ -5991,15 +5749,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "0ms"
 		},
@@ -6011,15 +5761,7 @@
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
-				"AAqD",
-				"ACzBA",
-				"CAAC",
-				"SAAS",
-				"UAAU",
-				"body",
-				"gCAAgC",
-				"iBAAiB",
-				"sBAAsB"
+				"body"
 			],
 			"stock": "cubic-bezier(1,-.115,.975,.855)"
 		},

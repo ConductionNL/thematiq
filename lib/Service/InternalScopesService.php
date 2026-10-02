@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  */
 
 declare(strict_types=1);
@@ -41,7 +41,7 @@ use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
  * `var()` references to the token; no value from a set or an upload reaches
  * this output.
  *
- * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  */
 class InternalScopesService {
 
@@ -82,7 +82,7 @@ class InternalScopesService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - CustomOverridesService::fileFor() is a pure lookup
 	 *
-	 * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	public function forSet(string $tokenSet, string $designSystemId, bool $withDark): string {
 		$light = (string)$this->files->read(name: 'css/tokens/' . $tokenSet . '.css');
@@ -113,7 +113,7 @@ class InternalScopesService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	public function build(array $lightNames, array $anyNames): string {
 		$internal = TokenRegistry::getInternalTokens();

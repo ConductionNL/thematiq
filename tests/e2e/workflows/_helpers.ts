@@ -166,14 +166,17 @@ export async function getServedOverrideCss(page: Page): Promise<string> {
 	return await res.text()
 }
 
-/** Read the active token set (GET /settings/tokenset). */
+/**
+ * Read the active token set from the public capability, the supported read
+ * path for scripts (GET /settings/tokenset was removed for #664).
+ */
 export async function getTokenSet(page: Page, token: string): Promise<string> {
 	return await page.evaluate(async (t) => {
-		const r = await fetch(OC.generateUrl('/apps/thematiq/settings/tokenset'), {
-			headers: { requesttoken: t },
+		const r = await fetch('/ocs/v2.php/cloud/capabilities?format=json', {
+			headers: { requesttoken: t, 'OCS-APIRequest': 'true' },
 		})
 		const j = await r.json()
-		return j.tokenSet
+		return j.ocs.data.capabilities.nldesign.tokenSet.id
 	}, token)
 }
 

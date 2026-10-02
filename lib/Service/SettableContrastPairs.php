@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/theme-vocabulary-complete/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ namespace OCA\Thematiq\Service;
  * settable side: otherwise Nextcloud's own values apply, and those are
  * Nextcloud's responsibility.
  *
- * @spec openspec/changes/theme-vocabulary-complete/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
  */
 class SettableContrastPairs {
 
@@ -44,7 +44,7 @@ class SettableContrastPairs {
 	 *
 	 * @param ContrastService $contrast The WCAG contrast service.
 	 *
-	 * @spec openspec/changes/theme-vocabulary-complete/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function __construct(
 		private readonly ContrastService $contrast = new ContrastService(),
@@ -58,7 +58,7 @@ class SettableContrastPairs {
 	 *
 	 * @return array<int, array{pair: string, foreground: string, background: string, ratio: float|null, threshold: float, passes: bool}> The pairs.
 	 *
-	 * @spec openspec/changes/theme-vocabulary-complete/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function pairs(array $declarations): array {
 		$pairs = [];

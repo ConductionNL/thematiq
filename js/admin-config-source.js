@@ -74,16 +74,24 @@
 				'thematiq',
 				'The house style is managed from deployment configuration: {path}.',
 				{ path: status.path },
+				undefined,
+				{ escape: false },
 			),
 			'nldesign-config-source-managed',
 		)
 		if (status.revision || status.appliedAt) {
 			line(
 				block,
-				t('thematiq', 'Last applied: revision {revision}, at {time}.', {
-					revision: status.revision || t('thematiq', 'unknown'),
-					time: status.appliedAt || t('thematiq', 'unknown'),
-				}),
+				t(
+					'thematiq',
+					'Last applied: revision {revision}, at {time}.',
+					{
+						revision: status.revision || t('thematiq', 'unknown'),
+						time: status.appliedAt || t('thematiq', 'unknown'),
+					},
+					undefined,
+					{ escape: false },
+				),
 			)
 		} else {
 			line(block, t('thematiq', 'The package has not been applied yet.'))
@@ -113,7 +121,7 @@
 				block,
 				t(
 					'thematiq',
-					'The running configuration differs from the package. The next apply replaces the changes made here.',
+					'The running configuration differs from the package. The changes made here stay until the package changes or an operator runs occ thematiq:config:apply --force.',
 				),
 				'nldesign-config-source-drift',
 			)

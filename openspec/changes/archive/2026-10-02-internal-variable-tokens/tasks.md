@@ -2,7 +2,7 @@
 
 - [x] 1.1 Record a status for every `component`, `slot` and `conduction` entry (453 settable, 47 excluded with a reason), generate `scripts/mapping/internal-tokens.json` from it, and verify its token list equals the settable list (inventory guard)
 - [x] 1.2 Read the map into `TokenRegistry::getInternalTokens()`, and verify `isEditable('--nldesign-nc-dp-hover-color')` is true and a runtime variable has no token (`InternalScopesServiceTest`)
-- [ ] 1.3 Moved to `token-editor-at-scale`: translated headings per owner component belong with the editor that first shows them
+- [x] 1.3 Moved to `token-editor-at-scale` and done there as its task 1.0 (#863): translated headings per group, with Dutch entries
 
 ## 2. Rules for set tokens
 
@@ -14,7 +14,7 @@
 ## 3. Proof in the browser
 
 - [x] 3.1 Verify in Chrome that every selector the map carries is valid, and that a declared variable, a read-only slot, a `--cn-*` tile, a `:root` variable and a dark-only token are reached, with the component's own declaration injected after thematiq's (`npm run test:internal-scopes`); a control run without the specificity bump fails the declared-variable checks
-- [ ] 3.2 Set ten internal tokens across five components on a live instance and screenshot each. Deferred to the chain's final live check on 8080, which needs the instance upgraded to this release
+- [x] 3.2 Set ten internal tokens across five components on a live instance and screenshot each. Done on 8080 (2026-10-02, release 1.2.13 plus #874), saved through the editor's endpoint on the stock set: date picker (`--dp-background-color`, `--dp-primary-color`), table (`--table-color-background`, `--table-color-heading`), app navigation (`--app-navigation-padding`, `--app-navigation-max-width`), header (`--color-header`, `--account-menu-outline`) and text input (`--input-border-box-shadow`, `--input-border-box-shadow-light`). All ten reached the real element, measured before and after; the input and account-menu outlines are visible in the screenshots
 
 ## 4. Documentation and verification
 
