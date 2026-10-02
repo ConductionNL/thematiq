@@ -458,6 +458,7 @@ class CssInjectionService {
 		// to. It rides with the set layers rather than beside them so `none` stays
 		// stock — that branch returns above — and so the manifest carries it, which
 		// is what lets the client add and remove it without a reload.
+		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
 		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
 		return $layers;
@@ -518,6 +519,7 @@ class CssInjectionService {
 			}
 		}
 
+		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
 		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
 		return $layers;

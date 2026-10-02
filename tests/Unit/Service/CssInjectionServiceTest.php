@@ -327,6 +327,7 @@ class CssInjectionServiceTest extends TestCase {
 				'tokens/rijkshuisstijl',
 				'icon-contrast',
 				'error-contrast',
+				'theme-scopes',
 				'component-scopes',
 			],
 			$styleLog
@@ -365,7 +366,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame(['component-scopes'], $styleLog);
+		$this->assertSame(['theme-scopes', 'component-scopes'], $styleLog);
 		$this->assertSame([], $fontLog);
 	}//end testNoneDesignSystemLoadsOnlyTheComponentLayer()
 
@@ -392,7 +393,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame(['tokens/custom-openwoo', 'component-scopes'], $styleLog);
+		$this->assertSame(['tokens/custom-openwoo', 'theme-scopes', 'component-scopes'], $styleLog);
 	}//end testACustomSetOnNoneLoadsItsOwnTokenFile()
 
 	/**
@@ -445,7 +446,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertSame(
-			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'component-scopes', 'hide-slogan', 'show-menu-labels'],
+			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'theme-scopes', 'component-scopes', 'hide-slogan', 'show-menu-labels'],
 			$styleLog
 		);
 	}//end testConditionalStylesheetsLoadedWhenEnabled()
@@ -611,6 +612,7 @@ class CssInjectionServiceTest extends TestCase {
 				'tokens/lasuite',
 				'icon-contrast',
 				'error-contrast',
+				'theme-scopes',
 				'component-scopes',
 			],
 			$styleLog
@@ -1210,7 +1212,7 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertSame('none', $manifest['designSystem']);
 		$this->assertSame(
-			['component-scopes'],
+			['theme-scopes', 'component-scopes'],
 			array_column($manifest['layers'], 'layer')
 		);
 	}//end testStylesheetManifestCarriesOnlyComponentScopesForStockNextcloud()
@@ -1263,7 +1265,7 @@ class CssInjectionServiceTest extends TestCase {
 		$fontLog = [];
 		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $fontLog)->getStylesheetManifest('nextcloud');
 
-		$this->assertSame(['tokens', 'component-scopes'], array_column($manifest['layers'], 'layer'));
+		$this->assertSame(['tokens', 'theme-scopes', 'component-scopes'], array_column($manifest['layers'], 'layer'));
 		$this->assertSame('inline', $manifest['layers'][0]['kind']);
 		$this->assertSame(CssInjectionService::STOCK_TOKENS_STYLE_ID, $manifest['layers'][0]['id']);
 		$this->assertSame($block, $manifest['layers'][0]['css']);
@@ -1322,6 +1324,7 @@ class CssInjectionServiceTest extends TestCase {
 		$this->assertSame(
 			[
 				'inline:' . CssInjectionService::STOCK_TOKENS_STYLE_ID . ':' . $block,
+				'file:theme-scopes',
 				'file:component-scopes',
 			],
 			$log

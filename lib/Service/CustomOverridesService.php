@@ -299,15 +299,16 @@ class CustomOverridesService {
 
 		$open = (int)strpos($css, '{', $start);
 		$close = (int)strpos($css, '}', $open);
-		preg_match_all('/(--[A-Za-z0-9_-]+)\\s*:\\s*([^;]+);/', substr($css, ($open + 1), ($close - $open - 1)), $matches, PREG_SET_ORDER);
+		// Read through parseDeclarations(), so a settable variable stored as its
+		// `--nldesign-nc-*` token comes back under the editor's name.
+		$block = $this->parseDeclarations(css: ':root {' . substr($css, ($open + 1), ($close - $open - 1)) . '}');
 		// Only the editor's names: own tokens keep their dark values in their own store.
 		$light = $this->filterEditable(tokens: $this->parseDeclarations(css: $css));
 		$derived = $this->css->darkValues(tokens: $light);
 		$own = [];
-		foreach ($matches as $match) {
-			$value = trim((string)preg_replace('/\\s*!important\\s*$/', '', $match[2]));
-			if (isset($light[$match[1]]) === true && ($derived[$match[1]] ?? null) !== $value) {
-				$own[$match[1]] = $value;
+		foreach ($block as $name => $value) {
+			if (isset($light[$name]) === true && ($derived[$name] ?? null) !== $value) {
+				$own[$name] = $value;
 			}
 		}
 
@@ -464,9 +465,22 @@ class CustomOverridesService {
 	 * @return array<string, string> Map of token name => value.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 */
 	private function parseDeclarations(string $css): array {
-		return $this->cssParser->parseRootBlock(css: $css);
+		$byToken = [];
+		foreach (TokenRegistry::getSettableTokens() as $name => $meta) {
+			$byToken[$meta['token']] = $name;
+		}
+
+		// Read a stored token back under the Nextcloud name the editor uses.
+		$tokens = [];
+		foreach ($this->cssParser->parseRootBlock(css: $css) as $name => $value) {
+			$tokens[($byToken[$name] ?? $name)] = $value;
+		}
+
+		return $tokens;
 	}//end parseDeclarations()
 
 	/**

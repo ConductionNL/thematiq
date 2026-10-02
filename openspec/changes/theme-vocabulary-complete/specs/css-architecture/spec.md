@@ -18,7 +18,7 @@ The app MUST inject `css/theme-scopes.css` after every stylesheet of the active 
 - AND it MUST precede `component-scopes`
 
 #### Scenario: A component scope falls back to a theme-scoped value
-- GIVEN a set declares `--nldesign-color-warning-hover` and no component token for the warning button
+- GIVEN a set declares `--nldesign-nc-color-warning-hover` and no component token for the warning button
 - WHEN a page with a warning button renders
 - THEN the button's hover colour MUST be the set's value
 

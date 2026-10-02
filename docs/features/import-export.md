@@ -75,11 +75,12 @@ The import accepts standard CSS files with a `:root {}` block:
 
 ## Editable vs. Excluded Tokens
 
-The import/export only operates on the 53 tokens shown in the token editor tabs. Some Nextcloud CSS variables are system-managed and cannot be overridden:
+Import and export cover every token the token editor shows. A few Nextcloud variables stay out of reach:
 
-- `--color-main-background` — managed by Nextcloud theming
-- `--color-main-text` — managed by Nextcloud theming
-- Other internal Nextcloud variables
+- image variables such as `--image-logo`, which carry a picture, not a design value;
+- variables Nextcloud's own JavaScript writes on every render, which a stylesheet value cannot hold.
+
+The [variable inventory](../reference/variable-inventory.md) lists each one with its reason.
 
 Attempting to import an excluded token via the API returns an HTTP 400 error. During file upload, excluded tokens are counted as skipped.
 

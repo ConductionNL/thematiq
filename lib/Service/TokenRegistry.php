@@ -82,6 +82,23 @@ class TokenRegistry implements TokenRegistryInterface {
 	private static ?array $componentTokens = null;
 
 	/**
+	 * The variable status table, relative to the app root.
+	 *
+	 * Its `settable` theme entries are Nextcloud variables a theme may set
+	 * through an `--nldesign-nc-*` token that has no default. The same table
+	 * feeds `scripts/generate-component-scopes.mjs`, so the registry and the
+	 * stylesheet that applies a value cannot disagree.
+	 */
+	private const STATUS_PATH = __DIR__ . '/../../scripts/mapping/variable-status.json';
+
+	/**
+	 * Decoded settable entries, or null before the first read.
+	 *
+	 * @var array<string, array<string, mixed>>|null
+	 */
+	private static ?array $settableTokens = null;
+
+	/**
 	 * Returns the full registry of editable tokens.
 	 *
 	 * Keys are CSS custom property names (e.g. '--color-primary').
@@ -108,11 +125,14 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	public static function getBrandTokens(): array {
+		// Settable entries come last, so for the two that were editable before
+		// (`--color-scrollbar`, `--body-container-radius`) they add the token.
 		$tokens = array_merge(
 			self::getLoginTokens(),
 			self::getContentTokens(),
 			self::getStatusTokens(),
-			self::getTypographyTokens()
+			self::getTypographyTokens(),
+			self::getSettableTokens()
 		);
 
 		return array_map(
@@ -120,6 +140,63 @@ class TokenRegistry implements TokenRegistryInterface {
 			$tokens
 		);
 	}//end getBrandTokens()
+
+	/**
+	 * The settable theme variables, read from the variable status table.
+	 *
+	 * A missing or malformed table yields none, so the brand tokens still edit.
+	 *
+	 * @return array<string, array<string, mixed>> Name => tab, type, label, settable, token, and advanced / perScheme when set.
+	 *
+	 * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
+	 */
+	public static function getSettableTokens(): array {
+		if (self::$settableTokens !== null) {
+			return self::$settableTokens;
+		}
+
+		self::$settableTokens = [];
+		$raw = false;
+		if (is_file(self::STATUS_PATH) === true) {
+			$raw = file_get_contents(self::STATUS_PATH);
+		}
+
+		$decoded = [];
+		if ($raw !== false) {
+			$decoded = json_decode($raw, true);
+		}
+
+		foreach (($decoded['variables'] ?? []) as $name => $entry) {
+			if (($entry['status'] ?? '') !== 'settable' || is_string($entry['token'] ?? null) === false) {
+				continue;
+			}
+
+			self::$settableTokens[$name] = [
+				'tab' => (string)($entry['tab'] ?? 'content'),
+				'type' => (string)($entry['type'] ?? 'text'),
+				'label' => (string)($entry['label'] ?? $name),
+				'settable' => true,
+				'token' => $entry['token'],
+				'advanced' => (($entry['advanced'] ?? false) === true),
+				'perScheme' => (($entry['perScheme'] ?? false) === true),
+			];
+		}
+
+		return self::$settableTokens;
+	}//end getSettableTokens()
+
+	/**
+	 * The `--nldesign-nc-*` token a settable variable is stored as, or null for any other name.
+	 *
+	 * @param string $tokenName A registry name, such as `--color-mark`.
+	 *
+	 * @return string|null The token.
+	 *
+	 * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
+	 */
+	public static function settableToken(string $tokenName): ?string {
+		return (self::getSettableTokens()[$tokenName]['token'] ?? null);
+	}//end settableToken()
 
 	/**
 	 * Returns the component layer, read from the shared mapping table.

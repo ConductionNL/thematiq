@@ -7,8 +7,8 @@
 		"icon/excluded": 484,
 		"runtime/excluded": 36,
 		"slot/excluded": 83,
-		"theme/excluded": 45,
 		"theme/mapped": 66,
+		"theme/settable": 45,
 		"unread/excluded": 10
 	},
 	"removals": {}

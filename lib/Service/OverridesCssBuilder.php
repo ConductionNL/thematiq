@@ -150,7 +150,9 @@ class OverridesCssBuilder {
 		$registry = TokenRegistry::getTokens();
 		$dark = [];
 		foreach ($tokens as $name => $value) {
-			if ($this->values->hasDarkValue(meta: ($registry[$name] ?? [])) === false) {
+			// A settable variable gets no derived dark value: it keeps
+			// Nextcloud's own in dark unless a dark value is given.
+			if ($this->values->hasDarkValue(meta: ($registry[$name] ?? [])) === false || ($registry[$name]['settable'] ?? false) === true) {
 				continue;
 			}
 
@@ -188,6 +190,8 @@ class OverridesCssBuilder {
 	 * @return array<string> List of CSS declaration lines.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 */
 	public static function declarationLines(array $tokens, bool $important): array {
 		$suffix = ';';
@@ -202,7 +206,10 @@ class OverridesCssBuilder {
 				continue;
 			}
 
-			$safeName = preg_replace('/[^a-zA-Z0-9\-]/', '', $name);
+			// A settable Nextcloud variable is stored as its `--nldesign-nc-*`
+			// token: the theme scopes read the token, and a plain declaration
+			// of the variable on :root would lose to their body-level one.
+			$safeName = preg_replace('/[^a-zA-Z0-9\-]/', '', (TokenRegistry::settableToken(tokenName: $name) ?? $name));
 
 			// Strip any pre-existing !important the caller may have included; it is
 			// re-applied uniformly so the round-trip stays canonical.
