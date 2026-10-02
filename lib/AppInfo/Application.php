@@ -173,7 +173,7 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @return string The absolute path to `vendor/autoload.php`.
 	 *
-	 * @spec openspec/changes/adopt-apphost-2026-06-16/tasks.md#task-2
+	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-2
 	 */
 	protected function composerAutoloader(): string {
 		return dirname(__DIR__, 2) . '/vendor/autoload.php';

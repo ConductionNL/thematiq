@@ -17,7 +17,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/icons-from-ncvue/specs/icon-assets/spec.md
+ * @spec openspec/changes/archive/2026-07-24-icons-from-ncvue/specs/icon-assets/spec.md
  * @spec openspec/specs/icon-assets/spec.md
  */
 
