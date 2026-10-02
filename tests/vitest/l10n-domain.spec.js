@@ -39,7 +39,8 @@ function filesUnder(dir, extensions) {
 const JS_OLD_DOMAIN = /\b(?:t|n|translate|translatePlural)\(\s*['"]nldesign['"]/g
 
 /** PHP lookups of a catalogue by app id. */
-const PHP_OLD_DOMAIN = /(?:getL10N|->get|L10N::get)\(\s*(?:appId:\s*|app:\s*)?['"]nldesign['"]/g
+const PHP_OLD_DOMAIN =
+	/(?:getL10N|->get|L10N::get)\(\s*(?:appId:\s*|app:\s*)?['"]nldesign['"]/g
 
 /** The offending calls in a set of files, as `file:line`. */
 function offenders(files, pattern) {
