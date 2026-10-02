@@ -122,7 +122,7 @@ Two kinds of file hold several brands:
 
 After the upload, the result lists the brands with their token counts, all ticked. Untick the ones you do not want and click **Import the chosen brands**. Nothing is stored before that click, and **Cancel** stores nothing at all. One import holds at most 20 brands.
 
-Each brand becomes a normal token set named "{source}: {brand}", with its own contrast warnings and dark variant. Choose it in the dropdown or map it to a group, like any other set. If one of the names is already taken, nothing is imported and the message names the brand.
+Each brand becomes a normal token set named `{source}: {brand}`, with its own contrast warnings and dark variant. Choose it in the dropdown or map it to a group, like any other set. If one of the names is already taken, nothing is imported and the message names the brand.
 
 In **Manage uploaded sets** the brands sit together under their source. **Update source** takes a new version of the file and replaces every brand at once, or none when one brand fails. The result says which brands were updated, which are no longer in the file (they stay as they were) and which are new in the file (import those with a normal upload). Delete a brand like any other set; the source goes away with its last brand.
 
