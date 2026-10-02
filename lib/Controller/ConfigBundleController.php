@@ -40,7 +40,7 @@ use Throwable;
  *
  * Both methods are thin wrappers around {@see ConfigBundleService} — no
  * second serialization/validation path, so the HTTP endpoints stay
- * byte-for-byte identical to the `nldesign:config:export`/`:import` occ
+ * byte-for-byte identical to the `thematiq:config:export`/`:import` occ
  * commands for the same bundle.
  *
  * @spec openspec/specs/config-portability/spec.md

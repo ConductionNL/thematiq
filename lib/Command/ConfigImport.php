@@ -30,9 +30,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 /**
- * `occ nldesign:config:import <file> [--dry-run]` — validates (and, unless
+ * `occ thematiq:config:import <file> [--dry-run]` — validates (and, unless
  * `--dry-run`, applies) a configuration bundle produced by
- * `nldesign:config:export` or the settings-panel download, for OTAP
+ * `thematiq:config:export` or the settings-panel download, for OTAP
  * (dev/test/acceptatie/productie) promotion pipelines.
  *
  * Reuses {@see ConfigBundleService::import()} exclusively — no second
@@ -80,7 +80,7 @@ class ConfigImport extends Command {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:config:import')
+		$this->setName(name: 'thematiq:config:import')
 			->setDescription(
 				'Import a complete NL Design configuration bundle (validate-everything-first, '
 				. 'then write — any hard validation failure applies nothing).'

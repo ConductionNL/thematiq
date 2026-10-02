@@ -212,7 +212,7 @@ date (e.g. `nldesign-compliance-{instanceid}-{tokenSet}-{YYYYMMDD}.json`/`.md`).
 
 ### Requirement: occ Export Command
 
-The app MUST register an occ command `nldesign:compliance-report` (first command of the app,
+The app MUST register an occ command `thematiq:compliance-report` (first command of the app,
 registered via `appinfo/info.xml` `<commands>`, class `lib/Command/ComplianceReport.php`) with
 options `--format=json|markdown` (default `json`) and `--output=<path>` (default: stdout). The
 command MUST reuse `ComplianceReportService` — identical output to the endpoint for identical
@@ -224,7 +224,7 @@ evidence produced".
 
 @e2e exclude CLI surface — verified via docker exec occ in the Verify tasks
 - GIVEN a configured instance
-- WHEN `occ nldesign:compliance-report --format=markdown` runs
+- WHEN `occ thematiq:compliance-report --format=markdown` runs
 - THEN the Markdown report MUST be written to stdout
 - AND the exit code MUST be 0 even when pairs fail
 - AND `--output=/tmp/report.md` MUST write the identical bytes to that path instead

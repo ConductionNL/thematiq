@@ -347,7 +347,7 @@ class ConfigBundleService {
 	 * @spec openspec/specs/config-portability/spec.md
 	 *
 	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - `$dryRun` IS the spec-required distinction
-	 * between "validate only" and "validate then apply" (`occ nldesign:config:import --dry-run`);
+	 * between "validate only" and "validate then apply" (`occ thematiq:config:import --dry-run`);
 	 * splitting into two public methods would duplicate phase 1 rather than remove a real flag.
 	 */
 	public function import(array $bundle, bool $dryRun = false): array {
