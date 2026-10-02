@@ -71,6 +71,8 @@
 					'thematiq',
 					'Saved. Members of {group} see the new house style on their next page.',
 					{ group: group.displayName },
+					undefined,
+					{ escape: false },
 				)
 			})
 			.catch(function () {

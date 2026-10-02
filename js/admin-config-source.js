@@ -74,16 +74,24 @@
 				'thematiq',
 				'The house style is managed from deployment configuration: {path}.',
 				{ path: status.path },
+				undefined,
+				{ escape: false },
 			),
 			'nldesign-config-source-managed',
 		)
 		if (status.revision || status.appliedAt) {
 			line(
 				block,
-				t('thematiq', 'Last applied: revision {revision}, at {time}.', {
-					revision: status.revision || t('thematiq', 'unknown'),
-					time: status.appliedAt || t('thematiq', 'unknown'),
-				}),
+				t(
+					'thematiq',
+					'Last applied: revision {revision}, at {time}.',
+					{
+						revision: status.revision || t('thematiq', 'unknown'),
+						time: status.appliedAt || t('thematiq', 'unknown'),
+					},
+					undefined,
+					{ escape: false },
+				),
 			)
 		} else {
 			line(block, t('thematiq', 'The package has not been applied yet.'))
