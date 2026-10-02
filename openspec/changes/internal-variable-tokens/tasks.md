@@ -1,33 +1,27 @@
 ## 1. Registry
 
-- [ ] 1.1 Generate an `internal` section in `scripts/mapping/component-tokens.json` from every non-excluded `component`, `slot` and `conduction` inventory entry, with owner, selectors and type, and verify its count equals the inventory's settable count for those classes
-- [ ] 1.2 Read the internal section into `TokenRegistry::getComponentTokens()`, and verify `isEditable('--nldesign-nc-dp-hover-color')` is true and `isEditable` for a runtime entry is false
-- [ ] 1.3 Add a translated heading per owner component, and verify `npm run test:l10n` passes with Dutch entries for every heading
+- [x] 1.1 Record a status for every `component`, `slot` and `conduction` entry (453 settable, 47 excluded with a reason), generate `scripts/mapping/internal-tokens.json` from it, and verify its token list equals the settable list (inventory guard)
+- [x] 1.2 Read the map into `TokenRegistry::getInternalTokens()`, and verify `isEditable('--nldesign-nc-dp-hover-color')` is true and a runtime variable has no token (`InternalScopesServiceTest`)
+- [ ] 1.3 Moved to `token-editor-at-scale`: translated headings per owner component belong with the editor that first shows them
 
-## 2. Bridge for slots
+## 2. Rules for set tokens
 
-- [ ] 2.1 Generate `css/internal-bridge.css` for `slot` entries and read-only `--cn-*` names, and verify the drift check fails on a stale file
-- [ ] 2.2 Inject it directly after `component-scopes.css`, and verify the stylesheet manifest test lists the order from the spec
+- [x] 2.1 Build the internal scopes at render time from the set's files, its dark variant and the overrides, with the specificity bump, and verify one set token and one override produce exactly two rules (`InternalScopesServiceTest`)
+- [x] 2.2 Emit them inline after the component scopes, including for a set on no design system, and verify the manifest order (`CssInjectionServiceTest::testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes`)
+- [x] 2.3 Verify nothing set gives no rule, an override save shows on the next build, and a dark-only token is scoped to dark (`InternalScopesServiceTest`)
+- [x] 2.4 Per-group resolution: the rules are a function of the resolved set, which `inject()` already resolves per group; no separate code path
 
-## 3. Scopes for declared variables
+## 3. Proof in the browser
 
-- [ ] 3.1 Write the internal scopes writer: set declarations plus saved overrides, looked up in the inventory, written to `css/generated/internal-scopes-{set}.css` with the specificity bump, and verify a PHPUnit test with one set token and one override produces exactly two rules
-- [ ] 3.2 Call the writer on set apply, on override save, and from a repair step on install and upgrade, and verify each path with a unit test
-- [ ] 3.3 Inject the file for the resolved set, including per-group resolution, and verify a test where two groups get two different files
-- [ ] 3.4 Write an empty file when nothing is set, and verify the "Nothing set means an empty file" scenario
+- [x] 3.1 Verify in Chrome that every selector the map carries is valid, and that a declared variable, a read-only slot, a `--cn-*` tile, a `:root` variable and a dark-only token are reached, with the component's own declaration injected after thematiq's (`npm run test:internal-scopes`); a control run without the specificity bump fails the declared-variable checks
+- [ ] 3.2 Set ten internal tokens across five components on a live instance and screenshot each. Deferred to the chain's final live check on 8080, which needs the instance upgraded to this release
 
-## 4. Proof in the browser
+## 4. Documentation and verification
 
-- [ ] 4.1 Record computed values of every internal inventory entry on Files, Text (with a code block), Calendar (date picker), Viewer (audio) and one Conduction dashboard, in light and dark, before and after, and verify the two recordings are identical
-- [ ] 4.2 Add Playwright tests for "A read-only slot is reached", "A variable the component declares itself is reached" and "A Conduction dashboard tile is reached", and verify each fails before the layer lands
-- [ ] 4.3 Set ten internal tokens across five components on 8080 and screenshot each, and verify every one changes what its component shows
-
-## 5. Documentation and verification
-
-- [ ] 5.1 Add a theme-author page listing internal tokens per component, generated from the registry, and verify the docs site builds
-- [ ] 5.2 Run `COMPOSER_PROCESS_TIMEOUT=0 composer check:strict`, `npm run lint`, `npm run format` and `npm run test:l10n` once before push, and record the exit codes in the PR body
+- [x] 4.1 Generate `docs/reference/internal-tokens.md` from the map, add the "Component variables" section to the feature page, and verify the docs site builds
+- [ ] 4.2 Run `COMPOSER_PROCESS_TIMEOUT=0 composer check:strict`, `npm run lint`, `npm run format` and `npm run test:l10n` once before push, and record the exit codes in the PR body
 
 Reminders, not tasks:
-- ADR-005: the writer only emits names the inventory knows and values that pass `CustomTokenSetValidator::validateDeclarations()`; nothing from an upload reaches the file unchecked.
-- ADR-010: hardcoded colours become settable, so the editor must show the stock value; that lands in change 4.
+- ADR-005: the rules carry only names the map knows and `var()` references; no value from a set or an upload reaches them.
+- ADR-010: hardcoded colours become settable, so the editor must show the stock value; that lands in change 4 (the map records `stock`).
 - Inherited findings on untouched lines go in one sentence in the PR body.
