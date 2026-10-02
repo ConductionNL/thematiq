@@ -74,8 +74,12 @@ Nextcloud's.
 `TokenDeprecationService` stores appconfig `token_deprecations`, keyed by token name:
 `{severity, replacement?, removalDate?, message?, deprecatedAt, source}`.
 
-- `severity` is `info`, `warning` or `critical`. Task 1.1 checks the values Tokens Studio writes
-  (`EditTokenForm.tsx:450-468` at 2.12.1, cited by the matrix) and maps them for the export.
+- `severity` is `info`, `warning` or `critical`. Task 1.1 checked the values Tokens Studio writes:
+  `packages/tokens-studio-for-figma/src/app/components/EditTokenForm.tsx:444-489` at tag 2.12.1
+  sets `$deprecated: {severity: 'warning', message: ''}` when the box is ticked, and its two
+  severity buttons write `'warning'` and `'error'`. The mapping: Tokens Studio `warning` is
+  `warning`, `error` is `critical`; `info` has no Tokens Studio value and exports as `warning`.
+  On import, `DesignTokensMapper` reads the object form with the same mapping.
 - `replacement` must be a token name that exists: an own token, a registry token or a name in the
   thematiq vocabulary.
 - `removalDate` is an ISO date, today or later when set.

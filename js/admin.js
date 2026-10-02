@@ -6447,9 +6447,69 @@
 					warnList.appendChild(item)
 				})
 				fragment.appendChild(warnList)
+				var adoptable = data.importWarnings.filter(function (w) {
+					return Boolean(w.token)
+				})
+				if (adoptable.length > 0) {
+					fragment.appendChild(buildAdoptNoticesButton(adoptable))
+				}
 			}
 
 			return fragment
+		}
+
+		/**
+		 * "Record as deprecations": keeps an upload's deprecation notices as deprecation records
+		 * (openspec/specs/token-deprecations/spec.md, imported notices). Nothing is recorded
+		 * without this click.
+		 *
+		 * @param {Array<object>} notices The notices that name a CSS variable.
+		 * @return {HTMLButtonElement} The button.
+		 */
+		function buildAdoptNoticesButton(notices) {
+			var button = document.createElement('button')
+			button.type = 'button'
+			button.className = 'nldesign-adopt-notices'
+			button.textContent = t('thematiq', 'Record as deprecations')
+			button.addEventListener('click', function () {
+				button.disabled = true
+				fetch(
+					OC.generateUrl(
+						'/apps/thematiq/settings/tokens/deprecations/adopt',
+					),
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							requesttoken: OC.requestToken,
+						},
+						body: JSON.stringify({ notices: notices }),
+					},
+				)
+					.then(function (r) {
+						return r.json()
+					})
+					.then(function (data) {
+						var count = (data.recorded || []).length
+						notify(
+							n(
+								'thematiq',
+								'Recorded {count} deprecation.',
+								'Recorded {count} deprecations.',
+								count,
+								{ count: count },
+							),
+						)
+						document.dispatchEvent(
+							new CustomEvent('thematiq:deprecations-changed'),
+						)
+					})
+					.catch(function () {
+						button.disabled = false
+						notify(t('thematiq', 'The notices were not recorded.'))
+					})
+			})
+			return button
 		}
 
 		/**

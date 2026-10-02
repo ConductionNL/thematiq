@@ -5481,21 +5481,20 @@
 			"id": "gov-token-deprecation",
 			"area": "governance",
 			"name": "Mark a token as deprecated with a severity, a replacement token and a removal date, so teams that consume the house style see it before it disappears.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "specified",
-				"evidence": "thematiq reads a DTCG $deprecated notice on import and shows it to the admin (lib/Controller/CustomTokenSetController.php:288-291, js/admin.js:4186-4189, lib/Service/TokenSetConverterService.php:177-181), but cannot author a deprecation with a replacement and a removal date",
+				"state": "built",
+				"evidence": "lib/Service/TokenDeprecationService.php records severity (info, warning, critical), a replacement that must exist and a removal date not in the past, never changing a value; lib/Controller/TokenDeprecationController.php on /settings/tokens/deprecations (AuthorizedAdminSetting, token_deprecation_changed audit); GET /api/token-deprecations for signed-in users (CatalogController::deprecations) with due and state; a comment above each deprecated own token in the served stylesheet; badges and the Deprecated tokens list (js/ownTokens.js); Record as deprecations on an upload's notices",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-token-lifecycle (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-token-lifecycle"
+				"change": "authoring-token-lifecycle"
 			},
-			"reachedOn": "Settings > Administration > Theming, custom token set upload, import warnings list",
+			"reachedOn": "Settings > Administration > Theming, under the token editor: Deprecated tokens; apps read /apps/thematiq/api/token-deprecations",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/css/default.css:48-54 and lib/Themes/DefaultTheme.php:180,230 mark some of Nextcloud's own variables deprecated in code comments ('@deprecated use css color functions'), with no severity or removal date; an admin cannot mark a token (ThemingController.php:74-147 accepts no such field)",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-json-schema: the full theme schema is isInverted, backgroundImageUri, palette, secondaryColors, displayMode and version fields, with no per-slot metadata such as deprecation or replacement",
@@ -6137,21 +6136,20 @@
 			"id": "aut-add-token",
 			"area": "authoring",
 			"name": "Add a new design token from the house style editor without changing the theme code.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "partial",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "specified",
-				"evidence": "the token editor only edits tokens that already exist; a new token is added without code by uploading a token set that declares it (aut-upload-css, lib/Controller/CustomTokenSetController.php), not from the editor",
+				"state": "built",
+				"evidence": "lib/Service/OwnTokenService.php stores own tokens under --nldesign-org- (slug rule, duplicate check, value checked by type via TokenValueValidator) in appconfig own_tokens; lib/Controller/OwnTokenController.php list/create/update/delete on /settings/tokens/own (AuthorizedAdminSetting, own_token_changed audit); CustomOverridesService renders them after the editor values without !important, light in :root and dark in both dark scopes, in every set's file; Your own tokens section with an Add a token dialog (js/ownTokens.js); travels in the configuration bundle (ownTokens)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-token-lifecycle (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-token-lifecycle"
+				"change": "authoring-token-lifecycle"
 			},
-			"reachedOn": "Settings > Administration > Theming, custom token set upload",
+			"reachedOn": "Settings > Administration > Theming, under the token editor: Your own tokens",
 			"evidence": {
 				"nextcloud-theming": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
 				"m365-branding": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",

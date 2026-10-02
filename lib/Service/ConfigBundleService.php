@@ -230,6 +230,7 @@ class ConfigBundleService {
 	 * @param LoggerInterface $logger The logger.
 	 * @param AssistantMarkService $assistantMark The approved mark for the AI assistant.
 	 * @param DocumentAssetService $documentAssets The document house style assets and footer line.
+	 * @param TokenLifecycleBundleSection|null $lifecycle The own tokens and deprecations section.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
 	 * section's EXISTING validator/service (config-portability's core reuse requirement); NC's DI
@@ -252,6 +253,7 @@ class ConfigBundleService {
 		LoggerInterface $logger,
 		AssistantMarkService $assistantMark,
 		DocumentAssetService $documentAssets,
+		private ?TokenLifecycleBundleSection $lifecycle = null,
 	) {
 		$this->config = $config;
 		$this->appManager = $appManager;
@@ -306,7 +308,7 @@ class ConfigBundleService {
 			],
 			'assistantMark' => $this->assistantMark->exportBundle(),
 			'documentStyle' => $this->documentAssets->exportBundle(),
-		];
+		] + ($this->lifecycle?->export() ?? []);
 	}//end export()
 
 	/**
@@ -417,6 +419,7 @@ class ConfigBundleService {
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
+		$resolved['lifecycle'] = $this->lifecycle?->validate(bundle: $bundle, errors: $errors);
 
 		$assistantMark = $this->assistantMark->validateBundle(section: ($bundle['assistantMark'] ?? null));
 		foreach ($assistantMark['errors'] as $message) {
@@ -1002,7 +1005,7 @@ class ConfigBundleService {
 				'note' => 'Font metadata recorded for information only — binaries are not part of the '
 					. 'bundle and must be re-uploaded by hand on the target environment.',
 			],
-		];
+		] + ($this->lifecycle?->summary(resolved: ($resolved['lifecycle'] ?? null)) ?? []);
 	}//end buildSectionSummary()
 
 	/**
@@ -1046,6 +1049,8 @@ class ConfigBundleService {
 			privacyUrl: $footer['privacyUrl']
 		);
 
+		// Own tokens first: the overrides file written next renders them.
+		$this->lifecycle?->apply(resolved: ($resolved['lifecycle'] ?? null));
 		$this->overridesService->write(tokens: $resolved['customOverrides']['tokens']);
 
 		foreach ($resolved['customTokenSets'] as $set) {

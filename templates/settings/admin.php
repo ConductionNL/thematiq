@@ -38,6 +38,8 @@ script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
 style('thematiq', 'admin');
+// Your own tokens and the deprecations list (authoring-token-lifecycle).
+script('thematiq', 'ownTokens');
 // The component playground: the selector / stage / tokens instrument that
 // admin.js's token editor is rebuilt into. Loaded AFTER admin.js because it
 // attaches to the editor that script renders, and waits for it.
@@ -501,6 +503,101 @@ if ($_['mockUi'] === true) {
 	<div id="nldesign-token-editor" style="margin-top:2em">
 		<p class="settings-hint"><?php p($l->t('Loading token editor…')); ?></p>
 	</div>
+
+	<!-- Your own tokens and the deprecations list (authoring-token-lifecycle), mounted by ownTokens.js. -->
+	<div class="nldesign-own-tokens" id="nldesign-own-tokens" style="margin-top:2em">
+		<h3><?php p($l->t('Your own tokens')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('Add a token of your own, such as a brand accent. Its name starts with --nldesign-org-. Custom CSS and apps can read it at once, for example var(--nldesign-org-brand-accent).')); ?>
+		</p>
+		<button type="button" id="nldesign-own-token-add" class="button"><?php p($l->t('Add a token')); ?></button>
+		<ul class="nldesign-own-token-list" id="nldesign-own-token-list" aria-label="<?php p($l->t('Your own tokens')); ?>"></ul>
+		<h4 id="nldesign-deprecations-heading"><?php p($l->t('Deprecated tokens')); ?></h4>
+		<p class="settings-hint">
+			<?php p($l->t('Tell the teams that use the house style that a token is going away: which token replaces it, and when it may be removed. A deprecation never changes a value. Apps read the list from /apps/thematiq/api/token-deprecations.')); ?>
+		</p>
+		<button type="button" id="nldesign-deprecation-add" class="button"><?php p($l->t('Deprecate a token')); ?></button>
+		<ul class="nldesign-deprecations" id="nldesign-deprecation-list" aria-labelledby="nldesign-deprecations-heading"></ul>
+		<p id="nldesign-own-tokens-status" role="status" aria-live="polite"></p>
+	</div>
+
+	<dialog id="nldesign-own-token-dialog" class="nldesign-own-dialog" aria-labelledby="nldesign-own-token-dialog-title">
+		<form method="dialog">
+			<h3 id="nldesign-own-token-dialog-title" class="nldesign-dialog-title"><?php p($l->t('Add a token')); ?></h3>
+			<p>
+				<label for="nldesign-own-token-slug"><?php p($l->t('Name')); ?></label>
+				<span class="nldesign-own-token-prefix" aria-hidden="true">--nldesign-org-</span>
+				<input type="text" id="nldesign-own-token-slug" name="slug" required maxlength="48"
+					pattern="[a-z0-9]+(-[a-z0-9]+)*" aria-describedby="nldesign-own-token-slug-hint">
+				<span id="nldesign-own-token-slug-hint" class="settings-hint"><?php p($l->t('Lowercase letters, digits and single dashes, at most 48 characters.')); ?></span>
+			</p>
+			<p>
+				<label for="nldesign-own-token-label"><?php p($l->t('Label')); ?></label>
+				<input type="text" id="nldesign-own-token-label" name="label" required maxlength="80">
+			</p>
+			<p>
+				<label for="nldesign-own-token-type"><?php p($l->t('Type')); ?></label>
+				<select id="nldesign-own-token-type" name="type">
+					<option value="color"><?php p($l->t('Colour')); ?></option>
+					<option value="text"><?php p($l->t('Text')); ?></option>
+					<option value="duration"><?php p($l->t('Duration')); ?></option>
+					<option value="easing"><?php p($l->t('Easing')); ?></option>
+				</select>
+			</p>
+			<p>
+				<label for="nldesign-own-token-value"><?php p($l->t('Value')); ?></label>
+				<input type="text" id="nldesign-own-token-value" name="value" required>
+			</p>
+			<p class="nldesign-own-token-dark">
+				<label for="nldesign-own-token-dark"><?php p($l->t('Dark value (optional)')); ?></label>
+				<input type="text" id="nldesign-own-token-dark" name="darkValue">
+			</p>
+			<p>
+				<label for="nldesign-own-token-description"><?php p($l->t('Description (optional)')); ?></label>
+				<input type="text" id="nldesign-own-token-description" name="description" maxlength="500">
+			</p>
+			<p class="nldesign-dialog-error" role="alert"></p>
+			<div class="nldesign-dialog-buttons">
+				<button type="button" class="nldesign-dialog-cancel"><?php p($l->t('Cancel')); ?></button>
+				<button type="submit" class="primary"><?php p($l->t('Save token')); ?></button>
+			</div>
+		</form>
+	</dialog>
+
+	<dialog id="nldesign-deprecation-dialog" class="nldesign-own-dialog" aria-labelledby="nldesign-deprecation-dialog-title">
+		<form method="dialog">
+			<h3 id="nldesign-deprecation-dialog-title"><?php p($l->t('Deprecate a token')); ?></h3>
+			<p>
+				<label for="nldesign-deprecation-token"><?php p($l->t('Token')); ?></label>
+				<input type="text" id="nldesign-deprecation-token" name="token" required placeholder="--nldesign-">
+			</p>
+			<p>
+				<label for="nldesign-deprecation-severity"><?php p($l->t('Severity')); ?></label>
+				<select id="nldesign-deprecation-severity" name="severity">
+					<option value="info"><?php p($l->t('Info')); ?></option>
+					<option value="warning" selected><?php p($l->t('Warning')); ?></option>
+					<option value="critical"><?php p($l->t('Critical')); ?></option>
+				</select>
+			</p>
+			<p>
+				<label for="nldesign-deprecation-replacement"><?php p($l->t('Replacement token (optional)')); ?></label>
+				<input type="text" id="nldesign-deprecation-replacement" name="replacement">
+			</p>
+			<p>
+				<label for="nldesign-deprecation-date"><?php p($l->t('Removal date (optional)')); ?></label>
+				<input type="date" id="nldesign-deprecation-date" name="removalDate">
+			</p>
+			<p>
+				<label for="nldesign-deprecation-message"><?php p($l->t('Message (optional)')); ?></label>
+				<input type="text" id="nldesign-deprecation-message" name="message" maxlength="500">
+			</p>
+			<p class="nldesign-dialog-error" role="alert"></p>
+			<div class="nldesign-dialog-buttons">
+				<button type="button" class="nldesign-dialog-cancel"><?php p($l->t('Cancel')); ?></button>
+				<button type="submit" class="primary"><?php p($l->t('Save deprecation')); ?></button>
+			</div>
+		</form>
+	</dialog>
 
 	<!-- Freeform custom CSS — admin-authored arbitrary rules, sanitised
 	     server-side and emitted after every other theming layer. -->
