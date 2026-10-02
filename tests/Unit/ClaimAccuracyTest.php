@@ -102,6 +102,35 @@ class ClaimAccuracyTest extends TestCase {
 		);
 	}
 
+	/**
+	 * The store listing is localised: name, summary and description come as an
+	 * English and a Dutch pair, and the Dutch text is a translation, not a copy.
+	 *
+	 * @spec openspec/specs/beta-alignment/spec.md#requirement-infoxml-localisation
+	 */
+	public function testManifestTextIsPairedInEnglishAndDutch(): void {
+		$info = simplexml_load_string($this->readFile('appinfo/info.xml'));
+		$this->assertNotFalse($info, 'appinfo/info.xml must parse.');
+
+		foreach (['summary', 'description'] as $tag) {
+			$byLang = [];
+			foreach ($info->{$tag} as $node) {
+				$byLang[(string) $node['lang']] = trim((string) $node);
+			}
+
+			$this->assertNotEmpty($byLang['en'] ?? '', "<{$tag} lang=\"en\"> must be present.");
+			$this->assertNotEmpty($byLang['nl'] ?? '', "<{$tag} lang=\"nl\"> must be present.");
+			$this->assertNotSame($byLang['en'], $byLang['nl'], "<{$tag} lang=\"nl\"> must be translated, not copied.");
+		}
+
+		$names = [];
+		foreach ($info->name as $node) {
+			$names[] = (string) $node['lang'];
+		}
+
+		$this->assertEqualsCanonicalizing(['en', 'nl'], $names, '<name> must come as an en and an nl pair.');
+	}
+
 	// REUSE-IgnoreStart -- from here to the end of testSpdxHeadersAgreeWithManifest()
 	// the SPDX tags are the SUBJECT of the assertions (patterns matched against
 	// lib/**/*.php), not a declaration about this file, which is EUPL-1.2 per its

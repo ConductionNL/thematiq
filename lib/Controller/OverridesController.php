@@ -187,7 +187,21 @@ class OverridesController extends Controller {
 		return new JSONResponse(
 			[
 				'overrides' => $overrides,
+				'darkOverrides' => $this->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
+				'darkDerived' => $this->overridesService->derivedDark(tokenSet: $this->requestedTokenSet()),
 				'registry' => $registry,
+				// Listed per component group, below the tabs. Only what a row shows:
+				// the selectors the server writes rules for would triple the payload.
+				'internal' => array_map(
+					static fn (array $token): array => [
+						'variable' => $token['variable'],
+						'group' => $token['group'],
+						'type' => $token['type'],
+						'stock' => $token['stock'],
+					],
+					TokenRegistry::getInternalTokens()
+				),
+				'count' => TokenRegistry::countEditable(),
 				'tabs' => $tabs,
 			]
 		);
@@ -226,22 +240,21 @@ class OverridesController extends Controller {
 
 		// Refuse the whole save when any token would be dropped, so the answer,
 		// the written count and the audit entry all describe what reached the file.
-		$rejected = $this->overridesService->findRejected(tokens: $overrides);
+		$darkOverrides = ($params['darkOverrides'] ?? []);
+		if (is_array($darkOverrides) === false) {
+			return new JSONResponse(['error' => 'darkOverrides must be an object'], 400);
+		}
+
+		$rejected = $this->overridesService->findRejected(tokens: $overrides, darkTokens: $darkOverrides);
 		if (empty($rejected) === false) {
-			return new JSONResponse(
-				[
-					'error' => 'Some tokens were not saved: ' . implode(', ', array_keys($rejected)),
-					'rejected' => $rejected,
-				],
-				400
-			);
+			return $this->rejectedResponse(rejected: $rejected);
 		}
 
 		$tokenSet = $this->requestedTokenSet();
 		$before = $this->overridesService->read(tokenSet: $tokenSet);
 
 		try {
-			$this->overridesService->write(tokens: $overrides, tokenSet: $tokenSet);
+			$this->overridesService->write(tokens: $overrides, tokenSet: $tokenSet, darkTokens: $darkOverrides);
 		} catch (\RuntimeException) {
 			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}
@@ -270,6 +283,22 @@ class OverridesController extends Controller {
 
 		return new JSONResponse($response);
 	}//end setOverrides()
+
+	/**
+	 * The 400 for a refused save: every token with its reason, which names the type.
+	 *
+	 * @param array<string, string> $rejected Token name => reason.
+	 *
+	 * @return JSONResponse The response.
+	 */
+	private function rejectedResponse(array $rejected): JSONResponse {
+		$named = [];
+		foreach ($rejected as $name => $reason) {
+			$named[] = $name . ' (' . $reason . ')';
+		}
+
+		return new JSONResponse(['error' => 'Some tokens were not saved: ' . implode(', ', $named), 'rejected' => $rejected], 400);
+	}//end rejectedResponse()
 
 	/**
 	 * Reset the theme to stock Nextcloud.

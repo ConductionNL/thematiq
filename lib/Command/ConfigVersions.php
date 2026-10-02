@@ -24,7 +24,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * `occ nldesign:config:versions`: list the kept configuration versions.
+ * `occ thematiq:config:versions`: list the kept configuration versions.
  *
  * @spec openspec/specs/theme-versions/spec.md
  */
@@ -49,7 +49,7 @@ class ConfigVersions extends Command {
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:config:versions')
+		$this->setName(name: 'thematiq:config:versions')
 			->setDescription('List the kept configuration versions, newest first: id, time, actor and audit action.');
 	}//end configure()
 

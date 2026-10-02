@@ -48,4 +48,14 @@ file_put_contents(
 	json_encode(['label' => 'Token sets', 'collapsible' => true, 'collapsed' => true], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
 );
 
-fwrite(STDOUT, 'Wrote ' . count($pages) . " pages to docs/reference/token-sets.\n");
+// The editable count the token editor states, written into the pages that state it.
+$count = \OCA\Thematiq\Service\TokenRegistry::countEditable();
+foreach (['docs/features/token-editor.md', 'docs/features/import-export.md'] as $page) {
+	$text = (string)file_get_contents($root . '/' . $page);
+	file_put_contents(
+		$root . '/' . $page,
+		(string)preg_replace('#<!-- editable-count -->\d+<!-- /editable-count -->#', '<!-- editable-count -->' . $count . '<!-- /editable-count -->', $text)
+	);
+}
+
+fwrite(STDOUT, 'Wrote ' . count($pages) . ' pages to docs/reference/token-sets and the editable count (' . $count . ").\n");
