@@ -32,6 +32,7 @@
  */
 
 import { createHash } from 'crypto'
+import * as prettier from 'prettier'
 import { readFileSync, writeFileSync, readdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -267,7 +268,22 @@ export function placeSection(bridge, section) {
 	return bridge.slice(0, start) + section + bridge.slice(end + END.length)
 }
 
-function main() {
+/**
+ * Place the section and format the bridge the way `npm run format` checks it.
+ *
+ * The bridge is in prettier's scope, so the generator writes exactly what
+ * prettier would; otherwise the drift check and the format check would fight.
+ *
+ * @param {string} bridge The bridge stylesheet.
+ * @param {string} section The generated section.
+ * @return {Promise<string>} The formatted bridge text.
+ */
+export async function renderBridge(bridge, section) {
+	const config = (await prettier.resolveConfig(BRIDGE_PATH)) ?? {}
+	return prettier.format(placeSection(bridge, section), { ...config, filepath: BRIDGE_PATH })
+}
+
+async function main() {
 	const check = process.argv.includes('--check')
 	const mappingText = readFileSync(MAPPING_PATH, 'utf8')
 	const mapping = JSON.parse(mappingText)
@@ -282,7 +298,7 @@ function main() {
 
 	const { section, count } = buildSection(mapping, mappingText, readSource, declarations(readFileSync(DEFAULTS_PATH, 'utf8')))
 	const bridge = readFileSync(BRIDGE_PATH, 'utf8')
-	const next = placeSection(bridge, section)
+	const next = await renderBridge(bridge, section)
 
 	if (check === true) {
 		if (next !== bridge) {
@@ -298,10 +314,8 @@ function main() {
 }
 
 if (process.argv[1] !== undefined && fileURLToPath(import.meta.url) === process.argv[1]) {
-	try {
-		main()
-	} catch (error) {
+	main().catch((error) => {
 		console.error(error.message)
 		process.exit(1)
-	}
+	})
 }

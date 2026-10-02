@@ -17,7 +17,7 @@ import {
 	END,
 	buildSection,
 	declarations,
-	placeSection,
+	renderBridge,
 	readProperties,
 	resolve,
 } from '../../scripts/generate-denhaag-bridge.mjs'
@@ -34,7 +34,8 @@ const bridge = read('css/public-bridge.css')
 function cascade(setId) {
 	const merged = new Map(defaults)
 	for (const [k, v] of declarations(bridge)) merged.set(k, v)
-	for (const [k, v] of declarations(read(`css/tokens/${setId}.css`))) merged.set(k, v)
+	for (const [k, v] of declarations(read(`css/tokens/${setId}.css`)))
+		merged.set(k, v)
 	return merged
 }
 
@@ -44,26 +45,29 @@ function value(setId, name) {
 }
 
 describe('the Den Haag section of the public bridge', () => {
-	it('is what the mapping produces (no hand edits, not stale)', () => {
+	it('is what the mapping produces (no hand edits, not stale)', async () => {
 		const { section } = buildSection(mapping, mappingText, readSource, defaults)
-		expect(placeSection(bridge, section)).toBe(bridge)
+		expect(await renderBridge(bridge, section)).toBe(bridge)
 	})
 
-	it('a hand edit inside the section is caught', () => {
+	it('a hand edit inside the section is caught', async () => {
 		const edited = bridge.replace(
-			/(--denhaag-case-card-title-color: )[^;]*/,
-			'$1#ff0000',
+			/(--denhaag-case-card-title-color:)[^;]*/,
+			'$1 #ff0000',
 		)
 		expect(edited).not.toBe(bridge)
 		const { section } = buildSection(mapping, mappingText, readSource, defaults)
-		expect(placeSection(edited, section)).not.toBe(edited)
+		expect(await renderBridge(edited, section)).not.toBe(edited)
 	})
 
 	it('declares every property a pinned component reads without a fallback', () => {
-		const declared = declarations(bridge.slice(bridge.indexOf(BEGIN), bridge.indexOf(END)))
+		const declared = declarations(
+			bridge.slice(bridge.indexOf(BEGIN), bridge.indexOf(END)),
+		)
 		const missing = []
 		for (const [name, version] of Object.entries(mapping.sources.components)) {
-			for (const prop of readProperties(readSource(`${name}@${version}.css`)).bare) {
+			for (const prop of readProperties(readSource(`${name}@${version}.css`))
+				.bare) {
 				if (declared.has(prop) === false) missing.push(`${name}: ${prop}`)
 			}
 		}
@@ -81,15 +85,20 @@ describe('the Den Haag section of the public bridge', () => {
 	it('refuses a Den Haag colour the mapping does not name', () => {
 		const partial = structuredClone(mapping)
 		delete partial.colours['--denhaag-case-card-title-color']
-		expect(() => buildSection(partial, mappingText, readSource, defaults)).toThrow(
-			/--denhaag-case-card-title-color/,
-		)
+		expect(() =>
+			buildSection(partial, mappingText, readSource, defaults),
+		).toThrow(/--denhaag-case-card-title-color/)
 	})
 
 	it('vendors every pinned source it names', () => {
 		const files = new Set(readdirSync(join(root, mapping.sources.directory)))
-		for (const [name, version] of Object.entries({ ...mapping.sources.components, ...mapping.sources.tokens })) {
-			expect(files.has(`${name}@${version}.css`), `${name}@${version}`).toBe(true)
+		for (const [name, version] of Object.entries({
+			...mapping.sources.components,
+			...mapping.sources.tokens,
+		})) {
+			expect(files.has(`${name}@${version}.css`), `${name}@${version}`).toBe(
+				true,
+			)
 		}
 	})
 })
@@ -98,31 +107,41 @@ describe('the cascade a portal sees', () => {
 	it('a set with only the semantic layer paints a case card in its own colours', () => {
 		const merged = cascade('denhaag')
 		const own = (t) => resolve(merged.get(t), merged)
-		expect(value('denhaag', '--denhaag-case-card-title-color')).toBe(own('--nldesign-color-text'))
-		expect(value('denhaag', '--denhaag-case-card-subtitle-color')).toBe(own('--nldesign-color-text-muted'))
-		expect(value('denhaag', '--denhaag-case-card-border-color')).toBe(own('--nldesign-color-border'))
+		expect(value('denhaag', '--denhaag-case-card-title-color')).toBe(
+			own('--nldesign-color-text'),
+		)
+		expect(value('denhaag', '--denhaag-case-card-subtitle-color')).toBe(
+			own('--nldesign-color-text-muted'),
+		)
+		expect(value('denhaag', '--denhaag-case-card-border-color')).toBe(
+			own('--nldesign-color-border'),
+		)
 	})
 
 	it('the primary colour reaches the current step of a set without Den Haag values', () => {
 		const own = declarations(read('css/tokens/tilburg.css'))
 		expect([...own.keys()].some((k) => k.startsWith('--denhaag-'))).toBe(false)
 		const merged = cascade('tilburg')
-		expect(value('tilburg', '--denhaag-step-marker-current-background-color')).toBe(
-			resolve(merged.get('--nldesign-color-primary'), merged),
-		)
+		expect(
+			value('tilburg', '--denhaag-step-marker-current-background-color'),
+		).toBe(resolve(merged.get('--nldesign-color-primary'), merged))
 	})
 
 	it('a set with its own step marker keeps it', () => {
 		const own = declarations(read('css/tokens/example-basisschool.css'))
-		expect(cascade('example-basisschool').get('--denhaag-step-marker-current-background-color')).toBe(
-			own.get('--denhaag-step-marker-current-background-color'),
-		)
+		expect(
+			cascade('example-basisschool').get(
+				'--denhaag-step-marker-current-background-color',
+			),
+		).toBe(own.get('--denhaag-step-marker-current-background-color'))
 	})
 
 	it('rotterdam keeps its own process steps', () => {
 		const own = declarations(read('css/tokens/rotterdam.css'))
 		const merged = cascade('rotterdam')
-		const names = [...own.keys()].filter((k) => k.startsWith('--denhaag-process-steps-'))
+		const names = [...own.keys()].filter((k) =>
+			k.startsWith('--denhaag-process-steps-'),
+		)
 		expect(names.length).toBeGreaterThan(0)
 		for (const name of names) {
 			expect(merged.get(name), name).toBe(own.get(name))
@@ -142,7 +161,8 @@ describe('the documented coverage', () => {
 			const css = readFileSync(file, 'utf8')
 			const utrecht = (css.match(/--utrecht-[a-z0-9-]+\s*:/g) ?? []).length
 			const nldesign = (css.match(/--nldesign-[a-z0-9-]+\s*:/g) ?? []).length
-			const denhaag = (css.match(/--denhaag-(?!color-)[a-z0-9-]+\s*:/g) ?? []).length
+			const denhaag = (css.match(/--denhaag-(?!color-)[a-z0-9-]+\s*:/g) ?? [])
+				.length
 			if (utrecht >= 100) roleLayer++
 			if (utrecht === 0 && nldesign > 0) nldesignOnly++
 			if (denhaag > 0) denhaagComponents++

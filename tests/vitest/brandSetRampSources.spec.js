@@ -32,14 +32,20 @@ describe('ramp steps carry their source', () => {
 	})
 
 	it('holds for every inline-palette brand file shipped', () => {
-		for (const file of readdirSync(brandsDir).filter((f) => f.startsWith('example-'))) {
+		for (const file of readdirSync(brandsDir).filter((f) =>
+			f.startsWith('example-'),
+		)) {
 			const brand = JSON.parse(readFileSync(join(brandsDir, file), 'utf8'))
 			expect(rampStepsWithoutSource(brand), file).toEqual([])
 		}
 	})
 
 	it('the script exits non-zero and writes nothing for an unknown brand', () => {
-		const run = spawnSync(process.execPath, [join(root, 'scripts', 'generate-brand-set.mjs'), 'no-such-brand'], { encoding: 'utf8' })
+		const run = spawnSync(
+			process.execPath,
+			[join(root, 'scripts', 'generate-brand-set.mjs'), 'no-such-brand'],
+			{ encoding: 'utf8' },
+		)
 		expect(run.status).toBe(1)
 	})
 })
