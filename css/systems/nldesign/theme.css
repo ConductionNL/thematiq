@@ -467,9 +467,16 @@ button:not(.action-button),
 		color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
 }
 
-/* Primary buttons */
-.button-vue--vue-primary,
-.button-vue--primary,
+/* Primary buttons.
+ *
+ * Nextcloud 33 and later render each Settings › Theming colour field as a
+ * primary NcButton whose background IS the colour being chosen, set inline as
+ * its own --color-primary-element (`ColorPickerField.vue`). Core gives it only
+ * a CSS-module class, `_colorPickerField__button_<hash>`, and no data
+ * attribute, so it is excluded by that class. `:where()` keeps the exclusion
+ * at zero specificity, so this rule outranks exactly what it did before. */
+.button-vue--vue-primary:not(:where([class*='_colorPickerField__button'])),
+.button-vue--primary:not(:where([class*='_colorPickerField__button'])),
 button.primary,
 input.primary,
 a.primary {
@@ -500,42 +507,66 @@ a.primary {
  * (1,2,0), which no sane opt-out rule can outrank, so the pickers are excluded
  * here instead of overridden later. */
 #body-login
-	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__text,
 #body-login
-	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__wrapper,
 #content
-	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__text,
 #content
-	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__wrapper,
-.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+.button-vue.button-vue--vue-primary:not(
+		[data-admin-theming-setting-color-picker]
+	):not(:where([class*='_colorPickerField__button']))
 	.button-vue__text,
-.button-vue.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])
+.button-vue.button-vue--vue-primary:not(
+		[data-admin-theming-setting-color-picker]
+	):not(:where([class*='_colorPickerField__button']))
 	.button-vue__wrapper,
 #body-login
-	.button-vue--primary:not([data-admin-theming-setting-color-picker])
+	.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__text,
 #body-login
-	.button-vue--primary:not([data-admin-theming-setting-color-picker])
+	.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__wrapper,
 #content
-	.button-vue--primary:not([data-admin-theming-setting-color-picker])
+	.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__text,
 #content
-	.button-vue--primary:not([data-admin-theming-setting-color-picker])
+	.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__wrapper,
-.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker])
+.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__text,
-.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker])
+.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
+		:where([class*='_colorPickerField__button'])
+	)
 	.button-vue__wrapper {
 	color: var(--nldesign-component-button-primary-action-color) !important;
 }
 
-.button-vue--vue-primary:hover,
-.button-vue--primary:hover,
+.button-vue--vue-primary:hover:not(:where([class*='_colorPickerField__button'])),
+.button-vue--primary:hover:not(:where([class*='_colorPickerField__button'])),
 button.primary:hover,
 input.primary:hover,
 a.primary:hover {
