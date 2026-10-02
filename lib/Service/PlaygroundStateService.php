@@ -162,8 +162,40 @@ class PlaygroundStateService {
 			// script, because a session preview decides it and the script has
 			// no business knowing that rule twice.
 			'playgroundSet' => $tokenSetId,
+			// The set's dark values, for the light and dark switch of "Your component".
+			'playgroundDarkTokens' => $this->getDarkTokens(tokenSetId: $tokenSetId),
 		];
 	}//end getInitialState()
+
+	/**
+	 * The `--nldesign-*` values the set's generated dark stylesheet gives a user who chose
+	 * the dark theme: the `body[data-theme-dark]` block of `css/tokens/dark/{set}.css`.
+	 *
+	 * @param string $tokenSetId The token set.
+	 *
+	 * @return array<string, string> Token => dark value; empty when the set has no dark file.
+	 *
+	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-3.3
+	 */
+	private function getDarkTokens(string $tokenSetId): array {
+		if (preg_match('/^[a-z0-9-]+$/', $tokenSetId) !== 1) {
+			return [];
+		}
+
+		$path = $this->appManager->getAppPath(Application::APP_ID) . '/css/tokens/dark/' . $tokenSetId . '.css';
+		$css  = (is_readable($path) === true ? (string)file_get_contents($path) : '');
+		if (preg_match('/body\[data-theme-dark\][^{]*\{([^}]*)\}/', $css, $block) !== 1) {
+			return [];
+		}
+
+		preg_match_all('/(--nldesign-[a-z0-9-]+)\s*:\s*([^;]+);/', $block[1], $matches, PREG_SET_ORDER);
+		$tokens = [];
+		foreach ($matches as $match) {
+			$tokens[$match[1]] = trim((string)preg_replace('/\s*!important\s*$/', '', $match[2]));
+		}
+
+		return $tokens;
+	}//end getDarkTokens()
 
 	/**
 	 * The major Nextcloud version this instance is running.

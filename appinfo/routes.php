@@ -60,6 +60,10 @@ return [
 		['name' => 'gallery#index', 'url' => '/settings/gallery', 'verb' => 'GET'],
 		['name' => 'gallery#setEnabled', 'url' => '/settings/gallery', 'verb' => 'POST'],
 		['name' => 'gallery#install', 'url' => '/settings/gallery/{id}/install', 'verb' => 'POST'],
+		// The playground's own components (authoring-own-markup-preview), admin-only.
+		['name' => 'ownComponent#list', 'url' => '/settings/playground/components', 'verb' => 'GET'],
+		['name' => 'ownComponent#save', 'url' => '/settings/playground/components', 'verb' => 'POST'],
+		['name' => 'ownComponent#delete', 'url' => '/settings/playground/components/{slug}', 'verb' => 'DELETE'],
 		['name' => 'overrides#getOverrides', 'url' => '/settings/overrides', 'verb' => 'GET'],
 		['name' => 'overrides#setOverrides', 'url' => '/settings/overrides', 'verb' => 'POST'],
 		// Import/export.

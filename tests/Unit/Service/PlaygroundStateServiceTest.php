@@ -182,10 +182,24 @@ class PlaygroundStateServiceTest extends TestCase {
 				'playgroundTokenSources',
 				'playgroundVersion',
 				'playgroundSet',
+				'playgroundDarkTokens',
 			],
 			array_keys($state)
 		);
 	}//end testItPublishesTheKeysTheInstrumentReads()
+
+	/**
+	 * Task 3.3: the set's dark values are published from its generated dark stylesheet.
+	 *
+	 * @spec openspec/changes/authoring-own-markup-preview/tasks.md#task-3.3
+	 */
+	public function testDarkTokensPublished(): void {
+		$dark = $this->build()->getInitialState(tokenSetId: 'amsterdam')['playgroundDarkTokens'];
+
+		$this->assertNotSame([], $dark);
+		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6,8}$/i', (string)($dark['--nldesign-color-primary'] ?? ''));
+		$this->assertSame([], $this->build()->getInitialState(tokenSetId: '../x')['playgroundDarkTokens']);
+	}//end testDarkTokensPublished()
 
 	/**
 	 * What an export writes is what the set DECLARES, never the map the
