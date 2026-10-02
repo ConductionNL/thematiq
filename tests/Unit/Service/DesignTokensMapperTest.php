@@ -397,6 +397,27 @@ class DesignTokensMapperTest extends TestCase {
 	}//end testDeprecatedTokenImportsWithWarning()
 
 	/**
+	 * The warning names the CSS variable the token became, so it can be recorded as a
+	 * deprecation; the Tokens Studio object form carries its message and severity.
+	 *
+	 * @spec openspec/changes/authoring-token-lifecycle/tasks.md#task-3.4
+	 */
+	public function testDeprecatedWarningNamesTheTargetAndReadsTokensStudio(): void {
+		$document = [
+			'color' => [
+				'primary' => ['$type' => 'color', '$value' => '#154273', '$deprecated' => 'Use color.brand.primary instead'],
+				'background' => ['$type' => 'color', '$value' => '#ffffff', '$deprecated' => ['severity' => 'error', 'message' => 'Gone in 2027']],
+			],
+		];
+
+		$warnings = array_column($this->mapper->map(document: $document)['warnings'], null, 'path');
+
+		$this->assertSame('--nldesign-color-primary', $warnings['color.primary']['token']);
+		$this->assertSame('Gone in 2027', $warnings['color.background']['message']);
+		$this->assertSame('critical', $warnings['color.background']['severity']);
+	}//end testDeprecatedWarningNamesTheTargetAndReadsTokensStudio()
+
+	/**
 	 * A boolean `$deprecated: true` still warns, with a null message.
 	 */
 	public function testDeprecatedBooleanTrueWarnsWithNullMessage(): void {

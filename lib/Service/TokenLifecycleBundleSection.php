@@ -59,7 +59,7 @@ class TokenLifecycleBundleSection {
 			$deprecations[$token] = $record;
 		}
 
-		return ['ownTokens' => (object)$this->ownTokens->list(), 'tokenDeprecations' => (object)$deprecations];
+		return ['ownTokens' => $this->ownTokens->list(), 'tokenDeprecations' => $deprecations];
 	}//end export()
 
 	/**

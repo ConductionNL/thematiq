@@ -182,6 +182,7 @@ class TokenDeprecationController extends Controller {
 	 */
 	private function rewrite(): void {
 		try {
+			$this->overrides->ensureExists();
 			$this->overrides->rewriteAll();
 		} catch (RuntimeException) {
 			// The record is the source of truth; the comment follows on the next write.
