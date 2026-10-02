@@ -53,9 +53,11 @@ scripts/sources/
 # would remove the very defect under test.
 tests/integration/fixtures/
 
-# Same contract again: both emitted by scripts/generate-component-scopes.mjs
-# from scripts/mapping/component-tokens.json and byte-compared against the
-# committed copies by `npm run test:component-scopes`. Prettier would rewrap
-# the var() fallback chains and fail that check on a file nobody edited.
+# Same contract again: all three emitted by scripts/generate-component-scopes.mjs
+# from scripts/mapping/component-tokens.json and variable-status.json, and
+# byte-compared against the committed copies by `npm run test:component-scopes`.
+# Prettier would rewrap the var() fallback chains and fail that check on a file
+# nobody edited.
 css/component-scopes.css
 css/primary-lock.css
+css/theme-scopes.css

@@ -27,7 +27,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * `occ nldesign:generate-dark-variants` — generate static dark-mode CSS
+ * `occ thematiq:generate-dark-variants` — generate static dark-mode CSS
  * variants for eligible NL Design token sets (build/install-time
  * generation, never per request — see the `dark-mode` spec).
  *
@@ -64,7 +64,7 @@ class GenerateDarkVariants extends Command {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	protected function configure(): void {
-		$this->setName(name: 'nldesign:generate-dark-variants')
+		$this->setName(name: 'thematiq:generate-dark-variants')
 			->setDescription('Generate static dark-mode CSS variants (css/tokens/dark/{id}.css) for eligible NL Design token sets.')
 			->addOption(
 				name: 'set',

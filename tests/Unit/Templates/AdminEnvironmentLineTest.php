@@ -30,7 +30,7 @@ class AdminEnvironmentLineTest extends TestCase {
 
 		$start = strpos($template, 'id="nldesign-environment"');
 		$this->assertNotFalse($start, 'The admin template must ship the environment line.');
-		$this->assertGreaterThan(strpos($template, "p(\$l->t('NL Design System Theme'))"), $start, 'The line sits under the theming heading.');
+		$this->assertGreaterThan(strpos($template, '<h2>Thematiq</h2>'), $start, 'The line sits under the theming heading.');
 
 		$end = strpos($template, '</div>', $start);
 		$block = substr($template, $start, ($end - $start));
