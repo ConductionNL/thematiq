@@ -16,11 +16,11 @@ This page lists every CSS custom property that Nextcloud 34.0.0.12 and `@conduct
 
 | Class | Variables | Mapped | Settable | Excluded |
 |---|---|---|---|---|
-| component | 380 | 12 | 0 | 368 |
-| conduction | 51 | 0 | 0 | 51 |
+| component | 380 | 12 | 364 | 4 |
+| conduction | 51 | 0 | 33 | 18 |
 | icon | 484 | 0 | 0 | 484 |
 | runtime | 36 | 0 | 0 | 36 |
-| slot | 83 | 0 | 0 | 83 |
+| slot | 83 | 0 | 56 | 27 |
 | theme | 111 | 66 | 45 | 0 |
 | unread | 10 | 0 | 0 | 10 |
 
@@ -250,386 +250,386 @@ Declared and read by one Nextcloud component.
 
 | Variable | Family | Status | Token | Value |
 |---|---|---|---|---|
-| `--account-menu-outline` | account | excluded |  | `var(--border-width-input) solid color-m…` |
-| `--alt-text-active-bg-color` | alt | excluded |  | `rgb(91 91 102 / var(--alt-text-opacity))` |
-| `--alt-text-active-border-color` | alt | excluded |  | `var(--alt-text-hover-bg-color)` |
-| `--alt-text-active-fg-color` | alt | excluded |  | `var(--alt-text-fg-color)` |
-| `--alt-text-bg-color` | alt | excluded |  | `rgb(43 42 51 / var(--alt-text-opacity))` |
-| `--alt-text-border-color` | alt | excluded |  | `var(--alt-text-bg-color)` |
-| `--alt-text-fg-color` | alt | excluded |  | `#fbfbfe` |
-| `--alt-text-focus-border-color` | alt | excluded |  | `#f0f0f4` |
-| `--alt-text-focus-outline-color` | alt | excluded |  | `#0060df` |
-| `--alt-text-hover-bg-color` | alt | excluded |  | `rgb(82 82 94 / var(--alt-text-opacity))` |
-| `--alt-text-hover-border-color` | alt | excluded |  | `var(--alt-text-hover-bg-color)` |
-| `--alt-text-hover-fg-color` | alt | excluded |  | `var(--alt-text-fg-color)` |
-| `--alt-text-opacity` | alt | excluded |  | `0.8` |
-| `--alt-text-shadow` | alt | excluded |  | `0 2px 6px 0 rgb(28 27 34 / 0.5)` |
-| `--alt-text-tooltip-bg` | alt | excluded |  | `#f0f0f4` |
-| `--alt-text-tooltip-border` | alt | excluded |  | `#8f8f9d` |
-| `--alt-text-tooltip-fg` | alt | excluded |  | `#15141a` |
-| `--alt-text-tooltip-shadow` | alt | excluded |  | `0px 2px 6px 0px rgb(58 57 68 / 0.2)` |
-| `--app-item-circle-size` | app | excluded |  | `calc(var(--default-grid-baseline) * 10)` |
-| `--app-item-col-width` | app | excluded |  | `69px` |
-| `--app-item-icon-size` | app | excluded |  | `22px` |
-| `--app-item-row-height` | app | excluded |  | `64px` |
-| `--app-navigation-item-child-offset` | app | excluded |  | `10px` |
-| `--app-navigation-max-width` | app | excluded |  | `calc(100vw - (var(--app-navigation-padd…` |
-| `--app-navigation-padding` | app | excluded |  | `calc(var(--default-grid-baseline, 4px) …` |
-| `--app-navigation-quota-margin` | app | excluded |  | `calc((var(--default-clickable-area) - 2…` |
-| `--app-settings-section-content-gap` | app | excluded |  | `calc(6 * var(--default-grid-baseline))` |
-| `--app-settings-section-text-offset` | app | excluded |  | `var(--form-element-label-offset)` |
-| `--app-sidebar-close-button-offset` | app | excluded |  | `calc(var(--default-clickable-area) + va…` |
-| `--app-sidebar-padding` | app | excluded |  | `calc(var(--default-grid-baseline, 4px) …` |
-| `--app-sidebar-width` | app | excluded |  | `clamp(300px, 27vw, 500px)` |
-| `--assistant-button-background-color` | assistant | excluded |  | `var(--color-background-assistant, #F6F5…` |
-| `--assistant-button-color` | assistant | excluded |  | `var(--color-element-assistant, linear-g…` |
-| `--auto-complete-result-avatar-size` | auto | excluded |  | `var(--default-clickable-area)` |
-| `--auto-complete-result-status-icon-position` | auto | excluded |  | `calc(var(--auto-complete-result-avatar-…` |
-| `--auto-complete-result-status-icon-size` | auto | excluded |  | `clamp(14px, var(--auto-complete-result-…` |
-| `--avatar-cell-width` | avatar | excluded |  | `48px` |
-| `--avatar-status-icon-position` | avatar | excluded |  | `min(0px, (var(--avatar-status-size-orbi…` |
-| `--avatar-status-size` | avatar | excluded |  | `max(var(--avatar-status-size-orbital), …` |
-| `--avatar-status-size-min` | avatar | excluded |  | `var(--font-size-small)` |
-| `--avatar-status-size-orbital` | avatar | excluded |  | `calc(var(--avatar-size) * (1 - 1 / sqrt…` |
-| `--backdrop-color` | backdrop | excluded |  | `0, 0, 0` |
-| `--background-blur` | background | excluded |  | `blur(10px)` |
-| `--body-bg-color` | body | excluded |  | `rgb(212 212 215)` |
-| `--button-cancel-bg-color` | button | excluded |  | `#f0f0f4` |
-| `--button-cancel-border-color` | button | excluded |  | `var(--button-cancel-bg-color)` |
-| `--button-cancel-fg-color` | button | excluded |  | `var(--text-primary-color)` |
-| `--button-cancel-hover-bg-color` | button | excluded |  | `var(--button-cancel-bg-color)` |
-| `--button-cancel-hover-border-color` | button | excluded |  | `var(--button-cancel-hover-bg-color)` |
-| `--button-cancel-hover-fg-color` | button | excluded |  | `var(--button-cancel-fg-color)` |
-| `--button-hover-color` | button | excluded |  | `rgb(221 222 223)` |
-| `--button-inner-size` | button | excluded |  | `calc(var(--button-size) - 4px)` |
-| `--button-padding` | button | excluded |  | `var(--default-grid-baseline) var(--butt…` |
-| `--button-padding-default` | button | excluded |  | `calc(var(--default-grid-baseline) + var…` |
-| `--button-radius` | button | excluded |  | `calc(var(--avatar-size) / 2)` |
-| `--button-save-bg-color` | button | excluded |  | `#0060df` |
-| `--button-save-fg-color` | button | excluded |  | `#fbfbfe` |
-| `--button-save-hover-bg-color` | button | excluded |  | `var(--button-save-bg-color)` |
-| `--button-save-hover-border-color` | button | excluded |  | `var(--button-save-hover-bg-color)` |
-| `--button-save-hover-fg-color` | button | excluded |  | `var(--button-save-fg-color)` |
-| `--button-size` | button | excluded |  | `calc(var(--default-clickable-area) - 2 …` |
-| `--callout-border` | callout | excluded |  | `var(--color-element-info, #006aa3)` |
-| `--cell-margin` | cell | excluded |  | `14px` |
-| `--cell-padding` | cell | excluded |  | `7px` |
-| `--cell-width` | cell | excluded |  | `200px` |
-| `--cell-width-groups` | cell | excluded |  | `380px` |
-| `--cell-width-large` | cell | excluded |  | `300px` |
-| `--checkbox-container-size` | checkbox | excluded |  | `44px` |
-| `--checkbox-padding` | checkbox | excluded |  | `calc((var(--row-height) - var(--checkbo…` |
-| `--checkbox-radio-switch--border-radius` | checkbox | excluded |  | `var(--border-radius-element)` |
-| `--checkbox-radio-switch--border-radius-outer` | checkbox | excluded |  | `calc(var(--checkbox-radio-switch--borde…` |
-| `--checkbox-size` | checkbox | excluded |  | `24px` |
-| `--chip-radius` | chip | excluded |  | `calc(var(--chip-size) / 2)` |
-| `--chip-size` | chip | excluded |  | `24px` |
-| `--clickable-area` | clickable | excluded |  | `var(--default-clickable-area)` |
-| `--color-header` | color | excluded |  | `rgba(24, 24, 24, 1)` |
-| `--color-primary-element-extra-light` | color | excluded |  | `hsl(from var(--color-primary-element-li…` |
-| `--color-primary-element-extra-light-hover` | color | excluded |  | `hsl(from var(--color-primary-element-li…` |
+| `--account-menu-outline` | account | settable | `--nldesign-nc-account-menu-outline` | `var(--border-width-input) solid color-m…` |
+| `--alt-text-active-bg-color` | alt | settable | `--nldesign-nc-alt-text-active-bg-color` | `rgb(91 91 102 / var(--alt-text-opacity))` |
+| `--alt-text-active-border-color` | alt | settable | `--nldesign-nc-alt-text-active-border-color` | `var(--alt-text-hover-bg-color)` |
+| `--alt-text-active-fg-color` | alt | settable | `--nldesign-nc-alt-text-active-fg-color` | `var(--alt-text-fg-color)` |
+| `--alt-text-bg-color` | alt | settable | `--nldesign-nc-alt-text-bg-color` | `rgb(43 42 51 / var(--alt-text-opacity))` |
+| `--alt-text-border-color` | alt | settable | `--nldesign-nc-alt-text-border-color` | `var(--alt-text-bg-color)` |
+| `--alt-text-fg-color` | alt | settable | `--nldesign-nc-alt-text-fg-color` | `#fbfbfe` |
+| `--alt-text-focus-border-color` | alt | settable | `--nldesign-nc-alt-text-focus-border-color` | `#f0f0f4` |
+| `--alt-text-focus-outline-color` | alt | settable | `--nldesign-nc-alt-text-focus-outline-color` | `#0060df` |
+| `--alt-text-hover-bg-color` | alt | settable | `--nldesign-nc-alt-text-hover-bg-color` | `rgb(82 82 94 / var(--alt-text-opacity))` |
+| `--alt-text-hover-border-color` | alt | settable | `--nldesign-nc-alt-text-hover-border-color` | `var(--alt-text-hover-bg-color)` |
+| `--alt-text-hover-fg-color` | alt | settable | `--nldesign-nc-alt-text-hover-fg-color` | `var(--alt-text-fg-color)` |
+| `--alt-text-opacity` | alt | settable | `--nldesign-nc-alt-text-opacity` | `0.8` |
+| `--alt-text-shadow` | alt | settable | `--nldesign-nc-alt-text-shadow` | `0 2px 6px 0 rgb(28 27 34 / 0.5)` |
+| `--alt-text-tooltip-bg` | alt | settable | `--nldesign-nc-alt-text-tooltip-bg` | `#f0f0f4` |
+| `--alt-text-tooltip-border` | alt | settable | `--nldesign-nc-alt-text-tooltip-border` | `#8f8f9d` |
+| `--alt-text-tooltip-fg` | alt | settable | `--nldesign-nc-alt-text-tooltip-fg` | `#15141a` |
+| `--alt-text-tooltip-shadow` | alt | settable | `--nldesign-nc-alt-text-tooltip-shadow` | `0px 2px 6px 0px rgb(58 57 68 / 0.2)` |
+| `--app-item-circle-size` | app | settable | `--nldesign-nc-app-item-circle-size` | `calc(var(--default-grid-baseline) * 10)` |
+| `--app-item-col-width` | app | settable | `--nldesign-nc-app-item-col-width` | `69px` |
+| `--app-item-icon-size` | app | settable | `--nldesign-nc-app-item-icon-size` | `22px` |
+| `--app-item-row-height` | app | settable | `--nldesign-nc-app-item-row-height` | `64px` |
+| `--app-navigation-item-child-offset` | app | settable | `--nldesign-nc-app-navigation-item-child-offset` | `10px` |
+| `--app-navigation-max-width` | app | settable | `--nldesign-nc-app-navigation-max-width` | `calc(100vw - (var(--app-navigation-padd…` |
+| `--app-navigation-padding` | app | settable | `--nldesign-nc-app-navigation-padding` | `calc(var(--default-grid-baseline, 4px) …` |
+| `--app-navigation-quota-margin` | app | settable | `--nldesign-nc-app-navigation-quota-margin` | `calc((var(--default-clickable-area) - 2…` |
+| `--app-settings-section-content-gap` | app | settable | `--nldesign-nc-app-settings-section-content-gap` | `calc(6 * var(--default-grid-baseline))` |
+| `--app-settings-section-text-offset` | app | settable | `--nldesign-nc-app-settings-section-text-offset` | `var(--form-element-label-offset)` |
+| `--app-sidebar-close-button-offset` | app | settable | `--nldesign-nc-app-sidebar-close-button-offset` | `calc(var(--default-clickable-area) + va…` |
+| `--app-sidebar-padding` | app | settable | `--nldesign-nc-app-sidebar-padding` | `calc(var(--default-grid-baseline, 4px) …` |
+| `--app-sidebar-width` | app | settable | `--nldesign-nc-app-sidebar-width` | `clamp(300px, 27vw, 500px)` |
+| `--assistant-button-background-color` | assistant | settable | `--nldesign-nc-assistant-button-background-color` | `var(--color-background-assistant, #F6F5…` |
+| `--assistant-button-color` | assistant | settable | `--nldesign-nc-assistant-button-color` | `var(--color-element-assistant, linear-g…` |
+| `--auto-complete-result-avatar-size` | auto | settable | `--nldesign-nc-auto-complete-result-avatar-size` | `var(--default-clickable-area)` |
+| `--auto-complete-result-status-icon-position` | auto | settable | `--nldesign-nc-auto-complete-result-status-icon-position` | `calc(var(--auto-complete-result-avatar-…` |
+| `--auto-complete-result-status-icon-size` | auto | settable | `--nldesign-nc-auto-complete-result-status-icon-size` | `clamp(14px, var(--auto-complete-result-…` |
+| `--avatar-cell-width` | avatar | settable | `--nldesign-nc-avatar-cell-width` | `48px` |
+| `--avatar-status-icon-position` | avatar | settable | `--nldesign-nc-avatar-status-icon-position` | `min(0px, (var(--avatar-status-size-orbi…` |
+| `--avatar-status-size` | avatar | settable | `--nldesign-nc-avatar-status-size` | `max(var(--avatar-status-size-orbital), …` |
+| `--avatar-status-size-min` | avatar | settable | `--nldesign-nc-avatar-status-size-min` | `var(--font-size-small)` |
+| `--avatar-status-size-orbital` | avatar | settable | `--nldesign-nc-avatar-status-size-orbital` | `calc(var(--avatar-size) * (1 - 1 / sqrt…` |
+| `--backdrop-color` | backdrop | settable | `--nldesign-nc-backdrop-color` | `0, 0, 0` |
+| `--background-blur` | background | settable | `--nldesign-nc-background-blur` | `blur(10px)` |
+| `--body-bg-color` | body | settable | `--nldesign-nc-body-bg-color` | `rgb(212 212 215)` |
+| `--button-cancel-bg-color` | button | settable | `--nldesign-nc-button-cancel-bg-color` | `#f0f0f4` |
+| `--button-cancel-border-color` | button | settable | `--nldesign-nc-button-cancel-border-color` | `var(--button-cancel-bg-color)` |
+| `--button-cancel-fg-color` | button | settable | `--nldesign-nc-button-cancel-fg-color` | `var(--text-primary-color)` |
+| `--button-cancel-hover-bg-color` | button | settable | `--nldesign-nc-button-cancel-hover-bg-color` | `var(--button-cancel-bg-color)` |
+| `--button-cancel-hover-border-color` | button | settable | `--nldesign-nc-button-cancel-hover-border-color` | `var(--button-cancel-hover-bg-color)` |
+| `--button-cancel-hover-fg-color` | button | settable | `--nldesign-nc-button-cancel-hover-fg-color` | `var(--button-cancel-fg-color)` |
+| `--button-hover-color` | button | settable | `--nldesign-nc-button-hover-color` | `rgb(221 222 223)` |
+| `--button-inner-size` | button | settable | `--nldesign-nc-button-inner-size` | `calc(var(--button-size) - 4px)` |
+| `--button-padding` | button | settable | `--nldesign-nc-button-padding` | `var(--default-grid-baseline) var(--butt…` |
+| `--button-padding-default` | button | settable | `--nldesign-nc-button-padding-default` | `calc(var(--default-grid-baseline) + var…` |
+| `--button-radius` | button | settable | `--nldesign-nc-button-radius` | `calc(var(--avatar-size) / 2)` |
+| `--button-save-bg-color` | button | settable | `--nldesign-nc-button-save-bg-color` | `#0060df` |
+| `--button-save-fg-color` | button | settable | `--nldesign-nc-button-save-fg-color` | `#fbfbfe` |
+| `--button-save-hover-bg-color` | button | settable | `--nldesign-nc-button-save-hover-bg-color` | `var(--button-save-bg-color)` |
+| `--button-save-hover-border-color` | button | settable | `--nldesign-nc-button-save-hover-border-color` | `var(--button-save-hover-bg-color)` |
+| `--button-save-hover-fg-color` | button | settable | `--nldesign-nc-button-save-hover-fg-color` | `var(--button-save-fg-color)` |
+| `--button-size` | button | settable | `--nldesign-nc-button-size` | `calc(var(--default-clickable-area) - 2 …` |
+| `--callout-border` | callout | settable | `--nldesign-nc-callout-border` | `var(--color-element-info, #006aa3)` |
+| `--cell-margin` | cell | settable | `--nldesign-nc-cell-margin` | `14px` |
+| `--cell-padding` | cell | settable | `--nldesign-nc-cell-padding` | `7px` |
+| `--cell-width` | cell | settable | `--nldesign-nc-cell-width` | `200px` |
+| `--cell-width-groups` | cell | settable | `--nldesign-nc-cell-width-groups` | `380px` |
+| `--cell-width-large` | cell | settable | `--nldesign-nc-cell-width-large` | `300px` |
+| `--checkbox-container-size` | checkbox | settable | `--nldesign-nc-checkbox-container-size` | `44px` |
+| `--checkbox-padding` | checkbox | settable | `--nldesign-nc-checkbox-padding` | `calc((var(--row-height) - var(--checkbo…` |
+| `--checkbox-radio-switch--border-radius` | checkbox | settable | `--nldesign-nc-checkbox-radio-switch--border-radius` | `var(--border-radius-element)` |
+| `--checkbox-radio-switch--border-radius-outer` | checkbox | settable | `--nldesign-nc-checkbox-radio-switch--border-radius-outer` | `calc(var(--checkbox-radio-switch--borde…` |
+| `--checkbox-size` | checkbox | settable | `--nldesign-nc-checkbox-size` | `24px` |
+| `--chip-radius` | chip | settable | `--nldesign-nc-chip-radius` | `calc(var(--chip-size) / 2)` |
+| `--chip-size` | chip | settable | `--nldesign-nc-chip-size` | `24px` |
+| `--clickable-area` | clickable | settable | `--nldesign-nc-clickable-area` | `var(--default-clickable-area)` |
+| `--color-header` | color | settable | `--nldesign-nc-color-header` | `rgba(24, 24, 24, 1)` |
+| `--color-primary-element-extra-light` | color | settable | `--nldesign-nc-color-primary-element-extra-light` | `hsl(from var(--color-primary-element-li…` |
+| `--color-primary-element-extra-light-hover` | color | settable | `--nldesign-nc-color-primary-element-extra-light-hover` | `hsl(from var(--color-primary-element-li…` |
 | `--color-text-light` | color | mapped | `--nldesign-component-text-light-color` | `var(--color-main-text)` |
 | `--color-text-lighter` | color | mapped | `--nldesign-component-text-lighter-color` | `var(--color-text-maxcontrast)` |
 | `--confetti-i` | confetti | excluded |  | `${h-1` |
-| `--contenteditable-block-offset` | contenteditable | excluded |  | `calc(2 * var(--default-grid-baseline))` |
-| `--contenteditable-inline-end-offset` | contenteditable | excluded |  | `calc(2 * var(--default-grid-baseline))` |
-| `--contenteditable-inline-start-offset` | contenteditable | excluded |  | `calc(2 * var(--default-grid-baseline))` |
-| `--counter-bubble-height` | counter | excluded |  | `22px` |
-| `--dark-link-color` | dark | excluded |  | `#249ee8` |
-| `--dark-text-color` | dark | excluded |  | `#c1c1c1` |
-| `--dialog-bg-color` | dialog | excluded |  | `white` |
-| `--dialog-border-color` | dialog | excluded |  | `white` |
-| `--dialog-button-bg-color` | dialog | excluded |  | `rgb(12 12 13 / 0.1)` |
-| `--dialog-button-border` | dialog | excluded |  | `none` |
-| `--dialog-button-hover-bg-color` | dialog | excluded |  | `rgb(12 12 13 / 0.3)` |
-| `--dialog-button-hover-color` | dialog | excluded |  | `ButtonFace` |
-| `--dialog-shadow` | dialog | excluded |  | `0 2px 14px 0 rgb(58 57 68 / 0.2)` |
-| `--dir-factor` | dir | excluded |  | `1` |
-| `--doorhanger-bg-color` | doorhanger | excluded |  | `rgb(255 255 255)` |
-| `--doorhanger-border-color` | doorhanger | excluded |  | `rgb(12 12 13 / 0.2)` |
-| `--doorhanger-border-color-whcm` | doorhanger | excluded |  | `1px solid ButtonText` |
-| `--doorhanger-hover-bg-color` | doorhanger | excluded |  | `rgb(237 237 237)` |
-| `--doorhanger-hover-color` | doorhanger | excluded |  | `rgb(12 12 13)` |
-| `--doorhanger-icon-opacity` | doorhanger | excluded |  | `0.9` |
-| `--doorhanger-separator-color` | doorhanger | excluded |  | `rgb(222 222 222)` |
-| `--doorhanger-triangle-opacity-whcm` | doorhanger | excluded |  | `0` |
-| `--dp-action-button-height` | dp | excluded |  | `var(--clickable-area-small)` |
-| `--dp-action-buttons-padding` | dp | excluded |  | `1px 6px` |
-| `--dp-action-row-padding` | dp | excluded |  | `8px` |
-| `--dp-action-row-transition` | dp | excluded |  | `all 0.2s ease-in` |
-| `--dp-action-row-transtion` | dp | excluded |  | `all 0.2s ease-in` |
-| `--dp-animation-duration` | dp | excluded |  | `var(--animation-quick)` |
-| `--dp-background-color` | dp | excluded |  | `#212121` |
-| `--dp-border-color` | dp | excluded |  | `#2d2d2d` |
-| `--dp-border-color-focus` | dp | excluded |  | `#aaaeb7` |
-| `--dp-border-color-hover` | dp | excluded |  | `#aaaeb7` |
-| `--dp-border-radius` | dp | excluded |  | `var(--border-radius-element)` |
-| `--dp-button-height` | dp | excluded |  | `var(--default-clickable-area)` |
-| `--dp-button-icon-height` | dp | excluded |  | `20px` |
-| `--dp-calendar-header-cell-padding` | dp | excluded |  | `0.5rem` |
-| `--dp-cell-border-radius` | dp | excluded |  | `var(--border-radius-small)` |
-| `--dp-cell-padding` | dp | excluded |  | `5px` |
-| `--dp-cell-size` | dp | excluded |  | `var(--default-clickable-area)` |
-| `--dp-common-padding` | dp | excluded |  | `10px` |
-| `--dp-common-transition` | dp | excluded |  | `all var(--animation-quick) ease-in` |
-| `--dp-danger-color` | dp | excluded |  | `#e53935` |
-| `--dp-direction` | dp | excluded |  | `ltr` |
-| `--dp-disabled-color` | dp | excluded |  | `#737373` |
-| `--dp-disabled-color-text` | dp | excluded |  | `#d0d0d0` |
-| `--dp-font-family` | dp | excluded |  | `var(--font-face)` |
-| `--dp-font-size` | dp | excluded |  | `1rem` |
-| `--dp-highlight-color` | dp | excluded |  | `rgb(0 92 178 / 20%)` |
-| `--dp-hover-color` | dp | excluded |  | `#484848` |
-| `--dp-hover-icon-color` | dp | excluded |  | `#959595` |
-| `--dp-hover-text-color` | dp | excluded |  | `#fff` |
-| `--dp-icon-color` | dp | excluded |  | `#959595` |
-| `--dp-input-icon-padding` | dp | excluded |  | `var(--default-clickable-area)` |
-| `--dp-input-not-clearable-padding` | dp | excluded |  | `12px` |
-| `--dp-input-padding` | dp | excluded |  | `6px 12px` |
-| `--dp-loader` | dp | excluded |  | `5px solid #005cb2` |
-| `--dp-marker-color` | dp | excluded |  | `#e53935` |
-| `--dp-menu-border-color` | dp | excluded |  | `#2d2d2d` |
-| `--dp-menu-min-width` | dp | excluded |  | `260px` |
-| `--dp-menu-padding` | dp | excluded |  | `6px 8px` |
-| `--dp-month-year-row-button-size` | dp | excluded |  | `var(--clickable-area-small)` |
-| `--dp-month-year-row-height` | dp | excluded |  | `var(--default-clickable-area)` |
-| `--dp-multi-calendars-spacing` | dp | excluded |  | `10px` |
-| `--dp-overlay-col-padding` | dp | excluded |  | `3px` |
-| `--dp-preview-font-size` | dp | excluded |  | `var(--font-size-small)` |
-| `--dp-primary-color` | dp | excluded |  | `#005cb2` |
-| `--dp-primary-disabled-color` | dp | excluded |  | `#61a8ea` |
-| `--dp-primary-text-color` | dp | excluded |  | `#fff` |
-| `--dp-range-between-border-color` | dp | excluded |  | `var(--dp-hover-color, #fff)` |
-| `--dp-range-between-dates-background-color` | dp | excluded |  | `var(--dp-hover-color, #484848)` |
-| `--dp-range-between-dates-text-color` | dp | excluded |  | `var(--dp-hover-text-color, #fff)` |
-| `--dp-row-margin` | dp | excluded |  | `5px 0` |
-| `--dp-scroll-bar-background` | dp | excluded |  | `#212121` |
-| `--dp-scroll-bar-color` | dp | excluded |  | `#484848` |
-| `--dp-secondary-color` | dp | excluded |  | `#a9a9a9` |
-| `--dp-success-color` | dp | excluded |  | `#00701a` |
-| `--dp-text-color` | dp | excluded |  | `#fff` |
-| `--dp-time-font-size` | dp | excluded |  | `2rem` |
-| `--dp-time-inc-dec-button-size` | dp | excluded |  | `var(--default-clickable-area)` |
-| `--dp-tooltip-color` | dp | excluded |  | `#3e3e3e` |
-| `--dp-transition-length` | dp | excluded |  | `22px` |
-| `--dp-transition-timing` | dp | excluded |  | `ease-out` |
-| `--dp-transition-timing-general` | dp | excluded |  | `var(--animation-quick)` |
-| `--dropdown-btn-bg-color` | dropdown | excluded |  | `rgb(215 215 219)` |
-| `--dropdown-btn-border` | dropdown | excluded |  | `none` |
-| `--editorFreeText-editing-cursor` | editorFreeText | excluded |  | `text` |
-| `--field-bg-color` | field | excluded |  | `rgb(255 255 255)` |
-| `--field-border-color` | field | excluded |  | `rgb(187 187 188)` |
-| `--field-color` | field | excluded |  | `rgb(6 6 6)` |
-| `--figure-size` | figure | excluded |  | `calc(52px + var(--app-sidebar-padding))` |
-| `--fixed-block-start-position` | fixed | excluded |  | `calc(var(--clickable-area-small) + var(…` |
-| `--focus-outline` | focus | excluded |  | `solid var(--outline-width) var(--outlin…` |
-| `--focus-outline-around` | focus | excluded |  | `solid var(--outline-around-width) var(-…` |
-| `--focus-ring-color` | focus | excluded |  | `#0060df` |
-| `--focus-ring-outline` | focus | excluded |  | `2px solid var(--focus-ring-color)` |
-| `--form-element-label-offset` | form | excluded |  | `calc(var(--border-radius-element) + var…` |
-| `--form-element-label-padding` | form | excluded |  | `calc(var(--form-element-label-offset) -…` |
-| `--form-group-content-gap` | form | excluded |  | `calc(2 * var(--default-grid-baseline))` |
-| `--freetext-line-height` | freetext | excluded |  | `1.35` |
-| `--freetext-padding` | freetext | excluded |  | `2px` |
-| `--gap` | gap | excluded |  | `30px` |
-| `--highlight-bg-color` | highlight | excluded |  | `rgb(180 0 170)` |
-| `--highlight-selected-bg-color` | highlight | excluded |  | `rgb(0 100 0)` |
-| `--hljs-background-color` | hljs | excluded |  | `var(--color-background-dark, #ffffff)` |
-| `--hljs-color` | hljs | excluded |  | `var(--color-main-text, #24292e)` |
-| `--hljs-syntax-comment-color` | hljs | excluded |  | `#6a737d` |
-| `--hljs-syntax-constant-color` | hljs | excluded |  | `#005cc5` |
-| `--hljs-syntax-entity-color` | hljs | excluded |  | `#6f42c1` |
-| `--hljs-syntax-entity-tag-color` | hljs | excluded |  | `#22863a` |
-| `--hljs-syntax-keyword-color` | hljs | excluded |  | `#d73a49` |
-| `--hljs-syntax-markup-bold-color` | hljs | excluded |  | `#24292e` |
-| `--hljs-syntax-markup-deleted-background-color` | hljs | excluded |  | `#ffeef0` |
-| `--hljs-syntax-markup-deleted-color` | hljs | excluded |  | `#b31d28` |
-| `--hljs-syntax-markup-heading-color` | hljs | excluded |  | `#005cc5` |
-| `--hljs-syntax-markup-inserted-background-color` | hljs | excluded |  | `#f0fff4` |
-| `--hljs-syntax-markup-inserted-color` | hljs | excluded |  | `#22863a` |
-| `--hljs-syntax-markup-italic-color` | hljs | excluded |  | `#24292e` |
-| `--hljs-syntax-markup-list-color` | hljs | excluded |  | `#735c0f` |
-| `--hljs-syntax-storage-modifier-import-color` | hljs | excluded |  | `#24292e` |
-| `--hljs-syntax-string-color` | hljs | excluded |  | `#032f62` |
-| `--hljs-syntax-variable-color` | hljs | excluded |  | `#e36209` |
-| `--hover-filter` | hover | excluded |  | `brightness(0.9)` |
-| `--hover-outline` | hover | excluded |  | `solid var(--outline-width) var(--hover-…` |
-| `--hover-outline-around` | hover | excluded |  | `solid var(--outline-around-width) var(-…` |
-| `--hover-outline-around-color` | hover | excluded |  | `var(--outline-around-color)` |
-| `--hover-outline-color` | hover | excluded |  | `#8f8f9d` |
-| `--inline-end` | inline | excluded |  | `right` |
-| `--inline-start` | inline | excluded |  | `left` |
-| `--input-border-box-shadow` | input | excluded |  | `var(--input-border-box-shadow-light)` |
-| `--input-border-box-shadow-dark` | input | excluded |  | `0 1px var(--vs-border-color), 0 0 0 1px…` |
-| `--input-border-box-shadow-light` | input | excluded |  | `0 -1px var(--vs-border-color), 0 0 0 1p…` |
+| `--contenteditable-block-offset` | contenteditable | settable | `--nldesign-nc-contenteditable-block-offset` | `calc(2 * var(--default-grid-baseline))` |
+| `--contenteditable-inline-end-offset` | contenteditable | settable | `--nldesign-nc-contenteditable-inline-end-offset` | `calc(2 * var(--default-grid-baseline))` |
+| `--contenteditable-inline-start-offset` | contenteditable | settable | `--nldesign-nc-contenteditable-inline-start-offset` | `calc(2 * var(--default-grid-baseline))` |
+| `--counter-bubble-height` | counter | settable | `--nldesign-nc-counter-bubble-height` | `22px` |
+| `--dark-link-color` | dark | settable | `--nldesign-nc-dark-link-color` | `#249ee8` |
+| `--dark-text-color` | dark | settable | `--nldesign-nc-dark-text-color` | `#c1c1c1` |
+| `--dialog-bg-color` | dialog | settable | `--nldesign-nc-dialog-bg-color` | `white` |
+| `--dialog-border-color` | dialog | settable | `--nldesign-nc-dialog-border-color` | `white` |
+| `--dialog-button-bg-color` | dialog | settable | `--nldesign-nc-dialog-button-bg-color` | `rgb(12 12 13 / 0.1)` |
+| `--dialog-button-border` | dialog | settable | `--nldesign-nc-dialog-button-border` | `none` |
+| `--dialog-button-hover-bg-color` | dialog | settable | `--nldesign-nc-dialog-button-hover-bg-color` | `rgb(12 12 13 / 0.3)` |
+| `--dialog-button-hover-color` | dialog | settable | `--nldesign-nc-dialog-button-hover-color` | `ButtonFace` |
+| `--dialog-shadow` | dialog | settable | `--nldesign-nc-dialog-shadow` | `0 2px 14px 0 rgb(58 57 68 / 0.2)` |
+| `--dir-factor` | dir | settable | `--nldesign-nc-dir-factor` | `1` |
+| `--doorhanger-bg-color` | doorhanger | settable | `--nldesign-nc-doorhanger-bg-color` | `rgb(255 255 255)` |
+| `--doorhanger-border-color` | doorhanger | settable | `--nldesign-nc-doorhanger-border-color` | `rgb(12 12 13 / 0.2)` |
+| `--doorhanger-border-color-whcm` | doorhanger | settable | `--nldesign-nc-doorhanger-border-color-whcm` | `1px solid ButtonText` |
+| `--doorhanger-hover-bg-color` | doorhanger | settable | `--nldesign-nc-doorhanger-hover-bg-color` | `rgb(237 237 237)` |
+| `--doorhanger-hover-color` | doorhanger | settable | `--nldesign-nc-doorhanger-hover-color` | `rgb(12 12 13)` |
+| `--doorhanger-icon-opacity` | doorhanger | settable | `--nldesign-nc-doorhanger-icon-opacity` | `0.9` |
+| `--doorhanger-separator-color` | doorhanger | settable | `--nldesign-nc-doorhanger-separator-color` | `rgb(222 222 222)` |
+| `--doorhanger-triangle-opacity-whcm` | doorhanger | settable | `--nldesign-nc-doorhanger-triangle-opacity-whcm` | `0` |
+| `--dp-action-button-height` | dp | settable | `--nldesign-nc-dp-action-button-height` | `var(--clickable-area-small)` |
+| `--dp-action-buttons-padding` | dp | settable | `--nldesign-nc-dp-action-buttons-padding` | `1px 6px` |
+| `--dp-action-row-padding` | dp | settable | `--nldesign-nc-dp-action-row-padding` | `8px` |
+| `--dp-action-row-transition` | dp | settable | `--nldesign-nc-dp-action-row-transition` | `all 0.2s ease-in` |
+| `--dp-action-row-transtion` | dp | settable | `--nldesign-nc-dp-action-row-transtion` | `all 0.2s ease-in` |
+| `--dp-animation-duration` | dp | settable | `--nldesign-nc-dp-animation-duration` | `var(--animation-quick)` |
+| `--dp-background-color` | dp | settable | `--nldesign-nc-dp-background-color` | `#212121` |
+| `--dp-border-color` | dp | settable | `--nldesign-nc-dp-border-color` | `#2d2d2d` |
+| `--dp-border-color-focus` | dp | settable | `--nldesign-nc-dp-border-color-focus` | `#aaaeb7` |
+| `--dp-border-color-hover` | dp | settable | `--nldesign-nc-dp-border-color-hover` | `#aaaeb7` |
+| `--dp-border-radius` | dp | settable | `--nldesign-nc-dp-border-radius` | `var(--border-radius-element)` |
+| `--dp-button-height` | dp | settable | `--nldesign-nc-dp-button-height` | `var(--default-clickable-area)` |
+| `--dp-button-icon-height` | dp | settable | `--nldesign-nc-dp-button-icon-height` | `20px` |
+| `--dp-calendar-header-cell-padding` | dp | settable | `--nldesign-nc-dp-calendar-header-cell-padding` | `0.5rem` |
+| `--dp-cell-border-radius` | dp | settable | `--nldesign-nc-dp-cell-border-radius` | `var(--border-radius-small)` |
+| `--dp-cell-padding` | dp | settable | `--nldesign-nc-dp-cell-padding` | `5px` |
+| `--dp-cell-size` | dp | settable | `--nldesign-nc-dp-cell-size` | `var(--default-clickable-area)` |
+| `--dp-common-padding` | dp | settable | `--nldesign-nc-dp-common-padding` | `10px` |
+| `--dp-common-transition` | dp | settable | `--nldesign-nc-dp-common-transition` | `all var(--animation-quick) ease-in` |
+| `--dp-danger-color` | dp | settable | `--nldesign-nc-dp-danger-color` | `#e53935` |
+| `--dp-direction` | dp | settable | `--nldesign-nc-dp-direction` | `ltr` |
+| `--dp-disabled-color` | dp | settable | `--nldesign-nc-dp-disabled-color` | `#737373` |
+| `--dp-disabled-color-text` | dp | settable | `--nldesign-nc-dp-disabled-color-text` | `#d0d0d0` |
+| `--dp-font-family` | dp | settable | `--nldesign-nc-dp-font-family` | `var(--font-face)` |
+| `--dp-font-size` | dp | settable | `--nldesign-nc-dp-font-size` | `1rem` |
+| `--dp-highlight-color` | dp | settable | `--nldesign-nc-dp-highlight-color` | `rgb(0 92 178 / 20%)` |
+| `--dp-hover-color` | dp | settable | `--nldesign-nc-dp-hover-color` | `#484848` |
+| `--dp-hover-icon-color` | dp | settable | `--nldesign-nc-dp-hover-icon-color` | `#959595` |
+| `--dp-hover-text-color` | dp | settable | `--nldesign-nc-dp-hover-text-color` | `#fff` |
+| `--dp-icon-color` | dp | settable | `--nldesign-nc-dp-icon-color` | `#959595` |
+| `--dp-input-icon-padding` | dp | settable | `--nldesign-nc-dp-input-icon-padding` | `var(--default-clickable-area)` |
+| `--dp-input-not-clearable-padding` | dp | settable | `--nldesign-nc-dp-input-not-clearable-padding` | `12px` |
+| `--dp-input-padding` | dp | settable | `--nldesign-nc-dp-input-padding` | `6px 12px` |
+| `--dp-loader` | dp | settable | `--nldesign-nc-dp-loader` | `5px solid #005cb2` |
+| `--dp-marker-color` | dp | settable | `--nldesign-nc-dp-marker-color` | `#e53935` |
+| `--dp-menu-border-color` | dp | settable | `--nldesign-nc-dp-menu-border-color` | `#2d2d2d` |
+| `--dp-menu-min-width` | dp | settable | `--nldesign-nc-dp-menu-min-width` | `260px` |
+| `--dp-menu-padding` | dp | settable | `--nldesign-nc-dp-menu-padding` | `6px 8px` |
+| `--dp-month-year-row-button-size` | dp | settable | `--nldesign-nc-dp-month-year-row-button-size` | `var(--clickable-area-small)` |
+| `--dp-month-year-row-height` | dp | settable | `--nldesign-nc-dp-month-year-row-height` | `var(--default-clickable-area)` |
+| `--dp-multi-calendars-spacing` | dp | settable | `--nldesign-nc-dp-multi-calendars-spacing` | `10px` |
+| `--dp-overlay-col-padding` | dp | settable | `--nldesign-nc-dp-overlay-col-padding` | `3px` |
+| `--dp-preview-font-size` | dp | settable | `--nldesign-nc-dp-preview-font-size` | `var(--font-size-small)` |
+| `--dp-primary-color` | dp | settable | `--nldesign-nc-dp-primary-color` | `#005cb2` |
+| `--dp-primary-disabled-color` | dp | settable | `--nldesign-nc-dp-primary-disabled-color` | `#61a8ea` |
+| `--dp-primary-text-color` | dp | settable | `--nldesign-nc-dp-primary-text-color` | `#fff` |
+| `--dp-range-between-border-color` | dp | settable | `--nldesign-nc-dp-range-between-border-color` | `var(--dp-hover-color, #fff)` |
+| `--dp-range-between-dates-background-color` | dp | settable | `--nldesign-nc-dp-range-between-dates-background-color` | `var(--dp-hover-color, #484848)` |
+| `--dp-range-between-dates-text-color` | dp | settable | `--nldesign-nc-dp-range-between-dates-text-color` | `var(--dp-hover-text-color, #fff)` |
+| `--dp-row-margin` | dp | settable | `--nldesign-nc-dp-row-margin` | `5px 0` |
+| `--dp-scroll-bar-background` | dp | settable | `--nldesign-nc-dp-scroll-bar-background` | `#212121` |
+| `--dp-scroll-bar-color` | dp | settable | `--nldesign-nc-dp-scroll-bar-color` | `#484848` |
+| `--dp-secondary-color` | dp | settable | `--nldesign-nc-dp-secondary-color` | `#a9a9a9` |
+| `--dp-success-color` | dp | settable | `--nldesign-nc-dp-success-color` | `#00701a` |
+| `--dp-text-color` | dp | settable | `--nldesign-nc-dp-text-color` | `#fff` |
+| `--dp-time-font-size` | dp | settable | `--nldesign-nc-dp-time-font-size` | `2rem` |
+| `--dp-time-inc-dec-button-size` | dp | settable | `--nldesign-nc-dp-time-inc-dec-button-size` | `var(--default-clickable-area)` |
+| `--dp-tooltip-color` | dp | settable | `--nldesign-nc-dp-tooltip-color` | `#3e3e3e` |
+| `--dp-transition-length` | dp | settable | `--nldesign-nc-dp-transition-length` | `22px` |
+| `--dp-transition-timing` | dp | settable | `--nldesign-nc-dp-transition-timing` | `ease-out` |
+| `--dp-transition-timing-general` | dp | settable | `--nldesign-nc-dp-transition-timing-general` | `var(--animation-quick)` |
+| `--dropdown-btn-bg-color` | dropdown | settable | `--nldesign-nc-dropdown-btn-bg-color` | `rgb(215 215 219)` |
+| `--dropdown-btn-border` | dropdown | settable | `--nldesign-nc-dropdown-btn-border` | `none` |
+| `--editorFreeText-editing-cursor` | editorFreeText | settable | `--nldesign-nc-editorFreeText-editing-cursor` | `text` |
+| `--field-bg-color` | field | settable | `--nldesign-nc-field-bg-color` | `rgb(255 255 255)` |
+| `--field-border-color` | field | settable | `--nldesign-nc-field-border-color` | `rgb(187 187 188)` |
+| `--field-color` | field | settable | `--nldesign-nc-field-color` | `rgb(6 6 6)` |
+| `--figure-size` | figure | settable | `--nldesign-nc-figure-size` | `calc(52px + var(--app-sidebar-padding))` |
+| `--fixed-block-start-position` | fixed | settable | `--nldesign-nc-fixed-block-start-position` | `calc(var(--clickable-area-small) + var(…` |
+| `--focus-outline` | focus | settable | `--nldesign-nc-focus-outline` | `solid var(--outline-width) var(--outlin…` |
+| `--focus-outline-around` | focus | settable | `--nldesign-nc-focus-outline-around` | `solid var(--outline-around-width) var(-…` |
+| `--focus-ring-color` | focus | settable | `--nldesign-nc-focus-ring-color` | `#0060df` |
+| `--focus-ring-outline` | focus | settable | `--nldesign-nc-focus-ring-outline` | `2px solid var(--focus-ring-color)` |
+| `--form-element-label-offset` | form | settable | `--nldesign-nc-form-element-label-offset` | `calc(var(--border-radius-element) + var…` |
+| `--form-element-label-padding` | form | settable | `--nldesign-nc-form-element-label-padding` | `calc(var(--form-element-label-offset) -…` |
+| `--form-group-content-gap` | form | settable | `--nldesign-nc-form-group-content-gap` | `calc(2 * var(--default-grid-baseline))` |
+| `--freetext-line-height` | freetext | settable | `--nldesign-nc-freetext-line-height` | `1.35` |
+| `--freetext-padding` | freetext | settable | `--nldesign-nc-freetext-padding` | `2px` |
+| `--gap` | gap | settable | `--nldesign-nc-gap` | `30px` |
+| `--highlight-bg-color` | highlight | settable | `--nldesign-nc-highlight-bg-color` | `rgb(180 0 170)` |
+| `--highlight-selected-bg-color` | highlight | settable | `--nldesign-nc-highlight-selected-bg-color` | `rgb(0 100 0)` |
+| `--hljs-background-color` | hljs | settable | `--nldesign-nc-hljs-background-color` | `var(--color-background-dark, #ffffff)` |
+| `--hljs-color` | hljs | settable | `--nldesign-nc-hljs-color` | `var(--color-main-text, #24292e)` |
+| `--hljs-syntax-comment-color` | hljs | settable | `--nldesign-nc-hljs-syntax-comment-color` | `#6a737d` |
+| `--hljs-syntax-constant-color` | hljs | settable | `--nldesign-nc-hljs-syntax-constant-color` | `#005cc5` |
+| `--hljs-syntax-entity-color` | hljs | settable | `--nldesign-nc-hljs-syntax-entity-color` | `#6f42c1` |
+| `--hljs-syntax-entity-tag-color` | hljs | settable | `--nldesign-nc-hljs-syntax-entity-tag-color` | `#22863a` |
+| `--hljs-syntax-keyword-color` | hljs | settable | `--nldesign-nc-hljs-syntax-keyword-color` | `#d73a49` |
+| `--hljs-syntax-markup-bold-color` | hljs | settable | `--nldesign-nc-hljs-syntax-markup-bold-color` | `#24292e` |
+| `--hljs-syntax-markup-deleted-background-color` | hljs | settable | `--nldesign-nc-hljs-syntax-markup-deleted-background-color` | `#ffeef0` |
+| `--hljs-syntax-markup-deleted-color` | hljs | settable | `--nldesign-nc-hljs-syntax-markup-deleted-color` | `#b31d28` |
+| `--hljs-syntax-markup-heading-color` | hljs | settable | `--nldesign-nc-hljs-syntax-markup-heading-color` | `#005cc5` |
+| `--hljs-syntax-markup-inserted-background-color` | hljs | settable | `--nldesign-nc-hljs-syntax-markup-inserted-background-color` | `#f0fff4` |
+| `--hljs-syntax-markup-inserted-color` | hljs | settable | `--nldesign-nc-hljs-syntax-markup-inserted-color` | `#22863a` |
+| `--hljs-syntax-markup-italic-color` | hljs | settable | `--nldesign-nc-hljs-syntax-markup-italic-color` | `#24292e` |
+| `--hljs-syntax-markup-list-color` | hljs | settable | `--nldesign-nc-hljs-syntax-markup-list-color` | `#735c0f` |
+| `--hljs-syntax-storage-modifier-import-color` | hljs | settable | `--nldesign-nc-hljs-syntax-storage-modifier-import-color` | `#24292e` |
+| `--hljs-syntax-string-color` | hljs | settable | `--nldesign-nc-hljs-syntax-string-color` | `#032f62` |
+| `--hljs-syntax-variable-color` | hljs | settable | `--nldesign-nc-hljs-syntax-variable-color` | `#e36209` |
+| `--hover-filter` | hover | settable | `--nldesign-nc-hover-filter` | `brightness(0.9)` |
+| `--hover-outline` | hover | settable | `--nldesign-nc-hover-outline` | `solid var(--outline-width) var(--hover-…` |
+| `--hover-outline-around` | hover | settable | `--nldesign-nc-hover-outline-around` | `solid var(--outline-around-width) var(-…` |
+| `--hover-outline-around-color` | hover | settable | `--nldesign-nc-hover-outline-around-color` | `var(--outline-around-color)` |
+| `--hover-outline-color` | hover | settable | `--nldesign-nc-hover-outline-color` | `#8f8f9d` |
+| `--inline-end` | inline | settable | `--nldesign-nc-inline-end` | `right` |
+| `--inline-start` | inline | settable | `--nldesign-nc-inline-start` | `left` |
+| `--input-border-box-shadow` | input | settable | `--nldesign-nc-input-border-box-shadow` | `var(--input-border-box-shadow-light)` |
+| `--input-border-box-shadow-dark` | input | settable | `--nldesign-nc-input-border-box-shadow-dark` | `0 1px var(--vs-border-color), 0 0 0 1px…` |
+| `--input-border-box-shadow-light` | input | settable | `--nldesign-nc-input-border-box-shadow-light` | `0 -1px var(--vs-border-color), 0 0 0 1p…` |
 | `--input-border-color` | input | mapped | `--nldesign-component-textarea-focus-border-color` | `var(--color-border-maxcontrast)` |
-| `--input-border-radius` | input | excluded |  | `var(--border-radius-element)` |
-| `--input-border-width-offset` | input | excluded |  | `calc(var(--border-width-input-focused, …` |
-| `--input-disabled-border-color` | input | excluded |  | `transparent` |
-| `--input-focus-border-color` | input | excluded |  | `Highlight` |
-| `--input-focus-outline` | input | excluded |  | `1px solid Canvas` |
-| `--input-hover-border-color` | input | excluded |  | `black` |
-| `--input-label-font-size` | input | excluded |  | `var(--default-font-size)` |
-| `--input-padding-end` | input | excluded |  | `var(--border-radius-element)` |
-| `--input-padding-start` | input | excluded |  | `var(--border-radius-element)` |
-| `--input-unfocused-border-color` | input | excluded |  | `transparent` |
-| `--item-padding` | item | excluded |  | `16px` |
-| `--level-padding` | level | excluded |  | `12px` |
-| `--link-outline` | link | excluded |  | `none` |
-| `--list-item-border-radius` | list | excluded |  | `var(--border-radius-element, 32px)` |
-| `--list-item-height` | list | excluded |  | `2lh` |
-| `--list-item-padding` | list | excluded |  | `var(--default-grid-baseline)` |
-| `--loading-icon-delay` | loading | excluded |  | `400ms` |
+| `--input-border-radius` | input | settable | `--nldesign-nc-input-border-radius` | `var(--border-radius-element)` |
+| `--input-border-width-offset` | input | settable | `--nldesign-nc-input-border-width-offset` | `calc(var(--border-width-input-focused, …` |
+| `--input-disabled-border-color` | input | settable | `--nldesign-nc-input-disabled-border-color` | `transparent` |
+| `--input-focus-border-color` | input | settable | `--nldesign-nc-input-focus-border-color` | `Highlight` |
+| `--input-focus-outline` | input | settable | `--nldesign-nc-input-focus-outline` | `1px solid Canvas` |
+| `--input-hover-border-color` | input | settable | `--nldesign-nc-input-hover-border-color` | `black` |
+| `--input-label-font-size` | input | settable | `--nldesign-nc-input-label-font-size` | `var(--default-font-size)` |
+| `--input-padding-end` | input | settable | `--nldesign-nc-input-padding-end` | `var(--border-radius-element)` |
+| `--input-padding-start` | input | settable | `--nldesign-nc-input-padding-start` | `var(--border-radius-element)` |
+| `--input-unfocused-border-color` | input | settable | `--nldesign-nc-input-unfocused-border-color` | `transparent` |
+| `--item-padding` | item | settable | `--nldesign-nc-item-padding` | `16px` |
+| `--level-padding` | level | settable | `--nldesign-nc-level-padding` | `12px` |
+| `--link-outline` | link | settable | `--nldesign-nc-link-outline` | `none` |
+| `--list-item-border-radius` | list | settable | `--nldesign-nc-list-item-border-radius` | `var(--border-radius-element, 32px)` |
+| `--list-item-height` | list | settable | `--nldesign-nc-list-item-height` | `2lh` |
+| `--list-item-padding` | list | settable | `--nldesign-nc-list-item-padding` | `var(--default-grid-baseline)` |
+| `--loading-icon-delay` | loading | settable | `--nldesign-nc-loading-icon-delay` | `400ms` |
 | `--local-search-width` | local | excluded |  | `min(calc(250px + var(--dfb017de)), 95vw)` |
-| `--main-color` | main | excluded |  | `rgb(12 12 13)` |
-| `--max-icon-size` | max | excluded |  | `calc(var(--default-clickable-area) - 2 …` |
-| `--member-list-gap` | member | excluded |  | `calc(1.5 * var(--default-grid-baseline))` |
+| `--main-color` | main | settable | `--nldesign-nc-main-color` | `rgb(12 12 13)` |
+| `--max-icon-size` | max | settable | `--nldesign-nc-max-icon-size` | `calc(var(--default-clickable-area) - 2 …` |
+| `--member-list-gap` | member | settable | `--nldesign-nc-member-list-gap` | `calc(1.5 * var(--default-grid-baseline))` |
 | `--mermaid-font-family` | mermaid | excluded |  | `${e.fontFamily` |
-| `--min-size` | min | excluded |  | `32px` |
-| `--mtime-height` | mtime | excluded |  | `calc(var(--font-size-small) + var(--def…` |
-| `--name-height` | name | excluded |  | `var(--default-clickable-area)` |
-| `--nav-tint` | nav | excluded |  | `hsl(from var(--color-primary-element-li…` |
-| `--nav-tint-strong` | nav | excluded |  | `var(--color-primary-element-light)` |
-| `--nc-form-box-item-border-width` | nc | excluded |  | `1px` |
-| `--nc-form-box-item-min-height` | nc | excluded |  | `40px` |
+| `--min-size` | min | settable | `--nldesign-nc-min-size` | `32px` |
+| `--mtime-height` | mtime | settable | `--nldesign-nc-mtime-height` | `calc(var(--font-size-small) + var(--def…` |
+| `--name-height` | name | settable | `--nldesign-nc-name-height` | `var(--default-clickable-area)` |
+| `--nav-tint` | nav | settable | `--nldesign-nc-nav-tint` | `hsl(from var(--color-primary-element-li…` |
+| `--nav-tint-strong` | nav | settable | `--nldesign-nc-nav-tint-strong` | `var(--color-primary-element-light)` |
+| `--nc-form-box-item-border-width` | nc | settable | `--nldesign-nc-nc-form-box-item-border-width` | `1px` |
+| `--nc-form-box-item-min-height` | nc | settable | `--nldesign-nc-nc-form-box-item-min-height` | `40px` |
 | `--note-background` | note | mapped |  | `var(--color-success)` |
-| `--note-card-icon-size` | note | excluded |  | `20px` |
-| `--note-card-padding` | note | excluded |  | `calc(2 * var(--default-grid-baseline))` |
+| `--note-card-icon-size` | note | settable | `--nldesign-nc-note-card-icon-size` | `20px` |
+| `--note-card-padding` | note | settable | `--nldesign-nc-note-card-padding` | `calc(2 * var(--default-grid-baseline))` |
 | `--note-theme` | note | mapped |  | `var(--color-success-text)` |
-| `--open-background-color` | open | excluded |  | `var(--color-background-hover, $action-b…` |
-| `--outline-around-color` | outline | excluded |  | `#f0f0f4` |
-| `--outline-around-width` | outline | excluded |  | `1px` |
-| `--outline-color` | outline | excluded |  | `#0060df` |
-| `--outline-width` | outline | excluded |  | `2px` |
-| `--padding` | padding | excluded |  | `calc((var(--default-clickable-area) - 2…` |
-| `--padding-inline-start` | padding | excluded |  | `calc(0 * var(--level-padding))` |
-| `--page-border` | page | excluded |  | `9px solid transparent` |
-| `--page-margin` | page | excluded |  | `1px auto -8px` |
-| `--panel-width` | panel | excluded |  | `300px` |
-| `--pdfViewer-padding-bottom` | pdfViewer | excluded |  | `0` |
-| `--photos-face-width` | photos | excluded |  | `128px` |
-| `--plyr-audio-control-color` | plyr | excluded |  | `var(--color-main-text)` |
-| `--plyr-audio-controls-background` | plyr | excluded |  | `var(--color-main-background)` |
-| `--plyr-button-size` | plyr | excluded |  | `44px` |
-| `--plyr-color-main` | plyr | excluded |  | `var(--color-primary-element)` |
-| `--plyr-control-icon-size` | plyr | excluded |  | `18px` |
-| `--plyr-menu-background` | plyr | excluded |  | `var(--color-main-background)` |
-| `--plyr-menu-color` | plyr | excluded |  | `var(--color-main-text)` |
-| `--plyr-range-fill-background` | plyr | excluded |  | `var(--color-primary-element)` |
+| `--open-background-color` | open | settable | `--nldesign-nc-open-background-color` | `var(--color-background-hover, $action-b…` |
+| `--outline-around-color` | outline | settable | `--nldesign-nc-outline-around-color` | `#f0f0f4` |
+| `--outline-around-width` | outline | settable | `--nldesign-nc-outline-around-width` | `1px` |
+| `--outline-color` | outline | settable | `--nldesign-nc-outline-color` | `#0060df` |
+| `--outline-width` | outline | settable | `--nldesign-nc-outline-width` | `2px` |
+| `--padding` | padding | settable | `--nldesign-nc-padding` | `calc((var(--default-clickable-area) - 2…` |
+| `--padding-inline-start` | padding | settable | `--nldesign-nc-padding-inline-start` | `calc(0 * var(--level-padding))` |
+| `--page-border` | page | settable | `--nldesign-nc-page-border` | `9px solid transparent` |
+| `--page-margin` | page | settable | `--nldesign-nc-page-margin` | `1px auto -8px` |
+| `--panel-width` | panel | settable | `--nldesign-nc-panel-width` | `300px` |
+| `--pdfViewer-padding-bottom` | pdfViewer | settable | `--nldesign-nc-pdfViewer-padding-bottom` | `0` |
+| `--photos-face-width` | photos | settable | `--nldesign-nc-photos-face-width` | `128px` |
+| `--plyr-audio-control-color` | plyr | settable | `--nldesign-nc-plyr-audio-control-color` | `var(--color-main-text)` |
+| `--plyr-audio-controls-background` | plyr | settable | `--nldesign-nc-plyr-audio-controls-background` | `var(--color-main-background)` |
+| `--plyr-button-size` | plyr | settable | `--nldesign-nc-plyr-button-size` | `44px` |
+| `--plyr-color-main` | plyr | settable | `--nldesign-nc-plyr-color-main` | `var(--color-primary-element)` |
+| `--plyr-control-icon-size` | plyr | settable | `--nldesign-nc-plyr-control-icon-size` | `18px` |
+| `--plyr-menu-background` | plyr | settable | `--nldesign-nc-plyr-menu-background` | `var(--color-main-background)` |
+| `--plyr-menu-color` | plyr | settable | `--nldesign-nc-plyr-menu-color` | `var(--color-main-text)` |
+| `--plyr-range-fill-background` | plyr | settable | `--nldesign-nc-plyr-range-fill-background` | `var(--color-primary-element)` |
 | `--progress-bar-color` | progress | excluded |  | `var(--3a86fec2)` |
-| `--progressBar-bg-color` | progressBar | excluded |  | `rgb(221 221 222)` |
-| `--progressBar-blend-color` | progressBar | excluded |  | `rgb(116 177 239)` |
-| `--progressBar-color` | progressBar | excluded |  | `rgb(10 132 255)` |
-| `--radio-bg-color` | radio | excluded |  | `#f0f0f4` |
-| `--radio-border-color` | radio | excluded |  | `#8f8f9d` |
-| `--radio-checked-bg-color` | radio | excluded |  | `#fbfbfe` |
-| `--radio-checked-border-color` | radio | excluded |  | `#0060df` |
-| `--radio-group-button--background-color` | radio | excluded |  | `var(--color-primary-element-light)` |
-| `--radio-group-button--background-color-hover` | radio | excluded |  | `var(--color-primary-element-light-hover)` |
-| `--radio-group-button--border-radius` | radio | excluded |  | `var(--border-radius-small)` |
-| `--radio-group-button--border-width` | radio | excluded |  | `1px` |
-| `--radio-group-button--color` | radio | excluded |  | `var(--color-primary-element-light-text)` |
-| `--radio-group-button--icon-size` | radio | excluded |  | `calc(var(--default-clickable-area) - 4p…` |
-| `--radio-group-button--padding` | radio | excluded |  | `1px` |
-| `--ratio` | ratio | excluded |  | `16` |
-| `--resizer-bg-color` | resizer | excluded |  | `var(--outline-color)` |
-| `--resizer-shift` | resizer | excluded |  | `calc(     0px - (var(--outline-width) +…` |
-| `--resizer-size` | resizer | excluded |  | `6px` |
-| `--resource-box-size` | resource | excluded |  | `var(--default-clickable-area)` |
-| `--resources-list-gap` | resources | excluded |  | `calc(2 * var(--default-grid-baseline))` |
-| `--row-width` | row | excluded |  | `calc(var(--icon-preview-size) + var(--i…` |
-| `--scrollbar-bg-color` | scrollbar | excluded |  | `auto` |
-| `--scrollbar-color` | scrollbar | excluded |  | `auto` |
-| `--secondary-margin` | secondary | excluded |  | `18px` |
-| `--separator-color` | separator | excluded |  | `rgb(0 0 0 / 0.3)` |
-| `--session-max-width` | session | excluded |  | `280px` |
-| `--sidebar-narrow-bg-color` | sidebar | excluded |  | `rgb(212 212 215 / 0.9)` |
-| `--sidebar-toolbar-bg-color` | sidebar | excluded |  | `rgb(245 246 247)` |
-| `--sidebar-transition-duration` | sidebar | excluded |  | `200ms` |
-| `--sidebar-transition-timing-function` | sidebar | excluded |  | `ease` |
-| `--sidebar-width` | sidebar | excluded |  | `200px` |
-| `--size` | size | excluded |  | `var(--default-clickable-area)` |
-| `--spreadHorizontalWrapped-margin-LR` | spreadHorizontalWrapped | excluded |  | `-3.5px` |
-| `--sticky-column-z-index` | sticky | excluded |  | `calc(var(--vs-dropdown-z-index) + 1)` |
-| `--table-border-radius` | table | excluded |  | `var(--border-radius)` |
-| `--table-color-background` | table | excluded |  | `var(--color-main-background)` |
-| `--table-color-background-hover` | table | excluded |  | `var(--color-primary-element-light)` |
-| `--table-color-border` | table | excluded |  | `var(--color-border)` |
-| `--table-color-heading` | table | excluded |  | `var(--color-text-maxcontrast)` |
-| `--table-color-heading-border` | table | excluded |  | `var(--color-border-dark)` |
-| `--text-primary-color` | text | excluded |  | `#15141a` |
-| `--text-secondary-color` | text | excluded |  | `#5b5b66` |
-| `--textarea-bg-color` | textarea | excluded |  | `white` |
-| `--textarea-border-color` | textarea | excluded |  | `#8f8f9d` |
-| `--textarea-fg-color` | textarea | excluded |  | `var(--text-secondary-color)` |
-| `--thumbnail-hover-color` | thumbnail | excluded |  | `rgb(0 0 0 / 0.1)` |
-| `--thumbnail-selected-color` | thumbnail | excluded |  | `rgb(0 0 0 / 0.2)` |
-| `--toggled-btn-bg-color` | toggled | excluded |  | `rgb(0 0 0 / 0.3)` |
-| `--toggled-btn-color` | toggled | excluded |  | `rgb(0 0 0)` |
-| `--toggled-hover-active-btn-color` | toggled | excluded |  | `rgb(0 0 0 / 0.4)` |
-| `--toggled-hover-btn-outline` | toggled | excluded |  | `none` |
-| `--toolbar-bg-color` | toolbar | excluded |  | `rgb(249 249 250)` |
-| `--toolbar-border-bottom` | toolbar | excluded |  | `none` |
-| `--toolbar-border-color` | toolbar | excluded |  | `rgb(184 184 184)` |
-| `--toolbar-box-shadow` | toolbar | excluded |  | `0 1px 0 var(--toolbar-border-color)` |
-| `--toolbar-icon-bg-color` | toolbar | excluded |  | `rgb(0 0 0)` |
-| `--toolbar-icon-hover-bg-color` | toolbar | excluded |  | `rgb(0 0 0)` |
-| `--toolbar-icon-opacity` | toolbar | excluded |  | `0.7` |
-| `--toolbarSidebar-border-bottom` | toolbarSidebar | excluded |  | `none` |
-| `--toolbarSidebar-box-shadow` | toolbarSidebar | excluded |  | `inset calc(-1px * var(--dir-factor)) 0 …` |
-| `--treeitem-bg-color` | treeitem | excluded |  | `rgb(0 0 0 / 0.15)` |
-| `--treeitem-color` | treeitem | excluded |  | `rgb(0 0 0 / 0.8)` |
-| `--treeitem-hover-color` | treeitem | excluded |  | `rgb(0 0 0 / 0.9)` |
-| `--treeitem-selected-bg-color` | treeitem | excluded |  | `rgb(0 0 0 / 0.25)` |
-| `--treeitem-selected-color` | treeitem | excluded |  | `rgb(0 0 0 / 0.9)` |
-| `--unfocus-outline` | unfocus | excluded |  | `solid var(--outline-width) transparent` |
-| `--user-status-color-away` | user | excluded |  | `#C88800` |
-| `--user-status-color-busy` | user | excluded |  | `#DB0606` |
-| `--user-status-color-offline` | user | excluded |  | `#6B6B6B` |
+| `--progressBar-bg-color` | progressBar | settable | `--nldesign-nc-progressBar-bg-color` | `rgb(221 221 222)` |
+| `--progressBar-blend-color` | progressBar | settable | `--nldesign-nc-progressBar-blend-color` | `rgb(116 177 239)` |
+| `--progressBar-color` | progressBar | settable | `--nldesign-nc-progressBar-color` | `rgb(10 132 255)` |
+| `--radio-bg-color` | radio | settable | `--nldesign-nc-radio-bg-color` | `#f0f0f4` |
+| `--radio-border-color` | radio | settable | `--nldesign-nc-radio-border-color` | `#8f8f9d` |
+| `--radio-checked-bg-color` | radio | settable | `--nldesign-nc-radio-checked-bg-color` | `#fbfbfe` |
+| `--radio-checked-border-color` | radio | settable | `--nldesign-nc-radio-checked-border-color` | `#0060df` |
+| `--radio-group-button--background-color` | radio | settable | `--nldesign-nc-radio-group-button--background-color` | `var(--color-primary-element-light)` |
+| `--radio-group-button--background-color-hover` | radio | settable | `--nldesign-nc-radio-group-button--background-color-hover` | `var(--color-primary-element-light-hover)` |
+| `--radio-group-button--border-radius` | radio | settable | `--nldesign-nc-radio-group-button--border-radius` | `var(--border-radius-small)` |
+| `--radio-group-button--border-width` | radio | settable | `--nldesign-nc-radio-group-button--border-width` | `1px` |
+| `--radio-group-button--color` | radio | settable | `--nldesign-nc-radio-group-button--color` | `var(--color-primary-element-light-text)` |
+| `--radio-group-button--icon-size` | radio | settable | `--nldesign-nc-radio-group-button--icon-size` | `calc(var(--default-clickable-area) - 4p…` |
+| `--radio-group-button--padding` | radio | settable | `--nldesign-nc-radio-group-button--padding` | `1px` |
+| `--ratio` | ratio | settable | `--nldesign-nc-ratio` | `16` |
+| `--resizer-bg-color` | resizer | settable | `--nldesign-nc-resizer-bg-color` | `var(--outline-color)` |
+| `--resizer-shift` | resizer | settable | `--nldesign-nc-resizer-shift` | `calc(     0px - (var(--outline-width) +…` |
+| `--resizer-size` | resizer | settable | `--nldesign-nc-resizer-size` | `6px` |
+| `--resource-box-size` | resource | settable | `--nldesign-nc-resource-box-size` | `var(--default-clickable-area)` |
+| `--resources-list-gap` | resources | settable | `--nldesign-nc-resources-list-gap` | `calc(2 * var(--default-grid-baseline))` |
+| `--row-width` | row | settable | `--nldesign-nc-row-width` | `calc(var(--icon-preview-size) + var(--i…` |
+| `--scrollbar-bg-color` | scrollbar | settable | `--nldesign-nc-scrollbar-bg-color` | `auto` |
+| `--scrollbar-color` | scrollbar | settable | `--nldesign-nc-scrollbar-color` | `auto` |
+| `--secondary-margin` | secondary | settable | `--nldesign-nc-secondary-margin` | `18px` |
+| `--separator-color` | separator | settable | `--nldesign-nc-separator-color` | `rgb(0 0 0 / 0.3)` |
+| `--session-max-width` | session | settable | `--nldesign-nc-session-max-width` | `280px` |
+| `--sidebar-narrow-bg-color` | sidebar | settable | `--nldesign-nc-sidebar-narrow-bg-color` | `rgb(212 212 215 / 0.9)` |
+| `--sidebar-toolbar-bg-color` | sidebar | settable | `--nldesign-nc-sidebar-toolbar-bg-color` | `rgb(245 246 247)` |
+| `--sidebar-transition-duration` | sidebar | settable | `--nldesign-nc-sidebar-transition-duration` | `200ms` |
+| `--sidebar-transition-timing-function` | sidebar | settable | `--nldesign-nc-sidebar-transition-timing-function` | `ease` |
+| `--sidebar-width` | sidebar | settable | `--nldesign-nc-sidebar-width` | `200px` |
+| `--size` | size | settable | `--nldesign-nc-size` | `var(--default-clickable-area)` |
+| `--spreadHorizontalWrapped-margin-LR` | spreadHorizontalWrapped | settable | `--nldesign-nc-spreadHorizontalWrapped-margin-LR` | `-3.5px` |
+| `--sticky-column-z-index` | sticky | settable | `--nldesign-nc-sticky-column-z-index` | `calc(var(--vs-dropdown-z-index) + 1)` |
+| `--table-border-radius` | table | settable | `--nldesign-nc-table-border-radius` | `var(--border-radius)` |
+| `--table-color-background` | table | settable | `--nldesign-nc-table-color-background` | `var(--color-main-background)` |
+| `--table-color-background-hover` | table | settable | `--nldesign-nc-table-color-background-hover` | `var(--color-primary-element-light)` |
+| `--table-color-border` | table | settable | `--nldesign-nc-table-color-border` | `var(--color-border)` |
+| `--table-color-heading` | table | settable | `--nldesign-nc-table-color-heading` | `var(--color-text-maxcontrast)` |
+| `--table-color-heading-border` | table | settable | `--nldesign-nc-table-color-heading-border` | `var(--color-border-dark)` |
+| `--text-primary-color` | text | settable | `--nldesign-nc-text-primary-color` | `#15141a` |
+| `--text-secondary-color` | text | settable | `--nldesign-nc-text-secondary-color` | `#5b5b66` |
+| `--textarea-bg-color` | textarea | settable | `--nldesign-nc-textarea-bg-color` | `white` |
+| `--textarea-border-color` | textarea | settable | `--nldesign-nc-textarea-border-color` | `#8f8f9d` |
+| `--textarea-fg-color` | textarea | settable | `--nldesign-nc-textarea-fg-color` | `var(--text-secondary-color)` |
+| `--thumbnail-hover-color` | thumbnail | settable | `--nldesign-nc-thumbnail-hover-color` | `rgb(0 0 0 / 0.1)` |
+| `--thumbnail-selected-color` | thumbnail | settable | `--nldesign-nc-thumbnail-selected-color` | `rgb(0 0 0 / 0.2)` |
+| `--toggled-btn-bg-color` | toggled | settable | `--nldesign-nc-toggled-btn-bg-color` | `rgb(0 0 0 / 0.3)` |
+| `--toggled-btn-color` | toggled | settable | `--nldesign-nc-toggled-btn-color` | `rgb(0 0 0)` |
+| `--toggled-hover-active-btn-color` | toggled | settable | `--nldesign-nc-toggled-hover-active-btn-color` | `rgb(0 0 0 / 0.4)` |
+| `--toggled-hover-btn-outline` | toggled | settable | `--nldesign-nc-toggled-hover-btn-outline` | `none` |
+| `--toolbar-bg-color` | toolbar | settable | `--nldesign-nc-toolbar-bg-color` | `rgb(249 249 250)` |
+| `--toolbar-border-bottom` | toolbar | settable | `--nldesign-nc-toolbar-border-bottom` | `none` |
+| `--toolbar-border-color` | toolbar | settable | `--nldesign-nc-toolbar-border-color` | `rgb(184 184 184)` |
+| `--toolbar-box-shadow` | toolbar | settable | `--nldesign-nc-toolbar-box-shadow` | `0 1px 0 var(--toolbar-border-color)` |
+| `--toolbar-icon-bg-color` | toolbar | settable | `--nldesign-nc-toolbar-icon-bg-color` | `rgb(0 0 0)` |
+| `--toolbar-icon-hover-bg-color` | toolbar | settable | `--nldesign-nc-toolbar-icon-hover-bg-color` | `rgb(0 0 0)` |
+| `--toolbar-icon-opacity` | toolbar | settable | `--nldesign-nc-toolbar-icon-opacity` | `0.7` |
+| `--toolbarSidebar-border-bottom` | toolbarSidebar | settable | `--nldesign-nc-toolbarSidebar-border-bottom` | `none` |
+| `--toolbarSidebar-box-shadow` | toolbarSidebar | settable | `--nldesign-nc-toolbarSidebar-box-shadow` | `inset calc(-1px * var(--dir-factor)) 0 …` |
+| `--treeitem-bg-color` | treeitem | settable | `--nldesign-nc-treeitem-bg-color` | `rgb(0 0 0 / 0.15)` |
+| `--treeitem-color` | treeitem | settable | `--nldesign-nc-treeitem-color` | `rgb(0 0 0 / 0.8)` |
+| `--treeitem-hover-color` | treeitem | settable | `--nldesign-nc-treeitem-hover-color` | `rgb(0 0 0 / 0.9)` |
+| `--treeitem-selected-bg-color` | treeitem | settable | `--nldesign-nc-treeitem-selected-bg-color` | `rgb(0 0 0 / 0.25)` |
+| `--treeitem-selected-color` | treeitem | settable | `--nldesign-nc-treeitem-selected-color` | `rgb(0 0 0 / 0.9)` |
+| `--unfocus-outline` | unfocus | settable | `--nldesign-nc-unfocus-outline` | `solid var(--outline-width) transparent` |
+| `--user-status-color-away` | user | settable | `--nldesign-nc-user-status-color-away` | `#C88800` |
+| `--user-status-color-busy` | user | settable | `--nldesign-nc-user-status-color-busy` | `#DB0606` |
+| `--user-status-color-offline` | user | settable | `--nldesign-nc-user-status-color-offline` | `#6B6B6B` |
 | `--user-status-color-online` | user | mapped | `--nldesign-component-avatar-online-status-color` | `#2D7B41` |
-| `--vs-actions-padding` | vs | excluded |  | `0 8px 0 4px` |
+| `--vs-actions-padding` | vs | settable | `--nldesign-nc-vs-actions-padding` | `0 8px 0 4px` |
 | `--vs-border-color` | vs | mapped | `--nldesign-component-form-select-border-color` | `var(--color-border-maxcontrast)` |
 | `--vs-border-radius` | vs | mapped | `--nldesign-component-form-select-border-radius` | `var(--border-radius-element)` |
-| `--vs-border-style` | vs | excluded |  | `solid` |
-| `--vs-border-width` | vs | excluded |  | `var(--border-width-input, 2px) !importa…` |
-| `--vs-colors--dark` | vs | excluded |  | `#333` |
-| `--vs-colors--darkest` | vs | excluded |  | `rgba(0,0,0,.15)` |
-| `--vs-colors--light` | vs | excluded |  | `rgba(60,60,60,.5)` |
-| `--vs-colors--lightest` | vs | excluded |  | `rgba(60,60,60,.26)` |
-| `--vs-controls--deselect-text-shadow` | vs | excluded |  | `0 1px 0 #fff` |
-| `--vs-controls-color` | vs | excluded |  | `var(--color-main-text)` |
-| `--vs-controls-size` | vs | excluded |  | `1` |
-| `--vs-disabled-bg` | vs | excluded |  | `var(--color-background-hover)` |
-| `--vs-disabled-cursor` | vs | excluded |  | `not-allowed` |
-| `--vs-dropdown-bg` | vs | excluded |  | `var(--color-main-background)` |
-| `--vs-dropdown-box-shadow` | vs | excluded |  | `0px 2px 2px 0px var(--color-box-shadow)` |
+| `--vs-border-style` | vs | settable | `--nldesign-nc-vs-border-style` | `solid` |
+| `--vs-border-width` | vs | settable | `--nldesign-nc-vs-border-width` | `var(--border-width-input, 2px) !importa…` |
+| `--vs-colors--dark` | vs | settable | `--nldesign-nc-vs-colors--dark` | `#333` |
+| `--vs-colors--darkest` | vs | settable | `--nldesign-nc-vs-colors--darkest` | `rgba(0,0,0,.15)` |
+| `--vs-colors--light` | vs | settable | `--nldesign-nc-vs-colors--light` | `rgba(60,60,60,.5)` |
+| `--vs-colors--lightest` | vs | settable | `--nldesign-nc-vs-colors--lightest` | `rgba(60,60,60,.26)` |
+| `--vs-controls--deselect-text-shadow` | vs | settable | `--nldesign-nc-vs-controls--deselect-text-shadow` | `0 1px 0 #fff` |
+| `--vs-controls-color` | vs | settable | `--nldesign-nc-vs-controls-color` | `var(--color-main-text)` |
+| `--vs-controls-size` | vs | settable | `--nldesign-nc-vs-controls-size` | `1` |
+| `--vs-disabled-bg` | vs | settable | `--nldesign-nc-vs-disabled-bg` | `var(--color-background-hover)` |
+| `--vs-disabled-cursor` | vs | settable | `--nldesign-nc-vs-disabled-cursor` | `not-allowed` |
+| `--vs-dropdown-bg` | vs | settable | `--nldesign-nc-vs-dropdown-bg` | `var(--color-main-background)` |
+| `--vs-dropdown-box-shadow` | vs | settable | `--nldesign-nc-vs-dropdown-box-shadow` | `0px 2px 2px 0px var(--color-box-shadow)` |
 | `--vs-dropdown-color` | vs | mapped | `--nldesign-component-form-select-option-color` | `var(--color-main-text)` |
-| `--vs-dropdown-max-height` | vs | excluded |  | `350px` |
-| `--vs-dropdown-min-width` | vs | excluded |  | `160px` |
+| `--vs-dropdown-max-height` | vs | settable | `--nldesign-nc-vs-dropdown-max-height` | `350px` |
+| `--vs-dropdown-min-width` | vs | settable | `--nldesign-nc-vs-dropdown-min-width` | `160px` |
 | `--vs-dropdown-option--active-bg` | vs | mapped | `--nldesign-component-form-select-option-hover-background-color` | `var(--color-background-hover)` |
 | `--vs-dropdown-option--active-color` | vs | mapped | `--nldesign-component-form-select-option-hover-color` | `var(--color-main-text)` |
-| `--vs-dropdown-option--deselect-bg` | vs | excluded |  | `var(--color-error)` |
-| `--vs-dropdown-option--deselect-color` | vs | excluded |  | `#fff` |
-| `--vs-dropdown-option--kb-focus-box-shadow` | vs | excluded |  | `inset 0px 0px 0px 2px var(--vs-border-c…` |
-| `--vs-dropdown-option-color` | vs | excluded |  | `var(--vs-dropdown-color)` |
-| `--vs-dropdown-option-padding` | vs | excluded |  | `8px 20px` |
-| `--vs-dropdown-z-index` | vs | excluded |  | `9999` |
-| `--vs-font-size` | vs | excluded |  | `var(--default-font-size)` |
-| `--vs-line-height` | vs | excluded |  | `var(--default-line-height)` |
-| `--vs-search-input-bg` | vs | excluded |  | `var(--color-main-background)` |
-| `--vs-search-input-color` | vs | excluded |  | `var(--color-main-text)` |
-| `--vs-search-input-placeholder-color` | vs | excluded |  | `var(--color-text-maxcontrast)` |
-| `--vs-selected-bg` | vs | excluded |  | `var(--color-background-hover)` |
-| `--vs-selected-border-color` | vs | excluded |  | `var(--vs-border-color)` |
-| `--vs-selected-border-style` | vs | excluded |  | `var(--vs-border-style)` |
-| `--vs-selected-border-width` | vs | excluded |  | `var(--vs-border-width)` |
+| `--vs-dropdown-option--deselect-bg` | vs | settable | `--nldesign-nc-vs-dropdown-option--deselect-bg` | `var(--color-error)` |
+| `--vs-dropdown-option--deselect-color` | vs | settable | `--nldesign-nc-vs-dropdown-option--deselect-color` | `#fff` |
+| `--vs-dropdown-option--kb-focus-box-shadow` | vs | settable | `--nldesign-nc-vs-dropdown-option--kb-focus-box-shadow` | `inset 0px 0px 0px 2px var(--vs-border-c…` |
+| `--vs-dropdown-option-color` | vs | settable | `--nldesign-nc-vs-dropdown-option-color` | `var(--vs-dropdown-color)` |
+| `--vs-dropdown-option-padding` | vs | settable | `--nldesign-nc-vs-dropdown-option-padding` | `8px 20px` |
+| `--vs-dropdown-z-index` | vs | settable | `--nldesign-nc-vs-dropdown-z-index` | `9999` |
+| `--vs-font-size` | vs | settable | `--nldesign-nc-vs-font-size` | `var(--default-font-size)` |
+| `--vs-line-height` | vs | settable | `--nldesign-nc-vs-line-height` | `var(--default-line-height)` |
+| `--vs-search-input-bg` | vs | settable | `--nldesign-nc-vs-search-input-bg` | `var(--color-main-background)` |
+| `--vs-search-input-color` | vs | settable | `--nldesign-nc-vs-search-input-color` | `var(--color-main-text)` |
+| `--vs-search-input-placeholder-color` | vs | settable | `--nldesign-nc-vs-search-input-placeholder-color` | `var(--color-text-maxcontrast)` |
+| `--vs-selected-bg` | vs | settable | `--nldesign-nc-vs-selected-bg` | `var(--color-background-hover)` |
+| `--vs-selected-border-color` | vs | settable | `--nldesign-nc-vs-selected-border-color` | `var(--vs-border-color)` |
+| `--vs-selected-border-style` | vs | settable | `--nldesign-nc-vs-selected-border-style` | `var(--vs-border-style)` |
+| `--vs-selected-border-width` | vs | settable | `--nldesign-nc-vs-selected-border-width` | `var(--vs-border-width)` |
 | `--vs-selected-color` | vs | mapped | `--nldesign-component-form-select-color` | `var(--color-main-text)` |
-| `--vs-state-disabled-bg` | vs | excluded |  | `var(--color-background-hover)` |
-| `--vs-state-disabled-color` | vs | excluded |  | `var(--color-text-maxcontrast)` |
-| `--vs-state-disabled-cursor` | vs | excluded |  | `not-allowed` |
-| `--vs-transition-duration` | vs | excluded |  | `0ms` |
-| `--vs-transition-timing-function` | vs | excluded |  | `cubic-bezier(1,-.115,.975,.855)` |
-| `--xfa-focus-outline` | xfa | excluded |  | `auto` |
+| `--vs-state-disabled-bg` | vs | settable | `--nldesign-nc-vs-state-disabled-bg` | `var(--color-background-hover)` |
+| `--vs-state-disabled-color` | vs | settable | `--nldesign-nc-vs-state-disabled-color` | `var(--color-text-maxcontrast)` |
+| `--vs-state-disabled-cursor` | vs | settable | `--nldesign-nc-vs-state-disabled-cursor` | `not-allowed` |
+| `--vs-transition-duration` | vs | settable | `--nldesign-nc-vs-transition-duration` | `0ms` |
+| `--vs-transition-timing-function` | vs | settable | `--nldesign-nc-vs-transition-timing-function` | `cubic-bezier(1,-.115,.975,.855)` |
+| `--xfa-focus-outline` | xfa | settable | `--nldesign-nc-xfa-focus-outline` | `auto` |
 
 ## Fallback slots
 
@@ -645,10 +645,10 @@ Read by a component with its own fallback, declared nowhere.
 | `--afe18836` | afe18836 | excluded |  |  |
 | `--animation-duration` | animation | excluded |  |  |
 | `--be84d992` | be84d992 | excluded |  |  |
-| `--callout-background` | callout | excluded |  |  |
+| `--callout-background` | callout | settable | `--nldesign-nc-callout-background` |  |
 | `--cf2ff408` | cf2ff408 | excluded |  |  |
 | `--color` | color | excluded |  |  |
-| `--color-norder-error` | color | excluded |  |  |
+| `--color-norder-error` | color | settable | `--nldesign-nc-color-norder-error` |  |
 | `--color-text` | color | excluded |  |  |
 | `--d7eb5974` | d7eb5974 | excluded |  |  |
 | `--d87c3654` | d87c3654 | excluded |  |  |
@@ -664,62 +664,62 @@ Read by a component with its own fallback, declared nowhere.
 | `--image-logoheader` | image | excluded |  |  |
 | `--image-logoheader-custom` | image | excluded |  |  |
 | `--invert-if-dark` | invert | excluded |  |  |
-| `--photos-navigation-height` | photos | excluded |  |  |
-| `--plyr-audio-control-background-hover` | plyr | excluded |  |  |
-| `--plyr-audio-control-color-hover` | plyr | excluded |  |  |
-| `--plyr-audio-progress-buffered-background` | plyr | excluded |  |  |
-| `--plyr-audio-range-thumb-active-shadow-color` | plyr | excluded |  |  |
-| `--plyr-audio-range-track-background` | plyr | excluded |  |  |
-| `--plyr-badge-background` | plyr | excluded |  |  |
-| `--plyr-badge-border-radius` | plyr | excluded |  |  |
-| `--plyr-badge-text-color` | plyr | excluded |  |  |
-| `--plyr-captions-background` | plyr | excluded |  |  |
-| `--plyr-captions-text-color` | plyr | excluded |  |  |
-| `--plyr-control-radius` | plyr | excluded |  |  |
-| `--plyr-control-spacing` | plyr | excluded |  |  |
-| `--plyr-control-toggle-checked-background` | plyr | excluded |  |  |
-| `--plyr-focus-visible-color` | plyr | excluded |  |  |
-| `--plyr-font-family` | plyr | excluded |  |  |
-| `--plyr-font-size-badge` | plyr | excluded |  |  |
-| `--plyr-font-size-base` | plyr | excluded |  |  |
-| `--plyr-font-size-large` | plyr | excluded |  |  |
-| `--plyr-font-size-menu` | plyr | excluded |  |  |
-| `--plyr-font-size-small` | plyr | excluded |  |  |
-| `--plyr-font-size-time` | plyr | excluded |  |  |
-| `--plyr-font-size-xlarge` | plyr | excluded |  |  |
-| `--plyr-font-weight-regular` | plyr | excluded |  |  |
-| `--plyr-line-height` | plyr | excluded |  |  |
-| `--plyr-menu-arrow-color` | plyr | excluded |  |  |
-| `--plyr-menu-arrow-size` | plyr | excluded |  |  |
-| `--plyr-menu-back-border-color` | plyr | excluded |  |  |
-| `--plyr-menu-back-border-shadow-color` | plyr | excluded |  |  |
-| `--plyr-menu-item-arrow-size` | plyr | excluded |  |  |
-| `--plyr-menu-radius` | plyr | excluded |  |  |
-| `--plyr-menu-shadow` | plyr | excluded |  |  |
-| `--plyr-progress-loading-background` | plyr | excluded |  |  |
-| `--plyr-progress-loading-size` | plyr | excluded |  |  |
-| `--plyr-progress-marker-background` | plyr | excluded |  |  |
-| `--plyr-progress-marker-width` | plyr | excluded |  |  |
-| `--plyr-range-thumb-active-shadow-width` | plyr | excluded |  |  |
-| `--plyr-range-thumb-background` | plyr | excluded |  |  |
-| `--plyr-range-thumb-height` | plyr | excluded |  |  |
-| `--plyr-range-thumb-shadow` | plyr | excluded |  |  |
-| `--plyr-range-track-height` | plyr | excluded |  |  |
-| `--plyr-tooltip-arrow-size` | plyr | excluded |  |  |
-| `--plyr-tooltip-background` | plyr | excluded |  |  |
-| `--plyr-tooltip-color` | plyr | excluded |  |  |
-| `--plyr-tooltip-radius` | plyr | excluded |  |  |
-| `--plyr-tooltip-shadow` | plyr | excluded |  |  |
-| `--plyr-video-background` | plyr | excluded |  |  |
-| `--plyr-video-control-background-hover` | plyr | excluded |  |  |
-| `--plyr-video-control-color` | plyr | excluded |  |  |
-| `--plyr-video-control-color-hover` | plyr | excluded |  |  |
-| `--plyr-video-controls-background` | plyr | excluded |  |  |
-| `--plyr-video-progress-buffered-background` | plyr | excluded |  |  |
-| `--plyr-video-range-track-background` | plyr | excluded |  |  |
+| `--photos-navigation-height` | photos | settable | `--nldesign-nc-photos-navigation-height` |  |
+| `--plyr-audio-control-background-hover` | plyr | settable | `--nldesign-nc-plyr-audio-control-background-hover` |  |
+| `--plyr-audio-control-color-hover` | plyr | settable | `--nldesign-nc-plyr-audio-control-color-hover` |  |
+| `--plyr-audio-progress-buffered-background` | plyr | settable | `--nldesign-nc-plyr-audio-progress-buffered-background` |  |
+| `--plyr-audio-range-thumb-active-shadow-color` | plyr | settable | `--nldesign-nc-plyr-audio-range-thumb-active-shadow-color` |  |
+| `--plyr-audio-range-track-background` | plyr | settable | `--nldesign-nc-plyr-audio-range-track-background` |  |
+| `--plyr-badge-background` | plyr | settable | `--nldesign-nc-plyr-badge-background` |  |
+| `--plyr-badge-border-radius` | plyr | settable | `--nldesign-nc-plyr-badge-border-radius` |  |
+| `--plyr-badge-text-color` | plyr | settable | `--nldesign-nc-plyr-badge-text-color` |  |
+| `--plyr-captions-background` | plyr | settable | `--nldesign-nc-plyr-captions-background` |  |
+| `--plyr-captions-text-color` | plyr | settable | `--nldesign-nc-plyr-captions-text-color` |  |
+| `--plyr-control-radius` | plyr | settable | `--nldesign-nc-plyr-control-radius` |  |
+| `--plyr-control-spacing` | plyr | settable | `--nldesign-nc-plyr-control-spacing` |  |
+| `--plyr-control-toggle-checked-background` | plyr | settable | `--nldesign-nc-plyr-control-toggle-checked-background` |  |
+| `--plyr-focus-visible-color` | plyr | settable | `--nldesign-nc-plyr-focus-visible-color` |  |
+| `--plyr-font-family` | plyr | settable | `--nldesign-nc-plyr-font-family` |  |
+| `--plyr-font-size-badge` | plyr | settable | `--nldesign-nc-plyr-font-size-badge` |  |
+| `--plyr-font-size-base` | plyr | settable | `--nldesign-nc-plyr-font-size-base` |  |
+| `--plyr-font-size-large` | plyr | settable | `--nldesign-nc-plyr-font-size-large` |  |
+| `--plyr-font-size-menu` | plyr | settable | `--nldesign-nc-plyr-font-size-menu` |  |
+| `--plyr-font-size-small` | plyr | settable | `--nldesign-nc-plyr-font-size-small` |  |
+| `--plyr-font-size-time` | plyr | settable | `--nldesign-nc-plyr-font-size-time` |  |
+| `--plyr-font-size-xlarge` | plyr | settable | `--nldesign-nc-plyr-font-size-xlarge` |  |
+| `--plyr-font-weight-regular` | plyr | settable | `--nldesign-nc-plyr-font-weight-regular` |  |
+| `--plyr-line-height` | plyr | settable | `--nldesign-nc-plyr-line-height` |  |
+| `--plyr-menu-arrow-color` | plyr | settable | `--nldesign-nc-plyr-menu-arrow-color` |  |
+| `--plyr-menu-arrow-size` | plyr | settable | `--nldesign-nc-plyr-menu-arrow-size` |  |
+| `--plyr-menu-back-border-color` | plyr | settable | `--nldesign-nc-plyr-menu-back-border-color` |  |
+| `--plyr-menu-back-border-shadow-color` | plyr | settable | `--nldesign-nc-plyr-menu-back-border-shadow-color` |  |
+| `--plyr-menu-item-arrow-size` | plyr | settable | `--nldesign-nc-plyr-menu-item-arrow-size` |  |
+| `--plyr-menu-radius` | plyr | settable | `--nldesign-nc-plyr-menu-radius` |  |
+| `--plyr-menu-shadow` | plyr | settable | `--nldesign-nc-plyr-menu-shadow` |  |
+| `--plyr-progress-loading-background` | plyr | settable | `--nldesign-nc-plyr-progress-loading-background` |  |
+| `--plyr-progress-loading-size` | plyr | settable | `--nldesign-nc-plyr-progress-loading-size` |  |
+| `--plyr-progress-marker-background` | plyr | settable | `--nldesign-nc-plyr-progress-marker-background` |  |
+| `--plyr-progress-marker-width` | plyr | settable | `--nldesign-nc-plyr-progress-marker-width` |  |
+| `--plyr-range-thumb-active-shadow-width` | plyr | settable | `--nldesign-nc-plyr-range-thumb-active-shadow-width` |  |
+| `--plyr-range-thumb-background` | plyr | settable | `--nldesign-nc-plyr-range-thumb-background` |  |
+| `--plyr-range-thumb-height` | plyr | settable | `--nldesign-nc-plyr-range-thumb-height` |  |
+| `--plyr-range-thumb-shadow` | plyr | settable | `--nldesign-nc-plyr-range-thumb-shadow` |  |
+| `--plyr-range-track-height` | plyr | settable | `--nldesign-nc-plyr-range-track-height` |  |
+| `--plyr-tooltip-arrow-size` | plyr | settable | `--nldesign-nc-plyr-tooltip-arrow-size` |  |
+| `--plyr-tooltip-background` | plyr | settable | `--nldesign-nc-plyr-tooltip-background` |  |
+| `--plyr-tooltip-color` | plyr | settable | `--nldesign-nc-plyr-tooltip-color` |  |
+| `--plyr-tooltip-radius` | plyr | settable | `--nldesign-nc-plyr-tooltip-radius` |  |
+| `--plyr-tooltip-shadow` | plyr | settable | `--nldesign-nc-plyr-tooltip-shadow` |  |
+| `--plyr-video-background` | plyr | settable | `--nldesign-nc-plyr-video-background` |  |
+| `--plyr-video-control-background-hover` | plyr | settable | `--nldesign-nc-plyr-video-control-background-hover` |  |
+| `--plyr-video-control-color` | plyr | settable | `--nldesign-nc-plyr-video-control-color` |  |
+| `--plyr-video-control-color-hover` | plyr | settable | `--nldesign-nc-plyr-video-control-color-hover` |  |
+| `--plyr-video-controls-background` | plyr | settable | `--nldesign-nc-plyr-video-controls-background` |  |
+| `--plyr-video-progress-buffered-background` | plyr | settable | `--nldesign-nc-plyr-video-progress-buffered-background` |  |
+| `--plyr-video-range-track-background` | plyr | settable | `--nldesign-nc-plyr-video-range-track-background` |  |
 | `--v6c51c3da` | v6c51c3da | excluded |  |  |
 | `--v6ca826ea` | v6ca826ea | excluded |  |  |
-| `--vs-controls--spinner-size` | vs | excluded |  |  |
+| `--vs-controls--spinner-size` | vs | settable | `--nldesign-nc-vs-controls--spinner-size` |  |
 
 ## Conduction library variables
 
@@ -727,16 +727,16 @@ The `--cn-*` variables of `@conduction/nextcloud-vue`.
 
 | Variable | Family | Status | Token | Value |
 |---|---|---|---|---|
-| `--cn-ai-pointer-offset` | cn | excluded |  | `19px` |
+| `--cn-ai-pointer-offset` | cn | settable | `--nldesign-cn-ai-pointer-offset` | `19px` |
 | `--cn-card-active-border` | cn | excluded |  |  |
-| `--cn-color-picker-checker` | cn | excluded |  | `linear-gradient(45deg, var(--color-back…` |
-| `--cn-color-swatch-checker` | cn | excluded |  | `linear-gradient(45deg, var(--color-back…` |
+| `--cn-color-picker-checker` | cn | settable | `--nldesign-cn-color-picker-checker` | `linear-gradient(45deg, var(--color-back…` |
+| `--cn-color-swatch-checker` | cn | settable | `--nldesign-cn-color-swatch-checker` | `linear-gradient(45deg, var(--color-back…` |
 | `--cn-ctx-menu-x` | cn | excluded |  |  |
 | `--cn-ctx-menu-y` | cn | excluded |  |  |
 | `--cn-detail-grid-label-width` | cn | excluded |  |  |
-| `--cn-email-accent` | cn | excluded |  |  |
-| `--cn-forms-accent` | cn | excluded |  |  |
-| `--cn-forms-status` | cn | excluded |  | `var(--color-success, #46ba61)` |
+| `--cn-email-accent` | cn | settable | `--nldesign-cn-email-accent` |  |
+| `--cn-forms-accent` | cn | settable | `--nldesign-cn-forms-accent` |  |
+| `--cn-forms-status` | cn | settable | `--nldesign-cn-forms-status` | `var(--color-success, #46ba61)` |
 | `--cn-grid-cols` | cn | excluded |  |  |
 | `--cn-grid-cs` | cn | excluded |  |  |
 | `--cn-grid-cspan` | cn | excluded |  |  |
@@ -746,38 +746,38 @@ The `--cn-*` variables of `@conduction/nextcloud-vue`.
 | `--cn-iw-accent` | cn | excluded |  |  |
 | `--cn-iwg-columns` | cn | excluded |  |  |
 | `--cn-iwg-min-height` | cn | excluded |  |  |
-| `--cn-kpi-accent` | cn | excluded |  | `var(--color-primary-element)` |
-| `--cn-kpi-gap` | cn | excluded |  | `8px` |
-| `--cn-kpi-gap-horizontal` | cn | excluded |  | `16px` |
-| `--cn-kpi-grid-gap` | cn | excluded |  | `16px` |
-| `--cn-kpi-icon-size` | cn | excluded |  | `44px` |
-| `--cn-kpi-icon-size-sm` | cn | excluded |  | `36px` |
-| `--cn-kpi-icon-tint` | cn | excluded |  | `12%` |
-| `--cn-kpi-label-color` | cn | excluded |  | `var(--color-text-maxcontrast)` |
-| `--cn-kpi-label-size` | cn | excluded |  | `13px` |
-| `--cn-kpi-padding` | cn | excluded |  | `16px` |
-| `--cn-kpi-padding-flat` | cn | excluded |  | `8px` |
-| `--cn-kpi-radius` | cn | excluded |  | `var(--border-radius-large, 10px)` |
-| `--cn-kpi-section-title-size` | cn | excluded |  | `14px` |
-| `--cn-kpi-stack-gap` | cn | excluded |  | `12px` |
-| `--cn-kpi-title-size` | cn | excluded |  | `14px` |
-| `--cn-kpi-title-weight` | cn | excluded |  | `600` |
-| `--cn-kpi-value-line` | cn | excluded |  | `1.1` |
-| `--cn-kpi-value-size` | cn | excluded |  | `1.75rem` |
-| `--cn-kpi-value-size-compact` | cn | excluded |  | `1.25rem` |
-| `--cn-kpi-value-size-stacked` | cn | excluded |  | `2rem` |
-| `--cn-kpi-value-text-size` | cn | excluded |  |  |
-| `--cn-kpi-value-weight` | cn | excluded |  | `700` |
+| `--cn-kpi-accent` | cn | settable | `--nldesign-cn-kpi-accent` | `var(--color-primary-element)` |
+| `--cn-kpi-gap` | cn | settable | `--nldesign-cn-kpi-gap` | `8px` |
+| `--cn-kpi-gap-horizontal` | cn | settable | `--nldesign-cn-kpi-gap-horizontal` | `16px` |
+| `--cn-kpi-grid-gap` | cn | settable | `--nldesign-cn-kpi-grid-gap` | `16px` |
+| `--cn-kpi-icon-size` | cn | settable | `--nldesign-cn-kpi-icon-size` | `44px` |
+| `--cn-kpi-icon-size-sm` | cn | settable | `--nldesign-cn-kpi-icon-size-sm` | `36px` |
+| `--cn-kpi-icon-tint` | cn | settable | `--nldesign-cn-kpi-icon-tint` | `12%` |
+| `--cn-kpi-label-color` | cn | settable | `--nldesign-cn-kpi-label-color` | `var(--color-text-maxcontrast)` |
+| `--cn-kpi-label-size` | cn | settable | `--nldesign-cn-kpi-label-size` | `13px` |
+| `--cn-kpi-padding` | cn | settable | `--nldesign-cn-kpi-padding` | `16px` |
+| `--cn-kpi-padding-flat` | cn | settable | `--nldesign-cn-kpi-padding-flat` | `8px` |
+| `--cn-kpi-radius` | cn | settable | `--nldesign-cn-kpi-radius` | `var(--border-radius-large, 10px)` |
+| `--cn-kpi-section-title-size` | cn | settable | `--nldesign-cn-kpi-section-title-size` | `14px` |
+| `--cn-kpi-stack-gap` | cn | settable | `--nldesign-cn-kpi-stack-gap` | `12px` |
+| `--cn-kpi-title-size` | cn | settable | `--nldesign-cn-kpi-title-size` | `14px` |
+| `--cn-kpi-title-weight` | cn | settable | `--nldesign-cn-kpi-title-weight` | `600` |
+| `--cn-kpi-value-line` | cn | settable | `--nldesign-cn-kpi-value-line` | `1.1` |
+| `--cn-kpi-value-size` | cn | settable | `--nldesign-cn-kpi-value-size` | `1.75rem` |
+| `--cn-kpi-value-size-compact` | cn | settable | `--nldesign-cn-kpi-value-size-compact` | `1.25rem` |
+| `--cn-kpi-value-size-stacked` | cn | settable | `--nldesign-cn-kpi-value-size-stacked` | `2rem` |
+| `--cn-kpi-value-text-size` | cn | settable | `--nldesign-cn-kpi-value-text-size` |  |
+| `--cn-kpi-value-weight` | cn | settable | `--nldesign-cn-kpi-value-weight` | `700` |
 | `--cn-links-widget-cols` | cn | excluded |  |  |
 | `--cn-quicklinks-icon-size` | cn | excluded |  |  |
-| `--cn-sidebar-tab-min-width` | cn | excluded |  |  |
-| `--cn-spacing-m` | cn | excluded |  |  |
-| `--cn-table-cell-max-width` | cn | excluded |  |  |
+| `--cn-sidebar-tab-min-width` | cn | settable | `--nldesign-cn-sidebar-tab-min-width` |  |
+| `--cn-spacing-m` | cn | settable | `--nldesign-cn-spacing-m` |  |
+| `--cn-table-cell-max-width` | cn | settable | `--nldesign-cn-table-cell-max-width` |  |
 | `--cn-tile-bg` | cn | excluded |  |  |
 | `--cn-tile-text` | cn | excluded |  |  |
 | `--cn-widget-icon-color` | cn | excluded |  |  |
-| `--cn-xwiki-accent` | cn | excluded |  |  |
-| `--cn-xwiki-accent-soft` | cn | excluded |  |  |
+| `--cn-xwiki-accent` | cn | settable | `--nldesign-cn-xwiki-accent` |  |
+| `--cn-xwiki-accent-soft` | cn | settable | `--nldesign-cn-xwiki-accent-soft` |  |
 
 ## Excluded classes
 

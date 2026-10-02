@@ -99,6 +99,27 @@ class TokenRegistry implements TokenRegistryInterface {
 	private static ?array $settableTokens = null;
 
 	/**
+	 * The internal token map, generated from the inventory by
+	 * `scripts/inventory/generate-internal-tokens.mjs`.
+	 */
+	private const INTERNAL_TOKENS_PATH = __DIR__ . '/../../scripts/mapping/internal-tokens.json';
+
+	/**
+	 * Decoded internal tokens, or null before the first read.
+	 *
+	 * @var array<string, array{
+	 *     variable: string,
+	 *     class: string,
+	 *     owner: string,
+	 *     type: string,
+	 *     mode: string,
+	 *     selectors: array<int, string>,
+	 *     stock: string
+	 * }>|null
+	 */
+	private static ?array $internalTokens = null;
+
+	/**
 	 * Returns the full registry of editable tokens.
 	 *
 	 * Keys are CSS custom property names (e.g. '--color-primary').
@@ -306,8 +327,9 @@ class TokenRegistry implements TokenRegistryInterface {
 			'--border-radius-rounded' => ['tab' => 'content', 'type' => 'text',  'label' => 'Border radius rounded'],
 			'--border-radius-pill' => ['tab' => 'content', 'type' => 'text',  'label' => 'Border radius pill'],
 			'--body-container-radius' => ['tab' => 'content', 'type' => 'text',  'label' => 'Body container radius'],
-			'--animation-quick' => ['tab' => 'content', 'type' => 'text',  'label' => 'Animation quick'],
-			'--animation-slow' => ['tab' => 'content', 'type' => 'text',  'label' => 'Animation slow'],
+			'--animation-quick' => ['tab' => 'content', 'type' => 'duration', 'label' => 'Animation quick'],
+			'--animation-slow' => ['tab' => 'content', 'type' => 'duration', 'label' => 'Animation slow'],
+			'--nldesign-animation-easing' => ['tab' => 'content', 'type' => 'easing', 'label' => 'Animation easing'],
 		];
 	}//end getContentTokens()
 
@@ -398,8 +420,64 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
 	 */
 	public static function isEditable(string $tokenName): bool {
-		return array_key_exists($tokenName, self::getTokens());
+		return array_key_exists($tokenName, self::getTokens()) === true
+			|| array_key_exists($tokenName, self::getInternalTokens()) === true;
 	}//end isEditable()
+
+	/**
+	 * The internal tokens: one per settable component, slot and Conduction variable.
+	 *
+	 * Keyed by token name (`--nldesign-nc-dp-hover-color`, `--nldesign-cn-kpi-accent`).
+	 * They are kept out of {@see self::getTokens()}, which feeds the token editor's
+	 * tabs, until the editor can list them per component. A missing or malformed
+	 * map yields none.
+	 *
+	 * @return array<string, array{
+	 *     variable: string,
+	 *     class: string,
+	 *     owner: string,
+	 *     type: string,
+	 *     mode: string,
+	 *     selectors: array<int, string>,
+	 *     stock: string
+	 * }> The internal tokens.
+	 *
+	 * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+	 */
+	public static function getInternalTokens(): array {
+		if (self::$internalTokens !== null) {
+			return self::$internalTokens;
+		}
+
+		self::$internalTokens = [];
+		$raw = false;
+		if (is_file(self::INTERNAL_TOKENS_PATH) === true) {
+			$raw = file_get_contents(self::INTERNAL_TOKENS_PATH);
+		}
+
+		$decoded = [];
+		if ($raw !== false) {
+			$decoded = json_decode($raw, true);
+		}
+
+		foreach (($decoded['tokens'] ?? []) as $token => $entry) {
+			if (is_array($entry) === false || is_string($entry['variable'] ?? null) === false) {
+				continue;
+			}
+
+			self::$internalTokens[(string)$token] = [
+				'variable' => $entry['variable'],
+				'class' => (string)($entry['class'] ?? 'component'),
+				'owner' => (string)($entry['owner'] ?? ''),
+				'type' => (string)($entry['type'] ?? 'text'),
+				'mode' => (string)($entry['mode'] ?? 'body'),
+				'selectors' => array_values(array_map('strval', (array)($entry['selectors'] ?? []))),
+				'stock' => (string)($entry['stock'] ?? ''),
+			];
+		}
+
+		return self::$internalTokens;
+	}//end getInternalTokens()
 
 	/**
 	 * Returns tokens grouped by tab.

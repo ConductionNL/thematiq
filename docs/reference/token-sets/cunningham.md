@@ -2,7 +2,7 @@
 
 # Cunningham (blue base)
 
-Token set `cunningham`: 25 declared by this set, 144 from the defaults layer.
+Token set `cunningham`: 25 declared by this set, 145 from the defaults layer.
 
 Contrast: primary text on primary 7.80:1, primary on background 6.02:1 (pass).
 
@@ -246,6 +246,7 @@ Contrast: primary text on primary 7.80:1, primary on background 6.02:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--nldesign-animation-easing` | `ease` | | defaults | |
 | `--nldesign-animation-quick` | `100ms` | | defaults | Header menu item height |
 | `--nldesign-animation-slow` | `300ms` | | defaults | Animation slow |
 | `--nldesign-header-icon-filter` | `invert(1) brightness(0) contrast(100)` | | defaults | |

@@ -78,6 +78,7 @@
 !/js/environment-marker.js
 !/js/playground.js
 !/js/playground/
+!/js/ownTokens.js
 # Per-feature admin and personal settings scripts (one file per block).
 !/js/admin-*.js
 !/js/personal-*.js
