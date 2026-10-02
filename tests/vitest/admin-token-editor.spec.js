@@ -459,7 +459,7 @@ describe('admin.js token editor', () => {
 			// quotes. Escaped as text only, the quote closed value="..." and the
 			// rest became live attributes (onfocus + autofocus = script on load).
 			const payload = 'Arial" onfocus="alert(1)" autofocus x="'
-			const label = "Font \" onmouseover='alert(2)' y=\""
+			const label = 'Font " onmouseover=\'alert(2)\' y="'
 			installInitialState({})
 			document.body.innerHTML = '<div id="nldesign-token-editor"></div>'
 			answer('GET', '/settings/overrides?', 200, {
