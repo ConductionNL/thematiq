@@ -82,6 +82,44 @@ class TokenRegistry implements TokenRegistryInterface {
 	private static ?array $componentTokens = null;
 
 	/**
+	 * The variable status table, relative to the app root.
+	 *
+	 * Its `settable` theme entries are Nextcloud variables a theme may set
+	 * through an `--nldesign-nc-*` token that has no default. The same table
+	 * feeds `scripts/generate-component-scopes.mjs`, so the registry and the
+	 * stylesheet that applies a value cannot disagree.
+	 */
+	private const STATUS_PATH = __DIR__ . '/../../scripts/mapping/variable-status.json';
+
+	/**
+	 * Decoded settable entries, or null before the first read.
+	 *
+	 * @var array<string, array<string, mixed>>|null
+	 */
+	private static ?array $settableTokens = null;
+
+	/**
+	 * The internal token map, generated from the inventory by
+	 * `scripts/inventory/generate-internal-tokens.mjs`.
+	 */
+	private const INTERNAL_TOKENS_PATH = __DIR__ . '/../../scripts/mapping/internal-tokens.json';
+
+	/**
+	 * Decoded internal tokens, or null before the first read.
+	 *
+	 * @var array<string, array{
+	 *     variable: string,
+	 *     class: string,
+	 *     owner: string,
+	 *     type: string,
+	 *     mode: string,
+	 *     selectors: array<int, string>,
+	 *     stock: string
+	 * }>|null
+	 */
+	private static ?array $internalTokens = null;
+
+	/**
 	 * Returns the full registry of editable tokens.
 	 *
 	 * Keys are CSS custom property names (e.g. '--color-primary').
@@ -108,11 +146,14 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	public static function getBrandTokens(): array {
+		// Settable entries come last, so for the two that were editable before
+		// (`--color-scrollbar`, `--body-container-radius`) they add the token.
 		$tokens = array_merge(
 			self::getLoginTokens(),
 			self::getContentTokens(),
 			self::getStatusTokens(),
-			self::getTypographyTokens()
+			self::getTypographyTokens(),
+			self::getSettableTokens()
 		);
 
 		return array_map(
@@ -120,6 +161,63 @@ class TokenRegistry implements TokenRegistryInterface {
 			$tokens
 		);
 	}//end getBrandTokens()
+
+	/**
+	 * The settable theme variables, read from the variable status table.
+	 *
+	 * A missing or malformed table yields none, so the brand tokens still edit.
+	 *
+	 * @return array<string, array<string, mixed>> Name => tab, type, label, settable, token, and advanced / perScheme when set.
+	 *
+	 * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
+	 */
+	public static function getSettableTokens(): array {
+		if (self::$settableTokens !== null) {
+			return self::$settableTokens;
+		}
+
+		self::$settableTokens = [];
+		$raw = false;
+		if (is_file(self::STATUS_PATH) === true) {
+			$raw = file_get_contents(self::STATUS_PATH);
+		}
+
+		$decoded = [];
+		if ($raw !== false) {
+			$decoded = json_decode($raw, true);
+		}
+
+		foreach (($decoded['variables'] ?? []) as $name => $entry) {
+			if (($entry['status'] ?? '') !== 'settable' || is_string($entry['token'] ?? null) === false) {
+				continue;
+			}
+
+			self::$settableTokens[$name] = [
+				'tab' => (string)($entry['tab'] ?? 'content'),
+				'type' => (string)($entry['type'] ?? 'text'),
+				'label' => (string)($entry['label'] ?? $name),
+				'settable' => true,
+				'token' => $entry['token'],
+				'advanced' => (($entry['advanced'] ?? false) === true),
+				'perScheme' => (($entry['perScheme'] ?? false) === true),
+			];
+		}
+
+		return self::$settableTokens;
+	}//end getSettableTokens()
+
+	/**
+	 * The `--nldesign-nc-*` token a settable variable is stored as, or null for any other name.
+	 *
+	 * @param string $tokenName A registry name, such as `--color-mark`.
+	 *
+	 * @return string|null The token.
+	 *
+	 * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
+	 */
+	public static function settableToken(string $tokenName): ?string {
+		return (self::getSettableTokens()[$tokenName]['token'] ?? null);
+	}//end settableToken()
 
 	/**
 	 * Returns the component layer, read from the shared mapping table.
@@ -321,8 +419,64 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
 	 */
 	public static function isEditable(string $tokenName): bool {
-		return array_key_exists($tokenName, self::getTokens());
+		return array_key_exists($tokenName, self::getTokens()) === true
+			|| array_key_exists($tokenName, self::getInternalTokens()) === true;
 	}//end isEditable()
+
+	/**
+	 * The internal tokens: one per settable component, slot and Conduction variable.
+	 *
+	 * Keyed by token name (`--nldesign-nc-dp-hover-color`, `--nldesign-cn-kpi-accent`).
+	 * They are kept out of {@see self::getTokens()}, which feeds the token editor's
+	 * tabs, until the editor can list them per component. A missing or malformed
+	 * map yields none.
+	 *
+	 * @return array<string, array{
+	 *     variable: string,
+	 *     class: string,
+	 *     owner: string,
+	 *     type: string,
+	 *     mode: string,
+	 *     selectors: array<int, string>,
+	 *     stock: string
+	 * }> The internal tokens.
+	 *
+	 * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+	 */
+	public static function getInternalTokens(): array {
+		if (self::$internalTokens !== null) {
+			return self::$internalTokens;
+		}
+
+		self::$internalTokens = [];
+		$raw = false;
+		if (is_file(self::INTERNAL_TOKENS_PATH) === true) {
+			$raw = file_get_contents(self::INTERNAL_TOKENS_PATH);
+		}
+
+		$decoded = [];
+		if ($raw !== false) {
+			$decoded = json_decode($raw, true);
+		}
+
+		foreach (($decoded['tokens'] ?? []) as $token => $entry) {
+			if (is_array($entry) === false || is_string($entry['variable'] ?? null) === false) {
+				continue;
+			}
+
+			self::$internalTokens[(string)$token] = [
+				'variable' => $entry['variable'],
+				'class' => (string)($entry['class'] ?? 'component'),
+				'owner' => (string)($entry['owner'] ?? ''),
+				'type' => (string)($entry['type'] ?? 'text'),
+				'mode' => (string)($entry['mode'] ?? 'body'),
+				'selectors' => array_values(array_map('strval', (array)($entry['selectors'] ?? []))),
+				'stock' => (string)($entry['stock'] ?? ''),
+			];
+		}
+
+		return self::$internalTokens;
+	}//end getInternalTokens()
 
 	/**
 	 * Returns tokens grouped by tab.
