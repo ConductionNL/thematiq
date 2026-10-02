@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  */
 
 declare(strict_types=1);

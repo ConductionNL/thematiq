@@ -177,7 +177,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return array<string, array<string, mixed>> Name => tab, type, label, settable, token, and advanced / perScheme when set.
 	 *
-	 * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public static function getSettableTokens(): array {
 		if (self::$settableTokens !== null) {
@@ -229,7 +229,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return string|null The token.
 	 *
-	 * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public static function settableToken(string $tokenName): ?string {
 		return (self::getSettableTokens()[$tokenName]['token'] ?? null);
@@ -433,7 +433,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return int The count.
 	 *
-	 * @spec openspec/changes/token-editor-at-scale/specs/token-editor-ui/spec.md
+	 * @spec openspec/specs/token-editor-ui/spec.md
 	 */
 	public static function countEditable(): int {
 		return count(self::getTokens()) + count(self::getInternalTokens());
@@ -472,7 +472,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *     stock: string
 	 * }> The internal tokens.
 	 *
-	 * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	public static function getInternalTokens(): array {
 		if (self::$internalTokens !== null) {

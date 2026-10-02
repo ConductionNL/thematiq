@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 
 declare(strict_types=1);
@@ -43,7 +43,7 @@ use RuntimeException;
  * stale copy wherever that move could not delete it, while every save went to
  * the store. Writing is not offered here at all; writers go to the store.
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 class RuntimeFileLocator {
 
@@ -56,7 +56,7 @@ class RuntimeFileLocator {
 	 * @param ITempManager     $tempManager  Hands out temporary files for consumers that need a path.
 	 * @param RuntimeFileNames $names        The name policy.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function __construct(
 		private readonly IAppManager $appManager,
@@ -72,7 +72,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return RuntimeFileStore The store.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function store(): RuntimeFileStore {
 		return $this->store;
@@ -92,7 +92,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return bool True when it does.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function isShipped(string $name): bool {
 		return is_file($this->appPath() . '/' . ltrim($name, '/'));
@@ -105,7 +105,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return bool True for a shipped set's stylesheet, dark variant or logo.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function isProtected(string $name): bool {
 		$name = ltrim($name, '/');
@@ -155,7 +155,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return bool True when the store holds it and it may be served from there.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function inStore(string $name): bool {
 		return $this->names->isAllowed(name: $name) === true
@@ -170,7 +170,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return bool True when either holds it.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function exists(string $name): bool {
 		return $this->inStore(name: $name) === true || $this->isShipped(name: $name) === true;
@@ -183,7 +183,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return string|null The content, or null when neither holds it.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function read(string $name): ?string {
 		if ($this->inStore(name: $name) === true) {
@@ -210,7 +210,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return array<int, string> Full app-relative names, sorted.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function listDirectory(string $directory, string $suffix = ''): array {
 		$directory = trim($directory, '/');
@@ -249,7 +249,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return string|null An absolute path URL, or null when neither holds the file.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function url(string $name): ?string {
 		if ($this->inStore(name: $name) === true) {
@@ -270,7 +270,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return string The URL.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function routeUrl(string $name): string {
 		return $this->urlGenerator->linkToRoute('thematiq.runtimeFile.serve', ['name' => $name])
@@ -290,7 +290,7 @@ class RuntimeFileLocator {
 	 *
 	 * @throws RuntimeException When a temporary copy cannot be made.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function localPath(string $name): ?string {
 		if ($this->inStore(name: $name) === false) {
@@ -327,7 +327,7 @@ class RuntimeFileLocator {
 	 *
 	 * @return string The MIME type.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function contentType(string $name): string {
 		return $this->names->contentType(name: $name);

@@ -803,7 +803,7 @@ class ComplianceReportService {
 	 *
 	 * @return string|null The CSS, or null when the file does not exist.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	private function setCss(string $appPath, string $name): ?string {
 		// An uploaded set lives in app data; its own service reads it.

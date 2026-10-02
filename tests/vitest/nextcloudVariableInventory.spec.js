@@ -13,7 +13,7 @@
  * not in the CSS, and when the count of mapped or settable entries moves
  * without the baseline moving with it, in either direction.
  *
- * @spec openspec/changes/nc-variable-inventory/specs/nextcloud-variable-inventory/spec.md
+ * @spec openspec/specs/nextcloud-variable-inventory/spec.md
  */
 
 import { describe, expect, it } from 'vitest'

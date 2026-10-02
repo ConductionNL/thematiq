@@ -21,7 +21,7 @@
  * Run with --check to compare instead of writing; the inventory guard in
  * tests/vitest/nextcloudVariableInventory.spec.js does that on every run.
  *
- * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
