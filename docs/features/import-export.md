@@ -103,15 +103,13 @@ Upload a file thematiq exported, under a new name, and every `--nldesign-*` valu
 
 ## Command Line Alternative
 
-You can also manage overrides directly via the filesystem or Nextcloud's `occ` command:
+Your overrides are kept in Nextcloud's app data. To read them on the server:
 
 ```bash
-# View current overrides file
-cat /var/www/html/custom_apps/thematiq/css/custom-overrides.css
-
-# Reset all overrides
-echo ':root {}' > /var/www/html/custom_apps/thematiq/css/custom-overrides.css
+cat "$(occ config:system:get datadirectory)/appdata_$(occ config:system:get instanceid)/thematiq/css/custom-overrides.css"
 ```
+
+Do not edit that file by hand. Nextcloud keeps a file cache for app data, and it does not see a change made outside it. Reset or replace your overrides on the admin page, or through the REST API.
 
 Or via the REST API:
 

@@ -20,6 +20,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\App\IAppManager;
 use Psr\Log\LoggerInterface;
 
@@ -179,24 +181,91 @@ class DarkPaletteService {
 	private LoggerInterface $logger;
 
 	/**
+	 * Where dark variants are written.
+	 *
+	 * @var RuntimeFileStore
+	 */
+	private RuntimeFileStore $store;
+
+	/**
+	 * Whether a shipped set's dark variant may be (re)written.
+	 *
+	 * True only when this service is built by hand, which is what
+	 * `scripts/generate-dark-variants.php` does at build time: the shipped
+	 * dark files are build output, committed with the release and covered by
+	 * its signature. Built by the container it is false, so an install never
+	 * rewrites a signed file. Rewriting one was the code integrity warning
+	 * every regeneration after a generator change used to cause.
+	 *
+	 * @var bool
+	 */
+	private bool $mayWriteShipped;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ContrastService $contrast The WCAG contrast service.
 	 * @param CssParserService $parser The CSS custom-property parser.
 	 * @param IAppManager $appManager The app manager.
 	 * @param LoggerInterface $logger The logger.
+	 * @param RuntimeFileStore|null $store Where dark variants are written. Without one, the
+	 *                                     app directory itself (build mode, see $mayWriteShipped).
 	 */
 	public function __construct(
 		ContrastService $contrast,
 		CssParserService $parser,
 		IAppManager $appManager,
 		LoggerInterface $logger,
+		?RuntimeFileStore $store = null,
 	) {
 		$this->contrast = $contrast;
 		$this->parser = $parser;
 		$this->appManager = $appManager;
 		$this->logger = $logger;
+		$this->mayWriteShipped = ($store === null);
+		if ($store === null) {
+			$store = new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq'));
+		}
+
+		$this->store = $store;
 	}//end __construct()
+
+	/**
+	 * Whether a set id is an uploaded set rather than a shipped one.
+	 *
+	 * @param string $setId The token set id.
+	 *
+	 * @return bool True for a `custom-` id.
+	 */
+	private function isUploaded(string $setId): bool {
+		return str_starts_with($setId, 'custom-');
+	}//end isUploaded()
+
+	/**
+	 * A set's light stylesheet: an uploaded one from the store, a shipped one from the release.
+	 *
+	 * @param string $setId The token set id.
+	 *
+	 * @return string|null The CSS, or null when the set has no stylesheet.
+	 */
+	private function readTokenCss(string $setId): ?string {
+		$name = 'css/tokens/' . $setId . '.css';
+		if ($this->isUploaded(setId: $setId) === true) {
+			return $this->store->read(name: $name);
+		}
+
+		$path = $this->appManager->getAppPath('thematiq') . '/' . $name;
+		if (is_file($path) === false) {
+			return null;
+		}
+
+		$css = file_get_contents($path);
+		if ($css === false) {
+			return null;
+		}
+
+		return $css;
+	}//end readTokenCss()
 
 	/**
 	 * Whether a design system id is eligible for dark-variant generation.
@@ -220,24 +289,28 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	public function discoverAllSetIds(): array {
+		$ids = [];
 		$tokensDir = $this->appManager->getAppPath('thematiq') . '/css/tokens';
-		if (is_dir($tokensDir) === false) {
-			return [];
+		$files = [];
+		if (is_dir($tokensDir) === true) {
+			$files = scandir($tokensDir);
 		}
 
-		$files = scandir($tokensDir);
 		if ($files === false) {
 			$files = [];
 		}
 
-		$ids = [];
 		foreach ($files as $file) {
-			$fullPath = $tokensDir . '/' . $file;
-			if (is_file($fullPath) === true && str_ends_with($file, '.css') === true) {
+			if (is_file($tokensDir . '/' . $file) === true && str_ends_with($file, '.css') === true) {
 				$ids[] = basename($file, '.css');
 			}
 		}
 
+		foreach ($this->store->listDirectory(directory: 'css/tokens') as $name) {
+			$ids[] = basename($name, '.css');
+		}
+
+		$ids = array_values(array_unique($ids));
 		sort($ids);
 
 		return $ids;
@@ -262,9 +335,9 @@ class DarkPaletteService {
 	private function resolveLightDeclarations(string $appPath, string $setId, array $theming = []): array {
 		$declarations = $this->parseFile(filePath: $appPath . '/css/systems/nldesign/defaults.css');
 
-		$tokenFile = $appPath . '/css/tokens/' . $setId . '.css';
-		if (is_file($tokenFile) === true) {
-			$declarations = array_merge($declarations, $this->parseFile(filePath: $tokenFile));
+		$tokenCss = $this->readTokenCss(setId: $setId);
+		if ($tokenCss !== null) {
+			$declarations = array_merge($declarations, ($this->parser->parseDeclarations(content: $tokenCss) ?? []));
 		}
 
 		if (isset($declarations['--nldesign-color-background']) === false
@@ -783,12 +856,11 @@ class DarkPaletteService {
 			return null;
 		}
 
-		$tokenFile = $appPath . '/css/tokens/' . $setId . '.css';
-		if (is_file($tokenFile) === false) {
+		$tokenCss = $this->readTokenCss(setId: $setId);
+		if ($tokenCss === null) {
 			return null;
 		}
 
-		$tokenCss = (string)file_get_contents($tokenFile);
 
 		$light = $this->resolveLightDeclarations(appPath: $appPath, setId: $setId, theming: $meta['theming']);
 		$derived = $this->deriveDarkDeclarations(lightDeclarations: $light);
@@ -890,21 +962,26 @@ class DarkPaletteService {
 	 */
 	public function generateAndWrite(string $setId, bool $force = false): array {
 		$appPath = $this->appManager->getAppPath('thematiq');
-		$tokenFile = $appPath . '/css/tokens/' . $setId . '.css';
-		$darkFile = $appPath . '/css/tokens/dark/' . $setId . '.css';
+		if ($this->isUploaded(setId: $setId) === false && $this->mayWriteShipped === false) {
+			// A shipped set's dark variant is build output, signed with the
+			// release. Rewriting it here is exactly the code integrity warning
+			// this guard exists to prevent; a stale one fails the build instead.
+			return ['written' => false, 'skipped' => true, 'reason' => 'shipped', 'warnings' => []];
+		}
 
+		$darkName = 'css/tokens/dark/' . $setId . '.css';
 		$meta = $this->loadSetMeta(appPath: $appPath, setId: $setId);
 		if ($this->isEligible(designSystemId: $meta['design_system']) === false) {
 			return ['written' => false, 'skipped' => true, 'reason' => 'ineligible', 'warnings' => []];
 		}
 
-		if (is_file($tokenFile) === false) {
+		$tokenCss = $this->readTokenCss(setId: $setId);
+		if ($tokenCss === null) {
 			return ['written' => false, 'skipped' => true, 'reason' => 'source-missing', 'warnings' => []];
 		}
 
-		$sourceHash = 'sha256:' . hash(algo: 'sha256', data: (string)file_get_contents($tokenFile));
-
-		if ($force === false && is_file($darkFile) === true && $this->isFresh(darkFile: $darkFile, sourceHash: $sourceHash) === true) {
+		$sourceHash = 'sha256:' . hash(algo: 'sha256', data: $tokenCss);
+		if ($force === false && $this->isFresh(darkCss: $this->store->read(name: $darkName), sourceHash: $sourceHash) === true) {
 			return ['written' => false, 'skipped' => true, 'reason' => 'fresh', 'warnings' => []];
 		}
 
@@ -913,46 +990,18 @@ class DarkPaletteService {
 			return ['written' => false, 'skipped' => true, 'reason' => 'ineligible', 'warnings' => []];
 		}
 
-		$darkDir = $appPath . '/css/tokens/dark';
-		if ($this->ensureDarkDirWritable(darkDir: $darkDir) === false) {
+		try {
+			$this->store->write(name: $darkName, content: $generated['css']);
+		} catch (\Throwable $e) {
 			$this->logger->warning(
-				'NL Design dark-variant directory {dir} is not writable; skipping "{set}" (light-only).',
-				['dir' => $darkDir, 'set' => $setId]
+				'NL Design dark variant for "{set}" could not be stored; the set stays light-only.',
+				['set' => $setId, 'exception' => $e]
 			);
-
 			return ['written' => false, 'skipped' => true, 'reason' => 'not-writable', 'warnings' => $generated['warnings']];
-		}
-
-		if ($this->writeAtomic(path: $darkFile, contents: $generated['css']) === false) {
-			$this->logger->warning('NL Design dark-variant write failed for "{set}".', ['set' => $setId]);
-
-			return ['written' => false, 'skipped' => false, 'reason' => 'write-failed', 'warnings' => $generated['warnings']];
 		}
 
 		return ['written' => true, 'skipped' => false, 'reason' => '', 'warnings' => $generated['warnings']];
 	}//end generateAndWrite()
-
-	/**
-	 * Ensure `css/tokens/dark/` exists and is writable, creating it (without
-	 * an error-control operator — a pre-check on the parent directory avoids
-	 * needing one) when it does not already exist.
-	 *
-	 * @param string $darkDir The absolute `css/tokens/dark` path.
-	 *
-	 * @return bool True when the directory exists and is writable afterwards.
-	 *
-	 * @spec openspec/specs/dark-mode/spec.md
-	 */
-	private function ensureDarkDirWritable(string $darkDir): bool {
-		if (is_dir($darkDir) === false) {
-			$parentDir = dirname($darkDir);
-			if (is_dir($parentDir) === true && is_writable($parentDir) === true) {
-				mkdir($darkDir, 0775, true);
-			}
-		}
-
-		return (is_dir($darkDir) === true && is_writable($darkDir) === true);
-	}//end ensureDarkDirWritable()
 
 	/**
 	 * Generate (or skip) every discovered token set's dark variant.
@@ -987,10 +1036,11 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	public function deleteDarkVariant(string $setId): void {
-		$darkFile = $this->appManager->getAppPath('thematiq') . '/css/tokens/dark/' . $setId . '.css';
-		if (is_file($darkFile) === true && is_writable($darkFile) === true) {
-			unlink($darkFile);
+		if ($this->isUploaded(setId: $setId) === false && $this->mayWriteShipped === false) {
+			return;
 		}
+
+		$this->store->delete(name: 'css/tokens/dark/' . $setId . '.css');
 	}//end deleteDarkVariant()
 
 	/**
@@ -1005,52 +1055,25 @@ class DarkPaletteService {
 	 * still on disk were the ones the fix was written to replace — a silent
 	 * no-op that reads exactly like a successful run.
 	 *
-	 * @param string $darkFile The existing dark CSS file path.
+	 * @param string|null $darkCss The existing dark stylesheet, or null when there is none.
 	 * @param string $sourceHash The current `sha256:...` source hash.
 	 *
 	 * @return bool True when the file is fresh.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function isFresh(string $darkFile, string $sourceHash): bool {
-		$header = file_get_contents($darkFile, false, null, 0, 512);
-		if ($header === false) {
+	private function isFresh(?string $darkCss, string $sourceHash): bool {
+		if ($darkCss === null) {
 			return false;
 		}
 
+		$header = substr($darkCss, 0, 512);
 		if (str_contains($header, 'DarkPaletteService v' . self::GENERATOR_VERSION . ' ') === false) {
 			return false;
 		}
 
 		return str_contains($header, $sourceHash);
 	}//end isFresh()
-
-	/**
-	 * Write a file atomically via a temp file + rename.
-	 *
-	 * @param string $path The destination path.
-	 * @param string $contents The content to write.
-	 *
-	 * @return bool True on success.
-	 *
-	 * @spec openspec/specs/dark-mode/spec.md
-	 */
-	private function writeAtomic(string $path, string $contents): bool {
-		$tmpPath = $path . '.tmp';
-		if (file_put_contents($tmpPath, $contents) === false) {
-			return false;
-		}
-
-		if (rename($tmpPath, $path) === false) {
-			if (file_exists($tmpPath) === true) {
-				unlink($tmpPath);
-			}
-
-			return false;
-		}
-
-		return true;
-	}//end writeAtomic()
 
 	/**
 	 * Parse a CSS file's `:root`-scoped declarations into a map (empty when absent/unreadable).

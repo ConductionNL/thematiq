@@ -28,6 +28,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenRegistry;
@@ -85,7 +86,7 @@ class TokenValueTypesTest extends TestCase {
 		$this->appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
 		$this->darkPalette = new DarkPaletteService(new ContrastService(), $parser, $this->appManager, $this->createMock(LoggerInterface::class));
-		$this->overrides = new CustomOverridesService($this->appManager, $parser, $this->darkPalette);
+		$this->overrides = new CustomOverridesService(new DirectoryRuntimeFileStore($this->appDir), $parser, $this->darkPalette);
 		$this->overrides->write(tokens: ['--color-primary' => '#000000']);
 	}//end setUp()
 
@@ -288,7 +289,7 @@ class TokenValueTypesTest extends TestCase {
 				$stored[$key] = (string)$value;
 			}
 		);
-		$store = new CustomTokenSetService($this->appManager, $config, new CustomTokenSetValidator(), new ContrastService(), $this->darkPalette);
+		$store = new CustomTokenSetService(new DirectoryRuntimeFileStore($this->appDir), $config, new CustomTokenSetValidator(), new ContrastService(), $this->darkPalette);
 
 		$store->store(displayName: 'Doorschijnend', description: '', declarations: ['--nldesign-color-primary' => '#15427380', '--nldesign-color-background' => '#ffffff']);
 		$store->store(displayName: 'Dekkend', description: '', declarations: ['--nldesign-color-primary' => '#154273']);

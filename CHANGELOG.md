@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Fixed
+- **No more code integrity warning after customising the theme.** thematiq wrote token
+  overrides, custom CSS, uploaded token sets with their logos and dark variants, and
+  captured logos and backgrounds into its own app directory. Nextcloud's integrity check
+  reported every one of those files. They now live in app data and are served by the
+  `/runtime/{name}` route, so the app directory stays exactly as released and an app
+  update no longer loses them. An upgrade moves an older install's files across. A
+  shipped set's dark variant is never rewritten at runtime any more; a stale one fails
+  the unit suite instead. Rolling back to an older release loses access to the moved
+  files, so download sets and overrides before downgrading.
+
 ### BREAKING
 - **Removed all 344 vendored Amsterdam Design System icon SVGs from `img/icons/`.** The
   upstream `@amsterdam/design-system-assets` `LICENSE.md` declares the icon artwork

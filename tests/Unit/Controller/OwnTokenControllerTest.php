@@ -31,6 +31,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\OwnTokenService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenDeprecationService;
 use OCA\Thematiq\Service\TokenSetService;
@@ -119,7 +120,7 @@ final class OwnTokenControllerTest extends TestCase {
 		$this->ownTokens    = new OwnTokenService($config, new TokenValueValidator(), $records);
 		$this->deprecations = new TokenDeprecationService($records, $this->ownTokens, $appManager, $parser);
 		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
-		$this->overrides = new CustomOverridesService($appManager, $parser, $dark, null, null, null, $this->ownTokens);
+		$this->overrides = new CustomOverridesService(new DirectoryRuntimeFileStore($this->appDir), $parser, $dark, null, null, null, $this->ownTokens);
 		$this->audit     = $this->createMock(ThemingAuditService::class);
 	}//end setUp()
 

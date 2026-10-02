@@ -22,6 +22,7 @@ use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\FontService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
@@ -103,7 +104,7 @@ class CustomTokenSetControllerTest extends TestCase {
 		);
 
 		$this->service = new CustomTokenSetService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$config,
 			new CustomTokenSetValidator(),
 			new ContrastService(),
