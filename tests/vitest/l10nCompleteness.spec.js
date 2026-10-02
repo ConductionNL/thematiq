@@ -26,7 +26,10 @@ function fixture(locales) {
 	for (const [name, translations] of Object.entries(locales)) {
 		fs.writeFileSync(
 			path.join(dir, name + '.json'),
-			JSON.stringify({ translations, pluralForm: 'nplurals=2; plural=(n != 1);' }),
+			JSON.stringify({
+				translations,
+				pluralForm: 'nplurals=2; plural=(n != 1);',
+			}),
 		)
 	}
 	return dir
@@ -82,19 +85,31 @@ describe('check-l10n-completeness.js', () => {
 
 describe('npm run test:l10n', () => {
 	it('runs the cross-locale completeness check, so CI catches a gap', () => {
-		const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
+		const pkg = JSON.parse(
+			fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'),
+		)
 		expect(pkg.scripts['test:l10n']).toContain('check-l10n-completeness.js')
 	})
 })
 
 describe('l10n/nl.json', () => {
 	it('translates the app-theming dropdown strings into Dutch', () => {
-		const nl = JSON.parse(fs.readFileSync(path.join(ROOT, 'l10n/nl.json'), 'utf8'))
-		for (const key of ['{themed} of {total} apps themed', 'Search apps', 'Search apps…']) {
+		const nl = JSON.parse(
+			fs.readFileSync(path.join(ROOT, 'l10n/nl.json'), 'utf8'),
+		)
+		for (const key of [
+			'{themed} of {total} apps themed',
+			'Search apps',
+			'Search apps…',
+		]) {
 			expect(nl.translations[key]).toBeTruthy()
 			expect(nl.translations[key]).not.toBe(key)
 		}
-		expect(nl.translations['{themed} of {total} apps themed']).toContain('{themed}')
-		expect(nl.translations['{themed} of {total} apps themed']).toContain('{total}')
+		expect(nl.translations['{themed} of {total} apps themed']).toContain(
+			'{themed}',
+		)
+		expect(nl.translations['{themed} of {total} apps themed']).toContain(
+			'{total}',
+		)
 	})
 })

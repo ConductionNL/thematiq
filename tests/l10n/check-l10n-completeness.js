@@ -49,7 +49,7 @@ const path = require('path')
 
 const ROOT = process.cwd()
 const WRITE = process.argv.includes('--write')
-const l10nDir = path.join(ROOT, process.env.L10N_DIR || 'l10n')
+const l10nDir = path.resolve(ROOT, process.env.L10N_DIR || 'l10n')
 const enFile = path.join(l10nDir, 'en.json')
 
 function readJson (p) {
