@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCP\App\IAppManager;
 use OCP\IL10N;
 use Throwable;
@@ -88,6 +90,8 @@ class PlaygroundStateService {
 	 * @param TokenSetConverterService $converter     The conversion reason vocabulary.
 	 * @param StockTokensService       $stockTokens   The instance's own stock theme.
 	 * @param IL10N                    $l10n          The app's translations.
+	 * @param RuntimeFileStore|null    $store         Where uploaded sets and their dark files live.
+	 * @param SetFileReader            $files         Reads a set file from the release or the store.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -95,6 +99,8 @@ class PlaygroundStateService {
 		TokenSetConverterService $converter,
 		StockTokensService $stockTokens,
 		IL10N $l10n,
+		private ?RuntimeFileStore $store = null,
+		private SetFileReader $files = new SetFileReader(),
 	) {
 		$this->appManager = $appManager;
 		$this->previewValues = $previewValues;
@@ -162,8 +168,44 @@ class PlaygroundStateService {
 			// script, because a session preview decides it and the script has
 			// no business knowing that rule twice.
 			'playgroundSet' => $tokenSetId,
+			// The set's dark values, for the light and dark switch of "Your component".
+			'playgroundDarkTokens' => $this->getDarkTokens(tokenSetId: $tokenSetId),
 		];
 	}//end getInitialState()
+
+	/**
+	 * The `--nldesign-*` values the set's generated dark stylesheet gives a user who chose
+	 * the dark theme: the `body[data-theme-dark]` block of `css/tokens/dark/{set}.css`.
+	 *
+	 * @param string $tokenSetId The token set.
+	 *
+	 * @return array<string, string> Token => dark value; empty when the set has no dark file.
+	 *
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-the-frame-can-show-the-dark-theme
+	 */
+	private function getDarkTokens(string $tokenSetId): array {
+		if (preg_match('/^[a-z0-9-]+$/', $tokenSetId) !== 1) {
+			return [];
+		}
+
+		// An uploaded set's dark file lives in the runtime store, a shipped one in the release.
+		$css = (string)$this->files->read(
+			appPath: $this->appManager->getAppPath(Application::APP_ID),
+			name: 'css/tokens/dark/' . $tokenSetId . '.css',
+			store: $this->store
+		);
+		if (preg_match('/body\[data-theme-dark\][^{]*\{([^}]*)\}/', $css, $block) !== 1) {
+			return [];
+		}
+
+		preg_match_all('/(--nldesign-[a-z0-9-]+)\s*:\s*([^;]+);/', $block[1], $matches, PREG_SET_ORDER);
+		$tokens = [];
+		foreach ($matches as $match) {
+			$tokens[$match[1]] = trim((string)preg_replace('/\s*!important\s*$/', '', $match[2]));
+		}
+
+		return $tokens;
+	}//end getDarkTokens()
 
 	/**
 	 * The major Nextcloud version this instance is running.

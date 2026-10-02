@@ -76,6 +76,9 @@ const NO_ROW_YET = new Set([
 	// The primary button's border. It tracks the background in every shipped
 	// set, so it reads as one edge — but it is a separate token with no row.
 	'primary-button: border-color <- --nldesign-component-button-primary-action-border-color',
+	// The initials on the avatar plate (#769 took them from #ffffff to the
+	// light-text token). The avatar chip has a row for the status badge only.
+	'avatar: color <- --nldesign-color-text-light',
 ])
 
 /**
@@ -86,6 +89,7 @@ const NO_ROW_YET = new Set([
 const NESTED = new Set([
 	'header-bar: background-color <- --nldesign-color-primary',
 	'avatar: color <- --nldesign-component-header-color',
+	'header-bar: color <- --nldesign-color-text-light',
 	'content-card: color <- --nldesign-component-button-primary-action-color',
 	'link: color <- --nldesign-component-header-color',
 	'link: color <- --nldesign-color-primary',

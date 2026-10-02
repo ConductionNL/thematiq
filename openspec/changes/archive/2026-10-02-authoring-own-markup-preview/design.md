@@ -67,6 +67,18 @@ A `srcdoc` document also inherits the settings page's policy, so both apply and 
 There is no `script-src`, so a script is refused even if the sandbox attribute were ever changed.
 No external image, font, stylesheet or connection can load, so pasted markup cannot call home.
 
+**Checked (task 1.1, 2 Oct 2026).** A local page served with Nextcloud's settings page policy
+(`default-src 'none'`, no `frame-src`) and this frame:
+
+| Browser | Renders | `frame-src` violation | Parent reaches the frame | Pasted script | External image |
+|---|---|---|---|---|---|
+| Chromium 151 (headless) | yes | none | yes, custom properties apply | refused by the sandbox | refused by both policies |
+| Firefox | not checked: no Firefox in the lane | | | | |
+| Safari | not checked: no Safari in the lane | | | | |
+
+Chromium confirms the assumption. Firefox and Safari are owed before release (recipe in the PR
+body); the shadow root fallback below stays the plan if either blocks the frame.
+
 **The open question.** Nextcloud's page policy has `default-src 'none'` and no `frame-src`. The
 change assumes that browsers do not apply `frame-src` to an `about:srcdoc` frame, because no
 request is made. Task 1.1 verifies that in Firefox, Chromium and Safari before any other work. If

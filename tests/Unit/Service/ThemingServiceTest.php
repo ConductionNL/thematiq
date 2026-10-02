@@ -50,10 +50,10 @@ use PHPUnit\Framework\TestCase;
  * the suite says so rather than failing on a mock of a class that is absent
  * for an understood reason.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
  * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
  */
 class ThemingServiceTest extends TestCase {
@@ -162,7 +162,7 @@ class ThemingServiceTest extends TestCase {
 	 *
 	 * @dataProvider hexColorProvider
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
 	 */
 	public function testIsValidHexColor(string $color, bool $expected): void {
 		$this->assertSame($expected, $this->service->isValidHexColor(color: $color));
@@ -191,7 +191,7 @@ class ThemingServiceTest extends TestCase {
 	 * An absent or empty colour parameter is not a validation failure: the
 	 * sync sends only what the set actually declares.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
 	 */
 	public function testValidateColorsAcceptsAbsentAndEmptyValues(): void {
 		$this->assertNull($this->service->validateColors(params: []));
@@ -205,7 +205,7 @@ class ThemingServiceTest extends TestCase {
 	 * A malformed colour is named in the message, so the admin panel can say
 	 * WHICH field it rejected rather than "invalid input".
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
 	 */
 	public function testValidateColorsNamesTheOffendingKey(): void {
 		$error = $this->service->validateColors(params: ['background_color' => 'not-a-colour']);
@@ -225,7 +225,7 @@ class ThemingServiceTest extends TestCase {
 	 *
 	 * @dataProvider traversalPathProvider
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
 	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function testValidateImagePathsRefusesTraversal(string $key, string $path): void {
@@ -253,7 +253,7 @@ class ThemingServiceTest extends TestCase {
 	 * A path that stays inside the app but outside the two permitted
 	 * directories is refused on the prefix rule, before the existence check.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
 	 */
 	public function testValidateImagePathsRefusesDirectoriesOutsideTheAllowedTwo(): void {
 		$error = $this->service->validateImagePaths(params: ['logo' => 'css/tokens/utrecht.css']);
@@ -267,7 +267,7 @@ class ThemingServiceTest extends TestCase {
 	 * A well-formed path to a file that is not there is refused too — the
 	 * prefix rule says where a file may live, not that it does.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
 	 */
 	public function testValidateImagePathsRefusesAMissingFile(): void {
 		$error = $this->service->validateImagePaths(params: ['logo' => 'img/logos/absent.svg']);
@@ -280,7 +280,7 @@ class ThemingServiceTest extends TestCase {
 	 * A path inside `img/logos/` that exists passes, and so does a request
 	 * that carries no image at all.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
 	 */
 	public function testValidateImagePathsAcceptsAnExistingFile(): void {
 		$this->assertNull($this->service->validateImagePaths(params: ['logo' => 'img/logos/present.svg']));
@@ -292,7 +292,7 @@ class ThemingServiceTest extends TestCase {
 	 * Applying a primary colour writes exactly that setting and reports it.
 	 * No background colour means no `backgroundMime` write.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
 	 */
 	public function testApplyColorsWritesOnlyWhatWasGiven(): void {
 		$written = [];
@@ -313,7 +313,7 @@ class ThemingServiceTest extends TestCase {
 	 * background IMAGE over it, which is the `backgroundMime` app value. So a
 	 * background colour with no accompanying image must also write that.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
 	 */
 	public function testApplyColorsRemovesTheDefaultBackgroundImage(): void {
 		$written = [];
@@ -335,7 +335,7 @@ class ThemingServiceTest extends TestCase {
 	 * after, and writing `backgroundColor` here would be overwritten anyway —
 	 * or, on a failed image write, would leave the two disagreeing.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
 	 */
 	public function testApplyColorsLeavesTheMimeAloneWhenAnImageIsAlsoGiven(): void {
 		$written = [];
@@ -450,7 +450,7 @@ class ThemingServiceTest extends TestCase {
 	 * all. Storing the file without writing the mime is the failure that
 	 * reported success while every page kept the stock logo.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
 	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function testApplyImagesPairsTheStoredFileWithItsMime(): void {
@@ -530,7 +530,7 @@ class ThemingServiceTest extends TestCase {
 	 * The image manager is handed out so callers can ask core what is in each
 	 * slot; it must be the same instance the service writes through.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
 	 */
 	public function testGetImageManagerReturnsTheInjectedInstance(): void {
 		$this->assertSame($this->imageManager, $this->service->getImageManager());

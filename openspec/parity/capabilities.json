@@ -2364,7 +2364,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Service/TypographyTokens.php:39-46 exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
+				"evidence": "lib/Service/TokenRegistry.php getTypographyTokens() exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own"
 			},
@@ -3179,7 +3179,7 @@
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
 			"featureConfidence": "high",
-			"note": "lib/Service/StatusTokens.php (a separate PHP class with the same token list) has zero callers anywhere (grep -rn 'StatusTokens::' found nothing); the token editor actually uses a hardcoded duplicate list in lib/Service/TokenRegistry.php:244-262. StatusTokens.php looks like dead/orphaned code, but it is not on the path that makes this capability work."
+			"note": "The status token list lives once, in lib/Service/TokenRegistry.php getStatusTokens(). The orphaned duplicate lib/Service/StatusTokens.php, and its Login/Content/Typography siblings, were removed for #665."
 		},
 		{
 			"id": "sur-mobile-desktop-clients",
@@ -5194,7 +5194,7 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "decided-no",
-				"evidence": "lib/Service/LoginTokens.php:39 getTokens() returns colour and typography tokens for the login page only; no login text or label is configurable",
+				"evidence": "lib/Service/TokenRegistry.php getLoginTokens() returns colour and typography tokens for the login page only; no login text or label is configurable",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"note": "Decided no (OpenSpec pass 2026-09-27): Owner corrected to nextcloud/server: the login form and its labels are core, and the demand row is a request against nextcloud/server (issue 38831). Thematiq could only change the labels by rewriting the core login view from a script, which breaks with every core release."
@@ -5618,7 +5618,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "decided-no",
-				"evidence": "lib/Service/TypographyTokens.php:39-46 exposes font family only; no per-theme root or base font size token exists (grep -niE 'font-size|rem' lib/Service/TypographyTokens.php finds nothing)",
+				"evidence": "lib/Service/TokenRegistry.php getTypographyTokens() exposes font family only; no per-theme root or base font size token exists (grep -niE 'font-size|rem' lib/Service/TypographyTokens.php finds nothing)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
 			},
@@ -5642,21 +5642,20 @@
 			"id": "aut-dtcg-colour-objects",
 			"area": "sync",
 			"name": "Read and write tokens in the stable DTCG specification, including colour values stored as objects with an explicit colour space.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "no",
 			"liferay-dxp": "no",
 			"tokens-studio": "partial",
 			"built": {
-				"state": "specified",
-				"evidence": "lib/Service/DesignTokensMapper.php:605-630 serializeColorObject() reads DTCG v2025.10 colour objects (hex or components) in the sRGB family and reports other colour spaces as unsupported-color-space (48-56); writing DTCG is not supported (aut-dtcg-bulk-convert)",
+				"state": "built",
+				"evidence": "lib/Service/DesignTokensWriter.php writes any token set as DTCG v2025.10 with colour objects (colorSpace, components, sRGB hex fallback, alpha), dimensions, durations, cubicBezier, fonts, aliases and a cssOnly map; GET /settings/tokensets/{id}/dtcg (DtcgExportController, AuthorizedAdminSetting); the importer converts every DTCG colour space to sRGB (ColorSpaceConverter, CSS Color 4 maths) and reports out-of-gamut colours as adapted; thematiq exports round-trip exactly for all shipped sets (DesignTokensRoundTripTest)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-dtcg-export (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-dtcg-export"
+				"change": "authoring-dtcg-export"
 			},
-			"reachedOn": "Settings > Administration > Theming, custom token set upload of a DTCG JSON file",
+			"reachedOn": "Settings > Administration > Theming: Download as design tokens next to the token set list and in each custom set row; Custom token sets upload",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:115-130 accepts colours only as hex strings for primary and background; grep -rniE 'dtcg|colorSpace|color_space' apps/theming/lib apps/theming/src: no hits",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-json-schema: palette colours 'are specified as 6-digit or 3-digit hexadecimal RGB string values'; no colour objects or colour spaces",
@@ -6200,21 +6199,20 @@
 			"id": "aut-component-preview",
 			"area": "authoring",
 			"name": "See your own components rendered with the house style tokens while you build them, before publishing.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "no",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "specified",
-				"evidence": "the component playground in the token editor (js/playground.js header, templates/settings/admin.php:32-42, lib/Service/PlaygroundStateService.php) renders the inventory in js/playground/components.json with the live tokens before saving; a builder's own new components are not in that inventory",
+				"state": "built",
+				"evidence": "js/playground.js Your component chip in every tab: HTML and CSS fields drawn in an iframe with sandbox allow-same-origin and its own CSP (js/lib/ownComponentFrame.js), markup cleaned against an allowlist with a removal report (js/lib/markupSanitizer.js), token values copied from the preview container so unsaved edits repaint the frame, a dark switch with the set's dark values (playgroundDarkTokens), a token list filtered to the names the code reads, contrast of text pairs via ContrastService; saved by name in app data (OwnComponentService, /settings/playground/components, admin-only), reopened from #preview={tab}/own-{slug}",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"note": "Specified in openspec/changes/authoring-own-markup-preview (OpenSpec pass 2026-09-27).",
-				"change": "openspec/changes/authoring-own-markup-preview"
+				"change": "authoring-own-markup-preview"
 			},
-			"reachedOn": "Settings > Administration > Theming, component playground",
+			"reachedOn": "Settings > Administration > Theming, the component playground: the Your component chip",
 			"evidence": {
 				"nextcloud-theming": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",
 				"m365-branding": "not checked: row mined on 2026-09-26 from Liferay release notes, roadmap or issues after this column was read; not yet re-read for this system",

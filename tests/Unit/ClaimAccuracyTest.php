@@ -15,11 +15,11 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.1
- * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.2
- * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.3
- * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.4
- * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.5
+ * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.1
+ * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.2
+ * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.3
+ * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.4
+ * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.5
  * @spec openspec/specs/marianne-font/spec.md
  */
 
@@ -63,7 +63,7 @@ class ClaimAccuracyTest extends TestCase {
 	/**
 	 * The manifest licence equals the bundled licence (EUPL-1.2), never AGPL.
 	 *
-	 * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.1
+	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.1
 	 */
 	public function testManifestLicenceMatchesBundledLicence(): void {
 		$info = $this->readFile('appinfo/info.xml');
@@ -139,7 +139,7 @@ class ClaimAccuracyTest extends TestCase {
 	/**
 	 * Every PHP file under lib/ carries SPDX-License-Identifier: EUPL-1.2 and none declares AGPL.
 	 *
-	 * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.2
+	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.2
 	 */
 	public function testSpdxHeadersAgreeWithManifest(): void {
 		$libDir = $this->repoRoot() . '/lib';
@@ -181,7 +181,7 @@ class ClaimAccuracyTest extends TestCase {
 	/**
 	 * The government checklist states the real licence (EUPL-1.2) and host (GitHub).
 	 *
-	 * @spec openspec/changes/fix-readiness-claims/tasks.md#task-1.4
+	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-1.4
 	 */
 	public function testGovernmentChecklistStatesRealLicenceAndHost(): void {
 		$doc = $this->readFile('docs/GOVERNMENT-FEATURES.md');
@@ -222,7 +222,7 @@ class ClaimAccuracyTest extends TestCase {
 	 * css/fonts.css uses only bundled, self-hosted fonts — no external CDN URL — and
 	 * every referenced woff2/woff file exists on disk.
 	 *
-	 * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.3
+	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.3
 	 */
 	public function testStylesheetUsesOnlyBundledFonts(): void {
 		$css = $this->readFile('css/fonts.css');
@@ -260,8 +260,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * The README and compliance docs describe the real self-hosted delivery and make
 	 * no false CDN / "not loaded" claim.
 	 *
-	 * @spec openspec/changes/fix-readiness-claims/tasks.md#task-2.1
-	 * @spec openspec/changes/fix-readiness-claims/tasks.md#task-2.3
+	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-2.1
+	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-2.3
 	 */
 	public function testFontDocumentationMatchesBundledDelivery(): void {
 		$readme = $this->readFile('README.md');
@@ -294,7 +294,7 @@ class ClaimAccuracyTest extends TestCase {
 	 * The token-set count stated in README.md equals the token-sets.json inventory,
 	 * and project.md does not state a different total.
 	 *
-	 * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.4
+	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.4
 	 */
 	public function testReadmeCountEqualsInventory(): void {
 		$count = $this->tokenSetCount();
@@ -336,7 +336,7 @@ class ClaimAccuracyTest extends TestCase {
 	 * token-audit.md scopes its verdict to the reviewed sets and never asserts a
 	 * blanket production verdict over the unaudited community sets.
 	 *
-	 * @spec openspec/changes/fix-readiness-claims/tasks.md#task-5.5
+	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.5
 	 */
 	public function testTokenAuditScopeStatedHonestly(): void {
 		$doc = $this->readFile('docs/reference/token-audit.md');

@@ -774,6 +774,11 @@
 			tabs: tabs,
 			tab: activeTab(tabs),
 			component: FULL_VIEW,
+			// "Your component" (openspec/specs/own-component-preview): the set's
+			// dark values for the frame's dark switch, and the saved components.
+			darkTokens: loadState('playgroundDarkTokens', {}),
+			ownComponents: [],
+			ownCleanup: null,
 		}
 
 		// The selector: the editor's own tab strip, moved above the preview, with
@@ -869,6 +874,9 @@
 			})
 		})
 
+		// Read before the selection below rewrites it: an own component's hash is
+		// resolved once the saved components have loaded.
+		var bootHash = window.location.hash
 		var wanted = parseHash(window.location.hash, inventory) || {
 			tab: 'content',
 			component: FULL_VIEW,
@@ -884,6 +892,8 @@
 		if (wanted.component !== FULL_VIEW) {
 			select(state, wanted.component)
 		}
+
+		loadOwnComponents(state, bootHash)
 	}
 
 	/**
@@ -979,11 +989,19 @@
 	 */
 	function updateCrumb(state) {
 		var component = componentById(state.inventory, state.component)
+		var own =
+			isOwnId(state.component) === true
+				? ownTitle(state, state.component)
+				: null
 		state.crumb.textContent =
 			' · '
 			+ tabLabel(state, state.tab)
 			+ ' · '
-			+ (component !== null ? component.title : t('thematiq', 'Full view'))
+			+ (own !== null
+				? own
+				: component !== null
+					? component.title
+					: t('thematiq', 'Full view'))
 	}
 
 	/**
@@ -1009,9 +1027,9 @@
 	function renderChips(state) {
 		state.chips.innerHTML = ''
 
-		var entries = [{ id: FULL_VIEW, title: t('thematiq', 'Full view') }].concat(
-			componentsFor(state.inventory, state.tab),
-		)
+		var entries = [{ id: FULL_VIEW, title: t('thematiq', 'Full view') }]
+			.concat(componentsFor(state.inventory, state.tab))
+			.concat(ownEntries(state))
 
 		entries.forEach(function (entry) {
 			var chip = el('button', 'nldesign-pg-chip', entry.title)
@@ -1038,6 +1056,15 @@
 	 * @return {void}
 	 */
 	function select(state, id) {
+		if (isOwnId(id) === true) {
+			state.component = id
+			enterOwn(state, id)
+			renderChips(state)
+			updateCrumb(state)
+			updateHash(state)
+			return
+		}
+
 		var component = componentById(state.inventory, id)
 
 		if (component === null || component.tab !== state.tab) {
@@ -1052,6 +1079,594 @@
 		renderChips(state)
 		updateCrumb(state)
 		updateHash(state)
+	}
+
+	/* ---------------------------------------------------------------- */
+	/* Your component (authoring-own-markup-preview)                     */
+	/* ---------------------------------------------------------------- */
+
+	/** The chip id of an empty "Your component" stage; a saved one is `own-{slug}`. */
+	var OWN = 'own'
+
+	/**
+	 * Whether a selection id is the own component stage.
+	 *
+	 * @param {string} id A selection id.
+	 * @return {boolean}
+	 */
+	function isOwnId(id) {
+		return id === OWN || /^own-[a-z0-9-]+$/.test(String(id || ''))
+	}
+
+	/**
+	 * The saved component a selection id names, or null.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} id A selection id.
+	 * @return {?Object} The component.
+	 */
+	function ownById(state, id) {
+		var found = null
+		state.ownComponents.forEach(function (component) {
+			if ('own-' + component.slug === id) {
+				found = component
+			}
+		})
+		return found
+	}
+
+	/**
+	 * The crumb text of an own selection.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} id A selection id.
+	 * @return {string}
+	 */
+	function ownTitle(state, id) {
+		var saved = ownById(state, id)
+		return saved !== null ? saved.name : t('thematiq', 'Your component')
+	}
+
+	/**
+	 * The own chips at the end of every tab's row: "Your component", then each saved one.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @return {Array<{id: string, title: string}>}
+	 */
+	function ownEntries(state) {
+		return [{ id: OWN, title: t('thematiq', 'Your component') }].concat(
+			(state.ownComponents || []).map(function (component) {
+				return { id: 'own-' + component.slug, title: component.name }
+			}),
+		)
+	}
+
+	/**
+	 * Load the saved components, then open one the hash names. A slug that no longer
+	 * exists is ignored, as a stale shipped component is.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} hash The location hash at boot.
+	 * @return {Promise<void>}
+	 */
+	function loadOwnComponents(state, hash) {
+		if (typeof fetch !== 'function' || typeof OC === 'undefined') {
+			return Promise.resolve()
+		}
+		return fetch(
+			OC.generateUrl('/apps/thematiq/settings/playground/components'),
+			{
+				headers: { requesttoken: OC.requestToken },
+			},
+		)
+			.then(function (response) {
+				return response.ok ? response.json() : { components: [] }
+			})
+			.then(function (data) {
+				state.ownComponents = (data && data.components) || []
+				renderChips(state)
+				var match = /^#preview=([a-z]+)\/(own(?:-[a-z0-9-]+)?)$/.exec(
+					String(hash || ''),
+				)
+				if (match === null) {
+					return
+				}
+				if (match[2] !== OWN && ownById(state, match[2]) === null) {
+					return
+				}
+				var tabButton = state.tabs.querySelector(
+					'.nldesign-tab-btn[data-tab="' + match[1] + '"]',
+				)
+				if (tabButton === null) {
+					return
+				}
+				if (match[1] !== state.tab) {
+					tabButton.click()
+				}
+				select(state, match[2])
+			})
+			.catch(function (error) {
+				console.error(
+					'[thematiq] own components could not be loaded:',
+					error,
+				)
+			})
+	}
+
+	/**
+	 * Open the own component stage. A stage that cannot build says so and leaves the
+	 * rest of the playground working.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} id `own` or `own-{slug}`.
+	 * @return {void}
+	 */
+	function enterOwn(state, id) {
+		exitComponent(state)
+		state.stage.innerHTML = ''
+		state.stage.removeAttribute('data-thematiq-component')
+		try {
+			buildOwnStage(state, ownById(state, id))
+		} catch (error) {
+			console.error(
+				'[thematiq] the own component stage could not be built:',
+				error,
+			)
+			state.stage.innerHTML = ''
+			state.stage.appendChild(
+				el(
+					'p',
+					'nldesign-own-error',
+					t('thematiq', 'Your component could not be shown.'),
+				),
+			)
+		}
+		showView(state, 'component')
+	}
+
+	/**
+	 * The house style's @font-face rules, from the page's readable stylesheets.
+	 *
+	 * @return {string}
+	 */
+	function fontFaces() {
+		var rules = []
+		Array.prototype.forEach.call(document.styleSheets || [], function (sheet) {
+			try {
+				Array.prototype.forEach.call(sheet.cssRules || [], function (rule) {
+					if (rule.type === 5) {
+						rules.push(rule.cssText)
+					}
+				})
+			} catch (error) {
+				// A sheet from another origin cannot be read; its fonts stay out.
+			}
+		})
+		return rules.join('\n')
+	}
+
+	/**
+	 * Label a field.
+	 *
+	 * @param {string} id The field id.
+	 * @param {string} text The label.
+	 * @return {Element}
+	 */
+	function ownLabel(id, text) {
+		var label = el('label', 'nldesign-own-label', text)
+		label.setAttribute('for', id)
+		return label
+	}
+
+	/**
+	 * Draw the stage: two fields, the dark switch, the frame, the removal report, saving.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {?Object} saved The saved component, or null for an empty stage.
+	 * @return {void}
+	 */
+	function buildOwnStage(state, saved) {
+		var sanitizer = window.NldesignMarkupSanitizer
+		var frames = window.NldesignOwnComponentFrame
+		if (!sanitizer || !frames) {
+			throw new Error('the sanitiser or the frame module is not loaded')
+		}
+
+		var stage = state.stage
+		stage.appendChild(
+			el(
+				'div',
+				'nldesign-pg-stage-title',
+				saved !== null ? saved.name : t('thematiq', 'Your component'),
+			),
+		)
+
+		var fields = el('div', 'nldesign-own-fields')
+		var html = el('textarea', 'nldesign-own-html')
+		html.id = 'nldesign-own-html'
+		html.rows = 6
+		html.spellcheck = false
+		html.value = saved !== null ? saved.html : ''
+		var css = el('textarea', 'nldesign-own-css')
+		css.id = 'nldesign-own-css'
+		css.rows = 6
+		css.spellcheck = false
+		css.value = saved !== null ? saved.css : ''
+		fields.appendChild(ownLabel('nldesign-own-html', t('thematiq', 'HTML')))
+		fields.appendChild(html)
+		fields.appendChild(ownLabel('nldesign-own-css', t('thematiq', 'CSS')))
+		fields.appendChild(css)
+		stage.appendChild(fields)
+
+		var dark = el(
+			'button',
+			'nldesign-btn nldesign-btn--small nldesign-own-dark',
+			t('thematiq', 'Dark theme'),
+		)
+		dark.type = 'button'
+		dark.setAttribute('aria-pressed', 'false')
+		var darkNote = el(
+			'p',
+			'nldesign-own-dark-note',
+			t('thematiq', "Nextcloud's own variables show your current theme."),
+		)
+		darkNote.hidden = true
+		stage.appendChild(dark)
+		stage.appendChild(darkNote)
+
+		var frame = frames.createFrame(
+			document,
+			t('thematiq', 'Your component: {name}', {
+				name: saved !== null ? saved.name : t('thematiq', 'not saved'),
+			}),
+		)
+		stage.appendChild(frame)
+
+		stage.appendChild(
+			el(
+				'p',
+				'nldesign-own-note',
+				t(
+					'thematiq',
+					'Scripts do not run here, and nothing loads from outside this server.',
+				),
+			),
+		)
+		var report = el('p', 'nldesign-own-report')
+		report.setAttribute('role', 'status')
+		stage.appendChild(report)
+		var contrast = el('ul', 'nldesign-own-contrast')
+		contrast.setAttribute(
+			'aria-label',
+			t('thematiq', 'Contrast of your component'),
+		)
+		stage.appendChild(contrast)
+
+		var save = el('div', 'nldesign-own-save')
+		var name = el('input', 'nldesign-own-name')
+		name.id = 'nldesign-own-name'
+		name.type = 'text'
+		name.value = saved !== null ? saved.name : ''
+		var saveButton = el(
+			'button',
+			'nldesign-btn nldesign-btn--small',
+			t('thematiq', 'Save component'),
+		)
+		saveButton.type = 'button'
+		save.appendChild(ownLabel('nldesign-own-name', t('thematiq', 'Name')))
+		save.appendChild(name)
+		save.appendChild(saveButton)
+		if (saved !== null) {
+			var remove = el(
+				'button',
+				'nldesign-btn nldesign-btn--small',
+				t('thematiq', 'Remove component'),
+			)
+			remove.type = 'button'
+			remove.addEventListener('click', function () {
+				removeOwn(state, saved)
+			})
+			save.appendChild(remove)
+		}
+		stage.appendChild(save)
+
+		var names = []
+		var fonts = fontFaces()
+
+		var read = function (token) {
+			if (
+				dark.getAttribute('aria-pressed') === 'true'
+				&& state.darkTokens[token] !== undefined
+			) {
+				return state.darkTokens[token]
+			}
+			return readVar(state.preview, token, '')
+		}
+
+		var paint = function () {
+			ownContrast(contrast, names, read)
+			frames.applyVars(frame, names, read)
+			if (frame.contentDocument && frame.contentDocument.documentElement) {
+				frame.contentDocument.documentElement.toggleAttribute(
+					'data-theme-dark',
+					dark.getAttribute('aria-pressed') === 'true',
+				)
+			}
+		}
+
+		var render = function () {
+			var cleanHtml = sanitizer.sanitizeHtml(html.value)
+			var cleanCss = sanitizer.sanitizeCss(css.value)
+			names = frames.scanVars(cleanHtml.html, cleanCss.css)
+			frame.srcdoc = frames.srcdoc(cleanHtml.html, cleanCss.css, fonts)
+			report.textContent = removalText(
+				sanitizer.merge(cleanHtml.removed, cleanCss.removed),
+			)
+			ownPanel(state, names)
+			paint()
+		}
+
+		frame.addEventListener('load', paint)
+		html.addEventListener('input', render)
+		css.addEventListener('input', render)
+		dark.addEventListener('click', function () {
+			var on = dark.getAttribute('aria-pressed') !== 'true'
+			dark.setAttribute('aria-pressed', on ? 'true' : 'false')
+			darkNote.hidden = !on
+			paint()
+		})
+		saveButton.addEventListener('click', function () {
+			saveOwn(state, name.value, html.value, css.value)
+		})
+
+		// A token edit anywhere in the editor repaints the frame without rebuilding it.
+		var onEdit = function () {
+			window.setTimeout(paint, 0)
+		}
+		state.editor.addEventListener('input', onEdit)
+		state.ownCleanup = function () {
+			state.editor.removeEventListener('input', onEdit)
+		}
+
+		render()
+	}
+
+	/**
+	 * The contrast of each text and background pair the code reads, paired by name
+	 * (`X-text` on `X`), measured by the server's ContrastService.
+	 *
+	 * @param {Element} list The list to fill.
+	 * @param {Array<string>} names The scanned names.
+	 * @param {Function} read name => value.
+	 * @return {void}
+	 */
+	function ownContrast(list, names, read) {
+		var pairs = names.filter(function (name) {
+			return (
+				/-text$/.test(name)
+				&& names.indexOf(name.replace(/-text$/, '')) !== -1
+			)
+		})
+		list.textContent = ''
+		pairs.forEach(function (text) {
+			var base = text.replace(/-text$/, '')
+			fetch(OC.generateUrl('/apps/thematiq/api/contrast/evaluate'), {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({
+					background: read(base),
+					candidates: [{ name: text, value: read(text), role: 'text' }],
+				}),
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					var result = ((data && data.results) || [])[0]
+					if (!result) {
+						return
+					}
+					var verdict = result.unevaluated
+						? t('thematiq', 'not evaluated')
+						: result.pass
+							? t('thematiq', 'passes')
+							: t('thematiq', 'fails')
+					list.appendChild(
+						el(
+							'li',
+							'nldesign-own-contrast-'
+								+ (result.pass ? 'pass' : 'fail'),
+							t(
+								'thematiq',
+								'{text} on {base}: {ratio}:1, {verdict} WCAG AA',
+								{
+									text: text,
+									base: base,
+									ratio: result.ratio,
+									verdict: verdict,
+								},
+							),
+						),
+					)
+				})
+				.catch(function () {
+					// No verdict is shown rather than a guessed one.
+				})
+		})
+	}
+
+	/**
+	 * What the sanitiser removed, in words.
+	 *
+	 * @param {Object<string, number>} removed Kind => count.
+	 * @return {string}
+	 */
+	function removalText(removed) {
+		var labels = {
+			script: t('thematiq', 'script'),
+			'event handler': t('thematiq', 'event handler'),
+			'external address': t('thematiq', 'external address'),
+			'script link': t('thematiq', 'script link'),
+			link: t('thematiq', 'link'),
+			element: t('thematiq', 'element'),
+			attribute: t('thematiq', 'attribute'),
+			import: t('thematiq', 'import'),
+			'style tag': t('thematiq', 'style tag'),
+		}
+		var parts = Object.keys(removed).map(function (kind) {
+			return removed[kind] + ' ' + (labels[kind] || kind)
+		})
+		return parts.length === 0
+			? ''
+			: t('thematiq', 'Removed: {list}', { list: parts.join(', ') })
+	}
+
+	/**
+	 * The token list beside the own stage: the names the code reads. An editor token
+	 * gets its editor row; any other name its value and a read-only note.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Array<string>} names The scanned names.
+	 * @return {void}
+	 */
+	function ownPanel(state, names) {
+		var open = state.editor.querySelector('.nldesign-pg-panel')
+		if (open !== null) {
+			open.remove()
+		}
+		var panel = state.editor.querySelector(
+			'.nldesign-tab-panel[data-panel="' + state.tab + '"]',
+		)
+		if (panel !== null) {
+			panel.classList.add('nldesign-pg-hidden')
+		}
+
+		var filtered = el('div', 'nldesign-pg-panel nldesign-own-panel')
+		filtered.appendChild(
+			el(
+				'div',
+				'nldesign-pg-panel-head',
+				names.length === 0
+					? t(
+							'thematiq',
+							'Your code reads no tokens yet. Use var(--nldesign-…) in it.',
+						)
+					: t('thematiq', 'The tokens your code reads'),
+			),
+		)
+		names.forEach(function (name) {
+			var editable = state.editor.querySelector(
+				'.nldesign-token-row[data-token-row="' + name + '"]',
+			)
+			if (editable !== null) {
+				filtered.appendChild(
+					cloneRow(state, {
+						name: name,
+						paints: t('thematiq', 'Read by your component'),
+					}),
+				)
+				return
+			}
+			var row = el(
+				'div',
+				'nldesign-token-row nldesign-pg-row nldesign-own-readonly',
+			)
+			var wrap = el('div', 'nldesign-token-label-wrap')
+			wrap.appendChild(el('span', 'nldesign-token-label', name))
+			wrap.appendChild(
+				el(
+					'span',
+					'nldesign-token-name',
+					(readVar(state.preview, name, '') || t('thematiq', 'not set'))
+						+ ' · '
+						+ t(
+							'thematiq',
+							'Read-only here: this comes from the token set',
+						),
+				),
+			)
+			row.appendChild(wrap)
+			filtered.appendChild(row)
+		})
+
+		if (state.saveBar) {
+			state.editor.insertBefore(filtered, state.saveBar)
+		} else {
+			state.editor.appendChild(filtered)
+		}
+	}
+
+	/**
+	 * Save the stage under a name.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} name The name.
+	 * @param {string} html The HTML, raw.
+	 * @param {string} css The CSS, raw.
+	 * @return {Promise<void>}
+	 */
+	function saveOwn(state, name, html, css) {
+		return fetch(
+			OC.generateUrl('/apps/thematiq/settings/playground/components'),
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({ name: name, html: html, css: css }),
+			},
+		)
+			.then(function (response) {
+				return response.json().then(function (data) {
+					return { ok: response.ok, data: data || {} }
+				})
+			})
+			.then(function (answer) {
+				if (!answer.ok) {
+					notify(
+						answer.data.error
+							|| t('thematiq', 'The component was not saved.'),
+					)
+					return
+				}
+				var stored = answer.data.component
+				state.ownComponents = state.ownComponents
+					.filter(function (c) {
+						return c.slug !== stored.slug
+					})
+					.concat([stored])
+				notify(t('thematiq', 'Component saved.'))
+				select(state, 'own-' + stored.slug)
+			})
+			.catch(function () {
+				notify(t('thematiq', 'The component was not saved.'))
+			})
+	}
+
+	/**
+	 * Remove a saved component.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Object} saved The component.
+	 * @return {Promise<void>}
+	 */
+	function removeOwn(state, saved) {
+		return fetch(
+			OC.generateUrl(
+				'/apps/thematiq/settings/playground/components/'
+					+ encodeURIComponent(saved.slug),
+			),
+			{ method: 'DELETE', headers: { requesttoken: OC.requestToken } },
+		).then(function () {
+			state.ownComponents = state.ownComponents.filter(function (c) {
+				return c.slug !== saved.slug
+			})
+			select(state, OWN)
+		})
 	}
 
 	/**
@@ -1158,6 +1773,10 @@
 	 * @return {void}
 	 */
 	function exitComponent(state) {
+		if (typeof state.ownCleanup === 'function') {
+			state.ownCleanup()
+			state.ownCleanup = null
+		}
 		var open = state.editor.querySelector('.nldesign-pg-panel')
 		if (open !== null) {
 			open.remove()

@@ -69,6 +69,10 @@ return [
 		['name' => 'gallery#index', 'url' => '/settings/gallery', 'verb' => 'GET'],
 		['name' => 'gallery#setEnabled', 'url' => '/settings/gallery', 'verb' => 'POST'],
 		['name' => 'gallery#install', 'url' => '/settings/gallery/{id}/install', 'verb' => 'POST'],
+		// The playground's own components (authoring-own-markup-preview), admin-only.
+		['name' => 'ownComponent#list', 'url' => '/settings/playground/components', 'verb' => 'GET'],
+		['name' => 'ownComponent#save', 'url' => '/settings/playground/components', 'verb' => 'POST'],
+		['name' => 'ownComponent#delete', 'url' => '/settings/playground/components/{slug}', 'verb' => 'DELETE'],
 		// Own tokens and token deprecations (authoring-token-lifecycle), admin-only.
 		['name' => 'ownToken#list', 'url' => '/settings/tokens/own', 'verb' => 'GET'],
 		['name' => 'ownToken#create', 'url' => '/settings/tokens/own', 'verb' => 'POST'],
@@ -102,6 +106,8 @@ return [
 		// Multi-brand token sources (authoring-multi-brand-token-source), admin-only.
 		['name' => 'tokenSource#list', 'url' => '/settings/tokensets/sources', 'verb' => 'GET'],
 		['name' => 'tokenSource#update', 'url' => '/settings/tokensets/sources/{sourceId}', 'verb' => 'POST'],
+		// Any token set as a W3C Design Tokens (DTCG) download (authoring-dtcg-export), admin-only.
+		['name' => 'dtcgExport#export', 'url' => '/settings/tokensets/{id}/dtcg', 'verb' => 'GET'],
 		['name' => 'customTokenSet#export', 'url' => '/settings/tokensets/custom/{id}/export', 'verb' => 'GET'],
 		['name' => 'customTokenSet#delete', 'url' => '/settings/tokensets/custom/{id}', 'verb' => 'DELETE'],
 		// Active-configuration WCAG contrast compliance evidence report (download).

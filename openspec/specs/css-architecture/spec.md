@@ -9,7 +9,7 @@ enriched_date: 2026-03-20
 ## Purpose
 Defines the layered CSS architecture that transforms NL Design System tokens into Nextcloud-compatible theming.
 
-@e2e exclude CSS-architecture / PHP boot-order spec — all scenarios describe CSS cascade layers, file load order, and server-side PHP logic with no testable UI surface in the admin settings page. The architecture uses a design-system-driven approach: `design-systems.json` declares ordered stylesheet bundles, and `Application::boot()` loads the correct bundle for the active token set. Organization-specific tokens cascade correctly, incomplete token sets fall back gracefully, and NL Design System component tokens (using the `--utrecht-*` prefix) are bridged to the `--nldesign-*` namespace. The load order is critical: each layer builds on the previous one.
+The architecture uses a design-system-driven approach: `design-systems.json` declares ordered stylesheet bundles, and `CssInjectionService::inject()` loads the correct bundle for the active token set. Organization-specific tokens cascade correctly, incomplete token sets fall back gracefully, and NL Design System component tokens (using the `--utrecht-*` prefix) are bridged to the `--nldesign-*` namespace. The load order is critical: each layer builds on the previous one.
 
 ## Requirements
 
@@ -77,7 +77,7 @@ identical for all users.
 
 #### Scenario: Empty mapping preserves legacy resolution byte-for-byte
 
-@e2e exclude regression invariant — PHPUnit asserts resolved id equals the app value
+@e2e exclude the GIVEN is an absent or empty group mapping, which a shared instance cannot guarantee; PHPUnit tests/Unit/Service/GroupThemingServiceTest.php::testResolveReturnsDefaultForEmptyMappingWithoutGroupOrCacheAccess asserts the resolved id equals the token_set app value
 - GIVEN `group_token_sets` is absent or an empty array and no preview is active
 - WHEN any request resolves its token set
 - THEN the resolved id MUST equal the `token_set` app value (default `nextcloud`)
@@ -104,6 +104,7 @@ The fonts layer MUST declare Fira Sans @font-face rules for all required weights
 - AND font files MUST be in the `css/systems/nldesign/fonts/` directory
 
 #### Scenario: Font licensing compliance
+@e2e exclude licensing is a property of the distributed files, not of a rendered page; and it is NOT met today: css/systems/nldesign/fonts/ ships no OFL text and REUSE.toml labels the Fira Sans binaries EUPL-1.2 (needs a licensing decision, see the #263 PR)
 - GIVEN Fira Sans is used as the app's primary font
 - WHEN the font is distributed
 - THEN it MUST comply with the SIL Open Font License 1.1
@@ -266,12 +267,14 @@ The overrides layer MUST map Nextcloud `--color-*` CSS variables to `--nldesign-
 The element-overrides layer MUST apply NL Design styling to specific HTML elements and Nextcloud components.
 
 #### Scenario: Font family forced on all elements
+@e2e exclude spec drift: css/systems/nldesign/element-overrides.css (FONT FORCING) deliberately sets font-family without !important on button, input, textarea, select and label only, and uses no universal selector; the scenario must be rewritten before a browser test can prove it
 - GIVEN Layer 7 (`css/systems/nldesign/element-overrides.css`) is loaded
 - WHEN the font forcing rules are processed
 - THEN `font-family: var(--nldesign-font-family) !important` MUST be applied to specific element selectors (html, body, div, span, p, h1-h6, a, button, input, textarea, select, label, li, ul, ol)
 - AND it MUST also be applied via wildcard descendant selectors (`html body *`, `#body-user *`, `#app *`, `#content *`) to ensure complete coverage
 
 #### Scenario: Header icons visible on themed background
+@e2e exclude spec drift: css/systems/nldesign/element-overrides.css (HEADER GLYPHS) colours header-end SVGs with `color` and sets `filter: none` on purpose, because the filter flattened the avatar; the scenario still asks for the removed filter
 - GIVEN the header has a white or light background from the token set
 - WHEN Layer 7 is loaded
 - THEN `#header .header-end svg` and related selectors MUST have `filter: invert(1) brightness(0) contrast(100)` to make icons visible
@@ -279,6 +282,7 @@ The element-overrides layer MUST apply NL Design styling to specific HTML elemen
 - AND user-status icons MUST be excluded from the filter
 
 #### Scenario: App navigation styled as card
+@e2e exclude spec drift: css/systems/nldesign/element-overrides.css deliberately sets no margin on #app-navigation (the 30px margin showed the page background as a strip); the scenario still asks for it
 - GIVEN the app navigation sidebar renders
 - WHEN Layer 7 styles are applied
 - THEN `#app-navigation` MUST use `var(--color-main-background)` as background
@@ -286,6 +290,7 @@ The element-overrides layer MUST apply NL Design styling to specific HTML elemen
 - AND the closed state (`.app-navigation--close`) MUST have 0 margin
 
 #### Scenario: App-specific exclusions
+@e2e exclude spec drift: no `.launchpad-widget` rule and no solid-background exclusion exist in css/systems/nldesign/; `.tile-widget` is only excluded from the text-colour rule in element-overrides.css
 - GIVEN certain apps have custom widget styling (e.g., LaunchPad)
 - WHEN solid background rules are applied
 - THEN elements with `.launchpad-widget` or `.tile-widget` classes MUST be excluded
@@ -336,6 +341,7 @@ All color token combinations used for text-on-background MUST meet WCAG 2.1 AA m
 - THEN the contrast ratio MUST be at least 4.5:1 for normal text
 
 #### Scenario: Focus indicator visible
+@e2e exclude known defect, a browser test would fail: the shipped --nldesign-color-focus rgba(0, 123, 199, 0.5) composites to about 2.0:1 on white, below 3:1; the test lands with the token fix (see the #263 PR)
 - GIVEN `--nldesign-color-focus` is used for keyboard focus outlines
 - WHEN a focus outline appears on any background
 - THEN the outline MUST have at least 3:1 contrast against the adjacent background
@@ -374,6 +380,7 @@ Shipped design systems are `none`, `nldesign`, `summer-breeze`, `high-contrast`,
   from for lasuite's violet `#4844AD`; `#0659C5` is brand-600, a different, unrendered step)
 
 #### Scenario: Unknown design system falls back safely
+@e2e exclude no shipped token set names an unknown design system, so no page can reach this branch; PHPUnit tests/Unit/DesignSystemServiceTest.php::testGetDesignSystemUnknownIdFallsBackToNoStylesheets asserts the empty-stylesheets fallback
 
 - GIVEN a token set references a design system id not in `design-systems.json`
 - WHEN `DesignSystemService::getDesignSystem()` is called with the unknown id
@@ -382,6 +389,7 @@ Shipped design systems are `none`, `nldesign`, `summer-breeze`, `high-contrast`,
 - AND the app MUST not throw an exception
 
 #### Scenario: Design systems are cached per request
+@e2e exclude in-process caching inside one PHP request is not observable from a browser; PHPUnit tests/Unit/DesignSystemServiceTest.php::testGetDesignSystemsReadsTheManifestOncePerInstance asserts the second call does not re-read design-systems.json
 
 - GIVEN `DesignSystemService::getDesignSystems()` is called multiple times in one request
 - WHEN the second call is made
@@ -446,20 +454,21 @@ previous boot-time injection on every surface. This change ships no admin UI for
   change
 
 #### Scenario: A context can be deliberately unthemed
+@e2e exclude themed_contexts has no admin UI or HTTP endpoint (occ only, per the requirement), so a browser test cannot set it; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testConfiguredListExcludesUnlistedContexts asserts the unlisted context gets no stylesheet
 - GIVEN `themed_contexts` is `["user","login","guest","error"]`
 - WHEN a public share page (`renderAs: public`) is rendered
 - THEN no nldesign stylesheet MUST be injected on that page
 - AND a user page rendered in the same configuration MUST remain fully themed
 
 #### Scenario: Invalid configuration fails open to themed
-@e2e exclude config-validation branch — PHPUnit on CssInjectionService
+@e2e exclude themed_contexts is occ-only, so a browser cannot store invalid JSON in it; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testInvalidJsonThemedContextsFailsOpen and ::testNonArrayJsonThemedContextsFailsOpen assert every context stays themed
 - GIVEN `themed_contexts` contains unparseable JSON or a non-array value
 - WHEN any template renders
 - THEN all contexts MUST be treated as themed
 - AND no error MUST be raised
 
 #### Scenario: Unknown renderAs values stay themed
-@e2e exclude forward-compatibility branch — PHPUnit on the listener mapping
+@e2e exclude no Nextcloud page renders with an unknown renderAs, so no browser can reach this branch; PHPUnit tests/Unit/Listener/ThemeInjectionListenerTest.php::testUnknownRenderAsStillInjects asserts injection proceeds
 - GIVEN a `BeforeTemplateRenderedEvent` whose response `renderAs` is `blank` or a value unknown
   to the listener
 - WHEN the listener handles the event

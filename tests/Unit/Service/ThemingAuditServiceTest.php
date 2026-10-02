@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/theming-audit-log/tasks.md#task-5.1
+ * @spec openspec/changes/archive/2026-07-23-theming-audit-log/tasks.md#task-5.1
  */
 
 declare(strict_types=1);
@@ -466,6 +466,28 @@ class ThemingAuditServiceTest extends TestCase {
 		$service->log(action: 'token_set_changed', context: ['old' => 'b', 'new' => 'c']);
 		$this->assertStringContainsString('"old":"b"', $this->root->auditFolder->getFile('audit.jsonl')->getContent());
 	}//end testRotationAtSizeCapKeepsOneGeneration()
+
+	/**
+	 * The lifetime counter keeps counting across a rotation, even though the
+	 * current audit.jsonl is empty right after it.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Counter
+	 * survives log rotation": MetricsController emits this app value, never a
+	 * line count of the file.
+	 */
+	public function testCounterKeepsCountingAcrossRotation(): void {
+		$this->appConfig['audit_entries_total'] = '41';
+		$service = $this->makeService();
+
+		$padding = str_repeat('a', 1048500) . "\n";
+		$this->root->auditFolder->newFile('audit.jsonl', $padding);
+
+		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
+
+		$this->assertTrue($this->root->auditFolder->fileExists('audit.jsonl.1'));
+		$this->assertSame('', $this->root->auditFolder->getFile('audit.jsonl')->getContent());
+		$this->assertSame('42', $this->appConfig['audit_entries_total']);
+	}//end testCounterKeepsCountingAcrossRotation()
 
 	/**
 	 * getRecent() returns newest-first and respects the limit.

@@ -6941,6 +6941,14 @@
 				),
 				'unsupported-color-space': t('thematiq', 'Unsupported color space'),
 				'unsupported-value-shape': t('thematiq', 'Unsupported value shape'),
+				'out-of-gamut-clipped': t(
+					'thematiq',
+					'Outside sRGB, clipped to the nearest colour',
+				),
+				'out-of-gamut-hex-fallback': t(
+					'thematiq',
+					"Outside sRGB, the document's own fallback was used",
+				),
 				'alias-cycle': t('thematiq', 'Alias cycle detected'),
 				'alias-target-missing': t('thematiq', 'Alias target does not exist'),
 				'alias-depth-exceeded': t(
@@ -6987,7 +6995,19 @@
 		function buildDiagnosticsFragment(data) {
 			var fragment = document.createDocumentFragment()
 
-			var diagnostics = [].concat(data.skipped || [], data.errors || [])
+			// Colours moved into sRGB are listed too, so the change is visible.
+			var adapted = (data.report || [])
+				.filter(function (entry) {
+					return /^out-of-gamut-/.test(entry.reason || '')
+				})
+				.map(function (entry) {
+					return { path: entry.source, reason: entry.reason }
+				})
+			var diagnostics = [].concat(
+				data.skipped || [],
+				data.errors || [],
+				adapted,
+			)
 			var groups =
 				typeof TT.groupDiagnosticsByReason === 'function'
 					? TT.groupDiagnosticsByReason(diagnostics)
@@ -7684,6 +7704,40 @@
 
 		initTokenReferenceLinks()
 
+		/**
+		 * Download a token set as a W3C Design Tokens (DTCG) document
+		 * (openspec/specs/token-set-dtcg-export/spec.md).
+		 *
+		 * @param {string} id The token set id.
+		 * @return {void}
+		 */
+		function downloadDtcg(id) {
+			downloadWithToken(
+				OC.generateUrl(
+					'/apps/thematiq/settings/tokensets/'
+						+ encodeURIComponent(id)
+						+ '/dtcg',
+				),
+				id + '.tokens.json',
+				t('thematiq', 'The design tokens could not be downloaded.'),
+			)
+		}
+
+		/**
+		 * "Download as design tokens" next to the dropdown acts on the selected set.
+		 */
+		function initDtcgDownload() {
+			var button = document.getElementById('nldesign-dtcg-download')
+			if (button === null || tokenSetSelect === null) {
+				return
+			}
+			button.addEventListener('click', function () {
+				downloadDtcg(tokenSetSelect.value)
+			})
+		}
+
+		initDtcgDownload()
+
 		function loadCustomTokenSets() {
 			var listEl = document.getElementById('nldesign-custom-set-list')
 			if (listEl === null) {
@@ -7859,6 +7913,16 @@
 						)
 					})
 					row.appendChild(downloadBtn)
+
+					var dtcgBtn = document.createElement('button')
+					dtcgBtn.type = 'button'
+					dtcgBtn.className =
+						'nldesign-btn nldesign-btn--small nldesign-dtcg-row-download'
+					dtcgBtn.textContent = t('thematiq', 'Download as design tokens')
+					dtcgBtn.addEventListener('click', function () {
+						downloadDtcg(set.id)
+					})
+					row.appendChild(dtcgBtn)
 
 					// The token reference of this set (openspec/specs/token-reference/spec.md).
 					var referenceLink = document.createElement('a')

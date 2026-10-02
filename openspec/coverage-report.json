@@ -1,212 +1,23 @@
 {
-  "generated_at": "2026-05-24T00:00:00Z",
-  "app": "nldesign",
-  "branch": "feature/i18n-complete-translations",
-  "scanner_version": "1",
-  "buckets": {
-    "annotated": [],
-    "plumbing": [
-      {"file": "lib/AppInfo/Application.php", "method": "__construct", "reason": "trivial parent call"},
-      {"file": "lib/AppInfo/Application.php", "method": "register", "reason": "empty body (IBootstrap requirement)"},
-      {"file": "lib/Controller/HealthController.php", "method": "__construct", "reason": "DI promotion"},
-      {"file": "lib/Controller/MetricsController.php", "method": "__construct", "reason": "DI promotion"},
-      {"file": "lib/Controller/OverridesController.php", "method": "__construct", "reason": "DI promotion"},
-      {"file": "lib/Controller/SettingsController.php", "method": "__construct", "reason": "DI promotion"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "__construct", "reason": "DI promotion"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "getFilePath", "reason": "trivial path helper"},
-      {"file": "lib/Service/DesignSystemService.php", "method": "__construct", "reason": "DI promotion"},
-      {"file": "lib/Service/DesignSystemService.php", "method": "getAppPath", "reason": "trivial path helper"},
-      {"file": "lib/Service/ThemingService.php", "method": "__construct", "reason": "DI promotion"},
-      {"file": "lib/Service/ThemingService.php", "method": "getImageManager", "reason": "trivial getter (covered by REQ-SYNC-008 helper)"},
-      {"file": "lib/Service/TokenSetPreviewService.php", "method": "__construct", "reason": "DI promotion"},
-      {"file": "lib/Service/TokenSetService.php", "method": "__construct", "reason": "DI promotion"},
-      {"file": "lib/Service/TokenSetService.php", "method": "getAppPath", "reason": "trivial path helper"},
-      {"file": "lib/Settings/Admin.php", "method": "__construct", "reason": "DI promotion"}
-    ],
-    "bucket_1": [
-      {"file": "lib/AppInfo/Application.php", "method": "boot", "capability": "css-architecture", "req_id": "REQ-CSS-001", "confidence": 0.92, "needs_review": false, "signal": "delegates to injectThemeCSS — boot entry for design-system loading", "inherits_from": null},
-      {"file": "lib/AppInfo/Application.php", "method": "injectThemeCSS", "capability": "css-architecture", "req_id": "REQ-CSS-001/009 + REQ-SLGN-002 + REQ-MLBL-002 + REQ-TSET-003", "confidence": 0.97, "needs_review": false, "signal": "directly implements design-system bundle loading, custom-overrides, conditional hide-slogan + show-menu-labels CSS — multi-REQ across css-architecture, custom-css-overrides, hide-slogan, menu-labels, token-sets"},
-
-      {"file": "lib/Controller/HealthController.php", "method": "index", "capability": "prometheus-metrics", "req_id": "REQ-PROM-009", "confidence": 0.95, "needs_review": false, "signal": "REQ scenario names HealthController + configuration check + NoCSRFRequired", "inherits_from": null},
-
-      {"file": "lib/Controller/MetricsController.php", "method": "index", "capability": "prometheus-metrics", "req_id": "REQ-PROM-001/002/003/007/010", "confidence": 0.97, "needs_review": false, "signal": "Prometheus exposition format, content-type, info/up/theming_syncs metrics"},
-      {"file": "lib/Controller/MetricsController.php", "method": "collectTokenSetMetrics", "capability": "prometheus-metrics", "req_id": "REQ-PROM-004/005/008", "confidence": 0.95, "needs_review": false, "signal": "token_sets_total + active_token_set gauge with try/catch fallback"},
-      {"file": "lib/Controller/MetricsController.php", "method": "collectOverrideMetrics", "capability": "prometheus-metrics", "req_id": "REQ-PROM-006/008", "confidence": 0.95, "needs_review": false, "signal": "custom_overrides_total via CustomOverridesService::read() with try/catch"},
-
-      {"file": "lib/Controller/OverridesController.php", "method": "getOverrides", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides Read/Write PHP Endpoint + REQ-ASET-010", "confidence": 0.93, "needs_review": false, "signal": "GET /settings/overrides — returns overrides + registry + tabs for editor mount"},
-      {"file": "lib/Controller/OverridesController.php", "method": "setOverrides", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides Read/Write PHP Endpoint", "confidence": 0.92, "needs_review": false, "signal": "POST /settings/overrides — validates and persists via service"},
-      {"file": "lib/Controller/OverridesController.php", "method": "exportOverrides", "capability": "token-import-export", "req_id": "REQ from token-import-export Export Current Overrides", "confidence": 0.96, "needs_review": false, "signal": "GET /settings/overrides/export — DataDownloadResponse with text/css"},
-      {"file": "lib/Controller/OverridesController.php", "method": "importOverrides", "capability": "token-import-export", "req_id": "REQ from token-import-export Import Token File + Upload Endpoint", "confidence": 0.96, "needs_review": false, "signal": "POST /settings/overrides/import — multipart, parses, filters via TokenRegistry"},
-      {"file": "lib/Controller/OverridesController.php", "method": "validateUploadedFile", "capability": "token-import-export", "req_id": "REQ from token-import-export Import Validation (file size limit)", "confidence": 0.94, "needs_review": false, "signal": "256 KB size guard, missing file guard", "inherits_from": "importOverrides"},
-      {"file": "lib/Controller/OverridesController.php", "method": "readUploadedContent", "capability": "token-import-export", "req_id": "REQ from token-import-export Upload Endpoint", "confidence": 0.85, "needs_review": false, "signal": "private helper for importOverrides", "inherits_from": "importOverrides"},
-      {"file": "lib/Controller/OverridesController.php", "method": "writeImportedTokens", "capability": "token-import-export", "req_id": "REQ from token-import-export Import Validation (unknown tokens skipped)", "confidence": 0.93, "needs_review": false, "signal": "TokenRegistry::isEditable filter + imported/skipped counts", "inherits_from": "importOverrides"},
-
-      {"file": "lib/Controller/SettingsController.php", "method": "setTokenSet", "capability": "token-sets", "req_id": "REQ-TSET-003/004/006", "confidence": 0.96, "needs_review": false, "signal": "POST /settings/tokenset — validates, writes IConfig"},
-      {"file": "lib/Controller/SettingsController.php", "method": "getAvailableTokenSets", "capability": "token-sets", "req_id": "REQ-TSET-001/006 + REQ-ASET-002", "confidence": 0.96, "needs_review": false, "signal": "GET /settings/tokensets delegating to TokenSetService"},
-      {"file": "lib/Controller/SettingsController.php", "method": "saveBooleanSetting", "capability": "hide-slogan + menu-labels", "req_id": "REQ-SLGN-005 + REQ-MLBL-001", "confidence": 0.95, "needs_review": false, "signal": "strict-true → '1'/'0' string conversion shared by both toggles", "inherits_from": "setSloganSetting + setMenuLabelsSetting"},
-      {"file": "lib/Controller/SettingsController.php", "method": "setSloganSetting", "capability": "hide-slogan", "req_id": "REQ-SLGN-001/005/006", "confidence": 0.97, "needs_review": false, "signal": "POST /settings/slogan named for the REQ"},
-      {"file": "lib/Controller/SettingsController.php", "method": "setMenuLabelsSetting", "capability": "menu-labels", "req_id": "REQ-MLBL-001", "confidence": 0.97, "needs_review": false, "signal": "POST /settings/menulabels named for the REQ"},
-      {"file": "lib/Controller/SettingsController.php", "method": "getOverrides", "capability": "custom-css-overrides + token-editor-ui", "req_id": "REQ from custom-css-overrides + token-editor-ui Editable Token Input", "confidence": 0.9, "needs_review": false, "signal": "duplicates OverridesController::getOverrides — returns registry/tabs/overrides for editor"},
-      {"file": "lib/Controller/SettingsController.php", "method": "setOverrides", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides Write new overrides", "confidence": 0.88, "needs_review": false, "signal": "duplicates OverridesController::setOverrides"},
-      {"file": "lib/Controller/SettingsController.php", "method": "updateThemingValues", "capability": "theming-sync", "req_id": "REQ-SYNC-007/009 + REQ from theming-sync-dialog Update Theming Values Endpoint", "confidence": 0.97, "needs_review": false, "signal": "POST /settings/theming — colors-then-images validation order"},
-      {"file": "lib/Controller/SettingsController.php", "method": "getThemingValues", "capability": "theming-sync", "req_id": "REQ-SYNC-002 + REQ from theming-sync-dialog Get Current Theming Values Endpoint", "confidence": 0.96, "needs_review": false, "signal": "GET /settings/theming via buildThemingSnapshot"},
-      {"file": "lib/Controller/SettingsController.php", "method": "buildThemingSnapshot", "capability": "theming-sync", "req_id": "REQ-SYNC-002", "confidence": 0.92, "needs_review": false, "signal": "scenario explicitly names buildThemingSnapshot()", "inherits_from": "getThemingValues"},
-      {"file": "lib/Controller/SettingsController.php", "method": "getTokenSetPreview", "capability": "token-sets + token-set-apply-dialog", "req_id": "REQ-TSET-009 + REQ from token-set-apply-dialog Resolved Value Comparison", "confidence": 0.96, "needs_review": false, "signal": "GET /settings/tokenset-preview/{id} feeds apply-dialog comparison"},
-
-      {"file": "lib/Service/ContentTokens.php", "method": "getTokens", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups (Content area)", "confidence": 0.93, "needs_review": false, "signal": "static map of Content area tab tokens matching REQ scenario"},
-
-      {"file": "lib/Service/CssParserService.php", "method": "parseDeclarations", "capability": "token-import-export", "req_id": "REQ from token-import-export Import Validation (parse CSS)", "confidence": 0.92, "needs_review": false, "signal": "Extracts --token: value pairs server-side, used by importOverrides"},
-      {"file": "lib/Service/CssParserService.php", "method": "parseRootBlock", "capability": "token-import-export", "req_id": "REQ from token-import-export Import Validation", "confidence": 0.78, "needs_review": true, "signal": "Helper for parsing :root {} blocks — currently no caller found in lib/; possible unused public helper"},
-
-      {"file": "lib/Service/CustomOverridesService.php", "method": "ensureExists", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides File does not exist on fresh install", "confidence": 0.96, "needs_review": false, "signal": "Called by Application::injectThemeCSS to seed empty file"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "read", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides Read current overrides", "confidence": 0.96, "needs_review": false, "signal": "Returns only tokens explicitly set in file"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "write", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides Write new overrides + No Database Storage", "confidence": 0.96, "needs_review": false, "signal": "filterEditable + atomic temp+rename per REQ"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "filterEditable", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides Read/Write PHP Endpoint", "confidence": 0.85, "needs_review": false, "signal": "TokenRegistry::isEditable gate", "inherits_from": "write"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "writeFile", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides Read/Write PHP Endpoint (write atomically)", "confidence": 0.95, "needs_review": false, "signal": "tmp file + rename, RuntimeException on failure", "inherits_from": "write + ensureExists"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "buildCss", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides File Format (single :root block, no important)", "confidence": 0.93, "needs_review": false, "signal": "Generates header comment + :root block exactly as spec example", "inherits_from": "writeFile"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "buildDeclarationLines", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides File Format (one decl per line, trailing semicolon)", "confidence": 0.9, "needs_review": false, "signal": "Two-space indent + trailing semicolon per line", "inherits_from": "buildCss"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "parseDeclarations", "capability": "custom-css-overrides", "req_id": "REQ from custom-css-overrides Read current overrides", "confidence": 0.85, "needs_review": false, "signal": ":root extraction regex", "inherits_from": "read"},
-      {"file": "lib/Service/CustomOverridesService.php", "method": "getRawContent", "capability": "token-import-export", "req_id": "REQ from token-import-export Export Current Overrides (text/css download)", "confidence": 0.94, "needs_review": false, "signal": "Returns raw file content for DataDownloadResponse"},
-
-      {"file": "lib/Service/DesignSystemService.php", "method": "getDesignSystems", "capability": "css-architecture", "req_id": "REQ-CSS-011/012", "confidence": 0.95, "needs_review": false, "signal": "Reads design-systems.json with per-request cache"},
-      {"file": "lib/Service/DesignSystemService.php", "method": "getDesignSystem", "capability": "css-architecture", "req_id": "REQ-CSS-011 (Unknown design system falls back safely)", "confidence": 0.96, "needs_review": false, "signal": "Empty-stylesheets fallback matches scenario exactly"},
-      {"file": "lib/Service/DesignSystemService.php", "method": "getTokenSetMeta", "capability": "css-architecture", "req_id": "REQ-CSS-011 (Design system resolved from token set metadata)", "confidence": 0.96, "needs_review": false, "signal": "Returns design_system field per scenario"},
-      {"file": "lib/Service/DesignSystemService.php", "method": "getDesignSystemsList", "capability": "css-architecture", "req_id": "REQ-CSS-011", "confidence": 0.72, "needs_review": true, "signal": "Public list helper — no caller in lib/, possibly dead public API for future endpoint"},
-      {"file": "lib/Service/DesignSystemService.php", "method": "readJsonManifest", "capability": "css-architecture", "req_id": "REQ-CSS-011 + REQ-TSET-002", "confidence": 0.9, "needs_review": false, "signal": "Shared JSON parser with malformed-input tolerance", "inherits_from": "getDesignSystems + getTokenSetMeta"},
-
-      {"file": "lib/Service/LoginTokens.php", "method": "getTokens", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups (Login page & Branding)", "confidence": 0.96, "needs_review": false, "signal": "Static map matches spec's primary-color token list verbatim"},
-
-      {"file": "lib/Service/StatusTokens.php", "method": "getTokens", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups (Buttons & Status)", "confidence": 0.96, "needs_review": false, "signal": "Static map matches spec's status/error/warning/success tokens"},
-
-      {"file": "lib/Service/ThemingService.php", "method": "isValidHexColor", "capability": "theming-sync", "req_id": "REQ-SYNC-003", "confidence": 0.96, "needs_review": false, "signal": "Hex regex exactly matches spec"},
-      {"file": "lib/Service/ThemingService.php", "method": "validateColors", "capability": "theming-sync", "req_id": "REQ-SYNC-003", "confidence": 0.96, "needs_review": false, "signal": "Iterates primary_color + background_color, returns first error"},
-      {"file": "lib/Service/ThemingService.php", "method": "validateImagePaths", "capability": "theming-sync", "req_id": "REQ-SYNC-004", "confidence": 0.96, "needs_review": false, "signal": "Spec scenario lists exact validation rules"},
-      {"file": "lib/Service/ThemingService.php", "method": "validateSinglePath", "capability": "theming-sync", "req_id": "REQ-SYNC-004", "confidence": 0.95, "needs_review": false, "signal": "Path traversal + allowed dir + file existence checks per spec", "inherits_from": "validateImagePaths"},
-      {"file": "lib/Service/ThemingService.php", "method": "applyColors", "capability": "theming-sync", "req_id": "REQ-SYNC-005", "confidence": 0.96, "needs_review": false, "signal": "ThemingDefaults::set per spec scenario"},
-      {"file": "lib/Service/ThemingService.php", "method": "applyImages", "capability": "theming-sync", "req_id": "REQ-SYNC-006", "confidence": 0.96, "needs_review": false, "signal": "ImageManager::updateImage with full path via IAppManager"},
-
-      {"file": "lib/Service/TokenRegistry.php", "method": "getTokens", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups + Excluded Token Registry", "confidence": 0.97, "needs_review": false, "signal": "Canonical registry — all 4 tabs, exclusion list enforced by absence"},
-      {"file": "lib/Service/TokenRegistry.php", "method": "getTabLabels", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups", "confidence": 0.95, "needs_review": false, "signal": "Returns Login/Content/Status/Typography labels per spec"},
-      {"file": "lib/Service/TokenRegistry.php", "method": "isEditable", "capability": "token-editor-ui + custom-css-overrides", "req_id": "REQ from token-editor-ui Excluded Token Registry + custom-css-overrides Write Validation", "confidence": 0.97, "needs_review": false, "signal": "Gate function used by OverridesController + CustomOverridesService"},
-      {"file": "lib/Service/TokenRegistry.php", "method": "getTokenNames", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Editable Token Input", "confidence": 0.7, "needs_review": true, "signal": "No internal caller found in lib/; public helper for API consumers"},
-      {"file": "lib/Service/TokenRegistry.php", "method": "getTokensByTab", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups", "confidence": 0.7, "needs_review": true, "signal": "No internal caller; alternative grouping helper, possibly dead"},
-
-      {"file": "lib/Service/TokenSetPreviewService.php", "method": "getResolvedColors", "capability": "token-set-apply-dialog + token-sets", "req_id": "REQ-TSET-009 + REQ from token-set-apply-dialog Resolved Value Comparison", "confidence": 0.95, "needs_review": false, "signal": "Server-side resolution pipeline feeding apply-dialog comparison"},
-      {"file": "lib/Service/TokenSetPreviewService.php", "method": "parseCssVars", "capability": "token-set-apply-dialog", "req_id": "REQ from token-set-apply-dialog Resolved Value Comparison", "confidence": 0.85, "needs_review": false, "signal": "Used twice by getResolvedColors for defaults + token set", "inherits_from": "getResolvedColors"},
-      {"file": "lib/Service/TokenSetPreviewService.php", "method": "parseMappings", "capability": "token-set-apply-dialog", "req_id": "REQ from token-set-apply-dialog Resolved Value Comparison", "confidence": 0.85, "needs_review": false, "signal": "Parses overrides.css --color-X: var(--nldesign-Y) mappings", "inherits_from": "getResolvedColors"},
-      {"file": "lib/Service/TokenSetPreviewService.php", "method": "resolveVarReference", "capability": "token-set-apply-dialog", "req_id": "REQ from token-set-apply-dialog Resolved Value Comparison", "confidence": 0.85, "needs_review": false, "signal": "One-level var() chase", "inherits_from": "getResolvedColors"},
-
-      {"file": "lib/Service/TokenSetService.php", "method": "getAvailableTokenSets", "capability": "token-sets", "req_id": "REQ-TSET-001/002/008 + REQ from token-set-dropdown Token Sets Sorted Alphabetically + REQ-EXT-* (extended-token-sets Dynamic Token Set Discovery + Admin Settings Dynamic Dropdown)", "confidence": 0.97, "needs_review": false, "signal": "Filesystem scan + manifest merge + alphabetical sort + auto-naming"},
-      {"file": "lib/Service/TokenSetService.php", "method": "isValidTokenSet", "capability": "token-sets", "req_id": "REQ-TSET-004 + REQ-EXT-* (Token set validation)", "confidence": 0.97, "needs_review": false, "signal": "Path-traversal guards (/ and ..) + file_exists per spec"},
-      {"file": "lib/Service/TokenSetService.php", "method": "readManifest", "capability": "token-sets", "req_id": "REQ-TSET-002", "confidence": 0.95, "needs_review": false, "signal": "Indexed-by-id, malformed/missing/unreadable tolerance", "inherits_from": "getAvailableTokenSets"},
-      {"file": "lib/Service/TokenSetService.php", "method": "formatName", "capability": "token-sets", "req_id": "REQ-TSET-001 (Auto-generated name for CSS files without manifest)", "confidence": 0.92, "needs_review": false, "signal": "ucwords + str_replace per scenario", "inherits_from": "getAvailableTokenSets"},
-
-      {"file": "lib/Service/TypographyTokens.php", "method": "getTokens", "capability": "token-editor-ui", "req_id": "REQ from token-editor-ui Functional Tab Groups (Typography)", "confidence": 0.96, "needs_review": false, "signal": "Static map matches text colors + font-face token list"},
-
-      {"file": "lib/Settings/Admin.php", "method": "getForm", "capability": "admin-settings", "req_id": "REQ-ASET-002 + REQ-ASET-001", "confidence": 0.97, "needs_review": false, "signal": "Returns TemplateResponse settings/admin with all four required parameters"},
-      {"file": "lib/Settings/Admin.php", "method": "getSection", "capability": "admin-settings", "req_id": "REQ-ASET-001 (theming section)", "confidence": 0.97, "needs_review": false, "signal": "Returns 'theming' per scenario"},
-      {"file": "lib/Settings/Admin.php", "method": "getPriority", "capability": "admin-settings", "req_id": "REQ-ASET-001 (priority 50)", "confidence": 0.97, "needs_review": false, "signal": "Returns 50 per scenario"}
-    ],
-    "bucket_2a": {},
-    "bucket_2b": {},
-    "bucket_3a": [
-      {"req": "prometheus-metrics#REQ-PROM-007 (theming_syncs_total counter increment)", "evidence": "removed-lines cache matched 4 hits for 'theming_syncs_total' — counter is READ by MetricsController but never INCREMENTED in lib/. Older code may have written the value. Verify whether the increment was lost in a refactor or never implemented in current PHP."}
-    ],
-    "bucket_3b": [
-      {"req": "admin-settings#REQ-ASET-003 (Token set selector dropdown rendering)", "note": "Implemented in templates/settings/admin.php (vanilla PHP) — outside the skill's scan scope (lib/ + src/); flagged false-alarm — PHP template path is not enumerated."},
-      {"req": "admin-settings#REQ-ASET-004 (Live preview box)", "note": "Implemented in templates/settings/admin.php + js/admin.js — outside scan scope; false-alarm."},
-      {"req": "admin-settings#REQ-ASET-005 (Hide slogan checkbox UI)", "note": "templates/settings/admin.php + js/admin.js — outside scan scope; false-alarm."},
-      {"req": "admin-settings#REQ-ASET-006 (Show menu labels checkbox UI)", "note": "templates/settings/admin.php + js/admin.js — outside scan scope; false-alarm."},
-      {"req": "admin-settings#REQ-ASET-007 (External documentation links)", "note": "templates/settings/admin.php — outside scan scope; false-alarm."},
-      {"req": "admin-settings#REQ-ASET-008 (Vanilla PHP template, no Vue)", "note": "templates/settings/admin.php — outside scan scope; false-alarm (architectural assertion, not a code unit)."},
-      {"req": "admin-settings#REQ-ASET-009 (Admin-only access control)", "note": "Implemented as @AuthorizedAdminSetting annotations on all controller methods — annotation-level enforcement, not a method. Confirmed present in PHP source."},
-      {"req": "admin-settings#REQ-ASET-010 (Token editor mount point + GET overrides API)", "note": "Backend API IS implemented (getOverrides bucket-1); the HTML mount-point lives in templates/settings/admin.php — outside scan scope."},
-      {"req": "admin-settings#REQ-ASET-011 (Settings hint text)", "note": "templates/settings/admin.php — outside scan scope; false-alarm."},
-      {"req": "admin-settings#REQ-ASET-012 (Data attributes for JS init)", "note": "templates/settings/admin.php — outside scan scope; false-alarm."},
-      {"req": "admin-settings#REQ-ASET-013 (Localization $l->t() in template)", "note": "templates/settings/admin.php — outside scan scope; false-alarm."},
-
-      {"req": "component-tokens (NLDesign component token prefix + utrecht bridge + categories + defaults)", "note": "Pure CSS spec — implemented in css/systems/nldesign/utrecht-bridge.css + defaults.css. CSS not enumerated by scanner; legitimate 3b false-alarm for a CSS-only theming app."},
-
-      {"req": "css-architecture#REQ-CSS-002 through REQ-CSS-010 (CSS layer behaviour)", "note": "Pure CSS spec — implemented in css/systems/nldesign/*.css (fonts/defaults/utrecht-bridge/theme/overrides/element-overrides). REQ-CSS-001/011/012 ARE covered by PHP (Application + DesignSystemService); the remaining 9 REQs in this spec describe CSS behaviour that no PHP/JS method can match. Legitimate 3b false-alarm — CSS files exist and were verified by the spec's own 'Current Implementation Status'."},
-
-      {"req": "custom-css-overrides Requirement: Custom Overrides File (CSS load-order position)", "note": "PHP write path IS implemented (CustomOverridesService bucket-1); the 'final position in load order' is enforced by Application::injectThemeCSS() — also covered. Some scenarios describe CSS cascade behaviour with no code unit (legitimate observability via integration testing)."},
-
-      {"req": "docs-content (entire spec — intro.md, getting-started, features, reference, integration guide, homepage cards, Docusaurus build)", "note": "Implemented in docs/ + docusaurus/ — markdown + JS bundle outside lib/ + src/ scan scope. Legitimate 3b false-alarm — docs site is its own deliverable."},
-
-      {"req": "extended-token-sets Auto-Generated Token CSS Files + Token Set Manifest auto-update", "note": "Implemented in scripts/generate-tokens.js (Node ES module under scripts/). Scanner does not enumerate scripts/; legitimate 3b false-alarm."},
-
-      {"req": "hide-slogan#REQ-SLGN-002/003/004/007 (CSS file behaviour)", "note": "css/hide-slogan.css implements the selectors. REQ-SLGN-001/005/006/008/010 ARE covered by PHP. CSS-only REQs are legitimate 3b false-alarms."},
-      {"req": "hide-slogan#REQ-SLGN-009 (Government branding compliance)", "note": "Compliance-by-design assertion — no code unit, integration test territory."},
-
-      {"req": "menu-labels#REQ-MLBL-002/003/004/005/006/007 (CSS file behaviour: icon hiding, label typography, layout)", "note": "css/show-menu-labels.css implements all selectors. REQ-MLBL-001/008 ARE covered by PHP. CSS-only REQs are legitimate 3b false-alarms."},
-      {"req": "menu-labels#REQ-MLBL-009/010/011 (Accessibility + responsive + interaction with hide-slogan)", "note": "Behavioural assertions over CSS — no code unit."},
-
-      {"req": "nextcloud-variable-mapping (Complete Nextcloud Variable Audit + Overrides CSS Structure + Defaults CSS Layer + Mappings Documentation + CSS Load Order)", "note": "Implemented in css/systems/nldesign/overrides.css + defaults.css + docs/reference/mappings.md. Pure CSS + markdown — legitimate 3b false-alarm."},
-
-      {"req": "nl-design (delta: Supported Token Sets + Design Token Usage)", "note": "Delta spec referencing extended-token-sets and component-tokens — neither has a discrete PHP/JS implementation unit; covered by token-sets PHP and CSS."},
-
-      {"req": "prometheus-metrics#REQ-PROM-011 (Controller Dependencies via DI)", "note": "Enforced by constructor signatures (plumbing-bucketed). Architectural assertion."},
-
-      {"req": "theming-sync-dialog Requirement: Confirmation Dialog After Token Set Change + Dialog Preview Boxes + Dialog User Actions", "note": "Implemented in js/admin.js (checkAndShowThemingDialog, showThemingDialog — confirmed by grep). js/admin.js is NOT under src/ so it is outside the scanner's enumeration scope. Legitimate 3b false-alarm — flag for human."},
-      {"req": "theming-sync-dialog Requirement: Bundled Organization Images", "note": "Filesystem assertion (img/logos/, img/backgrounds/) — no code unit."},
-
-      {"req": "theming-sync#REQ-SYNC-001 (Theming metadata in token sets)", "note": "Implemented by TokenSetService::getAvailableTokenSets() including the theming object (covered in Bucket 1). REQ describes a manifest/data-shape contract."},
-      {"req": "theming-sync#REQ-SYNC-008 (Theming Dependencies via DI)", "note": "Enforced by constructor signatures (plumbing-bucketed)."},
-      {"req": "theming-sync#REQ-SYNC-010 (Theming Sync Dialog frontend)", "note": "Implemented in js/admin.js (checkAndShowThemingDialog) — outside scan scope; flag for human."},
-      {"req": "theming-sync#REQ-SYNC-011 (Route Configuration)", "note": "appinfo/routes.php has GET/POST /settings/theming — verified present. Routes file not scanned; legitimate 3b false-alarm."},
-
-      {"req": "token-editor-ui Requirement: Token Editor Panel rendering + Editable Token Input + Live Preview + Save Action + Per-Token Reset", "note": "Token registry + GET/POST overrides backends ARE covered (Bucket 1). The UI rendering (tab buttons, color picker, live :root inline-style preview, save button, reset button) is implemented in js/admin.js — outside scan scope. Flag for human."},
-
-      {"req": "token-import-export Requirement: Import Result Feedback (UI summary message)", "note": "Backend returns imported/skipped JSON (covered). UI rendering of the summary message is in js/admin.js — outside scan scope."},
-
-      {"req": "token-set-apply-dialog Requirement: Dialog Trigger + Checkbox Selection + Live Preview in Dialog + Apply Action + Token Set Applied Together With Overrides", "note": "Backend preview endpoint covered (Bucket 1). The dialog UI (showApplyDialog confirmed in js/admin.js line 786) is outside scan scope. Flag for human."},
-
-      {"req": "token-set-dropdown (entire spec)", "note": "Backend sorting + service IS covered (TokenSetService::getAvailableTokenSets — alphabetical sort). The actual <select> rendering is in templates/settings/admin.php — outside scan scope."},
-
-      {"req": "token-sets#REQ-TSET-005 (Token Set CSS Structure — Complete + Incomplete + logo + lint + WCAG)", "note": "CSS-file behaviour — implemented in css/tokens/*.css. No PHP code unit."},
-      {"req": "token-sets#REQ-TSET-007 (Token Set Count and Coverage — 39+ files, major municipalities)", "note": "Filesystem assertion — verified by directory listing (39+ files in css/tokens/). No code unit."},
-      {"req": "token-sets#REQ-TSET-010 (Token Set Service Architecture — DI + private helpers)", "note": "Enforced by constructor signature + private modifiers (plumbing-bucketed)."},
-      {"req": "token-sets#REQ-TSET-011 (Route Configuration — 4 routes registered)", "note": "appinfo/routes.php verified present. Routes file outside scan scope."},
-
-      {"req": "token-sync-workflow (entire spec — GitHub Actions nightly schedule + change detection + PR creation + generation script + README docs)", "note": "Implemented in .github/workflows/sync-tokens.yml + scripts/generate-tokens.mjs + README. Neither lib/ nor src/ — legitimate 3b false-alarm for a CI/build pipeline spec."},
-
-      {"req": "vng-token-set (entire spec — CSS file + manifest entry)", "note": "Implemented in css/tokens/vng.css + token-sets.json. No PHP code unit. Manifest entry exposure is covered by TokenSetService (Bucket 1)."}
-    ],
-    "bucket_4": {
-      "missing-spec-in-file-docblock": [
-        {"file": "lib/AppInfo/Application.php"},
-        {"file": "lib/Controller/HealthController.php"},
-        {"file": "lib/Controller/MetricsController.php"},
-        {"file": "lib/Controller/OverridesController.php"},
-        {"file": "lib/Controller/SettingsController.php"},
-        {"file": "lib/Service/ContentTokens.php"},
-        {"file": "lib/Service/CssParserService.php"},
-        {"file": "lib/Service/CustomOverridesService.php"},
-        {"file": "lib/Service/DesignSystemService.php"},
-        {"file": "lib/Service/LoginTokens.php"},
-        {"file": "lib/Service/StatusTokens.php"},
-        {"file": "lib/Service/ThemingService.php"},
-        {"file": "lib/Service/TokenRegistry.php"},
-        {"file": "lib/Service/TokenRegistryInterface.php"},
-        {"file": "lib/Service/TokenSetPreviewService.php"},
-        {"file": "lib/Service/TokenSetService.php"},
-        {"file": "lib/Service/TypographyTokens.php"},
-        {"file": "lib/Settings/Admin.php"}
-      ],
-      "missing-license-or-copyright-in-docblock": [],
-      "forbidden-debug-patterns": [],
-      "hardcoded-strings-not-localized": [],
-      "direct-sql": []
-    }
+  "generated_at": "2026-10-02T00:00:00Z",
+  "app": "thematiq",
+  "commit": "ed6c69d3",
+  "scanner": "hydra-gates gate-16 check_spec_coverage.py, full sweep against an empty-tree base",
+  "summary": {
+    "lib_php_files": 152,
+    "files_with_spec": 152,
+    "public_protected_methods": 655,
+    "spec_tags": 1257,
+    "spec_excludes": 17,
+    "uncovered_methods": 0
   },
-  "ignored": 0,
-  "notes": [
-    "nldesign is a CSS-only theming app with PHP backend; no src/ directory exists. All Vue/JS lives in js/admin.js (vanilla) which the skill's standard glob does NOT enumerate. Many REQs across token-set-apply-dialog, theming-sync-dialog, token-editor-ui, token-import-export, token-set-dropdown, admin-settings ASET-003..012 describe behaviour implemented in templates/settings/admin.php + js/admin.js — these are NOT genuine missing implementations; they are false alarms produced by the scanner's scope. A grep of js/admin.js confirms checkAndShowThemingDialog (line 142), showThemingDialog (line 201), showApplyDialog (line 786), saveOverrides (line 665), exportOverrides (line 710), importOverrides (line 719), tokenset-preview fetch (line 755). Flag for human: consider extending the scanner scope to include templates/**/*.php + js/**/*.js for CSS-only theming apps.",
-    "REAL Bucket 3a finding: prometheus-metrics REQ-PROM-007 (theming_syncs_total counter). The metric is READ by MetricsController (line 88) but is never INCREMENTED anywhere in lib/. The REQ phrases it as a counter and expects the value to grow on every sync operation. SettingsController::updateThemingValues() does not call setAppValue for theming_syncs_total. Either the increment was lost in a refactor (4 hits in removed-lines cache support this) or never implemented. Worth a small follow-up PR.",
-    "Three NEEDS-REVIEW Bucket 1 entries: CssParserService::parseRootBlock, DesignSystemService::getDesignSystemsList, TokenRegistry::getTokenNames + getTokensByTab — public helpers with no caller in lib/. Possible dead public API or anticipated future endpoint surface. Worth a separate dead-code sweep but not a blocker.",
-    "Duplicate getOverrides/setOverrides exist on BOTH SettingsController and OverridesController — both routes are registered in appinfo/routes.php. The settings#getOverrides + settings#setOverrides routes still wire to SettingsController; the overrides#exportOverrides + overrides#importOverrides routes use OverridesController. This is fine but worth tidying — SettingsController's two methods are functional duplicates of OverridesController's.",
-    "Bucket 4: 18 of 18 PHP files lack @spec tags in docblocks — this is the expected state for a pre-retrofit codebase and is exactly what /opsx-annotate would fix. SPDX-style @license + @copyright ARE present (PHPDoc style — see file headers).",
-    "All specs carry status: implemented in frontmatter; no redirect/deprecated specs found.",
-    "Two changes archive directories show parallel histories for the same capability (e.g. 2026-03-03-nextcloud-theme-editor and 2026-03-21-token-editor-ui both shipped specs for token-editor-ui). Not a coverage issue, but worth knowing for downstream /opsx-annotate ghost-change naming."
-  ]
+  "buckets": {
+    "bucket_1": [],
+    "bucket_2a": [],
+    "bucket_2b": [],
+    "bucket_3a": [],
+    "bucket_3b": [],
+    "bucket_4": []
+  },
+  "supersedes": "the 2026-05-24 nldesign report (feature/i18n-complete-translations)"
 }
