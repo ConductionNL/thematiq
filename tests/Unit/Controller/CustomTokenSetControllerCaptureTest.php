@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
@@ -33,8 +34,8 @@ use RuntimeException;
 /**
  * A theme saved from the editor (a raw upload with `captureTheming`) keeps
  * Nextcloud's branding once it is stored, and deleting a custom theme forgets
- * that branding with it. A file Thematiq exported is stored the same way, as
- * it arrived, so an exported theme uploaded again comes back the same.
+ * that branding with it. A file Thematiq exported is stored the same way, with
+ * its own tokens, so an exported theme uploaded again comes back the same.
  */
 class CustomTokenSetControllerCaptureTest extends TestCase {
 
@@ -107,7 +108,7 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		);
 
 		$service = new CustomTokenSetService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$config,
 			new CustomTokenSetValidator(),
 			new ContrastService(),
@@ -304,11 +305,11 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	}//end uploadingAFile()
 
 	/**
-	 * A file "Export as token set" wrote is stored as it arrived, on the
+	 * A file "Export as token set" wrote is stored with its own tokens, on the
 	 * design system it names — not converted, which filled every token the set
 	 * left out with nldesign fallbacks.
 	 */
-	public function testAnExportedFileIsStoredAsItArrived(): void {
+	public function testAnExportedFileIsStoredWithItsOwnTokens(): void {
 		$content = "/* NL Design — custom token set, exported from the component playground. Do not edit manually. */
 "
 			. "/* thematiq-token-set: design-system=none */
@@ -325,8 +326,35 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		$this->assertSame(200, $response->getStatus());
 		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
 		$this->assertSame('none', $manifest['custom-round-trip']['design_system']);
-		$this->assertSame($content, file_get_contents($this->appDir . '/css/tokens/custom-round-trip.css'));
-	}//end testAnExportedFileIsStoredAsItArrived()
+		$stored = file_get_contents($this->appDir . '/css/tokens/custom-round-trip.css');
+		$this->assertStringContainsString('--nldesign-color-primary: #00679e;', $stored);
+		$this->assertStringNotContainsString('thematiq-token-set:', $stored);
+	}//end testAnExportedFileIsStoredWithItsOwnTokens()
+
+	/**
+	 * A rule hidden between two `url()` values does not reach the stored file.
+	 *
+	 * The guard and the parser read `/*` inside `url('…')` as a comment and a
+	 * browser does not, so storing the upload as sent let this file hide every
+	 * page body for every user. Only the parsed declarations are written.
+	 */
+	public function testARuleHiddenInsideUrlValuesIsNotStored(): void {
+		$this->uploadingAFile(
+			content: "/* thematiq-token-set: design-system=none */\n"
+				. ":root { --nldesign-a: url('/*'); }\n"
+				. "body { display: none !important; }\n"
+				. ":root { --nldesign-b: url('*/'); }\n"
+		);
+		$this->converter->expects($this->never())->method('convert');
+
+		$response = $this->controller->upload();
+
+		$this->assertSame(200, $response->getStatus());
+		$stored = file_get_contents($this->appDir . '/css/tokens/custom-round-trip.css');
+		$this->assertStringNotContainsString('body', $stored);
+		$this->assertStringNotContainsString('display', $stored);
+		$this->assertSame(1, substr_count($stored, '{'));
+	}//end testARuleHiddenInsideUrlValuesIsNotStored()
 
 	/**
 	 * A design system the marker names but the manifest does not ship is not

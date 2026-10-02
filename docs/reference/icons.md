@@ -9,7 +9,7 @@ sidebar_position: 7
 The Thematiq app includes **1488 icons** materialized from `@conduction/nextcloud-vue`'s
 EUPL-compatible NL-government icon packs (RVO, OpenGemeenten, Gemeente Den Haag), plus
 **1038 icons** materialized from `@gouvfr/dsfr`'s French-government DSFR pack
-(**Etalab-2.0**) — **2526 icons** total — plus **30 logos**, making them available for use
+(**Etalab-2.0**) — **2526 icons** total — plus **35 logos**, making them available for use
 across all Nextcloud apps.
 
 ### Theme-switchable iconography
@@ -21,6 +21,19 @@ pack via `DesignSystemService::resolveActiveIconPacks()` / `resolveIconPath()`, 
 from the public capability (`capabilities.nldesign.iconPacks`) — see
 `openspec/specs/icon-packs/spec.md`. This does **not** replace Nextcloud core's built-in
 icons; it only switches Thematiq's own bundled assets served through `imagePath`.
+
+To show the active pack's icon without resolving it yourself, point at the route
+`/index.php/apps/thematiq/icons/{name}`. It redirects to the file of that name in the pack
+the viewer's theme uses, and answers 404 when that pack has no icon of that name. It works
+without a login, so it is safe in an `<img>` tag or a CSS `url()`:
+
+```html
+<img src="/index.php/apps/thematiq/icons/arrow-right-line" alt="Next">
+```
+
+Ship a fallback for the 404. A design system without a pack, such as stock Nextcloud,
+serves no icons, and each pack names its icons its own way (`rvo-home` in RVO,
+`home-4-line` in DSFR), so one name rarely exists in every pack.
 
 **The proprietary City-of-Amsterdam icon set (`@amsterdam/design-system-assets`) is NOT
 bundled.** Its `LICENSE.md` marks the set proprietary to the City of Amsterdam,
@@ -114,7 +127,7 @@ release** — do not build new integrations against them; migrate to the set-pre
 
 ## Logos
 
-The 30 logos in `img/logos/` cover government and municipal organizations, plus four fictional example sets. A representative sample:
+The 35 logos in `img/logos/` cover government and municipal organizations, plus four fictional example sets. A representative sample:
 - `amsterdam.svg` - City of Amsterdam logo
 - `ggd-amsterdam.svg` - GGD Amsterdam logo
 - `stadsarchief.svg` - Amsterdam City Archives

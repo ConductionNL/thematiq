@@ -86,7 +86,7 @@ class GenerateDarkVariantsTest extends TestCase {
 		$command = new GenerateDarkVariants($darkPalette);
 		$app = new Application();
 		$app->add($command);
-		$this->tester = new CommandTester($app->find('nldesign:generate-dark-variants'));
+		$this->tester = new CommandTester($app->find('thematiq:generate-dark-variants'));
 	}//end setUp()
 
 	/**

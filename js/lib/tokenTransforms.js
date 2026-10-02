@@ -193,7 +193,155 @@
 			})
 	}
 
+	/**
+	 * The CSS named colours, and `transparent`. Mirrors `TokenValueValidator::NAMED_COLOURS`.
+	 */
+	var NAMED_COLOURS =
+		'aliceblue antiquewhite aqua aquamarine azure beige bisque black blanchedalmond blue blueviolet brown burlywood cadetblue chartreuse chocolate coral cornflowerblue cornsilk crimson cyan darkblue darkcyan darkgoldenrod darkgray darkgreen darkgrey darkkhaki darkmagenta darkolivegreen darkorange darkorchid darkred darksalmon darkseagreen darkslateblue darkslategray darkslategrey darkturquoise darkviolet deeppink deepskyblue dimgray dimgrey dodgerblue firebrick floralwhite forestgreen fuchsia gainsboro ghostwhite gold goldenrod gray green greenyellow grey honeydew hotpink indianred indigo ivory khaki lavender lavenderblush lawngreen lemonchiffon lightblue lightcoral lightcyan lightgoldenrodyellow lightgray lightgreen lightgrey lightpink lightsalmon lightseagreen lightskyblue lightslategray lightslategrey lightsteelblue lightyellow lime limegreen linen magenta maroon mediumaquamarine mediumblue mediumorchid mediumpurple mediumseagreen mediumslateblue mediumspringgreen mediumturquoise mediumvioletred midnightblue mintcream mistyrose moccasin navajowhite navy oldlace olive olivedrab orange orangered orchid palegoldenrod palegreen paleturquoise palevioletred papayawhip peachpuff peru pink plum powderblue purple rebeccapurple red rosybrown royalblue saddlebrown salmon sandybrown seagreen sienna silver skyblue slateblue slategray slategrey snow springgreen steelblue tan teal thistle tomato turquoise violet wheat white whitesmoke yellow yellowgreen transparent'.split(
+			' ',
+		)
+
+	/**
+	 * Whether a value is valid for its token type. Mirrors `TokenValueValidator::isValid()`;
+	 * both run tests/Unit/fixtures/token-value-grammar.json.
+	 *
+	 * @param {string} type `color`, `duration`, `easing`, `rgb` or `text`.
+	 * @param {string} value The value.
+	 * @return {boolean} True when it passes.
+	 */
+	function isValidTokenValue(type, value) {
+		var v = String(value).trim()
+		var number = '\\s*-?[0-9.]+%?\\s*'
+		var match
+
+		switch (type) {
+			case 'color':
+				v = v.toLowerCase()
+				return (
+					/^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/.test(v)
+					|| new RegExp(
+						'^(rgb|rgba|hsl|hsla)\\(('
+							+ number
+							+ ',){2}'
+							+ number
+							+ '(,'
+							+ number
+							+ ')?\\)$',
+					).test(v)
+					|| NAMED_COLOURS.indexOf(v) !== -1
+				)
+			case 'duration':
+				match = /^([0-9]+(?:\.[0-9]+)?)(ms|s)$/.exec(v)
+				return (
+					match !== null
+					&& parseFloat(match[1]) <= (match[2] === 's' ? 5 : 5000)
+				)
+			case 'easing':
+				if (
+					['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out'].indexOf(
+						v,
+					) !== -1
+				) {
+					return true
+				}
+				var n = '\\s*(-?[0-9]*\\.?[0-9]+)\\s*'
+				match = new RegExp(
+					'^cubic-bezier\\(' + n + ',' + n + ',' + n + ',' + n + '\\)$',
+				).exec(v)
+				return (
+					match !== null
+					&& parseFloat(match[1]) >= 0
+					&& parseFloat(match[1]) <= 1
+					&& parseFloat(match[3]) >= 0
+					&& parseFloat(match[3]) <= 1
+				)
+			case 'rgb':
+				match = /^([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})$/.exec(
+					v,
+				)
+				return (
+					match !== null
+					&& Math.max(+match[1], +match[2], +match[3]) <= 255
+				)
+			default:
+				return v !== ''
+		}
+	}
+
+	/**
+	 * Split a colour into the six-digit hex the native picker takes and an opacity percentage.
+	 *
+	 * @param {string} value `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa` or `rgb()`/`rgba()`.
+	 * @return {{hex: string, alpha: number}|null} The parts, or null when it cannot be read.
+	 */
+	function splitAlpha(value) {
+		var v = String(value).trim().toLowerCase()
+		var hex = /^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/.exec(v)
+		var channels
+		var alpha = 1
+
+		if (hex !== null) {
+			var digits = hex[1]
+			if (digits.length <= 4) {
+				digits = digits
+					.split('')
+					.map(function (c) {
+						return c + c
+					})
+					.join('')
+			}
+			channels = [0, 2, 4].map(function (i) {
+				return parseInt(digits.slice(i, i + 2), 16)
+			})
+			if (digits.length === 8) {
+				alpha = parseInt(digits.slice(6, 8), 16) / 255
+			}
+		} else {
+			var rgb =
+				/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(
+					v,
+				)
+			if (rgb === null) {
+				return null
+			}
+			channels = [+rgb[1], +rgb[2], +rgb[3]]
+			if (rgb[4] !== undefined) {
+				alpha = Math.min(1, parseFloat(rgb[4]))
+			}
+		}
+
+		return {
+			hex:
+				'#'
+				+ channels
+					.map(function (c) {
+						return ('0' + Math.min(255, c).toString(16)).slice(-2)
+					})
+					.join(''),
+			alpha: Math.round(alpha * 100),
+		}
+	}
+
+	/**
+	 * Join a six-digit hex and an opacity percentage: `#rrggbbaa`, or `#rrggbb` at 100.
+	 *
+	 * @param {string} hex `#rrggbb`.
+	 * @param {number} alpha 0 to 100.
+	 * @return {string} The colour.
+	 */
+	function joinAlpha(hex, alpha) {
+		var percent = Math.max(0, Math.min(100, Math.round(Number(alpha))))
+		if (percent === 100) {
+			return hex
+		}
+
+		return hex + ('0' + Math.round((percent / 100) * 255).toString(16)).slice(-2)
+	}
+
 	return {
+		isValidTokenValue: isValidTokenValue,
+		splitAlpha: splitAlpha,
+		joinAlpha: joinAlpha,
 		darkenHex: darkenHex,
 		getPreviewColors: getPreviewColors,
 		normaliseColorForPicker: normaliseColorForPicker,

@@ -42,6 +42,7 @@ use RuntimeException;
  * @spec openspec/specs/simple-brand-form/spec.md
  */
 class BrandFormController extends Controller {
+	use ErrorStatusTrait;
 
 	/**
 	 * Logo file types, as CustomTokenSetService writes them.
@@ -125,12 +126,7 @@ class BrandFormController extends Controller {
 				logoAsset: $logo
 			);
 		} catch (RuntimeException $e) {
-			$code = $e->getCode();
-			if ($code < 400 || $code > 599) {
-				$code = 500;
-			}
-
-			return new JSONResponse(['error' => $e->getMessage()], $code);
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
 
 		$this->audit->log(
@@ -150,7 +146,7 @@ class BrandFormController extends Controller {
 	}//end create()
 
 	/**
-	 * The optional logo upload, checked for type, size and active content.
+	 * The optional logo upload, checked for type, size and the obvious forms of active content.
 	 *
 	 * @return array{path: string, contents: string}|JSONResponse|null The asset, an error, or null when none was sent.
 	 */
@@ -175,7 +171,16 @@ class BrandFormController extends Controller {
 	}//end readLogo()
 
 	/**
-	 * Whether the bytes are an image of the claimed type; an SVG may not carry scripts or event handlers.
+	 * Whether the bytes are an image of the claimed type.
+	 *
+	 * For an SVG this is a coarse filter, not a sanitiser: it refuses the
+	 * obvious script, event handler, `javascript:` and `<foreignObject>`
+	 * spellings, and a namespaced `<s:script>` or an entity-encoded
+	 * `&#106;avascript:` still pass. What keeps an SVG logo from running
+	 * anything is the content security policy it is served with:
+	 * RuntimeFileController::serve() allows no scripts or loads, and core
+	 * theming's image endpoint sends its own. Logos the converter decodes out
+	 * of an uploaded or gallery theme do not come through this check at all.
 	 *
 	 * @param string $extension The claimed type.
 	 * @param string $contents  The bytes.
