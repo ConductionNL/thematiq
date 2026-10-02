@@ -15,6 +15,7 @@
 import { describe, it, expect } from 'vitest'
 import * as fs from 'fs'
 import * as path from 'path'
+import { JSDOM } from 'jsdom'
 import playground from '../../js/playground.js'
 
 const ROOT = path.resolve(__dirname, '../..')
@@ -471,6 +472,37 @@ describe('component instrument: the specimens can be used', () => {
 			.join('')
 	}
 
+	/** Markup parsed into a real DOM, so ancestry and ids can be asked. */
+	const parse = (markup) =>
+		new JSDOM('<!doctype html><body>' + markup + '</body>').window.document.body
+
+	/**
+	 * The accessible name of a form control, by the sources the accessible
+	 * name computation reads for one: aria-labelledby, aria-label, a label
+	 * pointing at its id, a label wrapped around it.
+	 */
+	const accessibleName = (control) => {
+		const doc = control.ownerDocument
+		const labelledBy = (control.getAttribute('aria-labelledby') || '')
+			.split(/\s+/)
+			.filter(Boolean)
+			.map((id) => doc.getElementById(id))
+			.filter(Boolean)
+			.map((node) => node.textContent.trim())
+			.join(' ')
+		if (labelledBy !== '') {
+			return labelledBy
+		}
+		const label = (control.getAttribute('aria-label') || '').trim()
+		if (label !== '') {
+			return label
+		}
+		return [...control.labels]
+			.map((node) => node.textContent.trim())
+			.join(' ')
+			.trim()
+	}
+
 	it('gives every content-area component something to interact with', () => {
 		const inert = inventory.components
 			.filter((entry) => entry.tab === 'content')
@@ -487,20 +519,55 @@ describe('component instrument: the specimens can be used', () => {
 	it('puts every pickable row inside the container its group names', () => {
 		// pick() finds the siblings with closest(group), so a row whose named
 		// container is not actually an ancestor would silently never move its
-		// selection — the failure this whole change was about.
+		// selection — the failure this whole change was about. Asked of the
+		// parsed markup, because two class names appearing in the same string
+		// says nothing about which element holds which.
 		const orphaned = []
-		playground.PICKABLE.forEach((group) => {
-			const hasRow = matches(group.row)
-			const hasGroup = matches(group.group.split(' ')[0])
-			inventory.components.forEach((entry) => {
-				const markup = render(entry)
-				if (hasRow(markup) && !hasGroup(markup)) {
-					orphaned.push(`${entry.id}: ${group.row}`)
-				}
+		inventory.components.forEach((entry) => {
+			const root = parse(render(entry))
+			playground.PICKABLE.forEach((group) => {
+				root.querySelectorAll(group.row).forEach((row) => {
+					if (row.closest(group.group) === null) {
+						orphaned.push(`${entry.id}: ${group.row}`)
+					}
+				})
 			})
 		})
 
 		expect(orphaned).toEqual([])
+	})
+
+	it('names every form control a specimen draws, and points every label at one', () => {
+		// Both directions. An input with no name is announced as "checkbox,
+		// unchecked" and nothing else (WCAG 4.1.2), and a label pointing at no
+		// control names nothing. Collecting ids from `<input id=` alone missed
+		// every input that carried no id at all, which is the defect itself.
+		const unnamed = []
+		const dangling = []
+		inventory.components.forEach((entry) => {
+			const root = parse(render(entry))
+			root.querySelectorAll(
+				'input:not([type="hidden"]), select, textarea',
+			).forEach((control, index) => {
+				if (accessibleName(control) === '') {
+					unnamed.push(`${entry.id}: control ${index} (${control.type})`)
+				}
+			})
+			root.querySelectorAll('label[for]').forEach((label) => {
+				const target = root.querySelector(
+					'#' + label.getAttribute('for').replace(/([^\w-])/g, '\\$1'),
+				)
+				if (
+					target === null
+					|| !/^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName)
+				) {
+					dangling.push(`${entry.id}: ${label.getAttribute('for')}`)
+				}
+			})
+		})
+
+		expect(unnamed).toEqual([])
+		expect(dangling).toEqual([])
 	})
 
 	it('leaves no specimen drawn from the removed placeholder bars', () => {
@@ -798,12 +865,23 @@ describe('the login card, against the page it stands for', () => {
 		expect(markup).toContain('--icon-height:24px')
 	})
 
-	it('ties every label to the input it names, under an id of its own', () => {
-		const ids = [...markup.matchAll(/<input id="([^"]+)"/g)].map((m) => m[1])
-		const fors = [...markup.matchAll(/<label for="([^"]+)"/g)].map((m) => m[1])
+	it('ties every input to a label of its own, and every label to an input', () => {
+		// Input to label as well as label to input: collecting ids from
+		// `<input id=` saw no input that lacked one, so an unnamed control and
+		// a field whose label had been deleted both passed.
+		const body = new JSDOM('<!doctype html><body>' + markup + '</body>').window
+			.document.body
+		const inputs = [...body.querySelectorAll('input:not([type="hidden"])')]
+		const ids = inputs.map((input) => input.id)
 
-		expect(ids.length).toBeGreaterThan(0)
+		expect(inputs.length).toBeGreaterThan(0)
+		inputs.forEach((input) => {
+			expect(input.id).not.toBe('')
+			expect(input.labels.length).toBeGreaterThan(0)
+		})
 		expect(new Set(ids).size).toBe(ids.length)
-		fors.forEach((name) => expect(ids).toContain(name))
+		body.querySelectorAll('label[for]').forEach((label) => {
+			expect(ids).toContain(label.htmlFor)
+		})
 	})
 })
