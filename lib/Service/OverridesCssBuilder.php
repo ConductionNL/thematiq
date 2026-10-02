@@ -19,7 +19,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
  * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
  */
 
@@ -30,7 +30,7 @@ namespace OCA\Thematiq\Service;
 /**
  * The CSS of one overrides file.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
  */
 class OverridesCssBuilder {
 
@@ -89,7 +89,7 @@ class OverridesCssBuilder {
 	 *
 	 * @return string The CSS file content.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
 	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
 	 */
 	public function build(array $tokens, array $darkTokens = [], ?OwnTokenCss $own = null): string {
@@ -195,7 +195,7 @@ class OverridesCssBuilder {
 	 *
 	 * @return array<string> List of CSS declaration lines.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 */
@@ -240,7 +240,7 @@ class OverridesCssBuilder {
 	 *
 	 * @return bool True when the writer drops the value.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
 	 */
 	public static function isUnsafeValue(string $value): bool {
 		return preg_match('/[{};]|\/\*|\*\//', $value) === 1;
