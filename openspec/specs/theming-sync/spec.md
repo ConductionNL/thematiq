@@ -405,6 +405,7 @@ blended value, with the note "Nextcloud's own theming has no transparency. It ge
 instead." The existing color validation for the sync request MUST stay as it is.
 
 #### Scenario: A translucent primary colour is synced as its blend
+@e2e exclude Not yet browser-tested; this scenario sat under the spec-wide exclusion this branch retires. The blend is proven by tests/Unit/TokenValueTypesTest.php::testTranslucentPrimaryIsBlendedForCore (`#15427380` over `#ffffff` gives `primary_color` `#8aa0b9` and keeps `primary_color_original`) and the dialog note by tests/vitest/admin-token-editor.spec.js "says why Nextcloud gets the blend of a translucent colour".
 - GIVEN an administrator on Settings > Administration > Theming
 - AND a custom set whose `--nldesign-color-primary` is `#15427380` and background `#ffffff`
 - WHEN the administrator applies the set and confirms the theming sync
