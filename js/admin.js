@@ -1363,7 +1363,7 @@
 			}
 			return t(
 				'thematiq',
-				'The set says {original}. Nextcloud\'s own theming has no transparency. It gets this colour instead.',
+				"The set says {original}. Nextcloud's own theming has no transparency. It gets this colour instead.",
 				{ original: original },
 			)
 		}
@@ -1932,6 +1932,7 @@
 					+ '</td>'
 					+ '<td>'
 					+ proposedDisplay
+					+ (diff.proposedNote ? ' ' + escapeHtml(diff.proposedNote) : '')
 					+ '</td>'
 					+ '</tr>'
 			})
@@ -4580,7 +4581,10 @@
 		 */
 		function rejectedMessage(rejected) {
 			var reasons = {
-				'not an editable token': t('thematiq', 'the editor cannot set this token'),
+				'not an editable token': t(
+					'thematiq',
+					'the editor cannot set this token',
+				),
 				'not an allowed value': t('thematiq', 'this value is not allowed'),
 				'not a valid color value': t('thematiq', 'this is not a colour'),
 				'not a valid rgb value': t('thematiq', 'this is not a colour'),
