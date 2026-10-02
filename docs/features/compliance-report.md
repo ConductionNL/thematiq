@@ -13,7 +13,7 @@ In the Thematiq admin settings, find **Contrast evidence report**. Click **Downl
 Or run it from the command line:
 
 ```bash
-occ nldesign:compliance-report --format=markdown --output=contrast.md
+occ thematiq:compliance-report --format=markdown --output=contrast.md
 ```
 
 The command writes JSON to standard output by default. It exits with 0 whenever it produced a report, also when the verdict is fail. A non-zero exit means no report was made. That lets a pipeline tell "the evidence says fail" apart from "there is no evidence".

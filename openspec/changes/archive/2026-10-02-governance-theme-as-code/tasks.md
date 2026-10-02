@@ -7,7 +7,7 @@ Tick a box when the work is merged to `development`.
 - [x] 1.1 Package reader and writer in `ConfigBundleService` (directory and ZIP, `bundle.json`, `fonts/`, `tokens/`, `REVISION`). Verify: `tests/Unit/Service/ConfigBundlePackageTest.php` round-trips a package with two fonts and one DTCG source.
 - [x] 1.2 Apply fonts from a package through `FontService` and its validator; a manifest entry without a file is a hard error. Verify: unit tests for both cases, and that a bare bundle still ignores font metadata.
 - [x] 1.3 Convert `tokens/<id>.json` through `TokenSetConverterService` before validation. Verify: unit test with a DTCG fixture.
-- [x] 1.4 `occ nldesign:config:export --package <dir>` and `occ nldesign:config:import <dir-or-zip>`. Verify: command tests.
+- [x] 1.4 `occ thematiq:config:export --package <dir>` and `occ thematiq:config:import <dir-or-zip>`. Verify: command tests.
 
 ## 2. Declarative mode
 

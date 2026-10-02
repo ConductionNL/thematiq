@@ -159,7 +159,7 @@ easing half is fully missing.
   transitions. Not needed for this change's scenarios. Nextcloud core components keep their own
   easing, out of reach.
 - **Regenerated files**: every `css/tokens/dark/*.css`, because derived dark values now keep alpha
-  (`occ nldesign:generate-dark-variants --force`, the command name at `lib/Command/GenerateDarkVariants.php:67`).
+  (`occ thematiq:generate-dark-variants --force`, the command name at `lib/Command/GenerateDarkVariants.php:67`).
 
 ## Rows
 

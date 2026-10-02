@@ -61,7 +61,7 @@ class ConfigImportTest extends TestCase {
 		$application = new Application();
 		$application->add($command);
 
-		$this->tester = new CommandTester($application->find('nldesign:config:import'));
+		$this->tester = new CommandTester($application->find('thematiq:config:import'));
 	}//end setUp()
 
 	/**
