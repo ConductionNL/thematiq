@@ -86,7 +86,7 @@ are rejected `401`. There is no `#[PublicPage]` endpoint in this app.
    name (400), list, export (200, `text/css`), unknown export (404), delete
    (200), delete of a shipped id (400), authz 401 on upload + list.
    Fixtures live in `fixtures/` — see "Two conventions" above.
-9. Teardown — restore the captured token set + overrides.
+10. Teardown — restore the captured token set + overrides.
 
 ## Notes
 
