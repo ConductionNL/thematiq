@@ -53,7 +53,12 @@
 		"generate:guest-css": "node scripts/generate-guest-css.mjs",
 		"test:guest-css": "node scripts/generate-guest-css.mjs --check",
 		"generate:component-scopes": "node scripts/generate-component-scopes.mjs",
-		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check"
+		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check",
+		"inventory:fetch": "bash scripts/inventory/fetch-nextcloud-sources.sh .inventory-sources",
+		"inventory:extract": "node scripts/inventory/extract-nextcloud-variables.mjs --sources .inventory-sources",
+		"inventory:check": "node scripts/inventory/extract-nextcloud-variables.mjs --sources .inventory-sources --check",
+		"generate:mappings": "node scripts/inventory/generate-mappings-doc.mjs",
+		"test:inventory": "vitest run tests/vitest/nextcloudVariableInventory.spec.js && node scripts/inventory/generate-mappings-doc.mjs --check"
 	},
 	"dependencies": {
 		"@fontsource/fira-sans": "^5.0.0"
