@@ -51,9 +51,9 @@ values, and `POST` MUST accept them as `darkOverrides`.
 
 ### Requirement: Motion tokens are typed and reach every transition
 
-The editor MUST list `--nldesign-animation-quick` and `--nldesign-animation-slow` as `duration`
-rows: a number field and a unit select (`ms`, `s`). Saving one MUST write the thematiq name and the
-matching Nextcloud name (`--animation-quick`, `--animation-slow`) with the same value. A new
+The editor MUST list `--animation-quick` and `--animation-slow` as `duration` rows: a number
+field and a unit select (`ms`, `s`). Saving one MUST write the Nextcloud name and the matching
+thematiq name (`--nldesign-animation-quick`, `--nldesign-animation-slow`) with the same value. A new
 editable token `--nldesign-animation-easing` MUST be an `easing` row: a select with `linear`,
 `ease`, `ease-in`, `ease-out`, `ease-in-out` and "Custom curve", which opens four number fields for
 `cubic-bezier()`. Every transition in `css/systems/nldesign/theme.css` that uses `ease` today MUST

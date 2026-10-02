@@ -358,6 +358,47 @@ describe('admin.js typed token values', () => {
 		})
 	})
 
+	describe('a refused save', () => {
+		it('names each token by its label and says why, saving nothing', async () => {
+			answer('POST', '/settings/overrides', 400, {
+				error: 'Some tokens were not saved: --animation-quick (not a valid duration value)',
+				rejected: {
+					[QUICK]: 'not a valid duration value',
+					[BASE]: 'dark value: not a valid color value',
+				},
+			})
+			await mount()
+			type(row(BASE).text, '#154273')
+			save()
+			await flush()
+
+			const message = toasts().pop()
+			expect(message).toContain('Nothing was saved.')
+			expect(message).toContain(
+				'Animation quick (--animation-quick): use a number with ms or s, up to 5 seconds',
+			)
+			expect(message).toContain(
+				'Primary (--color-primary-element), dark value: this is not a colour',
+			)
+			expect(toasts()).not.toContain('Token overrides saved.')
+		})
+
+		it('keeps the server reason it does not know', async () => {
+			answer('POST', '/settings/overrides', 400, {
+				error: 'x',
+				rejected: { [FONT]: 'something new' },
+			})
+			await mount()
+			type(row(BASE).text, '#154273')
+			save()
+			await flush()
+
+			expect(toasts().pop()).toContain(
+				'Font (--nldesign-font-family): something new',
+			)
+		})
+	})
+
 	describe('motion', () => {
 		it('saves a duration from a number and a unit', async () => {
 			answer('POST', '/settings/overrides', 200, { status: 'ok' })
@@ -390,6 +431,28 @@ describe('admin.js typed token values', () => {
 			expect(lastBody('/settings/overrides').overrides[EASING]).toBe(
 				'cubic-bezier(0.2, 0, 0, 1)',
 			)
+		})
+
+		it('moves the preview block with the chosen speed and curve', async () => {
+			await mount({
+				overrides: { [QUICK]: '400ms', [EASING]: 'ease-in' },
+			})
+			click(document.querySelector('.nldesign-motion-play'))
+
+			const block = document.querySelector('.nldesign-motion-block')
+			expect(block.classList.contains('nldesign-motion-block--moved')).toBe(
+				true,
+			)
+			expect(block.style.transition).toBe('transform 400ms ease-in')
+		})
+
+		it('labels the unit select after its row', async () => {
+			await mount()
+			expect(
+				row(QUICK)
+					.el.querySelector('.nldesign-duration-unit')
+					.getAttribute('aria-label'),
+			).toBe('Unit of Animation quick')
 		})
 
 		it('keeps the preview still and says the values under reduced motion', async () => {

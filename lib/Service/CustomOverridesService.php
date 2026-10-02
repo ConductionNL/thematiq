@@ -341,7 +341,7 @@ class CustomOverridesService {
 	 *
 	 * @throws RuntimeException When a file cannot be written.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.5
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-motion-tokens-are-typed-and-reach-every-transition
 	 */
 	public function rewriteAll(): array {
 		$changed = [];

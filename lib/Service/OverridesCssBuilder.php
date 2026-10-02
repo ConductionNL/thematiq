@@ -144,7 +144,7 @@ class OverridesCssBuilder {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.2
+	 * @spec openspec/specs/dark-mode/spec.md#requirement-editor-overrides-apply-the-same-way-for-every-dark-user
 	 */
 	public function darkValues(array $tokens): array {
 		$registry = TokenRegistry::getTokens();

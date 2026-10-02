@@ -264,7 +264,7 @@ class ContrastService {
 	 *
 	 * @return array{0: int, 1: int, 2: int, 3: float}|null The parsed colour, or null.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.1
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
 	 */
 	public function parseColorWithAlpha(string $value): ?array {
 		$value = trim($value);
@@ -331,7 +331,7 @@ class ContrastService {
 	 *
 	 * @return array{0: int, 1: int, 2: int} The opaque colour that renders.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.1
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
 	 */
 	public function blend(array $top, array $under): array {
 		$alpha = $top[3];
@@ -378,7 +378,7 @@ class ContrastService {
 	 *
 	 * @return float|null The unrounded ratio, or null when either colour is not a parseable literal.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-3.1
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
 	 */
 	public function measure(string $foreground, string $background, ?string $page = null): ?float {
 		$fgRgba = $this->parseColorWithAlpha(value: $foreground);

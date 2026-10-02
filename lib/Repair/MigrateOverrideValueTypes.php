@@ -34,7 +34,7 @@
  *
  * @link https://conduction.nl
  *
- * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.5
+ * @spec openspec/specs/token-editor-ui/spec.md#requirement-motion-tokens-are-typed-and-reach-every-transition
  */
 
 declare(strict_types=1);
@@ -50,7 +50,7 @@ use Throwable;
 /**
  * Bring every overrides file to the typed-values shape, keeping its values.
  *
- * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.5
+ * @spec openspec/specs/token-editor-ui/spec.md#requirement-motion-tokens-are-typed-and-reach-every-transition
  */
 class MigrateOverrideValueTypes implements IRepairStep {
 
@@ -72,7 +72,7 @@ class MigrateOverrideValueTypes implements IRepairStep {
 	 *
 	 * @return string
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.5
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-motion-tokens-are-typed-and-reach-every-transition
 	 */
 	public function getName(): string {
 		return 'Add motion twins and dark values to thematiq token overrides';
@@ -85,7 +85,7 @@ class MigrateOverrideValueTypes implements IRepairStep {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.5
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-motion-tokens-are-typed-and-reach-every-transition
 	 */
 	public function run(IOutput $output): void {
 		try {
