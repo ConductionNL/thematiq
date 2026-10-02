@@ -89,8 +89,11 @@
 				.then(function (result) {
 					if (!result.ok) {
 						feedback.textContent =
-							result.body.error ||
-							t('thematiq', 'The AI assistant settings could not be saved.')
+							result.body.error
+							|| t(
+								'thematiq',
+								'The AI assistant settings could not be saved.',
+							)
 						if (result.body.error) {
 							toggle.checked = false
 						}
@@ -98,7 +101,10 @@
 					}
 					fill(result.body)
 					renderPreview(preview, result.body.preview)
-					feedback.textContent = t('thematiq', 'AI assistant settings saved.')
+					feedback.textContent = t(
+						'thematiq',
+						'AI assistant settings saved.',
+					)
 				})
 				.catch(function () {
 					feedback.textContent = t(
