@@ -7,8 +7,6 @@ status: done
 ## Purpose
 Introduces component-level NL Design System tokens using the `--nldesign-component-*` prefix, with a temporary bridge file that maps the current `--utrecht-*` component tokens to the nldesign namespace.
 
-@e2e exclude CSS-variable and bridge-file spec — all scenarios are pure CSS cascade / file-structure assertions with no testable UI surface beyond the admin theming page already covered by admin-settings tests.
-
 ## Requirements
 
 ### Requirement: NLDesign Component Token Prefix
@@ -56,7 +54,7 @@ The system MUST support component tokens for the following NL Design System comp
 - GIVEN the NL Design System defines form input component tokens
 - WHEN the nldesign app processes them
 - THEN it MUST support tokens for: textbox, form-field, form-select, and form-fieldset components
-- AND each MUST support state variants (focus, hover, disabled, invalid)
+- AND the textbox MUST support state variants (focus, hover, disabled, invalid), and form-select a focus variant
 
 #### Scenario: Typography tokens
 - GIVEN the NL Design System defines heading and paragraph component tokens
@@ -73,7 +71,7 @@ The system MUST support component tokens for the following NL Design System comp
 All component tokens MUST have sensible default values in `defaults.css`.
 
 #### Scenario: Component token defaults reference brand tokens
-- GIVEN `defaults.css` defines `--nldesign-component-button-primary-background-color`
+- GIVEN `defaults.css` defines `--nldesign-component-button-primary-action-background-color`
 - WHEN no organization token overrides it
 - THEN it MUST default to `var(--nldesign-color-primary)` (referencing the brand token)
 
