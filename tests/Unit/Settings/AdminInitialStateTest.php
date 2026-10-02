@@ -23,7 +23,6 @@ use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -154,7 +153,6 @@ class AdminInitialStateTest extends TestCase {
 
 		return new Admin(
 			$config,
-			$this->createMock(IL10N::class),
 			$tokenSetService,
 			$emailThemingService,
 			$previewService,
