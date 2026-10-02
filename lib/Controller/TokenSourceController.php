@@ -60,7 +60,7 @@ class TokenSourceController extends Controller {
 	/**
 	 * Every source with its brands.
 	 *
-	 * @return JSONResponse {sources: {id: record}}.
+	 * @return JSONResponse The sources by id, each with its brands.
 	 *
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-the-administrator-chooses-which-brands-to-import
 	 */
@@ -74,7 +74,7 @@ class TokenSourceController extends Controller {
 	 *
 	 * @param string $sourceId The source id.
 	 *
-	 * @return JSONResponse {updated, missing, new}, or an error naming the brand.
+	 * @return JSONResponse The updated, missing and new brands, or an error naming the brand.
 	 *
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-new-version-of-a-source-updates-every-brand-together
 	 */
@@ -88,10 +88,11 @@ class TokenSourceController extends Controller {
 		try {
 			$report = $this->imports->update(sourceId: $sourceId, content: $read['content'], fileName: $read['name']);
 		} catch (RuntimeException $e) {
-			$code = $e->getCode();
-			if ($code < 400 || $code > 599) {
-				$code = 422;
-			}
+			$code = match ($e->getCode()) {
+				404 => 404,
+				409 => 409,
+				default => 422,
+			};
 
 			$error = $e->getMessage();
 			if ($code === 404) {

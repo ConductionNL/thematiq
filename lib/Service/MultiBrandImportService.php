@@ -128,7 +128,7 @@ class MultiBrandImportService {
 
 		$sets = [];
 		foreach ($plans as $key => $plan) {
-			$sets[] = $this->storeBrand(sourceId: $sourceId, key: (string)$key, plan: $plan, fileName: $fileName);
+			$sets[] = $this->storeBrand(sourceId: $sourceId, key: $key, plan: $plan, fileName: $fileName);
 		}
 
 		$records            = $this->records();
@@ -321,7 +321,7 @@ class MultiBrandImportService {
 	 * @param array<string, mixed> $plan     The converted brand.
 	 * @param string|null          $fileName The uploaded file's name.
 	 *
-	 * @return array<string, mixed> {brand, id, warnings}.
+	 * @return array<string, mixed> The brand key, the set id and the warnings.
 	 */
 	private function storeBrand(string $sourceId, string $key, array $plan, ?string $fileName): array {
 		$result = $this->customSets->store(

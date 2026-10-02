@@ -80,25 +80,6 @@ function installGlobals() {
 	}
 }
 
-/** Route a fetch() call to a canned response based on a URL substring / method. */
-function installFetchRouter(routes) {
-	global.fetch = vi.fn((url, options) => {
-		const method = (options && options.method) || 'GET'
-		for (const [match, matchMethod, body, status] of routes) {
-			if (
-				url.indexOf(match) !== -1
-				&& (matchMethod === undefined || matchMethod === method)
-			) {
-				return Promise.resolve({
-					status: status || 200,
-					json: () => Promise.resolve(body),
-				})
-			}
-		}
-		return Promise.resolve({ status: 200, json: () => Promise.resolve({}) })
-	})
-}
-
 /** Flush pending promise chains (see admin-a11y.spec.js for rationale). */
 async function flush(rounds = 8) {
 	for (let i = 0; i < rounds; i++) {

@@ -291,10 +291,11 @@ class CustomTokenSetController extends Controller {
 		try {
 			$result = $this->multiBrand->import(sourceName: $name, content: $read['content'], keys: (array)$chosen, fileName: $read['sourceName']);
 		} catch (RuntimeException $e) {
-			$code = $e->getCode();
-			if ($code < 400 || $code > 599) {
-				$code = 422;
-			}
+			$code = match ($e->getCode()) {
+				404 => 404,
+				409 => 409,
+				default => 422,
+			};
 
 			return new JSONResponse(['error' => $e->getMessage()], $code);
 		}

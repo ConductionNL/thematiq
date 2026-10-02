@@ -234,7 +234,6 @@ class TokenSetConverterService {
 	 *
 	 * @return array{
 	 *     css: string,
-	 *     imported: int,
 	 *     manifestEntry: array<string, mixed>,
 	 *     report: array<int, ReportEntry>,
 	 *     inputKind: string,
