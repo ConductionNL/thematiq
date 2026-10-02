@@ -941,7 +941,8 @@ OC.L10N.register(
         "No file uploaded.": "No file uploaded.",
         "The file is larger than 2 MB.": "The file is larger than 2 MB.",
         "Unknown document image.": "Unknown document image.",
-        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload a PNG, JPEG or WebP image, or an SVG without script."
+        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload a PNG, JPEG or WebP image, or an SVG without script.",
+        "The end must be in the future.": "The end must be in the future."
     },
     "nplurals=2; plural=(n != 1);"
 )

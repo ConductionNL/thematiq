@@ -941,7 +941,8 @@ OC.L10N.register(
         "No file uploaded.": "Geen bestand geüpload.",
         "The file is larger than 2 MB.": "Het bestand is groter dan 2 MB.",
         "Unknown document image.": "Onbekende documentafbeelding.",
-        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload een PNG-, JPEG- of WebP-afbeelding, of een SVG zonder script."
+        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload een PNG-, JPEG- of WebP-afbeelding, of een SVG zonder script.",
+        "The end must be in the future.": "Het einde moet in de toekomst liggen."
     },
     "nplurals=2; plural=(n != 1);"
 )

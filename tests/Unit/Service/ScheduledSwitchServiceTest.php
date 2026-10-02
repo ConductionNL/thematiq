@@ -267,6 +267,24 @@ class ScheduledSwitchServiceTest extends TestCase {
 	}//end testEndBeforeStartIsRefused()
 
 	/**
+	 * A window that is already over is refused, so it is not applied and
+	 * reverted on the next run; one that is still running is accepted.
+	 */
+	public function testAWindowThatIsAlreadyOverIsRefused(): void {
+		try {
+			$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-19T08:00:00Z', endAt: '2027-04-20T12:00:00Z', createdBy: 'admin');
+			$this->fail('A window that ended was accepted.');
+		} catch (ScheduledSwitchException $e) {
+			$this->assertStringContainsString('in the future', $e->getMessage());
+		}
+
+		$this->assertSame([], $this->service->list());
+
+		$entry = $this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-19T08:00:00Z', endAt: '2027-04-21T08:00:00Z', createdBy: 'admin');
+		$this->assertSame('planned', $entry['status']);
+	}//end testAWindowThatIsAlreadyOverIsRefused()
+
+	/**
 	 * A time that does not parse is refused.
 	 */
 	public function testUnparsableTimeIsRefused(): void {
