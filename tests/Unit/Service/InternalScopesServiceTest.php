@@ -124,6 +124,12 @@ class InternalScopesServiceTest extends TestCase {
 		$this->assertNotContains('--systemtag-color', array_column($internal, 'variable'));
 		$this->assertFalse(TokenRegistry::isEditable('--nldesign-nc-systemtag-color'));
 		$this->assertArrayNotHasKey('--nldesign-nc-dp-hover-color', TokenRegistry::getTokens(), 'kept out of the editor tabs until change 4');
+		// Under the Nextcloud name too: the settable theme loader read every
+		// settable status entry and listed all 453 as brand rows.
+		$this->assertArrayNotHasKey('--dp-hover-color', TokenRegistry::getTokens());
+		$this->assertCount(45, TokenRegistry::getSettableTokens(), 'only the 45 theme variables');
+		$this->assertNull(TokenRegistry::settableToken('--dp-hover-color'));
+		$this->assertSame('--nldesign-nc-color-mark', TokenRegistry::settableToken('--color-mark'));
 		$this->assertCount(453, $internal);
 	}
 }
