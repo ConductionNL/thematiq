@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-26
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-26
  */
 
 declare(strict_types=1);
@@ -26,7 +26,7 @@ namespace OCA\Thematiq\Service;
  * Content area colors including backgrounds, borders, border radii,
  * placeholders, and animation timings.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-26
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-26
  */
 class ContentTokens {
 	/**
@@ -34,7 +34,7 @@ class ContentTokens {
 	 *
 	 * @return array<string, array{tab: string, type: string, label: string}> Content tokens.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-26
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-26
 	 */
 	public static function getTokens(): array {
 		return [

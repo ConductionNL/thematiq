@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-39
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-39
  */
 
 declare(strict_types=1);
@@ -26,7 +26,7 @@ namespace OCA\Thematiq\Service;
  * Primary brand colors that drive login page buttons, links,
  * navigation accents, and interactive highlights.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-39
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-39
  */
 class LoginTokens {
 	/**
@@ -34,7 +34,7 @@ class LoginTokens {
 	 *
 	 * @return array<string, array{tab: string, type: string, label: string}> Login tokens.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-39
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-39
 	 */
 	public static function getTokens(): array {
 		return [

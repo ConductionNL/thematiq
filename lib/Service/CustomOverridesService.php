@@ -13,14 +13,14 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
  */
 
 declare(strict_types=1);
@@ -64,14 +64,14 @@ use RuntimeException;
  * back to "Nextcloud", so the stock set was not stock, and every theme saved
  * off it wore the other themes' pinned values too.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
  */
 class CustomOverridesService {
 
@@ -225,7 +225,7 @@ class CustomOverridesService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
 	 */
 	public function ensureExists(?string $tokenSet = null): void {
 		$path = $this->getFilePath(tokenSet: $tokenSet);
@@ -245,7 +245,7 @@ class CustomOverridesService {
 	 *
 	 * @return array<string, string> Map of token name => value for all overrides in the file.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
 	 */
 	public function read(?string $tokenSet = null): array {
 		$path = $this->getFilePath(tokenSet: $tokenSet);
@@ -274,7 +274,7 @@ class CustomOverridesService {
 	 *
 	 * @throws RuntimeException When the file cannot be written.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
 	 */
 	public function write(array $tokens, ?string $tokenSet = null): void {
 		$validated = $this->filterEditable(tokens: $tokens);
@@ -336,7 +336,7 @@ class CustomOverridesService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
 	 */
 	private function filterEditable(array $tokens): array {
 		$result = [];
@@ -359,7 +359,7 @@ class CustomOverridesService {
 	 *
 	 * @throws RuntimeException When the temp file cannot be written or renamed.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
 	 */
 	private function writeFile(array $tokens, string $path): void {
 		$tmpPath = $path . '.tmp';
@@ -392,7 +392,7 @@ class CustomOverridesService {
 	 *
 	 * @return string The CSS file content.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
 	 */
 	private function buildCss(array $tokens): string {
 		$header = self::CSS_HEADER . PHP_EOL;
@@ -465,7 +465,7 @@ class CustomOverridesService {
 	 *
 	 * @return array<string> List of CSS declaration lines.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
 	 */
 	private function buildDeclarationLines(array $tokens): array {
 		$lines = [];
@@ -505,7 +505,7 @@ class CustomOverridesService {
 	 *
 	 * @return array<string, string> Map of token name => value.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
 	 */
 	private function parseDeclarations(string $css): array {
 		return $this->cssParser->parseRootBlock(css: $css);
@@ -518,7 +518,7 @@ class CustomOverridesService {
 	 *
 	 * @return string The raw file content, or an empty :root {} if the file does not exist.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
 	 */
 	public function getRawContent(?string $tokenSet = null): string {
 		$path = $this->getFilePath(tokenSet: $tokenSet);

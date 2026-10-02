@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-54
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-54
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ namespace OCA\Thematiq\Service;
  *
  * Text colors and font family settings.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-54
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-54
  */
 class TypographyTokens {
 	/**
@@ -33,7 +33,7 @@ class TypographyTokens {
 	 *
 	 * @return array<string, array{tab: string, type: string, label: string}> Typography tokens.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-54
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-54
 	 */
 	public static function getTokens(): array {
 		return [

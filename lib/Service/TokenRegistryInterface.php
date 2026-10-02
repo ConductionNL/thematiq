@@ -33,7 +33,7 @@ interface TokenRegistryInterface {
 	 *
 	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global?: string}> The token registry.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
 	public static function getTokens(): array;
 
@@ -42,7 +42,7 @@ interface TokenRegistryInterface {
 	 *
 	 * @return array<string, string> Map of tab id to display label.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
 	 */
 	public static function getTabLabels(): array;
 
@@ -53,7 +53,7 @@ interface TokenRegistryInterface {
 	 *
 	 * @return bool True if the token is in the registry.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
 	 */
 	public static function isEditable(string $tokenName): bool;
 }//end interface
