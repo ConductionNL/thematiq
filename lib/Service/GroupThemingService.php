@@ -120,7 +120,8 @@ class GroupThemingService {
 	 * An absent or malformed stored value reads as an empty mapping — never
 	 * an error — reproducing today's global-theming behavior exactly.
 	 *
-	 * @return array<int, array{group: string, tokenSet: string}> The ordered mapping.
+	 * @return array<int, array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>}>
+	 *         The ordered mapping.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
@@ -163,7 +164,8 @@ class GroupThemingService {
 	 *
 	 * @param array<int, mixed> $entries The desired ordered mapping (`{group, tokenSet}` each).
 	 *
-	 * @return array<int, array{group: string, tokenSet: string}> The persisted mapping.
+	 * @return array<int, array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>}>
+	 *         The persisted mapping.
 	 *
 	 * @throws GroupThemingValidationException When any entry fails validation.
 	 *
@@ -193,7 +195,7 @@ class GroupThemingService {
 	 * @param mixed $entry The raw entry (may be malformed).
 	 * @param array<string, bool> $seenGroups Groups already validated in this batch (mutated by reference).
 	 *
-	 * @return array{group: string, tokenSet: string} The cleaned entry.
+	 * @return array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>} The cleaned entry.
 	 *
 	 * @throws GroupThemingValidationException When the entry fails any validation rule.
 	 *
@@ -370,7 +372,7 @@ class GroupThemingService {
 	 * of the user's groups, skipping entries whose token set no longer
 	 * exists.
 	 *
-	 * @param array<int, array{group: string, tokenSet: string}> $mapping The ordered mapping.
+	 * @param array<int, array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>}> $mapping The mapping.
 	 * @param string[] $userGroupIds The requesting user's group ids.
 	 *
 	 * @return string|null The matched token set id, or null when nothing matches.
