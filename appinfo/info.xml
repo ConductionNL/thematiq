@@ -264,6 +264,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 			     regenerate missing/stale css/tokens/dark/{id}.css on
 			     install/upgrade. Degrades to a logged warning (never fatal)
 			     when the app directory is read-only. -->
+			<step>OCA\Thematiq\Repair\MoveRuntimeFilesToAppData</step>
 			<step>OCA\Thematiq\Migration\GenerateDarkVariantsRepairStep</step>
 		</post-migration>
 		<install>
@@ -276,6 +277,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 			     the upgrade the step exists for. -->
 			<step>OCA\Thematiq\Repair\MigrateSchemaApplicationId</step>
 			<!-- Dark-mode token variants — see the note under <post-migration>. -->
+			<step>OCA\Thematiq\Repair\MoveRuntimeFilesToAppData</step>
 			<step>OCA\Thematiq\Migration\GenerateDarkVariantsRepairStep</step>
 		</install>
 	</repair-steps>

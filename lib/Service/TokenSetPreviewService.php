@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\App\IAppManager;
 
 /**
@@ -66,8 +67,12 @@ class TokenSetPreviewService {
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager.
+	 * @param RuntimeFileStore|null $store Where uploaded sets are kept.
 	 */
-	public function __construct(IAppManager $appManager) {
+	public function __construct(
+		IAppManager $appManager,
+		private readonly ?RuntimeFileStore $store = null,
+	) {
 		$this->appManager = $appManager;
 	}//end __construct()
 
@@ -119,12 +124,12 @@ class TokenSetPreviewService {
 	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
 	 */
 	public function getDeclaredTokens(string $tokenSetId): array {
-		$path = $this->appManager->getAppPath('thematiq') . '/css/tokens/' . $tokenSetId . '.css';
-		if (file_exists($path) === false) {
+		$css = $this->setCss(appPath: $this->appManager->getAppPath('thematiq'), name: 'css/tokens/' . $tokenSetId . '.css');
+		if ($css === null) {
 			return [];
 		}
 
-		return $this->semanticLayer(vars: $this->parseCssVars(filePath: $path));
+		return $this->semanticLayer(vars: $this->parseCssVarsFrom(content: $css));
 	}//end getDeclaredTokens()
 
 	/**
@@ -198,10 +203,9 @@ class TokenSetPreviewService {
 		);
 
 		// Step 2: parse tokens/{id}.css → overrides.
-		$tokenSetPath = $appPath . '/css/tokens/' . $tokenSetId . '.css';
-		if (file_exists($tokenSetPath) === true) {
-			$tokenSetVars = $this->parseCssVars(filePath: $tokenSetPath);
-			$nldesignVars = array_merge($nldesignVars, $tokenSetVars);
+		$tokenSetCss = $this->setCss(appPath: $appPath, name: 'css/tokens/' . $tokenSetId . '.css');
+		if ($tokenSetCss !== null) {
+			$nldesignVars = array_merge($nldesignVars, $this->parseCssVarsFrom(content: $tokenSetCss));
 		}
 
 		// Step 3: parse overrides.css → mapping --color-X: var(--nldesign-Y).
@@ -252,6 +256,19 @@ class TokenSetPreviewService {
 			return [];
 		}
 
+		return $this->parseCssVarsFrom(content: $content);
+	}//end parseCssVars()
+
+	/**
+	 * The `--property: value;` lines of a stylesheet.
+	 *
+	 * @param string $content The stylesheet.
+	 *
+	 * @return array<string, string> Map of --property-name => value.
+	 *
+	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 */
+	private function parseCssVarsFrom(string $content): array {
 		$vars = [];
 		preg_match_all('/^\s*(--[\w-]+)\s*:\s*([^;]+);/m', $content, $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
@@ -259,7 +276,7 @@ class TokenSetPreviewService {
 		}
 
 		return $vars;
-	}//end parseCssVars()
+	}//end parseCssVarsFrom()
 
 	/**
 	 * Parse the overrides.css file to extract --color-X: var(--nldesign-Y) mappings.
@@ -332,4 +349,32 @@ class TokenSetPreviewService {
 
 		return $ref;
 	}//end resolveVarReference()
+
+	/**
+	 * A set file's CSS: an uploaded (`custom-`) set's from the store, a shipped one's from the release.
+	 *
+	 * @param string $appPath The app directory.
+	 * @param string $name    The app-relative name, such as `css/tokens/utrecht.css`.
+	 *
+	 * @return string|null The CSS, or null when the file does not exist.
+	 *
+	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 */
+	private function setCss(string $appPath, string $name): ?string {
+		if ($this->store !== null && preg_match('#^css/tokens/(?:dark/)?custom-[a-z0-9-]+\.css$#', $name) === 1) {
+			return $this->store->read(name: $name);
+		}
+
+		$path = $appPath . '/' . $name;
+		if (is_file($path) === false) {
+			return null;
+		}
+
+		$css = file_get_contents($path);
+		if ($css === false) {
+			return null;
+		}
+
+		return $css;
+	}//end setCss()
 }//end class

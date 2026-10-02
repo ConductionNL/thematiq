@@ -22,6 +22,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileNames;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
@@ -88,13 +90,6 @@ class CssInjectionService {
 	private DesignSystemService $designSystemService;
 
 	/**
-	 * Ensures the custom-overrides.css file exists before it is loaded.
-	 *
-	 * @var CustomOverridesService
-	 */
-	private CustomOverridesService $overridesService;
-
-	/**
 	 * Gates and reads the freeform custom CSS layer.
 	 *
 	 * @var CustomCssService
@@ -146,11 +141,17 @@ class CssInjectionService {
 	private StockTokensService $stockTokens;
 
 	/**
+	 * Finds runtime files: an uploaded set, its dark variant, overrides and custom CSS.
+	 *
+	 * @var RuntimeFileLocator
+	 */
+	private RuntimeFileLocator $runtimeFiles;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
 	 * @param DesignSystemService $designSystemService The design system resolver.
-	 * @param CustomOverridesService $overridesService The custom overrides file service.
 	 * @param CustomCssService $customCssService The freeform custom CSS service.
 	 * @param FontService $fontService The custom font resolver.
 	 * @param IURLGenerator $urlGenerator The URL generator.
@@ -158,6 +159,7 @@ class CssInjectionService {
 	 * @param ThemePreviewBannerService $previewBannerService The theme-preview banner injector.
 	 * @param LoggerInterface $logger The logger for skipped layers.
 	 * @param StockTokensService $stockTokens Resolves the `nextcloud` set from the running instance.
+	 * @param RuntimeFileLocator $runtimeFiles Finds files thematiq wrote at runtime, which live in app data.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -165,7 +167,6 @@ class CssInjectionService {
 	public function __construct(
 		IConfig $config,
 		DesignSystemService $designSystemService,
-		CustomOverridesService $overridesService,
 		CustomCssService $customCssService,
 		FontService $fontService,
 		IURLGenerator $urlGenerator,
@@ -173,10 +174,10 @@ class CssInjectionService {
 		ThemePreviewBannerService $previewBannerService,
 		LoggerInterface $logger,
 		StockTokensService $stockTokens,
+		RuntimeFileLocator $runtimeFiles,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
-		$this->overridesService = $overridesService;
 		$this->customCssService = $customCssService;
 		$this->fontService = $fontService;
 		$this->urlGenerator = $urlGenerator;
@@ -184,6 +185,7 @@ class CssInjectionService {
 		$this->previewBannerService = $previewBannerService;
 		$this->logger = $logger;
 		$this->stockTokens = $stockTokens;
+		$this->runtimeFiles = $runtimeFiles;
 	}//end __construct()
 
 	/**
@@ -385,7 +387,7 @@ class CssInjectionService {
 		// reaches this line only when its metadata could not be read and the
 		// design system defaulted, and then the resolved block still beats the
 		// shipped snapshot. See stockTokenLayer().
-		$tokenLayer = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
+		$tokenLayer = $this->fileLayer(layer: 'tokens', file: 'tokens/' . $tokenSet);
 		if ($tokenSet === self::STOCK_TOKEN_SET) {
 			$tokenLayer = ($this->stockTokenLayer() ?? $tokenLayer);
 		}
@@ -415,7 +417,7 @@ class CssInjectionService {
 		// when the toggle is on AND a generated file exists for this set.
 		// A disabled toggle or a set without a variant adds nothing.
 		if ($this->hasDarkVariantLayer(tokenSet: $tokenSet) === true) {
-			$layers[] = ['layer' => 'dark-variant', 'kind' => 'file', 'file' => 'tokens/dark/' . $tokenSet];
+			$layers[] = $this->fileLayer(layer: 'dark-variant', file: 'tokens/dark/' . $tokenSet);
 		}
 
 		// Functional contrast fix shared by all design systems: app icons
@@ -484,7 +486,7 @@ class CssInjectionService {
 	private function noDesignSystemLayers(string $tokenSet): array {
 		$layers = [];
 		if ($tokenSet !== self::STOCK_TOKEN_SET) {
-			$layers[] = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
+			$layers[] = $this->fileLayer(layer: 'tokens', file: 'tokens/' . $tokenSet);
 		}
 
 		if ($tokenSet === self::STOCK_TOKEN_SET) {
@@ -541,8 +543,40 @@ class CssInjectionService {
 			return;
 		}
 
+		if ($entry['kind'] === 'runtime') {
+			$this->emitLinkedStyle(url: $this->runtimeFiles->routeUrl(name: (string)$entry['name']));
+			return;
+		}
+
 		$this->emitStyle(file: (string)$entry['file']);
 	}//end emitLayer()
+
+	/**
+	 * A stylesheet layer, from the release or from the runtime store.
+	 *
+	 * A shipped set's file is a static app stylesheet. An uploaded set's file,
+	 * and its dark variant, were written at runtime and live in app data, so
+	 * they are linked through the runtime file route instead. Nothing is ever
+	 * read from or written to the app directory for them.
+	 *
+	 * @param string $layer The layer name.
+	 * @param string $file  The stylesheet path relative to `css/`, without extension.
+	 *
+	 * @return array{layer: string, kind: string, file?: string, name?: string} The layer entry.
+	 *
+	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 */
+	private function fileLayer(string $layer, string $file): array {
+		$name = 'css/' . $file . '.css';
+		if ($this->runtimeFiles->isProtected(name: $name) === false
+			&& RuntimeFileNames::isAllowed(name: $name) === true
+			&& $this->runtimeFiles->store()->exists(name: $name) === true
+		) {
+			return ['layer' => $layer, 'kind' => 'runtime', 'name' => $name];
+		}
+
+		return ['layer' => $layer, 'kind' => 'file', 'file' => $file];
+	}//end fileLayer()
 
 	/**
 	 * The stylesheet manifest for a token set: what the page would carry for
@@ -585,6 +619,15 @@ class CssInjectionService {
 					'kind' => 'inline',
 					'id' => (string)($entry['id'] ?? ''),
 					'css' => (string)$entry['css'],
+				];
+				continue;
+			}
+
+			if ($entry['kind'] === 'runtime') {
+				$layers[] = [
+					'layer' => $entry['layer'],
+					'kind' => 'file',
+					'href' => $this->runtimeFiles->routeUrl(name: (string)$entry['name']),
 				];
 				continue;
 			}
@@ -636,31 +679,13 @@ class CssInjectionService {
 		// CustomOverridesService.
 		$overridesFile = CustomOverridesService::fileFor(tokenSet: $tokenSet, designSystemId: $designSystemId);
 		//
-		// `ensureExists()` WRITES `css/custom-overrides.css` INSIDE THE APP
-		// DIRECTORY, which is exactly the write a read-only or
-		// root-owned-checkout deployment refuses (nldesign#264). It throws only
-		// when the file is absent AND could not be created, so on failure there
-		// is no file to link — emitting the tag anyway would add a guaranteed
-		// 404 to every page. The freeform layer below is unrelated and still
-		// runs, and the skip is logged rather than silent.
-		$overridesReady = true;
-		try {
-			$this->overridesService->ensureExists(tokenSet: $tokenSet);
-		} catch (Throwable $e) {
-			$overridesReady = false;
-			$this->logger->warning(
-				'nldesign: css/' . $overridesFile . '.css is absent and could not be created, so the custom-overrides '
-				. 'layer was skipped. The app directory is not writable by the web server; generated CSS belongs '
-				. 'in appdata (see nldesign#264).',
-				[
-					'app' => Application::APP_ID,
-					'exception' => $e,
-				]
-			);
-		}
-
-		if ($overridesReady === true) {
-			$this->emitStyle(file: $overridesFile);
+		// The file lives in app data, never in the signed app directory, and
+		// is linked only when an admin has saved something. Nothing is created
+		// on render: a page that writes a file on every request is how every
+		// instance used to carry a code integrity warning.
+		$overridesName = 'css/' . $overridesFile . '.css';
+		if ($this->runtimeFiles->store()->exists(name: $overridesName) === true) {
+			$this->emitLinkedStyle(url: $this->runtimeFiles->routeUrl(name: $overridesName));
 		}
 
 		// 4.1 Freeform custom CSS — admin-authored arbitrary rules. Emitted
@@ -670,7 +695,7 @@ class CssInjectionService {
 		if ($this->customCssService->isEnabled() === true
 			&& $this->customCssService->hasContent() === true
 		) {
-			$this->emitStyle(file: 'custom-css');
+			$this->emitLinkedStyle(url: $this->runtimeFiles->routeUrl(name: CustomCssService::FILE));
 		}
 	}//end injectOverrideStyles()
 
@@ -794,7 +819,7 @@ class CssInjectionService {
 		$relative = null;
 		foreach (['svg', 'png', 'jpg', 'gif', 'webp'] as $extension) {
 			$candidate = 'img/logos/' . $tokenSet . '.' . $extension;
-			if (is_file($this->appPath() . '/' . $candidate) === true) {
+			if ($this->runtimeFiles->exists(name: $candidate) === true) {
 				$relative = $candidate;
 				break;
 			}
@@ -807,9 +832,7 @@ class CssInjectionService {
 		// unquoted is both valid and safe.
 		if ($relative !== null) {
 			return $this->inlineLayer(
-				css: ':root{--nldesign-logo-url:url('
-					. $this->urlGenerator->linkTo(appName: Application::APP_ID, file: $relative)
-					. ')}'
+				css: ':root{--nldesign-logo-url:url(' . $this->runtimeFiles->url(name: $relative) . ')}'
 			);
 		}
 
@@ -1043,4 +1066,28 @@ class CssInjectionService {
 			]
 		);
 	}//end emitFontLink()
+
+	/**
+	 * Emit a stylesheet served by a route as a `<link>` header.
+	 *
+	 * Runtime files live in app data, not under `css/`, so `Util::addStyle()`
+	 * cannot serve them; the runtime file route does.
+	 *
+	 * @param string $url The route URL, with its `?v=` revision.
+	 *
+	 * @return void
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - \OCP\Util::addHeader() is the Nextcloud API for header injection
+	 *
+	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 */
+	protected function emitLinkedStyle(string $url): void {
+		\OCP\Util::addHeader(
+			tag: 'link',
+			attributes: [
+				'rel' => 'stylesheet',
+				'href' => $url,
+			]
+		);
+	}//end emitLinkedStyle()
 }//end class

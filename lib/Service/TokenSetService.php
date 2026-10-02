@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -184,6 +185,7 @@ class TokenSetService {
 	 * @param ShippedTokenSetAuditService $audit The shipped-set contrast audit service.
 	 * @param ICacheFactory $cacheFactory Creates the distributed WCAG-level cache.
 	 * @param TokenSetVocabularyAuditService $vocabularyAudit The vocabulary-completeness audit service.
+	 * @param RuntimeFileStore|null $store Where uploaded sets are kept (app data).
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -192,6 +194,7 @@ class TokenSetService {
 		ShippedTokenSetAuditService $audit,
 		ICacheFactory $cacheFactory,
 		TokenSetVocabularyAuditService $vocabularyAudit,
+		private readonly ?RuntimeFileStore $store = null,
 	) {
 		$this->appManager = $appManager;
 		$this->config = $config;
@@ -240,10 +243,10 @@ class TokenSetService {
 		// what applying the theme is meant to bring back.
 		$captured = $this->readCapturedTheming();
 
-		// Scan filesystem for actual CSS files.
+		// Scan the release for shipped sets and the store for uploaded ones.
 		$tokenSets = [];
-		if (is_dir($tokensDir) === true) {
-			$files = scandir($tokensDir);
+		$files = $this->tokenSetFiles(tokensDir: $tokensDir);
+		if ($files !== []) {
 			foreach ($files as $file) {
 				if (str_ends_with($file, '.css') === true) {
 					$id = basename($file, '.css');
@@ -536,11 +539,50 @@ class TokenSetService {
 			return false;
 		}
 
+		if ($this->store !== null && str_starts_with($tokenSetId, 'custom-') === true) {
+			return $this->store->exists(name: 'css/tokens/' . $tokenSetId . '.css');
+		}
+
 		$appPath = $this->getAppPath();
 		$cssFile = $appPath . '/css/tokens/' . $tokenSetId . '.css';
 
 		return file_exists($cssFile);
 	}//end isValidTokenSet()
+
+	/**
+	 * The stylesheet file names of every set: shipped in the release, uploaded in the store.
+	 *
+	 * @param string $tokensDir The release's `css/tokens` directory.
+	 *
+	 * @return array<int, string> File names such as `utrecht.css`, without duplicates.
+	 *
+	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 */
+	private function tokenSetFiles(string $tokensDir): array {
+		$files = [];
+		$entries = [];
+		if (is_dir($tokensDir) === true) {
+			$entries = scandir($tokensDir);
+		}
+
+		if ($entries === false) {
+			$entries = [];
+		}
+
+		foreach ($entries as $file) {
+			if (is_file($tokensDir . '/' . $file) === true) {
+				$files[] = $file;
+			}
+		}
+
+		if ($this->store !== null) {
+			foreach ($this->store->listDirectory(directory: 'css/tokens') as $name) {
+				$files[] = basename($name);
+			}
+		}
+
+		return array_values(array_unique($files));
+	}//end tokenSetFiles()
 
 	/**
 	 * Read the token-sets.json manifest and index by id.
