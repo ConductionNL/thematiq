@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppThemingService;
+use OCA\Thematiq\Capabilities;
+use OCA\Thematiq\Service\AssistantMarkService;
 use OCA\Thematiq\Service\ConfigBundleService;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
@@ -189,7 +191,8 @@ class ConfigBundleServiceTest extends TestCase {
 			$this->fontService,
 			$freshnessService,
 			new ScheduledSwitchStore($config),
-			$logger
+			$logger,
+			new AssistantMarkService($config, $emailThemingService, $this->createMock(Capabilities::class))
 		);
 	}//end setUp()
 
@@ -415,6 +418,40 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertFalse($result['valid']);
 		$this->assertStringContainsString('atlantis', $result['errors'][0]['message']);
 	}//end testNonexistentTokenSetIsHardError()
+
+	/**
+	 * The approved mark's three values travel in the bundle; an unsafe logo is refused, and an
+	 * older bundle without the section leaves the mark alone.
+	 *
+	 * @spec openspec/specs/assistant-approved-mark/spec.md
+	 */
+	public function testAssistantMarkSurvivesExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['assistant_mark_enabled'] = '1';
+		$this->appConfig['assistant_mark_organisation'] = 'Gemeente Voorbeeld';
+		$this->appConfig['assistant_mark_logo'] = 'https://example.org/logo.svg';
+
+		$bundle = $this->service->export();
+		$this->assertSame(['enabled' => true, 'organisation' => 'Gemeente Voorbeeld', 'logo' => 'https://example.org/logo.svg'], $bundle['assistantMark']);
+
+		$this->appConfig['assistant_mark_enabled'] = '0';
+		$this->appConfig['assistant_mark_organisation'] = '';
+		$this->appConfig['assistant_mark_logo'] = '';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('1', $this->appConfig['assistant_mark_enabled']);
+		$this->assertSame('Gemeente Voorbeeld', $this->appConfig['assistant_mark_organisation']);
+		$this->assertSame('https://example.org/logo.svg', $this->appConfig['assistant_mark_logo']);
+
+		$bundle['assistantMark']['logo'] = 'javascript:alert(1)';
+		$this->assertFalse($this->service->import(bundle: $bundle, dryRun: true)['valid']);
+
+		unset($bundle['assistantMark']);
+		$this->appConfig['assistant_mark_enabled'] = '0';
+		$this->assertTrue($this->service->import(bundle: $bundle, dryRun: false)['valid']);
+		$this->assertSame('0', $this->appConfig['assistant_mark_enabled'], 'An older bundle leaves the mark alone.');
+	}//end testAssistantMarkSurvivesExportAndImport()
 
 	/**
 	 * `primaryDrivesComponents` travels in the bundle, so an OTAP promotion
