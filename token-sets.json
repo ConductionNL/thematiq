@@ -204,7 +204,8 @@
 		"theming": {
 			"primary_color": "#157C68",
 			"background_color": "#FFFFFF",
-			"logo": "img/logos/nijmegen.svg"
+			"logo": "img/logos/nijmegen.svg",
+			"logo_dark": "img/logos/nijmegen-dark.svg"
 		}
 	},
 	{
@@ -233,7 +234,8 @@
 		"theming": {
 			"primary_color": "#2C2276",
 			"background_color": "#FFFFFF",
-			"logo": "img/logos/noordwijk.svg"
+			"logo": "img/logos/noordwijk.svg",
+			"logo_dark": "img/logos/noordwijk-dark.svg"
 		}
 	},
 	{
@@ -243,7 +245,8 @@
 		"theming": {
 			"primary_color": "#C42035",
 			"background_color": "#FFFFFF",
-			"logo": "img/logos/provincie-zuid-holland.svg"
+			"logo": "img/logos/provincie-zuid-holland.svg",
+			"logo_dark": "img/logos/provincie-zuid-holland-dark.svg"
 		}
 	},
 	{
@@ -317,7 +320,8 @@
 		"theming": {
 			"primary_color": "#003865",
 			"background_color": "#0277BD",
-			"logo": "img/logos/vng.svg"
+			"logo": "img/logos/vng.svg",
+			"logo_dark": "img/logos/vng-dark.svg"
 		}
 	},
 	{
@@ -378,7 +382,8 @@
 		"theming": {
 			"primary_color": "#333333",
 			"background_color": "#FFFFFF",
-			"logo": "img/logos/xxllnc.svg"
+			"logo": "img/logos/xxllnc.svg",
+			"logo_dark": "img/logos/xxllnc-dark.svg"
 		}
 	},
 	{

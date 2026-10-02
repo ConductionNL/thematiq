@@ -1,5 +1,5 @@
 ---
-status: done
+status: in-progress
 ---
 
 # Token Import/Export Specification
@@ -14,7 +14,7 @@ The admin settings panel MUST provide a **Download** button that exports the cur
 file — it is NOT a complete configuration export: the active token set, feature toggles, per-app
 exclusions, and custom token sets are exported exclusively by the full configuration bundle
 defined in the `config-portability` spec (`GET /settings/config/export` /
-`occ nldesign:config:export`), and the overrides UI SHOULD point admins needing whole-config
+`occ thematiq:config:export`), and the overrides UI SHOULD point admins needing whole-config
 promotion (OTAP) at the bundle.
 
 Before downloading, the panel MUST say in a dialog what the file contains and what it does not.
@@ -72,7 +72,7 @@ for known `--color-*` tokens, and writes the recognized tokens to `custom-overri
 replacing the current overrides. This import touches ONLY the overrides file: it MUST NOT change
 the active token set, feature toggles, per-app exclusions, or custom token sets — importing the
 complete configuration is the `config-portability` bundle's job
-(`POST /settings/config/import` / `occ nldesign:config:import`), which reuses this capability's
+(`POST /settings/config/import` / `occ thematiq:config:import`), which reuses this capability's
 editable-token whitelist semantics for its overrides section.
 
 Before the file picker opens, the panel MUST say in a dialog that the file replaces every value

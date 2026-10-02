@@ -50,7 +50,7 @@ class AppThemingService {
 	 *
 	 * @var string[]
 	 */
-	private const PROTECTED_IDS = ['thematiq', 'settings', 'theming'];
+	public const PROTECTED_IDS = ['thematiq', 'settings', 'theming'];
 
 	/**
 	 * The application configuration service.
