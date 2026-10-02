@@ -17,6 +17,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -46,7 +47,7 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
 		$this->darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
-		$this->service = new CustomOverridesService($appManager, $parser, $this->darkPalette);
+		$this->service = new CustomOverridesService(new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')), $parser, $this->darkPalette);
 	}//end setUp()
 
 	protected function tearDown(): void {

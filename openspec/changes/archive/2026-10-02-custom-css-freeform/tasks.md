@@ -91,7 +91,9 @@ declarative-vs-imperative notification-dialect distinction does not apply.
   `hasContent()` read as content, so an empty stylesheet was still linked. `read()` now peels
   every header (which heals a file that already stacked several on the next save), and the test
   covers the round trip, the stacked case, the empty case, the 422 path and an unwritable
-  directory.
+  file. Since #811 the file lives in the runtime file store (app data) instead of the app's
+  `css/` directory, so the temp-file-and-rename part of task 5.2 belongs to that store now; the
+  test runs on a real `DirectoryRuntimeFileStore`.
 - Task 3.1 shipped with one endpoint pair instead of three methods: `POST /settings/custom-css`
   carries `enabled` with the CSS, and the single `custom_css_written` entry records the new state.
   A rejected save is audited too (`custom_css_rejected`), so the log shows attempts as well as

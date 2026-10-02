@@ -3,9 +3,9 @@
 /**
  * Unit tests for CustomCssService, the freeform custom CSS file.
  *
- * Runs against a real temporary app directory and the real validator, so a
- * save and a load go through the same bytes on disk the stylesheet is served
- * from.
+ * Runs against a real runtime file store on a temporary directory and the
+ * real validator, so a save and a load go through the same bytes the
+ * stylesheet is served from.
  *
  * @category Tests
  * @package  OCA\Thematiq\Tests\Unit\Service
@@ -25,7 +25,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\CustomCssValidator;
-use OCP\App\IAppManager;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\IAppConfig;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -66,12 +66,9 @@ class CustomCssServiceTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-custom-css-' . bin2hex(random_bytes(6));
 		mkdir($this->appDir . '/css', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
-		$appManager->method('getAppPath')->willReturn($this->appDir);
-
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->service = new CustomCssService(
-			appManager: $appManager,
+			store: new DirectoryRuntimeFileStore($this->appDir),
 			appConfig: $this->appConfig,
 			validator: new CustomCssValidator(),
 		);
@@ -84,6 +81,10 @@ class CustomCssServiceTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		chmod($this->appDir . '/css', 0777);
+		if (is_file($this->file()) === true) {
+			chmod($this->file(), 0666);
+		}
+
 		foreach (glob($this->appDir . '/css/*') as $file) {
 			unlink($file);
 		}
@@ -206,18 +207,17 @@ class CustomCssServiceTest extends TestCase {
 
 		$this->assertNotEmpty($errors);
 		$this->assertSame($before, file_get_contents($this->file()));
-		$this->assertFileDoesNotExist($this->file() . '.tmp');
 	}
 
 	/**
-	 * An unwritable css/ directory fails loudly and keeps the old file.
+	 * An unwritable stored file fails loudly and keeps the old content.
 	 *
 	 * @return void
 	 */
-	public function testUnwritableDirectoryThrowsAndKeepsTheOldFile(): void {
+	public function testUnwritableFileThrowsAndKeepsTheOldContent(): void {
 		$this->service->write(css: 'a { color: red; }');
-		chmod($this->appDir . '/css', 0555);
-		if (is_writable($this->appDir . '/css') === true) {
+		chmod($this->file(), 0444);
+		if (is_writable($this->file()) === true) {
 			$this->markTestSkipped('Running as a user that ignores directory permissions.');
 		}
 
@@ -228,7 +228,7 @@ class CustomCssServiceTest extends TestCase {
 			$this->service->write(css: 'b { color: blue; }');
 			$this->fail('Expected a RuntimeException.');
 		} catch (RuntimeException $e) {
-			$this->assertStringContainsString('write access', $e->getMessage());
+			$this->assertStringContainsString('Could not write', $e->getMessage());
 		} finally {
 			restore_error_handler();
 		}

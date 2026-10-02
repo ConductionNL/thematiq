@@ -226,7 +226,7 @@ toggle) MUST be recorded via the existing theming audit trail before the respons
 
 ### Requirement: Read/Write PHP Endpoint
 The backend MUST expose a PHP service that reads the current `custom-css.css` content and enabled
-state, and writes a new version atomically after validation succeeds. Direct file manipulation from
+state, and writes a new version through the runtime file store after validation succeeds. Direct file manipulation from
 the admin settings JavaScript MUST NOT be used.
 
 #### Scenario: Read current custom CSS
@@ -244,15 +244,15 @@ the admin settings JavaScript MUST NOT be used.
 
 - GIVEN an admin submits new CSS text that passes `CustomCssValidator`
 - WHEN a POST request is made to the custom CSS save endpoint
-- THEN the backend MUST write the content to `custom-css.css` atomically (write to a temp file, then
-  rename)
+- THEN the backend MUST write the content to `css/custom-css.css` in the runtime file store
+  (app data, outside the signed app directory)
 - AND it MUST return HTTP 200 with the stored size in bytes and the enabled state
 - AND reading it back MUST return exactly the submitted text, without the comment the file
   carries above it
 
 #### Scenario: Write fails due to filesystem permissions
 
-@e2e exclude covered by CustomCssServiceTest::testUnwritableDirectoryThrowsAndKeepsTheOldFile and covered by CustomCssControllerAuditTest::testUnwritableFileIsAServerError
+@e2e exclude covered by CustomCssServiceTest::testUnwritableFileThrowsAndKeepsTheOldContent and covered by CustomCssControllerAuditTest::testUnwritableFileIsAServerError
 
 - GIVEN the CSS directory is not writable by the web server process
 - WHEN a validated save is attempted
