@@ -111,6 +111,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *     variable: string,
 	 *     class: string,
 	 *     owner: string,
+	 *     group: string,
 	 *     type: string,
 	 *     mode: string,
 	 *     selectors: array<int, string>,
@@ -118,6 +119,13 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * }>|null
 	 */
 	private static ?array $internalTokens = null;
+
+	/**
+	 * Nextcloud's own light and dark value per settable theme variable, from the same map.
+	 *
+	 * @var array<string, array{light: string, dark: string}>
+	 */
+	private static array $themeStock = [];
 
 	/**
 	 * Returns the full registry of editable tokens.
@@ -206,6 +214,8 @@ class TokenRegistry implements TokenRegistryInterface {
 				'token' => $entry['token'],
 				'advanced' => (($entry['advanced'] ?? false) === true),
 				'perScheme' => (($entry['perScheme'] ?? false) === true),
+				'note' => (string)($entry['note'] ?? ''),
+				'stock' => (self::$themeStock[$name] ?? ['light' => '', 'dark' => '']),
 			];
 		}
 
@@ -417,6 +427,19 @@ class TokenRegistry implements TokenRegistryInterface {
 	}//end getTokenNames()
 
 	/**
+	 * How many tokens the editor offers: the registry's tabs plus the internal tokens.
+	 *
+	 * The editor heading and the user docs state this number, so they cannot drift apart.
+	 *
+	 * @return int The count.
+	 *
+	 * @spec openspec/changes/token-editor-at-scale/specs/token-editor-ui/spec.md
+	 */
+	public static function countEditable(): int {
+		return count(self::getTokens()) + count(self::getInternalTokens());
+	}//end countEditable()
+
+	/**
 	 * Checks whether a given token name is editable.
 	 *
 	 * @param string $tokenName The CSS custom property name.
@@ -442,6 +465,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *     variable: string,
 	 *     class: string,
 	 *     owner: string,
+	 *     group: string,
 	 *     type: string,
 	 *     mode: string,
 	 *     selectors: array<int, string>,
@@ -466,6 +490,13 @@ class TokenRegistry implements TokenRegistryInterface {
 			$decoded = json_decode($raw, true);
 		}
 
+		self::$themeStock = [];
+		foreach (($decoded['themeStock'] ?? []) as $name => $stock) {
+			if (is_array($stock) === true) {
+				self::$themeStock[(string)$name] = ['light' => (string)($stock['light'] ?? ''), 'dark' => (string)($stock['dark'] ?? '')];
+			}
+		}
+
 		foreach (($decoded['tokens'] ?? []) as $token => $entry) {
 			if (is_array($entry) === false || is_string($entry['variable'] ?? null) === false) {
 				continue;
@@ -475,6 +506,7 @@ class TokenRegistry implements TokenRegistryInterface {
 				'variable' => $entry['variable'],
 				'class' => (string)($entry['class'] ?? 'component'),
 				'owner' => (string)($entry['owner'] ?? ''),
+				'group' => (string)($entry['group'] ?? 'other'),
 				'type' => (string)($entry['type'] ?? 'text'),
 				'mode' => (string)($entry['mode'] ?? 'body'),
 				'selectors' => array_values(array_map('strval', (array)($entry['selectors'] ?? []))),

@@ -958,7 +958,27 @@
         "This app is not installed.": "Deze app is niet geïnstalleerd.",
         "This app is excluded from theming. Include it under Theming per app first.": "Deze app is uitgesloten van theming. Neem hem eerst op onder Theming per app.",
         "This token set is not available.": "Deze token set is niet beschikbaar.",
-        "The logo is larger than 1 MB.": "Het logo is groter dan 1 MB."
+        "The logo is larger than 1 MB.": "Het logo is groter dan 1 MB.",
+        "{count} editable tokens": "{count} bewerkbare tokens",
+        "Advanced": "Geavanceerd",
+        "Code highlighting": "Codemarkering",
+        "Component variables": "Componentvariabelen",
+        "Conduction apps": "Conduction-apps",
+        "Date picker": "Datumkiezer",
+        "Media player": "Mediaspeler",
+        "Name, variable or component": "Naam, variabele of component",
+        "Nextcloud components": "Nextcloud-componenten",
+        "Nextcloud: {value}": "Nextcloud: {value}",
+        "Nextcloud's own dark value": "De eigen donkere waarde van Nextcloud",
+        "No token matches your search.": "Geen token past bij je zoekopdracht.",
+        "Other variables": "Overige variabelen",
+        "PDF viewer": "Pdf-viewer",
+        "Photos": "Foto's",
+        "Search tokens": "Tokens zoeken",
+        "Select box": "Keuzelijst",
+        "Teams": "Teams",
+        "Text editor": "Teksteditor",
+        "These values size Nextcloud's layout. A wrong value can break the layout, not only the look.": "Deze waarden bepalen de opmaak van Nextcloud. Een verkeerde waarde kan de opmaak breken, niet alleen het uiterlijk."
     },
     "plurals": {}
 }

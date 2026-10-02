@@ -7,6 +7,7 @@
 			"variable": "--cn-ai-pointer-offset",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -18,6 +19,7 @@
 			"variable": "--cn-color-picker-checker",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -29,6 +31,7 @@
 			"variable": "--cn-color-swatch-checker",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -40,6 +43,7 @@
 			"variable": "--cn-email-accent",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "body"
 		},
@@ -47,6 +51,7 @@
 			"variable": "--cn-forms-accent",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "body"
 		},
@@ -54,6 +59,7 @@
 			"variable": "--cn-forms-status",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -67,6 +73,7 @@
 			"variable": "--cn-kpi-accent",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -85,6 +92,7 @@
 			"variable": "--cn-kpi-gap",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -96,6 +104,7 @@
 			"variable": "--cn-kpi-gap-horizontal",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -107,6 +116,7 @@
 			"variable": "--cn-kpi-grid-gap",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -118,6 +128,7 @@
 			"variable": "--cn-kpi-icon-size",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -129,6 +140,7 @@
 			"variable": "--cn-kpi-icon-size-sm",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -140,6 +152,7 @@
 			"variable": "--cn-kpi-icon-tint",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -151,6 +164,7 @@
 			"variable": "--cn-kpi-label-color",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -162,6 +176,7 @@
 			"variable": "--cn-kpi-label-size",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -173,6 +188,7 @@
 			"variable": "--cn-kpi-padding",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -184,6 +200,7 @@
 			"variable": "--cn-kpi-padding-flat",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -195,6 +212,7 @@
 			"variable": "--cn-kpi-radius",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -206,6 +224,7 @@
 			"variable": "--cn-kpi-section-title-size",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -217,6 +236,7 @@
 			"variable": "--cn-kpi-stack-gap",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -228,6 +248,7 @@
 			"variable": "--cn-kpi-title-size",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -239,6 +260,7 @@
 			"variable": "--cn-kpi-title-weight",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -250,6 +272,7 @@
 			"variable": "--cn-kpi-value-line",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -261,6 +284,7 @@
 			"variable": "--cn-kpi-value-size",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -272,6 +296,7 @@
 			"variable": "--cn-kpi-value-size-compact",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -283,6 +308,7 @@
 			"variable": "--cn-kpi-value-size-stacked",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -294,6 +320,7 @@
 			"variable": "--cn-kpi-value-text-size",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "body"
 		},
@@ -301,6 +328,7 @@
 			"variable": "--cn-kpi-value-weight",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -312,6 +340,7 @@
 			"variable": "--cn-sidebar-tab-min-width",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "body"
 		},
@@ -319,6 +348,7 @@
 			"variable": "--cn-spacing-m",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "body"
 		},
@@ -326,6 +356,7 @@
 			"variable": "--cn-table-cell-max-width",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "body"
 		},
@@ -333,6 +364,7 @@
 			"variable": "--cn-xwiki-accent",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "body"
 		},
@@ -340,6 +372,7 @@
 			"variable": "--cn-xwiki-accent-soft",
 			"class": "conduction",
 			"owner": "cn",
+			"group": "conduction",
 			"type": "text",
 			"mode": "body"
 		},
@@ -347,6 +380,7 @@
 			"variable": "--account-menu-outline",
 			"class": "component",
 			"owner": "account",
+			"group": "other",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -360,6 +394,7 @@
 			"variable": "--alt-text-active-bg-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -371,6 +406,7 @@
 			"variable": "--alt-text-active-border-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -382,6 +418,7 @@
 			"variable": "--alt-text-active-fg-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -393,6 +430,7 @@
 			"variable": "--alt-text-bg-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -404,6 +442,7 @@
 			"variable": "--alt-text-border-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -415,6 +454,7 @@
 			"variable": "--alt-text-fg-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -426,6 +466,7 @@
 			"variable": "--alt-text-focus-border-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -437,6 +478,7 @@
 			"variable": "--alt-text-focus-outline-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -448,6 +490,7 @@
 			"variable": "--alt-text-hover-bg-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -459,6 +502,7 @@
 			"variable": "--alt-text-hover-border-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -470,6 +514,7 @@
 			"variable": "--alt-text-hover-fg-color",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -481,6 +526,7 @@
 			"variable": "--alt-text-opacity",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -492,6 +538,7 @@
 			"variable": "--alt-text-shadow",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -503,6 +550,7 @@
 			"variable": "--alt-text-tooltip-bg",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -514,6 +562,7 @@
 			"variable": "--alt-text-tooltip-border",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -525,6 +574,7 @@
 			"variable": "--alt-text-tooltip-fg",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -536,6 +586,7 @@
 			"variable": "--alt-text-tooltip-shadow",
 			"class": "component",
 			"owner": "alt",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -547,6 +598,7 @@
 			"variable": "--app-item-circle-size",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -558,6 +610,7 @@
 			"variable": "--app-item-col-width",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -569,6 +622,7 @@
 			"variable": "--app-item-icon-size",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -580,6 +634,7 @@
 			"variable": "--app-item-row-height",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -591,6 +646,7 @@
 			"variable": "--app-navigation-item-child-offset",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -607,6 +663,7 @@
 			"variable": "--app-navigation-max-width",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -622,6 +679,7 @@
 			"variable": "--app-navigation-padding",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -634,6 +692,7 @@
 			"variable": "--app-navigation-quota-margin",
 			"class": "component",
 			"owner": "app",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -645,6 +704,7 @@
 			"variable": "--app-settings-section-content-gap",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -661,6 +721,7 @@
 			"variable": "--app-settings-section-text-offset",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -677,6 +738,7 @@
 			"variable": "--app-sidebar-close-button-offset",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -693,6 +755,7 @@
 			"variable": "--app-sidebar-padding",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -709,6 +772,7 @@
 			"variable": "--app-sidebar-width",
 			"class": "component",
 			"owner": "app",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -725,6 +789,7 @@
 			"variable": "--assistant-button-background-color",
 			"class": "component",
 			"owner": "assistant",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -741,6 +806,7 @@
 			"variable": "--assistant-button-color",
 			"class": "component",
 			"owner": "assistant",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -757,6 +823,7 @@
 			"variable": "--auto-complete-result-avatar-size",
 			"class": "component",
 			"owner": "auto",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -769,6 +836,7 @@
 			"variable": "--auto-complete-result-status-icon-position",
 			"class": "component",
 			"owner": "auto",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -781,6 +849,7 @@
 			"variable": "--auto-complete-result-status-icon-size",
 			"class": "component",
 			"owner": "auto",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -793,6 +862,7 @@
 			"variable": "--avatar-cell-width",
 			"class": "component",
 			"owner": "avatar",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -804,6 +874,7 @@
 			"variable": "--avatar-status-icon-position",
 			"class": "component",
 			"owner": "avatar",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -815,6 +886,7 @@
 			"variable": "--avatar-status-size",
 			"class": "component",
 			"owner": "avatar",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -831,6 +903,7 @@
 			"variable": "--avatar-status-size-min",
 			"class": "component",
 			"owner": "avatar",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -847,6 +920,7 @@
 			"variable": "--avatar-status-size-orbital",
 			"class": "component",
 			"owner": "avatar",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -863,6 +937,7 @@
 			"variable": "--backdrop-color",
 			"class": "component",
 			"owner": "backdrop",
+			"group": "other",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -879,6 +954,7 @@
 			"variable": "--background-blur",
 			"class": "component",
 			"owner": "background",
+			"group": "text-editor",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -891,6 +967,7 @@
 			"variable": "--body-bg-color",
 			"class": "component",
 			"owner": "body",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -902,6 +979,7 @@
 			"variable": "--button-cancel-bg-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -913,6 +991,7 @@
 			"variable": "--button-cancel-border-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -924,6 +1003,7 @@
 			"variable": "--button-cancel-fg-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -935,6 +1015,7 @@
 			"variable": "--button-cancel-hover-bg-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -946,6 +1027,7 @@
 			"variable": "--button-cancel-hover-border-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -957,6 +1039,7 @@
 			"variable": "--button-cancel-hover-fg-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -968,6 +1051,7 @@
 			"variable": "--button-hover-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -979,6 +1063,7 @@
 			"variable": "--button-inner-size",
 			"class": "component",
 			"owner": "button",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -995,6 +1080,7 @@
 			"variable": "--button-padding",
 			"class": "component",
 			"owner": "button",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1011,6 +1097,7 @@
 			"variable": "--button-padding-default",
 			"class": "component",
 			"owner": "button",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1027,6 +1114,7 @@
 			"variable": "--button-radius",
 			"class": "component",
 			"owner": "button",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1049,6 +1137,7 @@
 			"variable": "--button-save-bg-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1060,6 +1149,7 @@
 			"variable": "--button-save-fg-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1071,6 +1161,7 @@
 			"variable": "--button-save-hover-bg-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1082,6 +1173,7 @@
 			"variable": "--button-save-hover-border-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1093,6 +1185,7 @@
 			"variable": "--button-save-hover-fg-color",
 			"class": "component",
 			"owner": "button",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1104,6 +1197,7 @@
 			"variable": "--button-size",
 			"class": "component",
 			"owner": "button",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1120,6 +1214,7 @@
 			"variable": "--callout-background",
 			"class": "slot",
 			"owner": "callout",
+			"group": "text-editor",
 			"type": "color",
 			"mode": "body"
 		},
@@ -1127,6 +1222,7 @@
 			"variable": "--callout-border",
 			"class": "component",
 			"owner": "callout",
+			"group": "text-editor",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1142,6 +1238,7 @@
 			"variable": "--cell-margin",
 			"class": "component",
 			"owner": "cell",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1153,6 +1250,7 @@
 			"variable": "--cell-padding",
 			"class": "component",
 			"owner": "cell",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1164,6 +1262,7 @@
 			"variable": "--cell-width",
 			"class": "component",
 			"owner": "cell",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1175,6 +1274,7 @@
 			"variable": "--cell-width-groups",
 			"class": "component",
 			"owner": "cell",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1186,6 +1286,7 @@
 			"variable": "--cell-width-large",
 			"class": "component",
 			"owner": "cell",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1197,6 +1298,7 @@
 			"variable": "--checkbox-container-size",
 			"class": "component",
 			"owner": "checkbox",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1208,6 +1310,7 @@
 			"variable": "--checkbox-padding",
 			"class": "component",
 			"owner": "checkbox",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1220,6 +1323,7 @@
 			"variable": "--checkbox-radio-switch--border-radius",
 			"class": "component",
 			"owner": "checkbox",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1236,6 +1340,7 @@
 			"variable": "--checkbox-radio-switch--border-radius-outer",
 			"class": "component",
 			"owner": "checkbox",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1252,6 +1357,7 @@
 			"variable": "--checkbox-size",
 			"class": "component",
 			"owner": "checkbox",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1263,6 +1369,7 @@
 			"variable": "--chip-radius",
 			"class": "component",
 			"owner": "chip",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1278,6 +1385,7 @@
 			"variable": "--chip-size",
 			"class": "component",
 			"owner": "chip",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1293,6 +1401,7 @@
 			"variable": "--clickable-area",
 			"class": "component",
 			"owner": "clickable",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1304,6 +1413,7 @@
 			"variable": "--color-header",
 			"class": "component",
 			"owner": "color",
+			"group": "other",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1316,6 +1426,7 @@
 			"variable": "--color-norder-error",
 			"class": "slot",
 			"owner": "color",
+			"group": "other",
 			"type": "color",
 			"mode": "body"
 		},
@@ -1323,6 +1434,7 @@
 			"variable": "--color-primary-element-extra-light",
 			"class": "component",
 			"owner": "color",
+			"group": "other",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1336,6 +1448,7 @@
 			"variable": "--color-primary-element-extra-light-hover",
 			"class": "component",
 			"owner": "color",
+			"group": "other",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1349,6 +1462,7 @@
 			"variable": "--contenteditable-block-offset",
 			"class": "component",
 			"owner": "contenteditable",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1365,6 +1479,7 @@
 			"variable": "--contenteditable-inline-end-offset",
 			"class": "component",
 			"owner": "contenteditable",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1381,6 +1496,7 @@
 			"variable": "--contenteditable-inline-start-offset",
 			"class": "component",
 			"owner": "contenteditable",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1397,6 +1513,7 @@
 			"variable": "--counter-bubble-height",
 			"class": "component",
 			"owner": "counter",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1409,6 +1526,7 @@
 			"variable": "--dark-link-color",
 			"class": "component",
 			"owner": "dark",
+			"group": "other",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1420,6 +1538,7 @@
 			"variable": "--dark-text-color",
 			"class": "component",
 			"owner": "dark",
+			"group": "other",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1431,6 +1550,7 @@
 			"variable": "--dialog-bg-color",
 			"class": "component",
 			"owner": "dialog",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1442,6 +1562,7 @@
 			"variable": "--dialog-border-color",
 			"class": "component",
 			"owner": "dialog",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1453,6 +1574,7 @@
 			"variable": "--dialog-button-bg-color",
 			"class": "component",
 			"owner": "dialog",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1464,6 +1586,7 @@
 			"variable": "--dialog-button-border",
 			"class": "component",
 			"owner": "dialog",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1475,6 +1598,7 @@
 			"variable": "--dialog-button-hover-bg-color",
 			"class": "component",
 			"owner": "dialog",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1486,6 +1610,7 @@
 			"variable": "--dialog-button-hover-color",
 			"class": "component",
 			"owner": "dialog",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1497,6 +1622,7 @@
 			"variable": "--dialog-shadow",
 			"class": "component",
 			"owner": "dialog",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1508,6 +1634,7 @@
 			"variable": "--dir-factor",
 			"class": "component",
 			"owner": "dir",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1520,6 +1647,7 @@
 			"variable": "--doorhanger-bg-color",
 			"class": "component",
 			"owner": "doorhanger",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1531,6 +1659,7 @@
 			"variable": "--doorhanger-border-color",
 			"class": "component",
 			"owner": "doorhanger",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1542,6 +1671,7 @@
 			"variable": "--doorhanger-border-color-whcm",
 			"class": "component",
 			"owner": "doorhanger",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1553,6 +1683,7 @@
 			"variable": "--doorhanger-hover-bg-color",
 			"class": "component",
 			"owner": "doorhanger",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1564,6 +1695,7 @@
 			"variable": "--doorhanger-hover-color",
 			"class": "component",
 			"owner": "doorhanger",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1575,6 +1707,7 @@
 			"variable": "--doorhanger-icon-opacity",
 			"class": "component",
 			"owner": "doorhanger",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1586,6 +1719,7 @@
 			"variable": "--doorhanger-separator-color",
 			"class": "component",
 			"owner": "doorhanger",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1597,6 +1731,7 @@
 			"variable": "--doorhanger-triangle-opacity-whcm",
 			"class": "component",
 			"owner": "doorhanger",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1608,6 +1743,7 @@
 			"variable": "--dp-action-button-height",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1622,6 +1758,7 @@
 			"variable": "--dp-action-buttons-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1636,6 +1773,7 @@
 			"variable": "--dp-action-row-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1650,6 +1788,7 @@
 			"variable": "--dp-action-row-transition",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1662,6 +1801,7 @@
 			"variable": "--dp-action-row-transtion",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1675,6 +1815,7 @@
 			"variable": "--dp-animation-duration",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1689,6 +1830,7 @@
 			"variable": "--dp-background-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1703,6 +1845,7 @@
 			"variable": "--dp-border-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1717,6 +1860,7 @@
 			"variable": "--dp-border-color-focus",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1731,6 +1875,7 @@
 			"variable": "--dp-border-color-hover",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1745,6 +1890,7 @@
 			"variable": "--dp-border-radius",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1759,6 +1905,7 @@
 			"variable": "--dp-button-height",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1773,6 +1920,7 @@
 			"variable": "--dp-button-icon-height",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1787,6 +1935,7 @@
 			"variable": "--dp-calendar-header-cell-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1801,6 +1950,7 @@
 			"variable": "--dp-cell-border-radius",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1815,6 +1965,7 @@
 			"variable": "--dp-cell-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1829,6 +1980,7 @@
 			"variable": "--dp-cell-size",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1843,6 +1995,7 @@
 			"variable": "--dp-common-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1857,6 +2010,7 @@
 			"variable": "--dp-common-transition",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1871,6 +2025,7 @@
 			"variable": "--dp-danger-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1885,6 +2040,7 @@
 			"variable": "--dp-direction",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1899,6 +2055,7 @@
 			"variable": "--dp-disabled-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1913,6 +2070,7 @@
 			"variable": "--dp-disabled-color-text",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1927,6 +2085,7 @@
 			"variable": "--dp-font-family",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1941,6 +2100,7 @@
 			"variable": "--dp-font-size",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -1955,6 +2115,7 @@
 			"variable": "--dp-highlight-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1969,6 +2130,7 @@
 			"variable": "--dp-hover-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1983,6 +2145,7 @@
 			"variable": "--dp-hover-icon-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -1997,6 +2160,7 @@
 			"variable": "--dp-hover-text-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2011,6 +2175,7 @@
 			"variable": "--dp-icon-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2025,6 +2190,7 @@
 			"variable": "--dp-input-icon-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2039,6 +2205,7 @@
 			"variable": "--dp-input-not-clearable-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2051,6 +2218,7 @@
 			"variable": "--dp-input-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2065,6 +2233,7 @@
 			"variable": "--dp-loader",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2079,6 +2248,7 @@
 			"variable": "--dp-marker-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2093,6 +2263,7 @@
 			"variable": "--dp-menu-border-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2107,6 +2278,7 @@
 			"variable": "--dp-menu-min-width",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2121,6 +2293,7 @@
 			"variable": "--dp-menu-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2135,6 +2308,7 @@
 			"variable": "--dp-month-year-row-button-size",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2149,6 +2323,7 @@
 			"variable": "--dp-month-year-row-height",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2163,6 +2338,7 @@
 			"variable": "--dp-multi-calendars-spacing",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2177,6 +2353,7 @@
 			"variable": "--dp-overlay-col-padding",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2191,6 +2368,7 @@
 			"variable": "--dp-preview-font-size",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2205,6 +2383,7 @@
 			"variable": "--dp-primary-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2219,6 +2398,7 @@
 			"variable": "--dp-primary-disabled-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2233,6 +2413,7 @@
 			"variable": "--dp-primary-text-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2247,6 +2428,7 @@
 			"variable": "--dp-range-between-border-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2261,6 +2443,7 @@
 			"variable": "--dp-range-between-dates-background-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2275,6 +2458,7 @@
 			"variable": "--dp-range-between-dates-text-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2289,6 +2473,7 @@
 			"variable": "--dp-row-margin",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2303,6 +2488,7 @@
 			"variable": "--dp-scroll-bar-background",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2317,6 +2503,7 @@
 			"variable": "--dp-scroll-bar-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2331,6 +2518,7 @@
 			"variable": "--dp-secondary-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2345,6 +2533,7 @@
 			"variable": "--dp-success-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2359,6 +2548,7 @@
 			"variable": "--dp-text-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2373,6 +2563,7 @@
 			"variable": "--dp-time-font-size",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2387,6 +2578,7 @@
 			"variable": "--dp-time-inc-dec-button-size",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2401,6 +2593,7 @@
 			"variable": "--dp-tooltip-color",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2415,6 +2608,7 @@
 			"variable": "--dp-transition-length",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2429,6 +2623,7 @@
 			"variable": "--dp-transition-timing",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2443,6 +2638,7 @@
 			"variable": "--dp-transition-timing-general",
 			"class": "component",
 			"owner": "dp",
+			"group": "date-picker",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2457,6 +2653,7 @@
 			"variable": "--dropdown-btn-bg-color",
 			"class": "component",
 			"owner": "dropdown",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2468,6 +2665,7 @@
 			"variable": "--dropdown-btn-border",
 			"class": "component",
 			"owner": "dropdown",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2479,6 +2677,7 @@
 			"variable": "--editorFreeText-editing-cursor",
 			"class": "component",
 			"owner": "editorFreeText",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2490,6 +2689,7 @@
 			"variable": "--field-bg-color",
 			"class": "component",
 			"owner": "field",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2501,6 +2701,7 @@
 			"variable": "--field-border-color",
 			"class": "component",
 			"owner": "field",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2512,6 +2713,7 @@
 			"variable": "--field-color",
 			"class": "component",
 			"owner": "field",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2523,6 +2725,7 @@
 			"variable": "--figure-size",
 			"class": "component",
 			"owner": "figure",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2539,6 +2742,7 @@
 			"variable": "--fixed-block-start-position",
 			"class": "component",
 			"owner": "fixed",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2551,6 +2755,7 @@
 			"variable": "--focus-outline",
 			"class": "component",
 			"owner": "focus",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2562,6 +2767,7 @@
 			"variable": "--focus-outline-around",
 			"class": "component",
 			"owner": "focus",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2573,6 +2779,7 @@
 			"variable": "--focus-ring-color",
 			"class": "component",
 			"owner": "focus",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2584,6 +2791,7 @@
 			"variable": "--focus-ring-outline",
 			"class": "component",
 			"owner": "focus",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2595,6 +2803,7 @@
 			"variable": "--form-element-label-offset",
 			"class": "component",
 			"owner": "form",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2611,6 +2820,7 @@
 			"variable": "--form-element-label-padding",
 			"class": "component",
 			"owner": "form",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2624,6 +2834,7 @@
 			"variable": "--form-group-content-gap",
 			"class": "component",
 			"owner": "form",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2640,6 +2851,7 @@
 			"variable": "--freetext-line-height",
 			"class": "component",
 			"owner": "freetext",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2651,6 +2863,7 @@
 			"variable": "--freetext-padding",
 			"class": "component",
 			"owner": "freetext",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2662,6 +2875,7 @@
 			"variable": "--gap",
 			"class": "component",
 			"owner": "gap",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2673,6 +2887,7 @@
 			"variable": "--highlight-bg-color",
 			"class": "component",
 			"owner": "highlight",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2684,6 +2899,7 @@
 			"variable": "--highlight-selected-bg-color",
 			"class": "component",
 			"owner": "highlight",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2695,6 +2911,7 @@
 			"variable": "--hljs-background-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2711,6 +2928,7 @@
 			"variable": "--hljs-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2727,6 +2945,7 @@
 			"variable": "--hljs-syntax-comment-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2743,6 +2962,7 @@
 			"variable": "--hljs-syntax-constant-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2759,6 +2979,7 @@
 			"variable": "--hljs-syntax-entity-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2775,6 +2996,7 @@
 			"variable": "--hljs-syntax-entity-tag-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2791,6 +3013,7 @@
 			"variable": "--hljs-syntax-keyword-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2807,6 +3030,7 @@
 			"variable": "--hljs-syntax-markup-bold-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2823,6 +3047,7 @@
 			"variable": "--hljs-syntax-markup-deleted-background-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2839,6 +3064,7 @@
 			"variable": "--hljs-syntax-markup-deleted-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2855,6 +3081,7 @@
 			"variable": "--hljs-syntax-markup-heading-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2871,6 +3098,7 @@
 			"variable": "--hljs-syntax-markup-inserted-background-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2887,6 +3115,7 @@
 			"variable": "--hljs-syntax-markup-inserted-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2903,6 +3132,7 @@
 			"variable": "--hljs-syntax-markup-italic-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2919,6 +3149,7 @@
 			"variable": "--hljs-syntax-markup-list-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2935,6 +3166,7 @@
 			"variable": "--hljs-syntax-storage-modifier-import-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2951,6 +3183,7 @@
 			"variable": "--hljs-syntax-string-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2967,6 +3200,7 @@
 			"variable": "--hljs-syntax-variable-color",
 			"class": "component",
 			"owner": "hljs",
+			"group": "code-highlighting",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -2983,6 +3217,7 @@
 			"variable": "--hover-filter",
 			"class": "component",
 			"owner": "hover",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -2994,6 +3229,7 @@
 			"variable": "--hover-outline",
 			"class": "component",
 			"owner": "hover",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3005,6 +3241,7 @@
 			"variable": "--hover-outline-around",
 			"class": "component",
 			"owner": "hover",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3016,6 +3253,7 @@
 			"variable": "--hover-outline-around-color",
 			"class": "component",
 			"owner": "hover",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3027,6 +3265,7 @@
 			"variable": "--hover-outline-color",
 			"class": "component",
 			"owner": "hover",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3038,6 +3277,7 @@
 			"variable": "--inline-end",
 			"class": "component",
 			"owner": "inline",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3050,6 +3290,7 @@
 			"variable": "--inline-start",
 			"class": "component",
 			"owner": "inline",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3062,6 +3303,7 @@
 			"variable": "--input-border-box-shadow",
 			"class": "component",
 			"owner": "input",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3078,6 +3320,7 @@
 			"variable": "--input-border-box-shadow-dark",
 			"class": "component",
 			"owner": "input",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3094,6 +3337,7 @@
 			"variable": "--input-border-box-shadow-light",
 			"class": "component",
 			"owner": "input",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3110,6 +3354,7 @@
 			"variable": "--input-border-radius",
 			"class": "component",
 			"owner": "input",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3126,6 +3371,7 @@
 			"variable": "--input-border-width-offset",
 			"class": "component",
 			"owner": "input",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3142,6 +3388,7 @@
 			"variable": "--input-disabled-border-color",
 			"class": "component",
 			"owner": "input",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3153,6 +3400,7 @@
 			"variable": "--input-focus-border-color",
 			"class": "component",
 			"owner": "input",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3164,6 +3412,7 @@
 			"variable": "--input-focus-outline",
 			"class": "component",
 			"owner": "input",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3175,6 +3424,7 @@
 			"variable": "--input-hover-border-color",
 			"class": "component",
 			"owner": "input",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3186,6 +3436,7 @@
 			"variable": "--input-label-font-size",
 			"class": "component",
 			"owner": "input",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3202,6 +3453,7 @@
 			"variable": "--input-padding-end",
 			"class": "component",
 			"owner": "input",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3218,6 +3470,7 @@
 			"variable": "--input-padding-start",
 			"class": "component",
 			"owner": "input",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3234,6 +3487,7 @@
 			"variable": "--input-unfocused-border-color",
 			"class": "component",
 			"owner": "input",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3245,6 +3499,7 @@
 			"variable": "--item-padding",
 			"class": "component",
 			"owner": "item",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3256,6 +3511,7 @@
 			"variable": "--level-padding",
 			"class": "component",
 			"owner": "level",
+			"group": "text-editor",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3267,6 +3523,7 @@
 			"variable": "--link-outline",
 			"class": "component",
 			"owner": "link",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3278,6 +3535,7 @@
 			"variable": "--list-item-border-radius",
 			"class": "component",
 			"owner": "list",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3294,6 +3552,7 @@
 			"variable": "--list-item-height",
 			"class": "component",
 			"owner": "list",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3310,6 +3569,7 @@
 			"variable": "--list-item-padding",
 			"class": "component",
 			"owner": "list",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3326,6 +3586,7 @@
 			"variable": "--loading-icon-delay",
 			"class": "component",
 			"owner": "loading",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3337,6 +3598,7 @@
 			"variable": "--main-color",
 			"class": "component",
 			"owner": "main",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3348,6 +3610,7 @@
 			"variable": "--max-icon-size",
 			"class": "component",
 			"owner": "max",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3360,6 +3623,7 @@
 			"variable": "--member-list-gap",
 			"class": "component",
 			"owner": "member",
+			"group": "teams",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3371,6 +3635,7 @@
 			"variable": "--min-size",
 			"class": "component",
 			"owner": "min",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3382,6 +3647,7 @@
 			"variable": "--mtime-height",
 			"class": "component",
 			"owner": "mtime",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3393,6 +3659,7 @@
 			"variable": "--name-height",
 			"class": "component",
 			"owner": "name",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3404,6 +3671,7 @@
 			"variable": "--nav-tint",
 			"class": "component",
 			"owner": "nav",
+			"group": "other",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3416,6 +3684,7 @@
 			"variable": "--nav-tint-strong",
 			"class": "component",
 			"owner": "nav",
+			"group": "other",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3428,6 +3697,7 @@
 			"variable": "--nc-form-box-item-border-width",
 			"class": "component",
 			"owner": "nc",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3444,6 +3714,7 @@
 			"variable": "--nc-form-box-item-min-height",
 			"class": "component",
 			"owner": "nc",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3457,6 +3728,7 @@
 			"variable": "--note-card-icon-size",
 			"class": "component",
 			"owner": "note",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3473,6 +3745,7 @@
 			"variable": "--note-card-padding",
 			"class": "component",
 			"owner": "note",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3489,6 +3762,7 @@
 			"variable": "--open-background-color",
 			"class": "component",
 			"owner": "open",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3505,6 +3779,7 @@
 			"variable": "--outline-around-color",
 			"class": "component",
 			"owner": "outline",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3516,6 +3791,7 @@
 			"variable": "--outline-around-width",
 			"class": "component",
 			"owner": "outline",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3527,6 +3803,7 @@
 			"variable": "--outline-color",
 			"class": "component",
 			"owner": "outline",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3538,6 +3815,7 @@
 			"variable": "--outline-width",
 			"class": "component",
 			"owner": "outline",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3549,6 +3827,7 @@
 			"variable": "--padding",
 			"class": "component",
 			"owner": "padding",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3560,6 +3839,7 @@
 			"variable": "--padding-inline-start",
 			"class": "component",
 			"owner": "padding",
+			"group": "text-editor",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3576,6 +3856,7 @@
 			"variable": "--page-border",
 			"class": "component",
 			"owner": "page",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3587,6 +3868,7 @@
 			"variable": "--page-margin",
 			"class": "component",
 			"owner": "page",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3598,6 +3880,7 @@
 			"variable": "--panel-width",
 			"class": "component",
 			"owner": "panel",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3609,6 +3892,7 @@
 			"variable": "--pdfViewer-padding-bottom",
 			"class": "component",
 			"owner": "pdfViewer",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3620,6 +3904,7 @@
 			"variable": "--photos-face-width",
 			"class": "component",
 			"owner": "photos",
+			"group": "photos",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3634,6 +3919,7 @@
 			"variable": "--photos-navigation-height",
 			"class": "slot",
 			"owner": "photos",
+			"group": "photos",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3641,6 +3927,7 @@
 			"variable": "--plyr-audio-control-background-hover",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3648,6 +3935,7 @@
 			"variable": "--plyr-audio-control-color",
 			"class": "component",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3660,6 +3948,7 @@
 			"variable": "--plyr-audio-control-color-hover",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3667,6 +3956,7 @@
 			"variable": "--plyr-audio-controls-background",
 			"class": "component",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3679,6 +3969,7 @@
 			"variable": "--plyr-audio-progress-buffered-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3686,6 +3977,7 @@
 			"variable": "--plyr-audio-range-thumb-active-shadow-color",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3693,6 +3985,7 @@
 			"variable": "--plyr-audio-range-track-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3700,6 +3993,7 @@
 			"variable": "--plyr-badge-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3707,6 +4001,7 @@
 			"variable": "--plyr-badge-border-radius",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3714,6 +4009,7 @@
 			"variable": "--plyr-badge-text-color",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3721,6 +4017,7 @@
 			"variable": "--plyr-button-size",
 			"class": "component",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3735,6 +4032,7 @@
 			"variable": "--plyr-captions-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3742,6 +4040,7 @@
 			"variable": "--plyr-captions-text-color",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3749,6 +4048,7 @@
 			"variable": "--plyr-color-main",
 			"class": "component",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3761,6 +4061,7 @@
 			"variable": "--plyr-control-icon-size",
 			"class": "component",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -3773,6 +4074,7 @@
 			"variable": "--plyr-control-radius",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3780,6 +4082,7 @@
 			"variable": "--plyr-control-spacing",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3787,6 +4090,7 @@
 			"variable": "--plyr-control-toggle-checked-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3794,6 +4098,7 @@
 			"variable": "--plyr-focus-visible-color",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3801,6 +4106,7 @@
 			"variable": "--plyr-font-family",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3808,6 +4114,7 @@
 			"variable": "--plyr-font-size-badge",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3815,6 +4122,7 @@
 			"variable": "--plyr-font-size-base",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3822,6 +4130,7 @@
 			"variable": "--plyr-font-size-large",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3829,6 +4138,7 @@
 			"variable": "--plyr-font-size-menu",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3836,6 +4146,7 @@
 			"variable": "--plyr-font-size-small",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3843,6 +4154,7 @@
 			"variable": "--plyr-font-size-time",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3850,6 +4162,7 @@
 			"variable": "--plyr-font-size-xlarge",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3857,6 +4170,7 @@
 			"variable": "--plyr-font-weight-regular",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3864,6 +4178,7 @@
 			"variable": "--plyr-line-height",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3871,6 +4186,7 @@
 			"variable": "--plyr-menu-arrow-color",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3878,6 +4194,7 @@
 			"variable": "--plyr-menu-arrow-size",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3885,6 +4202,7 @@
 			"variable": "--plyr-menu-back-border-color",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3892,6 +4210,7 @@
 			"variable": "--plyr-menu-back-border-shadow-color",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3899,6 +4218,7 @@
 			"variable": "--plyr-menu-background",
 			"class": "component",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3911,6 +4231,7 @@
 			"variable": "--plyr-menu-color",
 			"class": "component",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3923,6 +4244,7 @@
 			"variable": "--plyr-menu-item-arrow-size",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3930,6 +4252,7 @@
 			"variable": "--plyr-menu-radius",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3937,6 +4260,7 @@
 			"variable": "--plyr-menu-shadow",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3944,6 +4268,7 @@
 			"variable": "--plyr-progress-loading-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3951,6 +4276,7 @@
 			"variable": "--plyr-progress-loading-size",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3958,6 +4284,7 @@
 			"variable": "--plyr-progress-marker-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3965,6 +4292,7 @@
 			"variable": "--plyr-progress-marker-width",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3972,6 +4300,7 @@
 			"variable": "--plyr-range-fill-background",
 			"class": "component",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -3984,6 +4313,7 @@
 			"variable": "--plyr-range-thumb-active-shadow-width",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -3991,6 +4321,7 @@
 			"variable": "--plyr-range-thumb-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -3998,6 +4329,7 @@
 			"variable": "--plyr-range-thumb-height",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -4005,6 +4337,7 @@
 			"variable": "--plyr-range-thumb-shadow",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -4012,6 +4345,7 @@
 			"variable": "--plyr-range-track-height",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -4019,6 +4353,7 @@
 			"variable": "--plyr-tooltip-arrow-size",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -4026,6 +4361,7 @@
 			"variable": "--plyr-tooltip-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -4033,6 +4369,7 @@
 			"variable": "--plyr-tooltip-color",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -4040,6 +4377,7 @@
 			"variable": "--plyr-tooltip-radius",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -4047,6 +4385,7 @@
 			"variable": "--plyr-tooltip-shadow",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "text",
 			"mode": "body"
 		},
@@ -4054,6 +4393,7 @@
 			"variable": "--plyr-video-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -4061,6 +4401,7 @@
 			"variable": "--plyr-video-control-background-hover",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -4068,6 +4409,7 @@
 			"variable": "--plyr-video-control-color",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -4075,6 +4417,7 @@
 			"variable": "--plyr-video-control-color-hover",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -4082,6 +4425,7 @@
 			"variable": "--plyr-video-controls-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -4089,6 +4433,7 @@
 			"variable": "--plyr-video-progress-buffered-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -4096,6 +4441,7 @@
 			"variable": "--plyr-video-range-track-background",
 			"class": "slot",
 			"owner": "plyr",
+			"group": "media-player",
 			"type": "color",
 			"mode": "body"
 		},
@@ -4103,6 +4449,7 @@
 			"variable": "--progressBar-bg-color",
 			"class": "component",
 			"owner": "progressBar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4114,6 +4461,7 @@
 			"variable": "--progressBar-blend-color",
 			"class": "component",
 			"owner": "progressBar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4125,6 +4473,7 @@
 			"variable": "--progressBar-color",
 			"class": "component",
 			"owner": "progressBar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4136,6 +4485,7 @@
 			"variable": "--radio-bg-color",
 			"class": "component",
 			"owner": "radio",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4147,6 +4497,7 @@
 			"variable": "--radio-border-color",
 			"class": "component",
 			"owner": "radio",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4158,6 +4509,7 @@
 			"variable": "--radio-checked-bg-color",
 			"class": "component",
 			"owner": "radio",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4169,6 +4521,7 @@
 			"variable": "--radio-checked-border-color",
 			"class": "component",
 			"owner": "radio",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4180,6 +4533,7 @@
 			"variable": "--radio-group-button--background-color",
 			"class": "component",
 			"owner": "radio",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4196,6 +4550,7 @@
 			"variable": "--radio-group-button--background-color-hover",
 			"class": "component",
 			"owner": "radio",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4212,6 +4567,7 @@
 			"variable": "--radio-group-button--border-radius",
 			"class": "component",
 			"owner": "radio",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4227,6 +4583,7 @@
 			"variable": "--radio-group-button--border-width",
 			"class": "component",
 			"owner": "radio",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4243,6 +4600,7 @@
 			"variable": "--radio-group-button--color",
 			"class": "component",
 			"owner": "radio",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4259,6 +4617,7 @@
 			"variable": "--radio-group-button--icon-size",
 			"class": "component",
 			"owner": "radio",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4274,6 +4633,7 @@
 			"variable": "--radio-group-button--padding",
 			"class": "component",
 			"owner": "radio",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4290,6 +4650,7 @@
 			"variable": "--ratio",
 			"class": "component",
 			"owner": "ratio",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4301,6 +4662,7 @@
 			"variable": "--resizer-bg-color",
 			"class": "component",
 			"owner": "resizer",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4312,6 +4674,7 @@
 			"variable": "--resizer-shift",
 			"class": "component",
 			"owner": "resizer",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4323,6 +4686,7 @@
 			"variable": "--resizer-size",
 			"class": "component",
 			"owner": "resizer",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4334,6 +4698,7 @@
 			"variable": "--resource-box-size",
 			"class": "component",
 			"owner": "resource",
+			"group": "teams",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4345,6 +4710,7 @@
 			"variable": "--resources-list-gap",
 			"class": "component",
 			"owner": "resources",
+			"group": "teams",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4356,6 +4722,7 @@
 			"variable": "--row-width",
 			"class": "component",
 			"owner": "row",
+			"group": "files",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4367,6 +4734,7 @@
 			"variable": "--scrollbar-bg-color",
 			"class": "component",
 			"owner": "scrollbar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4378,6 +4746,7 @@
 			"variable": "--scrollbar-color",
 			"class": "component",
 			"owner": "scrollbar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4389,6 +4758,7 @@
 			"variable": "--secondary-margin",
 			"class": "component",
 			"owner": "secondary",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4402,6 +4772,7 @@
 			"variable": "--separator-color",
 			"class": "component",
 			"owner": "separator",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4413,6 +4784,7 @@
 			"variable": "--session-max-width",
 			"class": "component",
 			"owner": "session",
+			"group": "text-editor",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4424,6 +4796,7 @@
 			"variable": "--sidebar-narrow-bg-color",
 			"class": "component",
 			"owner": "sidebar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4435,6 +4808,7 @@
 			"variable": "--sidebar-toolbar-bg-color",
 			"class": "component",
 			"owner": "sidebar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4446,6 +4820,7 @@
 			"variable": "--sidebar-transition-duration",
 			"class": "component",
 			"owner": "sidebar",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4457,6 +4832,7 @@
 			"variable": "--sidebar-transition-timing-function",
 			"class": "component",
 			"owner": "sidebar",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4468,6 +4844,7 @@
 			"variable": "--sidebar-width",
 			"class": "component",
 			"owner": "sidebar",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4479,6 +4856,7 @@
 			"variable": "--size",
 			"class": "component",
 			"owner": "size",
+			"group": "components",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4491,6 +4869,7 @@
 			"variable": "--spreadHorizontalWrapped-margin-LR",
 			"class": "component",
 			"owner": "spreadHorizontalWrapped",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4502,6 +4881,7 @@
 			"variable": "--sticky-column-z-index",
 			"class": "component",
 			"owner": "sticky",
+			"group": "other",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4513,6 +4893,7 @@
 			"variable": "--table-border-radius",
 			"class": "component",
 			"owner": "table",
+			"group": "text-editor",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4525,6 +4906,7 @@
 			"variable": "--table-color-background",
 			"class": "component",
 			"owner": "table",
+			"group": "text-editor",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4537,6 +4919,7 @@
 			"variable": "--table-color-background-hover",
 			"class": "component",
 			"owner": "table",
+			"group": "text-editor",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4549,6 +4932,7 @@
 			"variable": "--table-color-border",
 			"class": "component",
 			"owner": "table",
+			"group": "text-editor",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4561,6 +4945,7 @@
 			"variable": "--table-color-heading",
 			"class": "component",
 			"owner": "table",
+			"group": "text-editor",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4573,6 +4958,7 @@
 			"variable": "--table-color-heading-border",
 			"class": "component",
 			"owner": "table",
+			"group": "text-editor",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4585,6 +4971,7 @@
 			"variable": "--text-primary-color",
 			"class": "component",
 			"owner": "text",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4596,6 +4983,7 @@
 			"variable": "--text-secondary-color",
 			"class": "component",
 			"owner": "text",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4607,6 +4995,7 @@
 			"variable": "--textarea-bg-color",
 			"class": "component",
 			"owner": "textarea",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4618,6 +5007,7 @@
 			"variable": "--textarea-border-color",
 			"class": "component",
 			"owner": "textarea",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4629,6 +5019,7 @@
 			"variable": "--textarea-fg-color",
 			"class": "component",
 			"owner": "textarea",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4640,6 +5031,7 @@
 			"variable": "--thumbnail-hover-color",
 			"class": "component",
 			"owner": "thumbnail",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4651,6 +5043,7 @@
 			"variable": "--thumbnail-selected-color",
 			"class": "component",
 			"owner": "thumbnail",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4662,6 +5055,7 @@
 			"variable": "--toggled-btn-bg-color",
 			"class": "component",
 			"owner": "toggled",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4673,6 +5067,7 @@
 			"variable": "--toggled-btn-color",
 			"class": "component",
 			"owner": "toggled",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4684,6 +5079,7 @@
 			"variable": "--toggled-hover-active-btn-color",
 			"class": "component",
 			"owner": "toggled",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4695,6 +5091,7 @@
 			"variable": "--toggled-hover-btn-outline",
 			"class": "component",
 			"owner": "toggled",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4706,6 +5103,7 @@
 			"variable": "--toolbar-bg-color",
 			"class": "component",
 			"owner": "toolbar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4717,6 +5115,7 @@
 			"variable": "--toolbar-border-bottom",
 			"class": "component",
 			"owner": "toolbar",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4728,6 +5127,7 @@
 			"variable": "--toolbar-border-color",
 			"class": "component",
 			"owner": "toolbar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4739,6 +5139,7 @@
 			"variable": "--toolbar-box-shadow",
 			"class": "component",
 			"owner": "toolbar",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4750,6 +5151,7 @@
 			"variable": "--toolbar-icon-bg-color",
 			"class": "component",
 			"owner": "toolbar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4761,6 +5163,7 @@
 			"variable": "--toolbar-icon-hover-bg-color",
 			"class": "component",
 			"owner": "toolbar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4772,6 +5175,7 @@
 			"variable": "--toolbar-icon-opacity",
 			"class": "component",
 			"owner": "toolbar",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4783,6 +5187,7 @@
 			"variable": "--toolbarSidebar-border-bottom",
 			"class": "component",
 			"owner": "toolbarSidebar",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4794,6 +5199,7 @@
 			"variable": "--toolbarSidebar-box-shadow",
 			"class": "component",
 			"owner": "toolbarSidebar",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4805,6 +5211,7 @@
 			"variable": "--treeitem-bg-color",
 			"class": "component",
 			"owner": "treeitem",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4816,6 +5223,7 @@
 			"variable": "--treeitem-color",
 			"class": "component",
 			"owner": "treeitem",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4827,6 +5235,7 @@
 			"variable": "--treeitem-hover-color",
 			"class": "component",
 			"owner": "treeitem",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4838,6 +5247,7 @@
 			"variable": "--treeitem-selected-bg-color",
 			"class": "component",
 			"owner": "treeitem",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4849,6 +5259,7 @@
 			"variable": "--treeitem-selected-color",
 			"class": "component",
 			"owner": "treeitem",
+			"group": "pdf-viewer",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4860,6 +5271,7 @@
 			"variable": "--unfocus-outline",
 			"class": "component",
 			"owner": "unfocus",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4871,6 +5283,7 @@
 			"variable": "--user-status-color-away",
 			"class": "component",
 			"owner": "user",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4885,6 +5298,7 @@
 			"variable": "--user-status-color-busy",
 			"class": "component",
 			"owner": "user",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4899,6 +5313,7 @@
 			"variable": "--user-status-color-offline",
 			"class": "component",
 			"owner": "user",
+			"group": "components",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4913,6 +5328,7 @@
 			"variable": "--vs-actions-padding",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4932,6 +5348,7 @@
 			"variable": "--vs-border-style",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4951,6 +5368,7 @@
 			"variable": "--vs-border-width",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -4971,6 +5389,7 @@
 			"variable": "--vs-colors--dark",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -4990,6 +5409,7 @@
 			"variable": "--vs-colors--darkest",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5009,6 +5429,7 @@
 			"variable": "--vs-colors--light",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5028,6 +5449,7 @@
 			"variable": "--vs-colors--lightest",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5047,6 +5469,7 @@
 			"variable": "--vs-controls--deselect-text-shadow",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5066,6 +5489,7 @@
 			"variable": "--vs-controls--spinner-size",
 			"class": "slot",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "body"
 		},
@@ -5073,6 +5497,7 @@
 			"variable": "--vs-controls-color",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5092,6 +5517,7 @@
 			"variable": "--vs-controls-size",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5111,6 +5537,7 @@
 			"variable": "--vs-disabled-bg",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5122,6 +5549,7 @@
 			"variable": "--vs-disabled-cursor",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5133,6 +5561,7 @@
 			"variable": "--vs-dropdown-bg",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5152,6 +5581,7 @@
 			"variable": "--vs-dropdown-box-shadow",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5171,6 +5601,7 @@
 			"variable": "--vs-dropdown-max-height",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5190,6 +5621,7 @@
 			"variable": "--vs-dropdown-min-width",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5209,6 +5641,7 @@
 			"variable": "--vs-dropdown-option--deselect-bg",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5228,6 +5661,7 @@
 			"variable": "--vs-dropdown-option--deselect-color",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5247,6 +5681,7 @@
 			"variable": "--vs-dropdown-option--kb-focus-box-shadow",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5259,6 +5694,7 @@
 			"variable": "--vs-dropdown-option-color",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5278,6 +5714,7 @@
 			"variable": "--vs-dropdown-option-padding",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5297,6 +5734,7 @@
 			"variable": "--vs-dropdown-z-index",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5316,6 +5754,7 @@
 			"variable": "--vs-font-size",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5335,6 +5774,7 @@
 			"variable": "--vs-line-height",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5354,6 +5794,7 @@
 			"variable": "--vs-search-input-bg",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5366,6 +5807,7 @@
 			"variable": "--vs-search-input-color",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5385,6 +5827,7 @@
 			"variable": "--vs-search-input-placeholder-color",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5404,6 +5847,7 @@
 			"variable": "--vs-selected-bg",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5423,6 +5867,7 @@
 			"variable": "--vs-selected-border-color",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5442,6 +5887,7 @@
 			"variable": "--vs-selected-border-style",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5461,6 +5907,7 @@
 			"variable": "--vs-selected-border-width",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5480,6 +5927,7 @@
 			"variable": "--vs-state-disabled-bg",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5499,6 +5947,7 @@
 			"variable": "--vs-state-disabled-color",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "color",
 			"mode": "selectors",
 			"selectors": [
@@ -5518,6 +5967,7 @@
 			"variable": "--vs-state-disabled-cursor",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5537,6 +5987,7 @@
 			"variable": "--vs-transition-duration",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5556,6 +6007,7 @@
 			"variable": "--vs-transition-timing-function",
 			"class": "component",
 			"owner": "vs",
+			"group": "select",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
@@ -5575,12 +6027,195 @@
 			"variable": "--xfa-focus-outline",
 			"class": "component",
 			"owner": "xfa",
+			"group": "pdf-viewer",
 			"type": "text",
 			"mode": "selectors",
 			"selectors": [
 				"body"
 			],
 			"stock": "auto"
+		}
+	},
+	"themeStock": {
+		"--background-invert-if-bright": {
+			"light": "invert(100%)",
+			"dark": "no"
+		},
+		"--background-invert-if-dark": {
+			"light": "no",
+			"dark": "invert(100%)"
+		},
+		"--body-container-margin": {
+			"light": "calc(var(--default-grid-baseline) * 2)",
+			"dark": "calc(var(--default-grid-baseline) * 2)"
+		},
+		"--body-container-radius": {
+			"light": "var(--border-radius-container-large)",
+			"dark": "var(--border-radius-container-large)"
+		},
+		"--body-height": {
+			"light": "calc(100% - env(safe-area-inset-bottom) - var(--header-height) - var(--body-container-margin))",
+			"dark": "calc(100% - env(safe-area-inset-bottom) - var(--header-height) - var(--body-container-margin))"
+		},
+		"--border-radius-container": {
+			"light": "12px",
+			"dark": "12px"
+		},
+		"--border-radius-container-large": {
+			"light": "16px",
+			"dark": "16px"
+		},
+		"--border-width-input": {
+			"light": "1px",
+			"dark": "1px"
+		},
+		"--border-width-input-focused": {
+			"light": "2px",
+			"dark": "2px"
+		},
+		"--breakpoint-mobile": {
+			"light": "1024px",
+			"dark": "1024px"
+		},
+		"--clickable-area-large": {
+			"light": "48px",
+			"dark": "48px"
+		},
+		"--clickable-area-small": {
+			"light": "24px",
+			"dark": "24px"
+		},
+		"--color-background-assistant": {
+			"light": "#F6F5FF",
+			"dark": "#221D2B"
+		},
+		"--color-background-plain-text": {
+			"light": "#ffffff",
+			"dark": "#ffffff"
+		},
+		"--color-border-assistant": {
+			"light": "linear-gradient(125deg, #7398FE 50%, #6104A4 125%)",
+			"dark": "linear-gradient(125deg, #0C3A65 50%, #6204A5 125%)"
+		},
+		"--color-box-shadow": {
+			"light": "rgba(var(--color-box-shadow-rgb), 0.5)",
+			"dark": "#000000"
+		},
+		"--color-box-shadow-rgb": {
+			"light": "77,77,77",
+			"dark": "0,0,0"
+		},
+		"--color-element-assistant": {
+			"light": "linear-gradient(214deg, #A569D3 12%, #00679E 39%, #422083 86%)",
+			"dark": "linear-gradient(214deg, #C8A3E8 12%, #007CFF 39%, #C297DD 86%)"
+		},
+		"--color-element-assistant-icon": {
+			"light": "linear-gradient(214deg, #9669D3 15%, #00679E 40%, #492083 80%)",
+			"dark": "linear-gradient(214deg, #CDACE7 15.28%, #008FDB 39.98%, #A180E0 82.05%)"
+		},
+		"--color-error-text": {
+			"light": "#8A0000",
+			"dark": "#FFCCCC"
+		},
+		"--color-info-hover": {
+			"light": "#b5e6f6",
+			"dark": "#005686"
+		},
+		"--color-info-rgb": {
+			"light": "213,241,250",
+			"dark": "0,53,83"
+		},
+		"--color-info-text": {
+			"light": "#0066AC",
+			"dark": "#00AEFF"
+		},
+		"--color-loading-dark": {
+			"light": "#444444",
+			"dark": "#CCC"
+		},
+		"--color-loading-light": {
+			"light": "#cccccc",
+			"dark": "#777"
+		},
+		"--color-main-background": {
+			"light": "#ffffff",
+			"dark": "#171717"
+		},
+		"--color-mark": {
+			"light": "#fff0c7",
+			"dark": "#4d3800"
+		},
+		"--color-scrollbar": {
+			"light": "var(--color-border-maxcontrast) transparent",
+			"dark": "var(--color-border-maxcontrast) transparent"
+		},
+		"--color-success-hover": {
+			"light": "#bdebc0",
+			"dark": "#1e582e"
+		},
+		"--color-success-text": {
+			"light": "#005416",
+			"dark": "#D5F2DC"
+		},
+		"--color-text-maxcontrast-default": {
+			"light": "#6b6b6b",
+			"dark": "#999999"
+		},
+		"--color-text-selection": {
+			"light": "var(--color-main-text)",
+			"dark": "var(--color-main-text)"
+		},
+		"--color-warning-hover": {
+			"light": "#ffe4a1",
+			"dark": "#65501b"
+		},
+		"--color-warning-text": {
+			"light": "#664700",
+			"dark": "#FFEEC5"
+		},
+		"--default-clickable-area": {
+			"light": "34px",
+			"dark": "34px"
+		},
+		"--default-font-size": {
+			"light": "15px",
+			"dark": "15px"
+		},
+		"--default-grid-baseline": {
+			"light": "4px",
+			"dark": "4px"
+		},
+		"--default-line-height": {
+			"light": "1.5",
+			"dark": "1.5"
+		},
+		"--filter-background-blur": {
+			"light": "blur(25px)",
+			"dark": "blur(25px)"
+		},
+		"--font-size-small": {
+			"light": "13px",
+			"dark": "13px"
+		},
+		"--header-height": {
+			"light": "50px",
+			"dark": "50px"
+		},
+		"--header-menu-item-height": {
+			"light": "44px",
+			"dark": "44px"
+		},
+		"--navigation-width": {
+			"light": "300px",
+			"dark": "300px"
+		},
+		"--sidebar-max-width": {
+			"light": "500px",
+			"dark": "500px"
+		},
+		"--sidebar-min-width": {
+			"light": "300px",
+			"dark": "300px"
 		}
 	}
 }
