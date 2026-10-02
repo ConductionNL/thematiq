@@ -74,3 +74,21 @@ updates:
         - "*"
       exclude:
         - "conduction/*"
+
+  # The documentation site ships from docs/ on development. Dependabot scans
+  # the DEFAULT branch, which is still main, where the site lived under
+  # docusaurus/; every docs alert therefore named a path development no longer
+  # has, and docs/package-lock.json was never scanned at all (#246). This entry
+  # points Dependabot at the tree that actually ships.
+  - package-ecosystem: "npm"
+    directory: "/docs"
+    target-branch: "development"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 2
+      include:
+        - "*"
+      exclude:
+        - "@conduction/*"

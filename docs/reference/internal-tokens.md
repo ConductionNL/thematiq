@@ -15,259 +15,9 @@ Nextcloud 34.0.0.12 and `@conduction/nextcloud-vue` 2.57.1 style their component
 
 An internal token applies in light and dark alike. Give it a value in the dark file to differ in dark.
 
-453 tokens in 87 groups.
+453 tokens in 12 groups.
 
-## `account`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-account-menu-outline` | `--account-menu-outline` | its component | `var(--border-width-input) solid color-mix(in srgb, var(--co…` |
-
-## `alt`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-alt-text-active-bg-color` | `--alt-text-active-bg-color` | its component | `rgb(91 91 102 / var(--alt-text-opacity))` |
-| `--nldesign-nc-alt-text-active-border-color` | `--alt-text-active-border-color` | its component | `var(--alt-text-hover-bg-color)` |
-| `--nldesign-nc-alt-text-active-fg-color` | `--alt-text-active-fg-color` | its component | `var(--alt-text-fg-color)` |
-| `--nldesign-nc-alt-text-bg-color` | `--alt-text-bg-color` | its component | `rgb(43 42 51 / var(--alt-text-opacity))` |
-| `--nldesign-nc-alt-text-border-color` | `--alt-text-border-color` | its component | `var(--alt-text-bg-color)` |
-| `--nldesign-nc-alt-text-fg-color` | `--alt-text-fg-color` | its component | `#fbfbfe` |
-| `--nldesign-nc-alt-text-focus-border-color` | `--alt-text-focus-border-color` | its component | `#f0f0f4` |
-| `--nldesign-nc-alt-text-focus-outline-color` | `--alt-text-focus-outline-color` | its component | `#0060df` |
-| `--nldesign-nc-alt-text-hover-bg-color` | `--alt-text-hover-bg-color` | its component | `rgb(82 82 94 / var(--alt-text-opacity))` |
-| `--nldesign-nc-alt-text-hover-border-color` | `--alt-text-hover-border-color` | its component | `var(--alt-text-hover-bg-color)` |
-| `--nldesign-nc-alt-text-hover-fg-color` | `--alt-text-hover-fg-color` | its component | `var(--alt-text-fg-color)` |
-| `--nldesign-nc-alt-text-opacity` | `--alt-text-opacity` | its component | `0.8` |
-| `--nldesign-nc-alt-text-shadow` | `--alt-text-shadow` | its component | `0 2px 6px 0 rgb(28 27 34 / 0.5)` |
-| `--nldesign-nc-alt-text-tooltip-bg` | `--alt-text-tooltip-bg` | its component | `#f0f0f4` |
-| `--nldesign-nc-alt-text-tooltip-border` | `--alt-text-tooltip-border` | its component | `#8f8f9d` |
-| `--nldesign-nc-alt-text-tooltip-fg` | `--alt-text-tooltip-fg` | its component | `#15141a` |
-| `--nldesign-nc-alt-text-tooltip-shadow` | `--alt-text-tooltip-shadow` | its component | `0px 2px 6px 0px rgb(58 57 68 / 0.2)` |
-
-## `app`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-app-item-circle-size` | `--app-item-circle-size` | its component | `calc(var(--default-grid-baseline) * 10)` |
-| `--nldesign-nc-app-item-col-width` | `--app-item-col-width` | its component | `69px` |
-| `--nldesign-nc-app-item-icon-size` | `--app-item-icon-size` | its component | `22px` |
-| `--nldesign-nc-app-item-row-height` | `--app-item-row-height` | its component | `64px` |
-| `--nldesign-nc-app-navigation-item-child-offset` | `--app-navigation-item-child-offset` | its component | `10px` |
-| `--nldesign-nc-app-navigation-max-width` | `--app-navigation-max-width` | its component | `calc(100vw - (var(--app-navigation-padding) + var(--default…` |
-| `--nldesign-nc-app-navigation-padding` | `--app-navigation-padding` | its component | `calc(var(--default-grid-baseline, 4px) * 2)` |
-| `--nldesign-nc-app-navigation-quota-margin` | `--app-navigation-quota-margin` | its component | `calc((var(--default-clickable-area) - 24px) / 2)` |
-| `--nldesign-nc-app-settings-section-content-gap` | `--app-settings-section-content-gap` | its component | `calc(6 * var(--default-grid-baseline))` |
-| `--nldesign-nc-app-settings-section-text-offset` | `--app-settings-section-text-offset` | its component | `var(--form-element-label-offset)` |
-| `--nldesign-nc-app-sidebar-close-button-offset` | `--app-sidebar-close-button-offset` | its component | `calc(var(--default-clickable-area) + var(--app-sidebar-padd…` |
-| `--nldesign-nc-app-sidebar-padding` | `--app-sidebar-padding` | its component | `calc(var(--default-grid-baseline, 4px) * 2)` |
-| `--nldesign-nc-app-sidebar-width` | `--app-sidebar-width` | its component | `clamp(300px, 27vw, 500px)` |
-
-## `assistant`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-assistant-button-background-color` | `--assistant-button-background-color` | its component | `var(--color-background-assistant, #F6F5FF)` |
-| `--nldesign-nc-assistant-button-color` | `--assistant-button-color` | its component | `var(--color-element-assistant, linear-gradient(238deg, #A56…` |
-
-## `auto`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-auto-complete-result-avatar-size` | `--auto-complete-result-avatar-size` | its component | `var(--default-clickable-area)` |
-| `--nldesign-nc-auto-complete-result-status-icon-position` | `--auto-complete-result-status-icon-position` | its component | `calc(var(--auto-complete-result-avatar-size) / 2 * (1 - 1 /…` |
-| `--nldesign-nc-auto-complete-result-status-icon-size` | `--auto-complete-result-status-icon-size` | its component | `clamp(14px, var(--auto-complete-result-avatar-size) * .4, 1…` |
-
-## `avatar`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-avatar-cell-width` | `--avatar-cell-width` | its component | `48px` |
-| `--nldesign-nc-avatar-status-icon-position` | `--avatar-status-icon-position` | its component | `min(0px, (var(--avatar-status-size-orbital) - var(--avatar-…` |
-| `--nldesign-nc-avatar-status-size` | `--avatar-status-size` | its component | `max(var(--avatar-status-size-orbital), var(--avatar-status-…` |
-| `--nldesign-nc-avatar-status-size-min` | `--avatar-status-size-min` | its component | `var(--font-size-small)` |
-| `--nldesign-nc-avatar-status-size-orbital` | `--avatar-status-size-orbital` | its component | `calc(var(--avatar-size) * (1 - 1 / sqrt(2)))` |
-
-## `backdrop`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-backdrop-color` | `--backdrop-color` | its component | `0, 0, 0` |
-
-## `background`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-background-blur` | `--background-blur` | its component | `blur(10px)` |
-
-## `body`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-body-bg-color` | `--body-bg-color` | its component | `rgb(212 212 215)` |
-
-## `button`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-button-cancel-bg-color` | `--button-cancel-bg-color` | its component | `#f0f0f4` |
-| `--nldesign-nc-button-cancel-border-color` | `--button-cancel-border-color` | its component | `var(--button-cancel-bg-color)` |
-| `--nldesign-nc-button-cancel-fg-color` | `--button-cancel-fg-color` | its component | `var(--text-primary-color)` |
-| `--nldesign-nc-button-cancel-hover-bg-color` | `--button-cancel-hover-bg-color` | its component | `var(--button-cancel-bg-color)` |
-| `--nldesign-nc-button-cancel-hover-border-color` | `--button-cancel-hover-border-color` | its component | `var(--button-cancel-hover-bg-color)` |
-| `--nldesign-nc-button-cancel-hover-fg-color` | `--button-cancel-hover-fg-color` | its component | `var(--button-cancel-fg-color)` |
-| `--nldesign-nc-button-hover-color` | `--button-hover-color` | its component | `rgb(221 222 223)` |
-| `--nldesign-nc-button-inner-size` | `--button-inner-size` | its component | `calc(var(--button-size) - 4px)` |
-| `--nldesign-nc-button-padding` | `--button-padding` | its component | `var(--default-grid-baseline) var(--button-padding-default)` |
-| `--nldesign-nc-button-padding-default` | `--button-padding-default` | its component | `calc(var(--default-grid-baseline) + var(--button-radius))` |
-| `--nldesign-nc-button-radius` | `--button-radius` | its component | `calc(var(--avatar-size) / 2)` |
-| `--nldesign-nc-button-save-bg-color` | `--button-save-bg-color` | its component | `#0060df` |
-| `--nldesign-nc-button-save-fg-color` | `--button-save-fg-color` | its component | `#fbfbfe` |
-| `--nldesign-nc-button-save-hover-bg-color` | `--button-save-hover-bg-color` | its component | `var(--button-save-bg-color)` |
-| `--nldesign-nc-button-save-hover-border-color` | `--button-save-hover-border-color` | its component | `var(--button-save-hover-bg-color)` |
-| `--nldesign-nc-button-save-hover-fg-color` | `--button-save-hover-fg-color` | its component | `var(--button-save-fg-color)` |
-| `--nldesign-nc-button-size` | `--button-size` | its component | `calc(var(--default-clickable-area) - 2 * var(--border-width…` |
-
-## `callout`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-callout-background` | `--callout-background` | every reader |  |
-| `--nldesign-nc-callout-border` | `--callout-border` | its component | `var(--color-element-info, #006aa3)` |
-
-## `cell`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-cell-margin` | `--cell-margin` | its component | `14px` |
-| `--nldesign-nc-cell-padding` | `--cell-padding` | its component | `7px` |
-| `--nldesign-nc-cell-width` | `--cell-width` | its component | `200px` |
-| `--nldesign-nc-cell-width-groups` | `--cell-width-groups` | its component | `380px` |
-| `--nldesign-nc-cell-width-large` | `--cell-width-large` | its component | `300px` |
-
-## `checkbox`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-checkbox-container-size` | `--checkbox-container-size` | its component | `44px` |
-| `--nldesign-nc-checkbox-padding` | `--checkbox-padding` | its component | `calc((var(--row-height) - var(--checkbox-size)) / 2)` |
-| `--nldesign-nc-checkbox-radio-switch--border-radius` | `--checkbox-radio-switch--border-radius` | its component | `var(--border-radius-element)` |
-| `--nldesign-nc-checkbox-radio-switch--border-radius-outer` | `--checkbox-radio-switch--border-radius-outer` | its component | `calc(var(--checkbox-radio-switch--border-radius) + 2px)` |
-| `--nldesign-nc-checkbox-size` | `--checkbox-size` | its component | `24px` |
-
-## `chip`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-chip-radius` | `--chip-radius` | its component | `calc(var(--chip-size) / 2)` |
-| `--nldesign-nc-chip-size` | `--chip-size` | its component | `24px` |
-
-## `clickable`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-clickable-area` | `--clickable-area` | its component | `var(--default-clickable-area)` |
-
-## `cn`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-cn-ai-pointer-offset` | `--cn-ai-pointer-offset` | its component | `19px` |
-| `--nldesign-cn-color-picker-checker` | `--cn-color-picker-checker` | its component | `linear-gradient(45deg, var(--color-background-dark) 25%, tr…` |
-| `--nldesign-cn-color-swatch-checker` | `--cn-color-swatch-checker` | its component | `linear-gradient(45deg, var(--color-background-dark) 25%, tr…` |
-| `--nldesign-cn-email-accent` | `--cn-email-accent` | every reader |  |
-| `--nldesign-cn-forms-accent` | `--cn-forms-accent` | every reader |  |
-| `--nldesign-cn-forms-status` | `--cn-forms-status` | its component | `var(--color-success, #46ba61)` |
-| `--nldesign-cn-kpi-accent` | `--cn-kpi-accent` | its component | `var(--color-primary-element)` |
-| `--nldesign-cn-kpi-gap` | `--cn-kpi-gap` | its component | `8px` |
-| `--nldesign-cn-kpi-gap-horizontal` | `--cn-kpi-gap-horizontal` | its component | `16px` |
-| `--nldesign-cn-kpi-grid-gap` | `--cn-kpi-grid-gap` | its component | `16px` |
-| `--nldesign-cn-kpi-icon-size` | `--cn-kpi-icon-size` | its component | `44px` |
-| `--nldesign-cn-kpi-icon-size-sm` | `--cn-kpi-icon-size-sm` | its component | `36px` |
-| `--nldesign-cn-kpi-icon-tint` | `--cn-kpi-icon-tint` | its component | `12%` |
-| `--nldesign-cn-kpi-label-color` | `--cn-kpi-label-color` | its component | `var(--color-text-maxcontrast)` |
-| `--nldesign-cn-kpi-label-size` | `--cn-kpi-label-size` | its component | `13px` |
-| `--nldesign-cn-kpi-padding` | `--cn-kpi-padding` | its component | `16px` |
-| `--nldesign-cn-kpi-padding-flat` | `--cn-kpi-padding-flat` | its component | `8px` |
-| `--nldesign-cn-kpi-radius` | `--cn-kpi-radius` | its component | `var(--border-radius-large, 10px)` |
-| `--nldesign-cn-kpi-section-title-size` | `--cn-kpi-section-title-size` | its component | `14px` |
-| `--nldesign-cn-kpi-stack-gap` | `--cn-kpi-stack-gap` | its component | `12px` |
-| `--nldesign-cn-kpi-title-size` | `--cn-kpi-title-size` | its component | `14px` |
-| `--nldesign-cn-kpi-title-weight` | `--cn-kpi-title-weight` | its component | `600` |
-| `--nldesign-cn-kpi-value-line` | `--cn-kpi-value-line` | its component | `1.1` |
-| `--nldesign-cn-kpi-value-size` | `--cn-kpi-value-size` | its component | `1.75rem` |
-| `--nldesign-cn-kpi-value-size-compact` | `--cn-kpi-value-size-compact` | its component | `1.25rem` |
-| `--nldesign-cn-kpi-value-size-stacked` | `--cn-kpi-value-size-stacked` | its component | `2rem` |
-| `--nldesign-cn-kpi-value-text-size` | `--cn-kpi-value-text-size` | every reader |  |
-| `--nldesign-cn-kpi-value-weight` | `--cn-kpi-value-weight` | its component | `700` |
-| `--nldesign-cn-sidebar-tab-min-width` | `--cn-sidebar-tab-min-width` | every reader |  |
-| `--nldesign-cn-spacing-m` | `--cn-spacing-m` | every reader |  |
-| `--nldesign-cn-table-cell-max-width` | `--cn-table-cell-max-width` | every reader |  |
-| `--nldesign-cn-xwiki-accent` | `--cn-xwiki-accent` | every reader |  |
-| `--nldesign-cn-xwiki-accent-soft` | `--cn-xwiki-accent-soft` | every reader |  |
-
-## `color`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-color-header` | `--color-header` | its component | `rgba(24, 24, 24, 1)` |
-| `--nldesign-nc-color-norder-error` | `--color-norder-error` | every reader |  |
-| `--nldesign-nc-color-primary-element-extra-light` | `--color-primary-element-extra-light` | its component | `hsl(from var(--color-primary-element-light) h s calc(l * 1.…` |
-| `--nldesign-nc-color-primary-element-extra-light-hover` | `--color-primary-element-extra-light-hover` | its component | `hsl(from var(--color-primary-element-light-hover) h s calc(…` |
-
-## `contenteditable`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-contenteditable-block-offset` | `--contenteditable-block-offset` | its component | `calc(2 * var(--default-grid-baseline))` |
-| `--nldesign-nc-contenteditable-inline-end-offset` | `--contenteditable-inline-end-offset` | its component | `calc(2 * var(--default-grid-baseline))` |
-| `--nldesign-nc-contenteditable-inline-start-offset` | `--contenteditable-inline-start-offset` | its component | `calc(2 * var(--default-grid-baseline))` |
-
-## `counter`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-counter-bubble-height` | `--counter-bubble-height` | its component | `22px` |
-
-## `dark`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-dark-link-color` | `--dark-link-color` | its component | `#249ee8` |
-| `--nldesign-nc-dark-text-color` | `--dark-text-color` | its component | `#c1c1c1` |
-
-## `dialog`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-dialog-bg-color` | `--dialog-bg-color` | its component | `white` |
-| `--nldesign-nc-dialog-border-color` | `--dialog-border-color` | its component | `white` |
-| `--nldesign-nc-dialog-button-bg-color` | `--dialog-button-bg-color` | its component | `rgb(12 12 13 / 0.1)` |
-| `--nldesign-nc-dialog-button-border` | `--dialog-button-border` | its component | `none` |
-| `--nldesign-nc-dialog-button-hover-bg-color` | `--dialog-button-hover-bg-color` | its component | `rgb(12 12 13 / 0.3)` |
-| `--nldesign-nc-dialog-button-hover-color` | `--dialog-button-hover-color` | its component | `ButtonFace` |
-| `--nldesign-nc-dialog-shadow` | `--dialog-shadow` | its component | `0 2px 14px 0 rgb(58 57 68 / 0.2)` |
-
-## `dir`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-dir-factor` | `--dir-factor` | its component | `1` |
-
-## `doorhanger`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-doorhanger-bg-color` | `--doorhanger-bg-color` | its component | `rgb(255 255 255)` |
-| `--nldesign-nc-doorhanger-border-color` | `--doorhanger-border-color` | its component | `rgb(12 12 13 / 0.2)` |
-| `--nldesign-nc-doorhanger-border-color-whcm` | `--doorhanger-border-color-whcm` | its component | `1px solid ButtonText` |
-| `--nldesign-nc-doorhanger-hover-bg-color` | `--doorhanger-hover-bg-color` | its component | `rgb(237 237 237)` |
-| `--nldesign-nc-doorhanger-hover-color` | `--doorhanger-hover-color` | its component | `rgb(12 12 13)` |
-| `--nldesign-nc-doorhanger-icon-opacity` | `--doorhanger-icon-opacity` | its component | `0.9` |
-| `--nldesign-nc-doorhanger-separator-color` | `--doorhanger-separator-color` | its component | `rgb(222 222 222)` |
-| `--nldesign-nc-doorhanger-triangle-opacity-whcm` | `--doorhanger-triangle-opacity-whcm` | its component | `0` |
-
-## `dp`
+## Date picker
 
 | Token | Variable | Reaches | Nextcloud's value |
 |---|---|---|---|
@@ -333,272 +83,49 @@ An internal token applies in light and dark alike. Give it a value in the dark f
 | `--nldesign-nc-dp-transition-timing` | `--dp-transition-timing` | its component | `ease-out` |
 | `--nldesign-nc-dp-transition-timing-general` | `--dp-transition-timing-general` | its component | `var(--animation-quick)` |
 
-## `dropdown`
+## Select box
 
 | Token | Variable | Reaches | Nextcloud's value |
 |---|---|---|---|
-| `--nldesign-nc-dropdown-btn-bg-color` | `--dropdown-btn-bg-color` | its component | `rgb(215 215 219)` |
-| `--nldesign-nc-dropdown-btn-border` | `--dropdown-btn-border` | its component | `none` |
-
-## `editorFreeText`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-editorFreeText-editing-cursor` | `--editorFreeText-editing-cursor` | its component | `text` |
-
-## `field`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-field-bg-color` | `--field-bg-color` | its component | `rgb(255 255 255)` |
-| `--nldesign-nc-field-border-color` | `--field-border-color` | its component | `rgb(187 187 188)` |
-| `--nldesign-nc-field-color` | `--field-color` | its component | `rgb(6 6 6)` |
-
-## `figure`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-figure-size` | `--figure-size` | its component | `calc(52px + var(--app-sidebar-padding))` |
-
-## `fixed`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-fixed-block-start-position` | `--fixed-block-start-position` | its component | `calc(var(--clickable-area-small) + var(--default-grid-basel…` |
-
-## `focus`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-focus-outline` | `--focus-outline` | its component | `solid var(--outline-width) var(--outline-color)` |
-| `--nldesign-nc-focus-outline-around` | `--focus-outline-around` | its component | `solid var(--outline-around-width) var(--outline-around-colo…` |
-| `--nldesign-nc-focus-ring-color` | `--focus-ring-color` | its component | `#0060df` |
-| `--nldesign-nc-focus-ring-outline` | `--focus-ring-outline` | its component | `2px solid var(--focus-ring-color)` |
-
-## `form`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-form-element-label-offset` | `--form-element-label-offset` | its component | `calc(var(--border-radius-element) + var(--default-grid-base…` |
-| `--nldesign-nc-form-element-label-padding` | `--form-element-label-padding` | its component | `calc(var(--form-element-label-offset) - var(--nc-form-box-i…` |
-| `--nldesign-nc-form-group-content-gap` | `--form-group-content-gap` | its component | `calc(2 * var(--default-grid-baseline))` |
-
-## `freetext`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-freetext-line-height` | `--freetext-line-height` | its component | `1.35` |
-| `--nldesign-nc-freetext-padding` | `--freetext-padding` | its component | `2px` |
-
-## `gap`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-gap` | `--gap` | its component | `30px` |
-
-## `highlight`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-highlight-bg-color` | `--highlight-bg-color` | its component | `rgb(180 0 170)` |
-| `--nldesign-nc-highlight-selected-bg-color` | `--highlight-selected-bg-color` | its component | `rgb(0 100 0)` |
-
-## `hljs`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-hljs-background-color` | `--hljs-background-color` | its component | `var(--color-background-dark, #ffffff)` |
-| `--nldesign-nc-hljs-color` | `--hljs-color` | its component | `var(--color-main-text, #24292e)` |
-| `--nldesign-nc-hljs-syntax-comment-color` | `--hljs-syntax-comment-color` | its component | `#6a737d` |
-| `--nldesign-nc-hljs-syntax-constant-color` | `--hljs-syntax-constant-color` | its component | `#005cc5` |
-| `--nldesign-nc-hljs-syntax-entity-color` | `--hljs-syntax-entity-color` | its component | `#6f42c1` |
-| `--nldesign-nc-hljs-syntax-entity-tag-color` | `--hljs-syntax-entity-tag-color` | its component | `#22863a` |
-| `--nldesign-nc-hljs-syntax-keyword-color` | `--hljs-syntax-keyword-color` | its component | `#d73a49` |
-| `--nldesign-nc-hljs-syntax-markup-bold-color` | `--hljs-syntax-markup-bold-color` | its component | `#24292e` |
-| `--nldesign-nc-hljs-syntax-markup-deleted-background-color` | `--hljs-syntax-markup-deleted-background-color` | its component | `#ffeef0` |
-| `--nldesign-nc-hljs-syntax-markup-deleted-color` | `--hljs-syntax-markup-deleted-color` | its component | `#b31d28` |
-| `--nldesign-nc-hljs-syntax-markup-heading-color` | `--hljs-syntax-markup-heading-color` | its component | `#005cc5` |
-| `--nldesign-nc-hljs-syntax-markup-inserted-background-color` | `--hljs-syntax-markup-inserted-background-color` | its component | `#f0fff4` |
-| `--nldesign-nc-hljs-syntax-markup-inserted-color` | `--hljs-syntax-markup-inserted-color` | its component | `#22863a` |
-| `--nldesign-nc-hljs-syntax-markup-italic-color` | `--hljs-syntax-markup-italic-color` | its component | `#24292e` |
-| `--nldesign-nc-hljs-syntax-markup-list-color` | `--hljs-syntax-markup-list-color` | its component | `#735c0f` |
-| `--nldesign-nc-hljs-syntax-storage-modifier-import-color` | `--hljs-syntax-storage-modifier-import-color` | its component | `#24292e` |
-| `--nldesign-nc-hljs-syntax-string-color` | `--hljs-syntax-string-color` | its component | `#032f62` |
-| `--nldesign-nc-hljs-syntax-variable-color` | `--hljs-syntax-variable-color` | its component | `#e36209` |
-
-## `hover`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-hover-filter` | `--hover-filter` | its component | `brightness(0.9)` |
-| `--nldesign-nc-hover-outline` | `--hover-outline` | its component | `solid var(--outline-width) var(--hover-outline-color)` |
-| `--nldesign-nc-hover-outline-around` | `--hover-outline-around` | its component | `solid var(--outline-around-width) var(--hover-outline-aroun…` |
-| `--nldesign-nc-hover-outline-around-color` | `--hover-outline-around-color` | its component | `var(--outline-around-color)` |
-| `--nldesign-nc-hover-outline-color` | `--hover-outline-color` | its component | `#8f8f9d` |
-
-## `inline`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-inline-end` | `--inline-end` | its component | `right` |
-| `--nldesign-nc-inline-start` | `--inline-start` | its component | `left` |
-
-## `input`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-input-border-box-shadow` | `--input-border-box-shadow` | its component | `var(--input-border-box-shadow-light)` |
-| `--nldesign-nc-input-border-box-shadow-dark` | `--input-border-box-shadow-dark` | its component | `0 1px var(--vs-border-color), 0 0 0 1px color-mix(in srgb, …` |
-| `--nldesign-nc-input-border-box-shadow-light` | `--input-border-box-shadow-light` | its component | `0 -1px var(--vs-border-color), 0 0 0 1px color-mix(in srgb,…` |
-| `--nldesign-nc-input-border-radius` | `--input-border-radius` | its component | `var(--border-radius-element)` |
-| `--nldesign-nc-input-border-width-offset` | `--input-border-width-offset` | its component | `calc(var(--border-width-input-focused, 2px) - var(--border-…` |
-| `--nldesign-nc-input-disabled-border-color` | `--input-disabled-border-color` | its component | `transparent` |
-| `--nldesign-nc-input-focus-border-color` | `--input-focus-border-color` | its component | `Highlight` |
-| `--nldesign-nc-input-focus-outline` | `--input-focus-outline` | its component | `1px solid Canvas` |
-| `--nldesign-nc-input-hover-border-color` | `--input-hover-border-color` | its component | `black` |
-| `--nldesign-nc-input-label-font-size` | `--input-label-font-size` | its component | `var(--default-font-size)` |
-| `--nldesign-nc-input-padding-end` | `--input-padding-end` | its component | `var(--border-radius-element)` |
-| `--nldesign-nc-input-padding-start` | `--input-padding-start` | its component | `var(--border-radius-element)` |
-| `--nldesign-nc-input-unfocused-border-color` | `--input-unfocused-border-color` | its component | `transparent` |
-
-## `item`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-item-padding` | `--item-padding` | its component | `16px` |
-
-## `level`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-level-padding` | `--level-padding` | its component | `12px` |
-
-## `link`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-link-outline` | `--link-outline` | its component | `none` |
-
-## `list`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-list-item-border-radius` | `--list-item-border-radius` | its component | `var(--border-radius-element, 32px)` |
-| `--nldesign-nc-list-item-height` | `--list-item-height` | its component | `2lh` |
-| `--nldesign-nc-list-item-padding` | `--list-item-padding` | its component | `var(--default-grid-baseline)` |
-
-## `loading`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-loading-icon-delay` | `--loading-icon-delay` | its component | `400ms` |
-
-## `main`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-main-color` | `--main-color` | its component | `rgb(12 12 13)` |
-
-## `max`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-max-icon-size` | `--max-icon-size` | its component | `calc(var(--default-clickable-area) - 2 * var(--default-grid…` |
-
-## `member`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-member-list-gap` | `--member-list-gap` | its component | `calc(1.5 * var(--default-grid-baseline))` |
-
-## `min`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-min-size` | `--min-size` | its component | `32px` |
-
-## `mtime`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-mtime-height` | `--mtime-height` | its component | `calc(var(--font-size-small) + var(--default-grid-baseline))` |
-
-## `name`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-name-height` | `--name-height` | its component | `var(--default-clickable-area)` |
-
-## `nav`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-nav-tint` | `--nav-tint` | its component | `hsl(from var(--color-primary-element-light) h s calc(l*1.04…` |
-| `--nldesign-nc-nav-tint-strong` | `--nav-tint-strong` | its component | `var(--color-primary-element-light)` |
-
-## `nc`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-nc-form-box-item-border-width` | `--nc-form-box-item-border-width` | its component | `1px` |
-| `--nldesign-nc-nc-form-box-item-min-height` | `--nc-form-box-item-min-height` | its component | `40px` |
-
-## `note`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-note-card-icon-size` | `--note-card-icon-size` | its component | `20px` |
-| `--nldesign-nc-note-card-padding` | `--note-card-padding` | its component | `calc(2 * var(--default-grid-baseline))` |
-
-## `open`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-open-background-color` | `--open-background-color` | its component | `var(--color-background-hover, $action-background-hover)` |
-
-## `outline`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-outline-around-color` | `--outline-around-color` | its component | `#f0f0f4` |
-| `--nldesign-nc-outline-around-width` | `--outline-around-width` | its component | `1px` |
-| `--nldesign-nc-outline-color` | `--outline-color` | its component | `#0060df` |
-| `--nldesign-nc-outline-width` | `--outline-width` | its component | `2px` |
-
-## `padding`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-padding` | `--padding` | its component | `calc((var(--default-clickable-area) - 20px) / 2 + var(--def…` |
-| `--nldesign-nc-padding-inline-start` | `--padding-inline-start` | its component | `calc(0 * var(--level-padding))` |
-
-## `page`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-page-border` | `--page-border` | its component | `9px solid transparent` |
-| `--nldesign-nc-page-margin` | `--page-margin` | its component | `1px auto -8px` |
-
-## `panel`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-panel-width` | `--panel-width` | its component | `300px` |
-
-## `pdfViewer`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-pdfViewer-padding-bottom` | `--pdfViewer-padding-bottom` | its component | `0` |
-
-## `photos`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-photos-face-width` | `--photos-face-width` | its component | `128px` |
-| `--nldesign-nc-photos-navigation-height` | `--photos-navigation-height` | every reader |  |
-
-## `plyr`
+| `--nldesign-nc-vs-actions-padding` | `--vs-actions-padding` | its component | `0 8px 0 4px` |
+| `--nldesign-nc-vs-border-style` | `--vs-border-style` | its component | `solid` |
+| `--nldesign-nc-vs-border-width` | `--vs-border-width` | its component | `var(--border-width-input, 2px) !important` |
+| `--nldesign-nc-vs-colors--dark` | `--vs-colors--dark` | its component | `#333` |
+| `--nldesign-nc-vs-colors--darkest` | `--vs-colors--darkest` | its component | `rgba(0,0,0,.15)` |
+| `--nldesign-nc-vs-colors--light` | `--vs-colors--light` | its component | `rgba(60,60,60,.5)` |
+| `--nldesign-nc-vs-colors--lightest` | `--vs-colors--lightest` | its component | `rgba(60,60,60,.26)` |
+| `--nldesign-nc-vs-controls--deselect-text-shadow` | `--vs-controls--deselect-text-shadow` | its component | `0 1px 0 #fff` |
+| `--nldesign-nc-vs-controls--spinner-size` | `--vs-controls--spinner-size` | every reader |  |
+| `--nldesign-nc-vs-controls-color` | `--vs-controls-color` | its component | `var(--color-main-text)` |
+| `--nldesign-nc-vs-controls-size` | `--vs-controls-size` | its component | `1` |
+| `--nldesign-nc-vs-disabled-bg` | `--vs-disabled-bg` | its component | `var(--color-background-hover)` |
+| `--nldesign-nc-vs-disabled-cursor` | `--vs-disabled-cursor` | its component | `not-allowed` |
+| `--nldesign-nc-vs-dropdown-bg` | `--vs-dropdown-bg` | its component | `var(--color-main-background)` |
+| `--nldesign-nc-vs-dropdown-box-shadow` | `--vs-dropdown-box-shadow` | its component | `0px 2px 2px 0px var(--color-box-shadow)` |
+| `--nldesign-nc-vs-dropdown-max-height` | `--vs-dropdown-max-height` | its component | `350px` |
+| `--nldesign-nc-vs-dropdown-min-width` | `--vs-dropdown-min-width` | its component | `160px` |
+| `--nldesign-nc-vs-dropdown-option--deselect-bg` | `--vs-dropdown-option--deselect-bg` | its component | `var(--color-error)` |
+| `--nldesign-nc-vs-dropdown-option--deselect-color` | `--vs-dropdown-option--deselect-color` | its component | `#fff` |
+| `--nldesign-nc-vs-dropdown-option--kb-focus-box-shadow` | `--vs-dropdown-option--kb-focus-box-shadow` | its component | `inset 0px 0px 0px 2px var(--vs-border-color)` |
+| `--nldesign-nc-vs-dropdown-option-color` | `--vs-dropdown-option-color` | its component | `var(--vs-dropdown-color)` |
+| `--nldesign-nc-vs-dropdown-option-padding` | `--vs-dropdown-option-padding` | its component | `8px 20px` |
+| `--nldesign-nc-vs-dropdown-z-index` | `--vs-dropdown-z-index` | its component | `9999` |
+| `--nldesign-nc-vs-font-size` | `--vs-font-size` | its component | `var(--default-font-size)` |
+| `--nldesign-nc-vs-line-height` | `--vs-line-height` | its component | `var(--default-line-height)` |
+| `--nldesign-nc-vs-search-input-bg` | `--vs-search-input-bg` | its component | `var(--color-main-background)` |
+| `--nldesign-nc-vs-search-input-color` | `--vs-search-input-color` | its component | `var(--color-main-text)` |
+| `--nldesign-nc-vs-search-input-placeholder-color` | `--vs-search-input-placeholder-color` | its component | `var(--color-text-maxcontrast)` |
+| `--nldesign-nc-vs-selected-bg` | `--vs-selected-bg` | its component | `var(--color-background-hover)` |
+| `--nldesign-nc-vs-selected-border-color` | `--vs-selected-border-color` | its component | `var(--vs-border-color)` |
+| `--nldesign-nc-vs-selected-border-style` | `--vs-selected-border-style` | its component | `var(--vs-border-style)` |
+| `--nldesign-nc-vs-selected-border-width` | `--vs-selected-border-width` | its component | `var(--vs-border-width)` |
+| `--nldesign-nc-vs-state-disabled-bg` | `--vs-state-disabled-bg` | its component | `var(--color-background-hover)` |
+| `--nldesign-nc-vs-state-disabled-color` | `--vs-state-disabled-color` | its component | `var(--color-text-maxcontrast)` |
+| `--nldesign-nc-vs-state-disabled-cursor` | `--vs-state-disabled-cursor` | its component | `not-allowed` |
+| `--nldesign-nc-vs-transition-duration` | `--vs-transition-duration` | its component | `0ms` |
+| `--nldesign-nc-vs-transition-timing-function` | `--vs-transition-timing-function` | its component | `cubic-bezier(1,-.115,.975,.855)` |
+
+## Media player
 
 | Token | Variable | Reaches | Nextcloud's value |
 |---|---|---|---|
@@ -663,161 +190,184 @@ An internal token applies in light and dark alike. Give it a value in the dark f
 | `--nldesign-nc-plyr-video-progress-buffered-background` | `--plyr-video-progress-buffered-background` | every reader |  |
 | `--nldesign-nc-plyr-video-range-track-background` | `--plyr-video-range-track-background` | every reader |  |
 
-## `progressBar`
+## Code highlighting
 
 | Token | Variable | Reaches | Nextcloud's value |
 |---|---|---|---|
+| `--nldesign-nc-hljs-background-color` | `--hljs-background-color` | its component | `var(--color-background-dark, #ffffff)` |
+| `--nldesign-nc-hljs-color` | `--hljs-color` | its component | `var(--color-main-text, #24292e)` |
+| `--nldesign-nc-hljs-syntax-comment-color` | `--hljs-syntax-comment-color` | its component | `#6a737d` |
+| `--nldesign-nc-hljs-syntax-constant-color` | `--hljs-syntax-constant-color` | its component | `#005cc5` |
+| `--nldesign-nc-hljs-syntax-entity-color` | `--hljs-syntax-entity-color` | its component | `#6f42c1` |
+| `--nldesign-nc-hljs-syntax-entity-tag-color` | `--hljs-syntax-entity-tag-color` | its component | `#22863a` |
+| `--nldesign-nc-hljs-syntax-keyword-color` | `--hljs-syntax-keyword-color` | its component | `#d73a49` |
+| `--nldesign-nc-hljs-syntax-markup-bold-color` | `--hljs-syntax-markup-bold-color` | its component | `#24292e` |
+| `--nldesign-nc-hljs-syntax-markup-deleted-background-color` | `--hljs-syntax-markup-deleted-background-color` | its component | `#ffeef0` |
+| `--nldesign-nc-hljs-syntax-markup-deleted-color` | `--hljs-syntax-markup-deleted-color` | its component | `#b31d28` |
+| `--nldesign-nc-hljs-syntax-markup-heading-color` | `--hljs-syntax-markup-heading-color` | its component | `#005cc5` |
+| `--nldesign-nc-hljs-syntax-markup-inserted-background-color` | `--hljs-syntax-markup-inserted-background-color` | its component | `#f0fff4` |
+| `--nldesign-nc-hljs-syntax-markup-inserted-color` | `--hljs-syntax-markup-inserted-color` | its component | `#22863a` |
+| `--nldesign-nc-hljs-syntax-markup-italic-color` | `--hljs-syntax-markup-italic-color` | its component | `#24292e` |
+| `--nldesign-nc-hljs-syntax-markup-list-color` | `--hljs-syntax-markup-list-color` | its component | `#735c0f` |
+| `--nldesign-nc-hljs-syntax-storage-modifier-import-color` | `--hljs-syntax-storage-modifier-import-color` | its component | `#24292e` |
+| `--nldesign-nc-hljs-syntax-string-color` | `--hljs-syntax-string-color` | its component | `#032f62` |
+| `--nldesign-nc-hljs-syntax-variable-color` | `--hljs-syntax-variable-color` | its component | `#e36209` |
+
+## Conduction apps
+
+| Token | Variable | Reaches | Nextcloud's value |
+|---|---|---|---|
+| `--nldesign-cn-ai-pointer-offset` | `--cn-ai-pointer-offset` | its component | `19px` |
+| `--nldesign-cn-color-picker-checker` | `--cn-color-picker-checker` | its component | `linear-gradient(45deg, var(--color-background-dark) 25%, tr…` |
+| `--nldesign-cn-color-swatch-checker` | `--cn-color-swatch-checker` | its component | `linear-gradient(45deg, var(--color-background-dark) 25%, tr…` |
+| `--nldesign-cn-email-accent` | `--cn-email-accent` | every reader |  |
+| `--nldesign-cn-forms-accent` | `--cn-forms-accent` | every reader |  |
+| `--nldesign-cn-forms-status` | `--cn-forms-status` | its component | `var(--color-success, #46ba61)` |
+| `--nldesign-cn-kpi-accent` | `--cn-kpi-accent` | its component | `var(--color-primary-element)` |
+| `--nldesign-cn-kpi-gap` | `--cn-kpi-gap` | its component | `8px` |
+| `--nldesign-cn-kpi-gap-horizontal` | `--cn-kpi-gap-horizontal` | its component | `16px` |
+| `--nldesign-cn-kpi-grid-gap` | `--cn-kpi-grid-gap` | its component | `16px` |
+| `--nldesign-cn-kpi-icon-size` | `--cn-kpi-icon-size` | its component | `44px` |
+| `--nldesign-cn-kpi-icon-size-sm` | `--cn-kpi-icon-size-sm` | its component | `36px` |
+| `--nldesign-cn-kpi-icon-tint` | `--cn-kpi-icon-tint` | its component | `12%` |
+| `--nldesign-cn-kpi-label-color` | `--cn-kpi-label-color` | its component | `var(--color-text-maxcontrast)` |
+| `--nldesign-cn-kpi-label-size` | `--cn-kpi-label-size` | its component | `13px` |
+| `--nldesign-cn-kpi-padding` | `--cn-kpi-padding` | its component | `16px` |
+| `--nldesign-cn-kpi-padding-flat` | `--cn-kpi-padding-flat` | its component | `8px` |
+| `--nldesign-cn-kpi-radius` | `--cn-kpi-radius` | its component | `var(--border-radius-large, 10px)` |
+| `--nldesign-cn-kpi-section-title-size` | `--cn-kpi-section-title-size` | its component | `14px` |
+| `--nldesign-cn-kpi-stack-gap` | `--cn-kpi-stack-gap` | its component | `12px` |
+| `--nldesign-cn-kpi-title-size` | `--cn-kpi-title-size` | its component | `14px` |
+| `--nldesign-cn-kpi-title-weight` | `--cn-kpi-title-weight` | its component | `600` |
+| `--nldesign-cn-kpi-value-line` | `--cn-kpi-value-line` | its component | `1.1` |
+| `--nldesign-cn-kpi-value-size` | `--cn-kpi-value-size` | its component | `1.75rem` |
+| `--nldesign-cn-kpi-value-size-compact` | `--cn-kpi-value-size-compact` | its component | `1.25rem` |
+| `--nldesign-cn-kpi-value-size-stacked` | `--cn-kpi-value-size-stacked` | its component | `2rem` |
+| `--nldesign-cn-kpi-value-text-size` | `--cn-kpi-value-text-size` | every reader |  |
+| `--nldesign-cn-kpi-value-weight` | `--cn-kpi-value-weight` | its component | `700` |
+| `--nldesign-cn-sidebar-tab-min-width` | `--cn-sidebar-tab-min-width` | every reader |  |
+| `--nldesign-cn-spacing-m` | `--cn-spacing-m` | every reader |  |
+| `--nldesign-cn-table-cell-max-width` | `--cn-table-cell-max-width` | every reader |  |
+| `--nldesign-cn-xwiki-accent` | `--cn-xwiki-accent` | every reader |  |
+| `--nldesign-cn-xwiki-accent-soft` | `--cn-xwiki-accent-soft` | every reader |  |
+
+## PDF viewer
+
+| Token | Variable | Reaches | Nextcloud's value |
+|---|---|---|---|
+| `--nldesign-nc-alt-text-active-bg-color` | `--alt-text-active-bg-color` | its component | `rgb(91 91 102 / var(--alt-text-opacity))` |
+| `--nldesign-nc-alt-text-active-border-color` | `--alt-text-active-border-color` | its component | `var(--alt-text-hover-bg-color)` |
+| `--nldesign-nc-alt-text-active-fg-color` | `--alt-text-active-fg-color` | its component | `var(--alt-text-fg-color)` |
+| `--nldesign-nc-alt-text-bg-color` | `--alt-text-bg-color` | its component | `rgb(43 42 51 / var(--alt-text-opacity))` |
+| `--nldesign-nc-alt-text-border-color` | `--alt-text-border-color` | its component | `var(--alt-text-bg-color)` |
+| `--nldesign-nc-alt-text-fg-color` | `--alt-text-fg-color` | its component | `#fbfbfe` |
+| `--nldesign-nc-alt-text-focus-border-color` | `--alt-text-focus-border-color` | its component | `#f0f0f4` |
+| `--nldesign-nc-alt-text-focus-outline-color` | `--alt-text-focus-outline-color` | its component | `#0060df` |
+| `--nldesign-nc-alt-text-hover-bg-color` | `--alt-text-hover-bg-color` | its component | `rgb(82 82 94 / var(--alt-text-opacity))` |
+| `--nldesign-nc-alt-text-hover-border-color` | `--alt-text-hover-border-color` | its component | `var(--alt-text-hover-bg-color)` |
+| `--nldesign-nc-alt-text-hover-fg-color` | `--alt-text-hover-fg-color` | its component | `var(--alt-text-fg-color)` |
+| `--nldesign-nc-alt-text-opacity` | `--alt-text-opacity` | its component | `0.8` |
+| `--nldesign-nc-alt-text-shadow` | `--alt-text-shadow` | its component | `0 2px 6px 0 rgb(28 27 34 / 0.5)` |
+| `--nldesign-nc-alt-text-tooltip-bg` | `--alt-text-tooltip-bg` | its component | `#f0f0f4` |
+| `--nldesign-nc-alt-text-tooltip-border` | `--alt-text-tooltip-border` | its component | `#8f8f9d` |
+| `--nldesign-nc-alt-text-tooltip-fg` | `--alt-text-tooltip-fg` | its component | `#15141a` |
+| `--nldesign-nc-alt-text-tooltip-shadow` | `--alt-text-tooltip-shadow` | its component | `0px 2px 6px 0px rgb(58 57 68 / 0.2)` |
+| `--nldesign-nc-body-bg-color` | `--body-bg-color` | its component | `rgb(212 212 215)` |
+| `--nldesign-nc-button-cancel-bg-color` | `--button-cancel-bg-color` | its component | `#f0f0f4` |
+| `--nldesign-nc-button-cancel-border-color` | `--button-cancel-border-color` | its component | `var(--button-cancel-bg-color)` |
+| `--nldesign-nc-button-cancel-fg-color` | `--button-cancel-fg-color` | its component | `var(--text-primary-color)` |
+| `--nldesign-nc-button-cancel-hover-bg-color` | `--button-cancel-hover-bg-color` | its component | `var(--button-cancel-bg-color)` |
+| `--nldesign-nc-button-cancel-hover-border-color` | `--button-cancel-hover-border-color` | its component | `var(--button-cancel-hover-bg-color)` |
+| `--nldesign-nc-button-cancel-hover-fg-color` | `--button-cancel-hover-fg-color` | its component | `var(--button-cancel-fg-color)` |
+| `--nldesign-nc-button-hover-color` | `--button-hover-color` | its component | `rgb(221 222 223)` |
+| `--nldesign-nc-button-save-bg-color` | `--button-save-bg-color` | its component | `#0060df` |
+| `--nldesign-nc-button-save-fg-color` | `--button-save-fg-color` | its component | `#fbfbfe` |
+| `--nldesign-nc-button-save-hover-bg-color` | `--button-save-hover-bg-color` | its component | `var(--button-save-bg-color)` |
+| `--nldesign-nc-button-save-hover-border-color` | `--button-save-hover-border-color` | its component | `var(--button-save-hover-bg-color)` |
+| `--nldesign-nc-button-save-hover-fg-color` | `--button-save-hover-fg-color` | its component | `var(--button-save-fg-color)` |
+| `--nldesign-nc-dialog-bg-color` | `--dialog-bg-color` | its component | `white` |
+| `--nldesign-nc-dialog-border-color` | `--dialog-border-color` | its component | `white` |
+| `--nldesign-nc-dialog-button-bg-color` | `--dialog-button-bg-color` | its component | `rgb(12 12 13 / 0.1)` |
+| `--nldesign-nc-dialog-button-border` | `--dialog-button-border` | its component | `none` |
+| `--nldesign-nc-dialog-button-hover-bg-color` | `--dialog-button-hover-bg-color` | its component | `rgb(12 12 13 / 0.3)` |
+| `--nldesign-nc-dialog-button-hover-color` | `--dialog-button-hover-color` | its component | `ButtonFace` |
+| `--nldesign-nc-dialog-shadow` | `--dialog-shadow` | its component | `0 2px 14px 0 rgb(58 57 68 / 0.2)` |
+| `--nldesign-nc-dir-factor` | `--dir-factor` | its component | `1` |
+| `--nldesign-nc-doorhanger-bg-color` | `--doorhanger-bg-color` | its component | `rgb(255 255 255)` |
+| `--nldesign-nc-doorhanger-border-color` | `--doorhanger-border-color` | its component | `rgb(12 12 13 / 0.2)` |
+| `--nldesign-nc-doorhanger-border-color-whcm` | `--doorhanger-border-color-whcm` | its component | `1px solid ButtonText` |
+| `--nldesign-nc-doorhanger-hover-bg-color` | `--doorhanger-hover-bg-color` | its component | `rgb(237 237 237)` |
+| `--nldesign-nc-doorhanger-hover-color` | `--doorhanger-hover-color` | its component | `rgb(12 12 13)` |
+| `--nldesign-nc-doorhanger-icon-opacity` | `--doorhanger-icon-opacity` | its component | `0.9` |
+| `--nldesign-nc-doorhanger-separator-color` | `--doorhanger-separator-color` | its component | `rgb(222 222 222)` |
+| `--nldesign-nc-doorhanger-triangle-opacity-whcm` | `--doorhanger-triangle-opacity-whcm` | its component | `0` |
+| `--nldesign-nc-dropdown-btn-bg-color` | `--dropdown-btn-bg-color` | its component | `rgb(215 215 219)` |
+| `--nldesign-nc-dropdown-btn-border` | `--dropdown-btn-border` | its component | `none` |
+| `--nldesign-nc-editorFreeText-editing-cursor` | `--editorFreeText-editing-cursor` | its component | `text` |
+| `--nldesign-nc-field-bg-color` | `--field-bg-color` | its component | `rgb(255 255 255)` |
+| `--nldesign-nc-field-border-color` | `--field-border-color` | its component | `rgb(187 187 188)` |
+| `--nldesign-nc-field-color` | `--field-color` | its component | `rgb(6 6 6)` |
+| `--nldesign-nc-focus-outline` | `--focus-outline` | its component | `solid var(--outline-width) var(--outline-color)` |
+| `--nldesign-nc-focus-outline-around` | `--focus-outline-around` | its component | `solid var(--outline-around-width) var(--outline-around-colo…` |
+| `--nldesign-nc-focus-ring-color` | `--focus-ring-color` | its component | `#0060df` |
+| `--nldesign-nc-focus-ring-outline` | `--focus-ring-outline` | its component | `2px solid var(--focus-ring-color)` |
+| `--nldesign-nc-freetext-line-height` | `--freetext-line-height` | its component | `1.35` |
+| `--nldesign-nc-freetext-padding` | `--freetext-padding` | its component | `2px` |
+| `--nldesign-nc-highlight-bg-color` | `--highlight-bg-color` | its component | `rgb(180 0 170)` |
+| `--nldesign-nc-highlight-selected-bg-color` | `--highlight-selected-bg-color` | its component | `rgb(0 100 0)` |
+| `--nldesign-nc-hover-filter` | `--hover-filter` | its component | `brightness(0.9)` |
+| `--nldesign-nc-hover-outline` | `--hover-outline` | its component | `solid var(--outline-width) var(--hover-outline-color)` |
+| `--nldesign-nc-hover-outline-around` | `--hover-outline-around` | its component | `solid var(--outline-around-width) var(--hover-outline-aroun…` |
+| `--nldesign-nc-hover-outline-around-color` | `--hover-outline-around-color` | its component | `var(--outline-around-color)` |
+| `--nldesign-nc-hover-outline-color` | `--hover-outline-color` | its component | `#8f8f9d` |
+| `--nldesign-nc-inline-end` | `--inline-end` | its component | `right` |
+| `--nldesign-nc-inline-start` | `--inline-start` | its component | `left` |
+| `--nldesign-nc-input-disabled-border-color` | `--input-disabled-border-color` | its component | `transparent` |
+| `--nldesign-nc-input-focus-border-color` | `--input-focus-border-color` | its component | `Highlight` |
+| `--nldesign-nc-input-focus-outline` | `--input-focus-outline` | its component | `1px solid Canvas` |
+| `--nldesign-nc-input-hover-border-color` | `--input-hover-border-color` | its component | `black` |
+| `--nldesign-nc-input-unfocused-border-color` | `--input-unfocused-border-color` | its component | `transparent` |
+| `--nldesign-nc-link-outline` | `--link-outline` | its component | `none` |
+| `--nldesign-nc-loading-icon-delay` | `--loading-icon-delay` | its component | `400ms` |
+| `--nldesign-nc-main-color` | `--main-color` | its component | `rgb(12 12 13)` |
+| `--nldesign-nc-outline-around-color` | `--outline-around-color` | its component | `#f0f0f4` |
+| `--nldesign-nc-outline-around-width` | `--outline-around-width` | its component | `1px` |
+| `--nldesign-nc-outline-color` | `--outline-color` | its component | `#0060df` |
+| `--nldesign-nc-outline-width` | `--outline-width` | its component | `2px` |
+| `--nldesign-nc-page-border` | `--page-border` | its component | `9px solid transparent` |
+| `--nldesign-nc-page-margin` | `--page-margin` | its component | `1px auto -8px` |
+| `--nldesign-nc-panel-width` | `--panel-width` | its component | `300px` |
+| `--nldesign-nc-pdfViewer-padding-bottom` | `--pdfViewer-padding-bottom` | its component | `0` |
 | `--nldesign-nc-progressBar-bg-color` | `--progressBar-bg-color` | its component | `rgb(221 221 222)` |
 | `--nldesign-nc-progressBar-blend-color` | `--progressBar-blend-color` | its component | `rgb(116 177 239)` |
 | `--nldesign-nc-progressBar-color` | `--progressBar-color` | its component | `rgb(10 132 255)` |
-
-## `radio`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-radio-bg-color` | `--radio-bg-color` | its component | `#f0f0f4` |
 | `--nldesign-nc-radio-border-color` | `--radio-border-color` | its component | `#8f8f9d` |
 | `--nldesign-nc-radio-checked-bg-color` | `--radio-checked-bg-color` | its component | `#fbfbfe` |
 | `--nldesign-nc-radio-checked-border-color` | `--radio-checked-border-color` | its component | `#0060df` |
-| `--nldesign-nc-radio-group-button--background-color` | `--radio-group-button--background-color` | its component | `var(--color-primary-element-light)` |
-| `--nldesign-nc-radio-group-button--background-color-hover` | `--radio-group-button--background-color-hover` | its component | `var(--color-primary-element-light-hover)` |
-| `--nldesign-nc-radio-group-button--border-radius` | `--radio-group-button--border-radius` | its component | `var(--border-radius-small)` |
-| `--nldesign-nc-radio-group-button--border-width` | `--radio-group-button--border-width` | its component | `1px` |
-| `--nldesign-nc-radio-group-button--color` | `--radio-group-button--color` | its component | `var(--color-primary-element-light-text)` |
-| `--nldesign-nc-radio-group-button--icon-size` | `--radio-group-button--icon-size` | its component | `calc(var(--default-clickable-area) - 4px)` |
-| `--nldesign-nc-radio-group-button--padding` | `--radio-group-button--padding` | its component | `1px` |
-
-## `ratio`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-ratio` | `--ratio` | its component | `16` |
-
-## `resizer`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-resizer-bg-color` | `--resizer-bg-color` | its component | `var(--outline-color)` |
 | `--nldesign-nc-resizer-shift` | `--resizer-shift` | its component | `calc( 0px - (var(--outline-width) + var(--resizer-size)) / …` |
 | `--nldesign-nc-resizer-size` | `--resizer-size` | its component | `6px` |
-
-## `resource`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-resource-box-size` | `--resource-box-size` | its component | `var(--default-clickable-area)` |
-
-## `resources`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-resources-list-gap` | `--resources-list-gap` | its component | `calc(2 * var(--default-grid-baseline))` |
-
-## `row`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-row-width` | `--row-width` | its component | `calc(var(--icon-preview-size) + var(--item-padding) * 2)` |
-
-## `scrollbar`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-scrollbar-bg-color` | `--scrollbar-bg-color` | its component | `auto` |
 | `--nldesign-nc-scrollbar-color` | `--scrollbar-color` | its component | `auto` |
-
-## `secondary`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-secondary-margin` | `--secondary-margin` | its component | `18px` |
-
-## `separator`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-separator-color` | `--separator-color` | its component | `rgb(0 0 0 / 0.3)` |
-
-## `session`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-session-max-width` | `--session-max-width` | its component | `280px` |
-
-## `sidebar`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-sidebar-narrow-bg-color` | `--sidebar-narrow-bg-color` | its component | `rgb(212 212 215 / 0.9)` |
 | `--nldesign-nc-sidebar-toolbar-bg-color` | `--sidebar-toolbar-bg-color` | its component | `rgb(245 246 247)` |
 | `--nldesign-nc-sidebar-transition-duration` | `--sidebar-transition-duration` | its component | `200ms` |
 | `--nldesign-nc-sidebar-transition-timing-function` | `--sidebar-transition-timing-function` | its component | `ease` |
 | `--nldesign-nc-sidebar-width` | `--sidebar-width` | its component | `200px` |
-
-## `size`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-size` | `--size` | its component | `var(--default-clickable-area)` |
-
-## `spreadHorizontalWrapped`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-spreadHorizontalWrapped-margin-LR` | `--spreadHorizontalWrapped-margin-LR` | its component | `-3.5px` |
-
-## `sticky`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-sticky-column-z-index` | `--sticky-column-z-index` | its component | `calc(var(--vs-dropdown-z-index) + 1)` |
-
-## `table`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-table-border-radius` | `--table-border-radius` | its component | `var(--border-radius)` |
-| `--nldesign-nc-table-color-background` | `--table-color-background` | its component | `var(--color-main-background)` |
-| `--nldesign-nc-table-color-background-hover` | `--table-color-background-hover` | its component | `var(--color-primary-element-light)` |
-| `--nldesign-nc-table-color-border` | `--table-color-border` | its component | `var(--color-border)` |
-| `--nldesign-nc-table-color-heading` | `--table-color-heading` | its component | `var(--color-text-maxcontrast)` |
-| `--nldesign-nc-table-color-heading-border` | `--table-color-heading-border` | its component | `var(--color-border-dark)` |
-
-## `text`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-text-primary-color` | `--text-primary-color` | its component | `#15141a` |
 | `--nldesign-nc-text-secondary-color` | `--text-secondary-color` | its component | `#5b5b66` |
-
-## `textarea`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-textarea-bg-color` | `--textarea-bg-color` | its component | `white` |
 | `--nldesign-nc-textarea-border-color` | `--textarea-border-color` | its component | `#8f8f9d` |
 | `--nldesign-nc-textarea-fg-color` | `--textarea-fg-color` | its component | `var(--text-secondary-color)` |
-
-## `thumbnail`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-thumbnail-hover-color` | `--thumbnail-hover-color` | its component | `rgb(0 0 0 / 0.1)` |
 | `--nldesign-nc-thumbnail-selected-color` | `--thumbnail-selected-color` | its component | `rgb(0 0 0 / 0.2)` |
-
-## `toggled`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-toggled-btn-bg-color` | `--toggled-btn-bg-color` | its component | `rgb(0 0 0 / 0.3)` |
 | `--nldesign-nc-toggled-btn-color` | `--toggled-btn-color` | its component | `rgb(0 0 0)` |
 | `--nldesign-nc-toggled-hover-active-btn-color` | `--toggled-hover-active-btn-color` | its component | `rgb(0 0 0 / 0.4)` |
 | `--nldesign-nc-toggled-hover-btn-outline` | `--toggled-hover-btn-outline` | its component | `none` |
-
-## `toolbar`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-toolbar-bg-color` | `--toolbar-bg-color` | its component | `rgb(249 249 250)` |
 | `--nldesign-nc-toolbar-border-bottom` | `--toolbar-border-bottom` | its component | `none` |
 | `--nldesign-nc-toolbar-border-color` | `--toolbar-border-color` | its component | `rgb(184 184 184)` |
@@ -825,82 +375,157 @@ An internal token applies in light and dark alike. Give it a value in the dark f
 | `--nldesign-nc-toolbar-icon-bg-color` | `--toolbar-icon-bg-color` | its component | `rgb(0 0 0)` |
 | `--nldesign-nc-toolbar-icon-hover-bg-color` | `--toolbar-icon-hover-bg-color` | its component | `rgb(0 0 0)` |
 | `--nldesign-nc-toolbar-icon-opacity` | `--toolbar-icon-opacity` | its component | `0.7` |
-
-## `toolbarSidebar`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-toolbarSidebar-border-bottom` | `--toolbarSidebar-border-bottom` | its component | `none` |
 | `--nldesign-nc-toolbarSidebar-box-shadow` | `--toolbarSidebar-box-shadow` | its component | `inset calc(-1px * var(--dir-factor)) 0 0 rgb(0 0 0 / 0.25),…` |
-
-## `treeitem`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-treeitem-bg-color` | `--treeitem-bg-color` | its component | `rgb(0 0 0 / 0.15)` |
 | `--nldesign-nc-treeitem-color` | `--treeitem-color` | its component | `rgb(0 0 0 / 0.8)` |
 | `--nldesign-nc-treeitem-hover-color` | `--treeitem-hover-color` | its component | `rgb(0 0 0 / 0.9)` |
 | `--nldesign-nc-treeitem-selected-bg-color` | `--treeitem-selected-bg-color` | its component | `rgb(0 0 0 / 0.25)` |
 | `--nldesign-nc-treeitem-selected-color` | `--treeitem-selected-color` | its component | `rgb(0 0 0 / 0.9)` |
-
-## `unfocus`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
 | `--nldesign-nc-unfocus-outline` | `--unfocus-outline` | its component | `solid var(--outline-width) transparent` |
+| `--nldesign-nc-xfa-focus-outline` | `--xfa-focus-outline` | its component | `auto` |
 
-## `user`
+## Text editor
 
 | Token | Variable | Reaches | Nextcloud's value |
 |---|---|---|---|
+| `--nldesign-nc-background-blur` | `--background-blur` | its component | `blur(10px)` |
+| `--nldesign-nc-callout-background` | `--callout-background` | every reader |  |
+| `--nldesign-nc-callout-border` | `--callout-border` | its component | `var(--color-element-info, #006aa3)` |
+| `--nldesign-nc-level-padding` | `--level-padding` | its component | `12px` |
+| `--nldesign-nc-padding-inline-start` | `--padding-inline-start` | its component | `calc(0 * var(--level-padding))` |
+| `--nldesign-nc-session-max-width` | `--session-max-width` | its component | `280px` |
+| `--nldesign-nc-table-border-radius` | `--table-border-radius` | its component | `var(--border-radius)` |
+| `--nldesign-nc-table-color-background` | `--table-color-background` | its component | `var(--color-main-background)` |
+| `--nldesign-nc-table-color-background-hover` | `--table-color-background-hover` | its component | `var(--color-primary-element-light)` |
+| `--nldesign-nc-table-color-border` | `--table-color-border` | its component | `var(--color-border)` |
+| `--nldesign-nc-table-color-heading` | `--table-color-heading` | its component | `var(--color-text-maxcontrast)` |
+| `--nldesign-nc-table-color-heading-border` | `--table-color-heading-border` | its component | `var(--color-border-dark)` |
+
+## Files
+
+| Token | Variable | Reaches | Nextcloud's value |
+|---|---|---|---|
+| `--nldesign-nc-app-navigation-quota-margin` | `--app-navigation-quota-margin` | its component | `calc((var(--default-clickable-area) - 24px) / 2)` |
+| `--nldesign-nc-cell-margin` | `--cell-margin` | its component | `14px` |
+| `--nldesign-nc-checkbox-container-size` | `--checkbox-container-size` | its component | `44px` |
+| `--nldesign-nc-checkbox-padding` | `--checkbox-padding` | its component | `calc((var(--row-height) - var(--checkbox-size)) / 2)` |
+| `--nldesign-nc-checkbox-size` | `--checkbox-size` | its component | `24px` |
+| `--nldesign-nc-fixed-block-start-position` | `--fixed-block-start-position` | its component | `calc(var(--clickable-area-small) + var(--default-grid-basel…` |
+| `--nldesign-nc-item-padding` | `--item-padding` | its component | `16px` |
+| `--nldesign-nc-max-icon-size` | `--max-icon-size` | its component | `calc(var(--default-clickable-area) - 2 * var(--default-grid…` |
+| `--nldesign-nc-mtime-height` | `--mtime-height` | its component | `calc(var(--font-size-small) + var(--default-grid-baseline))` |
+| `--nldesign-nc-name-height` | `--name-height` | its component | `var(--default-clickable-area)` |
+| `--nldesign-nc-row-width` | `--row-width` | its component | `calc(var(--icon-preview-size) + var(--item-padding) * 2)` |
+
+## Photos
+
+| Token | Variable | Reaches | Nextcloud's value |
+|---|---|---|---|
+| `--nldesign-nc-photos-face-width` | `--photos-face-width` | its component | `128px` |
+| `--nldesign-nc-photos-navigation-height` | `--photos-navigation-height` | every reader |  |
+
+## Teams
+
+| Token | Variable | Reaches | Nextcloud's value |
+|---|---|---|---|
+| `--nldesign-nc-member-list-gap` | `--member-list-gap` | its component | `calc(1.5 * var(--default-grid-baseline))` |
+| `--nldesign-nc-resource-box-size` | `--resource-box-size` | its component | `var(--default-clickable-area)` |
+| `--nldesign-nc-resources-list-gap` | `--resources-list-gap` | its component | `calc(2 * var(--default-grid-baseline))` |
+
+## Nextcloud components
+
+| Token | Variable | Reaches | Nextcloud's value |
+|---|---|---|---|
+| `--nldesign-nc-app-item-circle-size` | `--app-item-circle-size` | its component | `calc(var(--default-grid-baseline) * 10)` |
+| `--nldesign-nc-app-item-col-width` | `--app-item-col-width` | its component | `69px` |
+| `--nldesign-nc-app-item-icon-size` | `--app-item-icon-size` | its component | `22px` |
+| `--nldesign-nc-app-item-row-height` | `--app-item-row-height` | its component | `64px` |
+| `--nldesign-nc-app-navigation-item-child-offset` | `--app-navigation-item-child-offset` | its component | `10px` |
+| `--nldesign-nc-app-navigation-max-width` | `--app-navigation-max-width` | its component | `calc(100vw - (var(--app-navigation-padding) + var(--default…` |
+| `--nldesign-nc-app-navigation-padding` | `--app-navigation-padding` | its component | `calc(var(--default-grid-baseline, 4px) * 2)` |
+| `--nldesign-nc-app-settings-section-content-gap` | `--app-settings-section-content-gap` | its component | `calc(6 * var(--default-grid-baseline))` |
+| `--nldesign-nc-app-settings-section-text-offset` | `--app-settings-section-text-offset` | its component | `var(--form-element-label-offset)` |
+| `--nldesign-nc-app-sidebar-close-button-offset` | `--app-sidebar-close-button-offset` | its component | `calc(var(--default-clickable-area) + var(--app-sidebar-padd…` |
+| `--nldesign-nc-app-sidebar-padding` | `--app-sidebar-padding` | its component | `calc(var(--default-grid-baseline, 4px) * 2)` |
+| `--nldesign-nc-app-sidebar-width` | `--app-sidebar-width` | its component | `clamp(300px, 27vw, 500px)` |
+| `--nldesign-nc-assistant-button-background-color` | `--assistant-button-background-color` | its component | `var(--color-background-assistant, #F6F5FF)` |
+| `--nldesign-nc-assistant-button-color` | `--assistant-button-color` | its component | `var(--color-element-assistant, linear-gradient(238deg, #A56…` |
+| `--nldesign-nc-auto-complete-result-avatar-size` | `--auto-complete-result-avatar-size` | its component | `var(--default-clickable-area)` |
+| `--nldesign-nc-auto-complete-result-status-icon-position` | `--auto-complete-result-status-icon-position` | its component | `calc(var(--auto-complete-result-avatar-size) / 2 * (1 - 1 /…` |
+| `--nldesign-nc-auto-complete-result-status-icon-size` | `--auto-complete-result-status-icon-size` | its component | `clamp(14px, var(--auto-complete-result-avatar-size) * .4, 1…` |
+| `--nldesign-nc-avatar-cell-width` | `--avatar-cell-width` | its component | `48px` |
+| `--nldesign-nc-avatar-status-icon-position` | `--avatar-status-icon-position` | its component | `min(0px, (var(--avatar-status-size-orbital) - var(--avatar-…` |
+| `--nldesign-nc-avatar-status-size` | `--avatar-status-size` | its component | `max(var(--avatar-status-size-orbital), var(--avatar-status-…` |
+| `--nldesign-nc-avatar-status-size-min` | `--avatar-status-size-min` | its component | `var(--font-size-small)` |
+| `--nldesign-nc-avatar-status-size-orbital` | `--avatar-status-size-orbital` | its component | `calc(var(--avatar-size) * (1 - 1 / sqrt(2)))` |
+| `--nldesign-nc-checkbox-radio-switch--border-radius` | `--checkbox-radio-switch--border-radius` | its component | `var(--border-radius-element)` |
+| `--nldesign-nc-checkbox-radio-switch--border-radius-outer` | `--checkbox-radio-switch--border-radius-outer` | its component | `calc(var(--checkbox-radio-switch--border-radius) + 2px)` |
+| `--nldesign-nc-chip-radius` | `--chip-radius` | its component | `calc(var(--chip-size) / 2)` |
+| `--nldesign-nc-chip-size` | `--chip-size` | its component | `24px` |
+| `--nldesign-nc-contenteditable-block-offset` | `--contenteditable-block-offset` | its component | `calc(2 * var(--default-grid-baseline))` |
+| `--nldesign-nc-contenteditable-inline-end-offset` | `--contenteditable-inline-end-offset` | its component | `calc(2 * var(--default-grid-baseline))` |
+| `--nldesign-nc-contenteditable-inline-start-offset` | `--contenteditable-inline-start-offset` | its component | `calc(2 * var(--default-grid-baseline))` |
+| `--nldesign-nc-counter-bubble-height` | `--counter-bubble-height` | its component | `22px` |
+| `--nldesign-nc-figure-size` | `--figure-size` | its component | `calc(52px + var(--app-sidebar-padding))` |
+| `--nldesign-nc-form-element-label-offset` | `--form-element-label-offset` | its component | `calc(var(--border-radius-element) + var(--default-grid-base…` |
+| `--nldesign-nc-form-element-label-padding` | `--form-element-label-padding` | its component | `calc(var(--form-element-label-offset) - var(--nc-form-box-i…` |
+| `--nldesign-nc-form-group-content-gap` | `--form-group-content-gap` | its component | `calc(2 * var(--default-grid-baseline))` |
+| `--nldesign-nc-input-border-box-shadow` | `--input-border-box-shadow` | its component | `var(--input-border-box-shadow-light)` |
+| `--nldesign-nc-input-border-box-shadow-dark` | `--input-border-box-shadow-dark` | its component | `0 1px var(--vs-border-color), 0 0 0 1px color-mix(in srgb, …` |
+| `--nldesign-nc-input-border-box-shadow-light` | `--input-border-box-shadow-light` | its component | `0 -1px var(--vs-border-color), 0 0 0 1px color-mix(in srgb,…` |
+| `--nldesign-nc-input-border-radius` | `--input-border-radius` | its component | `var(--border-radius-element)` |
+| `--nldesign-nc-input-border-width-offset` | `--input-border-width-offset` | its component | `calc(var(--border-width-input-focused, 2px) - var(--border-…` |
+| `--nldesign-nc-input-label-font-size` | `--input-label-font-size` | its component | `var(--default-font-size)` |
+| `--nldesign-nc-input-padding-end` | `--input-padding-end` | its component | `var(--border-radius-element)` |
+| `--nldesign-nc-input-padding-start` | `--input-padding-start` | its component | `var(--border-radius-element)` |
+| `--nldesign-nc-list-item-border-radius` | `--list-item-border-radius` | its component | `var(--border-radius-element, 32px)` |
+| `--nldesign-nc-list-item-height` | `--list-item-height` | its component | `2lh` |
+| `--nldesign-nc-list-item-padding` | `--list-item-padding` | its component | `var(--default-grid-baseline)` |
+| `--nldesign-nc-nc-form-box-item-border-width` | `--nc-form-box-item-border-width` | its component | `1px` |
+| `--nldesign-nc-nc-form-box-item-min-height` | `--nc-form-box-item-min-height` | its component | `40px` |
+| `--nldesign-nc-note-card-icon-size` | `--note-card-icon-size` | its component | `20px` |
+| `--nldesign-nc-note-card-padding` | `--note-card-padding` | its component | `calc(2 * var(--default-grid-baseline))` |
+| `--nldesign-nc-open-background-color` | `--open-background-color` | its component | `var(--color-background-hover, $action-background-hover)` |
+| `--nldesign-nc-radio-group-button--background-color` | `--radio-group-button--background-color` | its component | `var(--color-primary-element-light)` |
+| `--nldesign-nc-radio-group-button--background-color-hover` | `--radio-group-button--background-color-hover` | its component | `var(--color-primary-element-light-hover)` |
+| `--nldesign-nc-radio-group-button--border-radius` | `--radio-group-button--border-radius` | its component | `var(--border-radius-small)` |
+| `--nldesign-nc-radio-group-button--border-width` | `--radio-group-button--border-width` | its component | `1px` |
+| `--nldesign-nc-radio-group-button--color` | `--radio-group-button--color` | its component | `var(--color-primary-element-light-text)` |
+| `--nldesign-nc-radio-group-button--icon-size` | `--radio-group-button--icon-size` | its component | `calc(var(--default-clickable-area) - 4px)` |
+| `--nldesign-nc-radio-group-button--padding` | `--radio-group-button--padding` | its component | `1px` |
+| `--nldesign-nc-secondary-margin` | `--secondary-margin` | its component | `18px` |
+| `--nldesign-nc-size` | `--size` | its component | `var(--default-clickable-area)` |
 | `--nldesign-nc-user-status-color-away` | `--user-status-color-away` | its component | `#C88800` |
 | `--nldesign-nc-user-status-color-busy` | `--user-status-color-busy` | its component | `#DB0606` |
 | `--nldesign-nc-user-status-color-offline` | `--user-status-color-offline` | its component | `#6B6B6B` |
 
-## `vs`
+## Other variables
 
 | Token | Variable | Reaches | Nextcloud's value |
 |---|---|---|---|
-| `--nldesign-nc-vs-actions-padding` | `--vs-actions-padding` | its component | `0 8px 0 4px` |
-| `--nldesign-nc-vs-border-style` | `--vs-border-style` | its component | `solid` |
-| `--nldesign-nc-vs-border-width` | `--vs-border-width` | its component | `var(--border-width-input, 2px) !important` |
-| `--nldesign-nc-vs-colors--dark` | `--vs-colors--dark` | its component | `#333` |
-| `--nldesign-nc-vs-colors--darkest` | `--vs-colors--darkest` | its component | `rgba(0,0,0,.15)` |
-| `--nldesign-nc-vs-colors--light` | `--vs-colors--light` | its component | `rgba(60,60,60,.5)` |
-| `--nldesign-nc-vs-colors--lightest` | `--vs-colors--lightest` | its component | `rgba(60,60,60,.26)` |
-| `--nldesign-nc-vs-controls--deselect-text-shadow` | `--vs-controls--deselect-text-shadow` | its component | `0 1px 0 #fff` |
-| `--nldesign-nc-vs-controls--spinner-size` | `--vs-controls--spinner-size` | every reader |  |
-| `--nldesign-nc-vs-controls-color` | `--vs-controls-color` | its component | `var(--color-main-text)` |
-| `--nldesign-nc-vs-controls-size` | `--vs-controls-size` | its component | `1` |
-| `--nldesign-nc-vs-disabled-bg` | `--vs-disabled-bg` | its component | `var(--color-background-hover)` |
-| `--nldesign-nc-vs-disabled-cursor` | `--vs-disabled-cursor` | its component | `not-allowed` |
-| `--nldesign-nc-vs-dropdown-bg` | `--vs-dropdown-bg` | its component | `var(--color-main-background)` |
-| `--nldesign-nc-vs-dropdown-box-shadow` | `--vs-dropdown-box-shadow` | its component | `0px 2px 2px 0px var(--color-box-shadow)` |
-| `--nldesign-nc-vs-dropdown-max-height` | `--vs-dropdown-max-height` | its component | `350px` |
-| `--nldesign-nc-vs-dropdown-min-width` | `--vs-dropdown-min-width` | its component | `160px` |
-| `--nldesign-nc-vs-dropdown-option--deselect-bg` | `--vs-dropdown-option--deselect-bg` | its component | `var(--color-error)` |
-| `--nldesign-nc-vs-dropdown-option--deselect-color` | `--vs-dropdown-option--deselect-color` | its component | `#fff` |
-| `--nldesign-nc-vs-dropdown-option--kb-focus-box-shadow` | `--vs-dropdown-option--kb-focus-box-shadow` | its component | `inset 0px 0px 0px 2px var(--vs-border-color)` |
-| `--nldesign-nc-vs-dropdown-option-color` | `--vs-dropdown-option-color` | its component | `var(--vs-dropdown-color)` |
-| `--nldesign-nc-vs-dropdown-option-padding` | `--vs-dropdown-option-padding` | its component | `8px 20px` |
-| `--nldesign-nc-vs-dropdown-z-index` | `--vs-dropdown-z-index` | its component | `9999` |
-| `--nldesign-nc-vs-font-size` | `--vs-font-size` | its component | `var(--default-font-size)` |
-| `--nldesign-nc-vs-line-height` | `--vs-line-height` | its component | `var(--default-line-height)` |
-| `--nldesign-nc-vs-search-input-bg` | `--vs-search-input-bg` | its component | `var(--color-main-background)` |
-| `--nldesign-nc-vs-search-input-color` | `--vs-search-input-color` | its component | `var(--color-main-text)` |
-| `--nldesign-nc-vs-search-input-placeholder-color` | `--vs-search-input-placeholder-color` | its component | `var(--color-text-maxcontrast)` |
-| `--nldesign-nc-vs-selected-bg` | `--vs-selected-bg` | its component | `var(--color-background-hover)` |
-| `--nldesign-nc-vs-selected-border-color` | `--vs-selected-border-color` | its component | `var(--vs-border-color)` |
-| `--nldesign-nc-vs-selected-border-style` | `--vs-selected-border-style` | its component | `var(--vs-border-style)` |
-| `--nldesign-nc-vs-selected-border-width` | `--vs-selected-border-width` | its component | `var(--vs-border-width)` |
-| `--nldesign-nc-vs-state-disabled-bg` | `--vs-state-disabled-bg` | its component | `var(--color-background-hover)` |
-| `--nldesign-nc-vs-state-disabled-color` | `--vs-state-disabled-color` | its component | `var(--color-text-maxcontrast)` |
-| `--nldesign-nc-vs-state-disabled-cursor` | `--vs-state-disabled-cursor` | its component | `not-allowed` |
-| `--nldesign-nc-vs-transition-duration` | `--vs-transition-duration` | its component | `0ms` |
-| `--nldesign-nc-vs-transition-timing-function` | `--vs-transition-timing-function` | its component | `cubic-bezier(1,-.115,.975,.855)` |
-
-## `xfa`
-
-| Token | Variable | Reaches | Nextcloud's value |
-|---|---|---|---|
-| `--nldesign-nc-xfa-focus-outline` | `--xfa-focus-outline` | its component | `auto` |
+| `--nldesign-nc-account-menu-outline` | `--account-menu-outline` | its component | `var(--border-width-input) solid color-mix(in srgb, var(--co…` |
+| `--nldesign-nc-backdrop-color` | `--backdrop-color` | its component | `0, 0, 0` |
+| `--nldesign-nc-button-inner-size` | `--button-inner-size` | its component | `calc(var(--button-size) - 4px)` |
+| `--nldesign-nc-button-padding` | `--button-padding` | its component | `var(--default-grid-baseline) var(--button-padding-default)` |
+| `--nldesign-nc-button-padding-default` | `--button-padding-default` | its component | `calc(var(--default-grid-baseline) + var(--button-radius))` |
+| `--nldesign-nc-button-radius` | `--button-radius` | its component | `calc(var(--avatar-size) / 2)` |
+| `--nldesign-nc-button-size` | `--button-size` | its component | `calc(var(--default-clickable-area) - 2 * var(--border-width…` |
+| `--nldesign-nc-cell-padding` | `--cell-padding` | its component | `7px` |
+| `--nldesign-nc-cell-width` | `--cell-width` | its component | `200px` |
+| `--nldesign-nc-cell-width-groups` | `--cell-width-groups` | its component | `380px` |
+| `--nldesign-nc-cell-width-large` | `--cell-width-large` | its component | `300px` |
+| `--nldesign-nc-clickable-area` | `--clickable-area` | its component | `var(--default-clickable-area)` |
+| `--nldesign-nc-color-header` | `--color-header` | its component | `rgba(24, 24, 24, 1)` |
+| `--nldesign-nc-color-norder-error` | `--color-norder-error` | every reader |  |
+| `--nldesign-nc-color-primary-element-extra-light` | `--color-primary-element-extra-light` | its component | `hsl(from var(--color-primary-element-light) h s calc(l * 1.…` |
+| `--nldesign-nc-color-primary-element-extra-light-hover` | `--color-primary-element-extra-light-hover` | its component | `hsl(from var(--color-primary-element-light-hover) h s calc(…` |
+| `--nldesign-nc-dark-link-color` | `--dark-link-color` | its component | `#249ee8` |
+| `--nldesign-nc-dark-text-color` | `--dark-text-color` | its component | `#c1c1c1` |
+| `--nldesign-nc-gap` | `--gap` | its component | `30px` |
+| `--nldesign-nc-min-size` | `--min-size` | its component | `32px` |
+| `--nldesign-nc-nav-tint` | `--nav-tint` | its component | `hsl(from var(--color-primary-element-light) h s calc(l*1.04…` |
+| `--nldesign-nc-nav-tint-strong` | `--nav-tint-strong` | its component | `var(--color-primary-element-light)` |
+| `--nldesign-nc-padding` | `--padding` | its component | `calc((var(--default-clickable-area) - 20px) / 2 + var(--def…` |
+| `--nldesign-nc-ratio` | `--ratio` | its component | `16` |
+| `--nldesign-nc-sticky-column-z-index` | `--sticky-column-z-index` | its component | `calc(var(--vs-dropdown-z-index) + 1)` |

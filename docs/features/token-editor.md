@@ -10,7 +10,11 @@ The **Custom Token Overrides** section in the admin settings lets you fine-tune 
 
 The token editor is located in the **Thematiq** section of the Appearance admin settings. It consists of:
 
-- **4 category tabs** grouping the editable tokens by area
+- **A count** of the editable tokens: <!-- editable-count -->696<!-- /editable-count --> on this release
+- **A search field** that finds any token by its label, its CSS name or its component
+- **4 category tabs** grouping Nextcloud's theme tokens by area
+- **Component groups** for the variables inside Nextcloud's components and the Conduction apps, collapsed until you open one
+- **An Advanced group** for the layout variables, with a warning
 - **Per-row editing** with a color picker, hex input field, and reset button
 - **Custom value badge** indicating which tokens have been manually overridden
 - **Save overrides** button to persist all current values
@@ -23,7 +27,7 @@ Tokens are grouped into 4 tabs. Click a tab to switch between categories. The ac
 
 The tokens listed below are Nextcloud's own base tokens. They are locked until you tick **Also edit Nextcloud's base tokens** above the tabs and confirm the warning: each one is read by far more of Nextcloud than any single component, so changing it changes much more than the part you are looking at. To change one component, use that component's own rows in the preview instead. The base tokens lock again when you untick the box or leave the page.
 
-### Login Page & Branding (12 tokens)
+### Login Page & Branding
 
 Controls the primary brand colors used throughout the interface — buttons, links, highlights, and the login page header.
 
@@ -44,7 +48,7 @@ Controls the primary brand colors used throughout the interface — buttons, lin
 | Primary element light text | `--color-primary-element-light-text` | Text on light element backgrounds |
 | Primary element light hover | `--color-primary-element-light-hover` | Hover state for light elements |
 
-### Content Area (18 tokens)
+### Content Area
 
 Controls background colors, borders, and border radii — the structural appearance of the interface.
 
@@ -52,7 +56,7 @@ Controls background colors, borders, and border radii — the structural appeara
 
 Covers: main background, dark/darker backgrounds, placeholder colors, border colors, border radius values (small, element, body container), scrollbar color.
 
-### Buttons & Status (15 tokens)
+### Buttons & Status
 
 Controls error, warning, success, and info state colors — used in alerts, status badges, validation messages, and notification banners.
 
@@ -60,7 +64,7 @@ Controls error, warning, success, and info state colors — used in alerts, stat
 
 Covers: error color/hover/RGB/element/border, warning color/RGB/element, success color/RGB/element/border, info color/element, and favorite star color.
 
-### Typography (8 tokens)
+### Typography
 
 Controls text colors and the font family stack.
 
@@ -77,6 +81,18 @@ Controls text colors and the font family stack.
 | Text warning | `--color-text-warning` | Warning state text color |
 | Font family | `--font-face` | Full font family stack |
 
+## Search and component groups
+
+Type in **Search tokens** to filter every tab and group at once. The search matches a token's label, its CSS name and the heading of its group, in your language. A group with a match opens; a group without one is hidden. Clear the field and the groups you had open come back.
+
+Below the tabs, **Component variables** lists the variables inside Nextcloud's components and the Conduction apps: the date picker, the select box, the media player, code highlighting, the PDF viewer and more. Each group shows how many tokens it holds. Its rows are built when you open it, so the settings page stays quick to load.
+
+A component row is labelled with the variable's own name, such as `--dp-hover-color`, the name you find in Nextcloud's CSS. [The component variables page](../reference/internal-tokens.md) lists them all.
+
+### Advanced
+
+The **Advanced** group holds the 13 variables that size Nextcloud's layout: the header height, the navigation and sidebar widths, the mobile breakpoint, the grid baseline and the clickable areas. It starts collapsed. Opening it shows a warning first: a wrong value here breaks the layout, not only the look.
+
 ## Token Row Layout
 
 Each token row contains:
@@ -85,6 +101,8 @@ Each token row contains:
 - **CSS variable** — the actual CSS custom property name (e.g., `--color-primary`)
 - **Color picker** — click to open a native color picker (color tokens only)
 - **Hex input** — type a hex value directly (e.g., `#c00000`)
+- **Nextcloud's value**: what Nextcloud itself gives this variable in your current theme, where it is known, so you see what you replace
+- **Note**: a short remark from the variable inventory, where there is one
 - **Reset button** (↺) — undoes unsaved edits: puts back the value you last saved, or the token set's value if you never saved one
 
 The color picker and hex input are always in sync — changing one updates the other instantly.
@@ -138,6 +156,8 @@ Nextcloud's own theming has no transparency. When a token set with a transparent
 The brand colours (Nextcloud's own colour variables) have a second line, **Dark**. Leave it empty and thematiq derives a dark value from the light one, the same way it derives the dark variant of a token set. The empty field shows that derived value as its placeholder.
 
 Type your own value to use it instead. Both kinds of dark user see the same colour: a user whose system is set to dark, and a user who chose the dark theme in their Nextcloud settings.
+
+The theme colours Nextcloud varies per theme, such as the search highlight, and the colour rows of the component groups work differently. Nothing is derived for them. Leave **Dark** empty and dark mode keeps Nextcloud's own dark value, which the placeholder shows. Type a value to use yours in dark.
 
 ### Animation speed and easing
 

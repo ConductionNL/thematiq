@@ -138,9 +138,6 @@ function matches(url, match) {
 	return match instanceof RegExp ? match.test(url) : url.indexOf(match) !== -1
 }
 
-/** The token set commit endpoint, and only that one. */
-const COMMIT = /\/settings\/tokenset$/
-
 /**
  * Put an answer ahead of the defaults.
  *
@@ -240,12 +237,6 @@ function row(name) {
 function type(input, value) {
 	input.value = value
 	input.dispatchEvent(new window.Event('input', { bubbles: true }))
-}
-
-/** Tick or untick a checkbox and fire `change`. */
-function tick(box, checked) {
-	box.checked = checked
-	box.dispatchEvent(new window.Event('change', { bubbles: true }))
 }
 
 /** Click an element. */
