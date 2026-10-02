@@ -1374,6 +1374,23 @@
 		 * matching would keep the previous set's logo (the manifest has none)
 		 * and pin a stale primary.
 		 */
+		/**
+		 * The note next to a colour core gets as the blend of a translucent one.
+		 *
+		 * @param {string|undefined} original The set's own value, when it was translucent.
+		 * @return {string} The note, or '' for an opaque colour.
+		 */
+		function opaqueNote(original) {
+			if (!original) {
+				return ''
+			}
+			return t(
+				'thematiq',
+				"The set says {original}. Nextcloud's own theming has no transparency. It gets this colour instead.",
+				{ original: original },
+			)
+		}
+
 		function computeThemingPlan(tokenSetData, currentTheming) {
 			var none = { mode: 'none', diffs: [], payload: null }
 			if (!tokenSetData || !currentTheming) {
@@ -1456,6 +1473,7 @@
 					kind: 'color',
 					current: currentTheming.primary_color,
 					proposed: proposed.primary_color,
+					proposedNote: opaqueNote(proposed.primary_color_original),
 				})
 				payload.primary_color = proposed.primary_color
 			}
@@ -1471,6 +1489,7 @@
 					kind: 'color',
 					current: currentTheming.background_color,
 					proposed: proposed.background_color,
+					proposedNote: opaqueNote(proposed.background_color_original),
 				})
 				payload.background_color = proposed.background_color
 			}
@@ -1936,6 +1955,7 @@
 					+ '</td>'
 					+ '<td>'
 					+ proposedDisplay
+					+ (diff.proposedNote ? ' ' + escapeHtml(diff.proposedNote) : '')
 					+ '</td>'
 					+ '</tr>'
 			})
@@ -2588,6 +2608,13 @@
 
 		// Holds the in-memory state of the editor: token name → { resolved, custom, current, isDirty }
 		var tokenEditorState = {}
+
+		/**
+		 * The administrator's own dark value per colour token, and the value the
+		 * server derives when there is none (the field's placeholder).
+		 */
+		var tokenEditorDark = {}
+		var tokenEditorDarkDerived = {}
 		// Registry from server: token name → { tab, type, label }
 		var tokenRegistry = {}
 		// Tab labels from server: tab id → display label
@@ -2674,7 +2701,8 @@
 					tokenRegistry = data.registry || {}
 					tokenTabLabels = data.tabs || {}
 					var overrides = data.overrides || {}
-
+					tokenEditorDark = Object.assign({}, data.darkOverrides || {})
+					tokenEditorDarkDerived = data.darkDerived || {}
 					// Read resolved values from the live CSS stack.
 					var rootStyle = getComputedStyle(document.documentElement)
 					var bodyStyle = getComputedStyle(document.body)
@@ -3003,8 +3031,17 @@
 			// its note-card fills from one), so it gets the same picker as a
 			// colour and the picker writes the triplet — see wireTokenRows().
 			var format = meta.type === 'rgb' ? ' data-format="rgb"' : ''
-			if (meta.type === 'color' || meta.type === 'rgb') {
-				var pickerVal = normaliseColorForPicker(displayVal)
+			if (meta.type === 'duration') {
+				inputHtml = buildDurationInput(name, meta, displayVal, lockedAttr)
+			} else if (meta.type === 'easing') {
+				inputHtml = buildEasingInput(name, meta, displayVal, lockedAttr)
+			} else if (meta.type === 'color' || meta.type === 'rgb') {
+				var parts =
+					meta.type === 'color' && typeof TT.splitAlpha === 'function'
+						? TT.splitAlpha(displayVal)
+						: null
+				var pickerVal =
+					parts !== null ? parts.hex : normaliseColorForPicker(displayVal)
 				inputHtml =
 					'<div class="nldesign-color-input-wrap">'
 					+ '<input type="color" class="nldesign-color-picker" aria-label="'
@@ -3029,7 +3066,13 @@
 					+ '"'
 					+ lockedAttr
 					+ '>'
+					+ (meta.type === 'color'
+						? buildAlphaInput(name, meta, displayVal, parts, lockedAttr)
+						: '')
 					+ '</div>'
+					+ (meta.type === 'color' && meta.group === 'brand'
+						? buildDarkInput(name, meta, lockedAttr)
+						: '')
 			} else {
 				inputHtml =
 					'<input type="text" class="nldesign-text-input" aria-label="'
@@ -3072,6 +3115,224 @@
 				+ '"'
 				+ (locked ? ' disabled' : '')
 				+ '>↺</button>'
+				+ (meta.type === 'easing' ? buildMotionPreview() : '')
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * The opacity controls of a colour row: a checkerboard swatch, a range and a number field.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @param {string} value The shown value.
+		 * @param {{hex: string, alpha: number}|null} parts The value split by splitAlpha().
+		 * @param {string} lockedAttr The disabled attributes of a locked row.
+		 * @return {string} HTML.
+		 */
+		function buildAlphaInput(name, meta, value, parts, lockedAttr) {
+			var alpha = parts !== null ? parts.alpha : 100
+			var label = meta.label || name
+			return (
+				'<span class="nldesign-color-swatch" aria-hidden="true"><span style="background:'
+				+ escapeHtml(value)
+				+ '"></span></span>'
+				+ '<input type="range" class="nldesign-color-alpha" min="0" max="100" step="1" data-token="'
+				+ escapeHtml(name)
+				+ '" value="'
+				+ alpha
+				+ '" aria-label="'
+				+ escapeHtml(t('thematiq', 'Opacity of {label}', { label: label }))
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ '<input type="number" class="nldesign-color-alpha-number" min="0" max="100" step="1" data-token="'
+				+ escapeHtml(name)
+				+ '" value="'
+				+ alpha
+				+ '" aria-label="'
+				+ escapeHtml(
+					t('thematiq', 'Opacity of {label} in percent', { label: label }),
+				)
+				+ '"'
+				+ lockedAttr
+				+ '>'
+			)
+		}
+
+		/**
+		 * The "Dark" line of a colour row: empty means derived, shown as the placeholder.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @param {string} lockedAttr The disabled attributes of a locked row.
+		 * @return {string} HTML.
+		 */
+		function buildDarkInput(name, meta, lockedAttr) {
+			var placeholder =
+				tokenEditorDarkDerived[name]
+				|| t('thematiq', 'Derived from the light value')
+			return (
+				'<div class="nldesign-token-dark">'
+				+ '<span class="nldesign-token-dark-label" aria-hidden="true">'
+				+ escapeHtml(t('thematiq', 'Dark'))
+				+ '</span>'
+				+ '<input type="text" class="nldesign-dark-text" data-token="'
+				+ escapeHtml(name)
+				+ '" value="'
+				+ escapeHtml(tokenEditorDark[name] || '')
+				+ '" placeholder="'
+				+ escapeHtml(placeholder)
+				+ '" aria-label="'
+				+ escapeHtml(
+					t('thematiq', 'Dark value of {label}', {
+						label: meta.label || name,
+					}),
+				)
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * A duration row: a number field and a unit select.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @param {string} value The shown value, such as `150ms`.
+		 * @param {string} lockedAttr The disabled attributes of a locked row.
+		 * @return {string} HTML.
+		 */
+		function buildDurationInput(name, meta, value, lockedAttr) {
+			var match = /^\s*([0-9.]+)\s*(ms|s)\s*$/.exec(value || '')
+			var amount = match !== null ? match[1] : ''
+			var unit = match !== null ? match[2] : 'ms'
+			var label = meta.label || name
+			return (
+				'<div class="nldesign-duration-input">'
+				+ '<input type="number" class="nldesign-duration-number" min="0" step="any" data-token="'
+				+ escapeHtml(name)
+				+ '" value="'
+				+ escapeHtml(amount)
+				+ '" aria-label="'
+				+ escapeHtml(label)
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ '<select class="nldesign-duration-unit" data-token="'
+				+ escapeHtml(name)
+				+ '" aria-label="'
+				+ escapeHtml(t('thematiq', 'Unit of {label}', { label: label }))
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ ['ms', 's']
+					.map(function (u) {
+						return (
+							'<option value="'
+							+ u
+							+ '"'
+							+ (u === unit ? ' selected' : '')
+							+ '>'
+							+ u
+							+ '</option>'
+						)
+					})
+					.join('')
+				+ '</select>'
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * An easing row: the five keywords and "Custom curve", which opens four number fields.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @param {string} value The shown value.
+		 * @param {string} lockedAttr The disabled attributes of a locked row.
+		 * @return {string} HTML.
+		 */
+		function buildEasingInput(name, meta, value, lockedAttr) {
+			var curve = /^cubic-bezier\(([^)]*)\)$/.exec((value || '').trim())
+			var points = curve !== null ? curve[1].split(',') : ['', '', '', '']
+			var selected = curve !== null ? 'custom' : (value || 'ease').trim()
+			var label = meta.label || name
+			var options = [
+				['linear', 'linear'],
+				['ease', 'ease'],
+				['ease-in', 'ease-in'],
+				['ease-out', 'ease-out'],
+				['ease-in-out', 'ease-in-out'],
+				['custom', t('thematiq', 'Custom curve')],
+			]
+			return (
+				'<div class="nldesign-easing-input">'
+				+ '<select class="nldesign-easing-select" data-token="'
+				+ escapeHtml(name)
+				+ '" aria-label="'
+				+ escapeHtml(label)
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ options
+					.map(function (o) {
+						return (
+							'<option value="'
+							+ o[0]
+							+ '"'
+							+ (o[0] === selected ? ' selected' : '')
+							+ '>'
+							+ escapeHtml(o[1])
+							+ '</option>'
+						)
+					})
+					.join('')
+				+ '</select>'
+				+ '<span class="nldesign-easing-custom"'
+				+ (selected === 'custom' ? '' : ' hidden')
+				+ '>'
+				+ ['x1', 'y1', 'x2', 'y2']
+					.map(function (point, i) {
+						return (
+							'<input type="number" step="0.01" class="nldesign-easing-point" data-token="'
+							+ escapeHtml(name)
+							+ '" value="'
+							+ escapeHtml((points[i] || '').trim())
+							+ '" aria-label="'
+							+ escapeHtml(
+								t('thematiq', '{point} of the curve of {label}', {
+									point: point,
+									label: label,
+								}),
+							)
+							+ '"'
+							+ lockedAttr
+							+ '>'
+						)
+					})
+					.join('')
+				+ '</span>'
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * The motion preview: a block that moves with the chosen duration and easing,
+		 * and stays still, showing the values as text, under reduced motion.
+		 *
+		 * @return {string} HTML.
+		 */
+		function buildMotionPreview() {
+			return (
+				'<div class="nldesign-motion-preview">'
+				+ '<button type="button" class="nldesign-btn nldesign-btn--small nldesign-motion-play">'
+				+ escapeHtml(t('thematiq', 'Preview motion'))
+				+ '</button>'
+				+ '<span class="nldesign-motion-track" aria-hidden="true"><span class="nldesign-motion-block"></span></span>'
+				+ '<span class="nldesign-motion-readout" role="status" aria-live="polite"></span>'
 				+ '</div>'
 			)
 		}
@@ -3117,6 +3378,230 @@
 		}
 
 		/**
+		 * Move a colour row's picker and opacity controls to a typed value they can show.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @param {string} name The token.
+		 * @param {string} value The typed value.
+		 * @return {void}
+		 */
+		function syncAlpha(container, name, value) {
+			var parts =
+				typeof TT.splitAlpha === 'function' ? TT.splitAlpha(value) : null
+			if (parts === null) {
+				return
+			}
+			container
+				.querySelectorAll(
+					'.nldesign-color-alpha[data-token="'
+						+ name
+						+ '"], .nldesign-color-alpha-number[data-token="'
+						+ name
+						+ '"]',
+				)
+				.forEach(function (field) {
+					field.value = String(parts.alpha)
+				})
+			var picker = container.querySelector(
+				'.nldesign-color-picker[data-token="' + name + '"]',
+			)
+			if (picker !== null && picker.dataset.format !== 'rgb') {
+				picker.value = parts.hex
+			}
+		}
+
+		/**
+		 * Set a typed row's value from its controls: preview, mark unsaved.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @param {string} name The token.
+		 * @param {string} value The value.
+		 * @return {void}
+		 */
+		function setTypedValue(container, name, value) {
+			applyLivePreview(name, value)
+			markDirty(name, value, container)
+		}
+
+		/**
+		 * Wire the opacity, dark, duration, easing and motion preview controls.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @return {void}
+		 */
+		function wireTypedRows(container) {
+			container
+				.querySelectorAll(
+					'.nldesign-color-alpha, .nldesign-color-alpha-number',
+				)
+				.forEach(function (field) {
+					field.addEventListener('input', function () {
+						var name = field.dataset.token
+						var picker = container.querySelector(
+							'.nldesign-color-picker[data-token="' + name + '"]',
+						)
+						var text = container.querySelector(
+							'.nldesign-color-text[data-token="' + name + '"]',
+						)
+						container
+							.querySelectorAll(
+								'.nldesign-color-alpha[data-token="'
+									+ name
+									+ '"], .nldesign-color-alpha-number[data-token="'
+									+ name
+									+ '"]',
+							)
+							.forEach(function (other) {
+								other.value = field.value
+							})
+						if (picker === null || typeof TT.joinAlpha !== 'function') {
+							return
+						}
+						var value = TT.joinAlpha(picker.value, field.value)
+						if (text !== null) {
+							text.value = value
+						}
+						setTypedValue(container, name, value)
+					})
+				})
+
+			container
+				.querySelectorAll('.nldesign-dark-text')
+				.forEach(function (field) {
+					field.addEventListener('input', function () {
+						var name = field.dataset.token
+						tokenEditorDark[name] = field.value.trim()
+						var state = tokenEditorState[name]
+						markDirty(name, state ? state.current : '', container)
+					})
+				})
+
+			function durationOf(name) {
+				var number = container.querySelector(
+					'.nldesign-duration-number[data-token="' + name + '"]',
+				)
+				var unit = container.querySelector(
+					'.nldesign-duration-unit[data-token="' + name + '"]',
+				)
+				if (number === null || unit === null || number.value.trim() === '') {
+					return
+				}
+				setTypedValue(container, name, number.value.trim() + unit.value)
+			}
+			container
+				.querySelectorAll(
+					'.nldesign-duration-number, .nldesign-duration-unit',
+				)
+				.forEach(function (field) {
+					field.addEventListener('input', function () {
+						durationOf(field.dataset.token)
+					})
+					field.addEventListener('change', function () {
+						durationOf(field.dataset.token)
+					})
+				})
+
+			function easingOf(name) {
+				var select = container.querySelector(
+					'.nldesign-easing-select[data-token="' + name + '"]',
+				)
+				if (select === null) {
+					return
+				}
+				var custom = select.parentNode.querySelector(
+					'.nldesign-easing-custom',
+				)
+				if (custom !== null) {
+					custom.hidden = select.value !== 'custom'
+				}
+				if (select.value !== 'custom') {
+					setTypedValue(container, name, select.value)
+					return
+				}
+				var points = []
+				select.parentNode
+					.querySelectorAll('.nldesign-easing-point')
+					.forEach(function (point) {
+						points.push(point.value.trim())
+					})
+				if (points.indexOf('') === -1) {
+					setTypedValue(
+						container,
+						name,
+						'cubic-bezier(' + points.join(', ') + ')',
+					)
+				}
+			}
+			container
+				.querySelectorAll('.nldesign-easing-select, .nldesign-easing-point')
+				.forEach(function (field) {
+					field.addEventListener('change', function () {
+						easingOf(field.dataset.token)
+					})
+					field.addEventListener('input', function () {
+						easingOf(field.dataset.token)
+					})
+				})
+
+			container
+				.querySelectorAll('.nldesign-motion-play')
+				.forEach(function (btn) {
+					btn.addEventListener('click', function () {
+						var preview = btn.parentNode
+						var block = preview.querySelector('.nldesign-motion-block')
+						var readout = preview.querySelector(
+							'.nldesign-motion-readout',
+						)
+						var quick = tokenEditorState['--animation-quick']
+						var easing = tokenEditorState['--nldesign-animation-easing']
+						var duration = (quick && quick.current) || '100ms'
+						var curve = (easing && easing.current) || 'ease'
+						var reduced =
+							typeof window.matchMedia === 'function'
+							&& window.matchMedia('(prefers-reduced-motion: reduce)')
+								.matches
+						readout.textContent = t(
+							'thematiq',
+							'Duration {duration}, easing {easing}.',
+							{
+								duration: duration,
+								easing: curve,
+							},
+						)
+						if (reduced) {
+							return
+						}
+						block.style.transition =
+							'transform ' + duration + ' ' + curve
+						block.classList.toggle('nldesign-motion-block--moved')
+					})
+				})
+		}
+
+		/**
+		 * The dark values to send: each own dark value, with its colour's light value in
+		 * `overrides` too, because the server keeps a dark value only next to its light one.
+		 *
+		 * @param {Object<string,string>} overrides The light values being written; completed in place.
+		 * @return {Object<string,string>} Token => dark value.
+		 */
+		function collectDarkOverrides(overrides) {
+			var dark = {}
+			Object.keys(tokenEditorDark).forEach(function (name) {
+				var value = (tokenEditorDark[name] || '').trim()
+				var state = tokenEditorState[name]
+				if (value === '' || state === undefined) {
+					return
+				}
+				if (overrides[name] === undefined && state.current.trim() !== '') {
+					overrides[name] = state.current.trim()
+				}
+				dark[name] = value
+			})
+			return dark
+		}
+
+		/**
 		 * Wire event listeners on all token rows inside a container.
 		 */
 		function wireTokenRows(container) {
@@ -3126,6 +3611,12 @@
 					picker.addEventListener('input', function () {
 						var name = picker.dataset.token
 						var value = pickerValue(picker)
+						var alpha = container.querySelector(
+							'.nldesign-color-alpha[data-token="' + name + '"]',
+						)
+						if (alpha !== null && typeof TT.joinAlpha === 'function') {
+							value = TT.joinAlpha(picker.value, alpha.value)
+						}
 						var textField = container.querySelector(
 							'.nldesign-color-text[data-token="' + name + '"]',
 						)
@@ -3149,10 +3640,13 @@
 						if (picker !== null) {
 							syncPicker(picker, value)
 						}
+						syncAlpha(container, name, value)
 						applyLivePreview(name, value)
 						markDirty(name, value, container)
 					})
 				})
+
+			wireTypedRows(container)
 
 			container
 				.querySelectorAll('.nldesign-text-input')
@@ -4150,6 +4644,76 @@
 			})
 		}
 
+		/**
+		 * The refusal of a save in the administrator's language: each token by its label,
+		 * with why its value does not fit. The server names the reason in English.
+		 *
+		 * @param {Object<string,string>} rejected Token => the server's reason.
+		 * @return {string} The message.
+		 */
+		function rejectedMessage(rejected) {
+			var reasons = {
+				'not an editable token': t(
+					'thematiq',
+					'the editor cannot set this token',
+				),
+				'not an allowed value': t('thematiq', 'this value is not allowed'),
+				'not a valid color value': t('thematiq', 'this is not a colour'),
+				'not a valid rgb value': t('thematiq', 'this is not a colour'),
+				'not a valid duration value': t(
+					'thematiq',
+					'use a number with ms or s, up to 5 seconds',
+				),
+				'not a valid easing value': t(
+					'thematiq',
+					'use an easing keyword or a curve with both x values from 0 to 1',
+				),
+				'no dark value for this token': t(
+					'thematiq',
+					'this token has no dark value',
+				),
+			}
+			var parts = Object.keys(rejected).map(function (name) {
+				var reason = String(rejected[name])
+				var dark = reason.indexOf('dark value: ') === 0
+				var key = dark ? reason.slice('dark value: '.length) : reason
+				var text = reasons[key] || reason
+				var meta = tokenRegistry[name] || {}
+				var label = meta.label ? meta.label + ' (' + name + ')' : name
+				return dark
+					? t('thematiq', '{label}, dark value: {reason}', {
+							label: label,
+							reason: text,
+						})
+					: t('thematiq', '{label}: {reason}', {
+							label: label,
+							reason: text,
+						})
+			})
+			return t('thematiq', 'Nothing was saved. {problems}.', {
+				problems: parts.join('; '),
+			})
+		}
+
+		/**
+		 * The POST body of a save; `darkOverrides` only when there are any.
+		 *
+		 * @param {Object<string,string>} overrides The light values.
+		 * @return {object} The body.
+		 */
+		function overridesPayload(overrides) {
+			var dark = collectDarkOverrides(overrides)
+			var body = {
+				overrides: overrides,
+				tokenSet: editedTokenSetId(),
+				captureTheming: true,
+			}
+			if (Object.keys(dark).length > 0) {
+				body.darkOverrides = dark
+			}
+			return body
+		}
+
 		function writeOverrides() {
 			var overrides = collectOverridesToWrite()
 
@@ -4167,11 +4731,7 @@
 				// `captureTheming`: the theme also keeps Nextcloud's own branding
 				// as it is now (colours, background, logos, favicon), so applying
 				// it later puts that back. The server skips the stock set.
-				body: JSON.stringify({
-					overrides: overrides,
-					tokenSet: editedTokenSetId(),
-					captureTheming: true,
-				}),
+				body: JSON.stringify(overridesPayload(overrides)),
 			})
 				.then(function (r) {
 					return r.json()
@@ -4204,6 +4764,8 @@
 						refreshCustomOverridesLink()
 						updateSaveStatus()
 						notify(t('thematiq', 'Token overrides saved.'))
+					} else if (data.rejected && typeof data.rejected === 'object') {
+						notify(rejectedMessage(data.rejected))
 					} else {
 						notify(
 							t('thematiq', 'Failed to save overrides:')
