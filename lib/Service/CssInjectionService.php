@@ -382,28 +382,13 @@ class CssInjectionService {
 			return array_merge($layers, $this->noDesignSystemLayers(tokenSet: $tokenSet));
 		}
 
-		// 3a-1. The `nextcloud` set is the one set whose values belong to
-		// something else: it exists to reproduce the appearance of the running
-		// instance, and that appearance changes with every Nextcloud release.
-		// A shipped file can only ever hold a snapshot of one version, so it is
-		// resolved from the instance instead and the file is kept as a
-		// fallback. See StockTokensService for the measurements and for why a
-		// stylesheet cannot do this with var().
-		$stockCss = null;
-		if ($tokenSet === self::STOCK_TOKEN_SET) {
-			$stockCss = $this->stockTokens->getCss();
-		}
-
-		// 3a-2. The shipped file is the layer unless the instance answered, in
-		// which case the resolved block takes its place.
+		// 3a-1. The `nextcloud` set normally takes the `none` branch above. It
+		// reaches this line only when its metadata could not be read and the
+		// design system defaulted, and then the resolved block still beats the
+		// shipped snapshot. See stockTokenLayer().
 		$tokenLayer = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
-		if ($stockCss !== null) {
-			$tokenLayer = [
-				'layer' => 'tokens',
-				'kind' => 'inline',
-				'css' => $stockCss,
-				'id' => self::STOCK_TOKENS_STYLE_ID,
-			];
+		if ($tokenSet === self::STOCK_TOKEN_SET) {
+			$tokenLayer = ($this->stockTokenLayer() ?? $tokenLayer);
 		}
 
 		$layers[] = $tokenLayer;
@@ -511,11 +496,21 @@ class CssInjectionService {
 	 * IS the running Nextcloud. Leaving the custom file out too put the saved
 	 * theme in the dropdown and none of it on the page.
 	 *
+	 * THE STOCK SET'S TOKENS ARE THE INSTANCE'S OWN. Its `--nldesign-*` values
+	 * are resolved from the running theme (see stockTokenLayer()), so the page
+	 * declares what this Nextcloud actually wears. Nothing on a `none` page
+	 * paints from them, so stock still renders as stock; what reads them is the
+	 * admin panel, which compares the live values against the set an admin is
+	 * about to apply. When the instance cannot be read nothing is emitted:
+	 * the shipped snapshot is never the stock set's layer (thematiq#620).
+	 *
 	 * @param string $tokenSet The token set id.
 	 *
-	 * @return array<int, array{layer: string, kind: string, file: string}> The entries, in cascade order.
+	 * @return array<int, array{layer: string, kind: string, file?: string, css?: string, id?: string}>
+	 *         The entries, in cascade order.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
 	private function noDesignSystemLayers(string $tokenSet): array {
 		$layers = [];
@@ -523,10 +518,46 @@ class CssInjectionService {
 			$layers[] = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
 		}
 
+		if ($tokenSet === self::STOCK_TOKEN_SET) {
+			$stock = $this->stockTokenLayer();
+			if ($stock !== null) {
+				$layers[] = $stock;
+			}
+		}
+
 		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
 		return $layers;
 	}//end noDesignSystemLayers()
+
+	/**
+	 * The `nextcloud` set's token layer, resolved from the running instance.
+	 *
+	 * The `nextcloud` set is the one set whose values belong to something
+	 * else: it exists to reproduce the appearance of the running instance, and
+	 * that appearance changes with every Nextcloud release. A shipped file can
+	 * only ever hold a snapshot of one version, so it is resolved from the
+	 * instance instead. See StockTokensService for the measurements and for
+	 * why a stylesheet cannot do this with var().
+	 *
+	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline
+	 *         layer, or null when the instance could not be read.
+	 *
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 */
+	private function stockTokenLayer(): ?array {
+		$css = $this->stockTokens->getCss();
+		if ($css === null) {
+			return null;
+		}
+
+		return [
+			'layer' => 'tokens',
+			'kind' => 'inline',
+			'css' => $css,
+			'id' => self::STOCK_TOKENS_STYLE_ID,
+		];
+	}//end stockTokenLayer()
 
 	/**
 	 * Emit one entry from {@see self::designSystemLayers()}.
