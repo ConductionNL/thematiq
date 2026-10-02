@@ -110,7 +110,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 		which quoted the grep command in order to WARN about the problem —
 		made it read ")[^". The warning reproduced the bug it described.
 	-->
-	<version>1.2.12</version>
+	<version>1.2.13</version>
 	<licence>EUPL-1.2</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
 	<namespace>Thematiq</namespace>
@@ -267,6 +267,11 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 			     when the app directory is read-only. -->
 			<step>OCA\Thematiq\Repair\MoveRuntimeFilesToAppData</step>
 			<step>OCA\Thematiq\Migration\GenerateDarkVariantsRepairStep</step>
+			<!-- Typed token values: each overrides file gains the motion twins
+			     and its colour overrides' dark scopes on upgrade, values kept.
+			     Idempotent, never throws. Not under <install>: a fresh install
+			     has no overrides file yet. -->
+			<step>OCA\Thematiq\Repair\MigrateOverrideValueTypes</step>
 			<!-- Theme as code (openspec/specs/theme-as-code/spec.md): apply the
 			     branding package named in thematiq.config_source when it
 			     changed. Last, after the configuration rescue above. -->

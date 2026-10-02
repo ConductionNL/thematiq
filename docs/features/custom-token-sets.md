@@ -16,7 +16,7 @@ sync — exactly like a shipped set.
 
 ## Where
 
-Admin settings → **NL Design System Theme** (`/settings/admin/theming`) →
+Admin settings → **Thematiq** (`/settings/admin/theming`) →
 **Custom token sets** section. The feature is admin-only (delegated theming
 admins included); every endpoint is CSRF-protected.
 

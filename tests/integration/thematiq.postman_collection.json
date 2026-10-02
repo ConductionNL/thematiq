@@ -98,17 +98,17 @@
       "name": "0. Setup: capture live state",
       "item": [
         {
-          "name": "GET current token set (200, stash original)",
+          "name": "GET current token set from the capability (200, stash original)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('token set read (200)', () => pm.response.to.have.status(200));",
-                  "const b = pm.response.json();",
-                  "pm.test('has tokenSet field', () => pm.expect(b).to.have.property('tokenSet'));",
-                  "pm.collectionVariables.set('origTokenSet', b.tokenSet);"
+                  "pm.test('capabilities read (200)', () => pm.response.to.have.status(200));",
+                  "const cap = pm.response.json().ocs.data.capabilities.nldesign;",
+                  "pm.test('capability carries the active token set', () => pm.expect(cap.tokenSet).to.have.property('id'));",
+                  "pm.collectionVariables.set('origTokenSet', cap.tokenSet.id);"
                 ]
               }
             }
@@ -141,16 +141,21 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokenset",
+              "raw": "{{baseUrl}}/ocs/v2.php/cloud/capabilities?format=json",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "index.php",
-                "apps",
-                "thematiq",
-                "settings",
-                "tokenset"
+                "ocs",
+                "v2.php",
+                "cloud",
+                "capabilities"
+              ],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "json"
+                }
               ]
             }
           }
@@ -166,7 +171,7 @@
                   "pm.test('overrides read (200)', () => pm.response.to.have.status(200));",
                   "const b = pm.response.json();",
                   "// overrides serialises as a JSON object when populated, or [] when the",
-                  "// custom-overrides.css has no tokens yet \u2014 accept either container shape.",
+                  "// custom-overrides.css has no tokens yet — accept either container shape.",
                   "pm.test('has overrides container', () => pm.expect(b.overrides).to.satisfy(v => typeof v === 'object' && v !== null));",
                   "pm.test('has token registry', () => pm.expect(b.registry).to.be.an('object'));",
                   "pm.test('has tab labels', () => pm.expect(b.tabs).to.be.an('object'));",
@@ -1065,6 +1070,322 @@
               "mode": "raw",
               "raw": "{\n  \"overrides\": \"not-an-object\"\n}"
             },
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/overrides",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "overrides"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Write overrides ERROR: duration without unit -> 400 naming the token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('wrong value -> 400', () => pm.response.to.have.status(400));",
+                  "const b = pm.response.json();",
+                  "pm.test('names the token and the type', () => { pm.expect(JSON.stringify(b)).to.include('--animation-quick'); pm.expect(JSON.stringify(b)).to.include('duration'); });",
+                  "pm.test('no file path in the answer', () => pm.expect(JSON.stringify(b)).to.not.include('/css/'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"overrides\": {\n    \"--animation-quick\": \"150\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/overrides",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "overrides"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Write overrides ERROR: unknown token -> 400 naming the token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('unknown token -> 400', () => pm.response.to.have.status(400));",
+                  "pm.test('names the token', () => pm.expect(JSON.stringify(pm.response.json())).to.include('--not-a-registry-token'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"overrides\": {\n    \"--not-a-registry-token\": \"#000000\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/overrides",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "overrides"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Write overrides ERROR: dark value not a colour -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('wrong dark value -> 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"overrides\": {\n    \"--color-primary\": \"#154273\"\n  },\n  \"darkOverrides\": {\n    \"--color-primary\": \"dark blue\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/overrides",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "overrides"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Write overrides with a translucent colour and a dark value (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('overrides written (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('status ok', () => pm.expect(pm.response.json().status).to.eql('ok'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"overrides\": {\n    \"--color-primary\": \"#15427380\"\n  },\n  \"darkOverrides\": {\n    \"--color-primary\": \"#5b9bd5\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/overrides",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "overrides"
+              ]
+            }
+          }
+        },
+        {
+          "name": "darkOverrides round trip reads back (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('overrides read (200)', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('light value with alpha kept', () => pm.expect(b.overrides['--color-primary']).to.eql('#15427380'));",
+                  "pm.test('own dark value read back', () => pm.expect(b.darkOverrides['--color-primary']).to.eql('#5b9bd5'));",
+                  "pm.test('derived dark values listed', () => pm.expect(b.darkDerived).to.be.an('object'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/overrides",
               "host": [
@@ -2802,6 +3123,702 @@
       ]
     },
     {
+      "name": "7. Own tokens and deprecations (authoring-token-lifecycle)",
+      "item": [
+        {
+          "name": "Add own token (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('own token added (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('stored under the prefix', () => pm.expect(pm.response.json().token.name).to.eql('--nldesign-org-newman-accent'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokens/own",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "own"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"newman-accent\",\n  \"label\": \"Newman accent\",\n  \"type\": \"color\",\n  \"value\": \"#e17000\",\n  \"darkValue\": \"#ff9a3c\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Add own token ERROR: name outside the rule -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('bad name -> 400', () => pm.response.to.have.status(400));",
+                  "pm.test('names the field', () => pm.expect(pm.response.json().field).to.eql('name'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokens/own",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "own"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"Brand_Accent\",\n  \"label\": \"x\",\n  \"type\": \"color\",\n  \"value\": \"#000000\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Add own token ERROR: duplicate -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('duplicate -> 400', () => pm.response.to.have.status(400));",
+                  "pm.test('says it exists', () => pm.expect(pm.response.json().field).to.eql('duplicate'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokens/own",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "own"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"newman-accent\",\n  \"label\": \"x\",\n  \"type\": \"color\",\n  \"value\": \"#000000\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List own tokens (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('listed (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('lists the new token', () => pm.expect(pm.response.json().tokens.map(t => t.name)).to.include('--nldesign-org-newman-accent'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokens/own",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "own"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deprecate ERROR: replacement missing -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('missing replacement -> 400', () => pm.response.to.have.status(400));",
+                  "pm.test('names the replacement', () => pm.expect(pm.response.json().field).to.eql('replacement'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokens/deprecations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "deprecations"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"--nldesign-org-newman-accent\",\n  \"severity\": \"warning\",\n  \"replacement\": \"--nldesign-org-missing\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Deprecate own token (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('deprecated (200)', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokens/deprecations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "deprecations"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"--nldesign-org-newman-accent\",\n  \"severity\": \"warning\",\n  \"replacement\": \"--nldesign-color-primary\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Read deprecations as a signed-in user (200, public shape)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('read (200)', () => pm.response.to.have.status(200));",
+                  "const row = pm.response.json().deprecations.find(d => d.token === '--nldesign-org-newman-accent');",
+                  "pm.test('lists the deprecation', () => pm.expect(row).to.be.an('object'));",
+                  "pm.test('closed shape', () => pm.expect(Object.keys(row)).to.eql(['token','severity','replacement','removalDate','message','deprecatedAt','due','state']));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/api/token-deprecations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "api",
+                "token-deprecations"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Read deprecations AUTHZ: anonymous -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('anonymous rejected 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{noAuthBase}}/index.php/apps/thematiq/api/token-deprecations",
+              "host": [
+                "{{noAuthBase}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "api",
+                "token-deprecations"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List own tokens AUTHZ: anonymous -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('anonymous rejected 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{noAuthBase}}/index.php/apps/thematiq/settings/tokens/own",
+              "host": [
+                "{{noAuthBase}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "own"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Withdraw the deprecation (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('withdrawn (200)', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokens/deprecations/--nldesign-org-newman-accent",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "deprecations",
+                "--nldesign-org-newman-accent"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Remove own token (200, leaves no drift)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('removed (200)', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokens/own/--nldesign-org-newman-accent",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "own",
+                "--nldesign-org-newman-accent"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Remove own token ERROR: unknown -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('unknown -> 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "OCS-APIRequest",
+                "value": "true"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/tokens/own/--nldesign-org-newman-accent",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "settings",
+                "tokens",
+                "own",
+                "--nldesign-org-newman-accent"
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPass}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "8. Multi-brand token sources (authoring-multi-brand-token-source)",
       "item": [
         {
@@ -3373,7 +4390,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "// The original token_set must be a valid id (it was read live), so this",
-                  "// restore is a 200. If the instance had never set one, getTokenSet",
+                  "// restore is a 200. If the instance had never set one, the capability",
                   "// defaults to 'nextcloud' which is also valid.",
                   "pm.test('token set restored (200)', () => pm.response.to.have.status(200));"
                 ]

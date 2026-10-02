@@ -85,14 +85,14 @@ A restore MUST store a new version like any other change, so the configuration f
 
 ### Requirement: Operators restore from the command line
 
-`occ nldesign:config:versions` MUST list the kept versions with id, time, actor and audit action. `occ nldesign:config:restore <id>` MUST restore one, with `--dry-run` printing the changes without writing, and the audit entry MUST carry actor `cli`.
+`occ thematiq:config:versions` MUST list the kept versions with id, time, actor and audit action. `occ thematiq:config:restore <id>` MUST restore one, with `--dry-run` printing the changes without writing, and the audit entry MUST carry actor `cli`.
 
 #### Scenario: An operator restores on a server without the web interface
 
 @e2e exclude occ, not a page; proven by tests/Unit/Command/ConfigVersionCommandsTest.php::testRestoreDryRunThenApply
 
 - GIVEN an operator with shell access to the server
-- WHEN they run `occ nldesign:config:restore <id> --dry-run` and then without `--dry-run`
+- WHEN they run `occ thematiq:config:restore <id> --dry-run` and then without `--dry-run`
 - THEN the first run MUST print the changes and write nothing
 - AND the second run MUST apply them and exit 0
 

@@ -2,7 +2,7 @@
 
 # Gemeente Zwolle
 
-Token set `zwolle`: 53 declared by this set, 123 from the defaults layer.
+Token set `zwolle`: 53 declared by this set, 124 from the defaults layer.
 
 Contrast: primary text on primary 5.06:1, primary on background 5.06:1 (pass).
 
@@ -248,6 +248,7 @@ Contrast: primary text on primary 5.06:1, primary on background 5.06:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--nldesign-animation-easing` | `ease` | | defaults | |
 | `--nldesign-animation-quick` | `100ms` | | this set | Header menu item height |
 | `--nldesign-animation-slow` | `300ms` | | this set | Animation slow |
 | `--nldesign-header-icon-filter` | `none` | | this set | |

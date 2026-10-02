@@ -120,7 +120,8 @@ class GroupThemingService {
 	 * An absent or malformed stored value reads as an empty mapping — never
 	 * an error — reproducing today's global-theming behavior exactly.
 	 *
-	 * @return array<int, array{group: string, tokenSet: string}> The ordered mapping.
+	 * @return array<int, array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>}>
+	 *         The ordered mapping.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
@@ -163,7 +164,8 @@ class GroupThemingService {
 	 *
 	 * @param array<int, mixed> $entries The desired ordered mapping (`{group, tokenSet}` each).
 	 *
-	 * @return array<int, array{group: string, tokenSet: string}> The persisted mapping.
+	 * @return array<int, array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>}>
+	 *         The persisted mapping.
 	 *
 	 * @throws GroupThemingValidationException When any entry fails validation.
 	 *
@@ -186,6 +188,40 @@ class GroupThemingService {
 	}//end setMapping()
 
 	/**
+	 * Replace the stored entry of one group, validating that entry only.
+	 *
+	 * The delegated choice of a subadmin goes through here rather than
+	 * through setMapping(): that validates every entry again, so one deleted
+	 * group or removed set anywhere in the mapping refused every delegated
+	 * save, and told a non-admin about groups that are not theirs. The other
+	 * entries are written back as they are stored.
+	 *
+	 * @param array<string, mixed> $entry The group's new entry.
+	 *
+	 * @return array<string, mixed> The persisted entry.
+	 *
+	 * @throws GroupThemingValidationException When the entry fails validation or the group has no entry.
+	 *
+	 * @spec openspec/specs/per-group-theming/spec.md
+	 */
+	public function replaceEntry(array $entry): array {
+		$seenGroups = [];
+		$clean = $this->validateEntry(entry: $entry, seenGroups: $seenGroups);
+
+		$mapping = $this->getMapping();
+		$index = array_search($clean['group'], array_column($mapping, 'group'), true);
+		if ($index === false) {
+			throw new GroupThemingValidationException(entry: $entry, reason: 'The group has no mapping entry.');
+		}
+
+		$mapping[$index] = $clean;
+		$this->config->setAppValue(appName: Application::APP_ID, key: self::CONFIG_KEY, value: json_encode($mapping));
+		$this->bumpGeneration();
+
+		return $clean;
+	}//end replaceEntry()
+
+	/**
 	 * Validate one raw mapping entry against the group/token-set/duplicate
 	 * rules, tracking groups already seen in this batch by reference so a
 	 * duplicate anywhere in the payload is caught.
@@ -193,7 +229,7 @@ class GroupThemingService {
 	 * @param mixed $entry The raw entry (may be malformed).
 	 * @param array<string, bool> $seenGroups Groups already validated in this batch (mutated by reference).
 	 *
-	 * @return array{group: string, tokenSet: string} The cleaned entry.
+	 * @return array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>} The cleaned entry.
 	 *
 	 * @throws GroupThemingValidationException When the entry fails any validation rule.
 	 *
@@ -284,13 +320,19 @@ class GroupThemingService {
 	 * broken group backend, cache, or malformed stored mapping must never
 	 * brick theming or escape into `Application::boot()`.
 	 *
+	 * On a page of a branded app the caller passes the app's set: it wins over
+	 * the group mapping, an admin preview still wins over it, and a sessionless
+	 * page ignores it (openspec/specs/per-app-theming/spec.md).
+	 *
+	 * @param string|null $appBrandSet The token set of the rendered app's brand, or null.
+	 *
 	 * @return string The resolved token set id.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
-	public function resolveTokenSetForRequest(): string {
+	public function resolveTokenSetForRequest(?string $appBrandSet = null): string {
 		try {
-			return $this->resolveTokenSetForRequestUnsafe();
+			return $this->resolveTokenSetForRequestUnsafe(appBrandSet: $appBrandSet);
 		} catch (\Throwable $e) {
 			// Fail open: presentation, not security. A broken group backend,
 			// cache, or malformed mapping must not strip theming or crash
@@ -303,11 +345,13 @@ class GroupThemingService {
 	 * The un-guarded resolution pipeline; see {@see resolveTokenSetForRequest()}
 	 * for the fail-open wrapper.
 	 *
+	 * @param string|null $appBrandSet The token set of the rendered app's brand, or null.
+	 *
 	 * @return string The resolved token set id.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
-	private function resolveTokenSetForRequestUnsafe(): string {
+	private function resolveTokenSetForRequestUnsafe(?string $appBrandSet): string {
 		// 1. Admin preview wins over group mapping for the previewing admin.
 		// No-op stub until change `theme-preview-workflow` lands (its
 		// ThemePreviewService does not exist in this codebase yet) — this is
@@ -323,6 +367,12 @@ class GroupThemingService {
 		$user = $this->userSession->getUser();
 		if ($user === null) {
 			return $this->getDefaultTokenSet();
+		}
+
+		// 2b. The rendered app's own brand wins over the group mapping, so a
+		// branded app looks the same for every group (per-app-theming spec).
+		if ($appBrandSet !== null) {
+			return $appBrandSet;
 		}
 
 		// 3. Empty mapping fast path: no cache access, no group lookup —
@@ -356,7 +406,7 @@ class GroupThemingService {
 	 * of the user's groups, skipping entries whose token set no longer
 	 * exists.
 	 *
-	 * @param array<int, array{group: string, tokenSet: string}> $mapping The ordered mapping.
+	 * @param array<int, array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>}> $mapping The mapping.
 	 * @param string[] $userGroupIds The requesting user's group ids.
 	 *
 	 * @return string|null The matched token set id, or null when nothing matches.

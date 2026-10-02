@@ -10,7 +10,9 @@ enriched_date: 2026-03-20
 Defines the layered CSS architecture that transforms NL Design System tokens into Nextcloud-compatible theming.
 
 @e2e exclude CSS-architecture / PHP boot-order spec — all scenarios describe CSS cascade layers, file load order, and server-side PHP logic with no testable UI surface in the admin settings page. The architecture uses a design-system-driven approach: `design-systems.json` declares ordered stylesheet bundles, and `Application::boot()` loads the correct bundle for the active token set. Organization-specific tokens cascade correctly, incomplete token sets fall back gracefully, and NL Design System component tokens (using the `--utrecht-*` prefix) are bridged to the `--nldesign-*` namespace. The load order is critical: each layer builds on the previous one.
+
 ## Requirements
+
 ### Requirement: Design System Driven Stylesheet Loading
 
 The app MUST resolve which design system a token set belongs to and load the corresponding
@@ -463,6 +465,65 @@ previous boot-time injection on every surface. This change ships no admin UI for
 - WHEN the listener handles the event
 - THEN injection MUST proceed as themed (fail open)
 - AND the unknown value MUST NOT cause the configured context list to strip theming
+
+### Requirement: The theme scopes layer sits between the design system and the component scopes
+The app MUST inject `css/theme-scopes.css` after every stylesheet of the active design system and before `css/component-scopes.css`, in every themed render context.
+
+@e2e exclude Stylesheet order is a server-side injection fact; the browser-visible consequence is tested in `nextcloud-variable-mapping` ("A set value reaches the page").
+
+#### Scenario: Order on a workspace page
+- GIVEN the nldesign design system is active
+- WHEN a workspace page is rendered
+- THEN the injected stylesheets MUST list `systems/nldesign/element-overrides` before `theme-scopes`
+- AND they MUST list `theme-scopes` before `component-scopes`
+
+#### Scenario: Order on the login page
+- GIVEN the lasuite design system is active
+- WHEN the login page is rendered
+- THEN `theme-scopes` MUST follow the last lasuite stylesheet
+- AND it MUST precede `component-scopes`
+
+#### Scenario: A component scope falls back to a theme-scoped value
+- GIVEN a set declares `--nldesign-nc-color-warning-hover` and no component token for the warning button
+- WHEN a page with a warning button renders
+- THEN the button's hover colour MUST be the set's value
+
+### Requirement: Dark-mode compatibility variables follow Nextcloud in dark unless given a dark value
+REQ-CSS-007 MUST keep holding for every layer: `--color-main-background`, `--color-main-background-rgb`, `--color-main-background-translucent`, `--color-background-plain`, `--background-invert-if-dark` and `--background-invert-if-bright` MUST resolve to Nextcloud's own value in every dark theme unless a set's dark variant file or a dark admin value provides one.
+
+@e2e exclude The browser check is "Unset under the dark theme" in `nextcloud-variable-mapping`, run once per variable in this list.
+
+#### Scenario: A light-only admin value leaves dark mode alone
+- GIVEN the admin saves `--color-main-background: #fdfcf8` with no dark value
+- AND the user has chosen Nextcloud's dark theme
+- WHEN a page renders
+- THEN the computed `--color-main-background` MUST equal Nextcloud's dark value
+
+#### Scenario: The rule for every other admin override is unchanged
+- GIVEN the admin saves `--color-primary: #24578f`
+- AND the user has chosen Nextcloud's dark theme
+- WHEN a page renders
+- THEN the computed `--color-primary` MUST be the dark value the overrides writer derives from `#24578f`, as for every brand override
+
+### Requirement: The internal scopes sit after the component scopes
+The app MUST emit the internal scopes as an inline `<style id="thematiq-internal-scopes">` directly after `css/component-scopes.css`, in every themed render context, and MUST emit nothing for them when the set and the overrides give no internal token a value. The app MUST NOT write a file for them.
+
+@e2e exclude Stylesheet order is a server-side injection fact; the browser-visible effect is tested in `component-tokens`.
+
+#### Scenario: Order on a workspace page
+- GIVEN the active set gives `--nldesign-nc-dp-hover-color` a value
+- WHEN a workspace page is rendered
+- THEN the stylesheet manifest MUST list `component-scopes`, then `internal-scopes`, as an inline layer
+
+#### Scenario: Custom overrides still come last
+- GIVEN the admin has saved overrides
+- WHEN a page is rendered
+- THEN the `custom-overrides` link MUST follow the internal scopes
+
+#### Scenario: Nothing set adds nothing
+- GIVEN neither the active set nor the overrides declare an internal token
+- WHEN a page is rendered
+- THEN the page MUST carry no internal scopes layer
 
 ## Current Implementation Status
 

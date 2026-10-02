@@ -51,11 +51,24 @@ class EnvironmentMarkerServiceTest extends TestCase {
 	private $logger;
 
 	/**
+	 * In-memory app config.
+	 *
+	 * @var array<string, string>
+	 */
+	private array $app = [];
+
+	/**
 	 * Set up mocks before each test.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->config = $this->createMock(IConfig::class);
+		$this->config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->app[$key] ?? $default));
+		$this->config->method('setAppValue')->willReturnCallback(
+			function (string $app, string $key, $value): void {
+				$this->app[$key] = (string)$value;
+			}
+		);
 		$this->initialState = $this->createMock(IInitialState::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 	}//end setUp()
@@ -136,6 +149,25 @@ class EnvironmentMarkerServiceTest extends TestCase {
 		$this->assertSame('Unknown environment', $marker['label']);
 		$this->assertSame('test', $marker['style']);
 	}//end testAnUnknownValueIsShownAndLogged()
+
+	/**
+	 * A typo is logged once, not on every render, and a different typo is logged again.
+	 */
+	public function testAnUnknownValueIsLoggedOnce(): void {
+		$this->logger->expects($this->once())->method('warning');
+
+		$this->service('tset')->resolve();
+		$this->service('tset')->resolve();
+
+		// A new request with another typo: the app config note stays.
+		$this->setUp();
+		$this->logger->expects($this->once())
+			->method('warning')
+			->with($this->anything(), $this->callback(fn (array $ctx) => ($ctx['value'] ?? null) === 'acceptatie'));
+
+		$this->service('acceptatie')->resolve();
+		$this->service('acceptatie')->resolve();
+	}//end testAnUnknownValueIsLoggedOnce()
 
 	/**
 	 * inject() emits the assets and the initial state for a test server.

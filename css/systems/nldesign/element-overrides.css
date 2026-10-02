@@ -177,7 +177,6 @@ header#header .header-menu__trigger {
 	-webkit-mask: none !important;
 	mask-image: none !important;
 	-webkit-mask-image: none !important;
-	background-image: none !important;
 	background: transparent !important;
 }
 
@@ -302,7 +301,6 @@ header#header {
 .app-menu .icon,
 header nav [class*='icon-'],
 header nav .icon {
-	background-image: none !important;
 	background: transparent !important;
 }
 
@@ -779,11 +777,6 @@ body {
    chain is what lets the header be moved from the playground without touching
    `--nldesign-color-header-background`, which a token set owns. */
 #header {
-	background-color: var(
-		--nldesign-component-header-background-color,
-		var(--nldesign-color-header-background, #ffffff)
-	) !important;
-	background-image: none !important;
 	background: var(
 		--nldesign-component-header-background-color,
 		var(--nldesign-color-header-background, #ffffff)

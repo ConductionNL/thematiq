@@ -27,7 +27,7 @@ A ZIP may hold the tree at its root or in one top-level folder, the way a Git ho
 Write a package from the running server, fonts included:
 
 ```bash
-occ nldesign:config:export --package /srv/branding
+occ thematiq:config:export --package /srv/branding
 ```
 
 Commit that directory to a new repository. Add a `REVISION` file in your pipeline, for example with `git rev-parse --short HEAD > REVISION`, so the audit log shows which commit was applied.
@@ -37,8 +37,8 @@ Commit that directory to a new repository. Add a `REVISION` file in your pipelin
 Import a package on another server. The fonts come along, so nobody re-uploads them:
 
 ```bash
-occ nldesign:config:import /srv/branding
-occ nldesign:config:import /tmp/branding.zip --dry-run
+occ thematiq:config:import /srv/branding
+occ thematiq:config:import /tmp/branding.zip --dry-run
 ```
 
 A package that fails any check changes nothing. A bare `bundle.json` still works as before: fonts in a bare bundle are for information only.

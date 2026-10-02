@@ -183,7 +183,7 @@ describe('admin.js token reference links', () => {
 			expect(tab.location.href).toBe('blob:reference')
 		})
 
-		it('shows the reference in this tab when no new tab may open', async () => {
+		it('stays on the settings page and says so when no new tab may open', async () => {
 			await load()
 			vi.spyOn(window, 'open').mockReturnValue(null)
 			const assign = vi.fn()
@@ -195,7 +195,12 @@ describe('admin.js token reference links', () => {
 			await flush()
 			window.location = location
 
-			expect(assign).toHaveBeenCalledWith('blob:reference')
+			// Navigating this tab would lose unsaved edits on the page.
+			expect(assign).not.toHaveBeenCalled()
+			expect(referenceCalls()).toEqual([])
+			expect(OC.Notification.showTemporary).toHaveBeenCalledWith(
+				'The browser blocked the new tab, so the page did not open. Allow pop-ups for this site and try again.',
+			)
 		})
 
 		it('closes the tab and says so when the reference is refused', async () => {
