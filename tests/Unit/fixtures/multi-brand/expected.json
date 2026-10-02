@@ -1,0 +1,128 @@
+{
+    "three-themes.tokens.json": {
+        "brands": [
+            {
+                "key": "noord",
+                "name": "Noord",
+                "tokenCount": 3,
+                "group": "brand"
+            },
+            {
+                "key": "zuid",
+                "name": "Zuid",
+                "tokenCount": 3,
+                "group": "brand"
+            },
+            {
+                "key": "oost",
+                "name": "Oost",
+                "tokenCount": 3,
+                "group": "brand"
+            }
+        ],
+        "cuts": {
+            "noord": {
+                "content": "{\"color\":{\"blue\":{\"$type\":\"color\",\"$value\":\"#154273\"},\"red\":{\"$type\":\"color\",\"$value\":\"#c8102e\"},\"green\":{\"$type\":\"color\",\"$value\":\"#2e7d32\"},\"white\":{\"$type\":\"color\",\"$value\":\"#ffffff\"},\"background\":{\"$type\":\"color\",\"$value\":\"{color.white}\"},\"on-primary\":{\"$type\":\"color\",\"$value\":\"{color.white}\"},\"primary\":{\"$type\":\"color\",\"$value\":\"{color.blue}\"}}}",
+                "referenceOnlyPaths": [
+                    "color.blue",
+                    "color.red",
+                    "color.green",
+                    "color.white"
+                ]
+            },
+            "zuid": {
+                "content": "{\"color\":{\"blue\":{\"$type\":\"color\",\"$value\":\"#154273\"},\"red\":{\"$type\":\"color\",\"$value\":\"#c8102e\"},\"green\":{\"$type\":\"color\",\"$value\":\"#2e7d32\"},\"white\":{\"$type\":\"color\",\"$value\":\"#ffffff\"},\"background\":{\"$type\":\"color\",\"$value\":\"{color.white}\"},\"on-primary\":{\"$type\":\"color\",\"$value\":\"{color.white}\"},\"primary\":{\"$type\":\"color\",\"$value\":\"{color.red}\"}}}",
+                "referenceOnlyPaths": [
+                    "color.blue",
+                    "color.red",
+                    "color.green",
+                    "color.white"
+                ]
+            },
+            "oost": {
+                "content": "{\"color\":{\"blue\":{\"$type\":\"color\",\"$value\":\"#154273\"},\"red\":{\"$type\":\"color\",\"$value\":\"#c8102e\"},\"green\":{\"$type\":\"color\",\"$value\":\"#2e7d32\"},\"white\":{\"$type\":\"color\",\"$value\":\"#ffffff\"},\"background\":{\"$type\":\"color\",\"$value\":\"{color.white}\"},\"on-primary\":{\"$type\":\"color\",\"$value\":\"{color.white}\"},\"primary\":{\"$type\":\"color\",\"$value\":\"{color.green}\"}}}",
+                "referenceOnlyPaths": [
+                    "color.blue",
+                    "color.red",
+                    "color.green",
+                    "color.white"
+                ]
+            }
+        }
+    },
+    "three-themes-legacy.tokens.json": {
+        "brands": [
+            {
+                "key": "noord",
+                "name": "Noord",
+                "tokenCount": 3,
+                "group": "brand"
+            },
+            {
+                "key": "zuid",
+                "name": "Zuid",
+                "tokenCount": 3,
+                "group": "brand"
+            },
+            {
+                "key": "oost",
+                "name": "Oost",
+                "tokenCount": 3,
+                "group": "brand"
+            }
+        ],
+        "cuts": {
+            "noord": {
+                "content": "{\"color\":{\"blue\":{\"type\":\"color\",\"value\":\"#154273\"},\"red\":{\"type\":\"color\",\"value\":\"#c8102e\"},\"green\":{\"type\":\"color\",\"value\":\"#2e7d32\"},\"white\":{\"type\":\"color\",\"value\":\"#ffffff\"},\"background\":{\"type\":\"color\",\"value\":\"#ffffff\"},\"on-primary\":{\"type\":\"color\",\"value\":\"#ffffff\"},\"primary\":{\"type\":\"color\",\"value\":\"#154273\"}}}",
+                "referenceOnlyPaths": [
+                    "color.blue",
+                    "color.red",
+                    "color.green",
+                    "color.white"
+                ]
+            },
+            "zuid": {
+                "content": "{\"color\":{\"blue\":{\"type\":\"color\",\"value\":\"#154273\"},\"red\":{\"type\":\"color\",\"value\":\"#c8102e\"},\"green\":{\"type\":\"color\",\"value\":\"#2e7d32\"},\"white\":{\"type\":\"color\",\"value\":\"#ffffff\"},\"background\":{\"type\":\"color\",\"value\":\"#ffffff\"},\"on-primary\":{\"type\":\"color\",\"value\":\"#ffffff\"},\"primary\":{\"type\":\"color\",\"value\":\"#c8102e\"}}}",
+                "referenceOnlyPaths": [
+                    "color.blue",
+                    "color.red",
+                    "color.green",
+                    "color.white"
+                ]
+            },
+            "oost": {
+                "content": "{\"color\":{\"blue\":{\"type\":\"color\",\"value\":\"#154273\"},\"red\":{\"type\":\"color\",\"value\":\"#c8102e\"},\"green\":{\"type\":\"color\",\"value\":\"#2e7d32\"},\"white\":{\"type\":\"color\",\"value\":\"#ffffff\"},\"background\":{\"type\":\"color\",\"value\":\"#ffffff\"},\"on-primary\":{\"type\":\"color\",\"value\":\"#ffffff\"},\"primary\":{\"type\":\"color\",\"value\":\"#2e7d32\"}}}",
+                "referenceOnlyPaths": [
+                    "color.blue",
+                    "color.red",
+                    "color.green",
+                    "color.white"
+                ]
+            }
+        }
+    },
+    "two-brand-classes.css": {
+        "brands": [
+            {
+                "key": "noord",
+                "name": "Noord",
+                "tokenCount": 2
+            },
+            {
+                "key": "zuid",
+                "name": "Zuid",
+                "tokenCount": 2
+            }
+        ],
+        "cuts": {
+            "noord": {
+                "content": ":root {\n  --voorbeeld-radius: 4px;\n  --voorbeeld-color-white: #ffffff;\n}\n.noord-theme {\n  --voorbeeld-color-primary: #154273;\n  --voorbeeld-color-primary-text: #ffffff;\n}\n",
+                "referenceOnlyPaths": []
+            },
+            "zuid": {
+                "content": ":root {\n  --voorbeeld-radius: 4px;\n  --voorbeeld-color-white: #ffffff;\n}\n.zuid-theme {\n  --voorbeeld-color-primary: #c8102e;\n  --voorbeeld-color-primary-text: #ffffff;\n}\n",
+                "referenceOnlyPaths": []
+            }
+        }
+    }
+}

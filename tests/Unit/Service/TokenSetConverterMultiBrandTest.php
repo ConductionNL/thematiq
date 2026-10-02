@@ -169,4 +169,25 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 		$this->assertStringContainsString('#c8102e', (string)$result['css']);
 		$this->assertStringNotContainsString('#2e7d32', (string)$result['css'], 'core is source-only: its green is not emitted');
 	}//end testLegacyFormatRoutesToInputC()
+
+	/**
+	 * Task 2.4: expected.json is what PHP returns; tests/vitest/tokenConverterMultiBrand.spec.js
+	 * holds the JS mirror to the same file.
+	 *
+	 * @return void
+	 */
+	public function testParityFixtureMatchesPhp(): void {
+		$expected = json_decode($this->fixture('expected.json'), true);
+		$source   = new MultiBrandSource();
+		foreach ($expected as $file => $answer) {
+			$content = $this->fixture($file);
+			$brands  = $source->detectBrands(content: $content);
+			$cuts    = [];
+			foreach ($brands as $brand) {
+				$cuts[$brand['key']] = $source->cut(content: $content, key: $brand['key']);
+			}
+
+			$this->assertSame($answer, json_decode((string)json_encode(['brands' => $brands, 'cuts' => $cuts]), true), $file);
+		}
+	}//end testParityFixtureMatchesPhp()
 }//end class
