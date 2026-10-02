@@ -453,6 +453,33 @@ describe('admin.js token editor', () => {
 			expect(row(BUTTON).text.value).toBe('#23845c')
 		})
 
+		it('keeps a quote in a saved value or label inside its attribute (#622)', async () => {
+			// An imported overrides file can carry a double quote: the save
+			// filter strips newlines and rejects braces and semicolons, not
+			// quotes. Escaped as text only, the quote closed value="..." and the
+			// rest became live attributes (onfocus + autofocus = script on load).
+			const payload = 'Arial" onfocus="alert(1)" autofocus x="'
+			const label = 'Font " onmouseover=\'alert(2)\' y="'
+			installInitialState({})
+			document.body.innerHTML = '<div id="nldesign-token-editor"></div>'
+			answer('GET', '/settings/overrides?', 200, {
+				overrides: { [FONT]: payload },
+				registry: { [FONT]: { ...REGISTRY[FONT], tab: 'content', label } },
+				tabs: {},
+			})
+			vi.resetModules()
+			await import('../../js/admin.js?t=' + Math.random())
+			await flush()
+
+			const input = row(FONT).text
+			expect(input.value).toBe(payload)
+			expect(input.getAttribute('aria-label')).toBe(label)
+			const editor = document.getElementById('nldesign-token-editor')
+			for (const name of ['onfocus', 'autofocus', 'onmouseover', 'x', 'y']) {
+				expect(editor.querySelector('[' + name + ']')).toBeNull()
+			}
+		})
+
 		it('writes an r, g, b triplet from the picker of an rgb row', async () => {
 			await mount()
 			const info = row(INFO_RGB)
@@ -1027,6 +1054,44 @@ describe('admin.js token editor', () => {
 			click(document.getElementById('nldesign-save-btn'))
 			await flush()
 			expect(window.NldesignLayerSwap.refreshStylesheets).toHaveBeenCalled()
+		})
+
+		it('stops painting the edits an apply discarded, on the preview and the settings section', async () => {
+			// The editor is rebuilt from the server after an apply, so every
+			// unsaved edit is gone from its rows. The values those edits wrote
+			// inline (admin.js on the preview and, for the primary family, on
+			// the settings section; the playground on the preview) have to go
+			// with them, or the preview keeps painting a value nothing holds.
+			installLayerSwap()
+			answer('POST', COMMIT, 200, { status: 'ok' })
+			answer('POST', '/settings/overrides', 200, { status: 'ok' })
+			await mount({ current: 'nextcloud' })
+			unlockBase()
+			const preview = document.getElementById('nldesign-preview')
+			const settings = document.getElementById('nldesign-settings')
+
+			type(row(FONT).text, 'Comic Sans')
+			type(row(BASE).text, '#112233')
+			// What the playground's cloned row writes, without a priority.
+			preview.style.setProperty(BUTTON, '#123456')
+			const scale = preview.style.getPropertyValue('--prev-surface')
+			expect(preview.style.getPropertyValue(FONT)).toBe('Comic Sans')
+
+			await switchTo('rijkshuisstijl', { [FONT]: 'Arial' }, { overrides: {} })
+			click(
+				document
+					.getElementById('nldesign-apply-dialog-overlay')
+					.querySelector('.nldesign-dialog-confirm'),
+			)
+			await flush()
+
+			expect(window.NldesignLayerSwap.swap).toHaveBeenCalled()
+			expect(preview.style.getPropertyValue(FONT)).toBe('')
+			expect(preview.style.getPropertyValue(BASE)).toBe('')
+			expect(preview.style.getPropertyValue(BUTTON)).toBe('')
+			expect(settings.style.getPropertyValue(BASE)).toBe('')
+			// The preview's own scale model is not an edit and stays.
+			expect(preview.style.getPropertyValue('--prev-surface')).toBe(scale)
 		})
 
 		it('does without an overrides link on the page', async () => {

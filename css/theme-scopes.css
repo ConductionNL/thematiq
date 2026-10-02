@@ -1,0 +1,122 @@
+/**
+ * GENERATED FILE — do not edit.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Source: scripts/mapping/component-tokens.json
+ * Regenerate: npm run generate:component-scopes
+ */
+
+/*
+ * Settable theme variables.
+ *
+ * Each variable below is redeclared on body's children from its capture,
+ * which is the theme's `--nldesign-nc-*` token when one is set and
+ * Nextcloud's own value for the active theme when it is not. Nothing in
+ * Nextcloud declares a theme variable between body and its children, so an
+ * instance that sets none of these tokens renders exactly as before.
+ *
+ * The reset block makes a light-only value stay out of dark mode for the
+ * variables Nextcloud gives a different dark value. `:where()` gives it no
+ * specificity, so a dark variant file or a dark override outranks it.
+ */
+
+body > *,
+#nldesign-preview > * {
+	--background-invert-if-bright: var(--thematiq-global-background-invert-if-bright);
+	--background-invert-if-dark: var(--thematiq-global-background-invert-if-dark);
+	--body-container-margin: var(--thematiq-global-body-container-margin);
+	--body-container-radius: var(--thematiq-global-body-container-radius);
+	--body-height: var(--thematiq-global-body-height);
+	--border-radius-container: var(--thematiq-global-border-radius-container);
+	--border-radius-container-large: var(--thematiq-global-border-radius-container-large);
+	--border-width-input: var(--thematiq-global-border-width-input);
+	--border-width-input-focused: var(--thematiq-global-border-width-input-focused);
+	--breakpoint-mobile: var(--thematiq-global-breakpoint-mobile);
+	--clickable-area-large: var(--thematiq-global-clickable-area-large);
+	--clickable-area-small: var(--thematiq-global-clickable-area-small);
+	--color-background-assistant: var(--thematiq-global-color-background-assistant);
+	--color-background-plain-text: var(--thematiq-global-color-background-plain-text);
+	--color-border-assistant: var(--thematiq-global-color-border-assistant);
+	--color-box-shadow: var(--thematiq-global-color-box-shadow);
+	--color-box-shadow-rgb: var(--thematiq-global-color-box-shadow-rgb);
+	--color-element-assistant: var(--thematiq-global-color-element-assistant);
+	--color-element-assistant-icon: var(--thematiq-global-color-element-assistant-icon);
+	--color-error-text: var(--thematiq-global-color-error-text);
+	--color-info-hover: var(--thematiq-global-color-info-hover);
+	--color-info-rgb: var(--thematiq-global-color-info-rgb);
+	--color-info-text: var(--thematiq-global-color-info-text);
+	--color-loading-dark: var(--thematiq-global-color-loading-dark);
+	--color-loading-light: var(--thematiq-global-color-loading-light);
+	--color-main-background: var(--thematiq-global-color-main-background);
+	--color-mark: var(--thematiq-global-color-mark);
+	--color-scrollbar: var(--thematiq-global-color-scrollbar);
+	--color-success-hover: var(--thematiq-global-color-success-hover);
+	--color-success-text: var(--thematiq-global-color-success-text);
+	--color-text-maxcontrast-default: var(--thematiq-global-color-text-maxcontrast-default);
+	--color-text-selection: var(--thematiq-global-color-text-selection);
+	--color-warning-hover: var(--thematiq-global-color-warning-hover);
+	--color-warning-text: var(--thematiq-global-color-warning-text);
+	--default-clickable-area: var(--thematiq-global-default-clickable-area);
+	--default-font-size: var(--thematiq-global-default-font-size);
+	--default-grid-baseline: var(--thematiq-global-default-grid-baseline);
+	--default-line-height: var(--thematiq-global-default-line-height);
+	--filter-background-blur: var(--thematiq-global-filter-background-blur);
+	--font-size-small: var(--thematiq-global-font-size-small);
+	--header-height: var(--thematiq-global-header-height);
+	--header-menu-item-height: var(--thematiq-global-header-menu-item-height);
+	--navigation-width: var(--thematiq-global-navigation-width);
+	--sidebar-max-width: var(--thematiq-global-sidebar-max-width);
+	--sidebar-min-width: var(--thematiq-global-sidebar-min-width);
+}
+
+@media (prefers-color-scheme: dark) {
+	:where(body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])) {
+		--nldesign-nc-background-invert-if-bright: initial;
+		--nldesign-nc-background-invert-if-dark: initial;
+		--nldesign-nc-color-background-assistant: initial;
+		--nldesign-nc-color-border-assistant: initial;
+		--nldesign-nc-color-box-shadow: initial;
+		--nldesign-nc-color-box-shadow-rgb: initial;
+		--nldesign-nc-color-element-assistant: initial;
+		--nldesign-nc-color-element-assistant-icon: initial;
+		--nldesign-nc-color-error-text: initial;
+		--nldesign-nc-color-info-hover: initial;
+		--nldesign-nc-color-info-rgb: initial;
+		--nldesign-nc-color-info-text: initial;
+		--nldesign-nc-color-loading-dark: initial;
+		--nldesign-nc-color-loading-light: initial;
+		--nldesign-nc-color-main-background: initial;
+		--nldesign-nc-color-mark: initial;
+		--nldesign-nc-color-success-hover: initial;
+		--nldesign-nc-color-success-text: initial;
+		--nldesign-nc-color-text-maxcontrast-default: initial;
+		--nldesign-nc-color-warning-hover: initial;
+		--nldesign-nc-color-warning-text: initial;
+	}
+}
+
+:where(body[data-theme-dark], body[data-themes*=dark]) {
+	--nldesign-nc-background-invert-if-bright: initial;
+	--nldesign-nc-background-invert-if-dark: initial;
+	--nldesign-nc-color-background-assistant: initial;
+	--nldesign-nc-color-border-assistant: initial;
+	--nldesign-nc-color-box-shadow: initial;
+	--nldesign-nc-color-box-shadow-rgb: initial;
+	--nldesign-nc-color-element-assistant: initial;
+	--nldesign-nc-color-element-assistant-icon: initial;
+	--nldesign-nc-color-error-text: initial;
+	--nldesign-nc-color-info-hover: initial;
+	--nldesign-nc-color-info-rgb: initial;
+	--nldesign-nc-color-info-text: initial;
+	--nldesign-nc-color-loading-dark: initial;
+	--nldesign-nc-color-loading-light: initial;
+	--nldesign-nc-color-main-background: initial;
+	--nldesign-nc-color-mark: initial;
+	--nldesign-nc-color-success-hover: initial;
+	--nldesign-nc-color-success-text: initial;
+	--nldesign-nc-color-text-maxcontrast-default: initial;
+	--nldesign-nc-color-warning-hover: initial;
+	--nldesign-nc-color-warning-text: initial;
+}

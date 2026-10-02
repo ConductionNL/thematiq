@@ -144,7 +144,7 @@ class GroupThemingService {
 				continue;
 			}
 
-			$result[] = ['group' => $group, 'tokenSet' => $tokenSet];
+			$result[] = (new GroupDelegationRules())->read(entry: $entry, clean: ['group' => $group, 'tokenSet' => $tokenSet]);
 		}
 
 		return $result;
@@ -228,7 +228,11 @@ class GroupThemingService {
 
 		$seenGroups[$group] = true;
 
-		return ['group' => $group, 'tokenSet' => $tokenSet];
+		return (new GroupDelegationRules())->validate(
+			entry: $entry,
+			clean: ['group' => $group, 'tokenSet' => $tokenSet],
+			isAvailable: fn (string $setId): bool => $this->tokenSetService->isValidTokenSet(tokenSetId: $setId)
+		);
 	}//end validateEntry()
 
 	/**
