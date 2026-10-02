@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Tests for the nldesign:theme:* commands.
+ * Tests for the thematiq:theme:* commands.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.

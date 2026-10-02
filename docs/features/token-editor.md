@@ -8,9 +8,9 @@ The **Custom Token Overrides** section in the admin settings lets you fine-tune 
 
 ## Overview
 
-The token editor is located in the **NL Design System Theme** section of the Appearance admin settings. It consists of:
+The token editor is located in the **Thematiq** section of the Appearance admin settings. It consists of:
 
-- **4 category tabs** grouping the 53 editable tokens by area
+- **4 category tabs** grouping the editable tokens by area
 - **Per-row editing** with a color picker, hex input field, and reset button
 - **Custom value badge** indicating which tokens have been manually overridden
 - **Save overrides** button to persist all current values
@@ -120,6 +120,79 @@ From Nextcloud 34 the app menu is a glyph as well, and follows **Header glyphs**
 Toasts and note cards have a background and a text colour per type (success, error, warning, info). When a theme sets a background but no text colour, the text is chosen automatically: white on a dark background, black on a light one. When the theme sets neither, toasts and note cards look exactly as Nextcloud draws them.
 
 From Nextcloud 33 the note card colour is the card's fill. On Nextcloud 32 it is the stripe on the left, and the fill is a light tint mixed from a separate **fill (Nextcloud 32)** colour. Select **32** above the note card preview to see and set those; they are hidden for 33 and later, where Nextcloud does not read them. The automatic text colour compares against the card colour, so on Nextcloud 32 pick the text colour yourself if the automatic one does not suit the light fill.
+
+## Transparency, dark values and motion
+
+### Transparent colours
+
+Every colour row has an opacity control next to the picker: a slider and a number from 0 to 100. The picker sets the colour, the opacity sets how much of it shows. Together they write an 8-digit hex such as `#15427380`. At 100 the editor writes the plain 6-digit hex.
+
+The swatch shows the colour over a checkerboard, so you can see how transparent it is. You can also type any colour into the text field: `#rgba`, `#rrggbbaa`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, a colour name or `transparent`. The picker and the opacity follow what you type.
+
+The contrast check measures what people actually see. A transparent text colour is first blended over its background, and only then compared. Faint text fails, even when its colour alone would pass.
+
+Nextcloud's own theming has no transparency. When a token set with a transparent primary or background colour is synced to Nextcloud's theming, Nextcloud gets the blend over the set's background instead. The sync dialog shows both values.
+
+### A dark value per colour
+
+The brand colours (Nextcloud's own colour variables) have a second line, **Dark**. Leave it empty and thematiq derives a dark value from the light one, the same way it derives the dark variant of a token set. The empty field shows that derived value as its placeholder.
+
+Type your own value to use it instead. Both kinds of dark user see the same colour: a user whose system is set to dark, and a user who chose the dark theme in their Nextcloud settings.
+
+### Animation speed and easing
+
+**Animation quick** and **Animation slow** take a number and a unit, `ms` or `s`. The longest is 5 seconds. Saving one also sets thematiq's own name for it, so Nextcloud's components and thematiq's buttons and fields move at the same speed.
+
+**Animation easing** picks the curve: `linear`, `ease`, `ease-in`, `ease-out`, `ease-in-out`, or **Custom curve**. A custom curve takes four numbers, as in `cubic-bezier(0.2, 0, 0, 1)`. Both x values must lie between 0 and 1. A set that does not declare an easing uses `ease`.
+
+**Preview motion** moves a block with the speed and curve you chose. When your system asks for reduced motion, the block stays still and the preview shows the values as text. Reduced motion always wins over the speeds you set here.
+
+### Values the editor refuses
+
+Each value is checked against its type when you save. A colour field takes only colours, a duration needs a unit, and a curve must stay in range. When a value does not fit, nothing is saved and the message names the token. Fix that field and save again.
+
+Overrides saved before this check keep working. An upgrade adds the dark values and the second animation name to them, and keeps every value as it was.
+
+## Your own tokens
+
+Below the tabs is **Your own tokens**. Add a token there when the house style needs a value that no shipped token holds, such as a brand accent for a campaign banner. No code change and no token set upload is needed.
+
+Click **Add a token** and fill in:
+
+- **Name**: the part after `--nldesign-org-`, in lowercase letters, digits and single dashes, at most 48 characters. `brand-accent` becomes `--nldesign-org-brand-accent`.
+- **Label**: what the list shows.
+- **Type**: colour, text, duration or easing. The value is checked against it, like the editor's own values.
+- **Dark value**: for a colour only. Leave it empty and dark mode uses the light value.
+
+The token is on every page from the next page load, in every token set. Use it straight away in **Custom CSS**, for example `.header-menu { border-color: var(--nldesign-org-brand-accent); }`. Apps that read the house style can use it too.
+
+Shipped tokens never use the `--nldesign-org-` prefix, so an update cannot overwrite yours. Edit a token to change its label, type or value; its name stays. **Remove** asks first, and names the deprecation when the token has one.
+
+## Deprecate a token
+
+When a token is going away, tell the teams that use it before it is gone. Click **Deprecate** on an own token, or **Deprecate a token** under **Deprecated tokens** for any token whose name starts with `--nldesign-`. Choose:
+
+- **Severity**: info, warning or critical.
+- **Replacement token**: optional, and it must exist.
+- **Removal date**: optional, today or later.
+- **Message**: optional, a line of explanation.
+
+A deprecation never changes a value. The token row gets a badge with the severity in words. After the removal date the badge also says **Due for removal**, and still nothing happens by itself: removing an own token stays your decision. Its deprecation is then kept, marked as removed, so an app that missed the date can still read what happened.
+
+A shipped token cannot be removed, because its value comes from the token set. Its deprecation is a notice to the teams that use it, and the list says so.
+
+The served stylesheet writes the notice above each deprecated own token, so a developer who inspects the variable sees it:
+
+```css
+/* deprecated (warning): use --nldesign-org-brand-accent, removal 2027-03-01 */
+--nldesign-org-old-accent: #aa0000;
+```
+
+When an uploaded token file marks tokens as deprecated, the upload result lists them and offers **Record as deprecations**. Nothing is recorded until you click it. Each notice becomes a deprecation with severity warning and the notice text as its message; edit it afterwards to add a replacement or a date.
+
+Own tokens and deprecations travel with the configuration bundle (`ownTokens` and `tokenDeprecations`). Every change is in the theming audit log.
+
+Building an app that reads the house style? See [Read token deprecations from your app](./token-deprecations-api.md).
 
 ## Saving Overrides
 

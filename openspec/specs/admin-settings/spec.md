@@ -15,7 +15,7 @@ The admin settings panel MUST be registered in the Nextcloud Theming section wit
 #### Scenario: Settings panel appears in admin area
 - GIVEN the nldesign app is enabled
 - WHEN the admin navigates to Settings -> Administration -> Theming
-- THEN an "NL Design System Theme" section MUST appear
+- THEN a "Thematiq" section MUST appear
 - AND it MUST have priority 50 (via `Admin::getPriority()`)
 - AND it MUST be in the `theming` section (via `Admin::getSection()`)
 
@@ -29,7 +29,7 @@ The admin settings panel MUST be registered in the Nextcloud Theming section wit
 @e2e exclude Requires disabling the app mid-session — not safe to test in shared environment.
 - GIVEN the nldesign app is not enabled
 - WHEN the admin navigates to Settings -> Administration -> Theming
-- THEN the "NL Design System Theme" section MUST NOT appear
+- THEN the "Thematiq" section MUST NOT appear
 - AND no nldesign CSS MUST be injected into the page
 
 ### Requirement: Template Response and Parameters
@@ -181,7 +181,7 @@ The settings panel MUST include external links to relevant documentation with pr
 #### Scenario: Documentation link rendered
 - GIVEN the settings panel is loaded
 - WHEN the header section renders
-- THEN it MUST contain an anchor tag linking to `https://nldesign.app`
+- THEN it MUST contain an anchor tag with id `nldesign-doc-link` linking to the documentation of the active token set's design system
 - AND the link MUST have `target="_blank"` and `rel="noopener noreferrer"` for security
 - AND the link text MUST read "Documentation" (localized via `p($l->t())`)
 - AND the link MUST include a `span.icon-link-external` visual indicator
@@ -199,6 +199,36 @@ The settings panel MUST include external links to relevant documentation with pr
 - WHEN the link opens
 - THEN `rel="noopener noreferrer"` MUST prevent the opened page from accessing `window.opener`
 - AND `target="_blank"` MUST open in a new tab/window
+
+### Requirement: Documentation Link Follows the Design System
+The header's Documentation link MUST point at the documentation of the design system the admin
+works with, never at another design system's docs. Each design system MAY name its documentation in
+`documentation_url` in `design-systems.json`; `Admin::getForm()` MUST
+derive one https URL per design system and MUST fall back to the app's own documentation
+(`https://thematiq.conduction.nl`) for a design system that names none or names a non-https URL.
+`Admin::getForm()` MUST render the link for the current token set's design system as the
+`documentationUrl` template parameter and MUST publish the full map as the `designSystemDocs`
+initial-state key. `js/admin.js` MUST update the link's href when the token set dropdown changes to
+a set of another design system. The section heading MUST read "Thematiq", not a design system name.
+
+#### Scenario: The link opens the docs of the active design system
+@e2e exclude href per design system needs a token set switch on the shared instance; covered by AdminInitialStateTest, DesignSystemDocumentationTest and tests/vitest/admin-doc-link.spec.js
+- GIVEN the active token set belongs to the `lasuite` design system
+- WHEN the settings panel renders
+- THEN the Documentation link MUST point at `https://github.com/suitenumerique/cunningham`
+- AND a token set of the `nldesign` design system MUST get `https://nldesignsystem.nl`
+
+#### Scenario: The link follows the dropdown
+@e2e exclude covered by tests/vitest/admin-doc-link.spec.js against the real js/admin.js
+- GIVEN the settings panel shows an `nldesign` token set
+- WHEN the admin picks a token set of the `lasuite` design system in the dropdown
+- THEN the Documentation link's href MUST change to the lasuite documentation without a reload
+
+#### Scenario: A design system without docs of its own
+@e2e exclude manifest fallback, covered by AdminInitialStateTest
+- GIVEN a design system with no `documentation_url`, or one that is not https
+- WHEN the documentation links are resolved
+- THEN its link MUST be `https://thematiq.conduction.nl`
 
 ### Requirement: Vanilla Implementation (No Vue)
 The admin settings MUST be implemented using vanilla PHP templates and vanilla JavaScript without Vue, webpack, or any frontend build step.
@@ -529,7 +559,7 @@ path and covers the complete configuration, unlike the overrides-only download.
 - Live preview box with `.nldesign-preview-box`, preview header bar, primary and secondary buttons (`templates/settings/admin.php` lines 63-72)
 - Hide slogan checkbox with id `nldesign-hide-slogan`, checked state from `$_['hideSlogan']`, label text "Hide Nextcloud slogan/payoff on login page" (`templates/settings/admin.php` lines 39-49)
 - Show menu labels checkbox with id `nldesign-show-menu-labels`, checked state from `$_['showMenuLabels']`, label text "Show text labels in app menu (hide icons)" (`templates/settings/admin.php` lines 51-61)
-- External link to `https://nldesign.app` with `target="_blank"` and `rel="noopener noreferrer"` (`templates/settings/admin.php` lines 16-19)
+- Documentation link per design system (`documentation_url` in `design-systems.json`, `Admin::getForm()`), rendered from `documentationUrl` and kept in step with the dropdown by `js/admin.js` `updateDocumentationLink()`, with `target="_blank"` and `rel="noopener noreferrer"`
 - External link to `https://nldesignsystem.nl/` with arrow indicator (`templates/settings/admin.php` lines 80-82)
 - Vanilla PHP template loads `script('nldesign', 'admin')` and `style('nldesign', 'admin')` with no Vue/webpack (`templates/settings/admin.php` lines 7-8)
 - XSS prevention via `p()` for every value rendered into the template; structured server data is not hand-encoded into markup at all (`templates/settings/admin.php`)

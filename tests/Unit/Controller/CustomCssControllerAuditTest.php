@@ -158,4 +158,56 @@ class CustomCssControllerAuditTest extends TestCase {
 
 	}//end testNonStringPayloadIsRefused()
 
+
+	/**
+	 * Both endpoints are reachable only through the admin setting, which a
+	 * delegated admin of the theming section also holds.
+	 *
+	 * @return void
+	 */
+	public function testEveryEndpointIsAdminOnly(): void {
+		foreach (['getCustomCss', 'setCustomCss'] as $method) {
+			$attributes = (new \ReflectionMethod(CustomCssController::class, $method))
+				->getAttributes(\OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting::class);
+			$this->assertNotEmpty($attributes, "CustomCssController::{$method}() must carry #[AuthorizedAdminSetting]");
+			$this->assertSame(\OCA\Thematiq\Settings\Admin::class, $attributes[0]->getArguments()[0]);
+		}
+
+	}//end testEveryEndpointIsAdminOnly()
+
+	/**
+	 * The editor loads the stored CSS and the enabled state.
+	 *
+	 * @return void
+	 */
+	public function testReadReturnsTheStoredCssAndState(): void {
+		$this->customCssService->method('read')->willReturn('.a { color: red; }');
+		$this->customCssService->method('isEnabled')->willReturn(true);
+
+		$data = $this->buildController()->getCustomCss()->getData();
+
+		$this->assertSame('.a { color: red; }', $data['css']);
+		$this->assertTrue($data['enabled']);
+
+	}//end testReadReturnsTheStoredCssAndState()
+
+	/**
+	 * A file that cannot be written is a 500 with the reason, and no audit entry.
+	 *
+	 * @return void
+	 */
+	public function testUnwritableFileIsAServerError(): void {
+		$this->request->method('getParams')->willReturn(['css' => '.a { color: red; }']);
+		$this->customCssService->method('read')->willReturn('');
+		$this->customCssService->method('write')
+			->willThrowException(new \RuntimeException('Could not write css/custom-css.css.tmp.'));
+
+		$this->auditService->expects($this->never())->method('log');
+
+		$response = $this->buildController()->setCustomCss();
+
+		$this->assertSame(500, $response->getStatus());
+		$this->assertStringContainsString('Could not write', $response->getData()['error']);
+
+	}//end testUnwritableFileIsAServerError()
 }//end class
