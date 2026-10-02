@@ -157,7 +157,7 @@ class CustomOverridesServicePerSetTest extends TestCase {
 		$config->expects($this->never())->method('deleteAppValue');
 		$parser = new CssParserService();
 		$service = new CustomOverridesService(
-			$appManager,
+			new DirectoryRuntimeFileStore($this->appDir),
 			$parser,
 			new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class)),
 			$config,
