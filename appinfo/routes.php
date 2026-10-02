@@ -30,6 +30,7 @@ return [
 		['name' => 'assistantMark#show', 'url' => '/api/assistant-mark', 'verb' => 'GET'],
 		['name' => 'documentStyle#show', 'url' => '/api/document-style', 'verb' => 'GET'],
 		['name' => 'documentStyle#asset', 'url' => '/api/document-style/{kind}', 'verb' => 'GET'],
+		['name' => 'appBrand#logo', 'url' => '/api/app-brands/{appId}/logo/{size}', 'verb' => 'GET'],
 		// Token reference of one set, for signed-in users (openspec/specs/token-reference/spec.md).
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
@@ -57,6 +58,10 @@ return [
 		// Per-app theming exclusion list.
 		['name' => 'settings#getAppTheming', 'url' => '/settings/app-theming', 'verb' => 'GET'],
 		['name' => 'settings#setAppTheming', 'url' => '/settings/app-theming', 'verb' => 'POST'],
+		['name' => 'appBrand#index', 'url' => '/settings/app-brands', 'verb' => 'GET'],
+		['name' => 'appBrand#save', 'url' => '/settings/app-brands/{appId}', 'verb' => 'POST'],
+		['name' => 'appBrand#remove', 'url' => '/settings/app-brands/{appId}', 'verb' => 'DELETE'],
+		['name' => 'appBrand#uploadLogo', 'url' => '/settings/app-brands/{appId}/logo/{size}', 'verb' => 'POST'],
 		// Upstream token freshness (opt-in daily background job status + dismissal).
 		['name' => 'settings#getUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'GET'],
 		['name' => 'settings#setUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'POST'],

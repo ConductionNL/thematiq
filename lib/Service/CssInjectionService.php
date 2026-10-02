@@ -144,6 +144,12 @@ class CssInjectionService {
 	 */
 	private RuntimeFileLocator $runtimeFiles;
 
+	/** @var AppBrandService The brand per app (openspec/specs/per-app-theming/spec.md). */
+	private AppBrandService $appBrands;
+
+	/** @var array<string, string>|null The rendered app's logo layer for this request, when its brand applies. */
+	private ?array $brandLogo = null;
+
 	/**
 	 * Builds the rules that carry a set's internal tokens onto their components.
 	 *
@@ -165,6 +171,7 @@ class CssInjectionService {
 	 * @param StockTokensService $stockTokens Resolves the `nextcloud` set from the running instance.
 	 * @param RuntimeFileLocator $runtimeFiles Finds files thematiq wrote at runtime, which live in app data.
 	 * @param LogoLayerService $logoLayer Resolves the active set's logo layer.
+	 * @param AppBrandService $appBrands The brand per app.
 	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
@@ -182,6 +189,7 @@ class CssInjectionService {
 		StockTokensService $stockTokens,
 		RuntimeFileLocator $runtimeFiles,
 		private readonly LogoLayerService $logoLayer,
+		AppBrandService $appBrands,
 		?InternalScopesService $internalScopes = null,
 	) {
 		$this->config = $config;
@@ -194,6 +202,7 @@ class CssInjectionService {
 		$this->logger = $logger;
 		$this->stockTokens = $stockTokens;
 		$this->runtimeFiles = $runtimeFiles;
+		$this->appBrands = $appBrands;
 		$this->internalScopes = ($internalScopes ?? new InternalScopesService(files: $runtimeFiles));
 	}//end __construct()
 
@@ -248,14 +257,16 @@ class CssInjectionService {
 	 *
 	 * @param string $context One of `user`/`login`/`guest`/`public`/`error`,
 	 *                        or any other value (always themed — fail open).
+	 * @param string|null $appId The rendered app, for its brand (openspec/specs/per-app-theming/spec.md).
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
-	public function inject(string $context): void {
+	public function inject(string $context, ?string $appId = null): void {
 		if ($this->isContextThemed(context: $context) === false) {
 			return;
 		}
@@ -269,7 +280,10 @@ class CssInjectionService {
 		// It is still isolated, so a resolver failure logs and renders the
 		// page unthemed instead of throwing into the listener's catch-all.
 		try {
-			$tokenSet = $this->groupThemingService->resolveTokenSetForRequest();
+			$brand = $this->appBrands->brandFor(appId: $appId);
+			$tokenSet = $this->groupThemingService->resolveTokenSetForRequest(appBrandSet: ($brand['tokenSet'] ?? null));
+			$this->brandLogo = $this->appBrands->logoLayer(brand: $brand, tokenSet: $tokenSet, styleId: self::LOGO_STYLE_ID);
+
 			$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 			$designSystemId = $tokenSetMeta['design_system'] ?? 'nldesign';
 		} catch (Throwable $e) {
@@ -430,7 +444,7 @@ class CssInjectionService {
 		// file declares. See LogoLayerService::layer() — a relative url() inside a custom
 		// property is resolved against the stylesheet that USES it, and the use
 		// sites sit at different depths.
-		$logo = $this->logoLayer->layer(tokenSet: $tokenSet);
+		$logo = ($this->brandLogo ?? $this->logoLayer->layer(tokenSet: $tokenSet));
 		if ($logo !== null) {
 			$layers[] = $logo;
 		}

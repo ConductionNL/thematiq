@@ -941,7 +941,25 @@ OC.L10N.register(
         "No file uploaded.": "No file uploaded.",
         "The file is larger than 2 MB.": "The file is larger than 2 MB.",
         "Unknown document image.": "Unknown document image.",
-        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload a PNG, JPEG or WebP image, or an SVG without script."
+        "Upload a PNG, JPEG or WebP image, or an SVG without script.": "Upload a PNG, JPEG or WebP image, or an SVG without script.",
+        "Brand per app": "Brand per app",
+        "Give an app its own house style and logo, for example a knowledge base or a participation platform. On that app's pages the brand replaces the house style for everyone. Other pages stay as they are.": "Give an app its own house style and logo, for example a knowledge base or a participation platform. On that app's pages the brand replaces the house style for everyone. Other pages stay as they are.",
+        "The app's name stays as Nextcloud shows it: the app menu and page titles come from Nextcloud.": "The app's name stays as Nextcloud shows it: the app menu and page titles come from Nextcloud.",
+        "App": "App",
+        "Save brand": "Save brand",
+        "Large logo": "Large logo",
+        "Small logo": "Small logo",
+        "Logo saved.": "Logo saved.",
+        "No app has its own brand.": "No app has its own brand.",
+        "Not applied: the app is not installed, excluded, or its token set is gone.": "Not applied: the app is not installed, excluded, or its token set is gone.",
+        "Remove brand": "Remove brand",
+        "Remove the brand of {app}": "Remove the brand of {app}",
+        "Brand saved.": "Brand saved.",
+        "The settings pages always follow the house style. This app cannot get its own brand.": "The settings pages always follow the house style. This app cannot get its own brand.",
+        "This app is not installed.": "This app is not installed.",
+        "This app is excluded from theming. Include it under Theming per app first.": "This app is excluded from theming. Include it under Theming per app first.",
+        "This token set is not available.": "This token set is not available.",
+        "The logo is larger than 1 MB.": "The logo is larger than 1 MB."
     },
     "nplurals=2; plural=(n != 1);"
 )
