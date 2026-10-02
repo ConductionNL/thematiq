@@ -29,3 +29,12 @@
       canonical feature list and every reconciliation, and this `tasks.md`.
 - [x] 12. Write `specs/beta-alignment/spec.md` delta capturing the cross-surface consistency
       requirement.
+
+## Notes from the archive (2 Oct 2026)
+
+- Checked against `development` before archiving: `appinfo/info.xml` carries `lang="en"` and
+  `lang="nl"` pairs for name, summary and description with a translated Dutch text, and
+  `<licence>EUPL-1.2</licence>`. `ClaimAccuracyTest::testManifestTextIsPairedInEnglishAndDutch`
+  now guards the pairing; the licence was already guarded.
+- The product-page corrections (tasks 5 to 7) live in `conduction-website` and are not part of
+  this repository.

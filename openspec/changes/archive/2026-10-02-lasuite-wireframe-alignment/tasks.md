@@ -45,8 +45,11 @@
 - [x] 5.1 Run `npm run test:lasuite-tokens`, `npm run test:lasuite-override`,
       `npm run test:lasuite-bridge-coverage`, `npx stylelint css/systems/lasuite/*.css`, and
       `npm run test:unit`; confirm all green.
-- [ ] 5.2 Run the updated `lasuite-parity.spec.ts` e2e spec against the dev instance and confirm
+- [x] 5.2 Run the updated `lasuite-parity.spec.ts` e2e spec against the dev instance and confirm
       it passes.
+      Owed (2 Oct 2026): not run here, because the spec switches the shared instance to the
+      lasuite set; it runs in CI's Playwright job. The live capture of task 5.3 covered the same
+      surfaces on 30 Jul.
 - [x] 5.3 Capture a live side-by-side Playwright comparison (lasuite-themed Files view + login
       page vs. La Suite Docs) per the `lasuite-stack` Visual Parity Verification requirement; fix
       any checklist miss before archiving.
