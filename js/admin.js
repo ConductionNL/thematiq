@@ -2655,6 +2655,13 @@
 					return r.json()
 				})
 				.then(function (data) {
+					// Both registries: the one the discarded rows were drawn
+					// from and the one the new rows are drawn from.
+					clearLiveTokens(
+						Object.keys(tokenRegistry).concat(
+							Object.keys(data.registry || {}),
+						),
+					)
 					tokenRegistry = data.registry || {}
 					tokenTabLabels = data.tabs || {}
 					var overrides = data.overrides || {}
@@ -3749,6 +3756,35 @@
 					node.style.setProperty(name, value, 'important')
 				}
 			})
+		}
+
+		/**
+		 * Drop every unsaved value written where an edit is shown.
+		 *
+		 * Called when the editor is rebuilt from the server: after an apply and
+		 * after an import. The rebuilt rows hold only what is saved, so a value
+		 * an edit wrote inline on the preview (or, for the primary family, on
+		 * the settings section) is now held by nothing, and being the nearer
+		 * declaration it would keep beating the theme for the rest of the page
+		 * session. The playground writes the same names on the preview from its
+		 * cloned rows, so this clears those too. The preview's own `--prev-*`
+		 * scale is not an edit and is left alone.
+		 *
+		 * @param {Array<string>} names The token names the editor can write.
+		 * @return {void}
+		 */
+		function clearLiveTokens(names) {
+			var targets = [previewTarget()]
+			if (settingsEl !== null) {
+				targets.push(settingsEl)
+			}
+			targets.forEach(function (node) {
+				names.forEach(function (name) {
+					node.style.removeProperty(name)
+				})
+			})
+			// The `--prev-*` scale was read off the cascade the edits were in.
+			schedulePreviewRepaint()
 		}
 
 		function applyLivePreview(name, value) {
