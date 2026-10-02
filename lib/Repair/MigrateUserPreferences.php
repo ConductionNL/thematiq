@@ -210,6 +210,21 @@ class MigrateUserPreferences implements IRepairStep {
 			return;
 		}//end try
 
+		$this->reportCounts(output: $output);
+	}//end run()
+
+	/**
+	 * Report what the user walk did.
+	 *
+	 * A method of its own because the counters are written inside the
+	 * callForSeenUsers() callback: read inline after that call, a static
+	 * analyser still sees the zeroes run() set and calls the check redundant.
+	 *
+	 * @param IOutput $output The output interface for progress reporting.
+	 *
+	 * @return void
+	 */
+	private function reportCounts(IOutput $output): void {
 		if ($this->migrated === 0 && $this->alreadyPresent === 0 && $this->failed === 0) {
 			$output->info(
 				'MigrateUserPreferences: no stored nldesign user preferences on this install; nothing to do.'
@@ -221,8 +236,7 @@ class MigrateUserPreferences implements IRepairStep {
 			'MigrateUserPreferences: migrated ' . $this->migrated . ' preference(s); '
 			. $this->alreadyPresent . ' already set under thematiq; ' . $this->failed . ' failed.'
 		);
-
-	}//end run()
+	}//end reportCounts()
 
 	/**
 	 * Copy one user's stored preferences from the old app id to the new one.

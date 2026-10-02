@@ -94,7 +94,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	/**
 	 * Decoded settable entries, or null before the first read.
 	 *
-	 * @var array<string, array<string, mixed>>|null
+	 * @var array<string, array{tab: string, type: string, label: string, settable: true, token: string, advanced: bool, perScheme: bool}>|null
 	 */
 	private static ?array $settableTokens = null;
 
@@ -111,6 +111,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *     variable: string,
 	 *     class: string,
 	 *     owner: string,
+	 *     group: string,
 	 *     type: string,
 	 *     mode: string,
 	 *     selectors: array<int, string>,
@@ -120,12 +121,30 @@ class TokenRegistry implements TokenRegistryInterface {
 	private static ?array $internalTokens = null;
 
 	/**
+	 * Nextcloud's own light and dark value per settable theme variable, from the same map.
+	 *
+	 * @var array<string, array{light: string, dark: string}>
+	 */
+	private static array $themeStock = [];
+
+	/**
 	 * Returns the full registry of editable tokens.
 	 *
 	 * Keys are CSS custom property names (e.g. '--color-primary').
 	 * Values carry 'tab', 'type', 'label', 'group' and 'primary'.
 	 *
-	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool, global?: string}> The token registry.
+	 * @return array<string, array{
+	 *     tab: string,
+	 *     type: string,
+	 *     label: string,
+	 *     group: string,
+	 *     primary: bool,
+	 *     global?: string,
+	 *     settable?: true,
+	 *     token?: string,
+	 *     advanced?: bool,
+	 *     perScheme?: bool
+	 * }> The token registry.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
@@ -141,7 +160,17 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * locked by the `primary_drives_components` setting — that setting exists to
 	 * make these win, not to freeze them.
 	 *
-	 * @return array<string, array{tab: string, type: string, label: string, group: string, primary: bool}> The brand tokens.
+	 * @return array<string, array{
+	 *     tab: string,
+	 *     type: string,
+	 *     label: string,
+	 *     group: string,
+	 *     primary: bool,
+	 *     settable?: true,
+	 *     token?: string,
+	 *     advanced?: bool,
+	 *     perScheme?: bool
+	 * }> The brand tokens.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
@@ -167,9 +196,10 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * A missing or malformed table yields none, so the brand tokens still edit.
 	 *
-	 * @return array<string, array<string, mixed>> Name => tab, type, label, settable, token, and advanced / perScheme when set.
+	 * @return array<string, array{tab: string, type: string, label: string, settable: true, token: string, advanced: bool, perScheme: bool}>
+	 *         Name => tab, type, label, settable, token, advanced and perScheme.
 	 *
-	 * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public static function getSettableTokens(): array {
 		if (self::$settableTokens !== null) {
@@ -206,6 +236,8 @@ class TokenRegistry implements TokenRegistryInterface {
 				'token' => $entry['token'],
 				'advanced' => (($entry['advanced'] ?? false) === true),
 				'perScheme' => (($entry['perScheme'] ?? false) === true),
+				'note' => (string)($entry['note'] ?? ''),
+				'stock' => (self::$themeStock[$name] ?? ['light' => '', 'dark' => '']),
 			];
 		}
 
@@ -219,7 +251,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return string|null The token.
 	 *
-	 * @spec openspec/changes/theme-vocabulary-complete/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public static function settableToken(string $tokenName): ?string {
 		return (self::getSettableTokens()[$tokenName]['token'] ?? null);
@@ -417,6 +449,19 @@ class TokenRegistry implements TokenRegistryInterface {
 	}//end getTokenNames()
 
 	/**
+	 * How many tokens the editor offers: the registry's tabs plus the internal tokens.
+	 *
+	 * The editor heading and the user docs state this number, so they cannot drift apart.
+	 *
+	 * @return int The count.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md
+	 */
+	public static function countEditable(): int {
+		return count(self::getTokens()) + count(self::getInternalTokens());
+	}//end countEditable()
+
+	/**
 	 * Checks whether a given token name is editable.
 	 *
 	 * @param string $tokenName The CSS custom property name.
@@ -442,13 +487,14 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *     variable: string,
 	 *     class: string,
 	 *     owner: string,
+	 *     group: string,
 	 *     type: string,
 	 *     mode: string,
 	 *     selectors: array<int, string>,
 	 *     stock: string
 	 * }> The internal tokens.
 	 *
-	 * @spec openspec/changes/internal-variable-tokens/specs/component-tokens/spec.md
+	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	public static function getInternalTokens(): array {
 		if (self::$internalTokens !== null) {
@@ -466,6 +512,13 @@ class TokenRegistry implements TokenRegistryInterface {
 			$decoded = json_decode($raw, true);
 		}
 
+		self::$themeStock = [];
+		foreach (($decoded['themeStock'] ?? []) as $name => $stock) {
+			if (is_array($stock) === true) {
+				self::$themeStock[(string)$name] = ['light' => (string)($stock['light'] ?? ''), 'dark' => (string)($stock['dark'] ?? '')];
+			}
+		}
+
 		foreach (($decoded['tokens'] ?? []) as $token => $entry) {
 			if (is_array($entry) === false || is_string($entry['variable'] ?? null) === false) {
 				continue;
@@ -475,6 +528,7 @@ class TokenRegistry implements TokenRegistryInterface {
 				'variable' => $entry['variable'],
 				'class' => (string)($entry['class'] ?? 'component'),
 				'owner' => (string)($entry['owner'] ?? ''),
+				'group' => (string)($entry['group'] ?? 'other'),
 				'type' => (string)($entry['type'] ?? 'text'),
 				'mode' => (string)($entry['mode'] ?? 'body'),
 				'selectors' => array_values(array_map('strval', (array)($entry['selectors'] ?? []))),
@@ -488,7 +542,19 @@ class TokenRegistry implements TokenRegistryInterface {
 	/**
 	 * Returns tokens grouped by tab.
 	 *
-	 * @return array<string, array<string, array{tab: string, type: string, label: string, group: string, primary: bool}>> Tokens grouped by tab id.
+	 * @return array<string, array<string, array{
+	 *     tab: string,
+	 *     type: string,
+	 *     label: string,
+	 *     group: string,
+	 *     primary: bool,
+	 *     global?: string,
+	 *     settable?: true,
+	 *     token?: string,
+	 *     advanced?: bool,
+	 *     perScheme?: bool
+	 * }>>
+	 *         Tokens grouped by tab id.
 	 *
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
 	 */

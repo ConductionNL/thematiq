@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ namespace OCA\Thematiq\Service\RuntimeFile;
  *
  * Kept in one place so the readers do not each carry a copy of the branch.
  *
- * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+ * @spec openspec/specs/runtime-file-storage/spec.md
  */
 class SetFileReader {
 
@@ -48,7 +48,7 @@ class SetFileReader {
 	 *
 	 * @return string|null The content, or null when the file does not exist.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function read(string $appPath, string $name, ?RuntimeFileStore $store): ?string {
 		if ($store !== null && preg_match(self::UPLOADED, $name) === 1) {
@@ -77,7 +77,7 @@ class SetFileReader {
 	 *
 	 * @return bool True when it does.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function exists(string $appPath, string $name, ?RuntimeFileStore $store): bool {
 		if ($store !== null && preg_match(self::UPLOADED, $name) === 1) {
@@ -96,7 +96,7 @@ class SetFileReader {
 	 *
 	 * @return array<int, string> Base names such as `utrecht.css`, sorted.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	public function fileNames(string $appPath, string $directory, ?RuntimeFileStore $store): array {
 		$directory = trim($directory, '/');

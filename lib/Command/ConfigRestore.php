@@ -106,15 +106,13 @@ class ConfigRestore extends Command {
 	 * @param bool   $dryRun Whether to write nothing.
 	 *
 	 * @return array<string, mixed>|null The result, or null for an unknown id.
-	 *
-	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - mirrors the --dry-run option.
 	 */
 	private function previewOrRestore(string $id, bool $dryRun): ?array {
 		if ($dryRun === true) {
 			return $this->restorer->preview(id: $id);
 		}
 
-		return $this->restorer->restore(id: $id);
+		return $this->restorer->restore(id: $id, actor: 'cli');
 	}//end previewOrRestore()
 
 	/**

@@ -658,8 +658,38 @@
 						tokenSetsData[ts.id] = ts
 						upsertTokenSetOption(ts)
 					})
+					refreshScheduledSetOptions(sets)
 					return sets
 				})
+		}
+
+		/**
+		 * Rebuild the planned-switch set list from the catalogue. The server
+		 * renders it once, so a set added through the brand form, the gallery
+		 * or an upload was missing from it until a reload. The chosen set
+		 * stays chosen when it is still in the catalogue.
+		 *
+		 * @param {Array<object>} sets The catalogue.
+		 */
+		function refreshScheduledSetOptions(sets) {
+			var select = document.getElementById('nldesign-scheduled-set')
+			if (select === null || sets.length === 0) {
+				return
+			}
+			var chosen = select.value
+			select.textContent = ''
+			sets.forEach(function (ts) {
+				var option = document.createElement('option')
+				option.value = ts.id
+				option.textContent = ts.name || ts.id
+				select.appendChild(option)
+			})
+			var stillThere = sets.some(function (ts) {
+				return ts.id === chosen
+			})
+			if (stillThere) {
+				select.value = chosen
+			}
 		}
 
 		function upsertTokenSetOption(ts) {
@@ -2641,6 +2671,130 @@
 		var tokenEditorDarkDerived = {}
 		// Registry from server: token name → { tab, type, label }
 		var tokenRegistry = {}
+		// Internal tokens from server: token name → { variable, group, type, stock }.
+		// Kept apart from tokenRegistry, which the tabs, the locks and the apply
+		// dialog read; these are listed per component group below the tabs.
+		var tokenInternal = {}
+		// How many tokens the editor offers, as the server counts them.
+		var tokenEditableCount = 0
+		// Groups whose rows are built, and the open groups before a search began.
+		var tokenGroupsBuilt = {}
+		var tokenSearchRestore = null
+
+		/**
+		 * The registry entry of any editor token, internal ones included.
+		 *
+		 * @param {string} name The token name.
+		 * @return {object|undefined} The entry.
+		 */
+		function tokenMeta(name) {
+			if (tokenRegistry[name] !== undefined) {
+				return tokenRegistry[name]
+			}
+			var internal = tokenInternal[name]
+			if (internal === undefined) {
+				return undefined
+			}
+			return {
+				tab: 'internal',
+				type: internal.type,
+				label: internal.variable,
+				group: 'internal',
+				section: internal.group,
+				variable: internal.variable,
+				stock: { light: internal.stock || '', dark: internal.stock || '' },
+			}
+		}
+
+		/**
+		 * The translated heading of a component group, keyed by the ids
+		 * scripts/inventory/generate-internal-tokens.mjs gives them.
+		 *
+		 * @param {string} id The group id.
+		 * @return {string} The heading.
+		 */
+		function tokenGroupHeading(id) {
+			var headings = {
+				'date-picker': t('thematiq', 'Date picker'),
+				select: t('thematiq', 'Select box'),
+				'media-player': t('thematiq', 'Media player'),
+				'code-highlighting': t('thematiq', 'Code highlighting'),
+				conduction: t('thematiq', 'Conduction apps'),
+				'pdf-viewer': t('thematiq', 'PDF viewer'),
+				'text-editor': t('thematiq', 'Text editor'),
+				files: t('thematiq', 'Files'),
+				photos: t('thematiq', 'Photos'),
+				teams: t('thematiq', 'Teams'),
+				components: t('thematiq', 'Nextcloud components'),
+				other: t('thematiq', 'Other variables'),
+				advanced: t('thematiq', 'Advanced'),
+			}
+			return headings[id] || id
+		}
+
+		/** The order the groups are listed in, Advanced last. */
+		var TOKEN_GROUP_ORDER = [
+			'date-picker',
+			'select',
+			'media-player',
+			'code-highlighting',
+			'conduction',
+			'pdf-viewer',
+			'text-editor',
+			'files',
+			'photos',
+			'teams',
+			'components',
+			'other',
+			'advanced',
+		]
+
+		/**
+		 * Whether the page shows Nextcloud's dark theme.
+		 *
+		 * @return {boolean} True in dark.
+		 */
+		function pageIsDark() {
+			var themes = document.body.getAttribute('data-themes') || ''
+			if (themes.indexOf('dark') !== -1) {
+				return true
+			}
+			var chosen =
+				document.body.hasAttribute('data-theme-light')
+				|| document.body.hasAttribute('data-theme-dark')
+				|| document.body.hasAttribute('data-theme-light-highcontrast')
+				|| document.body.hasAttribute('data-theme-dark-highcontrast')
+			return (
+				chosen === false
+				&& typeof window.matchMedia === 'function'
+				&& window.matchMedia('(prefers-color-scheme: dark)').matches
+			)
+		}
+
+		/**
+		 * Nextcloud's own value of a row for the current theme, with a colour
+		 * expression such as `var(--color-border)` resolved to the colour it
+		 * gives on this page.
+		 *
+		 * @param {object} meta The row's registry entry.
+		 * @return {string} The value, or '' when none is recorded.
+		 */
+		function stockValue(meta) {
+			if (!meta.stock) {
+				return ''
+			}
+			var value = pageIsDark() ? meta.stock.dark : meta.stock.light
+			if (!value || meta.type !== 'color' || value.indexOf('var(') === -1) {
+				return value || ''
+			}
+			var probe = document.createElement('span')
+			probe.style.display = 'none'
+			probe.style.color = value
+			document.body.appendChild(probe)
+			var resolved = getComputedStyle(probe).color
+			probe.remove()
+			return resolved || value
+		}
 		// Tab labels from server: tab id → display label
 		var tokenTabLabels = {}
 
@@ -2718,11 +2872,20 @@
 					// Both registries: the one the discarded rows were drawn
 					// from and the one the new rows are drawn from.
 					clearLiveTokens(
-						Object.keys(tokenRegistry).concat(
-							Object.keys(data.registry || {}),
-						),
+						Object.keys(tokenRegistry)
+							.concat(Object.keys(data.registry || {}))
+							.concat(Object.keys(tokenInternal))
+							.concat(Object.keys(data.internal || {})),
 					)
 					tokenRegistry = data.registry || {}
+					tokenInternal = data.internal || {}
+					tokenGroupsBuilt = {}
+					tokenSearchRestore = null
+					tokenEditableCount =
+						typeof data.count === 'number'
+							? data.count
+							: Object.keys(tokenRegistry).length
+								+ Object.keys(tokenInternal).length
 					tokenTabLabels = data.tabs || {}
 					var overrides = data.overrides || {}
 					tokenEditorDark = Object.assign({}, data.darkOverrides || {})
@@ -2730,20 +2893,28 @@
 					// Read resolved values from the live CSS stack.
 					var rootStyle = getComputedStyle(document.documentElement)
 					var bodyStyle = getComputedStyle(document.body)
-					Object.keys(tokenRegistry).forEach(function (name) {
-						var resolved = resolveTokenValue(rootStyle, bodyStyle, name)
-						var overridden =
-							overrides[name] !== undefined ? overrides[name] : null
-						tokenEditorState[name] = {
-							resolved: resolved,
-							custom: overridden,
-							current: overridden !== null ? overridden : resolved,
-							// What the reset button goes back to: the value as it
-							// was last saved, not the theme's own.
-							saved: overridden !== null ? overridden : resolved,
-							isDirty: false,
-						}
-					})
+					Object.keys(tokenRegistry)
+						.concat(Object.keys(tokenInternal))
+						.forEach(function (name) {
+							var resolved = resolveTokenValue(
+								rootStyle,
+								bodyStyle,
+								name,
+							)
+							var overridden =
+								overrides[name] !== undefined
+									? overrides[name]
+									: null
+							tokenEditorState[name] = {
+								resolved: resolved,
+								custom: overridden,
+								current: overridden !== null ? overridden : resolved,
+								// What the reset button goes back to: the value as it
+								// was last saved, not the theme's own.
+								saved: overridden !== null ? overridden : resolved,
+								isDirty: false,
+							}
+						})
 
 					renderTokenEditor(container, overrides)
 				})
@@ -2763,6 +2934,10 @@
 			var grouped = {}
 			Object.keys(tokenRegistry).forEach(function (name) {
 				var meta = tokenRegistry[name]
+				// Layout variables go to the Advanced group, behind its warning.
+				if (meta.advanced === true) {
+					return
+				}
 				if (grouped[meta.tab] === undefined) {
 					grouped[meta.tab] = []
 				}
@@ -2827,10 +3002,29 @@
 				+ '">'
 				+ '</div>'
 				+ '</div>'
+				+ '<p class="settings-hint nldesign-token-count" id="nldesign-token-count">'
+				+ escapeHtml(
+					t('thematiq', '{count} editable tokens', {
+						count: tokenEditableCount,
+					}),
+				)
+				+ '</p>'
+				+ '<div class="nldesign-token-search">'
+				+ '<label for="nldesign-token-search">'
+				+ escapeHtml(t('thematiq', 'Search tokens'))
+				+ '</label>'
+				+ '<input type="search" id="nldesign-token-search" autocomplete="off" placeholder="'
+				+ escapeHtml(t('thematiq', 'Name, variable or component'))
+				+ '">'
+				+ '<p class="nldesign-token-search-empty" id="nldesign-token-search-empty" hidden>'
+				+ escapeHtml(t('thematiq', 'No token matches your search.'))
+				+ '</p>'
+				+ '</div>'
 				+ '<div class="nldesign-tabs">'
 				+ tabsHtml
 				+ '</div>'
 				+ panelsHtml
+				+ buildTokenGroups()
 				+ '<div class="nldesign-save-bar">'
 				+ '<span class="nldesign-save-status" id="nldesign-save-status"></span>'
 				+ '<button class="nldesign-btn nldesign-btn--primary" id="nldesign-save-btn">'
@@ -2904,6 +3098,10 @@
 			})
 
 			wireTokenRows(container)
+
+			wireTokenGroups(container)
+
+			wireTokenSearch(container)
 
 			wireConfirmControls()
 
@@ -3013,10 +3211,312 @@
 		}
 
 		/**
+		 * The tokens of each component group and of the Advanced group.
+		 *
+		 * @return {Object<string, Array<string>>} Group id => token names.
+		 */
+		function tokenGroupMembers() {
+			var members = {}
+			Object.keys(tokenInternal).forEach(function (name) {
+				var id = tokenInternal[name].group || 'other'
+				;(members[id] = members[id] || []).push(name)
+			})
+			Object.keys(tokenRegistry).forEach(function (name) {
+				if (tokenRegistry[name].advanced === true) {
+					;(members.advanced = members.advanced || []).push(name)
+				}
+			})
+			return members
+		}
+
+		/**
+		 * The collapsed component groups and the Advanced group. Each is a
+		 * disclosure button and an empty panel; its rows are built the first
+		 * time it opens or a search matches it, so the page does not build
+		 * hundreds of rows on load.
+		 *
+		 * @return {string} HTML.
+		 */
+		function buildTokenGroups() {
+			var members = tokenGroupMembers()
+			var html = ''
+			TOKEN_GROUP_ORDER.forEach(function (id) {
+				if (members[id] === undefined) {
+					return
+				}
+				html +=
+					'<div class="nldesign-token-group" data-group="'
+					+ escapeHtml(id)
+					+ '">'
+					+ '<h4 class="nldesign-token-group-heading">'
+					+ '<button type="button" class="nldesign-token-group-toggle" aria-expanded="false" aria-controls="nldesign-token-group-'
+					+ escapeHtml(id)
+					+ '">'
+					+ escapeHtml(tokenGroupHeading(id))
+					+ ' <span class="nldesign-token-group-count">('
+					+ members[id].length
+					+ ')</span>'
+					+ '</button>'
+					+ '</h4>'
+					+ '<div class="nldesign-token-group-panel" id="nldesign-token-group-'
+					+ escapeHtml(id)
+					+ '" hidden></div>'
+					+ '</div>'
+			})
+			if (html === '') {
+				return ''
+			}
+			return (
+				'<div class="nldesign-token-groups">'
+				+ '<h4>'
+				+ escapeHtml(t('thematiq', 'Component variables'))
+				+ '</h4>'
+				+ html
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * Build a group's rows once, and wire them.
+		 *
+		 * @param {HTMLElement} group The group element.
+		 * @return {void}
+		 */
+		function ensureTokenGroupBuilt(group) {
+			var id = group.dataset.group
+			if (tokenGroupsBuilt[id] === true) {
+				return
+			}
+			var panel = group.querySelector('.nldesign-token-group-panel')
+			var html = ''
+			if (id === 'advanced') {
+				// Text, above the first field: the icon is decoration only.
+				html +=
+					'<p class="nldesign-token-advanced-warning" role="note">'
+					+ '<span aria-hidden="true">⚠ </span>'
+					+ escapeHtml(
+						t(
+							'thematiq',
+							"These values size Nextcloud's layout. A wrong value can break the layout, not only the look.",
+						),
+					)
+					+ '</p>'
+			}
+			;(tokenGroupMembers()[id] || []).forEach(function (name) {
+				var state = tokenEditorState[name]
+				html += buildTokenRow(
+					name,
+					state && state.custom !== undefined ? state.custom : null,
+				)
+			})
+			panel.innerHTML = html
+			tokenGroupsBuilt[id] = true
+			wireTokenRows(panel)
+			refreshTokenEditorLocks()
+		}
+
+		/**
+		 * Open or close a group.
+		 *
+		 * @param {HTMLElement} group The group element.
+		 * @param {boolean} open Whether to open it.
+		 * @return {void}
+		 */
+		function setTokenGroupOpen(group, open) {
+			if (open === true) {
+				ensureTokenGroupBuilt(group)
+			}
+			group
+				.querySelector('.nldesign-token-group-toggle')
+				.setAttribute('aria-expanded', open === true ? 'true' : 'false')
+			group.querySelector('.nldesign-token-group-panel').hidden = open !== true
+		}
+
+		/**
+		 * Wire the group toggles.
+		 *
+		 * @param {HTMLElement} container The editor container.
+		 * @return {void}
+		 */
+		function wireTokenGroups(container) {
+			container
+				.querySelectorAll('.nldesign-token-group')
+				.forEach(function (group) {
+					group
+						.querySelector('.nldesign-token-group-toggle')
+						.addEventListener('click', function () {
+							setTokenGroupOpen(
+								group,
+								this.getAttribute('aria-expanded') !== 'true',
+							)
+						})
+				})
+		}
+
+		/**
+		 * Whether a token matches a search, by label, CSS name, variable or heading.
+		 *
+		 * @param {string} name The token.
+		 * @param {string} heading The heading it is listed under.
+		 * @param {string} query The lower-cased search.
+		 * @return {boolean} True on a match.
+		 */
+		function tokenMatches(name, heading, query) {
+			var meta = tokenMeta(name) || {}
+			return [meta.label, name, meta.variable, heading].some(function (text) {
+				return (
+					typeof text === 'string'
+					&& text.toLowerCase().indexOf(query) !== -1
+				)
+			})
+		}
+
+		/**
+		 * Filter every tab and group by the search field. A group with a match
+		 * opens, and is built first if it was not; an empty field puts back
+		 * what was open before the search began.
+		 *
+		 * @param {HTMLElement} container The editor container.
+		 * @param {string} raw The field's value.
+		 * @return {void}
+		 */
+		function applyTokenSearch(container, raw) {
+			var query = raw.trim().toLowerCase()
+			var editor = container.querySelector('.nldesign-token-editor')
+			var groups = container.querySelectorAll('.nldesign-token-group')
+			if (query === '') {
+				editor.classList.remove('nldesign-token-editor--searching')
+				container
+					.querySelectorAll(
+						'.nldesign-token-row, .nldesign-tab-panel, .nldesign-token-group',
+					)
+					.forEach(function (el) {
+						el.hidden = false
+					})
+				groups.forEach(function (group) {
+					var open =
+						tokenSearchRestore !== null
+						&& tokenSearchRestore[group.dataset.group] === true
+					setTokenGroupOpen(group, open)
+				})
+				tokenSearchRestore = null
+				container.querySelector('#nldesign-token-search-empty').hidden = true
+				return
+			}
+
+			if (tokenSearchRestore === null) {
+				tokenSearchRestore = {}
+				groups.forEach(function (group) {
+					tokenSearchRestore[group.dataset.group] =
+						group
+							.querySelector('.nldesign-token-group-toggle')
+							.getAttribute('aria-expanded') === 'true'
+				})
+			}
+			editor.classList.add('nldesign-token-editor--searching')
+			var any = false
+
+			container
+				.querySelectorAll('.nldesign-tab-panel')
+				.forEach(function (panel) {
+					var heading =
+						tokenTabLabels[panel.dataset.panel] || panel.dataset.panel
+					var hits = 0
+					panel
+						.querySelectorAll('.nldesign-token-row')
+						.forEach(function (row) {
+							var match = tokenMatches(
+								row.dataset.tokenRow,
+								heading,
+								query,
+							)
+							row.hidden = match === false
+							hits += match ? 1 : 0
+						})
+					panel.hidden = hits === 0
+					any = any || hits > 0
+				})
+
+			var members = tokenGroupMembers()
+			groups.forEach(function (group) {
+				var id = group.dataset.group
+				var heading = tokenGroupHeading(id)
+				var names = (members[id] || []).filter(function (name) {
+					return tokenMatches(name, heading, query)
+				})
+				group.hidden = names.length === 0
+				if (names.length === 0) {
+					return
+				}
+				any = true
+				setTokenGroupOpen(group, true)
+				group
+					.querySelectorAll('.nldesign-token-row')
+					.forEach(function (row) {
+						row.hidden = names.indexOf(row.dataset.tokenRow) === -1
+					})
+			})
+
+			container.querySelector('#nldesign-token-search-empty').hidden = any
+		}
+
+		/**
+		 * Wire the search field.
+		 *
+		 * @param {HTMLElement} container The editor container.
+		 * @return {void}
+		 */
+		function wireTokenSearch(container) {
+			var field = container.querySelector('#nldesign-token-search')
+			if (field === null) {
+				return
+			}
+			field.addEventListener('input', function () {
+				applyTokenSearch(container, field.value)
+			})
+		}
+
+		/**
+		 * Nextcloud's own value and the inventory note of a row, as text the
+		 * row's fields point at with `aria-describedby`.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @return {{html: string, ids: string}} The HTML and the ids it carries.
+		 */
+		function buildTokenFacts(name, meta) {
+			var key = name.replace(/[^a-zA-Z0-9-]/g, '')
+			var html = ''
+			var ids = []
+			var stock = stockValue(meta)
+			if (stock !== '') {
+				ids.push('nldesign-stock-' + key)
+				html +=
+					'<span class="nldesign-token-stock" id="nldesign-stock-'
+					+ key
+					+ '">'
+					+ escapeHtml(
+						t('thematiq', 'Nextcloud: {value}', { value: stock }),
+					)
+					+ '</span>'
+			}
+			if (meta.note) {
+				ids.push('nldesign-note-' + key)
+				html +=
+					'<span class="nldesign-token-note" id="nldesign-note-'
+					+ key
+					+ '">'
+					+ escapeHtml(meta.note)
+					+ '</span>'
+			}
+			return { html: html, ids: ids.join(' ') }
+		}
+
+		/**
 		 * Build HTML for a single token row.
 		 */
 		function buildTokenRow(name, customVal) {
-			var meta = tokenRegistry[name]
+			var meta = tokenMeta(name)
 			var state = tokenEditorState[name]
 			var displayVal = state
 				? state.current
@@ -3024,6 +3524,7 @@
 					? customVal
 					: ''
 			var isCustom = customVal !== null && customVal !== undefined
+			var facts = buildTokenFacts(name, meta)
 
 			var badgeHtml = isCustom
 				? '<span class="nldesign-token-custom-badge" title="'
@@ -3094,7 +3595,8 @@
 						? buildAlphaInput(name, meta, displayVal, parts, lockedAttr)
 						: '')
 					+ '</div>'
-					+ (meta.type === 'color' && meta.group === 'brand'
+					+ (meta.type === 'color'
+					&& (meta.group === 'brand' || meta.group === 'internal')
 						? buildDarkInput(name, meta, lockedAttr)
 						: '')
 			} else {
@@ -3124,8 +3626,14 @@
 				+ '<span class="nldesign-token-name">'
 				+ escapeHtml(name)
 				+ '</span>'
+				+ facts.html
 				+ '</div>'
-				+ inputHtml
+				+ (facts.ids === ''
+					? inputHtml
+					: inputHtml.replace(
+							/<input /g,
+							'<input aria-describedby="' + facts.ids + '" ',
+						))
 				+ '<button class="nldesign-btn nldesign-btn--small nldesign-reset-btn" data-token="'
 				+ escapeHtml(name)
 				+ '" title="'
@@ -3193,8 +3701,19 @@
 		 * @return {string} HTML.
 		 */
 		function buildDarkInput(name, meta, lockedAttr) {
+			// A settable or internal colour derives no dark value: empty keeps
+			// Nextcloud's own, which the placeholder shows where it is known.
+			var own =
+				meta.settable === true || meta.group === 'internal'
+					? meta.stock && meta.stock.dark
+						? t('thematiq', 'Nextcloud: {value}', {
+								value: meta.stock.dark,
+							})
+						: t('thematiq', "Nextcloud's own dark value")
+					: ''
 			var placeholder =
-				tokenEditorDarkDerived[name]
+				own
+				|| tokenEditorDarkDerived[name]
 				|| t('thematiq', 'Derived from the light value')
 			return (
 				'<div class="nldesign-token-dark">'
@@ -4702,7 +5221,7 @@
 				var dark = reason.indexOf('dark value: ') === 0
 				var key = dark ? reason.slice('dark value: '.length) : reason
 				var text = reasons[key] || reason
-				var meta = tokenRegistry[name] || {}
+				var meta = tokenMeta(name) || {}
 				var label = meta.label ? meta.label + ' (' + name + ')' : name
 				return dark
 					? t('thematiq', '{label}, dark value: {reason}', {
@@ -5702,12 +6221,11 @@
 				var boxes = optList.querySelectorAll(
 					'input[type="checkbox"][data-app-id]',
 				)
-				var themed = 0
-				boxes.forEach(function (b) {
-					if (b.checked) {
-						themed++
-					}
-				})
+				var themed = window.NldesignAppTheming.countThemed(
+					Array.prototype.map.call(boxes, function (b) {
+						return { checked: b.checked }
+					}),
+				).themed
 				triggerLabel.textContent = t(
 					'thematiq',
 					'{themed} of {total} apps themed',
@@ -5745,9 +6263,10 @@
 				optList
 					.querySelectorAll('.nldesign-app-option')
 					.forEach(function (opt) {
-						opt.hidden =
-							q !== ''
-							&& opt.getAttribute('data-app-name').indexOf(q) === -1
+						opt.hidden = !window.NldesignAppTheming.matchesAppSearch(
+							opt.getAttribute('data-app-name'),
+							q,
+						)
 					})
 			})
 
@@ -5820,14 +6339,17 @@
 				return
 			}
 
-			var disabledApps = []
-			listEl
-				.querySelectorAll('input[type="checkbox"][data-app-id]')
-				.forEach(function (cb) {
-					if (cb.checked === false) {
-						disabledApps.push(cb.getAttribute('data-app-id'))
-					}
-				})
+			var disabledApps = window.NldesignAppTheming.buildDisabledAppsPayload(
+				Array.prototype.map.call(
+					listEl.querySelectorAll('input[type="checkbox"][data-app-id]'),
+					function (cb) {
+						return {
+							id: cb.getAttribute('data-app-id'),
+							checked: cb.checked,
+						}
+					},
+				),
+			)
 
 			fetch(OC.generateUrl('/apps/thematiq/settings/app-theming'), {
 				method: 'POST',
@@ -5988,6 +6510,10 @@
 				})
 				tokenSetSelect.addEventListener('change', function () {
 					groupThemingRows[index].tokenSet = tokenSetSelect.value
+					keepCurrentSetAllowed(
+						index,
+						rowEl.querySelector('[data-field="allowedTokenSets"]'),
+					)
 				})
 
 				var moveUpBtn = document.createElement('button')
@@ -6077,6 +6603,29 @@
 			}
 		}
 
+		// The server refuses a delegated row whose allowed sets leave out its
+		// current set, so the current set is always on the list and its option
+		// cannot be unticked: changing the row's set adds the new one, and the
+		// picker cannot drop it.
+		function keepCurrentSetAllowed(index, picker) {
+			var row = groupThemingRows[index]
+			if (
+				row.delegated === true
+				&& row.allowedTokenSets.indexOf(row.tokenSet) === -1
+			) {
+				row.allowedTokenSets.push(row.tokenSet)
+			}
+			if (picker === null) {
+				return
+			}
+			Array.prototype.forEach.call(picker.options, function (opt) {
+				opt.disabled = opt.value === row.tokenSet
+				if (opt.value === row.tokenSet && row.delegated === true) {
+					opt.selected = true
+				}
+			})
+		}
+
 		// The delegate toggle and the allowed sets picker of one mapping row.
 		// Turning delegation on starts the allowed list with the current set,
 		// which the server requires it to hold.
@@ -6124,6 +6673,7 @@
 					.map(function (opt) {
 						return opt.value
 					})
+				keepCurrentSetAllowed(index, picker)
 			})
 			toggle.addEventListener('change', function () {
 				groupThemingRows[index].delegated = toggle.checked
@@ -6138,8 +6688,10 @@
 						opt.selected = opt.value === groupThemingRows[index].tokenSet
 					})
 				}
+				keepCurrentSetAllowed(index, picker)
 				picker.hidden = !toggle.checked
 			})
+			keepCurrentSetAllowed(index, picker)
 			wrap.appendChild(picker)
 			return wrap
 		}
@@ -6887,6 +7439,17 @@
 		 */
 		function openWithToken(url, failure) {
 			var tab = window.open('', '_blank')
+			// A blocked popup used to make this navigate the settings page
+			// itself to the page, which lost any unsaved edits on it.
+			if (tab === null) {
+				notify(
+					t(
+						'thematiq',
+						'The browser blocked the new tab, so the page did not open. Allow pop-ups for this site and try again.',
+					),
+				)
+				return
+			}
 			fetch(url, {
 				headers: { requesttoken: OC.requestToken },
 			})
@@ -6900,10 +7463,6 @@
 					var page = URL.createObjectURL(
 						new Blob([blob], { type: 'text/html' }),
 					)
-					if (tab === null) {
-						window.location.assign(page)
-						return
-					}
 					tab.opener = null
 					tab.location.href = page
 					// Long enough for the tab to have loaded it.
@@ -6912,9 +7471,7 @@
 					}, 60000)
 				})
 				.catch(function (err) {
-					if (tab !== null) {
-						tab.close()
-					}
+					tab.close()
 					console.error('Error opening ' + url + ':', err)
 					notify(failure)
 				})
@@ -7746,20 +8303,40 @@
 			var lines = []
 			;(preview.changes || []).forEach(function (change) {
 				lines.push(
-					t('thematiq', '{field}: {from} to {to}', {
-						field: change.field,
-						from: auditFormat.formatAuditValue(change.from),
-						to: auditFormat.formatAuditValue(change.to),
-					}),
+					t(
+						'thematiq',
+						'{field}: {from} to {to}',
+						{
+							field: change.field,
+							from: auditFormat.formatAuditValue(change.from),
+							to: auditFormat.formatAuditValue(change.to),
+						},
+						undefined,
+						{ escape: false },
+					),
 				)
 			})
 			var sets = preview.customTokenSets || { add: [], remove: [] }
 			;(sets.add || []).forEach(function (id) {
-				lines.push(t('thematiq', 'Custom token set added: {id}', { id: id }))
+				lines.push(
+					t(
+						'thematiq',
+						'Custom token set added: {id}',
+						{ id: id },
+						undefined,
+						{ escape: false },
+					),
+				)
 			})
 			;(sets.remove || []).forEach(function (id) {
 				lines.push(
-					t('thematiq', 'Custom token set removed: {id}', { id: id }),
+					t(
+						'thematiq',
+						'Custom token set removed: {id}',
+						{ id: id },
+						undefined,
+						{ escape: false },
+					),
 				)
 			})
 			;(preview.missingFonts || []).forEach(function (font) {
@@ -7771,6 +8348,8 @@
 							role: font.role,
 							name: font.name,
 						},
+						undefined,
+						{ escape: false },
 					),
 				)
 			})
@@ -7830,6 +8409,16 @@
 										window.location.reload()
 										return
 									}
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
+									button.focus()
+								})
+								.catch(function (err) {
+									console.error('Error restoring a version:', err)
 									notify(
 										t(
 											'thematiq',
@@ -8003,18 +8592,24 @@
 							'thematiq',
 							'{set} is active until {time}, then {previous} comes back.',
 							{
-								set: status.activeTokenSet,
+								set: tokenSetName(status.activeTokenSet),
 								time: formatLocalTime(status.activeUntil),
-								previous: status.revertTo,
+								previous: tokenSetName(status.revertTo),
 							},
+							undefined,
+							{ escape: false },
 						),
 					)
 				}
 				lines.push(
 					status.lastRun
-						? t('thematiq', 'The schedule last ran at {time}.', {
-								time: formatLocalTime(status.lastRun),
-							})
+						? t(
+								'thematiq',
+								'The schedule last ran at {time}.',
+								{ time: formatLocalTime(status.lastRun) },
+								undefined,
+								{ escape: false },
+							)
 						: t('thematiq', 'The schedule has not run yet.'),
 				)
 				statusEl.textContent = lines.join(' ')
@@ -8025,15 +8620,27 @@
 
 			function describe(entry) {
 				var text = entry.endAt
-					? t('thematiq', '{set} from {start} to {end}', {
-							set: entry.tokenSet,
-							start: formatLocalTime(entry.startAt),
-							end: formatLocalTime(entry.endAt),
-						})
-					: t('thematiq', '{set} from {start}, no end', {
-							set: entry.tokenSet,
-							start: formatLocalTime(entry.startAt),
-						})
+					? t(
+							'thematiq',
+							'{set} from {start} to {end}',
+							{
+								set: tokenSetName(entry.tokenSet),
+								start: formatLocalTime(entry.startAt),
+								end: formatLocalTime(entry.endAt),
+							},
+							undefined,
+							{ escape: false },
+						)
+					: t(
+							'thematiq',
+							'{set} from {start}, no end',
+							{
+								set: tokenSetName(entry.tokenSet),
+								start: formatLocalTime(entry.startAt),
+							},
+							undefined,
+							{ escape: false },
+						)
 				if (entry.status === 'running') {
 					return text + ' (' + t('thematiq', 'running') + ')'
 				}
@@ -8041,9 +8648,13 @@
 					return (
 						text
 						+ '. '
-						+ t('thematiq', 'Failed: {reason}', {
-							reason: entry.failureReason || '',
-						})
+						+ t(
+							'thematiq',
+							'Failed: {reason}',
+							{ reason: entry.failureReason || '' },
+							undefined,
+							{ escape: false },
+						)
 					)
 				}
 				return text
@@ -8073,9 +8684,13 @@
 					cancel.textContent = t('thematiq', 'Cancel')
 					cancel.setAttribute(
 						'aria-label',
-						t('thematiq', 'Cancel the switch to {set}', {
-							set: entry.tokenSet,
-						}),
+						t(
+							'thematiq',
+							'Cancel the switch to {set}',
+							{ set: tokenSetName(entry.tokenSet) },
+							undefined,
+							{ escape: false },
+						),
 					)
 					cancel.addEventListener('click', function () {
 						cancelSwitch(entry.id, cancel)
@@ -8733,15 +9348,21 @@
 						licence: entry.licence,
 						contrast: contrastText(entry.contrast),
 					},
+					undefined,
+					{ escape: false },
 				)
 				text.appendChild(meta)
 				var source = document.createElement('a')
 				source.href = entry.sourceUrl
 				source.target = '_blank'
 				source.rel = 'noopener noreferrer'
-				source.textContent = t('thematiq', 'Source of {name}', {
-					name: entry.name,
-				})
+				source.textContent = t(
+					'thematiq',
+					'Source of {name}',
+					{ name: entry.name },
+					undefined,
+					{ escape: false },
+				)
 				text.appendChild(source)
 				item.appendChild(text)
 

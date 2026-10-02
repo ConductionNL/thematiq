@@ -98,7 +98,7 @@ class TokenDeprecationService {
 	/**
 	 * The public shape for consuming apps: names and dates, no user data.
 	 *
-	 * @return array<int, array<string, mixed>> {token, severity, replacement, removalDate, message, deprecatedAt, due}.
+	 * @return array<int, array<string, mixed>> Shape: {token, severity, replacement, removalDate, message, deprecatedAt, due}.
 	 *
 	 * @spec openspec/specs/token-deprecations/spec.md#requirement-consuming-apps-can-read-every-deprecation
 	 */
@@ -326,7 +326,7 @@ class TokenDeprecationService {
 	 * @param array<string, mixed> $input The submitted fields.
 	 * @param string               $today Today, `Y-m-d`.
 	 *
-	 * @return array<string, string> {severity, replacement?, removalDate?, message?}.
+	 * @return array<string, string> Shape: {severity, replacement?, removalDate?, message?}.
 	 *
 	 * @throws InvalidArgumentException 400 naming the field.
 	 */

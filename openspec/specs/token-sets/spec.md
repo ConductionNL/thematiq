@@ -400,9 +400,9 @@ Token set management endpoints MUST be registered in the route configuration.
 - GIVEN the routes configuration in `appinfo/routes.php`
 - THEN `GET /settings/tokensets` MUST be mapped to `settings#getAvailableTokenSets`
 
-#### Scenario: Get active token set route
+#### Scenario: No separate read route for the active token set
 - GIVEN the routes configuration
-- THEN `GET /settings/tokenset` MUST be mapped to `settings#getTokenSet`
+- THEN `GET /settings/tokenset` MUST NOT be registered: the admin page reads the active set from initial state, and scripts read it from the public capability (`nldesign.tokenSet.id`)
 
 #### Scenario: Set active token set route
 - GIVEN the routes configuration
@@ -639,9 +639,9 @@ distinguishable from a contrast warning without inspecting its other fields.
 - Manifest entries without CSS files are excluded
 - Alphabetical sort by name (case-insensitive): `usort()` with `strcasecmp` (line 95)
 - Malformed/missing manifest: `readManifest()` returns `[]` on invalid JSON, missing file, or unreadable file
-- Active token set storage: Default `'nextcloud'` via `IConfig::getAppValue()` in `Application.php` (line 84) and `SettingsController::getTokenSet()` (line 134)
+- Active token set storage: Default `'nextcloud'` via `IConfig::getAppValue()` in `Application.php`, `Admin::getForm()` and `Capabilities`
 - Token set validation: `isValidTokenSet()` checks for path traversal (`/` and `..`) and verifies CSS file existence (lines 107-118)
-- API endpoints: all four routes implemented (tokensets GET, tokenset GET/POST, tokenset-preview GET)
+- API endpoints: tokensets GET, tokenset POST and tokenset-preview GET (the tokenset GET route was removed for #664; the capability serves reads)
 - Admin-only access: `@AuthorizedAdminSetting` annotation on all endpoints
 - Token set count: 39+ CSS files in `css/tokens/`, manifest with corresponding entries
 - Required token sets present: rijkshuisstijl, amsterdam, utrecht, rotterdam, denhaag, nextcloud all exist

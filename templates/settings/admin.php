@@ -33,6 +33,9 @@ script('thematiq', 'lib/auditFormat');
 // derives the set from two colours exactly as BrandFormService stores it.
 script('thematiq', 'lib/tokenConverter');
 script('thematiq', 'lib/brandForm');
+// The per-app theming list's search, count and exclusion list
+// (window.NldesignAppTheming); admin.js builds the dropdown from it.
+script('thematiq', 'lib/appTheming');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');
@@ -315,14 +318,18 @@ if ($_['mockUi'] === true) {
 						<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
 					</div>
 					<div class="nldesign-field">
-						<label for="nldesign-brand-logo-btn"><?php p($l->t('Logo (optional)')); ?></label>
+						<!-- No `for`: a label for the button would replace its name with
+						     "Logo (optional)", so "Choose logo" would not be in it (WCAG
+						     2.5.3). The button names itself from both instead. -->
+						<label id="nldesign-brand-logo-label"><?php p($l->t('Logo (optional)')); ?></label>
 						<!-- Nextcloud's own button instead of the browser's file control,
 						     which draws in the browser's language and style. The input is
 						     named for the same reason as the upload's above. -->
 						<div class="nldesign-file-pick">
 							<input type="file" id="nldesign-brand-logo" accept=".svg,.png,.jpg,.gif,.webp" hidden
 								   aria-label="<?php p($l->t('Logo file (SVG, PNG, JPG, GIF or WebP)')); ?>">
-							<button type="button" class="button" id="nldesign-brand-logo-btn"><?php p($l->t('Choose logo')); ?></button>
+							<button type="button" class="button" id="nldesign-brand-logo-btn"
+									aria-labelledby="nldesign-brand-logo-label nldesign-brand-logo-btn"><?php p($l->t('Choose logo')); ?></button>
 							<span class="nldesign-file-pick__name" id="nldesign-brand-logo-name"><?php p($l->t('No file chosen')); ?></span>
 						</div>
 					</div>

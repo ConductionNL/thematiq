@@ -228,6 +228,7 @@ class TokenSetConverterService {
 	 *     manifestEntry: array<string, mixed>,
 	 *     report: array<int, ReportEntry>,
 	 *     inputKind: string,
+	 *     imported: int,
 	 *     counts: array<string, int>,
 	 *     logoAsset: array{path: string, contents: string}|null,
 	 *     importWarnings: array<int, array{path: string, message: string|null}>,
@@ -1159,7 +1160,7 @@ class TokenSetConverterService {
 			return null;
 		}
 
-		$parameters = strtolower((string)$matches[2]);
+		$parameters = strtolower($matches[2]);
 		$payload = $matches[3];
 
 		$contents = rawurldecode($payload);
@@ -1614,7 +1615,7 @@ class TokenSetConverterService {
 	 * @param array<string, string>      $declarations The resolved input.
 	 * @param array<string, string>      $existing     Values the input already declared (input D wins).
 	 * @param string                     $slug         The brand slug.
-	 * @param array<string, string>|null $manifest     Manifest targets, written by reference.
+	 * @param array<string, string>      $manifest     Manifest targets, written by reference.
 	 * @param array<int, ReportEntry>    $report       The report, appended to by reference.
 	 *
 	 * @return array<string, string> The semantic layer.
@@ -1626,7 +1627,7 @@ class TokenSetConverterService {
 	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest
 	 *   target and report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
 	 */
-	private function runRules(array $declarations, array $existing, string $slug, ?array &$manifest, array &$report): array {
+	private function runRules(array $declarations, array $existing, string $slug, array &$manifest, array &$report): array {
 		$semantic = $existing;
 		$manifest = [];
 
@@ -1649,7 +1650,11 @@ class TokenSetConverterService {
 
 			$value = null;
 			$action = 'applied';
-			$reason = ($rule['reason'] ?? null);
+			$reason = null;
+			if (isset($rule['reason']) === true) {
+				$reason = (string)$rule['reason'];
+			}
+
 			$sourceName = '';
 
 			$byRole = $this->indexByRole(declarations: $declarations);
@@ -1883,7 +1888,7 @@ class TokenSetConverterService {
 		if ($criterion === 'darkest') {
 			uasort($ramp, fn (array $a, array $b) => array_sum($a) <=> array_sum($b));
 
-			return (string)array_key_first($ramp);
+			return array_key_first($ramp);
 		}
 
 		if ($criterion === 'nearestLuminance') {
@@ -1898,7 +1903,7 @@ class TokenSetConverterService {
 				$distance = abs(array_sum($rgb) - array_sum($targetRgb));
 				if ($bestDistance === null || $distance < $bestDistance) {
 					$bestDistance = $distance;
-					$best = (string)$hex;
+					$best = $hex;
 				}
 			}
 

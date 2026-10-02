@@ -569,7 +569,7 @@ class CssInjectionService {
 	 *
 	 * @return array<int, array{layer: string, kind: string, css: string, id: string}> Zero or one entry.
 	 *
-	 * @spec openspec/changes/internal-variable-tokens/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 */
 	private function internalScopesLayer(string $tokenSet, string $designSystemId, bool $withDark): array {
 		try {
@@ -999,7 +999,7 @@ class CssInjectionService {
 	 * @SuppressWarnings(PHPMD.StaticAccess) - \OCP\Util::addHeader() is the Nextcloud API for header injection
 	 *
 	 * @spec openspec/specs/custom-fonts/spec.md
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	protected function emitStylesheetLink(string $url): void {
 		\OCP\Util::addHeader(

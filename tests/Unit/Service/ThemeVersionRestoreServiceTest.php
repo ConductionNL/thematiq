@@ -144,6 +144,21 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 	}//end testARestoreImportsAndIsAudited()
 
 	/**
+	 * A restore from occ records the actor it is given, as the other commands do.
+	 */
+	public function testARestoreRecordsTheGivenActor(): void {
+		$this->bundles->method('import')->willReturnCallback(
+			fn (array $bundle, bool $dryRun = false): array => ['valid' => true, 'dryRun' => $dryRun, 'applied' => !$dryRun]
+		);
+		$this->audit->expects($this->once())->method('log')->with(
+			'version_restored',
+			['old' => '20260929170000-0001', 'new' => $this->version['id'], 'actor' => 'cli']
+		);
+
+		$this->assertTrue($this->service()->restore(id: $this->version['id'], actor: 'cli')['applied']);
+	}//end testARestoreRecordsTheGivenActor()
+
+	/**
 	 * A version that no longer validates is refused whole: nothing applied, nothing audited.
 	 */
 	public function testAnInvalidVersionWritesNothing(): void {

@@ -180,14 +180,7 @@ class DelegatedGroupThemingService {
 			return $current;
 		}
 
-		$mapping = $this->groupTheming->getMapping();
-		foreach ($mapping as $index => $entry) {
-			if ($entry['group'] === $group) {
-				$mapping[$index]['tokenSet'] = $tokenSet;
-			}
-		}
-
-		$this->groupTheming->setMapping(entries: $mapping);
+		$this->groupTheming->replaceEntry(entry: array_merge($current, ['tokenSet' => $tokenSet]));
 
 		$this->audit->log(
 			action: 'token_set_changed',

@@ -47,6 +47,7 @@ use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -235,6 +236,18 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 	}//end session()
 
 	/**
+	 * A translator that returns the source text.
+	 *
+	 * @return IL10N The translator.
+	 */
+	private function l10n(): IL10N {
+		$l10n = $this->createMock(IL10N::class);
+		$l10n->method('t')->willReturnArgument(0);
+
+		return $l10n;
+	}//end l10n()
+
+	/**
 	 * The entry of a group in the stored mapping.
 	 *
 	 * @param string $group The group.
@@ -301,6 +314,46 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 		$this->assertSame('token_set_changed', $this->audited[0][0]);
 		$this->assertSame(['actor' => 'anna', 'old' => 'rijkshuisstijl', 'new' => 'gemeente-a-huisstijl', 'group' => 'gemeente-a', 'delegated' => true], $this->audited[0][1]);
 	}//end testSubadminOfTheGroupChoosesAnAllowedSet()
+
+	/**
+	 * A stale entry of another group, here an allowed set that was removed,
+	 * does not block the subadmin's choice, and stays as it was stored.
+	 *
+	 * @return void
+	 */
+	public function testAStaleEntryOfAnotherGroupDoesNotBlockTheChoice(): void {
+		$mapping = json_decode($this->app['group_token_sets'], true);
+		$mapping[1]['allowedTokenSets'] = ['rijkshuisstijl', 'removed-set'];
+		$this->app['group_token_sets'] = json_encode($mapping);
+
+		$entry = $this->service()->setDelegatedTokenSet(uid: 'anna', group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl');
+
+		$this->assertSame('gemeente-a-huisstijl', $entry['tokenSet']);
+		$this->assertSame('gemeente-a-huisstijl', $this->entry('gemeente-a')['tokenSet']);
+		$this->assertSame(['rijkshuisstijl', 'removed-set'], $this->entry('gemeente-b')['allowedTokenSets']);
+		$this->assertSame(['group' => 'concern', 'tokenSet' => 'concern'], $this->entry('concern'));
+	}//end testAStaleEntryOfAnotherGroupDoesNotBlockTheChoice()
+
+	/**
+	 * When the group's own entry no longer validates, the subadmin gets a 422
+	 * with a plain message rather than the reason meant for the administrator.
+	 *
+	 * @return void
+	 */
+	public function testARefusedSaveGivesTheSubadminAPlainMessage(): void {
+		$mapping = json_decode($this->app['group_token_sets'], true);
+		$mapping[0]['allowedTokenSets'] = ['rijkshuisstijl', 'gemeente-a-huisstijl', 'removed-set'];
+		$this->app['group_token_sets'] = json_encode($mapping);
+		$before = $this->app['group_token_sets'];
+
+		$controller = new MyGroupsController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->session(), $this->l10n());
+		$response = $controller->update(group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl');
+
+		$this->assertSame(422, $response->getStatus());
+		$this->assertStringContainsString('Ask an administrator', $response->getData()['error']);
+		$this->assertStringNotContainsString('removed-set', $response->getData()['error']);
+		$this->assertSame($before, $this->app['group_token_sets']);
+	}//end testARefusedSaveGivesTheSubadminAPlainMessage()
 
 	/**
 	 * Another group, a set outside the list, and a locked group are refused; nothing changes.
@@ -401,7 +454,7 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 			$this->assertCount(1, (new ReflectionMethod(MyGroupsController::class, $method))->getAttributes(NoAdminRequired::class));
 		}
 
-		$controller = new MyGroupsController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->session());
+		$controller = new MyGroupsController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->session(), $this->l10n());
 		$this->assertSame('gemeente-a', $controller->index()->getData()['groups'][0]['group']);
 		$this->assertSame(403, $controller->update(group: 'gemeente-b', tokenSet: 'amsterdam')->getStatus());
 		$this->assertSame(403, $controller->update(group: 'gemeente-a', tokenSet: 'amsterdam')->getStatus());
@@ -409,7 +462,7 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 		$this->assertSame('gemeente-a-huisstijl', $this->entry('gemeente-a')['tokenSet']);
 
 		$this->sessionUid = 'bob';
-		$plain = new MyGroupsController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->session());
+		$plain = new MyGroupsController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->session(), $this->l10n());
 		$this->assertSame([], $plain->index()->getData()['groups']);
 		$this->assertSame(403, $plain->update(group: 'gemeente-a', tokenSet: 'rijkshuisstijl')->getStatus());
 	}//end testSubadminEndpoints()

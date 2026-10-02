@@ -13,7 +13,7 @@
  * not in the CSS, and when the count of mapped or settable entries moves
  * without the baseline moving with it, in either direction.
  *
- * @spec openspec/changes/nc-variable-inventory/specs/nextcloud-variable-inventory/spec.md
+ * @spec openspec/specs/nextcloud-variable-inventory/spec.md
  */
 
 import { describe, expect, it } from 'vitest'
@@ -363,6 +363,25 @@ describe('an internal variable is settable through its token, and only when set'
 	it('ships no value for any internal token, so unset means unset', () => {
 		const declared = Object.keys(map).filter((token) => allCss.has(token))
 		expect(declared).toEqual([])
+	})
+
+	it('types a whole colour as a colour, and a shadow, border or gradient that contains one as text', () => {
+		const typeOf = (variable) =>
+			Object.values(map).find((t) => t.variable === variable).type
+		expect(typeOf('--dp-hover-color')).toBe('color')
+		expect(typeOf('--button-save-bg-color')).toBe('color')
+		expect(typeOf('--backdrop-color')).toBe('rgb')
+		expect(typeOf('--input-border-box-shadow-light')).toBe('text')
+		expect(typeOf('--account-menu-outline')).toBe('text')
+		expect(typeOf('--cn-color-picker-checker')).toBe('text')
+		expect(typeOf('--dp-loader')).toBe('text')
+	})
+
+	it('carries no source-map fragment as a selector', () => {
+		const fragments = [
+			...new Set(Object.values(map).flatMap((t) => t.selectors ?? [])),
+		].filter((s) => /^[A-Za-z][A-Za-z0-9]*$/.test(s) && s !== 'body')
+		expect(fragments).toEqual([])
 	})
 
 	it('excludes every variable written at render time', () => {

@@ -269,7 +269,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --property-name => value.
 	 *
-	 * @spec openspec/changes/runtime-files-in-appdata/specs/runtime-file-storage/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
 	private function parseCssVarsFrom(string $content): array {
 		$vars = [];
