@@ -1056,6 +1056,44 @@ describe('admin.js token editor', () => {
 			expect(window.NldesignLayerSwap.refreshStylesheets).toHaveBeenCalled()
 		})
 
+		it('stops painting the edits an apply discarded, on the preview and the settings section', async () => {
+			// The editor is rebuilt from the server after an apply, so every
+			// unsaved edit is gone from its rows. The values those edits wrote
+			// inline (admin.js on the preview and, for the primary family, on
+			// the settings section; the playground on the preview) have to go
+			// with them, or the preview keeps painting a value nothing holds.
+			installLayerSwap()
+			answer('POST', COMMIT, 200, { status: 'ok' })
+			answer('POST', '/settings/overrides', 200, { status: 'ok' })
+			await mount({ current: 'nextcloud' })
+			unlockBase()
+			const preview = document.getElementById('nldesign-preview')
+			const settings = document.getElementById('nldesign-settings')
+
+			type(row(FONT).text, 'Comic Sans')
+			type(row(BASE).text, '#112233')
+			// What the playground's cloned row writes, without a priority.
+			preview.style.setProperty(BUTTON, '#123456')
+			const scale = preview.style.getPropertyValue('--prev-surface')
+			expect(preview.style.getPropertyValue(FONT)).toBe('Comic Sans')
+
+			await switchTo('rijkshuisstijl', { [FONT]: 'Arial' }, { overrides: {} })
+			click(
+				document
+					.getElementById('nldesign-apply-dialog-overlay')
+					.querySelector('.nldesign-dialog-confirm'),
+			)
+			await flush()
+
+			expect(window.NldesignLayerSwap.swap).toHaveBeenCalled()
+			expect(preview.style.getPropertyValue(FONT)).toBe('')
+			expect(preview.style.getPropertyValue(BASE)).toBe('')
+			expect(preview.style.getPropertyValue(BUTTON)).toBe('')
+			expect(settings.style.getPropertyValue(BASE)).toBe('')
+			// The preview's own scale model is not an edit and stays.
+			expect(preview.style.getPropertyValue('--prev-surface')).toBe(scale)
+		})
+
 		it('does without an overrides link on the page', async () => {
 			installLayerSwap()
 			answer('POST', COMMIT, 200, { status: 'ok' })

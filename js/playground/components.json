@@ -137,7 +137,7 @@
 				{
 					"callout": 1,
 					"what": "Header height",
-					"why": "Nextcloud fixes the header height itself — 50px on 32 and 33, 44px from 35 — and keeps every glyph above the WCAG 2.5.8 target size.",
+					"why": "Nextcloud fixes the header height itself: 50px on 32 and 33, 44px from 35. It keeps every glyph above the WCAG 2.5.8 target size.",
 					"code": "clickable-area-locked"
 				}
 			]
@@ -194,7 +194,7 @@
 				{
 					"callout": 1,
 					"what": "The page behind the card",
-					"why": "The login page shows the background image where the instance has one, and otherwise the background colour from Nextcloud's theming settings — neither is a token this editor writes.",
+					"why": "The login page shows the background image where the instance has one, and otherwise the background colour from Nextcloud's theming settings. Neither is a token this editor writes.",
 					"code": "routed-to-core-theming"
 				},
 				{
@@ -411,7 +411,7 @@
 				{
 					"callout": 3,
 					"what": "The hovered and selected washes",
-					"why": "Nextcloud mixes the primary element colour into the background rather than reading a colour token — 8% hovered, 16% selected, 22% both — so the shade is computed in the browser and there is nothing to edit but the colour it is mixed from.",
+					"why": "Nextcloud mixes the primary element colour into the background instead of reading a colour token: 8% hovered, 16% selected, 22% both. The browser computes the shade, so the only thing to edit is the colour it is mixed from.",
 					"code": "derived-by-nextcloud"
 				},
 				{
@@ -827,7 +827,7 @@
 				{
 					"callout": 1,
 					"what": "The disc and its initials",
-					"why": "Nextcloud renders an avatar as an image — uploaded, or generated from the account name — so no token paints it; an opaque image covers whatever colour the cascade puts behind it.",
+					"why": "Nextcloud renders an avatar as an image, uploaded or generated from the account name, so no token paints it. An opaque image covers whatever colour the cascade puts behind it.",
 					"code": "logo-extracted"
 				}
 			]
@@ -875,7 +875,7 @@
 			"id": "settings-section",
 			"tab": "content",
 			"title": "Settings section",
-			"subtitle": "NcSettingsSection — the frame this panel is in",
+			"subtitle": "NcSettingsSection: the frame this panel is in",
 			"ground": "content",
 			"layout": "wide",
 			"classes": [],
