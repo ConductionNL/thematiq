@@ -72,6 +72,11 @@ import {
 	requestToken,
 	setTokenSet,
 } from '../workflows/_helpers'
+import {
+	MAX_SUPPORTED_NC,
+	MIN_SUPPORTED_NC,
+	expiredOlderServerExcuses,
+} from './_supported-range'
 
 /**
  * A node that only exists once Nextcloud's Vue chrome has mounted.
@@ -223,11 +228,6 @@ const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 		reason: 'NC34 renders the app menu through a different structure; kept for older servers.',
 	},
 	{
-		pattern:
-			/\.header-appname|\.header-left|\.header-right|\.menutoggle|\.unified-search__button|\.header-start \.icon-vue/,
-		reason: 'Pre-Vue header classes retained as fallbacks for older Nextcloud releases.',
-	},
-	{
 		pattern: /^(button|input)\.(primary|secondary)\b/,
 		reason: 'Pre-Vue button classes; NC34 emits .button-vue--* which the adjacent wildcard rules catch.',
 	},
@@ -253,10 +253,6 @@ const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 			'Base-layer rules for plain form controls and minor headings. The surveyed surfaces are '
 			+ 'Vue apps that render their own components instead, but these still apply on form-bearing '
 			+ 'admin pages and inside dialogs.',
-	},
-	{
-		pattern: /unified-search__input/,
-		reason: 'Pre-NC34 unified-search markup, retained as a fallback for older servers.',
 	},
 	{
 		pattern: /\.app-menu-entry__|\.app-menu-icon\b|\.unified-search-menu\b/,
@@ -302,12 +298,8 @@ function allowedReason(selector: string): string | null {
 	return null
 }
 
-/**
- * The newest Nextcloud this app declares support for (appinfo/info.xml
- * `<nextcloud min-version="32" max-version="34"/>`). It is the expiry date on
- * every SINCE entry below: once CI surveys this major, nothing may be deferred.
- */
-const MAX_SUPPORTED_NC = 34
+// MAX_SUPPORTED_NC and its mirror MIN_SUPPORTED_NC live in ./_supported-range,
+// pinned to appinfo/info.xml by tests/vitest/supportedRange.spec.ts.
 
 /**
  * A ONE-VERSION SURVEY CANNOT JUDGE A CROSS-VERSION STYLESHEET.
@@ -1017,6 +1009,23 @@ test.describe('lasuite selector liveness', () => {
 				+ `(appinfo/info.xml max-version=${MAX_SUPPORTED_NC}), so nothing may be deferred to a newer `
 				+ `one. These selectors match nothing here and their SINCE entry has expired — delete the `
 				+ `entry and the CSS, or fix the selectors:\n  ${versionDeferred.join('\n  ')}`,
+		).toEqual([])
+
+		// THE MIRROR: an ALLOWED excuse that claims an OLDER server needs the
+		// selector expires once the survey runs on the oldest supported one.
+		// Eight such excuses outlived their evidence for months because nothing
+		// compared the surveyed major against MIN_SUPPORTED_NC (thematiq#270).
+		const expiredExcuses = expiredOlderServerExcuses(
+			dead,
+			allowedReason,
+			serverMajor,
+		)
+		expect(
+			expiredExcuses,
+			`Surveyed Nextcloud ${serverMajor} is the oldest version this app supports `
+				+ `(appinfo/info.xml min-version=${MIN_SUPPORTED_NC}), so nothing may be excused as a fallback `
+				+ `for an older one. These selectors match nothing here and their ALLOWED reason claims an `
+				+ `older server. Delete the CSS and the entry, or fix the selectors:\n  ${expiredExcuses.join('\n  ')}`,
 		).toEqual([])
 
 		const deferredSet = new Set(deferred)
