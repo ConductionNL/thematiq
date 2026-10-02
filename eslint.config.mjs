@@ -76,6 +76,17 @@ export default [
 		rules: relaxed,
 	},
 	{
+		// ES-module checks that drive a browser: Node globals for the script,
+		// browser globals for the functions they evaluate in the page.
+		files: ['tests/**/*.mjs'],
+		languageOptions: {
+			ecmaVersion: 2022,
+			sourceType: 'module',
+			globals: { ...globals.node, ...globals.browser },
+		},
+		rules: relaxed,
+	},
+	{
 		files: ['tests/css/**/*.js', 'tests/l10n/**/*.js'],
 		languageOptions: {
 			ecmaVersion: 2022,
