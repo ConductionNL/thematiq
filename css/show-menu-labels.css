@@ -3,7 +3,14 @@
  * SPDX-License-Identifier: EUPL-1.2
  *
  * Show Menu Labels Mode
- * Shows app names instead of icons in the header menu
+ * Shows app names in the header menu.
+ *
+ * Two halves, one per header Nextcloud has shipped. Nextcloud 32 builds the
+ * menu as one `li.app-menu-entry` per app, and the rules directly below swap
+ * each entry's icon for its label. Nextcloud 33 and newer build it as a waffle
+ * button, a current-app button and a popover grid of `.app-item` tiles (core
+ * AppMenu.vue and AppMenuItem.vue); the rules at the end of this file keep
+ * the names visible there. Each half matches nothing on the other server.
  */
 
 /* Hide app menu icons. */
@@ -61,4 +68,37 @@
 	min-width: 80px !important;
 	width: auto !important;
 	flex-shrink: 0 !important;
+}
+
+/* ============================================
+   Nextcloud 33 and newer: the waffle menu
+   ============================================ */
+
+/* The current app's name stays next to the waffle at every width. Core hides
+ * the whole current-app button below 1024px (`@media (max-width: 1024px)
+ * { display: none !important }` in AppMenu.vue), which leaves only the waffle
+ * icon; with labels on, the name is what the user asked to see. The button
+ * keeps NcButton's own `display: flex`, and its name keeps core's max-width,
+ * so a long name still ellipsizes instead of pushing the header icons off. */
+#header nav.app-menu .app-menu__current-app {
+	display: flex !important;
+}
+
+#header nav.app-menu .app-menu__current-app-name {
+	display: inline-block !important;
+	visibility: visible !important;
+	opacity: 1 !important;
+}
+
+/* The grid tiles carry their app's name under the icon. The popover is
+ * rendered outside `#header`, so it is matched by its own class. */
+.app-menu__popover .app-item__label {
+	display: block !important;
+	visibility: visible !important;
+	opacity: 1 !important;
+}
+
+/* The active app's tile, as on Nextcloud 32. */
+.app-menu__popover .app-item--active .app-item__label {
+	font-weight: 600 !important;
 }

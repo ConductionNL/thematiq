@@ -17,8 +17,13 @@
  * list. The layout and typography tests therefore mount the NC 32 entry
  * markup inside the real `#header` of a real, fully themed page and read the
  * computed styles there. That proves what the rules do to the markup they
- * were written for, under the whole cascade. It does not prove the labels
- * show on NC 33+, because they do not.
+ * were written for, under the whole cascade.
+ *
+ * The NC 33+ half of the stylesheet (#895) is measured on the server's own
+ * header instead, in the two tests at the end of this file: the current-app
+ * name next to the waffle on a narrow screen, and the labels of the popover
+ * grid. tests/vitest/menuLabelsWaffle.spec.js checks the same rules without a
+ * server.
  */
 import { test, expect, type Browser, type Page } from '@playwright/test'
 
@@ -851,5 +856,77 @@ test.describe('menu-labels', () => {
 				}
 			},
 		)
+	})
+
+	/*
+	 * NEXTCLOUD 33 AND NEWER (#895). These run on the server's own header, not
+	 * on a mounted fixture: the waffle, the current-app button and the popover
+	 * grid are what stable35 renders. On a Nextcloud 32 server the waffle does
+	 * not exist and the test says so by skipping, by name.
+	 */
+	test(// @e2e openspec/specs/menu-labels/spec.md#current-app-name-shown-next-to-the-waffle-at-every-width
+	'on a narrow screen the current app name stays next to the waffle, which core hides without labels', async ({
+		browser,
+		page,
+	}) => {
+		await page.setViewportSize({ width: 800, height: 900 })
+		const current = page.locator('#header .app-menu__current-app')
+		const name = page.locator('#header .app-menu__current-app-name')
+
+		// Control: without labels, core hides the button below 1024px.
+		await withThemeState(browser, { showMenuLabels: false }, async () => {
+			await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+			await page.locator('#header .app-menu').waitFor({ state: 'attached' })
+			test.skip(
+				(await page.locator('#header .app-menu__waffle').count()) === 0,
+				'Nextcloud 32 renders no waffle menu; its labels are covered by the fixture tests above',
+			)
+			await expect(current).toBeHidden()
+		})
+
+		await withThemeState(browser, { showMenuLabels: true }, async () => {
+			await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+			expect(await thematiqLayers(page)).toContain('show-menu-labels')
+			await expect(current).toBeVisible()
+			await expect(name).toBeVisible()
+			expect(((await name.textContent()) ?? '').trim()).not.toBe('')
+		})
+	})
+
+	test(// @e2e openspec/specs/menu-labels/spec.md#grid-tiles-keep-their-labels
+	'the waffle grid shows a visible label on every tile, the active one in 600', async ({
+		browser,
+		page,
+	}) => {
+		await withThemeState(browser, { showMenuLabels: true }, async () => {
+			await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+			await page.locator('#header .app-menu').waitFor({ state: 'attached' })
+			test.skip(
+				(await page.locator('#header .app-menu__waffle').count()) === 0,
+				'Nextcloud 32 renders no waffle menu; its labels are covered by the fixture tests above',
+			)
+			await page.locator('#header .app-menu__waffle').click()
+			const labels = page.locator('.app-menu__popover .app-item__label')
+			await expect(labels.first()).toBeVisible()
+			const count = await labels.count()
+			expect(count).toBeGreaterThan(0)
+			for (let i = 0; i < count; i++) {
+				await expect(labels.nth(i)).toBeVisible()
+				expect(((await labels.nth(i).textContent()) ?? '').trim()).not.toBe(
+					'',
+				)
+			}
+			const active = page.locator(
+				'.app-menu__popover .app-item--active .app-item__label',
+			)
+			if ((await active.count()) > 0) {
+				expect(
+					await active
+						.first()
+						.evaluate((el) => getComputedStyle(el).fontWeight),
+				).toBe('600')
+			}
+			await page.keyboard.press('Escape')
+		})
 	})
 })
