@@ -100,13 +100,17 @@ class TokenLifecycleBundleSection {
 	/**
 	 * Apply the validated keys.
 	 *
-	 * @param array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null} $resolved From validate().
+	 * @param array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null}|null $resolved From validate().
 	 *
 	 * @return bool Whether anything was applied.
 	 *
 	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
-	public function apply(array $resolved): bool {
+	public function apply(?array $resolved): bool {
+		if ($resolved === null) {
+			return false;
+		}
+
 		if ($resolved['ownTokens'] !== null) {
 			$this->ownTokens->replaceAll(tokens: $resolved['ownTokens']);
 		}
@@ -121,13 +125,17 @@ class TokenLifecycleBundleSection {
 	/**
 	 * The import summary for the two keys.
 	 *
-	 * @param array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null} $resolved From validate().
+	 * @param array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null}|null $resolved From validate().
 	 *
 	 * @return array<string, array<string, mixed>>
 	 *
 	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
 	 */
-	public function summary(array $resolved): array {
+	public function summary(?array $resolved): array {
+		if ($resolved === null) {
+			return [];
+		}
+
 		return [
 			'ownTokens' => ['applied' => $resolved['ownTokens'] !== null, 'count' => count(($resolved['ownTokens'] ?? []))],
 			'tokenDeprecations' => ['applied' => $resolved['tokenDeprecations'] !== null, 'count' => count(($resolved['tokenDeprecations'] ?? []))],

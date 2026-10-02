@@ -986,7 +986,7 @@ class ConfigBundleService {
 				'note' => 'Font metadata recorded for information only — binaries are not part of the '
 					. 'bundle and must be re-uploaded by hand on the target environment.',
 			],
-		] + $this->lifecycleSummary(resolved: $resolved);
+		] + ($this->lifecycle?->summary(resolved: ($resolved['lifecycle'] ?? null)) ?? []);
 	}//end buildSectionSummary()
 
 	/**
@@ -1030,8 +1030,11 @@ class ConfigBundleService {
 			privacyUrl: $footer['privacyUrl']
 		);
 
-		// Own tokens first: the overrides file written next renders them.
-		$this->applyLifecycle(resolved: $resolved);
+		// Own tokens first: the overrides file written next renders them, and every other set's file is brought up to date.
+		if ($this->lifecycle?->apply(resolved: ($resolved['lifecycle'] ?? null)) === true) {
+			$this->overridesService->rewriteAll();
+		}
+
 		$this->overridesService->write(tokens: $resolved['customOverrides']['tokens']);
 
 		foreach ($resolved['customTokenSets'] as $set) {
@@ -1048,41 +1051,4 @@ class ConfigBundleService {
 
 		// CustomFonts is deliberately never applied — see class docblock.
 	}//end apply()
-
-	/**
-	 * Apply the own tokens and deprecations a bundle carries, then bring every
-	 * overrides file up to date with them.
-	 *
-	 * @param array<string, mixed> $resolved Phase-1 output.
-	 *
-	 * @return void
-	 *
-	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
-	 */
-	private function applyLifecycle(array $resolved): void {
-		if ($this->lifecycle === null || $resolved['lifecycle'] === null) {
-			return;
-		}
-
-		if ($this->lifecycle->apply(resolved: $resolved['lifecycle']) === true) {
-			$this->overridesService->rewriteAll();
-		}
-	}//end applyLifecycle()
-
-	/**
-	 * The summary rows of the own tokens and deprecations.
-	 *
-	 * @param array<string, mixed> $resolved Phase-1 output.
-	 *
-	 * @return array<string, array<string, mixed>> Empty when the section is not wired.
-	 *
-	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-travel-with-the-configuration-bundle
-	 */
-	private function lifecycleSummary(array $resolved): array {
-		if ($this->lifecycle === null || ($resolved['lifecycle'] ?? null) === null) {
-			return [];
-		}
-
-		return $this->lifecycle->summary(resolved: $resolved['lifecycle']);
-	}//end lifecycleSummary()
 }//end class
