@@ -20,6 +20,7 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [Gemeente Epe](./epe.md) `epe`
 - [(EXAMPLE) Basisschool](./example-basisschool.md) `example-basisschool`
 - [(EXAMPLE) College](./example-college.md) `example-college`
+- [(EXAMPLE) Gemeente](./example-gemeente.md) `example-gemeente`
 - [(EXAMPLE) Opleider](./example-opleider.md) `example-opleider`
 - [(EXAMPLE) Voortgezet onderwijs](./example-voortgezet.md) `example-voortgezet`
 - [La Frankendesk](./frankendesk.md) `frankendesk`

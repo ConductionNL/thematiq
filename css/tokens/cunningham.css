@@ -80,4 +80,9 @@
 	--nldesign-component-table-header-background-color: transparent;
 	--nldesign-component-table-header-color: var(--nldesign-color-text-muted);
 	--nldesign-component-table-header-font-weight: 400;
+	/* Den Haag component text (denhaag-component-tokens, task 3.2). The set's
+	   muted text #74777c is unchanged; on white it is 4.49:1, just under AA.
+	   The Den Haag muted text uses it at 90% over black, #686b70, 5.35:1. */
+	--denhaag-step-marker-not-checked-color: #686b70;
+	--denhaag-case-card-subtitle-color: #686b70;
 }

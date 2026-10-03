@@ -30,9 +30,9 @@ A colour property MUST be mapped from the `--nldesign-*` semantic layer, through
 read the set's `--nldesign-border-radius` first.
 
 #### Scenario: The primary colour reaches the current step
-- **GIVEN** the `example-basisschool` set with primary `#B03A12`
+- **GIVEN** the `tilburg` set, which declares a primary colour and no Den Haag property
 - **WHEN** a process step marked current renders
-- **THEN** its marker background MUST resolve to `#B03A12` and its number to the set's primary text colour
+- **THEN** its marker background MUST resolve to the set's primary colour and its number to the set's primary text colour
 
 ### Requirement: The Den Haag mapping is data, and the bridge is generated from it
 The mapping MUST live in `scripts/mapping/denhaag-component-tokens.json`, and a generator

@@ -2,7 +2,7 @@
 
 Use this page to find a Thematiq feature and to check which standards it supports. Thematiq gives Nextcloud and every app on it a Dutch government house style. You pick a token set, or build your own, and Thematiq maps it onto the CSS variables Nextcloud already uses.
 
-Thematiq ships 51 token sets in `token-sets.json`. Of those, 38 are NL Design System house styles, among them Rijkshuisstijl and more than 30 municipalities. The rest are the stock Nextcloud base, a high-contrast set, three La Suite sets, Summer Breeze, three Conduction and supplier sets, and four example school sets.
+Thematiq ships 52 token sets in `token-sets.json`. Of those, 38 are NL Design System house styles, among them Rijkshuisstijl and more than 30 municipalities. The rest are the stock Nextcloud base, a high-contrast set, three La Suite sets, Summer Breeze, three Conduction and supplier sets, four example school sets and one example municipality.
 
 ## Standards
 

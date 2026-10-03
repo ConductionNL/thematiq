@@ -39,9 +39,32 @@ Measured with the real `frankendesk` set applied: its violet resolved perfectly
 at `--nldesign-color-primary` while `--utrecht-document-color` was unset and the
 header painted transparent. The theme loaded and did nothing.
 
-`public-bridge.css` maps one family onto the other and is linked **before** the
-set. Anything a portal needs that has no `--utrecht-*` role has to travel
-through that bridge, or it reaches nothing.
+`public-bridge.css` maps one family onto the other and is meant to be linked
+**before** the set. Anything a portal needs that has no `--utrecht-*` role has
+to travel through that bridge, or it reaches nothing.
+
+**Portaliq does not link it yet.** Its open change `site-links-the-theme-bridge`
+adds the link. Until then a portal paints from whatever the set itself declares.
+
+Measured coverage of the listed sets (`token-sets.json`, 52 sets):
+
+| What a set declares | Sets |
+| --- | --- |
+| the full `--utrecht-*` role layer | 8 |
+| only `--nldesign-*` | 41 |
+| Den Haag component properties | 10 |
+| a case card property | 0 |
+
+### The Den Haag components
+
+Portaliq's mijn-omgeving components use the `@gemeente-denhaag/*` CSS. That CSS
+reads `--denhaag-*` and `--nl-data-badge-*` properties, mostly without
+fallbacks. The bridge's generated Den Haag section gives every one of them a
+value for every set: colours follow the set's `--nldesign-*` layer, geometry is
+Den Haag's own. The rules live in `scripts/mapping/denhaag-component-tokens.json`;
+`npm run generate:denhaag-bridge` writes the section and
+`npm run test:denhaag-bridge` fails when it is stale. A set that declares a Den
+Haag property itself keeps it, because the bridge loads first.
 
 ## 3. The generated dark variants — currently unusable on a portal
 

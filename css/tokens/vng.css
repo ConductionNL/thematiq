@@ -1701,7 +1701,9 @@
 
   --denhaag-step-marker-not-checked-background-color: var(--tilburg-color-white);
   --denhaag-step-marker-not-checked-border-color: var(--tilburg-color-gray-200);
-  --denhaag-step-marker-not-checked-color: var(--tilburg-color-gray-400);
+  /* gray-400 #98a4b6 on white is 2.52:1; gray-600 #5b6e8a, the set's muted text, is 5.20:1
+     (denhaag-component-tokens, task 3.2). */
+  --denhaag-step-marker-not-checked-color: var(--tilburg-color-gray-600);
 
   --denhaag-step-marker-warning-background-color: var(--tilburg-color-orange-300);
   --denhaag-step-marker-warning-border-color: var(--tilburg-color-orange-300);
