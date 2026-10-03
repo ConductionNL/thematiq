@@ -685,9 +685,11 @@ a:visited {
 	box-shadow: 0 0 0 6px var(--nldesign-color-focus) !important;
 }
 
+/* The `/ 1` is the point: relative colour syntax keeps the origin's alpha
+ * unless one is given, so without it the ring stays translucent (#931). */
 @supports (color: rgb(from red r g b)) {
 	*:focus-visible {
-		--nldesign-focus-ring-color: rgb(from var(--nldesign-color-focus) r g b);
+		--nldesign-focus-ring-color: rgb(from var(--nldesign-color-focus) r g b / 1);
 	}
 }
 
