@@ -708,6 +708,10 @@ class DarkPaletteService {
 	 *
 	 * @param array<string, string> $declarations The candidate dark declarations.
 	 * @param string[] $protectedTokens Token names that MUST NOT be rewritten (hand-authored overrides).
+	 * @param array<int, array{fg: string, bg: string, threshold: float}>|null $pairs The pairs to verify instead of
+	 *                                                                            the brand pairs and {@see self::CONTROL_PAIRS};
+	 *                                                                            the editor's overrides pass Nextcloud's own
+	 *                                                                            names (OverridesCssBuilder::DARK_PAIRS).
 	 *
 	 * The (possibly repaired) declarations and the final warning list.
 	 *
@@ -715,11 +719,11 @@ class DarkPaletteService {
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	public function verifyAndRepair(array $declarations, array $protectedTokens = []): array {
+	public function verifyAndRepair(array $declarations, array $protectedTokens = [], ?array $pairs = null): array {
 		$protected = array_flip($protectedTokens);
 
 		for ($round = 0; $round < self::MAX_REPAIR_ROUNDS; $round++) {
-			$warnings = $this->failingPairs(declarations: $declarations);
+			$warnings = $this->failingPairs(declarations: $declarations, pairs: $pairs);
 			$fixableFound = false;
 
 			foreach ($warnings as $warning) {
@@ -757,7 +761,7 @@ class DarkPaletteService {
 			}
 		}//end for
 
-		$finalWarnings = $this->failingPairs(declarations: $declarations);
+		$finalWarnings = $this->failingPairs(declarations: $declarations, pairs: $pairs);
 
 		return [
 			'declarations' => $declarations,
@@ -771,15 +775,21 @@ class DarkPaletteService {
 	 * in the same warning shape and pair-label format.
 	 *
 	 * @param array<string, string> $declarations The dark declarations.
+	 * @param array<int, array{fg: string, bg: string, threshold: float}>|null $pairs The pairs to measure, or null for
+	 *                                                                            the brand pairs plus CONTROL_PAIRS.
 	 *
 	 * @return array<array{pair: string, ratio: float|null, threshold: float, level: string, unevaluated?: bool}> The warnings.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function failingPairs(array $declarations): array {
-		$warnings = $this->contrast->check(declarations: $declarations);
+	private function failingPairs(array $declarations, ?array $pairs = null): array {
+		$warnings = [];
+		if ($pairs === null) {
+			$warnings = $this->contrast->check(declarations: $declarations);
+			$pairs = self::CONTROL_PAIRS;
+		}
 
-		foreach (self::CONTROL_PAIRS as $pair) {
+		foreach ($pairs as $pair) {
 			$foreground = ($declarations[$pair['fg']] ?? null);
 			$background = ($declarations[$pair['bg']] ?? null);
 			if ($foreground === null || $background === null) {
