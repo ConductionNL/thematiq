@@ -70,8 +70,12 @@ class DarkPaletteService {
 	 *
 	 * Version 3 keeps a translucent light value's alpha on its dark value
 	 * (`#rrggbbaa`) and darkens 8-digit hex tokens, which it used to skip.
+	 *
+	 * Version 4 reads "text" as a whole word of the token name, so `textbox`
+	 * surfaces darken instead of landing mid-grey, and repairs the label and
+	 * input pairs in {@see self::CONTROL_PAIRS} (thematiq#938).
 	 */
-	public const GENERATOR_VERSION = 3;
+	public const GENERATOR_VERSION = 4;
 
 	/**
 	 * The guaranteed-passing near-white snap value (matches NC's own dark
@@ -132,6 +136,66 @@ class DarkPaletteService {
 	 * service can derive, and half-substituting one would corrupt it.
 	 */
 	private const ALIAS_PATTERN = '/^var\(\s*(--[A-Za-z0-9_-]+)\s*(?:,\s*(.+?)\s*)?\)$/';
+
+	/**
+	 * Text on a control fill, verified and repaired in the dark variant on top
+	 * of {@see ContrastService::check()}'s two brand pairs: normal-size text at
+	 * 4.5:1, and the input's border at the 3:1 of a component boundary
+	 * (WCAG SC 1.4.11) against the input fill: a dark fill on a dark page
+	 * leaves the border as the only edge.
+	 *
+	 * The hover fill is checked through the component tokens only, which give
+	 * it its own label token. `--nldesign-color-button-primary-text` has one
+	 * value for both fills, and a derived hover lighter than the rest fill
+	 * leaves no single label that clears both (zwolle: white fails the hover,
+	 * black fails the rest fill).
+	 *
+	 * The aliases between these tokens are flattened to literals at
+	 * generation time (see {@see self::deriveDarkDeclarations()}), so the
+	 * colour tokens and the component tokens that alias them are separate
+	 * values and each pair is checked on its own. Without these pairs a white
+	 * label clamped to mid-grey #9e9e9e on a light primary fill and shipped at
+	 * 1.17:1 in every set (thematiq#938).
+	 *
+	 * @var array<int, array{fg: string, bg: string, threshold: float}>
+	 */
+	private const CONTROL_PAIRS = [
+		[
+			'fg' => '--nldesign-component-textbox-border-color',
+			'bg' => '--nldesign-component-textbox-background-color',
+			'threshold' => 3.0,
+		],
+		[
+			'fg' => '--nldesign-component-textbox-color',
+			'bg' => '--nldesign-component-textbox-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-button-primary-text',
+			'bg' => '--nldesign-color-button-primary-background',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-button-primary-action-color',
+			'bg' => '--nldesign-component-button-primary-action-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-button-primary-action-hover-color',
+			'bg' => '--nldesign-component-button-primary-action-hover-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-badge-color',
+			'bg' => '--nldesign-component-badge-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-logo-text',
+			'bg' => '--nldesign-color-logo-background',
+			'threshold' => 4.5,
+		],
+	];
 
 	/**
 	 * Words that mark a `-color` token as naming a SURFACE rather than the
@@ -557,8 +621,9 @@ class DarkPaletteService {
 	 *
 	 * TWO conventions, because the sets use two.
 	 *
-	 * `--nldesign-*` names the role in the word: anything containing "text"
-	 * (`-text`, `-text-error`, the bare `--nldesign-color-text`) is text-class.
+	 * `--nldesign-*` names the role in the word: anything with "text" as a
+	 * whole word (`-text`, `-text-error`, the bare `--nldesign-color-text`) is
+	 * text-class. A word that merely starts with it (`textbox`) is not.
 	 *
 	 * The utrecht and municipal families instead name the SURFACE and leave the
 	 * text case unmarked: `--utrecht-document-background-color` is a surface,
@@ -580,7 +645,9 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	private function isTextClass(string $token): bool {
-		if (str_contains($token, 'text') === true) {
+		// "text" as a whole word of the name: `textbox` and `textarea` name a
+		// control, and its `-background-color` is a surface (thematiq#938).
+		if (preg_match('/(^|-)text(-|$)/', $token) === 1) {
 			return true;
 		}
 
@@ -652,7 +719,7 @@ class DarkPaletteService {
 		$protected = array_flip($protectedTokens);
 
 		for ($round = 0; $round < self::MAX_REPAIR_ROUNDS; $round++) {
-			$warnings = $this->contrast->check(declarations: $declarations);
+			$warnings = $this->failingPairs(declarations: $declarations);
 			$fixableFound = false;
 
 			foreach ($warnings as $warning) {
@@ -663,6 +730,17 @@ class DarkPaletteService {
 				[$fgName, $bgName] = $this->splitPairLabel(label: $warning['pair']);
 				if (isset($protected[$fgName]) === true || isset($protected[$bgName]) === true) {
 					// Hand-authored failure: warn only, never rewritten.
+					continue;
+				}
+
+				// An earlier repair in this round may already have fixed this pair
+				// through a shared foreground; repairing again would overshoot it.
+				$ratio = $this->contrast->measure(
+					foreground: $declarations[$fgName],
+					background: $declarations[$bgName],
+					page: ($declarations['--nldesign-color-background'] ?? null)
+				);
+				if ($ratio !== null && $ratio >= $warning['threshold']) {
 					continue;
 				}
 
@@ -679,13 +757,53 @@ class DarkPaletteService {
 			}
 		}//end for
 
-		$finalWarnings = $this->contrast->check(declarations: $declarations);
+		$finalWarnings = $this->failingPairs(declarations: $declarations);
 
 		return [
 			'declarations' => $declarations,
 			'warnings' => $finalWarnings,
 		];
 	}//end verifyAndRepair()
+
+	/**
+	 * The failing pairs of a dark declaration map: {@see ContrastService::check()}'s
+	 * brand pairs, then every {@see self::CONTROL_PAIRS} entry present in the map,
+	 * in the same warning shape and pair-label format.
+	 *
+	 * @param array<string, string> $declarations The dark declarations.
+	 *
+	 * @return array<array{pair: string, ratio: float|null, threshold: float, level: string, unevaluated?: bool}> The warnings.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function failingPairs(array $declarations): array {
+		$warnings = $this->contrast->check(declarations: $declarations);
+
+		foreach (self::CONTROL_PAIRS as $pair) {
+			$foreground = ($declarations[$pair['fg']] ?? null);
+			$background = ($declarations[$pair['bg']] ?? null);
+			if ($foreground === null || $background === null) {
+				continue;
+			}
+
+			$ratio = $this->contrast->measure(
+				foreground: $foreground,
+				background: $background,
+				page: ($declarations['--nldesign-color-background'] ?? null)
+			);
+			$label = $pair['fg'] . ' vs ' . $pair['bg'];
+			if ($ratio === null) {
+				$warnings[] = ['pair' => $label, 'ratio' => null, 'threshold' => $pair['threshold'], 'level' => 'AA', 'unevaluated' => true];
+				continue;
+			}
+
+			if ($ratio < $pair['threshold']) {
+				$warnings[] = ['pair' => $label, 'ratio' => round($ratio, 2), 'threshold' => $pair['threshold'], 'level' => 'AA'];
+			}
+		}
+
+		return $warnings;
+	}//end failingPairs()
 
 	/**
 	 * Split a `ContrastService::check()` pair label ("fg vs bg") back into
