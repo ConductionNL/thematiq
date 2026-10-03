@@ -18,7 +18,7 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 | `--nldesign-color-button-primary-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23004488%22%2F%3E%3C%2Fsvg%3E) `#004488` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236cb1f7%22%2F%3E%3C%2Fsvg%3E) `#6cb1f7` | this set | |
 | `--nldesign-color-button-primary-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23004488%22%2F%3E%3C%2Fsvg%3E) `#004488` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236cb1f7%22%2F%3E%3C%2Fsvg%3E) `#6cb1f7` | this set | |
 | `--nldesign-color-button-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23026596%22%2F%3E%3C%2Fsvg%3E) `#026596` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2361c4f5%22%2F%3E%3C%2Fsvg%3E) `#61c4f5` | this set | |
-| `--nldesign-color-button-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--nldesign-color-button-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | this set | |
 | `--nldesign-color-error` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23bf1a12%22%2F%3E%3C%2Fsvg%3E) `#bf1a12` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e34a42%22%2F%3E%3C%2Fsvg%3E) `#e34a42` | this set | Border error, Element error, Error color, Text error, Text input invalid |
 | `--nldesign-color-error-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5352c%22%2F%3E%3C%2Fsvg%3E) `#e5352c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cc2c24%22%2F%3E%3C%2Fsvg%3E) `#cc2c24` | this set | Error hover |
 | `--nldesign-color-error-rgb` | `191, 26, 18` | `227, 74, 66` | this set | Error text color |
@@ -53,7 +53,7 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2388c6f9%22%2F%3E%3C%2Fsvg%3E) `#88c6f9` | defaults | |
 | `--nldesign-component-badge-color` | `var(
 		--nldesign-color-primary-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
 | `--nldesign-component-button-active-background-color` | `var(
 		--nldesign-color-primary-light-hover
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23093f5d%22%2F%3E%3C%2Fsvg%3E) `#093f5d` | defaults | |
@@ -88,13 +88,13 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2388c6f9%22%2F%3E%3C%2Fsvg%3E) `#88c6f9` | defaults | |
 | `--nldesign-component-button-primary-action-color` | `var(
 		--nldesign-color-primary-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
 | `--nldesign-component-button-primary-action-hover-background-color` | `var(
 		--nldesign-color-primary-hover
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2361c4f5%22%2F%3E%3C%2Fsvg%3E) `#61c4f5` | defaults | |
 | `--nldesign-component-button-primary-action-hover-color` | `var(
 		--nldesign-color-primary-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
 | `--nldesign-component-button-secondary-action-background-color` | `transparent` | | defaults | |
 | `--nldesign-component-button-secondary-action-border-color` | `var(
 		--nldesign-color-primary
@@ -134,16 +134,16 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 | `--nldesign-component-table-row-hover-background-color` | `var(
 		--nldesign-color-background-hover
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23191e22%22%2F%3E%3C%2Fsvg%3E) `#191e22` | defaults | |
-| `--nldesign-component-textbox-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
-| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9caf%22%2F%3E%3C%2Fsvg%3E) `#8e9caf` | defaults | |
+| `--nldesign-component-textbox-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | defaults | |
+| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23647589%22%2F%3E%3C%2Fsvg%3E) `#647589` | defaults | |
 | `--nldesign-component-textbox-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-textbox-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
+| `--nldesign-component-textbox-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | defaults | |
 | `--nldesign-component-textbox-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
-| `--nldesign-component-textbox-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233dc9ff%22%2F%3E%3C%2Fsvg%3E) `#3dc9ff` | defaults | |
+| `--nldesign-component-textbox-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232abbf4%22%2F%3E%3C%2Fsvg%3E) `#2abbf4` | defaults | |
 | `--nldesign-component-textbox-hover-border-color` | `var(
 		--nldesign-color-border-dark
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9cae%22%2F%3E%3C%2Fsvg%3E) `#8e9cae` | defaults | |
-| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ee554e%22%2F%3E%3C%2Fsvg%3E) `#ee554e` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23637186%22%2F%3E%3C%2Fsvg%3E) `#637186` | defaults | |
+| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e34a42%22%2F%3E%3C%2Fsvg%3E) `#e34a42` | defaults | |
 | `--nldesign-component-unordered-list-color` | `var(
 		--nldesign-color-text
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
@@ -1646,9 +1646,9 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 | `--utrecht-table-row-background-color` | `transparent` | | this set | |
 | `--utrecht-table-row-border-block-end-color` | `var(--tilburg-line-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23828289%22%2F%3E%3C%2Fsvg%3E) `#828289` | this set | |
 | `--utrecht-table-row-border-block-end-width` | `var(--tilburg-border-width-sm)` | | this set | |
-| `--utrecht-textarea-background-color` | `var(--tilburg-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-textarea-background-color` | `var(--tilburg-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-textarea-border-block-end-width` | `var(--utrecht-textarea-border-width)` | | this set | |
-| `--utrecht-textarea-border-color` | `var(--tilburg-form-control-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9cae%22%2F%3E%3C%2Fsvg%3E) `#8e9cae` | this set | |
+| `--utrecht-textarea-border-color` | `var(--tilburg-form-control-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23637186%22%2F%3E%3C%2Fsvg%3E) `#637186` | this set | |
 | `--utrecht-textarea-border-radius` | `var(--tilburg-border-radius-md)` | | this set | |
 | `--utrecht-textarea-border-width` | `var(--tilburg-form-control-border-width)` | | this set | |
 | `--utrecht-textarea-color` | `var(--tilburg-form-control-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8dfff%22%2F%3E%3C%2Fsvg%3E) `#c8dfff` | this set | |
@@ -1663,25 +1663,25 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 | `--utrecht-textarea-placeholder-color` | `var(
     --tilburg-form-control-placeholder-color
   )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238a9ab2%22%2F%3E%3C%2Fsvg%3E) `#8a9ab2` | this set | |
-| `--utrecht-textbox-background-color` | `var(--tilburg-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-textbox-background-color` | `var(--tilburg-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-textbox-border-block-end-width` | `auto` | | this set | |
-| `--utrecht-textbox-border-color` | `var(--tilburg-form-control-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9cae%22%2F%3E%3C%2Fsvg%3E) `#8e9cae` | this set | |
+| `--utrecht-textbox-border-color` | `var(--tilburg-form-control-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23637186%22%2F%3E%3C%2Fsvg%3E) `#637186` | this set | |
 | `--utrecht-textbox-border-radius` | `var(--tilburg-border-radius-md)` | | this set | |
 | `--utrecht-textbox-border-width` | `var(--tilburg-form-control-border-width)` | | this set | |
 | `--utrecht-textbox-color` | `var(--tilburg-form-control-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8dfff%22%2F%3E%3C%2Fsvg%3E) `#c8dfff` | this set | |
 | `--utrecht-textbox-disabled-background-color` | `var(
     --tilburg-form-control-disabled-background-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239595a7%22%2F%3E%3C%2Fsvg%3E) `#9595a7` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2317171b%22%2F%3E%3C%2Fsvg%3E) `#17171b` | this set | |
 | `--utrecht-textbox-disabled-border-color` | `var(
     --tilburg-form-control-disabled-border-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9cae%22%2F%3E%3C%2Fsvg%3E) `#8e9cae` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23637186%22%2F%3E%3C%2Fsvg%3E) `#637186` | this set | |
 | `--utrecht-textbox-disabled-color` | `var(--tilburg-form-control-disabled-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9cae%22%2F%3E%3C%2Fsvg%3E) `#8e9cae` | this set | |
 | `--utrecht-textbox-focus-background-color` | `var(
     --tilburg-form-control-focus-background-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-textbox-focus-border-color` | `var(
     --tilburg-form-control-focus-border-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d5d5d5%22%2F%3E%3C%2Fsvg%3E) `#d5d5d5` | this set | |
 | `--utrecht-textbox-focus-border-width` | `var(
     --tilburg-form-control-focus-border-width
   )` | | this set | |
@@ -1691,20 +1691,20 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 | `--utrecht-textbox-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
 | `--utrecht-textbox-hover-background-color` | `var(
     --tilburg-form-control-hover-background-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239595a7%22%2F%3E%3C%2Fsvg%3E) `#9595a7` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2317171b%22%2F%3E%3C%2Fsvg%3E) `#17171b` | this set | |
 | `--utrecht-textbox-hover-border-color` | `var(
     --tilburg-form-control-hover-border-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9cae%22%2F%3E%3C%2Fsvg%3E) `#8e9cae` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23637186%22%2F%3E%3C%2Fsvg%3E) `#637186` | this set | |
 | `--utrecht-textbox-hover-border-width` | `var(
     --tilburg-form-control-hover-border-width
   )` | | this set | |
 | `--utrecht-textbox-hover-color` | `var(--tilburg-form-control-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8dfff%22%2F%3E%3C%2Fsvg%3E) `#c8dfff` | this set | |
 | `--utrecht-textbox-invalid-background-color` | `var(
     --tilburg-form-control-invalid-background-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-textbox-invalid-border-color` | `var(
     --tilburg-form-control-invalid-border-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ea5a52%22%2F%3E%3C%2Fsvg%3E) `#ea5a52` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cc2c24%22%2F%3E%3C%2Fsvg%3E) `#cc2c24` | this set | |
 | `--utrecht-textbox-invalid-border-width` | `var(
     --tilburg-form-control-invalid-border-width
   )` | | this set | |
@@ -1717,10 +1717,10 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 | `--utrecht-textbox-placeholder-color` | `var(--tilburg-form-control-placeholder-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238a9ab2%22%2F%3E%3C%2Fsvg%3E) `#8a9ab2` | this set | |
 | `--utrecht-textbox-read-only-background-color` | `var(
     --tilburg-form-control-read-only-background-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239595a7%22%2F%3E%3C%2Fsvg%3E) `#9595a7` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2317171b%22%2F%3E%3C%2Fsvg%3E) `#17171b` | this set | |
 | `--utrecht-textbox-read-only-border-color` | `var(
     --tilburg-form-control-read-only-border-color
-  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238e9cae%22%2F%3E%3C%2Fsvg%3E) `#8e9cae` | this set | |
+  )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23637186%22%2F%3E%3C%2Fsvg%3E) `#637186` | this set | |
 | `--utrecht-textbox-read-only-color` | `var(--tilburg-form-control-read-only-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8dfff%22%2F%3E%3C%2Fsvg%3E) `#c8dfff` | this set | |
 | `--utrecht-unordered-list-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | this set | |
 | `--utrecht-unordered-list-font-family` | `var(--tilburg-document-font-family)` | | this set | |
