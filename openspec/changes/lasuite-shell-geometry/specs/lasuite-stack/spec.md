@@ -32,6 +32,7 @@ Nextcloud header height.
 - **GIVEN** the `lasuite` token set is active
 - **WHEN** an admin opens a page that shows the unified search field
 - **THEN** the vertical centre of the search field equals the vertical centre of `#header`, within 1px
+- **AND** the search field renders 34px tall, its 1px borders included
 
 #### Scenario: The app navigation keeps La Suite Docs' 300px width
 
