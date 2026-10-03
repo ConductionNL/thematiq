@@ -69,6 +69,24 @@ class OverridesCssBuilder {
 	];
 
 	/**
+	 * Label and fill pairs among Nextcloud's own variables that the dark scopes
+	 * repair, as DarkPaletteService::CONTROL_PAIRS does for the generated dark
+	 * stylesheets. Each override derives its dark value on its own, so a white
+	 * label took the text clamp to mid-grey #9e9e9e on a fill that turned light
+	 * blue (thematiq#953). A pair is repaired only when the editor overrides
+	 * both sides; the other side otherwise comes from elsewhere and is not
+	 * this file's to measure.
+	 *
+	 * @var array<int, array{fg: string, bg: string, threshold: float}>
+	 */
+	public const DARK_PAIRS = [
+		['fg' => '--color-primary-text', 'bg' => '--color-primary', 'threshold' => 4.5],
+		['fg' => '--color-primary-element-text', 'bg' => '--color-primary-element', 'threshold' => 4.5],
+		['fg' => '--color-primary-light-text', 'bg' => '--color-primary-light', 'threshold' => 4.5],
+		['fg' => '--color-primary-element-light-text', 'bg' => '--color-primary-element-light', 'threshold' => 4.5],
+	];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param DarkPaletteService $darkPalette Derives each colour override's dark value.
@@ -137,6 +155,7 @@ class OverridesCssBuilder {
 	 * The dark value of every brand-layer colour override: derived as the
 	 * generated dark stylesheets derive it, or the light value when it is not
 	 * a colour literal, so both kinds of dark user still see the same thing.
+	 * Label and fill pairs in {@see self::DARK_PAIRS} are then repaired.
 	 *
 	 * Only the brand layer (Nextcloud's own variables) is split, because only
 	 * those does Nextcloud re-declare on body for a chosen theme. Component
@@ -165,7 +184,9 @@ class OverridesCssBuilder {
 			$dark[$name] = ($this->darkPalette->deriveDarkValue(token: $name, lightValue: $value, context: $tokens) ?? $value);
 		}
 
-		return $dark;
+		// The same repair the generated dark stylesheets get. An administrator's
+		// own dark value is not in this map, so it is never rewritten.
+		return $this->darkPalette->verifyAndRepair(declarations: $dark, pairs: self::DARK_PAIRS)['declarations'];
 	}//end darkValues()
 
 	/**
