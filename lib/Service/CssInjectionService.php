@@ -812,12 +812,17 @@ class CssInjectionService {
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	private function injectConditionalStyles(): void {
+		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet
+		// before every header, and the saved overrides are a header, so as
+		// addStyle() entries the toggles landed before custom-overrides. The
+		// spec puts them after it (css-architecture, hide-slogan, menu-labels),
+		// which is also where the admin page appends them on a toggle.
 		if ($this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1') {
-			$this->emitStyle(file: 'hide-slogan');
+			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'hide-slogan'));
 		}
 
 		if ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1') {
-			$this->emitStyle(file: 'show-menu-labels');
+			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
 		// A header, so it follows the overrides and custom CSS links: it must

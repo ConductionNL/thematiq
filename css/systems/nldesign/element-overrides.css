@@ -880,8 +880,14 @@ body {
 	padding-bottom: 0 !important;
 }
 
+/* The weight marks the active label, not a colour: it keeps the header's own
+   text colour, which the set says is legible on its header. The primary was
+   unreadable on a coloured header (#944, Utrecht #24578F on #cc0000). */
 #header nav.app-menu .app-menu-entry--active .app-menu-entry__label {
-	color: var(--color-primary) !important;
+	color: var(
+		--nldesign-component-header-color,
+		var(--nldesign-color-header-text)
+	) !important;
 	font-weight: 600 !important;
 }
 
