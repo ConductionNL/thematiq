@@ -4,7 +4,8 @@
  * Thematiq overrides CSS builder.
  *
  * Builds the content of a custom overrides file: the editor's values in `:root`
- * with `!important`, the thematiq twin of each motion token, the dark value of each
+ * with `!important`, the thematiq twin of each motion token, the motion tokens again
+ * on body for a user who chose a theme, the dark value of each
  * brand-layer colour in the two dark scopes, and the administrator's own tokens
  * after them without `!important`. Split out of {@see CustomOverridesService},
  * which keeps the file reading and writing.
@@ -49,6 +50,15 @@ class OverridesCssBuilder {
 	 * @var string
 	 */
 	private const CHOSEN_DARK_SELECTOR = 'body[data-theme-dark],' . PHP_EOL . 'body[data-themes*=dark]';
+
+	/**
+	 * The scope of every user but one who chose reduced motion. A chosen theme
+	 * declares Nextcloud's durations on body, so the motion overrides go there
+	 * too; the reduced-motion theme sets them to 0 on purpose and keeps that.
+	 *
+	 * @var string
+	 */
+	private const MOTION_SELECTOR = 'body:not([data-theme-reduced-motion])';
 
 	/**
 	 * The CSS file header comment.
@@ -103,6 +113,14 @@ class OverridesCssBuilder {
 		}
 
 		$css = self::CSS_HEADER . PHP_EOL . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
+
+		// A user who chose a theme, dark or light, gets Nextcloud's durations
+		// declared on body (`[data-theme-dark] { --animation-quick: 100ms }`),
+		// which a :root value never reaches (#937).
+		$motionLines = $this->declarationLines(tokens: array_intersect_key($tokens, self::MOTION_TWINS), important: true);
+		if ($motionLines !== []) {
+			$css .= self::MOTION_SELECTOR . ' {' . PHP_EOL . implode(PHP_EOL, $motionLines) . PHP_EOL . '}' . PHP_EOL;
+		}
 
 		// The administrator's own dark value replaces a derived one, and is the
 		// only dark value of a settable or internal colour, which derive none.
