@@ -26,8 +26,8 @@ use Psr\Log\LoggerInterface;
  * Issue #933: a set whose only grey is white converted every text, border and
  * hover role to #ffffff, because the "darkest" grey of a one-grey ramp is that
  * grey, however light it is. The ramp may only supply a role when the pick
- * still stands apart from the page background; otherwise the role is left to
- * Nextcloud's defaults, exactly like a set that declares no greys at all.
+ * still stands apart from the page background; otherwise the role takes the
+ * default the mapping rule names, so the set keeps its full semantic layer.
  *
  * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
  */
@@ -79,7 +79,7 @@ class TokenSetConverterRampContrastTest extends TestCase {
 
 	/**
 	 * The exact upload from the issue: the only grey is white, so no role may
-	 * take a value from the ramp. Each one falls back to the defaults instead.
+	 * take a value from the ramp. Each one takes its default from the rule instead.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 */
@@ -100,6 +100,12 @@ class TokenSetConverterRampContrastTest extends TestCase {
 			$this->assertNotSame('(brand ramp)', $entry['source'] ?? null, $role . ' was taken from a ramp of white only');
 			$this->assertNotSame('#ffffff', strtolower((string)($entry['value'] ?? '')), $role . ' became white on white');
 		}
+
+		// The set still carries the full semantic layer (multi-brand task 5.5):
+		// the roles take their defaults instead of the white.
+		$this->assertSame('(Nextcloud default)', $report['--nldesign-color-text']['source'] ?? null);
+		$this->assertSame('#333333', $report['--nldesign-color-text']['value'] ?? null);
+		$this->assertSame('#b4b4b4', $report['--nldesign-color-border']['value'] ?? null);
 	}//end testAWhiteOnlyRampSuppliesNoRole()
 
 	/**
