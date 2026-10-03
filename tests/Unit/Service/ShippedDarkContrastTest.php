@@ -131,7 +131,8 @@ class ShippedDarkContrastTest extends TestCase {
 		$contrast = new ContrastService();
 		$page = $this->darkValues(setId: $setId)('--nldesign-color-background');
 		if ($page === null) {
-			$this->assertNull($page, $setId . ' leaves the page background to Nextcloud');
+			// The set leaves the page background to Nextcloud's own dark theme.
+			$this->addToAssertionCount(1);
 			return;
 		}
 
