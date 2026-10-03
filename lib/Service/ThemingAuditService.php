@@ -327,7 +327,7 @@ class ThemingAuditService {
 		$entry['new'] = $this->summarizeValue(value: $newRaw, isCss: $newIsCss);
 
 		if (is_array($oldRaw) === true && is_array($newRaw) === true && $oldIsCss === false && $newIsCss === false) {
-			$entry['changed'] = $this->diffArrayIdentity(old: $oldRaw, new: $newRaw);
+			$entry['changed'] = (new AuditArrayDiff())->changed(old: $oldRaw, new: $newRaw);
 		}
 
 		foreach ($context as $key => $value) {
@@ -419,49 +419,6 @@ class ThemingAuditService {
 
 		return $value;
 	}//end summarizeValue()
-
-	/**
-	 * Diff two arrays' identities: list values, or assoc keys plus any key
-	 * whose value differs between old and new.
-	 *
-	 * @param array<int|string, mixed> $old The prior array.
-	 * @param array<int|string, mixed> $new The new array.
-	 *
-	 * @return array<int, int|string> The changed identities.
-	 */
-	private function diffArrayIdentity(array $old, array $new): array {
-		$isList = (array_is_list($old) === true && array_is_list($new) === true);
-
-		if ($isList === true) {
-			$oldValues = array_map(strval(...), $old);
-			$newValues = array_map(strval(...), $new);
-
-			return array_values(
-				array_unique(
-					array_merge(
-						array_diff($oldValues, $newValues),
-						array_diff($newValues, $oldValues)
-					)
-				)
-			);
-		}
-
-		$oldKeys = array_keys($old);
-		$newKeys = array_keys($new);
-
-		$changed = array_merge(
-			array_diff($oldKeys, $newKeys),
-			array_diff($newKeys, $oldKeys)
-		);
-
-		foreach (array_intersect($oldKeys, $newKeys) as $key) {
-			if ($old[$key] !== $new[$key]) {
-				$changed[] = $key;
-			}
-		}
-
-		return array_values(array_unique($changed));
-	}//end diffArrayIdentity()
 
 	/**
 	 * Parse a raw JSONL blob into an ordered list of entry arrays, skipping
