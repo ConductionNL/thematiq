@@ -13,8 +13,8 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.2
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
  * @spec openspec/specs/custom-token-sets/spec.md
  */
 
@@ -36,8 +36,8 @@ use RuntimeException;
  * derived theming colours, persisted contrast warnings) lives in the
  * `custom_token_sets` appconfig key, indexed by id.
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.2
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
  * @spec openspec/specs/dark-mode/spec.md
  */
 class CustomTokenSetService {
@@ -127,7 +127,7 @@ class CustomTokenSetService {
 	 *
 	 * @return string The derived slug (may be empty for all-symbol input).
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
 	 */
 	public function slugify(string $name): string {
 		$slug = strtolower(trim($name));
@@ -182,8 +182,8 @@ class CustomTokenSetService {
 	 * @throws RuntimeException When the slug is empty (422), the id collides
 	 *                          (409), or the file cannot be written (500).
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.2
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 *
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - storing writes files and a manifest entry in one transaction-like order; every branch is
@@ -332,7 +332,7 @@ class CustomTokenSetService {
 	 *
 	 * @return bool True when something was removed, false when nothing matched.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	public function delete(string $id): bool {
@@ -374,7 +374,7 @@ class CustomTokenSetService {
 	 *
 	 * @return array<int, array<string, mixed>> The custom sets with id+metadata.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.2
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
 	 */
 	public function list(): array {
 		$result = [];
@@ -406,7 +406,7 @@ class CustomTokenSetService {
 	 *
 	 * @return string|null The file content, or null when the set does not exist.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
 	 */
 	public function getRawContent(string $id): ?string {
 		if ($this->isCustomId(id: $id) === false) {
@@ -421,7 +421,7 @@ class CustomTokenSetService {
 	 *
 	 * @return array<string, mixed> The manifest indexed by id (empty on absence/corruption).
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.2
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
 	 */
 	public function getManifest(): array {
 		$raw = $this->config->getAppValue(Application::APP_ID, self::MANIFEST_KEY, '{}');
@@ -441,7 +441,7 @@ class CustomTokenSetService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.2
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
 	 */
 	private function saveManifest(array $manifest): void {
 		$this->config->setAppValue(
@@ -458,7 +458,7 @@ class CustomTokenSetService {
 	 *
 	 * @return array<string, string> The theming block (may be empty).
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.2
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
 	 */
 	private function deriveTheming(array $declarations): array {
 		$theming = [];
@@ -530,7 +530,7 @@ class CustomTokenSetService {
 	 *
 	 * @return string The name in the store, under `css/tokens/`.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
 	 */
 	private function getCssPath(string $id): string {
 		return 'css/tokens/' . $id . '.css';
@@ -546,7 +546,7 @@ class CustomTokenSetService {
 	 *
 	 * @return bool True when the id is a safe custom id.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
 	 */
 	public function isCustomId(string $id): bool {
 		return preg_match('/^custom-[a-z0-9-]+$/', $id) === 1;
@@ -562,7 +562,7 @@ class CustomTokenSetService {
 	 *
 	 * @throws RuntimeException When the store cannot write the file (code 500).
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-2.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
 	 */
 	private function writeFile(string $name, string $contents): void {
 		try {

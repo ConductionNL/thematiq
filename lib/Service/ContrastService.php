@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-1.3
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ namespace OCA\Thematiq\Service;
  * construct are reported as `unevaluated` so the caller never treats an
  * unknown colour as a passing one.
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-1.3
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
  */
 class ContrastService {
 
@@ -74,7 +74,7 @@ class ContrastService {
 	 * @return array<array{pair: string, ratio: float|null, threshold: float, level: string, unevaluated?: bool}>
 	 *                                                                                                            The non-blocking contrast warnings.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-1.3
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
 	 */
 	public function check(array $declarations): array {
 		$warnings = [];
@@ -193,7 +193,7 @@ class ContrastService {
 	 *
 	 * @return float The contrast ratio.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-1.3
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
 	 */
 	public function ratio(array $first, array $second): float {
 		$lum1 = $this->relativeLuminance(rgb: $first);
@@ -212,7 +212,7 @@ class ContrastService {
 	 *
 	 * @return float The relative luminance in [0, 1].
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-1.3
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
 	 */
 	private function relativeLuminance(array $rgb): float {
 		$channels = [];
@@ -242,7 +242,7 @@ class ContrastService {
 	 *
 	 * @return array{0: int, 1: int, 2: int}|null The parsed RGB triple, or null.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-1.3
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
 	 */
 	public function parseColor(string $value): ?array {
 		$rgba = $this->parseColorWithAlpha(value: $value);
