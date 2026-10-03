@@ -490,6 +490,22 @@ class DarkPaletteServiceTest extends TestCase {
 	}//end testTheRepairLoopFixesControlLabels()
 
 	/**
+	 * A mid-tone page background still derives to a dark page (thematiq#952).
+	 *
+	 * vng's theming background_color #0277BD stood in for the page background
+	 * and inverted to #42b1f3. The page keeps its hue but lands dark.
+	 */
+	public function testAMidTonePageBackgroundDerivesDark(): void {
+		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-background' => '#0277BD']);
+
+		$page = $derived['--nldesign-color-background'];
+		$this->assertLessThanOrEqual(0.125, $this->lightnessOf(hex: $page));
+		$this->assertEqualsWithDelta($this->hueOf(hex: '#0277BD'), $this->hueOf(hex: $page), 2.0);
+		// Light body text still reads on it.
+		$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: '#d5ddf0', background: $page));
+	}//end testAMidTonePageBackgroundDerivesDark()
+
+	/**
 	 * `-rgb` companion tokens are regenerated from their derived base token.
 	 */
 	public function testRgbCompanionsMatchDerivedBase(): void {

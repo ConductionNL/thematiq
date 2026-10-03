@@ -74,8 +74,11 @@ class DarkPaletteService {
 	 * Version 4 reads "text" as a whole word of the token name, so `textbox`
 	 * surfaces darken instead of landing mid-grey, and repairs the label and
 	 * input pairs in {@see self::CONTROL_PAIRS} (thematiq#938).
+	 *
+	 * Version 5 keeps the page background dark whatever light value it
+	 * derives from (see {@see self::PAGE_BACKGROUND_MAX_LUMINANCE}, thematiq#952).
 	 */
-	public const GENERATOR_VERSION = 4;
+	public const GENERATOR_VERSION = 5;
 
 	/**
 	 * The guaranteed-passing near-white snap value (matches NC's own dark
@@ -88,6 +91,27 @@ class DarkPaletteService {
 	 * theme main-background colour).
 	 */
 	private const NEAR_BLACK = '#111111';
+
+	/**
+	 * The highest relative luminance a dark page background may have, and the
+	 * lightness it is pulled down to when it has more.
+	 *
+	 * Inverting a light value's lightness only lands dark when the light value
+	 * was light. A set without its own `--nldesign-color-background` takes the
+	 * manifest's theming `background_color` instead (see
+	 * {@see self::resolveLightDeclarations()}), which is Nextcloud's header and
+	 * login colour and often a mid-tone: vng's #0277BD inverted to #42b1f3, a
+	 * bright page in dark mode (thematiq#952). Nextcloud's own dark page has
+	 * luminance 0.009; 0.05 leaves every tinted dark page a set already ships
+	 * alone. 0.12 lightness is a little above the 0.08 a white page derives
+	 * to, so the pulled-down page keeps its hue.
+	 */
+	private const PAGE_BACKGROUND_MAX_LUMINANCE = 0.05;
+
+	/**
+	 * See {@see self::PAGE_BACKGROUND_MAX_LUMINANCE}.
+	 */
+	private const PAGE_BACKGROUND_DARK_LIGHTNESS = 0.12;
 
 	/**
 	 * Design systems that are never eligible for dark-variant generation:
@@ -570,8 +594,28 @@ class DarkPaletteService {
 
 		$darkRgb = $this->hslToRgb(hue: $hue, saturation: $darkSaturation, lightness: $darkLightness);
 
+		if ($token === '--nldesign-color-background'
+			&& $this->luminanceOf(rgb: $darkRgb) > self::PAGE_BACKGROUND_MAX_LUMINANCE
+		) {
+			$darkRgb = $this->hslToRgb(hue: $hue, saturation: $darkSaturation, lightness: self::PAGE_BACKGROUND_DARK_LIGHTNESS);
+		}
+
 		return $this->rgbToHex(rgb: $darkRgb);
 	}//end deriveColorToken()
+
+	/**
+	 * WCAG relative luminance, read off the contrast ratio against black:
+	 * (L + 0.05) / 0.05.
+	 *
+	 * @param array{0:int,1:int,2:int} $rgb The colour.
+	 *
+	 * @return float The relative luminance.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function luminanceOf(array $rgb): float {
+		return (($this->contrast->ratio(first: $rgb, second: [0, 0, 0]) * 0.05) - 0.05);
+	}//end luminanceOf()
 
 	/**
 	 * Whether a token is the brand-primary token or its hover variant (the
