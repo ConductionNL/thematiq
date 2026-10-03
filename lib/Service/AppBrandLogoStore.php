@@ -56,6 +56,15 @@ class AppBrandLogoStore {
 	private const TYPES = ['image/png' => 'png', 'image/jpeg' => 'jpg', 'image/webp' => 'webp', 'image/svg+xml' => 'svg'];
 
 	/**
+	 * The header logo, more specific than any design system's rule for it
+	 * (`#header .logo` in La Suite, `#nextcloud .logo` in nldesign, and
+	 * Nextcloud's `#header #nextcloud .logo`).
+	 *
+	 * @var string
+	 */
+	private const HEADER_LOGO_SELECTOR = 'body #header #nextcloud .logo';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppData $appData The app's data store.
@@ -142,7 +151,8 @@ class AppBrandLogoStore {
 	/**
 	 * The logo variable for a branded app's pages: the large logo, and the small
 	 * one below 1024 px, the breakpoint at which Nextcloud's header goes narrow.
-	 * Unquoted, like the other logo URLs of LogoLayerService::layer().
+	 * Unquoted, like the other logo URLs of LogoLayerService::layer(). Followed
+	 * by a header-logo rule that draws it on every design system.
 	 *
 	 * @param string $large The large logo URL.
 	 * @param string|null $small The small logo URL, or null to use the large one at every width.
@@ -157,7 +167,18 @@ class AppBrandLogoStore {
 			$css .= '@media (max-width:1024px){:root{--nldesign-logo-url:url(' . $small . ')}}';
 		}
 
-		return $css;
+		// Only the nldesign bundle reads the variable. The La Suite element
+		// overrides, which Cunningham shares, paint the header logo as a mask
+		// of Nextcloud's logo with `background-image: none !important`, and
+		// Nextcloud's own rule reads --image-logoheader (#942). This rule
+		// outranks all of them and draws the brand through the same variable,
+		// so the small logo still swaps in below the breakpoint.
+		return $css . self::HEADER_LOGO_SELECTOR . '{'
+			. 'background-image:var(--nldesign-logo-url) !important;'
+			. 'background-color:transparent !important;'
+			. '-webkit-mask:none !important;'
+			. 'mask:none !important;'
+			. 'filter:none !important}';
 	}//end logoCss()
 
 	/**
