@@ -47,6 +47,9 @@ script('thematiq', 'ownTokens');
 // The component playground: the selector / stage / tokens instrument that
 // admin.js's token editor is rebuilt into. Loaded AFTER admin.js because it
 // attaches to the editor that script renders, and waits for it.
+// The sanitiser and the sandboxed frame of the playground's "Your component" stage.
+script('thematiq', 'lib/markupSanitizer');
+script('thematiq', 'lib/ownComponentFrame');
 script('thematiq', 'playground');
 style('thematiq', 'playground');
 // Nextcloud's own login-page stylesheet, scoped to the playground's login card.
@@ -123,6 +126,9 @@ if ($_['mockUi'] === true) {
 			</button>
 			<button type="button" id="nldesign-reset-theme-btn" class="button">
 				<?php p($l->t('Reset theme to Nextcloud')); ?>
+			</button>
+			<button type="button" id="nldesign-dtcg-download" class="button">
+				<?php p($l->t('Download as design tokens')); ?>
 			</button>
 			<!-- Token reference of the selected set (openspec/specs/token-reference/spec.md);
 			     admin.js keeps both links on the selected set. -->

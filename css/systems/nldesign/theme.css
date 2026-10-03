@@ -210,12 +210,12 @@ header#header {
 	min-height: 100vh !important;
 }
 
-/* Login form container - white background, no shadows */
+/* Login form container - main background, no shadows */
 #body-login form,
 #body-login .login-form,
 #body-login #login-form,
 #body-login .body-login-container > div {
-	background: #ffffff !important;
+	background: var(--color-main-background) !important;
 	box-shadow: none !important;
 	border-radius: var(
 		--nldesign-component-login-box-border-radius,
@@ -229,8 +229,8 @@ header#header {
 #body-login .login-box,
 .guest-box,
 .login-box {
-	background: #ffffff !important;
-	background-color: #ffffff !important;
+	background: var(--color-main-background) !important;
+	background-color: var(--color-main-background) !important;
 	box-shadow: none !important;
 	border-radius: var(
 		--nldesign-component-login-box-border-radius,
@@ -315,7 +315,7 @@ div[class*='login-box__wrapper'],
 div[data-v-48234338][class*='login-box__wrapper'],
 .login-box__wrapper[data-v-48234338] {
 	position: relative !important;
-	background: #ffffff !important;
+	background: var(--color-main-background) !important;
 	/* Use lint height or min 100px for non-lint themes */
 	padding-top: max(var(--nldesign-size-lint-height, 0px), 100px) !important;
 	z-index: 3 !important;
@@ -426,7 +426,7 @@ body.body-login-container header {
 #body-login .input-field {
 	border-radius: var(--nldesign-component-textbox-border-radius) !important;
 	box-shadow: none !important;
-	border: 1px solid #d0d0d0 !important;
+	border: 1px solid var(--nldesign-component-textbox-border-color) !important;
 }
 
 #body-login input[type='text']:focus,
@@ -666,9 +666,29 @@ a:visited {
    FOCUS STATES (Accessibility)
    ============================================ */
 
+/* Two-tone ring (#896). Every set's --nldesign-color-focus is translucent on
+ * purpose (ADR-CSS-003), and on its own the default one paints about 2.0:1 on
+ * white, below the 3:1 of WCAG SC 1.4.11. So the translucent token stays as the
+ * outer halo, and the 2px outline is the same colour made opaque: about 4.4:1
+ * on white for the default set. Browsers without relative colour syntax take
+ * the set's `-rgb` triplet instead, which is the same colour wherever a set
+ * declares both. tests/vitest/focusRingContrast.spec.js resolves both.
+ *
+ * The opaque colour is derived into --nldesign-focus-ring-color on the focused
+ * element itself, not on :root: a set's dark variant declares its focus tokens
+ * on body, and a :root declaration would keep resolving the light value. */
 *:focus-visible {
-	outline: 2px solid var(--nldesign-color-focus) !important;
+	--nldesign-focus-ring-color: rgb(var(--nldesign-color-focus-rgb));
+
+	outline: 2px solid var(--nldesign-focus-ring-color) !important;
 	outline-offset: 2px !important;
+	box-shadow: 0 0 0 6px var(--nldesign-color-focus) !important;
+}
+
+@supports (color: rgb(from red r g b)) {
+	*:focus-visible {
+		--nldesign-focus-ring-color: rgb(from var(--nldesign-color-focus) r g b);
+	}
 }
 
 /* ============================================

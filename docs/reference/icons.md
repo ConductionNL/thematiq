@@ -243,7 +243,7 @@ Icons are automatically built from `@conduction/nextcloud-vue`'s and `@gouvfr/ds
 npm run build:icons
 ```
 
-This decodes the data-URI icon packs at `node_modules/@conduction/nextcloud-vue/src/icons/{rvo,openGemeenten,denHaag}.js` into standalone SVG files under `img/icons/{set}/`, copies every DSFR source SVG (`@gouvfr/dsfr/dist/icons/**/*.svg`, falling back to the pre-fetched `.dsfr-src/icons/` scratch source when the package cannot be installed) into `img/icons/dsfr/{basename}.svg`, materializes the one-release legacy aliases from `scripts/icon-aliases.json`, and regenerates `img/ICONS.md`. It never touches `img/logos/`.
+This decodes the data-URI icon packs at `node_modules/@conduction/nextcloud-vue/src/icons/{rvo,openGemeenten,denHaag}.js` into standalone SVG files under `img/icons/{set}/`, copies every DSFR source SVG from the pre-fetched `.dsfr-src/icons/` scratch source (the `@gouvfr/dsfr` package is not a dependency: its install script refuses to run until the DSFR terms of use are accepted) into `img/icons/dsfr/{basename}.svg`, materializes the one-release legacy aliases from `scripts/icon-aliases.json`, and regenerates `img/ICONS.md`. It never touches `img/logos/`.
 
 ## Theme-Switchable Icon Packs
 

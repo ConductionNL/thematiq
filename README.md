@@ -133,6 +133,19 @@ This app uses **Fira Sans** as an open-source alternative to the proprietary gov
 - Similar characteristics to official government fonts
 - Officially recommended by Rijkshuisstijl Community as open-source alternative
 
+### Font licences
+
+Every bundled typeface except Marianne is under the SIL Open Font License 1.1. The licence text ships next to the font files as `OFL.txt`, and in [`LICENSES/OFL-1.1.txt`](LICENSES/OFL-1.1.txt). `REUSE.toml` labels each font file `OFL-1.1` with its upstream copyright holder.
+
+| Typeface | Files | Copyright holder |
+|---|---|---|
+| Fira Sans | `css/fonts/`, `css/systems/nldesign/fonts/` | The Mozilla Foundation and Telefonica S.A. |
+| Figtree | `css/fonts/` | The Figtree Project Authors |
+| IBM Plex Mono | `css/fonts/` | IBM Corp. (Reserved Font Name "Plex") |
+| Inter | `css/systems/lasuite/fonts/`, `css/systems/summer-breeze/fonts/` | The Inter Project Authors |
+
+Add a typeface? Put its `OFL.txt` notice and a `REUSE.toml` entry in the same commit. `tests/vitest/fontLicences.spec.js` fails without them.
+
 ## Marianne Font (La Suite numérique) — restricted, off by default
 
 > ⚠️ **Marianne is the official typeface of the French State, reserved for
@@ -338,6 +351,8 @@ This implementation is **fully legal and open-source** for:
 ## License
 
 This project is licensed under the [EUPL-1.2](LICENSE).
+
+The bundled fonts keep their own licences: SIL OFL 1.1 for Fira Sans, Figtree, IBM Plex Mono and Inter, Etalab-2.0 for Marianne. See [Font licences](#font-licences).
 
 ### Dependency license policy
 

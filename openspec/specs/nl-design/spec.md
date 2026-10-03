@@ -7,8 +7,6 @@ status: done
 ## Purpose
 Updates the existing nl-design shared spec to reflect expanded token set support and component-level tokens.
 
-@e2e exclude CSS-variable / delta spec — scenarios describe CSS variable usage rules and component-token prefix conventions; no distinct testable UI surface beyond what admin-settings tests cover.
-
 ## Requirements
 
 ### Requirement: Supported Token Sets
@@ -20,7 +18,7 @@ The nldesign app MUST support all organization token sets available in the `nl-d
 - THEN all apps MUST adapt to that municipality's design tokens
 
 #### Scenario: Incomplete token set renders correctly
-- GIVEN a municipality's token set only defines primary colors
+- GIVEN a municipality's token set defines only part of the token vocabulary (e.g. Gemeente Amsterdam defines its primary colors but no `--nldesign-color-favorite`)
 - WHEN their token set is selected
 - THEN the defined tokens MUST use the municipality's values
 - AND undefined tokens MUST fall back to sensible defaults from `defaults.css`
@@ -31,8 +29,10 @@ All visual styling MUST use CSS variables from design tokens, NOT hardcoded valu
 #### Scenario: Component uses color
 - GIVEN a UI component that needs styling
 - WHEN colors are applied
-- THEN it MUST use CSS variables (e.g., `var(--nldesign-color-primary)` or `var(--nldesign-component-button-primary-background-color)`)
+- THEN it MUST use CSS variables (e.g., `var(--nldesign-color-primary)` or `var(--nldesign-component-button-primary-action-background-color)`)
 - AND it MUST NOT use hardcoded hex/rgb values
+
+@e2e exclude not met on development: nine hardcoded colours in css/systems/nldesign/theme.css and element-overrides.css, tracked in #769. A test now could only fail; the served-stylesheet test lands with that fix.
 
 #### Scenario: Component uses component-level token
 - GIVEN a button component that needs styling

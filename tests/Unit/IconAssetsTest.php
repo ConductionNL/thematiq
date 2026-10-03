@@ -17,7 +17,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/icons-from-ncvue/specs/icon-assets/spec.md
+ * @spec openspec/changes/archive/2026-07-24-icons-from-ncvue/specs/icon-assets/spec.md
  * @spec openspec/specs/icon-assets/spec.md
  */
 
@@ -306,18 +306,18 @@ class IconAssetsTest extends TestCase {
 		$this->assertArrayNotHasKey('@amsterdam/design-system-react-icons', $allDeps, 'package.json must not depend on @amsterdam/design-system-react-icons.');
 		$this->assertArrayHasKey('@conduction/nextcloud-vue', $decoded['devDependencies'] ?? [], '@conduction/nextcloud-vue must be a devDependency.');
 
-		// @gouvfr/dsfr is declared OPTIONAL, not dev. Its published dependency tree is
-		// broken upstream — @gouvfr/dsfr@1.15.1 -> @gouvfr/dsfr-nexus -> @gouvfr/dsfr-roller
-		// -> @gouvfr/dsfr-publisher, which is not on the registry (E404), as is
-		// @gouvfr/dsfr-token. Declaring it as a devDependency made `npm ci` impossible and
-		// took every npm-dependent CI job down with it. `optionalDependencies` keeps the
-		// declaration (and its provenance) while letting npm skip the unresolvable subtree;
-		// scripts/build-icons.js already falls back to .dsfr-src/ when the package is absent.
-		$this->assertArrayHasKey(
-			'@gouvfr/dsfr',
-			$decoded['optionalDependencies'] ?? [],
-			'@gouvfr/dsfr must stay declared (as an optionalDependency) as the dsfr pack source.'
-		);
+		// @gouvfr/dsfr is not a dependency at all (2 Oct 2026): its preinstall
+		// script refuses to run until the DSFR terms of use are accepted, so npm
+		// skipped it on every install. scripts/build-icons.js reads the pre-fetched
+		// .dsfr-src/icons/ scratch source; the committed img/icons/dsfr/ pack is
+		// the shipped artefact.
+		foreach (['dependencies', 'devDependencies', 'optionalDependencies'] as $section) {
+			$this->assertArrayNotHasKey(
+				'@gouvfr/dsfr',
+				$decoded[$section] ?? [],
+				'@gouvfr/dsfr must not be declared in package.json ' . $section . '.'
+			);
+		}
 		$this->assertArrayNotHasKey(
 			'@gouvfr/dsfr',
 			$decoded['devDependencies'] ?? [],

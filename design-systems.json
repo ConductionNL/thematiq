@@ -52,6 +52,9 @@
 			"systems/lasuite/bridge",
 			"systems/lasuite/element-overrides"
 		],
+		"versioned_stylesheets": {
+			"35": ["systems/lasuite/shell-nc35"]
+		},
 		"icon_pack": "dsfr"
 	},
 	{

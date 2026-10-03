@@ -190,42 +190,30 @@ class MarianneFontTest extends TestCase {
 	}//end testGatedStylesheetDeclaresCorrectFontWeights()
 
 	/**
-	 * `@gouvfr/dsfr` is a build-only dependency and no runtime PHP or JS
-	 * source imports/requires it.
+	 * `@gouvfr/dsfr` is not a dependency at all, and no runtime PHP or JS
+	 * source imports or requires it.
 	 *
-	 * It is declared under `optionalDependencies`, not `devDependencies`. Its
-	 * published tree is broken upstream — @gouvfr/dsfr@1.15.1 ->
-	 * @gouvfr/dsfr-nexus -> @gouvfr/dsfr-roller -> @gouvfr/dsfr-publisher, which
-	 * is not on the registry (E404), as is @gouvfr/dsfr-token — so declaring it
-	 * as a devDependency made `npm ci` impossible and took every npm-dependent
-	 * CI job down with it. `optionalDependencies` keeps the declaration while
-	 * letting npm skip the unresolvable subtree.
-	 *
-	 * The build-only property this test exists to protect is unchanged and is
-	 * still asserted: it must not be a RUNTIME dependency, and nothing under
-	 * lib/ or js/ may reference it.
+	 * It used to be an optional dependency, but its preinstall script exits 1
+	 * until the DSFR terms of use are accepted, so npm never installed it. It
+	 * was dropped on 2 Oct 2026; scripts/build-icons.js reads the pre-fetched
+	 * .dsfr-src/ scratch source and the Marianne files are bundled separately.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
-	public function testDsfrIsABuildOnlyDevDependency(): void {
+	public function testDsfrIsNotADependency(): void {
 		$packageJson = json_decode($this->readFile('package.json'), true);
 		$this->assertIsArray($packageJson, 'package.json must decode to an array.');
 
-		$this->assertArrayHasKey(
-			'@gouvfr/dsfr',
-			$packageJson['optionalDependencies'] ?? [],
-			'@gouvfr/dsfr must appear under package.json optionalDependencies.'
-		);
-		$this->assertArrayNotHasKey(
-			'@gouvfr/dsfr',
-			$packageJson['devDependencies'] ?? [],
-			'@gouvfr/dsfr must NOT be a devDependency — its upstream tree is unresolvable and it breaks npm ci.'
-		);
-		$this->assertArrayNotHasKey(
-			'@gouvfr/dsfr',
-			$packageJson['dependencies'] ?? [],
-			'@gouvfr/dsfr must NOT appear under package.json runtime dependencies.'
-		);
+		// Dropped on 2 Oct 2026: its preinstall script refuses to run without the
+		// DSFR terms of use, so npm never installed it. The Marianne files are
+		// bundled separately, gated (marianne-font-restricted).
+		foreach (['dependencies', 'devDependencies', 'optionalDependencies'] as $section) {
+			$this->assertArrayNotHasKey(
+				'@gouvfr/dsfr',
+				$packageJson[$section] ?? [],
+				'@gouvfr/dsfr must not be declared in package.json ' . $section . '.'
+			);
+		}
 
 		// No lib/ or js/ (excluding the build script itself) source references it.
 		foreach (['lib', 'js'] as $dir) {
@@ -256,7 +244,7 @@ class MarianneFontTest extends TestCase {
 		// The build script itself is the one sanctioned build-time consumer.
 		$buildScript = $this->readFile('scripts/build-fonts-marianne.js');
 		$this->assertStringContainsString('@gouvfr/dsfr', $buildScript);
-	}//end testDsfrIsABuildOnlyDevDependency()
+	}//end testDsfrIsNotADependency()
 
 	/**
 	 * The three legal/governance artifacts exist and carry the required

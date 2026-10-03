@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
- * @spec openspec/changes/render-event-injection/tasks.md#task-3.1
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
+ * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.1
  */
 
 declare(strict_types=1);
@@ -39,8 +39,8 @@ use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
  *
  * Bootstraps the NL Design theme system and injects design tokens.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
  */
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'thematiq';
@@ -99,8 +99,8 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/adopt-apphost-2026-06-16/tasks.md#task-2
-	 * @spec openspec/changes/render-event-injection/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-2
+	 * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.1
 	 * @spec openspec/specs/theming-capability/spec.md
 	 */
 	public function register(IRegistrationContext $context): void {
@@ -185,7 +185,7 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @return string The absolute path to `vendor/autoload.php`.
 	 *
-	 * @spec openspec/changes/adopt-apphost-2026-06-16/tasks.md#task-2
+	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-2
 	 */
 	protected function composerAutoloader(): string {
 		return dirname(__DIR__, 2) . '/vendor/autoload.php';
@@ -206,7 +206,7 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - IBootstrap::boot() mandates this exact signature
 	 *
-	 * @spec openspec/changes/render-event-injection/tasks.md#task-3.2
+	 * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.2
 	 */
 	public function boot(IBootContext $context): void {
 	}//end boot()

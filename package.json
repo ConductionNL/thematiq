@@ -30,6 +30,7 @@
 		"generate:lasuite-override": "node scripts/generate-lasuite-tokens.mjs --override",
 		"test:lasuite-override": "node scripts/generate-lasuite-tokens.mjs --override --check",
 		"test:lasuite-bridge-coverage": "node tests/css/check-lasuite-bridge-coverage.js",
+		"test:lasuite-dark-ramp": "node tests/css/check-lasuite-dark-ramp.js",
 		"build": "npm run build:fonts && npm run build:fonts:marianne && npm run build:icons",
 		"build:fonts": "node scripts/build-fonts.js",
 		"build:fonts:marianne": "node scripts/build-fonts-marianne.js",
@@ -68,9 +69,6 @@
 	},
 	"dependencies": {
 		"@fontsource/fira-sans": "^5.0.0"
-	},
-	"optionalDependencies": {
-		"@gouvfr/dsfr": "^1.15.3"
 	},
 	"devDependencies": {
 		"@conduction/nextcloud-vue": "^2.57.1",
