@@ -48,3 +48,39 @@
 	font-style: italic;
 	font-display: swap;
 }
+
+/*
+ * Source Sans 3 (SIL Open Font License 1.1), for the (EXAMPLE) Gemeente token
+ * set. Latin subset, woff2 only, from @fontsource/source-sans-3 5.3.0. The set
+ * names it through --nldesign-font-family, so these faces load only when a page
+ * asks for the family.
+ */
+@font-face {
+	font-family: 'Source Sans 3';
+	src:
+		local('Source Sans 3'),
+		url('fonts/source-sans-3-latin-400-normal.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Source Sans 3';
+	src:
+		local('Source Sans 3 SemiBold'),
+		url('fonts/source-sans-3-latin-600-normal.woff2') format('woff2');
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Source Sans 3';
+	src:
+		local('Source Sans 3 Bold'),
+		url('fonts/source-sans-3-latin-700-normal.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}

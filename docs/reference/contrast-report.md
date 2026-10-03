@@ -29,6 +29,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | epe | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | example-basisschool | 6.07:1 | 4.5:1 | 6.07:1 | 3.0:1 | pass |
 | example-college | 9.34:1 | 4.5:1 | 9.34:1 | 3.0:1 | pass |
+| example-gemeente | 8.80:1 | 4.5:1 | 8.80:1 | 3.0:1 | pass |
 | example-opleider | 9.40:1 | 4.5:1 | 9.40:1 | 3.0:1 | pass |
 | example-voortgezet | 7.67:1 | 4.5:1 | 7.67:1 | 3.0:1 | pass |
 | frankendesk | 7.76:1 | 4.5:1 | 7.76:1 | 3.0:1 | pass |
@@ -63,4 +64,67 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | xxllnc | 21.00:1 | 4.5:1 | 21.00:1 | 3.0:1 | pass |
 | zevenaar | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | zwolle | 5.06:1 | 4.5:1 | 5.06:1 | 3.0:1 | pass |
+
+## Den Haag component pairs
+
+The text the Den Haag mijn-omgeving components draw, measured as a portal sees it:
+`css/systems/nldesign/defaults.css`, then `css/public-bridge.css`, then the set.
+Threshold 4.5:1 for every pair. These pairs are reported; they are not part of
+the verdict above.
+
+Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, action-date-warning, badge-neutral, badge-success, badge-warning, badge-error, nav-link, nav-link-active, file-link.
+
+| Token set | pass | fail | unevaluated | Below 4.5:1 or unevaluated |
+|-----------|-----:|-----:|------------:|----------------------------|
+| amsterdam | 13 | 0 | 0 |  |
+| bodegraven-reeuwijk | 13 | 0 | 0 |  |
+| borne | 13 | 0 | 0 |  |
+| buren | 13 | 0 | 0 |  |
+| conduction-new | 13 | 0 | 0 |  |
+| cunningham | 13 | 0 | 0 |  |
+| demodam | 13 | 0 | 0 |  |
+| denhaag | 13 | 0 | 0 |  |
+| dinkelland | 13 | 0 | 0 |  |
+| drechterland | 13 | 0 | 0 |  |
+| duiven | 13 | 0 | 0 |  |
+| duo | 13 | 0 | 0 |  |
+| enkhuizen | 13 | 0 | 0 |  |
+| epe | 13 | 0 | 0 |  |
+| example-basisschool | 13 | 0 | 0 |  |
+| example-college | 13 | 0 | 0 |  |
+| example-gemeente | 13 | 0 | 0 |  |
+| example-opleider | 13 | 0 | 0 |  |
+| example-voortgezet | 13 | 0 | 0 |  |
+| frankendesk | 13 | 0 | 0 |  |
+| groningen | 13 | 0 | 0 |  |
+| haarlem | 13 | 0 | 0 |  |
+| haarlemmermeer | 13 | 0 | 0 |  |
+| hoog-contrast | 13 | 0 | 0 |  |
+| hoorn | 13 | 0 | 0 |  |
+| horstaandemaas | 13 | 0 | 0 |  |
+| lasuite | 13 | 0 | 0 |  |
+| leiden | 13 | 0 | 0 |  |
+| leidschendam-voorburg | 13 | 0 | 0 |  |
+| nijmegen | 13 | 0 | 0 |  |
+| noaberkracht | 13 | 0 | 0 |  |
+| noordoostpolder | 13 | 0 | 0 |  |
+| noordwijk | 13 | 0 | 0 |  |
+| opencatalogi | 13 | 0 | 0 |  |
+| provincie-zuid-holland | 13 | 0 | 0 |  |
+| riddeliemers | 13 | 0 | 0 |  |
+| ridderkerk | 13 | 0 | 0 |  |
+| rijkshuisstijl | 13 | 0 | 0 |  |
+| rotterdam | 13 | 0 | 0 |  |
+| stedebroec | 13 | 0 | 0 |  |
+| summer-breeze | 13 | 0 | 0 |  |
+| tilburg | 13 | 0 | 0 |  |
+| tubbergen | 13 | 0 | 0 |  |
+| utrecht | 13 | 0 | 0 |  |
+| venray | 13 | 0 | 0 |  |
+| vng | 13 | 0 | 0 |  |
+| vught | 13 | 0 | 0 |  |
+| westervoort | 13 | 0 | 0 |  |
+| xxllnc | 13 | 0 | 0 |  |
+| zevenaar | 13 | 0 | 0 |  |
+| zwolle | 13 | 0 | 0 |  |
 

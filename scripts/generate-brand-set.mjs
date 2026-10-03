@@ -182,6 +182,23 @@ function declaration(name, value) {
 	return `\t${name}: ${value};`
 }
 
+/**
+ * The ramp steps of a brand that do not say where their value came from.
+ *
+ * A ramp value without a source is a colour nobody can check: was it quoted
+ * from the brand, or chosen, and against which contrast rule? The example sets
+ * mix quoted and chosen steps, so the source is what tells them apart
+ * (openspec/changes/example-gemeente-theme, task 1.1a).
+ *
+ * @param {object} brand The parsed brand file.
+ * @return {string[]} The ramp keys whose `from` is missing or empty.
+ */
+export function rampStepsWithoutSource(brand) {
+	return Object.entries(brand.ramp ?? {})
+		.filter(([, entry]) => typeof entry?.from !== 'string' || entry.from.trim() === '')
+		.map(([key]) => key)
+}
+
 function main() {
 	const [brandId, upstreamPath, upstreamVersion] = process.argv.slice(2)
 
@@ -201,6 +218,14 @@ function main() {
 	}
 
 	const brand = JSON.parse(readFileSync(brandPath, 'utf8'))
+
+	const unsourced = rampStepsWithoutSource(brand)
+	if (unsourced.length > 0) {
+		console.error(
+			`Brand '${brandId}': ramp step(s) without a \`from\`: ${unsourced.join(', ')}. Say where each value came from.`,
+		)
+		process.exit(1)
+	}
 
 	// ---- A + B. the brand's own palette and component mapping ------------
 	//
@@ -712,4 +737,7 @@ function main() {
 	}
 }
 
-main()
+// Run only when executed as a script, so a test can import the pure helpers.
+if (process.argv[1] !== undefined && fileURLToPath(import.meta.url) === process.argv[1]) {
+	main()
+}

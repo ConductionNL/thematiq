@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **A fictional example municipality token set.** `example-gemeente`, "(EXAMPLE) Gemeente",
+  carries the palette of the approved dossiq portal mockups: deep sea blue `#12506B` with a
+  brown accent. It bundles Source Sans 3 (OFL 1.1). The font is one value in the brand file,
+  so a switch to Fira Sans is a one-line change. The brand generator now refuses a ramp step
+  without a source.
 - **A token set can set every Nextcloud theme variable.** The 45 that thematiq left alone
   (selected text, the search highlight, the loading spinner, shadows, status hover and text
   colours, the main background, the assistant colours, font sizes, input borders, container

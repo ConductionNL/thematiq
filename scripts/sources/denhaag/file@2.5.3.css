@@ -1,0 +1,91 @@
+.denhaag-file {
+  width: 100%;
+  display: flex;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  text-decoration: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  align-items: normal;
+  line-height: inherit;
+  box-sizing: border-box;
+  border-radius: var(--denhaag-file-border-radius);
+  border-width: var(--denhaag-file-border-width);
+  border-color: var(--denhaag-file-border-color);
+  border-style: var(--denhaag-file-border-style);
+}
+.denhaag-file + .denhaag-file {
+  border-top: none;
+}
+.denhaag-file--focus, .denhaag-file:focus {
+  outline-color: var(--denhaag-file-focus-outline-color);
+  outline-width: var(--denhaag-file-focus-outline-width);
+  outline-style: var(--denhaag-file-focus-outline-style);
+}
+.denhaag-file__link {
+  display: flex;
+  align-items: center;
+  color: var(--denhaag-file-link-color);
+  gap: var(--denhaag-file-link-gap);
+  word-break: initial;
+  --utrecht-link-text-decoration: none;
+}
+.denhaag-file__link .denhaag-file__link__icon {
+  width: var(--denhaag-file-link-icon-width);
+}
+.denhaag-file--hover .utrecht-link, .denhaag-file:hover .utrecht-link {
+  --utrecht-link-color: var(--denhaag-file-hover-color, --utrecht-link-hover-color);
+}
+.denhaag-file--hover .denhaag-file__link, .denhaag-file:hover .denhaag-file__link {
+  color: var(--denhaag-file-hover-color);
+}
+.denhaag-file__left {
+  display: flex;
+  align-items: center;
+  padding-inline-start: var(--denhaag-file-left-padding-inline-start);
+  padding-inline-end: var(--denhaag-file-left-padding-inline-end);
+  background-color: var(--denhaag-file-left-background-color, --denhaag-color-warmgrey-1);
+}
+.denhaag-file__left .denhaag-file__icon {
+  fill: none;
+}
+.denhaag-file__right {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--denhaag-file-right-gap);
+  padding-block-start: var(--denhaag-file-right-padding-block-start);
+  padding-block-end: var(--denhaag-file-right-padding-block-end);
+  padding-inline-start: var(--denhaag-file-right-padding-inline-start);
+  padding-inline-end: var(--denhaag-file-right-padding-inline-end);
+}
+@media (width >= 620px) {
+  .denhaag-file__right {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+.denhaag-file__label {
+  flex-grow: 1;
+}
+.denhaag-file--loading {
+  pointer-events: none;
+}
+.denhaag-file--loading .denhaag-file__right {
+  opacity: 60%;
+}
+.denhaag-file--loading .denhaag-icon {
+  animation: denhaag-rotation 1000ms linear infinite;
+}
+
+@keyframes denhaag-rotation {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

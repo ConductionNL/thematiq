@@ -2,7 +2,7 @@
 
 # Cunningham (blue base)
 
-Token set `cunningham`: 25 declared by this set, 145 from the defaults layer.
+Token set `cunningham`: 27 declared by this set, 145 from the defaults layer.
 
 Contrast: primary text on primary 7.80:1, primary on background 6.02:1 (pass).
 
@@ -255,3 +255,10 @@ Contrast: primary text on primary 7.80:1, primary on background 6.02:1 (pass).
 | `--nldesign-logo-filter` | `none` | | defaults | |
 | `--nldesign-logo-inset` | `12px` | | defaults | |
 | `--nldesign-logo-top` | `1px` | | defaults | |
+
+## Tokens nothing reads (Tokens die niets leest)
+
+| Token | Value | Dark mode | Source | Paints |
+|---|---|---|---|---|
+| `--denhaag-case-card-subtitle-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23686b70%22%2F%3E%3C%2Fsvg%3E) `#686b70` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239b9da2%22%2F%3E%3C%2Fsvg%3E) `#9b9da2` | this set | |
+| `--denhaag-step-marker-not-checked-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23686b70%22%2F%3E%3C%2Fsvg%3E) `#686b70` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238c8f94%22%2F%3E%3C%2Fsvg%3E) `#8c8f94` | this set | |
