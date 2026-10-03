@@ -90,28 +90,8 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @param string $setId The token set id.
 	 */
 	public function testInputsAndPrimaryButtonsReachAa(string $setId): void {
-		$root = dirname(__DIR__, 3);
-		$parser = new CssParserService();
 		$contrast = new ContrastService();
-
-		$light = ($parser->parseDeclarations((string)file_get_contents($root . '/css/systems/nldesign/defaults.css')) ?? []);
-		if (is_file($root . '/css/tokens/' . $setId . '.css') === true) {
-			$light = array_merge($light, ($parser->parseDeclarations((string)file_get_contents($root . '/css/tokens/' . $setId . '.css')) ?? []));
-		}
-
-		$dark = ($parser->parseDeclarations((string)file_get_contents($root . '/css/tokens/dark/' . $setId . '.css')) ?? []);
-
-		$value = function (string $token) use ($light, $dark): ?string {
-			if (isset($dark[$token]) === true) {
-				return $this->resolve(value: $dark[$token], declarations: $dark + $light);
-			}
-
-			if (isset($light[$token]) === true) {
-				return $this->resolve(value: $light[$token], declarations: $light);
-			}
-
-			return null;
-		};
+		$value = $this->darkValues(setId: $setId);
 
 		$page = ($value('--nldesign-color-background') ?? '#171717');
 		$failures = [];
@@ -133,6 +113,69 @@ class ShippedDarkContrastTest extends TestCase {
 
 		$this->assertSame([], $failures, $setId . ' dark');
 	}//end testInputsAndPrimaryButtonsReachAa()
+
+	/**
+	 * The page background of a dark variant is dark (thematiq#952).
+	 *
+	 * vng shipped `#42b1f3`: its manifest's theming `background_color`
+	 * (#0277BD, Nextcloud's header and login colour) stood in for the page
+	 * background, and inverting a mid-tone lands on a mid-tone. Nextcloud's
+	 * own dark page is #171717 (relative luminance 0.009); 0.05 leaves room
+	 * for a tinted dark surface and refuses anything that reads as light.
+	 *
+	 * @dataProvider darkSetProvider
+	 *
+	 * @param string $setId The token set id.
+	 */
+	public function testThePageBackgroundIsDark(string $setId): void {
+		$contrast = new ContrastService();
+		$page = $this->darkValues(setId: $setId)('--nldesign-color-background');
+		if ($page === null) {
+			// The set leaves the page background to Nextcloud's own dark theme.
+			$this->addToAssertionCount(1);
+			return;
+		}
+
+		$rgb = $contrast->parseColor(value: $page);
+		$this->assertNotNull($rgb, $setId . ': cannot parse ' . $page);
+		// Relative luminance from the ratio against black: (L + 0.05) / 0.05.
+		$luminance = (($contrast->ratio(first: $rgb, second: [0, 0, 0]) * 0.05) - 0.05);
+		$this->assertLessThanOrEqual(0.05, $luminance, sprintf('%s dark page background %s has luminance %.3f', $setId, $page, $luminance));
+	}//end testThePageBackgroundIsDark()
+
+	/**
+	 * A resolver for a set's effective dark values: a token the dark file
+	 * declares wins; one it leaves out keeps its light value, resolved at
+	 * `:root` against the light declarations.
+	 *
+	 * @param string $setId The token set id.
+	 *
+	 * @return \Closure(string): (string|null) Token name to resolved value, or null when undeclared.
+	 */
+	private function darkValues(string $setId): \Closure {
+		$root = dirname(__DIR__, 3);
+		$parser = new CssParserService();
+
+		$light = ($parser->parseDeclarations((string)file_get_contents($root . '/css/systems/nldesign/defaults.css')) ?? []);
+		if (is_file($root . '/css/tokens/' . $setId . '.css') === true) {
+			$light = array_merge($light, ($parser->parseDeclarations((string)file_get_contents($root . '/css/tokens/' . $setId . '.css')) ?? []));
+		}
+
+		$dark = ($parser->parseDeclarations((string)file_get_contents($root . '/css/tokens/dark/' . $setId . '.css')) ?? []);
+
+		return function (string $token) use ($light, $dark): ?string {
+			if (isset($dark[$token]) === true) {
+				return $this->resolve(value: $dark[$token], declarations: $dark + $light);
+			}
+
+			if (isset($light[$token]) === true) {
+				return $this->resolve(value: $light[$token], declarations: $light);
+			}
+
+			return null;
+		};
+
+	}//end darkValues()
 
 	/**
 	 * Follow `var()` references to a literal.
