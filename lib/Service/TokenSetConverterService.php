@@ -1902,10 +1902,27 @@ class TokenSetConverterService {
 
 		$criterion = (string)($spec['criterion'] ?? 'darkest');
 
+		// The page background the picked grey has to stand apart from. A ramp
+		// of one grey still has a "darkest" and a "nearest" member, and when
+		// that grey is the background itself every role came out white on
+		// white (#933). No readable candidate means no pick: the role then
+		// falls back to the defaults, like a set that declares no greys.
+		$background = $this->contrast->parseColor(
+			value: ($semantic[(string)($spec['background'] ?? '--nldesign-color-nav-background')] ?? '#ffffff')
+		);
+		if ($background === null) {
+			$background = [255, 255, 255];
+		}
+
 		if ($criterion === 'darkest') {
 			uasort($ramp, fn (array $a, array $b) => array_sum($a) <=> array_sum($b));
 
-			return array_key_first($ramp);
+			$darkest = (string)array_key_first($ramp);
+			if ($this->contrast->ratio(first: $ramp[$darkest], second: $background) < (float)($spec['min'] ?? 4.5)) {
+				return null;
+			}
+
+			return $darkest;
 		}
 
 		if ($criterion === 'nearestLuminance') {
@@ -1918,6 +1935,13 @@ class TokenSetConverterService {
 			$bestDistance = null;
 			foreach ($ramp as $hex => $rgb) {
 				$distance = abs(array_sum($rgb) - array_sum($targetRgb));
+
+				// A grey nearer the background than the target reads as the
+				// background: a border or hover in that colour is invisible.
+				if ($distance >= abs(array_sum($rgb) - array_sum($background))) {
+					continue;
+				}
+
 				if ($bestDistance === null || $distance < $bestDistance) {
 					$bestDistance = $distance;
 					$best = $hex;
