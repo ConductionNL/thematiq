@@ -57,15 +57,15 @@ class DocumentStyleService {
 	/**
 	 * Constructor.
 	 *
-	 * @param UserTokenSetResolver   $resolver     The set that applies to a user.
-	 * @param TokenSetService        $tokenSets    Set names.
-	 * @param TokenSetPreviewService $preview      A set's resolved tokens.
-	 * @param DesignSystemService    $designSystem A set's theming metadata (logo).
-	 * @param FontService            $fonts        Uploaded fonts by role.
-	 * @param EmailThemingService    $emailTheming The footer settings.
-	 * @param DocumentAssetService   $assets       The document logo, cover and footer line.
-	 * @param ContrastService        $contrast     WCAG contrast.
-	 * @param IURLGenerator          $urls         URLs.
+	 * @param UserTokenSetResolver $resolver The set that applies to a user.
+	 * @param TokenSetService $tokenSets Set names.
+	 * @param TokenSetPreviewService $preview A set's resolved tokens.
+	 * @param DesignSystemService $designSystem A set's theming metadata (logo).
+	 * @param FontService $fonts Uploaded fonts by role.
+	 * @param EmailThemingService $emailTheming The footer settings.
+	 * @param DocumentAssetService $assets The document logo, cover and footer line.
+	 * @param ContrastService $contrast WCAG contrast.
+	 * @param IURLGenerator $urls URLs.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - one collaborator per part of the profile.
 	 */

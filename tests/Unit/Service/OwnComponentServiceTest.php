@@ -68,10 +68,12 @@ final class OwnComponentServiceTest extends TestCase {
 	protected function setUp(): void {
 		$this->folder = new FakeVersionFolder();
 		$folder = $this->folder;
-		$root   = new class($folder) implements IAppData {
+		$root = new class($folder) implements IAppData {
 			public bool $exists = false;
 
-			public function __construct(private FakeVersionFolder $folder) {
+			public function __construct(
+				private FakeVersionFolder $folder,
+			) {
 			}
 
 			public function getFolder(string $name): ISimpleFolder {

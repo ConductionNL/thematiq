@@ -43,10 +43,10 @@ class TokenSourceController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string                  $appName The app name.
-	 * @param IRequest                $request The request.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
 	 * @param MultiBrandImportService $imports The sources.
-	 * @param IL10N                   $l       The error texts.
+	 * @param IL10N $l The error texts.
 	 */
 	public function __construct(
 		string $appName,

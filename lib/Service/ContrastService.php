@@ -347,7 +347,7 @@ class ContrastService {
 	 * The opaque `#rrggbb` a translucent colour renders as over a background, or null when the
 	 * colour is opaque or cannot be read.
 	 *
-	 * @param string          $value The colour.
+	 * @param string $value The colour.
 	 * @param array<int, int> $under The background as `[r, g, b]`.
 	 *
 	 * @return string|null The blend.

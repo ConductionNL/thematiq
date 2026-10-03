@@ -141,7 +141,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * Build the service with the given appconfig values.
 	 *
 	 * @param array<string, string> $appConfig The appconfig keys to answer.
-	 * @param string|null           $appPath   The app path; defaults to the synthetic catalogue.
+	 * @param string|null $appPath The app path; defaults to the synthetic catalogue.
 	 *
 	 * @return TokenSetService The service under test.
 	 */

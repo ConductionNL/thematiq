@@ -106,7 +106,6 @@ class CustomCssService {
 
 	}//end __construct()
 
-
 	/**
 	 * Whether the freeform layer is switched on.
 	 *

@@ -65,15 +65,15 @@ class ScheduledSwitchService {
 	/**
 	 * Constructor.
 	 *
-	 * @param ScheduledSwitchStore     $store          The stored plans.
-	 * @param ActiveTokenSetService    $activeTokenSet The one token set write path.
-	 * @param TokenSetService          $tokenSets      Validates a set on planning.
-	 * @param ScheduledCoreThemingSync $coreSync       Syncs core logo and colours with every switch.
-	 * @param ThemingAuditService      $auditService   Records a failed switch.
-	 * @param IConfig                  $config         Last run and cron mode.
-	 * @param ITimeFactory             $time           The clock.
-	 * @param IL10N                    $l10n           The translator.
-	 * @param LoggerInterface          $logger         The logger.
+	 * @param ScheduledSwitchStore $store The stored plans.
+	 * @param ActiveTokenSetService $activeTokenSet The one token set write path.
+	 * @param TokenSetService $tokenSets Validates a set on planning.
+	 * @param ScheduledCoreThemingSync $coreSync Syncs core logo and colours with every switch.
+	 * @param ThemingAuditService $auditService Records a failed switch.
+	 * @param IConfig $config Last run and cron mode.
+	 * @param ITimeFactory $time The clock.
+	 * @param IL10N $l10n The translator.
+	 * @param LoggerInterface $logger The logger.
 	 */
 	public function __construct(
 		private readonly ScheduledSwitchStore $store,
@@ -105,15 +105,15 @@ class ScheduledSwitchService {
 	/**
 	 * Plan a switch.
 	 *
-	 * @param string      $tokenSet  The set to switch to.
-	 * @param string      $startAt   The start, ISO 8601 with an offset.
-	 * @param string|null $endAt     The optional end, ISO 8601 with an offset.
-	 * @param string      $createdBy The administrator's uid.
+	 * @param string $tokenSet The set to switch to.
+	 * @param string $startAt The start, ISO 8601 with an offset.
+	 * @param string|null $endAt The optional end, ISO 8601 with an offset.
+	 * @param string $createdBy The administrator's uid.
 	 *
 	 * @return array<string, mixed> The planned entry.
 	 *
 	 * @throws ScheduledSwitchException When the set does not exist, a time does not parse, the end is not after the start
-	 *                                   or not in the future, or the window overlaps.
+	 *                                  or not in the future, or the window overlaps.
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
 	 */
@@ -154,8 +154,8 @@ class ScheduledSwitchService {
 	/**
 	 * Parse a planned window to UTC and check it.
 	 *
-	 * @param string      $startAt The start, ISO 8601 with an offset.
-	 * @param string|null $endAt   The optional end, ISO 8601 with an offset.
+	 * @param string $startAt The start, ISO 8601 with an offset.
+	 * @param string|null $endAt The optional end, ISO 8601 with an offset.
 	 *
 	 * @return array{0: string, 1: string|null} The start and end in UTC.
 	 *
@@ -287,7 +287,7 @@ class ScheduledSwitchService {
 	 * Move one entry forward in time.
 	 *
 	 * @param array<string, mixed> $entry The entry.
-	 * @param int                  $now   The current time.
+	 * @param int $now The current time.
 	 *
 	 * @return array<string, mixed>|null The entry to keep, or null when it is done.
 	 */
@@ -421,7 +421,7 @@ class ScheduledSwitchService {
 		$context = ['actor' => 'system', 'switchId' => $entry['id']];
 		if (($entry['coreSnapshot'] ?? false) === true) {
 			$context['coreThemingRestored'] = $this->coreSync->restore(switchId: (string)$entry['id']);
-		} else if (($entry['syncCoreTheming'] ?? false) === true) {
+		} elseif (($entry['syncCoreTheming'] ?? false) === true) {
 			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $revertTo);
 		}
 
@@ -445,9 +445,9 @@ class ScheduledSwitchService {
 	 * could see. For the stock set the sync resets Nextcloud's theming to its
 	 * defaults, as the dialog does.
 	 *
-	 * @param array<string, mixed> $entry    The switch.
-	 * @param string               $tokenSet The set to apply.
-	 * @param array<string, mixed> $context  The audit context.
+	 * @param array<string, mixed> $entry The switch.
+	 * @param string $tokenSet The set to apply.
+	 * @param array<string, mixed> $context The audit context.
 	 *
 	 * @return string The set that was active before.
 	 *

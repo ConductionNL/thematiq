@@ -43,7 +43,7 @@ class DtcgValueTyper {
 	/**
 	 * Constructor.
 	 *
-	 * @param CssColorParser      $colors    Reads colour values.
+	 * @param CssColorParser $colors Reads colour values.
 	 * @param ColorSpaceConverter $converter Gives every colour its sRGB hex fallback.
 	 */
 	public function __construct(
@@ -55,7 +55,7 @@ class DtcgValueTyper {
 	/**
 	 * A token for a value DTCG can type, or null.
 	 *
-	 * @param string $name  The custom property.
+	 * @param string $name The custom property.
 	 * @param string $value The value.
 	 *
 	 * @return array<string, mixed>|null `$type` and `$value`, or `$alias` for a `var()` to resolve later.
@@ -88,7 +88,7 @@ class DtcgValueTyper {
 			return null;
 		}
 
-		$rgb    = (array)$this->converter->toSrgb(space: $parsed['space'], components: $parsed['components']);
+		$rgb = (array)$this->converter->toSrgb(space: $parsed['space'], components: $parsed['components']);
 		$object = [
 			'colorSpace' => $parsed['space'],
 			'components' => array_map(static fn (float $v): float => round($v, 4), $parsed['components']),
@@ -134,7 +134,7 @@ class DtcgValueTyper {
 	 * A font stack in a font-family token, or a weight in a font-weight token. A stack is
 	 * typed only when the importer writes it back to the same text.
 	 *
-	 * @param string $name  The custom property.
+	 * @param string $name The custom property.
 	 * @param string $value The value.
 	 *
 	 * @return array<string, mixed>|null
@@ -149,7 +149,7 @@ class DtcgValueTyper {
 		}
 
 		$families = array_map(static fn (string $family): string => trim($family, " \t'\""), explode(',', $value));
-		$written  = implode(', ', array_map(static fn (string $family): string => (string)preg_replace('/^(.* .*)$/', "'$1'", $family), $families));
+		$written = implode(', ', array_map(static fn (string $family): string => (string)preg_replace('/^(.* .*)$/', "'$1'", $family), $families));
 		if ($written !== $value) {
 			return null;
 		}

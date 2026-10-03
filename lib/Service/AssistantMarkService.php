@@ -77,9 +77,9 @@ class AssistantMarkService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig             $config       App config.
+	 * @param IConfig $config App config.
 	 * @param EmailThemingService $emailTheming The email footer, for the default organisation name.
-	 * @param Capabilities        $capabilities The theming capability, for the default logo.
+	 * @param Capabilities $capabilities The theming capability, for the default logo.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
@@ -108,9 +108,9 @@ class AssistantMarkService {
 	/**
 	 * Save the settings.
 	 *
-	 * @param bool   $enabled      Whether the mark is on.
+	 * @param bool $enabled Whether the mark is on.
 	 * @param string $organisation The organisation name, empty for the email footer name.
-	 * @param string $logo         The logo URL, empty for the house style logo.
+	 * @param string $logo The logo URL, empty for the house style logo.
 	 *
 	 * @return array<string, mixed> The saved settings.
 	 *

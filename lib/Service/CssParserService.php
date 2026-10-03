@@ -159,7 +159,7 @@ class CssParserService {
 	 * custom-property name is located inside it rather than assumed to start it.
 	 * A chunk with no `--name:` at all is not a declaration and is dropped.
 	 *
-	 * @param string                $chunk  The raw text between two terminators.
+	 * @param string $chunk The raw text between two terminators.
 	 * @param array<string, string> $parsed The declaration map, appended to by reference.
 	 *
 	 * @return void

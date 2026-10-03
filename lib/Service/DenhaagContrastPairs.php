@@ -261,7 +261,7 @@ class DenhaagContrastPairs {
 			$char = $value[$i];
 			if ($char === '(') {
 				$level++;
-			} else if ($char === ')') {
+			} elseif ($char === ')') {
 				$level--;
 				if ($level === 0) {
 					$head = substr($value, ($open + 1), (($comma ?? $i) - $open - 1));
@@ -272,7 +272,7 @@ class DenhaagContrastPairs {
 
 					return [$i, trim($head), $fallback];
 				}
-			} else if ($char === ',' && $level === 1 && $comma === null) {
+			} elseif ($char === ',' && $level === 1 && $comma === null) {
 				$comma = $i;
 			}
 		}//end for

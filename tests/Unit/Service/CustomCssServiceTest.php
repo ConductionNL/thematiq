@@ -142,7 +142,7 @@ class CustomCssServiceTest extends TestCase {
 		$this->assertSame([], $this->service->write(css: $css));
 
 		$this->assertSame($css, $this->service->read());
-		$this->assertStringStartsWith(CustomCssService::FILE_HEADER, (string) file_get_contents($this->file()));
+		$this->assertStringStartsWith(CustomCssService::FILE_HEADER, (string)file_get_contents($this->file()));
 	}
 
 	/**
@@ -154,7 +154,7 @@ class CustomCssServiceTest extends TestCase {
 		$this->service->write(css: 'a { color: red; }');
 		$this->service->write(css: $this->service->read());
 
-		$this->assertSame(1, substr_count((string) file_get_contents($this->file()), CustomCssService::FILE_HEADER));
+		$this->assertSame(1, substr_count((string)file_get_contents($this->file()), CustomCssService::FILE_HEADER));
 		$this->assertSame('a { color: red; }', $this->service->read());
 	}
 

@@ -118,7 +118,7 @@ class ScheduledSwitchStore {
 	 * whose window has already ended is dropped rather than replayed.
 	 *
 	 * @param array<int, array<string, mixed>> $imported The validated bundle entries.
-	 * @param int                              $now      The current time.
+	 * @param int $now The current time.
 	 *
 	 * @return array<int, array<string, mixed>> The entries to store.
 	 *
@@ -160,7 +160,7 @@ class ScheduledSwitchStore {
 	 * Whether a window's end has passed. A window without an end never ends.
 	 *
 	 * @param string|null $end The end in UTC, or null.
-	 * @param int         $now The current time.
+	 * @param int $now The current time.
 	 *
 	 * @return bool True when the end is at or before now.
 	 *
@@ -218,8 +218,8 @@ class ScheduledSwitchStore {
 	 * The first entry whose window overlaps the candidate's, ignoring failed
 	 * entries and the candidate itself. A window without an end runs forever.
 	 *
-	 * @param array<string, mixed>             $candidate The entry to check (UTC times).
-	 * @param array<int, array<string, mixed>> $entries   The entries to check against.
+	 * @param array<string, mixed> $candidate The entry to check (UTC times).
+	 * @param array<int, array<string, mixed>> $entries The entries to check against.
 	 *
 	 * @return array<string, mixed>|null The overlapping entry, or null.
 	 *
@@ -244,7 +244,7 @@ class ScheduledSwitchStore {
 	/**
 	 * Validate a bundle's planned switches.
 	 *
-	 * @param mixed    $raw       The `config.scheduledSwitches` value.
+	 * @param mixed $raw The `config.scheduledSwitches` value.
 	 * @param callable $setExists Answers whether a token set id exists (installed or bundled).
 	 *
 	 * @return array{entries: array<int, array<string, mixed>>, errors: array<int, string>}
@@ -279,10 +279,10 @@ class ScheduledSwitchStore {
 	/**
 	 * Validate one bundle entry.
 	 *
-	 * @param mixed             $item      The entry.
-	 * @param int               $index     Its position, for the error message.
-	 * @param callable          $setExists Answers whether a token set id exists.
-	 * @param array<int,string> $errors    Accumulator.
+	 * @param mixed $item The entry.
+	 * @param int $index Its position, for the error message.
+	 * @param callable $setExists Answers whether a token set id exists.
+	 * @param array<int,string> $errors Accumulator.
 	 *
 	 * @return array<string, mixed>|null The normalised entry, or null when it failed.
 	 */
@@ -319,10 +319,10 @@ class ScheduledSwitchStore {
 	/**
 	 * What is wrong with one bundle entry whose id and token set are strings, if anything.
 	 *
-	 * @param array<string, mixed> $item      The entry.
-	 * @param string|null          $start     Its start in UTC, null when it does not parse.
-	 * @param string|null          $end       Its end in UTC, null when absent or unparsable.
-	 * @param callable             $setExists Answers whether a token set id exists.
+	 * @param array<string, mixed> $item The entry.
+	 * @param string|null $start Its start in UTC, null when it does not parse.
+	 * @param string|null $end Its end in UTC, null when absent or unparsable.
+	 * @param callable $setExists Answers whether a token set id exists.
 	 *
 	 * @return string|null The problem, or null when the entry is fine.
 	 */

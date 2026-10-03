@@ -46,9 +46,9 @@ class RuntimeFileController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string             $appName The app name.
-	 * @param IRequest           $request The request.
-	 * @param RuntimeFileLocator $files   Finds runtime files.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param RuntimeFileLocator $files Finds runtime files.
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */

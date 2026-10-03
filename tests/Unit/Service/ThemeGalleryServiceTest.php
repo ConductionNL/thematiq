@@ -185,7 +185,7 @@ class ThemeGalleryServiceTest extends TestCase {
 	 * Answer the next GET with an index holding these entries.
 	 *
 	 * @param array<int, mixed> $entries The entries.
-	 * @param string            $etag    The ETag to send.
+	 * @param string $etag The ETag to send.
 	 *
 	 * @return void
 	 */

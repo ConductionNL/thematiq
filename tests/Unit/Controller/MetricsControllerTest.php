@@ -75,9 +75,9 @@ class MetricsControllerTest extends TestCase {
 	/**
 	 * Build a controller whose collaborators can be made to fail.
 	 *
-	 * @param \Exception|null       $tokenSetError  Thrown by `TokenSetService::getAvailableTokenSets()`.
-	 * @param \Exception|null       $overridesError Thrown by `CustomOverridesService::read()`.
-	 * @param LoggerInterface|null  $logger         The logger, so a test can expect warnings.
+	 * @param \Exception|null $tokenSetError Thrown by `TokenSetService::getAvailableTokenSets()`.
+	 * @param \Exception|null $overridesError Thrown by `CustomOverridesService::read()`.
+	 * @param LoggerInterface|null $logger The logger, so a test can expect warnings.
 	 *
 	 * @return MetricsController
 	 */

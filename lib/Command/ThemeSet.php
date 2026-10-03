@@ -40,9 +40,9 @@ class ThemeSet extends Command {
 	/**
 	 * Constructor.
 	 *
-	 * @param ActiveTokenSetService    $active    The one write path for the active set.
-	 * @param TokenSetService          $tokenSets Validates the id.
-	 * @param ScheduledCoreThemingSync $coreSync  Applies a set's theming block to core theming.
+	 * @param ActiveTokenSetService $active The one write path for the active set.
+	 * @param TokenSetService $tokenSets Validates the id.
+	 * @param ScheduledCoreThemingSync $coreSync Applies a set's theming block to core theming.
 	 */
 	public function __construct(
 		private readonly ActiveTokenSetService $active,
@@ -70,7 +70,7 @@ class ThemeSet extends Command {
 	/**
 	 * Validate, switch, and optionally sync core theming.
 	 *
-	 * @param InputInterface  $input  The input.
+	 * @param InputInterface $input The input.
 	 * @param OutputInterface $output The output.
 	 *
 	 * @return int Success, or failure for an unknown id.
@@ -108,7 +108,7 @@ class ThemeSet extends Command {
 	/**
 	 * Switch the active set, audited with actor `cli`.
 	 *
-	 * @param string          $target The set id.
+	 * @param string $target The set id.
 	 * @param OutputInterface $output The output.
 	 *
 	 * @return void
@@ -121,9 +121,9 @@ class ThemeSet extends Command {
 	/**
 	 * Apply core theming when asked, and say which of the two happened.
 	 *
-	 * @param string          $target   The set id.
-	 * @param boolean         $syncCore Whether --sync-core was given.
-	 * @param OutputInterface $output   The output.
+	 * @param string $target The set id.
+	 * @param boolean $syncCore Whether --sync-core was given.
+	 * @param OutputInterface $output The output.
 	 *
 	 * @return void
 	 */

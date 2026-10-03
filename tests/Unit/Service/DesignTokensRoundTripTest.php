@@ -48,7 +48,7 @@ final class DesignTokensRoundTripTest extends TestCase {
 	 */
 	public static function shippedSets(): array {
 		$sets = json_decode((string)file_get_contents(\dirname(__DIR__, 3) . '/token-sets.json'), true);
-		$out  = [];
+		$out = [];
 		foreach ((array)$sets as $set) {
 			$id = (string)($set['id'] ?? '');
 			if ($id !== '' && is_file(\dirname(__DIR__, 3) . '/css/tokens/' . $id . '.css') === true) {
@@ -68,13 +68,13 @@ final class DesignTokensRoundTripTest extends TestCase {
 	 */
 	private function roundTrip(array $declarations): array {
 		$document = (new DesignTokensWriter())->write(declarations: $declarations, setId: 'x', setName: 'X', appVersion: 'test');
-		$json     = (string)json_encode($document);
+		$json = (string)json_encode($document);
 
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
-		$parser    = new CssParserService();
+		$parser = new CssParserService();
 		$converter = new TokenSetConverterService($appManager, $parser, new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class));
-		$result    = $converter->convert(content: $json, slug: 'kopie', displayName: 'Kopie');
+		$result = $converter->convert(content: $json, slug: 'kopie', displayName: 'Kopie');
 
 		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'report' => $result['report']];
 	}//end roundTrip()
@@ -83,9 +83,9 @@ final class DesignTokensRoundTripTest extends TestCase {
 	 * A value with every var() to a name the set declares replaced by that value, so a
 	 * palette step that moved to the new prefix compares by what it holds.
 	 *
-	 * @param string                $value The value.
-	 * @param array<string, string> $set   The set's declarations.
-	 * @param int                   $depth Recursion guard.
+	 * @param string $value The value.
+	 * @param array<string, string> $set The set's declarations.
+	 * @param int $depth Recursion guard.
 	 *
 	 * @return string
 	 */
@@ -129,7 +129,7 @@ final class DesignTokensRoundTripTest extends TestCase {
 	#[DataProvider('shippedSets')]
 	public function testShippedSetSurvivesTheRoundTrip(string $id): void {
 		$original = (new CssParserService())->parseRootBlock(css: (string)file_get_contents(\dirname(__DIR__, 3) . '/css/tokens/' . $id . '.css'));
-		$back     = $this->roundTrip(declarations: $original)['declarations'];
+		$back = $this->roundTrip(declarations: $original)['declarations'];
 
 		$differences = [];
 		foreach ($original as $name => $value) {
@@ -158,7 +158,7 @@ final class DesignTokensRoundTripTest extends TestCase {
 	 */
 	public function testNoThematiqTokenIsSkipped(): void {
 		$original = (new CssParserService())->parseRootBlock(css: (string)file_get_contents(\dirname(__DIR__, 3) . '/css/tokens/amsterdam.css'));
-		$skipped  = array_filter(
+		$skipped = array_filter(
 			$this->roundTrip(declarations: $original)['report'],
 			static fn (array $entry): bool => $entry['action'] === 'skipped' && str_starts_with((string)$entry['source'], '--nldesign-')
 		);

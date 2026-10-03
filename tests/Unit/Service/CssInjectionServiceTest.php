@@ -16,7 +16,6 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
-use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
@@ -58,7 +57,6 @@ class CssInjectionServiceTest extends TestCase {
 	 * @var DesignSystemService&MockObject
 	 */
 	private $designSystemService;
-
 
 	/**
 	 * Gates and reads the freeform custom CSS layer.
@@ -191,8 +189,8 @@ class CssInjectionServiceTest extends TestCase {
 	/**
 	 * The position of the first entry that starts with a prefix, failing the test when there is none.
 	 *
-	 * @param array<int, string> $log    The emitted entries, in order.
-	 * @param string             $prefix The start to look for.
+	 * @param array<int, string> $log The emitted entries, in order.
+	 * @param string $prefix The start to look for.
 	 *
 	 * @return int The index.
 	 */

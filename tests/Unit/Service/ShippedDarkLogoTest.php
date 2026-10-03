@@ -76,11 +76,11 @@ class ShippedDarkLogoTest extends TestCase {
 	 */
 	public static function setsWithDarkInkLogos(): array {
 		return [
-			'nijmegen'               => ['nijmegen'],
-			'noordwijk'              => ['noordwijk'],
+			'nijmegen' => ['nijmegen'],
+			'noordwijk' => ['noordwijk'],
 			'provincie-zuid-holland' => ['provincie-zuid-holland'],
-			'vng'                    => ['vng'],
-			'xxllnc'                 => ['xxllnc'],
+			'vng' => ['vng'],
+			'xxllnc' => ['xxllnc'],
 		];
 	}//end setsWithDarkInkLogos()
 

@@ -53,10 +53,10 @@ class IconController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param IRequest            $request             The request.
+	 * @param IRequest $request The request.
 	 * @param DesignSystemService $designSystemService Resolves an icon name in the active pack.
-	 * @param GroupThemingService $groupTheming        Resolves the request's token set.
-	 * @param IURLGenerator       $urlGenerator        Builds the icon's static file URL.
+	 * @param GroupThemingService $groupTheming Resolves the request's token set.
+	 * @param IURLGenerator $urlGenerator Builds the icon's static file URL.
 	 *
 	 * @return void
 	 */

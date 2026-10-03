@@ -159,8 +159,8 @@ class DesignTokensMapper {
 	/**
 	 * Map a parsed DTCG document onto nldesign declarations.
 	 *
-	 * @param array<string, mixed> $document           The decoded DTCG JSON document.
-	 * @param array<int, string>   $referenceOnlyPaths Dotted paths that resolve aliases but are not emitted.
+	 * @param array<string, mixed> $document The decoded DTCG JSON document.
+	 * @param array<int, string> $referenceOnlyPaths Dotted paths that resolve aliases but are not emitted.
 	 *
 	 * @return array{
 	 *     declarations: array<string, string>,

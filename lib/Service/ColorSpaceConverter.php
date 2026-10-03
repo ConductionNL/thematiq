@@ -150,7 +150,7 @@ class ColorSpaceConverter {
 	/**
 	 * Convert to gamma-encoded sRGB, unclipped.
 	 *
-	 * @param string            $space      A colour space from {@see self::SPACES}.
+	 * @param string $space A colour space from {@see self::SPACES}.
 	 * @param array<int, float> $components Its three components, in the DTCG ranges.
 	 *
 	 * @return array<int, float>|null [r, g, b] in 0..1 when in gamut; null for an unknown space.
@@ -196,8 +196,8 @@ class ColorSpaceConverter {
 	/**
 	 * An sRGB triple as hex, each channel clipped to 0..1, with alpha as a fourth pair below 1.
 	 *
-	 * @param array<int, float> $rgb   [r, g, b].
-	 * @param float|null        $alpha The alpha, 0..1, or null for opaque.
+	 * @param array<int, float> $rgb [r, g, b].
+	 * @param float|null $alpha The alpha, 0..1, or null for opaque.
 	 *
 	 * @return string `#rrggbb` or `#rrggbbaa`.
 	 *
@@ -219,8 +219,8 @@ class ColorSpaceConverter {
 	/**
 	 * A colour space other than srgb, hsl and hwb to XYZ (D65).
 	 *
-	 * @param string            $space The colour space.
-	 * @param array<int, float> $c     The components.
+	 * @param string $space The colour space.
+	 * @param array<int, float> $c The components.
 	 *
 	 * @return array<int, float> XYZ.
 	 */
@@ -269,12 +269,12 @@ class ColorSpaceConverter {
 	 * @return array<int, float> XYZ.
 	 */
 	private function labToXyzD50(array $lab): array {
-		$kappa   = (24389 / 27);
+		$kappa = (24389 / 27);
 		$epsilon = (216 / 24389);
-		$yRoot   = (($lab[0] + 16) / 116);
-		$xRoot   = (($lab[1] / 500) + $yRoot);
-		$zRoot   = ($yRoot - ($lab[2] / 200));
-		$white   = self::D50_WHITE;
+		$yRoot = (($lab[0] + 16) / 116);
+		$xRoot = (($lab[1] / 500) + $yRoot);
+		$zRoot = ($yRoot - ($lab[2] / 200));
+		$white = self::D50_WHITE;
 
 		return [
 			($this->labInverse(value: $xRoot, kappa: $kappa, epsilon: $epsilon) * $white[0]),
@@ -286,8 +286,8 @@ class ColorSpaceConverter {
 	/**
 	 * The inverse Lab companding of the x or z channel.
 	 *
-	 * @param float $value   f(x) or f(z).
-	 * @param float $kappa   CIE kappa.
+	 * @param float $value f(x) or f(z).
+	 * @param float $kappa CIE kappa.
 	 * @param float $epsilon CIE epsilon.
 	 *
 	 * @return float
@@ -304,8 +304,8 @@ class ColorSpaceConverter {
 	 * The relative luminance Y of a Lab lightness.
 	 *
 	 * @param float $lightness L, 0..100.
-	 * @param float $kappa     CIE kappa.
-	 * @param float $epsilon   CIE epsilon.
+	 * @param float $kappa CIE kappa.
+	 * @param float $epsilon CIE epsilon.
 	 *
 	 * @return float
 	 */
@@ -344,16 +344,16 @@ class ColorSpaceConverter {
 	/**
 	 * HSL to sRGB (CSS Color 4 hslToRgb).
 	 *
-	 * @param float $hue        Degrees.
+	 * @param float $hue Degrees.
 	 * @param float $saturation 0..1.
-	 * @param float $lightness  0..1.
+	 * @param float $lightness 0..1.
 	 *
 	 * @return array<int, float> [r, g, b].
 	 */
 	private function hslToSrgb(float $hue, float $saturation, float $lightness): array {
 		$hue = fmod(fmod($hue, 360) + 360, 360);
-		$a   = ($saturation * min($lightness, (1 - $lightness)));
-		$f   = static function (int $n) use ($hue, $a, $lightness): float {
+		$a = ($saturation * min($lightness, (1 - $lightness)));
+		$f = static function (int $n) use ($hue, $a, $lightness): float {
 			$k = fmod(($n + ($hue / 30)), 12);
 
 			return ($lightness - ($a * max(-1, min(($k - 3), (9 - $k), 1))));
@@ -365,7 +365,7 @@ class ColorSpaceConverter {
 	/**
 	 * HWB to sRGB (CSS Color 4 hwbToRgb).
 	 *
-	 * @param float $hue   Degrees.
+	 * @param float $hue Degrees.
 	 * @param float $white 0..1.
 	 * @param float $black 0..1.
 	 *
@@ -425,8 +425,8 @@ class ColorSpaceConverter {
 	 */
 	private function linearRec2020(float $value): float {
 		$alpha = 1.09929682680944;
-		$beta  = 0.018053968510807;
-		$abs   = abs($value);
+		$beta = 0.018053968510807;
+		$abs = abs($value);
 		if ($abs < ($beta * 4.5)) {
 			return ($value / 4.5);
 		}
@@ -454,7 +454,7 @@ class ColorSpaceConverter {
 	 * A 3x3 matrix times a vector.
 	 *
 	 * @param array<int, array<int, float>> $matrix The matrix.
-	 * @param array<int, float>             $vector The vector.
+	 * @param array<int, float> $vector The vector.
 	 *
 	 * @return array<int, float>
 	 */

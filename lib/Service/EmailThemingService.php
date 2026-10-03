@@ -22,10 +22,10 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Mail\NLDesignEMailTemplate;
-use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCP\HintException;
 use OCP\IConfig;
 use OCP\IURLGenerator;

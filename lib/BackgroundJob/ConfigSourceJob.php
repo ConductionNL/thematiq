@@ -43,9 +43,9 @@ class ConfigSourceJob extends TimedJob {
 	/**
 	 * Constructor.
 	 *
-	 * @param ITimeFactory        $time   The clock.
+	 * @param ITimeFactory $time The clock.
 	 * @param ConfigSourceService $source The configuration source service.
-	 * @param LoggerInterface     $logger The logger.
+	 * @param LoggerInterface $logger The logger.
 	 */
 	public function __construct(
 		ITimeFactory $time,

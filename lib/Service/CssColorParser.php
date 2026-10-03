@@ -157,7 +157,7 @@ class CssColorParser {
 	/**
 	 * A colour function to its colour space.
 	 *
-	 * @param string $name      The function name.
+	 * @param string $name The function name.
 	 * @param string $arguments What is between the parentheses.
 	 *
 	 * @return array{space: string, components: array<int, float>, alpha: float|null}|null
@@ -189,7 +189,7 @@ class CssColorParser {
 		}
 
 		if ($space === 'hsl') {
-			$space      = 'srgb';
+			$space = 'srgb';
 			$components = (array)$this->converter->toSrgb(space: 'hsl', components: $components);
 		}
 
@@ -205,7 +205,7 @@ class CssColorParser {
 	 */
 	private function split(string $arguments): array {
 		$alpha = null;
-		$main  = $arguments;
+		$main = $arguments;
 		if (str_contains($arguments, '/') === true) {
 			[$main, $alphaText] = array_map('trim', explode('/', $arguments, 2));
 			$alpha = $this->alpha(text: $alphaText);
@@ -241,10 +241,10 @@ class CssColorParser {
 	/**
 	 * One component word to its DTCG number.
 	 *
-	 * @param string $part          The word.
-	 * @param string $space         The colour space.
-	 * @param int    $index         Its position.
-	 * @param bool   $isRgbFunction Whether it came from rgb() rather than color(srgb ...), which reads 0..255.
+	 * @param string $part The word.
+	 * @param string $space The colour space.
+	 * @param int $index Its position.
+	 * @param bool $isRgbFunction Whether it came from rgb() rather than color(srgb ...), which reads 0..255.
 	 *
 	 * @return float|null Null for a word that is not a number.
 	 */

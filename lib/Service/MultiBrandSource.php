@@ -91,7 +91,7 @@ class MultiBrandSource {
 	 * winning, with the paths only a `source` set defines listed as reference-only.
 	 *
 	 * @param string $content The uploaded document.
-	 * @param string $key     The brand key.
+	 * @param string $key The brand key.
 	 *
 	 * @return array{content: string, referenceOnlyPaths: array<int, string>}
 	 *
@@ -106,7 +106,7 @@ class MultiBrandSource {
 		}
 
 		$shared = [];
-		$own    = null;
+		$own = null;
 		foreach ($this->reader->blocks(css: $content) as $block) {
 			if (preg_match(self::BRAND_SELECTOR, $block['selector'], $match) === 1) {
 				if ($match[1] === $key) {
@@ -194,7 +194,7 @@ class MultiBrandSource {
 	 * Cut one theme out of a Tokens Studio document.
 	 *
 	 * @param array<string, mixed> $document The document.
-	 * @param string               $key      The theme id.
+	 * @param string $key The theme id.
 	 *
 	 * @return array{content: string, referenceOnlyPaths: array<int, string>}
 	 *
@@ -203,7 +203,7 @@ class MultiBrandSource {
 	private function cutTheme(array $document, string $key): array {
 		foreach ((array)($document['$themes'] ?? []) as $theme) {
 			if (is_array($theme) === true && ($theme['id'] ?? null) === $key) {
-				$merged  = $this->mergeSets(document: $document, theme: $theme, statuses: ['enabled', 'source']);
+				$merged = $this->mergeSets(document: $document, theme: $theme, statuses: ['enabled', 'source']);
 				$enabled = $this->leafPaths(node: $this->mergeSets(document: $document, theme: $theme, statuses: ['enabled']), prefix: '');
 
 				return [
@@ -222,8 +222,8 @@ class MultiBrandSource {
 	 * path, as Tokens Studio's `applyTokenSetOrder` and `mergeTokenGroups` do.
 	 *
 	 * @param array<string, mixed> $document The document.
-	 * @param array<string, mixed> $theme    The theme.
-	 * @param array<int, string>   $statuses The statuses to include.
+	 * @param array<string, mixed> $theme The theme.
+	 * @param array<int, string> $statuses The statuses to include.
 	 *
 	 * @return array<string, mixed> The merged token tree.
 	 */
@@ -237,7 +237,7 @@ class MultiBrandSource {
 		usort(
 			$names,
 			static function (string $first, string $second) use ($order): int {
-				$firstAt  = array_search($first, $order, true);
+				$firstAt = array_search($first, $order, true);
 				$secondAt = array_search($second, $order, true);
 				if ($firstAt === false && $secondAt === false) {
 					return strcmp($first, $second);
@@ -298,8 +298,8 @@ class MultiBrandSource {
 	/**
 	 * The dotted paths of every token in a tree.
 	 *
-	 * @param array<string, mixed> $node   The tree.
-	 * @param string               $prefix The path so far.
+	 * @param array<string, mixed> $node The tree.
+	 * @param string $prefix The path so far.
 	 *
 	 * @return array<int, string>
 	 */

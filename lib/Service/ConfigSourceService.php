@@ -98,15 +98,15 @@ class ConfigSourceService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig                $config         System and app config.
-	 * @param BrandingPackageReader  $reader         Hashes the package.
+	 * @param IConfig $config System and app config.
+	 * @param BrandingPackageReader $reader Hashes the package.
 	 * @param BrandingPackageService $packageService Applies the package.
-	 * @param ConfigBundleService    $bundleService  Exports the running configuration, for drift.
-	 * @param ThemingAuditService    $audit          The audit log.
-	 * @param ILockingProvider       $locking        The Nextcloud lock.
-	 * @param ITimeFactory           $time           The clock.
-	 * @param LoggerInterface        $logger         The logger.
-	 * @param IAppConfig             $appConfig      Re-read under the lock, for what another replica applied.
+	 * @param ConfigBundleService $bundleService Exports the running configuration, for drift.
+	 * @param ThemingAuditService $audit The audit log.
+	 * @param ILockingProvider $locking The Nextcloud lock.
+	 * @param ITimeFactory $time The clock.
+	 * @param LoggerInterface $logger The logger.
+	 * @param IAppConfig $appConfig Re-read under the lock, for what another replica applied.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - each collaborator is one step of an apply.
 	 */

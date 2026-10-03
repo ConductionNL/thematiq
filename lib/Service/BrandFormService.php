@@ -17,6 +17,7 @@
  */
 
 declare(strict_types=1);
+
 namespace OCA\Thematiq\Service;
 
 use InvalidArgumentException;
@@ -61,8 +62,8 @@ class BrandFormService {
 	/**
 	 * Constructor.
 	 *
-	 * @param ContrastService  $contrast The contrast arithmetic.
-	 * @param CssParserService $parser   Reads the defaults layer.
+	 * @param ContrastService $contrast The contrast arithmetic.
+	 * @param CssParserService $parser Reads the defaults layer.
 	 */
 	public function __construct(
 		private ContrastService $contrast,
@@ -89,12 +90,14 @@ class BrandFormService {
 	/**
 	 * Derive the set.
 	 *
-	 * @param string $appPath    The app root.
-	 * @param string $primary    The primary colour, `#rgb` or `#rrggbb`.
+	 * Returns the declarations in rule order, the text colour on primary, and the two ratios
+	 * (two decimals).
+	 *
+	 * @param string $appPath The app root.
+	 * @param string $primary The primary colour, `#rgb` or `#rrggbb`.
 	 * @param string $background The background colour, `#rgb` or `#rrggbb`.
 	 *
 	 * @return array{declarations: array<string, string>, textOnPrimary: string, textRatio: float, uiRatio: float}
-	 *   The declarations in rule order, the text colour on primary, and the two ratios (two decimals).
 	 *
 	 * @throws InvalidArgumentException When a colour is not a hex colour, or a rule resolves to nothing.
 	 *
@@ -127,10 +130,10 @@ class BrandFormService {
 	/**
 	 * Apply one rule.
 	 *
-	 * @param array<int, mixed>     $rule     `[op, ...operands]`.
-	 * @param array<string, string> $known    `primary`, `background` and the tokens derived so far.
+	 * @param array<int, mixed> $rule `[op, ...operands]`.
+	 * @param array<string, string> $known `primary`, `background` and the tokens derived so far.
 	 * @param array<string, string> $defaults The defaults layer.
-	 * @param string                $token    The token being derived.
+	 * @param string $token The token being derived.
 	 *
 	 * @return string The value, or '' when the rule resolves to nothing.
 	 */
@@ -186,9 +189,9 @@ class BrandFormService {
 	/**
 	 * The value when it reaches 4.5:1 on the background, else the fallback.
 	 *
-	 * @param string $value      The candidate.
+	 * @param string $value The candidate.
 	 * @param string $background The background.
-	 * @param string $fallback   The defaults value.
+	 * @param string $fallback The defaults value.
 	 *
 	 * @return string The legible value.
 	 */
@@ -203,7 +206,7 @@ class BrandFormService {
 	/**
 	 * The contrast ratio of two colours, rounded to two decimals.
 	 *
-	 * @param string $first  One colour.
+	 * @param string $first One colour.
 	 * @param string $second The other.
 	 *
 	 * @return float The ratio, 1.0 when either is not a colour.
@@ -221,8 +224,8 @@ class BrandFormService {
 	/**
 	 * Darken a colour. Mirrors `darken()` in `js/lib/tokenConverter.js` and `TokenSetConverterService`.
 	 *
-	 * @param string $value    The colour.
-	 * @param float  $fraction 0 unchanged, 1 black.
+	 * @param string $value The colour.
+	 * @param float $fraction 0 unchanged, 1 black.
 	 *
 	 * @return string The colour.
 	 */
@@ -240,9 +243,9 @@ class BrandFormService {
 	/**
 	 * Mix two colours; `weight` is the share of the first kept. Mirrors `mix()` in `js/lib/tokenConverter.js`.
 	 *
-	 * @param string $value  The first colour.
-	 * @param string $with   The second colour.
-	 * @param float  $weight Share of the first (0-1).
+	 * @param string $value The first colour.
+	 * @param string $with The second colour.
+	 * @param float $weight Share of the first (0-1).
 	 *
 	 * @return string The colour.
 	 */

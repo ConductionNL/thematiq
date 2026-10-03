@@ -124,8 +124,7 @@ spl_autoload_register(static function (string $class): void {
  *
  * @return bool True when config/config.php declares `installed => true`.
  */
-function thematiq_nc_root_is_installed(string $ncRoot): bool
-{
+function thematiq_nc_root_is_installed(string $ncRoot): bool {
 	$configFile = $ncRoot . '/config/config.php';
 	if (is_file($configFile) === false || filesize($configFile) === 0) {
 		return false;
@@ -193,7 +192,7 @@ if (!defined('OC_CONSOLE')) {
 			fwrite(
 				STDERR,
 				sprintf(
-					"[thematiq/tests/bootstrap] Nextcloud root at %s is not an installed instance (config/config.php lacks installed => true); "
+					'[thematiq/tests/bootstrap] Nextcloud root at %s is not an installed instance (config/config.php lacks installed => true); '
 					. "skipping lib/base.php and running with composer autoload only (pure-unit mode).\n",
 					$thematiqNcRoot
 				)

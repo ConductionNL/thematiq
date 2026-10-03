@@ -85,13 +85,13 @@ class PlaygroundStateService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppManager              $appManager    Resolves the app directory.
-	 * @param TokenSetPreviewService   $previewValues Resolves token values and sources.
-	 * @param TokenSetConverterService $converter     The conversion reason vocabulary.
-	 * @param StockTokensService       $stockTokens   The instance's own stock theme.
-	 * @param IL10N                    $l10n          The app's translations.
-	 * @param RuntimeFileStore|null    $store         Where uploaded sets and their dark files live.
-	 * @param SetFileReader            $files         Reads a set file from the release or the store.
+	 * @param IAppManager $appManager Resolves the app directory.
+	 * @param TokenSetPreviewService $previewValues Resolves token values and sources.
+	 * @param TokenSetConverterService $converter The conversion reason vocabulary.
+	 * @param StockTokensService $stockTokens The instance's own stock theme.
+	 * @param IL10N $l10n The app's translations.
+	 * @param RuntimeFileStore|null $store Where uploaded sets and their dark files live.
+	 * @param SetFileReader $files Reads a set file from the release or the store.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -325,8 +325,8 @@ class PlaygroundStateService {
 	/**
 	 * Translate the named string fields of one entry, leaving the rest alone.
 	 *
-	 * @param array<string, mixed> $entry  One inventory entry.
-	 * @param array<int, string>   $fields The fields that are chrome.
+	 * @param array<string, mixed> $entry One inventory entry.
+	 * @param array<int, string> $fields The fields that are chrome.
 	 *
 	 * @return array<string, mixed> The entry, those fields translated.
 	 *

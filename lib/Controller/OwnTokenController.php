@@ -47,13 +47,13 @@ class OwnTokenController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string                  $appName      The app name.
-	 * @param IRequest                $request      The request.
-	 * @param OwnTokenService         $ownTokens    The own token store.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param OwnTokenService $ownTokens The own token store.
 	 * @param TokenDeprecationService $deprecations Marks a removed token's deprecation as removed.
-	 * @param CustomOverridesService  $overrides    Rewrites the overrides files after a change.
-	 * @param ThemingAuditService     $audit        The audit trail.
-	 * @param IL10N                   $l            Translations for the error texts.
+	 * @param CustomOverridesService $overrides Rewrites the overrides files after a change.
+	 * @param ThemingAuditService $audit The audit trail.
+	 * @param IL10N $l Translations for the error texts.
 	 */
 	public function __construct(
 		string $appName,
@@ -77,7 +77,7 @@ class OwnTokenController extends Controller {
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function list(): JSONResponse {
 		$deprecations = $this->deprecations->list();
-		$tokens       = [];
+		$tokens = [];
 		foreach ($this->ownTokens->list() as $name => $token) {
 			$row = ['name' => $name] + $token;
 			if (isset($deprecations[$name]) === true) {
@@ -168,9 +168,9 @@ class OwnTokenController extends Controller {
 	/**
 	 * After a successful change: rewrite the files, audit, answer.
 	 *
-	 * @param string                    $name The token name.
-	 * @param array<string, mixed>|null $old  The token before, null when added.
-	 * @param array<string, mixed>|null $new  The token after, null when removed.
+	 * @param string $name The token name.
+	 * @param array<string, mixed>|null $old The token before, null when added.
+	 * @param array<string, mixed>|null $new The token after, null when removed.
 	 *
 	 * @return JSONResponse
 	 */

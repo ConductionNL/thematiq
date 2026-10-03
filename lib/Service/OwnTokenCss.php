@@ -30,8 +30,8 @@ class OwnTokenCss {
 	/**
 	 * Constructor.
 	 *
-	 * @param array<string, string> $light    Token name => light value.
-	 * @param array<string, string> $dark     Token name => dark value.
+	 * @param array<string, string> $light Token name => light value.
+	 * @param array<string, string> $dark Token name => dark value.
 	 * @param array<string, string> $comments Token name => the deprecation notice written above it.
 	 */
 	public function __construct(

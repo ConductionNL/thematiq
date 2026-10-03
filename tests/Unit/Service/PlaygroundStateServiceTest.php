@@ -36,8 +36,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * Build the service with the app path pointing at this repository, so the
 	 * inventory read is the real shipped file.
 	 *
-	 * @param TokenSetPreviewService|null   $previewValues A stub, when the test needs its own.
-	 * @param TokenSetConverterService|null $converter     A stub, when the test needs its own.
+	 * @param TokenSetPreviewService|null $previewValues A stub, when the test needs its own.
+	 * @param TokenSetConverterService|null $converter A stub, when the test needs its own.
 	 *
 	 * @return PlaygroundStateService The service under test.
 	 */

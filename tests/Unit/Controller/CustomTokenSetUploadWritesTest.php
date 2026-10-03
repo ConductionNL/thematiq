@@ -200,7 +200,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	/**
 	 * Drive one upload of the given CSS.
 	 *
-	 * @param string $css  The uploaded document.
+	 * @param string $css The uploaded document.
 	 * @param string $name The token set display name.
 	 *
 	 * @return \OCP\AppFramework\Http\JSONResponse The upload response.
@@ -255,7 +255,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * before the value gate moved ahead of the name split this reached disk
 	 * unjudged.
 	 *
-	 * @param string $name  The declaration name the converter keeps verbatim.
+	 * @param string $name The declaration name the converter keeps verbatim.
 	 * @param string $value The forbidden value.
 	 *
 	 * @dataProvider smuggledValueProvider
@@ -440,7 +440,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * no such gap — there is no arrangement of the input that can spell a
 	 * terminator out of characters that are not there.
 	 *
-	 * @param string $id    The stored set id.
+	 * @param string $id The stored set id.
 	 * @param string $label The provenance label.
 	 *
 	 * @return void
@@ -460,7 +460,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	/**
 	 * The provenance line carrying the given label, as stored.
 	 *
-	 * @param string $id    The stored set id.
+	 * @param string $id The stored set id.
 	 * @param string $label The provenance label, e.g. `source:`.
 	 *
 	 * @return string The rest of that line, or '' when absent.

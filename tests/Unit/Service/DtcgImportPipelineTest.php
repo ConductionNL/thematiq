@@ -61,7 +61,7 @@ final class DtcgImportPipelineTest extends TestCase {
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testAdaptedColourIsReported(): void {
-		$result  = $this->convert(['color' => ['primary' => ['$type' => 'color', '$value' => ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]]]]);
+		$result = $this->convert(['color' => ['primary' => ['$type' => 'color', '$value' => ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]]]]);
 		$adapted = array_values(array_filter($result['report'], static fn (array $e): bool => $e['reason'] === 'out-of-gamut-clipped'));
 
 		$this->assertCount(1, $adapted);
@@ -76,7 +76,7 @@ final class DtcgImportPipelineTest extends TestCase {
 	 * @return void
 	 */
 	public function testExtensionWithForbiddenValueIsRefused(): void {
-		$result    = $this->convert(
+		$result = $this->convert(
 			[
 				'color' => ['primary' => ['$type' => 'color', '$value' => '#154273']],
 				'$extensions' => ['nl.conduction.thematiq' => ['setId' => 'x', 'cssOnly' => ['--nldesign-header-background' => 'expression(alert(1))']]],
@@ -94,7 +94,7 @@ final class DtcgImportPipelineTest extends TestCase {
 	 * @return void
 	 */
 	public function testConvertedColourIsContrastChecked(): void {
-		$mapped   = (new DesignTokensMapper())->map(
+		$mapped = (new DesignTokensMapper())->map(
 			document: ['color' => ['$type' => 'color', 'primary' => ['$value' => ['colorSpace' => 'oklch', 'components' => [0.85, 0.08, 100]]], 'primary-text' => ['$value' => '#ffffff']]]
 		);
 		$warnings = (new ContrastService())->check(declarations: $mapped['declarations']);
