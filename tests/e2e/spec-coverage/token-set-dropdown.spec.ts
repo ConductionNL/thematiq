@@ -173,7 +173,18 @@ test.describe('token-set-dropdown', () => {
 		await openTheming(page)
 		const token = await requestToken(page)
 		const before = await getTokenSet(page, token)
-		const target = before === 'rijkshuisstijl' ? 'amsterdam' : 'rijkshuisstijl'
+		// A set the dropdown offers: one of the sets this file offers, other
+		// than the active one. The admin dropdown lists only the selectable sets
+		// (TokenSetService::SELECTABLE_SHIPPED_SETS, the active set, custom sets
+		// and mapped sets), so a set outside the offer cannot be picked.
+		const offered = await page
+			.locator('#nldesign-token-set-select option')
+			.evaluateAll((els) => els.map((el) => (el as HTMLOptionElement).value))
+		const target = OFFERED.find((id) => id !== before && offered.includes(id))
+		expect(
+			target,
+			`the dropdown offers one of ${OFFERED.join(', ')}`,
+		).toBeTruthy()
 		try {
 			const saved = page.waitForRequest(
 				(req) =>
@@ -181,11 +192,24 @@ test.describe('token-set-dropdown', () => {
 					&& new URL(req.url()).pathname.endsWith(
 						'/apps/thematiq/settings/tokenset',
 					),
+				{ timeout: 30_000 },
 			)
-			await page.locator('#nldesign-token-set-select').selectOption(target)
+			await page
+				.locator('#nldesign-token-set-select')
+				.selectOption(target as string)
 
+			// The apply dialog opens once its preview and theming reads resolve,
+			// or the save goes out directly when the preview has nothing to show.
+			// Wait for whichever comes first; `isVisible()` does not wait at all.
 			const dialog = page.locator('#nldesign-apply-dialog-overlay')
-			if (await dialog.isVisible({ timeout: 6_000 }).catch(() => false)) {
+			const opened = await Promise.race([
+				dialog
+					.waitFor({ state: 'visible', timeout: 30_000 })
+					.then(() => true)
+					.catch(() => false),
+				saved.then(() => false),
+			])
+			if (opened) {
 				// Apply the set only: no token rows pinned, no core theming sync.
 				await page.locator('#nldesign-apply-deselect-all').click()
 				const sync = dialog.locator('#nldesign-apply-theming-check')

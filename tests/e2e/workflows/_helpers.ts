@@ -155,9 +155,18 @@ export async function appAssetUrl(
 	)
 }
 
-/** Read the raw served custom-overrides.css (the actual generated file on disk). */
+/**
+ * Read the raw served custom-overrides.css (the actual generated file).
+ *
+ * The file is written to app data and served by the `runtimeFile#serve`
+ * route (#811), never from the app folder, so `appAssetUrl()` cannot reach it.
+ */
 export async function getServedOverrideCss(page: Page): Promise<string> {
-	const url = await appAssetUrl(page, 'css', 'custom-overrides.css')
+	const url = await page.evaluate(() =>
+		(
+			window as unknown as { OC: { generateUrl: (p: string) => string } }
+		).OC.generateUrl('/apps/thematiq/runtime/css/custom-overrides.css'),
+	)
 	const res = await page.request.get(url)
 	expect(
 		res.ok(),

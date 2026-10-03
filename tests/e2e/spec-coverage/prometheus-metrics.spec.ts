@@ -22,6 +22,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 import {
+	api,
 	ensureNonAdminUser,
 	loginAs,
 	NONADMIN_PASS,
@@ -39,6 +40,13 @@ const METRICS = '/index.php/apps/thematiq/api/metrics'
 const HEALTH = '/index.php/apps/thematiq/api/health'
 const THEMING_URL = '/settings/admin/theming'
 const REPO = path.resolve(__dirname, '../../..')
+
+/**
+ * No cookies, no origins. `playwright.request.newContext()` inside a test
+ * takes the project's `use.storageState` (the admin session) unless it is
+ * given one, so a context meant to be anonymous has to say so.
+ */
+const NO_SESSION = { cookies: [], origins: [] }
 
 /** The seven metric families MetricsController::index() emits. */
 const FAMILIES: Record<string, { help: string; type: string }> = {
@@ -126,7 +134,10 @@ test.describe('prometheus-metrics', () => {
 		playwright,
 		baseURL,
 	}) => {
-		const anonymous = await playwright.request.newContext({ baseURL })
+		const anonymous = await playwright.request.newContext({
+			baseURL,
+			storageState: NO_SESSION,
+		})
 		try {
 			const res = await anonymous.get(METRICS, {
 				headers: { Accept: 'text/plain' },
@@ -246,10 +257,12 @@ test.describe('prometheus-metrics', () => {
 	// @e2e openspec/specs/prometheus-metrics/spec.md#token-set-metric-with-help-and-type
 	'the token-set gauge counts every set in css/tokens', async ({ page }) => {
 		// The public catalogue is built from the same getAvailableTokenSets()
-		// scan, one entry per css/tokens/*.css file.
-		const res = await page.request.get('/index.php/apps/thematiq/api/token-sets')
-		expect(res.status()).toBe(200)
-		const catalogue = (await res.json()).tokenSets as Array<{ id: string }>
+		// scan, one entry per css/tokens/*.css file. A session caller needs the
+		// CSRF token (412 without it), so it is read from inside the page.
+		await page.goto(THEMING_URL)
+		const res = await api(page, 'GET', '/index.php/apps/thematiq/api/token-sets')
+		expect(res.status).toBe(200)
+		const catalogue = res.json.tokenSets as Array<{ id: string }>
 
 		const shipped = fs
 			.readdirSync(path.join(REPO, 'css/tokens'))
@@ -399,7 +412,10 @@ test.describe('prometheus-metrics', () => {
 			.map((check) => check.id)
 			.sort()
 
-		const anonymous = await playwright.request.newContext({ baseURL })
+		const anonymous = await playwright.request.newContext({
+			baseURL,
+			storageState: NO_SESSION,
+		})
 		let body: any
 		try {
 			const res = await anonymous.get(HEALTH)
