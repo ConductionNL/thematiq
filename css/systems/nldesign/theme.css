@@ -637,17 +637,20 @@ button.secondary:hover {
    LINKS — Component Token Mapping
    ============================================ */
 
-a {
+/* A `.tile-widget` keeps its app's link colours (css-architecture spec, #939).
+ * :where() keeps these rules at the specificity of a bare `a`, so every rule
+ * that outranked them before still does. */
+a:not(:where(.tile-widget, .tile-widget a)) {
 	color: var(--nldesign-component-link-color) !important;
 	text-decoration: var(--nldesign-component-link-text-decoration) !important;
 	transition: color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
 }
 
-a:hover {
+a:not(:where(.tile-widget, .tile-widget a)):hover {
 	color: var(--nldesign-component-link-hover-color) !important;
 }
 
-a:visited {
+a:not(:where(.tile-widget, .tile-widget a)):visited {
 	color: var(--nldesign-component-link-visited-color) !important;
 }
 

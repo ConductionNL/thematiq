@@ -373,26 +373,33 @@ header nav .icon {
  * the opt-out reaches every descendant without competing on specificity, and a
  * nested light surface opts back in by resetting the same property. The
  * pairings live in css/error-contrast.css next to the other on-fill fixes.
+ *
+ * `.tile-widget` is the one per-app exclusion the css-architecture spec keeps:
+ * the tile AND everything in it keep their app's colours. Each exclusion lists
+ * the tile itself next to its descendants (`:not(.tile-widget, .tile-widget
+ * div)`): the descendant form alone let the tile's own root element match
+ * (#939). A selector list inside :not() takes its most specific argument, so
+ * the specificity is unchanged. tests/vitest/tileWidgetOptOut.spec.js.
  */
 body,
 #app,
 #content,
 .app-content,
 p,
-span:not(#header span):not(#header * span):not(.tile-widget span):not(
+span:not(#header span):not(#header * span):not(.tile-widget, .tile-widget span):not(
 		.tile-widget * span
 	):not(.button-vue--vue-primary span):not(.button-vue--vue-primary *):not(
 		.button-vue--primary span
 	):not(.button-vue--primary *),
-div:not(#header div):not(#header * div):not(.tile-widget div):not(
+div:not(#header div):not(#header * div):not(.tile-widget, .tile-widget div):not(
 		.tile-widget * div
 	):not(.button-vue--vue-primary div):not(.button-vue--primary div),
 li:not(#header li):not(#header * li),
-a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
+a:not(#header a):not(.tile-widget, .tile-widget a):not(.tile-widget * a) {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-text)) !important;
 }
 
-a:not(#header a):not(.tile-widget a):not(.tile-widget * a) {
+a:not(#header a):not(.tile-widget, .tile-widget a):not(.tile-widget * a) {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-link)) !important;
 }
 
