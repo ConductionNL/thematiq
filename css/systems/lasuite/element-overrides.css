@@ -743,12 +743,16 @@ input.primary,
 	),
 .button-vue.button-vue--primary:not(:where([class*='_colorPickerField__button'])),
 button[class*='primary']:not(:where([class*='_colorPickerField__button'])) {
+	/* Cunningham's own brand fill token, not the header-icon alias: the dark
+	   blocks turn that alias brand-050 for icons on a dark header, which made
+	   the fill as pale as the brand-050 label (#935). Cunningham's dark theme
+	   keeps brand-550 here, and so do the dark blocks below. */
 	background-color: var(
-		--lasuite-content-brand-icon,
+		--lasuite--contextuals--background--semantic--brand--primary,
 		var(--lasuite-color-brand-550)
 	) !important;
 	border-color: var(
-		--lasuite-content-brand-icon,
+		--lasuite--contextuals--background--semantic--brand--primary,
 		var(--lasuite-color-brand-550)
 	) !important;
 	border-radius: var(--lasuite-border-radius) !important;
@@ -817,11 +821,11 @@ button.primary:hover,
 		:where([class*='_colorPickerField__button'])
 	) {
 	background-color: var(
-		--lasuite-content-brand,
+		--lasuite--contextuals--background--semantic--brand--primary-hover,
 		var(--lasuite-color-brand-650)
 	) !important;
 	border-color: var(
-		--lasuite-content-brand,
+		--lasuite--contextuals--background--semantic--brand--primary-hover,
 		var(--lasuite-color-brand-650)
 	) !important;
 }
@@ -1085,6 +1089,12 @@ h6 {
 		--lasuite-content-muted: var(--lasuite-color-gray-200);
 		--lasuite-content-brand: var(--lasuite-color-brand-050);
 		--lasuite-content-brand-icon: var(--lasuite-color-brand-050);
+		--lasuite--contextuals--background--semantic--brand--primary: var(
+			--lasuite--globals--colors--brand-550
+		);
+		--lasuite--contextuals--background--semantic--brand--primary-hover: var(
+			--lasuite--globals--colors--brand-650
+		);
 	}
 }
 
@@ -1122,6 +1132,12 @@ body[data-themes*='dark'] {
 	--lasuite-content-muted: var(--lasuite-color-gray-200);
 	--lasuite-content-brand: var(--lasuite-color-brand-050);
 	--lasuite-content-brand-icon: var(--lasuite-color-brand-050);
+	--lasuite--contextuals--background--semantic--brand--primary: var(
+		--lasuite--globals--colors--brand-550
+	);
+	--lasuite--contextuals--background--semantic--brand--primary-hover: var(
+		--lasuite--globals--colors--brand-650
+	);
 }
 
 /* ============================================
