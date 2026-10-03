@@ -1,0 +1,459 @@
+{
+    "inputs": {
+        "rules": {
+            "--nldesign-color-primary": [
+                "from",
+                "primary"
+            ],
+            "--nldesign-color-primary-text": [
+                "onColor",
+                "primary"
+            ],
+            "--nldesign-color-primary-hover": [
+                "darken",
+                "primary",
+                0.15
+            ],
+            "--nldesign-color-primary-light": [
+                "mix",
+                "primary",
+                "background",
+                0.12
+            ],
+            "--nldesign-color-primary-light-hover": [
+                "mix",
+                "primary",
+                "background",
+                0.22
+            ],
+            "--nldesign-color-header-background": [
+                "from",
+                "primary"
+            ],
+            "--nldesign-color-header-text": [
+                "onColor",
+                "primary"
+            ],
+            "--nldesign-color-nav-background": [
+                "from",
+                "background"
+            ],
+            "--nldesign-color-text": [
+                "default"
+            ],
+            "--nldesign-color-text-muted": [
+                "default"
+            ],
+            "--nldesign-color-border": [
+                "default"
+            ],
+            "--nldesign-color-border-dark": [
+                "default"
+            ],
+            "--nldesign-color-link": [
+                "legible",
+                "primary"
+            ],
+            "--nldesign-color-link-hover": [
+                "darken",
+                "--nldesign-color-link",
+                0.15
+            ],
+            "--nldesign-color-error": [
+                "default"
+            ],
+            "--nldesign-color-error-rgb": [
+                "default"
+            ],
+            "--nldesign-color-warning": [
+                "default"
+            ],
+            "--nldesign-color-warning-rgb": [
+                "default"
+            ],
+            "--nldesign-color-success": [
+                "default"
+            ],
+            "--nldesign-color-success-rgb": [
+                "default"
+            ],
+            "--nldesign-color-info": [
+                "default"
+            ],
+            "--nldesign-color-info-rgb": [
+                "default"
+            ],
+            "--nldesign-font-family": [
+                "default"
+            ],
+            "--nldesign-border-radius": [
+                "default"
+            ],
+            "--nldesign-border-radius-small": [
+                "default"
+            ],
+            "--nldesign-border-radius-large": [
+                "default"
+            ]
+        },
+        "defaults": {
+            "--nldesign-color-primary": "#154273",
+            "--nldesign-color-primary-text": "#ffffff",
+            "--nldesign-color-primary-hover": "#1d5499",
+            "--nldesign-color-primary-light": "#e8f0f8",
+            "--nldesign-color-primary-light-hover": "#d4e4f2",
+            "--nldesign-color-error": "#d52b1e",
+            "--nldesign-color-error-rgb": "213, 43, 30",
+            "--nldesign-color-error-hover": "#8b1a15",
+            "--nldesign-color-warning": "#e17000",
+            "--nldesign-color-warning-rgb": "225, 112, 0",
+            "--nldesign-color-success": "#39870c",
+            "--nldesign-color-success-rgb": "57, 135, 12",
+            "--nldesign-color-info": "#007bc7",
+            "--nldesign-color-info-rgb": "0, 123, 199",
+            "--nldesign-color-background-hover": "#e8e9ea",
+            "--nldesign-color-background-dark": "#e0e1e2",
+            "--nldesign-color-background-darker": "#d0d1d2",
+            "--nldesign-color-header-background": "#ffffff",
+            "--nldesign-color-header-text": "#333333",
+            "--nldesign-header-icon-filter": "invert(1) brightness(0) contrast(100)",
+            "--nldesign-header-border-bottom": "0",
+            "--nldesign-color-nav-background": "#ffffff",
+            "--nldesign-color-logo-background": "transparent",
+            "--nldesign-size-lint": "0px",
+            "--nldesign-size-lint-height": "0px",
+            "--nldesign-logo-center": "50%",
+            "--nldesign-logo-filter": "none",
+            "--nldesign-logo-width": "62px",
+            "--nldesign-logo-height": "auto",
+            "--nldesign-logo-inset": "12px",
+            "--nldesign-logo-top": "1px",
+            "--nldesign-logo-bottom": "1px",
+            "--nldesign-color-text": "#333333",
+            "--nldesign-color-text-muted": "#696969",
+            "--nldesign-color-text-light": "#ffffff",
+            "--nldesign-color-border": "#b4b4b4",
+            "--nldesign-color-border-dark": "#696969",
+            "--nldesign-color-focus": "rgba(0, 123, 199, 0.5)",
+            "--nldesign-color-focus-rgb": "0, 123, 199",
+            "--nldesign-color-link": "#154273",
+            "--nldesign-color-link-hover": "#007bc7",
+            "--nldesign-color-link-visited": "#42145f",
+            "--nldesign-color-button-primary-background": "#154273",
+            "--nldesign-color-button-primary-text": "#ffffff",
+            "--nldesign-color-button-primary-border": "#154273",
+            "--nldesign-color-button-primary-hover": "#1d5499",
+            "--nldesign-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\tOxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+            "--nldesign-font-weight-default": "400",
+            "--nldesign-font-weight-element": "500",
+            "--nldesign-font-weight-heading": "700",
+            "--nldesign-border-radius": "0",
+            "--nldesign-border-radius-small": "0",
+            "--nldesign-border-radius-large": "4px",
+            "--nldesign-border-radius-rounded": "0",
+            "--nldesign-border-radius-pill": "100px",
+            "--nldesign-color-placeholder-light": "#e5e5e5",
+            "--nldesign-color-placeholder-dark": "#cccccc",
+            "--nldesign-color-favorite": "#e17000",
+            "--nldesign-animation-quick": "100ms",
+            "--nldesign-animation-slow": "300ms",
+            "--nldesign-animation-easing": "ease",
+            "--nldesign-component-button-background-color": "transparent",
+            "--nldesign-component-button-color": "var(--nldesign-color-primary)",
+            "--nldesign-component-button-border-radius": "var(--nldesign-border-radius)",
+            "--nldesign-component-button-border-width": "1px",
+            "--nldesign-component-button-border-color": "var(\n\t\t--nldesign-color-primary\n\t)",
+            "--nldesign-component-button-font-family": "var(--nldesign-font-family)",
+            "--nldesign-component-button-font-size": "1rem",
+            "--nldesign-component-button-font-weight": "700",
+            "--nldesign-component-button-padding-block": "0.5rem",
+            "--nldesign-component-button-padding-inline": "1rem",
+            "--nldesign-component-button-hover-background-color": "var(\n\t\t--nldesign-color-primary-light\n\t)",
+            "--nldesign-component-button-hover-color": "var(\n\t\t--nldesign-color-primary\n\t)",
+            "--nldesign-component-button-hover-border-color": "var(\n\t\t--nldesign-color-primary-hover\n\t)",
+            "--nldesign-component-button-active-background-color": "var(\n\t\t--nldesign-color-primary-light-hover\n\t)",
+            "--nldesign-component-button-active-color": "var(\n\t\t--nldesign-color-primary\n\t)",
+            "--nldesign-component-button-disabled-background-color": "#e5e5e5",
+            "--nldesign-component-button-disabled-color": "#696969",
+            "--nldesign-component-button-disabled-border-color": "#b4b4b4",
+            "--nldesign-component-button-focus-border-color": "var(\n\t\t--nldesign-color-focus\n\t)",
+            "--nldesign-component-button-primary-action-background-color": "var(\n\t\t--nldesign-color-primary\n\t)",
+            "--nldesign-component-button-primary-action-color": "var(\n\t\t--nldesign-color-primary-text\n\t)",
+            "--nldesign-component-button-primary-action-border-color": "var(\n\t\t--nldesign-color-primary\n\t)",
+            "--nldesign-component-button-primary-action-hover-background-color": "var(\n\t\t--nldesign-color-primary-hover\n\t)",
+            "--nldesign-component-button-primary-action-hover-color": "var(\n\t\t--nldesign-color-primary-text\n\t)",
+            "--nldesign-component-button-secondary-action-background-color": "transparent",
+            "--nldesign-component-button-secondary-action-color": "var(\n\t\t--nldesign-color-primary\n\t)",
+            "--nldesign-component-button-secondary-action-border-color": "var(\n\t\t--nldesign-color-primary\n\t)",
+            "--nldesign-component-button-secondary-action-hover-background-color": "var(\n\t\t--nldesign-color-primary-light\n\t)",
+            "--nldesign-component-textbox-background-color": "#ffffff",
+            "--nldesign-component-textbox-color": "var(--nldesign-color-text)",
+            "--nldesign-component-textbox-border-color": "var(--nldesign-color-border)",
+            "--nldesign-component-textbox-border-width": "1px",
+            "--nldesign-component-textbox-border-radius": "var(--nldesign-border-radius)",
+            "--nldesign-component-textbox-font-family": "var(--nldesign-font-family)",
+            "--nldesign-component-textbox-font-size": "1rem",
+            "--nldesign-component-textbox-padding-block": "0.5rem",
+            "--nldesign-component-textbox-padding-inline": "0.75rem",
+            "--nldesign-component-textbox-focus-border-color": "var(--nldesign-color-info)",
+            "--nldesign-component-textbox-hover-border-color": "var(\n\t\t--nldesign-color-border-dark\n\t)",
+            "--nldesign-component-textbox-disabled-background-color": "#e5e5e5",
+            "--nldesign-component-textbox-disabled-color": "#696969",
+            "--nldesign-component-textbox-invalid-border-color": "var(--nldesign-color-error)",
+            "--nldesign-component-form-field-label-color": "var(--nldesign-color-text)",
+            "--nldesign-component-form-field-label-font-weight": "700",
+            "--nldesign-component-form-select-border-color": "var(--nldesign-color-border)",
+            "--nldesign-component-form-select-border-radius": "var(--nldesign-border-radius)",
+            "--nldesign-component-form-select-focus-border-color": "var(--nldesign-color-info)",
+            "--nldesign-component-form-fieldset-border-color": "var(\n\t\t--nldesign-color-border\n\t)",
+            "--nldesign-component-form-fieldset-border-width": "1px",
+            "--nldesign-component-heading-font-family": "var(--nldesign-font-family)",
+            "--nldesign-component-heading-font-weight": "var(--nldesign-font-weight-heading)",
+            "--nldesign-component-heading-color": "var(--nldesign-color-text)",
+            "--nldesign-component-heading-1-font-size": "2.5rem",
+            "--nldesign-component-heading-1-font-weight": "var(\n\t\t--nldesign-component-heading-font-weight\n\t)",
+            "--nldesign-component-heading-1-line-height": "1.2",
+            "--nldesign-component-heading-1-color": "var(--nldesign-component-heading-color)",
+            "--nldesign-component-heading-2-font-size": "2rem",
+            "--nldesign-component-heading-2-font-weight": "var(\n\t\t--nldesign-component-heading-font-weight\n\t)",
+            "--nldesign-component-heading-2-line-height": "1.25",
+            "--nldesign-component-heading-2-color": "var(--nldesign-component-heading-color)",
+            "--nldesign-component-heading-3-font-size": "1.5rem",
+            "--nldesign-component-heading-3-font-weight": "var(\n\t\t--nldesign-component-heading-font-weight\n\t)",
+            "--nldesign-component-heading-3-line-height": "1.3",
+            "--nldesign-component-heading-3-color": "var(--nldesign-component-heading-color)",
+            "--nldesign-component-heading-4-font-size": "1.25rem",
+            "--nldesign-component-heading-4-font-weight": "var(\n\t\t--nldesign-component-heading-font-weight\n\t)",
+            "--nldesign-component-heading-4-line-height": "1.35",
+            "--nldesign-component-heading-4-color": "var(--nldesign-component-heading-color)",
+            "--nldesign-component-heading-5-font-size": "1.125rem",
+            "--nldesign-component-heading-5-font-weight": "var(\n\t\t--nldesign-component-heading-font-weight\n\t)",
+            "--nldesign-component-heading-5-line-height": "1.4",
+            "--nldesign-component-heading-5-color": "var(--nldesign-component-heading-color)",
+            "--nldesign-component-heading-6-font-size": "1rem",
+            "--nldesign-component-heading-6-font-weight": "var(\n\t\t--nldesign-component-heading-font-weight\n\t)",
+            "--nldesign-component-heading-6-line-height": "1.5",
+            "--nldesign-component-heading-6-color": "var(--nldesign-component-heading-color)",
+            "--nldesign-component-paragraph-font-size": "1rem",
+            "--nldesign-component-paragraph-line-height": "1.5",
+            "--nldesign-component-paragraph-color": "var(--nldesign-color-text)",
+            "--nldesign-component-paragraph-font-family": "var(--nldesign-font-family)",
+            "--nldesign-component-paragraph-font-weight": "var(--nldesign-font-weight-default)",
+            "--nldesign-component-link-color": "var(--nldesign-color-link)",
+            "--nldesign-component-link-hover-color": "var(--nldesign-color-link-hover)",
+            "--nldesign-component-link-visited-color": "var(--nldesign-color-link-visited)",
+            "--nldesign-component-link-font-weight": "var(\n\t\t--nldesign-font-weight-default\n\t)",
+            "--nldesign-component-link-text-decoration": "underline",
+            "--nldesign-component-table-border-color": "var(--nldesign-color-border)",
+            "--nldesign-component-table-border-width": "1px",
+            "--nldesign-component-table-header-background-color": "var(\n\t\t--nldesign-color-background-dark\n\t)",
+            "--nldesign-component-table-header-color": "var(--nldesign-color-text)",
+            "--nldesign-component-table-header-font-weight": "700",
+            "--nldesign-component-table-cell-padding-block": "0.5rem",
+            "--nldesign-component-table-cell-padding-inline": "0.75rem",
+            "--nldesign-component-table-row-hover-background-color": "var(\n\t\t--nldesign-color-background-hover\n\t)",
+            "--nldesign-component-badge-background-color": "var(\n\t\t--nldesign-color-primary\n\t)",
+            "--nldesign-component-badge-color": "var(\n\t\t--nldesign-color-primary-text\n\t)",
+            "--nldesign-component-badge-border-radius": "var(\n\t\t--nldesign-border-radius-pill\n\t)",
+            "--nldesign-component-badge-font-size": "0.875rem",
+            "--nldesign-component-badge-font-weight": "700",
+            "--nldesign-component-badge-padding-block": "0.125rem",
+            "--nldesign-component-badge-padding-inline": "0.5rem",
+            "--nldesign-component-separator-border-color": "var(--nldesign-color-border)",
+            "--nldesign-component-separator-border-width": "1px",
+            "--nldesign-component-ordered-list-color": "var(\n\t\t--nldesign-color-text\n\t)",
+            "--nldesign-component-ordered-list-font-size": "1rem",
+            "--nldesign-component-ordered-list-line-height": "1.5",
+            "--nldesign-component-unordered-list-color": "var(\n\t\t--nldesign-color-text\n\t)",
+            "--nldesign-component-unordered-list-font-size": "1rem",
+            "--nldesign-component-unordered-list-line-height": "1.5"
+        }
+    },
+    "cases": [
+        {
+            "primary": "#c8102e",
+            "background": "#ffffff",
+            "expected": {
+                "declarations": {
+                    "--nldesign-color-primary": "#c8102e",
+                    "--nldesign-color-primary-text": "#ffffff",
+                    "--nldesign-color-primary-hover": "#aa0e27",
+                    "--nldesign-color-primary-light": "#f8e2e6",
+                    "--nldesign-color-primary-light-hover": "#f3cad1",
+                    "--nldesign-color-header-background": "#c8102e",
+                    "--nldesign-color-header-text": "#ffffff",
+                    "--nldesign-color-nav-background": "#ffffff",
+                    "--nldesign-color-text": "#333333",
+                    "--nldesign-color-text-muted": "#696969",
+                    "--nldesign-color-border": "#b4b4b4",
+                    "--nldesign-color-border-dark": "#696969",
+                    "--nldesign-color-link": "#c8102e",
+                    "--nldesign-color-link-hover": "#aa0e27",
+                    "--nldesign-color-error": "#d52b1e",
+                    "--nldesign-color-error-rgb": "213, 43, 30",
+                    "--nldesign-color-warning": "#e17000",
+                    "--nldesign-color-warning-rgb": "225, 112, 0",
+                    "--nldesign-color-success": "#39870c",
+                    "--nldesign-color-success-rgb": "57, 135, 12",
+                    "--nldesign-color-info": "#007bc7",
+                    "--nldesign-color-info-rgb": "0, 123, 199",
+                    "--nldesign-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\tOxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "--nldesign-border-radius": "0",
+                    "--nldesign-border-radius-small": "0",
+                    "--nldesign-border-radius-large": "4px"
+                },
+                "textOnPrimary": "#ffffff",
+                "textRatio": 5.88,
+                "uiRatio": 5.88
+            }
+        },
+        {
+            "primary": "#ffd200",
+            "background": "#ffffff",
+            "expected": {
+                "declarations": {
+                    "--nldesign-color-primary": "#ffd200",
+                    "--nldesign-color-primary-text": "#000000",
+                    "--nldesign-color-primary-hover": "#d9b300",
+                    "--nldesign-color-primary-light": "#fffae0",
+                    "--nldesign-color-primary-light-hover": "#fff5c7",
+                    "--nldesign-color-header-background": "#ffd200",
+                    "--nldesign-color-header-text": "#000000",
+                    "--nldesign-color-nav-background": "#ffffff",
+                    "--nldesign-color-text": "#333333",
+                    "--nldesign-color-text-muted": "#696969",
+                    "--nldesign-color-border": "#b4b4b4",
+                    "--nldesign-color-border-dark": "#696969",
+                    "--nldesign-color-link": "#154273",
+                    "--nldesign-color-link-hover": "#123862",
+                    "--nldesign-color-error": "#d52b1e",
+                    "--nldesign-color-error-rgb": "213, 43, 30",
+                    "--nldesign-color-warning": "#e17000",
+                    "--nldesign-color-warning-rgb": "225, 112, 0",
+                    "--nldesign-color-success": "#39870c",
+                    "--nldesign-color-success-rgb": "57, 135, 12",
+                    "--nldesign-color-info": "#007bc7",
+                    "--nldesign-color-info-rgb": "0, 123, 199",
+                    "--nldesign-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\tOxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "--nldesign-border-radius": "0",
+                    "--nldesign-border-radius-small": "0",
+                    "--nldesign-border-radius-large": "4px"
+                },
+                "textOnPrimary": "#000000",
+                "textRatio": 14.47,
+                "uiRatio": 1.45
+            }
+        },
+        {
+            "primary": "#808080",
+            "background": "#ffffff",
+            "expected": {
+                "declarations": {
+                    "--nldesign-color-primary": "#808080",
+                    "--nldesign-color-primary-text": "#000000",
+                    "--nldesign-color-primary-hover": "#6d6d6d",
+                    "--nldesign-color-primary-light": "#f0f0f0",
+                    "--nldesign-color-primary-light-hover": "#e3e3e3",
+                    "--nldesign-color-header-background": "#808080",
+                    "--nldesign-color-header-text": "#000000",
+                    "--nldesign-color-nav-background": "#ffffff",
+                    "--nldesign-color-text": "#333333",
+                    "--nldesign-color-text-muted": "#696969",
+                    "--nldesign-color-border": "#b4b4b4",
+                    "--nldesign-color-border-dark": "#696969",
+                    "--nldesign-color-link": "#154273",
+                    "--nldesign-color-link-hover": "#123862",
+                    "--nldesign-color-error": "#d52b1e",
+                    "--nldesign-color-error-rgb": "213, 43, 30",
+                    "--nldesign-color-warning": "#e17000",
+                    "--nldesign-color-warning-rgb": "225, 112, 0",
+                    "--nldesign-color-success": "#39870c",
+                    "--nldesign-color-success-rgb": "57, 135, 12",
+                    "--nldesign-color-info": "#007bc7",
+                    "--nldesign-color-info-rgb": "0, 123, 199",
+                    "--nldesign-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\tOxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "--nldesign-border-radius": "0",
+                    "--nldesign-border-radius-small": "0",
+                    "--nldesign-border-radius-large": "4px"
+                },
+                "textOnPrimary": "#000000",
+                "textRatio": 5.32,
+                "uiRatio": 3.95
+            }
+        },
+        {
+            "primary": "#154273",
+            "background": "#f5f5f5",
+            "expected": {
+                "declarations": {
+                    "--nldesign-color-primary": "#154273",
+                    "--nldesign-color-primary-text": "#ffffff",
+                    "--nldesign-color-primary-hover": "#123862",
+                    "--nldesign-color-primary-light": "#dae0e5",
+                    "--nldesign-color-primary-light-hover": "#c4ced8",
+                    "--nldesign-color-header-background": "#154273",
+                    "--nldesign-color-header-text": "#ffffff",
+                    "--nldesign-color-nav-background": "#f5f5f5",
+                    "--nldesign-color-text": "#333333",
+                    "--nldesign-color-text-muted": "#696969",
+                    "--nldesign-color-border": "#b4b4b4",
+                    "--nldesign-color-border-dark": "#696969",
+                    "--nldesign-color-link": "#154273",
+                    "--nldesign-color-link-hover": "#123862",
+                    "--nldesign-color-error": "#d52b1e",
+                    "--nldesign-color-error-rgb": "213, 43, 30",
+                    "--nldesign-color-warning": "#e17000",
+                    "--nldesign-color-warning-rgb": "225, 112, 0",
+                    "--nldesign-color-success": "#39870c",
+                    "--nldesign-color-success-rgb": "57, 135, 12",
+                    "--nldesign-color-info": "#007bc7",
+                    "--nldesign-color-info-rgb": "0, 123, 199",
+                    "--nldesign-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\tOxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "--nldesign-border-radius": "0",
+                    "--nldesign-border-radius-small": "0",
+                    "--nldesign-border-radius-large": "4px"
+                },
+                "textOnPrimary": "#ffffff",
+                "textRatio": 10.2,
+                "uiRatio": 9.36
+            }
+        },
+        {
+            "primary": "#0a0",
+            "background": "#FFF",
+            "expected": {
+                "declarations": {
+                    "--nldesign-color-primary": "#00aa00",
+                    "--nldesign-color-primary-text": "#000000",
+                    "--nldesign-color-primary-hover": "#009100",
+                    "--nldesign-color-primary-light": "#e0f5e0",
+                    "--nldesign-color-primary-light-hover": "#c7ecc7",
+                    "--nldesign-color-header-background": "#00aa00",
+                    "--nldesign-color-header-text": "#000000",
+                    "--nldesign-color-nav-background": "#ffffff",
+                    "--nldesign-color-text": "#333333",
+                    "--nldesign-color-text-muted": "#696969",
+                    "--nldesign-color-border": "#b4b4b4",
+                    "--nldesign-color-border-dark": "#696969",
+                    "--nldesign-color-link": "#154273",
+                    "--nldesign-color-link-hover": "#123862",
+                    "--nldesign-color-error": "#d52b1e",
+                    "--nldesign-color-error-rgb": "213, 43, 30",
+                    "--nldesign-color-warning": "#e17000",
+                    "--nldesign-color-warning-rgb": "225, 112, 0",
+                    "--nldesign-color-success": "#39870c",
+                    "--nldesign-color-success-rgb": "57, 135, 12",
+                    "--nldesign-color-info": "#007bc7",
+                    "--nldesign-color-info-rgb": "0, 123, 199",
+                    "--nldesign-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\tOxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "--nldesign-border-radius": "0",
+                    "--nldesign-border-radius-small": "0",
+                    "--nldesign-border-radius-large": "4px"
+                },
+                "textOnPrimary": "#000000",
+                "textRatio": 6.75,
+                "uiRatio": 3.11
+            }
+        }
+    ]
+}

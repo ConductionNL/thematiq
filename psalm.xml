@@ -26,122 +26,42 @@
              analysers see. Required by the ADR-040 autoload prelude in
              lib/AppInfo/Application.php. Never autoloaded at runtime. -->
         <file name="stubs/nextcloud-legacy.php" />
+        <!-- Server-private classes this app calls or extends: OCA\Theming
+             (lib/Service/ThemingService.php and friends) and
+             OC\Mail\EMailTemplate (lib/Mail/NLDesignEMailTemplate.php's
+             parent). Stubs make psalm check the calls instead of
+             suppressing UndefinedClass. Never autoloaded at runtime. -->
+        <file name="stubs/nextcloud-theming.php" />
+        <file name="stubs/nextcloud-mail.php" />
     </stubs>
     <issueHandlers>
-        <UndefinedDocblockClass errorLevel="suppress"/>
-        <UndefinedClass>
-            <errorLevel type="suppress">
-                <!-- Nextcloud OCP Classes -->
-                <referencedClass name="OCP\AppFramework\App"/>
-                <referencedClass name="OCP\AppFramework\Bootstrap\IBootstrap"/>
-                <referencedClass name="OCP\AppFramework\Controller"/>
-                <referencedClass name="OCP\AppFramework\IAppContainer"/>
-                <referencedClass name="OCP\App\IAppManager"/>
-                <referencedClass name="OCP\BackgroundJob\IJobList"/>
-                <referencedClass name="OCP\BackgroundJob\QueuedJob"/>
-                <referencedClass name="OCP\BackgroundJob\TimedJob"/>
-                <referencedClass name="OCP\EventDispatcher\Event"/>
-                <referencedClass name="OCP\EventDispatcher\IEventListener"/>
-                <referencedClass name="OCP\IAppConfig"/>
-                <referencedClass name="OCP\ICacheFactory"/>
-                <referencedClass name="OCP\IConfig"/>
-                <referencedClass name="OCP\IDBConnection"/>
-                <referencedClass name="OCP\IGroupManager"/>
-                <referencedClass name="OCP\IUserManager"/>
-                <referencedClass name="OCP\IUserSession"/>
-                <referencedClass name="OCP\IMemcache"/>
-                <referencedClass name="OCP\IRequest"/>
-                <referencedClass name="OCP\EventDispatcher\IEventDispatcher"/>
-                <referencedClass name="OCP\DB\QueryBuilder\IQueryBuilder"/>
-                <referencedClass name="OCP\AppFramework\Db\QBMapper"/>
-                <referencedClass name="OCP\AppFramework\Db\Entity"/>
-                <referencedClass name="OCP\Files\IRootFolder"/>
-                <referencedClass name="OCP\Files\Node"/>
-                <referencedClass name="OCP\Files\File"/>
-                <referencedClass name="OCP\Files\Folder"/>
-                <referencedClass name="OCP\Files\NotFoundException"/>
-                <referencedClass name="OCP\AppFramework\Http\JSONResponse"/>
-                <referencedClass name="OCP\AppFramework\Http\TemplateResponse"/>
-                <referencedClass name="OCP\AppFramework\Http\DataResponse"/>
-                <referencedClass name="OCP\IL10N"/>
-                <referencedClass name="OCP\IURLGenerator"/>
-                <referencedClass name="OCP\Http\Client\IClient"/>
-                <referencedClass name="OCP\Http\Client\IClientService"/>
-                <referencedClass name="OCP\Notification\IManager"/>
-                <referencedClass name="OCP\Share\IManager"/>
-                <!-- OpenRegister cross-app classes (loaded dynamically) -->
-                <referencedClass name="OCA\OpenRegister\Db\ObjectEntity"/>
-                <referencedClass name="OCA\OpenRegister\Db\RegisterMapper"/>
-                <referencedClass name="OCA\OpenRegister\Db\SchemaMapper"/>
-                <referencedClass name="OCA\OpenRegister\Event\DeepLinkRegistrationEvent"/>
-                <referencedClass name="OCA\OpenRegister\Event\ObjectCreatingEvent"/>
-                <referencedClass name="OCA\OpenRegister\Event\ObjectCreatedEvent"/>
-                <referencedClass name="OCA\OpenRegister\Event\ObjectUpdatingEvent"/>
-                <referencedClass name="OCA\OpenRegister\Event\ObjectUpdatedEvent"/>
-                <referencedClass name="OCA\OpenRegister\Event\ObjectDeletedEvent"/>
-                <referencedClass name="OCA\OpenRegister\Service\ObjectService"/>
-                <referencedClass name="OCA\OpenRegister\Service\ConfigurationService"/>
-                <referencedClass name="OCA\OpenRegister\Service\RegisterService"/>
-                <referencedClass name="OCA\OpenRegister\Service\FileService"/>
-                <referencedClass name="OCA\OpenRegister\Service\CalendarEventService"/>
-                <referencedClass name="OCA\OpenRegister\Mcp\IMcpToolProvider"/>
-                <!-- Additional OCP infrastructure types used across the fleet -->
-                <referencedClass name="OCP\AppFramework\Bootstrap\IBootContext"/>
-                <referencedClass name="OCP\AppFramework\Bootstrap\IRegistrationContext"/>
-                <referencedClass name="OCP\AppFramework\Db\DoesNotExistException"/>
-                <referencedClass name="OCP\DB\Exception"/>
-                <referencedClass name="OCP\IGroup"/>
-                <referencedClass name="OCP\IUser"/>
-                <referencedClass name="OCP\Migration\IRepairStep"/>
-                <!-- Nextcloud server internals -->
-                <referencedClass name="OC"/>
-                <!-- Nextcloud Theming app peer-app classes (theming app is always enabled in NC) -->
-                <referencedClass name="OCA\Theming\ImageManager"/>
-                <referencedClass name="OCA\Theming\ThemingDefaults"/>
-                <!-- Server-internal (private-namespace) mail classes. Extending
-                     OC\Mail\EMailTemplate is the platform's own sanctioned
-                     mail_template_class hook (OC\Mail\Mailer::makeTemplate()) —
-                     not stubbed in nextcloud/ocp because OC\ is intentionally
-                     private API, mirroring the OCA\Theming precedent above. -->
-                <referencedClass name="OC\Mail\EMailTemplate"/>
-                <referencedClass name="OC\Mail\Mailer"/>
-                <!-- NLDesign own Settings class (loaded at runtime, not in Psalm analysis path) -->
-                <referencedClass name="OCA\Thematiq\Settings\Admin"/>
-                <!-- GuzzleHttp (loaded via composer at runtime) -->
-                <referencedClass name="GuzzleHttp\Client"/>
-                <referencedClass name="GuzzleHttp\Exception\GuzzleException"/>
-            </errorLevel>
-        </UndefinedClass>
-        <UndefinedMagicMethod errorLevel="suppress"/>
-        <UnusedClass errorLevel="suppress"/>
+        <!-- Burned down on 2026-10-02 from 37 blanket handlers and a 70-class
+             UndefinedClass list to the five below. Every other issue type is
+             live: fix a new finding, do not add a handler for it.
+
+             All five are the same false positive. Psalm sees only lib/, so
+             it cannot see the callers Nextcloud reaches by reflection
+             (routes.php to controller methods, the DI container to services,
+             info.xml to repair steps, commands and jobs, events to
+             listeners) or the unit tests that read a return value. Measured
+             with every handler removed: 85 PossiblyUnusedMethod, 36
+             UnusedClass, 2 PossiblyUnusedParam, 2 PossiblyUnusedReturnValue,
+             and 2 private members of NlDesignThemeShareableConfigType, a
+             class only OpenRegister instantiates. -->
         <PossiblyUnusedMethod errorLevel="suppress"/>
-        <UnusedMethod errorLevel="suppress"/>
-        <UnusedProperty errorLevel="suppress"/>
+        <UnusedClass errorLevel="suppress"/>
         <PossiblyUnusedParam errorLevel="suppress"/>
-        <UnusedDocblockParam errorLevel="suppress"/>
-        <UnusedVariable errorLevel="suppress"/>
         <PossiblyUnusedReturnValue errorLevel="suppress"/>
-        <RedundantCondition errorLevel="suppress"/>
-        <RedundantFunctionCall errorLevel="suppress"/>
-        <RedundantCast errorLevel="suppress"/>
-        <InvalidDocblock errorLevel="suppress"/>
-        <MoreSpecificImplementedParamType errorLevel="suppress"/>
-        <MissingDependency errorLevel="suppress"/>
-        <UnevaluatedCode errorLevel="suppress"/>
-        <NoValue errorLevel="suppress"/>
-        <TypeDoesNotContainNull errorLevel="suppress"/>
-        <TypeDoesNotContainType errorLevel="suppress"/>
-        <InvalidArrayOffset errorLevel="suppress"/>
-        <InvalidCast errorLevel="suppress"/>
-        <InvalidArgument errorLevel="suppress"/>
-        <InvalidReturnType errorLevel="suppress"/>
-        <InvalidReturnStatement errorLevel="suppress"/>
-        <MismatchingDocblockReturnType errorLevel="suppress"/>
-        <EmptyArrayAccess errorLevel="suppress"/>
-        <ImplementedReturnTypeMismatch errorLevel="suppress"/>
-        <InvalidMethodCall errorLevel="suppress"/>
-        <UndefinedInterfaceMethod errorLevel="suppress"/>
-        <MissingTemplateParam errorLevel="suppress"/>
+        <UnusedMethod>
+            <errorLevel type="suppress">
+                <file name="lib/Service/Config/NlDesignThemeShareableConfigType.php"/>
+            </errorLevel>
+        </UnusedMethod>
+        <UnusedProperty>
+            <errorLevel type="suppress">
+                <file name="lib/Service/Config/NlDesignThemeShareableConfigType.php"/>
+            </errorLevel>
+        </UnusedProperty>
     </issueHandlers>
     <extraFiles>
         <directory name="vendor/nextcloud/ocp" />

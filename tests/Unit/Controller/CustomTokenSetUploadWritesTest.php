@@ -22,6 +22,7 @@ use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\FontService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
@@ -117,7 +118,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		);
 
 		$this->service = new CustomTokenSetService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$config,
 			new CustomTokenSetValidator(),
 			new ContrastService(),
@@ -259,7 +260,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @dataProvider smuggledValueProvider
 	 *
-	 * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-1
+	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
 	 */
 	public function testAForbiddenValueUnderANameTheValidatorSkipsIsRefused(string $name, string $value): void {
 		$css = ":root {\n  --nldesign-color-primary: #154273;\n  " . $name . ': ' . $value . ";\n}\n";
@@ -316,7 +317,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * The same constructs under an ACCEPTED name are refused too — the gate
 	 * did not move from one set to the other, it widened to cover both.
 	 *
-	 * @spec openspec/changes/harden-custom-token-set-value-validation/tasks.md#task-1
+	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
 	 */
 	public function testAForbiddenValueUnderAnAcceptedNameIsStillRefused(): void {
 		$response = $this->upload(":root {\n  --nldesign-color-primary: expression(alert(1));\n}\n");

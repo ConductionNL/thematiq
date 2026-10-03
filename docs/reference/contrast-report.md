@@ -27,6 +27,10 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | duo | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | enkhuizen | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | epe | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
+| example-basisschool | 6.07:1 | 4.5:1 | 6.07:1 | 3.0:1 | pass |
+| example-college | 9.34:1 | 4.5:1 | 9.34:1 | 3.0:1 | pass |
+| example-opleider | 9.40:1 | 4.5:1 | 9.40:1 | 3.0:1 | pass |
+| example-voortgezet | 7.67:1 | 4.5:1 | 7.67:1 | 3.0:1 | pass |
 | frankendesk | 7.76:1 | 4.5:1 | 7.76:1 | 3.0:1 | pass |
 | groningen | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | haarlem | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |

@@ -23,7 +23,6 @@ use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -77,10 +76,14 @@ class AdminInitialStateTest extends TestCase {
 		string $iconPackOverride,
 		array &$captured,
 		?string &$playgroundSetAsked = null,
+		string $environment = '',
 	): Admin {
 		$captured = [];
 
 		$config = $this->createMock(IConfig::class);
+		$config->method('getSystemValueString')->willReturnCallback(
+			static fn (string $key, string $default = '') => ($key === 'thematiq.environment' ? $environment : $default)
+		);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (string $app, string $key, string $default = '') use ($iconPackOverride) {
 				if ($key === 'icon_pack') {
@@ -121,6 +124,14 @@ class AdminInitialStateTest extends TestCase {
 
 		$designSystemService = $this->createMock(DesignSystemService::class);
 		$designSystemService->method('resolveActiveIconPacks')->willReturn(['remixicon']);
+		$designSystemService->method('getDesignSystems')->willReturn(
+			[
+				'nldesign' => ['id' => 'nldesign', 'documentation_url' => 'https://nldesignsystem.nl'],
+				'lasuite' => ['id' => 'lasuite', 'documentation_url' => 'https://github.com/suitenumerique/cunningham'],
+				'none' => ['id' => 'none'],
+				'evil' => ['id' => 'evil', 'documentation_url' => 'javascript:alert(1)'],
+			]
+		);
 
 		$initialState = $this->createMock(IInitialState::class);
 		$initialState->method('provideInitialState')->willReturnCallback(
@@ -150,7 +161,6 @@ class AdminInitialStateTest extends TestCase {
 
 		return new Admin(
 			$config,
-			$this->createMock(IL10N::class),
 			$tokenSetService,
 			$emailThemingService,
 			$previewService,
@@ -187,6 +197,7 @@ class AdminInitialStateTest extends TestCase {
 				'playgroundTokenSources',
 				'playgroundVersion',
 				'playgroundSet',
+				'designSystemDocs',
 			],
 			array_keys($captured),
 			'js/admin.js reads the first four and js/playground.js the rest; publishing fewer makes either fall back silently.'
@@ -205,6 +216,34 @@ class AdminInitialStateTest extends TestCase {
 		// stops that from being reintroduced.
 		$this->assertSame([], $captured['activePreview']);
 	}//end testEveryKeyTheScriptReadsIsProvided()
+
+	/**
+	 * The Documentation link starts at the current set's design system, and
+	 * the script gets every design system's link to follow the dropdown (#662).
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+	 */
+	public function testTheDocumentationLinkFollowsTheDesignSystem(): void {
+		$captured = [];
+		$params = $this->buildAdmin(null, '', $captured)->getForm()->getParams();
+
+		// The stub's active set is `lasuite`, whose design system is lasuite.
+		$this->assertSame('https://github.com/suitenumerique/cunningham', $params['documentationUrl']);
+		$this->assertSame(
+			[
+				'nldesign' => 'https://nldesignsystem.nl',
+				'lasuite' => 'https://github.com/suitenumerique/cunningham',
+				'none' => Admin::DEFAULT_DOCUMENTATION_URL,
+				'evil' => Admin::DEFAULT_DOCUMENTATION_URL,
+			],
+			$captured['designSystemDocs'],
+			'A design system without docs, or with a non-https link, gets the app docs.'
+		);
+
+		$template = (string)file_get_contents(__DIR__ . '/../../../templates/settings/admin.php');
+		$this->assertStringNotContainsString('href="https://nldesign.app"', $template);
+		$this->assertStringContainsString("p(\$_['documentationUrl'])", $template);
+	}//end testTheDocumentationLinkFollowsTheDesignSystem()
 
 	/**
 	 * An active preview is published with the token set's DISPLAY NAME
@@ -278,4 +317,21 @@ class AdminInitialStateTest extends TestCase {
 			);
 		}
 	}//end testTemplateShipsNoServerDataAttributes()
+
+	/**
+	 * The settings page shows the environment config.php declares, and the
+	 * occ command that sets it.
+	 *
+	 * @spec openspec/specs/environment-marker/spec.md
+	 */
+	public function testTheFormCarriesTheDeclaredEnvironment(): void {
+		$captured = [];
+		$params = $this->buildAdmin(null, '', $captured, $unused, 'acceptance')->getForm()->getParams();
+
+		$this->assertSame('acceptance', $params['environment']);
+		$this->assertSame('occ config:system:set thematiq.environment --value=<environment>', $params['environmentCommand']);
+
+		$params = $this->buildAdmin(null, '', $captured)->getForm()->getParams();
+		$this->assertSame('', $params['environment']);
+	}//end testTheFormCarriesTheDeclaredEnvironment()
 }//end class

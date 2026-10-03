@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.2
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.2
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
  * @spec openspec/specs/custom-token-sets/spec.md
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  */
@@ -28,6 +28,7 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
+use OCA\Thematiq\Service\MultiBrandImportService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ThemingAuditService;
@@ -51,7 +52,7 @@ use RuntimeException;
  * output is CSS served to every user, so the validation pipeline is strict and
  * the served file is always re-serialised from parsed declarations.
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - one endpoint family (import, list, export, delete) for one resource; the branches
@@ -60,6 +61,7 @@ use RuntimeException;
  *   and — when the deleted set was the active one — undo what it pushed into core theming. Each is called here; none is passed through.
  */
 class CustomTokenSetController extends Controller {
+	use ErrorStatusTrait;
 
 	/**
 	 * The custom token set storage/lifecycle service.
@@ -152,6 +154,7 @@ class CustomTokenSetController extends Controller {
 	 * @param ThemingService $themingService Core theming, for undoing a deleted set's sync.
 	 * @param DesignSystemService $designSystems The design-system manifest, for allow-listing a claimed id.
 	 * @param BrandingCaptureService|null $brandingCapture Copies Nextcloud's branding into a theme saved from the editor.
+	 * @param MultiBrandImportService|null $multiBrand Lists and imports the brands of a multi-brand source.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else; the
 	 *   alternative is a service locator, which hides exactly these dependencies instead of removing any of them.
@@ -169,6 +172,7 @@ class CustomTokenSetController extends Controller {
 		ThemingService $themingService,
 		DesignSystemService $designSystems,
 		?BrandingCaptureService $brandingCapture = null,
+		private ?MultiBrandImportService $multiBrand = null,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->service = $service;
@@ -217,11 +221,6 @@ class CustomTokenSetController extends Controller {
 	 * @return JSONResponse `{ id, imported, skipped, warnings, report, counts, inputKind }` or an error.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one upload endpoint validates name, source, size, kind and logo before it may persist;
-	 *   each check is a branch, and splitting them hides the order they must run in.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - one upload endpoint validates name, source, size, kind and logo before it may persist; each
-	 *   check is a branch, and splitting them hides the order they must run in.
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function upload(): JSONResponse {
@@ -240,7 +239,13 @@ class CustomTokenSetController extends Controller {
 			return $read;
 		}
 
-		// ALREADY A TOKEN SET — store it as it arrived.
+		// One source, several brands: listed first, stored on the admin's choice.
+		$brands = ($this->multiBrand?->brands(content: $read['content']) ?? []);
+		if ($brands !== []) {
+			return $this->uploadBrands(name: $name, read: $read, brands: $brands);
+		}
+
+		// ALREADY A TOKEN SET — store it without converting it.
 		//
 		// The token editor's "save as a new theme" serialises the active set and
 		// the admin's overrides straight into the `css/tokens/*.css` shape, so
@@ -251,38 +256,103 @@ class CustomTokenSetController extends Controller {
 		// theme carrying 121 component tokens of Rijkshuisstijl defaults they
 		// never chose.
 		//
-		// Uploads are untouched — a file an admin picks off disk is still an
-		// unknown document and still goes through the converter.
-		if ($this->request->getParam('raw', false) === true) {
-			return $this->storeRaw(name: $name, slug: $slug, content: $read['content']);
+		// A file an admin picks off disk is an unknown document and goes through
+		// the converter — unless Thematiq exported it. "Export as token set"
+		// marks its file with the design system it was taken from, and that
+		// file is a token set already: converting it filled every token the set
+		// left out with nldesign fallbacks, so an exported theme came back as a
+		// different one.
+		$exported = $this->exportedDesignSystem(content: $read['content']);
+		if ($this->request->getParam('raw', false) === true || $exported !== null) {
+			return $this->storeRaw(name: $name, slug: $slug, content: $read['content'], designSystem: $exported);
 		}
 
 		return $this->storeConverted(name: $name, slug: $slug, read: $read);
 	}//end upload()
 
 	/**
+	 * A multi-brand upload: without `brands` the brands are listed and nothing is stored;
+	 * with `brands` the chosen ones are stored together, or none.
+	 *
+	 * @param string                                          $name   The source's display name.
+	 * @param array{content: string, sourceName: string|null} $read   The payload from readInput().
+	 * @param array<int, array<string, mixed>>                $brands The brands the source holds.
+	 *
+	 * @return JSONResponse `{multiBrand, stored, brands}` or `{multiBrand, stored, sourceId, sets}`, or an error naming the brand.
+	 *
+	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
+	 */
+	private function uploadBrands(string $name, array $read, array $brands): JSONResponse {
+		$chosen = $this->request->getParam('brands', null);
+		if ($chosen === null || $this->multiBrand === null) {
+			return new JSONResponse(['multiBrand' => true, 'stored' => false, 'brands' => $brands]);
+		}
+
+		try {
+			$result = $this->multiBrand->import(sourceName: $name, content: $read['content'], keys: (array)$chosen, fileName: $read['sourceName']);
+		} catch (RuntimeException $e) {
+			$code = match ($e->getCode()) {
+				404 => 404,
+				409 => 409,
+				default => 422,
+			};
+
+			return new JSONResponse(['error' => $e->getMessage()], $code);
+		}
+
+		return new JSONResponse(['multiBrand' => true, 'stored' => true] + $result);
+	}//end uploadBrands()
+
+	/**
+	 * The design system a file exported by Thematiq says it was taken from.
+	 *
+	 * `js/playground.js` `exportCss()` writes the marker as a comment of its
+	 * own, so the exported file stays a plain token set that any other reader
+	 * can take as it is.
+	 *
+	 * @param string $content The uploaded document.
+	 *
+	 * @return string|null The design system id, or null for a file without the marker.
+	 *
+	 * @spec openspec/specs/token-import-export/spec.md#requirement-token-set-round-trip
+	 */
+	private function exportedDesignSystem(string $content): ?string {
+		if (preg_match('/\/\*\s*thematiq-token-set:\s*design-system=([a-z0-9-]+)\s*\*\//', $content, $match) !== 1) {
+			return null;
+		}
+
+		return $match[1];
+	}//end exportedDesignSystem()
+
+	/**
 	 * Store a token set that arrived already in the `css/tokens/*.css` shape.
 	 *
-	 * @param string $name The set's display name.
-	 * @param string $slug The slug derived from the name.
-	 * @param string $content The token set CSS, as sent.
+	 * @param string      $name         The set's display name.
+	 * @param string      $slug         The slug derived from the name.
+	 * @param string      $content      The token set CSS, as sent; only its validated declarations are stored.
+	 * @param string|null $designSystem The design system the file itself names, which outranks the request's claim.
 	 *
 	 * @return JSONResponse The persisted set, or the validator's error.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
 	 */
-	private function storeRaw(string $name, string $slug, string $content): JSONResponse {
+	private function storeRaw(string $name, string $slug, string $content, ?string $designSystem=null): JSONResponse {
 		$parsed = $this->mapFromCss(content: $content, slug: $slug);
 		if ($parsed instanceof JSONResponse) {
 			return $parsed;
 		}
 
-		$parsed['css'] = $content;
+		// No `css` key: persist() then writes the accepted declarations
+		// re-serialised, as a bundle import does, never the bytes as sent.
+		// The selector guard and the parser strip comments without regard to
+		// strings, while a browser does not treat a `/*` inside `url('…')` as
+		// one, so a crafted file could hide a whole rule between two :root
+		// declarations and still validate.
 
 		// Which design system the editor was looking at when it serialised
 		// this. Allow-listed against the shipped manifest rather than taken
 		// on trust: it decides which stylesheet layers every page load emits.
-		$claimed = trim((string)$this->request->getParam('designSystem', ''));
+		$claimed = ($designSystem ?? trim((string)$this->request->getParam('designSystem', '')));
 		if ($claimed !== '' && isset($this->designSystems->getDesignSystems()[$claimed]) === true) {
 			$parsed['designSystem'] = $claimed;
 		}
@@ -333,12 +403,7 @@ class CustomTokenSetController extends Controller {
 				assetName: CustomTokenSetService::ID_PREFIX . $slug
 			);
 		} catch (RuntimeException $e) {
-			$code = $e->getCode();
-			if ($code < 400 || $code > 599) {
-				$code = 422;
-			}
-
-			return new JSONResponse(['error' => $e->getMessage()], $code);
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 422));
 		}
 
 		// What the ADMIN'S DOCUMENT yielded, reported by the converter from the
@@ -521,7 +586,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array{accepted: array<string, string>, skipped: string[]}|JSONResponse
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
 	 */
 	private function mapFromCss(string $content, string $slug) {
 		if ($this->validator->hasDisallowedSelector(css: $content) === true) {
@@ -562,12 +627,9 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The upload result or a collision/storage error.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.3
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - persisting is a sequence of independent optional steps (dark variant, logo, manifest),
-	 *   each guarded.
 	 */
 	private function persist(string $name, array $parsed): JSONResponse {
 		try {
@@ -585,12 +647,7 @@ class CustomTokenSetController extends Controller {
 				designSystem: ($parsed['designSystem'] ?? null)
 			);
 		} catch (RuntimeException $e) {
-			$code = $e->getCode();
-			if ($code < 400 || $code > 599) {
-				$code = 500;
-			}
-
-			return new JSONResponse(['error' => $e->getMessage()], $code);
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
 
 		$servedCss = $this->service->getRawContent(id: $result['id']);
@@ -647,7 +704,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The list of custom sets.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function list(): JSONResponse {
@@ -661,7 +718,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return DataDownloadResponse|JSONResponse The CSS download or a 404.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function export(string $id) {
@@ -684,7 +741,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The deletion result.
 	 *
-	 * @spec openspec/changes/custom-token-set-upload/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
@@ -699,6 +756,9 @@ class CustomTokenSetController extends Controller {
 		if ($this->service->delete(id: $id) === false) {
 			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
 		}
+
+		// The source record of a multi-brand import goes with its last brand.
+		$this->multiBrand?->forgetSet(id: $id);
 
 		// The branding it captured, and the images copied for it, go with it.
 		if ($this->brandingCapture !== null) {

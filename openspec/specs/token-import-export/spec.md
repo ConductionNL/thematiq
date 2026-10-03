@@ -1,12 +1,14 @@
 ---
-status: done
+status: in-progress
 ---
 
 # Token Import/Export Specification
 
 ## Purpose
 Allows admins to download the current `custom-overrides.css` as a portable file and upload a previously saved file to restore or share a token configuration. Only known, editable Nextcloud `--color-*` tokens are accepted on import — unknown variables are silently rejected and their count is reported.
+
 ## Requirements
+
 ### Requirement: Export Current Overrides
 
 The admin settings panel MUST provide a **Download** button that exports the current
@@ -14,8 +16,21 @@ The admin settings panel MUST provide a **Download** button that exports the cur
 file — it is NOT a complete configuration export: the active token set, feature toggles, per-app
 exclusions, and custom token sets are exported exclusively by the full configuration bundle
 defined in the `config-portability` spec (`GET /settings/config/export` /
-`occ nldesign:config:export`), and the overrides UI SHOULD point admins needing whole-config
+`occ thematiq:config:export`), and the overrides UI SHOULD point admins needing whole-config
 promotion (OTAP) at the bundle.
+
+Before downloading, the panel MUST say in a dialog what the file contains and what it does not.
+The download MUST carry the request token: the endpoint is CSRF-protected, so a plain link is
+refused and the browser reports the download as failed.
+
+#### Scenario: Download says what it does first
+
+- GIVEN the admin is on the theming settings with the token editor loaded
+- WHEN the admin clicks Download
+- THEN a dialog MUST open naming the theme, saying the file holds only its saved overrides and
+  not a complete theme, and pointing at Export as token set and the configuration bundle
+- AND nothing MUST be downloaded until the admin confirms
+- AND Cancel MUST close the dialog without downloading
 
 #### Scenario: Admin downloads overrides
 
@@ -59,8 +74,21 @@ for known `--color-*` tokens, and writes the recognized tokens to `custom-overri
 replacing the current overrides. This import touches ONLY the overrides file: it MUST NOT change
 the active token set, feature toggles, per-app exclusions, or custom token sets — importing the
 complete configuration is the `config-portability` bundle's job
-(`POST /settings/config/import` / `occ nldesign:config:import`), which reuses this capability's
+(`POST /settings/config/import` / `occ thematiq:config:import`), which reuses this capability's
 editable-token whitelist semantics for its overrides section.
+
+Before the file picker opens, the panel MUST say in a dialog that the file replaces every value
+saved for the theme.
+
+#### Scenario: Upload says what it does first
+
+- GIVEN the admin is on the theming settings with the token editor loaded
+- WHEN the admin clicks Upload
+- THEN a dialog MUST open naming the theme and saying the file replaces every value saved for
+  it, that unknown values are skipped and unsaved changes are lost, and pointing at Custom token
+  sets for adding a whole theme
+- AND the file picker MUST only open once the admin confirms
+- AND Cancel MUST close the dialog without opening the file picker
 
 #### Scenario: Admin uploads a valid overrides file
 
@@ -89,7 +117,7 @@ editable-token whitelist semantics for its overrides section.
 
 ### Requirement: Import Validation
 On upload, the importer MUST validate each CSS custom property against the canonical editable token registry. Only tokens on the editable list MUST be written.
-@e2e exclude All import-validation scenarios require file upload + server-side parse response assertions — backend validation logic, not testable via DOM; would mutate shared-env custom-overrides.css.
+@e2e exclude All import-validation scenarios require a file upload and assertions on the server's parse response: backend validation logic with no DOM surface, and a run would change the shared environment's custom-overrides.css.
 
 #### Scenario: File contains unknown tokens
 - GIVEN an uploaded CSS file contains `--color-primary: #aa0000` (known) and `--my-custom-var: red` (unknown)
@@ -106,10 +134,16 @@ On upload, the importer MUST validate each CSS custom property against the canon
 - AND no error MUST be thrown (it is valid to import a file that contributes no tokens)
 
 #### Scenario: File contains excluded tokens
-- GIVEN an uploaded CSS file contains `--color-main-background: #ffffff` (excluded)
+- GIVEN an uploaded CSS file contains `--icon-download-dark: url(x.svg)` (excluded, class `icon`)
 - WHEN the file is imported
-- THEN `--color-main-background` MUST be silently rejected
+- THEN `--icon-download-dark` MUST be silently rejected
 - AND it MUST be counted in the "skipped" total
+
+#### Scenario: File contains a formerly excluded token
+- GIVEN an uploaded CSS file contains `--color-main-background: #fdfcf8`
+- WHEN the file is imported
+- THEN `--color-main-background` MUST be written to `custom-overrides.css`
+- AND it MUST be counted in the "imported" total
 
 #### Scenario: File is not valid CSS
 - GIVEN the admin uploads a file that is not parseable CSS (e.g. a JSON file or empty file)
@@ -146,3 +180,45 @@ The import MUST be handled by a dedicated POST endpoint that accepts a multipart
 - AND the server MUST parse the file content server-side (not rely on client-side JS parsing)
 - AND the response MUST be JSON with `{ imported: N, skipped: M }`
 
+### Requirement: Token Set Round Trip
+A theme exported with **Export as token set** and uploaded again under Custom token sets MUST come
+back the same theme. The export MUST write only the tokens the set itself declares, with the
+overrides saved for that set folded in, and never the design system's defaults that only exist to
+draw the preview. It MUST mark the file with the design system the set is worn on, and the upload
+MUST store a marked file as it arrived, on that design system, instead of converting it.
+
+#### Scenario: Export writes only what the set declares
+@e2e exclude Reads the downloaded file's content — covered by the playground unit tests; a browser download cannot be read from the page.
+- GIVEN a theme saved from the stock Nextcloud set with one colour changed
+- WHEN the admin clicks Export as token set
+- THEN the file MUST contain the set's own tokens with the saved override folded in
+- AND it MUST NOT contain nldesign defaults the set does not declare, such as spacing tokens
+- AND it MUST carry the marker `/* thematiq-token-set: design-system=none */`
+
+#### Scenario: A marked file is stored as it arrived
+@e2e exclude Uploads a token set and inspects the stored file — mutates shared-env custom sets; covered by the controller unit tests.
+- GIVEN a file carrying `/* thematiq-token-set: design-system=none */`
+- WHEN it is uploaded under Custom token sets
+- THEN it MUST be stored as it arrived, without conversion
+- AND the new set MUST be recorded on design system `none`
+- AND a design system the manifest does not ship MUST NOT be recorded
+
+### Requirement: Overrides round-trip every registry token
+Exporting the overrides and importing the file again MUST restore every override, for every registry token, including dark values.
+
+@e2e exclude File download and upload with assertions on the stored overrides; the visible effect of an imported internal token is covered by `component-tokens` ("A variable the component declares itself is reached").
+
+#### Scenario: An internal token survives the round trip
+- GIVEN the admin has set `--nldesign-nc-dp-hover-color` to `#e8eef5`
+- WHEN the admin downloads the overrides and uploads the same file
+- THEN the override MUST be restored with the same value
+
+#### Scenario: A dark value survives the round trip
+- GIVEN the admin has set `--color-mark` with a dark value `#5c4a00`
+- WHEN the overrides are exported and imported
+- THEN the dark value MUST be restored for the dark scopes only
+
+#### Scenario: A file from before this change still imports
+- GIVEN an overrides file exported before this change, holding only brand tokens
+- WHEN the admin imports it
+- THEN every token in it MUST be imported as before

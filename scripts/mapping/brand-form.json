@@ -1,0 +1,36 @@
+{
+	"$comment": "How the simple brand form derives a complete token set from a primary and a background colour. Read by lib/Service/BrandFormService.php and js/lib/brandForm.js, in this order. A rule is [op, ...operands]; an operand is 'primary', 'background' or a token already derived above. Ops: from (copy), onColor (black or white, whichever contrasts better), darken (fraction), mix (share of the first kept), legible (the operand when it reaches 4.5:1 on the background, else the defaults value), default (the defaults layer value).",
+	"tokens": {
+		"--nldesign-color-primary": ["from", "primary"],
+		"--nldesign-color-primary-text": ["onColor", "primary"],
+		"--nldesign-color-primary-hover": ["darken", "primary", 0.15],
+		"--nldesign-color-primary-light": ["mix", "primary", "background", 0.12],
+		"--nldesign-color-primary-light-hover": [
+			"mix",
+			"primary",
+			"background",
+			0.22
+		],
+		"--nldesign-color-header-background": ["from", "primary"],
+		"--nldesign-color-header-text": ["onColor", "primary"],
+		"--nldesign-color-nav-background": ["from", "background"],
+		"--nldesign-color-text": ["default"],
+		"--nldesign-color-text-muted": ["default"],
+		"--nldesign-color-border": ["default"],
+		"--nldesign-color-border-dark": ["default"],
+		"--nldesign-color-link": ["legible", "primary"],
+		"--nldesign-color-link-hover": ["darken", "--nldesign-color-link", 0.15],
+		"--nldesign-color-error": ["default"],
+		"--nldesign-color-error-rgb": ["default"],
+		"--nldesign-color-warning": ["default"],
+		"--nldesign-color-warning-rgb": ["default"],
+		"--nldesign-color-success": ["default"],
+		"--nldesign-color-success-rgb": ["default"],
+		"--nldesign-color-info": ["default"],
+		"--nldesign-color-info-rgb": ["default"],
+		"--nldesign-font-family": ["default"],
+		"--nldesign-border-radius": ["default"],
+		"--nldesign-border-radius-small": ["default"],
+		"--nldesign-border-radius-large": ["default"]
+	}
+}

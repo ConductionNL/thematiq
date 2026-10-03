@@ -16,7 +16,7 @@ sync — exactly like a shipped set.
 
 ## Where
 
-Admin settings → **NL Design System Theme** (`/settings/admin/theming`) →
+Admin settings → **Thematiq** (`/settings/admin/theming`) →
 **Custom token sets** section. The feature is admin-only (delegated theming
 admins included); every endpoint is CSRF-protected.
 
@@ -94,6 +94,38 @@ Properties that are not part of the supported vocabulary (e.g. Nextcloud
 `--color-*` variables) are **skipped and listed** in the response so you can
 move them to `custom-overrides.css` instead.
 
+## Start from your colours
+
+No token file yet? Under **Custom token sets**, fill in **Start from your colours**: a name, your primary colour, your background colour and, if you like, a logo. Choose **Create house style** and the set is stored like an upload. It appears in the dropdown, and you can edit, export, preview and map it to groups.
+
+Thematiq fills in every token a complete set needs:
+
+- the hover shade and the light tints come from your primary colour;
+- the text on your primary colour is black or white, whichever reads better;
+- links take your primary colour when it reaches 4.5:1 on your background, and keep the default link colour when it does not;
+- status colours, greys, fonts and corner radii keep the default values.
+
+While you pick colours, the preview shows a primary button and its hover shade, exactly as they will be stored. Below it you see two contrast ratios: text on primary against 4.5:1, and primary on background against 3:1. A ratio below its threshold is a warning. You can still save.
+
+The logo may be SVG, PNG, JPG, GIF or WebP, up to 512 KB. It becomes the set's logo for the theming-sync dialog, together with your primary colour.
+
+A set made from two colours is plainer than one a designer made. Refine it in the token editor.
+
+## Several brands in one source
+
+One design source often holds several brands: a municipality with districts, a supplier with customers. Upload it once and choose the brands you want.
+
+Two kinds of file hold several brands:
+
+- A Tokens Studio file with two or more themes. Each theme is a brand. Its `enabled` token sets make the brand; its `source` sets only resolve references.
+- Built theme CSS with two or more blocks like `.noord-theme { … }`. Each class is a brand, and `:root` is shared by all of them.
+
+After the upload, the result lists the brands with their token counts, all ticked. Untick the ones you do not want and click **Import the chosen brands**. Nothing is stored before that click, and **Cancel** stores nothing at all. One import holds at most 20 brands.
+
+Each brand becomes a normal token set named `{source}: {brand}`, with its own contrast warnings and dark variant. Choose it in the dropdown or map it to a group, like any other set. If one of the names is already taken, nothing is imported and the message names the brand.
+
+In **Manage uploaded sets** the brands sit together under their source. **Update source** takes a new version of the file and replaces every brand at once, or none when one brand fails. The result says which brands were updated, which are no longer in the file (they stay as they were) and which are new in the file (import those with a normal upload). Delete a brand like any other set; the source goes away with its last brand.
+
 ## WCAG 2.1 AA contrast warnings
 
 On upload, the server computes WCAG 2.1 relative-luminance contrast ratios for
@@ -116,12 +148,14 @@ Each uploaded set in the **Custom token sets** list offers:
 - **Delete** — removes the file and its metadata. Deleting the **active** set
   resets the active token set to `nextcloud` in the same operation.
 
-## ⚠️ Upgrade caveat
+## Where your uploads are kept
 
-Uploaded sets are stored as files in the app directory
-(`css/tokens/custom-{slug}.css`), the same accepted trade-off as
-`custom-overrides.css`. An app-store upgrade that replaces the app directory
-**removes** uploaded sets. **Export your custom sets (Download) before
-upgrading** and re-upload them afterwards. Set metadata lives in the `thematiq`
-appconfig key `custom_token_sets` and survives the upgrade, but a manifest entry
-without a backing file is ignored by discovery.
+Your uploaded sets, their logos and their dark variants are kept in Nextcloud's app data, not in the app directory. So are your token overrides, your custom CSS and the logos and backgrounds a saved theme captures.
+
+- An app update leaves them in place.
+- Nextcloud's code integrity check stays clean, because the app directory keeps exactly the files the release shipped.
+- A server with a read-only app directory can use every one of these features.
+
+Updating from an older version moves the files it finds in the app directory into app data, and removes them there. If the app directory is read-only, the update logs each file it could not remove. Remove those by hand to clear the integrity warning.
+
+Going back to an older version? That version looks for these files in the app directory and does not find them. Download your sets and your overrides first, so you can upload them again.

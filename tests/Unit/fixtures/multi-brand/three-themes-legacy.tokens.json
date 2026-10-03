@@ -1,0 +1,100 @@
+{
+  "core": {
+    "color": {
+      "blue": {
+        "type": "color",
+        "value": "#154273"
+      },
+      "red": {
+        "type": "color",
+        "value": "#c8102e"
+      },
+      "green": {
+        "type": "color",
+        "value": "#2e7d32"
+      },
+      "white": {
+        "type": "color",
+        "value": "#ffffff"
+      }
+    }
+  },
+  "common": {
+    "color": {
+      "background": {
+        "type": "color",
+        "value": "#ffffff"
+      },
+      "on-primary": {
+        "type": "color",
+        "value": "#ffffff"
+      }
+    }
+  },
+  "brand/noord": {
+    "color": {
+      "primary": {
+        "type": "color",
+        "value": "#154273"
+      }
+    }
+  },
+  "brand/zuid": {
+    "color": {
+      "primary": {
+        "type": "color",
+        "value": "#c8102e"
+      }
+    }
+  },
+  "brand/oost": {
+    "color": {
+      "primary": {
+        "type": "color",
+        "value": "#2e7d32"
+      }
+    }
+  },
+  "$themes": [
+    {
+      "id": "noord",
+      "name": "Noord",
+      "group": "brand",
+      "selectedTokenSets": {
+        "core": "source",
+        "common": "enabled",
+        "brand/noord": "enabled",
+        "brand/zuid": "disabled"
+      }
+    },
+    {
+      "id": "zuid",
+      "name": "Zuid",
+      "group": "brand",
+      "selectedTokenSets": {
+        "core": "source",
+        "common": "enabled",
+        "brand/zuid": "enabled"
+      }
+    },
+    {
+      "id": "oost",
+      "name": "Oost",
+      "group": "brand",
+      "selectedTokenSets": {
+        "core": "source",
+        "common": "enabled",
+        "brand/oost": "enabled"
+      }
+    }
+  ],
+  "$metadata": {
+    "tokenSetOrder": [
+      "core",
+      "common",
+      "brand/noord",
+      "brand/zuid",
+      "brand/oost"
+    ]
+  }
+}

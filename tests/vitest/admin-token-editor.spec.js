@@ -5,6 +5,10 @@
  * - locked rows: Nextcloud's base tokens behind a warned opt-in, and the rows
  *   "primary drives every component" owns
  * - colour rows that hold an `r, g, b` triplet, and the per-row reset
+ * - where an unsaved edit is shown: the preview, and for the primary family
+ *   the settings section too, so the editor's own controls follow it
+ * - what switching sets offers: the set as saved, without the primary family
+ *   when the set brings its own primary through the theming sync
  * - the two save confirmations (stock: new theme or over Nextcloud; any other
  *   set: a plain confirm), their "do not ask again", and the controls that
  *   turn them back on
@@ -23,6 +27,8 @@
  * @spec openspec/specs/token-editor-ui/spec.md#requirement-save-action
  * @spec openspec/specs/token-editor-ui/spec.md#requirement-per-token-reset
  * @spec openspec/specs/token-editor-ui/spec.md#requirement-editable-token-input
+ * @spec openspec/specs/token-editor-ui/spec.md#requirement-live-preview
+ * @spec openspec/specs/token-set-apply-dialog/spec.md#requirement-resolved-value-comparison
  * @spec openspec/specs/theming-sync/spec.md#requirement-theming-sync-dialog-frontend
  */
 
@@ -101,7 +107,7 @@ function installGlobals() {
 function installFetch() {
 	global.fetch = vi.fn((url, options = {}) => {
 		const method = options.method || 'GET'
-		requests.push({ url, method, body: options.body })
+		requests.push({ url, method, body: options.body, headers: options.headers })
 		for (const [m, match, status, body] of routes) {
 			if (m === method && matches(url, match)) {
 				if (body instanceof Error) {
@@ -114,6 +120,7 @@ function installFetch() {
 						body === undefined
 							? Promise.reject(new Error('no body'))
 							: Promise.resolve(body),
+					blob: () => Promise.resolve(new window.Blob([String(body)])),
 				})
 			}
 		}
@@ -176,6 +183,7 @@ async function flush(rounds = 10) {
  * @param {object} [options.state] Extra initial-state keys.
  * @param {boolean} [options.primaryDrives] Whether the primary-drives box starts ticked.
  * @param {boolean} [options.withSelect] Whether the page has the token set dropdown.
+ * @param {string} [options.extraHtml] More of the settings page, inside the section.
  */
 async function mount({
 	current = 'rijkshuisstijl',
@@ -183,6 +191,7 @@ async function mount({
 	state = {},
 	primaryDrives = false,
 	withSelect = true,
+	extraHtml = '',
 } = {}) {
 	installInitialState({
 		tokenSets: TOKEN_SETS,
@@ -201,6 +210,7 @@ async function mount({
 			<span id="nldesign-design-system-badge"></span>
 			<input type="checkbox" id="nldesign-primary-drives-components"${primaryDrives ? ' checked' : ''}>
 			<button type="button" id="nldesign-reset-theme-btn">Reset</button>
+			${extraHtml}
 		</div>
 		<div class="nldesign-preview" id="nldesign-preview"></div>
 		<div id="nldesign-token-editor"></div>
@@ -258,6 +268,46 @@ function toasts() {
 	return OC.Notification.showTemporary.mock.calls.map((call) => call[0])
 }
 
+/** Tick "Also edit Nextcloud's base tokens" and accept its warning. */
+function unlockBase() {
+	tick(document.getElementById('nldesign-base-unlock'), true)
+	click(
+		document
+			.getElementById('nldesign-base-unlock-overlay')
+			.querySelector('.nldesign-dialog-confirm'),
+	)
+}
+
+/**
+ * Pick another set in the dropdown, with what its file resolves to and what
+ * was saved for it.
+ *
+ * @param {string} id The token set to switch to.
+ * @param {object} resolved What the set's file resolves to.
+ * @param {*} [saved] The overrides answer for the set, or an Error to fail it with.
+ */
+async function switchTo(id, resolved, saved) {
+	answer('GET', 'tokenset-preview', 200, { resolved })
+	if (saved !== undefined) {
+		answer('GET', 'overrides?tokenSet=' + id, 200, saved)
+	}
+	const select = document.getElementById('nldesign-token-set-select')
+	select.value = id
+	select.dispatchEvent(new window.Event('change', { bubbles: true }))
+	await flush()
+}
+
+/** The apply dialog's rows, as `{ token: new value }`. */
+function applyRows() {
+	return Object.fromEntries(
+		[
+			...document.querySelectorAll(
+				'#nldesign-apply-dialog-overlay .nldesign-apply-check',
+			),
+		].map((box) => [box.dataset.token, box.closest('tr').cells[3].textContent]),
+	)
+}
+
 /** The JSON body of the last request to a URL substring. */
 function lastBody(match, method = 'POST') {
 	const matching = sent(match, method)
@@ -278,6 +328,9 @@ describe('admin.js token editor', () => {
 	afterEach(() => {
 		document.head.innerHTML = ''
 		document.body.innerHTML = ''
+		// The apply dialog previews its values inline on <html>, which the
+		// body reset above does not reach.
+		document.documentElement.removeAttribute('style')
 		delete window.NldesignLayerSwap
 		delete window.ThematiqPlayground
 		vi.restoreAllMocks()
@@ -291,7 +344,7 @@ describe('admin.js token editor', () => {
 			expect(base.picker.disabled).toBe(true)
 			expect(base.reset.disabled).toBe(true)
 			expect(base.text.getAttribute('title')).toContain(
-				'A Nextcloud base colour',
+				'A Nextcloud base color',
 			)
 			expect(row(BUTTON).picker.disabled).toBe(false)
 
@@ -329,6 +382,26 @@ describe('admin.js token editor', () => {
 			).toBeNull()
 		})
 
+		it("draws its checkboxes as Nextcloud's own input.checkbox and label pair", async () => {
+			await mount()
+
+			for (const id of [
+				'nldesign-base-unlock',
+				'nldesign-confirm-save-stock',
+				'nldesign-confirm-save-theme',
+			]) {
+				const box = document.getElementById(id)
+				expect(box.classList.contains('checkbox'), id).toBe(true)
+				// A sibling label, not a wrapping one: core hides the input
+				// and draws the box on the label.
+				expect(box.closest('label'), id).toBeNull()
+				expect(
+					document.querySelector('label[for="' + id + '"]'),
+					id,
+				).not.toBeNull()
+			}
+		})
+
 		it('locks the rows the primary drives, and says why', async () => {
 			await mount({ primaryDrives: true })
 
@@ -337,7 +410,7 @@ describe('admin.js token editor', () => {
 				true,
 			)
 			expect(button.picker.getAttribute('title')).toContain(
-				'The primary colour drives this component',
+				'The primary color drives this component',
 			)
 		})
 
@@ -378,6 +451,33 @@ describe('admin.js token editor', () => {
 			await flush()
 
 			expect(row(BUTTON).text.value).toBe('#23845c')
+		})
+
+		it('keeps a quote in a saved value or label inside its attribute (#622)', async () => {
+			// An imported overrides file can carry a double quote: the save
+			// filter strips newlines and rejects braces and semicolons, not
+			// quotes. Escaped as text only, the quote closed value="..." and the
+			// rest became live attributes (onfocus + autofocus = script on load).
+			const payload = 'Arial" onfocus="alert(1)" autofocus x="'
+			const label = 'Font " onmouseover=\'alert(2)\' y="'
+			installInitialState({})
+			document.body.innerHTML = '<div id="nldesign-token-editor"></div>'
+			answer('GET', '/settings/overrides?', 200, {
+				overrides: { [FONT]: payload },
+				registry: { [FONT]: { ...REGISTRY[FONT], tab: 'content', label } },
+				tabs: {},
+			})
+			vi.resetModules()
+			await import('../../js/admin.js?t=' + Math.random())
+			await flush()
+
+			const input = row(FONT).text
+			expect(input.value).toBe(payload)
+			expect(input.getAttribute('aria-label')).toBe(label)
+			const editor = document.getElementById('nldesign-token-editor')
+			for (const name of ['onfocus', 'autofocus', 'onmouseover', 'x', 'y']) {
+				expect(editor.querySelector('[' + name + ']')).toBeNull()
+			}
 		})
 
 		it('writes an r, g, b triplet from the picker of an rgb row', async () => {
@@ -442,6 +542,81 @@ describe('admin.js token editor', () => {
 			click(font.reset)
 
 			expect(preview.style.getPropertyValue(FONT)).toBe('')
+		})
+
+		it("lets the editor's own controls follow an unsaved primary colour", async () => {
+			await mount()
+			unlockBase()
+			const settings = document.getElementById('nldesign-settings')
+			const preview = document.getElementById('nldesign-preview')
+
+			type(row(BASE).text, '#112233')
+
+			expect(preview.style.getPropertyValue(BASE)).toBe('#112233')
+			expect(settings.style.getPropertyValue(BASE)).toBe('#112233')
+			expect(settings.style.getPropertyPriority(BASE)).toBe('important')
+			// The rest of the page still wears only what has been saved.
+			expect(document.documentElement.style.getPropertyValue(BASE)).toBe('')
+
+			type(row(BASE).text, '')
+
+			expect(preview.style.getPropertyValue(BASE)).toBe('')
+			expect(settings.style.getPropertyValue(BASE)).toBe('')
+		})
+
+		it('keeps any other edit on the preview alone', async () => {
+			await mount()
+			const settings = document.getElementById('nldesign-settings')
+
+			type(row(FONT).text, 'Fira Sans')
+			// Painted from the primary, but not one of its family.
+			type(row(BUTTON).picker, '#123456')
+
+			expect(settings.style.getPropertyValue(FONT)).toBe('')
+			expect(settings.style.getPropertyValue(BUTTON)).toBe('')
+		})
+
+		it('resets a primary-family row on the settings section as well', async () => {
+			await mount({ overrides: { [BASE]: '#aa0000' } })
+			unlockBase()
+			const settings = document.getElementById('nldesign-settings')
+
+			type(row(BASE).text, '#00aa00')
+			click(row(BASE).reset)
+
+			expect(settings.style.getPropertyValue(BASE)).toBe('#aa0000')
+		})
+
+		it('drops a never-saved primary-family value from the settings section on reset', async () => {
+			await mount()
+			unlockBase()
+			const settings = document.getElementById('nldesign-settings')
+
+			type(row(BASE).text, '#00aa00')
+			click(row(BASE).reset)
+
+			expect(settings.style.getPropertyValue(BASE)).toBe('')
+		})
+
+		it('writes a primary colour on the page alone when there is no settings section', async () => {
+			installInitialState({})
+			document.body.innerHTML = '<div id="nldesign-token-editor"></div>'
+			answer('GET', '/settings/overrides?', 200, {
+				overrides: {},
+				registry: { [BASE]: REGISTRY[BASE] },
+				tabs: {},
+			})
+			vi.resetModules()
+			await import('../../js/admin.js?t=' + Math.random())
+			await flush()
+			unlockBase()
+
+			type(row(BASE).text, '#112233')
+
+			// Without a preview either, the page root is where an edit is shown.
+			expect(document.documentElement.style.getPropertyValue(BASE)).toBe(
+				'#112233',
+			)
 		})
 	})
 
@@ -761,6 +936,8 @@ describe('admin.js token editor', () => {
 			expect(playground.exportCss.mock.calls[0][2]).toEqual({
 				'--color-primary': '--nldesign-color-primary',
 			})
+			// Marked in the file as well, so the stored theme round-trips.
+			expect(playground.exportCss.mock.calls[0][3]).toBe('none')
 
 			expect(lastBody('/settings/tokensets/upload')).toEqual({
 				name: 'OpenWoo',
@@ -879,6 +1056,44 @@ describe('admin.js token editor', () => {
 			expect(window.NldesignLayerSwap.refreshStylesheets).toHaveBeenCalled()
 		})
 
+		it('stops painting the edits an apply discarded, on the preview and the settings section', async () => {
+			// The editor is rebuilt from the server after an apply, so every
+			// unsaved edit is gone from its rows. The values those edits wrote
+			// inline (admin.js on the preview and, for the primary family, on
+			// the settings section; the playground on the preview) have to go
+			// with them, or the preview keeps painting a value nothing holds.
+			installLayerSwap()
+			answer('POST', COMMIT, 200, { status: 'ok' })
+			answer('POST', '/settings/overrides', 200, { status: 'ok' })
+			await mount({ current: 'nextcloud' })
+			unlockBase()
+			const preview = document.getElementById('nldesign-preview')
+			const settings = document.getElementById('nldesign-settings')
+
+			type(row(FONT).text, 'Comic Sans')
+			type(row(BASE).text, '#112233')
+			// What the playground's cloned row writes, without a priority.
+			preview.style.setProperty(BUTTON, '#123456')
+			const scale = preview.style.getPropertyValue('--prev-surface')
+			expect(preview.style.getPropertyValue(FONT)).toBe('Comic Sans')
+
+			await switchTo('rijkshuisstijl', { [FONT]: 'Arial' }, { overrides: {} })
+			click(
+				document
+					.getElementById('nldesign-apply-dialog-overlay')
+					.querySelector('.nldesign-dialog-confirm'),
+			)
+			await flush()
+
+			expect(window.NldesignLayerSwap.swap).toHaveBeenCalled()
+			expect(preview.style.getPropertyValue(FONT)).toBe('')
+			expect(preview.style.getPropertyValue(BASE)).toBe('')
+			expect(preview.style.getPropertyValue(BUTTON)).toBe('')
+			expect(settings.style.getPropertyValue(BASE)).toBe('')
+			// The preview's own scale model is not an edit and stays.
+			expect(preview.style.getPropertyValue('--prev-surface')).toBe(scale)
+		})
+
 		it('does without an overrides link on the page', async () => {
 			installLayerSwap()
 			answer('POST', COMMIT, 200, { status: 'ok' })
@@ -893,6 +1108,126 @@ describe('admin.js token editor', () => {
 
 			expect(window.NldesignLayerSwap.swap).toHaveBeenCalled()
 			expect(toasts()).toContain('Applied.')
+		})
+	})
+
+	describe('switching to another set', () => {
+		it('offers what was saved for the set, not what its file says', async () => {
+			await mount({ current: 'nextcloud' })
+
+			await switchTo(
+				'rijkshuisstijl',
+				{ [FONT]: 'Arial', '--color-main-background': '#ffffff' },
+				{ overrides: { [FONT]: 'Fira Sans', '--not-in-file': '#000000' } },
+			)
+
+			expect(sent('overrides?tokenSet=rijkshuisstijl', 'GET')).toHaveLength(1)
+			// A saved value the file does not carry is not a change to offer.
+			expect(applyRows()).toEqual({
+				[FONT]: 'Fira Sans',
+				'--color-main-background': '#ffffff',
+			})
+		})
+
+		it('warns in the apply dialog that a running switch will put its set back', async () => {
+			answer('GET', '/settings/scheduled-switches', 200, {
+				switches: [],
+				status: {
+					runningTokenSet: 'nextcloud',
+					activeUntil: '2027-04-28T06:00:00Z',
+				},
+			})
+			await mount({
+				current: 'nextcloud',
+				extraHtml:
+					'<form id="nldesign-scheduled-form"></form><ul id="nldesign-scheduled-list"></ul>',
+			})
+
+			await switchTo('rijkshuisstijl', { [FONT]: 'Arial' }, { overrides: {} })
+
+			const warning = document.querySelector(
+				'#nldesign-apply-dialog-overlay .nldesign-apply-switch-warning',
+			)
+			expect(warning.textContent).toContain(
+				'A planned switch to Nextcloud (Base) is running until',
+			)
+		})
+
+		it('offers the file when what was saved cannot be read', async () => {
+			await mount({ current: 'nextcloud' })
+
+			await switchTo(
+				'rijkshuisstijl',
+				{ [FONT]: 'Arial' },
+				new Error('offline'),
+			)
+
+			expect(applyRows()).toEqual({ [FONT]: 'Arial' })
+		})
+
+		it('offers the file when nothing was saved for the set', async () => {
+			await mount({ current: 'nextcloud' })
+
+			await switchTo('rijkshuisstijl', { [FONT]: 'Arial' }, { status: 'ok' })
+
+			expect(applyRows()).toEqual({ [FONT]: 'Arial' })
+		})
+
+		it('leaves the primary family to Nextcloud when the set brings its own primary colour', async () => {
+			await mount({ current: 'nextcloud' })
+
+			await switchTo(
+				'rijkshuisstijl',
+				{
+					'--color-primary': '#154273',
+					[BASE]: '#154273',
+					[FONT]: 'Arial',
+				},
+				{ overrides: {} },
+			)
+
+			expect(applyRows()).toEqual({ [FONT]: 'Arial' })
+		})
+
+		it('keeps the primary family of the stock set, and asks nothing saved for it', async () => {
+			await mount()
+			const before = sent('overrides?tokenSet=nextcloud', 'GET').length
+
+			await switchTo('nextcloud', { '--color-primary': '#00679e' })
+
+			expect(applyRows()).toEqual({ '--color-primary': '#00679e' })
+			expect(sent('overrides?tokenSet=nextcloud', 'GET')).toHaveLength(before)
+		})
+
+		it('applies straight away when the file resolves to nothing', async () => {
+			answer('POST', COMMIT, 200, { status: 'ok' })
+			await mount({ current: 'nextcloud' })
+
+			await switchTo('rijkshuisstijl', undefined, { overrides: {} })
+
+			expect(
+				document.getElementById('nldesign-apply-dialog-overlay'),
+			).toBeNull()
+			expect(sent(COMMIT, 'POST')).toHaveLength(1)
+		})
+
+		it('compares a set the page has no details for against what was saved for it', async () => {
+			await mount({ current: 'nextcloud' })
+			const option = document.createElement('option')
+			option.value = 'custom-unknown'
+			document.getElementById('nldesign-token-set-select').appendChild(option)
+
+			await switchTo(
+				'custom-unknown',
+				{ '--color-primary': '#123456', [FONT]: 'Arial' },
+				{ overrides: { [FONT]: 'Fira Sans' } },
+			)
+
+			// No theming to bring a primary, so the family stays in the diff.
+			expect(applyRows()).toEqual({
+				'--color-primary': '#123456',
+				[FONT]: 'Fira Sans',
+			})
 		})
 	})
 
@@ -934,19 +1269,109 @@ describe('admin.js token editor', () => {
 	})
 
 	describe('download and upload', () => {
-		it("downloads and uploads the edited set's own file", async () => {
-			await mount({ current: 'nextcloud' })
-			const clicked = vi.fn()
+		/** Stand in for the browser's save: record the file name offered. */
+		function catchDownload() {
+			const saved = vi.fn()
+			URL.createObjectURL = vi.fn(() => 'blob:overrides')
+			URL.revokeObjectURL = vi.fn()
 			vi.spyOn(window.HTMLAnchorElement.prototype, 'click').mockImplementation(
 				function () {
-					clicked(this.getAttribute('href'))
+					saved(this.download)
 				},
 			)
+			return saved
+		}
+
+		it('says what Download holds before downloading, and Cancel downloads nothing', async () => {
+			await mount({ current: 'nextcloud' })
+			const saved = catchDownload()
 
 			click(document.getElementById('nldesign-export-btn'))
-			expect(clicked).toHaveBeenCalledWith(
+			const overlay = document.getElementById(
+				'nldesign-export-overrides-overlay',
+			)
+			expect(overlay.querySelector('h3').textContent).toBe(
+				'Download the overrides of Nextcloud (Base)?',
+			)
+			expect(overlay.textContent).toContain('It is not a complete theme.')
+
+			click(overlay.querySelector('.nldesign-dialog-cancel'))
+			await flush()
+
+			expect(
+				document.getElementById('nldesign-export-overrides-overlay'),
+			).toBeNull()
+			expect(sent('/settings/overrides/export')).toHaveLength(0)
+			expect(saved).not.toHaveBeenCalled()
+		})
+
+		it("downloads the edited set's own file, with the request token", async () => {
+			answer('GET', '/settings/overrides/export', 200, ':root {}')
+			await mount({ current: 'nextcloud' })
+			const saved = catchDownload()
+
+			click(document.getElementById('nldesign-export-btn'))
+			click(
+				document
+					.getElementById('nldesign-export-overrides-overlay')
+					.querySelector('.nldesign-dialog-confirm'),
+			)
+			await flush()
+
+			const request = sent('/settings/overrides/export', 'GET')[0]
+			expect(request.url).toBe(
 				'/apps/thematiq/settings/overrides/export?tokenSet=nextcloud',
 			)
+			expect(request.headers).toEqual({ requesttoken: 'test-token' })
+			expect(saved).toHaveBeenCalledWith('custom-overrides.css')
+		})
+
+		it('says so when the download is refused', async () => {
+			answer('GET', '/settings/overrides/export', 412, {})
+			await mount({ current: 'nextcloud' })
+			const saved = catchDownload()
+			vi.spyOn(console, 'error').mockImplementation(() => {})
+
+			click(document.getElementById('nldesign-export-btn'))
+			click(
+				document
+					.getElementById('nldesign-export-overrides-overlay')
+					.querySelector('.nldesign-dialog-confirm'),
+			)
+			await flush()
+
+			expect(saved).not.toHaveBeenCalled()
+			expect(toasts()).toContain('The overrides could not be downloaded.')
+		})
+
+		it('says what Upload replaces before the file picker opens, and Cancel opens none', async () => {
+			await mount({ current: 'nextcloud' })
+			const input = document.getElementById('nldesign-import-input')
+			const picker = vi.spyOn(input, 'click').mockImplementation(() => {})
+
+			click(document.getElementById('nldesign-import-btn'))
+			const overlay = document.getElementById(
+				'nldesign-import-overrides-overlay',
+			)
+			expect(overlay.querySelector('h3').textContent).toBe(
+				'Upload overrides into Nextcloud (Base)?',
+			)
+			expect(picker).not.toHaveBeenCalled()
+
+			click(overlay.querySelector('.nldesign-dialog-cancel'))
+			expect(picker).not.toHaveBeenCalled()
+
+			click(document.getElementById('nldesign-import-btn'))
+			click(
+				document
+					.getElementById('nldesign-import-overrides-overlay')
+					.querySelector('.nldesign-dialog-confirm'),
+			)
+			expect(picker).toHaveBeenCalledTimes(1)
+		})
+
+		it("uploads into the edited set's own file", async () => {
+			await mount({ current: 'nextcloud' })
 
 			const input = document.getElementById('nldesign-import-input')
 			Object.defineProperty(input, 'files', {
@@ -1127,7 +1552,7 @@ describe('admin.js theming sync rows', () => {
 		)
 
 		expect(labels(overlay)).toEqual(['Background image'])
-		expect(overlay.textContent).toContain('Removed (plain colour)')
+		expect(overlay.textContent).toContain('Removed (plain color)')
 
 		const body = await confirm(overlay)
 		expect(body.get('background_mode')).toBe('color')
@@ -1148,6 +1573,29 @@ describe('admin.js theming sync rows', () => {
 			{ has_custom_background: true },
 		)
 		expect(labels(overlay)).toEqual(['Background image'])
+	})
+
+	it('says why Nextcloud gets the blend of a translucent colour', async () => {
+		const overlay = await switchTo(
+			{ primary_color: '#8aa0b9', primary_color_original: '#15427380' },
+			{ primary_color: '#000000' },
+		)
+
+		expect(labels(overlay)).toEqual(['Primary color'])
+		expect(overlay.textContent).toContain('#8aa0b9')
+		expect(overlay.textContent).toContain(
+			"The set says #15427380. Nextcloud's own theming has no transparency. It gets this colour instead.",
+		)
+		expect((await confirm(overlay)).get('primary_color')).toBe('#8aa0b9')
+	})
+
+	it('adds no note to an opaque colour', async () => {
+		const overlay = await switchTo(
+			{ primary_color: '#154273' },
+			{ primary_color: '#000000' },
+		)
+
+		expect(overlay.textContent).not.toContain('no transparency')
 	})
 
 	it('offers nothing when the page already has the saved background state', async () => {

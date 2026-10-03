@@ -9,7 +9,9 @@ enriched_date: 2026-03-20
 ## Purpose
 Defines the "Show Menu Labels" feature that replaces app menu icons in the Nextcloud header with text labels.
 
-@e2e exclude Backend/CSS spec — scenarios cover IConfig storage, PHP boot-time CSS injection, CSS typography/layout rules, and API internals; the admin checkbox UI surface is covered by admin-settings tests. When enabled, the header navigation displays application names (e.g. "Files", "Mail", "Calendar") instead of icons, improving discoverability and accessibility for users unfamiliar with Nextcloud's icon-based navigation. This feature aligns with Dutch government UX guidelines that prioritize clarity and readability over icon recognition.
+When enabled, the header navigation displays application names (e.g. "Files", "Mail", "Calendar") instead of icons, improving discoverability and accessibility for users unfamiliar with Nextcloud's icon-based navigation. This feature aligns with Dutch government UX guidelines that prioritize clarity and readability over icon recognition.
+
+On Nextcloud 32 each header entry swaps its icon for its name. Nextcloud 33 and newer replaced those entries with a waffle menu; there the setting keeps the current app's name next to the waffle at every width and keeps every tile in the app grid labelled.
 
 ## Requirements
 
@@ -30,12 +32,14 @@ The show menu labels setting MUST be stored in Nextcloud's `IConfig` as a string
 - AND the response MUST be JSON with `{"status": "ok", "showMenuLabels": false}`
 
 #### Scenario: Default value when not configured
+@e2e exclude a browser cannot remove a stored app value, so it cannot reach the never-configured state on an instance where the setting was ever saved; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testTogglesAbsentFromConfigDefaultToOff asserts an absent key loads no show-menu-labels stylesheet
 - GIVEN no value has been set for `nldesign:show_menu_labels`
 - WHEN the setting is read during boot
 - THEN the default value MUST be `'0'` (disabled)
 - AND menu icons MUST be displayed normally (Nextcloud default behavior)
 
 #### Scenario: Setting persists across restarts
+@e2e exclude a server restart cannot be driven from a browser; the value is the IConfig row, and PHPUnit tests/Unit/Controller/SettingsControllerEndpointsTest.php::testATogglePersistsTheOnValue asserts the endpoint stores the string '1' there
 - GIVEN the admin has enabled menu labels
 - WHEN the Nextcloud server restarts
 - THEN the setting MUST remain `'1'` in IConfig
@@ -277,6 +281,25 @@ The menu labels and hide slogan features MUST be independently configurable and 
 - THEN the slogan MUST be visible
 - AND after logging in, the header MUST show text labels
 
+### Requirement: Waffle menu labels on Nextcloud 33 and newer
+From Nextcloud 33 the header has no `app-menu-entry` elements: core `AppMenu.vue` renders a waffle button (`.app-menu__waffle`), a button with the current app's icon and name (`.app-menu__current-app`, `.app-menu__current-app-name`), and a popover grid of `.app-item` tiles, each with an `.app-item__label` (`AppMenuItem.vue`). The show-menu-labels stylesheet MUST keep the app names visible on that menu, and MUST keep its Nextcloud 32 rules, because the app supports both. Each half matches nothing on the other server.
+
+#### Scenario: Current app name shown next to the waffle at every width
+- GIVEN the show-menu-labels CSS is loaded on Nextcloud 33 or newer
+- AND the viewport is 1024px wide or narrower, where core hides the current-app button with `display: none !important`
+- WHEN the header renders
+- THEN `#header nav.app-menu .app-menu__current-app` MUST have `display: flex !important`, outside any media query, so the button shows at every width
+- AND `#header nav.app-menu .app-menu__current-app-name` MUST have `display: inline-block`, `visibility: visible` and `opacity: 1`, each `!important`
+- AND the name MUST keep core's `max-width`, so a long name ellipsizes instead of pushing the header icons off screen
+- AND the waffle MUST stay, because it is the only way to open the app grid
+
+#### Scenario: Grid tiles keep their labels
+- GIVEN the show-menu-labels CSS is loaded on Nextcloud 33 or newer
+- WHEN the user opens the waffle menu
+- THEN every `.app-menu__popover .app-item__label` MUST have `display: block`, `visibility: visible` and `opacity: 1`, each `!important`
+- AND the selector MUST NOT start with `#header`, because the popover is rendered outside the header
+- AND the active app's label (`.app-item--active .app-item__label`) MUST have `font-weight: 600`, as the active entry does on Nextcloud 32
+
 ## Current Implementation Status
 
 **Fully implemented:**
@@ -296,11 +319,13 @@ The menu labels and hide slogan features MUST be independently configurable and 
 - Settings panel checkbox: `templates/settings/admin.php` renders `#nldesign-show-menu-labels` checkbox with correct checked state and localized label text
 - JavaScript handler: `js/admin.js` calls save on checkbox change
 
+- Nextcloud 33+ waffle menu (#895): the end of `css/show-menu-labels.css` keeps `.app-menu__current-app` shown below 1024px, shows `.app-menu__current-app-name`, and keeps `.app-menu__popover .app-item__label` visible, with the active tile at 600
+
 **Not yet implemented:**
 - All requirements in this spec are fully implemented.
 
 ## Standards & References
 - WCAG 2.1 AA: Text labels improve discoverability and accessibility (SC 1.3.1 Info and Relationships, SC 3.3.2 Labels or Instructions)
 - NL Design System: Government users may be unfamiliar with Nextcloud icon conventions; text labels align with government UX guidelines for clarity
-- Nextcloud header navigation: `.app-menu-entry`, `.app-menu-entry__icon`, `.app-menu-entry__label` are standard Nextcloud component classes from `AppMenuEntry.vue`
+- Nextcloud header navigation: `.app-menu-entry`, `.app-menu-entry__icon`, `.app-menu-entry__label` are standard Nextcloud component classes from `AppMenuEntry.vue` (Nextcloud 32); `.app-menu__waffle`, `.app-menu__current-app`, `.app-menu__current-app-name` and `.app-item__label` come from `AppMenu.vue` and `AppMenuItem.vue` (Nextcloud 33 and newer)
 - Rijkshuisstijl: Dutch government guidelines favor explicit, readable navigation over icon-based shortcuts

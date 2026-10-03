@@ -93,6 +93,11 @@
 		}
 
 		var settingsEl = document.getElementById('nldesign-settings')
+		// The planned switch that is running, as `{ tokenSet, until }`, or null.
+		// It puts its token set back on every job run, so a set picked in the
+		// dropdown meanwhile would not last; the page says so beside the dropdown
+		// and in the apply dialog.
+		var runningSwitch = null
 		var tokenSetSelect = document.getElementById('nldesign-token-set-select')
 		var hideSloganCheckbox = document.getElementById('nldesign-hide-slogan')
 		var primaryDrivesComponentsCheckbox = document.getElementById(
@@ -159,12 +164,12 @@
 			if (meta !== undefined && meta.group === 'brand') {
 				return t(
 					'thematiq',
-					'A Nextcloud base colour, read far beyond any one component. Tick "Also edit Nextcloud\'s base tokens" to change it.',
+					'A Nextcloud base color, read far beyond any one component. Tick "Also edit Nextcloud\'s base tokens" to change it.',
 				)
 			}
 			return t(
 				'thematiq',
-				'The primary colour drives this component. Switch off "Let the primary colour drive every component" to set it separately.',
+				'The primary color drives this component. Switch off "Let the primary color drive every component" to set it separately.',
 			)
 		}
 
@@ -300,6 +305,13 @@
 							pageTokenSetId = tokenSetId
 							pageManifest = manifests[1]
 							syncOverridesLink(tokenSetId)
+							// For what follows the page's theme, such as the
+							// brand form's starting colors.
+							document.dispatchEvent(
+								new CustomEvent('thematiq:theme-applied', {
+									detail: { tokenSet: tokenSetId },
+								}),
+							)
 							return true
 						},
 					)
@@ -646,8 +658,38 @@
 						tokenSetsData[ts.id] = ts
 						upsertTokenSetOption(ts)
 					})
+					refreshScheduledSetOptions(sets)
 					return sets
 				})
+		}
+
+		/**
+		 * Rebuild the planned-switch set list from the catalogue. The server
+		 * renders it once, so a set added through the brand form, the gallery
+		 * or an upload was missing from it until a reload. The chosen set
+		 * stays chosen when it is still in the catalogue.
+		 *
+		 * @param {Array<object>} sets The catalogue.
+		 */
+		function refreshScheduledSetOptions(sets) {
+			var select = document.getElementById('nldesign-scheduled-set')
+			if (select === null || sets.length === 0) {
+				return
+			}
+			var chosen = select.value
+			select.textContent = ''
+			sets.forEach(function (ts) {
+				var option = document.createElement('option')
+				option.value = ts.id
+				option.textContent = ts.name || ts.id
+				select.appendChild(option)
+			})
+			var stillThere = sets.some(function (ts) {
+				return ts.id === chosen
+			})
+			if (stillThere) {
+				select.value = chosen
+			}
 		}
 
 		function upsertTokenSetOption(ts) {
@@ -868,31 +910,54 @@
 			})
 		}
 
-		// App / Login preview switch.
+		// App / Login preview switch: a WAI-ARIA tablist. A click or the arrow,
+		// Home and End keys select a view; only the selected tab is in the tab
+		// order, the same way the "Add a custom token set" tabs work.
 		if (previewRoot) {
-			previewRoot
-				.querySelectorAll('.nldesign-preview-switch-btn')
-				.forEach(function (btn) {
-					btn.addEventListener('click', function () {
-						var view = btn.getAttribute('data-view')
-						previewRoot
-							.querySelectorAll('.nldesign-preview-switch-btn')
-							.forEach(function (b) {
-								var on = b === btn
-								b.classList.toggle('active', on)
-								b.setAttribute(
-									'aria-selected',
-									on ? 'true' : 'false',
-								)
-							})
-						previewRoot
-							.querySelectorAll('.nldesign-preview-stage')
-							.forEach(function (stage) {
-								stage.hidden =
-									stage.getAttribute('data-view') !== view
-							})
-					})
+			var previewTabs = Array.prototype.slice.call(
+				previewRoot.querySelectorAll('.nldesign-preview-switch-btn'),
+			)
+			var selectPreviewTab = function (btn) {
+				var view = btn.getAttribute('data-view')
+				previewTabs.forEach(function (b) {
+					var on = b === btn
+					b.classList.toggle('active', on)
+					b.setAttribute('aria-selected', on ? 'true' : 'false')
+					b.tabIndex = on ? 0 : -1
 				})
+				previewRoot
+					.querySelectorAll('.nldesign-preview-stage')
+					.forEach(function (stage) {
+						stage.hidden = stage.getAttribute('data-view') !== view
+					})
+			}
+			previewTabs.forEach(function (btn, index) {
+				btn.setAttribute('role', 'tab')
+				btn.tabIndex = btn.classList.contains('active') ? 0 : -1
+				btn.addEventListener('click', function () {
+					selectPreviewTab(btn)
+				})
+				btn.addEventListener('keydown', function (event) {
+					var next = null
+					if (event.key === 'ArrowRight') {
+						next = previewTabs[(index + 1) % previewTabs.length]
+					} else if (event.key === 'ArrowLeft') {
+						next =
+							previewTabs[
+								(index - 1 + previewTabs.length) % previewTabs.length
+							]
+					} else if (event.key === 'Home') {
+						next = previewTabs[0]
+					} else if (event.key === 'End') {
+						next = previewTabs[previewTabs.length - 1]
+					}
+					if (next !== null) {
+						event.preventDefault()
+						selectPreviewTab(next)
+						next.focus()
+					}
+				})
+			})
 		}
 
 		// Design system display names (inline fallback for designSystemLabel()).
@@ -901,17 +966,41 @@
 			nldesign: 'NL Design System',
 		}
 
+		// Documentation link per design system id, from lib/Settings/Admin.php.
+		var designSystemDocs = loadInitialState('designSystemDocs', {})
+
+		/**
+		 * Point the header's Documentation link at the docs of a design system.
+		 *
+		 * The template renders the current set's link; this follows the
+		 * dropdown, so an admin who picks a La Suite set is not sent to NL
+		 * Design System docs (#662). A design system with no entry keeps the
+		 * link it has.
+		 *
+		 * @param {string} dsId The design system id.
+		 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+		 */
+		function updateDocumentationLink(dsId) {
+			var link = document.getElementById('nldesign-doc-link')
+			var url = designSystemDocs[dsId]
+			if (link === null || typeof url !== 'string' || url === '') {
+				return
+			}
+			link.setAttribute('href', url)
+		}
+
 		// Update the design system badge for the selected token set
 		function updateDesignSystemBadge(tokenSetId) {
-			var badge = document.getElementById('nldesign-design-system-badge')
-			if (!badge) return
-
 			var option = tokenSetSelect
 				? tokenSetSelect.querySelector('option[value="' + tokenSetId + '"]')
 				: null
 			var dsId = option
 				? option.getAttribute('data-design-system') || 'nldesign'
 				: 'nldesign'
+			updateDocumentationLink(dsId)
+
+			var badge = document.getElementById('nldesign-design-system-badge')
+			if (!badge) return
 			var dsName =
 				typeof TT.designSystemLabel === 'function'
 					? TT.designSystemLabel(dsId)
@@ -991,7 +1080,7 @@
 				lines.push(
 					t(
 						'thematiq',
-						'Primary colour {css} in the token CSS disagrees with {manifest} in the token set manifest.',
+						'Primary color {css} in the token CSS disagrees with {manifest} in the token set manifest.',
 					)
 						.replace('{css}', warning.cssPrimary || '?')
 						.replace('{manifest}', warning.declaredPrimary || '?'),
@@ -1301,11 +1390,11 @@
 							notify(
 								publishMode === true
 									? t(
-											'nldesign',
+											'thematiq',
 											'Theme published instance-wide. Reload the page to see changes.',
 										)
 									: t(
-											'nldesign',
+											'thematiq',
 											'Theme updated successfully. reload the page to see changes.',
 										),
 							)
@@ -1339,6 +1428,23 @@
 		 * matching would keep the previous set's logo (the manifest has none)
 		 * and pin a stale primary.
 		 */
+		/**
+		 * The note next to a colour core gets as the blend of a translucent one.
+		 *
+		 * @param {string|undefined} original The set's own value, when it was translucent.
+		 * @return {string} The note, or '' for an opaque colour.
+		 */
+		function opaqueNote(original) {
+			if (!original) {
+				return ''
+			}
+			return t(
+				'thematiq',
+				"The set says {original}. Nextcloud's own theming has no transparency. It gets this colour instead.",
+				{ original: original },
+			)
+		}
+
 		function computeThemingPlan(tokenSetData, currentTheming) {
 			var none = { mode: 'none', diffs: [], payload: null }
 			if (!tokenSetData || !currentTheming) {
@@ -1421,6 +1527,7 @@
 					kind: 'color',
 					current: currentTheming.primary_color,
 					proposed: proposed.primary_color,
+					proposedNote: opaqueNote(proposed.primary_color_original),
 				})
 				payload.primary_color = proposed.primary_color
 			}
@@ -1436,6 +1543,7 @@
 					kind: 'color',
 					current: currentTheming.background_color,
 					proposed: proposed.background_color,
+					proposedNote: opaqueNote(proposed.background_color_original),
 				})
 				payload.background_color = proposed.background_color
 			}
@@ -1520,7 +1628,7 @@
 			var mode = proposed.background_mode
 			var removedNow = currentTheming.background_mime === 'backgroundColor'
 			var currentBackground = removedNow
-				? t('thematiq', 'Removed (plain colour)')
+				? t('thematiq', 'Removed (plain color)')
 				: currentTheming.has_custom_background
 					? t('thematiq', '(custom)')
 					: t('thematiq', '(default)')
@@ -1530,7 +1638,7 @@
 					key: 'background_mode',
 					kind: 'text',
 					current: currentBackground,
-					proposed: t('thematiq', 'Removed (plain colour)'),
+					proposed: t('thematiq', 'Removed (plain color)'),
 				})
 			} else if (
 				mode === 'default'
@@ -1800,7 +1908,7 @@
 				+ escapeHtml(
 					t(
 						'thematiq',
-						"Stock Nextcloud means Nextcloud's own colours and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.",
+						"Stock Nextcloud means Nextcloud's own colors and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.",
 					),
 				)
 				+ '</p>'
@@ -1901,6 +2009,7 @@
 					+ '</td>'
 					+ '<td>'
 					+ proposedDisplay
+					+ (diff.proposedNote ? ' ' + escapeHtml(diff.proposedNote) : '')
 					+ '</td>'
 					+ '</tr>'
 			})
@@ -1933,7 +2042,7 @@
 					+ '      <p class="nldesign-dialog-hint">'
 					+ escapeHtml(
 						t(
-							'nldesign',
+							'thematiq',
 							"This token set also ships a dark-surface logo. Nextcloud core has no dark logo slot, so it is applied by nldesign's own dark-mode stylesheet, not synced to Nextcloud theming.",
 						),
 					)
@@ -1948,7 +2057,7 @@
 				+ '    <h3>'
 				+ escapeHtml(
 					t(
-						'nldesign',
+						'thematiq',
 						'Update Nextcloud theming to match {name}?',
 					).replace('{name}', tokenSetName),
 				)
@@ -2009,7 +2118,7 @@
 				+ '    <p class="nldesign-dialog-hint">'
 				+ escapeHtml(
 					t(
-						'nldesign',
+						'thematiq',
 						'Only values that differ are shown. items without a proposed value are left unchanged.',
 					),
 				)
@@ -2119,7 +2228,7 @@
 							} else {
 								notify(
 									t(
-										'nldesign',
+										'thematiq',
 										'Failed to update Nextcloud theming:',
 									) + (data.error || ''),
 								)
@@ -2135,11 +2244,24 @@
 				})
 		}
 
-		// Escape HTML to prevent XSS
+		/**
+		 * Escape a value for HTML text and for a quoted attribute value.
+		 *
+		 * Most call sites put the result inside value="..." or title="...", so
+		 * quotes must be escaped too. The old textContent/innerHTML round trip
+		 * left `"` as is, and a quote in an imported overrides value closed
+		 * the attribute and let the rest parse as new attributes (#622).
+		 *
+		 * @param {*} text The value to escape.
+		 * @return {string} The escaped value.
+		 */
 		function escapeHtml(text) {
-			var div = document.createElement('div')
-			div.textContent = text
-			return div.innerHTML
+			return String(text === null || text === undefined ? '' : text)
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#39;')
 		}
 
 		/* ==========================================================================
@@ -2327,7 +2449,7 @@
 									swapped === true
 										? t('thematiq', 'Applied.')
 										: t(
-												'nldesign',
+												'thematiq',
 												'Setting saved successfully. reload the page to see changes.',
 											),
 								)
@@ -2378,7 +2500,7 @@
 									swapped === true
 										? t('thematiq', 'Applied.')
 										: t(
-												'nldesign',
+												'thematiq',
 												'Setting saved successfully. reload the page to see changes.',
 											),
 								)
@@ -2540,8 +2662,139 @@
 
 		// Holds the in-memory state of the editor: token name → { resolved, custom, current, isDirty }
 		var tokenEditorState = {}
+
+		/**
+		 * The administrator's own dark value per colour token, and the value the
+		 * server derives when there is none (the field's placeholder).
+		 */
+		var tokenEditorDark = {}
+		var tokenEditorDarkDerived = {}
 		// Registry from server: token name → { tab, type, label }
 		var tokenRegistry = {}
+		// Internal tokens from server: token name → { variable, group, type, stock }.
+		// Kept apart from tokenRegistry, which the tabs, the locks and the apply
+		// dialog read; these are listed per component group below the tabs.
+		var tokenInternal = {}
+		// How many tokens the editor offers, as the server counts them.
+		var tokenEditableCount = 0
+		// Groups whose rows are built, and the open groups before a search began.
+		var tokenGroupsBuilt = {}
+		var tokenSearchRestore = null
+
+		/**
+		 * The registry entry of any editor token, internal ones included.
+		 *
+		 * @param {string} name The token name.
+		 * @return {object|undefined} The entry.
+		 */
+		function tokenMeta(name) {
+			if (tokenRegistry[name] !== undefined) {
+				return tokenRegistry[name]
+			}
+			var internal = tokenInternal[name]
+			if (internal === undefined) {
+				return undefined
+			}
+			return {
+				tab: 'internal',
+				type: internal.type,
+				label: internal.variable,
+				group: 'internal',
+				section: internal.group,
+				variable: internal.variable,
+				stock: { light: internal.stock || '', dark: internal.stock || '' },
+			}
+		}
+
+		/**
+		 * The translated heading of a component group, keyed by the ids
+		 * scripts/inventory/generate-internal-tokens.mjs gives them.
+		 *
+		 * @param {string} id The group id.
+		 * @return {string} The heading.
+		 */
+		function tokenGroupHeading(id) {
+			var headings = {
+				'date-picker': t('thematiq', 'Date picker'),
+				select: t('thematiq', 'Select box'),
+				'media-player': t('thematiq', 'Media player'),
+				'code-highlighting': t('thematiq', 'Code highlighting'),
+				conduction: t('thematiq', 'Conduction apps'),
+				'pdf-viewer': t('thematiq', 'PDF viewer'),
+				'text-editor': t('thematiq', 'Text editor'),
+				files: t('thematiq', 'Files'),
+				photos: t('thematiq', 'Photos'),
+				teams: t('thematiq', 'Teams'),
+				components: t('thematiq', 'Nextcloud components'),
+				other: t('thematiq', 'Other variables'),
+				advanced: t('thematiq', 'Advanced'),
+			}
+			return headings[id] || id
+		}
+
+		/** The order the groups are listed in, Advanced last. */
+		var TOKEN_GROUP_ORDER = [
+			'date-picker',
+			'select',
+			'media-player',
+			'code-highlighting',
+			'conduction',
+			'pdf-viewer',
+			'text-editor',
+			'files',
+			'photos',
+			'teams',
+			'components',
+			'other',
+			'advanced',
+		]
+
+		/**
+		 * Whether the page shows Nextcloud's dark theme.
+		 *
+		 * @return {boolean} True in dark.
+		 */
+		function pageIsDark() {
+			var themes = document.body.getAttribute('data-themes') || ''
+			if (themes.indexOf('dark') !== -1) {
+				return true
+			}
+			var chosen =
+				document.body.hasAttribute('data-theme-light')
+				|| document.body.hasAttribute('data-theme-dark')
+				|| document.body.hasAttribute('data-theme-light-highcontrast')
+				|| document.body.hasAttribute('data-theme-dark-highcontrast')
+			return (
+				chosen === false
+				&& typeof window.matchMedia === 'function'
+				&& window.matchMedia('(prefers-color-scheme: dark)').matches
+			)
+		}
+
+		/**
+		 * Nextcloud's own value of a row for the current theme, with a colour
+		 * expression such as `var(--color-border)` resolved to the colour it
+		 * gives on this page.
+		 *
+		 * @param {object} meta The row's registry entry.
+		 * @return {string} The value, or '' when none is recorded.
+		 */
+		function stockValue(meta) {
+			if (!meta.stock) {
+				return ''
+			}
+			var value = pageIsDark() ? meta.stock.dark : meta.stock.light
+			if (!value || meta.type !== 'color' || value.indexOf('var(') === -1) {
+				return value || ''
+			}
+			var probe = document.createElement('span')
+			probe.style.display = 'none'
+			probe.style.color = value
+			document.body.appendChild(probe)
+			var resolved = getComputedStyle(probe).color
+			probe.remove()
+			return resolved || value
+		}
 		// Tab labels from server: tab id → display label
 		var tokenTabLabels = {}
 
@@ -2616,27 +2869,52 @@
 					return r.json()
 				})
 				.then(function (data) {
+					// Both registries: the one the discarded rows were drawn
+					// from and the one the new rows are drawn from.
+					clearLiveTokens(
+						Object.keys(tokenRegistry)
+							.concat(Object.keys(data.registry || {}))
+							.concat(Object.keys(tokenInternal))
+							.concat(Object.keys(data.internal || {})),
+					)
 					tokenRegistry = data.registry || {}
+					tokenInternal = data.internal || {}
+					tokenGroupsBuilt = {}
+					tokenSearchRestore = null
+					tokenEditableCount =
+						typeof data.count === 'number'
+							? data.count
+							: Object.keys(tokenRegistry).length
+								+ Object.keys(tokenInternal).length
 					tokenTabLabels = data.tabs || {}
 					var overrides = data.overrides || {}
-
+					tokenEditorDark = Object.assign({}, data.darkOverrides || {})
+					tokenEditorDarkDerived = data.darkDerived || {}
 					// Read resolved values from the live CSS stack.
 					var rootStyle = getComputedStyle(document.documentElement)
 					var bodyStyle = getComputedStyle(document.body)
-					Object.keys(tokenRegistry).forEach(function (name) {
-						var resolved = resolveTokenValue(rootStyle, bodyStyle, name)
-						var overridden =
-							overrides[name] !== undefined ? overrides[name] : null
-						tokenEditorState[name] = {
-							resolved: resolved,
-							custom: overridden,
-							current: overridden !== null ? overridden : resolved,
-							// What the reset button goes back to: the value as it
-							// was last saved, not the theme's own.
-							saved: overridden !== null ? overridden : resolved,
-							isDirty: false,
-						}
-					})
+					Object.keys(tokenRegistry)
+						.concat(Object.keys(tokenInternal))
+						.forEach(function (name) {
+							var resolved = resolveTokenValue(
+								rootStyle,
+								bodyStyle,
+								name,
+							)
+							var overridden =
+								overrides[name] !== undefined
+									? overrides[name]
+									: null
+							tokenEditorState[name] = {
+								resolved: resolved,
+								custom: overridden,
+								current: overridden !== null ? overridden : resolved,
+								// What the reset button goes back to: the value as it
+								// was last saved, not the theme's own.
+								saved: overridden !== null ? overridden : resolved,
+								isDirty: false,
+							}
+						})
 
 					renderTokenEditor(container, overrides)
 				})
@@ -2656,6 +2934,10 @@
 			var grouped = {}
 			Object.keys(tokenRegistry).forEach(function (name) {
 				var meta = tokenRegistry[name]
+				// Layout variables go to the Advanced group, behind its warning.
+				if (meta.advanced === true) {
+					return
+				}
 				if (grouped[meta.tab] === undefined) {
 					grouped[meta.tab] = []
 				}
@@ -2707,27 +2989,42 @@
 				+ escapeHtml(t('thematiq', 'Custom token overrides'))
 				+ '</h3>'
 				+ '<div class="nldesign-token-editor-actions">'
-				+ '<button class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn">'
+				+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn">'
 				+ escapeHtml(t('thematiq', 'Download'))
 				+ '</button>'
-				+ '<label class="nldesign-btn nldesign-btn--small" style="cursor:pointer">'
+				// A real button, so it is drawn like the ones beside it; the file
+				// input stays hidden and is only opened once the dialog is read.
+				+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-import-btn">'
 				+ escapeHtml(t('thematiq', 'Upload'))
-				+ '<input type="file" id="nldesign-import-input" accept=".css" style="display:none">'
-				+ '</label>'
+				+ '</button>'
+				+ '<input type="file" id="nldesign-import-input" accept=".css" style="display:none" aria-label="'
+				+ escapeHtml(t('thematiq', 'Overrides file to upload (CSS)'))
+				+ '">'
 				+ '</div>'
 				+ '</div>'
-				// Nextcloud's own base tokens stay locked until asked for; see
-				// baseTokensUnlocked and confirmBaseUnlock().
-				+ '<label class="nldesign-base-unlock">'
-				+ '<input type="checkbox" id="nldesign-base-unlock"'
-				+ (baseTokensUnlocked === true ? ' checked' : '')
-				+ '>'
-				+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
+				+ '<p class="settings-hint nldesign-token-count" id="nldesign-token-count">'
+				+ escapeHtml(
+					t('thematiq', '{count} editable tokens', {
+						count: tokenEditableCount,
+					}),
+				)
+				+ '</p>'
+				+ '<div class="nldesign-token-search">'
+				+ '<label for="nldesign-token-search">'
+				+ escapeHtml(t('thematiq', 'Search tokens'))
 				+ '</label>'
+				+ '<input type="search" id="nldesign-token-search" autocomplete="off" placeholder="'
+				+ escapeHtml(t('thematiq', 'Name, variable or component'))
+				+ '">'
+				+ '<p class="nldesign-token-search-empty" id="nldesign-token-search-empty" hidden>'
+				+ escapeHtml(t('thematiq', 'No token matches your search.'))
+				+ '</p>'
+				+ '</div>'
 				+ '<div class="nldesign-tabs">'
 				+ tabsHtml
 				+ '</div>'
 				+ panelsHtml
+				+ buildTokenGroups()
 				+ '<div class="nldesign-save-bar">'
 				+ '<span class="nldesign-save-status" id="nldesign-save-status"></span>'
 				+ '<button class="nldesign-btn nldesign-btn--primary" id="nldesign-save-btn">'
@@ -2741,8 +3038,20 @@
 				// after one careless click. Worded the same way round as that
 				// dialog: ticked means "stop asking".
 				+ '<div class="nldesign-confirm-controls">'
-				+ '<label>'
-				+ '<input type="checkbox" id="nldesign-confirm-save-stock">'
+				// Nextcloud's own base tokens stay locked until asked for; see
+				// baseTokensUnlocked and confirmBaseUnlock(). With the editor's
+				// other settings, as a checkbox like them.
+				+ '<div class="nldesign-base-unlock">'
+				+ '<input type="checkbox" class="checkbox" id="nldesign-base-unlock"'
+				+ (baseTokensUnlocked === true ? ' checked' : '')
+				+ '>'
+				+ '<label for="nldesign-base-unlock">'
+				+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
+				+ '</label>'
+				+ '</div>'
+				+ '<div>'
+				+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-stock">'
+				+ '<label for="nldesign-confirm-save-stock">'
 				+ escapeHtml(
 					t(
 						'thematiq',
@@ -2750,8 +3059,10 @@
 					),
 				)
 				+ '</label>'
-				+ '<label>'
-				+ '<input type="checkbox" id="nldesign-confirm-save-theme">'
+				+ '</div>'
+				+ '<div>'
+				+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-theme">'
+				+ '<label for="nldesign-confirm-save-theme">'
 				+ escapeHtml(
 					t(
 						'thematiq',
@@ -2759,6 +3070,7 @@
 					),
 				)
 				+ '</label>'
+				+ '</div>'
 				+ '</div>'
 				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>'
 
@@ -2787,6 +3099,10 @@
 
 			wireTokenRows(container)
 
+			wireTokenGroups(container)
+
+			wireTokenSearch(container)
+
 			wireConfirmControls()
 
 			wireBaseUnlock()
@@ -2796,7 +3112,10 @@
 				.addEventListener('click', saveOverrides)
 			document
 				.getElementById('nldesign-export-btn')
-				.addEventListener('click', exportOverrides)
+				.addEventListener('click', confirmExportOverrides)
+			document
+				.getElementById('nldesign-import-btn')
+				.addEventListener('click', confirmImportOverrides)
 			document
 				.getElementById('nldesign-import-input')
 				.addEventListener('change', function (e) {
@@ -2856,7 +3175,7 @@
 				+ escapeHtml(
 					t(
 						'thematiq',
-						'These are the colours and sizes Nextcloud itself is built from, such as the main text colour. Changing one changes every part of Nextcloud that reads it, which is far more than the component you are looking at, and not only what this panel shows. To change one component, use its own rows instead.',
+						'These are the colors and sizes Nextcloud itself is built from, such as the main text color. Changing one changes every part of Nextcloud that reads it, which is far more than the component you are looking at, and not only what this panel shows. To change one component, use its own rows instead.',
 					),
 				)
 				+ '</p>'
@@ -2892,10 +3211,312 @@
 		}
 
 		/**
+		 * The tokens of each component group and of the Advanced group.
+		 *
+		 * @return {Object<string, Array<string>>} Group id => token names.
+		 */
+		function tokenGroupMembers() {
+			var members = {}
+			Object.keys(tokenInternal).forEach(function (name) {
+				var id = tokenInternal[name].group || 'other'
+				;(members[id] = members[id] || []).push(name)
+			})
+			Object.keys(tokenRegistry).forEach(function (name) {
+				if (tokenRegistry[name].advanced === true) {
+					;(members.advanced = members.advanced || []).push(name)
+				}
+			})
+			return members
+		}
+
+		/**
+		 * The collapsed component groups and the Advanced group. Each is a
+		 * disclosure button and an empty panel; its rows are built the first
+		 * time it opens or a search matches it, so the page does not build
+		 * hundreds of rows on load.
+		 *
+		 * @return {string} HTML.
+		 */
+		function buildTokenGroups() {
+			var members = tokenGroupMembers()
+			var html = ''
+			TOKEN_GROUP_ORDER.forEach(function (id) {
+				if (members[id] === undefined) {
+					return
+				}
+				html +=
+					'<div class="nldesign-token-group" data-group="'
+					+ escapeHtml(id)
+					+ '">'
+					+ '<h4 class="nldesign-token-group-heading">'
+					+ '<button type="button" class="nldesign-token-group-toggle" aria-expanded="false" aria-controls="nldesign-token-group-'
+					+ escapeHtml(id)
+					+ '">'
+					+ escapeHtml(tokenGroupHeading(id))
+					+ ' <span class="nldesign-token-group-count">('
+					+ members[id].length
+					+ ')</span>'
+					+ '</button>'
+					+ '</h4>'
+					+ '<div class="nldesign-token-group-panel" id="nldesign-token-group-'
+					+ escapeHtml(id)
+					+ '" hidden></div>'
+					+ '</div>'
+			})
+			if (html === '') {
+				return ''
+			}
+			return (
+				'<div class="nldesign-token-groups">'
+				+ '<h4>'
+				+ escapeHtml(t('thematiq', 'Component variables'))
+				+ '</h4>'
+				+ html
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * Build a group's rows once, and wire them.
+		 *
+		 * @param {HTMLElement} group The group element.
+		 * @return {void}
+		 */
+		function ensureTokenGroupBuilt(group) {
+			var id = group.dataset.group
+			if (tokenGroupsBuilt[id] === true) {
+				return
+			}
+			var panel = group.querySelector('.nldesign-token-group-panel')
+			var html = ''
+			if (id === 'advanced') {
+				// Text, above the first field: the icon is decoration only.
+				html +=
+					'<p class="nldesign-token-advanced-warning" role="note">'
+					+ '<span aria-hidden="true">⚠ </span>'
+					+ escapeHtml(
+						t(
+							'thematiq',
+							"These values size Nextcloud's layout. A wrong value can break the layout, not only the look.",
+						),
+					)
+					+ '</p>'
+			}
+			;(tokenGroupMembers()[id] || []).forEach(function (name) {
+				var state = tokenEditorState[name]
+				html += buildTokenRow(
+					name,
+					state && state.custom !== undefined ? state.custom : null,
+				)
+			})
+			panel.innerHTML = html
+			tokenGroupsBuilt[id] = true
+			wireTokenRows(panel)
+			refreshTokenEditorLocks()
+		}
+
+		/**
+		 * Open or close a group.
+		 *
+		 * @param {HTMLElement} group The group element.
+		 * @param {boolean} open Whether to open it.
+		 * @return {void}
+		 */
+		function setTokenGroupOpen(group, open) {
+			if (open === true) {
+				ensureTokenGroupBuilt(group)
+			}
+			group
+				.querySelector('.nldesign-token-group-toggle')
+				.setAttribute('aria-expanded', open === true ? 'true' : 'false')
+			group.querySelector('.nldesign-token-group-panel').hidden = open !== true
+		}
+
+		/**
+		 * Wire the group toggles.
+		 *
+		 * @param {HTMLElement} container The editor container.
+		 * @return {void}
+		 */
+		function wireTokenGroups(container) {
+			container
+				.querySelectorAll('.nldesign-token-group')
+				.forEach(function (group) {
+					group
+						.querySelector('.nldesign-token-group-toggle')
+						.addEventListener('click', function () {
+							setTokenGroupOpen(
+								group,
+								this.getAttribute('aria-expanded') !== 'true',
+							)
+						})
+				})
+		}
+
+		/**
+		 * Whether a token matches a search, by label, CSS name, variable or heading.
+		 *
+		 * @param {string} name The token.
+		 * @param {string} heading The heading it is listed under.
+		 * @param {string} query The lower-cased search.
+		 * @return {boolean} True on a match.
+		 */
+		function tokenMatches(name, heading, query) {
+			var meta = tokenMeta(name) || {}
+			return [meta.label, name, meta.variable, heading].some(function (text) {
+				return (
+					typeof text === 'string'
+					&& text.toLowerCase().indexOf(query) !== -1
+				)
+			})
+		}
+
+		/**
+		 * Filter every tab and group by the search field. A group with a match
+		 * opens, and is built first if it was not; an empty field puts back
+		 * what was open before the search began.
+		 *
+		 * @param {HTMLElement} container The editor container.
+		 * @param {string} raw The field's value.
+		 * @return {void}
+		 */
+		function applyTokenSearch(container, raw) {
+			var query = raw.trim().toLowerCase()
+			var editor = container.querySelector('.nldesign-token-editor')
+			var groups = container.querySelectorAll('.nldesign-token-group')
+			if (query === '') {
+				editor.classList.remove('nldesign-token-editor--searching')
+				container
+					.querySelectorAll(
+						'.nldesign-token-row, .nldesign-tab-panel, .nldesign-token-group',
+					)
+					.forEach(function (el) {
+						el.hidden = false
+					})
+				groups.forEach(function (group) {
+					var open =
+						tokenSearchRestore !== null
+						&& tokenSearchRestore[group.dataset.group] === true
+					setTokenGroupOpen(group, open)
+				})
+				tokenSearchRestore = null
+				container.querySelector('#nldesign-token-search-empty').hidden = true
+				return
+			}
+
+			if (tokenSearchRestore === null) {
+				tokenSearchRestore = {}
+				groups.forEach(function (group) {
+					tokenSearchRestore[group.dataset.group] =
+						group
+							.querySelector('.nldesign-token-group-toggle')
+							.getAttribute('aria-expanded') === 'true'
+				})
+			}
+			editor.classList.add('nldesign-token-editor--searching')
+			var any = false
+
+			container
+				.querySelectorAll('.nldesign-tab-panel')
+				.forEach(function (panel) {
+					var heading =
+						tokenTabLabels[panel.dataset.panel] || panel.dataset.panel
+					var hits = 0
+					panel
+						.querySelectorAll('.nldesign-token-row')
+						.forEach(function (row) {
+							var match = tokenMatches(
+								row.dataset.tokenRow,
+								heading,
+								query,
+							)
+							row.hidden = match === false
+							hits += match ? 1 : 0
+						})
+					panel.hidden = hits === 0
+					any = any || hits > 0
+				})
+
+			var members = tokenGroupMembers()
+			groups.forEach(function (group) {
+				var id = group.dataset.group
+				var heading = tokenGroupHeading(id)
+				var names = (members[id] || []).filter(function (name) {
+					return tokenMatches(name, heading, query)
+				})
+				group.hidden = names.length === 0
+				if (names.length === 0) {
+					return
+				}
+				any = true
+				setTokenGroupOpen(group, true)
+				group
+					.querySelectorAll('.nldesign-token-row')
+					.forEach(function (row) {
+						row.hidden = names.indexOf(row.dataset.tokenRow) === -1
+					})
+			})
+
+			container.querySelector('#nldesign-token-search-empty').hidden = any
+		}
+
+		/**
+		 * Wire the search field.
+		 *
+		 * @param {HTMLElement} container The editor container.
+		 * @return {void}
+		 */
+		function wireTokenSearch(container) {
+			var field = container.querySelector('#nldesign-token-search')
+			if (field === null) {
+				return
+			}
+			field.addEventListener('input', function () {
+				applyTokenSearch(container, field.value)
+			})
+		}
+
+		/**
+		 * Nextcloud's own value and the inventory note of a row, as text the
+		 * row's fields point at with `aria-describedby`.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @return {{html: string, ids: string}} The HTML and the ids it carries.
+		 */
+		function buildTokenFacts(name, meta) {
+			var key = name.replace(/[^a-zA-Z0-9-]/g, '')
+			var html = ''
+			var ids = []
+			var stock = stockValue(meta)
+			if (stock !== '') {
+				ids.push('nldesign-stock-' + key)
+				html +=
+					'<span class="nldesign-token-stock" id="nldesign-stock-'
+					+ key
+					+ '">'
+					+ escapeHtml(
+						t('thematiq', 'Nextcloud: {value}', { value: stock }),
+					)
+					+ '</span>'
+			}
+			if (meta.note) {
+				ids.push('nldesign-note-' + key)
+				html +=
+					'<span class="nldesign-token-note" id="nldesign-note-'
+					+ key
+					+ '">'
+					+ escapeHtml(meta.note)
+					+ '</span>'
+			}
+			return { html: html, ids: ids.join(' ') }
+		}
+
+		/**
 		 * Build HTML for a single token row.
 		 */
 		function buildTokenRow(name, customVal) {
-			var meta = tokenRegistry[name]
+			var meta = tokenMeta(name)
 			var state = tokenEditorState[name]
 			var displayVal = state
 				? state.current
@@ -2903,6 +3524,7 @@
 					? customVal
 					: ''
 			var isCustom = customVal !== null && customVal !== undefined
+			var facts = buildTokenFacts(name, meta)
 
 			var badgeHtml = isCustom
 				? '<span class="nldesign-token-custom-badge" title="'
@@ -2915,7 +3537,7 @@
 			// to satisfy WCAG 1.3.1/4.1.2 (axe "label").
 			var inputLabel = escapeHtml(meta.label || name)
 			var pickerLabel = escapeHtml(
-				t('thematiq', 'Colour picker for {label}', {
+				t('thematiq', 'Color picker for {label}', {
 					label: meta.label || name,
 				}),
 			)
@@ -2934,8 +3556,17 @@
 			// its note-card fills from one), so it gets the same picker as a
 			// colour and the picker writes the triplet — see wireTokenRows().
 			var format = meta.type === 'rgb' ? ' data-format="rgb"' : ''
-			if (meta.type === 'color' || meta.type === 'rgb') {
-				var pickerVal = normaliseColorForPicker(displayVal)
+			if (meta.type === 'duration') {
+				inputHtml = buildDurationInput(name, meta, displayVal, lockedAttr)
+			} else if (meta.type === 'easing') {
+				inputHtml = buildEasingInput(name, meta, displayVal, lockedAttr)
+			} else if (meta.type === 'color' || meta.type === 'rgb') {
+				var parts =
+					meta.type === 'color' && typeof TT.splitAlpha === 'function'
+						? TT.splitAlpha(displayVal)
+						: null
+				var pickerVal =
+					parts !== null ? parts.hex : normaliseColorForPicker(displayVal)
 				inputHtml =
 					'<div class="nldesign-color-input-wrap">'
 					+ '<input type="color" class="nldesign-color-picker" aria-label="'
@@ -2960,7 +3591,14 @@
 					+ '"'
 					+ lockedAttr
 					+ '>'
+					+ (meta.type === 'color'
+						? buildAlphaInput(name, meta, displayVal, parts, lockedAttr)
+						: '')
 					+ '</div>'
+					+ (meta.type === 'color'
+					&& (meta.group === 'brand' || meta.group === 'internal')
+						? buildDarkInput(name, meta, lockedAttr)
+						: '')
 			} else {
 				inputHtml =
 					'<input type="text" class="nldesign-text-input" aria-label="'
@@ -2988,8 +3626,14 @@
 				+ '<span class="nldesign-token-name">'
 				+ escapeHtml(name)
 				+ '</span>'
+				+ facts.html
 				+ '</div>'
-				+ inputHtml
+				+ (facts.ids === ''
+					? inputHtml
+					: inputHtml.replace(
+							/<input /g,
+							'<input aria-describedby="' + facts.ids + '" ',
+						))
 				+ '<button class="nldesign-btn nldesign-btn--small nldesign-reset-btn" data-token="'
 				+ escapeHtml(name)
 				+ '" title="'
@@ -3003,6 +3647,235 @@
 				+ '"'
 				+ (locked ? ' disabled' : '')
 				+ '>↺</button>'
+				+ (meta.type === 'easing' ? buildMotionPreview() : '')
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * The opacity controls of a colour row: a checkerboard swatch, a range and a number field.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @param {string} value The shown value.
+		 * @param {{hex: string, alpha: number}|null} parts The value split by splitAlpha().
+		 * @param {string} lockedAttr The disabled attributes of a locked row.
+		 * @return {string} HTML.
+		 */
+		function buildAlphaInput(name, meta, value, parts, lockedAttr) {
+			var alpha = parts !== null ? parts.alpha : 100
+			var label = meta.label || name
+			return (
+				'<span class="nldesign-color-swatch" aria-hidden="true"><span style="background:'
+				+ escapeHtml(value)
+				+ '"></span></span>'
+				+ '<input type="range" class="nldesign-color-alpha" min="0" max="100" step="1" data-token="'
+				+ escapeHtml(name)
+				+ '" value="'
+				+ alpha
+				+ '" aria-label="'
+				+ escapeHtml(t('thematiq', 'Opacity of {label}', { label: label }))
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ '<input type="number" class="nldesign-color-alpha-number" min="0" max="100" step="1" data-token="'
+				+ escapeHtml(name)
+				+ '" value="'
+				+ alpha
+				+ '" aria-label="'
+				+ escapeHtml(
+					t('thematiq', 'Opacity of {label} in percent', { label: label }),
+				)
+				+ '"'
+				+ lockedAttr
+				+ '>'
+			)
+		}
+
+		/**
+		 * The "Dark" line of a colour row: empty means derived, shown as the placeholder.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @param {string} lockedAttr The disabled attributes of a locked row.
+		 * @return {string} HTML.
+		 */
+		function buildDarkInput(name, meta, lockedAttr) {
+			// A settable or internal colour derives no dark value: empty keeps
+			// Nextcloud's own, which the placeholder shows where it is known.
+			var own =
+				meta.settable === true || meta.group === 'internal'
+					? meta.stock && meta.stock.dark
+						? t('thematiq', 'Nextcloud: {value}', {
+								value: meta.stock.dark,
+							})
+						: t('thematiq', "Nextcloud's own dark value")
+					: ''
+			var placeholder =
+				own
+				|| tokenEditorDarkDerived[name]
+				|| t('thematiq', 'Derived from the light value')
+			return (
+				'<div class="nldesign-token-dark">'
+				+ '<span class="nldesign-token-dark-label" aria-hidden="true">'
+				+ escapeHtml(t('thematiq', 'Dark'))
+				+ '</span>'
+				+ '<input type="text" class="nldesign-dark-text" data-token="'
+				+ escapeHtml(name)
+				+ '" value="'
+				+ escapeHtml(tokenEditorDark[name] || '')
+				+ '" placeholder="'
+				+ escapeHtml(placeholder)
+				+ '" aria-label="'
+				+ escapeHtml(
+					t('thematiq', 'Dark value of {label}', {
+						label: meta.label || name,
+					}),
+				)
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * A duration row: a number field and a unit select.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @param {string} value The shown value, such as `150ms`.
+		 * @param {string} lockedAttr The disabled attributes of a locked row.
+		 * @return {string} HTML.
+		 */
+		function buildDurationInput(name, meta, value, lockedAttr) {
+			var match = /^\s*([0-9.]+)\s*(ms|s)\s*$/.exec(value || '')
+			var amount = match !== null ? match[1] : ''
+			var unit = match !== null ? match[2] : 'ms'
+			var label = meta.label || name
+			return (
+				'<div class="nldesign-duration-input">'
+				+ '<input type="number" class="nldesign-duration-number" min="0" step="any" data-token="'
+				+ escapeHtml(name)
+				+ '" value="'
+				+ escapeHtml(amount)
+				+ '" aria-label="'
+				+ escapeHtml(label)
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ '<select class="nldesign-duration-unit" data-token="'
+				+ escapeHtml(name)
+				+ '" aria-label="'
+				+ escapeHtml(t('thematiq', 'Unit of {label}', { label: label }))
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ ['ms', 's']
+					.map(function (u) {
+						return (
+							'<option value="'
+							+ u
+							+ '"'
+							+ (u === unit ? ' selected' : '')
+							+ '>'
+							+ u
+							+ '</option>'
+						)
+					})
+					.join('')
+				+ '</select>'
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * An easing row: the five keywords and "Custom curve", which opens four number fields.
+		 *
+		 * @param {string} name The token.
+		 * @param {object} meta Its registry entry.
+		 * @param {string} value The shown value.
+		 * @param {string} lockedAttr The disabled attributes of a locked row.
+		 * @return {string} HTML.
+		 */
+		function buildEasingInput(name, meta, value, lockedAttr) {
+			var curve = /^cubic-bezier\(([^)]*)\)$/.exec((value || '').trim())
+			var points = curve !== null ? curve[1].split(',') : ['', '', '', '']
+			var selected = curve !== null ? 'custom' : (value || 'ease').trim()
+			var label = meta.label || name
+			var options = [
+				['linear', 'linear'],
+				['ease', 'ease'],
+				['ease-in', 'ease-in'],
+				['ease-out', 'ease-out'],
+				['ease-in-out', 'ease-in-out'],
+				['custom', t('thematiq', 'Custom curve')],
+			]
+			return (
+				'<div class="nldesign-easing-input">'
+				+ '<select class="nldesign-easing-select" data-token="'
+				+ escapeHtml(name)
+				+ '" aria-label="'
+				+ escapeHtml(label)
+				+ '"'
+				+ lockedAttr
+				+ '>'
+				+ options
+					.map(function (o) {
+						return (
+							'<option value="'
+							+ o[0]
+							+ '"'
+							+ (o[0] === selected ? ' selected' : '')
+							+ '>'
+							+ escapeHtml(o[1])
+							+ '</option>'
+						)
+					})
+					.join('')
+				+ '</select>'
+				+ '<span class="nldesign-easing-custom"'
+				+ (selected === 'custom' ? '' : ' hidden')
+				+ '>'
+				+ ['x1', 'y1', 'x2', 'y2']
+					.map(function (point, i) {
+						return (
+							'<input type="number" step="0.01" class="nldesign-easing-point" data-token="'
+							+ escapeHtml(name)
+							+ '" value="'
+							+ escapeHtml((points[i] || '').trim())
+							+ '" aria-label="'
+							+ escapeHtml(
+								t('thematiq', '{point} of the curve of {label}', {
+									point: point,
+									label: label,
+								}),
+							)
+							+ '"'
+							+ lockedAttr
+							+ '>'
+						)
+					})
+					.join('')
+				+ '</span>'
+				+ '</div>'
+			)
+		}
+
+		/**
+		 * The motion preview: a block that moves with the chosen duration and easing,
+		 * and stays still, showing the values as text, under reduced motion.
+		 *
+		 * @return {string} HTML.
+		 */
+		function buildMotionPreview() {
+			return (
+				'<div class="nldesign-motion-preview">'
+				+ '<button type="button" class="nldesign-btn nldesign-btn--small nldesign-motion-play">'
+				+ escapeHtml(t('thematiq', 'Preview motion'))
+				+ '</button>'
+				+ '<span class="nldesign-motion-track" aria-hidden="true"><span class="nldesign-motion-block"></span></span>'
+				+ '<span class="nldesign-motion-readout" role="status" aria-live="polite"></span>'
 				+ '</div>'
 			)
 		}
@@ -3048,6 +3921,230 @@
 		}
 
 		/**
+		 * Move a colour row's picker and opacity controls to a typed value they can show.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @param {string} name The token.
+		 * @param {string} value The typed value.
+		 * @return {void}
+		 */
+		function syncAlpha(container, name, value) {
+			var parts =
+				typeof TT.splitAlpha === 'function' ? TT.splitAlpha(value) : null
+			if (parts === null) {
+				return
+			}
+			container
+				.querySelectorAll(
+					'.nldesign-color-alpha[data-token="'
+						+ name
+						+ '"], .nldesign-color-alpha-number[data-token="'
+						+ name
+						+ '"]',
+				)
+				.forEach(function (field) {
+					field.value = String(parts.alpha)
+				})
+			var picker = container.querySelector(
+				'.nldesign-color-picker[data-token="' + name + '"]',
+			)
+			if (picker !== null && picker.dataset.format !== 'rgb') {
+				picker.value = parts.hex
+			}
+		}
+
+		/**
+		 * Set a typed row's value from its controls: preview, mark unsaved.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @param {string} name The token.
+		 * @param {string} value The value.
+		 * @return {void}
+		 */
+		function setTypedValue(container, name, value) {
+			applyLivePreview(name, value)
+			markDirty(name, value, container)
+		}
+
+		/**
+		 * Wire the opacity, dark, duration, easing and motion preview controls.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @return {void}
+		 */
+		function wireTypedRows(container) {
+			container
+				.querySelectorAll(
+					'.nldesign-color-alpha, .nldesign-color-alpha-number',
+				)
+				.forEach(function (field) {
+					field.addEventListener('input', function () {
+						var name = field.dataset.token
+						var picker = container.querySelector(
+							'.nldesign-color-picker[data-token="' + name + '"]',
+						)
+						var text = container.querySelector(
+							'.nldesign-color-text[data-token="' + name + '"]',
+						)
+						container
+							.querySelectorAll(
+								'.nldesign-color-alpha[data-token="'
+									+ name
+									+ '"], .nldesign-color-alpha-number[data-token="'
+									+ name
+									+ '"]',
+							)
+							.forEach(function (other) {
+								other.value = field.value
+							})
+						if (picker === null || typeof TT.joinAlpha !== 'function') {
+							return
+						}
+						var value = TT.joinAlpha(picker.value, field.value)
+						if (text !== null) {
+							text.value = value
+						}
+						setTypedValue(container, name, value)
+					})
+				})
+
+			container
+				.querySelectorAll('.nldesign-dark-text')
+				.forEach(function (field) {
+					field.addEventListener('input', function () {
+						var name = field.dataset.token
+						tokenEditorDark[name] = field.value.trim()
+						var state = tokenEditorState[name]
+						markDirty(name, state ? state.current : '', container)
+					})
+				})
+
+			function durationOf(name) {
+				var number = container.querySelector(
+					'.nldesign-duration-number[data-token="' + name + '"]',
+				)
+				var unit = container.querySelector(
+					'.nldesign-duration-unit[data-token="' + name + '"]',
+				)
+				if (number === null || unit === null || number.value.trim() === '') {
+					return
+				}
+				setTypedValue(container, name, number.value.trim() + unit.value)
+			}
+			container
+				.querySelectorAll(
+					'.nldesign-duration-number, .nldesign-duration-unit',
+				)
+				.forEach(function (field) {
+					field.addEventListener('input', function () {
+						durationOf(field.dataset.token)
+					})
+					field.addEventListener('change', function () {
+						durationOf(field.dataset.token)
+					})
+				})
+
+			function easingOf(name) {
+				var select = container.querySelector(
+					'.nldesign-easing-select[data-token="' + name + '"]',
+				)
+				if (select === null) {
+					return
+				}
+				var custom = select.parentNode.querySelector(
+					'.nldesign-easing-custom',
+				)
+				if (custom !== null) {
+					custom.hidden = select.value !== 'custom'
+				}
+				if (select.value !== 'custom') {
+					setTypedValue(container, name, select.value)
+					return
+				}
+				var points = []
+				select.parentNode
+					.querySelectorAll('.nldesign-easing-point')
+					.forEach(function (point) {
+						points.push(point.value.trim())
+					})
+				if (points.indexOf('') === -1) {
+					setTypedValue(
+						container,
+						name,
+						'cubic-bezier(' + points.join(', ') + ')',
+					)
+				}
+			}
+			container
+				.querySelectorAll('.nldesign-easing-select, .nldesign-easing-point')
+				.forEach(function (field) {
+					field.addEventListener('change', function () {
+						easingOf(field.dataset.token)
+					})
+					field.addEventListener('input', function () {
+						easingOf(field.dataset.token)
+					})
+				})
+
+			container
+				.querySelectorAll('.nldesign-motion-play')
+				.forEach(function (btn) {
+					btn.addEventListener('click', function () {
+						var preview = btn.parentNode
+						var block = preview.querySelector('.nldesign-motion-block')
+						var readout = preview.querySelector(
+							'.nldesign-motion-readout',
+						)
+						var quick = tokenEditorState['--animation-quick']
+						var easing = tokenEditorState['--nldesign-animation-easing']
+						var duration = (quick && quick.current) || '100ms'
+						var curve = (easing && easing.current) || 'ease'
+						var reduced =
+							typeof window.matchMedia === 'function'
+							&& window.matchMedia('(prefers-reduced-motion: reduce)')
+								.matches
+						readout.textContent = t(
+							'thematiq',
+							'Duration {duration}, easing {easing}.',
+							{
+								duration: duration,
+								easing: curve,
+							},
+						)
+						if (reduced) {
+							return
+						}
+						block.style.transition =
+							'transform ' + duration + ' ' + curve
+						block.classList.toggle('nldesign-motion-block--moved')
+					})
+				})
+		}
+
+		/**
+		 * The dark values to send: each own dark value, with its colour's light value in
+		 * `overrides` too, because the server keeps a dark value only next to its light one.
+		 *
+		 * @param {Object<string,string>} overrides The light values being written; completed in place.
+		 * @return {Object<string,string>} Token => dark value.
+		 */
+		function collectDarkOverrides(overrides) {
+			var dark = {}
+			Object.keys(tokenEditorDark).forEach(function (name) {
+				var value = (tokenEditorDark[name] || '').trim()
+				var state = tokenEditorState[name]
+				if (value === '' || state === undefined) {
+					return
+				}
+				if (overrides[name] === undefined && state.current.trim() !== '') {
+					overrides[name] = state.current.trim()
+				}
+				dark[name] = value
+			})
+			return dark
+		}
+
+		/**
 		 * Wire event listeners on all token rows inside a container.
 		 */
 		function wireTokenRows(container) {
@@ -3057,6 +4154,12 @@
 					picker.addEventListener('input', function () {
 						var name = picker.dataset.token
 						var value = pickerValue(picker)
+						var alpha = container.querySelector(
+							'.nldesign-color-alpha[data-token="' + name + '"]',
+						)
+						if (alpha !== null && typeof TT.joinAlpha === 'function') {
+							value = TT.joinAlpha(picker.value, alpha.value)
+						}
 						var textField = container.querySelector(
 							'.nldesign-color-text[data-token="' + name + '"]',
 						)
@@ -3080,10 +4183,13 @@
 						if (picker !== null) {
 							syncPicker(picker, value)
 						}
+						syncAlpha(container, name, value)
 						applyLivePreview(name, value)
 						markDirty(name, value, container)
 					})
 				})
+
+			wireTypedRows(container)
 
 			container
 				.querySelectorAll('.nldesign-text-input')
@@ -3138,18 +4244,10 @@
 						}
 						// A saved value stays on the preview; with none, the
 						// preview falls back to what the theme itself declares.
-						if (
-							typeof state.custom === 'string'
-							&& state.custom !== ''
-						) {
-							previewTarget().style.setProperty(
-								name,
-								state.custom,
-								'important',
-							)
-						} else {
-							previewTarget().style.removeProperty(name)
-						}
+						writeLiveToken(
+							name,
+							typeof state.custom === 'string' ? state.custom : '',
+						)
 						schedulePreviewRepaint()
 						tokenEditorState[name].current = defaultVal
 						tokenEditorState[name].isDirty = false
@@ -3200,6 +4298,74 @@
 			return previewRoot !== null ? previewRoot : document.documentElement
 		}
 
+		/**
+		 * Whether a token belongs to the family Nextcloud derives from the
+		 * primary colour (`--color-primary`, `-element`, `-light`, `-hover`…).
+		 *
+		 * @param {string} name The custom property.
+		 * @return {boolean} True for a primary-family token.
+		 */
+		function isPrimaryFamily(name) {
+			return name.indexOf('--color-primary') === 0
+		}
+
+		/**
+		 * Write an unsaved value, or clear it, where an edit is shown.
+		 *
+		 * The editor's own tabs, chips, buttons and badges are drawn in the
+		 * brand primary, so an edit to that family is written on
+		 * #nldesign-settings as well: on the preview alone, the controls around
+		 * it kept the saved colour while everything inside showed the new one.
+		 * The settings section is as far as it reaches — the rest of the page
+		 * still wears only what has been saved.
+		 *
+		 * @param {string} name The custom property.
+		 * @param {string} value The value, or an empty string to clear it.
+		 * @return {void}
+		 */
+		function writeLiveToken(name, value) {
+			var targets = [previewTarget()]
+			if (settingsEl !== null && isPrimaryFamily(name) === true) {
+				targets.push(settingsEl)
+			}
+			targets.forEach(function (node) {
+				if (value.trim() === '') {
+					node.style.removeProperty(name)
+				} else {
+					node.style.setProperty(name, value, 'important')
+				}
+			})
+		}
+
+		/**
+		 * Drop every unsaved value written where an edit is shown.
+		 *
+		 * Called when the editor is rebuilt from the server: after an apply and
+		 * after an import. The rebuilt rows hold only what is saved, so a value
+		 * an edit wrote inline on the preview (or, for the primary family, on
+		 * the settings section) is now held by nothing, and being the nearer
+		 * declaration it would keep beating the theme for the rest of the page
+		 * session. The playground writes the same names on the preview from its
+		 * cloned rows, so this clears those too. The preview's own `--prev-*`
+		 * scale is not an edit and is left alone.
+		 *
+		 * @param {Array<string>} names The token names the editor can write.
+		 * @return {void}
+		 */
+		function clearLiveTokens(names) {
+			var targets = [previewTarget()]
+			if (settingsEl !== null) {
+				targets.push(settingsEl)
+			}
+			targets.forEach(function (node) {
+				names.forEach(function (name) {
+					node.style.removeProperty(name)
+				})
+			})
+			// The `--prev-*` scale was read off the cascade the edits were in.
+			schedulePreviewRepaint()
+		}
+
 		function applyLivePreview(name, value) {
 			// The custom property is written immediately, NOT deferred: this is
 			// what repaints the specimens in the preview, and the browser
@@ -3216,11 +4382,7 @@
 			//
 			// Inline `!important` outranks any author stylesheet, so the preview
 			// now wins over the stored value it is about to replace.
-			if (value.trim() === '') {
-				previewTarget().style.removeProperty(name)
-			} else {
-				previewTarget().style.setProperty(name, value, 'important')
-			}
+			writeLiveToken(name, value)
 			schedulePreviewRepaint()
 		}
 
@@ -3734,6 +4896,9 @@
 				),
 				collectSavedAndDirtyOverrides(),
 				loadInitialState('playgroundTokenSources', {}),
+				// Marked in the file too, so the stored theme, downloaded from
+				// the custom set list and uploaded again, comes back the same.
+				designSystem,
 			)
 
 			// An override the exporter could not express is a value the admin
@@ -4022,6 +5187,76 @@
 			})
 		}
 
+		/**
+		 * The refusal of a save in the administrator's language: each token by its label,
+		 * with why its value does not fit. The server names the reason in English.
+		 *
+		 * @param {Object<string,string>} rejected Token => the server's reason.
+		 * @return {string} The message.
+		 */
+		function rejectedMessage(rejected) {
+			var reasons = {
+				'not an editable token': t(
+					'thematiq',
+					'the editor cannot set this token',
+				),
+				'not an allowed value': t('thematiq', 'this value is not allowed'),
+				'not a valid color value': t('thematiq', 'this is not a colour'),
+				'not a valid rgb value': t('thematiq', 'this is not a colour'),
+				'not a valid duration value': t(
+					'thematiq',
+					'use a number with ms or s, up to 5 seconds',
+				),
+				'not a valid easing value': t(
+					'thematiq',
+					'use an easing keyword or a curve with both x values from 0 to 1',
+				),
+				'no dark value for this token': t(
+					'thematiq',
+					'this token has no dark value',
+				),
+			}
+			var parts = Object.keys(rejected).map(function (name) {
+				var reason = String(rejected[name])
+				var dark = reason.indexOf('dark value: ') === 0
+				var key = dark ? reason.slice('dark value: '.length) : reason
+				var text = reasons[key] || reason
+				var meta = tokenMeta(name) || {}
+				var label = meta.label ? meta.label + ' (' + name + ')' : name
+				return dark
+					? t('thematiq', '{label}, dark value: {reason}', {
+							label: label,
+							reason: text,
+						})
+					: t('thematiq', '{label}: {reason}', {
+							label: label,
+							reason: text,
+						})
+			})
+			return t('thematiq', 'Nothing was saved. {problems}.', {
+				problems: parts.join('; '),
+			})
+		}
+
+		/**
+		 * The POST body of a save; `darkOverrides` only when there are any.
+		 *
+		 * @param {Object<string,string>} overrides The light values.
+		 * @return {object} The body.
+		 */
+		function overridesPayload(overrides) {
+			var dark = collectDarkOverrides(overrides)
+			var body = {
+				overrides: overrides,
+				tokenSet: editedTokenSetId(),
+				captureTheming: true,
+			}
+			if (Object.keys(dark).length > 0) {
+				body.darkOverrides = dark
+			}
+			return body
+		}
+
 		function writeOverrides() {
 			var overrides = collectOverridesToWrite()
 
@@ -4039,11 +5274,7 @@
 				// `captureTheming`: the theme also keeps Nextcloud's own branding
 				// as it is now (colours, background, logos, favicon), so applying
 				// it later puts that back. The server skips the stock set.
-				body: JSON.stringify({
-					overrides: overrides,
-					tokenSet: editedTokenSetId(),
-					captureTheming: true,
-				}),
+				body: JSON.stringify(overridesPayload(overrides)),
 			})
 				.then(function (r) {
 					return r.json()
@@ -4076,6 +5307,8 @@
 						refreshCustomOverridesLink()
 						updateSaveStatus()
 						notify(t('thematiq', 'Token overrides saved.'))
+					} else if (data.rejected && typeof data.rejected === 'object') {
+						notify(rejectedMessage(data.rejected))
 					} else {
 						notify(
 							t('thematiq', 'Failed to save overrides:')
@@ -4092,13 +5325,196 @@
 				})
 		}
 
+		/**
+		 * Download a file from a CSRF-protected endpoint.
+		 *
+		 * Fetched with the request token rather than followed as a link: a
+		 * plain link or `window.location` carries no token, so Nextcloud
+		 * refused it with 412 and the browser reported the download as failed
+		 * ("site not available").
+		 *
+		 * @param {string} url          The endpoint.
+		 * @param {string} fallbackName The file name when the response names none.
+		 * @param {string} failure      What to tell the admin when it fails.
+		 *
+		 * @return {void}
+		 */
+		function downloadWithToken(url, fallbackName, failure) {
+			var name = fallbackName
+			fetch(url, {
+				headers: { requesttoken: OC.requestToken },
+			})
+				.then(function (r) {
+					if (r.ok === false) {
+						throw new Error('download failed: ' + r.status)
+					}
+					var disposition = r.headers
+						? r.headers.get('Content-Disposition') || ''
+						: ''
+					var match = /filename="?([^";]+)"?/.exec(disposition)
+					if (match !== null) {
+						name = match[1]
+					}
+					return r.blob()
+				})
+				.then(function (blob) {
+					var objectUrl = URL.createObjectURL(blob)
+					var a = document.createElement('a')
+					a.href = objectUrl
+					a.download = name
+					document.body.appendChild(a)
+					a.click()
+					document.body.removeChild(a)
+					// Not in the same tick: some browsers abort a blob download
+					// whose URL is revoked straight after the click.
+					window.setTimeout(function () {
+						URL.revokeObjectURL(objectUrl)
+					}, 60000)
+				})
+				.catch(function (err) {
+					console.error('Error downloading ' + url + ':', err)
+					notify(failure)
+				})
+		}
+
+		/**
+		 * The display name of the set the editor works on.
+		 *
+		 * @return {string} Its name, or its id when the page has no name for it.
+		 */
+		function editedTokenSetName() {
+			var id = editedTokenSetId()
+			var ts = tokenSetsData[id]
+			return ts && ts.name ? ts.name : id
+		}
+
+		/**
+		 * Say what an overrides action does before it is taken.
+		 *
+		 * @param {string}        id           The overlay's element id.
+		 * @param {string}        title        The dialog heading.
+		 * @param {Array<string>} paragraphs   What the action does, one paragraph each.
+		 * @param {string}        confirmLabel The label of the button that goes ahead.
+		 * @param {Function}      proceed      Called when the admin confirms.
+		 *
+		 * @return {void}
+		 */
+		function confirmOverridesAction(
+			id,
+			title,
+			paragraphs,
+			confirmLabel,
+			proceed,
+		) {
+			var html =
+				'<div class="nldesign-dialog-overlay" id="'
+				+ id
+				+ '">'
+				+ '<div class="nldesign-dialog nldesign-dialog--small">'
+				+ '<h3>'
+				+ escapeHtml(title)
+				+ '</h3>'
+				+ paragraphs
+					.map(function (text) {
+						return (
+							'<p class="settings-hint">' + escapeHtml(text) + '</p>'
+						)
+					})
+					.join('')
+				+ '<div class="nldesign-dialog-actions">'
+				+ '<button type="button" class="nldesign-dialog-cancel">'
+				+ escapeHtml(t('thematiq', 'Cancel'))
+				+ '</button>'
+				+ '<button type="button" class="nldesign-dialog-confirm nldesign-btn--primary">'
+				+ escapeHtml(confirmLabel)
+				+ '</button>'
+				+ '</div>'
+				+ '</div>'
+				+ '</div>'
+
+			document.body.insertAdjacentHTML('beforeend', html)
+			var overlay = document.getElementById(id)
+
+			function close() {
+				overlay.remove()
+			}
+
+			makeDialogAccessible(overlay, close)
+
+			overlay
+				.querySelector('.nldesign-dialog-cancel')
+				.addEventListener('click', close)
+			overlay
+				.querySelector('.nldesign-dialog-confirm')
+				.addEventListener('click', function () {
+					close()
+					proceed()
+				})
+		}
+
+		function confirmExportOverrides() {
+			confirmOverridesAction(
+				'nldesign-export-overrides-overlay',
+				t(
+					'thematiq',
+					'Download the overrides of {name}?',
+					{ name: editedTokenSetName() },
+					undefined,
+					{ escape: false },
+				),
+				[
+					t(
+						'thematiq',
+						'This downloads only the values saved for this theme on top of its token set, as custom-overrides.css. Unsaved changes are not in it.',
+					),
+					t(
+						'thematiq',
+						'It is not a complete theme. Use Export as token set to hand the whole theme on, or the configuration bundle to move the complete configuration.',
+					),
+				],
+				t('thematiq', 'Download'),
+				exportOverrides,
+			)
+		}
+
+		function confirmImportOverrides() {
+			confirmOverridesAction(
+				'nldesign-import-overrides-overlay',
+				t(
+					'thematiq',
+					'Upload overrides into {name}?',
+					{ name: editedTokenSetName() },
+					undefined,
+					{ escape: false },
+				),
+				[
+					t(
+						'thematiq',
+						'The values in the file replace every value saved for this theme, straight away. Values the editor does not know are skipped, and unsaved changes are lost.',
+					),
+					t(
+						'thematiq',
+						'To add a whole theme as a new token set, use Custom token sets further down instead.',
+					),
+				],
+				t('thematiq', 'Choose file'),
+				function () {
+					document.getElementById('nldesign-import-input').click()
+				},
+			)
+		}
+
+		/**
+		 * Download the saved overrides of the edited set.
+		 *
+		 * @return {void}
+		 */
 		function exportOverrides() {
-			var a = document.createElement('a')
-			a.href = overridesUrl('/export', editedTokenSetId())
-			a.download = 'custom-overrides.css'
-			document.body.appendChild(a)
-			a.click()
-			document.body.removeChild(a)
+			downloadWithToken(
+				overridesUrl('/export', editedTokenSetId()),
+				'custom-overrides.css',
+				t('thematiq', 'The overrides could not be downloaded.'),
+			)
 		}
 
 		function importOverrides(file) {
@@ -4118,7 +5534,7 @@
 					if (data.status === 'ok') {
 						if (resultEl !== null) {
 							resultEl.textContent = t(
-								'nldesign',
+								'thematiq',
 								'{imported} tokens imported, {skipped} tokens skipped (not recognized)',
 							)
 								.replace('{imported}', data.imported)
@@ -4172,7 +5588,27 @@
 				return null
 			})
 
-			Promise.all([preview, theming])
+			// What the admin saved for the set outranks its file on the page, so
+			// the comparison is made against the set as saved. Against the file
+			// alone, every switch back to a set pinned the file's values over
+			// the ones saved for it.
+			var saved =
+				newTokenSetId === STOCK_TOKEN_SET
+					? Promise.resolve({})
+					: fetch(overridesUrl('', newTokenSetId), {
+							headers: { requesttoken: OC.requestToken },
+						})
+							.then(function (r) {
+								return r.json()
+							})
+							.then(function (existing) {
+								return existing.overrides || {}
+							})
+							.catch(function () {
+								return {}
+							})
+
+			Promise.all([preview, theming, saved])
 				.then(function (results) {
 					var data = results[0]
 					var themingPlan = computeThemingPlan(
@@ -4183,7 +5619,25 @@
 						saveTokenSet(newTokenSetId, publishMode)
 						return
 					}
-					var newValues = data.resolved || {}
+					var newValues = Object.assign({}, data.resolved || {})
+					Object.keys(results[2]).forEach(function (name) {
+						if (newValues[name] !== undefined) {
+							newValues[name] = results[2][name]
+						}
+					})
+					// A set that carries a primary colour brings it through the
+					// theming sync, and Nextcloud derives the whole primary family
+					// from it. Pinned here as well, the family outranked Nextcloud
+					// with `!important`, so a primary chosen in Nextcloud's own
+					// theming never reached anything painted from it.
+					var setTheming = (tokenSetsData[newTokenSetId] || {}).theming
+					if (setTheming && setTheming.primary_color) {
+						Object.keys(newValues).forEach(function (name) {
+							if (isPrimaryFamily(name) === true) {
+								delete newValues[name]
+							}
+						})
+					}
 					var rootStyle = getComputedStyle(document.documentElement)
 					var changes = []
 					Object.keys(newValues).forEach(function (name) {
@@ -4278,10 +5732,17 @@
 				)
 				+ '</h3>'
 				+ buildTokenSetWarningsHtml(newTokenSetId)
+				// A set other than the running switch's would be put back within
+				// five minutes; say so before it is applied.
+				+ (runningSwitch !== null && runningSwitch.tokenSet !== newTokenSetId
+					? '<p class="settings-hint nldesign-apply-switch-warning">'
+						+ escapeHtml(runningSwitchText())
+						+ '</p>'
+					: '')
 				+ '<p class="settings-hint">'
 				+ escapeHtml(
 					t(
-						'nldesign',
+						'thematiq',
 						'These values would change. check which ones to apply to your custom overrides.',
 					),
 				)
@@ -4729,13 +6190,21 @@
 			var trigger = document.createElement('button')
 			trigger.type = 'button'
 			trigger.className = 'nldesign-app-dropdown-trigger'
-			trigger.setAttribute('aria-haspopup', 'true')
+			// The panel holds a search field and a list of checkboxes, so it is
+			// a non-modal dialog, not a menu or a listbox: `aria-haspopup` names
+			// that, and the trigger's own text ("3 of 12 apps themed") labels it.
+			trigger.id = 'nldesign-app-dropdown-trigger'
+			trigger.setAttribute('aria-haspopup', 'dialog')
 			trigger.setAttribute('aria-expanded', 'false')
+			trigger.setAttribute('aria-controls', 'nldesign-app-dropdown-panel')
 			var triggerLabel = document.createElement('span')
 			trigger.appendChild(triggerLabel)
 
 			var panel = document.createElement('div')
 			panel.className = 'nldesign-app-dropdown-panel'
+			panel.id = 'nldesign-app-dropdown-panel'
+			panel.setAttribute('role', 'dialog')
+			panel.setAttribute('aria-labelledby', trigger.id)
 
 			var searchWrap = document.createElement('div')
 			searchWrap.className = 'nldesign-app-dropdown-search'
@@ -4752,14 +6221,13 @@
 				var boxes = optList.querySelectorAll(
 					'input[type="checkbox"][data-app-id]',
 				)
-				var themed = 0
-				boxes.forEach(function (b) {
-					if (b.checked) {
-						themed++
-					}
-				})
+				var themed = window.NldesignAppTheming.countThemed(
+					Array.prototype.map.call(boxes, function (b) {
+						return { checked: b.checked }
+					}),
+				).themed
 				triggerLabel.textContent = t(
-					'nldesign',
+					'thematiq',
 					'{themed} of {total} apps themed',
 					{ themed: themed, total: boxes.length },
 				)
@@ -4795,9 +6263,10 @@
 				optList
 					.querySelectorAll('.nldesign-app-option')
 					.forEach(function (opt) {
-						opt.hidden =
-							q !== ''
-							&& opt.getAttribute('data-app-name').indexOf(q) === -1
+						opt.hidden = !window.NldesignAppTheming.matchesAppSearch(
+							opt.getAttribute('data-app-name'),
+							q,
+						)
 					})
 			})
 
@@ -4842,6 +6311,18 @@
 				}
 			})
 
+			// The panel is not modal, so Tab may leave it. When focus moves
+			// outside the dropdown the panel closes, the keyboard twin of the
+			// click-outside handler above, and focus stays where the user sent it.
+			dropdown.addEventListener('focusout', function (e) {
+				if (
+					e.relatedTarget !== null
+					&& !dropdown.contains(e.relatedTarget)
+				) {
+					closeDropdown(false)
+				}
+			})
+
 			panel.appendChild(searchWrap)
 			panel.appendChild(optList)
 			dropdown.appendChild(trigger)
@@ -4858,14 +6339,17 @@
 				return
 			}
 
-			var disabledApps = []
-			listEl
-				.querySelectorAll('input[type="checkbox"][data-app-id]')
-				.forEach(function (cb) {
-					if (cb.checked === false) {
-						disabledApps.push(cb.getAttribute('data-app-id'))
-					}
-				})
+			var disabledApps = window.NldesignAppTheming.buildDisabledAppsPayload(
+				Array.prototype.map.call(
+					listEl.querySelectorAll('input[type="checkbox"][data-app-id]'),
+					function (cb) {
+						return {
+							id: cb.getAttribute('data-app-id'),
+							checked: cb.checked,
+						}
+					},
+				),
+			)
 
 			fetch(OC.generateUrl('/apps/thematiq/settings/app-theming'), {
 				method: 'POST',
@@ -4882,13 +6366,13 @@
 					if (data && data.status === 'ok') {
 						if (feedback !== null) {
 							feedback.textContent = t(
-								'nldesign',
+								'thematiq',
 								'App theming saved. Reload an affected app to see changes.',
 							)
 						}
 						notify(
 							t(
-								'nldesign',
+								'thematiq',
 								'App theming saved. Reload an affected app to see changes.',
 							),
 						)
@@ -4935,16 +6419,14 @@
 					groupThemingGroups = (data && data.groups) || []
 					groupThemingTokenSets = (data && data.tokenSets) || []
 					groupThemingRows = ((data && data.mapping) || []).map(
-						function (entry) {
-							return { group: entry.group, tokenSet: entry.tokenSet }
-						},
+						toGroupThemingRow,
 					)
 					renderGroupThemingList()
 				})
 				.catch(function (err) {
 					console.error('Error loading group theming:', err)
 					listEl.textContent = t(
-						'nldesign',
+						'thematiq',
 						'Failed to load group mappings.',
 					)
 				})
@@ -5028,6 +6510,10 @@
 				})
 				tokenSetSelect.addEventListener('change', function () {
 					groupThemingRows[index].tokenSet = tokenSetSelect.value
+					keepCurrentSetAllowed(
+						index,
+						rowEl.querySelector('[data-field="allowedTokenSets"]'),
+					)
 				})
 
 				var moveUpBtn = document.createElement('button')
@@ -5068,6 +6554,7 @@
 
 				rowEl.appendChild(groupSelect)
 				rowEl.appendChild(tokenSetSelect)
+				rowEl.appendChild(renderGroupDelegation(index))
 				rowEl.appendChild(moveUpBtn)
 				rowEl.appendChild(moveDownBtn)
 				rowEl.appendChild(removeBtn)
@@ -5101,6 +6588,114 @@
 			}
 		}
 
+		// A mapping entry as the list keeps it. Delegation (an administrator
+		// lets the group's subadmins choose from allowed sets) is optional:
+		// an entry without it reads as not delegated.
+		// openspec/specs/per-group-theming/spec.md
+		function toGroupThemingRow(entry) {
+			return {
+				group: entry.group,
+				tokenSet: entry.tokenSet,
+				delegated: entry.delegated === true,
+				allowedTokenSets: Array.isArray(entry.allowedTokenSets)
+					? entry.allowedTokenSets.slice()
+					: [],
+			}
+		}
+
+		// The server refuses a delegated row whose allowed sets leave out its
+		// current set, so the current set is always on the list and its option
+		// cannot be unticked: changing the row's set adds the new one, and the
+		// picker cannot drop it.
+		function keepCurrentSetAllowed(index, picker) {
+			var row = groupThemingRows[index]
+			if (
+				row.delegated === true
+				&& row.allowedTokenSets.indexOf(row.tokenSet) === -1
+			) {
+				row.allowedTokenSets.push(row.tokenSet)
+			}
+			if (picker === null) {
+				return
+			}
+			Array.prototype.forEach.call(picker.options, function (opt) {
+				opt.disabled = opt.value === row.tokenSet
+				if (opt.value === row.tokenSet && row.delegated === true) {
+					opt.selected = true
+				}
+			})
+		}
+
+		// The delegate toggle and the allowed sets picker of one mapping row.
+		// Turning delegation on starts the allowed list with the current set,
+		// which the server requires it to hold.
+		function renderGroupDelegation(index) {
+			var row = groupThemingRows[index]
+			if (!Array.isArray(row.allowedTokenSets)) {
+				row.allowedTokenSets = []
+			}
+			var wrap = document.createElement('span')
+			wrap.className = 'nldesign-group-theming-delegation'
+
+			var toggleId = 'nldesign-group-theming-delegate-' + index
+			var toggle = document.createElement('input')
+			toggle.type = 'checkbox'
+			toggle.className = 'checkbox'
+			toggle.id = toggleId
+			toggle.setAttribute('data-field', 'delegated')
+			toggle.checked = row.delegated === true
+			var toggleLabel = document.createElement('label')
+			toggleLabel.setAttribute('for', toggleId)
+			toggleLabel.textContent = t('thematiq', 'Subadmins choose')
+			wrap.appendChild(toggle)
+			wrap.appendChild(toggleLabel)
+
+			var picker = document.createElement('select')
+			picker.multiple = true
+			picker.setAttribute('data-field', 'allowedTokenSets')
+			picker.setAttribute(
+				'aria-label',
+				t('thematiq', 'Token sets the subadmins of this group can choose'),
+			)
+			picker.hidden = row.delegated !== true
+			groupThemingTokenSets.forEach(function (ts) {
+				var opt = document.createElement('option')
+				opt.value = ts.id
+				opt.textContent = ts.name || ts.id
+				opt.selected = row.allowedTokenSets.indexOf(ts.id) !== -1
+				picker.appendChild(opt)
+			})
+			picker.addEventListener('change', function () {
+				groupThemingRows[index].allowedTokenSets = Array.prototype.filter
+					.call(picker.options, function (opt) {
+						return opt.selected
+					})
+					.map(function (opt) {
+						return opt.value
+					})
+				keepCurrentSetAllowed(index, picker)
+			})
+			toggle.addEventListener('change', function () {
+				groupThemingRows[index].delegated = toggle.checked
+				if (
+					toggle.checked
+					&& groupThemingRows[index].allowedTokenSets.length === 0
+				) {
+					groupThemingRows[index].allowedTokenSets = [
+						groupThemingRows[index].tokenSet,
+					]
+					Array.prototype.forEach.call(picker.options, function (opt) {
+						opt.selected = opt.value === groupThemingRows[index].tokenSet
+					})
+				}
+				keepCurrentSetAllowed(index, picker)
+				picker.hidden = !toggle.checked
+			})
+			keepCurrentSetAllowed(index, picker)
+			wrap.appendChild(picker)
+			return wrap
+		}
+
 		// Swap row at `index` with its neighbour `index + direction` (direction
 		// is -1 for up, +1 for down) and keep focus on the moved row's move-up
 		// button at its new position.
@@ -5121,7 +6716,12 @@
 		function saveGroupTheming() {
 			var feedback = document.getElementById('nldesign-group-theming-feedback')
 			var payload = groupThemingRows.map(function (row) {
-				return { group: row.group, tokenSet: row.tokenSet }
+				var entry = { group: row.group, tokenSet: row.tokenSet }
+				if (row.delegated === true) {
+					entry.delegated = true
+					entry.allowedTokenSets = row.allowedTokenSets
+				}
+				return entry
 			})
 
 			fetch(OC.generateUrl('/apps/thematiq/settings/group-theming'), {
@@ -5142,17 +6742,12 @@
 
 					if (result.ok === true && data && data.status === 'ok') {
 						groupThemingRows = (data.mapping || []).map(
-							function (entry) {
-								return {
-									group: entry.group,
-									tokenSet: entry.tokenSet,
-								}
-							},
+							toGroupThemingRow,
 						)
 						renderGroupThemingList()
 						if (feedback !== null) {
 							feedback.textContent = t(
-								'nldesign',
+								'thematiq',
 								'Group theming saved.',
 							)
 						}
@@ -5165,7 +6760,7 @@
 						var entryTokenSet =
 							(data.entry && data.entry.tokenSet) || '?'
 						var message = t(
-							'nldesign',
+							'thematiq',
 							'Could not save mapping for group "{group}" → "{tokenSet}": {reason}',
 							{
 								group: entryGroup,
@@ -5184,7 +6779,7 @@
 
 					if (feedback !== null) {
 						feedback.textContent = t(
-							'nldesign',
+							'thematiq',
 							'Failed to save group theming.',
 						)
 					}
@@ -5265,8 +6860,8 @@
 							'<li>'
 							+ escapeHtml(
 								t(
-									'nldesign',
-									'{pair}: contrast could not be evaluated (non-literal colour).',
+									'thematiq',
+									'{pair}: contrast could not be evaluated (non-literal color).',
 								).replace('{pair}', w.pair),
 							)
 							+ '</li>'
@@ -5276,7 +6871,7 @@
 						'<li>'
 						+ escapeHtml(
 							t(
-								'nldesign',
+								'thematiq',
 								'{pair}: contrast {ratio}:1 is below the WCAG 2.1 AA threshold of {threshold}:1.',
 							)
 								.replace('{pair}', w.pair)
@@ -5337,23 +6932,31 @@
 		function reasonLabel(reason) {
 			var labels = {
 				'unmapped-path': t(
-					'nldesign',
+					'thematiq',
 					'Not part of the --nldesign-* vocabulary',
 				),
 				'missing-type': t(
-					'nldesign',
+					'thematiq',
 					'No $type could be resolved (never guessed)',
 				),
 				'unsupported-color-space': t('thematiq', 'Unsupported color space'),
 				'unsupported-value-shape': t('thematiq', 'Unsupported value shape'),
+				'out-of-gamut-clipped': t(
+					'thematiq',
+					'Outside sRGB, clipped to the nearest colour',
+				),
+				'out-of-gamut-hex-fallback': t(
+					'thematiq',
+					"Outside sRGB, the document's own fallback was used",
+				),
 				'alias-cycle': t('thematiq', 'Alias cycle detected'),
 				'alias-target-missing': t('thematiq', 'Alias target does not exist'),
 				'alias-depth-exceeded': t(
-					'nldesign',
+					'thematiq',
 					'Alias chain too deep (more than 10 hops)',
 				),
 				'duplicate-target': t(
-					'nldesign',
+					'thematiq',
 					'Another token already maps to this target',
 				),
 			}
@@ -5392,7 +6995,19 @@
 		function buildDiagnosticsFragment(data) {
 			var fragment = document.createDocumentFragment()
 
-			var diagnostics = [].concat(data.skipped || [], data.errors || [])
+			// Colours moved into sRGB are listed too, so the change is visible.
+			var adapted = (data.report || [])
+				.filter(function (entry) {
+					return /^out-of-gamut-/.test(entry.reason || '')
+				})
+				.map(function (entry) {
+					return { path: entry.source, reason: entry.reason }
+				})
+			var diagnostics = [].concat(
+				data.skipped || [],
+				data.errors || [],
+				adapted,
+			)
 			var groups =
 				typeof TT.groupDiagnosticsByReason === 'function'
 					? TT.groupDiagnosticsByReason(diagnostics)
@@ -5428,16 +7043,278 @@
 					warnList.appendChild(item)
 				})
 				fragment.appendChild(warnList)
+				var adoptable = data.importWarnings.filter(function (w) {
+					return Boolean(w.token)
+				})
+				if (adoptable.length > 0) {
+					fragment.appendChild(buildAdoptNoticesButton(adoptable))
+				}
 			}
 
 			return fragment
 		}
 
-		function uploadCustomTokenSet(name, file) {
+		/**
+		 * "Record as deprecations": keeps an upload's deprecation notices as deprecation records
+		 * (openspec/specs/token-deprecations/spec.md, imported notices). Nothing is recorded
+		 * without this click.
+		 *
+		 * @param {Array<object>} notices The notices that name a CSS variable.
+		 * @return {HTMLButtonElement} The button.
+		 */
+		function buildAdoptNoticesButton(notices) {
+			var button = document.createElement('button')
+			button.type = 'button'
+			button.className = 'nldesign-adopt-notices'
+			button.textContent = t('thematiq', 'Record as deprecations')
+			button.addEventListener('click', function () {
+				button.disabled = true
+				fetch(
+					OC.generateUrl(
+						'/apps/thematiq/settings/tokens/deprecations/adopt',
+					),
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							requesttoken: OC.requestToken,
+						},
+						body: JSON.stringify({ notices: notices }),
+					},
+				)
+					.then(function (r) {
+						return r.json()
+					})
+					.then(function (data) {
+						var count = (data.recorded || []).length
+						notify(
+							n(
+								'thematiq',
+								'Recorded {count} deprecation.',
+								'Recorded {count} deprecations.',
+								count,
+								{ count: count },
+							),
+						)
+						document.dispatchEvent(
+							new CustomEvent('thematiq:deprecations-changed'),
+						)
+					})
+					.catch(function () {
+						button.disabled = false
+						notify(t('thematiq', 'The notices were not recorded.'))
+					})
+			})
+			return button
+		}
+
+		/**
+		 * The simple brand form (openspec/specs/simple-brand-form/spec.md): the preview derives the
+		 * set with window.NldesignBrandForm over the server's rules and defaults, so it shows what is
+		 * stored; saving posts to /settings/tokensets/from-colours.
+		 */
+		function initBrandForm() {
+			var form = document.getElementById('nldesign-brand-form')
+			var brandForm = window.NldesignBrandForm
+			if (form === null || !brandForm) {
+				return
+			}
+			var nameInput = document.getElementById('nldesign-brand-name')
+			var primaryInput = document.getElementById('nldesign-brand-primary')
+			var backgroundInput = document.getElementById(
+				'nldesign-brand-background',
+			)
+			var logoInput = document.getElementById('nldesign-brand-logo')
+			var sample = document.getElementById('nldesign-brand-sample')
+			var sampleHover = document.getElementById('nldesign-brand-sample-hover')
+			var readout = document.getElementById('nldesign-brand-contrast')
+			var resultEl = document.getElementById('nldesign-brand-result')
+			var saveBtn = document.getElementById('nldesign-brand-save')
+			var inputs = null
+
+			function ratioLine(label, value, minimum) {
+				var line = t('thematiq', '{label}: {ratio}:1, needs {min}:1.')
+					.replace('{label}', label)
+					.replace('{ratio}', value.toFixed(2))
+					.replace('{min}', String(minimum))
+				if (value < minimum) {
+					line +=
+						' '
+						+ t(
+							'thematiq',
+							'Warning: below the threshold. You can still save.',
+						)
+				}
+				return line
+			}
+
+			function repaint() {
+				if (inputs === null) {
+					return
+				}
+				var result = brandForm.derive(
+					inputs,
+					primaryInput.value,
+					backgroundInput.value,
+				)
+				if (result === null) {
+					return
+				}
+				var d = result.declarations
+				sample.style.background = d['--nldesign-color-primary']
+				sample.style.color = d['--nldesign-color-primary-text']
+				sampleHover.style.background = d['--nldesign-color-primary-hover']
+				sampleHover.style.color = d['--nldesign-color-primary-text']
+				form.style.setProperty(
+					'--brand-form-background',
+					d['--nldesign-color-nav-background'],
+				)
+				readout.textContent =
+					ratioLine(
+						t('thematiq', 'Text on primary'),
+						result.textRatio,
+						brandForm.TEXT_MIN,
+					)
+					+ ' '
+					+ ratioLine(
+						t('thematiq', 'Primary on background'),
+						result.uiRatio,
+						brandForm.UI_MIN,
+					)
+			}
+
+			function showResult(text) {
+				resultEl.style.display = 'block'
+				resultEl.textContent = text
+			}
+
+			// The two colors start as the theme the page is wearing, and follow
+			// it when another theme is applied, until the admin picks their own.
+			var picked = false
+			function followTheme() {
+				if (picked === true) {
+					return
+				}
+				var style = getComputedStyle(document.documentElement)
+				var primary = style.getPropertyValue('--color-primary').trim()
+				var background = style
+					.getPropertyValue('--color-main-background')
+					.trim()
+				// Only what the page actually declares: an empty value would
+				// read as black.
+				if (primary !== '' && TT.normaliseColorForPicker) {
+					primaryInput.value = TT.normaliseColorForPicker(primary)
+				}
+				if (background !== '' && TT.normaliseColorForPicker) {
+					backgroundInput.value = TT.normaliseColorForPicker(background)
+				}
+				repaint()
+			}
+
+			function pick() {
+				picked = true
+				repaint()
+			}
+
+			primaryInput.addEventListener('input', pick)
+			backgroundInput.addEventListener('input', pick)
+			document.addEventListener('thematiq:theme-applied', followTheme)
+			var coloursTab = document.getElementById('nldesign-create-tab-colours')
+			if (coloursTab !== null) {
+				coloursTab.addEventListener('click', followTheme)
+			}
+			followTheme()
+
+			var logoBtn = document.getElementById('nldesign-brand-logo-btn')
+			var logoName = document.getElementById('nldesign-brand-logo-name')
+			if (logoBtn !== null && logoInput !== null) {
+				logoBtn.addEventListener('click', function () {
+					logoInput.click()
+				})
+				logoInput.addEventListener('change', function () {
+					if (logoName !== null) {
+						logoName.textContent =
+							logoInput.files && logoInput.files[0]
+								? logoInput.files[0].name
+								: t('thematiq', 'No file chosen')
+					}
+				})
+			}
+
+			fetch(OC.generateUrl('/apps/thematiq/settings/tokensets/from-colours'), {
+				headers: { requesttoken: OC.requestToken },
+			})
+				.then(function (r) {
+					return r.json()
+				})
+				.then(function (data) {
+					inputs = data
+					repaint()
+				})
+				.catch(function (err) {
+					console.error('Error loading the brand form rules:', err)
+				})
+
+			saveBtn.addEventListener('click', function () {
+				var name = nameInput.value.trim()
+				if (name === '') {
+					notify(t('thematiq', 'Enter a token set name first.'))
+					nameInput.focus()
+					return
+				}
+				var formData = new FormData()
+				formData.append('name', name)
+				formData.append('primary', primaryInput.value)
+				formData.append('background', backgroundInput.value)
+				if (logoInput !== null && logoInput.files && logoInput.files[0]) {
+					formData.append('logo', logoInput.files[0])
+				}
+				fetch(
+					OC.generateUrl('/apps/thematiq/settings/tokensets/from-colours'),
+					{
+						method: 'POST',
+						headers: { requesttoken: OC.requestToken },
+						body: formData,
+					},
+				)
+					.then(function (r) {
+						return r.json().then(function (data) {
+							return { status: r.status, data: data }
+						})
+					})
+					.then(function (res) {
+						if (res.status >= 400) {
+							showResult(
+								t('thematiq', 'Not saved:')
+									+ ' '
+									+ (res.data.error || ''),
+							)
+							return
+						}
+						showResult(
+							t(
+								'thematiq',
+								'"{name}" is saved and is now in the dropdown. Select it to apply it.',
+							).replace('{name}', name),
+						)
+						loadCustomTokenSets()
+						refreshTokenSetCatalogue().catch(function () {})
+					})
+					.catch(function (err) {
+						console.error('Error creating the house style:', err)
+						showResult(t('thematiq', 'Not saved.'))
+					})
+			})
+		}
+
+		function uploadCustomTokenSet(name, file, brands) {
 			var resultEl = document.getElementById('nldesign-upload-result')
 			var formData = new FormData()
 			formData.append('name', name)
 			formData.append('file', file)
+			;(brands || []).forEach(function (key) {
+				formData.append('brands[]', key)
+			})
 
 			fetch(OC.generateUrl('/apps/thematiq/settings/tokensets/upload'), {
 				method: 'POST',
@@ -5472,8 +7349,38 @@
 						)
 						return
 					}
+					// One source, several brands: choose first, then the same upload again.
+					if (res.data.multiBrand === true && res.data.stored !== true) {
+						if (resultEl !== null) {
+							renderBrandPicker(
+								resultEl,
+								name,
+								file,
+								res.data.brands || [],
+							)
+						}
+						return
+					}
+					if (res.data.multiBrand === true) {
+						if (resultEl !== null) {
+							resultEl.appendChild(
+								document.createTextNode(
+									n(
+										'thematiq',
+										'{count} brand imported as a token set.',
+										'{count} brands imported as token sets.',
+										(res.data.sets || []).length,
+										{ count: (res.data.sets || []).length },
+									),
+								),
+							)
+						}
+						loadCustomTokenSets()
+						refreshTokenSetCatalogue().catch(function () {})
+						return
+					}
 					var msg = t(
-						'nldesign',
+						'thematiq',
 						'{imported} tokens imported, {skipped} skipped.',
 					)
 						.replace('{imported}', res.data.imported)
@@ -5490,7 +7397,7 @@
 						msg +=
 							' '
 							+ t(
-								'nldesign',
+								'thematiq',
 								'{count} WCAG AA contrast warning(s) — see the apply dialog.',
 							).replace('{count}', res.data.warnings.length)
 					}
@@ -5519,7 +7426,7 @@
 						.catch(function () {
 							notify(
 								t(
-									'nldesign',
+									'thematiq',
 									'Token set uploaded. Reload the page to apply it.',
 								),
 							)
@@ -5530,6 +7437,306 @@
 					notify(t('thematiq', 'Upload failed.'))
 				})
 		}
+
+		/**
+		 * The brand picker after a multi-brand upload
+		 * (openspec/specs/multi-brand-token-sources): one labelled checkbox per
+		 * brand, all ticked, with its token count and group; Import repeats the upload with
+		 * the chosen brands, Cancel stores nothing. Focus moves to the picker's heading.
+		 *
+		 * @param {HTMLElement} resultEl The upload result region.
+		 * @param {string} name The source name.
+		 * @param {File} file The uploaded file.
+		 * @param {Array<object>} brands The brands the server found.
+		 * @return {void}
+		 */
+		function renderBrandPicker(resultEl, name, file, brands) {
+			var picker = document.createElement('fieldset')
+			picker.className = 'nldesign-brand-picker'
+			var legend = document.createElement('legend')
+			legend.tabIndex = -1
+			legend.textContent = t(
+				'thematiq',
+				'This file holds {count} brands. Choose the ones to import.',
+				{ count: brands.length },
+			)
+			picker.appendChild(legend)
+			brands.forEach(function (brand, index) {
+				var row = document.createElement('div')
+				var box = document.createElement('input')
+				box.type = 'checkbox'
+				box.checked = true
+				box.value = brand.key
+				box.id = 'nldesign-brand-pick-' + index
+				box.className = 'checkbox'
+				var label = document.createElement('label')
+				label.setAttribute('for', box.id)
+				label.textContent =
+					brand.name
+					+ ' '
+					+ n(
+						'thematiq',
+						'({count} token)',
+						'({count} tokens)',
+						brand.tokenCount,
+						{
+							count: brand.tokenCount,
+						},
+					)
+					+ (brand.group ? ' · ' + brand.group : '')
+				row.appendChild(box)
+				row.appendChild(label)
+				picker.appendChild(row)
+			})
+			var confirm = document.createElement('button')
+			confirm.type = 'button'
+			confirm.className = 'button primary nldesign-brand-import'
+			confirm.textContent = t('thematiq', 'Import the chosen brands')
+			confirm.addEventListener('click', function () {
+				var chosen = Array.prototype.slice
+					.call(picker.querySelectorAll('input[type="checkbox"]:checked'))
+					.map(function (box) {
+						return box.value
+					})
+				if (chosen.length === 0) {
+					notify(t('thematiq', 'Choose at least one brand.'))
+					return
+				}
+				uploadCustomTokenSet(name, file, chosen)
+			})
+			var cancel = document.createElement('button')
+			cancel.type = 'button'
+			cancel.className = 'button nldesign-brand-cancel'
+			cancel.textContent = t('thematiq', 'Cancel')
+			cancel.addEventListener('click', function () {
+				resultEl.innerHTML = ''
+				resultEl.appendChild(
+					document.createTextNode(t('thematiq', 'Nothing was imported.')),
+				)
+			})
+			picker.appendChild(confirm)
+			picker.appendChild(cancel)
+			resultEl.appendChild(picker)
+			legend.focus()
+		}
+
+		/**
+		 * Update a multi-brand source from a new file; the report goes to the result region.
+		 *
+		 * @param {string} sourceId The source id.
+		 * @param {File} file The new file.
+		 * @return {Promise<void>}
+		 */
+		function updateTokenSource(sourceId, file) {
+			var resultEl = document.getElementById('nldesign-upload-result')
+			var formData = new FormData()
+			formData.append('file', file)
+			return fetch(
+				OC.generateUrl(
+					'/apps/thematiq/settings/tokensets/sources/'
+						+ encodeURIComponent(sourceId),
+				),
+				{
+					method: 'POST',
+					headers: { requesttoken: OC.requestToken },
+					body: formData,
+				},
+			)
+				.then(function (r) {
+					return r.json().then(function (data) {
+						return { ok: r.ok, data: data || {} }
+					})
+				})
+				.then(function (res) {
+					var text = res.ok
+						? t(
+								'thematiq',
+								'Updated: {updated}. Missing from the file, kept as they were: {missing}. New in the file, not imported: {new}.',
+								{
+									updated:
+										(res.data.updated || []).join(', ') || '-',
+									missing:
+										(res.data.missing || []).join(', ') || '-',
+									new: (res.data.new || []).join(', ') || '-',
+								},
+							)
+						: t('thematiq', 'The source was not updated:')
+							+ ' '
+							+ (res.data.error || '')
+					if (resultEl !== null) {
+						resultEl.style.display = 'block'
+						resultEl.textContent = text
+					}
+					loadCustomTokenSets()
+				})
+				.catch(function () {
+					notify(t('thematiq', 'The source was not updated.'))
+				})
+		}
+
+		/**
+		 * The URL of a set's token reference (openspec/specs/token-reference/spec.md).
+		 *
+		 * @param {string} id The token set id.
+		 * @param {string} format `html` or `md`.
+		 * @param {boolean} download Whether the browser saves it as a file.
+		 * @return {string} The URL.
+		 */
+		function tokenReferenceUrl(id, format, download) {
+			return (
+				OC.generateUrl(
+					'/apps/thematiq/api/token-sets/'
+						+ encodeURIComponent(id)
+						+ '/reference',
+				)
+				+ '?format='
+				+ format
+				+ (download ? '&download=1' : '')
+			)
+		}
+
+		/**
+		 * Open a CSRF-protected page in a new tab.
+		 *
+		 * The tab is opened inside the click, so no popup blocker stops it, and
+		 * filled once the page has been fetched with the request token.
+		 *
+		 * @param {string} url     The page.
+		 * @param {string} failure What to tell the admin when it fails.
+		 *
+		 * @return {void}
+		 */
+		function openWithToken(url, failure) {
+			var tab = window.open('', '_blank')
+			// A blocked popup used to make this navigate the settings page
+			// itself to the page, which lost any unsaved edits on it.
+			if (tab === null) {
+				notify(
+					t(
+						'thematiq',
+						'The browser blocked the new tab, so the page did not open. Allow pop-ups for this site and try again.',
+					),
+				)
+				return
+			}
+			fetch(url, {
+				headers: { requesttoken: OC.requestToken },
+			})
+				.then(function (r) {
+					if (r.ok === false) {
+						throw new Error('page failed: ' + r.status)
+					}
+					return r.blob()
+				})
+				.then(function (blob) {
+					var page = URL.createObjectURL(
+						new Blob([blob], { type: 'text/html' }),
+					)
+					tab.opener = null
+					tab.location.href = page
+					// Long enough for the tab to have loaded it.
+					window.setTimeout(function () {
+						URL.revokeObjectURL(page)
+					}, 60000)
+				})
+				.catch(function (err) {
+					tab.close()
+					console.error('Error opening ' + url + ':', err)
+					notify(failure)
+				})
+		}
+
+		/**
+		 * Every token reference link on the page, the two by the dropdown and
+		 * the two in each custom set row, fetches with the request token.
+		 *
+		 * The endpoint is CSRF-protected, and following the link carried no
+		 * token, so both the page and the download were refused. Delegated on
+		 * the settings section, because the custom set rows are rendered after
+		 * this runs.
+		 *
+		 * @spec openspec/specs/token-reference/spec.md
+		 */
+		function initTokenReferenceClicks() {
+			if (settingsEl === null) {
+				return
+			}
+			settingsEl.addEventListener('click', function (e) {
+				var link =
+					e.target && e.target.closest
+						? e.target.closest('a.nldesign-token-reference-link')
+						: null
+				if (link === null || !link.getAttribute('href')) {
+					return
+				}
+				e.preventDefault()
+				var href = link.getAttribute('href')
+				var failure = t(
+					'thematiq',
+					'The token reference could not be loaded.',
+				)
+				if (href.indexOf('download=1') !== -1) {
+					downloadWithToken(href, 'token-reference.md', failure)
+					return
+				}
+				openWithToken(href, failure)
+			})
+		}
+
+		initTokenReferenceClicks()
+
+		/**
+		 * Keep the two reference links next to the dropdown on the selected set.
+		 */
+		function initTokenReferenceLinks() {
+			var view = document.getElementById('nldesign-token-reference-link')
+			var save = document.getElementById('nldesign-token-reference-download')
+			if (view === null || save === null || tokenSetSelect === null) {
+				return
+			}
+			function update() {
+				view.href = tokenReferenceUrl(tokenSetSelect.value, 'html', false)
+				save.href = tokenReferenceUrl(tokenSetSelect.value, 'md', true)
+			}
+			tokenSetSelect.addEventListener('change', update)
+			update()
+		}
+
+		initTokenReferenceLinks()
+
+		/**
+		 * Download a token set as a W3C Design Tokens (DTCG) document
+		 * (openspec/specs/token-set-dtcg-export/spec.md).
+		 *
+		 * @param {string} id The token set id.
+		 * @return {void}
+		 */
+		function downloadDtcg(id) {
+			downloadWithToken(
+				OC.generateUrl(
+					'/apps/thematiq/settings/tokensets/'
+						+ encodeURIComponent(id)
+						+ '/dtcg',
+				),
+				id + '.tokens.json',
+				t('thematiq', 'The design tokens could not be downloaded.'),
+			)
+		}
+
+		/**
+		 * "Download as design tokens" next to the dropdown acts on the selected set.
+		 */
+		function initDtcgDownload() {
+			var button = document.getElementById('nldesign-dtcg-download')
+			if (button === null || tokenSetSelect === null) {
+				return
+			}
+			button.addEventListener('click', function () {
+				downloadDtcg(tokenSetSelect.value)
+			})
+		}
+
+		initDtcgDownload()
 
 		function loadCustomTokenSets() {
 			var listEl = document.getElementById('nldesign-custom-set-list')
@@ -5548,10 +7755,49 @@
 				.catch(function (err) {
 					console.error('Error loading custom token sets:', err)
 					listEl.textContent = t(
-						'nldesign',
+						'thematiq',
 						'Failed to load custom token sets.',
 					)
 				})
+		}
+
+		/**
+		 * The header of a multi-brand source in the custom set list: its name and an
+		 * "Update source" action that takes a new file.
+		 *
+		 * @param {object} set The first brand set of the source.
+		 * @return {HTMLElement} The header.
+		 */
+		function buildSourceHeader(set) {
+			var header = document.createElement('div')
+			header.className = 'nldesign-custom-source'
+			var title = document.createElement('strong')
+			title.textContent = String(set.name || '').split(':')[0]
+			header.appendChild(title)
+			var input = document.createElement('input')
+			input.type = 'file'
+			input.accept = '.css,.json,.tokens.json'
+			input.hidden = true
+			input.addEventListener('change', function () {
+				if (input.files && input.files[0]) {
+					updateTokenSource(set.source.id, input.files[0])
+				}
+			})
+			var button = document.createElement('button')
+			button.type = 'button'
+			button.className =
+				'nldesign-btn nldesign-btn--small nldesign-source-update'
+			button.textContent = t('thematiq', 'Update source')
+			button.setAttribute(
+				'aria-label',
+				t('thematiq', 'Update source {name}', { name: title.textContent }),
+			)
+			button.addEventListener('click', function () {
+				input.click()
+			})
+			header.appendChild(button)
+			header.appendChild(input)
+			return header
 		}
 
 		function renderCustomSetList(listEl, sets) {
@@ -5560,91 +7806,172 @@
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
 				empty.textContent = t(
-					'nldesign',
+					'thematiq',
 					'No custom token sets uploaded yet.',
 				)
 				listEl.appendChild(empty)
 				return
 			}
 
-			sets.forEach(function (set) {
-				var row = document.createElement('div')
-				row.className = 'nldesign-custom-set-row'
+			// Brands of one source sit together under its name, with "Update source".
+			var lastSource = null
+			sets.slice()
+				.sort(function (a, b) {
+					var sa = a.source ? a.source.id : ''
+					var sb = b.source ? b.source.id : ''
+					return sa === sb ? 0 : sa < sb ? -1 : 1
+				})
+				.forEach(function (set) {
+					if (set.source && set.source.id !== lastSource) {
+						lastSource = set.source.id
+						listEl.appendChild(buildSourceHeader(set))
+					}
+					if (!set.source) {
+						lastSource = null
+					}
+					var row = document.createElement('div')
+					row.className = 'nldesign-custom-set-row'
+					if (set.source) {
+						row.classList.add('nldesign-custom-set-row--brand')
+					}
 
-				var nameSpan = document.createElement('span')
-				nameSpan.className = 'nldesign-custom-set-name'
-				nameSpan.textContent = set.name || set.id
-				row.appendChild(nameSpan)
+					var nameSpan = document.createElement('span')
+					nameSpan.className = 'nldesign-custom-set-name'
+					nameSpan.textContent = set.name || set.id
+					row.appendChild(nameSpan)
 
-				if (set.version) {
-					var versionSpan = document.createElement('span')
-					versionSpan.className = 'nldesign-custom-set-version'
-					versionSpan.textContent = t('thematiq', 'v{version}', {
-						version: set.version,
+					if (set.version) {
+						var versionSpan = document.createElement('span')
+						versionSpan.className = 'nldesign-custom-set-version'
+						versionSpan.textContent = t('thematiq', 'v{version}', {
+							version: set.version,
+						})
+						row.appendChild(versionSpan)
+					}
+
+					// Three states, in order of what the admin most needs to know:
+					// a set that never defines the vocabulary is broken in a way no
+					// contrast ratio can reveal, so "Incomplete set" wins over
+					// "Contrast warning".
+					var warnings = set.warnings || []
+					var incomplete = warnings.filter(function (w) {
+						return w && w.kind === 'incomplete'
 					})
-					row.appendChild(versionSpan)
-				}
+					var contrast = warnings.filter(function (w) {
+						return w && w.kind !== 'incomplete'
+					})
 
-				// Three states, in order of what the admin most needs to know:
-				// a set that never defines the vocabulary is broken in a way no
-				// contrast ratio can reveal, so "Incomplete set" wins over
-				// "Contrast warning".
-				var warnings = set.warnings || []
-				var incomplete = warnings.filter(function (w) {
-					return w && w.kind === 'incomplete'
-				})
-				var contrast = warnings.filter(function (w) {
-					return w && w.kind !== 'incomplete'
-				})
+					var badge = document.createElement('span')
+					badge.className = 'nldesign-badge'
+					if (incomplete.length > 0) {
+						badge.classList.add('nldesign-badge--warning')
+						badge.textContent = t('thematiq', 'Incomplete set')
+						badge.setAttribute(
+							'title',
+							incompleteWarningLines(incomplete[0]).join('\n'),
+						)
+					} else if (contrast.length > 0) {
+						badge.classList.add('nldesign-badge--warning')
+						badge.textContent = t('thematiq', 'Contrast warning')
+					} else {
+						badge.classList.add('nldesign-badge--ok')
+						badge.textContent = t('thematiq', 'WCAG AA OK')
+					}
+					row.appendChild(badge)
 
-				var badge = document.createElement('span')
-				badge.className = 'nldesign-badge'
-				if (incomplete.length > 0) {
-					badge.classList.add('nldesign-badge--warning')
-					badge.textContent = t('thematiq', 'Incomplete set')
-					badge.setAttribute(
-						'title',
-						incompleteWarningLines(incomplete[0]).join('\n'),
+					// A set installed from the theme gallery names its source and
+					// licence (openspec/specs/theme-gallery/spec.md).
+					if (set.provenance && set.provenance.sourceUrl) {
+						var provenance = document.createElement('a')
+						provenance.className = 'nldesign-custom-set-provenance'
+						provenance.href = set.provenance.sourceUrl
+						provenance.target = '_blank'
+						provenance.rel = 'noopener noreferrer'
+						provenance.textContent = t(
+							'thematiq',
+							'From the gallery, licence {licence}',
+							{
+								licence: set.provenance.licence || '',
+							},
+						)
+						row.appendChild(provenance)
+					}
+
+					var downloadBtn = document.createElement('button')
+					downloadBtn.type = 'button'
+					downloadBtn.className = 'nldesign-btn nldesign-btn--small'
+					downloadBtn.textContent = t('thematiq', 'Download')
+					downloadBtn.addEventListener('click', function () {
+						downloadWithToken(
+							OC.generateUrl(
+								'/apps/thematiq/settings/tokensets/custom/'
+									+ encodeURIComponent(set.id)
+									+ '/export',
+							),
+							set.id + '.css',
+							t('thematiq', 'The token set could not be downloaded.'),
+						)
+					})
+					row.appendChild(downloadBtn)
+
+					var dtcgBtn = document.createElement('button')
+					dtcgBtn.type = 'button'
+					dtcgBtn.className =
+						'nldesign-btn nldesign-btn--small nldesign-dtcg-row-download'
+					dtcgBtn.textContent = t('thematiq', 'Download as design tokens')
+					dtcgBtn.addEventListener('click', function () {
+						downloadDtcg(set.id)
+					})
+					row.appendChild(dtcgBtn)
+
+					// The token reference of this set (openspec/specs/token-reference/spec.md).
+					var referenceLink = document.createElement('a')
+					referenceLink.className = 'nldesign-token-reference-link'
+					referenceLink.href = tokenReferenceUrl(set.id, 'html', false)
+					referenceLink.target = '_blank'
+					referenceLink.rel = 'noopener noreferrer'
+					referenceLink.textContent = t('thematiq', 'Token reference')
+					referenceLink.setAttribute(
+						'aria-label',
+						t('thematiq', 'Token reference of {name}', {
+							name: set.name || set.id,
+						}),
 					)
-				} else if (contrast.length > 0) {
-					badge.classList.add('nldesign-badge--warning')
-					badge.textContent = t('thematiq', 'Contrast warning')
-				} else {
-					badge.textContent = t('thematiq', 'WCAG AA OK')
-				}
-				row.appendChild(badge)
+					row.appendChild(referenceLink)
 
-				var downloadBtn = document.createElement('button')
-				downloadBtn.type = 'button'
-				downloadBtn.className = 'nldesign-btn nldesign-btn--small'
-				downloadBtn.textContent = t('thematiq', 'Download')
-				downloadBtn.addEventListener('click', function () {
-					window.location = OC.generateUrl(
-						'/apps/thematiq/settings/tokensets/custom/'
-							+ encodeURIComponent(set.id)
-							+ '/export',
+					var referenceDownload = document.createElement('a')
+					referenceDownload.className = 'nldesign-token-reference-link'
+					referenceDownload.href = tokenReferenceUrl(set.id, 'md', true)
+					referenceDownload.textContent = t(
+						'thematiq',
+						'Download reference',
 					)
-				})
-				row.appendChild(downloadBtn)
+					referenceDownload.setAttribute(
+						'aria-label',
+						t('thematiq', 'Download the token reference of {name}', {
+							name: set.name || set.id,
+						}),
+					)
+					row.appendChild(referenceDownload)
 
-				var deleteBtn = document.createElement('button')
-				deleteBtn.type = 'button'
-				deleteBtn.className =
-					'nldesign-btn nldesign-btn--small nldesign-btn--danger'
-				deleteBtn.textContent = t('thematiq', 'Delete')
-				deleteBtn.addEventListener('click', function () {
-					deleteCustomSet(set.id, set.name || set.id)
-				})
-				row.appendChild(deleteBtn)
+					var deleteBtn = document.createElement('button')
+					deleteBtn.type = 'button'
+					deleteBtn.className =
+						'nldesign-btn nldesign-btn--small nldesign-btn--danger'
+					deleteBtn.textContent = t('thematiq', 'Delete')
+					deleteBtn.addEventListener('click', function () {
+						deleteCustomSet(set.id, set.name || set.id)
+					})
+					row.appendChild(deleteBtn)
 
-				listEl.appendChild(row)
-			})
+					listEl.appendChild(row)
+				})
 		}
 
 		function deleteCustomSet(id, name) {
 			OC.dialogs.confirm(
 				t(
-					'nldesign',
+					'thematiq',
 					'Delete the custom token set "{name}"? If it is currently active, the theme will fall back to Nextcloud.',
 				).replace('{name}', name),
 				t('thematiq', 'Delete custom token set'),
@@ -5705,7 +8032,7 @@
 							} else {
 								notify(
 									t(
-										'nldesign',
+										'thematiq',
 										'Failed to delete custom token set.',
 									),
 								)
@@ -5722,8 +8049,63 @@
 			)
 		}
 
+		/**
+		 * The two ways to add a custom token set, as tabs: a click or the arrow,
+		 * Home and End keys select a tab and show its panel. Only the selected
+		 * tab is in the tab order, the way a WAI-ARIA tablist moves focus.
+		 */
+		function initCreateTabs() {
+			var tablist = document.querySelector('.nldesign-create-tabs')
+			if (tablist === null) {
+				return
+			}
+			var tabs = Array.prototype.slice.call(
+				tablist.querySelectorAll('.nldesign-create-tab'),
+			)
+
+			function select(tab) {
+				tabs.forEach(function (candidate) {
+					var on = candidate === tab
+					candidate.classList.toggle('active', on)
+					candidate.setAttribute('aria-selected', on ? 'true' : 'false')
+					candidate.tabIndex = on ? 0 : -1
+					var panel = document.getElementById(
+						candidate.getAttribute('aria-controls'),
+					)
+					if (panel !== null) {
+						panel.hidden = !on
+					}
+				})
+			}
+
+			tabs.forEach(function (tab, index) {
+				tab.addEventListener('click', function () {
+					select(tab)
+				})
+				tab.addEventListener('keydown', function (event) {
+					var next = null
+					if (event.key === 'ArrowRight') {
+						next = tabs[(index + 1) % tabs.length]
+					} else if (event.key === 'ArrowLeft') {
+						next = tabs[(index - 1 + tabs.length) % tabs.length]
+					} else if (event.key === 'Home') {
+						next = tabs[0]
+					} else if (event.key === 'End') {
+						next = tabs[tabs.length - 1]
+					}
+					if (next !== null) {
+						event.preventDefault()
+						select(next)
+						next.focus()
+					}
+				})
+			})
+		}
+
 		// Initialise the custom token set panel on page load.
 		initCustomTokenSets()
+		initCreateTabs()
+		initBrandForm()
 
 		/* ==========================================================================
 		 * RESET THEME TO NEXTCLOUD
@@ -5741,7 +8123,7 @@
 				OC.dialogs.confirm(
 					t(
 						'thematiq',
-						'This fully resets the theme to stock Nextcloud: the overrides of the current theme and every change written over the Nextcloud theme are deleted, and the Nextcloud theming colours and logo return to their defaults. Custom token sets, fonts and custom CSS are kept. This cannot be undone.',
+						'This fully resets the theme to stock Nextcloud: the overrides of the current theme and every change written over the Nextcloud theme are deleted, and the Nextcloud theming colors and logo return to their defaults. Custom token sets, fonts and custom CSS are kept. This cannot be undone.',
 					),
 					t('thematiq', 'Reset theme to Nextcloud'),
 					function (confirmed) {
@@ -5945,7 +8327,7 @@
 		function deleteFont(id, name) {
 			OC.dialogs.confirm(
 				t(
-					'nldesign',
+					'thematiq',
 					'Delete the font "{name}"? Pages using it will fall back to Fira Sans.',
 				).replace('{name}', name),
 				t('thematiq', 'Delete font'),
@@ -5970,7 +8352,7 @@
 							if (data && data.status === 'ok') {
 								notify(
 									t(
-										'nldesign',
+										'thematiq',
 										'Font deleted. Reload the page to refresh the styling.',
 									),
 								)
@@ -6027,8 +8409,10 @@
 
 			if (downloadBtn !== null) {
 				downloadBtn.addEventListener('click', function () {
-					window.location = OC.generateUrl(
-						'/apps/thematiq/settings/audit/export',
+					downloadWithToken(
+						OC.generateUrl('/apps/thematiq/settings/audit/export'),
+						'nldesign-audit.jsonl',
+						t('thematiq', 'The audit log could not be downloaded.'),
 					)
 				})
 			}
@@ -6038,7 +8422,7 @@
 			tableBody.innerHTML = ''
 			var row = document.createElement('tr')
 			var cell = document.createElement('td')
-			cell.colSpan = 6
+			cell.colSpan = 7
 			cell.className = 'settings-hint'
 			cell.textContent = message
 			row.appendChild(cell)
@@ -6113,11 +8497,532 @@
 					row.appendChild(td)
 				})
 
+				var restoreCell = document.createElement('td')
+				restoreCell.className = 'nldesign-audit-restore-cell'
+				if (typeof entry.versionId === 'string' && entry.versionId !== '') {
+					var restoreBtn = document.createElement('button')
+					restoreBtn.type = 'button'
+					restoreBtn.className = 'button nldesign-audit-restore'
+					restoreBtn.textContent = t('thematiq', 'Restore')
+					restoreBtn.setAttribute(
+						'aria-label',
+						t('thematiq', 'Restore the configuration from {time}', {
+							time: auditFormat.formatAuditTimestamp(entry.ts),
+						}),
+					)
+					restoreBtn.addEventListener('click', function () {
+						restoreVersion(entry.versionId, restoreBtn)
+					})
+					restoreCell.appendChild(restoreBtn)
+				}
+				row.appendChild(restoreCell)
+
 				tableBody.appendChild(row)
 			})
 		}
 
+		/**
+		 * Describe a version preview as plain text lines for the dialog.
+		 *
+		 * @param {object} preview The preview from POST /settings/versions/{id}/preview.
+		 * @return {string} The description.
+		 * @spec openspec/specs/theme-versions/spec.md
+		 */
+		function describeVersionPreview(preview) {
+			var lines = []
+			;(preview.changes || []).forEach(function (change) {
+				lines.push(
+					t(
+						'thematiq',
+						'{field}: {from} to {to}',
+						{
+							field: change.field,
+							from: auditFormat.formatAuditValue(change.from),
+							to: auditFormat.formatAuditValue(change.to),
+						},
+						undefined,
+						{ escape: false },
+					),
+				)
+			})
+			var sets = preview.customTokenSets || { add: [], remove: [] }
+			;(sets.add || []).forEach(function (id) {
+				lines.push(
+					t(
+						'thematiq',
+						'Custom token set added: {id}',
+						{ id: id },
+						undefined,
+						{ escape: false },
+					),
+				)
+			})
+			;(sets.remove || []).forEach(function (id) {
+				lines.push(
+					t(
+						'thematiq',
+						'Custom token set removed: {id}',
+						{ id: id },
+						undefined,
+						{ escape: false },
+					),
+				)
+			})
+			;(preview.missingFonts || []).forEach(function (font) {
+				lines.push(
+					t(
+						'thematiq',
+						'The {role} font {name} is no longer uploaded and stays on the default font.',
+						{
+							role: font.role,
+							name: font.name,
+						},
+						undefined,
+						{ escape: false },
+					),
+				)
+			})
+			if (lines.length === 0) {
+				lines.push(
+					t('thematiq', 'This version matches the current configuration.'),
+				)
+			}
+			return lines.join('\n')
+		}
+
+		/**
+		 * Preview a version, confirm with the changes listed, then restore.
+		 * Nothing is written until the administrator confirms; on cancel the
+		 * focus returns to the button that opened the dialog.
+		 *
+		 * @param {string} versionId The version to restore.
+		 * @param {HTMLElement} button The row's restore button.
+		 * @spec openspec/specs/theme-versions/spec.md
+		 */
+		function restoreVersion(versionId, button) {
+			var base = OC.generateUrl(
+				'/apps/thematiq/settings/versions/' + encodeURIComponent(versionId),
+			)
+			var post = { method: 'POST', headers: { requesttoken: OC.requestToken } }
+			button.disabled = true
+			fetch(base + '/preview', post)
+				.then(function (r) {
+					return r.json()
+				})
+				.then(function (preview) {
+					button.disabled = false
+					if (!preview || preview.valid !== true) {
+						notify(
+							t(
+								'thematiq',
+								'This version does not validate today and cannot be restored.',
+							),
+						)
+						button.focus()
+						return
+					}
+					OC.dialogs.confirm(
+						describeVersionPreview(preview),
+						t('thematiq', 'Restore this version?'),
+						function (confirmed) {
+							if (confirmed !== true) {
+								button.focus()
+								return
+							}
+							fetch(base + '/restore', post)
+								.then(function (r) {
+									return r.json()
+								})
+								.then(function (result) {
+									if (result && result.applied === true) {
+										window.location.reload()
+										return
+									}
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
+									button.focus()
+								})
+								.catch(function (err) {
+									console.error('Error restoring a version:', err)
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
+									button.focus()
+								})
+						},
+						true,
+					)
+				})
+				.catch(function (err) {
+					console.error('Error restoring a version:', err)
+					button.disabled = false
+					notify(
+						t(
+							'thematiq',
+							'The version was not restored. Nothing was changed.',
+						),
+					)
+					button.focus()
+				})
+		}
+
 		initAuditLog()
+
+		/**
+		 * Point the contrast evidence report links at the export endpoint, one
+		 * per format.
+		 *
+		 * The href stays, so each link still says where it leads, but a click
+		 * fetches the file with the request token: the endpoint is
+		 * CSRF-protected, and following the link carried no token.
+		 *
+		 * @spec openspec/specs/compliance-evidence/spec.md
+		 */
+		function initComplianceReport() {
+			var base = OC.generateUrl('/apps/thematiq/settings/compliance-report')
+			var links = {
+				'nldesign-compliance-report-json': ['json', 'json'],
+				'nldesign-compliance-report-markdown': ['markdown', 'md'],
+			}
+			Object.keys(links).forEach(function (id) {
+				var link = document.getElementById(id)
+				if (link === null) {
+					return
+				}
+				var url = base + '?format=' + links[id][0]
+				link.setAttribute('href', url)
+				link.addEventListener('click', function (e) {
+					e.preventDefault()
+					downloadWithToken(
+						url,
+						'contrast-report.' + links[id][1],
+						t(
+							'thematiq',
+							'The contrast report could not be downloaded.',
+						),
+					)
+				})
+			})
+		}
+
+		initComplianceReport()
+
+		/**
+		 * Format a UTC ISO time in the administrator's own time zone.
+		 *
+		 * @param {string} iso The UTC time.
+		 * @return {string} The local date and time.
+		 * @spec openspec/specs/scheduled-switch/spec.md
+		 */
+		function formatLocalTime(iso) {
+			return new Date(iso).toLocaleString([], {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+			})
+		}
+
+		/**
+		 * The name of a token set, or its id when the page has none for it.
+		 *
+		 * @param {string} id The token set id.
+		 * @return {string} The name.
+		 */
+		function tokenSetName(id) {
+			var ts = tokenSetsData[id]
+			return ts && ts.name ? ts.name : id
+		}
+
+		/**
+		 * What a running switch means for the dropdown, or '' when none runs.
+		 *
+		 * @return {string} The sentence.
+		 */
+		function runningSwitchText() {
+			if (runningSwitch === null) {
+				return ''
+			}
+			return t(
+				'thematiq',
+				'A planned switch to {set} is running until {time}. A token set picked here is put back within five minutes; cancel the switch under Planned switches to change the theme before then.',
+				{
+					set: tokenSetName(runningSwitch.tokenSet),
+					time: formatLocalTime(runningSwitch.until),
+				},
+				undefined,
+				{ escape: false },
+			)
+		}
+
+		/**
+		 * Say beside the dropdown that a running switch will put its set back.
+		 *
+		 * @return {void}
+		 */
+		function updateSwitchNote() {
+			var note = document.getElementById('nldesign-token-set-switch-note')
+			if (note === null) {
+				return
+			}
+			note.textContent = runningSwitchText()
+			note.hidden = runningSwitch === null
+		}
+
+		/**
+		 * The "Planned switches" block: status, cron warning, plan form and
+		 * the list with a cancel button per switch. Times are entered and
+		 * shown in the browser's time zone and sent as UTC.
+		 *
+		 * @spec openspec/specs/scheduled-switch/spec.md
+		 */
+		function initScheduledSwitches() {
+			var list = document.getElementById('nldesign-scheduled-list')
+			var form = document.getElementById('nldesign-scheduled-form')
+			if (list === null || form === null) {
+				return
+			}
+			var url = OC.generateUrl('/apps/thematiq/settings/scheduled-switches')
+			var statusEl = document.getElementById('nldesign-scheduled-status')
+			var warning = document.getElementById('nldesign-scheduled-cron-warning')
+			var zone = document.getElementById('nldesign-scheduled-zone')
+			if (zone !== null) {
+				zone.textContent = t(
+					'thematiq',
+					'Times are in your time zone ({zone}).',
+					{ zone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+				)
+			}
+
+			function renderStatus(status) {
+				if (!status) {
+					return
+				}
+				runningSwitch =
+					status.runningTokenSet && status.activeUntil
+						? {
+								tokenSet: status.runningTokenSet,
+								until: status.activeUntil,
+							}
+						: null
+				updateSwitchNote()
+				if (statusEl === null) {
+					return
+				}
+				var lines = []
+				if (status.activeUntil) {
+					lines.push(
+						t(
+							'thematiq',
+							'{set} is active until {time}, then {previous} comes back.',
+							{
+								set: tokenSetName(status.activeTokenSet),
+								time: formatLocalTime(status.activeUntil),
+								previous: tokenSetName(status.revertTo),
+							},
+							undefined,
+							{ escape: false },
+						),
+					)
+				}
+				lines.push(
+					status.lastRun
+						? t(
+								'thematiq',
+								'The schedule last ran at {time}.',
+								{ time: formatLocalTime(status.lastRun) },
+								undefined,
+								{ escape: false },
+							)
+						: t('thematiq', 'The schedule has not run yet.'),
+				)
+				statusEl.textContent = lines.join(' ')
+				if (warning !== null) {
+					warning.hidden = status.cronWarning !== true
+				}
+			}
+
+			function describe(entry) {
+				var text = entry.endAt
+					? t(
+							'thematiq',
+							'{set} from {start} to {end}',
+							{
+								set: tokenSetName(entry.tokenSet),
+								start: formatLocalTime(entry.startAt),
+								end: formatLocalTime(entry.endAt),
+							},
+							undefined,
+							{ escape: false },
+						)
+					: t(
+							'thematiq',
+							'{set} from {start}, no end',
+							{
+								set: tokenSetName(entry.tokenSet),
+								start: formatLocalTime(entry.startAt),
+							},
+							undefined,
+							{ escape: false },
+						)
+				if (entry.status === 'running') {
+					return text + ' (' + t('thematiq', 'running') + ')'
+				}
+				if (entry.status === 'failed') {
+					return (
+						text
+						+ '. '
+						+ t(
+							'thematiq',
+							'Failed: {reason}',
+							{ reason: entry.failureReason || '' },
+							undefined,
+							{ escape: false },
+						)
+					)
+				}
+				return text
+			}
+
+			function renderList(switches) {
+				list.innerHTML = ''
+				if (!switches || switches.length === 0) {
+					var empty = document.createElement('li')
+					empty.className = 'settings-hint'
+					empty.textContent = t('thematiq', 'No switches are planned.')
+					list.appendChild(empty)
+					return
+				}
+				switches.forEach(function (entry) {
+					var item = document.createElement('li')
+					item.className = 'nldesign-scheduled-item'
+					if (entry.status === 'failed') {
+						item.classList.add('nldesign-scheduled-item--failed')
+					}
+					var label = document.createElement('span')
+					label.textContent = describe(entry)
+					item.appendChild(label)
+					var cancel = document.createElement('button')
+					cancel.type = 'button'
+					cancel.className = 'button nldesign-scheduled-cancel'
+					cancel.textContent = t('thematiq', 'Cancel')
+					cancel.setAttribute(
+						'aria-label',
+						t(
+							'thematiq',
+							'Cancel the switch to {set}',
+							{ set: tokenSetName(entry.tokenSet) },
+							undefined,
+							{ escape: false },
+						),
+					)
+					cancel.addEventListener('click', function () {
+						cancelSwitch(entry.id, cancel)
+					})
+					item.appendChild(cancel)
+					list.appendChild(item)
+				})
+			}
+
+			function load() {
+				return fetch(url, { headers: { requesttoken: OC.requestToken } })
+					.then(function (r) {
+						return r.json()
+					})
+					.then(function (data) {
+						renderStatus(data.status)
+						renderList(data.switches)
+					})
+					.catch(function (err) {
+						console.error('Error loading planned switches:', err)
+					})
+			}
+
+			function cancelSwitch(id, button) {
+				button.disabled = true
+				fetch(url + '/' + encodeURIComponent(id), {
+					method: 'DELETE',
+					headers: { requesttoken: OC.requestToken },
+				})
+					.then(function (r) {
+						return r.json().then(function (body) {
+							if (!r.ok) {
+								notify(
+									body.error
+										|| t(
+											'thematiq',
+											'The switch was not cancelled.',
+										),
+								)
+							}
+							return load()
+						})
+					})
+					.catch(function (err) {
+						console.error('Error cancelling a planned switch:', err)
+						button.disabled = false
+						notify(t('thematiq', 'The switch was not cancelled.'))
+					})
+			}
+
+			function toUtc(value) {
+				return value ? new Date(value).toISOString() : ''
+			}
+
+			form.addEventListener('submit', function (event) {
+				event.preventDefault()
+				var start = document.getElementById('nldesign-scheduled-start').value
+				if (!start) {
+					notify(t('thematiq', 'Enter the start as a date and a time.'))
+					return
+				}
+				var params = {
+					tokenSet: document.getElementById('nldesign-scheduled-set')
+						.value,
+					startAt: toUtc(start),
+					endAt: toUtc(
+						document.getElementById('nldesign-scheduled-end').value,
+					),
+				}
+				fetch(url, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						requesttoken: OC.requestToken,
+					},
+					body: new URLSearchParams(params).toString(),
+				})
+					.then(function (r) {
+						return r.json().then(function (body) {
+							if (!r.ok) {
+								notify(
+									body.error
+										|| t(
+											'thematiq',
+											'The switch was not planned.',
+										),
+								)
+								return undefined
+							}
+							form.reset()
+							return load()
+						})
+					})
+					.catch(function (err) {
+						console.error('Error planning a switch:', err)
+						notify(t('thematiq', 'The switch was not planned.'))
+					})
+			})
+
+			load()
+		}
+
+		initScheduledSwitches()
 
 		/* ==========================================================================
 		 * CONFIGURATION BUNDLE — complete-config OTAP promotion download/upload
@@ -6128,7 +9033,11 @@
 		 * ========================================================================== */
 
 		function downloadConfigBundle() {
-			window.location = OC.generateUrl('/apps/thematiq/settings/config/export')
+			downloadWithToken(
+				OC.generateUrl('/apps/thematiq/settings/config/export'),
+				'thematiq-config.json',
+				t('thematiq', 'The configuration could not be downloaded.'),
+			)
 		}
 
 		function showConfigBundleResult(message) {
@@ -6158,7 +9067,7 @@
 					if (result.status === 200 && result.data.applied === true) {
 						showConfigBundleResult(
 							t(
-								'nldesign',
+								'thematiq',
 								'Configuration imported successfully. Reloading…',
 							),
 						)
@@ -6335,7 +9244,7 @@
 						renderEmailTheming(data.state, data.footer)
 						if (feedback !== null) {
 							feedback.textContent = t(
-								'nldesign',
+								'thematiq',
 								'Email template settings saved.',
 							)
 						}
@@ -6363,7 +9272,7 @@
 						}
 						notify(
 							t(
-								'nldesign',
+								'thematiq',
 								'config.php is read-only; run the shown occ command manually.',
 							),
 						)
@@ -6376,14 +9285,14 @@
 						renderEmailTheming(null, data.footer)
 						if (foreignNote !== null) {
 							foreignNote.textContent = t(
-								'nldesign',
+								'thematiq',
 								'A different mail template class is already configured ({class}); nldesign will not overwrite it.',
 								{ class: data.class },
 							)
 						}
 						notify(
 							t(
-								'nldesign',
+								'thematiq',
 								'A different mail template class is already configured.',
 							),
 						)
@@ -6393,7 +9302,7 @@
 					if (data && data.error === 'invalid_footer') {
 						notify(
 							t(
-								'nldesign',
+								'thematiq',
 								'Invalid footer URL — use an http:// or https:// address.',
 							),
 						)
@@ -6448,13 +9357,13 @@
 				var ts = tokenSetsData[notice.setId]
 				var name = ts ? ts.name : notice.setId
 				return t(
-					'nldesign',
+					'thematiq',
 					'Token set {name} has upstream update {version} — review & apply',
 					{ name: name, version: version },
 				)
 			}
 			return t(
-				'nldesign',
+				'thematiq',
 				'Upstream token sets have updates ({version}) — review & apply',
 				{ version: version },
 			)
@@ -6570,11 +9479,11 @@
 						notify(
 							enabled
 								? t(
-										'nldesign',
+										'thematiq',
 										'Upstream token update checks enabled.',
 									)
 								: t(
-										'nldesign',
+										'thematiq',
 										'Upstream token update checks disabled.',
 									),
 						)
@@ -6594,6 +9503,251 @@
 
 		// Initialise the upstream freshness panel on page load.
 		initUpstreamFreshness()
+
+		/**
+		 * Theme gallery (openspec/specs/theme-gallery/spec.md): an opt-in
+		 * index of house styles. The toggle label names the index host, the
+		 * list shows each entry with its swatches, licence, source and
+		 * contrast result, and install or update runs the upload path on the
+		 * server. Nothing is fetched from the index while the toggle is off;
+		 * the server makes no request then either.
+		 */
+		function initGallery() {
+			var toggle = document.getElementById('nldesign-gallery-toggle')
+			var label = document.getElementById('nldesign-gallery-toggle-label')
+			var statusEl = document.getElementById('nldesign-gallery-status')
+			var list = document.getElementById('nldesign-gallery-list')
+			if (toggle === null || list === null) {
+				return
+			}
+			var url = OC.generateUrl('/apps/thematiq/settings/gallery')
+
+			function setStatus(text) {
+				if (statusEl !== null) {
+					statusEl.textContent = text
+				}
+			}
+
+			function contrastText(contrast) {
+				if (
+					contrast
+					&& typeof contrast === 'object'
+					&& contrast.fail !== undefined
+				) {
+					return Number(contrast.fail) === 0
+						? t('thematiq', 'Contrast: all checks pass')
+						: t('thematiq', 'Contrast checks failed: {count}', {
+								count: contrast.fail,
+							})
+				}
+				if (typeof contrast === 'string' && contrast !== '') {
+					return t('thematiq', 'Contrast: {result}', { result: contrast })
+				}
+				return t('thematiq', 'Contrast: not checked')
+			}
+
+			function renderEntry(entry) {
+				var item = document.createElement('li')
+				item.className = 'nldesign-gallery-entry'
+				item.setAttribute('data-gallery-id', entry.id)
+
+				var swatches = document.createElement('span')
+				swatches.className = 'nldesign-gallery-swatches'
+				swatches.setAttribute('aria-hidden', 'true')
+				;['primary', 'background', 'text'].forEach(function (key) {
+					var swatch = document.createElement('span')
+					swatch.className = 'nldesign-gallery-swatch'
+					swatch.style.backgroundColor = entry.swatches[key]
+					swatches.appendChild(swatch)
+				})
+				item.appendChild(swatches)
+
+				var text = document.createElement('span')
+				text.className = 'nldesign-gallery-text'
+				var name = document.createElement('strong')
+				name.textContent = entry.name
+				text.appendChild(name)
+				var meta = document.createElement('span')
+				meta.className = 'nldesign-gallery-meta'
+				meta.textContent = t(
+					'thematiq',
+					'{organisation}, licence {licence}. {contrast}.',
+					{
+						organisation: entry.organisation,
+						licence: entry.licence,
+						contrast: contrastText(entry.contrast),
+					},
+					undefined,
+					{ escape: false },
+				)
+				text.appendChild(meta)
+				var source = document.createElement('a')
+				source.href = entry.sourceUrl
+				source.target = '_blank'
+				source.rel = 'noopener noreferrer'
+				source.textContent = t(
+					'thematiq',
+					'Source of {name}',
+					{ name: entry.name },
+					undefined,
+					{ escape: false },
+				)
+				text.appendChild(source)
+				item.appendChild(text)
+
+				if (entry.installed && !entry.updateAvailable) {
+					var done = document.createElement('span')
+					done.className = 'nldesign-badge'
+					done.textContent = t('thematiq', 'Installed')
+					item.appendChild(done)
+					return item
+				}
+
+				var button = document.createElement('button')
+				button.type = 'button'
+				button.className = 'nldesign-btn nldesign-btn--small'
+				if (entry.updateAvailable) {
+					var badge = document.createElement('span')
+					badge.className = 'nldesign-badge nldesign-badge--warning'
+					badge.textContent = t('thematiq', 'Update available')
+					item.appendChild(badge)
+					button.textContent = t('thematiq', 'Update')
+					button.setAttribute(
+						'aria-label',
+						t('thematiq', 'Update {name}', { name: entry.name }),
+					)
+				} else {
+					button.textContent = t('thematiq', 'Install')
+					button.setAttribute(
+						'aria-label',
+						t('thematiq', 'Install {name}', { name: entry.name }),
+					)
+				}
+				button.addEventListener('click', function () {
+					install(entry, button)
+				})
+				item.appendChild(button)
+				return item
+			}
+
+			function render(data) {
+				toggle.checked = data.enabled === true
+				if (label !== null && data.host) {
+					label.textContent = t(
+						'thematiq',
+						'Show the theme gallery (contacts {host})',
+						{ host: data.host },
+					)
+				}
+				list.innerHTML = ''
+				if (data.enabled !== true) {
+					setStatus('')
+					return
+				}
+				if (data.reachable === false) {
+					setStatus(
+						t(
+							'thematiq',
+							'The gallery could not be reached. You can still upload a token set file under Custom token sets.',
+						),
+					)
+					return
+				}
+				var entries = data.entries || []
+				setStatus(
+					entries.length === 0
+						? t('thematiq', 'The gallery lists no house styles yet.')
+						: '',
+				)
+				entries.forEach(function (entry) {
+					list.appendChild(renderEntry(entry))
+				})
+			}
+
+			function load() {
+				return fetch(url, { headers: { requesttoken: OC.requestToken } })
+					.then(function (r) {
+						return r.json()
+					})
+					.then(render)
+					.catch(function (err) {
+						console.error('Error loading the theme gallery:', err)
+					})
+			}
+
+			function install(entry, button) {
+				button.disabled = true
+				setStatus(t('thematiq', 'Installing {name}…', { name: entry.name }))
+				fetch(
+					OC.generateUrl(
+						'/apps/thematiq/settings/gallery/'
+							+ encodeURIComponent(entry.id)
+							+ '/install',
+					),
+					{ method: 'POST', headers: { requesttoken: OC.requestToken } },
+				)
+					.then(function (r) {
+						return r.json().then(function (body) {
+							return { ok: r.ok, body: body }
+						})
+					})
+					.then(function (result) {
+						if (!result.ok) {
+							button.disabled = false
+							setStatus(
+								result.body.error
+									|| t('thematiq', '{name} was not installed.', {
+										name: entry.name,
+									}),
+							)
+							return
+						}
+						notify(
+							t(
+								'thematiq',
+								'{name} is installed. Choose it in the Design token set list.',
+								{ name: entry.name },
+							),
+						)
+						refreshTokenSetCatalogue()
+						loadCustomTokenSets()
+						load()
+					})
+					.catch(function (err) {
+						console.error('Error installing a gallery entry:', err)
+						button.disabled = false
+						setStatus(
+							t('thematiq', '{name} was not installed.', {
+								name: entry.name,
+							}),
+						)
+					})
+			}
+
+			toggle.addEventListener('change', function () {
+				var enabled = toggle.checked
+				fetch(url, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						requesttoken: OC.requestToken,
+					},
+					body: JSON.stringify({ enabled: enabled }),
+				})
+					.then(function (r) {
+						return r.json()
+					})
+					.then(render)
+					.catch(function (err) {
+						console.error('Error saving the gallery setting:', err)
+						toggle.checked = !enabled
+					})
+			})
+
+			load()
+		}
+
+		initGallery()
 
 		/**
 		 * Freeform custom CSS panel.

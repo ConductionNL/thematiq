@@ -8,7 +8,7 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
 
 ## Features
 
-- **47 token sets**: Choose from Dutch government design systems, including:
+- **51 token sets**: Choose from Dutch government design systems, including:
   - Rijkshuisstijl (Dutch national government)
   - Gemeente Utrecht
   - Gemeente Amsterdam
@@ -16,6 +16,7 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
   - Gemeente Rotterdam
   - La Suite numérique (Cunningham design system, European sovereign-workplace / MinBZK-mijn-bureau EDIC bundles) — plus the published Cunningham blue base as an optional sibling set
   - …and a broad set of community-maintained municipality and organization brands
+  - Four fictional example sets for education demos: a primary school, a secondary school, an mbo college and a training provider
 
 - **Open Source Fonts**: Uses **Fira Sans** from `@fontsource/fira-sans` and **Inter** (self-hosted from `@fontsource/inter`) as professional alternatives to proprietary government fonts
 
@@ -25,13 +26,13 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
 
 - **No Build Required**: Tokens are pre-compiled CSS and fonts are bundled and self-hosted (no external CDN)
 
-- **NL-Government and French-Government Icons**: Includes 1488 SVG icons sourced from `@conduction/nextcloud-vue`'s EUPL-compatible NL-government packs (RVO, OpenGemeenten, Gemeente Den Haag) plus 1038 SVG icons from the French-government DSFR pack (`@gouvfr/dsfr`, Etalab-2.0) — 2526 icons total — plus 23 organization logos, for use across all Nextcloud apps
+- **NL-Government and French-Government Icons**: Includes 1488 SVG icons sourced from `@conduction/nextcloud-vue`'s EUPL-compatible NL-government packs (RVO, OpenGemeenten, Gemeente Den Haag) plus 1038 SVG icons from the French-government DSFR pack (`@gouvfr/dsfr`, Etalab-2.0) — 2526 icons total — plus 35 organization and example logos, for use across all Nextcloud apps
 
 - **Theme-switchable iconography**: The icon pack an app resolves through nldesign travels with the active design system — a French-government (`lasuite`) theme serves the DSFR pack, a Dutch-government theme serves the RVO/OpenGemeenten/Den Haag packs — resolved via `DesignSystemService` and advertised on the public capability (`iconPacks`). See `img/ICONS.md`.
 
 ## Icons
 
-The app includes **2526 icons** across four government icon sets and **25 logos**:
+The app includes **2526 icons** across four government icon sets and **35 logos**:
 
 - RVO, OpenGemeenten, Gemeente Den Haag — **1488 icons** (CC0-1.0 / CC0-1.0 / EUPL-1.2), materialized from `@conduction/nextcloud-vue`
 - DSFR (Système de Design de l'État) — **1038 icons** (**Etalab-2.0**), materialized from `@gouvfr/dsfr`
@@ -78,7 +79,7 @@ docker exec -u 33 nextcloud php occ app:enable nldesign
 
 ## Configuration
 
-Navigate to **Settings → Administration → Theming** and find the "NL Design System Theme" section.
+Navigate to **Settings → Administration → Theming** and find the "Thematiq" section.
 
 Select your preferred design token set and reload the page to see the changes.
 
@@ -130,6 +131,19 @@ This app uses **Fira Sans** as an open-source alternative to the proprietary gov
 - Excellent legibility for government services
 - Similar characteristics to official government fonts
 - Officially recommended by Rijkshuisstijl Community as open-source alternative
+
+### Font licences
+
+Every bundled typeface except Marianne is under the SIL Open Font License 1.1. The licence text ships next to the font files as `OFL.txt`, and in [`LICENSES/OFL-1.1.txt`](LICENSES/OFL-1.1.txt). `REUSE.toml` labels each font file `OFL-1.1` with its upstream copyright holder.
+
+| Typeface | Files | Copyright holder |
+|---|---|---|
+| Fira Sans | `css/fonts/`, `css/systems/nldesign/fonts/` | The Mozilla Foundation and Telefonica S.A. |
+| Figtree | `css/fonts/` | The Figtree Project Authors |
+| IBM Plex Mono | `css/fonts/` | IBM Corp. (Reserved Font Name "Plex") |
+| Inter | `css/systems/lasuite/fonts/`, `css/systems/summer-breeze/fonts/` | The Inter Project Authors |
+
+Add a typeface? Put its `OFL.txt` notice and a `REUSE.toml` entry in the same commit. `tests/vitest/fontLicences.spec.js` fails without them.
 
 ## Marianne Font (La Suite numérique) — restricted, off by default
 
@@ -336,6 +350,8 @@ This implementation is **fully legal and open-source** for:
 ## License
 
 This project is licensed under the [EUPL-1.2](LICENSE).
+
+The bundled fonts keep their own licences: SIL OFL 1.1 for Fira Sans, Figtree, IBM Plex Mono and Inter, Etalab-2.0 for Marianne. See [Font licences](#font-licences).
 
 ### Dependency license policy
 

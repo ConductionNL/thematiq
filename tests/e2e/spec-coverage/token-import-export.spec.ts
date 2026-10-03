@@ -27,6 +27,22 @@ test.describe('token-import-export', () => {
 		await expect(downloadBtn).toBeVisible()
 	})
 
+	test(// @e2e openspec/specs/token-import-export/spec.md#download-says-what-it-does-first
+	'Download explains the file before downloading, and Cancel downloads nothing', async ({
+		page,
+	}) => {
+		await page.goto(THEMING_URL)
+		await page.waitForLoadState('domcontentloaded')
+		await page.locator('#nldesign-export-btn').click()
+
+		const dialog = page.locator('#nldesign-export-overrides-overlay')
+		await expect(dialog).toBeVisible()
+		await expect(dialog).toContainText('It is not a complete theme.')
+
+		await dialog.locator('.nldesign-dialog-cancel').click()
+		await expect(dialog).toHaveCount(0)
+	})
+
 	// Scenario: Download with no custom overrides
 	// @e2e exclude openspec/specs/token-import-export/spec.md#download-with-no-custom-overrides
 	// Requires verifying file download content — browser download behaviour
@@ -44,9 +60,26 @@ test.describe('token-import-export', () => {
 	'Upload control is present in the token editor panel', async ({ page }) => {
 		await page.goto(THEMING_URL)
 		await page.waitForLoadState('domcontentloaded')
-		// The upload trigger (label acting as button or actual file input)
-		const uploadTrigger = page.locator('text=Upload').first()
+		const uploadTrigger = page.locator('#nldesign-import-btn')
 		await expect(uploadTrigger).toBeVisible()
+	})
+
+	test(// @e2e openspec/specs/token-import-export/spec.md#upload-says-what-it-does-first
+	'Upload explains the replace before the file picker, and Cancel opens none', async ({
+		page,
+	}) => {
+		await page.goto(THEMING_URL)
+		await page.waitForLoadState('domcontentloaded')
+		await page.locator('#nldesign-import-btn').click()
+
+		const dialog = page.locator('#nldesign-import-overrides-overlay')
+		await expect(dialog).toBeVisible()
+		await expect(dialog).toContainText(
+			'replace every value saved for this theme',
+		)
+
+		await dialog.locator('.nldesign-dialog-cancel').click()
+		await expect(dialog).toHaveCount(0)
 	})
 
 	// Scenario: Import replaces existing overrides
@@ -81,4 +114,15 @@ test.describe('token-import-export', () => {
 
 	// @e2e exclude openspec/specs/token-import-export/spec.md#upload-endpoint-receives-file
 	// API-layer assertion (multipart/form-data, server-side parsing) — not UI.
+
+	// -----------------------------------------------------------------------
+	// Requirement: Token Set Round Trip
+	// -----------------------------------------------------------------------
+
+	// @e2e exclude openspec/specs/token-import-export/spec.md#export-writes-only-what-the-set-declares
+	// Reads the downloaded file's content — covered by the playground unit tests.
+
+	// @e2e exclude openspec/specs/token-import-export/spec.md#a-marked-file-is-stored-as-it-arrived
+	// Uploads a token set and inspects the stored file — mutates shared-env custom sets;
+	// covered by the controller unit tests.
 })

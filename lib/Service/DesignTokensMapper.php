@@ -46,15 +46,11 @@ namespace OCA\Thematiq\Service;
 class DesignTokensMapper {
 
 	/**
-	 * Color spaces accepted for the v2025.10 object color form.
+	 * The thematiq extension key a token carries its CSS name under.
 	 *
-	 * Every other `colorSpace` value (display-p3, oklch, lab, …) is reported
-	 * as `unsupported-color-space` — we only know how to serialize sRGB-family
-	 * values to a hex literal.
-	 *
-	 * @var string[]
+	 * @var string
 	 */
-	private const SRGB_COLOR_SPACES = ['srgb', 'srgb-linear'];
+	private const EXTENSION = 'nl.conduction.thematiq';
 
 	/**
 	 * The v2025.10 `fontWeight` keyword => numeric CSS value table.
@@ -127,20 +123,44 @@ class DesignTokensMapper {
 	private DesignTokensAliasResolver $aliasResolver;
 
 	/**
+	 * Converts every DTCG colour space to sRGB.
+	 *
+	 * @var ColorSpaceConverter
+	 */
+	private ColorSpaceConverter $colorSpaces;
+
+	/**
+	 * The colours of the current map() that were changed to fit sRGB.
+	 *
+	 * @var array<int, array<string, mixed>>
+	 */
+	private array $adapted = [];
+
+	/**
+	 * The CSS name the leaf being mapped carries in the thematiq extension, if any.
+	 *
+	 * @var string|null
+	 */
+	private ?string $extensionTarget = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param DesignTokensAliasResolver|null $aliasResolver The alias resolver
 	 *                                                      (defaults to a fresh instance — it is stateless and dependency-free,
 	 *                                                      so DI is optional; tests may still substitute their own).
+	 * @param ColorSpaceConverter|null $colorSpaces The colour space maths (stateless, so optional as well).
 	 */
-	public function __construct(?DesignTokensAliasResolver $aliasResolver = null) {
+	public function __construct(?DesignTokensAliasResolver $aliasResolver = null, ?ColorSpaceConverter $colorSpaces = null) {
 		$this->aliasResolver = ($aliasResolver ?? new DesignTokensAliasResolver());
+		$this->colorSpaces = ($colorSpaces ?? new ColorSpaceConverter());
 	}//end __construct()
 
 	/**
 	 * Map a parsed DTCG document onto nldesign declarations.
 	 *
-	 * @param array<string, mixed> $document The decoded DTCG JSON document.
+	 * @param array<string, mixed> $document           The decoded DTCG JSON document.
+	 * @param array<int, string>   $referenceOnlyPaths Dotted paths that resolve aliases but are not emitted.
 	 *
 	 * @return array{
 	 *     declarations: array<string, string>,
@@ -148,14 +168,18 @@ class DesignTokensMapper {
 	 *     skipped: array<int, array{path: string, reason: string, detail?: string}>,
 	 *     errors: array<int, array{path: string, reason: string, detail?: string}>,
 	 *     warnings: array<int, array{path: string, message: string|null}>,
-	 *     packageVersion: string|null
+	 *     packageVersion: string|null,
+	 *     adapted: array<int, array<string, mixed>>,
+	 *     thematiqExport: bool
 	 * } The mapped declarations plus structured import accounting.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	public function map(array $document): array {
+	public function map(array $document, array $referenceOnlyPaths = []): array {
+		$this->adapted = [];
 		$leaves = [];
 		$this->collectLeaves(node: $document, prefix: '', inheritedType: null, leaves: $leaves);
+		$referenceOnly = array_flip($referenceOnlyPaths);
 
 		$declarations = [];
 		$skipped = [];
@@ -163,6 +187,12 @@ class DesignTokensMapper {
 		$warnings = [];
 
 		foreach ($leaves as $path => $leaf) {
+			// A reference-only leaf (a Tokens Studio `source` set) stays in the alias table
+			// above and is never assigned to a target.
+			if (isset($referenceOnly[$path]) === true) {
+				continue;
+			}
+
 			$this->processLeaf(
 				path: $path,
 				leaf: $leaf,
@@ -174,8 +204,15 @@ class DesignTokensMapper {
 			);
 		}
 
+		// The root cssOnly map: values DTCG has no type for, written by thematiq's own export.
+		// Tokens win over it; every entry passes the validator downstream like any declaration.
+		$declarations += $this->cssOnly(document: $document);
+
 		return [
 			'declarations' => $declarations,
+			'adapted' => $this->adapted,
+			// A document thematiq itself exported: the converter keeps every name as it is.
+			'thematiqExport' => is_string($document['$extensions'][self::EXTENSION]['setId'] ?? null),
 			'imported' => count($declarations),
 			'skipped' => $skipped,
 			'errors' => $errors,
@@ -246,7 +283,7 @@ class DesignTokensMapper {
 	 * @param string|null $ownType The node's own declared `$type`, if any.
 	 * @param string|null $inheritedType The nearest ancestor's declared `$type`, if any.
 	 *
-	 * @return array{value: mixed, type: string|null, deprecated: mixed} The leaf entry.
+	 * @return array{value: mixed, type: string|null, deprecated: mixed, cssVariable: string|null} The leaf entry.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -260,8 +297,45 @@ class DesignTokensMapper {
 			'value' => $node['$value'],
 			'type' => ($ownType ?? $inheritedType),
 			'deprecated' => $deprecated,
+			'cssVariable' => $this->extensionName(value: ($node['$extensions'][self::EXTENSION]['cssVariable'] ?? null)),
 		];
 	}//end buildLeafEntry()
+
+	/**
+	 * A custom property name from the thematiq extension, or null when it is not one.
+	 *
+	 * @param mixed $value The extension member.
+	 *
+	 * @return string|null
+	 */
+	private function extensionName(mixed $value): ?string {
+		if (is_string($value) === false || preg_match('/^--[a-z0-9]+(-[a-z0-9]+)*$/', $value) !== 1) {
+			return null;
+		}
+
+		return $value;
+	}//end extensionName()
+
+	/**
+	 * The root `$extensions["nl.conduction.thematiq"].cssOnly` map, names checked, values as strings.
+	 *
+	 * @param array<string, mixed> $document The document.
+	 *
+	 * @return array<string, string>
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 */
+	private function cssOnly(array $document): array {
+		$map = (array)($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []);
+		$out = [];
+		foreach ($map as $name => $value) {
+			if ($this->extensionName(value: (string)$name) !== null && is_scalar($value) === true) {
+				$out[(string)$name] = trim((string)$value);
+			}
+		}
+
+		return $out;
+	}//end cssOnly()
 
 	/**
 	 * Process a single flattened leaf: resolve aliases, resolve the type,
@@ -293,6 +367,7 @@ class DesignTokensMapper {
 		$rawValue = $leaf['value'];
 		$ownType = $leaf['type'];
 		$deprecated = $leaf['deprecated'];
+		$this->extensionTarget = ($leaf['cssVariable'] ?? null);
 
 		$value = $rawValue;
 		$type = $ownType;
@@ -378,7 +453,8 @@ class DesignTokensMapper {
 
 		$result = match ($type) {
 			'color' => $this->serializeColor(value: $value),
-			'dimension' => $this->serializeDimension(value: $value),
+			'dimension', 'duration' => $this->serializeDimension(value: $value),
+			'cubicBezier' => $this->serializeCubicBezier(value: $value),
 			'fontFamily' => $this->serializeFontFamily(value: $value),
 			'fontWeight' => $this->serializeFontWeight(value: $value),
 			// Any other declared type (shadow, number, duration, …) is not
@@ -400,13 +476,34 @@ class DesignTokensMapper {
 	}//end dispatchByType()
 
 	/**
-	 * Legacy scalar-passthrough "serializer" for any declared type this
-	 * mapper does not yet have a first-class serializer for (shadow, number,
-	 * duration, …) — preserves the original mapper's tolerant behaviour.
+	 * Serialize a `cubicBezier` value: the four-number array, or a legacy string.
 	 *
 	 * @param mixed $value The resolved `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, adapted?: array<string, mixed>} The serialization result.
+	 *
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
+	 */
+	private function serializeCubicBezier($value): array {
+		if (is_string($value) === true) {
+			return ['ok' => true, 'value' => trim($value)];
+		}
+
+		if (is_array($value) === false || count($value) !== 4 || count(array_filter($value, 'is_numeric')) !== 4) {
+			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
+		}
+
+		return ['ok' => true, 'value' => 'cubic-bezier(' . implode(', ', array_map('strval', array_values($value))) . ')'];
+	}//end serializeCubicBezier()
+
+	/**
+	 * Legacy scalar-passthrough "serializer" for any declared type this
+	 * mapper does not yet have a first-class serializer for (shadow, number,
+	 * …) — preserves the original mapper's tolerant behaviour.
+	 *
+	 * @param mixed $value The resolved `$value`.
+	 *
+	 * @return array{ok: bool, value?: string, reason?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -423,7 +520,7 @@ class DesignTokensMapper {
 	 *
 	 * @param string $path The token's dotted path.
 	 * @param mixed $deprecated The token's raw `$deprecated` value, if any.
-	 * @param array{ok: bool, value?: string, reason?: string, detail?: string} $result The serializer result.
+	 * @param array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} $result The serializer result.
 	 * @param array<string, string> $declarations Accumulated declarations (by reference).
 	 * @param array<int, array<string, string>> $skipped Accumulated skips (by reference).
 	 * @param array<int, array<string, string>> $errors Accumulated errors (by reference).
@@ -453,7 +550,8 @@ class DesignTokensMapper {
 			return;
 		}
 
-		$target = $this->resolveTarget(path: $path);
+		// The thematiq extension names the target before the suffix table is tried.
+		$target = ($this->extensionTarget ?? $this->resolveTarget(path: $path));
 		if ($target === null) {
 			$skipped[] = ['path' => $path, 'reason' => 'unmapped-path'];
 
@@ -469,7 +567,11 @@ class DesignTokensMapper {
 		}
 
 		$declarations[$target] = $result['value'];
-		$this->maybeWarnDeprecated(path: $path, deprecated: $deprecated, warnings: $warnings);
+		if (isset($result['adapted']) === true) {
+			$this->adapted[] = ['path' => $path, 'target' => $target, 'value' => $result['value']] + $result['adapted'];
+		}
+
+		$this->maybeWarnDeprecated(path: $path, deprecated: $deprecated, warnings: $warnings, token: $target);
 	}//end assignSingleTarget()
 
 	/**
@@ -549,29 +651,46 @@ class DesignTokensMapper {
 	/**
 	 * Record a deprecation warning for a successfully imported token.
 	 *
-	 * `$deprecated` may be boolean `true` (no message) or a string message;
-	 * per the ADDED requirement, the warning is only ever surfaced for a
-	 * token that was actually imported.
+	 * `$deprecated` may be boolean `true` (no message), a string message, or
+	 * the object Tokens Studio writes (`{severity: warning|error, message}`,
+	 * EditTokenForm.tsx:444-489 at 2.12.1); per the ADDED requirement, the
+	 * warning is only ever surfaced for a token that was actually imported.
+	 * A single-target token also names the CSS variable it became, so the
+	 * notice can be recorded as a deprecation of that name.
 	 *
 	 * @param string $path The token's dotted path.
 	 * @param mixed $deprecated The raw `$deprecated` value.
 	 * @param array<int, array<string, mixed>> $warnings Accumulated warnings (by reference).
+	 * @param string|null $token The CSS variable the token became, when it became one.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function maybeWarnDeprecated(string $path, $deprecated, array &$warnings): void {
+	private function maybeWarnDeprecated(string $path, $deprecated, array &$warnings, ?string $token = null): void {
 		if ($deprecated === null || $deprecated === false) {
 			return;
 		}
 
-		$message = null;
-		if (is_string($deprecated) === true && trim($deprecated) !== '') {
-			$message = $deprecated;
+		$warning = ['path' => $path, 'message' => null];
+		if (is_array($deprecated) === true) {
+			$warning['severity'] = 'warning';
+			if (($deprecated['severity'] ?? '') === 'error') {
+				$warning['severity'] = 'critical';
+			}
+
+			$deprecated = ($deprecated['message'] ?? null);
 		}
 
-		$warnings[] = ['path' => $path, 'message' => $message];
+		if (is_string($deprecated) === true && trim($deprecated) !== '') {
+			$warning['message'] = $deprecated;
+		}
+
+		if ($token !== null) {
+			$warning['token'] = $token;
+		}
+
+		$warnings[] = $warning;
 	}//end maybeWarnDeprecated()
 
 	/**
@@ -580,7 +699,7 @@ class DesignTokensMapper {
 	 *
 	 * @param mixed $value The resolved `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string, detail?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -597,94 +716,69 @@ class DesignTokensMapper {
 	}//end serializeColor()
 
 	/**
-	 * Serialize the v2025.10 object-form `color` value (sRGB-family color
-	 * spaces only). Extracted from {@see self::serializeColor()} to keep its
-	 * own cyclomatic complexity in check.
+	 * Serialize the v2025.10 object-form `color` value, in any colour space the DTCG colour
+	 * module lists, to sRGB hex: the `hex` member for an sRGB colour, else the converted
+	 * components; out of gamut, the document's `hex` or the clipped value, reported `adapted`.
 	 *
 	 * @param array<string, mixed> $value The object-form `$value`.
 	 *
-	 * @return array{ok: bool, value?: string, reason?: string, detail?: string} The serialization result.
+	 * @return array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} The serialization result.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function serializeColorObject(array $value): array {
 		$colorSpace = strtolower((string)($value['colorSpace'] ?? ''));
-		if (in_array($colorSpace, self::SRGB_COLOR_SPACES, true) === false) {
+		if ($this->colorSpaces->isKnownSpace(space: $colorSpace) === false) {
 			return ['ok' => false, 'reason' => 'unsupported-color-space', 'detail' => ($value['colorSpace'] ?? 'unknown')];
 		}
 
 		$alphaHex = $this->alphaToHex(alpha: $value['alpha'] ?? null);
-
-		if (isset($value['hex']) === true && is_string($value['hex']) === true) {
-			$hex = $value['hex'];
-			if (str_starts_with($hex, '#') === false) {
-				$hex = '#' . $hex;
-			}
-
-			// The hex member is a 6-digit fallback with no alpha of its own.
-			if (strlen($hex) === 7) {
-				$hex .= $alphaHex;
-			}
-
-			return ['ok' => true, 'value' => $hex];
-		}
-
-		if (isset($value['components']) === true
-			&& is_array($value['components']) === true
-			&& count($value['components']) >= 3
-		) {
-			$hex = $this->componentsToHex(
-				components: array_values($value['components']),
-				linear: $colorSpace === 'srgb-linear'
-			);
-
+		$hex = $this->hexMember(value: $value);
+		$components = $value['components'] ?? null;
+		if ($colorSpace === 'srgb' && $hex !== null) {
 			return ['ok' => true, 'value' => $hex . $alphaHex];
 		}
 
-		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
+		if (is_array($components) === false || count($components) < 3) {
+			if ($hex !== null) {
+				return ['ok' => true, 'value' => $hex . $alphaHex];
+			}
+
+			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
+		}
+
+		$rgb = (array)$this->colorSpaces->toSrgb(space: $colorSpace, components: array_values($components));
+		if ($this->colorSpaces->isInGamut(rgb: $rgb) === true) {
+			return ['ok' => true, 'value' => $this->colorSpaces->toHex(rgb: $rgb) . $alphaHex];
+		}
+
+		// Out of the sRGB gamut every consumer reads: the document's own fallback when it
+		// has one, else each channel clipped. Either way the report says so.
+		$adapted = ['reason' => 'out-of-gamut-clipped', 'original' => $value];
+		if ($hex !== null) {
+			$adapted['reason'] = 'out-of-gamut-hex-fallback';
+
+			return ['ok' => true, 'value' => $hex . $alphaHex, 'adapted' => $adapted];
+		}
+
+		return ['ok' => true, 'value' => $this->colorSpaces->toHex(rgb: $rgb) . $alphaHex, 'adapted' => $adapted];
 	}//end serializeColorObject()
 
 	/**
-	 * Serialize three 0–1 sRGB-family float components to a `#rrggbb` hex literal.
+	 * A colour object's `hex` member as `#rrggbb`, or null when it has none.
 	 *
-	 * Linear-light (`srgb-linear`) components go through the sRGB transfer
-	 * function first; scaling them straight to 0–255 renders them too dark.
+	 * @param array<string, mixed> $value The colour object.
 	 *
-	 * @param array<int, mixed> $components The `[r, g, b]` components (0–1 range, clamped).
-	 * @param bool $linear Whether the components are linear light.
-	 *
-	 * @return string The `#rrggbb` hex literal.
-	 *
-	 * @spec openspec/changes/authoring-dtcg-export/tasks.md#task-2.2
+	 * @return string|null
 	 */
-	private function componentsToHex(array $components, bool $linear): string {
-		$hex = '#';
-		foreach ([0, 1, 2] as $index) {
-			$channel = max(0.0, min(1.0, (float)$components[$index]));
-			if ($linear === true) {
-				$channel = $this->linearToSrgb(channel: $channel);
-			}
-
-			$hex .= str_pad(dechex((int)round($channel * 255)), 2, '0', STR_PAD_LEFT);
+	private function hexMember(array $value): ?string {
+		$hex = $value['hex'] ?? null;
+		if (is_string($hex) === false || preg_match('/^#?([0-9a-fA-F]{6})$/', trim($hex), $match) !== 1) {
+			return null;
 		}
 
-		return $hex;
-	}//end componentsToHex()
-
-	/**
-	 * Apply the sRGB transfer function (CSS Color 4) to one linear-light channel.
-	 *
-	 * @param float $channel The linear channel, 0–1.
-	 *
-	 * @return float The gamma-encoded sRGB channel, 0–1.
-	 */
-	private function linearToSrgb(float $channel): float {
-		if ($channel <= 0.0031308) {
-			return 12.92 * $channel;
-		}
-
-		return (1.055 * ($channel ** (1 / 2.4))) - 0.055;
-	}//end linearToSrgb()
+		return '#' . strtolower($match[1]);
+	}//end hexMember()
 
 	/**
 	 * Turn a colour object's `alpha` into the fourth hex pair, or '' when opaque.

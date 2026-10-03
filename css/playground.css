@@ -285,6 +285,20 @@
 	cursor: pointer;
 }
 
+/* The same rows, reached from the keyboard: each is a tab stop (or, in the
+   tabs and the select, the arrows move between them), so each needs a ring
+   that says where the focus is (WCAG 2.4.7). */
+#nldesign-preview .nldesign-pg-option:focus-visible,
+#nldesign-preview .nldesign-pg-nav-entry:focus-visible,
+#nldesign-preview .nldesign-pg-listitem:focus-visible,
+#nldesign-preview .nldesign-pg-crumb:focus-visible,
+#nldesign-preview .nldesign-pg-tab:focus-visible,
+#nldesign-preview .nldesign-pg-rec:focus-visible,
+#nldesign-preview .nldesign-pg-table tbody tr:focus-visible {
+	outline: 2px solid var(--color-primary-element);
+	outline-offset: -2px;
+}
+
 /* A picked table row. The zebra and hover states are drawn by their own
    classes; this is the one the admin puts there. */
 #nldesign-preview .nldesign-pg-table tbody tr.is-selected {
@@ -2424,4 +2438,46 @@
  * settings page's own type. */
 #nldesign-settings .nldesign-pg-selector .nldesign-token-editor-header {
 	margin-bottom: 8px;
+}
+
+/* Your component (authoring-own-markup-preview): two fields, the frame, the reports. */
+.nldesign-own-fields {
+	display: grid;
+	gap: 4px;
+	margin-bottom: 8px;
+}
+.nldesign-own-fields textarea {
+	width: 100%;
+	font-family: var(--font-face-monospace, monospace);
+	font-size: 13px;
+}
+.nldesign-own-label {
+	font-weight: 600;
+}
+.nldesign-own-frame {
+	display: block;
+	width: 100%;
+	min-height: 240px;
+	margin: 8px 0;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+	background: var(--color-main-background);
+}
+.nldesign-own-note,
+.nldesign-own-dark-note,
+.nldesign-own-report {
+	color: var(--color-text-maxcontrast);
+}
+.nldesign-own-contrast {
+	margin: 0;
+	padding-left: 18px;
+}
+.nldesign-own-save {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+.nldesign-own-error {
+	color: var(--color-text-error, var(--color-error));
 }

@@ -9,7 +9,7 @@ v2025.10 ingestion contract (`openspec/specs/custom-token-sets/spec.md`).
 | --- | --- |
 | `01-legacy-scalar-regression.tokens.json` | Regression — identical to the pre-hardening mapper's own test document (own `$type` on every token); must still import 2/2, 0 skipped, 0 errors. |
 | `02-group-type-inheritance.tokens.json` | Group-level `$type` inherited by an untyped descendant token. |
-| `03-object-color-and-dimension.tokens.json` | v2025.10 object-form `color` (sRGB + hex, imports) and `dimension` (`{value, unit}`, imports), plus an object-form color in an unsupported color space (`display-p3` — `unsupported-color-space`). |
+| `03-object-color-and-dimension.tokens.json` | v2025.10 object-form `color` (sRGB + hex, imports) and `dimension` (`{value, unit}`, imports), plus an object-form color in a colour space the DTCG colour module does not list (`cmyk`, `unsupported-color-space`). |
 | `04-composite-typography.tokens.json` | Composite `typography` token: `fontFamily` array maps to `--nldesign-font-family`; `fontSize`/`fontWeight`/`lineHeight` have no target and are counted skipped with their sub-path. |
 | `05-alias-chain-3-hop.tokens.json` | Transitive alias resolution across 3 hops to a concrete `color` leaf. |
 | `06-alias-cycle.tokens.json` | `a.x <-> b.y` alias cycle (`alias-cycle`, full chain in the error) alongside an unrelated valid token — the valid token still imports. |

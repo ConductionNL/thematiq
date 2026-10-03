@@ -53,6 +53,7 @@ use RuntimeException;
  * @spec openspec/specs/custom-fonts/spec.md
  */
 class FontController extends Controller {
+	use ErrorStatusTrait;
 
 	/**
 	 * The font storage/lifecycle service.
@@ -128,12 +129,7 @@ class FontController extends Controller {
 				reportedSize: (int)($file['size'] ?? strlen($bytes))
 			);
 		} catch (RuntimeException $e) {
-			$code = $e->getCode();
-			if ($code < 400 || $code > 599) {
-				$code = 500;
-			}
-
-			return new JSONResponse(['error' => $e->getMessage()], $code);
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
 
 		return new JSONResponse(['id' => $result['id']]);

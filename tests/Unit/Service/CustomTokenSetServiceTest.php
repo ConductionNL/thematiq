@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/custom-token-set-upload/tasks.md#task-5.4
+ * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-5.4
  */
 
 declare(strict_types=1);
@@ -18,6 +18,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use PHPUnit\Framework\TestCase;
@@ -77,7 +78,7 @@ class CustomTokenSetServiceTest extends TestCase {
 		);
 
 		$this->service = new CustomTokenSetService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$config,
 			new CustomTokenSetValidator(),
 			new ContrastService(),

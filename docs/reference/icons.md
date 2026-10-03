@@ -9,7 +9,7 @@ sidebar_position: 7
 The Thematiq app includes **1488 icons** materialized from `@conduction/nextcloud-vue`'s
 EUPL-compatible NL-government icon packs (RVO, OpenGemeenten, Gemeente Den Haag), plus
 **1038 icons** materialized from `@gouvfr/dsfr`'s French-government DSFR pack
-(**Etalab-2.0**) — **2526 icons** total — plus **23 logos**, making them available for use
+(**Etalab-2.0**) — **2526 icons** total — plus **35 logos**, making them available for use
 across all Nextcloud apps.
 
 ### Theme-switchable iconography
@@ -21,6 +21,19 @@ pack via `DesignSystemService::resolveActiveIconPacks()` / `resolveIconPath()`, 
 from the public capability (`capabilities.nldesign.iconPacks`) — see
 `openspec/specs/icon-packs/spec.md`. This does **not** replace Nextcloud core's built-in
 icons; it only switches Thematiq's own bundled assets served through `imagePath`.
+
+To show the active pack's icon without resolving it yourself, point at the route
+`/index.php/apps/thematiq/icons/{name}`. It redirects to the file of that name in the pack
+the viewer's theme uses, and answers 404 when that pack has no icon of that name. It works
+without a login, so it is safe in an `<img>` tag or a CSS `url()`:
+
+```html
+<img src="/index.php/apps/thematiq/icons/arrow-right-line" alt="Next">
+```
+
+Ship a fallback for the 404. A design system without a pack, such as stock Nextcloud,
+serves no icons, and each pack names its icons its own way (`rvo-home` in RVO,
+`home-4-line` in DSFR), so one name rarely exists in every pack.
 
 **The proprietary City-of-Amsterdam icon set (`@amsterdam/design-system-assets`) is NOT
 bundled.** Its `LICENSE.md` marks the set proprietary to the City of Amsterdam,
@@ -43,7 +56,7 @@ View all available icons in the [icon documentation](https://github.com/Conducti
 - **NL-government icons:** `img/icons/{rvo,open-gemeenten,den-haag}/` (1488 SVG files across 3 sets)
 - **DSFR (French-government) icons:** `img/icons/dsfr/` (1038 SVG files)
 - **Legacy aliases:** `img/icons/*.svg` (77 one-release compatibility files — see CHANGELOG.md, removed next minor release)
-- **Logos:** `img/logos/` (23 SVG files, static checked-in huisstijl assets — not build output)
+- **Logos:** `img/logos/` (30 SVG files, static checked-in huisstijl assets — not build output)
 
 ## Usage in Nextcloud Apps
 
@@ -114,7 +127,7 @@ release** — do not build new integrations against them; migrate to the set-pre
 
 ## Logos
 
-The 23 logos in `img/logos/` cover government and municipal organizations. A representative sample:
+The 35 logos in `img/logos/` cover government and municipal organizations, plus four fictional example sets. A representative sample:
 - `amsterdam.svg` - City of Amsterdam logo
 - `ggd-amsterdam.svg` - GGD Amsterdam logo
 - `stadsarchief.svg` - Amsterdam City Archives
@@ -230,7 +243,7 @@ Icons are automatically built from `@conduction/nextcloud-vue`'s and `@gouvfr/ds
 npm run build:icons
 ```
 
-This decodes the data-URI icon packs at `node_modules/@conduction/nextcloud-vue/src/icons/{rvo,openGemeenten,denHaag}.js` into standalone SVG files under `img/icons/{set}/`, copies every DSFR source SVG (`@gouvfr/dsfr/dist/icons/**/*.svg`, falling back to the pre-fetched `.dsfr-src/icons/` scratch source when the package cannot be installed) into `img/icons/dsfr/{basename}.svg`, materializes the one-release legacy aliases from `scripts/icon-aliases.json`, and regenerates `img/ICONS.md`. It never touches `img/logos/`.
+This decodes the data-URI icon packs at `node_modules/@conduction/nextcloud-vue/src/icons/{rvo,openGemeenten,denHaag}.js` into standalone SVG files under `img/icons/{set}/`, copies every DSFR source SVG from the pre-fetched `.dsfr-src/icons/` scratch source (the `@gouvfr/dsfr` package is not a dependency: its install script refuses to run until the DSFR terms of use are accepted) into `img/icons/dsfr/{basename}.svg`, materializes the one-release legacy aliases from `scripts/icon-aliases.json`, and regenerates `img/ICONS.md`. It never touches `img/logos/`.
 
 ## Theme-Switchable Icon Packs
 

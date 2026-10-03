@@ -1,8 +1,10 @@
 # token-set-contrast-audit Specification
 
 ## Purpose
-TBD - created by archiving change shipped-token-set-contrast-audit. Update Purpose after archive.
+Every shipped token set is checked for WCAG AA contrast before an admin applies it. The audit measures the primary colour against its text and against the background, the selection and highlight colours a set can move, and translucent colours as they render. A set that fails is named in a reproducible report and flagged in the apply dialog, so nobody applies an unreadable theme without knowing.
+
 ## Requirements
+
 ### Requirement: Automated Contrast Audit Over All Shipped Token Sets
 For every token set declared in `token-sets.json` whose design system reads `--nldesign-*` tokens (i.e. `design_system` is not `none`), the app MUST compute WCAG relative-luminance contrast ratios for the fixed pairs using the existing `ContrastService`: `--nldesign-color-primary` vs `--nldesign-color-primary-text` against the 4.5:1 AA text threshold, and `--nldesign-color-primary` vs the set background (`--nldesign-color-background`, or `theming.background_color` when the token is absent) against the 3:1 AA non-text threshold. The values MUST be resolved from the set's `css/tokens/{id}.css` layered over `css/defaults.css`. A pair whose values cannot be resolved to literals MUST be reported as `unevaluated` and MUST NOT be treated as passing.
 
@@ -75,3 +77,47 @@ same per-set verdict to a leaf app's own non-admin picker, and its "Selection
 Contrast Is Non-Blocking" requirement extends the non-blocking policy this
 spec already applies in the apply dialog to that new consumption path.
 
+### Requirement: Translucent colours are measured as they render
+
+`ContrastService` MUST read `#rgba`, `#rrggbbaa`, and the alpha of `rgba()` and `hsla()`. Before a
+ratio is computed, a translucent foreground MUST be blended over its background, and a translucent
+background over the page background (`--nldesign-color-background`, else white). This MUST stay
+inside the one contrast implementation this spec requires, and a colour that cannot be parsed MUST
+stay `unevaluated`.
+
+#### Scenario: Faint text fails even though its opaque colour would pass
+@e2e exclude Contrast arithmetic, covered by PHPUnit on ContrastService
+- GIVEN text `rgba(0, 0, 0, 0.2)` on background `#ffffff`
+- WHEN the pair is evaluated
+- THEN the ratio MUST be computed for the blend `#cccccc` on `#ffffff`
+- AND the pair MUST fail AA
+
+#### Scenario: An 8-digit hex is evaluated, not skipped
+@e2e exclude Contrast arithmetic, covered by PHPUnit on ContrastService
+- GIVEN text `#000000cc` on background `#ffffff`
+- WHEN the pair is evaluated
+- THEN the pair MUST get a ratio and a verdict
+- AND it MUST NOT be `unevaluated`
+
+### Requirement: Selection and highlight pairs are audited
+The contrast audit MUST report two more pairs for every audited set that declares their settable side, each against the 4.5:1 text threshold: `--nldesign-nc-color-text-selection` against the selection wash Nextcloud derives from the set's primary (20% of it over the set's background), and `--nldesign-color-text` against `--nldesign-nc-color-mark`.
+
+#### Scenario: A set that moves the selected-text colour is audited against the derived wash
+@e2e exclude backend computation; `tests/Unit/Service/SettableContrastPairsTest.php` asserts it.
+- GIVEN a set declares `--nldesign-nc-color-text-selection` and a primary colour
+- WHEN the contrast audit runs
+- THEN the pair MUST be evaluated against 20% of that primary over the set's background
+
+#### Scenario: A pale highlight under dark text fails
+@e2e exclude backend computation; `tests/Unit/Service/SettableContrastPairsTest.php` asserts it.
+- GIVEN a set declares `--nldesign-nc-color-mark: #222222` and `--nldesign-color-text: #1a1a1a`
+- WHEN the contrast audit runs
+- THEN the pair MUST be reported below 4.5:1
+- AND the report MUST name both tokens
+
+#### Scenario: A set that declares neither side is not reported
+@e2e exclude backend computation; `tests/Unit/Service/SettableContrastPairsTest.php` asserts it.
+- GIVEN a set declares neither `--nldesign-nc-color-text-selection` nor `--nldesign-nc-color-mark`
+- WHEN the contrast audit runs
+- THEN the two pairs MUST NOT appear for that set
+- BECAUSE Nextcloud's own values apply and are Nextcloud's responsibility

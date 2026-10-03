@@ -2,7 +2,9 @@
 
 ## Purpose
 TBD - created by archiving change dark-mode-token-variants. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Dark Palette Derivation
 
 The app MUST provide a `DarkPaletteService` that derives a dark palette from a token set's
@@ -105,7 +107,7 @@ override set (never error) for sets without such a block or with malformed CSS.
 
 Dark variants MUST be materialised as static files `css/tokens/dark/<set>.css` at build,
 install, or upgrade time — never derived per request. Generation MUST be available as an occ
-command (`nldesign:generate-dark-variants`, with `--set` and `--force` options) and as an
+command (`thematiq:generate-dark-variants`, with `--set` and `--force` options) and as an
 `IRepairStep` that regenerates missing or stale files and logs-and-skips when the target
 directory is not writable. Each generated file MUST carry a header comment with the generator
 version and a hash of the source token set so freshness can be checked. Generation MUST skip
@@ -117,7 +119,7 @@ sets MUST be generated at upload time and removed when the custom set is deleted
 #### Scenario: occ command generates a variant
 
 - GIVEN the `amsterdam` token set exists
-- WHEN `occ nldesign:generate-dark-variants --set=amsterdam` runs
+- WHEN `occ thematiq:generate-dark-variants --set=amsterdam` runs
 - THEN `css/tokens/dark/amsterdam.css` MUST be written
 - AND the output MUST list the set and any contrast warnings
 
@@ -261,3 +263,121 @@ already established (user choice or OS preference).
 - THEN the rendered palette MUST switch via the CSS media query alone
 - AND no nldesign PHP or JS code MUST run to effect the switch
 
+### Requirement: Shipped Dark Logo Variants
+
+A shipped token set whose `theming.logo_dark` is set MUST have that file under `img/logos/`, and the set's committed dark stylesheet `css/tokens/dark/{id}.css` MUST override `--nldesign-logo-url` with it. Every fill colour in a shipped dark logo MUST reach 3:1 against the dark background `#141414` (WCAG 1.4.11). The Epe set MUST ship one, because its light logo draws its letters in near black on a transparent background.
+
+#### Scenario: A user in dark mode sees the Epe logo in light ink
+
+- GIVEN the Epe token set is active and dark variants are enabled
+- WHEN a user whose system is in dark mode opens any page
+- THEN the dark stylesheet for Epe MUST set `--nldesign-logo-url` to `img/logos/epe-dark.svg`
+- AND that file MUST be served with status 200
+
+### Requirement: Editor overrides apply the same way for every dark user
+
+`custom-overrides.css` MUST carry, next to its `:root` block of light values, the two dark scopes
+of the generated dark stylesheets: a `prefers-color-scheme: dark` block on
+`body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])`,
+and a `body[data-theme-dark], body[data-themes*=dark]` block. Every colour override MUST have a
+declaration in both dark scopes: the administrator's dark value, or the derived one. A user who
+follows a dark system setting and a user who chose the dark theme MUST see the same colour.
+
+#### Scenario: Both kinds of dark user see the same override
+- GIVEN the administrator saved "Primary color" `#154273` with dark value `#8fb8e6`
+- WHEN one user on "System default" with a dark operating system loads Files
+- AND another user who chose the dark theme loads Files
+- THEN both MUST see `#8fb8e6` as the primary colour
+
+#### Scenario: A light theme user is not affected by dark values
+- GIVEN the same overrides
+- WHEN a user who chose the light theme loads Files on a dark operating system
+- THEN the user MUST see `#154273`
+
+### Requirement: Derived dark values keep the light value's alpha
+
+When a light colour has an alpha below 1, its derived dark value MUST keep that alpha. The dark
+channels MUST be derived from the opaque colour as today, and written as `#rrggbbaa`.
+
+#### Scenario: A translucent surface stays translucent in dark mode
+@e2e exclude Generated file content, covered by PHPUnit on DarkPaletteService
+- GIVEN `css/tokens/conduction-new.css` declares `--nldesign-hero-cell-background: rgba(255, 255, 255, 0.08)`
+- WHEN its dark variant is generated
+- THEN the dark value MUST be an 8-digit hex whose alpha is `14`
+- AND it MUST NOT be the opaque `#141414` the generator writes today
+
+### Requirement: A design system whose overrides consume its own token ramp SHALL ship a dark counterpart for that ramp
+
+When a design system's `element-overrides.css` paints the shell from its own `--{system}-*`
+tokens, every ground-dependent value it reads MUST resolve to a dark value in dark mode. A rule
+SHALL read such a value through a token that the system's dark scope remaps (for La Suite: the
+Cunningham contextual tokens and the `--lasuite-content-*` aliases), never through a raw light
+ramp step, and both dark scopes (the `prefers-color-scheme: dark` media block and the explicit
+`data-theme` block) SHALL remap every such token.
+Redefining only the shared `--nldesign-*` layer is NOT sufficient: an override that reads the
+system ramp with `!important` discards the `--nldesign-*` value entirely, so the dark variant
+computes and is then thrown away.
+
+Dark values SHALL be sourced from the upstream design system's own dark palette where one
+exists, rather than derived by inverting the light ramp. Cunningham's dark theme keeps the ramp
+and remaps its contextual tokens, so the La Suite dark block remaps the same contextuals to the
+same ramp steps.
+
+#### Scenario: A ground-dependent token consumed by an override has a dark value
+
+@e2e exclude a static resolution of the shipped stylesheets in the lasuite load order; proven by tests/vitest/lasuiteDarkRamp.spec.js 'read no raw gray step and no token the dark blocks leave unmapped' and 'resolve #header to a dark surface in dark mode and a light one in light mode'
+
+- **GIVEN** `element-overrides.css` paints the header from `--lasuite--contextuals--background--surface--primary`
+- **WHEN** the dark scope is active
+- **THEN** that token resolves to upstream's dark value (`gray-800`)
+- **AND** no override rule reads a raw `--lasuite-color-gray-*` step directly
+
+#### Scenario: Redefining only the shared layer fails the check
+
+@e2e exclude a build-time check with no page; proven by tests/vitest/lasuiteDarkRamp.spec.js 'fails when a dark variant redefines only the shared layer' and 'fails when only one of the two dark scopes remaps a token a rule reads'
+
+- **GIVEN** a dark variant that redefines `--nldesign-color-header-background`
+- **AND** an override that sets the header from `--lasuite-color-gray-000` with `!important`
+- **WHEN** the dark-ramp check (`tests/css/check-lasuite-dark-ramp.js`) runs
+- **THEN** it fails, because the token the override actually consumes has no dark value
+
+### Requirement: Translucent override values SHALL be legible on both grounds
+
+A value expressed as a translucent overlay SHALL be defined per ground, or expressed so it
+resolves correctly on both. A dark wash intended for a light surface SHALL NOT be reused
+unchanged on a dark surface.
+
+#### Scenario: The active-row wash remains visible in dark mode
+
+@e2e exclude a static resolution of the shipped stylesheets; proven by tests/vitest/lasuiteDarkRamp.spec.js 'keep the selected row visible on the dark navigation'
+
+- **GIVEN** the active navigation row is marked by a translucent wash
+- **WHEN** the interface renders in dark mode
+- **THEN** the wash is a light wash over the dark navigation surface
+- **AND** the row it paints differs from that surface
+
+### Requirement: Dark-mode verification SHALL assert resolved shell values, not only stylesheet injection
+
+Dark-mode coverage for a design system SHALL assert the values the shell resolves to in dark
+mode (header, content canvas, content card, navigation and search field), resolved from the
+shipped stylesheets in that system's load order, and the contrast of the text on them.
+Asserting stylesheet order, scoping and toggle state alone is insufficient: a stylesheet can be
+correctly ordered, correctly scoped, and have no effect on the system under test.
+
+#### Scenario: The shell is dark in dark mode
+
+@e2e exclude resolved from the shipped stylesheets in the lasuite load order, because switching the shared instance to the lasuite set and a dark user theme is a state change no spec-coverage run may make; proven by tests/vitest/lasuiteDarkRamp.spec.js 'resolve %s to a dark surface in dark mode and a light one in light mode' (header, canvas, card, navigation, search) and the WCAG AA cases
+
+- **WHEN** the dark scope is active
+- **THEN** the header, navigation, content canvas and card resolve to dark values
+- **AND** the card stays lighter than the canvas it sits on
+- **AND** text, muted text and brand text on them reach 4.5:1
+
+#### Scenario: Injection-order coverage alone does not satisfy this requirement
+
+@e2e exclude a statement about what counts as coverage, not a behaviour; the resolved-value tests above are what satisfies it
+
+- **GIVEN** a suite that asserts only injection order, scoping and toggle state
+- **WHEN** a design system ships no dark ramp for its own tokens
+- **THEN** that suite passes while the interface renders light
+- **AND** this requirement is therefore NOT met by such a suite

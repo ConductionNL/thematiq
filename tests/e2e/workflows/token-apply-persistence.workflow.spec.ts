@@ -49,7 +49,8 @@ let baselineOverrides: Record<string, string> = {}
  * @param page The Playwright page, on the theming settings.
  */
 async function unlockBaseTokens(page: Page): Promise<void> {
-	await page.locator('#nldesign-base-unlock').click()
+	// Nextcloud's `input.checkbox` is visually hidden; its label is the control.
+	await page.locator('label[for="nldesign-base-unlock"]').click()
 	await page
 		.locator('#nldesign-base-unlock-overlay .nldesign-dialog-confirm')
 		.click()

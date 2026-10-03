@@ -159,31 +159,91 @@
 	 * do not overlap. The container is named rather than assumed to be the
 	 * parent, because a table row's siblings live in `tbody` and a navigation
 	 * entry's in the column, not in whatever element happens to wrap them.
+	 *
+	 * The rest says how the pick reaches a keyboard and a screen reader, which
+	 * the class alone never did (WCAG 2.1.1 and 4.1.2):
+	 *
+	 *  - `state` is the attribute that carries the pick, with `value` on the
+	 *    picked row. `aria-selected` is only valid on a row whose `role`
+	 *    supports it (a tab, an option, a table row); everything else says it
+	 *    with `aria-current`, which any element may carry.
+	 *  - `role` and `groupRole` give a set the widget semantics it acts out.
+	 *  - `arrows` marks a composite widget: one tab stop for the whole set
+	 *    (roving tabindex) and the arrow keys moving between its rows, which is
+	 *    the contract a tablist or a listbox promises. `follows` moves the pick
+	 *    with the focus, the way tabs do; an option waits for Enter or Space.
+	 *    A set without `arrows` puts every row in the tab order instead.
 	 */
 	var PICKABLE = [
-		{ row: '.nldesign-pg-tab', group: '.nldesign-pg-tabs', on: 'is-active' },
+		{
+			row: '.nldesign-pg-tab',
+			group: '.nldesign-pg-tabs',
+			on: 'is-active',
+			role: 'tab',
+			groupRole: 'tablist',
+			state: 'aria-selected',
+			value: 'true',
+			arrows: 'horizontal',
+			follows: true,
+		},
 		{
 			row: '.nldesign-pg-nav-entry',
 			group: '.nldesign-pg-nav',
 			on: 'is-selected active',
+			role: 'link',
+			state: 'aria-current',
+			value: 'page',
 		},
 		{
 			row: '.nldesign-pg-listitem',
 			group: '.nldesign-pg-list',
 			on: 'is-selected active',
+			state: 'aria-current',
+			value: 'true',
 		},
-		{ row: '.nldesign-pg-rec', group: '.app-content-list', on: 'is-selected' },
+		{
+			row: '.nldesign-pg-rec',
+			group: '.app-content-list',
+			on: 'is-selected',
+			state: 'aria-current',
+			value: 'true',
+		},
 		{
 			row: '.nldesign-pg-table tbody tr',
 			group: '.nldesign-pg-table tbody',
 			on: 'is-selected',
+			state: 'aria-selected',
+			value: 'true',
 		},
 		{
 			row: '.nldesign-pg-crumb',
 			group: '.nldesign-pg-crumbs',
 			on: 'is-current',
+			role: 'link',
+			state: 'aria-current',
+			value: 'page',
 		},
 	]
+
+	/**
+	 * The options of the select specimen, which are chosen rather than picked:
+	 * choosing one writes it into the field (see interact()). They are a
+	 * listbox all the same, and wear their choice the way a picked row does.
+	 */
+	var OPTIONS = {
+		row: '.nldesign-pg-option',
+		group: '.nldesign-pg-options',
+		on: 'is-selected',
+		role: 'option',
+		groupRole: 'listbox',
+		state: 'aria-selected',
+		value: 'true',
+		arrows: 'vertical',
+		follows: false,
+	}
+
+	/** Every set the keyboard and the accessibility tree have to reach. */
+	var SETS = PICKABLE.concat([OPTIONS])
 
 	/**
 	 * What the stage reports when each specimen button is pressed.
@@ -371,14 +431,21 @@
 	 * One is chosen by the same rule `StockTokensService::canonical()` applies
 	 * to the same map in the other direction, and the rest are reported.
 	 *
+	 * With a design system named, the file says so in a comment of its own, and
+	 * the custom-set upload recognises it: the file is then stored as it is, on
+	 * that design system, instead of being converted — which filled every token
+	 * the set left out with nldesign fallbacks, so an exported theme came back
+	 * as a different one.
+	 *
 	 * @param {Object<string, string>} tokens The resolved --nldesign-* values of the active set.
 	 * @param {Object<string, string>} overrides The admin's --color-* overrides.
 	 * @param {Object<string, string>} sources Map of --color-* to the --nldesign-* token it reads.
+	 * @param {string} [designSystem] The design system the set is worn on.
 	 * @return {{css: string, unexpressed: Array<string>, overruled: Array<Object>}}
 	 *         The file, the overrides no token could carry, and the ones a
 	 *         competing override took the token from.
 	 */
-	function exportCss(tokens, overrides, sources) {
+	function exportCss(tokens, overrides, sources, designSystem) {
 		var merged = {}
 		Object.keys(tokens || {}).forEach(function (token) {
 			merged[token] = tokens[token]
@@ -447,6 +514,11 @@
 			css:
 				'/* NL Design — custom token set, exported from the component'
 				+ ' playground. Do not edit manually. */\n'
+				+ (designSystem
+					? '/* thematiq-token-set: design-system='
+						+ designSystem
+						+ ' */\n'
+					: '')
 				+ ':root {\n'
 				+ lines.join('\n')
 				+ '\n}\n',
@@ -681,6 +753,12 @@
 			inventory: inventory,
 			reasons: loadState('playgroundReasons', {}),
 			tokens: loadState('playgroundTokens', {}),
+			// What the set DECLARES, which is what an export writes. `tokens`
+			// is what the instrument draws with: the set on top of
+			// css/systems/nldesign/defaults.css, so exporting from it wrote
+			// every nldesign default into a theme that never held them. See
+			// PlaygroundStateService::getExportTokens().
+			exportTokens: loadState('playgroundExportTokens', {}),
 			sources: loadState('playgroundTokenSources', {}),
 			// The set the page is WEARING, which a session preview changes —
 			// so an export is named after the set it actually contains.
@@ -696,6 +774,11 @@
 			tabs: tabs,
 			tab: activeTab(tabs),
 			component: FULL_VIEW,
+			// "Your component" (openspec/specs/own-component-preview): the set's
+			// dark values for the frame's dark switch, and the saved components.
+			darkTokens: loadState('playgroundDarkTokens', {}),
+			ownComponents: [],
+			ownCleanup: null,
 		}
 
 		// The selector: the editor's own tab strip, moved above the preview, with
@@ -791,6 +874,9 @@
 			})
 		})
 
+		// Read before the selection below rewrites it: an own component's hash is
+		// resolved once the saved components have loaded.
+		var bootHash = window.location.hash
 		var wanted = parseHash(window.location.hash, inventory) || {
 			tab: 'content',
 			component: FULL_VIEW,
@@ -806,6 +892,8 @@
 		if (wanted.component !== FULL_VIEW) {
 			select(state, wanted.component)
 		}
+
+		loadOwnComponents(state, bootHash)
 	}
 
 	/**
@@ -901,11 +989,19 @@
 	 */
 	function updateCrumb(state) {
 		var component = componentById(state.inventory, state.component)
+		var own =
+			isOwnId(state.component) === true
+				? ownTitle(state, state.component)
+				: null
 		state.crumb.textContent =
 			' · '
 			+ tabLabel(state, state.tab)
 			+ ' · '
-			+ (component !== null ? component.title : t('thematiq', 'Full view'))
+			+ (own !== null
+				? own
+				: component !== null
+					? component.title
+					: t('thematiq', 'Full view'))
 	}
 
 	/**
@@ -931,9 +1027,9 @@
 	function renderChips(state) {
 		state.chips.innerHTML = ''
 
-		var entries = [{ id: FULL_VIEW, title: t('thematiq', 'Full view') }].concat(
-			componentsFor(state.inventory, state.tab),
-		)
+		var entries = [{ id: FULL_VIEW, title: t('thematiq', 'Full view') }]
+			.concat(componentsFor(state.inventory, state.tab))
+			.concat(ownEntries(state))
 
 		entries.forEach(function (entry) {
 			var chip = el('button', 'nldesign-pg-chip', entry.title)
@@ -960,6 +1056,15 @@
 	 * @return {void}
 	 */
 	function select(state, id) {
+		if (isOwnId(id) === true) {
+			state.component = id
+			enterOwn(state, id)
+			renderChips(state)
+			updateCrumb(state)
+			updateHash(state)
+			return
+		}
+
 		var component = componentById(state.inventory, id)
 
 		if (component === null || component.tab !== state.tab) {
@@ -974,6 +1079,594 @@
 		renderChips(state)
 		updateCrumb(state)
 		updateHash(state)
+	}
+
+	/* ---------------------------------------------------------------- */
+	/* Your component (authoring-own-markup-preview)                     */
+	/* ---------------------------------------------------------------- */
+
+	/** The chip id of an empty "Your component" stage; a saved one is `own-{slug}`. */
+	var OWN = 'own'
+
+	/**
+	 * Whether a selection id is the own component stage.
+	 *
+	 * @param {string} id A selection id.
+	 * @return {boolean}
+	 */
+	function isOwnId(id) {
+		return id === OWN || /^own-[a-z0-9-]+$/.test(String(id || ''))
+	}
+
+	/**
+	 * The saved component a selection id names, or null.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} id A selection id.
+	 * @return {?Object} The component.
+	 */
+	function ownById(state, id) {
+		var found = null
+		state.ownComponents.forEach(function (component) {
+			if ('own-' + component.slug === id) {
+				found = component
+			}
+		})
+		return found
+	}
+
+	/**
+	 * The crumb text of an own selection.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} id A selection id.
+	 * @return {string}
+	 */
+	function ownTitle(state, id) {
+		var saved = ownById(state, id)
+		return saved !== null ? saved.name : t('thematiq', 'Your component')
+	}
+
+	/**
+	 * The own chips at the end of every tab's row: "Your component", then each saved one.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @return {Array<{id: string, title: string}>}
+	 */
+	function ownEntries(state) {
+		return [{ id: OWN, title: t('thematiq', 'Your component') }].concat(
+			(state.ownComponents || []).map(function (component) {
+				return { id: 'own-' + component.slug, title: component.name }
+			}),
+		)
+	}
+
+	/**
+	 * Load the saved components, then open one the hash names. A slug that no longer
+	 * exists is ignored, as a stale shipped component is.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} hash The location hash at boot.
+	 * @return {Promise<void>}
+	 */
+	function loadOwnComponents(state, hash) {
+		if (typeof fetch !== 'function' || typeof OC === 'undefined') {
+			return Promise.resolve()
+		}
+		return fetch(
+			OC.generateUrl('/apps/thematiq/settings/playground/components'),
+			{
+				headers: { requesttoken: OC.requestToken },
+			},
+		)
+			.then(function (response) {
+				return response.ok ? response.json() : { components: [] }
+			})
+			.then(function (data) {
+				state.ownComponents = (data && data.components) || []
+				renderChips(state)
+				var match = /^#preview=([a-z]+)\/(own(?:-[a-z0-9-]+)?)$/.exec(
+					String(hash || ''),
+				)
+				if (match === null) {
+					return
+				}
+				if (match[2] !== OWN && ownById(state, match[2]) === null) {
+					return
+				}
+				var tabButton = state.tabs.querySelector(
+					'.nldesign-tab-btn[data-tab="' + match[1] + '"]',
+				)
+				if (tabButton === null) {
+					return
+				}
+				if (match[1] !== state.tab) {
+					tabButton.click()
+				}
+				select(state, match[2])
+			})
+			.catch(function (error) {
+				console.error(
+					'[thematiq] own components could not be loaded:',
+					error,
+				)
+			})
+	}
+
+	/**
+	 * Open the own component stage. A stage that cannot build says so and leaves the
+	 * rest of the playground working.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} id `own` or `own-{slug}`.
+	 * @return {void}
+	 */
+	function enterOwn(state, id) {
+		exitComponent(state)
+		state.stage.innerHTML = ''
+		state.stage.removeAttribute('data-thematiq-component')
+		try {
+			buildOwnStage(state, ownById(state, id))
+		} catch (error) {
+			console.error(
+				'[thematiq] the own component stage could not be built:',
+				error,
+			)
+			state.stage.innerHTML = ''
+			state.stage.appendChild(
+				el(
+					'p',
+					'nldesign-own-error',
+					t('thematiq', 'Your component could not be shown.'),
+				),
+			)
+		}
+		showView(state, 'component')
+	}
+
+	/**
+	 * The house style's @font-face rules, from the page's readable stylesheets.
+	 *
+	 * @return {string}
+	 */
+	function fontFaces() {
+		var rules = []
+		Array.prototype.forEach.call(document.styleSheets || [], function (sheet) {
+			try {
+				Array.prototype.forEach.call(sheet.cssRules || [], function (rule) {
+					if (rule.type === 5) {
+						rules.push(rule.cssText)
+					}
+				})
+			} catch (error) {
+				// A sheet from another origin cannot be read; its fonts stay out.
+			}
+		})
+		return rules.join('\n')
+	}
+
+	/**
+	 * Label a field.
+	 *
+	 * @param {string} id The field id.
+	 * @param {string} text The label.
+	 * @return {Element}
+	 */
+	function ownLabel(id, text) {
+		var label = el('label', 'nldesign-own-label', text)
+		label.setAttribute('for', id)
+		return label
+	}
+
+	/**
+	 * Draw the stage: two fields, the dark switch, the frame, the removal report, saving.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {?Object} saved The saved component, or null for an empty stage.
+	 * @return {void}
+	 */
+	function buildOwnStage(state, saved) {
+		var sanitizer = window.NldesignMarkupSanitizer
+		var frames = window.NldesignOwnComponentFrame
+		if (!sanitizer || !frames) {
+			throw new Error('the sanitiser or the frame module is not loaded')
+		}
+
+		var stage = state.stage
+		stage.appendChild(
+			el(
+				'div',
+				'nldesign-pg-stage-title',
+				saved !== null ? saved.name : t('thematiq', 'Your component'),
+			),
+		)
+
+		var fields = el('div', 'nldesign-own-fields')
+		var html = el('textarea', 'nldesign-own-html')
+		html.id = 'nldesign-own-html'
+		html.rows = 6
+		html.spellcheck = false
+		html.value = saved !== null ? saved.html : ''
+		var css = el('textarea', 'nldesign-own-css')
+		css.id = 'nldesign-own-css'
+		css.rows = 6
+		css.spellcheck = false
+		css.value = saved !== null ? saved.css : ''
+		fields.appendChild(ownLabel('nldesign-own-html', t('thematiq', 'HTML')))
+		fields.appendChild(html)
+		fields.appendChild(ownLabel('nldesign-own-css', t('thematiq', 'CSS')))
+		fields.appendChild(css)
+		stage.appendChild(fields)
+
+		var dark = el(
+			'button',
+			'nldesign-btn nldesign-btn--small nldesign-own-dark',
+			t('thematiq', 'Dark theme'),
+		)
+		dark.type = 'button'
+		dark.setAttribute('aria-pressed', 'false')
+		var darkNote = el(
+			'p',
+			'nldesign-own-dark-note',
+			t('thematiq', "Nextcloud's own variables show your current theme."),
+		)
+		darkNote.hidden = true
+		stage.appendChild(dark)
+		stage.appendChild(darkNote)
+
+		var frame = frames.createFrame(
+			document,
+			t('thematiq', 'Your component: {name}', {
+				name: saved !== null ? saved.name : t('thematiq', 'not saved'),
+			}),
+		)
+		stage.appendChild(frame)
+
+		stage.appendChild(
+			el(
+				'p',
+				'nldesign-own-note',
+				t(
+					'thematiq',
+					'Scripts do not run here, and nothing loads from outside this server.',
+				),
+			),
+		)
+		var report = el('p', 'nldesign-own-report')
+		report.setAttribute('role', 'status')
+		stage.appendChild(report)
+		var contrast = el('ul', 'nldesign-own-contrast')
+		contrast.setAttribute(
+			'aria-label',
+			t('thematiq', 'Contrast of your component'),
+		)
+		stage.appendChild(contrast)
+
+		var save = el('div', 'nldesign-own-save')
+		var name = el('input', 'nldesign-own-name')
+		name.id = 'nldesign-own-name'
+		name.type = 'text'
+		name.value = saved !== null ? saved.name : ''
+		var saveButton = el(
+			'button',
+			'nldesign-btn nldesign-btn--small',
+			t('thematiq', 'Save component'),
+		)
+		saveButton.type = 'button'
+		save.appendChild(ownLabel('nldesign-own-name', t('thematiq', 'Name')))
+		save.appendChild(name)
+		save.appendChild(saveButton)
+		if (saved !== null) {
+			var remove = el(
+				'button',
+				'nldesign-btn nldesign-btn--small',
+				t('thematiq', 'Remove component'),
+			)
+			remove.type = 'button'
+			remove.addEventListener('click', function () {
+				removeOwn(state, saved)
+			})
+			save.appendChild(remove)
+		}
+		stage.appendChild(save)
+
+		var names = []
+		var fonts = fontFaces()
+
+		var read = function (token) {
+			if (
+				dark.getAttribute('aria-pressed') === 'true'
+				&& state.darkTokens[token] !== undefined
+			) {
+				return state.darkTokens[token]
+			}
+			return readVar(state.preview, token, '')
+		}
+
+		var paint = function () {
+			ownContrast(contrast, names, read)
+			frames.applyVars(frame, names, read)
+			if (frame.contentDocument && frame.contentDocument.documentElement) {
+				frame.contentDocument.documentElement.toggleAttribute(
+					'data-theme-dark',
+					dark.getAttribute('aria-pressed') === 'true',
+				)
+			}
+		}
+
+		var render = function () {
+			var cleanHtml = sanitizer.sanitizeHtml(html.value)
+			var cleanCss = sanitizer.sanitizeCss(css.value)
+			names = frames.scanVars(cleanHtml.html, cleanCss.css)
+			frame.srcdoc = frames.srcdoc(cleanHtml.html, cleanCss.css, fonts)
+			report.textContent = removalText(
+				sanitizer.merge(cleanHtml.removed, cleanCss.removed),
+			)
+			ownPanel(state, names)
+			paint()
+		}
+
+		frame.addEventListener('load', paint)
+		html.addEventListener('input', render)
+		css.addEventListener('input', render)
+		dark.addEventListener('click', function () {
+			var on = dark.getAttribute('aria-pressed') !== 'true'
+			dark.setAttribute('aria-pressed', on ? 'true' : 'false')
+			darkNote.hidden = !on
+			paint()
+		})
+		saveButton.addEventListener('click', function () {
+			saveOwn(state, name.value, html.value, css.value)
+		})
+
+		// A token edit anywhere in the editor repaints the frame without rebuilding it.
+		var onEdit = function () {
+			window.setTimeout(paint, 0)
+		}
+		state.editor.addEventListener('input', onEdit)
+		state.ownCleanup = function () {
+			state.editor.removeEventListener('input', onEdit)
+		}
+
+		render()
+	}
+
+	/**
+	 * The contrast of each text and background pair the code reads, paired by name
+	 * (`X-text` on `X`), measured by the server's ContrastService.
+	 *
+	 * @param {Element} list The list to fill.
+	 * @param {Array<string>} names The scanned names.
+	 * @param {Function} read name => value.
+	 * @return {void}
+	 */
+	function ownContrast(list, names, read) {
+		var pairs = names.filter(function (name) {
+			return (
+				/-text$/.test(name)
+				&& names.indexOf(name.replace(/-text$/, '')) !== -1
+			)
+		})
+		list.textContent = ''
+		pairs.forEach(function (text) {
+			var base = text.replace(/-text$/, '')
+			fetch(OC.generateUrl('/apps/thematiq/api/contrast/evaluate'), {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({
+					background: read(base),
+					candidates: [{ name: text, value: read(text), role: 'text' }],
+				}),
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					var result = ((data && data.results) || [])[0]
+					if (!result) {
+						return
+					}
+					var verdict = result.unevaluated
+						? t('thematiq', 'not evaluated')
+						: result.pass
+							? t('thematiq', 'passes')
+							: t('thematiq', 'fails')
+					list.appendChild(
+						el(
+							'li',
+							'nldesign-own-contrast-'
+								+ (result.pass ? 'pass' : 'fail'),
+							t(
+								'thematiq',
+								'{text} on {base}: {ratio}:1, {verdict} WCAG AA',
+								{
+									text: text,
+									base: base,
+									ratio: result.ratio,
+									verdict: verdict,
+								},
+							),
+						),
+					)
+				})
+				.catch(function () {
+					// No verdict is shown rather than a guessed one.
+				})
+		})
+	}
+
+	/**
+	 * What the sanitiser removed, in words.
+	 *
+	 * @param {Object<string, number>} removed Kind => count.
+	 * @return {string}
+	 */
+	function removalText(removed) {
+		var labels = {
+			script: t('thematiq', 'script'),
+			'event handler': t('thematiq', 'event handler'),
+			'external address': t('thematiq', 'external address'),
+			'script link': t('thematiq', 'script link'),
+			link: t('thematiq', 'link'),
+			element: t('thematiq', 'element'),
+			attribute: t('thematiq', 'attribute'),
+			import: t('thematiq', 'import'),
+			'style tag': t('thematiq', 'style tag'),
+		}
+		var parts = Object.keys(removed).map(function (kind) {
+			return removed[kind] + ' ' + (labels[kind] || kind)
+		})
+		return parts.length === 0
+			? ''
+			: t('thematiq', 'Removed: {list}', { list: parts.join(', ') })
+	}
+
+	/**
+	 * The token list beside the own stage: the names the code reads. An editor token
+	 * gets its editor row; any other name its value and a read-only note.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Array<string>} names The scanned names.
+	 * @return {void}
+	 */
+	function ownPanel(state, names) {
+		var open = state.editor.querySelector('.nldesign-pg-panel')
+		if (open !== null) {
+			open.remove()
+		}
+		var panel = state.editor.querySelector(
+			'.nldesign-tab-panel[data-panel="' + state.tab + '"]',
+		)
+		if (panel !== null) {
+			panel.classList.add('nldesign-pg-hidden')
+		}
+
+		var filtered = el('div', 'nldesign-pg-panel nldesign-own-panel')
+		filtered.appendChild(
+			el(
+				'div',
+				'nldesign-pg-panel-head',
+				names.length === 0
+					? t(
+							'thematiq',
+							'Your code reads no tokens yet. Use var(--nldesign-…) in it.',
+						)
+					: t('thematiq', 'The tokens your code reads'),
+			),
+		)
+		names.forEach(function (name) {
+			var editable = state.editor.querySelector(
+				'.nldesign-token-row[data-token-row="' + name + '"]',
+			)
+			if (editable !== null) {
+				filtered.appendChild(
+					cloneRow(state, {
+						name: name,
+						paints: t('thematiq', 'Read by your component'),
+					}),
+				)
+				return
+			}
+			var row = el(
+				'div',
+				'nldesign-token-row nldesign-pg-row nldesign-own-readonly',
+			)
+			var wrap = el('div', 'nldesign-token-label-wrap')
+			wrap.appendChild(el('span', 'nldesign-token-label', name))
+			wrap.appendChild(
+				el(
+					'span',
+					'nldesign-token-name',
+					(readVar(state.preview, name, '') || t('thematiq', 'not set'))
+						+ ' · '
+						+ t(
+							'thematiq',
+							'Read-only here: this comes from the token set',
+						),
+				),
+			)
+			row.appendChild(wrap)
+			filtered.appendChild(row)
+		})
+
+		if (state.saveBar) {
+			state.editor.insertBefore(filtered, state.saveBar)
+		} else {
+			state.editor.appendChild(filtered)
+		}
+	}
+
+	/**
+	 * Save the stage under a name.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} name The name.
+	 * @param {string} html The HTML, raw.
+	 * @param {string} css The CSS, raw.
+	 * @return {Promise<void>}
+	 */
+	function saveOwn(state, name, html, css) {
+		return fetch(
+			OC.generateUrl('/apps/thematiq/settings/playground/components'),
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({ name: name, html: html, css: css }),
+			},
+		)
+			.then(function (response) {
+				return response.json().then(function (data) {
+					return { ok: response.ok, data: data || {} }
+				})
+			})
+			.then(function (answer) {
+				if (!answer.ok) {
+					notify(
+						answer.data.error
+							|| t('thematiq', 'The component was not saved.'),
+					)
+					return
+				}
+				var stored = answer.data.component
+				state.ownComponents = state.ownComponents
+					.filter(function (c) {
+						return c.slug !== stored.slug
+					})
+					.concat([stored])
+				notify(t('thematiq', 'Component saved.'))
+				select(state, 'own-' + stored.slug)
+			})
+			.catch(function () {
+				notify(t('thematiq', 'The component was not saved.'))
+			})
+	}
+
+	/**
+	 * Remove a saved component.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Object} saved The component.
+	 * @return {Promise<void>}
+	 */
+	function removeOwn(state, saved) {
+		return fetch(
+			OC.generateUrl(
+				'/apps/thematiq/settings/playground/components/'
+					+ encodeURIComponent(saved.slug),
+			),
+			{ method: 'DELETE', headers: { requesttoken: OC.requestToken } },
+		).then(function () {
+			state.ownComponents = state.ownComponents.filter(function (c) {
+				return c.slug !== saved.slug
+			})
+			select(state, OWN)
+		})
 	}
 
 	/**
@@ -1080,6 +1773,10 @@
 	 * @return {void}
 	 */
 	function exitComponent(state) {
+		if (typeof state.ownCleanup === 'function') {
+			state.ownCleanup()
+			state.ownCleanup = null
+		}
 		var open = state.editor.querySelector('.nldesign-pg-panel')
 		if (open !== null) {
 			open.remove()
@@ -1671,7 +2368,7 @@
 					'nldesign-pg-pointable',
 					t(
 						'thematiq',
-						'On Nextcloud 32 and 33 the app icons are images, so "Header glyphs" does not recolour them: they stay white. The other header glyphs do follow it. From Nextcloud 34 the app menu follows it too.',
+						'On Nextcloud 32 and 33 the app icons are images, so "Header glyphs" does not recolor them: they stay white. The other header glyphs do follow it. From Nextcloud 34 the app menu follows it too.',
 					),
 				),
 			)
@@ -1686,6 +2383,7 @@
 		state.stage.appendChild(saidLine)
 
 		decorateFields(state.stage)
+		decoratePickables(state.stage)
 	}
 
 	/**
@@ -1888,23 +2586,11 @@
 		})
 
 		// The button specimens are real `<button>` elements, which the browser
-		// already activates on Enter and Space by firing a click — so the
-		// handler above covers them. What is still needed is stopping Space
-		// from scrolling the panel out from under the specimen being looked at.
+		// already activates on Enter and Space by firing a click, so the
+		// handler above covers them. The pickable rows are not, and keyOn()
+		// gives them the keys their widget promises.
 		stage.addEventListener('keydown', function (event) {
-			if (event.key !== ' ') {
-				return
-			}
-
-			var target = event.target
-			if (
-				target.closest === undefined
-				|| target.closest('.nldesign-pg-btn') === null
-			) {
-				return
-			}
-
-			event.preventDefault()
+			keyOn(stage, event)
 		})
 	}
 
@@ -1975,6 +2661,10 @@
 			if (field !== null) {
 				setLabel(field, firstLine(option))
 			}
+			var options = option.closest(OPTIONS.group)
+			if (options !== null) {
+				pick(options, option, OPTIONS.row, OPTIONS.on)
+			}
 			// The name is the specimen's own label and stays in the language the
 			// drawing is in; the sentence around it is the instrument speaking.
 			say(
@@ -1999,6 +2689,13 @@
 
 		var choice = target.closest('.nldesign-pg-choice')
 		if (choice !== null) {
+			// A click on the label is followed by the browser's own click on
+			// the input it names, which lands here as well. Answering both
+			// flipped the choice twice and left it where it was.
+			var label = target.closest('label')
+			if (label !== null && choice.contains(label) && label.htmlFor !== '') {
+				return
+			}
 			toggleChoice(choice)
 			say(
 				stage,
@@ -2029,7 +2726,114 @@
 	}
 
 	/**
-	 * Move a state class to the element that was picked.
+	 * The set a row selector belongs to.
+	 *
+	 * @param {string} rowSelector A `row` out of SETS.
+	 * @return {?Object} Its set, or null for a selector no set names.
+	 */
+	function setFor(rowSelector) {
+		for (var i = 0; i < SETS.length; i++) {
+			if (SETS[i].row === rowSelector) {
+				return SETS[i]
+			}
+		}
+
+		return null
+	}
+
+	/**
+	 * The rows of one set that belong to this container and to no nearer one.
+	 *
+	 * @param {Element} group The container the set lives in.
+	 * @param {Object} set Its entry in SETS.
+	 * @return {Array<Element>} The rows, in document order.
+	 */
+	function rowsOf(group, set) {
+		var groupSelector = set.group
+		return Array.prototype.filter.call(
+			group.querySelectorAll(set.row),
+			function (candidate) {
+				return candidate.closest(groupSelector) === group
+			},
+		)
+	}
+
+	/**
+	 * Say on one row whether it is the picked one, in the attributes a keyboard
+	 * and a screen reader read: its state attribute and, in a composite widget,
+	 * whether it is the set's one tab stop.
+	 *
+	 * @param {Element} row The row.
+	 * @param {Object} set Its entry in SETS.
+	 * @param {boolean} picked Whether it is the picked one.
+	 * @param {boolean} stop Whether it holds the set's tab stop.
+	 * @return {void}
+	 */
+	function markRow(row, set, picked, stop) {
+		if (set.role !== undefined) {
+			row.setAttribute('role', set.role)
+		}
+
+		if (set.state === 'aria-current') {
+			if (picked === true) {
+				row.setAttribute('aria-current', set.value)
+			} else {
+				row.removeAttribute('aria-current')
+			}
+		} else {
+			row.setAttribute(set.state, picked === true ? set.value : 'false')
+		}
+
+		if (set.arrows !== undefined) {
+			row.setAttribute('tabindex', stop === true ? '0' : '-1')
+		} else {
+			row.setAttribute('tabindex', '0')
+		}
+	}
+
+	/**
+	 * Give every pickable set on a freshly drawn stage its roles, its tab stops
+	 * and its current pick, read off the classes the specimen was drawn with.
+	 *
+	 * Done once over the drawn markup rather than written into each specimen,
+	 * so SETS is the one place that says how a set is reached, and a specimen
+	 * added later cannot forget it.
+	 *
+	 * @param {Element} root The stage, or any element holding specimens.
+	 * @return {void}
+	 */
+	function decoratePickables(root) {
+		SETS.forEach(function (set) {
+			var marker = set.on.split(' ')[0]
+			Array.prototype.forEach.call(
+				root.querySelectorAll(set.group),
+				function (group) {
+					var rows = rowsOf(group, set)
+					if (rows.length === 0) {
+						return
+					}
+					if (set.groupRole !== undefined) {
+						group.setAttribute('role', set.groupRole)
+					}
+					if (set === OPTIONS) {
+						group.setAttribute('aria-label', t('thematiq', 'Country'))
+					}
+
+					var picked = rows.filter(function (row) {
+						return row.classList.contains(marker)
+					})
+					var stop = picked.length > 0 ? picked[0] : rows[0]
+					rows.forEach(function (row) {
+						markRow(row, set, picked.indexOf(row) !== -1, row === stop)
+					})
+				},
+			)
+		})
+	}
+
+	/**
+	 * Move the pick to the element that was picked: its state classes, its
+	 * state attribute and, in a composite widget, the set's tab stop.
 	 *
 	 * @param {Element} group The container the set lives in.
 	 * @param {Element} row The element that was picked.
@@ -2039,6 +2843,7 @@
 	 */
 	function pick(group, row, rowSelector, on) {
 		var classes = on.split(' ')
+		var set = setFor(rowSelector)
 
 		Array.prototype.forEach.call(
 			group.querySelectorAll(rowSelector),
@@ -2046,12 +2851,108 @@
 				classes.forEach(function (name) {
 					candidate.classList.remove(name)
 				})
+				if (set !== null && candidate.closest(set.group) === group) {
+					markRow(candidate, set, false, false)
+				}
 			},
 		)
 
 		classes.forEach(function (name) {
 			row.classList.add(name)
 		})
+		if (set !== null) {
+			markRow(row, set, true, true)
+		}
+	}
+
+	/**
+	 * The set a focused element is a row of, if it is one.
+	 *
+	 * Only the row ITSELF counts: a key pressed in a field inside a row is the
+	 * field's, not the row's.
+	 *
+	 * @param {Element} target The focused element.
+	 * @return {?Object} Its entry in SETS, or null.
+	 */
+	function rowSetOf(target) {
+		if (target === null || typeof target.matches !== 'function') {
+			return null
+		}
+		for (var i = 0; i < SETS.length; i++) {
+			if (
+				target.matches(SETS[i].row) === true
+				&& target.closest(SETS[i].group) !== null
+			) {
+				return SETS[i]
+			}
+		}
+
+		return null
+	}
+
+	/**
+	 * Answer a key on a stage the way the widget it draws would.
+	 *
+	 * Enter and Space pick the focused row, as a click does. In a composite
+	 * widget the arrow keys, Home and End move between its rows, and in tabs
+	 * the pick follows the focus. Space never scrolls the panel from under a
+	 * row or a specimen button.
+	 *
+	 * @param {Element} stage The stage element.
+	 * @param {KeyboardEvent} event The key event.
+	 * @return {void}
+	 */
+	function keyOn(stage, event) {
+		var target = event.target
+		var set = rowSetOf(target)
+
+		if (set === null) {
+			if (
+				event.key === ' '
+				&& typeof target.closest === 'function'
+				&& target.closest('.nldesign-pg-btn') !== null
+			) {
+				event.preventDefault()
+			}
+			return
+		}
+
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault()
+			interact(stage, target)
+			return
+		}
+
+		if (set.arrows === undefined) {
+			return
+		}
+
+		var back = set.arrows === 'horizontal' ? 'ArrowLeft' : 'ArrowUp'
+		var next = set.arrows === 'horizontal' ? 'ArrowRight' : 'ArrowDown'
+		var rows = rowsOf(target.closest(set.group), set)
+		var index = rows.indexOf(target)
+		var to = -1
+		if (event.key === next) {
+			to = (index + 1) % rows.length
+		} else if (event.key === back) {
+			to = (index - 1 + rows.length) % rows.length
+		} else if (event.key === 'Home') {
+			to = 0
+		} else if (event.key === 'End') {
+			to = rows.length - 1
+		}
+		if (to === -1) {
+			return
+		}
+
+		event.preventDefault()
+		rows.forEach(function (row) {
+			row.setAttribute('tabindex', row === rows[to] ? '0' : '-1')
+		})
+		rows[to].focus()
+		if (set.follows === true) {
+			interact(stage, rows[to])
+		}
 	}
 
 	/**
@@ -2672,13 +3573,13 @@
 				// reaches the heading as it does on a real settings page.
 				'<div class="settings-section nldesign-pg-section">'
 				+ '<h2 class="settings-section__name nldesign-pg-section-title">'
-				+ t('thematiq', 'Background and colours')
+				+ t('thematiq', 'Background and colors')
 				+ ''
 				+ '</h2>'
 				+ '<p class="nldesign-pg-muted is-maxcontrast nldesign-pg-reading">'
 				+ t(
 					'thematiq',
-					'Pick a colour that suits your organisation. It is used in the header, on the login page and in emails.',
+					'Pick a color that suits your organisation. It is used in the header, on the login page and in emails.',
 				)
 				+ '</p>'
 				+ button('secondary', 'default', t('thematiq', 'Save changes'))
@@ -2761,7 +3662,7 @@
 				// it shows what that one shows: the values about to change.
 				+ '<ul class="nldesign-pg-changes">'
 				+ [
-					[t('thematiq', 'Primary colour'), '#0082c9', '#23845c'],
+					[t('thematiq', 'Primary color'), '#0082c9', '#23845c'],
 					[t('thematiq', 'Corner radius'), '4px', '8px'],
 					[t('thematiq', 'Heading text'), '#ffffff', '#11304e'],
 				]
@@ -2827,7 +3728,7 @@
 				[
 					'warning',
 					2,
-					t('thematiq', 'Two colours do not meet the WCAG AA threshold.'),
+					t('thematiq', 'Two colors do not meet the WCAG AA threshold.'),
 				],
 				['error', 3, t('thematiq', 'The token set could not be saved.')],
 				[
@@ -2896,7 +3797,7 @@
 				+ ''
 				+ '</h1>'
 				+ '<h2 class="nldesign-pg-h2">'
-				+ t('thematiq', 'Background and colours')
+				+ t('thematiq', 'Background and colors')
 				+ '</h2>'
 				+ '<h3 class="nldesign-pg-h3">'
 				+ t('thematiq', 'Upload your own token set')
@@ -2912,7 +3813,7 @@
 				'<p class="nldesign-pg-paragraph nldesign-pg-reading">'
 				+ t(
 					'thematiq',
-					'Pick a token set as your basis, or adjust individual Nextcloud tokens below. A token set decides the colours, the typography and the shape of every part you see here. What you save applies to everyone on this instance, on every page.',
+					'Pick a token set as your basis, or adjust individual Nextcloud tokens below. A token set decides the colors, the typography and the shape of every part you see here. What you save applies to everyone on this instance, on every page.',
 				)
 				+ '</p>'
 			)
@@ -3033,13 +3934,14 @@
 		return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase()
 	}
 
-	/** Make a string safe to sit inside a double-quoted HTML attribute. */
+	/** Make a string safe to sit inside a quoted HTML attribute (#622). */
 	function attr(value) {
 		return String(value)
 			.replace(/&/g, '&amp;')
 			.replace(/"/g, '&quot;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')
+			.replace(/'/g, '&#39;')
 	}
 
 	/**
@@ -3791,18 +4693,30 @@
 				? '--icon-size:36px;--icon-height:16px'
 				: '--icon-size:24px;--icon-height:24px'
 
+		// The content is a `<label for>` the way NcCheckboxContent renders it
+		// (`tag="label"`), so the control has a name and clicking its text
+		// reaches it. Drawn as a span, every choice was announced as an
+		// unnamed checkbox (WCAG 4.1.2).
+		var id = specimenId()
+
 		return (
 			'<span style="'
 			+ sizes
 			+ '" class="'
 			+ classes.join(' ')
 			+ '">'
-			+ '<input class="checkbox-radio-switch__input" type="'
+			+ '<input id="'
+			+ id
+			+ '" class="checkbox-radio-switch__input" type="'
 			+ (kind === 'radio' ? 'radio' : 'checkbox')
 			+ '"'
+			// What NcCheckboxRadioSwitch puts on the input of a switch.
+			+ (kind === 'switch' ? ' role="switch"' : '')
 			+ (checked === true ? ' checked' : '')
 			+ '>'
-			+ '<span class="checkbox-content checkbox-radio-switch__content'
+			+ '<label for="'
+			+ id
+			+ '" class="checkbox-content checkbox-radio-switch__content'
 			+ ' checkbox-content-'
 			+ kind
 			+ ' checkbox-content--has-text">'
@@ -3814,7 +4728,7 @@
 			+ '<span class="checkbox-content__wrapper">'
 			+ '<span class="checkbox-content__text checkbox-radio-switch__text">'
 			+ label
-			+ '</span></span></span>'
+			+ '</span></span></label>'
 			+ '</span>'
 		)
 	}
@@ -3973,6 +4887,26 @@
 	}
 
 	/**
+	 * The design system a set is worn on, as the token set dropdown records it.
+	 *
+	 * @param {string} tokenSet The token set id.
+	 * @return {string} The design system id, or '' when the page does not list the set.
+	 */
+	function designSystemOf(tokenSet) {
+		var select = document.getElementById('nldesign-token-set-select')
+		if (select === null || !tokenSet) {
+			return ''
+		}
+		var option = [].slice.call(select.options).find(function (entry) {
+			return entry.value === tokenSet
+		})
+		if (option === undefined) {
+			return ''
+		}
+		return option.getAttribute('data-design-system') || 'nldesign'
+	}
+
+	/**
 	 * Fetch the overrides as they are SAVED — not as they are typed — and offer
 	 * the resulting token set as a file.
 	 *
@@ -3980,11 +4914,19 @@
 	 * another instance: exporting unsaved edits would produce a file that no
 	 * instance, including this one, is actually wearing.
 	 *
+	 * The overrides are the ones saved for the set being exported. Without the
+	 * set named, the server answers for the instance's active set, which a
+	 * session preview makes a different one.
+	 *
 	 * @param {Object} state The instrument state.
 	 * @return {void}
 	 */
 	function downloadTokenSet(state) {
-		fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
+		var url = OC.generateUrl('/apps/thematiq/settings/overrides')
+		if (state.tokenSet) {
+			url += '?tokenSet=' + encodeURIComponent(state.tokenSet)
+		}
+		fetch(url, {
 			headers: { requesttoken: OC.requestToken },
 		})
 			.then(function (response) {
@@ -4001,11 +4943,12 @@
 			})
 			.then(function (data) {
 				var result = exportCss(
-					liveTokens(state.tokens, function (name, fallback) {
+					liveTokens(state.exportTokens, function (name, fallback) {
 						return readVar(document.documentElement, name, fallback)
 					}),
 					data.overrides || {},
 					state.sources,
+					designSystemOf(state.tokenSet),
 				)
 
 				var blob = new Blob([result.css], { type: 'text/css' })
@@ -4085,9 +5028,29 @@
 		componentScopes: componentScopes,
 		applyScopes: applyScopes,
 		PICKABLE: PICKABLE,
+		OPTIONS: OPTIONS,
 		POINTABLE: POINTABLE,
 		STAGES: STAGES,
 		FULL_VIEW: FULL_VIEW,
+		// The interaction layer, driven under jsdom by
+		// tests/vitest/playgroundInteraction.spec.js. Exported for that
+		// alone: the browser reaches all of it through boot().
+		build: build,
+		setTab: setTab,
+		select: select,
+		enterComponent: enterComponent,
+		exitComponent: exitComponent,
+		renderStage: renderStage,
+		cloneRow: cloneRow,
+		wireReset: wireReset,
+		bindStage: bindStage,
+		interact: interact,
+		pick: pick,
+		decoratePickables: decoratePickables,
+		toggleChoice: toggleChoice,
+		setChoice: setChoice,
+		pressButton: pressButton,
+		say: say,
 		// The browser entry point.
 		boot: boot,
 	}

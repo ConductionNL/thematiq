@@ -197,6 +197,8 @@ class CssParserService {
 	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
 	 */
 	public function parseRootBlock(string $css): array {
+		// Comments first: one holding braces (defaults.css has `{normal,bold}`) ended the block early.
+		$css = (string)preg_replace('#/\*.*?\*/#s', '', $css);
 		if (preg_match('/:root\s*\{([^}]*)\}/s', $css, $rootMatch) !== 1) {
 			return [];
 		}
@@ -223,7 +225,7 @@ class CssParserService {
 	 *
 	 * @return array<string, string>|null Token => light value, or null when the file declares nothing.
 	 *
-	 * @spec openspec/changes/authoring-token-value-types/tasks.md#task-2.2
+	 * @spec openspec/specs/dark-mode/spec.md#requirement-editor-overrides-apply-the-same-way-for-every-dark-user
 	 */
 	public function parseOverridesFile(string $css): ?array {
 		if (preg_match('/:root\s*\{/', $css) === 1) {

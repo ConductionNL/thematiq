@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
  * @spec openspec/specs/admin-settings/spec.md#requirement-session-preview-controls
  * @spec openspec/specs/icon-packs/spec.md
  */
@@ -33,7 +33,6 @@ use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Settings\IDelegatedSettings;
@@ -44,11 +43,18 @@ use OCP\Settings\IDelegatedSettings;
  * Provides the configuration interface for selecting design token sets.
  * Implements IDelegatedSettings so AuthorizedAdminSetting can reference this class.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
  */
 class Admin implements IDelegatedSettings {
+
+	/**
+	 * Where the Documentation link goes for a design system without docs of its own.
+	 *
+	 * @var string
+	 */
+	public const DEFAULT_DOCUMENTATION_URL = 'https://thematiq.conduction.nl';
 
 	/**
 	 * The application configuration service.
@@ -56,13 +62,6 @@ class Admin implements IDelegatedSettings {
 	 * @var IConfig
 	 */
 	private IConfig $config;
-
-	/**
-	 * The localization service (kept for future i18n use).
-	 *
-	 * @var IL10N
-	 */
-	private IL10N $l;
 
 	/**
 	 * The token set service.
@@ -136,7 +135,6 @@ class Admin implements IDelegatedSettings {
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
-	 * @param IL10N $l The localization service.
 	 * @param TokenSetService $tokenSetService The token set service.
 	 * @param EmailThemingService $emailThemingService The email theming service.
 	 * @param ThemePreviewService $previewService The theme preview service.
@@ -145,13 +143,9 @@ class Admin implements IDelegatedSettings {
 	 * @param IInitialState $initialState Carries server state to admin.js.
 	 * @param IRequest $request The current request (presentation-mock switch).
 	 * @param PlaygroundStateService $playgroundState What the component playground reads at boot.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - this is the app's one admin settings form, and Nextcloud's container injects
-	 *   through the constructor and nothing else; the parameter count is the number of things the panel renders.
 	 */
 	public function __construct(
 		IConfig $config,
-		IL10N $l,
 		TokenSetService $tokenSetService,
 		EmailThemingService $emailThemingService,
 		ThemePreviewService $previewService,
@@ -162,7 +156,6 @@ class Admin implements IDelegatedSettings {
 		PlaygroundStateService $playgroundState,
 	) {
 		$this->config = $config;
-		$this->l = $l;
 		$this->tokenSetService = $tokenSetService;
 		$this->emailThemingService = $emailThemingService;
 		$this->previewService = $previewService;
@@ -178,7 +171,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return TemplateResponse The settings form template.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
 	 * @spec openspec/specs/dark-mode/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
@@ -278,9 +271,56 @@ class Admin implements IDelegatedSettings {
 				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
 				// can be screenshotted from a running instance. Nothing else changes.
 				'mockUi' => ($this->request->getParam('mock') === '1'),
-			]
+			] + $this->environmentParams() + $this->documentationParams(designSystem: $currentDesignSystem)
 		);
 	}//end getForm()
+
+	/**
+	 * The environment config.php declares, shown read-only, and the command
+	 * that sets it.
+	 *
+	 * @return array{environment: string, environmentCommand: string} The template parameters.
+	 *
+	 * @spec openspec/specs/environment-marker/spec.md
+	 */
+	private function environmentParams(): array {
+		return [
+			'environment' => strtolower(trim($this->config->getSystemValueString(Application::ENVIRONMENT_CONFIG_KEY, ''))),
+			'environmentCommand' => Application::ENVIRONMENT_OCC_COMMAND,
+		];
+	}//end environmentParams()
+
+	/**
+	 * The Documentation link for the current design system, as a template
+	 * parameter, and every design system's link for js/admin.js.
+	 *
+	 * A design system names its docs in `documentation_url` in
+	 * design-systems.json; one that names none gets this app's docs. The link
+	 * follows the design system of the set picked in the dropdown, so the
+	 * script needs every design system's link, not only the current one's (#662).
+	 *
+	 * @param string $designSystem The current token set's design system.
+	 *
+	 * @return array{documentationUrl: string} The template parameter.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+	 */
+	private function documentationParams(string $designSystem): array {
+		$urls = [];
+		foreach ($this->designSystemService->getDesignSystems() as $id => $entry) {
+			$url = ($entry['documentation_url'] ?? '');
+			// Only an https link: the manifest must not put a javascript: URL in the header.
+			if (is_string($url) === false || str_starts_with($url, 'https://') === false) {
+				$url = self::DEFAULT_DOCUMENTATION_URL;
+			}
+
+			$urls[(string)$id] = $url;
+		}
+
+		$this->initialState->provideInitialState('designSystemDocs', $urls);
+
+		return ['documentationUrl' => ($urls[$designSystem] ?? self::DEFAULT_DOCUMENTATION_URL)];
+	}//end documentationParams()
 
 	/**
 	 * Reads one on/off appconfig flag.
@@ -421,7 +461,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return string The section identifier (theming).
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
 	 */
 	public function getSection(): string {
 		return 'theming';
@@ -432,7 +472,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return int The priority value (lower = higher priority).
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
 	 */
 	public function getPriority(): int {
 		return 50;
@@ -445,7 +485,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return string|null The settings display name, or null.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
 	 */
 	public function getName(): ?string {
 		return null;
@@ -459,7 +499,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return array<string, string[]> The authorized app config map.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md

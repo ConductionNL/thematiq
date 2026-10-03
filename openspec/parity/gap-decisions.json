@@ -328,34 +328,10 @@
 		"decidedOn": "2026-09-27"
 	},
 	{
-		"row": "acc-contrast-in-editor",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Single competitor yes (Microsoft 365), no demand row, outside the core area.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
 		"row": "acc-forced-colors",
 		"matrix": "thematiq",
 		"decision": "defer",
 		"reason": "partial, built, no demand; one competitor yes (Microsoft 365).",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "acc-high-contrast-tokens",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Roadmap demand (Liferay LPD-90810) with no competitor rated yes, outside the core area. The archived high-contrast-token-set change made one separate set, not per house style values.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "ast-brand-images",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Single competitor yes (Microsoft 365), no demand row, outside the core area.",
 		"change": null,
 		"decidedOn": "2026-09-27"
 	},
@@ -368,50 +344,10 @@
 		"decidedOn": "2026-09-27"
 	},
 	{
-		"row": "ast-mobile-logo",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Changelog demand (openDesk 1.17.0) with one competitor yes; changelog alone is not a build trigger and the row is outside the core area.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "aut-dtcg-bulk-convert",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Changelog demand (Tokens Studio 2.12.0) with one competitor yes, outside the core area. DTCG writing itself is specified under authoring-dtcg-export; the revertible bulk conversion on a branch is a Git tool concern.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "aut-figma-sync",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Single competitor yes (Tokens Studio), no demand row, outside the core area.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "aut-multi-platform-export",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Single competitor yes (Tokens Studio), no demand row, outside the core area.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
 		"row": "aut-semantic-aliases",
 		"matrix": "thematiq",
 		"decision": "defer",
 		"reason": "partial, built, no demand; one competitor yes (Tokens Studio).",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "aut-token-math",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Single competitor yes (Tokens Studio), no demand row, outside the core area.",
 		"change": null,
 		"decidedOn": "2026-09-27"
 	},
@@ -440,50 +376,10 @@
 		"decidedOn": "2026-09-27"
 	},
 	{
-		"row": "gov-approval-workflow",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Single competitor yes (Tokens Studio), no demand row, outside the core area.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "int-rest-api-theme",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Single competitor yes (Microsoft 365), no demand row, outside the core area.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
 		"row": "int-sovereign-bundle",
 		"matrix": "thematiq",
 		"decision": "defer",
 		"reason": "partial, built, no demand; one competitor yes (openDesk). Assembling the bundle is MijnBureau or EDIC packaging.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "sco-tenant-isolation",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Single competitor yes (Liferay), no demand row, outside the core area; Nextcloud has one user directory, so tenants would need platform support first.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "sur-coverage-report",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "FeatureRequest demand (openDesk work item 27) with no competitor rated yes, outside the core area.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
-		"row": "sur-office-suite",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "No competitor yes, no demand row, outside the core area; the office editor runs in a separate-origin frame thematiq cannot reach.",
 		"change": null,
 		"decidedOn": "2026-09-27"
 	},
@@ -496,14 +392,6 @@
 		"decidedOn": "2026-09-27"
 	},
 	{
-		"row": "syn-push-to-platform",
-		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Changelog demand (Tokens Studio 2.11.9) with one competitor yes; changelog alone is not a build trigger and the row is outside the core area.",
-		"change": null,
-		"decidedOn": "2026-09-27"
-	},
-	{
 		"row": "typ-org-font-library",
 		"matrix": "thematiq",
 		"decision": "defer",
@@ -512,11 +400,163 @@
 		"decidedOn": "2026-09-27"
 	},
 	{
+		"row": "aut-token-math",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Tokens Studio), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "aut-figma-sync",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Tokens Studio), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "aut-multi-platform-export",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Tokens Studio), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "ast-icon-pack",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "No competitor rated yes, no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "ast-dark-logo",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "ast-brand-images",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "sur-office-suite",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "No competitor rated yes, no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "sco-tenant-isolation",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Liferay DXP), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "acc-compliance-report",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "No competitor rated yes, no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "acc-contrast-in-editor",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "gov-approval-workflow",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Tokens Studio), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "int-rest-api-theme",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "sur-coverage-report",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "No competitor rated yes, one featureRequest demand row but no competitor yes cell, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "ast-mobile-logo",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (openDesk), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "syn-push-to-platform",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Tokens Studio), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "aut-dtcg-bulk-convert",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Tokens Studio), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
 		"row": "typ-theme-base-size",
 		"matrix": "thematiq",
-		"decision": "defer",
-		"reason": "Changelog demand (Tokens Studio 2.11.5) with one competitor yes; changelog alone is not a build trigger and the row is outside the core area.",
+		"decision": "decided-no",
+		"reason": "Single competitor rated yes (Tokens Studio), no demand row, outside the core area (catalogue and apply). Was defer, retired.",
 		"change": null,
-		"decidedOn": "2026-09-27"
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "acc-high-contrast-tokens",
+		"matrix": "thematiq",
+		"decision": "decided-no",
+		"reason": "No competitor rated yes, one roadmap demand row but no competitor yes cell, outside the core area (catalogue and apply). Was defer, retired.",
+		"change": null,
+		"decidedOn": "2026-09-28"
+	},
+	{
+		"row": "acc-compliance-report",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Ruben reversed the decided-no on 29 Sep 2026 (build-all DECISIONS.md row 11): the half-built plumbing is finished as one small change.",
+		"change": "accessibility-evidence-download-and-dark-logo",
+		"decidedOn": "2026-09-29"
+	},
+	{
+		"row": "ast-dark-logo",
+		"matrix": "thematiq",
+		"decision": "build",
+		"reason": "Ruben reversed the decided-no on 29 Sep 2026 (build-all DECISIONS.md row 11): the half-built plumbing is finished as one small change.",
+		"change": "accessibility-evidence-download-and-dark-logo",
+		"decidedOn": "2026-09-29"
 	}
 ]

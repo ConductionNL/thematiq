@@ -6,13 +6,14 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/theming-audit-log/tasks.md#task-5.1
+ * @spec openspec/changes/archive/2026-07-23-theming-audit-log/tasks.md#task-5.1
  */
 
 declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\ThemeVersionService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\AppData\IAppDataFactory;
@@ -262,7 +263,7 @@ class ThemingAuditServiceTest extends TestCase {
 	 *
 	 * @return ThemingAuditService The service under test.
 	 */
-	private function makeService(int $time = 1700000000): ThemingAuditService {
+	private function makeService(int $time = 1700000000, ?ThemeVersionService $versions = null): ThemingAuditService {
 		$config = $this->createMock(IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
@@ -283,7 +284,8 @@ class ThemingAuditServiceTest extends TestCase {
 			config: $config,
 			userSession: $this->userSession,
 			timeFactory: $timeFactory,
-			logger: $this->logger
+			logger: $this->logger,
+			versionService: ($versions ?? $this->createMock(ThemeVersionService::class))
 		);
 	}//end makeService()
 
@@ -354,7 +356,7 @@ class ThemingAuditServiceTest extends TestCase {
 
 		$this->userSession->method('getUser')->willReturn(null);
 
-		$service = new class(new FakeAuditAppDataFactory(appData: $this->root), $config, $this->userSession, $timeFactory, $this->logger) extends ThemingAuditService {
+		$service = new class(new FakeAuditAppDataFactory(appData: $this->root), $config, $this->userSession, $timeFactory, $this->logger, $this->createMock(ThemeVersionService::class)) extends ThemingAuditService {
 			protected function isRunningInCli(): bool {
 				return false;
 			}
@@ -466,6 +468,28 @@ class ThemingAuditServiceTest extends TestCase {
 	}//end testRotationAtSizeCapKeepsOneGeneration()
 
 	/**
+	 * The lifetime counter keeps counting across a rotation, even though the
+	 * current audit.jsonl is empty right after it.
+	 *
+	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Counter
+	 * survives log rotation": MetricsController emits this app value, never a
+	 * line count of the file.
+	 */
+	public function testCounterKeepsCountingAcrossRotation(): void {
+		$this->appConfig['audit_entries_total'] = '41';
+		$service = $this->makeService();
+
+		$padding = str_repeat('a', 1048500) . "\n";
+		$this->root->auditFolder->newFile('audit.jsonl', $padding);
+
+		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
+
+		$this->assertTrue($this->root->auditFolder->fileExists('audit.jsonl.1'));
+		$this->assertSame('', $this->root->auditFolder->getFile('audit.jsonl')->getContent());
+		$this->assertSame('42', $this->appConfig['audit_entries_total']);
+	}//end testCounterKeepsCountingAcrossRotation()
+
+	/**
 	 * getRecent() returns newest-first and respects the limit.
 	 */
 	public function testGetRecentOrderAndLimit(): void {
@@ -532,7 +556,8 @@ class ThemingAuditServiceTest extends TestCase {
 			config: $config,
 			userSession: $this->userSession,
 			timeFactory: $timeFactory,
-			logger: $this->logger
+			logger: $this->logger,
+			versionService: $this->createMock(ThemeVersionService::class)
 		);
 
 		// Must not throw.
@@ -541,4 +566,84 @@ class ThemingAuditServiceTest extends TestCase {
 		// The counter must NOT have been incremented — the append failed.
 		$this->assertSame('0', ($this->appConfig['audit_entries_total'] ?? '0'));
 	}//end testAppdataFailureIsSwallowedAndWarned()
+
+	/**
+	 * An entry for which a version was kept names it.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md
+	 */
+	public function testAnEntryNamesTheVersionItProduced(): void {
+		$versions = $this->createMock(ThemeVersionService::class);
+		$versions->expects($this->once())->method('capture')->with('token_set_changed', 'cli')->willReturn('20260929164000-0001');
+
+		$service = $this->makeService(versions: $versions);
+		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
+
+		$this->assertSame('20260929164000-0001', $service->getRecent(limit: 1)[0]['versionId']);
+	}//end testAnEntryNamesTheVersionItProduced()
+
+	/**
+	 * An entry for which no version was kept omits the field.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md
+	 */
+	public function testAnEntryWithoutAVersionOmitsTheField(): void {
+		$versions = $this->createMock(ThemeVersionService::class);
+		$versions->method('capture')->willReturn(null);
+
+		$service = $this->makeService(versions: $versions);
+		$service->log(action: 'toggle_changed', context: ['key' => 'hide_slogan', 'old' => '0', 'new' => '1']);
+
+		$this->assertArrayNotHasKey('versionId', $service->getRecent(limit: 1)[0]);
+	}//end testAnEntryWithoutAVersionOmitsTheField()
+
+	/**
+	 * A capture that throws still writes the entry.
+	 */
+	public function testAThrowingCaptureStillWritesTheEntry(): void {
+		$versions = $this->createMock(ThemeVersionService::class);
+		$versions->method('capture')->willThrowException(new \RuntimeException('boom'));
+
+		$service = $this->makeService(versions: $versions);
+		$service->log(action: 'overrides_written', context: []);
+
+		$entries = $service->getRecent(limit: 1);
+		$this->assertSame('overrides_written', $entries[0]['action']);
+		$this->assertArrayNotHasKey('versionId', $entries[0]);
+	}//end testAThrowingCaptureStillWritesTheEntry()
+
+	/**
+	 * version_restored is part of the closed vocabulary.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md
+	 */
+	public function testVersionRestoredIsAcceptedAction(): void {
+		$service = $this->makeService();
+		$service->log(action: 'version_restored', context: ['old' => '20260929164000-0002', 'new' => '20260929164000-0001']);
+
+		$entry = $service->getRecent(limit: 1)[0];
+		$this->assertSame('version_restored', $entry['action']);
+		$this->assertSame('20260929164000-0001', $entry['new']);
+	}//end testVersionRestoredIsAcceptedAction()
+
+	/**
+	 * scheduled_switch_applied is part of the closed vocabulary, and the
+	 * background job's entry carries actor `system` although cron runs in CLI.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md
+	 */
+	public function testScheduledSwitchAppliedIsAcceptedWithSystemActor(): void {
+		$service = $this->makeService();
+		$service->log(
+			action: 'scheduled_switch_applied',
+			context: ['old' => 'rijkshuisstijl', 'new' => 'koningsdag-oranje', 'actor' => 'system', 'switchId' => 'abc123']
+		);
+
+		$entry = $service->getRecent(limit: 1)[0];
+		$this->assertSame('scheduled_switch_applied', $entry['action']);
+		$this->assertSame('system', $entry['actor']);
+		$this->assertSame('rijkshuisstijl', $entry['old']);
+		$this->assertSame('koningsdag-oranje', $entry['new']);
+		$this->assertSame('abc123', $entry['switchId']);
+	}//end testScheduledSwitchAppliedIsAcceptedWithSystemActor()
 }//end class

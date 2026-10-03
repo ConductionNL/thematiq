@@ -16,6 +16,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use PHPUnit\Framework\TestCase;
@@ -76,7 +77,7 @@ class CustomOverridesServicePerSetTest extends TestCase {
 		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
 
 		$this->service = new CustomOverridesService(
-			$appManager,
+			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
 			$parser,
 			$darkPalette,
 			$config,
@@ -137,4 +138,37 @@ class CustomOverridesServicePerSetTest extends TestCase {
 		$this->assertFileExists($this->appDir . '/css/custom-overrides-nextcloud.css');
 		$this->assertSame([], $this->service->read());
 	}//end testNoSetNamedMeansTheActiveSet()
+
+	/**
+	 * The overrides file is the only store: writing, reading and creating it
+	 * never writes or deletes an app config value, so a file that survives a
+	 * disable/enable cycle is all a re-enabled app needs.
+	 *
+	 * @spec openspec/specs/custom-css-overrides/spec.md#token-overrides-survive-app-reinstall-if-css-directory-is-preserved
+	 */
+	public function testOverridesLiveInTheFileAndNeverInAppConfig(): void {
+		$appManager = $this->createMock(IAppManager::class);
+		$appManager->method('getAppPath')->willReturn($this->appDir);
+		$config = $this->createMock(IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(
+			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'amsterdam' : $default)
+		);
+		$config->expects($this->never())->method('setAppValue');
+		$config->expects($this->never())->method('deleteAppValue');
+		$parser = new CssParserService();
+		$service = new CustomOverridesService(
+			new DirectoryRuntimeFileStore($this->appDir),
+			$parser,
+			new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class)),
+			$config,
+			new DesignSystemService($appManager, $config)
+		);
+
+		$service->ensureExists();
+		$service->write(tokens: ['--color-primary' => '#445566']);
+
+		// The value comes back from the file alone.
+		$this->assertSame(['--color-primary' => '#445566'], $service->read());
+		$this->assertStringContainsString('--color-primary: #445566', (string)file_get_contents($this->appDir . '/css/custom-overrides.css'));
+	}//end testOverridesLiveInTheFileAndNeverInAppConfig()
 }//end class

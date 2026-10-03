@@ -13,13 +13,13 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  */
 
@@ -55,13 +55,13 @@ use OCP\IRequest;
  * keeps its edits in a file of its own — see CustomOverridesService. Without
  * it, the instance's active set is meant.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - The reset to stock touches every part a theme
  * is made of: the overrides files, the active set and core theming. Each dependency is one of them;
@@ -176,7 +176,7 @@ class OverridesController extends Controller {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-7
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getOverrides(): JSONResponse {
@@ -187,7 +187,21 @@ class OverridesController extends Controller {
 		return new JSONResponse(
 			[
 				'overrides' => $overrides,
+				'darkOverrides' => $this->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
+				'darkDerived' => $this->overridesService->derivedDark(tokenSet: $this->requestedTokenSet()),
 				'registry' => $registry,
+				// Listed per component group, below the tabs. Only what a row shows:
+				// the selectors the server writes rules for would triple the payload.
+				'internal' => array_map(
+					static fn (array $token): array => [
+						'variable' => $token['variable'],
+						'group' => $token['group'],
+						'type' => $token['type'],
+						'stock' => $token['stock'],
+					],
+					TokenRegistry::getInternalTokens()
+				),
+				'count' => TokenRegistry::countEditable(),
 				'tabs' => $tabs,
 			]
 		);
@@ -207,7 +221,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return JSONResponse Status and count of written tokens.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
@@ -226,22 +240,21 @@ class OverridesController extends Controller {
 
 		// Refuse the whole save when any token would be dropped, so the answer,
 		// the written count and the audit entry all describe what reached the file.
-		$rejected = $this->overridesService->findRejected(tokens: $overrides);
+		$darkOverrides = ($params['darkOverrides'] ?? []);
+		if (is_array($darkOverrides) === false) {
+			return new JSONResponse(['error' => 'darkOverrides must be an object'], 400);
+		}
+
+		$rejected = $this->overridesService->findRejected(tokens: $overrides, darkTokens: $darkOverrides);
 		if (empty($rejected) === false) {
-			return new JSONResponse(
-				[
-					'error' => 'Some tokens were not saved: ' . implode(', ', array_keys($rejected)),
-					'rejected' => $rejected,
-				],
-				400
-			);
+			return $this->rejectedResponse(rejected: $rejected);
 		}
 
 		$tokenSet = $this->requestedTokenSet();
 		$before = $this->overridesService->read(tokenSet: $tokenSet);
 
 		try {
-			$this->overridesService->write(tokens: $overrides, tokenSet: $tokenSet);
+			$this->overridesService->write(tokens: $overrides, tokenSet: $tokenSet, darkTokens: $darkOverrides);
 		} catch (\RuntimeException) {
 			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}
@@ -270,6 +283,22 @@ class OverridesController extends Controller {
 
 		return new JSONResponse($response);
 	}//end setOverrides()
+
+	/**
+	 * The 400 for a refused save: every token with its reason, which names the type.
+	 *
+	 * @param array<string, string> $rejected Token name => reason.
+	 *
+	 * @return JSONResponse The response.
+	 */
+	private function rejectedResponse(array $rejected): JSONResponse {
+		$named = [];
+		foreach ($rejected as $name => $reason) {
+			$named[] = $name . ' (' . $reason . ')';
+		}
+
+		return new JSONResponse(['error' => 'Some tokens were not saved: ' . implode(', ', $named), 'rejected' => $rejected], 400);
+	}//end rejectedResponse()
 
 	/**
 	 * Reset the theme to stock Nextcloud.
@@ -332,7 +361,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return DataDownloadResponse The CSS file as a download.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-9
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function exportOverrides(): DataDownloadResponse {
@@ -354,7 +383,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return JSONResponse Import result with 'imported' and 'skipped' counts.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-10
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function importOverrides(): JSONResponse {
@@ -385,7 +414,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return JSONResponse|null An error response, or null if the file is valid.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
 	 */
 	private function validateUploadedFile(): ?JSONResponse {
 		$file = $this->request->getUploadedFile(key: 'file');
@@ -424,7 +453,7 @@ class OverridesController extends Controller {
 	 *
 	 * @return string|null The file content, or null on failure.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-12
 	 */
 	private function readUploadedContent(): ?string {
 		$file = $this->request->getUploadedFile(key: 'file');
@@ -447,7 +476,7 @@ class OverridesController extends Controller {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	private function writeImportedTokens(array $parsed, string $rawContent): JSONResponse {

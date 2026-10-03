@@ -2,7 +2,9 @@
 
 ## Purpose
 TBD - created by archiving change theming-audit-log. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Append-Only Audit Entries
 
 The app MUST record every theming configuration change as an append-only audit entry written by
@@ -162,3 +164,80 @@ included, oldest first) as Content-Type `application/x-ndjson` with Content-Disp
 - WHEN either audit endpoint is called
 - THEN the request MUST be rejected with no audit content in the response
 
+### Requirement: An audit entry names its version
+
+Every audit entry written by `ThemingAuditService::log()` for which a version was stored MUST carry a `versionId` field with that version's id. An entry for which no version could be stored MUST omit the field rather than carry an empty value.
+
+#### Scenario: The panel knows which rows can be restored
+
+@e2e exclude needs audit entries written with and without a writable app data folder; proven by tests/Unit/Service/ThemingAuditServiceTest.php::testAnEntryNamesTheVersionItProduced and ::testAnEntryWithoutAVersionOmitsTheField
+
+- GIVEN three audit entries, the second written while app data was not writable
+- WHEN an administrator calls `GET /apps/thematiq/settings/audit?limit=3`
+- THEN the first and third entries MUST carry a `versionId`
+- AND the second MUST NOT carry the field
+
+### Requirement: Restoring a version is an audited action
+
+The closed action vocabulary MUST include `version_restored`. Its entry MUST carry `old` equal to the version id that was active before the restore and `new` equal to the restored version id, and the actor rules of every other entry (`cli` for occ, the user id otherwise).
+
+#### Scenario: A restore from the command line is recorded
+
+@e2e exclude occ, not a page; proven by tests/Unit/Service/ThemeVersionRestoreServiceTest.php::testARestoreImportsAndIsAudited and tests/Unit/Service/ThemingAuditServiceTest.php::testVersionRestoredIsAcceptedAction
+
+- GIVEN an operator runs `occ thematiq:config:restore <id>`
+- WHEN the restore completes
+- THEN the audit log MUST contain one `version_restored` entry with actor `cli` and `new` equal to `<id>`
+
+### Requirement: Applied planned switches are audited
+
+The closed action vocabulary MUST include `scheduled_switch_applied`. Its entry MUST carry actor `system`, `old` and `new` token set ids, and the planned switch id in its context. A planned switch that could not be applied MUST be audited with `new` empty and the reason.
+
+#### Scenario: A start and an end leave two entries
+
+@e2e exclude depends on the background job; proven by tests/Unit/Service/ScheduledSwitchServiceTest.php::testTheLookStartsAndEndsOnTime and tests/Unit/Service/ThemingAuditServiceTest.php::testScheduledSwitchAppliedIsAcceptedWithSystemActor
+
+- GIVEN a planned switch with a start and an end
+- WHEN both have passed and the job has run
+- THEN the audit log MUST contain two `scheduled_switch_applied` entries with actor `system`, the first to the planned set and the second back
+
+### Requirement: Source updates are audited
+
+The closed action vocabulary MUST include `custom_source_updated`. A successful source update MUST
+write exactly one `custom_source_updated` entry with the source id, the old and new content hash,
+and the lists of `updated`, `missing` and `new` brands. Importing brands MUST write one
+`custom_set_uploaded` entry per brand set, each carrying the source id and brand key. A refused
+import or update MUST write no entry.
+
+#### Scenario: Updating a source writes one entry
+@e2e exclude Audit record content, covered by PHPUnit on ThemingAuditService and the controller
+- GIVEN the administrator `admin` updates the source "Gemeente Voorbeeld"
+- WHEN the update succeeds
+- THEN one `custom_source_updated` entry MUST be appended with actor `admin`
+- AND it MUST carry the old and new content hash
+
+#### Scenario: A refused update writes nothing
+@e2e exclude Audit record content, covered by PHPUnit on the controller
+- GIVEN a source update that fails validation with 422
+- WHEN the request completes
+- THEN no audit entry MUST have been written
+
+### Requirement: Own tokens and deprecations are audited
+
+The closed action vocabulary MUST include `own_token_changed` and `token_deprecation_changed`.
+Adding, editing or removing an own token MUST write one `own_token_changed` entry with the token
+name and the old and new value. Adding, editing or removing a deprecation MUST write one
+`token_deprecation_changed` entry with the token name and the old and new record. A refused
+request MUST write no entry.
+
+#### Scenario: Adding an own token is recorded
+@e2e exclude Audit record content, covered by PHPUnit on OwnTokenController
+- GIVEN the administrator `admin` adds `--nldesign-org-brand-accent`
+- WHEN the request succeeds
+- THEN one `own_token_changed` entry MUST be appended with actor `admin` and the new value
+
+#### Scenario: A refused deprecation writes nothing
+@e2e exclude Audit record content, covered by PHPUnit on the controller
+- GIVEN a deprecation request refused with 400
+- WHEN the request completes
+- THEN no audit entry MUST have been written

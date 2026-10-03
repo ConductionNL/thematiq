@@ -72,6 +72,11 @@ import {
 	requestToken,
 	setTokenSet,
 } from '../workflows/_helpers'
+import {
+	MAX_SUPPORTED_NC,
+	MIN_SUPPORTED_NC,
+	expiredOlderServerExcuses,
+} from './_supported-range'
 
 /**
  * A node that only exists once Nextcloud's Vue chrome has mounted.
@@ -223,11 +228,6 @@ const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 		reason: 'NC34 renders the app menu through a different structure; kept for older servers.',
 	},
 	{
-		pattern:
-			/\.header-appname|\.header-left|\.header-right|\.menutoggle|\.unified-search__button|\.header-start \.icon-vue/,
-		reason: 'Pre-Vue header classes retained as fallbacks for older Nextcloud releases.',
-	},
-	{
 		pattern: /^(button|input)\.(primary|secondary)\b/,
 		reason: 'Pre-Vue button classes; NC34 emits .button-vue--* which the adjacent wildcard rules catch.',
 	},
@@ -255,10 +255,6 @@ const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 			+ 'admin pages and inside dialogs.',
 	},
 	{
-		pattern: /unified-search__input/,
-		reason: 'Pre-NC34 unified-search markup, retained as a fallback for older servers.',
-	},
-	{
 		pattern: /\.app-menu-entry__|\.app-menu-icon\b|\.unified-search-menu\b/,
 		reason:
 			'NC 32/33 header markup — the mirror image of the SINCE list below, and dead here for '
@@ -284,14 +280,14 @@ const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 	{
 		pattern: /^\[data-admin-theming-setting-color-(picker|reset)\] \*$/,
 		reason:
-			'NC 32/33 colour-picker markup. Those releases render the admin colour fields as '
-			+ 'NcButtons carrying data-admin-theming-setting-color-picker / -color-reset. NC 34 '
-			+ 'rewrote Settings > Theming as a Vue 3 app with CSS-module classes '
-			+ '(_colorPickerField__button_<hash>) and no data attribute: MEASURED on run '
-			+ '35051300741, whose admin-theming DOM snapshot has neither attribute anywhere. '
-			+ 'The rule is still what keeps the picker label legible on the NC 32 floor. The NC 34 '
-			+ 'picker is not excluded by any rule yet; that gap is tracked separately rather than '
-			+ 'hidden here.',
+			'NC 32 colour-picker markup. That release renders the admin colour fields as '
+			+ 'NcButtons carrying data-admin-theming-setting-color-picker / -color-reset. The Vue 3 '
+			+ 'rewrite of Settings > Theming (in the server source from v33.0.0beta1, still so in '
+			+ '35.0.1) gives the picker only a CSS-module class (_colorPickerField__button_<hash>) '
+			+ 'and no data attribute: MEASURED on run 35051300741, whose admin-theming DOM snapshot '
+			+ 'has neither attribute anywhere. The rule is still what keeps the picker label legible '
+			+ 'on the NC 32 floor. Its NC 33+ counterpart is the [class*="_colorPickerField__button"] '
+			+ 'rule in SINCE below (thematiq#611).',
 	},
 ]
 
@@ -302,12 +298,8 @@ function allowedReason(selector: string): string | null {
 	return null
 }
 
-/**
- * The newest Nextcloud this app declares support for (appinfo/info.xml
- * `<nextcloud min-version="32" max-version="34"/>`). It is the expiry date on
- * every SINCE entry below: once CI surveys this major, nothing may be deferred.
- */
-const MAX_SUPPORTED_NC = 34
+// MAX_SUPPORTED_NC and its mirror MIN_SUPPORTED_NC live in ./_supported-range,
+// pinned to appinfo/info.xml by tests/vitest/supportedRange.spec.ts.
 
 /**
  * A ONE-VERSION SURVEY CANNOT JUDGE A CROSS-VERSION STYLESHEET.
@@ -364,6 +356,18 @@ const MAX_SUPPORTED_NC = 34
  * STILL OPEN, and deliberately not smuggled in here: the table above also says
  * the La Suite header treatment does not reach NC 32 at all — its own change.
  */
+/*
+ * NOT SURVEYED HERE: css/show-menu-labels.css. The survey reads the lasuite
+ * element-overrides.css only, and that sheet loads only with the setting on.
+ * It carries the same two halves as this file (#895): the NC 32 `app-menu-entry*`
+ * rules that ALLOWED excuses above, and NC 33+ rules on `#header nav.app-menu
+ * .app-menu__current-app*` and on the popover's `.app-menu__popover
+ * .app-item__label`, a transient overlay. Neither NC 33+ selector fits the
+ * first SINCE pattern below, which expects `#header .app-menu__…` with nothing
+ * in between, so adding the sheet to this survey needs its own entries. Until
+ * then its liveness is proven by the last two tests of menu-labels.spec.ts,
+ * on the real header.
+ */
 const SINCE: Array<{ pattern: RegExp; since: number; reason: string }> = [
 	{
 		pattern:
@@ -372,6 +376,14 @@ const SINCE: Array<{ pattern: RegExp; since: number; reason: string }> = [
 		reason:
 			'NC33+ header markup (waffle / current-app / inline unified-search). NC32 renders '
 			+ 'app-menu-entry* + unified-search-menu instead, so these cannot match there.',
+	},
+	{
+		pattern: /^\[class\*=["']_colorPickerField__button["']\] \*$/,
+		since: 33,
+		reason:
+			'NC33+ colour-picker markup (thematiq#611). The Vue 3 Settings > Theming renders each '
+			+ 'colour field as a primary NcButton with the CSS-module class '
+			+ '_colorPickerField__button_<hash>; NC32 renders the data attribute in ALLOWED above.',
 	},
 ]
 
@@ -1009,6 +1021,23 @@ test.describe('lasuite selector liveness', () => {
 				+ `(appinfo/info.xml max-version=${MAX_SUPPORTED_NC}), so nothing may be deferred to a newer `
 				+ `one. These selectors match nothing here and their SINCE entry has expired — delete the `
 				+ `entry and the CSS, or fix the selectors:\n  ${versionDeferred.join('\n  ')}`,
+		).toEqual([])
+
+		// THE MIRROR: an ALLOWED excuse that claims an OLDER server needs the
+		// selector expires once the survey runs on the oldest supported one.
+		// Eight such excuses outlived their evidence for months because nothing
+		// compared the surveyed major against MIN_SUPPORTED_NC (thematiq#270).
+		const expiredExcuses = expiredOlderServerExcuses(
+			dead,
+			allowedReason,
+			serverMajor,
+		)
+		expect(
+			expiredExcuses,
+			`Surveyed Nextcloud ${serverMajor} is the oldest version this app supports `
+				+ `(appinfo/info.xml min-version=${MIN_SUPPORTED_NC}), so nothing may be excused as a fallback `
+				+ `for an older one. These selectors match nothing here and their ALLOWED reason claims an `
+				+ `older server. Delete the CSS and the entry, or fix the selectors:\n  ${expiredExcuses.join('\n  ')}`,
 		).toEqual([])
 
 		const deferredSet = new Set(deferred)

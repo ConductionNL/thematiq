@@ -13,9 +13,22 @@
  */
 import { test, expect } from '@playwright/test'
 
+import { removeE2eCustomSets } from './_fixtures'
+
 const THEMING_URL = '/settings/admin/theming'
 
 test.describe('custom-token-set-upload', () => {
+	// Each upload test deletes its own set as its last step. A test that dies
+	// before that step left the set behind and poisoned later runs (#181), so
+	// sweep leftovers before the first test and after every test.
+	test.beforeAll(async ({ browser }) => {
+		await removeE2eCustomSets(browser)
+	})
+
+	test.afterEach(async ({ browser }) => {
+		await removeE2eCustomSets(browser)
+	})
+
 	// -----------------------------------------------------------------------
 	// Requirement: Upload Custom Token Set (CSS format)
 	// -----------------------------------------------------------------------

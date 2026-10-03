@@ -118,6 +118,7 @@
 		--nldesign-component-textbox-hover-border-color: #9e9e9e;
 		--nldesign-component-textbox-invalid-border-color: #e75f55;
 		--nldesign-component-unordered-list-color: #cccccc;
+		--nldesign-logo-url: url('../../../img/logos/epe-dark.svg');
 	}
 }
 body[data-theme-dark],
@@ -239,4 +240,5 @@ body[data-themes*=dark] {
 	--nldesign-component-textbox-hover-border-color: #9e9e9e;
 	--nldesign-component-textbox-invalid-border-color: #e75f55;
 	--nldesign-component-unordered-list-color: #cccccc;
+	--nldesign-logo-url: url('../../../img/logos/epe-dark.svg');
 }

@@ -21,7 +21,10 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCP\App\IAppManager;
+use OCP\IL10N;
 use Throwable;
 
 /**
@@ -72,23 +75,38 @@ class PlaygroundStateService {
 	private StockTokensService $stockTokens;
 
 	/**
+	 * Translates the inventory's own chrome: titles, subtitles, what each
+	 * token paints and why a look has no token. See {@see translateInventory()}.
+	 *
+	 * @var IL10N
+	 */
+	private IL10N $l10n;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager              $appManager    Resolves the app directory.
 	 * @param TokenSetPreviewService   $previewValues Resolves token values and sources.
 	 * @param TokenSetConverterService $converter     The conversion reason vocabulary.
 	 * @param StockTokensService       $stockTokens   The instance's own stock theme.
+	 * @param IL10N                    $l10n          The app's translations.
+	 * @param RuntimeFileStore|null    $store         Where uploaded sets and their dark files live.
+	 * @param SetFileReader            $files         Reads a set file from the release or the store.
 	 */
 	public function __construct(
 		IAppManager $appManager,
 		TokenSetPreviewService $previewValues,
 		TokenSetConverterService $converter,
 		StockTokensService $stockTokens,
+		IL10N $l10n,
+		private ?RuntimeFileStore $store = null,
+		private SetFileReader $files = new SetFileReader(),
 	) {
 		$this->appManager = $appManager;
 		$this->previewValues = $previewValues;
 		$this->converter = $converter;
 		$this->stockTokens = $stockTokens;
+		$this->l10n = $l10n;
 	}//end __construct()
 
 	/**
@@ -150,8 +168,44 @@ class PlaygroundStateService {
 			// script, because a session preview decides it and the script has
 			// no business knowing that rule twice.
 			'playgroundSet' => $tokenSetId,
+			// The set's dark values, for the light and dark switch of "Your component".
+			'playgroundDarkTokens' => $this->getDarkTokens(tokenSetId: $tokenSetId),
 		];
 	}//end getInitialState()
+
+	/**
+	 * The `--nldesign-*` values the set's generated dark stylesheet gives a user who chose
+	 * the dark theme: the `body[data-theme-dark]` block of `css/tokens/dark/{set}.css`.
+	 *
+	 * @param string $tokenSetId The token set.
+	 *
+	 * @return array<string, string> Token => dark value; empty when the set has no dark file.
+	 *
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-the-frame-can-show-the-dark-theme
+	 */
+	private function getDarkTokens(string $tokenSetId): array {
+		if (preg_match('/^[a-z0-9-]+$/', $tokenSetId) !== 1) {
+			return [];
+		}
+
+		// An uploaded set's dark file lives in the runtime store, a shipped one in the release.
+		$css = (string)$this->files->read(
+			appPath: $this->appManager->getAppPath(Application::APP_ID),
+			name: 'css/tokens/dark/' . $tokenSetId . '.css',
+			store: $this->store
+		);
+		if (preg_match('/body\[data-theme-dark\][^{]*\{([^}]*)\}/', $css, $block) !== 1) {
+			return [];
+		}
+
+		preg_match_all('/(--nldesign-[a-z0-9-]+)\s*:\s*([^;]+);/', $block[1], $matches, PREG_SET_ORDER);
+		$tokens = [];
+		foreach ($matches as $match) {
+			$tokens[$match[1]] = trim((string)preg_replace('/\s*!important\s*$/', '', $match[2]));
+		}
+
+		return $tokens;
+	}//end getDarkTokens()
 
 	/**
 	 * The major Nextcloud version this instance is running.
@@ -220,8 +274,92 @@ class PlaygroundStateService {
 			return ['version' => 0, 'tabs' => [], 'components' => []];
 		}
 
-		return $decoded;
+		return $this->translateInventory(inventory: $decoded);
 	}//end getInventory()
+
+	/**
+	 * The inventory with its chrome in the admin's language.
+	 *
+	 * The panel's own words live in this data file rather than in `t()` calls:
+	 * a component's title and subtitle, what each token paints, what a look
+	 * with no token is and why, and what differs per Nextcloud version. The
+	 * frontend renders them as they arrive, so they are translated here, from
+	 * the same `thematiq` catalogue the rest of the panel reads. The keys are
+	 * the English strings in the file; tests/Unit/Service/PlaygroundStateServiceTest.php
+	 * fails on any of them that has no Dutch entry in l10n/nl.json.
+	 *
+	 * Ids, class names, token names and reason codes are data and stay as
+	 * they are.
+	 *
+	 * @param array<string, mixed> $inventory The decoded inventory.
+	 *
+	 * @return array<string, mixed> The same inventory, its chrome translated.
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	private function translateInventory(array $inventory): array {
+		foreach ($inventory['components'] as $index => $component) {
+			if (is_array($component) === false) {
+				continue;
+			}
+
+			$component = $this->translateFields(entry: $component, fields: ['title', 'subtitle']);
+			foreach (['tokens' => ['paints'], 'fixed' => ['what', 'why'], 'versionNotes' => ['text']] as $list => $fields) {
+				if (is_array($component[$list] ?? null) === false) {
+					continue;
+				}
+
+				foreach ($component[$list] as $at => $entry) {
+					if (is_array($entry) === true) {
+						$component[$list][$at] = $this->translateFields(entry: $entry, fields: $fields);
+					}
+				}
+			}
+
+			$inventory['components'][$index] = $component;
+		}
+
+		return $inventory;
+	}//end translateInventory()
+
+	/**
+	 * Translate the named string fields of one entry, leaving the rest alone.
+	 *
+	 * @param array<string, mixed> $entry  One inventory entry.
+	 * @param array<int, string>   $fields The fields that are chrome.
+	 *
+	 * @return array<string, mixed> The entry, those fields translated.
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	private function translateFields(array $entry, array $fields): array {
+		foreach ($fields as $field) {
+			if (is_string($entry[$field] ?? null) === true && $entry[$field] !== '') {
+				$entry[$field] = $this->translate(text: $entry[$field]);
+			}
+		}
+
+		return $entry;
+	}//end translateFields()
+
+	/**
+	 * Translate one data-file string.
+	 *
+	 * IL10N::t() runs every string through vsprintf(), so a literal `%` in a
+	 * data-file string ("mixed at 10% from this colour") is read as a format
+	 * specifier and throws, which took down the whole admin form (#824). The
+	 * catalogue keys carry the escaped `%%` form, the way a literal percent
+	 * sign is written in any Nextcloud translation source.
+	 *
+	 * @param string $text The English source string.
+	 *
+	 * @return string The translation, with any `%` back as a single `%`.
+	 *
+	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 */
+	private function translate(string $text): string {
+		return $this->l10n->t(str_replace('%', '%%', $text));
+	}//end translate()
 
 	/**
 	 * The reason-code vocabulary, so a row with no token and a token an import
@@ -233,7 +371,16 @@ class PlaygroundStateService {
 	 */
 	public function getReasons(): array {
 		try {
-			return $this->converter->getReasons();
+			// Translated here, for the panel: the converter's own callers write
+			// the English sentence into import reports.
+			$reasons = $this->converter->getReasons();
+			foreach ($reasons as $code => $reason) {
+				if (is_string($reason) === true) {
+					$reasons[$code] = $this->translate(text: $reason);
+				}
+			}
+
+			return $reasons;
 		} catch (Throwable $e) {
 			// The mapping table is the converter's own dependency. Without it
 			// every row still renders; only the explanatory sentence falls back

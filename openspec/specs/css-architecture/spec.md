@@ -1,5 +1,5 @@
 ---
-status: done
+status: in-progress
 reviewed_date: 2026-02-28
 enriched_date: 2026-03-20
 ---
@@ -9,8 +9,10 @@ enriched_date: 2026-03-20
 ## Purpose
 Defines the layered CSS architecture that transforms NL Design System tokens into Nextcloud-compatible theming.
 
-@e2e exclude CSS-architecture / PHP boot-order spec — all scenarios describe CSS cascade layers, file load order, and server-side PHP logic with no testable UI surface in the admin settings page. The architecture uses a design-system-driven approach: `design-systems.json` declares ordered stylesheet bundles, and `Application::boot()` loads the correct bundle for the active token set. Organization-specific tokens cascade correctly, incomplete token sets fall back gracefully, and NL Design System component tokens (using the `--utrecht-*` prefix) are bridged to the `--nldesign-*` namespace. The load order is critical: each layer builds on the previous one.
+The architecture uses a design-system-driven approach: `design-systems.json` declares ordered stylesheet bundles, and `CssInjectionService::inject()` loads the correct bundle for the active token set. Organization-specific tokens cascade correctly, incomplete token sets fall back gracefully, and NL Design System component tokens (using the `--utrecht-*` prefix) are bridged to the `--nldesign-*` namespace. The load order is critical: each layer builds on the previous one.
+
 ## Requirements
+
 ### Requirement: Design System Driven Stylesheet Loading
 
 The app MUST resolve which design system a token set belongs to and load the corresponding
@@ -31,13 +33,16 @@ identical for all users.
 - THEN the `DesignSystemService` MUST resolve the design system from `design-systems.json`
 - AND CSS files MUST be loaded in the order declared in the design system's `stylesheets` array via `\OCP\Util::addStyle()`
 - AND the standard nldesign order MUST be:
-  1. `systems/nldesign/fonts` (Layer 1 -- @font-face declarations)
-  2. `systems/nldesign/defaults` (Layer 2 -- all `--nldesign-*` token defaults)
-  3. Token set file loaded separately: `tokens/{resolvedTokenSet}` (Layer 3 -- organization overrides)
-  4. `systems/nldesign/utrecht-bridge` (Layer 4 -- `--utrecht-*` to `--nldesign-component-*` mapping)
-  5. `systems/nldesign/theme` (Layer 5 -- `--nldesign-*` to Nextcloud element selectors)
-  6. `systems/nldesign/overrides` (Layer 6 -- Nextcloud `--color-*` variable mappings)
-  7. `systems/nldesign/element-overrides` (Layer 7 -- low-level element styling)
+  1. `systems/nldesign/fonts` (Layer 1: @font-face declarations)
+  2. `systems/nldesign/defaults` (Layer 2: all `--nldesign-*` token defaults)
+  3. `systems/nldesign/utrecht-bridge` (Layer 4: `--utrecht-*` to `--nldesign-component-*` mapping)
+  4. `systems/nldesign/theme` (Layer 5: `--nldesign-*` to Nextcloud element selectors)
+  5. `systems/nldesign/overrides` (Layer 6: Nextcloud `--color-*` variable mappings)
+  6. `systems/nldesign/element-overrides` (Layer 7: low-level element styling)
+  7. `tokens/{resolvedTokenSet}` (Layer 3: organization overrides), emitted by `CssInjectionService::designSystemLayers()` directly after the last bundle stylesheet, not from the bundle
+- AND the layer numbers MUST name each file's role, not its load position: the token file is Layer 3 because it overrides the Layer 2 defaults
+- AND the token file MUST come after `systems/nldesign/defaults`, because both declare the same `--nldesign-*` properties on `:root` and the later declaration wins; the bridge, theme and override layers only read those properties through `var()`, which resolves against the final cascaded value, so they do not need to follow the token file
+- AND the token file MUST stay out of the bundle's `stylesheets` array, because the bundle is shared by every token set on the design system while the token file is the set-dependent layer the admin panel swaps without a reload
 
 #### Scenario: Stock Nextcloud design system loads no stylesheets
 
@@ -75,7 +80,7 @@ identical for all users.
 
 #### Scenario: Empty mapping preserves legacy resolution byte-for-byte
 
-@e2e exclude regression invariant — PHPUnit asserts resolved id equals the app value
+@e2e exclude the GIVEN is an absent or empty group mapping, which a shared instance cannot guarantee; PHPUnit tests/Unit/Service/GroupThemingServiceTest.php::testResolveReturnsDefaultForEmptyMappingWithoutGroupOrCacheAccess asserts the resolved id equals the token_set app value
 - GIVEN `group_token_sets` is absent or an empty array and no preview is active
 - WHEN any request resolves its token set
 - THEN the resolved id MUST equal the `token_set` app value (default `nextcloud`)
@@ -102,9 +107,12 @@ The fonts layer MUST declare Fira Sans @font-face rules for all required weights
 - AND font files MUST be in the `css/systems/nldesign/fonts/` directory
 
 #### Scenario: Font licensing compliance
+@e2e exclude licensing is a property of the distributed files, not of a rendered page; vitest tests/vitest/fontLicences.spec.js asserts LICENSES/OFL-1.1.txt, an OFL.txt naming each holder in every font directory, and an OFL-1.1 REUSE.toml annotation for every font file
 - GIVEN Fira Sans is used as the app's primary font
 - WHEN the font is distributed
 - THEN it MUST comply with the SIL Open Font License 1.1
+- AND every font directory that ships Fira Sans (`css/systems/nldesign/fonts/`, `css/fonts/`) MUST carry an `OFL.txt` with the copyright notice and the licence text, because the OFL requires both to travel with the fonts
+- AND `REUSE.toml` MUST label the font files `OFL-1.1` with their upstream copyright holder, overriding the EUPL-1.2 blanket, and `LICENSES/OFL-1.1.txt` MUST hold the licence text
 - AND the font MUST be a suitable open-source alternative to RijksoverheidSansWebText
 
 ### Requirement: Layer 2 -- Default Token Definitions
@@ -227,8 +235,9 @@ The theme layer MUST apply `--nldesign-*` tokens to Nextcloud element selectors 
 #### Scenario: Focus states for accessibility
 - GIVEN any interactive element receives keyboard focus
 - WHEN `:focus-visible` is triggered
-- THEN the element MUST show a 2px solid outline using `var(--nldesign-color-focus)`
+- THEN the element MUST show a 2px solid outline in the colour of `--nldesign-color-focus` made opaque (`rgb(from var(--nldesign-color-focus) r g b)`, or `rgb(var(--nldesign-color-focus-rgb))` where relative colour syntax is unsupported)
 - AND the outline offset MUST be 2px
+- AND the translucent `var(--nldesign-color-focus)` MUST surround it as a 6px `box-shadow` halo
 - AND this MUST satisfy WCAG 2.1 AA SC 2.4.7 (Focus Visible)
 
 ### Requirement: Layer 6 -- Nextcloud Variable Overrides
@@ -264,31 +273,36 @@ The overrides layer MUST map Nextcloud `--color-*` CSS variables to `--nldesign-
 The element-overrides layer MUST apply NL Design styling to specific HTML elements and Nextcloud components.
 
 #### Scenario: Font family forced on all elements
-- GIVEN Layer 7 (`css/systems/nldesign/element-overrides.css`) is loaded
-- WHEN the font forcing rules are processed
-- THEN `font-family: var(--nldesign-font-family) !important` MUST be applied to specific element selectors (html, body, div, span, p, h1-h6, a, button, input, textarea, select, label, li, ul, ol)
-- AND it MUST also be applied via wildcard descendant selectors (`html body *`, `#body-user *`, `#app *`, `#content *`) to ensure complete coverage
+@e2e exclude browser-observable (computed font-family on a button, input, textarea, select and label, and on an icon-font glyph that must keep its own), but no browser test asserts it yet; the test is owed under #897
+- GIVEN Layer 5 (`css/systems/nldesign/theme.css`) sets `font-family: var(--nldesign-font-family)` on `body`, `#body-user`, `#body-login`, `#body-public`, `#app`, `#content` and `.app-content`, and every other element inherits it
+- AND Layer 7 (`css/systems/nldesign/element-overrides.css`) is loaded
+- WHEN the browser resolves the font of a `button`, `input`, `textarea`, `select` or `label`
+- THEN Layer 7 MUST set `font-family: var(--nldesign-font-family)` on exactly those five element types, without `!important`, because form controls take their font from the browser's own stylesheet instead of inheriting it
+- AND no layer MUST set `font-family` on a universal or wildcard descendant selector (`*`, `html body *`, `#body-user *`, `#app *`, `#content *`), because that clobbers icon fonts, monospace code editors and any component that declares its own font (ADR-CSS-001)
 
 #### Scenario: Header icons visible on themed background
-- GIVEN the header has a white or light background from the token set
+@e2e exclude browser-observable (computed color and filter on a header-end svg, and the avatar keeping its own colour), but no browser test asserts it yet; the test is owed under #897
+- GIVEN the header has a white or light background from the token set (Rijkshuisstijl, Amsterdam and Cunningham paint it `#ffffff`), while Nextcloud ships every header glyph white
 - WHEN Layer 7 is loaded
-- THEN `#header .header-end svg` and related selectors MUST have `filter: invert(1) brightness(0) contrast(100)` to make icons visible
-- AND avatar images (`#header .header-end .avatardiv img`) MUST be excluded from the filter
-- AND user-status icons MUST be excluded from the filter
+- THEN the header glyphs (`#header .header-end svg`, `.button-vue__icon`, `.icon-vue`, `.unified-search__button`, the same glyphs in `.header-start`, and `.app-menu__waffle`) MUST take `color: var(--nldesign-component-header-color, var(--nldesign-color-header-text))`, which their `currentColor` fill follows
+- AND those glyphs MUST carry `filter: none`, not `filter: invert(1) brightness(0) contrast(100)`: that filter forced every glyph to pure black whatever the header text token said, and because a filter rasterises its whole subtree it flattened the avatar inside the user menu trigger to a black square that no descendant `filter: none` could undo
+- AND the avatar (`.avatardiv`, `[class*='avatar' i]`) and the user-status icon MUST be excluded from the forced glyph fill and MUST carry `filter: none`, so the avatar keeps its generated colour or photo and the status badge its own status colour
 
 #### Scenario: App navigation styled as card
-- GIVEN the app navigation sidebar renders
+@e2e exclude browser-observable (computed background and a 0px margin-right on #app-navigation, and no gap between it and #app-content), but no browser test asserts it yet; the test is owed under #897
+- GIVEN the app navigation sidebar renders inside `#content`, which is `display: flex`, clips its children to `--body-container-radius` and has no background of its own
 - WHEN Layer 7 styles are applied
-- THEN `#app-navigation` MUST use `var(--color-main-background)` as background
-- AND it MUST have a right margin of 30px (card layout effect)
-- AND the closed state (`.app-navigation--close`) MUST have 0 margin
+- THEN `#app-navigation`, `.app-navigation` and `#app-navigation-vue` MUST use `var(--color-main-background)` as background
+- AND Layer 7 MUST NOT set a margin or a border-radius on them, so the navigation and the app content sit flush as two panels that `#content` clips into one rounded container
+- AND the former 30px right margin MUST NOT return: it opened empty flex space inside `#content`, and the page background showed through it as a vertical strip between the menu and the content
 
 #### Scenario: App-specific exclusions
-- GIVEN certain apps have custom widget styling (e.g., LaunchPad)
-- WHEN solid background rules are applied
-- THEN elements with `.launchpad-widget` or `.tile-widget` classes MUST be excluded
-- AND the LaunchPad container MUST have transparent background
-- AND these exclusions MUST prevent breaking app-specific layouts
+@e2e exclude browser-observable (computed color of a span, div and link inside a .tile-widget against the same element outside one), but no shipped page renders a .tile-widget, so a test needs a fixture element; the test is owed under #897
+- GIVEN Layer 7 forces `color: var(--nldesign-color-on-surface, var(--nldesign-color-text))` with `!important` onto `body`, `#app`, `#content`, `.app-content`, `p`, `span`, `div`, `li` and `a`, and the link colour onto `a`
+- WHEN an element renders that is a `.tile-widget` or sits inside one
+- THEN its `span`, `div` and `a` elements MUST be excluded from both rules, so the tile keeps the colours its app paints
+- AND Layer 7 MUST NOT add other per-app `:not()` exclusions: there is no `.launchpad-widget` rule, and widgets are not excluded from the solid background rule, which paints every panel and widget with `var(--color-main-background)`
+- AND a new surface that needs its own foreground MUST opt out by setting `--nldesign-color-on-surface` on itself, because a `:not()` list only covers the surfaces somebody remembered, while a custom property reaches every descendant without competing on specificity
 
 ### Requirement: Custom Overrides Layer (Layer 8)
 
@@ -334,9 +348,11 @@ All color token combinations used for text-on-background MUST meet WCAG 2.1 AA m
 - THEN the contrast ratio MUST be at least 4.5:1 for normal text
 
 #### Scenario: Focus indicator visible
-- GIVEN `--nldesign-color-focus` is used for keyboard focus outlines
+@e2e exclude browser-observable (the computed outline colour against the page background), but no browser test asserts the ratio yet; vitest tests/vitest/focusRingContrast.spec.js resolves every focus-visible outline colour in theme.css for the default set and asserts at least 3:1 on white and on the dark surface
+- GIVEN `--nldesign-color-focus` is translucent on purpose (ADR-CSS-003), and on its own the default rgba(0, 123, 199, 0.5) composites to about 2.0:1 on white
 - WHEN a focus outline appears on any background
-- THEN the outline MUST have at least 3:1 contrast against the adjacent background
+- THEN the 2px outline MUST be the focus colour made opaque, with the translucent token as the halo around it
+- AND the outline MUST have at least 3:1 contrast against the adjacent background: for the default set about 4.4:1 on white, and its dark variant against Nextcloud's dark main background
 
 ### Requirement: Design System Resolution
 
@@ -372,6 +388,7 @@ Shipped design systems are `none`, `nldesign`, `summer-breeze`, `high-contrast`,
   from for lasuite's violet `#4844AD`; `#0659C5` is brand-600, a different, unrendered step)
 
 #### Scenario: Unknown design system falls back safely
+@e2e exclude no shipped token set names an unknown design system, so no page can reach this branch; PHPUnit tests/Unit/DesignSystemServiceTest.php::testGetDesignSystemUnknownIdFallsBackToNoStylesheets asserts the empty-stylesheets fallback
 
 - GIVEN a token set references a design system id not in `design-systems.json`
 - WHEN `DesignSystemService::getDesignSystem()` is called with the unknown id
@@ -380,6 +397,7 @@ Shipped design systems are `none`, `nldesign`, `summer-breeze`, `high-contrast`,
 - AND the app MUST not throw an exception
 
 #### Scenario: Design systems are cached per request
+@e2e exclude in-process caching inside one PHP request is not observable from a browser; PHPUnit tests/Unit/DesignSystemServiceTest.php::testGetDesignSystemsReadsTheManifestOncePerInstance asserts the second call does not re-read design-systems.json
 
 - GIVEN `DesignSystemService::getDesignSystems()` is called multiple times in one request
 - WHEN the second call is made
@@ -444,25 +462,85 @@ previous boot-time injection on every surface. This change ships no admin UI for
   change
 
 #### Scenario: A context can be deliberately unthemed
+@e2e exclude themed_contexts has no admin UI or HTTP endpoint (occ only, per the requirement), so a browser test cannot set it; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testConfiguredListExcludesUnlistedContexts asserts the unlisted context gets no stylesheet
 - GIVEN `themed_contexts` is `["user","login","guest","error"]`
 - WHEN a public share page (`renderAs: public`) is rendered
 - THEN no nldesign stylesheet MUST be injected on that page
 - AND a user page rendered in the same configuration MUST remain fully themed
 
 #### Scenario: Invalid configuration fails open to themed
-@e2e exclude config-validation branch — PHPUnit on CssInjectionService
+@e2e exclude themed_contexts is occ-only, so a browser cannot store invalid JSON in it; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testInvalidJsonThemedContextsFailsOpen and ::testNonArrayJsonThemedContextsFailsOpen assert every context stays themed
 - GIVEN `themed_contexts` contains unparseable JSON or a non-array value
 - WHEN any template renders
 - THEN all contexts MUST be treated as themed
 - AND no error MUST be raised
 
 #### Scenario: Unknown renderAs values stay themed
-@e2e exclude forward-compatibility branch — PHPUnit on the listener mapping
+@e2e exclude no Nextcloud page renders with an unknown renderAs, so no browser can reach this branch; PHPUnit tests/Unit/Listener/ThemeInjectionListenerTest.php::testUnknownRenderAsStillInjects asserts injection proceeds
 - GIVEN a `BeforeTemplateRenderedEvent` whose response `renderAs` is `blank` or a value unknown
   to the listener
 - WHEN the listener handles the event
 - THEN injection MUST proceed as themed (fail open)
 - AND the unknown value MUST NOT cause the configured context list to strip theming
+
+### Requirement: The theme scopes layer sits between the design system and the component scopes
+The app MUST inject `css/theme-scopes.css` after every stylesheet of the active design system and before `css/component-scopes.css`, in every themed render context.
+
+@e2e exclude Stylesheet order is a server-side injection fact; the browser-visible consequence is tested in `nextcloud-variable-mapping` ("A set value reaches the page").
+
+#### Scenario: Order on a workspace page
+- GIVEN the nldesign design system is active
+- WHEN a workspace page is rendered
+- THEN the injected stylesheets MUST list `systems/nldesign/element-overrides` before `theme-scopes`
+- AND they MUST list `theme-scopes` before `component-scopes`
+
+#### Scenario: Order on the login page
+- GIVEN the lasuite design system is active
+- WHEN the login page is rendered
+- THEN `theme-scopes` MUST follow the last lasuite stylesheet
+- AND it MUST precede `component-scopes`
+
+#### Scenario: A component scope falls back to a theme-scoped value
+- GIVEN a set declares `--nldesign-nc-color-warning-hover` and no component token for the warning button
+- WHEN a page with a warning button renders
+- THEN the button's hover colour MUST be the set's value
+
+### Requirement: Dark-mode compatibility variables follow Nextcloud in dark unless given a dark value
+REQ-CSS-007 MUST keep holding for every layer: `--color-main-background`, `--color-main-background-rgb`, `--color-main-background-translucent`, `--color-background-plain`, `--background-invert-if-dark` and `--background-invert-if-bright` MUST resolve to Nextcloud's own value in every dark theme unless a set's dark variant file or a dark admin value provides one.
+
+@e2e exclude The browser check is "Unset under the dark theme" in `nextcloud-variable-mapping`, run once per variable in this list.
+
+#### Scenario: A light-only admin value leaves dark mode alone
+- GIVEN the admin saves `--color-main-background: #fdfcf8` with no dark value
+- AND the user has chosen Nextcloud's dark theme
+- WHEN a page renders
+- THEN the computed `--color-main-background` MUST equal Nextcloud's dark value
+
+#### Scenario: The rule for every other admin override is unchanged
+- GIVEN the admin saves `--color-primary: #24578f`
+- AND the user has chosen Nextcloud's dark theme
+- WHEN a page renders
+- THEN the computed `--color-primary` MUST be the dark value the overrides writer derives from `#24578f`, as for every brand override
+
+### Requirement: The internal scopes sit after the component scopes
+The app MUST emit the internal scopes as an inline `<style id="thematiq-internal-scopes">` directly after `css/component-scopes.css`, in every themed render context, and MUST emit nothing for them when the set and the overrides give no internal token a value. The app MUST NOT write a file for them.
+
+@e2e exclude Stylesheet order is a server-side injection fact; the browser-visible effect is tested in `component-tokens`.
+
+#### Scenario: Order on a workspace page
+- GIVEN the active set gives `--nldesign-nc-dp-hover-color` a value
+- WHEN a workspace page is rendered
+- THEN the stylesheet manifest MUST list `component-scopes`, then `internal-scopes`, as an inline layer
+
+#### Scenario: Custom overrides still come last
+- GIVEN the admin has saved overrides
+- WHEN a page is rendered
+- THEN the `custom-overrides` link MUST follow the internal scopes
+
+#### Scenario: Nothing set adds nothing
+- GIVEN neither the active set nor the overrides declare an internal token
+- WHEN a page is rendered
+- THEN the page MUST carry no internal scopes layer
 
 ## Current Implementation Status
 
@@ -536,6 +614,10 @@ on both light and dark surfaces with a single token value.
 
 **Revisit if:** the brand rule is updated to explicitly cover focus indicators,
 or if a contrast audit shows the current value fails on specific backgrounds.
+
+**Revisited (#896):** the contrast audit showed the default value at about 2.0:1
+on white. The token stays translucent and becomes the halo; the 2px outline is
+the same colour made opaque, which reaches 3:1 (see "Focus indicator visible").
 
 **References:** Issue #131.
 

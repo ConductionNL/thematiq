@@ -102,4 +102,28 @@ class CssParserServiceTest extends TestCase {
 	public function testEmptyInputDegradesToEmpty(): void {
 		$this->assertSame([], $this->parser->parseDarkBlock(css: ''));
 	}//end testEmptyInputDegradesToEmpty()
+
+	/**
+	 * A comment inside `:root` that holds braces does not end the block early. defaults.css
+	 * carries `{normal,bold}` in a comment at line 156, which cut every token after it.
+	 *
+	 * @return void
+	 */
+	public function testBracesInACommentDoNotEndTheRootBlock(): void {
+		$css = ":root {\n\t--a: 1;\n\t/* the {normal,bold} weights */\n\t--b: 2;\n}\n";
+
+		$this->assertSame(['--a' => '1', '--b' => '2'], $this->parser->parseRootBlock(css: $css));
+	}//end testBracesInACommentDoNotEndTheRootBlock()
+
+	/**
+	 * The real defaults layer is read whole: its last `:root` tokens are present.
+	 *
+	 * @return void
+	 */
+	public function testDefaultsLayerIsReadWhole(): void {
+		$root = $this->parser->parseRootBlock(css: (string)file_get_contents(\dirname(__DIR__, 3) . '/css/systems/nldesign/defaults.css'));
+
+		$this->assertSame('0', ($root['--nldesign-border-radius'] ?? null));
+		$this->assertSame('4px', ($root['--nldesign-border-radius-large'] ?? null));
+	}//end testDefaultsLayerIsReadWhole()
 }//end class

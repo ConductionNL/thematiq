@@ -427,16 +427,33 @@ function main() {
 		name: '--nldesign-font-family',
 		value: brand.typography.fontFamily,
 	})
-	semantic.push({
-		name: '--nldesign-font-weight-normal',
-		value: brand.typography.weightNormal,
-	})
-	semantic.push({
-		name: '--nldesign-font-weight-bold',
-		value: brand.typography.weightBold,
-	})
+	// A dark header needs Nextcloud's app-menu icons left white; the defaults
+	// layer inverts them to black for its white header. Optional, so a brand
+	// with a light header simply omits it.
+	if (brand.headerIconFilter !== undefined) {
+		semantic.push({
+			name: '--nldesign-header-icon-filter',
+			value: brand.headerIconFilter,
+		})
+	}
 
-	for (const [step, sizes] of Object.entries(brand.typography.scale)) {
+	// The weight, size and space steps below are OPTIONAL. No layer in the app
+	// reads them under the --nldesign- prefix, so the vocabulary audit counts
+	// them as foreign names. A brand that wants to pass that audit omits them.
+	if (brand.typography.weightNormal !== undefined) {
+		semantic.push({
+			name: '--nldesign-font-weight-normal',
+			value: brand.typography.weightNormal,
+		})
+	}
+	if (brand.typography.weightBold !== undefined) {
+		semantic.push({
+			name: '--nldesign-font-weight-bold',
+			value: brand.typography.weightBold,
+		})
+	}
+
+	for (const [step, sizes] of Object.entries(brand.typography.scale ?? {})) {
 		semantic.push({
 			name: `--nldesign-font-size-${step}`,
 			value: sizes.fontSize,
@@ -447,7 +464,7 @@ function main() {
 		})
 	}
 
-	for (const [step, size] of Object.entries(brand.space)) {
+	for (const [step, size] of Object.entries(brand.space ?? {})) {
 		semantic.push({ name: `--nldesign-space-${step}`, value: size })
 	}
 

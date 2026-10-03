@@ -9,6 +9,7 @@
 		"id": "nldesign",
 		"name": "NL Design System",
 		"description": "Dutch government design system — Fira Sans, Rijkshuisstijl defaults, Utrecht component bridge, element-level overrides.",
+		"documentation_url": "https://nldesignsystem.nl",
 		"stylesheets": [
 			"systems/nldesign/fonts",
 			"systems/nldesign/defaults",
@@ -43,6 +44,7 @@
 		"id": "lasuite",
 		"name": "La Suite numérique",
 		"description": "Pixel-adjacent match to La Suite numérique's Cunningham design system (MIT) — the Docs/Meet/Chat suite behind MinBZK/mijn-bureau — so a Nextcloud core in a sovereign-workplace (EDIC) bundle shows no visual seam. Self-hosted Inter (SIL OFL 1.1) with Marianne resolved only via local() install; no Marianne files, no La Suite/state logos shipped. Cunningham base is generated (1167 tokens, blue); the deployed violet brand is a separate, sourced override layer.",
+		"documentation_url": "https://github.com/suitenumerique/cunningham",
 		"stylesheets": [
 			"systems/lasuite/fonts",
 			"systems/lasuite/defaults",
@@ -50,12 +52,16 @@
 			"systems/lasuite/bridge",
 			"systems/lasuite/element-overrides"
 		],
+		"versioned_stylesheets": {
+			"35": ["systems/lasuite/shell-nc35"]
+		},
 		"icon_pack": "dsfr"
 	},
 	{
 		"id": "cunningham",
 		"name": "Cunningham (blue base)",
 		"description": "The published Cunningham design system (MIT) as the npm packages actually distribute it — blue base (brand-600 #0659C5), no La Suite deployment override. Reuses the same generated defaults as lasuite, minus the sourced violet brand-override layer. Self-hosted Inter (SIL OFL 1.1) with Marianne resolved only via local() install; no Marianne files, no logos shipped.",
+		"documentation_url": "https://github.com/suitenumerique/cunningham",
 		"stylesheets": [
 			"systems/lasuite/fonts",
 			"systems/lasuite/defaults",

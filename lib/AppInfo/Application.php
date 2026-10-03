@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
- * @spec openspec/changes/render-event-injection/tasks.md#task-3.1
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
+ * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.1
  */
 
 declare(strict_types=1);
@@ -24,6 +24,9 @@ namespace OCA\Thematiq\AppInfo;
 
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Listener\ThemeInjectionListener;
+use OCA\Thematiq\Middleware\ConfigSourceLockMiddleware;
+use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -36,11 +39,22 @@ use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
  *
  * Bootstraps the NL Design theme system and injects design tokens.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
  */
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'thematiq';
+
+	/**
+	 * The config.php key that declares the server's OTAP environment
+	 * (openspec/specs/environment-marker/spec.md).
+	 */
+	public const ENVIRONMENT_CONFIG_KEY = 'thematiq.environment';
+
+	/**
+	 * The command an administrator runs to declare the environment.
+	 */
+	public const ENVIRONMENT_OCC_COMMAND = 'occ config:system:set thematiq.environment --value=<environment>';
 
 	/**
 	 * Constructor.
@@ -85,8 +99,8 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/adopt-apphost-2026-06-16/tasks.md#task-2
-	 * @spec openspec/changes/render-event-injection/tasks.md#task-3.1
+	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-2
+	 * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.1
 	 * @spec openspec/specs/theming-capability/spec.md
 	 */
 	public function register(IRegistrationContext $context): void {
@@ -94,12 +108,30 @@ class Application extends App implements IBootstrap {
 		// process-wide, not only inside this app's own container — required so a
 		// cross-app event listener (e.g. the OpenRegister federated-config type)
 		// can be constructed by another app's dispatcher. Mirrors hermiq.
-		include_once __DIR__ . '/../../vendor/autoload.php';
+		//
+		// Guarded, because an install without `vendor/` (a git checkout nobody
+		// ran composer in) is legitimate: the app has no runtime composer
+		// dependency and Nextcloud autoloads `lib/` itself. Unguarded, the
+		// include_once logged two warnings on every request that booted the
+		// app (thematiq#266).
+		$autoloader = $this->composerAutoloader();
+		if (is_file($autoloader) === true) {
+			include_once $autoloader;
+		}
 
 		// Health endpoint served by Controller\HealthController, which drives
 		// the AppHost engine by composition — no explicit registration needed.
 		// Public huisstijl capability — see lib/Capabilities.php.
 		$context->registerCapability(Capabilities::class);
+
+		// Runtime files (overrides, custom CSS, uploaded sets, captured images)
+		// live in app data, never in the signed app directory. See
+		// lib/Service/RuntimeFile/RuntimeFileStore.php.
+		$context->registerServiceAlias(RuntimeFileStore::class, AppDataRuntimeFileStore::class);
+
+		// Theme as code (openspec/specs/theme-as-code/spec.md): while
+		// thematiq.config_source_lock is on, configuration setters answer 423.
+		$context->registerMiddleware(ConfigSourceLockMiddleware::class);
 
 		// Event-driven CSS injection — see lib/Listener/ThemeInjectionListener.php.
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, ThemeInjectionListener::class);
@@ -147,6 +179,19 @@ class Application extends App implements IBootstrap {
 	}//end register()
 
 	/**
+	 * The path of this app's composer autoloader, which may not exist.
+	 *
+	 * Its own method so a test can point register() at a missing file.
+	 *
+	 * @return string The absolute path to `vendor/autoload.php`.
+	 *
+	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-2
+	 */
+	protected function composerAutoloader(): string {
+		return dirname(__DIR__, 2) . '/vendor/autoload.php';
+	}//end composerAutoloader()
+
+	/**
 	 * Boot the application.
 	 *
 	 * Intentionally a no-op: `IBootstrap` requires the method, but style
@@ -161,7 +206,7 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - IBootstrap::boot() mandates this exact signature
 	 *
-	 * @spec openspec/changes/render-event-injection/tasks.md#task-3.2
+	 * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.2
 	 */
 	public function boot(IBootContext $context): void {
 	}//end boot()

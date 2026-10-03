@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OCA\Thematiq\Controller\SettingsController;
+use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingService;
@@ -129,23 +130,10 @@ class SettingsControllerEndpointsTest extends TestCase {
 			$auditService,
 			$this->createMock(EmailThemingService::class),
 			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class)
+			$this->createMock(GroupThemingService::class),
+			$this->createMock(ActiveTokenSetService::class)
 		);
 	}//end setUp()
-
-	/**
-	 * An instance that has never chosen a set reports the stock one rather
-	 * than an empty string — the panel selects by id, and no id selects
-	 * nothing.
-	 *
-	 * @spec openspec/specs/admin-settings/spec.md
-	 */
-	public function testTheActiveTokenSetDefaultsToStock(): void {
-		$this->assertSame('nextcloud', $this->controller->getTokenSet()->getData()['tokenSet']);
-
-		$this->appConfig['thematiq|token_set'] = 'rijkshuisstijl';
-		$this->assertSame('rijkshuisstijl', $this->controller->getTokenSet()->getData()['tokenSet']);
-	}//end testTheActiveTokenSetDefaultsToStock()
 
 	/**
 	 * A preview is only computed for a set that exists. The resolver reads

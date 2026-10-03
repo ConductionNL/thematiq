@@ -76,6 +76,9 @@ const NO_ROW_YET = new Set([
 	// The primary button's border. It tracks the background in every shipped
 	// set, so it reads as one edge — but it is a separate token with no row.
 	'primary-button: border-color <- --nldesign-component-button-primary-action-border-color',
+	// The initials on the avatar plate (#769 took them from #ffffff to the
+	// light-text token). The avatar chip has a row for the status badge only.
+	'avatar: color <- --nldesign-color-text-light',
 ])
 
 /**
@@ -86,6 +89,7 @@ const NO_ROW_YET = new Set([
 const NESTED = new Set([
 	'header-bar: background-color <- --nldesign-color-primary',
 	'avatar: color <- --nldesign-component-header-color',
+	'header-bar: color <- --nldesign-color-text-light',
 	'content-card: color <- --nldesign-component-button-primary-action-color',
 	'link: color <- --nldesign-component-header-color',
 	'link: color <- --nldesign-color-primary',
@@ -390,5 +394,35 @@ describe('component tokens: the capture block is taken on body', () => {
 
 			expect(stranded.map(() => file)).toEqual([])
 		}
+	})
+})
+
+/**
+ * Core's guest layout wraps the login logo in its own `<div id="header">`, so
+ * a bare `#header` in the header-bar scope painted the top bar's colour behind
+ * the login logo — an area that belongs to `logo-slogan`, `login-card` and the
+ * login background. The exclusion sits in `:where()` so the selector keeps the
+ * specificity of a plain `#header`.
+ */
+describe('component tokens: header-bar leaves the login page alone', () => {
+	const LOGGED_IN = ':where(body:not(#body-login)) #header'
+
+	it('maps header-bar onto #header outside the login page only', () => {
+		const selectors = mapping.components['header-bar'].selectors
+		const headers = selectors.filter((s) => s.includes('#header'))
+
+		expect(headers).toEqual([LOGGED_IN])
+	})
+
+	it('generates no bare #header rule', () => {
+		const css = fs.readFileSync(
+			path.join(ROOT, 'css/component-scopes.css'),
+			'utf8',
+		)
+		// `#header` at the start of a selector, i.e. not under the exclusion.
+		const bare = css.match(/(^|[,{}]|\*\/)\s*#header\b/g) || []
+
+		expect(bare).toEqual([])
+		expect(css).toContain(LOGGED_IN + ' {')
 	})
 })

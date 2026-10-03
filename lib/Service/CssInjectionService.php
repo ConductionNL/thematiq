@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
@@ -39,7 +40,7 @@ use Throwable;
  * its cascade position, and its loading condition are otherwise unchanged.
  *
  * The two `\OCP\Util::addStyle()` / `\OCP\Util::addHeader()` calls are
- * wrapped in the protected `emitStyle()` / `emitFontLink()` seams purely so
+ * wrapped in the protected `emitStyle()` / `emitStylesheetLink()` seams purely so
  * unit tests can assert the exact stylesheet sequence via a partial mock —
  * the real static calls delegate to the server-private `\OC_Util`, which is
  * not resolvable outside a full Nextcloud bootstrap. Production code always
@@ -86,13 +87,6 @@ class CssInjectionService {
 	 * @var DesignSystemService
 	 */
 	private DesignSystemService $designSystemService;
-
-	/**
-	 * Ensures the custom-overrides.css file exists before it is loaded.
-	 *
-	 * @var CustomOverridesService
-	 */
-	private CustomOverridesService $overridesService;
 
 	/**
 	 * Gates and reads the freeform custom CSS layer.
@@ -146,11 +140,28 @@ class CssInjectionService {
 	private StockTokensService $stockTokens;
 
 	/**
+	 * @var RuntimeFileLocator Finds runtime files: uploaded sets, dark variants, overrides, custom CSS.
+	 */
+	private RuntimeFileLocator $runtimeFiles;
+
+	/** @var AppBrandService The brand per app (openspec/specs/per-app-theming/spec.md). */
+	private AppBrandService $appBrands;
+
+	/** @var array<string, string>|null The rendered app's logo layer for this request, when its brand applies. */
+	private ?array $brandLogo = null;
+
+	/**
+	 * Builds the rules that carry a set's internal tokens onto their components.
+	 *
+	 * @var InternalScopesService
+	 */
+	private InternalScopesService $internalScopes;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
 	 * @param DesignSystemService $designSystemService The design system resolver.
-	 * @param CustomOverridesService $overridesService The custom overrides file service.
 	 * @param CustomCssService $customCssService The freeform custom CSS service.
 	 * @param FontService $fontService The custom font resolver.
 	 * @param IURLGenerator $urlGenerator The URL generator.
@@ -158,6 +169,10 @@ class CssInjectionService {
 	 * @param ThemePreviewBannerService $previewBannerService The theme-preview banner injector.
 	 * @param LoggerInterface $logger The logger for skipped layers.
 	 * @param StockTokensService $stockTokens Resolves the `nextcloud` set from the running instance.
+	 * @param RuntimeFileLocator $runtimeFiles Finds files thematiq wrote at runtime, which live in app data.
+	 * @param LogoLayerService $logoLayer Resolves the active set's logo layer.
+	 * @param AppBrandService $appBrands The brand per app.
+	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -165,7 +180,6 @@ class CssInjectionService {
 	public function __construct(
 		IConfig $config,
 		DesignSystemService $designSystemService,
-		CustomOverridesService $overridesService,
 		CustomCssService $customCssService,
 		FontService $fontService,
 		IURLGenerator $urlGenerator,
@@ -173,10 +187,13 @@ class CssInjectionService {
 		ThemePreviewBannerService $previewBannerService,
 		LoggerInterface $logger,
 		StockTokensService $stockTokens,
+		RuntimeFileLocator $runtimeFiles,
+		private readonly LogoLayerService $logoLayer,
+		AppBrandService $appBrands,
+		?InternalScopesService $internalScopes = null,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
-		$this->overridesService = $overridesService;
 		$this->customCssService = $customCssService;
 		$this->fontService = $fontService;
 		$this->urlGenerator = $urlGenerator;
@@ -184,6 +201,9 @@ class CssInjectionService {
 		$this->previewBannerService = $previewBannerService;
 		$this->logger = $logger;
 		$this->stockTokens = $stockTokens;
+		$this->runtimeFiles = $runtimeFiles;
+		$this->appBrands = $appBrands;
+		$this->internalScopes = ($internalScopes ?? new InternalScopesService(files: $runtimeFiles));
 	}//end __construct()
 
 	/**
@@ -237,14 +257,16 @@ class CssInjectionService {
 	 *
 	 * @param string $context One of `user`/`login`/`guest`/`public`/`error`,
 	 *                        or any other value (always themed — fail open).
+	 * @param string|null $appId The rendered app, for its brand (openspec/specs/per-app-theming/spec.md).
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
-	public function inject(string $context): void {
+	public function inject(string $context, ?string $appId = null): void {
 		if ($this->isContextThemed(context: $context) === false) {
 			return;
 		}
@@ -258,7 +280,10 @@ class CssInjectionService {
 		// It is still isolated, so a resolver failure logs and renders the
 		// page unthemed instead of throwing into the listener's catch-all.
 		try {
-			$tokenSet = $this->groupThemingService->resolveTokenSetForRequest();
+			$brand = $this->appBrands->brandFor(appId: $appId);
+			$tokenSet = $this->groupThemingService->resolveTokenSetForRequest(appBrandSet: ($brand['tokenSet'] ?? null));
+			$this->brandLogo = $this->appBrands->logoLayer(brand: $brand, tokenSet: $tokenSet, styleId: self::LOGO_STYLE_ID);
+
 			$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 			$designSystemId = $tokenSetMeta['design_system'] ?? 'nldesign';
 		} catch (Throwable $e) {
@@ -317,10 +342,33 @@ class CssInjectionService {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	private function injectDesignSystemStyles(string $designSystemId, string $tokenSet): void {
+		// Nextcloud prints every addStyle() stylesheet before every header. A
+		// runtime layer is a header, so once one is emitted, the static layers
+		// after it are linked as headers too, or they would move ahead of it.
+		$linked = false;
 		foreach ($this->designSystemLayers(designSystemId: $designSystemId, tokenSet: $tokenSet) as $entry) {
+			$linked = ($linked === true || $entry['kind'] === 'runtime');
+			if ($linked === true && $entry['kind'] === 'file') {
+				$this->emitStylesheetLink(url: $this->staticLayerUrl(file: (string)$entry['file']));
+				continue;
+			}
+
 			$this->emitLayer(entry: $entry);
 		}
 	}//end injectDesignSystemStyles()
+
+	/**
+	 * The URL of a static app stylesheet, with the installed version as cache-buster.
+	 *
+	 * @param string $file The stylesheet path relative to `css/`, without extension.
+	 *
+	 * @return string The URL.
+	 */
+	private function staticLayerUrl(string $file): string {
+		$version = $this->config->getAppValue(Application::APP_ID, 'installed_version', '0');
+
+		return $this->urlGenerator->linkTo(appName: Application::APP_ID, file: 'css/' . $file . '.css') . '?v=' . rawurlencode($version);
+	}//end staticLayerUrl()
 
 	/**
 	 * The set-dependent part of the cascade, as DATA.
@@ -344,7 +392,7 @@ class CssInjectionService {
 	 * @param string $designSystemId The resolved design system id.
 	 * @param string $tokenSet       The token set id.
 	 *
-	 * @return array<int, array{layer: string, kind: string, file?: string, css?: string, id?: string}>
+	 * @return array<int, array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string}>
 	 *         Ordered entries: `kind` is `file` (a stylesheet under `css/`, `file` without extension)
 	 *         or `inline` (a `<style>` block, `css`, with the element `id` the client replaces).
 	 *
@@ -381,37 +429,22 @@ class CssInjectionService {
 			return array_merge($layers, $this->noDesignSystemLayers(tokenSet: $tokenSet));
 		}
 
-		// 3a-1. The `nextcloud` set is the one set whose values belong to
-		// something else: it exists to reproduce the appearance of the running
-		// instance, and that appearance changes with every Nextcloud release.
-		// A shipped file can only ever hold a snapshot of one version, so it is
-		// resolved from the instance instead and the file is kept as a
-		// fallback. See StockTokensService for the measurements and for why a
-		// stylesheet cannot do this with var().
-		$stockCss = null;
+		// 3a-1. The `nextcloud` set normally takes the `none` branch above. It
+		// reaches this line only when its metadata could not be read and the
+		// design system defaulted, and then the resolved block still beats the
+		// shipped snapshot. See stockTokenLayer().
+		$tokenLayer = $this->fileLayer(layer: 'tokens', file: 'tokens/' . $tokenSet);
 		if ($tokenSet === self::STOCK_TOKEN_SET) {
-			$stockCss = $this->stockTokens->getCss();
-		}
-
-		// 3a-2. The shipped file is the layer unless the instance answered, in
-		// which case the resolved block takes its place.
-		$tokenLayer = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
-		if ($stockCss !== null) {
-			$tokenLayer = [
-				'layer' => 'tokens',
-				'kind' => 'inline',
-				'css' => $stockCss,
-				'id' => self::STOCK_TOKENS_STYLE_ID,
-			];
+			$tokenLayer = ($this->stockTokenLayer() ?? $tokenLayer);
 		}
 
 		$layers[] = $tokenLayer;
 
 		// 3a0. The logo as an ABSOLUTE url, overriding the relative one the token
-		// file declares. See logoUrlLayer() — a relative url() inside a custom
+		// file declares. See LogoLayerService::layer() — a relative url() inside a custom
 		// property is resolved against the stylesheet that USES it, and the use
 		// sites sit at different depths.
-		$logo = $this->logoUrlLayer(tokenSet: $tokenSet);
+		$logo = ($this->brandLogo ?? $this->logoLayer->layer(tokenSet: $tokenSet));
 		if ($logo !== null) {
 			$layers[] = $logo;
 		}
@@ -429,8 +462,9 @@ class CssInjectionService {
 		// so its media-query/attribute-scoped rules override it — only
 		// when the toggle is on AND a generated file exists for this set.
 		// A disabled toggle or a set without a variant adds nothing.
-		if ($this->hasDarkVariantLayer(tokenSet: $tokenSet) === true) {
-			$layers[] = ['layer' => 'dark-variant', 'kind' => 'file', 'file' => 'tokens/dark/' . $tokenSet];
+		$withDark = $this->hasDarkVariantLayer(tokenSet: $tokenSet);
+		if ($withDark === true) {
+			$layers[] = $this->fileLayer(layer: 'dark-variant', file: 'tokens/dark/' . $tokenSet);
 		}
 
 		// Functional contrast fix shared by all design systems: app icons
@@ -449,9 +483,13 @@ class CssInjectionService {
 		// to. It rides with the set layers rather than beside them so `none` stays
 		// stock — that branch returns above — and so the manifest carries it, which
 		// is what lets the client add and remove it without a reload.
+		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
 		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
-		return $layers;
+		return array_merge(
+			$layers,
+			$this->internalScopesLayer(tokenSet: $tokenSet, designSystemId: $designSystemId, withDark: $withDark)
+		);
 	}//end designSystemLayers()
 
 	/**
@@ -480,27 +518,110 @@ class CssInjectionService {
 	 * IS the running Nextcloud. Leaving the custom file out too put the saved
 	 * theme in the dropdown and none of it on the page.
 	 *
+	 * THE STOCK SET'S TOKENS ARE THE INSTANCE'S OWN. Its `--nldesign-*` values
+	 * are resolved from the running theme (see stockTokenLayer()), so the page
+	 * declares what this Nextcloud actually wears. Nothing on a `none` page
+	 * paints from them, so stock still renders as stock; what reads them is the
+	 * admin panel, which compares the live values against the set an admin is
+	 * about to apply. When the instance cannot be read nothing is emitted:
+	 * the shipped snapshot is never the stock set's layer (thematiq#620).
+	 *
 	 * @param string $tokenSet The token set id.
 	 *
-	 * @return array<int, array{layer: string, kind: string, file: string}> The entries, in cascade order.
+	 * @return array<int, array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string}>
+	 *         The entries, in cascade order.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
 	private function noDesignSystemLayers(string $tokenSet): array {
 		$layers = [];
 		if ($tokenSet !== self::STOCK_TOKEN_SET) {
-			$layers[] = ['layer' => 'tokens', 'kind' => 'file', 'file' => 'tokens/' . $tokenSet];
+			$layers[] = $this->fileLayer(layer: 'tokens', file: 'tokens/' . $tokenSet);
 		}
 
+		if ($tokenSet === self::STOCK_TOKEN_SET) {
+			$stock = $this->stockTokenLayer();
+			if ($stock !== null) {
+				$layers[] = $stock;
+			}
+		}
+
+		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
 		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
 
-		return $layers;
+		return array_merge(
+			$layers,
+			// This branch injects no dark variant, so none is read for the scopes either.
+			$this->internalScopesLayer(tokenSet: $tokenSet, designSystemId: 'none', withDark: false)
+		);
 	}//end noDesignSystemLayers()
+
+	/**
+	 * The internal scopes as an inline layer, after the component scopes, or
+	 * nothing when the set and the overrides give no internal token a value.
+	 *
+	 * Its own failure degrades only itself: the set's other layers still emit.
+	 *
+	 * @param string $tokenSet       The token set.
+	 * @param string $designSystemId The design system the set wears.
+	 * @param bool   $withDark       Whether the set's dark variant is part of the cascade.
+	 *
+	 * @return array<int, array{layer: string, kind: string, css: string, id: string}> Zero or one entry.
+	 *
+	 * @spec openspec/specs/css-architecture/spec.md
+	 */
+	private function internalScopesLayer(string $tokenSet, string $designSystemId, bool $withDark): array {
+		try {
+			$css = $this->internalScopes->forSet(tokenSet: $tokenSet, designSystemId: $designSystemId, withDark: $withDark);
+		} catch (Throwable $e) {
+			$this->logger->warning(
+				'thematiq: the internal scopes layer was skipped; the rest of the cascade still ran.',
+				['app' => Application::APP_ID, 'exception' => $e]
+			);
+			return [];
+		}
+
+		if ($css === '') {
+			return [];
+		}
+
+		return [['layer' => 'internal-scopes', 'kind' => 'inline', 'css' => $css, 'id' => self::INTERNAL_SCOPES_STYLE_ID]];
+	}//end internalScopesLayer()
+
+	/**
+	 * The `nextcloud` set's token layer, resolved from the running instance.
+	 *
+	 * The `nextcloud` set is the one set whose values belong to something
+	 * else: it exists to reproduce the appearance of the running instance, and
+	 * that appearance changes with every Nextcloud release. A shipped file can
+	 * only ever hold a snapshot of one version, so it is resolved from the
+	 * instance instead. See StockTokensService for the measurements and for
+	 * why a stylesheet cannot do this with var().
+	 *
+	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline
+	 *         layer, or null when the instance could not be read.
+	 *
+	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 */
+	private function stockTokenLayer(): ?array {
+		$css = $this->stockTokens->getCss();
+		if ($css === null) {
+			return null;
+		}
+
+		return [
+			'layer' => 'tokens',
+			'kind' => 'inline',
+			'css' => $css,
+			'id' => self::STOCK_TOKENS_STYLE_ID,
+		];
+	}//end stockTokenLayer()
 
 	/**
 	 * Emit one entry from {@see self::designSystemLayers()}.
 	 *
-	 * @param array{layer: string, kind: string, file?: string, css?: string, id?: string} $entry The layer entry.
+	 * @param array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string} $entry The layer entry.
 	 *
 	 * @return void
 	 */
@@ -510,8 +631,30 @@ class CssInjectionService {
 			return;
 		}
 
+		if ($entry['kind'] === 'runtime') {
+			$this->emitStylesheetLink(url: $this->runtimeFiles->routeUrl(name: (string)$entry['name']));
+			return;
+		}
+
 		$this->emitStyle(file: (string)$entry['file']);
 	}//end emitLayer()
+
+	/**
+	 * A stylesheet layer: a shipped static file, or a runtime file linked by route.
+	 *
+	 * @param string $layer The layer name.
+	 * @param string $file  The stylesheet path relative to `css/`, without extension.
+	 *
+	 * @return array{layer: string, kind: string, file?: string, name?: string} The layer entry.
+	 */
+	private function fileLayer(string $layer, string $file): array {
+		$name = 'css/' . $file . '.css';
+		if ($this->runtimeFiles->inStore(name: $name) === true) {
+			return ['layer' => $layer, 'kind' => 'runtime', 'name' => $name];
+		}
+
+		return ['layer' => $layer, 'kind' => 'file', 'file' => $file];
+	}//end fileLayer()
 
 	/**
 	 * The stylesheet manifest for a token set: what the page would carry for
@@ -544,8 +687,6 @@ class CssInjectionService {
 	public function getStylesheetManifest(string $tokenSet): array {
 		$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 		$designSystemId = (string)($tokenSetMeta['design_system'] ?? 'nldesign');
-		$version = $this->config->getAppValue(Application::APP_ID, 'installed_version', '0');
-
 		$layers = [];
 		foreach ($this->designSystemLayers(designSystemId: $designSystemId, tokenSet: $tokenSet) as $entry) {
 			if ($entry['kind'] === 'inline') {
@@ -558,12 +699,16 @@ class CssInjectionService {
 				continue;
 			}
 
-			$layers[] = [
-				'layer' => $entry['layer'],
-				'kind' => 'file',
-				'href' => $this->urlGenerator->linkTo(appName: Application::APP_ID, file: 'css/' . $entry['file'] . '.css')
-					. '?v=' . rawurlencode($version),
-			];
+			if ($entry['kind'] === 'runtime') {
+				$layers[] = [
+					'layer' => $entry['layer'],
+					'kind' => 'file',
+					'href' => $this->runtimeFiles->routeUrl(name: (string)$entry['name']),
+				];
+				continue;
+			}
+
+			$layers[] = ['layer' => $entry['layer'], 'kind' => 'file', 'href' => $this->staticLayerUrl(file: (string)$entry['file'])];
 		}
 
 		// 4.5 Custom fonts — see injectCustomFontLink(): only for a design
@@ -605,31 +750,11 @@ class CssInjectionService {
 		// CustomOverridesService.
 		$overridesFile = CustomOverridesService::fileFor(tokenSet: $tokenSet, designSystemId: $designSystemId);
 		//
-		// `ensureExists()` WRITES `css/custom-overrides.css` INSIDE THE APP
-		// DIRECTORY, which is exactly the write a read-only or
-		// root-owned-checkout deployment refuses (nldesign#264). It throws only
-		// when the file is absent AND could not be created, so on failure there
-		// is no file to link — emitting the tag anyway would add a guaranteed
-		// 404 to every page. The freeform layer below is unrelated and still
-		// runs, and the skip is logged rather than silent.
-		$overridesReady = true;
-		try {
-			$this->overridesService->ensureExists(tokenSet: $tokenSet);
-		} catch (Throwable $e) {
-			$overridesReady = false;
-			$this->logger->warning(
-				'nldesign: css/' . $overridesFile . '.css is absent and could not be created, so the custom-overrides '
-				. 'layer was skipped. The app directory is not writable by the web server; generated CSS belongs '
-				. 'in appdata (see nldesign#264).',
-				[
-					'app' => Application::APP_ID,
-					'exception' => $e,
-				]
-			);
-		}
-
-		if ($overridesReady === true) {
-			$this->emitStyle(file: $overridesFile);
+		// Kept in app data and linked only once saved: writing it on render
+		// is what gave every instance a code integrity warning.
+		$overridesName = 'css/' . $overridesFile . '.css';
+		if ($this->runtimeFiles->store()->exists(name: $overridesName) === true) {
+			$this->emitStylesheetLink(url: $this->runtimeFiles->routeUrl(name: $overridesName));
 		}
 
 		// 4.1 Freeform custom CSS — admin-authored arbitrary rules. Emitted
@@ -639,7 +764,7 @@ class CssInjectionService {
 		if ($this->customCssService->isEnabled() === true
 			&& $this->customCssService->hasContent() === true
 		) {
-			$this->emitStyle(file: 'custom-css');
+			$this->emitStylesheetLink(url: $this->runtimeFiles->routeUrl(name: CustomCssService::FILE));
 		}
 	}//end injectOverrideStyles()
 
@@ -665,7 +790,7 @@ class CssInjectionService {
 		}
 
 		$cssUrl = $this->urlGenerator->linkToRoute('thematiq.font.css') . '?v=' . $this->fontService->getRevision();
-		$this->emitFontLink(url: $cssUrl);
+		$this->emitStylesheetLink(url: $cssUrl);
 	}//end injectCustomFontLink()
 
 	/**
@@ -693,134 +818,12 @@ class CssInjectionService {
 			$this->emitStyle(file: 'show-menu-labels');
 		}
 
+		// A header, so it follows the overrides and custom CSS links: it must
+		// come last, or a stored value would beat the lock.
 		if ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1') {
-			$this->emitStyle(file: 'primary-lock');
+			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'primary-lock'));
 		}
 	}//end injectConditionalStyles()
-
-	/**
-	 * Re-declare the active set's logo as an ABSOLUTE url.
-	 *
-	 * 🔴 A RELATIVE `url()` INSIDE A CUSTOM PROPERTY IS RESOLVED AGAINST THE
-	 * STYLESHEET THAT USES IT, not the one that declares it. The token files
-	 * declare `url('../../img/logos/<set>.svg')`, which is correct relative to
-	 * `css/tokens/` — but the property is consumed in
-	 * `css/systems/nldesign/theme.css` and in `css/token-overrides/*.css`, which
-	 * sit at DIFFERENT depths, so no single relative path can be right for both.
-	 *
-	 * Measured: the browser asked for `…/css/img/logos/rijkshuisstijl.svg` (the
-	 * `theme.css` depth) and got a 404. A 404 is re-requested on every
-	 * recompute, including on an OS dark/light flip — which is why this
-	 * presented itself as an e2e failure asserting that the OS switch issues no
-	 * requests. The switch was pure CSS; a broken image was not.
-	 *
-	 * `linkTo()` resolves the install root, so this works under `custom_apps`
-	 * and under `apps` without either being hard-coded.
-	 *
-	 * A SET THAT SHIPS NO LOGO GETS NEXTCLOUD'S OWN. `theme.css` blanks the
-	 * stock logo (`background-image: var(--nldesign-logo-url, none)`) so a set's
-	 * artwork can take its place; for the ~20 shipped sets with no
-	 * `img/logos/<id>.svg` that resolved to `none`, and the header simply had a
-	 * 56px hole where every stock installation shows the Nextcloud logo. There
-	 * is no CSS-only fix: a `!important` declaration whose `var()` chain ends
-	 * unresolved is still the winning declaration and computes to `unset`, so
-	 * Nextcloud's own rule never comes back — and its fallback URL is relative
-	 * to `core/css/server.css`, a depth this app cannot spell. So the fallback
-	 * chain is emitted here, where the webroot is known: the theming app's own
-	 * `--image-logoheader` / `--image-logo` first (an admin-uploaded logo is
-	 * still an admin-uploaded logo), then core's `logo.svg`.
-	 *
-	 * WHICH fallback depends on whether the ADMIN uploaded a logo, which is why
-	 * the branch is taken here and not in CSS:
-	 *
-	 *  - Uploaded logo → it is brand artwork and is shown as it is, through the
-	 *    theming app's own `--image-logoheader` / `--image-logo`, with no filter.
-	 *  - No uploaded logo → core's `logo.svg`, which is WHITE, drawn for
-	 *    Nextcloud's dark-blue header. A `filter` cannot tint an image to an
-	 *    arbitrary colour, and this app's shipped sets paint headers from white
-	 *    (Rijkshuisstijl, Amsterdam, Cunningham) to saturated (Zwolle's blue,
-	 *    Rotterdam's green), so no single filter is right for all of them. It
-	 *    is MASKED instead — the SVG becomes the alpha channel and the
-	 *    background paints `--nldesign-color-header-text`, which is by
-	 *    definition the colour this set says is legible on its own header.
-	 *    That is the technique
-	 *    `css/systems/lasuite/element-overrides.css` already documents for the
-	 *    same image.
-	 *
-	 * A set that ships its own artwork is not touched here at all and keeps
-	 * whatever `--nldesign-logo-filter` its token file declares.
-	 *
-	 * @param string $tokenSet The selected token set id.
-	 *
-	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline layer, or null when
-	 *         nothing can be said about the logo (core's logo.svg unresolvable).
-	 *
-	 * @spec openspec/specs/app-token-set-selection/spec.md
-	 */
-	private function logoUrlLayer(string $tokenSet): ?array {
-		// A converter-extracted logo may be any raster or vector type Nextcloud's
-		// ImageManager accepts; a shipped set's is an .svg. First match wins.
-		$relative = null;
-		foreach (['svg', 'png', 'jpg', 'gif', 'webp'] as $extension) {
-			$candidate = 'img/logos/' . $tokenSet . '.' . $extension;
-			if (is_file($this->appPath() . '/' . $candidate) === true) {
-				$relative = $candidate;
-				break;
-			}
-		}
-
-		// UNQUOTED on purpose, here and below. `Util::addHeader()` HTML-escapes
-		// its text, so a quoted `url("…")` reaches the page as
-		// `url(&quot;…&quot;)` and the declaration is invalid — measured in the
-		// browser. An app path carries no spaces, parentheses or quotes, so
-		// unquoted is both valid and safe.
-		if ($relative !== null) {
-			return $this->inlineLayer(
-				css: ':root{--nldesign-logo-url:url('
-					. $this->urlGenerator->linkTo(appName: Application::APP_ID, file: $relative)
-					. ')}'
-			);
-		}
-
-		// The same appconfig keys `ThemingDefaults` reads to decide whether a
-		// custom logo exists at all.
-		$hasUploadedLogo = ($this->config->getAppValue('theming', 'logoheaderMime', '') !== ''
-			|| $this->config->getAppValue('theming', 'logoMime', '') !== '');
-		if ($hasUploadedLogo === true) {
-			return $this->inlineLayer(
-				css: ':root{--nldesign-logo-url:var(--image-logoheader,var(--image-logo));'
-					. '--nldesign-logo-filter:none}'
-			);
-		}
-
-		// `imagePath()` THROWS when it cannot resolve the file, and this method
-		// runs inside the design-system layer, so an unhandled throw here would
-		// also cancel the dark-variant and contrast stylesheets emitted after
-		// it. Without the URL there is nothing to mask, so the header keeps the
-		// pre-existing empty slot rather than gaining a coloured block.
-		try {
-			$logo = $this->urlGenerator->imagePath(appName: 'core', file: 'logo/logo.svg');
-		} catch (Throwable $e) {
-			$this->logger->debug(
-				'nldesign: core logo.svg could not be resolved, so the header keeps the active set\'s own (absent) logo.',
-				[
-					'app' => Application::APP_ID,
-					'exception' => $e,
-				]
-			);
-			return null;
-		}
-
-		$mask = 'url(' . $logo . ') no-repeat center / contain!important';
-
-		return $this->inlineLayer(
-			css: '#nextcloud .logo{background-image:none!important;'
-				. 'background-color:var(--nldesign-color-header-text,#333333)!important;'
-				. 'filter:none!important;'
-				. '-webkit-mask:' . $mask . ';'
-				. 'mask:' . $mask . '}'
-		);
-	}//end logoUrlLayer()
 
 	/**
 	 * The `id` the logo `<style>` carries on the page.
@@ -852,15 +855,9 @@ class CssInjectionService {
 	public const STOCK_TOKENS_STYLE_ID = 'nldesign-stock-tokens';
 
 	/**
-	 * Build the logo layer entry.
-	 *
-	 * @param string $css The stylesheet body.
-	 *
-	 * @return array{layer: string, kind: string, css: string, id: string} The entry.
+	 * The id of the inline `<style>` carrying the internal scopes.
 	 */
-	private function inlineLayer(string $css): array {
-		return ['layer' => 'logo-url', 'kind' => 'inline', 'css' => $css, 'id' => self::LOGO_STYLE_ID];
-	}//end inlineLayer()
+	public const INTERNAL_SCOPES_STYLE_ID = 'thematiq-internal-scopes';
 
 	/**
 	 * Emit one inline `<style>` block into the page head.
@@ -992,18 +989,19 @@ class CssInjectionService {
 	}//end emitStyle()
 
 	/**
-	 * Emit the dynamically-generated custom-fonts stylesheet as a `<link>`
-	 * header (not a static `css/` file, so `Util::addStyle()` cannot serve it).
+	 * Emit a stylesheet served by a route, not a static `css/` file, as a `<link>`
+	 * header: the generated custom-fonts stylesheet and every runtime file.
 	 *
-	 * @param string $url The absolute URL to the generated fonts CSS route.
+	 * @param string $url The route URL, with its `?v=` revision.
 	 *
 	 * @return void
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - \OCP\Util::addHeader() is the Nextcloud API for header injection
 	 *
 	 * @spec openspec/specs/custom-fonts/spec.md
+	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
-	protected function emitFontLink(string $url): void {
+	protected function emitStylesheetLink(string $url): void {
 		\OCP\Util::addHeader(
 			tag: 'link',
 			attributes: [
@@ -1011,5 +1009,6 @@ class CssInjectionService {
 				'href' => $url,
 			]
 		);
-	}//end emitFontLink()
+	}//end emitStylesheetLink()
+
 }//end class

@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCP\App\IAppManager;
+use OCP\IL10N;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -44,6 +45,7 @@ class PlaygroundStateServiceTest extends TestCase {
 		?TokenSetPreviewService $previewValues = null,
 		?TokenSetConverterService $converter = null,
 		?StockTokensService $stockTokens = null,
+		?IL10N $l10n = null,
 	): PlaygroundStateService {
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->method('getAppPath')->willReturn((string)realpath(__DIR__ . '/../../..'));
@@ -63,9 +65,119 @@ class PlaygroundStateServiceTest extends TestCase {
 			$appManager,
 			$previewValues,
 			$converter,
-			($stockTokens ?? $this->createMock(StockTokensService::class))
+			($stockTokens ?? $this->createMock(StockTokensService::class)),
+			($l10n ?? $this->identityL10n())
 		);
 	}//end build()
+
+	/**
+	 * An IL10N that answers with the English source, as an English locale does.
+	 *
+	 * It runs the text through vsprintf() with no parameters, exactly as
+	 * Nextcloud's L10NString::__toString() does, so a bare `%` in a source
+	 * string fails here the way it fails on a real server (#824).
+	 *
+	 * @return IL10N The stub.
+	 */
+	private function identityL10n(): IL10N {
+		$l10n = $this->createMock(IL10N::class);
+		$l10n->method('t')->willReturnCallback(fn (string $text): string => vsprintf($text, []));
+
+		return $l10n;
+	}//end identityL10n()
+
+	/**
+	 * An IL10N that marks every string it is asked for, and remembers them.
+	 *
+	 * @param array<int, string> $asked Filled with every string passed to t().
+	 *
+	 * @return IL10N The stub.
+	 */
+	private function markingL10n(array &$asked): IL10N {
+		$l10n = $this->createMock(IL10N::class);
+		$l10n->method('t')->willReturnCallback(
+			function (string $text) use (&$asked): string {
+				$asked[] = $text;
+
+				return 'NL:' . vsprintf($text, []);
+			}
+		);
+
+		return $l10n;
+	}//end markingL10n()
+
+	/**
+	 * The panel's own words reach the admin in their language: every title,
+	 * subtitle, paints note, token-less fact, reason and version note goes
+	 * through IL10N, and the data around them (ids, token names, codes) does
+	 * not.
+	 */
+	public function testTheInventoryChromeIsTranslatedAndItsDataIsNot(): void {
+		$asked = [];
+		$state = $this->build(l10n: $this->markingL10n($asked))->getInitialState(tokenSetId: 'nextcloud');
+		$inventory = $state['playgroundInventory'];
+
+		foreach ($inventory['components'] as $component) {
+			$this->assertStringStartsWith('NL:', $component['title']);
+			$this->assertStringStartsWith('NL:', $component['subtitle']);
+			$this->assertStringStartsNotWith('NL:', $component['id']);
+			foreach ($component['tokens'] ?? [] as $token) {
+				$this->assertStringStartsWith('NL:', $token['paints'], $component['id']);
+				$this->assertStringStartsWith('--', $token['name']);
+			}
+			foreach ($component['fixed'] ?? [] as $fixed) {
+				$this->assertStringStartsWith('NL:', $fixed['what']);
+				$this->assertStringStartsWith('NL:', $fixed['why']);
+				$this->assertStringStartsNotWith('NL:', $fixed['code']);
+			}
+			foreach ($component['versionNotes'] ?? [] as $note) {
+				$this->assertStringStartsWith('NL:', $note['text']);
+			}
+		}
+
+		$this->assertSame(['derived-by-nextcloud' => 'NL:Calculated by Nextcloud.'], $state['playgroundReasons']);
+	}//end testTheInventoryChromeIsTranslatedAndItsDataIsNot()
+
+	/**
+	 * Every chrome string the inventory and the mapping table carry has a key
+	 * in the catalogue and a Dutch translation (ADR-007: Dutch required).
+	 *
+	 * The strings live in data files, so test:l10n, which scans t() calls in
+	 * js/, cannot see them. This is the guard that can: a new title, paints
+	 * note or reason without an l10n/en.json key and an l10n/nl.json value
+	 * fails here.
+	 */
+	public function testEveryChromeStringIsInTheCatalogueWithADutchTranslation(): void {
+		$root = __DIR__ . '/../../..';
+		$mapping = json_decode((string)file_get_contents($root . '/scripts/mapping/nlds-to-nextcloud.json'), true);
+		$converter = $this->createMock(TokenSetConverterService::class);
+		$converter->method('getReasons')->willReturn($mapping['reasons']);
+
+		$asked = [];
+		$this->build(converter: $converter, l10n: $this->markingL10n($asked))->getInitialState(tokenSetId: 'nextcloud');
+		$asked = array_values(array_unique($asked));
+
+		$english = json_decode((string)file_get_contents($root . '/l10n/en.json'), true)['translations'];
+		$dutch = json_decode((string)file_get_contents($root . '/l10n/nl.json'), true)['translations'];
+
+		$this->assertGreaterThan(200, count($asked));
+		$missing = [];
+		foreach ($asked as $text) {
+			if (isset($english[$text]) === false || is_string($dutch[$text] ?? null) === false || trim($dutch[$text]) === '') {
+				$missing[] = $text;
+				continue;
+			}
+
+			// The translation goes through vsprintf() too (#824).
+			try {
+				vsprintf($dutch[$text], []);
+			} catch (\ValueError $e) {
+				$missing[] = $text . ' (Dutch value has an unescaped %)';
+			}
+		}
+
+		$this->assertSame([], $missing, 'Chrome strings with no l10n/en.json key or no Dutch translation in l10n/nl.json.');
+	}//end testEveryChromeStringIsInTheCatalogueWithADutchTranslation()
 
 	/**
 	 * Exactly the keys js/playground.js reads, and no others.
@@ -82,10 +194,24 @@ class PlaygroundStateServiceTest extends TestCase {
 				'playgroundTokenSources',
 				'playgroundVersion',
 				'playgroundSet',
+				'playgroundDarkTokens',
 			],
 			array_keys($state)
 		);
 	}//end testItPublishesTheKeysTheInstrumentReads()
+
+	/**
+	 * Task 3.3: the set's dark values are published from its generated dark stylesheet.
+	 *
+	 * @spec openspec/specs/own-component-preview/spec.md#requirement-the-frame-can-show-the-dark-theme
+	 */
+	public function testDarkTokensPublished(): void {
+		$dark = $this->build()->getInitialState(tokenSetId: 'amsterdam')['playgroundDarkTokens'];
+
+		$this->assertNotSame([], $dark);
+		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6,8}$/i', (string)($dark['--nldesign-color-primary'] ?? ''));
+		$this->assertSame([], $this->build()->getInitialState(tokenSetId: '../x')['playgroundDarkTokens']);
+	}//end testDarkTokensPublished()
 
 	/**
 	 * What an export writes is what the set DECLARES, never the map the
@@ -279,7 +405,8 @@ class PlaygroundStateServiceTest extends TestCase {
 			$appManager,
 			$this->createMock(TokenSetPreviewService::class),
 			$this->createMock(TokenSetConverterService::class),
-			$this->createMock(StockTokensService::class)
+			$this->createMock(StockTokensService::class),
+			$this->identityL10n()
 		);
 
 		$this->assertSame(['version' => 0, 'tabs' => [], 'components' => []], $service->getInventory());
