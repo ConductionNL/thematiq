@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Controller;
 
-use OCA\Theming\ImageManager;
 use OCA\Thematiq\Controller\SettingsController;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
@@ -26,6 +25,7 @@ use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
+use OCA\Theming\ImageManager;
 use OCP\IConfig;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;

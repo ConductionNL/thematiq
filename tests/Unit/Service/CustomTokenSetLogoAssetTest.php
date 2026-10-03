@@ -146,7 +146,7 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * Store a set carrying the given logo asset.
 	 *
 	 * @param array<string, mixed>|null $logoAsset The decoded logo, or null.
-	 * @param string                    $name      The display name.
+	 * @param string $name The display name.
 	 *
 	 * @return array<string, mixed> The store result.
 	 */
@@ -212,7 +212,7 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * written file carries it — the file is served by name, so a mismatch
 	 * would hand the browser the wrong content type.
 	 *
-	 * @param string $path      The proposed asset path.
+	 * @param string $path The proposed asset path.
 	 * @param string $extension The extension the file must end up with.
 	 *
 	 * @dataProvider acceptedExtensionProvider

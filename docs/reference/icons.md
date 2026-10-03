@@ -56,7 +56,7 @@ View all available icons in the [icon documentation](https://github.com/Conducti
 - **NL-government icons:** `img/icons/{rvo,open-gemeenten,den-haag}/` (1488 SVG files across 3 sets)
 - **DSFR (French-government) icons:** `img/icons/dsfr/` (1038 SVG files)
 - **Legacy aliases:** `img/icons/*.svg` (77 one-release compatibility files — see CHANGELOG.md, removed next minor release)
-- **Logos:** `img/logos/` (30 SVG files, static checked-in huisstijl assets — not build output)
+- **Logos:** `img/logos/` (36 SVG files, static checked-in huisstijl assets — not build output)
 
 ## Usage in Nextcloud Apps
 
@@ -127,7 +127,7 @@ release** — do not build new integrations against them; migrate to the set-pre
 
 ## Logos
 
-The 35 logos in `img/logos/` cover government and municipal organizations, plus four fictional example sets. A representative sample:
+The 36 logos in `img/logos/` cover government and municipal organizations, plus five fictional example sets. A representative sample:
 - `amsterdam.svg` - City of Amsterdam logo
 - `ggd-amsterdam.svg` - GGD Amsterdam logo
 - `stadsarchief.svg` - Amsterdam City Archives
@@ -243,7 +243,7 @@ Icons are automatically built from `@conduction/nextcloud-vue`'s and `@gouvfr/ds
 npm run build:icons
 ```
 
-This decodes the data-URI icon packs at `node_modules/@conduction/nextcloud-vue/src/icons/{rvo,openGemeenten,denHaag}.js` into standalone SVG files under `img/icons/{set}/`, copies every DSFR source SVG (`@gouvfr/dsfr/dist/icons/**/*.svg`, falling back to the pre-fetched `.dsfr-src/icons/` scratch source when the package cannot be installed) into `img/icons/dsfr/{basename}.svg`, materializes the one-release legacy aliases from `scripts/icon-aliases.json`, and regenerates `img/ICONS.md`. It never touches `img/logos/`.
+This decodes the data-URI icon packs at `node_modules/@conduction/nextcloud-vue/src/icons/{rvo,openGemeenten,denHaag}.js` into standalone SVG files under `img/icons/{set}/`, copies every DSFR source SVG from the pre-fetched `.dsfr-src/icons/` scratch source (the `@gouvfr/dsfr` package is not a dependency: its install script refuses to run until the DSFR terms of use are accepted) into `img/icons/dsfr/{basename}.svg`, materializes the one-release legacy aliases from `scripts/icon-aliases.json`, and regenerates `img/ICONS.md`. It never touches `img/logos/`.
 
 ## Theme-Switchable Icon Packs
 

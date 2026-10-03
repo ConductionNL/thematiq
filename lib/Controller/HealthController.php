@@ -35,7 +35,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/adopt-apphost-2026-06-16/tasks.md#task-3
+ * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-3
  */
 
 declare(strict_types=1);
@@ -60,7 +60,7 @@ use Psr\Container\ContainerInterface;
  * dispatch time, so nldesign never binds an OpenRegister class at
  * class-declaration time.
  *
- * @spec openspec/changes/adopt-apphost-2026-06-16/tasks.md#task-3
+ * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-3
  */
 class HealthController extends Controller {
 
@@ -118,7 +118,7 @@ class HealthController extends Controller {
 	 *
 	 * @return JSONResponse `{status, app, version, checks}`.
 	 *
-	 * @spec openspec/changes/adopt-apphost-2026-06-16/specs/prometheus-metrics/spec.md — Requirement: Health Check Endpoint
+	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/specs/prometheus-metrics/spec.md — Requirement: Health Check Endpoint
 	 */
 	#[PublicPage]
 	#[NoCSRFRequired]

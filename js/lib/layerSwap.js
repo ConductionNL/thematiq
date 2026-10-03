@@ -159,7 +159,6 @@
 		}
 
 		return found.sort(function (left, right) {
-			// eslint-disable-next-line no-bitwise
 			return (left.compareDocumentPosition(right) & 4) === 4 ? -1 : 1
 		})
 	}

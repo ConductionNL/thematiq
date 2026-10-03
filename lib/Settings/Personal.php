@@ -46,8 +46,8 @@ class Personal implements ISettings {
 	/**
 	 * Constructor.
 	 *
-	 * @param DelegatedGroupThemingService $delegation  The delegation service.
-	 * @param IUserSession                 $userSession The session.
+	 * @param DelegatedGroupThemingService $delegation The delegation service.
+	 * @param IUserSession $userSession The session.
 	 */
 	public function __construct(
 		private readonly DelegatedGroupThemingService $delegation,

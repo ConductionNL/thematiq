@@ -1,0 +1,20 @@
+{
+  "$description": "One colour per DTCG colour space (v2025.10). Each $description holds the sRGB value the CSS Color 4 sample code gives (https://www.w3.org/TR/css-color-4/#color-conversion-code), checked against colord 2.9 for lab, lch and hwb.",
+  "color": {
+    "$type": "color",
+    "srgb": { "$value": { "colorSpace": "srgb", "components": [0.0824, 0.2588, 0.451] }, "$description": "#154273" },
+    "srgb-linear": { "$value": { "colorSpace": "srgb-linear", "components": [0.5, 0.5, 0.5] }, "$description": "#bcbcbc" },
+    "hsl": { "$value": { "colorSpace": "hsl", "components": [210, 50, 40] }, "$description": "#336699" },
+    "hwb": { "$value": { "colorSpace": "hwb", "components": [210, 20, 30] }, "$description": "#3373b3" },
+    "lab": { "$value": { "colorSpace": "lab", "components": [50, 20, -30] }, "$description": "#856caa" },
+    "lch": { "$value": { "colorSpace": "lch", "components": [50, 30, 300] }, "$description": "#7f6fa3" },
+    "oklab": { "$value": { "colorSpace": "oklab", "components": [0.6, 0.05, -0.1] }, "$description": "#8771bb" },
+    "oklch": { "$value": { "colorSpace": "oklch", "components": [0.5, 0.1, 250] }, "$description": "#32669a" },
+    "display-p3": { "$value": { "colorSpace": "display-p3", "components": [0.5, 0.3, 0.7] }, "$description": "#8849b8" },
+    "a98-rgb": { "$value": { "colorSpace": "a98-rgb", "components": [0.5, 0.3, 0.7] }, "$description": "#8f4bb7" },
+    "prophoto-rgb": { "$value": { "colorSpace": "prophoto-rgb", "components": [0.5, 0.3, 0.7] }, "$description": "#9d4dca" },
+    "rec2020": { "$value": { "colorSpace": "rec2020", "components": [0.5, 0.3, 0.7] }, "$description": "#9c51c1" },
+    "xyz-d65": { "$value": { "colorSpace": "xyz-d65", "components": [0.2, 0.2, 0.3] }, "$description": "#797a92" },
+    "xyz-d50": { "$value": { "colorSpace": "xyz-d50", "components": [0.2, 0.2, 0.3] }, "$description": "#6e7ba8" }
+  }
+}

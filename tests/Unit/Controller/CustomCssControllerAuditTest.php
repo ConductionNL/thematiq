@@ -158,7 +158,6 @@ class CustomCssControllerAuditTest extends TestCase {
 
 	}//end testNonStringPayloadIsRefused()
 
-
 	/**
 	 * Both endpoints are reachable only through the admin setting, which a
 	 * delegated admin of the theming section also holds.

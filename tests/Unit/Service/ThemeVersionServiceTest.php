@@ -33,9 +33,9 @@ class FakeVersionFile implements ISimpleFile {
 	/**
 	 * Constructor.
 	 *
-	 * @param FakeVersionFolder $folder  The owning folder.
-	 * @param string            $name    The file name.
-	 * @param string            $content The content.
+	 * @param FakeVersionFolder $folder The owning folder.
+	 * @param string $name The file name.
+	 * @param string $content The content.
 	 */
 	public function __construct(
 		private FakeVersionFolder $folder,
@@ -210,7 +210,7 @@ class ThemeVersionServiceTest extends TestCase {
 	/**
 	 * Build the service.
 	 *
-	 * @param LoggerInterface|null $logger     The logger, or a silent mock.
+	 * @param LoggerInterface|null $logger The logger, or a silent mock.
 	 * @param IAppDataFactory|null $appFactory The app data factory, or the fake.
 	 *
 	 * @return ThemeVersionService The service under test.

@@ -94,9 +94,9 @@ final class CustomOverridesServiceOwnTokensTest extends TestCase {
 		});
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
-		$parser  = new CssParserService();
+		$parser = new CssParserService();
 		$records = new DeprecationRecords($config);
-		$this->ownTokens    = new OwnTokenService($config, new TokenValueValidator(), $records);
+		$this->ownTokens = new OwnTokenService($config, new TokenValueValidator(), $records);
 		$this->deprecations = new TokenDeprecationService($records, $this->ownTokens, $appManager, $parser);
 		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
 		$this->overrides = new CustomOverridesService(new DirectoryRuntimeFileStore($this->appDir), $parser, $dark, null, null, null, $this->ownTokens);

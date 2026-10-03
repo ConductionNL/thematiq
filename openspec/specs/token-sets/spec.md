@@ -9,7 +9,7 @@ enriched_date: 2026-03-20
 ## Purpose
 Defines how the NL Design app discovers, validates, stores, and serves design token sets.
 
-@e2e exclude Backend/filesystem/API spec — scenarios cover TokenSetService PHP logic, manifest parsing, IConfig storage, path-traversal checks, and route configuration; the admin dropdown UI surface is covered by admin-settings tests. Token sets are organization-specific CSS files that override default Rijkshuisstijl design tokens, enabling Dutch government organizations to apply their own visual identity to Nextcloud. The system uses filesystem-based discovery combined with a JSON manifest for metadata, and supports multiple design systems via a `design_system` field that determines which CSS stack is loaded.
+Token sets are organization-specific CSS files that override default Rijkshuisstijl design tokens, enabling Dutch government organizations to apply their own visual identity to Nextcloud. The system uses filesystem-based discovery combined with a JSON manifest for metadata, and supports multiple design systems via a `design_system` field that determines which CSS stack is loaded.
 ## Requirements
 ### Requirement: Filesystem-Based Discovery
 The app MUST discover available token sets by scanning the `css/tokens/` directory for CSS files and merging metadata from `token-sets.json` for shipped sets and from the `custom_token_sets` appconfig manifest for uploaded sets (files matching `custom-*.css`).
@@ -32,7 +32,6 @@ The app MUST discover available token sets by scanning the `css/tokens/` directo
 - AND if the manifest entry has a `theming` object, it MUST be included in the response
 
 #### Scenario: Custom set metadata merged from appconfig manifest
-@e2e exclude discovery merge — PHPUnit on TokenSetService
 - GIVEN `css/tokens/custom-gemeente-voorbeeld.css` exists
 - AND the `custom_token_sets` appconfig manifest contains an entry for `custom-gemeente-voorbeeld` with name "Gemeente Voorbeeld" and a `theming` object
 - WHEN the available token sets are retrieved
@@ -49,6 +48,7 @@ The app MUST discover available token sets by scanning the `css/tokens/` directo
 - AND the `design_system` MUST default to "nldesign"
 
 #### Scenario: Manifest entry exists without CSS file
+@e2e exclude The GIVEN cannot be produced on an instance: every token-sets.json entry ships with its CSS file, and a custom manifest entry is removed together with its file (DELETE /settings/tokensets/custom/{id}). tests/Unit/Service/TokenSetServiceMergeTest.php::testManifestEntryWithoutFileIsDropped asserts a manifest entry without a file is dropped.
 - GIVEN `token-sets.json` or the `custom_token_sets` appconfig manifest contains an entry with `id: "phantom-org"`
 - AND `css/tokens/phantom-org.css` does NOT exist
 - WHEN the available token sets are retrieved
@@ -56,7 +56,7 @@ The app MUST discover available token sets by scanning the `css/tokens/` directo
 - AND the filesystem MUST be the source of truth for available sets
 
 #### Scenario: Shipped manifest wins on impossible id collision
-@e2e exclude defensive branch — PHPUnit on the merge order
+@e2e exclude The GIVEN cannot be produced through the app: an uploaded id is always custom-* and no shipped id is. tests/Unit/Service/TokenSetServiceMergeTest.php::testShippedManifestWinsACollisionAndLogsIt asserts the shipped metadata wins and the collision is logged as a warning.
 - GIVEN an entry with the same id exists in both `token-sets.json` and the `custom_token_sets` appconfig manifest (should be impossible given the `custom-` namespace, but defensively)
 - WHEN the available token sets are retrieved
 - THEN the shipped `token-sets.json` metadata MUST take precedence
@@ -78,7 +78,8 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
 - THEN it MUST have an `id` field (string, kebab-case identifier matching the CSS filename)
 - AND it MUST have a `name` field (string, human-readable display name)
 - AND it MUST have a `description` field (string)
-- AND it MUST have a `design_system` field (string, referencing an id in `design-systems.json`)
+- AND its `design_system` field (string), when present, MUST reference an id in `design-systems.json`;
+  an entry without one is an `nldesign` set (see Metadata merged from manifest)
 - AND it MAY have a `theming` object with optional keys: `primary_color` (hex),
   `background_color` (hex), `logo` (relative path), `background` (relative path), and
   `logo_dark` (relative path to a dark-surface logo variant within `img/logos/`)
@@ -100,6 +101,7 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
 - AND the light layer's `--nldesign-logo-url` MUST remain untouched
 
 #### Scenario: Token set file may carry a hand-authored dark block
+@e2e exclude The GIVEN cannot be produced on an instance: the only shipped file with a dark block is css/tokens/nextcloud.css, whose design system `none` gets no dark variant, and the upload validator refuses @media. tests/Unit/Service/DarkPaletteServiceTest.php::testGenerateForSetHandAuthoredOverrideWins and tests/Unit/Service/CssParserServiceTest.php::testDarkBlockPresent prove the block is read apart from the light layer and used as the override source.
 
 - GIVEN a token set CSS file containing a top-level
   `@media (prefers-color-scheme: dark) { :root { … } }` block
@@ -110,6 +112,7 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
   source (see the `dark-mode` spec's override requirement)
 
 #### Scenario: Manifest is malformed JSON
+@e2e exclude Needs a corrupt token-sets.json on the server, a file no route writes. tests/Unit/Service/TokenSetServiceMergeTest.php::testMalformedShippedManifestStillDiscoversFiles asserts discovery continues with id-derived names and the nldesign default.
 
 - GIVEN `token-sets.json` contains invalid JSON
 - WHEN `readManifest()` is called
@@ -118,6 +121,7 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
 - AND the app MUST NOT throw an exception or display an error
 
 #### Scenario: Manifest is missing
+@e2e exclude Needs token-sets.json removed from the server, which no route does. Every test in tests/Unit/Service/TokenSetServiceMergeTest.php runs without a token-sets.json, and ::testCustomFileWithoutManifestUsesIdFallback asserts sets are still discovered with id-derived names.
 
 - GIVEN `token-sets.json` does not exist
 - WHEN `readManifest()` is called
@@ -125,6 +129,7 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
 - AND the system MUST still discover token sets with auto-generated names and default design_system
 
 #### Scenario: Manifest file unreadable
+@e2e exclude Needs a token-sets.json the PHP process cannot read, a filesystem state no route produces. tests/Unit/Service/TokenSetServiceMergeTest.php::testUnreadableShippedManifestStillDiscoversFiles.
 
 - GIVEN `token-sets.json` exists but `file_get_contents()` returns `false`
 - WHEN `readManifest()` is called
@@ -132,6 +137,7 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
 - AND the system MUST continue with auto-generated metadata
 
 #### Scenario: Manifest indexed by id
+@e2e exclude An entry without an id needs an edited token-sets.json on the server, a file no route writes; indexing by id itself is what every metadata test in tests/e2e/spec-coverage/token-sets.spec.ts reads. tests/Unit/Service/TokenSetServiceMergeTest.php::testShippedManifestIsIndexedByIdAndSkipsEntriesWithoutOne.
 
 - GIVEN the manifest contains multiple entries
 - WHEN `readManifest()` processes them
@@ -142,6 +148,7 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
 The active token set MUST be stored in Nextcloud's `IConfig` and default to `nextcloud`.
 
 #### Scenario: No token set configured (fresh install)
+@e2e exclude The GIVEN is the app value never having been written. No route clears it (POST /settings/tokenset only writes a valid id), so an instance that has run this suite cannot be put back in that state. tests/Unit/Controller/SettingsControllerEndpointsTest.php::testTheActiveTokenSetDefaultsToStock asserts the default.
 - GIVEN no value has been set for `nldesign:token_set` in IConfig
 - WHEN the active token set is queried
 - THEN the default value MUST be `'nextcloud'` (stock Nextcloud theming)
@@ -218,7 +225,7 @@ Each token set CSS file MUST define organization-specific `--nldesign-*` variabl
 - GIVEN a token set defines `--nldesign-logo-url: url('../img/logos/amsterdam.svg')`
 - WHEN the theme is rendered
 - THEN the logo MUST be displayed in the header and login page via `background-image`
-- AND the logo MUST be sized and positioned using `--nldesign-logo-center` and related variables
+- AND the logo MUST be sized and positioned using `--nldesign-logo-width` and related variables
 
 #### Scenario: Token set with lint/ribbon
 - GIVEN a token set defines `--nldesign-color-logo-background`, `--nldesign-size-lint`, and `--nldesign-size-lint-height`
@@ -227,6 +234,7 @@ Each token set CSS file MUST define organization-specific `--nldesign-*` variabl
 - AND the ribbon dimensions MUST match the token values
 
 #### Scenario: WCAG AA contrast in token sets
+@e2e exclude An authoring rule on the shipped files, checked where they are built: tests/Unit/TokenSetContrastAuditTest.php::testDocumentedAaSetsMeetAa holds the documented sets to 4.5:1, and ::testSubAaSetsAreSurfacedNotSilentlyPassed records the known exceptions (noaberkracht at 4.01:1).
 - GIVEN a token set defines `--nldesign-color-primary` and `--nldesign-color-primary-text`
 - WHEN these colors are used together (e.g., on primary buttons)
 - THEN the contrast ratio MUST be at least 4.5:1 for normal text
@@ -376,17 +384,20 @@ The app MUST provide an endpoint for previewing the resolved CSS values of a tok
 The `TokenSetService` MUST be a clean service class with `IAppManager` as its only dependency.
 
 #### Scenario: Constructor dependency
+@e2e exclude Constructor wiring with no HTTP surface. tests/Unit/Service/TokenSetServiceMergeTest.php::setUp builds the service from an injected IAppManager double whose getAppPath() is the only source of the paths it reads. The service now takes five more collaborators than this scenario lists.
 - GIVEN `TokenSetService` is constructed
 - THEN it MUST receive `IAppManager` via constructor injection
 - AND it MUST use `IAppManager::getAppPath('nldesign')` to resolve filesystem paths
 
 #### Scenario: Private helper methods
+@e2e exclude Method visibility in lib/Service/TokenSetService.php: a source-structure fact with no runtime surface.
 - GIVEN the service has internal methods
 - THEN `getAppPath()` MUST be private and return the absolute app directory
 - AND `readManifest()` MUST be private and handle all file-reading errors gracefully
 - AND `formatName()` MUST be private and convert kebab-case ids to display names
 
 #### Scenario: Service used in multiple locations
+@e2e exclude Where the service is constructed is DI wiring with no runtime surface. lib/Settings/Admin.php and lib/Controller/SettingsController.php both receive it by injection now; the `new TokenSetService(...)` calls this scenario describes are gone.
 - GIVEN the `TokenSetService` is needed by both `Admin::getForm()` and `SettingsController`
 - WHEN it is instantiated
 - THEN `Admin::getForm()` creates a new instance via `new TokenSetService(appManager: $appManager)`
@@ -442,6 +453,7 @@ Narrowing a picker MUST NOT be able to change what an instance is doing, so thre
 - BECAUSE the importer tells the admin their upload was added and selectable
 
 #### Scenario: Adding a brand to the allowlist is an audit outcome
+@e2e exclude A rule about editing the TokenSetService::SELECTABLE_SHIPPED_SETS constant, not runtime behaviour. cunningham is on that list while tests/Unit/fixtures/token-set-vocabulary-allowlist.json still records it incomplete; the constant's docblock names it a deliberate exception.
 - GIVEN a shipped brand that the vocabulary audit reports as complete
 - THEN it MAY be added to `SELECTABLE_SHIPPED_SETS`
 - AND a brand the audit still reports as incomplete MUST NOT be
@@ -469,7 +481,6 @@ The required semantic tokens are exactly:
 ```
 
 #### Scenario: A set that declares the full required vocabulary is complete
-@e2e exclude Filesystem audit — PHPUnit on TokenSetVocabularyAuditService
 - GIVEN `css/tokens/amsterdam.css` declares all 26 required semantic tokens
 - AND every `--nldesign-*` name it declares is declared or read by some CSS layer under `css/`
 - AND its `--nldesign-color-primary` normalises to the same hex as `token-sets.json`'s
@@ -481,7 +492,6 @@ The required semantic tokens are exactly:
 - AND `complete` MUST be true
 
 #### Scenario: Missing required tokens are evaluated against the set file alone
-@e2e exclude Filesystem audit — PHPUnit on TokenSetVocabularyAuditService
 - GIVEN `css/tokens/zwolle.css` declares none of the required semantic tokens
 - AND `css/systems/nldesign/defaults.css` declares Rijkshuisstijl values for all of them
 - WHEN the set is audited
@@ -491,7 +501,6 @@ The required semantic tokens are exactly:
 - AND the reason MUST be reported as "the set renders as the defaults.css brand, not its own"
 
 #### Scenario: `--nldesign-*` names nothing reads are reported as foreign
-@e2e exclude Filesystem audit — PHPUnit on TokenSetVocabularyAuditService
 - GIVEN a shipped set declares `--nldesign-color-blue-40` (a raw upstream palette step)
 - AND no `.css` file under `css/` outside `css/tokens/` declares or reads that name
 - WHEN the set is audited
@@ -501,7 +510,6 @@ The required semantic tokens are exactly:
   `--zwolle-color-blue-40`), where it cannot masquerade as app vocabulary
 
 #### Scenario: The accepted vocabulary is every name any non-token-set CSS layer declares or reads
-@e2e exclude Filesystem audit — PHPUnit on TokenSetVocabularyAuditService
 - GIVEN `css/systems/nldesign/theme.css` reads `--nldesign-logo-url`
 - AND neither `defaults.css` nor `utrecht-bridge.css` mentions that name
 - WHEN a set declaring `--nldesign-logo-url` is audited
@@ -511,7 +519,6 @@ The required semantic tokens are exactly:
   `custom-css.css`, so a value an admin typed into the theme editor can never widen the vocabulary
 
 #### Scenario: Token names are matched case-sensitively but not case-restrictively
-@e2e exclude Filesystem audit — PHPUnit on TokenSetVocabularyAuditService
 - GIVEN `css/tokens/nijmegen.css` declares `--nldesign-tokenSetOrder-0` (an upstream generator
   artefact with a camelCase segment)
 - WHEN the set is audited
@@ -521,7 +528,6 @@ The required semantic tokens are exactly:
   can never disagree about whether such a name exists
 
 #### Scenario: A primary colour that disagrees with the manifest is a mismatch
-@e2e exclude Filesystem audit — PHPUnit on TokenSetVocabularyAuditService
 - GIVEN `css/tokens/xxllnc.css` declares `--nldesign-color-primary: #000000`
 - AND `token-sets.json`'s entry for `xxllnc` declares `theming.primary_color: "#333333"`
 - WHEN the set is audited
@@ -530,7 +536,6 @@ The required semantic tokens are exactly:
 - AND comparison MUST normalise case and expand 3-digit hex to 6-digit before comparing
 
 #### Scenario: An absent or non-literal primary is not double-reported as a mismatch
-@e2e exclude Filesystem audit — PHPUnit on TokenSetVocabularyAuditService
 - GIVEN a set does not declare `--nldesign-color-primary` at all, or declares a non-hex value
 - WHEN the set is audited
 - THEN the defect MUST be reported once, in `missingRequired`
@@ -538,7 +543,6 @@ The required semantic tokens are exactly:
 - AND a manifest entry with no `theming.primary_color` MUST NOT produce a mismatch either
 
 #### Scenario: A set whose design system reads no `--nldesign-*` name is not auditable
-@e2e exclude Filesystem audit — PHPUnit on TokenSetVocabularyAuditService
 - GIVEN `design-systems.json` declares the `summer-breeze` system's stylesheets
 - AND none of those stylesheets references any `--nldesign-*` name
 - WHEN `css/tokens/summer-breeze.css` is audited
@@ -550,25 +554,28 @@ The required semantic tokens are exactly:
   `cunningham`) MUST be audited like any `nldesign` set
 
 #### Scenario: Commented-out declarations never count
-@e2e exclude Filesystem audit — PHPUnit on TokenSetVocabularyAuditService
+@e2e exclude No shipped set contains a commented-out declaration and an upload is never vocabulary-audited, so the GIVEN cannot be produced on an instance. tests/Unit/Service/TokenSetVocabularyAuditServiceTest.php::testCommentedOutDeclarationsNeverCount.
 - GIVEN a set contains `/* --nldesign-color-primary: red; */`
 - WHEN the set is audited
 - THEN the token MUST still be reported in `missingRequired`
 - AND CSS comments MUST be stripped before declaration parsing
 
 #### Scenario: The audit gate fails for an unlisted incomplete set
+@e2e exclude Describes the PHPUnit gate itself: tests/Unit/TokenSetVocabularyTest.php::testEveryShippedSetIsCompleteOrAllowListed.
 - GIVEN `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` lists the known-incomplete set ids
 - WHEN `tests/Unit/TokenSetVocabularyTest.php` runs
 - THEN a set that is auditable, incomplete, and NOT listed MUST fail the test
 - AND the failure message MUST name the set and every missing, foreign and mismatched token
 
 #### Scenario: The allow-list can only shrink
+@e2e exclude Describes the PHPUnit gate itself: tests/Unit/TokenSetVocabularyTest.php::testAllowlistHasNoStaleEntries.
 - GIVEN an allow-listed set has since been regenerated and now passes all three rules
 - WHEN the audit gate runs
 - THEN the test MUST fail until that id is deleted from the allow-list
 - AND the allow-list MUST be empty once every shipped set is complete
 
 #### Scenario: The audit is runnable without a PHP runtime
+@e2e exclude A Node CLI (`npm run audit:token-sets`), not a browser surface. tests/Unit/TokenSetVocabularyTest.php::testNodeMirrorRequiresTheSameTokens asserts its required-token list equals the PHP constant.
 - GIVEN a token-set author has no `vendor/` directory and no PHP CLI
 - WHEN they run `npm run audit:token-sets`
 - THEN a table MUST be printed with one row per shipped set: id, design system, missing count,
@@ -624,6 +631,7 @@ distinguishable from a contrast warning without inspecting its other fields.
   the ranking is specified now so the two paths cannot disagree later
 
 #### Scenario: A complete catalogue stays quiet
+@e2e exclude The GIVEN is false on development: tests/Unit/fixtures/token-set-vocabulary-allowlist.json lists 39 incomplete shipped sets. The per-set half (a complete set shows no badge and carries no vocabulary entry) is browser-tested under selecting-an-incomplete-set-shows-the-incomplete-set-badge and a-set-that-declares-the-full-required-vocabulary-is-complete.
 - GIVEN every shipped set passes the vocabulary audit
 - WHEN the settings page is rendered
 - THEN no completeness badge MUST be visible for any set

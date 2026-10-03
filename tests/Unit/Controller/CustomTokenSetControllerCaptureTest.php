@@ -123,7 +123,7 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		$this->designSystems = $this->createMock(DesignSystemService::class);
 		$this->designSystems->method('getDesignSystems')->willReturn(
 			[
-				'none'     => ['id' => 'none'],
+				'none' => ['id' => 'none'],
 				'nldesign' => ['id' => 'nldesign'],
 			]
 		);
@@ -295,7 +295,7 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	 */
 	private function uploadingAFile(string $content): void {
 		$params = [
-			'name'    => 'Round Trip',
+			'name' => 'Round Trip',
 			'content' => $content,
 		];
 		$this->request->method('getParam')->willReturnCallback(
@@ -310,14 +310,14 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	 * left out with nldesign fallbacks.
 	 */
 	public function testAnExportedFileIsStoredWithItsOwnTokens(): void {
-		$content = "/* NL Design — custom token set, exported from the component playground. Do not edit manually. */
-"
-			. "/* thematiq-token-set: design-system=none */
-"
-			. ":root {
+		$content = '/* NL Design — custom token set, exported from the component playground. Do not edit manually. */
+'
+			. '/* thematiq-token-set: design-system=none */
+'
+			. ':root {
   --nldesign-color-primary: #00679e;
 }
-";
+';
 		$this->uploadingAFile(content: $content);
 		$this->converter->expects($this->never())->method('convert');
 
@@ -362,11 +362,11 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	 */
 	public function testAnExportedFileNamingAnUnknownDesignSystemRecordsNone(): void {
 		$this->uploadingAFile(
-			content: "/* thematiq-token-set: design-system=evil */
+			content: '/* thematiq-token-set: design-system=evil */
 :root {
   --nldesign-color-primary: #00679e;
 }
-"
+'
 		);
 		$this->converter->expects($this->never())->method('convert');
 
@@ -380,10 +380,10 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	 * A file without the marker is an unknown document and is converted.
 	 */
 	public function testAFileWithoutTheMarkerIsConverted(): void {
-		$this->uploadingAFile(content: ":root {
+		$this->uploadingAFile(content: ':root {
   --nldesign-color-primary: #00679e;
 }
-");
+');
 		$this->converter->expects($this->once())
 			->method('convert')
 			->willThrowException(new RuntimeException('converted', 422));

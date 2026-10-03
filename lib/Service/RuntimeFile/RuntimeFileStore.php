@@ -48,7 +48,7 @@ interface RuntimeFileStore {
 	/**
 	 * Write a file, replacing any earlier content.
 	 *
-	 * @param string $name    An allowed name.
+	 * @param string $name An allowed name.
 	 * @param string $content The content.
 	 *
 	 * @return void

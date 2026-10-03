@@ -17,9 +17,9 @@
           "severity": "degraded"
         },
         {
-          "id": "nldesign",
+          "id": "thematiq",
           "type": "appEnabled",
-          "app": "nldesign",
+          "app": "thematiq",
           "severity": "critical"
         }
       ]

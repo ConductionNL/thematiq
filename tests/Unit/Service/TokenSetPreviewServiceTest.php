@@ -101,7 +101,7 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 * Write one of the stylesheets the service reads.
 	 *
 	 * @param string $relativePath Path under the fake app directory.
-	 * @param string $css          The file body.
+	 * @param string $css The file body.
 	 *
 	 * @return void
 	 */

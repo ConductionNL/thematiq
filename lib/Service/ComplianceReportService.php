@@ -799,7 +799,7 @@ class ComplianceReportService {
 	 * A set file's CSS: an uploaded (`custom-`) set's from its service, a shipped one's from the release.
 	 *
 	 * @param string $appPath The app directory.
-	 * @param string $name    The app-relative name, such as `css/tokens/utrecht.css`.
+	 * @param string $name The app-relative name, such as `css/tokens/utrecht.css`.
 	 *
 	 * @return string|null The CSS, or null when the file does not exist.
 	 *

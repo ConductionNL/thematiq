@@ -496,5 +496,15 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/example-opleider.svg"
 		}
+	},
+	{
+		"id": "example-gemeente",
+		"name": "(EXAMPLE) Gemeente",
+		"description": "Fictional example set for a municipality, \"Gemeente Esdoornstad\": deep sea blue with a brown accent, from the approved dossiq portal mockups. Not a real organisation.",
+		"theming": {
+			"primary_color": "#12506B",
+			"background_color": "#FFFFFF",
+			"logo": "img/logos/example-gemeente.svg"
+		}
 	}
 ]

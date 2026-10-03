@@ -17,6 +17,7 @@
  */
 
 declare(strict_types=1);
+
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
@@ -45,16 +46,16 @@ class GalleryInstallService {
 	/**
 	 * Constructor.
 	 *
-	 * @param ThemeGalleryService      $gallery       The index.
-	 * @param IClientService           $clientService The HTTP client service.
-	 * @param TokenSetConverterService $converter     The converter every upload runs through.
-	 * @param CustomTokenSetValidator  $validator     The CSS whitelist.
-	 * @param CssParserService         $cssParser     The CSS parser.
-	 * @param CustomTokenSetService    $customSets    Custom set storage.
-	 * @param ThemingAuditService      $audit         The audit trail.
-	 * @param IConfig                  $config        App config, for the active token set.
-	 * @param IL10N                    $l10n          Translations.
-	 * @param ITimeFactory             $time          The clock.
+	 * @param ThemeGalleryService $gallery The index.
+	 * @param IClientService $clientService The HTTP client service.
+	 * @param TokenSetConverterService $converter The converter every upload runs through.
+	 * @param CustomTokenSetValidator $validator The CSS whitelist.
+	 * @param CssParserService $cssParser The CSS parser.
+	 * @param CustomTokenSetService $customSets Custom set storage.
+	 * @param ThemingAuditService $audit The audit trail.
+	 * @param IConfig $config App config, for the active token set.
+	 * @param IL10N $l10n Translations.
+	 * @param ITimeFactory $time The clock.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - see the class comment: the upload path's own collaborators.
 	 */
@@ -165,7 +166,7 @@ class GalleryInstallService {
 	 * Add where the set came from to its manifest entry, which the custom token sets list shows.
 	 * Rewrites the stored file and entry verbatim through CustomTokenSetService::replace().
 	 *
-	 * @param string                $id         The stored custom set id.
+	 * @param string $id The stored custom set id.
 	 * @param array<string, string> $provenance Gallery id, source, licence, checksum, install date.
 	 *
 	 * @return void
@@ -212,7 +213,7 @@ class GalleryInstallService {
 	/**
 	 * Convert and validate exactly as an upload is, before anything is written.
 	 *
-	 * @param string $name    The display name the set is stored under.
+	 * @param string $name The display name the set is stored under.
 	 * @param string $content The downloaded file.
 	 * @param string $fileUrl Its URL, whose file name tells the converter nothing it relies on.
 	 *

@@ -170,9 +170,9 @@ class CustomTokenSetService {
 	 *                                       Nextcloud keeps owning `--color-main-background` and dark mode), and
 	 *                                       `deriveTheming()` cannot see that decision from the declarations alone.
 	 * @param array{path: string, contents: string}|null $logoAsset A logo the converter decoded out of the theme,
-	 *                                       to be written under `img/logos/`. Nextcloud's core theming takes a
-	 *                                       logo as a FILE (`ImageManager::updateImage()`), so a theme's inline
-	 *                                       `data:` URI has to become one before `theming.logo` can mean anything.
+	 *                                                              to be written under `img/logos/`. Nextcloud's core theming takes a
+	 *                                                              logo as a FILE (`ImageManager::updateImage()`), so a theme's inline
+	 *                                                              `data:` URI has to become one before `theming.logo` can mean anything.
 	 * @param string|null $designSystem The design system this set was created FROM, when the caller knows it.
 	 *                                  Decides which stylesheet layers the set emits; left unset for an
 	 *                                  upload of an unknown document, which still resolves to nldesign.
@@ -487,7 +487,7 @@ class CustomTokenSetService {
 	 * already on disk and only the Nextcloud logo sync is lost, so the caller
 	 * drops `theming.logo` rather than failing the whole upload.
 	 *
-	 * @param string                              $id    The custom set id.
+	 * @param string $id The custom set id.
 	 * @param array{path: string, contents: string} $asset The decoded logo.
 	 *
 	 * @return string|null The app-relative path that was written, or null on refusal/failure.
@@ -555,7 +555,7 @@ class CustomTokenSetService {
 	/**
 	 * Write the CSS file to the store.
 	 *
-	 * @param string $name     The runtime file name.
+	 * @param string $name The runtime file name.
 	 * @param string $contents The canonical CSS content.
 	 *
 	 * @return void

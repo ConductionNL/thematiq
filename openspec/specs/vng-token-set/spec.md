@@ -7,7 +7,7 @@ status: done
 ## Purpose
 Define requirements for adding VNG (Vereniging Nederlandse Gemeenten) as a selectable design token set in the nldesign Nextcloud app.
 
-@e2e exclude CSS token-set / colour-value spec — scenarios describe CSS custom property values, colour palette, typography tokens, and border-radius values; the manifest entry and dropdown visibility are covered by admin-settings tests. VNG tokens are manually converted from the tilburg-woo-ui project since they are not available in the upstream nl-design-system/themes repository.
+VNG tokens are manually converted from the tilburg-woo-ui project since they are not available in the upstream nl-design-system/themes repository.
 
 ## Requirements
 
@@ -56,13 +56,14 @@ The VNG token file MUST define typography tokens based on VNG's Avenir font fami
 #### Scenario: Font family is set to Avenir
 - GIVEN the VNG token set is active
 - WHEN typography tokens are evaluated
-- THEN `--nldesign-typography-font-family` SHALL include 'Avenir' as the primary font
+- THEN `--nldesign-font-family` (the font token the nldesign design system reads) SHALL include 'Avenir' as the primary font
 - AND a sans-serif fallback SHALL be specified
 
 #### Scenario: Font sizes follow VNG scale
 - GIVEN the VNG token set is active
 - WHEN font size tokens are evaluated
-- THEN heading and body font sizes SHALL be derived from the VNG typography scale (sm: 14px, md: 16px, lg: 20px, xl: 24px, etc.)
+- THEN the VNG typography scale SHALL be defined as `--tilburg-typography-font-size-*` (sm: 14px, md: 16px, lg: 20px, xl: 24px, 2xl: 32px, 3xl: 36px, 4xl: 48px)
+- AND the heading sizes `--utrecht-heading-1-font-size` to `--utrecht-heading-6-font-size` and the body size `--utrecht-document-font-size` SHALL resolve to values from that scale
 
 ### Requirement: VNG Spacing and Border Tokens
 The VNG token file MUST define spacing and border tokens derived from the VNG design system.
@@ -70,7 +71,9 @@ The VNG token file MUST define spacing and border tokens derived from the VNG de
 #### Scenario: Spacing tokens are defined
 - GIVEN the VNG token set is active
 - WHEN spacing tokens are evaluated
-- THEN `--nldesign-spacing-*` tokens SHALL map to VNG spacing values
+- THEN the VNG spacing scale SHALL be defined as `--tilburg-space-*` tokens (the animal scale, e.g. `--tilburg-space-row-snail: 8px`, `--tilburg-space-row-rat: 16px`)
+- AND component padding tokens SHALL resolve from that scale (e.g. `--utrecht-textarea-padding-block-start` resolves to `--tilburg-space-block-snail`)
+- AND no `--nldesign-spacing-*` token is required: the nldesign token vocabulary has none, spacing reaches components through the component tokens
 
 #### Scenario: Border radius uses VNG values
 - GIVEN the VNG token set is active
@@ -80,11 +83,12 @@ The VNG token file MUST define spacing and border tokens derived from the VNG de
 ### Requirement: VNG Header and Background Tokens
 The VNG token file MUST define header and background tokens using VNG colors.
 
-#### Scenario: Header uses VNG dark blue
+#### Scenario: Header is white with VNG dark text
 - GIVEN the VNG token set is active
 - WHEN header tokens are evaluated
-- THEN `--nldesign-color-header-background` SHALL be `#003865` (VNG dark blue)
-- AND `--nldesign-color-header-text` SHALL provide sufficient contrast (WCAG AA)
+- THEN `--nldesign-color-header-background` SHALL be `#ffffff` (VNG white header)
+- AND `--nldesign-color-header-text` SHALL be `#333333` (VNG black-txt)
+- AND the pair SHALL provide sufficient contrast (WCAG AA, at least 4.5:1)
 
 ### Requirement: Token Set Manifest Entry
 The `token-sets.json` manifest MUST include an entry for VNG.
@@ -100,11 +104,12 @@ The `token-sets.json` manifest MUST include an entry for VNG.
 - WHEN the token set dropdown is rendered
 - THEN "VNG Vereniging Nederlandse Gemeenten" SHALL appear as a selectable option
 
-### Requirement: No Utrecht Component Token Duplication
-The VNG token file MUST NOT include `--utrecht-*` component tokens, as these are handled by the `utrecht-bridge.css` layer.
+### Requirement: VNG Supplies the Utrecht Component Tokens the Bridge Reads
+The VNG token file MUST supply the `--utrecht-*` component tokens that `utrecht-bridge.css` reads, declared inside its single `:root` block, so component styling on VNG is VNG and not the Rijkshuisstijl-flavoured bridge fallbacks.
 
-#### Scenario: Utrecht tokens are absent from VNG file
+#### Scenario: Utrecht component tokens flow through the bridge
 - GIVEN the VNG token file is loaded
 - WHEN the CSS custom properties are inspected
-- THEN no `--utrecht-*` prefixed tokens SHALL be present
-- AND component styling SHALL flow through the existing `--nldesign-component-*` → `--utrecht-*` bridge
+- THEN `--utrecht-*` component tokens SHALL be present with VNG values (e.g. `--utrecht-button-border-radius` resolves to VNG border-radius-md, 8px)
+- AND the bridged `--nldesign-component-*` token SHALL resolve to the same value (e.g. `--nldesign-component-button-border-radius` is 8px)
+- AND the token file SHALL hold exactly one `:root` block

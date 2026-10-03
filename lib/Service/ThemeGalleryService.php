@@ -94,13 +94,13 @@ class ThemeGalleryService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig               $config        App config.
-	 * @param IClientService        $clientService The HTTP client service.
-	 * @param CustomTokenSetService $customSets    The installed custom sets, for provenance.
-	 * @param GalleryEntryValidator $entries       Decides which index entries may be listed.
-	 * @param ITimeFactory          $time          The clock.
-	 * @param LoggerInterface       $logger        The logger.
-	 * @param IAppConfig            $appConfig     Holds the cached index as a lazy value.
+	 * @param IConfig $config App config.
+	 * @param IClientService $clientService The HTTP client service.
+	 * @param CustomTokenSetService $customSets The installed custom sets, for provenance.
+	 * @param GalleryEntryValidator $entries Decides which index entries may be listed.
+	 * @param ITimeFactory $time The clock.
+	 * @param LoggerInterface $logger The logger.
+	 * @param IAppConfig $appConfig Holds the cached index as a lazy value.
 	 */
 	public function __construct(
 		private IConfig $config,
@@ -345,7 +345,7 @@ class ThemeGalleryService {
 	 * @param string $etag The ETag to revalidate, or ''.
 	 *
 	 * @return array{status: int, body: string, etag: string}|null The answer, or null when the host did not answer
-	 *                                                              or sent an index larger than MAX_INDEX_BYTES.
+	 *                                                             or sent an index larger than MAX_INDEX_BYTES.
 	 */
 	private function fetch(string $etag): ?array {
 		$headers = ['Accept' => 'application/json'];

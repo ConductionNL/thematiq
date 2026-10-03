@@ -17,6 +17,7 @@
  */
 
 declare(strict_types=1);
+
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\Service\Exception\GalleryException;
@@ -39,9 +40,9 @@ class GalleryController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string                $appName   The app name.
-	 * @param IRequest              $request   The request.
-	 * @param ThemeGalleryService   $gallery   The index.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param ThemeGalleryService $gallery The index.
 	 * @param GalleryInstallService $installer The installer.
 	 */
 	public function __construct(

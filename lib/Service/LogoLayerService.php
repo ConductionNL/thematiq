@@ -42,10 +42,10 @@ class LogoLayerService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig            $config       Reads the theming app's uploaded-logo flags.
-	 * @param IURLGenerator      $urlGenerator Resolves core's logo.
-	 * @param LoggerInterface    $logger       Logs an unresolvable core logo.
-	 * @param RuntimeFileLocator $files        Finds a shipped or uploaded logo.
+	 * @param IConfig $config Reads the theming app's uploaded-logo flags.
+	 * @param IURLGenerator $urlGenerator Resolves core's logo.
+	 * @param LoggerInterface $logger Logs an unresolvable core logo.
+	 * @param RuntimeFileLocator $files Finds a shipped or uploaded logo.
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
@@ -112,7 +112,7 @@ class LogoLayerService {
 	 * @param string $tokenSet The selected token set id.
 	 *
 	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline layer, or null when
-	 *         nothing can be said about the logo (core's logo.svg unresolvable).
+	 *                                                                          nothing can be said about the logo (core's logo.svg unresolvable).
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */

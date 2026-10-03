@@ -46,12 +46,12 @@ class BrandingPackageService {
 	/**
 	 * Constructor.
 	 *
-	 * @param BrandingPackageReader    $reader        Reads and writes the package files.
-	 * @param ConfigBundleService      $bundleService The existing bundle import and export.
-	 * @param FontService              $fontService   Font storage.
-	 * @param FontValidator            $fontValidator The upload rules for fonts.
-	 * @param TokenSetConverterService $converter     DTCG to token set conversion.
-	 * @param CustomTokenSetService    $customSets    For the custom set id rules.
+	 * @param BrandingPackageReader $reader Reads and writes the package files.
+	 * @param ConfigBundleService $bundleService The existing bundle import and export.
+	 * @param FontService $fontService Font storage.
+	 * @param FontValidator $fontValidator The upload rules for fonts.
+	 * @param TokenSetConverterService $converter DTCG to token set conversion.
+	 * @param CustomTokenSetService $customSets For the custom set id rules.
 	 */
 	public function __construct(
 		private readonly BrandingPackageReader $reader,
@@ -122,8 +122,8 @@ class BrandingPackageService {
 	/**
 	 * Validate a package and, unless `$dryRun`, apply it.
 	 *
-	 * @param string $path   The package directory or ZIP.
-	 * @param bool   $dryRun When true, validate only.
+	 * @param string $path The package directory or ZIP.
+	 * @param bool $dryRun When true, validate only.
 	 *
 	 * @return array<string, mixed> `{valid, dryRun, applied, sections?, errors?, revision, hash}`.
 	 *

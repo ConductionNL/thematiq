@@ -63,7 +63,7 @@ class ConfigImport extends Command {
 	/**
 	 * Constructor.
 	 *
-	 * @param ConfigBundleService    $service  The configuration bundle service.
+	 * @param ConfigBundleService $service The configuration bundle service.
 	 * @param BrandingPackageService $packages The branding package service.
 	 */
 	public function __construct(ConfigBundleService $service, BrandingPackageService $packages) {

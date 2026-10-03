@@ -139,6 +139,18 @@ Toasts and note cards have a background and a text colour per type (success, err
 
 From Nextcloud 33 the note card colour is the card's fill. On Nextcloud 32 it is the stripe on the left, and the fill is a light tint mixed from a separate **fill (Nextcloud 32)** colour. Select **32** above the note card preview to see and set those; they are hidden for 33 and later, where Nextcloud does not read them. The automatic text colour compares against the card colour, so on Nextcloud 32 pick the text colour yourself if the automatic one does not suit the light fill.
 
+## Preview your own component
+
+Building a component for your own portal or app? See it in the house style before you publish anything. Every tab of the preview ends with the chip **Your component**.
+
+1. Paste the component's HTML in **HTML** and its CSS in **CSS**. Read the house style through its tokens, for example `background: var(--nldesign-color-primary)`.
+2. The frame under the fields draws it with the active token set, including edits you have not saved yet. Change a colour in the token list and the frame follows at once.
+3. The token list beside the preview shows the tokens your code reads. A token the editor can set has its editor row. Any other token shows its value, read-only.
+4. When your code reads a text token and its base, such as `--nldesign-color-primary-text` on `--nldesign-color-primary`, the stage shows their contrast against WCAG AA.
+5. **Dark theme** shows the frame with the set's dark values. Nextcloud's own variables keep the theme you are using.
+6. Give it a name and click **Save component**. It gets a chip of its own, and a link: `#preview=content/own-{name}`. You can keep 20 components of at most 64 KB each. Only administrators see them, and saving one changes nothing for other users.
+
+Three locks keep pasted code harmless. The frame runs no scripts and cannot submit forms, open windows or move this page. It loads nothing from outside this server. And the code is cleaned before it is drawn: scripts, event handlers, external addresses and elements outside a fixed list are removed, and the stage says what it removed, for example "Removed: 1 script, 2 event handler".
 ## Transparency, dark values and motion
 
 ### Transparent colours

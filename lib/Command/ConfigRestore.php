@@ -60,7 +60,7 @@ class ConfigRestore extends Command {
 	/**
 	 * Preview or restore.
 	 *
-	 * @param InputInterface  $input  The input.
+	 * @param InputInterface $input The input.
 	 * @param OutputInterface $output The output.
 	 *
 	 * @return int The exit code: 0 applied or previewed, 1 unknown or refused.
@@ -102,8 +102,8 @@ class ConfigRestore extends Command {
 	/**
 	 * Preview on a dry run, restore otherwise.
 	 *
-	 * @param string $id     The version id.
-	 * @param bool   $dryRun Whether to write nothing.
+	 * @param string $id The version id.
+	 * @param bool $dryRun Whether to write nothing.
 	 *
 	 * @return array<string, mixed>|null The result, or null for an unknown id.
 	 */
@@ -118,7 +118,7 @@ class ConfigRestore extends Command {
 	/**
 	 * Print the changes a restore makes.
 	 *
-	 * @param OutputInterface      $output The output.
+	 * @param OutputInterface $output The output.
 	 * @param array<string, mixed> $result The preview or restore result.
 	 *
 	 * @return void

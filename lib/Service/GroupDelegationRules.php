@@ -40,7 +40,7 @@ class GroupDelegationRules {
 	 * @param array{group: string, tokenSet: string} $clean The entry's group and set.
 	 *
 	 * @return array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>} The entry, with `delegated: true` and
-	 *         `allowedTokenSets` when delegated.
+	 *                                                                                                   `allowedTokenSets` when delegated.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */

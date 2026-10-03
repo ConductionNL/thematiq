@@ -29,23 +29,23 @@ class ErrorStatusTraitTest extends TestCase {
 	 */
 	public static function codes(): array {
 		return [
-			'409 clash passes'          => [409, 409],
-			'413 oversized passes'      => [413, 413],
-			'422 invalid passes'        => [422, 422],
-			'503 unavailable passes'    => [503, 503],
-			'0 falls back'              => [0, 500],
-			'200 is not an error'       => [200, 500],
-			'399 is below the range'    => [399, 500],
+			'409 clash passes' => [409, 409],
+			'413 oversized passes' => [413, 413],
+			'422 invalid passes' => [422, 422],
+			'503 unavailable passes' => [503, 503],
+			'0 falls back' => [0, 500],
+			'200 is not an error' => [200, 500],
+			'399 is below the range' => [399, 500],
 			'419 is no JSONResponse status' => [419, 500],
 			'599 is no JSONResponse status' => [599, 500],
-			'600 is above the range'    => [600, 500],
+			'600 is above the range' => [600, 500],
 		];
 	}//end codes()
 
 	/**
 	 * The mapping.
 	 *
-	 * @param int $code     The exception code.
+	 * @param int $code The exception code.
 	 * @param int $expected The status the response must carry.
 	 *
 	 * @return void
@@ -59,7 +59,7 @@ class ErrorStatusTraitTest extends TestCase {
 			 * Expose the private helper.
 			 *
 			 * @param RuntimeException $exception The exception.
-			 * @param 422|500          $fallback  The fallback.
+			 * @param 422|500 $fallback The fallback.
 			 *
 			 * @return int The status.
 			 */

@@ -7,7 +7,7 @@ status: done
 ## Purpose
 Defines the CSS file persistence layer for user-defined token customizations.
 
-@e2e exclude CSS file persistence / backend spec — scenarios cover file write semantics, CSS cascade order, PHP endpoint internals, and filesystem state; no distinct UI surface beyond the token editor already covered by admin-settings and token-editor-ui tests. `custom-overrides.css` is the single write target for all theme editor output. It is loaded last in the CSS stack so user intent always wins. NL Design token set CSS files are read-only presets and are never modified.
+`custom-overrides.css` is the single write target for all theme editor output. It is loaded last in the CSS stack so user intent always wins. NL Design token set CSS files are read-only presets and are never modified.
 
 ## Requirements
 
@@ -15,6 +15,7 @@ Defines the CSS file persistence layer for user-defined token customizations.
 The system MUST maintain a `custom-overrides.css` file in the nldesign app's CSS directory. This file MUST be written exclusively by the theme editor backend — no other write path exists.
 
 #### Scenario: File does not exist on fresh install
+@e2e exclude a browser cannot delete a file from the app directory, and every themed render recreates it; PHPUnit tests/Unit/Service/CustomOverridesServicePerSetTest.php::testNoSetNamedMeansTheActiveSet asserts ensureExists() creates the missing file as an empty block, and tests/Unit/Service/CssInjectionServiceTest.php::testCustomOverridesAlwaysLoadedLast asserts it runs before the link is emitted
 - GIVEN the nldesign app is freshly installed
 - WHEN Nextcloud loads the theming CSS
 - THEN `custom-overrides.css` MUST NOT be required to exist
@@ -31,9 +32,17 @@ The system MUST maintain a `custom-overrides.css` file in the nldesign app's CSS
 
 Load order (final):
 ```
-fonts.css → defaults.css → tokens/{org}.css → utrecht-bridge.css
-  → theme.css → overrides.css → element-overrides.css → custom-overrides.css
+fonts.css → defaults.css → utrecht-bridge.css → theme.css → overrides.css
+  → element-overrides.css → tokens/{set}.css → the other set layers
+  → custom-overrides.css
 ```
+
+The token set file loads after the whole design-system bundle, emitted by
+`CssInjectionService::designSystemLayers()`, as the css-architecture scenario "Token set CSS
+loaded after design system stylesheets" states. It only has to follow `defaults.css`, whose
+`:root` declarations it overrides; the other bundle layers read its values through `var()`.
+"The other set layers" are the ones `designSystemLayers()` lists after the token file (logo,
+token-overrides, dark variant, contrast fixes, theme and component scopes).
 
 #### Scenario: Custom override wins over NL Design token set
 - GIVEN `tokens/utrecht.css` sets `--nldesign-color-primary: #CC0000`
@@ -43,13 +52,16 @@ fonts.css → defaults.css → tokens/{org}.css → utrecht-bridge.css
 - THEN the resolved value MUST be `#0000FF` (custom override wins)
 
 #### Scenario: Missing file does not break stack
+@e2e exclude a browser cannot make the file absent and uncreatable; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testAFailingOverridesWriteDoesNotCancelTheLaterLayers asserts the other layers still load when the file cannot be created
 - GIVEN `custom-overrides.css` does not exist on disk
 - WHEN Nextcloud loads the CSS stack
 - THEN the remaining CSS layers MUST apply normally
 - AND no PHP error or missing-file warning MUST appear in logs
 
 ### Requirement: File Format
-`custom-overrides.css` MUST contain only a single `:root` block with `--color-*` custom property declarations. The file MUST NOT contain selectors other than `:root`, media queries, or `!important` declarations — the load-order position ensures precedence without `!important`.
+`custom-overrides.css` MUST open with the header comment and one `:root` block holding the custom property declarations the admin set, one per line. `OverridesCssBuilder::declarationLines()` (the former `CustomOverridesService::buildDeclarationLines()`) MUST write every editor token with `!important`. Load order alone does not win: the nldesign design-system stylesheets re-declare every editable token with `!important`, and Nextcloud core theming sets variables such as `--color-primary` itself. The file only holds tokens the admin set, so this does not put `!important` on the whole registry. The administrator's own tokens follow the editor's lines without `!important`, because nothing else declares them.
+
+When a brand-group colour token is set, the file MUST also carry its dark value, with `!important`, in two dark scopes after the `:root` block: a `@media (prefers-color-scheme: dark)` block scoped to a `body` with no chosen theme, and a `body[data-theme-dark], body[data-themes*=dark]` block. A user who chose the dark theme gets Nextcloud's dark colours declared on `body`, which a `:root` value never reaches. The dark value is derived by `DarkPaletteService`, or is the admin's own dark value when one was given; a settable Nextcloud variable gets a dark line only from the admin's own value. PHPUnit tests/Unit/Service/CustomOverridesServiceDarkScopesTest.php::testDarkScopesWritten asserts both scopes.
 
 #### Scenario: File is written by the save endpoint
 - GIVEN the admin saves token overrides via the editor
@@ -58,12 +70,13 @@ fonts.css → defaults.css → tokens/{org}.css → utrecht-bridge.css
   ```css
   /* NL Design — custom token overrides. Generated by theme editor. Do not edit manually. */
   :root {
-    --color-primary: #c00000;
-    --color-error: #b30000;
+    --color-primary: #c00000 !important;
+    --color-error: #b30000 !important;
   }
   ```
 - AND the file MUST contain only tokens that differ from the resolved default
-- AND each token MUST appear on its own line with a trailing semicolon
+- AND each token MUST appear on its own line, ending in ` !important;`
+- AND a posted brand-group colour MUST also get its dark value in the two dark scopes the file format requirement names, below the `:root` block
 
 #### Scenario: No custom tokens results in empty overrides block
 - GIVEN the admin saves with all tokens reset to default
@@ -88,6 +101,7 @@ The backend MUST expose a PHP service that reads the current `custom-overrides.c
 - AND it MUST return HTTP 200 with the final set of written tokens
 
 #### Scenario: Write fails due to filesystem permissions
+@e2e exclude a browser cannot make the app's css directory unwritable; PHPUnit tests/Unit/Controller/OverridesControllerValidationTest.php::testWriteFailureHidesPath asserts the 500 and its message
 - GIVEN the CSS directory is not writable by the web server process
 - WHEN the save endpoint is called
 - THEN the server MUST return HTTP 500
@@ -98,6 +112,7 @@ The backend MUST expose a PHP service that reads the current `custom-overrides.c
 Token overrides MUST NOT be stored in Nextcloud's `appconfig` table or any database table. The CSS file is the sole persistence mechanism.
 
 #### Scenario: Token overrides survive app reinstall if CSS directory is preserved
+@e2e exclude disabling thematiq from the suite takes down the endpoints every test restores state through; PHPUnit tests/Unit/Service/CustomOverridesServicePerSetTest.php::testOverridesLiveInTheFileAndNeverInAppConfig asserts the overrides live in the file alone and never in app config
 - GIVEN `custom-overrides.css` exists in the app's CSS directory
 - WHEN the nldesign app is disabled and re-enabled
 - THEN `custom-overrides.css` MUST still apply after re-enable

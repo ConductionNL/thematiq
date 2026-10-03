@@ -44,7 +44,7 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	 */
 	public function __construct(
 		private readonly string $root,
-		private readonly RuntimeFileNames $names=new RuntimeFileNames(),
+		private readonly RuntimeFileNames $names = new RuntimeFileNames(),
 	) {
 	}//end __construct()
 
@@ -75,7 +75,7 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	/**
 	 * Write a file, replacing any earlier content.
 	 *
-	 * @param string $name    An allowed name.
+	 * @param string $name An allowed name.
 	 * @param string $content The content.
 	 *
 	 * @return void

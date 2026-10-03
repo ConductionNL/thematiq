@@ -111,6 +111,21 @@ The logo may be SVG, PNG, JPG, GIF or WebP, up to 512 KB. It becomes the set's l
 
 A set made from two colours is plainer than one a designer made. Refine it in the token editor.
 
+## Several brands in one source
+
+One design source often holds several brands: a municipality with districts, a supplier with customers. Upload it once and choose the brands you want.
+
+Two kinds of file hold several brands:
+
+- A Tokens Studio file with two or more themes. Each theme is a brand. Its `enabled` token sets make the brand; its `source` sets only resolve references.
+- Built theme CSS with two or more blocks like `.noord-theme { … }`. Each class is a brand, and `:root` is shared by all of them.
+
+After the upload, the result lists the brands with their token counts, all ticked. Untick the ones you do not want and click **Import the chosen brands**. Nothing is stored before that click, and **Cancel** stores nothing at all. One import holds at most 20 brands.
+
+Each brand becomes a normal token set named `{source}: {brand}`, with its own contrast warnings and dark variant. Choose it in the dropdown or map it to a group, like any other set. If one of the names is already taken, nothing is imported and the message names the brand.
+
+In **Manage uploaded sets** the brands sit together under their source. **Update source** takes a new version of the file and replaces every brand at once, or none when one brand fails. The result says which brands were updated, which are no longer in the file (they stay as they were) and which are new in the file (import those with a normal upload). Delete a brand like any other set; the source goes away with its last brand.
+
 ## WCAG 2.1 AA contrast warnings
 
 On upload, the server computes WCAG 2.1 relative-luminance contrast ratios for
