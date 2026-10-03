@@ -709,9 +709,9 @@ class DarkPaletteService {
 	 * @param array<string, string> $declarations The candidate dark declarations.
 	 * @param string[] $protectedTokens Token names that MUST NOT be rewritten (hand-authored overrides).
 	 * @param array<int, array{fg: string, bg: string, threshold: float}>|null $pairs The pairs to verify instead of
-	 *                                                                            the brand pairs and {@see self::CONTROL_PAIRS};
-	 *                                                                            the editor's overrides pass Nextcloud's own
-	 *                                                                            names (OverridesCssBuilder::DARK_PAIRS).
+	 *                                                                                the brand pairs and {@see self::CONTROL_PAIRS};
+	 *                                                                                the editor's overrides pass Nextcloud's own
+	 *                                                                                names (OverridesCssBuilder::DARK_PAIRS).
 	 *
 	 * The (possibly repaired) declarations and the final warning list.
 	 *
@@ -776,7 +776,7 @@ class DarkPaletteService {
 	 *
 	 * @param array<string, string> $declarations The dark declarations.
 	 * @param array<int, array{fg: string, bg: string, threshold: float}>|null $pairs The pairs to measure, or null for
-	 *                                                                            the brand pairs plus CONTROL_PAIRS.
+	 *                                                                                the brand pairs plus CONTROL_PAIRS.
 	 *
 	 * @return array<array{pair: string, ratio: float|null, threshold: float, level: string, unevaluated?: bool}> The warnings.
 	 *
