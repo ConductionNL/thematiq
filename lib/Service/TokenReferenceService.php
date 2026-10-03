@@ -17,6 +17,7 @@
  */
 
 declare(strict_types=1);
+
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
@@ -63,29 +64,29 @@ class TokenReferenceService {
 	/**
 	 * Constructor.
 	 *
-	 * @param ShippedTokenSetAuditService $audit  The contrast audit, for the summary line.
-	 * @param CssParserService            $parser The CSS parser.
-	 * @param TokenReferenceCells         $cells  The cell formatter.
-	 * @param RuntimeFileStore|null       $store  Where uploaded sets are kept.
-	 * @param SetFileReader               $files  Reads a set's file from the release or the store.
+	 * @param ShippedTokenSetAuditService $audit The contrast audit, for the summary line.
+	 * @param CssParserService $parser The CSS parser.
+	 * @param TokenReferenceCells $cells The cell formatter.
+	 * @param RuntimeFileStore|null $store Where uploaded sets are kept.
+	 * @param SetFileReader $files Reads a set's file from the release or the store.
 	 */
 	public function __construct(
 		private ShippedTokenSetAuditService $audit,
 		private CssParserService $parser,
-		private TokenReferenceCells $cells=new TokenReferenceCells(),
-		private ?RuntimeFileStore $store=null,
-		private SetFileReader $files=new SetFileReader(),
+		private TokenReferenceCells $cells = new TokenReferenceCells(),
+		private ?RuntimeFileStore $store = null,
+		private SetFileReader $files = new SetFileReader(),
 	) {
 	}//end __construct()
 
 	/**
 	 * Render the reference of one set.
 	 *
-	 * @param string               $appPath The app root.
-	 * @param array<string, mixed> $set     The set: `id`, `name`, `theming`.
-	 * @param string               $format  `md`, `md-plain` or `html`. `md-plain` is Markdown without swatch images:
-	 *                                      the docs site renders them, but a downloaded file is read as text, where
-	 *                                      each one is a long data URL.
+	 * @param string $appPath The app root.
+	 * @param array<string, mixed> $set The set: `id`, `name`, `theming`.
+	 * @param string $format `md`, `md-plain` or `html`. `md-plain` is Markdown without swatch images:
+	 *                       the docs site renders them, but a downloaded file is read as text, where
+	 *                       each one is a long data URL.
 	 *
 	 * @return string The reference.
 	 *
@@ -153,8 +154,8 @@ class TokenReferenceService {
 	/**
 	 * Resolve the rows of one set.
 	 *
-	 * @param string               $appPath The app root.
-	 * @param array<string, mixed> $set     The set.
+	 * @param string $appPath The app root.
+	 * @param array<string, mixed> $set The set.
 	 *
 	 * @return array{id: string, name: string, declared: int, inherited: int, contrast: string, groups: array<string, array<int, array<string, mixed>>>}
 	 */
@@ -292,8 +293,8 @@ class TokenReferenceService {
 	/**
 	 * The contrast summary of the set.
 	 *
-	 * @param string               $appPath The app root.
-	 * @param string               $id      The set id.
+	 * @param string $appPath The app root.
+	 * @param string $id The set id.
 	 * @param array<string, mixed> $theming The set's theming block.
 	 *
 	 * @return string The sentence.
@@ -327,8 +328,8 @@ class TokenReferenceService {
 	/**
 	 * The Markdown page.
 	 *
-	 * @param array<string, mixed> $model  The resolved rows.
-	 * @param string               $format `md` with swatch images, or `md-plain` without.
+	 * @param array<string, mixed> $model The resolved rows.
+	 * @param string $format `md` with swatch images, or `md-plain` without.
 	 *
 	 * @return string Markdown.
 	 */

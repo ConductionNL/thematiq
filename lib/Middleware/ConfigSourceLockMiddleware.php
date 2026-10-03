@@ -61,9 +61,9 @@ class ConfigSourceLockMiddleware extends Middleware {
 	/**
 	 * Constructor.
 	 *
-	 * @param IRequest            $request The request.
-	 * @param ConfigSourceService $source  The configuration source service.
-	 * @param IL10N               $l10n    Translations.
+	 * @param IRequest $request The request.
+	 * @param ConfigSourceService $source The configuration source service.
+	 * @param IL10N $l10n Translations.
 	 */
 	public function __construct(
 		private readonly IRequest $request,

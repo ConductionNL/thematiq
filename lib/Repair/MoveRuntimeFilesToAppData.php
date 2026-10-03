@@ -67,10 +67,10 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppManager      $appManager Resolves the app directory.
-	 * @param RuntimeFileStore $store      Where runtime files belong.
-	 * @param LoggerInterface  $logger     Logs what was moved and what could not be removed.
-	 * @param RuntimeFileNames $names      The name policy.
+	 * @param IAppManager $appManager Resolves the app directory.
+	 * @param RuntimeFileStore $store Where runtime files belong.
+	 * @param LoggerInterface $logger Logs what was moved and what could not be removed.
+	 * @param RuntimeFileNames $names The name policy.
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
@@ -78,7 +78,7 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 		private readonly IAppManager $appManager,
 		private readonly RuntimeFileStore $store,
 		private readonly LoggerInterface $logger,
-		private readonly RuntimeFileNames $names=new RuntimeFileNames(),
+		private readonly RuntimeFileNames $names = new RuntimeFileNames(),
 	) {
 	}//end __construct()
 
@@ -150,7 +150,7 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 	 * Copy one file into the store unless the store already holds it, then remove the original.
 	 *
 	 * @param string $appPath The app directory.
-	 * @param string $name    The app-relative name.
+	 * @param string $name The app-relative name.
 	 *
 	 * @return bool True when the file was copied into the store.
 	 */

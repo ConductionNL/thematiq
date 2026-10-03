@@ -50,11 +50,11 @@ class RuntimeFileLocator {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppManager      $appManager   Resolves the app directory.
-	 * @param RuntimeFileStore $store        Where runtime files live.
-	 * @param IURLGenerator    $urlGenerator Builds file and route URLs.
-	 * @param ITempManager     $tempManager  Hands out temporary files for consumers that need a path.
-	 * @param RuntimeFileNames $names        The name policy.
+	 * @param IAppManager $appManager Resolves the app directory.
+	 * @param RuntimeFileStore $store Where runtime files live.
+	 * @param IURLGenerator $urlGenerator Builds file and route URLs.
+	 * @param ITempManager $tempManager Hands out temporary files for consumers that need a path.
+	 * @param RuntimeFileNames $names The name policy.
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
@@ -63,7 +63,7 @@ class RuntimeFileLocator {
 		private readonly RuntimeFileStore $store,
 		private readonly IURLGenerator $urlGenerator,
 		private readonly ITempManager $tempManager,
-		private readonly RuntimeFileNames $names=new RuntimeFileNames(),
+		private readonly RuntimeFileNames $names = new RuntimeFileNames(),
 	) {
 	}//end __construct()
 
@@ -206,7 +206,7 @@ class RuntimeFileLocator {
 	 * The names in one directory, shipped and runtime, without duplicates.
 	 *
 	 * @param string $directory An app-relative directory such as `css/tokens`.
-	 * @param string $suffix    Keep only names ending in this, such as `.css`.
+	 * @param string $suffix Keep only names ending in this, such as `.css`.
 	 *
 	 * @return array<int, string> Full app-relative names, sorted.
 	 *

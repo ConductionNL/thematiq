@@ -133,10 +133,10 @@ class StockTokensService {
 	/**
 	 * Constructor.
 	 *
-	 * @param TokenSetPreviewService $sources      The variable-to-token mapping.
-	 * @param LoggerInterface        $logger       Records resolve failures.
-	 * @param ICacheFactory          $cacheFactory Creates the cross-request block cache.
-	 * @param IConfig                $config       Reads the version and theming cachebuster.
+	 * @param TokenSetPreviewService $sources The variable-to-token mapping.
+	 * @param LoggerInterface $logger Records resolve failures.
+	 * @param ICacheFactory $cacheFactory Creates the cross-request block cache.
+	 * @param IConfig $config Reads the version and theming cachebuster.
 	 *
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
@@ -299,7 +299,7 @@ class StockTokensService {
 	 * first in sorted order is taken so the output does not depend on the order
 	 * declarations appear in `overrides.css`.
 	 *
-	 * @param string             $token      The `--nldesign-*` token name.
+	 * @param string $token The `--nldesign-*` token name.
 	 * @param array<int, string> $candidates The `--color-*` names reading it (non-empty).
 	 *
 	 * @return string The variable whose stock value the token should take.
@@ -386,7 +386,7 @@ class StockTokensService {
 	 * @return object A theme that resolves the admin's colours.
 	 *
 	 * @throws RuntimeException When the theme does not carry the admin colour,
-	 *                           so a user-dependent block can never be cached.
+	 *                          so a user-dependent block can never be cached.
 	 */
 	private function asInstance(object $theme): object {
 		if (

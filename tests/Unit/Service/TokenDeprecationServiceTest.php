@@ -75,7 +75,7 @@ final class TokenDeprecationServiceTest extends TestCase {
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$records = new DeprecationRecords($config);
 		$this->ownTokens = new OwnTokenService($config, new TokenValueValidator(), $records);
-		$this->service   = new TokenDeprecationService($records, $this->ownTokens, $appManager, new CssParserService());
+		$this->service = new TokenDeprecationService($records, $this->ownTokens, $appManager, new CssParserService());
 		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
 		$this->ownTokens->create(input: ['slug' => 'brand-accent', 'label' => 'Brand', 'type' => 'color', 'value' => '#e17000']);
 	}//end setUp()

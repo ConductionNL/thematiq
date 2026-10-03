@@ -861,7 +861,6 @@ class DarkPaletteService {
 			return null;
 		}
 
-
 		$light = $this->resolveLightDeclarations(appPath: $appPath, setId: $setId, theming: $meta['theming']);
 		$derived = $this->deriveDarkDeclarations(lightDeclarations: $light);
 		$overrides = $this->parser->parseDarkBlock(css: $tokenCss);

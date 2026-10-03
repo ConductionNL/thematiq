@@ -39,9 +39,9 @@ class ConfigSourceController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string              $appName The app name.
-	 * @param IRequest            $request The request.
-	 * @param ConfigSourceService $source  The configuration source service.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param ConfigSourceService $source The configuration source service.
 	 */
 	public function __construct(
 		string $appName,

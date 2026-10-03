@@ -55,6 +55,7 @@ Colors are sourced from each organization's official NL Design System token set.
 | (EXAMPLE) Voortgezet onderwijs | ![#2D4FA0](https://via.placeholder.com/16/2D4FA0/2D4FA0.png) `#2D4FA0` | `#FFFFFF` | `example-voortgezet.svg` |
 | (EXAMPLE) College | ![#7A1F6E](https://via.placeholder.com/16/7A1F6E/7A1F6E.png) `#7A1F6E` | `#FFFFFF` | `example-college.svg` |
 | (EXAMPLE) Opleider | ![#0E4D5C](https://via.placeholder.com/16/0E4D5C/0E4D5C.png) `#0E4D5C` | `#FFFFFF` | `example-opleider.svg` |
+| (EXAMPLE) Gemeente | ![#12506B](https://via.placeholder.com/16/12506B/12506B.png) `#12506B` | `#FFFFFF` | `example-gemeente.svg` |
 
 ## Logo Sources
 

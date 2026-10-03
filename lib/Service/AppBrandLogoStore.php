@@ -58,7 +58,7 @@ class AppBrandLogoStore {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppData     $appData The app's data store.
+	 * @param IAppData $appData The app's data store.
 	 * @param ImageSniffer $sniffer The image checks.
 	 */
 	public function __construct(

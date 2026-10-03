@@ -228,6 +228,14 @@
 	],
 
 	"upstreamOverrides": {
+		"--denhaag-step-marker-current-color": {
+			"value": "#003865",
+			"reason": "the captured #1791d4 on the current-step fill #e8f4fb is 3.11:1; the set's own blue-500 #003865 reaches 10.70:1 (denhaag-component-tokens, task 3.2)"
+		},
+		"--denhaag-step-marker-checked-color": {
+			"value": "#006e32",
+			"reason": "the captured #00811f on the checked-step fill #e6f3e9 is 4.41:1; the set's own green-400 #006e32 reaches 5.60:1 (denhaag-component-tokens, task 3.2)"
+		},
 		"--tilburg-erm-font-size": {
 			"value": "16px",
 			"reason": "THE CAPTURE HOISTED A DELIBERATELY-SCOPED TOKEN. On opencatalogi.nl this is undefined at `html` and 12px only inside `.ac-app-container`, so the `body, html {font-size: var(--tilburg-erm-font-size)}` rule finds nothing and the root stays 16px. Read from the container and written to `:root`, that rule DID find it and every rem on the page shrank 25% — heading-3 rendered 24px against the reference's 32px, small text 9px against 12px"

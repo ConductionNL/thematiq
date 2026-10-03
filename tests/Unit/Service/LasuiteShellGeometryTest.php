@@ -108,7 +108,7 @@ class LasuiteShellGeometryTest extends TestCase {
 	/**
 	 * The stylesheet paths of a set's manifest, in cascade order.
 	 *
-	 * @param string $tokenSet      The token set id.
+	 * @param string $tokenSet The token set id.
 	 * @param string $serverVersion The server version.
 	 *
 	 * @return array<int, string> The app-relative paths without `.css` and query.

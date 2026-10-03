@@ -43,10 +43,10 @@ class AssistantMarkController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string               $appName The app name.
-	 * @param IRequest             $request The request.
-	 * @param AssistantMarkService $mark    The mark service.
-	 * @param IL10N                $l10n    Translations in the requesting user's language.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param AssistantMarkService $mark The mark service.
+	 * @param IL10N $l10n Translations in the requesting user's language.
 	 */
 	public function __construct(
 		string $appName,
@@ -87,9 +87,9 @@ class AssistantMarkController extends Controller {
 	/**
 	 * Save the settings.
 	 *
-	 * @param bool   $enabled      Whether the mark is on.
+	 * @param bool $enabled Whether the mark is on.
 	 * @param string $organisation The organisation name, empty for the email footer name.
-	 * @param string $logo         The logo URL, empty for the house style logo.
+	 * @param string $logo The logo URL, empty for the house style logo.
 	 *
 	 * @return JSONResponse The saved settings, or 422 with the reason.
 	 *

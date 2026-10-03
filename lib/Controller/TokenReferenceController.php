@@ -17,6 +17,7 @@
  */
 
 declare(strict_types=1);
+
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\Service\TokenReferenceService;
@@ -40,11 +41,11 @@ class TokenReferenceController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string                $appName   The app name.
-	 * @param IRequest              $request   The request.
-	 * @param TokenSetService       $tokenSets Available token sets, custom sets included.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param TokenSetService $tokenSets Available token sets, custom sets included.
 	 * @param TokenReferenceService $reference The renderer.
-	 * @param IAppManager           $apps      For the app root.
+	 * @param IAppManager $apps For the app root.
 	 */
 	public function __construct(
 		string $appName,

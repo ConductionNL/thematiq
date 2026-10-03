@@ -62,8 +62,8 @@ class InternalScopesService {
 	/**
 	 * Constructor.
 	 *
-	 * @param RuntimeFileLocator $files  Reads a set's files, shipped or in app data.
-	 * @param CssParserService   $parser Reads a stylesheet's `:root` declarations.
+	 * @param RuntimeFileLocator $files Reads a set's files, shipped or in app data.
+	 * @param CssParserService $parser Reads a stylesheet's `:root` declarations.
 	 */
 	public function __construct(
 		private readonly RuntimeFileLocator $files,
@@ -74,9 +74,9 @@ class InternalScopesService {
 	/**
 	 * The internal scopes for a set as the page wears it.
 	 *
-	 * @param string $tokenSet       The resolved token set.
+	 * @param string $tokenSet The resolved token set.
 	 * @param string $designSystemId The design system the set wears.
-	 * @param bool   $withDark       Whether the set's dark variant is injected.
+	 * @param bool $withDark Whether the set's dark variant is injected.
 	 *
 	 * @return string The CSS, or the empty string when no internal token is set.
 	 *
@@ -107,7 +107,7 @@ class InternalScopesService {
 	 * The rules for the internal tokens given a value.
 	 *
 	 * @param array<int, string> $lightNames Names declared on `:root`, which apply in every theme.
-	 * @param array<int, string> $anyNames   Names declared anywhere, including dark scopes only.
+	 * @param array<int, string> $anyNames Names declared anywhere, including dark scopes only.
 	 *
 	 * @return string The CSS, or the empty string when no internal token is set.
 	 *
@@ -153,8 +153,8 @@ class InternalScopesService {
 	 * The rule for a token declared only in dark scopes: in light the token is
 	 * unset, so the rule may only apply where the dark value is visible.
 	 *
-	 * @param array<int, string> $selectors   The component's selectors.
-	 * @param string             $declaration The declaration line.
+	 * @param array<int, string> $selectors The component's selectors.
+	 * @param string $declaration The declaration line.
 	 *
 	 * @return string The two scoped rules.
 	 */
@@ -180,7 +180,7 @@ class InternalScopesService {
 	 * One selector limited to a body-level scope.
 	 *
 	 * @param string $selector The selector.
-	 * @param string $scope    The body scope.
+	 * @param string $scope The body scope.
 	 *
 	 * @return string The scoped selector.
 	 */

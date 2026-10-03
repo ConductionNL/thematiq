@@ -44,7 +44,9 @@ class ApplicationTest extends TestCase {
 			 *
 			 * @param string $autoloader The autoloader path.
 			 */
-			public function __construct(private string $autoloader) {
+			public function __construct(
+				private string $autoloader,
+			) {
 			}
 
 			/**

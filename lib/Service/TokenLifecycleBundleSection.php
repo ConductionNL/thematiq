@@ -36,9 +36,9 @@ class TokenLifecycleBundleSection {
 	/**
 	 * Constructor.
 	 *
-	 * @param OwnTokenService             $ownTokens    The own tokens.
-	 * @param TokenDeprecationService     $deprecations The deprecations.
-	 * @param CustomOverridesService|null $overrides    Brought up to date after an apply.
+	 * @param OwnTokenService $ownTokens The own tokens.
+	 * @param TokenDeprecationService $deprecations The deprecations.
+	 * @param CustomOverridesService|null $overrides Brought up to date after an apply.
 	 */
 	public function __construct(
 		private readonly OwnTokenService $ownTokens,
@@ -67,7 +67,7 @@ class TokenLifecycleBundleSection {
 	/**
 	 * Validate the keys a bundle carries.
 	 *
-	 * @param array<string, mixed>             $bundle The decoded bundle.
+	 * @param array<string, mixed> $bundle The decoded bundle.
 	 * @param array<int, array<string, mixed>> $errors Accumulator, appended to on failure.
 	 *
 	 * @return array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null} Null for a key the bundle lacks.
@@ -76,7 +76,7 @@ class TokenLifecycleBundleSection {
 	 */
 	public function validate(array $bundle, array &$errors): array {
 		$resolved = ['ownTokens' => null, 'tokenDeprecations' => null];
-		$checks   = [
+		$checks = [
 			'ownTokens' => fn (array $value): array => $this->ownTokens->checkAll(tokens: $value),
 			'tokenDeprecations' => fn (array $value): array => $this->deprecations->checkAll(records: $value),
 		];

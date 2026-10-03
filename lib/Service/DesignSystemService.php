@@ -13,10 +13,10 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-37
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-38
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-37
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-38
  * @spec openspec/specs/icon-packs/spec.md
  */
 
@@ -36,10 +36,10 @@ use OCP\IConfig;
  * stylesheets should be loaded for a given token set, and which icon pack(s)
  * (openspec/specs/icon-packs/spec.md) the active design system serves.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-37
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-38
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-37
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-38
  * @spec openspec/specs/icon-packs/spec.md
  */
 class DesignSystemService {
@@ -123,7 +123,7 @@ class DesignSystemService {
 	 *     documentation_url?: string
 	 * }> Indexed by id.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
 	 */
 	public function getDesignSystems(): array {
 		if ($this->designSystems !== null) {
@@ -161,7 +161,7 @@ class DesignSystemService {
 	 *     documentation_url?: string
 	 * } The design system.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-36
 	 * @spec openspec/changes/lasuite-shell-geometry/specs/lasuite-stack/spec.md
 	 */
 	public function getDesignSystem(string $id): array {
@@ -192,7 +192,7 @@ class DesignSystemService {
 	 *
 	 * @return array The token set metadata from token-sets.json (empty array if not found).
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-37
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-37
 	 */
 	public function getTokenSetMeta(string $tokenSetId): array {
 		if ($this->tokenSetMeta === null) {
@@ -468,7 +468,7 @@ class DesignSystemService {
 	 *     documentation_url?: string
 	 * }> List of design systems.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-35
 	 */
 	public function getDesignSystemsList(): array {
 		return array_values($this->getDesignSystems());
@@ -481,7 +481,7 @@ class DesignSystemService {
 	 *
 	 * @return array<string, array> Entries indexed by id.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-38
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-38
 	 */
 	private function readJsonManifest(string $path): array {
 		if (file_exists($path) === false) {

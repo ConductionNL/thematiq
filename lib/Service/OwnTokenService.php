@@ -73,9 +73,9 @@ class OwnTokenService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig             $config  The app config store.
-	 * @param TokenValueValidator $values  The value grammar per type.
-	 * @param DeprecationRecords  $records The deprecations, written as a comment above a deprecated token.
+	 * @param IConfig $config The app config store.
+	 * @param TokenValueValidator $values The value grammar per type.
+	 * @param DeprecationRecords $records The deprecations, written as a comment above a deprecated token.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
@@ -134,7 +134,7 @@ class OwnTokenService {
 			throw new InvalidArgumentException('name', 400);
 		}
 
-		$name   = self::PREFIX . $slug;
+		$name = self::PREFIX . $slug;
 		$tokens = $this->list();
 		if (isset($tokens[$name]) === true) {
 			throw new InvalidArgumentException('duplicate', 400);
@@ -150,7 +150,7 @@ class OwnTokenService {
 	/**
 	 * Change a token's label, type, value, dark value or description. The name stays.
 	 *
-	 * @param string               $name  The full name.
+	 * @param string $name The full name.
 	 * @param array<string, mixed> $input {label, type, value, darkValue?, description?}.
 	 *
 	 * @return array<string, string> The stored token, with its `name`.
@@ -211,7 +211,7 @@ class OwnTokenService {
 	 */
 	public function checkAll(array $tokens): array {
 		$clean = [];
-		$now   = gmdate(DATE_ATOM);
+		$now = gmdate(DATE_ATOM);
 		foreach ($tokens as $name => $token) {
 			if (self::isOwnName(name: (string)$name) === false || is_array($token) === false) {
 				throw new InvalidArgumentException('name', 400);
@@ -253,7 +253,7 @@ class OwnTokenService {
 	 */
 	public function css(): OwnTokenCss {
 		$light = [];
-		$dark  = [];
+		$dark = [];
 		foreach ($this->list() as $name => $token) {
 			$light[$name] = (string)($token['value'] ?? '');
 			if (($token['darkValue'] ?? '') !== '') {
@@ -325,8 +325,8 @@ class OwnTokenService {
 	/**
 	 * A value that passes the injection filter and its type.
 	 *
-	 * @param mixed  $value The submitted value.
-	 * @param string $type  The type to check against.
+	 * @param mixed $value The submitted value.
+	 * @param string $type The type to check against.
 	 * @param string $field The field name, for the error.
 	 *
 	 * @return string The trimmed value.

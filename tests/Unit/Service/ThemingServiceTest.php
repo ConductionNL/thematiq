@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Unit tests for ThemingService.
  *
@@ -157,8 +158,8 @@ class ThemingServiceTest extends TestCase {
 	 * named colours and `rgb()` forms CSS would take — is not, because the
 	 * value is handed to core theming, which stores a hex string.
 	 *
-	 * @param string $color    The candidate colour.
-	 * @param bool   $expected Whether it is a valid hex colour.
+	 * @param string $color The candidate colour.
+	 * @param bool $expected Whether it is a valid hex colour.
 	 *
 	 * @dataProvider hexColorProvider
 	 *
@@ -220,7 +221,7 @@ class ThemingServiceTest extends TestCase {
 	 * the filesystem. `logo_dark` is validated by the same rules as `logo`
 	 * even though it is never passed to core theming.
 	 *
-	 * @param string $key  The image parameter name.
+	 * @param string $key The image parameter name.
 	 * @param string $path The candidate path.
 	 *
 	 * @dataProvider traversalPathProvider

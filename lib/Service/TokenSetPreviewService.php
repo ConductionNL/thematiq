@@ -13,8 +13,8 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
  */
 
 declare(strict_types=1);
@@ -38,8 +38,8 @@ use OCP\App\IAppManager;
  * This is pure string manipulation — no DOM, no CSS parser.
  * Only editable tokens (in TokenRegistry) are returned.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
  */
 class TokenSetPreviewService {
 
@@ -195,7 +195,7 @@ class TokenSetPreviewService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
 	 */
 	public function getResolvedColors(string $tokenSetId): array {
 		$appPath = $this->appManager->getAppPath('thematiq');
@@ -247,7 +247,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --property-name => value.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
 	 */
 	private function parseCssVars(string $filePath): array {
 		if (file_exists($filePath) === false) {
@@ -291,7 +291,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --color-X => --nldesign-Y.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
 	 */
 	private function parseMappings(string $filePath): array {
 		if (file_exists($filePath) === false) {
@@ -333,7 +333,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return string The resolved value or the original reference.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
 	 */
 	private function resolveVarReference(string $ref, array $vars): string {
 		// Direct lookup (ref is a --nldesign-* token name).

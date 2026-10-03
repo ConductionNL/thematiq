@@ -49,9 +49,9 @@ class TokenValueValidatorTest extends TestCase {
 	/**
 	 * Every case is accepted or refused as the fixture says.
 	 *
-	 * @param string $type     The token type.
-	 * @param string $value    The value.
-	 * @param bool   $accepted Whether it passes.
+	 * @param string $type The token type.
+	 * @param string $value The value.
+	 * @param bool $accepted Whether it passes.
 	 *
 	 * @return void
 	 */
