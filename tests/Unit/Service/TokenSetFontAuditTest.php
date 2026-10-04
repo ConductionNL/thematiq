@@ -207,6 +207,163 @@ class TokenSetFontAuditTest extends TestCase {
 	}//end testASystemFamilyIsNotReportedAsMissing()
 
 	/**
+	 * A design system whose manifest is missing, unreadable or not a list
+	 * self-hosts nothing — reported as such rather than throwing, because a
+	 * broken manifest must not take the admin panel down with it.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
+	 */
+	public function testAnUnusableDesignSystemManifestSelfHostsNothing(): void {
+		$probe = sys_get_temp_dir() . '/thematiq-font-probe-' . getmypid();
+		@mkdir($probe . '/css/tokens', 0777, true);
+
+		// No design-systems.json at all.
+		$this->assertSame([], $this->service()->selfHostedFamilies($probe, 'nldesign'));
+
+		// Present but not a JSON list.
+		file_put_contents($probe . '/design-systems.json', '{"id":"nldesign"}');
+		$this->assertSame([], $this->service()->selfHostedFamilies($probe, 'nldesign'));
+
+		// Present and a list, but naming a stylesheet that is not on disk.
+		file_put_contents(
+			$probe . '/design-systems.json',
+			json_encode([['id' => 'nldesign', 'stylesheets' => ['systems/nowhere/fonts']]])
+		);
+		$this->assertSame([], $this->service()->selfHostedFamilies($probe, 'nldesign'));
+
+		// A design system nothing declares.
+		$this->assertSame([], $this->service()->selfHostedFamilies($this->repoRoot(), 'no-such-system'));
+	}//end testAnUnusableDesignSystemManifestSelfHostsNothing()
+
+	/**
+	 * A set id with no CSS file names no family, and is reported as a system
+	 * set rather than as a missing typeface: there is no file to have named
+	 * anything, so there is nothing to ask an administrator for.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
+	 */
+	public function testASetWithNoFileNamesNoFamily(): void {
+		$result = $this->service()->auditSet($this->repoRoot(), 'no-such-set', []);
+
+		$this->assertNull($result['family']);
+		$this->assertNull($result['stack']);
+		$this->assertSame('system', $result['kind']);
+		$this->assertTrue($result['ok']);
+		$this->assertSame([], $this->service()->warningsFor($this->repoRoot(), 'no-such-set', []));
+	}//end testASetWithNoFileNamesNoFamily()
+
+	/**
+	 * A missing or malformed `token-sets.json`, and a missing `css/tokens/`,
+	 * degrade to an empty audit rather than throwing.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
+	 */
+	public function testAnUnusableCatalogueAuditsNothing(): void {
+		$probe = sys_get_temp_dir() . '/thematiq-font-catalogue-' . getmypid();
+		@mkdir($probe, 0777, true);
+
+		// No css/tokens/ directory and no manifest.
+		$this->assertSame([], $this->service()->auditAll($probe));
+
+		// A manifest that is not a list, and still no token files.
+		file_put_contents($probe . '/token-sets.json', '"not a list"');
+		$this->assertSame([], $this->service()->auditAll($probe));
+
+		// One token file, and a manifest entry with no usable id.
+		@mkdir($probe . '/css/tokens', 0777, true);
+		file_put_contents($probe . '/css/tokens/probe.css', ":root {\n\t--nldesign-font-family: Arial;\n}\n");
+		file_put_contents($probe . '/token-sets.json', json_encode([['name' => 'no id'], 'not an entry']));
+		$results = $this->service()->auditAll($probe);
+		$this->assertCount(1, $results);
+		$this->assertSame('probe', $results[0]['id']);
+		$this->assertSame('Arial', $results[0]['family']);
+	}//end testAnUnusableCatalogueAuditsNothing()
+
+	/**
+	 * A `font` block that is not an object, or that omits any of licence,
+	 * action or note, does NOT count as having declared anything — a block
+	 * naming a family and nothing else tells an administrator nothing.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
+	 */
+	public function testAnIncompleteFontBlockDeclaresNothing(): void {
+		$probe = sys_get_temp_dir() . '/thematiq-font-block-' . getmypid();
+		@mkdir($probe . '/css/tokens', 0777, true);
+		copy($this->repoRoot() . '/design-systems.json', $probe . '/design-systems.json');
+		file_put_contents(
+			$probe . '/css/tokens/probe.css',
+			":root {\n\t--nldesign-font-family: 'Avenir', sans-serif;\n}\n"
+		);
+
+		foreach (
+			[
+				'not an object' => ['design_system' => 'nldesign', 'font' => 'Avenir'],
+				'no licence' => ['design_system' => 'nldesign', 'font' => ['family' => 'Avenir', 'action' => 'upload', 'note' => 'x']],
+				'no action' => ['design_system' => 'nldesign', 'font' => ['family' => 'Avenir', 'licence' => 'proprietary', 'note' => 'x']],
+				'no note' => ['design_system' => 'nldesign', 'font' => ['family' => 'Avenir', 'licence' => 'proprietary', 'action' => 'upload']],
+			] as $label => $meta
+		) {
+			$result = $this->service()->auditSet($probe, 'probe', $meta);
+			$this->assertSame('undeclared', $result['kind'], $label);
+			$this->assertFalse($result['ok'], $label);
+			$this->assertCount(1, $this->service()->warningsFor($probe, 'probe', $meta), $label);
+		}
+
+		// ...and the complete block is accepted, so the assertion above is not
+		// passing on a rule that rejects everything.
+		$complete = [
+			'design_system' => 'nldesign',
+			'font' => [
+				'family' => 'Avenir',
+				'licence' => 'proprietary',
+				'action' => 'upload',
+				'note' => 'Not redistributable; an administrator uploads it.',
+			],
+		];
+		$this->assertSame('declared', $this->service()->auditSet($probe, 'probe', $complete)['kind']);
+	}//end testAnIncompleteFontBlockDeclaresNothing()
+
+	/**
+	 * A commented-out `@font-face` never counts as served, and an empty font
+	 * stack names no family.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
+	 */
+	public function testACommentedFaceIsNotServedAndAnEmptyStackNamesNothing(): void {
+		$probe = sys_get_temp_dir() . '/thematiq-font-comment-' . getmypid();
+		@mkdir($probe . '/css/systems/probe', 0777, true);
+		@mkdir($probe . '/css/tokens', 0777, true);
+		file_put_contents(
+			$probe . '/css/systems/probe/fonts.css',
+			"/* @font-face { font-family: 'Ghost'; } */\n"
+		);
+		file_put_contents(
+			$probe . '/design-systems.json',
+			json_encode([['id' => 'probe', 'stylesheets' => ['systems/probe/fonts']]])
+		);
+
+		$this->assertSame([], $this->service()->selfHostedFamilies($probe, 'probe'));
+
+		file_put_contents($probe . '/css/tokens/ghost.css', ":root {\n\t--nldesign-font-family: 'Ghost';\n}\n");
+		$this->assertSame('undeclared', $this->service()->auditSet($probe, 'ghost', ['design_system' => 'probe'])['kind']);
+
+		file_put_contents($probe . '/css/tokens/empty.css', ":root {\n\t--nldesign-font-family: ;\n}\n");
+		$empty = $this->service()->auditSet($probe, 'empty', ['design_system' => 'probe']);
+		$this->assertNull($empty['family']);
+		$this->assertSame('system', $empty['kind']);
+	}//end testACommentedFaceIsNotServedAndAnEmptyStackNamesNothing()
+
+	/**
 	 * `token-sets.json` indexed by id.
 	 *
 	 * @return array<string, array<string, mixed>> The manifest entries.
