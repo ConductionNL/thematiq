@@ -264,3 +264,19 @@ describe('withPins', () => {
 		expect(withPins(base, {})).toBe(base)
 	})
 })
+
+describe('withOverrides', () => {
+	it('keeps one declaration per name: the override, not the converted copy', async () => {
+		const { withOverrides } =
+			await import('../../scripts/sync-upstream-tokens.mjs')
+		const css = withOverrides(
+			':root {\n\t--nldesign-color-primary: #157c68;\n\t--nldesign-color-text: #333333;\n}\n',
+			[['--nldesign-color-primary', '#157c68']],
+		)
+		expect(css.match(/--nldesign-color-primary:/g)).toHaveLength(1)
+		expect(css).toContain('--nldesign-color-text: #333333;')
+		expect(css.indexOf('--nldesign-color-primary')).toBeGreaterThan(
+			css.indexOf('5. Local overrides'),
+		)
+	})
+})

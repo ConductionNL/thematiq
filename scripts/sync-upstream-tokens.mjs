@@ -277,6 +277,16 @@ export function withOverrides(css, overrides) {
 	if (overrides.length === 0) {
 		return css
 	}
+	// An override is the one declaration of its name: a pinned colour the
+	// converter also emitted would otherwise appear twice in one block.
+	const names = new Set(overrides.map(([name]) => name))
+	css = css
+		.split('\n')
+		.filter((line) => {
+			const match = /^\t(--[\w-]+)\s*:.*;\s*$/.exec(line)
+			return match === null || names.has(match[1]) === false
+		})
+		.join('\n')
 	const close = css.lastIndexOf('}')
 	const block = [
 		'',
