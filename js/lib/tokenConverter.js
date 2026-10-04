@@ -942,6 +942,99 @@
 	}
 
 	/**
+	 * Bring the component pairs a theme declares itself to their threshold
+	 * (thematiq#1006, #1007): the Den Haag and Tilburg colours a portal draws
+	 * from the set's own component layer, measured the way
+	 * `DenhaagContrastPairs` measures them. Only a pair whose foreground the
+	 * theme declares is touched; one it leaves to the bridge follows the
+	 * already-repaired semantic layer. A `transparent` background, which
+	 * cannot be measured, becomes the page colour it shows anyway.
+	 *
+	 * @param {Object<string,string>} component The component layer (mutated).
+	 * @param {Object<string,string>} semantic The semantic layer.
+	 * @param {Object} table The mapping table.
+	 * @param {Array<Object>} report The conversion report.
+	 * @return {Object<string,string>} The component layer.
+	 */
+	function repairComponents(component, semantic, table, report) {
+		var spec = table.contrastRepair || {}
+		var pairs = spec.componentPairs
+		if (!Array.isArray(pairs)) {
+			return component
+		}
+
+		var pageHex = String(spec.page || '#ffffff')
+		var page = parseColor(pageHex) || [255, 255, 255]
+		var defaults = spec.defaults || {}
+
+		pairs.forEach(function (pair) {
+			var name = String(pair.foreground)
+			var backgroundName = String(pair.background)
+			var value = component[name]
+			if (value === undefined) {
+				return
+			}
+
+			var backgroundValue = component[backgroundName]
+			if (
+				backgroundValue !== undefined
+				&& String(backgroundValue).trim().toLowerCase() === 'transparent'
+			) {
+				component[backgroundName] = pageHex
+				backgroundValue = pageHex
+				report.push({
+					source: backgroundName,
+					target: backgroundName,
+					action: 'adapted',
+					reason: 'not-a-colour',
+					value: pageHex,
+					original: 'transparent',
+				})
+			}
+
+			if (backgroundValue === undefined) {
+				backgroundValue = semantic[backgroundName]
+			}
+
+			if (backgroundValue === undefined) {
+				backgroundValue = fallbackValue(backgroundName, semantic, defaults)
+			}
+
+			var foreground = opaque(value, page)
+			var background =
+				backgroundValue === undefined ? null : opaque(backgroundValue, page)
+			var min = numberOr(pair.min, 4.5)
+			if (
+				foreground === null
+				|| background === null
+				|| ratio(foreground, background) >= min
+			) {
+				return
+			}
+
+			var repaired =
+				pair.adjust === 'flip'
+					? ratio([255, 255, 255], background)
+						>= ratio([0, 0, 0], background)
+						? [255, 255, 255]
+						: [0, 0, 0]
+					: repairLightness(foreground, background, min)
+
+			component[name] = toHex(repaired)
+			report.push({
+				source: name,
+				target: name,
+				action: 'adapted',
+				reason: 'contrast-repaired',
+				value: component[name],
+				original: value,
+			})
+		})
+
+		return component
+	}
+
+	/**
 	 * Bring every pair of the table's `contrastRepair` list to its threshold.
 	 *
 	 * @param {Object<string,string>} semantic The semantic layer (mutated).
@@ -1150,6 +1243,25 @@
 	 * @return {string|null} The picked colour, or null.
 	 */
 	function pickFromRamp(spec, declarations, semantic) {
+		var picked = pickByCriterion(spec, declarations, semantic)
+		if (picked === null && spec.default !== undefined) {
+			// Mirrors the PHP runtime: a ramp with no step that meets the
+			// criterion falls back to the table's default (thematiq#1006).
+			return String(spec.default)
+		}
+
+		return picked
+	}
+
+	/**
+	 * The ramp step a criterion picks, or null. See `pickFromRamp()`.
+	 *
+	 * @param {Object} spec The fallback spec.
+	 * @param {Object<string,string>} declarations The theme's declarations.
+	 * @param {Object<string,string>} semantic Semantic layer so far.
+	 * @return {string|null} The picked colour.
+	 */
+	function pickByCriterion(spec, declarations, semantic) {
 		var ramp = []
 		var seen = {}
 
@@ -1172,6 +1284,9 @@
 			ramp.push({ hex: hex, rgb: rgb, sum: rgb[0] + rgb[1] + rgb[2] })
 		})
 
+		// A theme with no neutral greys at all still needs a body text and a
+		// border colour: the table's default is the answer, not a missing token
+		// (groningen and riddeliemers lacked text and borders, thematiq#1006).
 		if (ramp.length === 0) {
 			return null
 		}
@@ -2640,6 +2755,12 @@
 		// Only on request (the nightly sync): an admin's upload keeps its colours.
 		if (settings.repairContrast === true) {
 			semantic = repairContrast(semantic, table, manifest, report, pinned)
+			sections.component = repairComponents(
+				sections.component,
+				semantic,
+				table,
+				report,
+			)
 		}
 
 		if (logo !== null) {

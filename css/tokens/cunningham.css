@@ -48,6 +48,20 @@
 	--nldesign-color-text-muted: #74777c;
 	--nldesign-color-text-light: #ffffff;
 
+	/* Links and status (thematiq#1006): the system's own values, the same ones
+	 * css/systems/lasuite/bridge.css declares, so the set also carries them where
+	 * the bridge is not loaded (a public portal) and the vocabulary is complete. */
+	--nldesign-color-link: #1a509f;
+	--nldesign-color-link-hover: #203c63;
+	--nldesign-color-error: #d80000;
+	--nldesign-color-error-rgb: 216, 0, 0;
+	--nldesign-color-warning: #836703;
+	--nldesign-color-warning-rgb: 131, 103, 3;
+	--nldesign-color-success: #427816;
+	--nldesign-color-success-rgb: 66, 120, 22;
+	--nldesign-color-info: #1167d4;
+	--nldesign-color-info-rgb: 17, 103, 212;
+
 	/* Border */
 	--nldesign-color-border: #c4c7cb;
 	--nldesign-color-border-dark: #74777c;

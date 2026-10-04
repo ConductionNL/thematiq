@@ -519,7 +519,9 @@
 			"give way instead of the text: body text must read on the page AND on the neutral fill",
 			"(the badge), and a mid-tone fill makes that impossible for any text colour.",
 			"`replaceInvalid` tokens whose value is not a visible colour (an upstream reference",
-			"written as text, `transparent` for a fill) get their default before anything is measured."
+			"written as text, `transparent` for a fill) get their default before anything is measured.",
+			"`componentPairs` are the Den Haag and Tilburg pairs DenhaagContrastPairs measures. They",
+			"apply only to a foreground the theme declares in its own component layer (thematiq#1006)."
 		],
 		"page": "#ffffff",
 		"defaults": {
@@ -546,6 +548,23 @@
 			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background-dark", "min": 4.5, "adjust": "lightness", "repair": "background" },
 			{ "foreground": "--nldesign-color-text-muted", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--nldesign-color-header-text", "background": "--nldesign-color-header-background", "min": 4.5, "adjust": "flip" }
+		],
+		"componentPairs": [
+			{ "foreground": "--denhaag-step-marker-current-color", "background": "--denhaag-step-marker-current-background-color", "min": 4.5, "adjust": "flip" },
+			{ "foreground": "--denhaag-step-marker-checked-color", "background": "--denhaag-step-marker-checked-background-color", "min": 4.5, "adjust": "flip" },
+			{ "foreground": "--denhaag-step-marker-not-checked-color", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--denhaag-case-card-title-color", "background": "--denhaag-case-card-background-color", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--denhaag-case-card-subtitle-color", "background": "--denhaag-case-card-background-color", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--denhaag-action-date-warning-color", "background": "--denhaag-action-background-color", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nl-data-badge-neutral-color", "background": "--nl-data-badge-neutral-background-color", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nl-data-badge-success-color", "background": "--nl-data-badge-success-background-color", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nl-data-badge-warning-color", "background": "--nl-data-badge-warning-background-color", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nl-data-badge-error-color", "background": "--nl-data-badge-error-background-color", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--denhaag-side-navigation-link-color", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--denhaag-side-navigation-link-active-color", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--denhaag-file-link-color", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--tilburg-header-logo-text-color", "background": "--tilburg-header-background-color", "min": 4.5, "adjust": "flip" },
+			{ "foreground": "--tilburg-footer-color", "background": "--tilburg-footer-background-color", "min": 4.5, "adjust": "flip" }
 		]
 	},
 	"never": [

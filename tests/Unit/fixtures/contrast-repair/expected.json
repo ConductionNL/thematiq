@@ -63,5 +63,15 @@
 			"--nldesign-color-background-dark": "#e0e1e2"
 		},
 		"primary_color": "#154273"
+	},
+	"component-pairs": {
+		"input": ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #154273;\n\t--denhaag-step-marker-current-background-color: #f2757f;\n\t--denhaag-step-marker-current-color: white;\n\t--denhaag-side-navigation-link-color: #FFFFFF;\n\t--denhaag-action-background-color: transparent;\n\t--denhaag-action-date-warning-color: #e0a0a0;\n}\n",
+		"expected": {
+			"--denhaag-step-marker-current-color": "#000000",
+			"--denhaag-side-navigation-link-color": "#757575",
+			"--denhaag-action-background-color": "#ffffff",
+			"--denhaag-action-date-warning-color": "#c64f4f"
+		},
+		"primary_color": "#154273"
 	}
 }
