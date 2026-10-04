@@ -180,17 +180,42 @@ class TokenSetVocabularyTest extends TestCase {
 			'No shipped set passes the vocabulary audit — the required-token list or the '
 			. 'vocabulary scan is broken, not all 48 sets.'
 		);
-		$this->assertNotEmpty(
-			$incomplete,
-			'Every shipped set passes — either every set has been regenerated (then empty the allow-list '
-			. 'and delete this assertion) or the audit has stopped auditing anything.'
-		);
+		// Every shipped set passes since thematiq#1006 emptied the allow-list, so the
+		// "something is incomplete" half of this control now runs on a probe: a copy
+		// of the app's own stylesheets plus one set that declares only a primary. An
+		// audit that has stopped auditing would pass the probe too.
+		$probe = $this->probeAppWithAnIncompleteSet();
+		$result = $this->service()->auditSet($probe, 'probe', ['design_system' => 'nldesign']);
+		$this->assertTrue($result['auditable'], 'The probe set must be audited.');
+		$this->assertFalse($result['complete'], 'An nldesign set that declares only a primary must be incomplete.');
+		$this->assertContains('--nldesign-color-text', $result['missingRequired']);
 		$this->assertContains(
 			'rijkshuisstijl',
 			array_merge($complete, $incomplete),
 			'The default token set must always be audited.'
 		);
 	}//end testAuditDistinguishesCompleteFromIncompleteSets()
+
+	/**
+	 * A throwaway app root: the real design-systems.json and nldesign stylesheets,
+	 * and one token set with nothing but a primary colour.
+	 *
+	 * @return string The probe app path.
+	 */
+	private function probeAppWithAnIncompleteSet(): string {
+		$probe = sys_get_temp_dir() . '/thematiq-vocabulary-probe-' . getmypid();
+		@mkdir($probe . '/css/tokens', 0777, true);
+		@mkdir($probe . '/css/systems/nldesign', 0777, true);
+		copy($this->repoRoot() . '/design-systems.json', $probe . '/design-systems.json');
+		foreach (glob($this->repoRoot() . '/css/systems/nldesign/*.css') ?: [] as $file) {
+			copy($file, $probe . '/css/systems/nldesign/' . basename($file));
+		}
+
+		file_put_contents($probe . '/css/tokens/probe.css', ":root {\n\t--nldesign-color-primary: #154273;\n}\n");
+		file_put_contents($probe . '/token-sets.json', json_encode([['id' => 'probe', 'design_system' => 'nldesign']]));
+
+		return $probe;
+	}//end probeAppWithAnIncompleteSet()
 
 	/**
 	 * A set whose design system reads no `--nldesign-*` token is reported as
