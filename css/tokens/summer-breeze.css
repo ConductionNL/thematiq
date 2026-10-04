@@ -4,7 +4,7 @@
  * A soft, airy light-blue theme. Gentle on the eyes, relaxed in nature.
  * Derived from the Acato design language used in docudesk (Inter typeface,
  * large rounded surfaces, soft low-contrast shadows, pastel status colours,
- * a pale-blue gradient navigation).
+ * a floating white navigation card).
  *
  * These --summer-* tokens are consumed exclusively by the
  * css/systems/summer-breeze/ stylesheet bundle. They are namespaced so they
@@ -26,24 +26,23 @@
 	--summer-color-background-dark: #e7eef6;
 	--summer-color-background-darker: #dbe6f2;
 
-	/* Pale-blue navigation gradient — the signature "breeze". */
-	--summer-gradient-nav: linear-gradient(180deg, #dcebfa 0%, #eaf2fb 55%, #f4f9fd 100%);
-
 	/* Text — soft navy, never pure black. */
 	--summer-color-text: #02162e;
 	--summer-color-text-muted: #5b6b7b;
 	--summer-color-text-light: #ffffff;
 
-	/* Borders — barely-there. */
+	/* Borders — barely-there on panels and cards. An input's border is the
+	   only edge of the control, so it gets its own token at 3:1 (WCAG 1.4.11). */
 	--summer-color-border: #e3e9f0;
 	--summer-color-border-dark: #c7d3e0;
+	--summer-color-border-input: #7a8b9f;
 
 	/* Status — pastel fills with legible text (WCAG AA on white). Each fill has
 	   a slightly-darker border colour for the docudesk rounded-rect badge look. */
-	--summer-color-success: #2e7d4f;
+	--summer-color-success: #2b7649;
 	--summer-color-success-light: #e3f4e7;
 	--summer-color-success-border: #b5dcc0;
-	--summer-color-warning: #8a6d00;
+	--summer-color-warning: #806500;
 	--summer-color-warning-light: #fbf0cf;
 	--summer-color-warning-border: #efd68b;
 	--summer-color-error: #c0392b;
@@ -57,8 +56,10 @@
 	/* Status badge geometry — rounded-rect, small text. */
 	--summer-radius-badge: 6px;
 
-	/* Focus. */
+	/* Focus. The translucent colour is the halo; theme.css draws the outline
+	   from the same channels made opaque (the -rgb triplet is its fallback). */
 	--summer-color-focus: rgba(40, 116, 209, 0.5);
+	--summer-color-focus-rgb: 40, 116, 209;
 
 	/* Typography — Inter, light by default for the relaxed feel. */
 	--summer-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
@@ -84,5 +85,4 @@
 
 	/* Animation. */
 	--summer-animation-quick: 120ms;
-	--summer-animation-slow: 280ms;
 }

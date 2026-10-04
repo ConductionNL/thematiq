@@ -31,6 +31,7 @@ npx vitest run \
 	tests/vitest/fontLicences.spec.js \
 	tests/vitest/tokenSetCoverage.spec.js \
 	tests/vitest/focusRingContrast.spec.js \
+	tests/vitest/frankendeskTokenSet.spec.js \
 	tests/vitest/layerSwap.spec.js \
 	tests/vitest/layerSwapDom.spec.js \
 	tests/vitest/playgroundSelection.spec.js \

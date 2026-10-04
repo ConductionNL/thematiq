@@ -12,10 +12,10 @@
 	{
 		"id": "summer-breeze",
 		"name": "Summer Breeze",
-		"description": "Soft, airy light-blue theme — Inter, rounded surfaces, soft shadows, pastel status colours and a pale-blue gradient navigation. Gentle on the eyes.",
+		"description": "Soft, airy light-blue theme. Inter, rounded surfaces, soft shadows, pastel status colours and a floating white navigation card. Gentle on the eyes.",
 		"design_system": "summer-breeze",
 		"theming": {
-			"primary_color": "#2874D1",
+			"primary_color": "#21468B",
 			"background_color": "#EAF2FB"
 		}
 	},
@@ -612,12 +612,13 @@
 	{
 		"id": "frankendesk",
 		"name": "La Frankendesk",
-		"description": "Conduction's own branded riff on the lasuite bundle. EXTENDS `lasuite`: the renderer loads the parent set first and this one after, so this file is the DELTA — the logo and anything Conduction deliberately changes — instead of a copy that drifts. Same violet Cunningham design tokens (MIT), self-hosted Inter, brand blue-violet #4844AD, with the original \"La Frankendesk\" mark as logo.",
+		"description": "Conduction's own brand on the La Suite look. It keeps every lasuite colour and adds the La Frankendesk logo. A layer for public portals adds the footer, hero, cards and spacing. Violet #4844AD from the Cunningham tokens (MIT), set in self-hosted Inter.",
 		"design_system": "lasuite",
 		"theming": {
 			"primary_color": "#4844AD",
 			"background_color": "#FFFFFF",
-			"logo": "img/logos/frankendesk.svg"
+			"logo": "img/logos/frankendesk.svg",
+			"logo_dark": "img/logos/frankendesk-dark.svg"
 		},
 		"extends": "lasuite"
 	},

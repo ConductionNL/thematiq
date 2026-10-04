@@ -12,8 +12,8 @@
  *
  * Read from the stylesheets themselves: every `outline` / `outline-color`
  * declaration in a `*:focus-visible` rule of each bundle's ring stylesheet
- * (css/systems/nldesign/theme.css, and css/systems/lasuite/bridge.css for
- * lasuite and cunningham, #970) is
+ * (css/systems/nldesign/theme.css, css/systems/lasuite/bridge.css for
+ * lasuite and cunningham, #970, and css/systems/summer-breeze/theme.css, #1022) is
  * resolved against the default set's tokens (defaults.css, then
  * tokens/rijkshuisstijl.css) on white, and against the generated dark variant
  * on Nextcloud's dark main background. A translucent colour is composited over
@@ -255,6 +255,20 @@ const BUNDLES = [
 		],
 		dark: ['css/tokens/dark/cunningham.css'],
 	},
+	{
+		// Summer Breeze runs its own vocabulary: the ring is drawn from
+		// --summer-color-focus, light from its token file, dark from its
+		// generated variant (#1022).
+		name: 'summer-breeze',
+		sheet: 'css/systems/summer-breeze/theme.css',
+		light: ['css/tokens/summer-breeze.css'],
+		dark: ['css/tokens/dark/summer-breeze.css'],
+		halo: '--summer-color-focus',
+		grounds: {
+			light: '--summer-color-background-plain',
+			dark: '--summer-color-background-plain',
+		},
+	},
 ]
 
 for (const bundle of BUNDLES) {
@@ -284,14 +298,39 @@ for (const bundle of BUNDLES) {
 			})
 		}
 
+		// A bundle that paints its own page also gets the ring measured on
+		// that page, in light and in dark.
+		if (bundle.grounds) {
+			for (const [name, vars, token] of [
+				['on its own page', LIGHT, bundle.grounds.light],
+				['on its own dark page', DARK, bundle.grounds.dark],
+			]) {
+				it(`every outline colour clears 3:1 ${name}`, () => {
+					const bg = parseColour(substitute(`var(${token})`, vars)).slice(
+						0,
+						3,
+					)
+					for (const { value, vars: scoped } of outlineVariants(
+						bundle.sheet,
+						vars,
+					)) {
+						const ratio = contrast(painted(value, scoped, bg), bg)
+						expect(
+							ratio,
+							`${value} paints ${ratio.toFixed(2)}:1 ${name}`,
+						).toBeGreaterThanOrEqual(3)
+					}
+				})
+			}
+		}
+
 		it('keeps the translucent token as the halo', () => {
+			const halo = bundle.halo ?? '--nldesign-color-focus'
 			const shadows = []
 			for (const rule of focusRules(bundle.sheet)) {
 				rule.walkDecls('box-shadow', (d) => shadows.push(d.value))
 			}
-			expect(
-				shadows.some((s) => s.includes('var(--nldesign-color-focus)')),
-			).toBe(true)
+			expect(shadows.some((s) => s.includes(`var(${halo})`))).toBe(true)
 		})
 	})
 }

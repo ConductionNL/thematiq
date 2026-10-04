@@ -80,6 +80,41 @@ there MUST produce warnings only.
 - THEN the hand-authored values MUST be emitted unchanged
 - AND the generation output MUST contain a contrast warning for that pair
 
+### Requirement: Error Labels Read on the Error Fill
+
+The error chip (`NcChip variant="error"`) and the error button (`NcButton type="error"`) paint
+their label on `--color-error`. `css/error-contrast.css` MUST paint both labels from
+`--nldesign-component-button-error-color`, falling back to white, and MUST NOT pin a literal
+colour on either. Every generated dark variant MUST declare that token whenever the fill its
+design system paints is a token the variant derives (`--nldesign-color-error` for nldesign,
+`--summer-color-error` for summer-breeze): pure white or pure black, whichever reads better on the
+derived fill, and at least 4.5:1. A label the set authors in its own dark block MUST NOT be
+rewritten. The lasuite system paints the red of its own ramp, which no dark variant changes, so
+its variants leave the token out and the white fallback applies. The hand-written high-contrast
+variant declares its own label at 7:1.
+
+@e2e exclude computed over the shipped stylesheets: no shipped page shows an error chip on demand; proven by tests/vitest/errorLabelContrast.spec.js (both labels resolved through each shipped set's real cascade, light and both dark scopes), tests/Unit/Service/ShippedDarkContrastTest.php (testTheErrorLabelReadsOnTheErrorFill) and tests/Unit/Service/DarkPaletteServiceTest.php (testGenerateForSetGivesTheErrorLabelAReadableColour, testGenerateForSetKeepsAReadableHandAuthoredErrorLabel).
+
+#### Scenario: The error chip label reads in light and dark
+
+- GIVEN any shipped token set and its dark variant
+- WHEN its stylesheets resolve in the light theme, under a dark system preference, and under an
+  explicit dark theme
+- THEN the error chip label and the error button label MUST each reach 4.5:1 on `--color-error`
+
+#### Scenario: The generator picks the label that reads
+
+- GIVEN a set whose light error red is `#d70d0d`, derived in dark to `#e72e2e`
+- WHEN its dark variant is generated
+- THEN `--nldesign-component-button-error-color` MUST be declared at 4.5:1 or more on the derived
+  red (white reaches 4.35:1 there and near-black `#111111` 4.34:1, so it is pure black)
+
+#### Scenario: A hand-authored error label stands
+
+- GIVEN a set whose dark block declares `--nldesign-component-button-error-color`
+- WHEN its dark variant is generated
+- THEN that value MUST be emitted unchanged
+
 ### Requirement: Hand-Authored Dark Overrides Win
 
 The generator MUST honour hand-authored dark overrides: a token set CSS file MAY contain a
@@ -385,3 +420,61 @@ correctly ordered, correctly scoped, and have no effect on the system under test
 - **WHEN** a design system ships no dark ramp for its own tokens
 - **THEN** that suite passes while the interface renders light
 - **AND** this requirement is therefore NOT met by such a suite
+
+### Requirement: Summer Breeze is legible in light and in both dark scopes
+
+Summer Breeze paints from its own `--summer-*` tokens, so the `--nldesign-*` pairs the dark
+generator and `ShippedDarkContrastTest` measure never reach it. The pairs its stylesheets paint
+SHALL reach WCAG AA in light mode and in EACH of the two dark scopes of
+`css/tokens/dark/summer-breeze.css` on its own: the `prefers-color-scheme` block for users on the
+auto theme and the explicit `data-theme-dark` block. The dark file SHALL be generated from the
+committed light file, and the dark generator SHALL repair the same pairs (thematiq#1022).
+
+The pairs: body and muted text on a panel, on the page, on a hovered row and on the view-toggle
+track; the primary button label on its fill at rest and on hover; the secondary button label on the
+primary-light wash at rest and on hover; links on a panel and on the page; each status colour on its
+badge fill and on a panel; all at 4.5:1. The input border on the input at 3:1 (WCAG SC 1.4.11).
+
+#### Scenario: Text, buttons, links and status colours reach AA in light mode
+
+- **GIVEN** the `summer-breeze` token set is active and the user is on the light theme
+- **WHEN** a page renders
+- **THEN** body text on the main background, the primary button label on its fill and links on
+  the main background reach 4.5:1
+- **AND** a text input's border reaches 3:1 against the input
+
+#### Scenario: Both dark scopes remap every colour token and stay legible
+
+- **GIVEN** the `summer-breeze` token set is active
+- **WHEN** the page renders on the auto theme with a dark OS, or on the explicit dark theme
+- **THEN** the main background resolves to a dark colour
+- **AND** body text, the primary button label and links reach 4.5:1 on it
+- **AND** a text input's border reaches 3:1 against the input
+- **AND** every `--summer-color-*` literal of the light file has a value in both dark scopes, and
+  the two scopes declare the same values
+
+#### Scenario: The Summer Breeze focus ring reaches 3:1
+
+- **GIVEN** the `summer-breeze` token set is active
+- **WHEN** an element receives keyboard focus, in light or in dark mode
+- **THEN** its 2px solid outline is `--summer-color-focus` made opaque and reaches 3:1 against the
+  page
+- **AND** the translucent `--summer-color-focus` stays as the halo around it
+
+#### Scenario: The shipped contrast audit reports the colours Summer Breeze paints
+
+@e2e exclude a generation-time audit over the shipped files; tests/Unit/Service/SummerBreezeContrastTest.php::testTheShippedAuditMeasuresSummerBreezeOnItsOwnColours.
+
+- **GIVEN** `css/tokens/summer-breeze.css` declares no `--nldesign-*` name
+- **WHEN** `ShippedTokenSetAuditService` audits it
+- **THEN** primary text on primary is measured on `--summer-color-primary-text` and
+  `--summer-color-primary`, and primary on background on `--summer-color-primary` and
+  `--summer-color-background-plain`, not on the Rijkshuisstijl defaults
+
+#### Scenario: A stale Summer Breeze dark file fails the gate
+
+@e2e exclude a build-time comparison of two shipped files; tests/Unit/Service/SummerBreezeContrastTest.php::testTheDarkFileWasGeneratedFromTheCurrentLightFile.
+
+- **GIVEN** `css/tokens/summer-breeze.css` changed
+- **WHEN** the token-set gate runs without regenerating the dark file
+- **THEN** it fails, naming `php scripts/generate-dark-variants.php`

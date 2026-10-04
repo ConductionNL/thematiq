@@ -90,6 +90,18 @@ const REQUIRED_TOKENS = [
 ]
 
 /**
+ * Design systems that read their OWN token vocabulary instead of
+ * `--nldesign-*`: the prefix their stylesheets read and the token that carries
+ * the brand primary. A set of such a system is audited against that vocabulary
+ * (thematiq#1022).
+ *
+ * Kept byte-identical to TokenSetVocabularyAuditService::OWN_VOCABULARIES.
+ */
+const OWN_VOCABULARIES = {
+	'summer-breeze': { prefix: '--summer-', primary: '--summer-color-primary' },
+}
+
+/**
  * Runtime-generated CSS files under css/ that are admin data, not app source.
  * They are excluded from the vocabulary scan so a stray admin value can never
  * widen the accepted vocabulary.
@@ -120,18 +132,26 @@ function nldesignNames(css) {
 	)
 }
 
+/** Escape a string for use inside a RegExp. */
+function escapeRegExp(text) {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 /**
- * The `--nldesign-*` custom properties the given CSS DECLARES, name => value.
+ * The custom properties under one prefix (`--nldesign-` unless told otherwise)
+ * the given CSS DECLARES, name => value.
  *
  * The trailing `;` is required, and `!important` stripped, so this matches
  * `CssParserService::parseDeclarations()` — the parser the PHP service reuses —
  * declaration for declaration.
  */
-function nldesignDeclarations(css) {
+function nldesignDeclarations(css, prefix = '--nldesign-') {
 	const declarations = {}
-	for (const match of stripComments(css).matchAll(
-		/(--nldesign-[A-Za-z0-9_-]+)\s*:\s*([^;]+);/g,
-	)) {
+	const pattern = new RegExp(
+		`(${escapeRegExp(prefix)}[A-Za-z0-9_-]+)\\s*:\\s*([^;]+);`,
+		'g',
+	)
+	for (const match of stripComments(css).matchAll(pattern)) {
 		declarations[match[1]] = match[2].replace(/\s*!\s*important\s*$/i, '').trim()
 	}
 	return declarations
@@ -174,9 +194,32 @@ function declaredVocabulary(root) {
 }
 
 /**
+ * The own-prefix names the non-token CSS layers read through `var()`, and the
+ * ones they declare (mirror of TokenSetVocabularyAuditService::ownVocabulary()).
+ */
+function ownVocabulary(root, prefix) {
+	const quoted = escapeRegExp(prefix)
+	const readPattern = new RegExp(`var\\(\\s*(${quoted}[A-Za-z0-9_-]+)`, 'g')
+	const declaredPattern = new RegExp(`(${quoted}[A-Za-z0-9_-]+)\\s*:`, 'g')
+	const read = new Set()
+	const declared = new Set()
+	for (const file of collectCssFiles(join(root, 'css'))) {
+		const css = stripComments(readFileSync(file, 'utf8'))
+		for (const match of css.matchAll(readPattern)) {
+			read.add(match[1])
+		}
+		for (const match of css.matchAll(declaredPattern)) {
+			declared.add(match[1])
+		}
+	}
+	return { read, declared }
+}
+
+/**
  * The design-system ids whose own stylesheet stack reads `--nldesign-*` tokens
- * at all. A set belonging to any other system (`none`, `summer-breeze`) cannot
- * be judged against this vocabulary and is reported as not auditable.
+ * at all. A set of `none` cannot be judged against this vocabulary and is
+ * reported as not auditable; a set of a system in OWN_VOCABULARIES
+ * (`summer-breeze`) is audited against its own vocabulary instead.
  */
 function nldesignConsumingSystems(root) {
 	const systems = new Set()
@@ -256,10 +299,55 @@ function readManifest(root) {
 	return byId
 }
 
+/** Audit a set of a design system with its own vocabulary (same three rules). */
+function auditOwnVocabulary(root, id, meta, designSystem) {
+	const { prefix, primary } = OWN_VOCABULARIES[designSystem]
+	const declarations = nldesignDeclarations(
+		readFileSync(join(root, 'css/tokens', `${id}.css`), 'utf8'),
+		prefix,
+	)
+	const declaredNames = Object.keys(declarations)
+	const layers = ownVocabulary(root, prefix)
+
+	const missingRequired = [...layers.read]
+		.filter((name) => layers.declared.has(name) === false)
+		.filter((name) => declaredNames.includes(name) === false)
+		.sort()
+	const foreignNldesignNames = declaredNames
+		.filter((name) => layers.read.has(name) === false)
+		.filter((name) => layers.declared.has(name) === false)
+		.sort()
+
+	const declaredPrimary = normaliseHex(meta.theming?.primary_color)
+	const cssPrimary = normaliseHex(declarations[primary])
+	const primaryMismatch =
+		declaredPrimary !== null
+		&& cssPrimary !== null
+		&& declaredPrimary !== cssPrimary
+
+	return {
+		id,
+		designSystem,
+		auditable: true,
+		missingRequired,
+		foreignNldesignNames,
+		primaryMismatch,
+		declaredPrimary,
+		cssPrimary,
+		complete:
+			missingRequired.length === 0
+			&& foreignNldesignNames.length === 0
+			&& primaryMismatch === false,
+	}
+}
+
 /** Audit one token set file. */
 function auditSet(root, id, meta, vocabulary, consumingSystems) {
 	const designSystem =
 		typeof meta.design_system === 'string' ? meta.design_system : 'nldesign'
+	if (Object.hasOwn(OWN_VOCABULARIES, designSystem) === true) {
+		return auditOwnVocabulary(root, id, meta, designSystem)
+	}
 	const auditable = consumingSystems.has(designSystem)
 
 	const declarations = nldesignDeclarations(

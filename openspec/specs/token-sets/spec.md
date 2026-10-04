@@ -565,13 +565,14 @@ The required semantic tokens are exactly:
 - AND a manifest entry with no `theming.primary_color` MUST NOT produce a mismatch either
 
 #### Scenario: A set whose design system reads no `--nldesign-*` name is not auditable
-- GIVEN `design-systems.json` declares the `summer-breeze` system's stylesheets
-- AND none of those stylesheets references any `--nldesign-*` name
-- WHEN `css/tokens/summer-breeze.css` is audited
+- GIVEN a set whose `design_system` is `none` (stock Nextcloud, no stylesheet)
+- WHEN the set is audited
 - THEN `auditable` MUST be false
 - AND `missingRequired` and `foreignNldesignNames` MUST be empty
 - AND `complete` MUST be true, so the set is never counted as failing
-- AND the same MUST hold for a set whose `design_system` is `none` (stock Nextcloud, no stylesheet)
+- AND a system whose stylesheets read a vocabulary of their own (`summer-breeze`, whose stylesheets
+  reference no `--nldesign-*` name) MUST instead be audited against that vocabulary, see
+  "A design system with its own vocabulary is audited against it"
 - AND a system that DOES read the vocabulary through a bridge layer (`high-contrast`, `lasuite`,
   `cunningham`) MUST be audited like any `nldesign` set
 
@@ -608,6 +609,52 @@ The required semantic tokens are exactly:
 - AND `--check` MUST exit non-zero on an unlisted failure or a stale allow-list entry
 - AND the required-token list used by the CLI MUST be asserted equal to the PHP service's constant by
   a test, because the two are duplicated with no build step between them
+
+### Requirement: A design system with its own vocabulary is audited against it
+A design system whose stylesheets read a token vocabulary of their own instead of `--nldesign-*`
+MUST be listed in `TokenSetVocabularyAuditService::OWN_VOCABULARIES` with its prefix and its primary
+token, and every shipped set of that system MUST be audited against that vocabulary with the same
+three rules. Nothing sits under such a set, so every name its stylesheets read is required.
+`summer-breeze` (prefix `--summer-`, primary `--summer-color-primary`) is the shipped example
+(thematiq#1022).
+
+#### Scenario: Every name the Summer Breeze stylesheets read is declared by its token file
+@e2e exclude a static walk of the shipped stylesheets with no page; tests/Unit/TokenSetVocabularyTest.php::testSummerBreezeIsCompleteForItsOwnVocabulary, and the rendered result is covered by tests/e2e/spec-coverage/summer-breeze.spec.ts.
+- GIVEN `css/systems/summer-breeze/theme.css` and `element-overrides.css` read `--summer-*` names
+  through `var()`
+- WHEN `css/tokens/summer-breeze.css` is audited
+- THEN `auditable` MUST be true
+- AND every `--summer-*` name a non-token CSS layer reads, and no such layer declares, MUST be
+  declared by the set file, or be listed in `missingRequired`
+- AND CSS comments MUST be stripped before both the read scan and the declaration parse
+
+#### Scenario: A Summer Breeze token nothing reads is reported
+@e2e exclude a static walk of the shipped stylesheets with no page; tests/Unit/Service/TokenSetVocabularyAuditServiceTest.php::testOwnVocabularySystemIsAuditedAgainstItsOwnNames.
+- GIVEN the set file declares `--summer-gradient-nav`
+- AND no non-token CSS layer declares or reads that name
+- WHEN the set is audited
+- THEN `foreignNldesignNames` MUST contain `--summer-gradient-nav` (the key keeps its name so the admin
+  UI reads one warning shape for every design system)
+- AND `complete` MUST be false
+
+#### Scenario: The Summer Breeze primary agrees with the manifest
+@e2e exclude a comparison of two shipped files; tests/Unit/TokenSetVocabularyTest.php::testSummerBreezeIsCompleteForItsOwnVocabulary.
+- GIVEN `css/tokens/summer-breeze.css` declares `--summer-color-primary: #21468b`
+- WHEN the set is audited
+- THEN `token-sets.json`'s `theming.primary_color` for `summer-breeze` MUST normalise to the same hex,
+  or `primaryMismatch` MUST be true
+
+#### Scenario: The Node mirror audits the same own vocabularies
+@e2e exclude A Node CLI, not a browser surface; tests/Unit/TokenSetVocabularyTest.php::testNodeMirrorKnowsTheSameOwnVocabularies.
+- GIVEN `scripts/audit-token-sets.mjs` declares `OWN_VOCABULARIES`
+- WHEN `npm run audit:token-sets` runs
+- THEN a `summer-breeze` row MUST be audited with the same three rules
+- AND the object MUST be asserted equal to the PHP constant by a test
+
+#### Scenario: A complete Summer Breeze set raises no incomplete warning in the admin dropdown
+- GIVEN the admin opens the theming settings page
+- WHEN the `summer-breeze` entry of the token-set dropdown is read
+- THEN it MUST carry no `kind: 'incomplete'` warning
 
 ### Requirement: Incomplete Sets Are Surfaced In The Admin Dropdown
 An incomplete shipped set MUST be labelled as such in the admin settings UI, at the point of
