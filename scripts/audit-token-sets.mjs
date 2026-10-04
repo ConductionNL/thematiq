@@ -836,13 +836,18 @@ function coverageFindings(results, allowlist) {
 	for (const dimension of DIMENSIONS) {
 		const recorded = allowlist.$reported?.[dimension]
 		const barred = BARRED_DIMENSIONS.includes(dimension)
-		if (barred === false && (typeof recorded !== 'string' || recorded.trim().length < 20)) {
+		if (
+			barred === false
+			&& (typeof recorded !== 'string' || recorded.trim().length < 20)
+		) {
 			reasonless.push(
 				`$reported/${dimension} (measured but not gated, with no recorded reason)`,
 			)
 		}
 		if (barred === true && recorded !== undefined) {
-			stale.push(`$reported/${dimension} (this dimension IS gated — delete the entry)`)
+			stale.push(
+				`$reported/${dimension} (this dimension IS gated — delete the entry)`,
+			)
 		}
 	}
 

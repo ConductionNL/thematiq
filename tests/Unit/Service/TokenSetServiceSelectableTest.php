@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Unit tests for TokenSetService::getSelectableTokenSets(): the narrowed list
+ * Unit tests for TokenSetSelectionPolicy::selectable(): the narrowed list
  * the admin dropdown is built from, and the three ids it may never narrow away.
  *
  * SPDX-License-Identifier: EUPL-1.2
@@ -17,6 +17,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetSelectionPolicy;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
@@ -27,7 +28,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
- * `getSelectableTokenSets()` narrows the catalogue to what an admin may pick.
+ * `TokenSetSelectionPolicy::selectable()` narrows the catalogue to what an admin may pick.
  * Narrowing a picker must never be able to change what the instance is doing,
  * so three ids survive the filter whatever the allowlist says: the set that is
  * running now, any set a per-group mapping points at, and every `custom-*`
@@ -144,7 +145,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 		foreach (glob($this->repoRoot() . '/css/systems/nldesign/*.css') ?: [] as $layer) {
 			copy($layer, $this->appDir . '/css/systems/nldesign/' . basename($layer));
 		}
-        copy($this->repoRoot() . '/design-systems.json', $this->appDir . '/design-systems.json');
+		copy($this->repoRoot() . '/design-systems.json', $this->appDir . '/design-systems.json');
 		file_put_contents(
 			$this->appDir . '/css/tokens/' . self::INCOMPLETE_SET . '.css',
 			":root {\n  --nldesign-color-primary: #154273;\n}\n"
@@ -239,6 +240,42 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 *
 	 * @return array<int, string> The ids.
 	 */
+	/**
+	 * The selectable entries for a catalogue built with the given appconfig.
+	 *
+	 * The decision lives in `TokenSetSelectionPolicy`, so these tests drive the
+	 * policy over the service's real catalogue rather than a method on the
+	 * service.
+	 *
+	 * @param array<string, string> $appConfig The appconfig keys to answer.
+	 * @param string|null $appPath The app path; defaults to the synthetic catalogue.
+	 *
+	 * @return array<int, array<string, mixed>> The selectable entries.
+	 */
+	private function selectable(array $appConfig, ?string $appPath = null): array {
+		return (new TokenSetSelectionPolicy())->selectable(
+			tokenSets: $this->service($appConfig, $appPath),
+			config: $this->configFor($appConfig),
+			appPath: ($appPath ?? $this->appDir)
+		);
+	}//end selectable()
+
+	/**
+	 * An IConfig that answers the given appconfig keys.
+	 *
+	 * @param array<string, string> $appConfig The appconfig keys to answer.
+	 *
+	 * @return IConfig The configured mock.
+	 */
+	private function configFor(array $appConfig): IConfig {
+		$config = $this->createMock(IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(
+			static fn (string $app, string $key, $default = '') => ($appConfig[$key] ?? $default)
+		);
+
+		return $config;
+	}//end configFor()
+
 	private function ids(array $sets): array {
 		return array_map(static fn (array $set): string => (string)$set['id'], $sets);
 	}//end ids()
@@ -255,10 +292,10 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testStockInstanceOffersEveryNamedCompleteSet(): void {
-		$service = $this->service(['token_set' => 'nextcloud']);
+		$config = ['token_set' => 'nextcloud'];
 
-		$selectable = $this->ids($service->getSelectableTokenSets());
-		$all = $this->ids($service->getAvailableTokenSets());
+		$selectable = $this->ids($this->selectable($config));
+		$all = $this->ids($this->service($config)->getAvailableTokenSets());
 
 		$this->assertEqualsCanonicalizing(self::COMPLETE_SETS, $selectable);
 		$this->assertNotContains(self::INCOMPLETE_SET, $selectable, 'A vocabulary-incomplete set must not be offered.');
@@ -284,7 +321,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 */
 	public function testTheActiveSetIsAlwaysSelectable(): void {
 		foreach ([self::INCOMPLETE_SET, self::UNNAMED_SET] as $id) {
-			$selectable = $this->ids($this->service(['token_set' => $id])->getSelectableTokenSets());
+			$selectable = $this->ids($this->selectable(['token_set' => $id]));
 
 			$this->assertContains($id, $selectable, $id . ' is active, so it must still be offered.');
 			$this->assertContains('nextcloud', $selectable);
@@ -294,7 +331,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 		// the assertion above is not passing on a filter that keeps everything.
 		$this->assertNotContains(
 			self::INCOMPLETE_SET,
-			$this->ids($this->service(['token_set' => 'nextcloud'])->getSelectableTokenSets())
+			$this->ids($this->selectable(['token_set' => 'nextcloud']))
 		);
 	}//end testTheActiveSetIsAlwaysSelectable()
 
@@ -315,8 +352,9 @@ class TokenSetServiceSelectableTest extends TestCase {
 			]
 		);
 
-		$service = $this->service(['token_set' => 'nextcloud', 'group_token_sets' => $mapping]);
-		$selectable = $this->ids($service->getSelectableTokenSets());
+		$selectable = $this->ids(
+			$this->selectable(['token_set' => 'nextcloud', 'group_token_sets' => $mapping])
+		);
 
 		$this->assertContains(self::INCOMPLETE_SET, $selectable);
 		$this->assertContains(self::UNNAMED_SET, $selectable);
@@ -336,11 +374,9 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testAnUnusableGroupMappingIsIgnored(string $mapping): void {
-		$service = $this->service(['token_set' => 'nextcloud', 'group_token_sets' => $mapping]);
-
 		$this->assertEqualsCanonicalizing(
 			self::COMPLETE_SETS,
-			$this->ids($service->getSelectableTokenSets())
+			$this->ids($this->selectable(['token_set' => 'nextcloud', 'group_token_sets' => $mapping]))
 		);
 	}//end testAnUnusableGroupMappingIsIgnored()
 
@@ -370,11 +406,11 @@ class TokenSetServiceSelectableTest extends TestCase {
 	public function testAnEmptyActiveSetAddsNothing(): void {
 		$this->assertEqualsCanonicalizing(
 			self::COMPLETE_SETS,
-			$this->ids($this->service(['token_set' => ''])->getSelectableTokenSets())
+			$this->ids($this->selectable(['token_set' => '']))
 		);
 		$this->assertEqualsCanonicalizing(
 			self::COMPLETE_SETS,
-			$this->ids($this->service([])->getSelectableTokenSets())
+			$this->ids($this->selectable([]))
 		);
 	}//end testAnEmptyActiveSetAddsNothing()
 
@@ -387,10 +423,10 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testSelectableEntriesAreCatalogueEntriesInCatalogueOrder(): void {
-		$service = $this->service(['token_set' => 'nextcloud']);
+		$config = ['token_set' => 'nextcloud'];
 
-		$all = $service->getAvailableTokenSets();
-		$selectable = $service->getSelectableTokenSets();
+		$all = $this->service($config)->getAvailableTokenSets();
+		$selectable = $this->selectable($config);
 
 		$this->assertNotEmpty($selectable);
 		foreach ($selectable as $entry) {
@@ -425,10 +461,10 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testEveryNamedShippedSetTheAuditPassesIsOfferedOnTheRealCatalogue(): void {
-		$service = $this->service(['token_set' => 'nextcloud'], $this->repoRoot());
+		$config = ['token_set' => 'nextcloud'];
 
-		$all = $service->getAvailableTokenSets();
-		$selectable = $this->ids($service->getSelectableTokenSets());
+		$all = $this->service($config, $this->repoRoot())->getAvailableTokenSets();
+		$selectable = $this->ids($this->selectable($config, $this->repoRoot()));
 
 		$manifest = json_decode((string)file_get_contents($this->repoRoot() . '/token-sets.json'), true);
 		$this->assertIsArray($manifest);

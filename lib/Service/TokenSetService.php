@@ -65,36 +65,6 @@ use Psr\Log\LoggerInterface;
 class TokenSetService {
 
 	/**
-	 * Marker a shipped set carries when the vocabulary audit reports it
-	 * incomplete, on the `warnings` channel `applyWarnings()` already fills.
-	 *
-	 * WHAT REPLACED THE HAND-MAINTAINED LIST. Until this change, selectability
-	 * was `SELECTABLE_SHIPPED_SETS = ['nextcloud', 'cunningham']` — two of 59
-	 * shipped sets — because in 2026-09 all but a handful of set files declared
-	 * none of the `--nldesign-*` vocabulary the theme reads, so picking one
-	 * rendered Rijkshuisstijl with the wrong header. That constant's own
-	 * docblock named its exit condition: a set returns once it passes
-	 * `TokenSetVocabularyAuditService` and leaves
-	 * `tests/Unit/fixtures/token-set-vocabulary-allowlist.json`, which is
-	 * shrink-only and must reach empty, and then "every shipped set is
-	 * selectable again and this constant is deleted rather than widened".
-	 *
-	 * That condition is met: the fixture reads `"sets": []` and the audit
-	 * reports 57 of 57 auditable sets complete. So the constant is deleted, and
-	 * the audit it named is the gate — which is what the docblock asked for and
-	 * is strictly better than a wider list, because a list goes stale and a
-	 * measurement cannot. A set that stops passing the audit stops being
-	 * offered, with no edit here.
-	 *
-	 * The verdict is READ OFF THE ENTRY rather than recomputed:
-	 * `getAvailableTokenSets()` already runs the vocabulary audit for every set
-	 * through `applyWarnings()`, so asking the service again would both double
-	 * the work on every admin page render and create a second answer to one
-	 * question.
-	 */
-	public const INCOMPLETE_WARNING_KIND = 'incomplete';
-
-	/**
 	 * The app manager for resolving paths.
 	 *
 	 * @var IAppManager
@@ -181,9 +151,15 @@ class TokenSetService {
 	/**
 	 * Get the absolute path to the app's directory.
 	 *
+	 * Public because `TokenSetSelectionPolicy` reads `token-sets.json` from the
+	 * same root this service discovers from, and resolving the path twice is how
+	 * two layers end up disagreeing about which app directory they are in.
+	 *
 	 * @return string The app directory path.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-filesystem-based-discovery
 	 */
-	private function getAppPath(): string {
+	public function getAppPath(): string {
 		return $this->appManager->getAppPath('thematiq');
 	}//end getAppPath()
 
@@ -282,141 +258,6 @@ class TokenSetService {
 
 		return $captured;
 	}//end readCapturedTheming()
-
-	/**
-	 * Get the token sets an admin may select: every NAMED shipped set the
-	 * vocabulary audit passes, plus every admin-imported `custom-*` set.
-	 *
-	 * Two conditions, both measured rather than listed:
-	 *
-	 *  A. The set has an entry in `token-sets.json`. Discovery is
-	 *     filesystem-based, so `css/tokens/conduction.css` is found like any
-	 *     other file — but it is the shared role layer
-	 *     `scripts/generate-brand-set.mjs` copies into a brand set, not a
-	 *     theme, and it has no name, description or theming of its own. A set
-	 *     with no manifest entry would be offered as "Conduction" with a
-	 *     generated description, which is the one set that genuinely should not
-	 *     be in the picker.
-	 *  B. The vocabulary audit does not report it incomplete. A set that
-	 *     declares none of the `--nldesign-*` vocabulary the theme reads
-	 *     renders as `defaults.css`'s brand rather than its own, and an admin
-	 *     cannot tell that from a dropdown.
-	 *
-	 * The BRIDGE figure is deliberately NOT a condition. A set that declares
-	 * none of the 87 `--utrecht-*` names the bridge reads adopts the NL Design
-	 * System's component geometry and type scale, and still brands the
-	 * component COLOURS from its own semantic layer: measured on
-	 * `css/systems/nldesign/utrecht-bridge.css`, 42 of its 84 declarations fall
-	 * back to a `--nldesign-*` token the set declares, 38 to a non-colour
-	 * literal (`1rem`, `1px`, `transparent`, `700`, `underline`) and 3 to a
-	 * colour literal, those three being `#e5e5e5`/`#696969` (disabled button)
-	 * and `#ffffff` (textbox fill). Resolved over the real cascade, `amsterdam`
-	 * and `rijkshuisstijl` are both bridge-zero and differ on 32 of the 84
-	 * component tokens, with Amsterdam's buttons at `#004699` and
-	 * Rijkshuisstijl's at `#154273`. Withholding such a set would withhold a
-	 * working theme.
-	 *
-	 * Three ids are never filtered out, whatever the audit says, because
-	 * narrowing a picker must not be able to change what an instance is doing:
-	 *
-	 *  1. The set the instance is CURRENTLY running. Dropping it would render
-	 *     the panel with no option selected, and the first save would silently
-	 *     re-theme the instance to whatever happened to be first.
-	 *  2. Any set a per-group mapping points at, for the same reason — the
-	 *     group picker is fed from this list too, and a group's theme would
-	 *     disappear from the UI while still applying.
-	 *  3. Every `custom-*` set, unconditionally. The converter tells the admin
-	 *     their upload was "added and selectable"; a filter that then hid it
-	 *     would make the converter a liar.
-	 *
-	 * Read straight from `IConfig` rather than through `GroupThemingService`,
-	 * which depends on this service — the group key is a plain JSON array of
-	 * `{group, tokenSet}` and re-reading it here avoids a circular dependency.
-	 *
-	 * @return array<int, TokenSetEntry> The selectable token sets, same shape and order as `getAvailableTokenSets()`.
-	 *
-	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
-	 */
-	public function getSelectableTokenSets(): array {
-		$all = $this->getAvailableTokenSets();
-		$named = $this->readManifest(manifestPath: $this->getAppPath() . '/token-sets.json');
-
-		$keep = [];
-
-		// (1) Whatever the instance is running right now.
-		$active = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
-		if ($active !== '') {
-			$keep[$active] = true;
-		}
-
-		// (2) Every set a group mapping points at.
-		$rawMapping = $this->config->getAppValue(Application::APP_ID, 'group_token_sets', '[]');
-		$decodedMapping = json_decode($rawMapping, true);
-		if (is_array($decodedMapping) === true) {
-			foreach ($decodedMapping as $entry) {
-				if (is_array($entry) === true && is_string($entry['tokenSet'] ?? null) === true) {
-					$keep[$entry['tokenSet']] = true;
-				}
-			}
-		}
-
-		$selectable = [];
-		foreach ($all as $tokenSet) {
-			$id = $tokenSet['id'];
-
-			// (3) An imported set is always selectable, and so is anything the
-			// two survival rules above kept.
-			if (isset($keep[$id]) === true || str_starts_with($id, 'custom-') === true) {
-				$selectable[] = $tokenSet;
-				continue;
-			}
-
-			if (isset($named[$id]) === false) {
-				continue;
-			}
-
-			if ($this->isVocabularyIncomplete(tokenSet: $tokenSet) === true) {
-				continue;
-			}
-
-			$selectable[] = $tokenSet;
-		}//end foreach
-
-		return $selectable;
-	}//end getSelectableTokenSets()
-
-	/**
-	 * Whether a catalogue entry carries the vocabulary audit's "incomplete"
-	 * finding.
-	 *
-	 * The finding is already on the entry: `applyWarnings()` put it there from
-	 * `TokenSetVocabularyAuditService::warningsFor()`, on the same channel the
-	 * admin UI renders its "Incomplete set" banner from. Reading it here rather
-	 * than re-auditing keeps one answer to one question, and keeps the dropdown
-	 * and the banner from ever disagreeing.
-	 *
-	 * @param array<string, mixed> $tokenSet The catalogue entry.
-	 *
-	 * @return bool True when the set is vocabulary-incomplete.
-	 *
-	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
-	 */
-	private function isVocabularyIncomplete(array $tokenSet): bool {
-		$warnings = ($tokenSet['warnings'] ?? []);
-		if (is_array($warnings) === false) {
-			return false;
-		}
-
-		foreach ($warnings as $warning) {
-			if (is_array($warning) === true
-				&& ($warning['kind'] ?? null) === self::INCOMPLETE_WARNING_KIND
-			) {
-				return true;
-			}
-		}
-
-		return false;
-	}//end isVocabularyIncomplete()
 
 	/**
 	 * Project the catalogue to the closed, non-admin, 5-field public shape:

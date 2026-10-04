@@ -175,7 +175,7 @@ test.describe('token-set-dropdown', () => {
 		const before = await getTokenSet(page, token)
 		// A set the dropdown offers: one of the sets this file offers, other
 		// than the active one. The admin dropdown lists only the selectable sets
-		// (TokenSetService::getSelectableTokenSets() — every named shipped set
+		// (TokenSetSelectionPolicy::selectable() — every named shipped set
 		// the vocabulary audit passes, the active set, custom sets and mapped
 		// sets), so a set outside the offer cannot be picked.
 		const offered = await page

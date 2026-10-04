@@ -85,7 +85,7 @@ const REQUIRED_TOKENS: string[] = (() => {
 })()
 /**
  * The shipped sets the admin picker offers, derived the way
- * `TokenSetService::getSelectableTokenSets()` derives it: every id named in
+ * `TokenSetSelectionPolicy::selectable()` derives it: every id named in
  * `token-sets.json` that the vocabulary allow-list does not record incomplete.
  *
  * Read from the data rather than from a PHP constant, because the constant is
@@ -1480,7 +1480,10 @@ test.describe('token-sets', () => {
 		const target = UNNAMED_TOKEN_FILES.find(
 			(id) => !mapped.includes(id),
 		) as string
-		expect(target, 'no withheld shipped file to exercise the rule with').toBeTruthy()
+		expect(
+			target,
+			'no withheld shipped file to exercise the rule with',
+		).toBeTruthy()
 		await withActiveSet(page, target, async () => {
 			await openSettings(page)
 			expect((await adminList(page)).map((s) => s.id)).toContain(target)
@@ -1501,7 +1504,10 @@ test.describe('token-sets', () => {
 		const target = UNNAMED_TOKEN_FILES.find(
 			(id) => !mapped.includes(id) && id !== active,
 		) as string
-		expect(target, 'no withheld shipped file to exercise the rule with').toBeTruthy()
+		expect(
+			target,
+			'no withheld shipped file to exercise the rule with',
+		).toBeTruthy()
 		expect((await adminList(page)).map((s) => s.id)).not.toContain(target)
 		await withOffered(page, [target], async () => {
 			expect((await adminList(page)).map((s) => s.id)).toContain(target)

@@ -104,7 +104,10 @@ describe('shipped token-set instance coverage', () => {
 		// a dimension that is in fact gated.
 		const file = JSON.parse(
 			fs.readFileSync(
-				path.join(REPO_ROOT, 'tests/Unit/fixtures/token-set-coverage-allowlist.json'),
+				path.join(
+					REPO_ROOT,
+					'tests/Unit/fixtures/token-set-coverage-allowlist.json',
+				),
 				'utf8',
 			),
 		)
