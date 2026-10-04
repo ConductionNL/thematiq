@@ -147,7 +147,16 @@ header#header {
 	/* A set's own logo or an admin's upload takes the mark's place (#968):
 	   LogoLayerService declares the three --nldesign-header-logo-* variables
 	   only when a logo exists, so the fallbacks below are the Nextcloud mark
-	   in brand colour. tests/Unit/Service/SetLogoReachTest.php. */
+	   in brand colour. tests/Unit/Service/SetLogoReachTest.php.
+
+	   --nldesign-header-mark-fill names that brand colour on the element, for
+	   LogoLayerService's no-logo rule, which renders over this one and would
+	   otherwise fill the mark with the header text colour (#975). */
+	--nldesign-header-mark-fill: var(
+		--lasuite-content-brand-icon,
+		var(--lasuite-color-brand-550)
+	);
+
 	background-color: var(
 		--nldesign-header-logo-fill,
 		var(--lasuite-content-brand-icon, var(--lasuite-color-brand-550))

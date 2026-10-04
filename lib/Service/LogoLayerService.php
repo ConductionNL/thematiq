@@ -185,9 +185,15 @@ class LogoLayerService {
 
 		$mask = 'url(' . $logo . ') no-repeat center / contain!important';
 
+		// A bundle that paints the mark in its own colour declares
+		// --nldesign-header-mark-fill on the logo element: the La Suite element
+		// overrides fill it with the brand, and this rule, which renders over
+		// theirs, read only the header text colour, near-black there (#975).
+		// The nldesign bundle declares none and keeps the header text colour.
+
 		return $this->inlineLayer(
 			css: '#nextcloud .logo{background-image:none!important;'
-				. 'background-color:var(--nldesign-color-header-text,#333333)!important;'
+				. 'background-color:var(--nldesign-header-mark-fill,var(--nldesign-color-header-text,#333333))!important;'
 				. 'filter:none!important;'
 				. '-webkit-mask:' . $mask . ';'
 				. 'mask:' . $mask . '}'
