@@ -28,6 +28,7 @@ import {
 	PROBE_URL,
 	readToggles,
 	thematiqLayers,
+	tokenSetManifest,
 	withThemeState,
 } from './_theme-state'
 import { openTheming } from '../workflows/_helpers'
@@ -441,15 +442,23 @@ test.describe('hide-slogan', () => {
 	}) => {
 		test.setTimeout(180_000)
 		// One set per design system: the stylesheet does not depend on the set,
-		// so the meaningful partition is the bundle loaded before it.
+		// so the meaningful partition is the bundle loaded before it. These are
+		// set ids: the high-contrast design system's set is `hoog-contrast`.
 		const sets = [
 			'nextcloud',
 			'rijkshuisstijl',
 			'summer-breeze',
-			'high-contrast',
+			'hoog-contrast',
 			'lasuite',
 			'cunningham',
 		]
+		const shipped = tokenSetManifest()
+		for (const set of sets) {
+			expect(
+				shipped.some((s) => s.id === set),
+				`token-sets.json ships ${set}`,
+			).toBe(true)
+		}
 		for (const set of sets) {
 			await withThemeState(
 				browser,

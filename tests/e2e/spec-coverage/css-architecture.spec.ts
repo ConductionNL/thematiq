@@ -78,6 +78,41 @@ async function probeLayers(page: Page): Promise<string[]> {
 	return thematiqLayers(page)
 }
 
+/**
+ * A computed colour as `#rrggbb`, or `#rrggbbaa` when it is not opaque.
+ * Reads `rgb()`/`rgba()` (0-255 channels) and `color(srgb r g b [/ a])`
+ * (0-1 channels), the two forms Chromium serialises a computed colour in.
+ */
+function asHex(value: string): string {
+	const v = value.trim()
+	let channels: number[]
+	let alpha = 1
+	const srgb =
+		/^color\(srgb\s+([\d.e-]+)\s+([\d.e-]+)\s+([\d.e-]+)(?:\s*\/\s*([\d.e-]+%?))?\s*\)$/i.exec(
+			v,
+		)
+	const rgb =
+		/^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?\s*\)$/i.exec(
+			v,
+		)
+	const readAlpha = (a: string | undefined) =>
+		a === undefined ? 1 : a.endsWith('%') ? parseFloat(a) / 100 : parseFloat(a)
+	if (srgb !== null) {
+		channels = srgb.slice(1, 4).map((c) => parseFloat(c) * 255)
+		alpha = readAlpha(srgb[4])
+	} else if (rgb !== null) {
+		channels = rgb.slice(1, 4).map((c) => parseFloat(c))
+		alpha = readAlpha(rgb[4])
+	} else {
+		throw new Error(`not an rgb() or color(srgb) value: ${value}`)
+	}
+	const hex = (n: number) =>
+		Math.round(Math.min(255, Math.max(0, n)))
+			.toString(16)
+			.padStart(2, '0')
+	return '#' + channels.map(hex).join('') + (alpha < 1 ? hex(alpha * 255) : '')
+}
+
 /** The highest index of any layer matching `pred`, or -1. */
 function lastIndex(layers: string[], pred: (l: string) => boolean): number {
 	let last = -1
@@ -209,7 +244,8 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 
 		expect(elementOverrides).toBeGreaterThanOrEqual(0)
 		expect(overrides).toBeGreaterThan(elementOverrides)
-		// ensureExists() ran before the link was emitted: the file is there.
+		// The link is emitted only for a saved file (beforeAll saved an empty
+		// map), and the runtime route serves it.
 		const css = await servedCss(page, 'custom-overrides')
 		expect(css).toContain(':root')
 	})
@@ -257,14 +293,18 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 				})
 		})
 		expect(rules, 'systems/nldesign/fonts.css must be loaded').not.toBeNull()
-		expect(
-			(rules ?? []).map((r) => `${r.family} ${r.weight} ${r.style}`).sort(),
-		).toEqual([
-			'Fira Sans 400 italic',
-			'Fira Sans 400 normal',
-			'Fira Sans 700 italic',
-			'Fira Sans 700 normal',
-		])
+		// The requirement is about Fira Sans. The same file also registers
+		// Source Sans 3 for the (EXAMPLE) Gemeente set (#899), which loads only
+		// when a page asks for that family.
+		const fira = (rules ?? []).filter((r) => r.family === 'Fira Sans')
+		expect(fira.map((r) => `${r.family} ${r.weight} ${r.style}`).sort()).toEqual(
+			[
+				'Fira Sans 400 italic',
+				'Fira Sans 400 normal',
+				'Fira Sans 700 italic',
+				'Fira Sans 700 normal',
+			],
+		)
 		expect(new Set((rules ?? []).map((r) => r.display))).toEqual(
 			new Set(['swap']),
 		)
@@ -311,18 +351,25 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 			return [...sheet.cssRules]
 				.filter((r) => r instanceof CSSFontFaceRule)
 				.map((r) => {
-					const src = (r as CSSFontFaceRule).style.getPropertyValue('src')
+					const style = (r as CSSFontFaceRule).style
+					const family = style
+						.getPropertyValue('font-family')
+						.replace(/['"]/g, '')
+					const src = style.getPropertyValue('src')
 					const urls = [
 						...src.matchAll(
 							/url\("?([^")]+)"?\)\s*format\("?([\w-]+)"?\)/g,
 						),
 					].map((m) => ({ url: new URL(m[1], base).href, format: m[2] }))
-					return { src, urls }
+					return { family, src, urls }
 				})
 		})
 		expect(faces, 'systems/nldesign/fonts.css must be loaded').not.toBeNull()
-		expect((faces ?? []).length).toBe(4)
-		for (const face of faces ?? []) {
+		// The Fira Sans faces, as the requirement names them. Source Sans 3
+		// (#899, the (EXAMPLE) Gemeente set) ships woff2 only.
+		const fira = (faces ?? []).filter((f) => f.family === 'Fira Sans')
+		expect(fira.length).toBe(4)
+		for (const face of fira) {
 			expect(face.src.trim().startsWith('local(')).toBe(true)
 			expect(face.urls.map((u) => u.format)).toEqual(['woff2', 'woff'])
 			for (const { url } of face.urls) {
@@ -568,14 +615,31 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 			expect(referenced, `${name} must not reference itself`).not.toContain(
 				name,
 			)
-			// The first var() is the --utrecht-* input; every later one is a
-			// fallback and must be a token the defaults layer defines.
-			for (const fallback of referenced.slice(1)) {
+			// Every --utrecht-* reference is an input: a mapping may read a
+			// second Utrecht name before its fallback (the textbox reads
+			// --utrecht-textbox-* and then the older --utrecht-form-input-*).
+			// Every other reference is a fallback and must be a token the
+			// defaults layer defines.
+			expect(
+				referenced[0],
+				`${name} reads an --utrecht-* input first`,
+			).toMatch(/^--utrecht-/)
+			for (const fallback of referenced.filter(
+				(r) => !r.startsWith('--utrecht-'),
+			)) {
 				expect(
 					defaults.has(fallback),
 					`${name} falls back to ${fallback}`,
 				).toBe(true)
 			}
+			// And the chain ends in a defaults token or a plain value, never in
+			// an input that may be undefined.
+			const last = referenced[referenced.length - 1]
+			const endsInValue = !/var\(\s*--[\w-]+\s*\)+\s*$/.test(value)
+			expect(
+				defaults.has(last) || endsInValue,
+				`${name} ends in a defaults token or a value: ${value}`,
+			).toBe(true)
 		}
 		// And the browser agrees: no bridged token computed to the
 		// guaranteed-invalid (empty) value a cycle produces.
@@ -814,17 +878,11 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 			await rootVar(page, '--nldesign-color-focus'),
 		)
 		const [r, g, b] = parseRgb(token)
-		// Normalised through a canvas: a relative colour may serialise as
-		// color(srgb ...) rather than rgb(), depending on the browser version.
-		const asHex = (c: string) =>
-			page.evaluate((v) => {
-				const ctx = document
-					.createElement('canvas')
-					.getContext('2d') as CanvasRenderingContext2D
-				ctx.fillStyle = v
-				return ctx.fillStyle
-			}, c)
-		expect(await asHex(outline.color)).toBe(await asHex(`rgb(${r}, ${g}, ${b})`))
+		// A relative colour may serialise as color(srgb r g b [/ a]) rather than
+		// rgb(), and Chromium 151's canvas hands color() back unchanged, so both
+		// forms are parsed here. An alpha below 1 is kept, so a translucent ring
+		// can never compare equal to the opaque token.
+		expect(asHex(outline.color)).toBe(asHex(`rgb(${r}, ${g}, ${b})`))
 		expect(outline.shadow).toContain(token)
 	})
 
@@ -1026,25 +1084,31 @@ test.describe('css-architecture: design systems and layers on other sets', () =>
 	}) => {
 		const hrefs: string[] = []
 		for (const set of [NLDESIGN_SET, 'amsterdam']) {
-			await withThemeState(browser, { tokenSet: set }, async () => {
-				const layers = await probeLayers(page)
-				const overrides = layers.indexOf('custom-overrides')
-				const lastSetLayer = lastIndex(
-					layers,
-					(l) =>
-						l.startsWith('systems/')
-						|| l.startsWith('tokens/')
-						|| l === 'icon-contrast'
-						|| l === 'error-contrast'
-						|| l === 'component-scopes',
-				)
-				expect(lastSetLayer, set).toBeGreaterThanOrEqual(0)
-				expect(overrides, set).toBeGreaterThan(lastSetLayer)
-				hrefs.push(
-					new URL((await layerHref(page, 'custom-overrides')) as string)
-						.pathname,
-				)
-			})
+			// overrides: {} saves the file, so its link is there to be ordered.
+			await withThemeState(
+				browser,
+				{ tokenSet: set, overrides: {} },
+				async () => {
+					const layers = await probeLayers(page)
+					const overrides = layers.indexOf('custom-overrides')
+					const lastSetLayer = lastIndex(
+						layers,
+						(l) =>
+							l.startsWith('systems/')
+							|| l.startsWith('tokens/')
+							|| l === 'icon-contrast'
+							|| l === 'error-contrast'
+							|| l === 'component-scopes',
+					)
+					expect(lastSetLayer, set).toBeGreaterThanOrEqual(0)
+					expect(overrides, set).toBeGreaterThan(lastSetLayer)
+					hrefs.push(
+						new URL(
+							(await layerHref(page, 'custom-overrides')) as string,
+						).pathname,
+					)
+				},
+			)
 		}
 		expect(hrefs[0]).toBe(hrefs[1])
 	})
@@ -1058,7 +1122,7 @@ test.describe('css-architecture: design systems and layers on other sets', () =>
 		await ensureNonAdminUser(page)
 		await withThemeState(
 			browser,
-			{ hideSlogan: true, showMenuLabels: true },
+			{ overrides: {}, hideSlogan: true, showMenuLabels: true },
 			async () => {
 				const layers = await probeLayers(page)
 				const overrides = layers.findIndex((l) =>
@@ -1216,9 +1280,22 @@ test.describe('css-architecture: design systems and layers on other sets', () =>
 		]
 		expect(designSystem('lasuite').stylesheets).toEqual(expected)
 		await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+		// The bundle's shell geometry for the running major follows the five
+		// files (design-systems.json `versioned_stylesheets`, #893): on
+		// Nextcloud 35 that is systems/lasuite/shell-nc35.
+		const version = await page.evaluate(() =>
+			String((window as any).OC?.config?.version ?? ''),
+		)
+		expect(version, 'the page must expose OC.config.version').not.toBe('')
+		const versioned =
+			(
+				designSystem('lasuite') as {
+					versioned_stylesheets?: Record<string, string[]>
+				}
+			).versioned_stylesheets?.[version.split('.')[0]] ?? []
 		const manifest = await stylesheetManifest(page, 'lasuite')
 		expect(manifest.designSystem).toBe('lasuite')
-		expect(manifestFiles(manifest)).toEqual(expected)
+		expect(manifestFiles(manifest)).toEqual([...expected, ...versioned])
 		const tokenLayer = manifest.layers.find((l) => l.layer === 'tokens')
 		expect(new URL(tokenLayer?.href as string, 'http://x').pathname).toMatch(
 			/\/thematiq\/css\/tokens\/lasuite\.css$/,

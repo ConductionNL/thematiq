@@ -33,6 +33,7 @@ import {
 	withdrawTokenSetOffer,
 } from '../workflows/_helpers'
 import {
+	activeTokenSet,
 	adminContext,
 	ensureNonAdminUser,
 	loginAs,
@@ -245,6 +246,12 @@ async function openSettings(page: Page): Promise<void> {
 	await expect(page.locator('#nldesign-token-set-select')).toBeVisible({
 		timeout: 30_000,
 	})
+	// Every call from this page reads OC.requestToken: wait for it.
+	await page.waitForFunction(
+		() => typeof (window as any).OC?.requestToken === 'string',
+		null,
+		{ timeout: 30_000 },
+	)
 }
 
 /** A request from inside the authenticated page, with status and parsed body. */
@@ -627,12 +634,12 @@ test.describe('token-sets', () => {
 	})
 
 	// @e2e openspec/specs/token-sets/spec.md#token-set-retrieved-via-api
-	test('GET /settings/tokenset answers the stored set', async ({ page }) => {
+	test('the public capability answers the stored set', async ({ page }) => {
 		await openSettings(page)
 		await withActiveSet(page, 'amsterdam', async () => {
-			const res = await call(page, 'GET', '/apps/thematiq/settings/tokenset')
-			expect(res.status).toBe(200)
-			expect(res.json).toEqual({ tokenSet: 'amsterdam' })
+			// GET /settings/tokenset was removed (#664, #873): scripts read
+			// the capability.
+			expect(await activeTokenSet(page)).toEqual({ tokenSet: 'amsterdam' })
 		})
 	})
 
@@ -962,14 +969,11 @@ test.describe('token-sets', () => {
 	})
 
 	// @e2e openspec/specs/token-sets/spec.md#get-current-token-set
-	test('GET /settings/tokenset answers the id the dropdown shows', async ({
-		page,
-	}) => {
+	test('the capability answers the id the dropdown shows', async ({ page }) => {
 		await openSettings(page)
-		const res = await call(page, 'GET', '/apps/thematiq/settings/tokenset')
-		expect(res.status).toBe(200)
-		expect(Object.keys(res.json)).toEqual(['tokenSet'])
-		expect(res.json.tokenSet).toBe(
+		const { tokenSet } = await activeTokenSet(page)
+		expect(typeof tokenSet).toBe('string')
+		expect(tokenSet).toBe(
 			await page.locator('#nldesign-token-set-select').inputValue(),
 		)
 	})
@@ -1129,7 +1133,9 @@ test.describe('token-sets', () => {
 		)
 		expect(entry.design_system).toBe('cunningham')
 		expect(entry.theming.primary_color).toBe('#1A509F')
-		expect(entry.theming.background_color).toBe('#FFFFFF')
+		// The set's own --nldesign-color-background-dark, not pure white,
+		// so core theming matches what the stylesheet paints (585ceb76).
+		expect(entry.theming.background_color).toBe('#E1E2E5')
 		expect('logo' in entry.theming).toBe(false)
 
 		const served = await servedFile(page, 'css/tokens/cunningham.css')
@@ -1139,7 +1145,13 @@ test.describe('token-sets', () => {
 				.replace(/\/\*[\s\S]*?\*\//g, '')
 				.matchAll(/(--[\w-]+)\s*:/g),
 		].map((m) => m[1])
-		for (const n of names) expect(n.startsWith('--nldesign-'), n).toBe(true)
+		// The semantic layer, plus the Den Haag component tokens #899 gave
+		// every set (openspec/changes/denhaag-component-tokens: a set's own
+		// `--denhaag-*` or `--nl-data-badge-*` value wins over the bridge).
+		for (const n of names) {
+			expect(/^--(nldesign|denhaag|nl-data-badge)-/.test(n), n).toBe(true)
+		}
+		expect(names.some((n) => n.startsWith('--nldesign-'))).toBe(true)
 
 		const cunningham = fileLayers(await layerManifest(page, 'cunningham'))
 		const bundle =
@@ -1349,12 +1361,15 @@ test.describe('token-sets', () => {
 		expect(Array.isArray(res.json.tokenSets)).toBe(true)
 	})
 
-	// @e2e openspec/specs/token-sets/spec.md#get-active-token-set-route
-	test('GET /settings/tokenset reaches getTokenSet', async ({ page }) => {
+	// @e2e openspec/specs/token-sets/spec.md#no-separate-read-route-for-the-active-token-set
+	test('GET /settings/tokenset is not a route: only the POST answers there', async ({
+		page,
+	}) => {
 		await openSettings(page)
 		const res = await call(page, 'GET', '/apps/thematiq/settings/tokenset')
-		expect(res.status).toBe(200)
-		expect(typeof res.json.tokenSet).toBe('string')
+		// The path exists for POST only, so the router refuses the verb.
+		expect(res.status).toBe(405)
+		expect(res.json?.tokenSet).toBeUndefined()
 	})
 
 	// @e2e openspec/specs/token-sets/spec.md#set-active-token-set-route
@@ -1628,7 +1643,7 @@ test.describe('token-sets', () => {
 			// not part of the vocabulary.
 			expect(nldesignDeclarations(tokenCss(foreignSet))[name]).toBeDefined()
 			try {
-				// Make the name appear in both runtime files.
+				// Make the name appear in the custom CSS runtime file.
 				const written = await call(
 					page,
 					'POST',
@@ -1639,7 +1654,9 @@ test.describe('token-sets', () => {
 					},
 				)
 				expect(written.status, JSON.stringify(written.json)).toBe(200)
-				const saved = await call(
+				// The overrides file cannot carry the name: a var() value is
+				// not a colour, and #809 refuses it before anything is written.
+				const refused = await call(
 					page,
 					'POST',
 					'/apps/thematiq/settings/overrides',
@@ -1651,7 +1668,18 @@ test.describe('token-sets', () => {
 						tokenSet: 'amsterdam',
 					},
 				)
-				expect(saved.status, JSON.stringify(saved.json)).toBe(200)
+				expect(refused.status, JSON.stringify(refused.json)).toBe(400)
+				expect(Object.keys(refused.json.rejected)).toEqual([
+					'--color-main-text',
+				])
+				const overridesAfter = (
+					await call(
+						page,
+						'GET',
+						'/apps/thematiq/settings/overrides?tokenSet=amsterdam',
+					)
+				).json.overrides
+				expect(overridesAfter ?? {}).toEqual(overridesBefore)
 
 				const again = (await adminList(page)).find(
 					(s) => s.id === foreignSet,
@@ -1808,6 +1836,9 @@ test.describe('token-sets', () => {
 		setId: string,
 		body: () => Promise<void>,
 	) {
+		// withOffered calls the API from this page, so it must be an
+		// authenticated page with OC loaded first, not about:blank.
+		await openSettings(page)
 		await withOffered(page, [setId], async () => {
 			const token = await requestToken(page)
 			const previous = await getTokenSet(page, token)
@@ -2074,8 +2105,9 @@ test.describe('token-sets', () => {
 		test('every token set endpoint refuses a non-admin and admits the admin', async ({
 			page,
 		}) => {
+			// GET /settings/tokenset is gone (#664); the POST is the only
+			// route on that path.
 			const calls: Array<[string, string, unknown]> = [
-				['GET', '/apps/thematiq/settings/tokenset', undefined],
 				['GET', '/apps/thematiq/settings/tokensets', undefined],
 				[
 					'POST',
@@ -2093,7 +2125,7 @@ test.describe('token-sets', () => {
 				).toBe(403)
 			}
 			expect(await getTokenSet(page, token)).toBe(before)
-			for (const [method, url] of calls.slice(0, 2)) {
+			for (const [method, url] of calls.slice(0, 1)) {
 				expect(
 					(await call(page, method, url)).status,
 					`admin ${method} ${url}`,
