@@ -433,6 +433,7 @@ function convertOrg(org, context) {
 				tableHash: context.tableHash,
 				vocabulary: context.vocabulary,
 				fonts: [],
+				repairContrast: true,
 			},
 		)
 	} catch (error) {

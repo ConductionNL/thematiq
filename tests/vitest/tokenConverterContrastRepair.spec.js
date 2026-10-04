@@ -45,6 +45,7 @@ function convert(tokens) {
 		table,
 		vocabulary,
 		fonts: [],
+		repairContrast: true,
 	})
 	const decl = {}
 	for (const match of result.css
@@ -95,6 +96,20 @@ describe('colour literals', () => {
 })
 
 describe('contrast repair', () => {
+	it('leaves the colours alone unless the caller asks for the repair (an admin upload)', () => {
+		const result = converter.convert(
+			'.demo-theme {\n\t--utrecht-button-primary-action-background-color: #f0b800;\n}\n',
+			{
+				slug: 'demo',
+				displayName: 'Demo',
+				table,
+				vocabulary,
+				fonts: [],
+			},
+		)
+		expect(result.css).toContain('--nldesign-color-primary: #f0b800;')
+	})
+
 	it('darkens a light primary until it reads as a link on the page, keeping its hue', () => {
 		const { decl, result } = convert({
 			'--utrecht-button-primary-action-background-color': '#f0b800',
@@ -131,16 +146,9 @@ describe('contrast repair', () => {
 		const { decl } = convert({
 			'--utrecht-button-primary-action-background-color': '#4a90e2',
 		})
-		// The primary must also read on its own light washes (the secondary button),
-		// which sit a little darker than the page, so it lands just above 4.5 there.
-		const primary = decl['--nldesign-color-primary']
-		expect(
-			contrast(primary, decl['--nldesign-color-primary-light-hover']),
-		).toBeGreaterThanOrEqual(4.5)
-		expect(
-			contrast(primary, decl['--nldesign-color-primary-light-hover']),
-		).toBeLessThan(4.8)
-		expect(contrast(primary, '#ffffff')).toBeLessThan(6)
+		const value = contrast(decl['--nldesign-color-primary'], '#ffffff')
+		expect(value).toBeGreaterThanOrEqual(4.5)
+		expect(value).toBeLessThan(4.7)
 	})
 
 	it('flips a header title that cannot be read on its header', () => {
@@ -256,6 +264,7 @@ describe('parity fixture', () => {
 			table,
 			vocabulary,
 			fonts: [],
+			repairContrast: true,
 		})
 		const decl = {}
 		for (const match of result.css

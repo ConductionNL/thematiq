@@ -90,7 +90,7 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	 */
 	public function testMatchesTheJavaScriptConverter(string $name): void {
 		$case = self::fixture()[$name];
-		$result = $this->converter()->convert(content: $case['input'], slug: 'demo', displayName: 'Demo');
+		$result = $this->converter()->convert(content: $case['input'], slug: 'demo', displayName: 'Demo', repairContrast: true);
 
 		$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)$result['css']);
 		preg_match_all('/(--[\w-]+)\s*:\s*([^;]+);/', $css, $matches, PREG_SET_ORDER);
@@ -105,6 +105,15 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 
 		$this->assertSame($case['primary_color'], $result['manifestEntry']['theming']['primary_color'] ?? null);
 	}//end testMatchesTheJavaScriptConverter()
+
+	/**
+	 * An admin's upload keeps its own colours: the repair only runs when the caller asks.
+	 */
+	public function testAnUploadKeepsItsColours(): void {
+		$result = $this->converter()->convert(content: ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #f0b800;\n}\n", slug: 'demo', displayName: 'Demo');
+
+		$this->assertStringContainsString('--nldesign-color-primary: #f0b800;', (string)$result['css']);
+	}//end testAnUploadKeepsItsColours()
 
 	/**
 	 * A colour that already passes is never touched, and the report names what was repaired.

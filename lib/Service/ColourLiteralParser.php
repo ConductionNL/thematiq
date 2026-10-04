@@ -143,7 +143,7 @@ class ColourLiteralParser {
 			[$second, 0.0, $chroma],
 			[$chroma, 0.0, $second],
 		];
-		$sector = $sectors[min(5, (int)floor($sextant))];
+		$sector = $sectors[max(0, min(5, (int)floor($sextant)))];
 		$offset = ($lightness - $chroma / 2);
 
 		return [($sector[0] + $offset) * 255, ($sector[1] + $offset) * 255, ($sector[2] + $offset) * 255];

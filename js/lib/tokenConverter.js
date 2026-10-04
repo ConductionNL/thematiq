@@ -2517,6 +2517,8 @@
 	 * @param {Object<string,boolean>} [options.vocabulary] The app's `--nldesign-*` names.
 	 * @param {Array<string>} [options.fonts] Available font family names.
 	 * @param {string|null} [options.sourceName] Provenance label.
+	 * @param {boolean} [options.repairContrast] Bring the converted pairs to WCAG AA (thematiq#993); off
+	 *        for an admin's upload, which keeps its own colours and gets contrast warnings instead.
 	 * @param {string} [options.assetName] Base name for an extracted logo, without extension.
 	 *        Defaults to the slug; the admin upload path passes `custom-{slug}` so an uploaded
 	 *        theme can never overwrite a shipped `img/logos/{slug}.svg`.
@@ -2606,7 +2608,10 @@
 			report,
 		)
 
-		semantic = repairContrast(semantic, table, manifest, report)
+		// Only on request (the nightly sync): an admin's upload keeps its colours.
+		if (settings.repairContrast === true) {
+			semantic = repairContrast(semantic, table, manifest, report)
+		}
 
 		if (logo !== null) {
 			semantic['--nldesign-logo-url'] = logo.css

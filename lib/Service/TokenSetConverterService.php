@@ -231,6 +231,8 @@ class TokenSetConverterService {
 	 *                               uploaded theme can never overwrite a shipped `img/logos/{slug}.svg`.
 	 * @param array<int, string> $referenceOnlyPaths Dotted token paths that resolve aliases but are not
 	 *                                               emitted (a Tokens Studio `source` set of one brand).
+	 * @param bool $repairContrast Bring the converted pairs to WCAG AA (the nightly sync); off for an admin's upload,
+	 *   which keeps its own colours and reports contrast warnings instead (thematiq#993).
 	 *
 	 * @return array{
 	 *     css: string,
@@ -261,6 +263,7 @@ class TokenSetConverterService {
 		?string $sourceName = null,
 		?string $assetName = null,
 		array $referenceOnlyPaths = [],
+		bool $repairContrast = false,
 	): array {
 		$this->referenceOnlyPaths = $referenceOnlyPaths;
 		$report = [];
@@ -380,7 +383,10 @@ class TokenSetConverterService {
 		);
 
 		// Bring the converted brand and text pairs to WCAG AA, smallest change first (thematiq#993).
-		$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $manifest, report: $report);
+		// Only on request: an admin's own upload keeps its colours and gets contrast warnings instead.
+		if ($repairContrast === true) {
+			$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $manifest, report: $report);
+		}
 
 		if ($logo !== null) {
 			$semantic['--nldesign-logo-url'] = $logo['css'];
