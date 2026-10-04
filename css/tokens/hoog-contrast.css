@@ -51,6 +51,15 @@
 	--nldesign-color-warning: #7a3d00;
 	--nldesign-color-success: #00591a;
 	--nldesign-color-info: #003a99;
+	/* The bare triples Nextcloud mixes its translucent status fills from, and the
+	 * link colours: black like the body text, always underlined by theme.css
+	 * (thematiq#1006). */
+	--nldesign-color-error-rgb: 179, 0, 0;
+	--nldesign-color-warning-rgb: 122, 61, 0;
+	--nldesign-color-success-rgb: 0, 89, 26;
+	--nldesign-color-info-rgb: 0, 58, 153;
+	--nldesign-color-link: #000000;
+	--nldesign-color-link-hover: #333333;
 
 	/* Placeholders — no low-contrast grey; near-black. */
 	--nldesign-color-placeholder-dark: #1a1a1a;

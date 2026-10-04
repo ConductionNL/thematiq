@@ -2,7 +2,7 @@
 
 # Conduction 2026
 
-Token set `conduction-new`: 385 declared by this set, 156 from the defaults layer.
+Token set `conduction-new`: 400 declared by this set, 141 from the defaults layer.
 
 Contrast: primary text on primary not evaluated, primary on background not evaluated (unevaluated).
 
@@ -13,24 +13,24 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 | `--nldesign-color-background-dark` | `var(--c-cobalt-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a2538%22%2F%3E%3C%2Fsvg%3E) `#1a2538` | this set | Background dark, Table header background |
 | `--nldesign-color-background-darker` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0d1d2%22%2F%3E%3C%2Fsvg%3E) `#d0d1d2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233a3b3c%22%2F%3E%3C%2Fsvg%3E) `#3a3b3c` | defaults | Background darker |
 | `--nldesign-color-background-hover` | `var(--conduction-color-background-muted)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23131c2a%22%2F%3E%3C%2Fsvg%3E) `#131c2a` | this set | Main background color |
-| `--nldesign-color-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b4b4b4%22%2F%3E%3C%2Fsvg%3E) `#b4b4b4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | Border color, Select border, Table row rule, Text input border, `--nldesign-component-separator-border-color` |
-| `--nldesign-color-border-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23929292%22%2F%3E%3C%2Fsvg%3E) `#929292` | defaults | Border dark, Border max contrast |
+| `--nldesign-color-border` | `var(--conduction-color-border-default)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232c3957%22%2F%3E%3C%2Fsvg%3E) `#2c3957` | this set | Border color, Select border, Table row rule, Text input border, `--nldesign-component-separator-border-color` |
+| `--nldesign-color-border-dark` | `var(--conduction-color-border-strong)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | this set | Border dark, Border max contrast |
 | `--nldesign-color-button-primary-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23154273%22%2F%3E%3C%2Fsvg%3E) `#154273` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | |
 | `--nldesign-color-button-primary-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23154273%22%2F%3E%3C%2Fsvg%3E) `#154273` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | |
 | `--nldesign-color-button-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d5499%22%2F%3E%3C%2Fsvg%3E) `#1d5499` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236397da%22%2F%3E%3C%2Fsvg%3E) `#6397da` | defaults | |
 | `--nldesign-color-button-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
-| `--nldesign-color-error` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d52b1e%22%2F%3E%3C%2Fsvg%3E) `#d52b1e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d83d32%22%2F%3E%3C%2Fsvg%3E) `#d83d32` | defaults | Border error, Element error, Error color, Text error, Text input invalid |
+| `--nldesign-color-error` | `var(--conduction-color-status-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23da515d%22%2F%3E%3C%2Fsvg%3E) `#da515d` | this set | Border error, Element error, Error color, Text error, Text input invalid |
 | `--nldesign-color-error-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238b1a15%22%2F%3E%3C%2Fsvg%3E) `#8b1a15` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e2726d%22%2F%3E%3C%2Fsvg%3E) `#e2726d` | defaults | Error hover |
-| `--nldesign-color-error-rgb` | `213, 43, 30` | `216, 61, 50` | defaults | Error text color |
+| `--nldesign-color-error-rgb` | `174, 28, 40` | `218, 81, 93` | this set | Error text color |
 | `--nldesign-color-favorite` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e17000%22%2F%3E%3C%2Fsvg%3E) `#e17000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f48c25%22%2F%3E%3C%2Fsvg%3E) `#f48c25` | defaults | Background blur filter |
 | `--nldesign-color-focus` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%20123%2C%20199%2C%200.5%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 123, 199, 0.5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf580%22%2F%3E%3C%2Fsvg%3E) `#39adf580` | defaults | Button focus ring |
 | `--nldesign-color-focus-rgb` | `0, 123, 199` | `57, 173, 245` | defaults | |
 | `--nldesign-color-header-background` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--nldesign-color-header-text` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
-| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23007bc7%22%2F%3E%3C%2Fsvg%3E) `#007bc7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf5%22%2F%3E%3C%2Fsvg%3E) `#39adf5` | defaults | Info color, Info hover color, Text input focus |
-| `--nldesign-color-info-rgb` | `0, 123, 199` | `57, 173, 245` | defaults | |
+| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23007bc7%22%2F%3E%3C%2Fsvg%3E) `#007bc7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf5%22%2F%3E%3C%2Fsvg%3E) `#39adf5` | this set | Info color, Info hover color, Text input focus |
+| `--nldesign-color-info-rgb` | `0, 123, 199` | `57, 173, 245` | this set | |
 | `--nldesign-color-link` | `var(--conduction-color-link-default)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | this set | Link colour |
-| `--nldesign-color-link-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23007bc7%22%2F%3E%3C%2Fsvg%3E) `#007bc7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf5%22%2F%3E%3C%2Fsvg%3E) `#39adf5` | defaults | Link hover colour |
+| `--nldesign-color-link-hover` | `var(--conduction-color-link-hover)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d75b17%22%2F%3E%3C%2Fsvg%3E) `#d75b17` | this set | Link hover colour |
 | `--nldesign-color-link-visited` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2342145f%22%2F%3E%3C%2Fsvg%3E) `#42145f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c392e3%22%2F%3E%3C%2Fsvg%3E) `#c392e3` | defaults | `--nldesign-component-link-visited-color` |
 | `--nldesign-color-logo-background` | `transparent` | | defaults | |
 | `--nldesign-color-nav-background` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
@@ -39,15 +39,15 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 | `--nldesign-color-primary` | `var(--conduction-color-brand-primary)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23bcceef%22%2F%3E%3C%2Fsvg%3E) `#bcceef` | this set | Badge background, Primary button background, Primary color, Primary element color, Primary element light text and 7 more |
 | `--nldesign-color-primary-hover` | `var(--c-cobalt-600)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231b3a75%22%2F%3E%3C%2Fsvg%3E) `#1b3a75` | this set | Primary button hover, Primary element hover, Primary hover color |
 | `--nldesign-color-primary-light` | `var(--c-cobalt-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23131c2a%22%2F%3E%3C%2Fsvg%3E) `#131c2a` | this set | Primary element light, Tertiary button hover, `--color-primary-element-text-dark` |
-| `--nldesign-color-primary-light-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4e4f2%22%2F%3E%3C%2Fsvg%3E) `#d4e4f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23172d41%22%2F%3E%3C%2Fsvg%3E) `#172d41` | defaults | Primary element light hover, Primary light hover, Tertiary button pressed |
+| `--nldesign-color-primary-light-hover` | `var(--c-cobalt-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a2538%22%2F%3E%3C%2Fsvg%3E) `#1a2538` | this set | Primary element light hover, Primary light hover, Tertiary button pressed |
 | `--nldesign-color-primary-text` | `var(--conduction-color-text-inverse)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | this set | Badge number, Primary button label, Primary element text, Primary text color |
-| `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339870c%22%2F%3E%3C%2Fsvg%3E) `#39870c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239ceb6f%22%2F%3E%3C%2Fsvg%3E) `#9ceb6f` | defaults | Border success, Element success, Success color, Text success |
-| `--nldesign-color-success-rgb` | `57, 135, 12` | `156, 235, 111` | defaults | Success hover color |
+| `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339870c%22%2F%3E%3C%2Fsvg%3E) `#39870c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239ceb6f%22%2F%3E%3C%2Fsvg%3E) `#9ceb6f` | this set | Border success, Element success, Success color, Text success |
+| `--nldesign-color-success-rgb` | `57, 135, 12` | `156, 235, 111` | this set | Success hover color |
 | `--nldesign-color-text` | `var(--conduction-color-text-default)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | Body text colour, Main text color, Table header label, `--nldesign-component-form-field-label-color`, `--nldesign-component-heading-1-color` and 8 more |
 | `--nldesign-color-text-light` | `var(--conduction-color-text-inverse)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | Muted text default color |
 | `--nldesign-color-text-muted` | `var(--conduction-color-text-muted)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237b92c1%22%2F%3E%3C%2Fsvg%3E) `#7b92c1` | this set | Text lighter, Text max contrast |
-| `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e17000%22%2F%3E%3C%2Fsvg%3E) `#e17000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f48c25%22%2F%3E%3C%2Fsvg%3E) `#f48c25` | defaults | Element warning, Text warning, Warning color |
-| `--nldesign-color-warning-rgb` | `225, 112, 0` | `244, 140, 37` | defaults | Warning hover color |
+| `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e17000%22%2F%3E%3C%2Fsvg%3E) `#e17000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f48c25%22%2F%3E%3C%2Fsvg%3E) `#f48c25` | this set | Element warning, Text warning, Warning color |
+| `--nldesign-color-warning-rgb` | `225, 112, 0` | `244, 140, 37` | this set | Warning hover color |
 | `--nldesign-component-badge-background-color` | `var(
 		--nldesign-color-primary
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | defaults | |
@@ -56,7 +56,7 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23262626%22%2F%3E%3C%2Fsvg%3E) `#262626` | defaults | |
 | `--nldesign-component-button-active-background-color` | `var(
 		--nldesign-color-primary-light-hover
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23172d41%22%2F%3E%3C%2Fsvg%3E) `#172d41` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a2538%22%2F%3E%3C%2Fsvg%3E) `#1a2538` | defaults | |
 | `--nldesign-component-button-active-color` | `var(
 		--nldesign-color-primary
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
@@ -108,8 +108,8 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 | `--nldesign-component-form-field-label-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
 | `--nldesign-component-form-fieldset-border-color` | `var(
 		--nldesign-color-border
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
-| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232c3957%22%2F%3E%3C%2Fsvg%3E) `#2c3957` | defaults | |
+| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232c3957%22%2F%3E%3C%2Fsvg%3E) `#2c3957` | defaults | |
 | `--nldesign-component-form-select-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf5%22%2F%3E%3C%2Fsvg%3E) `#39adf5` | defaults | |
 | `--nldesign-component-heading-1-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
 | `--nldesign-component-heading-2-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
@@ -119,14 +119,14 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 | `--nldesign-component-heading-6-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
 | `--nldesign-component-heading-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
 | `--nldesign-component-link-color` | `var(--nldesign-color-link)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
-| `--nldesign-component-link-hover-color` | `var(--nldesign-color-link-hover)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233db5ff%22%2F%3E%3C%2Fsvg%3E) `#3db5ff` | defaults | |
+| `--nldesign-component-link-hover-color` | `var(--nldesign-color-link-hover)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f58547%22%2F%3E%3C%2Fsvg%3E) `#f58547` | defaults | |
 | `--nldesign-component-link-visited-color` | `var(--nldesign-color-link-visited)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cea0eb%22%2F%3E%3C%2Fsvg%3E) `#cea0eb` | defaults | |
 | `--nldesign-component-ordered-list-color` | `var(
 		--nldesign-color-text
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
 | `--nldesign-component-paragraph-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
-| `--nldesign-component-separator-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
-| `--nldesign-component-table-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
+| `--nldesign-component-separator-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232c3957%22%2F%3E%3C%2Fsvg%3E) `#2c3957` | defaults | |
+| `--nldesign-component-table-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232c3957%22%2F%3E%3C%2Fsvg%3E) `#2c3957` | defaults | |
 | `--nldesign-component-table-header-background-color` | `var(
 		--nldesign-color-background-dark
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a2538%22%2F%3E%3C%2Fsvg%3E) `#1a2538` | defaults | |
@@ -135,15 +135,15 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 		--nldesign-color-background-hover
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23131c2a%22%2F%3E%3C%2Fsvg%3E) `#131c2a` | defaults | |
 | `--nldesign-component-textbox-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | defaults | |
-| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23939393%22%2F%3E%3C%2Fsvg%3E) `#939393` | defaults | |
+| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235871ab%22%2F%3E%3C%2Fsvg%3E) `#5871ab` | defaults | |
 | `--nldesign-component-textbox-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
 | `--nldesign-component-textbox-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | defaults | |
 | `--nldesign-component-textbox-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
 | `--nldesign-component-textbox-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf5%22%2F%3E%3C%2Fsvg%3E) `#39adf5` | defaults | |
 | `--nldesign-component-textbox-hover-border-color` | `var(
 		--nldesign-color-border-dark
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23929292%22%2F%3E%3C%2Fsvg%3E) `#929292` | defaults | |
-| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d83d32%22%2F%3E%3C%2Fsvg%3E) `#d83d32` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | defaults | |
+| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23da515d%22%2F%3E%3C%2Fsvg%3E) `#da515d` | defaults | |
 | `--nldesign-component-unordered-list-color` | `var(
 		--nldesign-color-text
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | |
@@ -214,11 +214,11 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
-| `--nldesign-border-radius` | `0` | | defaults | Border radius element, Button corner, Input border width, Select corner, Text input corner |
-| `--nldesign-border-radius-large` | `4px` | | defaults | Container radius |
+| `--nldesign-border-radius` | `var(--radius-md)` | | this set | Border radius element, Button corner, Input border width, Select corner, Text input corner |
+| `--nldesign-border-radius-large` | `var(--radius-lg)` | | this set | Container radius |
 | `--nldesign-border-radius-pill` | `100px` | | defaults | Badge shape, Border radius pill |
 | `--nldesign-border-radius-rounded` | `0` | | defaults | Border radius rounded |
-| `--nldesign-border-radius-small` | `0` | | defaults | Border radius small |
+| `--nldesign-border-radius-small` | `var(--radius-sm)` | | this set | Border radius small |
 | `--nldesign-component-badge-border-radius` | `var(
 		--nldesign-border-radius-pill
 	)` | | defaults | |
@@ -310,6 +310,199 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 | `--conduction-color-text-default` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
 | `--conduction-color-text-inverse` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
 | `--conduction-color-text-muted` | `var(--c-cobalt-400)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237b92c1%22%2F%3E%3C%2Fsvg%3E) `#7b92c1` | this set | |
+| `--conduction-new-card-background` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--conduction-new-card-body-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
+| `--conduction-new-card-body-font` | `var(--conduction-typography-font-family-body)` | | this set | |
+| `--conduction-new-card-body-line-height` | `22.8px` | | this set | |
+| `--conduction-new-card-body-size` | `15.2px` | | this set | |
+| `--conduction-new-card-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23EBEDF0%22%2F%3E%3C%2Fsvg%3E) `#EBEDF0` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f2228%22%2F%3E%3C%2Fsvg%3E) `#1f2228` | this set | |
+| `--conduction-new-card-border-width` | `1px` | | this set | |
+| `--conduction-new-card-gap` | `0px` | | this set | |
+| `--conduction-new-card-heading-align` | `flex-start` | | this set | |
+| `--conduction-new-card-heading-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
+| `--conduction-new-card-heading-direction` | `column` | | this set | |
+| `--conduction-new-card-heading-font` | `var(--conduction-typography-font-family-heading)` | | this set | |
+| `--conduction-new-card-heading-margin-block-end` | `6px` | | this set | |
+| `--conduction-new-card-heading-size` | `19.2px` | | this set | |
+| `--conduction-new-card-heading-weight` | `700` | | this set | |
+| `--conduction-new-card-icon-background` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | this set | |
+| `--conduction-new-card-icon-block-size` | `50px` | | this set | |
+| `--conduction-new-card-icon-clip` | `var(--hex-pointy-top)` | | this set | |
+| `--conduction-new-card-icon-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-new-card-icon-gap` | `14px` | | this set | |
+| `--conduction-new-card-icon-padding` | `11px` | | this set | |
+| `--conduction-new-card-icon-size` | `44px` | | this set | |
+| `--conduction-new-card-padding` | `24px` | | this set | |
+| `--conduction-new-card-radius` | `12px` | | this set | |
+| `--conduction-new-card-shadow` | `none` | | this set | |
+| `--conduction-new-card-shadow-hover` | `var(--shadow-2)` | | this set | |
+| `--conduction-new-container-max` | `1280px` | | this set | |
+| `--conduction-new-container-padding-inline` | `24px` | | this set | |
+| `--conduction-new-footer-badge-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.25%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.25)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2314141440%22%2F%3E%3C%2Fsvg%3E) `#14141440` | this set | |
+| `--conduction-new-footer-badge-border-width` | `1px` | | this set | |
+| `--conduction-new-footer-badge-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.85%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.85)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9ed9%22%2F%3E%3C%2Fsvg%3E) `#9e9e9ed9` | this set | |
+| `--conduction-new-footer-badge-font` | `var(--conduction-typography-font-family-code)` | | this set | |
+| `--conduction-new-footer-badge-gap` | `20px` | | this set | |
+| `--conduction-new-footer-badge-inner-gap` | `6px` | | this set | |
+| `--conduction-new-footer-badge-line-height` | `17px` | | this set | |
+| `--conduction-new-footer-badge-mark-spacing` | `0.88px` | | this set | |
+| `--conduction-new-footer-badge-mark-weight` | `700` | | this set | |
+| `--conduction-new-footer-badge-padding` | `5px 9px` | | this set | |
+| `--conduction-new-footer-badge-radius` | `4px` | | this set | |
+| `--conduction-new-footer-badge-size` | `11px` | | this set | |
+| `--conduction-new-footer-badge-value-spacing` | `0.44px` | | this set | |
+| `--conduction-new-footer-badge-value-weight` | `400` | | this set | |
+| `--conduction-new-footer-boat-color` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f58547%22%2F%3E%3C%2Fsvg%3E) `#f58547` | this set | |
+| `--conduction-new-footer-boat-mark-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-new-footer-boat-offset` | `6px` | | this set | |
+| `--conduction-new-footer-brand-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.7%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.7)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9eb3%22%2F%3E%3C%2Fsvg%3E) `#9e9e9eb3` | this set | |
+| `--conduction-new-footer-brand-font` | `var(--conduction-typography-font-family-body)` | | this set | |
+| `--conduction-new-footer-brand-line-height` | `21.7px` | | this set | |
+| `--conduction-new-footer-brand-margin-block` | `12px 0` | | this set | |
+| `--conduction-new-footer-brand-measure` | `288px` | | this set | |
+| `--conduction-new-footer-brand-size` | `14px` | | this set | |
+| `--conduction-new-footer-column-gap` | `48px` | | this set | |
+| `--conduction-new-footer-flag-bottom-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
+| `--conduction-new-footer-flag-middle-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-new-footer-flag-top-color` | `var(--c-red-vermillion)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e45864%22%2F%3E%3C%2Fsvg%3E) `#e45864` | this set | |
+| `--conduction-new-footer-grid-columns` | `297px repeat(auto-fill, 198px)` | | this set | |
+| `--conduction-new-footer-heading-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.55%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.55)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e8c%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e8c` | this set | |
+| `--conduction-new-footer-heading-font` | `var(--conduction-typography-font-family-code)` | | this set | |
+| `--conduction-new-footer-heading-line-height` | `13px` | | this set | |
+| `--conduction-new-footer-heading-margin-block-end` | `16px` | | this set | |
+| `--conduction-new-footer-heading-size` | `11px` | | this set | |
+| `--conduction-new-footer-heading-spacing` | `1.54px` | | this set | |
+| `--conduction-new-footer-heading-transform` | `uppercase` | | this set | |
+| `--conduction-new-footer-heading-weight` | `500` | | this set | |
+| `--conduction-new-footer-item-margin-block-end` | `13px` | | this set | |
+| `--conduction-new-footer-item-marker` | `none` | | this set | |
+| `--conduction-new-footer-legal-background` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b9cbed%22%2F%3E%3C%2Fsvg%3E) `#b9cbed` | this set | |
+| `--conduction-new-footer-legal-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.55%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.55)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e8c%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e8c` | this set | |
+| `--conduction-new-footer-legal-font` | `var(--conduction-typography-font-family-code)` | | this set | |
+| `--conduction-new-footer-legal-gap` | `16px` | | this set | |
+| `--conduction-new-footer-legal-line-height` | `18px` | | this set | |
+| `--conduction-new-footer-legal-link-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.65%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.65)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9ea6%22%2F%3E%3C%2Fsvg%3E) `#9e9e9ea6` | this set | |
+| `--conduction-new-footer-legal-link-decoration` | `none` | | this set | |
+| `--conduction-new-footer-legal-link-gap` | `8px` | | this set | |
+| `--conduction-new-footer-legal-padding-block-start` | `24px` | | this set | |
+| `--conduction-new-footer-legal-rule-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.1%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e1a%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e1a` | this set | |
+| `--conduction-new-footer-legal-rule-width` | `1px` | | this set | |
+| `--conduction-new-footer-legal-size` | `12px` | | this set | |
+| `--conduction-new-footer-link-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.85%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.85)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9ed9%22%2F%3E%3C%2Fsvg%3E) `#9e9e9ed9` | this set | |
+| `--conduction-new-footer-link-font` | `var(--conduction-typography-font-family-body)` | | this set | |
+| `--conduction-new-footer-link-line-height` | `21px` | | this set | |
+| `--conduction-new-footer-link-size` | `14px` | | this set | |
+| `--conduction-new-footer-padding-block` | `88px` | | this set | |
+| `--conduction-new-footer-padding-block-end` | `28px` | | this set | |
+| `--conduction-new-footer-quay-accent-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8482f%22%2F%3E%3C%2Fsvg%3E) `#c8482f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8543e%22%2F%3E%3C%2Fsvg%3E) `#c8543e` | this set | |
+| `--conduction-new-footer-quay-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239b9da3%22%2F%3E%3C%2Fsvg%3E) `#9b9da3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239a9ca2%22%2F%3E%3C%2Fsvg%3E) `#9a9ca2` | this set | |
+| `--conduction-new-footer-quay-height` | `30px` | | this set | |
+| `--conduction-new-footer-quay-highlight-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.5%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e80%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e80` | this set | |
+| `--conduction-new-footer-quay-ink-color` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0ddf5%22%2F%3E%3C%2Fsvg%3E) `#d0ddf5` | this set | |
+| `--conduction-new-footer-ripple-image` | `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 500' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.11' stroke-width='2'%3E%3Cpath d='M 0,96 L 140,82 L 280,96 L 420,82 L 560,96 L 700,82 L 840,96 L 980,82 L 1120,96 L 1260,82 L 1400,96'/%3E%3Cpath d='M 0,206 L 180,182 L 360,206 L 540,182 L 720,206 L 900,182 L 1080,206 L 1260,182 L 1400,200'/%3E%3Cpath d='M 0,362 L 220,332 L 440,362 L 660,332 L 880,362 L 1100,332 L 1320,362 L 1400,348'/%3E%3C/g%3E%3C/svg%3E")` | | this set | |
+| `--conduction-new-footer-skyline-color` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f58547%22%2F%3E%3C%2Fsvg%3E) `#f58547` | this set | |
+| `--conduction-new-footer-skyline-height` | `152px` | | this set | |
+| `--conduction-new-footer-social-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.18%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.18)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231414142e%22%2F%3E%3C%2Fsvg%3E) `#1414142e` | this set | |
+| `--conduction-new-footer-social-border-width` | `1px` | | this set | |
+| `--conduction-new-footer-social-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.78%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.78)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9ec7%22%2F%3E%3C%2Fsvg%3E) `#9e9e9ec7` | this set | |
+| `--conduction-new-footer-social-gap` | `10px` | | this set | |
+| `--conduction-new-footer-social-margin-block` | `24px 0` | | this set | |
+| `--conduction-new-footer-social-radius` | `8px` | | this set | |
+| `--conduction-new-footer-social-size` | `34px` | | this set | |
+| `--conduction-new-footer-water-background` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b9cbed%22%2F%3E%3C%2Fsvg%3E) `#b9cbed` | this set | |
+| `--conduction-new-footer-water-height` | `76px` | | this set | |
+| `--conduction-new-footer-window-dark-color` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0ddf5%22%2F%3E%3C%2Fsvg%3E) `#d0ddf5` | this set | |
+| `--conduction-new-footer-window-lit-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fff7d2%22%2F%3E%3C%2Fsvg%3E) `#fff7d2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffdd3d%22%2F%3E%3C%2Fsvg%3E) `#ffdd3d` | this set | |
+| `--conduction-new-footer-wordmark-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-new-footer-wordmark-font` | `var(
+		--conduction-typography-font-family-heading
+	)` | | this set | |
+| `--conduction-new-footer-wordmark-line-height` | `33px` | | this set | |
+| `--conduction-new-footer-wordmark-size` | `22px` | | this set | |
+| `--conduction-new-footer-wordmark-spacing` | `-0.44px` | | this set | |
+| `--conduction-new-footer-wordmark-weight` | `700` | | this set | |
+| `--conduction-new-header-action-border-width` | `1px` | | this set | |
+| `--conduction-new-header-action-decoration` | `none` | | this set | |
+| `--conduction-new-header-action-font-size` | `14px` | | this set | |
+| `--conduction-new-header-action-font-weight` | `500` | | this set | |
+| `--conduction-new-header-action-line-height` | `20px` | | this set | |
+| `--conduction-new-header-action-padding` | `8px 16px` | | this set | |
+| `--conduction-new-header-action-primary-background` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | this set | |
+| `--conduction-new-header-action-primary-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-new-header-action-radius` | `6px` | | this set | |
+| `--conduction-new-header-action-secondary-border-color` | `var(--c-cobalt-200)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232c3957%22%2F%3E%3C%2Fsvg%3E) `#2c3957` | this set | |
+| `--conduction-new-header-action-secondary-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
+| `--conduction-new-header-background` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--conduction-new-header-border-color` | `var(--c-cobalt-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a2538%22%2F%3E%3C%2Fsvg%3E) `#1a2538` | this set | |
+| `--conduction-new-header-border-width` | `1px` | | this set | |
+| `--conduction-new-header-height` | `60px` | | this set | |
+| `--conduction-new-header-logo-background` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | this set | |
+| `--conduction-new-header-logo-clip` | `var(--hex-pointy-top)` | | this set | |
+| `--conduction-new-header-logo-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-new-header-logo-font` | `var(--conduction-typography-font-family-heading)` | | this set | |
+| `--conduction-new-header-logo-font-size` | `18px` | | this set | |
+| `--conduction-new-header-logo-font-weight` | `700` | | this set | |
+| `--conduction-new-header-logo-gap` | `10px` | | this set | |
+| `--conduction-new-header-logo-inset` | `0px` | | this set | |
+| `--conduction-new-header-logo-size` | `32px` | | this set | |
+| `--conduction-new-header-nav-gap` | `0px` | | this set | |
+| `--conduction-new-header-padding-inline` | `56px` | | this set | |
+| `--conduction-new-header-position` | `sticky` | | this set | |
+| `--conduction-new-header-wordmark-font` | `var(
+		--conduction-typography-font-family-heading
+	)` | | this set | |
+| `--conduction-new-header-wordmark-size` | `22px` | | this set | |
+| `--conduction-new-header-wordmark-spacing` | `-0.44px` | | this set | |
+| `--conduction-new-header-wordmark-transform` | `none` | | this set | |
+| `--conduction-new-header-wordmark-weight` | `700` | | this set | |
+| `--conduction-new-header-z-index` | `100` | | this set | |
+| `--conduction-new-hero-action-border-width` | `1px` | | this set | |
+| `--conduction-new-hero-action-decoration` | `none` | | this set | |
+| `--conduction-new-hero-action-font-size` | `15px` | | this set | |
+| `--conduction-new-hero-action-font-weight` | `500` | | this set | |
+| `--conduction-new-hero-action-gap` | `16px` | | this set | |
+| `--conduction-new-hero-action-line-height` | `22.5px` | | this set | |
+| `--conduction-new-hero-action-padding` | `13px 22px` | | this set | |
+| `--conduction-new-hero-action-primary-background` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d75b17%22%2F%3E%3C%2Fsvg%3E) `#d75b17` | this set | |
+| `--conduction-new-hero-action-primary-color` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0ddf5%22%2F%3E%3C%2Fsvg%3E) `#d0ddf5` | this set | |
+| `--conduction-new-hero-action-radius` | `6px` | | this set | |
+| `--conduction-new-hero-action-secondary-background` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--conduction-new-hero-action-secondary-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
+| `--conduction-new-hero-body-gap` | `32px` | | this set | |
+| `--conduction-new-hero-body-line-height` | `33px` | | this set | |
+| `--conduction-new-hero-body-measure` | `840px` | | this set | |
+| `--conduction-new-hero-body-size` | `22px` | | this set | |
+| `--conduction-new-hero-body-weight` | `400` | | this set | |
+| `--conduction-new-hero-cell-accent-background` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d75b17%22%2F%3E%3C%2Fsvg%3E) `#d75b17` | this set | |
+| `--conduction-new-hero-cell-accent-color` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b9cbed%22%2F%3E%3C%2Fsvg%3E) `#b9cbed` | this set | |
+| `--conduction-new-hero-cell-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.08%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.08)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2314141414%22%2F%3E%3C%2Fsvg%3E) `#14141414` | this set | |
+| `--conduction-new-hero-cell-block-size` | `106px` | | this set | |
+| `--conduction-new-hero-cell-clip` | `var(--hex-pointy-top)` | | this set | |
+| `--conduction-new-hero-cell-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-new-hero-cell-font-size` | `22px` | | this set | |
+| `--conduction-new-hero-cell-font-weight` | `700` | | this set | |
+| `--conduction-new-hero-cell-size` | `92px` | | this set | |
+| `--conduction-new-hero-cell-step-block` | `78px` | | this set | |
+| `--conduction-new-hero-column-gap` | `64px` | | this set | |
+| `--conduction-new-hero-padding-block-end` | `64px` | | this set | |
+| `--conduction-new-hero-padding-block-start` | `56px` | | this set | |
+| `--conduction-new-hero-radius` | `0px` | | this set | |
+| `--conduction-new-hero-title-font` | `var(--conduction-typography-font-family-heading)` | | this set | |
+| `--conduction-new-hero-title-gap` | `20px` | | this set | |
+| `--conduction-new-hero-title-icon-background` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d75b17%22%2F%3E%3C%2Fsvg%3E) `#d75b17` | this set | |
+| `--conduction-new-hero-title-icon-block-size` | `92px` | | this set | |
+| `--conduction-new-hero-title-icon-clip` | `var(--hex-pointy-top)` | | this set | |
+| `--conduction-new-hero-title-icon-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-new-hero-title-icon-gap` | `22px` | | this set | |
+| `--conduction-new-hero-title-icon-size` | `80px` | | this set | |
+| `--conduction-new-hero-title-line-height` | `1.05` | | this set | |
+| `--conduction-new-hero-title-size` | `clamp(32px, 28px + 2.5vw, 64px)` | | this set | |
+| `--conduction-new-hero-title-weight` | `700` | | this set | |
+| `--conduction-new-list-gap` | `16px` | | this set | |
+| `--conduction-new-nav-font-size` | `14px` | | this set | |
+| `--conduction-new-nav-font-weight` | `500` | | this set | |
+| `--conduction-new-nav-item-padding-inline` | `12px` | | this set | |
+| `--conduction-new-section-gap` | `48px` | | this set | |
 | `--conduction-primary-top-nav-background-color` | `var(--nldesign-color-nav-background)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--conduction-primary-top-nav-color` | `var(--nldesign-color-nav-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
 | `--conduction-primary-top-nav-current-background-color` | `var(--c-cobalt-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23131c2a%22%2F%3E%3C%2Fsvg%3E) `#131c2a` | this set | |
@@ -333,207 +526,14 @@ Contrast: primary text on primary not evaluated, primary on background not evalu
 | `--lh-relaxed` | `1.75` | | this set | |
 | `--lh-tight` | `1.2` | | this set | |
 | `--nldesign-body-font-family` | `var(--conduction-typography-font-family-body)` | | this set | |
-| `--nldesign-card-background` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
-| `--nldesign-card-body-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
-| `--nldesign-card-body-font` | `var(--conduction-typography-font-family-body)` | | this set | |
-| `--nldesign-card-body-line-height` | `22.8px` | | this set | |
-| `--nldesign-card-body-size` | `15.2px` | | this set | |
-| `--nldesign-card-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23EBEDF0%22%2F%3E%3C%2Fsvg%3E) `#EBEDF0` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f2228%22%2F%3E%3C%2Fsvg%3E) `#1f2228` | this set | |
-| `--nldesign-card-border-width` | `1px` | | this set | |
-| `--nldesign-card-gap` | `0px` | | this set | |
-| `--nldesign-card-heading-align` | `flex-start` | | this set | |
-| `--nldesign-card-heading-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
-| `--nldesign-card-heading-direction` | `column` | | this set | |
-| `--nldesign-card-heading-font` | `var(--conduction-typography-font-family-heading)` | | this set | |
-| `--nldesign-card-heading-margin-block-end` | `6px` | | this set | |
-| `--nldesign-card-heading-size` | `19.2px` | | this set | |
-| `--nldesign-card-heading-weight` | `700` | | this set | |
-| `--nldesign-card-icon-background` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | this set | |
-| `--nldesign-card-icon-block-size` | `50px` | | this set | |
-| `--nldesign-card-icon-clip` | `var(--hex-pointy-top)` | | this set | |
-| `--nldesign-card-icon-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-card-icon-gap` | `14px` | | this set | |
-| `--nldesign-card-icon-padding` | `11px` | | this set | |
-| `--nldesign-card-icon-size` | `44px` | | this set | |
-| `--nldesign-card-padding` | `24px` | | this set | |
-| `--nldesign-card-radius` | `12px` | | this set | |
-| `--nldesign-card-shadow` | `none` | | this set | |
-| `--nldesign-card-shadow-hover` | `var(--shadow-2)` | | this set | |
 | `--nldesign-color-background` | `var(--conduction-color-background-default)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--nldesign-color-footer-background` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b9cbed%22%2F%3E%3C%2Fsvg%3E) `#b9cbed` | this set | |
 | `--nldesign-color-footer-text` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
 | `--nldesign-color-nav-text` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
-| `--nldesign-container-max` | `1280px` | | this set | |
-| `--nldesign-container-padding-inline` | `24px` | | this set | |
-| `--nldesign-footer-badge-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.25%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.25)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2314141440%22%2F%3E%3C%2Fsvg%3E) `#14141440` | this set | |
-| `--nldesign-footer-badge-border-width` | `1px` | | this set | |
-| `--nldesign-footer-badge-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.85%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.85)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9ed9%22%2F%3E%3C%2Fsvg%3E) `#9e9e9ed9` | this set | |
-| `--nldesign-footer-badge-font` | `var(--conduction-typography-font-family-code)` | | this set | |
-| `--nldesign-footer-badge-gap` | `20px` | | this set | |
-| `--nldesign-footer-badge-inner-gap` | `6px` | | this set | |
-| `--nldesign-footer-badge-line-height` | `17px` | | this set | |
-| `--nldesign-footer-badge-mark-spacing` | `0.88px` | | this set | |
-| `--nldesign-footer-badge-mark-weight` | `700` | | this set | |
-| `--nldesign-footer-badge-padding` | `5px 9px` | | this set | |
-| `--nldesign-footer-badge-radius` | `4px` | | this set | |
-| `--nldesign-footer-badge-size` | `11px` | | this set | |
-| `--nldesign-footer-badge-value-spacing` | `0.44px` | | this set | |
-| `--nldesign-footer-badge-value-weight` | `400` | | this set | |
-| `--nldesign-footer-boat-color` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f58547%22%2F%3E%3C%2Fsvg%3E) `#f58547` | this set | |
-| `--nldesign-footer-boat-mark-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-footer-boat-offset` | `6px` | | this set | |
-| `--nldesign-footer-brand-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.7%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.7)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9eb3%22%2F%3E%3C%2Fsvg%3E) `#9e9e9eb3` | this set | |
-| `--nldesign-footer-brand-font` | `var(--conduction-typography-font-family-body)` | | this set | |
-| `--nldesign-footer-brand-line-height` | `21.7px` | | this set | |
-| `--nldesign-footer-brand-margin-block` | `12px 0` | | this set | |
-| `--nldesign-footer-brand-measure` | `288px` | | this set | |
-| `--nldesign-footer-brand-size` | `14px` | | this set | |
-| `--nldesign-footer-column-gap` | `48px` | | this set | |
-| `--nldesign-footer-flag-bottom-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
-| `--nldesign-footer-flag-middle-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-footer-flag-top-color` | `var(--c-red-vermillion)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e45864%22%2F%3E%3C%2Fsvg%3E) `#e45864` | this set | |
-| `--nldesign-footer-grid-columns` | `297px repeat(auto-fill, 198px)` | | this set | |
-| `--nldesign-footer-heading-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.55%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.55)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e8c%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e8c` | this set | |
-| `--nldesign-footer-heading-font` | `var(--conduction-typography-font-family-code)` | | this set | |
-| `--nldesign-footer-heading-line-height` | `13px` | | this set | |
-| `--nldesign-footer-heading-margin-block-end` | `16px` | | this set | |
-| `--nldesign-footer-heading-size` | `11px` | | this set | |
-| `--nldesign-footer-heading-spacing` | `1.54px` | | this set | |
-| `--nldesign-footer-heading-transform` | `uppercase` | | this set | |
-| `--nldesign-footer-heading-weight` | `500` | | this set | |
-| `--nldesign-footer-item-margin-block-end` | `13px` | | this set | |
-| `--nldesign-footer-item-marker` | `none` | | this set | |
-| `--nldesign-footer-legal-background` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b9cbed%22%2F%3E%3C%2Fsvg%3E) `#b9cbed` | this set | |
-| `--nldesign-footer-legal-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.55%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.55)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e8c%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e8c` | this set | |
-| `--nldesign-footer-legal-font` | `var(--conduction-typography-font-family-code)` | | this set | |
-| `--nldesign-footer-legal-gap` | `16px` | | this set | |
-| `--nldesign-footer-legal-line-height` | `18px` | | this set | |
-| `--nldesign-footer-legal-link-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.65%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.65)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9ea6%22%2F%3E%3C%2Fsvg%3E) `#9e9e9ea6` | this set | |
-| `--nldesign-footer-legal-link-decoration` | `none` | | this set | |
-| `--nldesign-footer-legal-link-gap` | `8px` | | this set | |
-| `--nldesign-footer-legal-padding-block-start` | `24px` | | this set | |
-| `--nldesign-footer-legal-rule-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.1%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e1a%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e1a` | this set | |
-| `--nldesign-footer-legal-rule-width` | `1px` | | this set | |
-| `--nldesign-footer-legal-size` | `12px` | | this set | |
-| `--nldesign-footer-link-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.85%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.85)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9ed9%22%2F%3E%3C%2Fsvg%3E) `#9e9e9ed9` | this set | |
-| `--nldesign-footer-link-font` | `var(--conduction-typography-font-family-body)` | | this set | |
-| `--nldesign-footer-link-line-height` | `21px` | | this set | |
-| `--nldesign-footer-link-size` | `14px` | | this set | |
-| `--nldesign-footer-padding-block` | `88px` | | this set | |
-| `--nldesign-footer-padding-block-end` | `28px` | | this set | |
-| `--nldesign-footer-quay-accent-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8482f%22%2F%3E%3C%2Fsvg%3E) `#c8482f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8543e%22%2F%3E%3C%2Fsvg%3E) `#c8543e` | this set | |
-| `--nldesign-footer-quay-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239b9da3%22%2F%3E%3C%2Fsvg%3E) `#9b9da3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239a9ca2%22%2F%3E%3C%2Fsvg%3E) `#9a9ca2` | this set | |
-| `--nldesign-footer-quay-height` | `30px` | | this set | |
-| `--nldesign-footer-quay-highlight-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.5%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e80%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e80` | this set | |
-| `--nldesign-footer-quay-ink-color` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0ddf5%22%2F%3E%3C%2Fsvg%3E) `#d0ddf5` | this set | |
-| `--nldesign-footer-ripple-image` | `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 500' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.11' stroke-width='2'%3E%3Cpath d='M 0,96 L 140,82 L 280,96 L 420,82 L 560,96 L 700,82 L 840,96 L 980,82 L 1120,96 L 1260,82 L 1400,96'/%3E%3Cpath d='M 0,206 L 180,182 L 360,206 L 540,182 L 720,206 L 900,182 L 1080,206 L 1260,182 L 1400,200'/%3E%3Cpath d='M 0,362 L 220,332 L 440,362 L 660,332 L 880,362 L 1100,332 L 1320,362 L 1400,348'/%3E%3C/g%3E%3C/svg%3E")` | | this set | |
-| `--nldesign-footer-skyline-color` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f58547%22%2F%3E%3C%2Fsvg%3E) `#f58547` | this set | |
-| `--nldesign-footer-skyline-height` | `152px` | | this set | |
-| `--nldesign-footer-social-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.18%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.18)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231414142e%22%2F%3E%3C%2Fsvg%3E) `#1414142e` | this set | |
-| `--nldesign-footer-social-border-width` | `1px` | | this set | |
-| `--nldesign-footer-social-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.78%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.78)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9ec7%22%2F%3E%3C%2Fsvg%3E) `#9e9e9ec7` | this set | |
-| `--nldesign-footer-social-gap` | `10px` | | this set | |
-| `--nldesign-footer-social-margin-block` | `24px 0` | | this set | |
-| `--nldesign-footer-social-radius` | `8px` | | this set | |
-| `--nldesign-footer-social-size` | `34px` | | this set | |
-| `--nldesign-footer-water-background` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b9cbed%22%2F%3E%3C%2Fsvg%3E) `#b9cbed` | this set | |
-| `--nldesign-footer-water-height` | `76px` | | this set | |
-| `--nldesign-footer-window-dark-color` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0ddf5%22%2F%3E%3C%2Fsvg%3E) `#d0ddf5` | this set | |
-| `--nldesign-footer-window-lit-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fff7d2%22%2F%3E%3C%2Fsvg%3E) `#fff7d2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffdd3d%22%2F%3E%3C%2Fsvg%3E) `#ffdd3d` | this set | |
-| `--nldesign-footer-wordmark-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-footer-wordmark-font` | `var(
-		--conduction-typography-font-family-heading
-	)` | | this set | |
-| `--nldesign-footer-wordmark-line-height` | `33px` | | this set | |
-| `--nldesign-footer-wordmark-size` | `22px` | | this set | |
-| `--nldesign-footer-wordmark-spacing` | `-0.44px` | | this set | |
-| `--nldesign-footer-wordmark-weight` | `700` | | this set | |
-| `--nldesign-header-action-border-width` | `1px` | | this set | |
-| `--nldesign-header-action-decoration` | `none` | | this set | |
-| `--nldesign-header-action-font-size` | `14px` | | this set | |
-| `--nldesign-header-action-font-weight` | `500` | | this set | |
-| `--nldesign-header-action-line-height` | `20px` | | this set | |
-| `--nldesign-header-action-padding` | `8px 16px` | | this set | |
-| `--nldesign-header-action-primary-background` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | this set | |
-| `--nldesign-header-action-primary-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-header-action-radius` | `6px` | | this set | |
-| `--nldesign-header-action-secondary-border-color` | `var(--c-cobalt-200)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232c3957%22%2F%3E%3C%2Fsvg%3E) `#2c3957` | this set | |
-| `--nldesign-header-action-secondary-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
-| `--nldesign-header-background` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
-| `--nldesign-header-border-color` | `var(--c-cobalt-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a2538%22%2F%3E%3C%2Fsvg%3E) `#1a2538` | this set | |
-| `--nldesign-header-border-width` | `1px` | | this set | |
-| `--nldesign-header-height` | `60px` | | this set | |
 | `--nldesign-header-link-color` | `var(--nldesign-color-header-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
-| `--nldesign-header-logo-background` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236f93d6%22%2F%3E%3C%2Fsvg%3E) `#6f93d6` | this set | |
-| `--nldesign-header-logo-clip` | `var(--hex-pointy-top)` | | this set | |
-| `--nldesign-header-logo-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-header-logo-font` | `var(--conduction-typography-font-family-heading)` | | this set | |
-| `--nldesign-header-logo-font-size` | `18px` | | this set | |
-| `--nldesign-header-logo-font-weight` | `700` | | this set | |
-| `--nldesign-header-logo-gap` | `10px` | | this set | |
-| `--nldesign-header-logo-inset` | `0px` | | this set | |
-| `--nldesign-header-logo-size` | `32px` | | this set | |
-| `--nldesign-header-nav-gap` | `0px` | | this set | |
-| `--nldesign-header-padding-inline` | `56px` | | this set | |
-| `--nldesign-header-position` | `sticky` | | this set | |
-| `--nldesign-header-wordmark-font` | `var(
-		--conduction-typography-font-family-heading
-	)` | | this set | |
-| `--nldesign-header-wordmark-size` | `22px` | | this set | |
-| `--nldesign-header-wordmark-spacing` | `-0.44px` | | this set | |
-| `--nldesign-header-wordmark-transform` | `none` | | this set | |
-| `--nldesign-header-wordmark-weight` | `700` | | this set | |
-| `--nldesign-header-z-index` | `100` | | this set | |
-| `--nldesign-hero-action-border-width` | `1px` | | this set | |
-| `--nldesign-hero-action-decoration` | `none` | | this set | |
-| `--nldesign-hero-action-font-size` | `15px` | | this set | |
-| `--nldesign-hero-action-font-weight` | `500` | | this set | |
-| `--nldesign-hero-action-gap` | `16px` | | this set | |
-| `--nldesign-hero-action-line-height` | `22.5px` | | this set | |
-| `--nldesign-hero-action-padding` | `13px 22px` | | this set | |
-| `--nldesign-hero-action-primary-background` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d75b17%22%2F%3E%3C%2Fsvg%3E) `#d75b17` | this set | |
-| `--nldesign-hero-action-primary-color` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0ddf5%22%2F%3E%3C%2Fsvg%3E) `#d0ddf5` | this set | |
-| `--nldesign-hero-action-radius` | `6px` | | this set | |
-| `--nldesign-hero-action-secondary-background` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
-| `--nldesign-hero-action-secondary-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
 | `--nldesign-hero-body-color` | `var(--c-cobalt-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237792c5%22%2F%3E%3C%2Fsvg%3E) `#7792c5` | this set | |
-| `--nldesign-hero-body-gap` | `32px` | | this set | |
-| `--nldesign-hero-body-line-height` | `33px` | | this set | |
-| `--nldesign-hero-body-measure` | `840px` | | this set | |
-| `--nldesign-hero-body-size` | `22px` | | this set | |
-| `--nldesign-hero-body-weight` | `400` | | this set | |
-| `--nldesign-hero-cell-accent-background` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d75b17%22%2F%3E%3C%2Fsvg%3E) `#d75b17` | this set | |
-| `--nldesign-hero-cell-accent-color` | `var(--c-cobalt-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b9cbed%22%2F%3E%3C%2Fsvg%3E) `#b9cbed` | this set | |
-| `--nldesign-hero-cell-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28255%2C%20255%2C%20255%2C%200.08%29%22%2F%3E%3C%2Fsvg%3E) `rgba(255, 255, 255, 0.08)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2314141414%22%2F%3E%3C%2Fsvg%3E) `#14141414` | this set | |
-| `--nldesign-hero-cell-block-size` | `106px` | | this set | |
-| `--nldesign-hero-cell-clip` | `var(--hex-pointy-top)` | | this set | |
-| `--nldesign-hero-cell-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-hero-cell-font-size` | `22px` | | this set | |
-| `--nldesign-hero-cell-font-weight` | `700` | | this set | |
-| `--nldesign-hero-cell-size` | `92px` | | this set | |
-| `--nldesign-hero-cell-step-block` | `78px` | | this set | |
-| `--nldesign-hero-column-gap` | `64px` | | this set | |
-| `--nldesign-hero-padding-block-end` | `64px` | | this set | |
-| `--nldesign-hero-padding-block-start` | `56px` | | this set | |
-| `--nldesign-hero-radius` | `0px` | | this set | |
 | `--nldesign-hero-title-color` | `var(--conduction-color-text-inverse)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-hero-title-font` | `var(--conduction-typography-font-family-heading)` | | this set | |
-| `--nldesign-hero-title-gap` | `20px` | | this set | |
-| `--nldesign-hero-title-icon-background` | `var(--c-orange-knvb)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d75b17%22%2F%3E%3C%2Fsvg%3E) `#d75b17` | this set | |
-| `--nldesign-hero-title-icon-block-size` | `92px` | | this set | |
-| `--nldesign-hero-title-icon-clip` | `var(--hex-pointy-top)` | | this set | |
-| `--nldesign-hero-title-icon-color` | `var(--c-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-hero-title-icon-gap` | `22px` | | this set | |
-| `--nldesign-hero-title-icon-size` | `80px` | | this set | |
-| `--nldesign-hero-title-line-height` | `1.05` | | this set | |
-| `--nldesign-hero-title-size` | `clamp(32px, 28px + 2.5vw, 64px)` | | this set | |
-| `--nldesign-hero-title-weight` | `700` | | this set | |
-| `--nldesign-list-gap` | `16px` | | this set | |
-| `--nldesign-nav-font-size` | `14px` | | this set | |
-| `--nldesign-nav-font-weight` | `500` | | this set | |
-| `--nldesign-nav-item-padding-inline` | `12px` | | this set | |
 | `--nldesign-nav-link-color` | `var(--c-blue-cobalt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | this set | |
-| `--nldesign-section-gap` | `48px` | | this set | |
 | `--radius-lg` | `10px` | | this set | |
 | `--radius-md` | `6px` | | this set | |
 | `--radius-pill` | `999px` | | this set | |

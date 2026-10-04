@@ -98,7 +98,9 @@
 	/* Logo lint/ribbon (rhc.logo.image.* + rhc.size.lint) */
 	/* When these are defined, theme.css renders a colored bar behind the logo */
 	--nldesign-color-logo-background: #154273;
-	--nldesign-color-logo-text: #ffffff;
+	/* Nothing reads a logo text colour under --nldesign-; kept under the set's
+	   own prefix for the ribbon's documentation (thematiq#1006). */
+	--rijkshuisstijl-color-logo-text: #ffffff;
 	--nldesign-size-lint: 48px;
 	--nldesign-size-lint-height: 96px;
 	--nldesign-logo-center: 32px;

@@ -9,18 +9,5 @@
 		"both on a set that is incomplete and NOT listed here, and on a listed set that now",
 		"passes. This array MUST be empty once every shipped set is complete."
 	],
-	"sets": [
-		"buren",
-		"conduction-new",
-		"cunningham",
-		"demodam",
-		"frankendesk",
-		"groningen",
-		"hoog-contrast",
-		"lasuite",
-		"opencatalogi",
-		"riddeliemers",
-		"rijkshuisstijl",
-		"xxllnc"
-	]
+	"sets": []
 }
