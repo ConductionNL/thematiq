@@ -153,6 +153,23 @@ class GenerateDarkVariantsTest extends TestCase {
 	}//end testFullRunSkipsIneligibleSetsWithZeroExitCode()
 
 	/**
+	 * A forced full run, and a forced run of that set alone, leave a shipped
+	 * hand-written high-contrast dark variant byte for byte (thematiq#1023):
+	 * the generator only reaches AA, and that file is held to AAA by hand.
+	 */
+	public function testForcedRunLeavesAHandWrittenHighContrastVariantAlone(): void {
+		mkdir($this->appDir . '/css/tokens/dark', 0777, true);
+		$handWritten = "/* HAND-WRITTEN */\nbody[data-theme-dark],\nbody[data-themes*=dark] {\n\t--nldesign-color-background: #000000;\n}\n";
+		file_put_contents($this->appDir . '/css/tokens/dark/hoog-contrast.css', $handWritten);
+
+		$this->assertSame(0, $this->tester->execute(['--force' => true]));
+		$this->assertSame(0, $this->tester->execute(['--set' => 'hoog-contrast', '--force' => true]));
+
+		$this->assertSame($handWritten, file_get_contents($this->appDir . '/css/tokens/dark/hoog-contrast.css'));
+		$this->assertStringContainsString('hoog-contrast: skipped (ineligible)', $this->tester->getDisplay());
+	}//end testForcedRunLeavesAHandWrittenHighContrastVariantAlone()
+
+	/**
 	 * A second run without `--force` skips the now-fresh file.
 	 */
 	public function testSecondRunWithoutForceSkipsFreshFile(): void {

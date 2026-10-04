@@ -15,6 +15,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -86,6 +87,165 @@ class ShippedDarkContrastTest extends TestCase {
 			'--nldesign-color-background',
 		],
 	];
+
+	/**
+	 * What a high-contrast set's dark variant is held to, on top of {@see self::PAIRS}.
+	 *
+	 * The set promises WCAG AAA (thematiq#1023), and the high-contrast design
+	 * system paints every one of these from the token named here
+	 * (css/systems/high-contrast/theme.css and element-overrides.css): text at
+	 * the AAA 7:1, a boundary or fill against the page at the 4.5:1 the
+	 * contrast audit uses for AAA non-text contrast.
+	 *
+	 * @var array<string, array{0: string, 1: string, 2: string}> Foreground, background, `text` or `ui`.
+	 */
+	private const AAA_PAIRS = [
+		'body text on the page' => ['--nldesign-color-text', '--nldesign-color-background', 'text'],
+		'muted text on the page' => ['--nldesign-color-text-muted', '--nldesign-color-background', 'text'],
+		'light text on the page' => ['--nldesign-color-text-light', '--nldesign-color-background', 'text'],
+		'body text on the hover surface' => ['--nldesign-color-text', '--nldesign-color-background-hover', 'text'],
+		'body text on the dark surface' => ['--nldesign-color-text', '--nldesign-color-background-dark', 'text'],
+		'body text on the darker surface' => ['--nldesign-color-text', '--nldesign-color-background-darker', 'text'],
+		'body text on the navigation' => ['--nldesign-color-text', '--nldesign-color-nav-background', 'text'],
+		'primary button label' => ['--nldesign-color-primary-text', '--nldesign-color-primary', 'text'],
+		'primary button label on hover' => ['--nldesign-color-primary-text', '--nldesign-color-primary-hover', 'text'],
+		'secondary button label' => ['--nldesign-color-primary', '--nldesign-color-primary-light', 'text'],
+		'secondary button label on hover' => ['--nldesign-color-primary', '--nldesign-color-primary-light-hover', 'text'],
+		'header text on the header' => ['--nldesign-color-header-text', '--nldesign-color-header-background', 'text'],
+		'link on the page' => ['--nldesign-color-link', '--nldesign-color-background', 'text'],
+		'link on hover on the page' => ['--nldesign-color-link-hover', '--nldesign-color-background', 'text'],
+		'placeholder on the page' => ['--nldesign-color-placeholder-dark', '--nldesign-color-background', 'text'],
+		'error text on the page' => ['--nldesign-color-error', '--nldesign-color-background', 'text'],
+		'warning text on the page' => ['--nldesign-color-warning', '--nldesign-color-background', 'text'],
+		'success text on the page' => ['--nldesign-color-success', '--nldesign-color-background', 'text'],
+		'info text on the page' => ['--nldesign-color-info', '--nldesign-color-background', 'text'],
+		'error button label' => ['--nldesign-component-button-error-color', '--nldesign-color-error', 'text'],
+		'border on the page' => ['--nldesign-color-border', '--nldesign-color-background', 'ui'],
+		'strong border on the page' => ['--nldesign-color-border-dark', '--nldesign-color-background', 'ui'],
+		'focus ring on the page' => ['--nldesign-color-focus', '--nldesign-color-background', 'ui'],
+		'primary fill on the page' => ['--nldesign-color-primary', '--nldesign-color-background', 'ui'],
+	];
+
+	/**
+	 * Every shipped set the high-contrast design system wears, or that declares AAA.
+	 *
+	 * @return array<string, array{0: string}> Set id per case.
+	 */
+	public static function highContrastSetProvider(): array {
+		$manifest = json_decode((string)file_get_contents(dirname(__DIR__, 3) . '/token-sets.json'), true);
+		$cases = [];
+		foreach ((is_array($manifest) === true ? $manifest : []) as $set) {
+			if (self::isHighContrast(set: $set) === true) {
+				$cases[$set['id']] = [$set['id']];
+			}
+		}
+
+		return $cases;
+	}//end highContrastSetProvider()
+
+	/**
+	 * Whether a manifest entry is held to AAA, the rule the contrast audit uses.
+	 *
+	 * @param array<string, mixed> $set The manifest entry.
+	 *
+	 * @return bool True for a high-contrast or AAA-declaring set.
+	 */
+	private static function isHighContrast(array $set): bool {
+		return (($set['design_system'] ?? '') === 'high-contrast') || (($set['contrast_level'] ?? '') === 'AAA');
+	}//end isHighContrast()
+
+	/**
+	 * The provider finds the shipped high-contrast set, so the AAA cases cannot pass empty.
+	 */
+	public function testThereIsAHighContrastSet(): void {
+		$this->assertArrayHasKey('hoog-contrast', self::highContrastSetProvider());
+	}//end testThereIsAHighContrastSet()
+
+	/**
+	 * A high-contrast set ships a dark variant (thematiq#1023): without one its
+	 * surfaces stay white in Nextcloud's dark and dark-highcontrast themes.
+	 *
+	 * @dataProvider highContrastSetProvider
+	 *
+	 * @param string $setId The token set id.
+	 */
+	public function testHighContrastSetShipsADarkVariant(string $setId): void {
+		$this->assertFileExists(dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css', $setId . ' has no dark variant');
+	}//end testHighContrastSetShipsADarkVariant()
+
+	/**
+	 * A high-contrast set's dark variant reaches AAA: 7:1 for text, 4.5:1 for
+	 * borders, fills and the focus ring.
+	 *
+	 * @dataProvider highContrastSetProvider
+	 *
+	 * @param string $setId The token set id.
+	 */
+	public function testHighContrastDarkVariantReachesAaa(string $setId): void {
+		$this->assertFileExists(dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css');
+
+		$contrast = new ContrastService();
+		$value = $this->darkValues(setId: $setId);
+		$page = $value('--nldesign-color-background');
+		$this->assertNotNull($page, $setId . ' dark declares no page background');
+
+		$failures = [];
+		foreach (self::AAA_PAIRS as $name => [$fgToken, $bgToken, $kind]) {
+			$threshold = ShippedTokenSetAuditService::AAA_UI;
+			if ($kind === 'text') {
+				$threshold = ShippedTokenSetAuditService::AAA_TEXT;
+			}
+
+			$foreground = $value($fgToken);
+			$background = $value($bgToken);
+			if ($foreground === null || $background === null) {
+				$failures[] = sprintf('%s: %s or %s is not declared', $name, $fgToken, $bgToken);
+				continue;
+			}
+
+			$ratio = $contrast->measure(foreground: $foreground, background: $background, page: $page);
+			if ($ratio === null || $ratio < $threshold) {
+				$failures[] = sprintf('%s: %s on %s = %s, needs %.1f:1', $name, $foreground, $background, ($ratio === null ? 'unmeasurable' : sprintf('%.2f:1', $ratio)), $threshold);
+			}
+		}
+
+		$this->assertSame([], $failures, $setId . ' dark');
+	}//end testHighContrastDarkVariantReachesAaa()
+
+	/**
+	 * A high-contrast dark variant applies in both dark scopes with the same
+	 * values: the system preference without an explicit theme, and an
+	 * explicit dark choice (`body[data-themes*=dark]` also matches Nextcloud's
+	 * dark-highcontrast theme). A token in one scope only would leave that
+	 * path half light.
+	 *
+	 * @dataProvider highContrastSetProvider
+	 *
+	 * @param string $setId The token set id.
+	 */
+	public function testHighContrastDarkVariantCoversBothScopesAlike(string $setId): void {
+		$css = (string)file_get_contents(dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css');
+		$css = (string)preg_replace('#/\*.*?\*/#s', '', $css);
+
+		$media = [];
+		$this->assertSame(
+			1,
+			preg_match('/@media \(prefers-color-scheme: dark\) \{\s*body:not\(\[data-theme-light\]\):not\(\[data-theme-dark\]\):not\(\[data-theme-light-highcontrast\]\):not\(\[data-theme-dark-highcontrast\]\) \{([^}]*)\}\s*\}/', $css, $media),
+			$setId . ': no system-preference dark scope'
+		);
+		$explicit = [];
+		$this->assertSame(
+			1,
+			preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\] \{([^}]*)\}/', $css, $explicit),
+			$setId . ': no explicit dark scope'
+		);
+
+		$parser = new CssParserService();
+		$fromMedia = ($parser->parseDeclarations(':root {' . $media[1] . '}') ?? []);
+		$fromExplicit = ($parser->parseDeclarations(':root {' . $explicit[1] . '}') ?? []);
+		$this->assertNotSame([], $fromMedia);
+		$this->assertSame($fromMedia, $fromExplicit, $setId . ': the two dark scopes differ');
+	}//end testHighContrastDarkVariantCoversBothScopesAlike()
 
 	/**
 	 * Every committed dark variant.
@@ -225,7 +385,15 @@ class ShippedDarkContrastTest extends TestCase {
 		$root = dirname(__DIR__, 3);
 		$parser = new CssParserService();
 
-		$light = ($parser->parseDeclarations((string)file_get_contents($root . '/css/systems/nldesign/defaults.css')) ?? []);
+		// The nldesign defaults are not part of a high-contrast set's cascade
+		// (design-systems.json loads no defaults.css for that system), so the
+		// component tokens they declare must not stand in for its values.
+		$light = [];
+		$set = (self::highContrastSetProvider()[$setId] ?? null);
+		if ($set === null) {
+			$light = ($parser->parseDeclarations((string)file_get_contents($root . '/css/systems/nldesign/defaults.css')) ?? []);
+		}
+
 		if (is_file($root . '/css/tokens/' . $setId . '.css') === true) {
 			$light = array_merge($light, ($parser->parseDeclarations((string)file_get_contents($root . '/css/tokens/' . $setId . '.css')) ?? []));
 		}

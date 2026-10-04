@@ -111,8 +111,11 @@ command (`thematiq:generate-dark-variants`, with `--set` and `--force` options) 
 `IRepairStep` that regenerates missing or stale files and logs-and-skips when the target
 directory is not writable. Each generated file MUST carry a header comment with the generator
 version and a hash of the source token set so freshness can be checked. Generation MUST skip
-token sets whose `design_system` is `none` or `high-contrast`. Dark variants for custom uploaded
-sets MUST be generated at upload time and removed when the custom set is deleted.
+token sets whose `design_system` is `none` or `high-contrast`. A `high-contrast` set's dark variant
+is hand-written instead (see the high-contrast-token-set spec, "Dark Variant at AAA"), because the
+derivation repairs pairs to AA 4.5:1 and that set promises AAA; generation MUST NOT write, rewrite or
+delete it, and the injection loads it like any other `css/tokens/dark/<set>.css`. Dark variants for
+custom uploaded sets MUST be generated at upload time and removed when the custom set is deleted.
 
 @e2e exclude occ command and file lifecycle — these scenarios assert what an `occ` invocation writes to css/tokens/, its exit code, its idempotency without --force and its deletion behaviour; none of that is reachable from a browser session; proven by tests/Unit/Command/GenerateDarkVariantsTest.php (testSetOptionWritesOnlyThatFile, testFullRunSkipsIneligibleSetsWithZeroExitCode, testSecondRunWithoutForceSkipsFreshFile, testForceRewritesFreshFile) and tests/Unit/Service/DarkPaletteServiceTest.php (testGenerateAndWriteIsIdempotentWithoutForce, testGenerateAndWriteForceRewrites, testDeleteDarkVariant, testDiscoverAllSetIds).
 
@@ -136,7 +139,8 @@ sets MUST be generated at upload time and removed when the custom set is deleted
 - GIVEN the `nextcloud` set (`design_system: "none"`) and the high-contrast set
 - WHEN generation runs over all sets
 - THEN no `css/tokens/dark/nextcloud.css` MUST be produced
-- AND no dark variant MUST be produced for sets with `design_system: "high-contrast"`
+- AND generation MUST NOT produce, rewrite or delete a dark variant for sets with
+  `design_system: "high-contrast"` (their shipped dark variant is hand-written)
 - AND the command exit code MUST remain zero (skips are not failures)
 
 #### Scenario: Repair step degrades gracefully on read-only app dir

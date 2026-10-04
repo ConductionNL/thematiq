@@ -123,9 +123,11 @@ class DarkPaletteService {
 	/**
 	 * Design systems that are never eligible for dark-variant generation:
 	 * `none` has no `--nldesign-*` tokens to darken (stock Nextcloud handles
-	 * its own dark theme), and `high-contrast` is a AAA black-on-white set
-	 * whose purpose auto-darkening would defeat (hand-authored dark blocks
-	 * remain possible for it).
+	 * its own dark theme), and `high-contrast` is a AAA set whose purpose
+	 * auto-darkening would defeat: the repair here stops at AA 4.5:1. Its
+	 * dark variant is hand-written instead (`css/tokens/dark/hoog-contrast.css`,
+	 * thematiq#1023), and skipping the design system is what keeps this
+	 * service from ever writing over it.
 	 *
 	 * @var string[]
 	 */

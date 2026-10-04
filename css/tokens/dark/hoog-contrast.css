@@ -1,0 +1,85 @@
+/* HAND-WRITTEN dark variant of tokens/hoog-contrast.css (thematiq#1023), not generated.
+ *
+ * DarkPaletteService skips the high-contrast design system on purpose and never
+ * writes or rewrites this file: its derivation repairs pairs to AA 4.5:1, and this
+ * set promises AAA. Every value here is chosen by hand and held by
+ * ShippedDarkContrastTest (7:1 text, 4.5:1 UI) and tests/vitest/highContrastDark.spec.js.
+ *
+ * White text on a black page, the light set's black-on-white turned around:
+ *   - text (#ffffff) on background (#000000)          = 21:1
+ *   - primary-text (#000000) on primary (#ffffff)      = 21:1
+ *   - primary (#ffffff) on primary-light (#000000)     = 21:1
+ *   - status colours on the page                       >= 8.6:1
+ *   - focus ring (#ffff00) on the page                 = 19.6:1, yellow so it never
+ *     reads as one of the white control borders.
+ *
+ * Same two scopes as every generated dark file: the system dark preference when
+ * the user chose no explicit theme, and an explicit dark choice, which includes
+ * Nextcloud's dark-highcontrast theme (`data-themes` contains `dark`). */
+@media (prefers-color-scheme: dark) {
+	body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast]) {
+		--nldesign-color-background: #000000;
+		--nldesign-color-background-dark: #333333;
+		--nldesign-color-background-darker: #4d4d4d;
+		--nldesign-color-background-hover: #1a1a1a;
+		--nldesign-color-border: #ffffff;
+		--nldesign-color-border-dark: #ffffff;
+		--nldesign-color-error: #ff8080;
+		--nldesign-color-error-rgb: 255, 128, 128;
+		--nldesign-color-focus: #ffff00;
+		--nldesign-color-header-background: #000000;
+		--nldesign-color-header-text: #ffffff;
+		--nldesign-color-info: #8cb3ff;
+		--nldesign-color-info-rgb: 140, 179, 255;
+		--nldesign-color-link: #ffffff;
+		--nldesign-color-link-hover: #cccccc;
+		--nldesign-color-nav-background: #000000;
+		--nldesign-color-placeholder-dark: #e6e6e6;
+		--nldesign-color-primary: #ffffff;
+		--nldesign-color-primary-hover: #cccccc;
+		--nldesign-color-primary-light: #000000;
+		--nldesign-color-primary-light-hover: #262626;
+		--nldesign-color-primary-text: #000000;
+		--nldesign-color-success: #66e08a;
+		--nldesign-color-success-rgb: 102, 224, 138;
+		--nldesign-color-text: #ffffff;
+		--nldesign-color-text-light: #ffffff;
+		--nldesign-color-text-muted: #e6e6e6;
+		--nldesign-color-warning: #ffb366;
+		--nldesign-color-warning-rgb: 255, 179, 102;
+		--nldesign-component-button-error-color: #000000;
+	}
+}
+body[data-theme-dark],
+body[data-themes*=dark] {
+	--nldesign-color-background: #000000;
+	--nldesign-color-background-dark: #333333;
+	--nldesign-color-background-darker: #4d4d4d;
+	--nldesign-color-background-hover: #1a1a1a;
+	--nldesign-color-border: #ffffff;
+	--nldesign-color-border-dark: #ffffff;
+	--nldesign-color-error: #ff8080;
+	--nldesign-color-error-rgb: 255, 128, 128;
+	--nldesign-color-focus: #ffff00;
+	--nldesign-color-header-background: #000000;
+	--nldesign-color-header-text: #ffffff;
+	--nldesign-color-info: #8cb3ff;
+	--nldesign-color-info-rgb: 140, 179, 255;
+	--nldesign-color-link: #ffffff;
+	--nldesign-color-link-hover: #cccccc;
+	--nldesign-color-nav-background: #000000;
+	--nldesign-color-placeholder-dark: #e6e6e6;
+	--nldesign-color-primary: #ffffff;
+	--nldesign-color-primary-hover: #cccccc;
+	--nldesign-color-primary-light: #000000;
+	--nldesign-color-primary-light-hover: #262626;
+	--nldesign-color-primary-text: #000000;
+	--nldesign-color-success: #66e08a;
+	--nldesign-color-success-rgb: 102, 224, 138;
+	--nldesign-color-text: #ffffff;
+	--nldesign-color-text-light: #ffffff;
+	--nldesign-color-text-muted: #e6e6e6;
+	--nldesign-color-warning: #ffb366;
+	--nldesign-color-warning-rgb: 255, 179, 102;
+	--nldesign-component-button-error-color: #000000;
+}
