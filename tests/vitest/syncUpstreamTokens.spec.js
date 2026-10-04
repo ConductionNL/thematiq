@@ -198,3 +198,101 @@ describe('coverage claims', () => {
 		expect(out).toContain('| only `--nldesign-*` | 37 |')
 	})
 })
+
+describe('Tokens Studio exports (thematiq#994)', () => {
+	it('merges the token sets in their export order and leaves the dark colour scheme out', async () => {
+		const { tokensStudioTree, buildThemeCss } =
+			await import('../../scripts/sync-upstream-tokens.mjs')
+		const tree = tokensStudioTree({
+			brand: {
+				leiden: {
+					colors: { red: { 50: { $type: 'color', $value: '#D62410' } } },
+				},
+			},
+			common: {
+				basis: {
+					color: {
+						action: { $type: 'color', $value: '{leiden.colors.red.50}' },
+					},
+				},
+			},
+			'components/button/utrecht': {
+				utrecht: {
+					button: {
+						'primary-action': {
+							'background-color': {
+								$type: 'color',
+								$value: '{basis.color.action}',
+							},
+						},
+					},
+				},
+			},
+			'color-scheme-dark/components/button/utrecht': {
+				utrecht: {
+					button: {
+						'primary-action': {
+							'background-color': {
+								$type: 'color',
+								$value: '#000000',
+							},
+						},
+					},
+				},
+			},
+			$themes: [],
+			$metadata: {
+				tokenSetOrder: [
+					'brand',
+					'common',
+					'components/button/utrecht',
+					'color-scheme-dark/components/button/utrecht',
+				],
+			},
+		})
+		const css = buildThemeCss(tree, 'leiden')
+		expect(css).toContain('\t--leiden-colors-red-50: #D62410;')
+		expect(css).toContain('\t--basis-color-action: var(--leiden-colors-red-50);')
+		expect(css).toContain(
+			'\t--utrecht-button-primary-action-background-color: var(--basis-color-action);',
+		)
+		expect(css).not.toContain('#000000')
+	})
+
+	it('reads figma/ only when upstream has no style-dictionary sources', async () => {
+		const { readUpstreamTokens } =
+			await import('../../scripts/sync-upstream-tokens.mjs')
+		const { mkdtempSync, mkdirSync, writeFileSync, rmSync } =
+			await import('node:fs')
+		const { join } = await import('node:path')
+		const { tmpdir } = await import('node:os')
+		const dir = mkdtempSync(join(tmpdir(), 'tokens-studio-'))
+		try {
+			mkdirSync(join(dir, 'figma'))
+			writeFileSync(
+				join(dir, 'figma', 'figma.tokens.json'),
+				JSON.stringify({
+					brand: { x: { a: { $value: '#111111' } } },
+					$metadata: { tokenSetOrder: ['brand'] },
+				}),
+			)
+			writeFileSync(
+				join(dir, 'figma', 'color-scheme-dark.tokens.json'),
+				JSON.stringify({ brand: { x: { a: { $value: '#eeeeee' } } } }),
+			)
+			const read = readUpstreamTokens(dir)
+			expect(read.kind).toBe('tokens-studio')
+			expect(read.error).toBe(null)
+			expect(read.tokens.x.a.$value).toBe('#111111')
+
+			mkdirSync(join(dir, 'src'))
+			writeFileSync(
+				join(dir, 'src', 'x.tokens.json'),
+				JSON.stringify({ x: { a: { value: '#222222' } } }),
+			)
+			expect(readUpstreamTokens(dir).kind).toBe('style-dictionary')
+		} finally {
+			rmSync(dir, { recursive: true, force: true })
+		}
+	})
+})

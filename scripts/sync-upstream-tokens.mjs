@@ -137,6 +137,73 @@ export function mergeTokens(target, source) {
 }
 
 /**
+ * Read one organisation's upstream tokens: the style-dictionary sources under
+ * `src/`, or, when upstream has moved on to it, the Tokens Studio export under
+ * `figma/` (thematiq#994).
+ *
+ * @param {string} orgDir The organisation's directory in the themes checkout.
+ * @return {Object} `{kind, tokens, rawTokens, error}`; error is null when it read.
+ */
+export function readUpstreamTokens(orgDir) {
+	const out = { kind: 'style-dictionary', tokens: {}, rawTokens: [], error: null }
+	let files = findTokenFiles(join(orgDir, 'src')).sort()
+	if (files.length === 0) {
+		out.kind = 'tokens-studio'
+		files = findTokenFiles(join(orgDir, 'figma'))
+			.filter((file) => /dark/i.test(file.slice(orgDir.length)) === false)
+			.sort()
+	}
+	if (files.length === 0) {
+		out.error = 'no *.tokens.json files upstream'
+		return out
+	}
+	for (const file of files) {
+		let json
+		try {
+			json = JSON.parse(readFileSync(file, 'utf8'))
+		} catch (error) {
+			out.error = `malformed upstream JSON in ${relative(orgDir, file)}: ${error.message}`
+			return out
+		}
+		if (out.kind === 'tokens-studio') {
+			json = tokensStudioTree(json)
+		}
+		mergeTokens(out.tokens, json)
+		out.rawTokens.push(...flattenTokens(json))
+	}
+	return out
+}
+
+/**
+ * Merge a Tokens Studio export's token sets into one tree, in the export's own
+ * set order, leaving out its dark colour scheme. A set's name is not part of a
+ * token's path: `{basis.color.default.color-default}` reads from whichever set
+ * defines it, which is what merging the sets reproduces.
+ *
+ * @param {Object} document The parsed export.
+ * @return {Object} The merged token tree.
+ */
+export function tokensStudioTree(document) {
+	const order = Array.isArray(document.$metadata?.tokenSetOrder)
+		? document.$metadata.tokenSetOrder
+		: Object.keys(document)
+	const tree = {}
+	for (const name of order) {
+		const set = document[name]
+		if (
+			name.startsWith('$')
+			|| /(^|\/)color-scheme-dark(\/|$)/.test(name)
+			|| set === null
+			|| typeof set !== 'object'
+		) {
+			continue
+		}
+		mergeTokens(tree, set)
+	}
+	return tree
+}
+
+/**
  * Render a token value as CSS, references as `var()` (`outputReferences`).
  *
  * @param {*} value A leaf value.
@@ -368,31 +435,12 @@ function writeRepo(path, content) {
  * @return {Object} `{ok: true, css, entry}` or `{ok: false, reason}`.
  */
 function convertOrg(org, context) {
-	const tokenFiles = findTokenFiles(join(org.dir, 'src'))
-	if (tokenFiles.length === 0) {
-		const figma = existsSync(join(org.dir, 'figma'))
-		return {
-			ok: false,
-			reason: figma
-				? 'upstream now publishes only a Tokens Studio export (figma/), which the sync does not convert yet'
-				: 'no *.tokens.json files upstream',
-		}
+	const source = readUpstreamTokens(org.dir)
+	if (source.error !== null) {
+		return { ok: false, reason: source.error }
 	}
-	const merged = {}
-	const rawTokens = []
-	for (const file of tokenFiles.sort()) {
-		let json
-		try {
-			json = JSON.parse(readFileSync(file, 'utf8'))
-		} catch (error) {
-			return {
-				ok: false,
-				reason: `malformed upstream JSON in ${relative(org.dir, file)}: ${error.message}`,
-			}
-		}
-		mergeTokens(merged, json)
-		rawTokens.push(...flattenTokens(json))
-	}
+	const merged = source.tokens
+	const rawTokens = source.rawTokens
 
 	let result
 	try {
@@ -438,7 +486,22 @@ function convertOrg(org, context) {
 	}
 
 	let css = result.css
-	if (org.oldCss !== null) {
+	if (org.oldCss !== null && source.kind === 'tokens-studio') {
+		// The old raw dump was made from the src/ format upstream has since
+		// dropped, so the names it wrote cannot be recomputed. It only ever wrote
+		// `--nldesign-*` and `--{slug}-*`; anything else a person added.
+		const rawNames = new Set(
+			[...declarations(org.oldCss).keys()].filter(
+				(name) =>
+					name.startsWith('--nldesign-')
+					|| name.startsWith(`--${org.slug}-`),
+			),
+		)
+		css = withOverrides(
+			css,
+			localOverrides(org.oldCss, org.kind, rawNames, declarations(css)),
+		)
+	} else if (org.oldCss !== null) {
 		const rawNames = new Set(
 			declarations(
 				generateOrgCSS(org.slug, org.name, rawTokens, [
