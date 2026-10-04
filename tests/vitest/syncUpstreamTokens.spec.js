@@ -157,3 +157,44 @@ describe('local overrides', () => {
 		expect(withOverrides(converted, [])).toBe(converted)
 	})
 })
+
+describe('coverage claims', () => {
+	it('rewrites the bridge line and its prose, across the comment line break', async () => {
+		const { rewriteBridge } =
+			await import('../../scripts/update-coverage-claims.mjs')
+		const bridge = [
+			' *   coverage: listed=52 roleLayer=8 nldesignOnly=41 denhaagComponents=10',
+			' * Of the listed sets, 8 carry the full `--utrecht-*` role layer, 41 declare',
+			' * only `--nldesign-*`, and 10 declare Den Haag component properties.',
+		].join('\n')
+		const out = rewriteBridge(bridge, {
+			listed: 52,
+			roleLayer: 10,
+			nldesignOnly: 37,
+			denhaagComponents: 11,
+		})
+		expect(out).toContain(
+			'coverage: listed=52 roleLayer=10 nldesignOnly=37 denhaagComponents=11',
+		)
+		expect(out).toContain(
+			'Of the listed sets, 10 carry the full `--utrecht-*` role layer, 37 declare',
+		)
+		expect(out).toContain('and 11 declare Den Haag')
+	})
+
+	it('rewrites the docs table rows', async () => {
+		const { rewriteDoc } =
+			await import('../../scripts/update-coverage-claims.mjs')
+		const doc =
+			'Measured coverage of the listed sets (`token-sets.json`, 52 sets):\n\n| the full `--utrecht-*` role layer | 8 |\n| only `--nldesign-*` | 41 |\n| Den Haag component properties | 10 |\n'
+		const out = rewriteDoc(doc, {
+			listed: 53,
+			roleLayer: 10,
+			nldesignOnly: 37,
+			denhaagComponents: 10,
+		})
+		expect(out).toContain('(`token-sets.json`, 53 sets)')
+		expect(out).toContain('| the full `--utrecht-*` role layer | 10 |')
+		expect(out).toContain('| only `--nldesign-*` | 37 |')
+	})
+})

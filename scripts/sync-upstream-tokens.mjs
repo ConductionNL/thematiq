@@ -579,6 +579,11 @@ function runGate(command) {
 			),
 		),
 	]
+	for (const match of output.matchAll(/^ FAIL +(\S+)/gm)) {
+		if (failures.includes(match[1]) === false) {
+			failures.push(match[1])
+		}
+	}
 	if (run.status !== 0 && failures.length === 0) {
 		failures.push(output.trim().split('\n').slice(-3).join(' ').slice(0, 300))
 	}

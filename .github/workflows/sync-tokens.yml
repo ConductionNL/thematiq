@@ -40,6 +40,10 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-progress --no-interaction
 
+      - name: Install Node dependencies
+        # The gate runs the vitest specs that read the shipped sets.
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
       - name: Clone NL Design System themes
         id: clone_themes
         run: |
@@ -59,12 +63,14 @@ jobs:
       - name: Verify the shipped token sets
         # The same tests once more, on exactly the tree that would be committed.
         # A failure here fails the job before any branch or PR is touched.
-        run: php vendor/bin/phpunit --no-coverage -c phpunit.token-sets.xml
+        run: |
+          php vendor/bin/phpunit --no-coverage -c phpunit.token-sets.xml
+          node scripts/update-coverage-claims.mjs --check
 
       - name: Check for changes
         id: changes
         run: |
-          git add css/tokens/ token-sets.json tests/Unit/fixtures/token-set-vocabulary-allowlist.json docs/reference/ docs/features/
+          git add css/tokens/ css/public-bridge.css token-sets.json tests/Unit/fixtures/token-set-vocabulary-allowlist.json docs/reference/ docs/features/
           if git diff --cached --quiet; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           else

@@ -73,7 +73,7 @@ git clone --depth 1 https://github.com/nl-design-system/themes.git /tmp/themes
 node scripts/sync-upstream-tokens.mjs /tmp/themes "$(git -C /tmp/themes rev-parse HEAD)" --report report.md
 ```
 
-After editing a set by hand, run `bash scripts/token-set-gate.sh`. It regenerates the dark variants, the contrast report and the token reference, then runs the token-set tests.
+After editing a set by hand, run `bash scripts/token-set-gate.sh`. It regenerates the dark variants, the contrast report, the token reference and the set counts in `css/public-bridge.css`. Then it runs the token-set tests.
 
 ## Adding a New Token Set
 
