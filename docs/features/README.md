@@ -61,7 +61,7 @@ Other Conduction apps describe their scope with the TEC feature framework, for e
 | Feature | What you do with it | Standards | Page |
 |---|---|---|---|
 | Token editor | Change any Nextcloud colour token with a live preview | | [Token editor](./token-editor.md) |
-| Toggles and theming per app | Hide the login slogan, show menu labels, leave single apps unthemed | | [Toggles](./toggles.md) |
+| Toggles and theming per app | Hide the login slogan, show menu labels, choose the light workplace layout and the brand stripe, leave single apps unthemed | | [Toggles](./toggles.md) |
 | Group theming | Give each Nextcloud group its own set | | [Group theming](./group-theming.md) |
 | Dark mode | Serve a contrast-checked dark variant of every set | WCAG 2.1 AA | [Dark mode](./dark-mode.md) |
 | High contrast | Offer a set for users who need stronger contrast | WCAG AAA, EN 301 549 | [High contrast](./high-contrast.md) |

@@ -49,6 +49,7 @@ Colors are sourced from each organization's official NL Design System token set.
 | Gemeente Den Haag | ![#1a7a3e](https://via.placeholder.com/16/1a7a3e/1a7a3e.png) `#1a7a3e` | `#FFFFFF` | `denhaag.svg` |
 | Gemeente Rotterdam | ![#00811f](https://via.placeholder.com/16/00811f/00811f.png) `#00811f` | `#FFFFFF` | `rotterdam.svg` |
 | xxllnc | ![#333333](https://via.placeholder.com/16/333333/333333.png) `#333333` | `#FFFFFF` | `xxllnc.svg` |
+| `zuiddrecht.svg`, `zuiddrecht-dark.svg`, `zuiddrecht-emblem.svg`, `zuiddrecht-emblem-grey.svg` | Conduction's own design for the demo municipality Zuiddrecht, which does not exist |
 | Gemeente Zevenaar | ![#596E28](https://via.placeholder.com/16/596E28/596E28.png) `#596E28` | `#FFFFFF` | -- |
 | Gemeente Zwolle | ![#3A4F93](https://via.placeholder.com/16/3A4F93/3A4F93.png) `#3A4F93` | `#FFFFFF` | -- |
 | (EXAMPLE) Basisschool | ![#B03A12](https://via.placeholder.com/16/B03A12/B03A12.png) `#B03A12` | `#FFFFFF` | `example-basisschool.svg` |
@@ -56,6 +57,7 @@ Colors are sourced from each organization's official NL Design System token set.
 | (EXAMPLE) College | ![#7A1F6E](https://via.placeholder.com/16/7A1F6E/7A1F6E.png) `#7A1F6E` | `#FFFFFF` | `example-college.svg` |
 | (EXAMPLE) Opleider | ![#0E4D5C](https://via.placeholder.com/16/0E4D5C/0E4D5C.png) `#0E4D5C` | `#FFFFFF` | `example-opleider.svg` |
 | (EXAMPLE) Gemeente | ![#12506B](https://via.placeholder.com/16/12506B/12506B.png) `#12506B` | `#FFFFFF` | `example-gemeente.svg` |
+| Gemeente Zuiddrecht (demo) | ![#3669A5](https://via.placeholder.com/16/3669A5/3669A5.png) `#3669A5` | `#F5F6F8` | `zuiddrecht.svg`, `zuiddrecht-dark.svg` |
 
 ## Logo Sources
 

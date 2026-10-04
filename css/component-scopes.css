@@ -54,11 +54,14 @@ body,
 	--thematiq-global-color-primary-text: var(--color-primary-text);
 	--thematiq-global-font-face: var(--font-face);
 	--thematiq-global-color-main-text: var(--color-main-text);
+	--thematiq-global-color-primary-element-light: var(--color-primary-element-light);
+	--thematiq-global-color-primary-element-light-text: var(--color-primary-element-light-text);
 	--thematiq-global-body-container-radius: var(--nldesign-nc-body-container-radius, var(--body-container-radius));
 	--thematiq-global-border-radius-rounded: var(--border-radius-rounded);
 	--thematiq-global-color-scrollbar: var(--nldesign-nc-color-scrollbar, var(--color-scrollbar));
-	--thematiq-global-color-text-maxcontrast: var(--color-text-maxcontrast);
+	--thematiq-global-color-box-shadow: var(--nldesign-nc-color-box-shadow, var(--color-box-shadow));
 	--thematiq-global-color-main-background: var(--nldesign-nc-color-main-background, var(--color-main-background));
+	--thematiq-global-color-text-maxcontrast: var(--color-text-maxcontrast);
 	--thematiq-global-font-weight-default: var(--font-weight-default);
 	--thematiq-global-color-background-dark: var(--color-background-dark);
 	--thematiq-global-color-border-dark: var(--color-border-dark);
@@ -75,7 +78,6 @@ body,
 	--thematiq-global-vs-border-color: var(--vs-border-color);
 	--thematiq-global-vs-border-radius: var(--vs-border-radius);
 	--thematiq-global-vs-selected-color: var(--vs-selected-color);
-	--thematiq-global-color-primary-element-light: var(--color-primary-element-light);
 	--thematiq-global-vs-dropdown-color: var(--vs-dropdown-color);
 	--thematiq-global-vs-dropdown-option--active-bg: var(--vs-dropdown-option--active-bg);
 	--thematiq-global-vs-dropdown-option--active-color: var(--vs-dropdown-option--active-color);
@@ -84,7 +86,6 @@ body,
 	--thematiq-global-color-background-darker: var(--color-background-darker);
 	--thematiq-global-border-radius-pill: var(--border-radius-pill);
 	--thematiq-global-font-weight-element: var(--font-weight-element);
-	--thematiq-global-color-primary-element-light-text: var(--color-primary-element-light-text);
 	--thematiq-global-color-primary-element-light-hover: var(--color-primary-element-light-hover);
 	--thematiq-global-color-error: var(--color-error);
 	--thematiq-global-color-error-rgb: var(--color-error-rgb);
@@ -101,6 +102,10 @@ body,
 	--thematiq-global-color-warning-rgb: var(--color-warning-rgb);
 	--thematiq-global-color-success-rgb: var(--color-success-rgb);
 	--thematiq-global-color-favorite: var(--color-favorite);
+	--thematiq-global-color-info-light: var(--color-info-light);
+	--thematiq-global-color-success-light: var(--color-success-light);
+	--thematiq-global-color-warning-light: var(--color-warning-light);
+	--thematiq-global-color-error-light: var(--color-error-light);
 	--thematiq-global-font-weight-heading: var(--font-weight-heading);
 	--thematiq-global-color-primary-hover: var(--color-primary-hover);
 	--thematiq-global-color-text-light: var(--color-text-light);
@@ -121,7 +126,6 @@ body,
 	--thematiq-global-clickable-area-small: var(--nldesign-nc-clickable-area-small, var(--clickable-area-small));
 	--thematiq-global-color-background-assistant: var(--nldesign-nc-color-background-assistant, var(--color-background-assistant));
 	--thematiq-global-color-border-assistant: var(--nldesign-nc-color-border-assistant, var(--color-border-assistant));
-	--thematiq-global-color-box-shadow: var(--nldesign-nc-color-box-shadow, var(--color-box-shadow));
 	--thematiq-global-color-box-shadow-rgb: var(--nldesign-nc-color-box-shadow-rgb, var(--color-box-shadow-rgb));
 	--thematiq-global-color-element-assistant: var(--nldesign-nc-color-element-assistant, var(--color-element-assistant));
 	--thematiq-global-color-element-assistant-icon: var(--nldesign-nc-color-element-assistant-icon, var(--color-element-assistant-icon));
@@ -266,6 +270,36 @@ body,
 	);
 }
 
+/* navigation-active-entry */
+#app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+#app-navigation-vue .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+.app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+[data-thematiq-component='navigation-active-entry'] {
+	--color-main-text: var(
+		--nldesign-component-navigation-active-color,
+		var(--nldesign-component-navigation-color, var(--thematiq-global-color-main-text))
+	);
+	--color-primary-element-text: var(
+		--nldesign-component-navigation-active-color,
+		var(--thematiq-global-color-primary-element-text)
+	);
+}
+
+/* navigation-badge */
+#app-navigation .counter-bubble__counter,
+#app-navigation-vue .counter-bubble__counter,
+.app-navigation .counter-bubble__counter,
+[data-thematiq-component='navigation-badge'] {
+	--color-primary-element-light: var(
+		--nldesign-component-navigation-badge-background-color,
+		var(--thematiq-global-color-primary-element-light)
+	);
+	--color-primary-element-light-text: var(
+		--nldesign-component-navigation-badge-color,
+		var(--thematiq-global-color-primary-element-light-text)
+	);
+}
+
 /* content-card */
 #app-content,
 .app-content,
@@ -287,6 +321,26 @@ body,
 		--nldesign-component-content-card-scrollbar-color,
 		var(--thematiq-global-color-scrollbar)
 	);
+	--color-box-shadow: var(
+		--nldesign-component-content-card-shadow-color,
+		var(--thematiq-global-color-box-shadow)
+	);
+}
+
+/* content-surface */
+#app-content,
+.app-content,
+#app-content-vue,
+.app-content-wrapper,
+[data-thematiq-component='content-surface'] {
+	--color-main-background: var(
+		--nldesign-component-content-surface-background-color,
+		var(--thematiq-global-color-main-background)
+	);
+}
+
+:where(#app-content, .app-content, #app-content-vue, .app-content-wrapper) > * {
+	--color-main-background: var(--thematiq-global-color-main-background);
 }
 
 /* table */
@@ -867,6 +921,43 @@ body .notecard.success {
 	--color-favorite: var(
 		--nldesign-component-badge-favorite-color,
 		var(--thematiq-global-color-favorite)
+	);
+}
+
+/* status-badge */
+.cn-status-badge,
+[data-thematiq-component='status-badge'] {
+	--color-info-light: var(
+		--nldesign-component-status-badge-info-background-color,
+		var(--thematiq-global-color-info-light)
+	);
+	--color-info-text: var(
+		--nldesign-component-status-badge-info-color,
+		var(--thematiq-global-color-info-text)
+	);
+	--color-success-light: var(
+		--nldesign-component-status-badge-success-background-color,
+		var(--thematiq-global-color-success-light)
+	);
+	--color-success-text: var(
+		--nldesign-component-status-badge-success-color,
+		var(--thematiq-global-color-success-text)
+	);
+	--color-warning-light: var(
+		--nldesign-component-status-badge-warning-background-color,
+		var(--thematiq-global-color-warning-light)
+	);
+	--color-warning-text: var(
+		--nldesign-component-status-badge-warning-color,
+		var(--thematiq-global-color-warning-text)
+	);
+	--color-error-light: var(
+		--nldesign-component-status-badge-error-background-color,
+		var(--thematiq-global-color-error-light)
+	);
+	--color-error-text: var(
+		--nldesign-component-status-badge-error-color,
+		var(--thematiq-global-color-error-text)
 	);
 }
 

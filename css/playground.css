@@ -1893,9 +1893,51 @@
 	font-weight: 700;
 }
 
+/* The counter of a navigation entry is NcCounterBubble's DEFAULT shape, the
+   light wash with the dark number, not the highlighted one above. It carries
+   the real `counter-bubble__counter` class, so the navigation-badge scope in
+   css/component-scopes.css reaches it. */
+#nldesign-preview .nldesign-pg-bubble--nav {
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+}
+
 #nldesign-preview .nldesign-pg-star {
 	color: var(--color-favorite);
 	font-size: 24px;
+}
+
+/* Status pills, as the Conduction apps draw them: a light tint with the status
+   text colour, each with the fallback the real pill has while a theme sets no
+   tint. The variables are redirected on the pill by the status-badge scope. */
+#nldesign-preview .nldesign-pg-pill {
+	display: inline-flex;
+	align-items: center;
+	margin-inline-end: 6px;
+	padding: 2px 10px;
+	border-radius: var(--border-radius-pill);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+#nldesign-preview .nldesign-pg-pill.is-info {
+	background: var(--color-info-light, rgba(0, 130, 201, 0.15));
+	color: var(--color-info-text, var(--color-info));
+}
+
+#nldesign-preview .nldesign-pg-pill.is-success {
+	background: var(--color-success-light, rgba(70, 186, 97, 0.15));
+	color: var(--color-success-text, var(--color-success));
+}
+
+#nldesign-preview .nldesign-pg-pill.is-warning {
+	background: var(--color-warning-light, rgba(232, 163, 39, 0.15));
+	color: var(--color-warning-text, var(--color-warning));
+}
+
+#nldesign-preview .nldesign-pg-pill.is-error {
+	background: var(--color-error-light, rgba(224, 68, 68, 0.15));
+	color: var(--color-error-text, var(--color-error));
 }
 
 /* A toast as Nextcloud draws one: a card on the main background, main text,

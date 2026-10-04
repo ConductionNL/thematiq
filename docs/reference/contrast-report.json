@@ -393,6 +393,13 @@
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
+        "zuiddrecht": {
+            "verdict": "pass",
+            "textRatio": 5.64,
+            "uiRatio": 5.22,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
         "zwolle": {
             "verdict": "pass",
             "textRatio": 5.06,

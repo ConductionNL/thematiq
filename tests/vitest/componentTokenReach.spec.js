@@ -93,6 +93,10 @@ const NESTED = new Set([
 	'content-card: color <- --nldesign-component-button-primary-action-color',
 	'link: color <- --nldesign-component-header-color',
 	'link: color <- --nldesign-color-primary',
+	// The header's app MENU entry (`.app-menu-main .app-menu-entry.active a` in
+	// theme.css), not the app NAVIGATION entry this component is. The two share
+	// only the `.active` state class, which is all the marker match can see.
+	'navigation-active-entry: color <- --nldesign-color-primary',
 ])
 
 /* ---------------------------------------------------- defaults.css chains */

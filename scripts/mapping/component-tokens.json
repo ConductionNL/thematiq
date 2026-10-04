@@ -239,6 +239,52 @@
 				}
 			}
 		},
+		"navigation-active-entry": {
+			"tab": "content",
+			"selectors": [
+				"#app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active",
+				"#app-navigation-vue .app-navigation-entry:not(.app-navigation-entry--legacy).active",
+				".app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active"
+			],
+			"tokens": {
+				"--nldesign-component-navigation-active-color": {
+					"global": "--color-main-text",
+					"fallback": "--nldesign-component-navigation-color",
+					"alsoGlobals": ["--color-primary-element-text"],
+					"label": "Navigation selected entry label",
+					"type": "color",
+					"primary": false,
+					"paints": "The selected entry's label and icon, on the wash Nextcloud 34 and later draw",
+					"callout": 2
+				}
+			}
+		},
+		"navigation-badge": {
+			"tab": "content",
+			"selectors": [
+				"#app-navigation .counter-bubble__counter",
+				"#app-navigation-vue .counter-bubble__counter",
+				".app-navigation .counter-bubble__counter"
+			],
+			"tokens": {
+				"--nldesign-component-navigation-badge-background-color": {
+					"global": "--color-primary-element-light",
+					"label": "Navigation count badge",
+					"type": "color",
+					"primary": true,
+					"paints": "The count badge of a navigation entry",
+					"callout": 2
+				},
+				"--nldesign-component-navigation-badge-color": {
+					"global": "--color-primary-element-light-text",
+					"label": "Navigation count badge number",
+					"type": "color",
+					"primary": true,
+					"paints": "Its number",
+					"callout": 2
+				}
+			}
+		},
 		"content-card": {
 			"tab": "content",
 			"selectors": ["#app-content", ".app-content", "#content"],
@@ -273,6 +319,34 @@
 					"type": "color",
 					"primary": false,
 					"paints": "Scrollbar thumb",
+					"callout": 1
+				},
+				"--nldesign-component-content-card-shadow-color": {
+					"global": "--color-box-shadow",
+					"label": "Content card shadow",
+					"type": "text",
+					"primary": false,
+					"paints": "The shadow under cards inside it",
+					"callout": 1
+				}
+			}
+		},
+		"content-surface": {
+			"tab": "content",
+			"selectors": [
+				"#app-content",
+				".app-content",
+				"#app-content-vue",
+				".app-content-wrapper"
+			],
+			"tokens": {
+				"--nldesign-component-content-surface-background-color": {
+					"global": "--color-main-background",
+					"selfOnly": true,
+					"label": "Content surface",
+					"type": "color",
+					"primary": false,
+					"paints": "The surface cards sit on, not the cards themselves",
 					"callout": 1
 				}
 			}
@@ -1268,6 +1342,76 @@
 					"primary": false,
 					"paints": "The favourite star",
 					"callout": 2
+				}
+			}
+		},
+		"status-badge": {
+			"tab": "status",
+			"selectors": [".cn-status-badge"],
+			"tokens": {
+				"--nldesign-component-status-badge-info-background-color": {
+					"global": "--color-info-light",
+					"label": "Info pill background",
+					"type": "color",
+					"primary": false,
+					"paints": "The light tint of the info pill",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-info-color": {
+					"global": "--color-info-text",
+					"label": "Info pill label",
+					"type": "color",
+					"primary": false,
+					"paints": "Its label",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-success-background-color": {
+					"global": "--color-success-light",
+					"label": "Success pill background",
+					"type": "color",
+					"primary": false,
+					"paints": "The light tint of the success pill",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-success-color": {
+					"global": "--color-success-text",
+					"label": "Success pill label",
+					"type": "color",
+					"primary": false,
+					"paints": "Its label",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-warning-background-color": {
+					"global": "--color-warning-light",
+					"label": "Warning pill background",
+					"type": "color",
+					"primary": false,
+					"paints": "The light tint of the warning pill",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-warning-color": {
+					"global": "--color-warning-text",
+					"label": "Warning pill label",
+					"type": "color",
+					"primary": false,
+					"paints": "Its label",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-error-background-color": {
+					"global": "--color-error-light",
+					"label": "Error pill background",
+					"type": "color",
+					"primary": false,
+					"paints": "The light tint of the error pill",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-error-color": {
+					"global": "--color-error-text",
+					"label": "Error pill label",
+					"type": "color",
+					"primary": false,
+					"paints": "Its label",
+					"callout": 3
 				}
 			}
 		},

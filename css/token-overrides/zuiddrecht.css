@@ -1,0 +1,63 @@
+/* SPDX-License-Identifier: EUPL-1.2
+   SPDX-FileCopyrightText: 2026 Conduction B.V.
+
+   Zuiddrecht overrides: the dark page and the dark workspace.
+
+   The generated dark variant (css/tokens/dark/zuiddrecht.css) derives every
+   colour the token file declares. Two things it cannot get right, and this
+   file sets them by hand for the same two dark scopes it uses.
+
+   1. THE PAGE BACKGROUND. Nextcloud paints the page with the background colour
+      from its theming settings, #F5F6F8 for this set, and keeps that colour in
+      the dark. A dark workplace would then sit in a light grey frame. In the
+      dark the page takes the colour of the workspace, as it does in the light,
+      and the text Nextcloud pairs with the page takes the main text colour.
+
+   2. THE WORKSPACE. In the light the workspace is a grey (#F5F6F8) that white
+      cards stand out from. The generator turns that grey into #171a20, which
+      is LIGHTER than Nextcloud's dark cards (#171717): the cards would sink
+      into the surface instead of standing on it, and the set's error text is
+      4.49:1 there, just under AA. In the dark the workspace is #121315, below
+      the cards, and every text colour of the set reaches AA on it (error
+      4.79:1, link 5.19:1, muted text 6.76:1, text 14.47:1).
+
+   ⚠️ THIS LIVES OUTSIDE `css/tokens/` ON PURPOSE. A shipped token file is one
+   flat `:root { }` block with no at-rule (TokenCssShapeTest), so a dark value
+   set by hand cannot live there.
+
+   The selectors start with `:root` so they outrank the generated dark file,
+   which is loaded after this one and uses the same two scopes without it. */
+@media (prefers-color-scheme: dark) {
+	:root
+		body:not([data-theme-light]):not([data-theme-dark]):not(
+			[data-theme-light-highcontrast]
+		):not([data-theme-dark-highcontrast]) {
+		--color-background-plain: #121315;
+		--color-background-plain-text: var(--color-main-text);
+		--nldesign-component-content-surface-background-color: #121315;
+	}
+}
+
+:root body[data-theme-dark],
+:root body[data-themes*='dark'] {
+	--color-background-plain: #121315;
+	--color-background-plain-text: var(--color-main-text);
+	--nldesign-component-content-surface-background-color: #121315;
+}
+
+/* The logo on the login card.
+ *
+ * The NL Design sheet draws every set's logo there in a 40 by 32 pixel box,
+ * which suits an emblem. This logo is a wordmark, 4.7 times as wide as it is
+ * high: in that box it is 40px wide and under 9px high. Here it gets 200 by
+ * 44 pixels, centred in the 100px the card keeps free above the form. Same
+ * selectors as the rule it follows (css/systems/nldesign/theme.css), and this
+ * file loads after that one. */
+#body-login .guest-box.login-box::after,
+#body-login div.guest-box::after,
+.guest-box.login-box::after,
+div.guest-box.login-box::after {
+	top: 28px !important;
+	width: 200px !important;
+	height: 44px !important;
+}

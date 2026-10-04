@@ -87,11 +87,12 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | xxllnc | 46/87 | declared | yes | pass |
 | zaanstad | 55/87 | self-hosted | no (known) | pass |
 | zevenaar | 8/87 | self-hosted | no (known) | pass |
+| zuiddrecht | 0/87 | self-hosted | yes | pass |
 | zwolle | 0/87 | declared | no (known) | pass |
 
-- 56 sets measured; 22 pass every gated dimension (font, logo, contrast).
-- bridge (measured, NOT gated): 8 of 52 bridged sets declare none of the 87 --utrecht-* names; median 21.
-- font: 16 declared, 36 self-hosted, 4 system.
-- logo: 34 of 56 point Nextcloud at no logo.
-- contrast: 0 of 56 do not pass.
+- 57 sets measured; 23 pass every gated dimension (font, logo, contrast).
+- bridge (measured, NOT gated): 9 of 53 bridged sets declare none of the 87 --utrecht-* names; median 21.
+- font: 16 declared, 37 self-hosted, 4 system.
+- logo: 34 of 57 point Nextcloud at no logo.
+- contrast: 0 of 57 do not pass.
 

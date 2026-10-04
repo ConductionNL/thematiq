@@ -75,7 +75,7 @@ The import accepts standard CSS files with a `:root {}` block:
 
 ## Editable vs. Excluded Tokens
 
-Import and export cover every token the token editor shows, <!-- editable-count -->696<!-- /editable-count --> on this release, and the dark value you gave each colour. A file exported before these tokens existed still imports as before. A few Nextcloud variables stay out of reach:
+Import and export cover every token the token editor shows, <!-- editable-count -->709<!-- /editable-count --> on this release, and the dark value you gave each colour. A file exported before these tokens existed still imports as before. A few Nextcloud variables stay out of reach:
 
 - image variables such as `--image-logo`, which carry a picture, not a design value;
 - variables Nextcloud's own JavaScript writes on every render, which a stylesheet value cannot hold.

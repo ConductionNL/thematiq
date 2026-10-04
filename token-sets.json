@@ -764,5 +764,21 @@
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
 		"upstreamVersion": "1.7.2"
+	},
+	{
+		"id": "zuiddrecht",
+		"name": "Gemeente Zuiddrecht",
+		"description": "A demo municipality that does not exist, for demonstrations and acceptance environments. Blue #3669A5 for actions, red #CC0000 as the accent, Fira Sans. A light workplace: white top bar and navigation, grey workspace, white cards and the three-colour brand stripe.",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#3669A5",
+			"background_color": "#F5F6F8",
+			"logo": "img/logos/zuiddrecht.svg",
+			"logo_dark": "img/logos/zuiddrecht-dark.svg"
+		},
+		"layout": {
+			"workplace_layout": "light",
+			"brand_stripe": true
+		}
 	}
 ]
