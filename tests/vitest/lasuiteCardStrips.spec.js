@@ -133,19 +133,27 @@ describe('the La Suite card has one surface (thematiq#1052)', () => {
 		})
 	}
 
-	it('gives the dark header cells no fill the light ones lack', () => {
-		// The lasuite bundle loads no nldesign defaults.css, so in light a
-		// `th` takes component-scopes.css's `transparent`. The dark variant
-		// must not invent a fill (it derived #23232f from defaults.css).
-		const dark = postcss.parse(
-			fs.readFileSync(path.join(root, 'css/tokens/dark/lasuite.css'), 'utf8'),
-		)
-		const values = []
-		dark.walkDecls('--nldesign-component-table-header-background-color', (d) => {
-			values.push(d.value.trim())
+	for (const set of ['lasuite', 'frankendesk']) {
+		it(`gives ${set}'s dark header cells no fill the light ones lack`, () => {
+			// The lasuite bundle loads no nldesign defaults.css, so in light a
+			// `th` takes component-scopes.css's `transparent`. The dark variant
+			// must not invent a fill (it derived #23232f from defaults.css).
+			const dark = postcss.parse(
+				fs.readFileSync(
+					path.join(root, `css/tokens/dark/${set}.css`),
+					'utf8',
+				),
+			)
+			const values = []
+			dark.walkDecls(
+				'--nldesign-component-table-header-background-color',
+				(d) => {
+					values.push(d.value.trim())
+				},
+			)
+			expect(values.filter((v) => v !== 'transparent')).toEqual([])
 		})
-		expect(values.filter((v) => v !== 'transparent')).toEqual([])
-	})
+	}
 
 	it('writes none of the variables REQ-CSS-007 leaves to Nextcloud', () => {
 		const written = []

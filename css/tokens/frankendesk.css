@@ -87,6 +87,9 @@
 	--nldesign-border-radius-large: 4px;
 	--nldesign-border-radius-rounded: 4px;
 
+	/* Table headers without a fill of their own, as lasuite.css (#1052). */
+	--nldesign-component-table-header-background-color: transparent;
+
 	/* La Frankendesk mark. Path is relative to THIS file's served URL
 	   (css/tokens/{id}.css → two levels up is the app root, e.g.
 	   /custom_apps/nldesign/css/tokens/frankendesk.css →
