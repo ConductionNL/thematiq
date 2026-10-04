@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
+use OCA\Thematiq\Service\TokenSetSelectionPolicy;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
@@ -176,9 +177,8 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function getForm(): TemplateResponse {
-		// The PICKER, not the catalogue: only stock plus the admin's own
-		// imports. See TokenSetService::SELECTABLE_SHIPPED_SETS.
-		$tokenSets = $this->tokenSetService->getSelectableTokenSets();
+		// The PICKER, not the catalogue. See TokenSetSelectionPolicy.
+		$tokenSets = $this->selectableTokenSets();
 
 		$currentTokenSet = $this->config->getAppValue(
 			Application::APP_ID,
@@ -531,4 +531,20 @@ class Admin implements IDelegatedSettings {
 			],
 		];
 	}//end getAuthorizedAppConfig()
+	/**
+	 * The sets the picker offers: every named shipped set the vocabulary audit
+	 * passes, plus the admin's own imports. See {@see TokenSetSelectionPolicy}.
+	 *
+	 * @return array<int, array<string, mixed>> The selectable token sets.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 */
+	private function selectableTokenSets(): array {
+		return (new TokenSetSelectionPolicy())->selectable(
+			tokenSets: $this->tokenSetService,
+			config: $this->config,
+			appPath: $this->tokenSetService->getAppPath()
+		);
+	}//end selectableTokenSets()
+
 }//end class

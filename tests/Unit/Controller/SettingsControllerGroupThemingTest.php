@@ -80,9 +80,13 @@ class SettingsControllerGroupThemingTest extends TestCase {
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
 		// The group picker offers the SELECTABLE list, not the full catalogue.
-		$tokenSetService->method('getSelectableTokenSets')->willReturn(
+		// TokenSetSelectionPolicy derives that from this catalogue, so the real
+		// filter runs here; getAppPath() points at the repository so it reads the
+		// real token-sets.json, where `amsterdam` is named and passes the audit.
+		$tokenSetService->method('getAvailableTokenSets')->willReturn(
 			[['id' => 'amsterdam', 'name' => 'Amsterdam']]
 		);
+		$tokenSetService->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		$controller = $this->makeController($groupThemingService, $tokenSetService);
 		$response = $controller->getGroupTheming();

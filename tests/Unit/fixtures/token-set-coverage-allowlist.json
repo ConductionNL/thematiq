@@ -1,28 +1,27 @@
 {
 	"$comment": [
-		"Known-incomplete shipped token sets, per coverage dimension, with the reason each one is",
-		"not fixed yet. Read by scripts/audit-token-sets.mjs --check and by",
+		"Known-incomplete shipped token sets, per GATED coverage dimension, with the reason each one",
+		"is not fixed yet. Read by scripts/audit-token-sets.mjs --check and by",
 		"tests/vitest/tokenSetCoverage.spec.js, so the CLI and the gate cannot disagree.",
 		"",
-		"This file is a ratchet and it has to be able to fail BOTH ways: the gate fails on a set",
-		"below the bar that is not listed here, AND on a listed set that has started passing (delete",
-		"the entry). A reason shorter than 20 characters fails too, because an allow-list without",
-		"reasons is how a baseline becomes permanent. The previous stage-1 list was an empty array",
-		"of ids with no reasons at all, which is what made 'every shipped set is complete' readable",
-		"as a fact about an instance.",
+		"This file is a ratchet and it has to be able to fail every way: the gate fails on a set below",
+		"the bar that is not listed here, on a listed set that has started passing (delete the entry),",
+		"on an entry under a dimension nothing gates, and on a reason shorter than 20 characters. An",
+		"allow-list without reasons is how a baseline becomes permanent.",
 		"",
-		"Baseline recorded 2026-10-04: bridge 8, font 0, logo 34, contrast 0."
+		"THE COUNT WENT 42 -> 34 WITHOUT ANY SET IMPROVING, and that is the one movement this file has",
+		"to explain rather than absorb. The `bridge` dimension was demoted from a bar to reported-only",
+		"on 2026-10-04, which deleted its 8 entries (amsterdam, denhaag, epe, groningen, ridderkerk, rijkshuisstijl, utrecht, zwolle).",
+		"The measurement that forced the demotion is under $reported.bridge below. Demoting a dimension",
+		"is the only edit that lowers this count with nothing fixed, so the audit refuses a demotion",
+		"that is not written down there.",
+		"",
+		"Baseline recorded 2026-10-04: font 0, logo 34. Gated dimensions: font, logo, contrast."
 	],
-	"bridge": {
-		"amsterdam": "Declares none of the 87 --utrecht-* names the bridge reads, so every button, table and form control keeps the Rijkshuisstijl default and only the accent colour changes. The fix is a scripts/brands/amsterdam.json that generate-brand-set.mjs turns into the component layer; no upstream source is recorded for this set, so the brand's own component mapping has to be sourced before a brand file can be written. Eight brand files exist for 56 sets, so these eight are a wave of their own and not this change.",
-		"denhaag": "Declares none of the 87 --utrecht-* names the bridge reads, so every button, table and form control keeps the Rijkshuisstijl default and only the accent colour changes. The fix is a scripts/brands/denhaag.json that generate-brand-set.mjs turns into the component layer; no upstream source is recorded for this set, so the brand's own component mapping has to be sourced before a brand file can be written. Eight brand files exist for 56 sets, so these eight are a wave of their own and not this change.",
-		"epe": "Declares none of the 87 --utrecht-* names the bridge reads, so every button, table and form control keeps the Rijkshuisstijl default and only the accent colour changes. The fix is a scripts/brands/epe.json that generate-brand-set.mjs turns into the component layer; its upstream nl-design-system/themes commit 9cfc4c5a is already recorded, so the mapping can be read from there. Eight brand files exist for 56 sets, so these eight are a wave of their own and not this change.",
-		"groningen": "Declares none of the 87 --utrecht-* names the bridge reads, so every button, table and form control keeps the Rijkshuisstijl default and only the accent colour changes. The fix is a scripts/brands/groningen.json that generate-brand-set.mjs turns into the component layer; its upstream nl-design-system/themes commit 9cfc4c5a is already recorded, so the mapping can be read from there. Eight brand files exist for 56 sets, so these eight are a wave of their own and not this change.",
-		"ridderkerk": "Declares none of the 87 --utrecht-* names the bridge reads, so every button, table and form control keeps the Rijkshuisstijl default and only the accent colour changes. The fix is a scripts/brands/ridderkerk.json that generate-brand-set.mjs turns into the component layer; its upstream nl-design-system/themes commit 9cfc4c5a is already recorded, so the mapping can be read from there. Eight brand files exist for 56 sets, so these eight are a wave of their own and not this change.",
-		"rijkshuisstijl": "Declares none of the 87 --utrecht-* names the bridge reads, so every button, table and form control keeps the Rijkshuisstijl default and only the accent colour changes. The fix is a scripts/brands/rijkshuisstijl.json that generate-brand-set.mjs turns into the component layer; no upstream source is recorded for this set, so the brand's own component mapping has to be sourced before a brand file can be written. Eight brand files exist for 56 sets, so these eight are a wave of their own and not this change.",
-		"utrecht": "Declares none of the 87 --utrecht-* names the bridge reads, so every button, table and form control keeps the Rijkshuisstijl default and only the accent colour changes. The fix is a scripts/brands/utrecht.json that generate-brand-set.mjs turns into the component layer; no upstream source is recorded for this set, so the brand's own component mapping has to be sourced before a brand file can be written. Eight brand files exist for 56 sets, so these eight are a wave of their own and not this change.",
-		"zwolle": "Declares none of the 87 --utrecht-* names the bridge reads, so every button, table and form control keeps the Rijkshuisstijl default and only the accent colour changes. The fix is a scripts/brands/zwolle.json that generate-brand-set.mjs turns into the component layer; its upstream package @nl-design-system-unstable/zwolle-design-tokens is already recorded, so the mapping can be read from there. Eight brand files exist for 56 sets, so these eight are a wave of their own and not this change."
+	"$reported": {
+		"bridge": "Measured and published, deliberately NOT gated. css/systems/nldesign/utrecht-bridge.css holds 84 declarations shaped --nldesign-component-X: var(--utrecht-Y, <fallback>); outside comments, 42 fall back to a var(--nldesign-*) token the SET declares, 38 to a non-colour literal (1rem, 1px, 0.5rem, 700, transparent, underline), 3 to a colour literal (#e5e5e5 and #696969 for the disabled button, #ffffff for the textbox fill) and 1 to another var(). Resolved over the real cascade, amsterdam and rijkshuisstijl are both bridge-zero and differ on 32 of the 84 component tokens, with Amsterdam's buttons at #004699 and Rijkshuisstijl's at #154273. So a bridge-zero set adopts the NL Design System's component geometry and type scale and still brands the component colours from its own semantic layer: a working theme, not a broken one. Gating it withheld 8 working sets from the admin picker. The figure stays in the report because a set with its own --utrecht-* layer owns its radii, spacing and type scale, which is part of conformance to a house style."
 	},
+	"bridge": {},
 	"font": {},
 	"logo": {
 		"bodegraven-reeuwijk": "An organisation's wordmark is its own trademark and thematiq must not vendor one: its upstream, nl-design-system/themes commit 9cfc4c5a, ships design tokens and no logo asset, so there is nothing we may redistribute. An administrator uploads the logo in the admin theming panel, which writes it to Nextcloud's own logo slot; until then the Nextcloud logo stays. This is a licensing question, not a technical one.",

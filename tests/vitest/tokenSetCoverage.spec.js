@@ -28,6 +28,7 @@ import {
 	coverageFindings,
 	readCoverageAllowlist,
 	renderCoverageMarkdown,
+	BARRED_DIMENSIONS,
 	DIMENSIONS,
 	REPO_ROOT,
 	SYSTEM_FAMILIES,
@@ -79,12 +80,13 @@ describe('shipped token-set instance coverage', () => {
 
 		// And an allow-listed set that has started passing must be reported as a
 		// stale entry, so progress is recorded rather than hidden.
+		expect(Object.keys(allowlist.logo)).toContain('zwolle')
 		const climbed = coverage.map((row) =>
 			row.id === 'zwolle'
-				? { ...row, bridge: { ...row.bridge, declared: 40, ok: true } }
+				? { ...row, logo: { path: 'img/logos/zwolle.svg', ok: true } }
 				: row,
 		)
-		expect(coverageFindings(climbed, allowlist).stale).toEqual(['bridge/zwolle'])
+		expect(coverageFindings(climbed, allowlist).stale).toEqual(['logo/zwolle'])
 
 		// And a reason too short to be a reason must be rejected.
 		const thin = {
@@ -92,6 +94,80 @@ describe('shipped token-set instance coverage', () => {
 			logo: { ...allowlist.logo, zwolle: 'todo' },
 		}
 		expect(coverageFindings(coverage, thin).reasonless).toEqual(['logo/zwolle'])
+	})
+
+	it('a dimension is either gated or has a written reason for not being', () => {
+		// Demoting a dimension out of the gate is the one edit that lowers the
+		// allow-list count with no set improving — 42 entries became 34 when
+		// `bridge` was demoted, and nothing was fixed. So the audit refuses a
+		// demotion that is not written down, and refuses a `$reported` entry for
+		// a dimension that is in fact gated.
+		const file = JSON.parse(
+			fs.readFileSync(
+				path.join(
+					REPO_ROOT,
+					'tests/Unit/fixtures/token-set-coverage-allowlist.json',
+				),
+				'utf8',
+			),
+		)
+
+		for (const dimension of DIMENSIONS) {
+			if (BARRED_DIMENSIONS.includes(dimension)) {
+				expect(
+					file.$reported?.[dimension],
+					`${dimension} is gated, so it must not claim to be reported-only`,
+				).toBeUndefined()
+				continue
+			}
+			expect(
+				(file.$reported?.[dimension] ?? '').length,
+				`${dimension} is measured but not gated, so it needs a recorded reason`,
+			).toBeGreaterThan(20)
+			expect(
+				Object.keys(file[dimension] ?? {}),
+				`${dimension} gates nothing, so entries under it gate nothing either`,
+			).toEqual([])
+		}
+
+		// Probes: both halves of that rule must be able to fail.
+		const undocumented = { ...allowlist, $reported: {} }
+		expect(coverageFindings(coverage, undocumented).reasonless).toEqual([
+			expect.stringContaining('$reported/bridge'),
+		])
+		const overclaimed = {
+			...allowlist,
+			$reported: { ...allowlist.$reported, logo: 'x'.repeat(40) },
+		}
+		expect(coverageFindings(coverage, overclaimed).stale).toEqual([
+			expect.stringContaining('$reported/logo'),
+		])
+	})
+
+	it('the bridge figure is reported for every bridged set and gates nothing', () => {
+		expect(BARRED_DIMENSIONS).not.toContain('bridge')
+		expect(DIMENSIONS).toContain('bridge')
+
+		const bridged = coverage.filter((row) => row.bridge.applies === true)
+		expect(bridged.length).toBeGreaterThan(40)
+
+		// A bridge-zero set must not be reported as failing anything.
+		const atZero = bridged.filter((row) => row.bridge.declared === 0)
+		expect(atZero.length).toBeGreaterThan(0)
+		const findings = coverageFindings(coverage, allowlist)
+		for (const row of atZero) {
+			expect(findings.unexpected.join('\n')).not.toContain(`bridge/${row.id}`)
+		}
+
+		// And the published report still carries the number, so demoting it did
+		// not hide it.
+		const report = fs.readFileSync(
+			path.join(REPO_ROOT, 'docs/reference/token-set-coverage.md'),
+			'utf8',
+		)
+		for (const row of atZero) {
+			expect(report).toContain(`| ${row.id} | 0/${row.bridge.total} |`)
+		}
 	})
 
 	it('the allow-list only names dimensions the audit measures', () => {
@@ -107,6 +183,9 @@ describe('shipped token-set instance coverage', () => {
 		const keys = Object.keys(file).filter((key) => key.startsWith('$') === false)
 
 		expect(keys.sort()).toEqual([...DIMENSIONS].sort())
+		expect(Object.keys(file.$reported ?? {}).sort()).toEqual(
+			DIMENSIONS.filter((d) => BARRED_DIMENSIONS.includes(d) === false).sort(),
+		)
 	})
 
 	it('the bridge denominator is the bridge, not a number typed in', () => {
