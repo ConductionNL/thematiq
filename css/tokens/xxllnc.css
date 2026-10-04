@@ -12,13 +12,13 @@
 	--xxllnc-color-alert-warning: #856404;
 	--xxllnc-color-alert-warning-background: #fff3cd;
 	--xxllnc-color-black-0: #000000;
-	--xxllnc-color-black-0-22-t: #00000038;
+	--xxllnc-color-black-0-22-t: rgba(0, 0, 0, 0.22);
 	--xxllnc-color-black-10: #1a1a1a;
-	--xxllnc-color-black-12-6-7-t: #1e1e2010;
+	--xxllnc-color-black-12-6-7-t: rgba(30, 30, 32, 0.06);
 	--xxllnc-color-black-14: #202125;
 	--xxllnc-color-black-16: #28282c;
 	--xxllnc-color-black-17: #2b2b2b;
-	--xxllnc-color-black-17-hover: #2b2b2bcc;
+	--xxllnc-color-black-17-hover: rgba(43, 43, 43, 0.8);
 	--xxllnc-color-black-21: #333338;
 	--xxllnc-color-black-23: #39383f;
 	--xxllnc-color-black-6: #0e0d10;
@@ -29,15 +29,15 @@
 	--xxllnc-color-grey-46: #767676;
 	--xxllnc-color-grey-82: #d1d1d1;
 	--xxllnc-color-grey-90: #e5e5e5;
-	--xxllnc-color-grey-90-hover: #e5e5e5cc;
+	--xxllnc-color-grey-90-hover: rgba(229, 229, 229, 0.8);
 	--xxllnc-color-grey-92: #eaeaea;
 	--xxllnc-color-grey-97: #f7f7f7;
-	--xxllnc-color-info: #000000ad;
+	--xxllnc-color-info: rgba(0, 0, 0, 0.68);
 	--xxllnc-color-lightgrey-86: #dbdbdb;
 	--xxllnc-color-lightgrey-87: #dddddd;
 	--xxllnc-color-lightgrey-96: #f5f5f5;
-	--xxllnc-color-primary: #000000ad;
-	--xxllnc-color-primary-hover: #00000080;
+	--xxllnc-color-primary: rgba(0, 0, 0, 0.68);
+	--xxllnc-color-primary-hover: rgba(0, 0, 0, 0.5);
 	--xxllnc-color-succes: #28a745;
 	--xxllnc-color-warning: #ffc107;
 	--xxllnc-color-white-100: #ffffff;
@@ -137,16 +137,16 @@
 	--conduction-input-checkbox-border-radius: 3px;
 	--conduction-input-checkbox-border-style: solid;
 	--conduction-input-checkbox-border-width: 1px;
-	--conduction-input-checkbox-checked-border-color: #000000ad;
+	--conduction-input-checkbox-checked-border-color: rgba(0, 0, 0, 0.68);
 	--conduction-input-checkbox-checked-border-radius: 3px;
 	--conduction-input-checkbox-checked-border-style: solid;
 	--conduction-input-checkbox-checked-border-width: 1px;
-	--conduction-input-checkbox-checked-color: #000000ad;
-	--conduction-input-checkbox-checked-hover-border-color: #00000080;
+	--conduction-input-checkbox-checked-color: rgba(0, 0, 0, 0.68);
+	--conduction-input-checkbox-checked-hover-border-color: rgba(0, 0, 0, 0.5);
 	--conduction-input-checkbox-checked-hover-border-radius: 3px;
 	--conduction-input-checkbox-checked-hover-border-style: solid;
 	--conduction-input-checkbox-checked-hover-border-width: 1px;
-	--conduction-input-checkbox-checked-hover-color: #00000080;
+	--conduction-input-checkbox-checked-hover-color: rgba(0, 0, 0, 0.5);
 	--conduction-input-checkbox-color: #ffffff;
 	--conduction-input-checkbox-disabled-border-color: #d1d1d1;
 	--conduction-input-checkbox-disabled-border-radius: 3px;
@@ -208,7 +208,7 @@
 	--conduction-pagination-current-page-text-decoration: unset;
 	--conduction-pagination-item-background-color: #ffffff;
 	--conduction-pagination-item-border-radius: 32px;
-	--conduction-pagination-item-color: #000000ad;
+	--conduction-pagination-item-color: rgba(0, 0, 0, 0.68);
 	--conduction-pagination-item-font-family: neue-haas-grotesk-text, sans-serif;
 	--conduction-pagination-item-font-size: 16px;
 	--conduction-pagination-item-font-weight: 400;
@@ -223,24 +223,24 @@
 	--conduction-pagination-navigation-button-disabled-background-color: unset;
 	--conduction-pagination-navigation-button-disabled-border-width: 0px;
 	--conduction-pagination-navigation-button-disabled-color: #e5e5e5;
-	--conduction-pagination-navigation-button-hover-background-color: #2b2b2bcc;
+	--conduction-pagination-navigation-button-hover-background-color: rgba(43, 43, 43, 0.8);
 	--conduction-pagination-navigation-button-hover-border-width: 0px;
 	--conduction-pagination-navigation-button-hover-color: #ffffff;
 	--conduction-pagination-navigation-button-padding-block-end: 0px;
 	--conduction-pagination-navigation-button-padding-block-start: 0px;
-	--conduction-pagination-page-hover-background-color: #2b2b2bcc;
-	--conduction-pagination-page-hover-color: #e5e5e5cc;
+	--conduction-pagination-page-hover-background-color: rgba(43, 43, 43, 0.8);
+	--conduction-pagination-page-hover-color: rgba(229, 229, 229, 0.8);
 	--conduction-pagination-page-hover-text-decoration: unset;
 	--conduction-pagination-page-hover-text-decoration-thickness: 0px;
 	--conduction-primary-top-nav-background-color: #eaeaea;
 	--conduction-primary-top-nav-color: #39383f;
-	--conduction-primary-top-nav-current-background-color: #1e1e2010;
+	--conduction-primary-top-nav-current-background-color: rgba(30, 30, 32, 0.06);
 	--conduction-primary-top-nav-current-color: #39383f;
 	--conduction-primary-top-nav-dropdown-background-color: #0e0d10;
 	--conduction-primary-top-nav-dropdown-color: #dbdbdb;
 	--conduction-primary-top-nav-dropdown-hover-background-color: #0e0d10;
 	--conduction-primary-top-nav-dropdown-hover-color: #eaeaea;
-	--conduction-primary-top-nav-hover-background-color: #1e1e2010;
+	--conduction-primary-top-nav-hover-background-color: rgba(30, 30, 32, 0.06);
 	--conduction-primary-top-nav-hover-color: #39383f;
 	--conduction-primary-top-nav-item-padding: 18px;
 	--conduction-primary-top-nav-padding-block-end: 16px;
@@ -254,7 +254,7 @@
 	--conduction-secondary-top-nav-current-color: #39383f;
 	--conduction-secondary-top-nav-font-size: 16px;
 	--conduction-secondary-top-nav-font-weight: 400;
-	--conduction-secondary-top-nav-hover-background-color: #1e1e2010;
+	--conduction-secondary-top-nav-hover-background-color: rgba(30, 30, 32, 0.06);
 	--conduction-secondary-top-nav-hover-color: #39383f;
 	--conduction-secondary-top-nav-item-padding: 18px;
 	--conduction-secondary-top-nav-padding-block-end: 16px;
@@ -267,13 +267,13 @@
 	--conduction-table-wrapper-scroll-button-border-width: 1px;
 	--conduction-table-wrapper-scroll-button-color: #28282c;
 	--conduction-table-wrapper-scroll-button-hover-background-color: #ffffff;
-	--conduction-table-wrapper-scroll-button-hover-color: #2b2b2bcc;
+	--conduction-table-wrapper-scroll-button-hover-color: rgba(43, 43, 43, 0.8);
 	--conduction-table-wrapper-scroll-button-padding-inline-end: 14px;
 	--conduction-table-wrapper-scroll-button-padding-inline-start: 14px;
 	--conduction-tabs-scroll-button-background-color: #ffffff;
 	--conduction-tabs-scroll-button-color: #28282c;
 	--conduction-tabs-scroll-button-hover-background-color: #ffffff;
-	--conduction-tabs-scroll-button-hover-color: #2b2b2bcc;
+	--conduction-tabs-scroll-button-hover-color: rgba(43, 43, 43, 0.8);
 	--conduction-tabs-tab-background-color: transparent;
 	--conduction-tabs-tab-bottom: -2px;
 	--conduction-tabs-tab-color: #28282c;
@@ -298,7 +298,7 @@
 	--conduction-tabs-tab-panel-padding-inline-end: 24px;
 	--conduction-tabs-tab-panel-padding-inline-start: 24px;
 	--conduction-tabs-tab-selected-background-color: transparent;
-	--conduction-tabs-tab-selected-border-bottom-color: #000000ad;
+	--conduction-tabs-tab-selected-border-bottom-color: rgba(0, 0, 0, 0.68);
 	--conduction-tabs-tab-selected-border-bottom-style: solid;
 	--conduction-tabs-tab-selected-border-bottom-width: 2px;
 	--conduction-tabs-tab-selected-color: #28282c;
@@ -339,7 +339,7 @@
 	--utrecht-badge-background-color: #28282c;
 	--utrecht-badge-border-radius: 10000px;
 	--utrecht-badge-color: #f1f1f1;
-	--utrecht-badge-counter-background-color: #000000ad;
+	--utrecht-badge-counter-background-color: rgba(0, 0, 0, 0.68);
 	--utrecht-badge-counter-border-radius: 50%;
 	--utrecht-badge-counter-color: #ffffff;
 	--utrecht-badge-counter-font-family: neue-haas-grotesk-text, sans-serif;
@@ -374,8 +374,8 @@
 	--utrecht-button-font-family: "Inter", sans-serif;
 	--utrecht-button-font-size: inherit;
 	--utrecht-button-font-weight: inherit;
-	--utrecht-button-hover-background-color: #2b2b2bcc;
-	--utrecht-button-hover-color: #e5e5e5cc;
+	--utrecht-button-hover-background-color: rgba(43, 43, 43, 0.8);
+	--utrecht-button-hover-color: rgba(229, 229, 229, 0.8);
 	--utrecht-button-icon-gap: 8px;
 	--utrecht-button-primary-action-background-color: #2b2b2b;
 	--utrecht-button-primary-action-border-width: 0;
@@ -389,8 +389,8 @@
 	--utrecht-button-secondary-action-color: #2b2b2b;
 	--utrecht-button-secondary-action-font-weight: 400;
 	--utrecht-button-secondary-action-hover-background-color: #ffffff;
-	--utrecht-button-secondary-action-hover-border-color: #2b2b2bcc;
-	--utrecht-button-secondary-action-hover-color: #2b2b2bcc;
+	--utrecht-button-secondary-action-hover-border-color: rgba(43, 43, 43, 0.8);
+	--utrecht-button-secondary-action-hover-color: rgba(43, 43, 43, 0.8);
 	--utrecht-code-background-color: #f5f5f5;
 	--utrecht-code-block-background-color: #f5f5f5;
 	--utrecht-code-block-color: #28282c;
@@ -412,7 +412,7 @@
 	--utrecht-document-color: #28282c;
 	--utrecht-document-font-family: neue-haas-grotesk-text, sans-serif;
 	--utrecht-form-input-background-color: #ffffff;
-	--utrecht-form-input-border-color: #00000038;
+	--utrecht-form-input-border-color: rgba(0, 0, 0, 0.22);
 	--utrecht-form-input-border-radius: 6px;
 	--utrecht-form-input-border-width: 1px;
 	--utrecht-form-input-color: #6d6d6d;
@@ -444,8 +444,8 @@
 	--utrecht-heading-5-margin-block-end: 24px;
 	--utrecht-heading-5-margin-block-start: 18px;
 	--utrecht-icon-gap: 8px;
-	--utrecht-link-color: #000000ad;
-	--utrecht-link-hover-color: #00000080;
+	--utrecht-link-color: rgba(0, 0, 0, 0.68);
+	--utrecht-link-hover-color: rgba(0, 0, 0, 0.5);
 	--utrecht-link-hover-text-decoration: none;
 	--utrecht-link-hover-text-decoration-thickness: 0;
 	--utrecht-link-icon-size: 18px;
@@ -453,7 +453,7 @@
 	--utrecht-link-text-decoration-color: unset;
 	--utrecht-link-text-decoration-thickness: 0;
 	--utrecht-link-text-underline-offset: 2px;
-	--utrecht-link-visited-color: #000000ad;
+	--utrecht-link-visited-color: rgba(0, 0, 0, 0.68);
 	--utrecht-ordered-list-font-size: 16px;
 	--utrecht-ordered-list-item-margin-block-end: 4px;
 	--utrecht-ordered-list-item-margin-block-start: 4px;
@@ -463,9 +463,9 @@
 	--utrecht-ordered-list-padding-inline-start: 32px;
 	--utrecht-page-footer-background-color: #ffffff;
 	--utrecht-page-footer-background-image: unset;
-	--utrecht-page-footer-color: #000000ad;
-	--utrecht-page-footer-link-color: #000000ad;
-	--utrecht-page-footer-link-hover-color: #00000080;
+	--utrecht-page-footer-color: rgba(0, 0, 0, 0.68);
+	--utrecht-page-footer-link-color: rgba(0, 0, 0, 0.68);
+	--utrecht-page-footer-link-hover-color: rgba(0, 0, 0, 0.5);
 	--utrecht-page-footer-link-hover-text-decoration: none;
 	--utrecht-page-footer-link-hover-text-decoration-thickness: 0;
 	--utrecht-page-footer-link-text-decoration: none;
@@ -494,33 +494,33 @@
 	--utrecht-radio-button-border-color: #767676;
 	--utrecht-radio-button-border-width: 1px;
 	--utrecht-radio-button-checked-active-background-color: #ffffff;
-	--utrecht-radio-button-checked-active-border-color: #000000ad;
+	--utrecht-radio-button-checked-active-border-color: rgba(0, 0, 0, 0.68);
 	--utrecht-radio-button-checked-active-border-width: 1px;
-	--utrecht-radio-button-checked-active-color: #000000ad;
+	--utrecht-radio-button-checked-active-color: rgba(0, 0, 0, 0.68);
 	--utrecht-radio-button-checked-background-color: #ffffff;
-	--utrecht-radio-button-checked-border-color: #000000ad;
+	--utrecht-radio-button-checked-border-color: rgba(0, 0, 0, 0.68);
 	--utrecht-radio-button-checked-border-width: 1px;
-	--utrecht-radio-button-checked-color: #000000ad;
+	--utrecht-radio-button-checked-color: rgba(0, 0, 0, 0.68);
 	--utrecht-radio-button-checked-disabled-background-color: #ffffff;
 	--utrecht-radio-button-checked-disabled-border-color: #d1d1d1;
 	--utrecht-radio-button-checked-disabled-border-width: 1px;
 	--utrecht-radio-button-checked-disabled-color: #d1d1d1;
 	--utrecht-radio-button-checked-focus-background-color: #ffffff;
-	--utrecht-radio-button-checked-focus-border-color: #000000ad;
+	--utrecht-radio-button-checked-focus-border-color: rgba(0, 0, 0, 0.68);
 	--utrecht-radio-button-checked-focus-border-width: 1px;
-	--utrecht-radio-button-checked-focus-color: #000000ad;
+	--utrecht-radio-button-checked-focus-color: rgba(0, 0, 0, 0.68);
 	--utrecht-radio-button-checked-hover-background-color: #ffffff;
-	--utrecht-radio-button-checked-hover-border-color: #00000080;
+	--utrecht-radio-button-checked-hover-border-color: rgba(0, 0, 0, 0.5);
 	--utrecht-radio-button-checked-hover-border-width: 1px;
-	--utrecht-radio-button-checked-hover-color: #00000080;
+	--utrecht-radio-button-checked-hover-color: rgba(0, 0, 0, 0.5);
 	--utrecht-radio-button-disabled-background-color: #f7f7f7;
 	--utrecht-radio-button-disabled-border-color: #d1d1d1;
 	--utrecht-radio-button-disabled-border-width: 1px;
 	--utrecht-radio-button-disabled-color: #d1d1d1;
 	--utrecht-radio-button-focus-background-color: #ffffff;
-	--utrecht-radio-button-focus-border-color: #000000ad;
+	--utrecht-radio-button-focus-border-color: rgba(0, 0, 0, 0.68);
 	--utrecht-radio-button-focus-border-width: 1px;
-	--utrecht-radio-button-focus-color: #000000ad;
+	--utrecht-radio-button-focus-color: rgba(0, 0, 0, 0.68);
 	--utrecht-radio-button-hover-background-color: #ffffff;
 	--utrecht-radio-button-hover-border-color: #4f4f4f;
 	--utrecht-radio-button-hover-border-width: 1px;
@@ -557,7 +557,7 @@
 	--utrecht-table-row-border-block-end-color: #f5f5f5;
 	--utrecht-table-row-border-block-end-width: 1px;
 	--utrecht-textbox-background-color: #ffffff;
-	--utrecht-textbox-border-color: #00000038;
+	--utrecht-textbox-border-color: rgba(0, 0, 0, 0.22);
 	--utrecht-textbox-border-radius: 6px;
 	--utrecht-textbox-border-width: 1px;
 	--utrecht-textbox-color: #6d6d6d;
@@ -574,11 +574,11 @@
 	--utrecht-unordered-list-item-padding-inline-start: 1ch;
 	--utrecht-unordered-list-margin-block-end: 0;
 	--utrecht-unordered-list-margin-block-start: 18px;
-	--utrecht-unordered-list-marker-color: #000000ad;
+	--utrecht-unordered-list-marker-color: rgba(0, 0, 0, 0.68);
 	--utrecht-unordered-list-padding-inline-start: 2ch;
 	--xxllnc-catalogi-rating-font-family: neue-haas-grotesk-text, sans-serif;
 	--xxllnc-catalogi-rating-font-size: 16px;
-	--xxllnc-catalogi-rating-rating-bar-color: #000000ad;
+	--xxllnc-catalogi-rating-rating-bar-color: rgba(0, 0, 0, 0.68);
 
 	/* 3. Semantic layer — what Nextcloud's chrome actually reads, via
 	 *    css/systems/nldesign/theme.css and overrides.css. */
@@ -590,8 +590,8 @@
 	--nldesign-color-background-dark: #f1f1f1;
 	--nldesign-color-background-darker: #e5e5e5;
 	--nldesign-color-background-hover: #f7f7f7;
-	--nldesign-color-border: #00000038;
-	--nldesign-color-border-dark: #00000038;
+	--nldesign-color-border: rgba(0, 0, 0, 0.22);
+	--nldesign-color-border-dark: rgba(0, 0, 0, 0.22);
 	--nldesign-color-error: #dc3545;
 	--nldesign-color-error-hover: #c6303e;
 	--nldesign-color-error-rgb: 220, 53, 69;
@@ -600,11 +600,11 @@
 	--nldesign-color-focus-rgb: 43, 43, 43;
 	--nldesign-color-header-background: #eaeaea;
 	--nldesign-color-header-text: #28282c;
-	--nldesign-color-info: #000000ad;
-	--nldesign-color-info-rgb: #000000ad;
-	--nldesign-color-link: #000000ad;
-	--nldesign-color-link-hover: #00000080;
-	--nldesign-color-link-visited: #000000ad;
+	--nldesign-color-info: rgba(0, 0, 0, 0.68);
+	--nldesign-color-info-rgb: 0, 0, 0;
+	--nldesign-color-link: rgba(0, 0, 0, 0.68);
+	--nldesign-color-link-hover: #767676;
+	--nldesign-color-link-visited: rgba(0, 0, 0, 0.68);
 	--nldesign-color-nav-background: #ffffff;
 	--nldesign-color-placeholder-dark: #e5e5e5;
 	--nldesign-color-placeholder-light: #f1f1f1;
@@ -632,10 +632,10 @@
 	 *    source version:  1.0.0
 	 *    slug:            xxllnc
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:e1eaba501816cbe2
+	 *    mapping table:   v1 sha256:a83cd3afb43901ad
 	 *    applied:         22
-	 *    adapted:         23
-	 *    kept:            548
+	 *    adapted:         24
+	 *    kept:            594
 	 *    skipped:         13
 	 */
 

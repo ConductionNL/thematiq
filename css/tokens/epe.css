@@ -3,6 +3,7 @@
 :root {
 	/* 1. Brand palette — the theme's own steps, under the set's own prefix so
 	 *    they can never masquerade as app vocabulary. */
+	--epe-color-primary: #00549e;
 
 	/* 2. Component layer — emitted verbatim. css/systems/nldesign/utrecht-bridge.css
 	 *    reads these into --nldesign-component-*, and Conduction's apps read them
@@ -16,8 +17,10 @@
 	--epe-conduction-download-card-border-style: solid;
 	--epe-conduction-input-checkbox-border-radius: 3px;
 	--epe-conduction-input-checkbox-border-style: solid;
+	--epe-conduction-input-checkbox-checked-border-color: #00549e;
 	--epe-conduction-input-checkbox-checked-border-radius: 3px;
 	--epe-conduction-input-checkbox-checked-border-style: solid;
+	--epe-conduction-input-checkbox-checked-color: #00549e;
 	--epe-conduction-input-checkbox-checked-hover-border-radius: 3px;
 	--epe-conduction-input-checkbox-checked-hover-border-style: solid;
 	--epe-conduction-input-checkbox-disabled-border-radius: 3px;
@@ -53,6 +56,10 @@
 	--epe-conduction-pagination-page-hover-text-decoration: underline;
 	--epe-conduction-pagination-page-hover-text-decoration-thickness: 0.15rem;
 	--epe-conduction-primary-top-nav-current-background-color: unset;
+	--epe-conduction-primary-top-nav-current-box-shadow: inset 0 -4px #00549e;
+	--epe-conduction-primary-top-nav-current-color: #00549e;
+	--epe-conduction-primary-top-nav-current-mobile-box-shadow: inset 4px 0 #00549e;
+	--epe-conduction-primary-top-nav-hover-color: #00549e;
 	--epe-conduction-primary-top-nav-item-padding: 18px;
 	--epe-conduction-primary-top-nav-padding-block-end: 16px;
 	--epe-conduction-primary-top-nav-padding-block-start: 16px;
@@ -60,12 +67,17 @@
 	--epe-conduction-primary-top-nav-padding-inline-start: 16px;
 	--epe-conduction-secondary-top-nav-background-color: transparent;
 	--epe-conduction-secondary-top-nav-current-background-color: unset;
+	--epe-conduction-secondary-top-nav-current-box-shadow: inset 0 -4px #00549e;
+	--epe-conduction-secondary-top-nav-current-color: #00549e;
 	--epe-conduction-secondary-top-nav-font-weight: 400;
+	--epe-conduction-secondary-top-nav-hover-color: #00549e;
 	--epe-conduction-secondary-top-nav-item-padding: 18px;
 	--epe-conduction-secondary-top-nav-padding-block-end: 16px;
 	--epe-conduction-secondary-top-nav-padding-block-start: 16px;
 	--epe-conduction-secondary-top-nav-padding-inline-end: 16px;
 	--epe-conduction-secondary-top-nav-padding-inline-start: 16px;
+	--epe-conduction-table-wrapper-scroll-button-hover-color: #00549e;
+	--epe-conduction-tabs-scroll-button-hover-color: #00549e;
 	--epe-conduction-tabs-tab-background-color: transparent;
 	--epe-conduction-tabs-tab-bottom: -2px;
 	--epe-conduction-tabs-tab-list-border-bottom-style: solid;
@@ -75,6 +87,7 @@
 	--epe-conduction-tabs-tab-min-height: 61px;
 	--epe-conduction-tabs-tab-min-width: 160px;
 	--epe-conduction-tabs-tab-selected-background-color: transparent;
+	--epe-conduction-tabs-tab-selected-border-bottom-color: #00549e;
 	--epe-conduction-tabs-tab-selected-border-bottom-style: solid;
 	--epe-conduction-tooltip-border-color: unset;
 	--epe-conduction-tooltip-border-radius: 0px;
@@ -136,10 +149,12 @@
 	--epe-epe-typography-font-weight-normal: 400;
 	--epe-epe-typography-monospace-font-family: Monospace, "Lucida Console";
 	--epe-epe-typography-source-sans-font-family: "Source Sans";
+	--epe-open-catalogi-rating-rating-bar-color: #00549e;
 	--epe-utrecht-action-busy-cursor: wait;
 	--epe-utrecht-action-disabled-cursor: not-allowed;
 	--epe-utrecht-action-submit-cursor: pointer;
 	--epe-utrecht-badge-border-radius: 0;
+	--epe-utrecht-badge-counter-background-color: #00549e;
 	--epe-utrecht-badge-counter-border-radius: 50%;
 	--epe-utrecht-badge-counter-text-decoration: none;
 	--epe-utrecht-breadcrumb-nav-font-size: 16px;
@@ -172,6 +187,7 @@
 	--epe-utrecht-heading-5-font-weight: 600;
 	--epe-utrecht-heading-5-margin-block-end: 0;
 	--epe-utrecht-heading-5-margin-block-start: 0;
+	--epe-utrecht-link-color: #00549e;
 	--epe-utrecht-link-hover-text-decoration: underline;
 	--epe-utrecht-link-hover-text-decoration-thickness: 0.15em;
 	--epe-utrecht-link-text-decoration: underline;
@@ -195,6 +211,14 @@
 	--epe-utrecht-paragraph-line-height: 1.5em;
 	--epe-utrecht-paragraph-margin-block-end: 0;
 	--epe-utrecht-paragraph-margin-block-start: 0;
+	--epe-utrecht-radio-button-checked-active-border-color: #00549e;
+	--epe-utrecht-radio-button-checked-active-color: #00549e;
+	--epe-utrecht-radio-button-checked-border-color: #00549e;
+	--epe-utrecht-radio-button-checked-color: #00549e;
+	--epe-utrecht-radio-button-checked-focus-border-color: #00549e;
+	--epe-utrecht-radio-button-checked-focus-color: #00549e;
+	--epe-utrecht-radio-button-focus-border-color: #00549e;
+	--epe-utrecht-radio-button-focus-color: #00549e;
 	--epe-utrecht-radio-button-icon-size: 5px;
 	--epe-utrecht-radio-button-min-block-size: 16px;
 	--epe-utrecht-radio-button-min-inline-size: 16px;
@@ -226,9 +250,23 @@
 	--nldesign-color-error-hover: #c20c0c;
 	--nldesign-color-error-rgb: 215, 13, 13;
 	--nldesign-color-favorite: #f9cf00;
+	--nldesign-color-focus: rgba(0, 84, 158, 0.5);
+	--nldesign-color-focus-rgb: 0, 84, 158;
+	--nldesign-color-header-background: #00549e;
+	--nldesign-color-header-text: #ffffff;
+	--nldesign-color-info: #00549e;
+	--nldesign-color-info-rgb: 0, 84, 158;
+	--nldesign-color-link: #00549e;
+	--nldesign-color-link-hover: #004c8e;
+	--nldesign-color-link-visited: #00549e;
 	--nldesign-color-nav-background: #ffffff;
 	--nldesign-color-placeholder-dark: #e6e6e6;
 	--nldesign-color-placeholder-light: #f5f5f5;
+	--nldesign-color-primary: #00549e;
+	--nldesign-color-primary-hover: #004c8e;
+	--nldesign-color-primary-light: #e6eef5;
+	--nldesign-color-primary-light-hover: #ccddec;
+	--nldesign-color-primary-text: #ffffff;
 	--nldesign-color-success: #39870c;
 	--nldesign-color-success-rgb: 57, 135, 12;
 	--nldesign-color-text: #000000;
@@ -240,6 +278,7 @@
 	--nldesign-component-table-header-color: #757575;
 	--nldesign-component-table-header-font-weight: 400;
 	--nldesign-font-family: 'Fira Sans', 'Helvetica Neue', Arial, sans-serif;
+	--nldesign-header-icon-filter: none;
 
 	/* 4. Provenance — enough to tell two runs apart without running anything.
 	 *    input kind:      A (built theme CSS)
@@ -247,11 +286,11 @@
 	 *    source version:  1.0.3
 	 *    slug:            epe
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:e1eaba501816cbe2
-	 *    applied:         0
-	 *    adapted:         28
-	 *    kept:            202
-	 *    skipped:         398
+	 *    mapping table:   v1 sha256:a83cd3afb43901ad
+	 *    applied:         2
+	 *    adapted:         42
+	 *    kept:            225
+	 *    skipped:         375
 	 */
 
 	/* 5. Local overrides, kept by the token sync: values a person set on top of upstream.
