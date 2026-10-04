@@ -36,6 +36,20 @@
 	--nldesign-color-text-muted: #75758a;
 	--nldesign-color-text-light: #ffffff;
 
+	/* Links and status (thematiq#1006): the system's own values, the same ones
+	 * css/systems/lasuite/bridge.css declares, so the set also carries them where
+	 * the bridge is not loaded (a public portal) and the vocabulary is complete. */
+	--nldesign-color-link: #4844ad;
+	--nldesign-color-link-hover: #36347d;
+	--nldesign-color-error: #d80000;
+	--nldesign-color-error-rgb: 216, 0, 0;
+	--nldesign-color-warning: #836703;
+	--nldesign-color-warning-rgb: 131, 103, 3;
+	--nldesign-color-success: #427816;
+	--nldesign-color-success-rgb: 66, 120, 22;
+	--nldesign-color-info: #1167d4;
+	--nldesign-color-info-rgb: 17, 103, 212;
+
 	/* Border */
 	--nldesign-color-border: #c5c6d5;
 	--nldesign-color-border-dark: #75758a;
@@ -87,68 +101,68 @@
 	/* Chrome: a white bar with a hairline rule, like La Suite's own. */
 	--nldesign-color-footer-background: #1b1b23;
 	--nldesign-color-footer-text: #ffffff;
-	--nldesign-header-background: #ffffff;
-	--nldesign-header-padding-inline: 40px;
-	--nldesign-header-border-width: 1px;
-	--nldesign-header-border-color: #e2e2ea;
-	--nldesign-nav-font-size: 14px;
-	--nldesign-nav-font-weight: 500;
-	--nldesign-nav-item-padding-inline: 12px;
+	--frankendesk-header-background: #ffffff;
+	--frankendesk-header-padding-inline: 40px;
+	--frankendesk-header-border-width: 1px;
+	--frankendesk-header-border-color: #e2e2ea;
+	--frankendesk-nav-font-size: 14px;
+	--frankendesk-nav-font-weight: 500;
+	--frankendesk-nav-item-padding-inline: 12px;
 	--nldesign-nav-link-color: #1b1b23;
-	--nldesign-container-max: 1200px;
-	--nldesign-container-padding-inline: 24px;
+	--frankendesk-container-max: 1200px;
+	--frankendesk-container-padding-inline: 24px;
 
 	/* Type: Inter is now actually served (css/fonts-conduction.css). */
 	--nldesign-body-font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
 	/* Hero: the brand violet, with a headline that carries the page. */
-	--nldesign-hero-padding-block-start: 56px;
-	--nldesign-hero-padding-block-end: 64px;
-	--nldesign-hero-title-size: 48px;
-	--nldesign-hero-title-weight: 700;
-	--nldesign-hero-title-line-height: 1.1;
+	--frankendesk-hero-padding-block-start: 56px;
+	--frankendesk-hero-padding-block-end: 64px;
+	--frankendesk-hero-title-size: 48px;
+	--frankendesk-hero-title-weight: 700;
+	--frankendesk-hero-title-line-height: 1.1;
 	--nldesign-hero-title-color: #ffffff;
-	--nldesign-hero-title-gap: 12px;
+	--frankendesk-hero-title-gap: 12px;
 	--nldesign-hero-body-color: #eef1fa;
-	--nldesign-hero-body-size: 20px;
-	--nldesign-hero-body-line-height: 1.5;
-	--nldesign-hero-body-weight: 400;
-	--nldesign-hero-body-gap: 32px;
+	--frankendesk-hero-body-size: 20px;
+	--frankendesk-hero-body-line-height: 1.5;
+	--frankendesk-hero-body-weight: 400;
+	--frankendesk-hero-body-gap: 32px;
 	/* A measure, not the full band: a one-line lead across 1200px is a line a
 	   reader loses their place in. */
-	--nldesign-hero-body-measure: 62ch;
-	--nldesign-hero-radius: 0px;
+	--frankendesk-hero-body-measure: 62ch;
+	--frankendesk-hero-radius: 0px;
 
 	/* Rhythm: the distance between a band and the section that follows it, and
 	   between the rows of a list. Cunningham's spacing scale is a 8px base, so
 	   these are multiples of it rather than free numbers. */
-	--nldesign-section-gap: 48px;
-	--nldesign-list-gap: 16px;
-	--nldesign-list-rule-width: 1px;
-	--nldesign-list-rule-color: #e2e2ea;
+	--frankendesk-section-gap: 48px;
+	--frankendesk-list-gap: 16px;
+	--frankendesk-list-rule-width: 1px;
+	--frankendesk-list-rule-color: #e2e2ea;
 
 	/* Cards: white, hairline, roomy — Cunningham keeps elevation for
 	   things that float, not for things that sit. */
-	--nldesign-card-background: #ffffff;
-	--nldesign-card-border-width: 1px;
-	--nldesign-card-border-color: #e2e2ea;
-	--nldesign-card-radius: 8px;
-	--nldesign-card-padding: 24px;
-	--nldesign-card-gap: 8px;
-	--nldesign-card-shadow: none;
-	--nldesign-card-shadow-hover: 0 2px 8px rgba(27, 27, 35, 0.10);
-	--nldesign-card-heading-color: #1b1b23;
-	--nldesign-card-heading-weight: 600;
-	--nldesign-card-heading-size: 18px;
+	--frankendesk-card-background: #ffffff;
+	--frankendesk-card-border-width: 1px;
+	--frankendesk-card-border-color: #e2e2ea;
+	--frankendesk-card-radius: 8px;
+	--frankendesk-card-padding: 24px;
+	--frankendesk-card-gap: 8px;
+	--frankendesk-card-shadow: none;
+	--frankendesk-card-shadow-hover: 0 2px 8px rgba(27, 27, 35, 0.10);
+	--frankendesk-card-heading-color: #1b1b23;
+	--frankendesk-card-heading-weight: 600;
+	--frankendesk-card-heading-size: 18px;
 	/*
 	 * The parent's muted grey is #75758a, which on white measures 4.499:1 —
 	 * AA by a thousandth, and it FAILS. Measured on four card descriptions.
 	 * Body copy takes one step darker; the parent's value stays untouched for
 	 * everything that is not a paragraph a citizen has to read.
 	 */
-	--nldesign-card-body-color: #6b6b80;
-	--nldesign-card-body-size: 15px;
-	--nldesign-card-body-line-height: 22px;
+	--frankendesk-card-body-color: #6b6b80;
+	--frankendesk-card-body-size: 15px;
+	--frankendesk-card-body-line-height: 22px;
 
 	/*
 	 * Footer: dark ink, restrained link colour, no mono affectation — that
@@ -160,54 +174,54 @@
 	 * these unset the citizen portal rendered its wordmark, its description and
 	 * its legal line as three lines of text touching each other.
 	 */
-	--nldesign-footer-padding-block: 56px;
-	--nldesign-footer-padding-block-end: 32px;
-	--nldesign-footer-grid-columns: 320px repeat(auto-fill, 200px);
-	--nldesign-footer-column-gap: 40px;
+	--frankendesk-footer-padding-block: 56px;
+	--frankendesk-footer-padding-block-end: 32px;
+	--frankendesk-footer-grid-columns: 320px repeat(auto-fill, 200px);
+	--frankendesk-footer-column-gap: 40px;
 
 	/* Brand column. */
-	--nldesign-footer-wordmark-size: 20px;
-	--nldesign-footer-wordmark-weight: 700;
-	--nldesign-footer-wordmark-color: #ffffff;
-	--nldesign-footer-wordmark-line-height: 28px;
-	--nldesign-footer-brand-size: 14px;
-	--nldesign-footer-brand-line-height: 22px;
-	--nldesign-footer-brand-color: rgba(255, 255, 255, 0.75);
-	--nldesign-footer-brand-margin-block: 12px 0;
-	--nldesign-footer-brand-measure: 320px;
-	--nldesign-footer-social-size: 40px;
-	--nldesign-footer-social-radius: 8px;
-	--nldesign-footer-social-gap: 8px;
-	--nldesign-footer-social-color: rgba(255, 255, 255, 0.85);
-	--nldesign-footer-social-border-width: 1px;
-	--nldesign-footer-social-border-color: rgba(255, 255, 255, 0.2);
-	--nldesign-footer-social-margin-block: 24px 0;
+	--frankendesk-footer-wordmark-size: 20px;
+	--frankendesk-footer-wordmark-weight: 700;
+	--frankendesk-footer-wordmark-color: #ffffff;
+	--frankendesk-footer-wordmark-line-height: 28px;
+	--frankendesk-footer-brand-size: 14px;
+	--frankendesk-footer-brand-line-height: 22px;
+	--frankendesk-footer-brand-color: rgba(255, 255, 255, 0.75);
+	--frankendesk-footer-brand-margin-block: 12px 0;
+	--frankendesk-footer-brand-measure: 320px;
+	--frankendesk-footer-social-size: 40px;
+	--frankendesk-footer-social-radius: 8px;
+	--frankendesk-footer-social-gap: 8px;
+	--frankendesk-footer-social-color: rgba(255, 255, 255, 0.85);
+	--frankendesk-footer-social-border-width: 1px;
+	--frankendesk-footer-social-border-color: rgba(255, 255, 255, 0.2);
+	--frankendesk-footer-social-margin-block: 24px 0;
 
 	/* Column headings and links. */
-	--nldesign-footer-heading-size: 13px;
-	--nldesign-footer-heading-weight: 600;
-	--nldesign-footer-heading-color: rgba(255, 255, 255, 0.6);
-	--nldesign-footer-heading-spacing: 0.8px;
-	--nldesign-footer-heading-transform: uppercase;
-	--nldesign-footer-heading-line-height: 18px;
-	--nldesign-footer-heading-margin-block-end: 14px;
-	--nldesign-footer-link-size: 15px;
-	--nldesign-footer-link-line-height: 22px;
-	--nldesign-footer-link-color: #c5c6d5;
-	--nldesign-footer-item-margin-block-end: 10px;
-	--nldesign-footer-item-marker: none;
+	--frankendesk-footer-heading-size: 13px;
+	--frankendesk-footer-heading-weight: 600;
+	--frankendesk-footer-heading-color: rgba(255, 255, 255, 0.6);
+	--frankendesk-footer-heading-spacing: 0.8px;
+	--frankendesk-footer-heading-transform: uppercase;
+	--frankendesk-footer-heading-line-height: 18px;
+	--frankendesk-footer-heading-margin-block-end: 14px;
+	--frankendesk-footer-link-size: 15px;
+	--frankendesk-footer-link-line-height: 22px;
+	--frankendesk-footer-link-color: #c5c6d5;
+	--frankendesk-footer-item-margin-block-end: 10px;
+	--frankendesk-footer-item-marker: none;
 
 	/* Legal bar. */
-	--nldesign-footer-legal-size: 13px;
-	--nldesign-footer-legal-line-height: 20px;
-	--nldesign-footer-legal-color: rgba(255, 255, 255, 0.55);
-	--nldesign-footer-legal-link-color: rgba(255, 255, 255, 0.75);
-	--nldesign-footer-legal-link-decoration: underline;
-	--nldesign-footer-legal-rule-width: 1px;
-	--nldesign-footer-legal-rule-color: rgba(255, 255, 255, 0.12);
-	--nldesign-footer-legal-padding-block-start: 24px;
-	--nldesign-footer-legal-gap: 16px;
-	--nldesign-footer-legal-link-gap: 8px;
+	--frankendesk-footer-legal-size: 13px;
+	--frankendesk-footer-legal-line-height: 20px;
+	--frankendesk-footer-legal-color: rgba(255, 255, 255, 0.55);
+	--frankendesk-footer-legal-link-color: rgba(255, 255, 255, 0.75);
+	--frankendesk-footer-legal-link-decoration: underline;
+	--frankendesk-footer-legal-rule-width: 1px;
+	--frankendesk-footer-legal-rule-color: rgba(255, 255, 255, 0.12);
+	--frankendesk-footer-legal-padding-block-start: 24px;
+	--frankendesk-footer-legal-gap: 16px;
+	--frankendesk-footer-legal-link-gap: 8px;
 }
 
 /* The #header .logo override that used to live here moved to

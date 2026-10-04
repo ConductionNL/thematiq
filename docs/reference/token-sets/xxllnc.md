@@ -2,7 +2,7 @@
 
 # xxllnc
 
-Token set `xxllnc`: 620 declared by this set, 128 from the defaults layer.
+Token set `xxllnc`: 618 declared by this set, 128 from the defaults layer.
 
 Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 
@@ -472,8 +472,6 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--conduction-tooltip-padding-inline-end` | `14px` | | this set | |
 | `--conduction-tooltip-padding-inline-start` | `14px` | | this set | |
 | `--conduction-tooltip-z-index` | `9999` | | this set | |
-| `--nldesign-color-alert-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23155724%22%2F%3E%3C%2Fsvg%3E) `#155724` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2399e1aa%22%2F%3E%3C%2Fsvg%3E) `#99e1aa` | this set | |
-| `--nldesign-color-alert-success-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4edda%22%2F%3E%3C%2Fsvg%3E) `#d4edda` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d3f25%22%2F%3E%3C%2Fsvg%3E) `#1d3f25` | this set | |
 | `--nldesign-logo-url` | `url('../../img/logos/xxllnc.svg')` | `url('../../../img/logos/xxllnc-dark.svg')` | this set | |
 | `--utrecht-action-busy-cursor` | `wait` | | this set | |
 | `--utrecht-action-disabled-cursor` | `not-allowed` | | this set | |
