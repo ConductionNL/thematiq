@@ -157,11 +157,7 @@ class CssInjectionService {
 	 */
 	private InternalScopesService $internalScopes;
 
-	/**
-	 * Resolves the workplace layout and the brand stripe for a token set.
-	 *
-	 * @var LayoutOptionsService
-	 */
+	/** @var LayoutOptionsService Resolves the workplace layout and the brand stripe for a token set. */
 	private LayoutOptionsService $layoutOptions;
 
 	/**
@@ -742,13 +738,8 @@ class CssInjectionService {
 			'tokenSet' => $tokenSet,
 			'designSystem' => $designSystemId,
 			'layers' => $layers,
-			// The two conditional stylesheets that can follow the set. They
-			// are not layers of the set, so they are not in the list above;
-			// the client adds or drops them from this resolved state.
-			'layout' => [
-				'workplaceLayout' => $this->layoutOptions->workplaceLayout(tokenSet: $tokenSet),
-				'brandStripe' => $this->layoutOptions->brandStripe(tokenSet: $tokenSet),
-			],
+			// Not layers of the set: the two conditional stylesheets that can follow it.
+			'layout' => $this->layoutOptions->resolved(tokenSet: $tokenSet),
 		];
 	}//end getStylesheetManifest()
 
@@ -819,12 +810,8 @@ class CssInjectionService {
 
 	/**
 	 * Emit the appconfig-gated hide-slogan, show-menu-labels, workplace-layout,
-	 * brand-stripe and primary-lock stylesheets.
-	 *
-	 * The workplace layout and the brand stripe are resolved for the token set
-	 * this page renders with, because a set may carry their defaults (see
-	 * {@see LayoutOptionsService}). With no administrator choice and a set that
-	 * names none, neither stylesheet is emitted and the page is as it was.
+	 * brand-stripe and primary-lock stylesheets. The layout pair is resolved for
+	 * this page's token set, which may carry its defaults ({@see LayoutOptionsService}).
 	 *
 	 * `primary-lock` is emitted LAST on purpose. It and `custom-overrides.css`
 	 * both write `--nldesign-component-*` at `:root` with `!important`, so the
@@ -856,12 +843,9 @@ class CssInjectionService {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
-		if ($this->layoutOptions->workplaceLayout(tokenSet: $tokenSet) === LayoutOptionsService::LAYOUT_LIGHT) {
-			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'workplace-layout'));
-		}
-
-		if ($this->layoutOptions->brandStripe(tokenSet: $tokenSet) === true) {
-			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'brand-stripe'));
+		// The workplace layout and the brand stripe, for the set this page wears.
+		foreach ($this->layoutOptions->stylesheets(tokenSet: $tokenSet) as $file) {
+			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: $file));
 		}
 
 		// A header, so it follows the overrides and custom CSS links: it must

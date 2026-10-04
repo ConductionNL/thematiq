@@ -1064,7 +1064,18 @@ OC.L10N.register(
         "Received": "Received",
         "Completed": "Completed",
         "Waiting": "Waiting",
-        "Overdue": "Overdue"
+        "Overdue": "Overdue",
+        "The selected entry's label and icon, on the wash Nextcloud 34 and later draw": "The selected entry's label and icon, on the wash Nextcloud 34 and later draw",
+        "The count badge of a navigation entry": "The count badge of a navigation entry",
+        "The shadow under cards inside it": "The shadow under cards inside it",
+        "The surface cards sit on, not the cards themselves": "The surface cards sit on, not the cards themselves",
+        "NcCounterBubble, the favourite star and status pills": "NcCounterBubble, the favourite star and status pills",
+        "The light tint of the info pill": "The light tint of the info pill",
+        "Its label": "Its label",
+        "The light tint of the success pill": "The light tint of the success pill",
+        "The light tint of the warning pill": "The light tint of the warning pill",
+        "The light tint of the error pill": "The light tint of the error pill",
+        "status pills": "status pills"
     },
     "nplurals=2; plural=(n != 1);"
 )

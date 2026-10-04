@@ -105,10 +105,7 @@ class LayoutController extends Controller {
 				'status' => 'ok',
 				'workplaceLayout' => $workplaceLayout,
 				'brandStripe' => $brandStripe,
-				'resolved' => [
-					'workplaceLayout' => $this->layoutOptions->workplaceLayout(tokenSet: $tokenSet),
-					'brandStripe' => $this->layoutOptions->brandStripe(tokenSet: $tokenSet),
-				],
+				'resolved' => $this->layoutOptions->resolved(tokenSet: $tokenSet),
 			]
 		);
 	}//end save()

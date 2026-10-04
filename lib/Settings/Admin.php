@@ -190,10 +190,6 @@ class Admin implements IDelegatedSettings {
 		$hideSlogan = $this->isFlagOn(key: 'hide_slogan');
 		$showMenuLabels = $this->isFlagOn(key: 'show_menu_labels');
 
-		// The administrator's own layout choices, as stored: empty means the
-		// option follows the active token set (see LayoutOptionsService).
-		$layoutOptions = new LayoutOptionsService(config: $this->config, designSystemService: $this->designSystemService);
-
 		// Whether the brand primary overrules every component token it used to
 		// drive. OFF by default, and that costs nothing visually: with no
 		// per-component value stored, the component tokens already resolve to the
@@ -262,8 +258,6 @@ class Admin implements IDelegatedSettings {
 				'currentDesignSystem' => $currentDesignSystem,
 				'hideSlogan' => $hideSlogan,
 				'showMenuLabels' => $showMenuLabels,
-				'workplaceLayout' => $layoutOptions->workplaceLayoutSetting(),
-				'brandStripe' => $layoutOptions->brandStripeSetting(),
 				'primaryDrivesComponents' => $drivesComponents,
 				'darkVariantsEnabled' => $darkVariantsEnabled,
 				'marianneEnabled' => $marianneEnabled,
@@ -278,9 +272,27 @@ class Admin implements IDelegatedSettings {
 				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
 				// can be screenshotted from a running instance. Nothing else changes.
 				'mockUi' => ($this->request->getParam('mock') === '1'),
-			] + $this->environmentParams() + $this->documentationParams(designSystem: $currentDesignSystem)
+			] + $this->environmentParams() + $this->layoutParams() + $this->documentationParams(designSystem: $currentDesignSystem)
 		);
 	}//end getForm()
+
+	/**
+	 * The administrator's own layout choices, as stored. An empty value means
+	 * the option follows the active token set (see LayoutOptionsService).
+	 *
+	 * @return array{workplaceLayout: string, brandStripe: string} The template parameters.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 */
+	private function layoutParams(): array {
+		$layoutOptions = new LayoutOptionsService(config: $this->config, designSystemService: $this->designSystemService);
+
+		return [
+			'workplaceLayout' => $layoutOptions->workplaceLayoutSetting(),
+			'brandStripe' => $layoutOptions->brandStripeSetting(),
+		];
+	}//end layoutParams()
 
 	/**
 	 * The environment config.php declares, shown read-only, and the command

@@ -1064,7 +1064,18 @@ OC.L10N.register(
         "Received": "Ontvangen",
         "Completed": "Afgehandeld",
         "Waiting": "Wacht op reactie",
-        "Overdue": "Termijn verlopen"
+        "Overdue": "Termijn verlopen",
+        "The selected entry's label and icon, on the wash Nextcloud 34 and later draw": "Het label en het pictogram van het gekozen item, op het vlak dat Nextcloud 34 en later tekenen",
+        "The count badge of a navigation entry": "De teller van een item in de navigatie",
+        "The shadow under cards inside it": "De schaduw onder kaarten erin",
+        "The surface cards sit on, not the cards themselves": "Het vlak waar kaarten op liggen, niet de kaarten zelf",
+        "NcCounterBubble, the favourite star and status pills": "NcCounterBubble, de favorietenster en statuslabels",
+        "The light tint of the info pill": "De lichte tint van het infolabel",
+        "Its label": "De tekst erop",
+        "The light tint of the success pill": "De lichte tint van het succeslabel",
+        "The light tint of the warning pill": "De lichte tint van het waarschuwingslabel",
+        "The light tint of the error pill": "De lichte tint van het foutlabel",
+        "status pills": "statuslabels"
     },
     "nplurals=2; plural=(n != 1);"
 )

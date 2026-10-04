@@ -195,6 +195,46 @@ class LayoutOptionsService {
 	}//end brandStripe()
 
 	/**
+	 * What a page rendered with this token set resolves to, for a client.
+	 *
+	 * @param string $tokenSet The token set the page renders with.
+	 *
+	 * @return array{workplaceLayout: string, brandStripe: bool} The resolved layout and stripe.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 */
+	public function resolved(string $tokenSet): array {
+		return [
+			'workplaceLayout' => $this->workplaceLayout(tokenSet: $tokenSet),
+			'brandStripe' => $this->brandStripe(tokenSet: $tokenSet),
+		];
+	}//end resolved()
+
+	/**
+	 * The conditional stylesheets a page rendered with this token set loads,
+	 * in cascade order, as paths under `css/` without the extension.
+	 *
+	 * @param string $tokenSet The token set the page renders with.
+	 *
+	 * @return array<int, string> Zero, one or both of `workplace-layout` and `brand-stripe`.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
+	 */
+	public function stylesheets(string $tokenSet): array {
+		$files = [];
+		if ($this->workplaceLayout(tokenSet: $tokenSet) === self::LAYOUT_LIGHT) {
+			$files[] = 'workplace-layout';
+		}
+
+		if ($this->brandStripe(tokenSet: $tokenSet) === true) {
+			$files[] = 'brand-stripe';
+		}
+
+		return $files;
+	}//end stylesheets()
+
+	/**
 	 * Store the workplace layout choice.
 	 *
 	 * @param string $layout `default`, `light`, or the empty string to follow the set again.
