@@ -451,6 +451,16 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 	--nldesign-color-on-surface: var(--color-primary-element-text);
 }
 
+/* The wash keeps the main text colour, computed on the entry itself, so a
+ * set's `--nldesign-component-navigation-active-color` (component-scopes.css,
+ * navigation-active-entry) reaches the label. Without this the entry would
+ * inherit the navigation's value and lose it. */
+#app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+#app-navigation-vue .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+.app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active {
+	--nldesign-color-on-surface: var(--color-main-text);
+}
+
 /* Underlining is for links in prose. `a { text-decoration: underline }` in
    theme.css carries `!important` at specificity (0,0,1), so the navigation
    needs an id-level rule of its own to opt out. */

@@ -46,7 +46,10 @@ const SETS = JSON.parse(read('token-sets.json')).filter(
 )
 
 /** The selected entry as Nextcloud 34 and 35 render it. */
-const ENTRY = '#app-navigation-vue .app-navigation-entry.active'
+const ENTRY_SELECTORS = [
+	'#app-navigation-vue .app-navigation-entry.active',
+	'#app-navigation-vue .app-navigation-entry:not(.app-navigation-entry--legacy).active',
+]
 const NAVIGATION = '#app-navigation-vue'
 
 /** The wash shares: at rest and hovered. */
@@ -230,7 +233,7 @@ function ratio(a, b) {
 }
 
 /**
- * The stylesheets a set loads, in order.
+ * The stylesheets a set loads, in order (CssInjectionService::layers).
  *
  * @param {object} set The token-sets.json entry.
  * @return {string[]} App-relative paths.
@@ -248,27 +251,59 @@ function bundle(set) {
 	if (exists(`css/tokens/dark/${set.id}.css`)) {
 		files.push(`css/tokens/dark/${set.id}.css`)
 	}
+	// CssInjectionService appends these after the set, in this order.
+	files.push(
+		'css/icon-contrast.css',
+		'css/error-contrast.css',
+		'css/theme-scopes.css',
+		'css/component-scopes.css',
+	)
 	return files
 }
 
 /**
- * The label colour of the selected entry: what the entry hands its text
- * through `--nldesign-color-on-surface`, else what the navigation hands it,
- * else Nextcloud's own `--color-main-text`.
+ * The custom properties one level down: a rule's declarations, each resolved
+ * against the level above (the scoped `--thematiq-global-*` fallbacks are
+ * computed at :root, so resolving against the parent keeps them finite).
+ *
+ * @param {Record<string, string>} parent The level above.
+ * @param {Record<string, string>} declared The level's own declarations.
+ * @return {Record<string, string>} The level's variables.
+ */
+function level(parent, declared) {
+	const own = Object.entries(declared).filter(([name]) => name.startsWith('--'))
+	// First against the level above, then once more so a declaration that
+	// reads another one redeclared on the same element sees that one, as
+	// var() does. A self-reference keeps the level above's value.
+	const first = { ...parent }
+	for (const [name, value] of own) {
+		first[name] = resolve(value, parent)
+	}
+	const out = { ...first }
+	for (const [name, value] of own) {
+		out[name] = resolve(value, { ...first, [name]: parent[name] })
+	}
+	return out
+}
+
+/**
+ * The variables on the selected entry: body, then the navigation's scope,
+ * then the entry's own (Nextcloud 34+ renders it without `--legacy`).
  *
  * @param {string[]} files The bundle.
  * @param {object} env The environment.
  * @param {Record<string, string>} vars The body-level variables.
- * @return {string} The label colour.
+ * @return {Record<string, string>} The entry's variables.
  */
-function label(files, env, vars) {
-	const entry = cascade(files, env, (s) => s.trim() === ENTRY)
-	const nav = cascade(files, env, (s) => s.trim() === NAVIGATION)
-	const value =
-		entry['--nldesign-color-on-surface']
-		?? nav['--nldesign-color-on-surface']
-		?? 'var(--color-main-text)'
-	return resolve(value, vars)
+function entryVars(files, env, vars) {
+	const nav = level(
+		vars,
+		cascade(files, env, (s) => s.trim() === NAVIGATION),
+	)
+	return level(
+		nav,
+		cascade(files, env, (s) => ENTRY_SELECTORS.includes(s.trim())),
+	)
 }
 
 /**
@@ -281,11 +316,17 @@ function label(files, env, vars) {
 function failures(set, env) {
 	const files = bundle(set)
 	const vars = cascade(files, env, (s) => reachesBody(s, env))
-	const text = label(files, env, vars)
+	const entry = entryVars(files, env, vars)
+	// The label reads `--nldesign-color-on-surface` where nldesign sets it,
+	// else Nextcloud's `--color-main-text`.
+	const text = resolve(
+		entry['--nldesign-color-on-surface'] ?? entry['--color-main-text'],
+		entry,
+	)
 	const page = vars['--color-main-background']
 		? resolve(vars['--color-main-background'], vars)
 		: env.page
-	const element = resolve('var(--color-primary-element)', vars)
+	const element = resolve(entry['--color-primary-element'], entry)
 	const out = []
 	for (const [state, share] of Object.entries(WASHES)) {
 		const ground = wash(element, share, page)
@@ -321,6 +362,23 @@ describe('the selected navigation entry label (thematiq#1051)', () => {
 			expect(all).toEqual({})
 		})
 	}
+
+	it("hands a set's navigation-active-color to the label", () => {
+		const set = SETS.find((s) => s.id === 'zuiddrecht')
+		expect(set).toBeDefined()
+		const files = bundle(set)
+		const env = ENVIRONMENTS.light
+		const vars = cascade(files, env, (s) => reachesBody(s, env))
+		const entry = entryVars(files, env, vars)
+		expect(
+			resolve(entry['--nldesign-color-on-surface'], entry).toLowerCase(),
+		).toBe(
+			resolve(
+				'var(--nldesign-component-navigation-active-color)',
+				vars,
+			).toLowerCase(),
+		)
+	})
 
 	it('keeps the solid fill label on legacy entries', () => {
 		const files = bundle({ id: 'utrecht', design_system: 'nldesign' })
