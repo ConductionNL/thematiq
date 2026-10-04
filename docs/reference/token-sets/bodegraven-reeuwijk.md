@@ -2,151 +2,149 @@
 
 # Gemeente Bodegraven-Reeuwijk
 
-Token set `bodegraven-reeuwijk`: 152 declared by this set, 158 from the defaults layer.
+Token set `bodegraven-reeuwijk`: 210 declared by this set, 127 from the defaults layer.
 
-Contrast: primary text on primary 10.20:1, primary on background 10.20:1 (pass).
+Contrast: primary text on primary 5.57:1, primary on background 5.57:1 (pass).
 
 ## Colours (Kleuren)
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
-| `--nldesign-color-background-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e0e1e2%22%2F%3E%3C%2Fsvg%3E) `#e0e1e2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232c2e2f%22%2F%3E%3C%2Fsvg%3E) `#2c2e2f` | defaults | Background dark, Table header background |
-| `--nldesign-color-background-darker` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0d1d2%22%2F%3E%3C%2Fsvg%3E) `#d0d1d2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233a3b3c%22%2F%3E%3C%2Fsvg%3E) `#3a3b3c` | defaults | Background darker |
-| `--nldesign-color-background-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e8e9ea%22%2F%3E%3C%2Fsvg%3E) `#e8e9ea` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23252728%22%2F%3E%3C%2Fsvg%3E) `#252728` | defaults | Main background color |
-| `--nldesign-color-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b4b4b4%22%2F%3E%3C%2Fsvg%3E) `#b4b4b4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | Border color, Select border, Table row rule, Text input border, `--nldesign-component-separator-border-color` |
-| `--nldesign-color-border-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23929292%22%2F%3E%3C%2Fsvg%3E) `#929292` | defaults | Border dark, Border max contrast |
+| `--nldesign-color-background-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | Background dark, Table header background |
+| `--nldesign-color-background-darker` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | Background darker |
+| `--nldesign-color-background-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | Main background color |
+| `--nldesign-color-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | Border color, Select border, Table row rule, Text input border, `--nldesign-component-separator-border-color` |
+| `--nldesign-color-border-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | Border dark, Border max contrast |
 | `--nldesign-color-button-primary-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23154273%22%2F%3E%3C%2Fsvg%3E) `#154273` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | |
 | `--nldesign-color-button-primary-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23154273%22%2F%3E%3C%2Fsvg%3E) `#154273` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | |
 | `--nldesign-color-button-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d5499%22%2F%3E%3C%2Fsvg%3E) `#1d5499` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236397da%22%2F%3E%3C%2Fsvg%3E) `#6397da` | defaults | |
 | `--nldesign-color-button-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
-| `--nldesign-color-error` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d52b1e%22%2F%3E%3C%2Fsvg%3E) `#d52b1e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d83d32%22%2F%3E%3C%2Fsvg%3E) `#d83d32` | defaults | Border error, Element error, Error color, Text error, Text input invalid |
-| `--nldesign-color-error-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238b1a15%22%2F%3E%3C%2Fsvg%3E) `#8b1a15` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e2726d%22%2F%3E%3C%2Fsvg%3E) `#e2726d` | defaults | Error hover |
-| `--nldesign-color-error-rgb` | `213, 43, 30` | `216, 61, 50` | defaults | Error text color |
-| `--nldesign-color-favorite` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e17000%22%2F%3E%3C%2Fsvg%3E) `#e17000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f48c25%22%2F%3E%3C%2Fsvg%3E) `#f48c25` | defaults | Background blur filter |
-| `--nldesign-color-focus` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%20123%2C%20199%2C%200.5%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 123, 199, 0.5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf580%22%2F%3E%3C%2Fsvg%3E) `#39adf580` | defaults | Button focus ring |
-| `--nldesign-color-focus-rgb` | `0, 123, 199` | `57, 173, 245` | defaults | |
-| `--nldesign-color-header-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | defaults | |
-| `--nldesign-color-header-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23007bc7%22%2F%3E%3C%2Fsvg%3E) `#007bc7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf5%22%2F%3E%3C%2Fsvg%3E) `#39adf5` | defaults | Info color, Info hover color, Text input focus |
-| `--nldesign-color-info-rgb` | `0, 123, 199` | `57, 173, 245` | defaults | |
-| `--nldesign-color-link` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23154273%22%2F%3E%3C%2Fsvg%3E) `#154273` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | Link colour |
-| `--nldesign-color-link-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23007bc7%22%2F%3E%3C%2Fsvg%3E) `#007bc7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf5%22%2F%3E%3C%2Fsvg%3E) `#39adf5` | defaults | Link hover colour |
-| `--nldesign-color-link-visited` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2342145f%22%2F%3E%3C%2Fsvg%3E) `#42145f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c392e3%22%2F%3E%3C%2Fsvg%3E) `#c392e3` | defaults | `--nldesign-component-link-visited-color` |
+| `--nldesign-color-error` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d70d0d%22%2F%3E%3C%2Fsvg%3E) `#d70d0d` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e72e2e%22%2F%3E%3C%2Fsvg%3E) `#e72e2e` | this set | Border error, Element error, Error color, Text error, Text input invalid |
+| `--nldesign-color-error-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c20c0c%22%2F%3E%3C%2Fsvg%3E) `#c20c0c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e93f3f%22%2F%3E%3C%2Fsvg%3E) `#e93f3f` | this set | Error hover |
+| `--nldesign-color-error-rgb` | `215, 13, 13` | `231, 46, 46` | this set | Error text color |
+| `--nldesign-color-favorite` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f9cf00%22%2F%3E%3C%2Fsvg%3E) `#f9cf00` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f3cd12%22%2F%3E%3C%2Fsvg%3E) `#f3cd12` | this set | Background blur filter |
+| `--nldesign-color-focus` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%20102%2C%20204%2C%200.5%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 102, 204, 0.5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f480%22%2F%3E%3C%2Fsvg%3E) `#3595f480` | this set | Button focus ring |
+| `--nldesign-color-focus-rgb` | `0, 102, 204` | `53, 149, 244` | this set | |
+| `--nldesign-color-header-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--nldesign-color-header-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e87%22%2F%3E%3C%2Fsvg%3E) `#2d2e87` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237879d2%22%2F%3E%3C%2Fsvg%3E) `#7879d2` | this set | |
+| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | Info color, Info hover color, Text input focus |
+| `--nldesign-color-info-rgb` | `0, 102, 204` | `53, 149, 244` | this set | |
+| `--nldesign-color-link` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | Link colour |
+| `--nldesign-color-link-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e86%22%2F%3E%3C%2Fsvg%3E) `#2d2e86` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237576ca%22%2F%3E%3C%2Fsvg%3E) `#7576ca` | this set | Link hover colour |
+| `--nldesign-color-link-visited` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | `--nldesign-component-link-visited-color` |
 | `--nldesign-color-logo-background` | `transparent` | | defaults | |
-| `--nldesign-color-nav-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | defaults | |
-| `--nldesign-color-placeholder-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233f3f3f%22%2F%3E%3C%2Fsvg%3E) `#3f3f3f` | defaults | Placeholder dark |
-| `--nldesign-color-placeholder-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | defaults | Placeholder light |
-| `--nldesign-color-primary` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23154273%22%2F%3E%3C%2Fsvg%3E) `#154273` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239bc2ed%22%2F%3E%3C%2Fsvg%3E) `#9bc2ed` | defaults | Badge background, Primary button background, Primary color, Primary element color, Primary element light text and 7 more |
-| `--nldesign-color-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d5499%22%2F%3E%3C%2Fsvg%3E) `#1d5499` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d5499%22%2F%3E%3C%2Fsvg%3E) `#1d5499` | defaults | Primary button hover, Primary element hover, Primary hover color |
-| `--nldesign-color-primary-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e8f0f8%22%2F%3E%3C%2Fsvg%3E) `#e8f0f8` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23112131%22%2F%3E%3C%2Fsvg%3E) `#112131` | defaults | Primary element light, Tertiary button hover, `--color-primary-element-text-dark` |
-| `--nldesign-color-primary-light-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4e4f2%22%2F%3E%3C%2Fsvg%3E) `#d4e4f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23172d41%22%2F%3E%3C%2Fsvg%3E) `#172d41` | defaults | Primary element light hover, Primary light hover, Tertiary button pressed |
-| `--nldesign-color-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | defaults | Badge number, Primary button label, Primary element text, Primary text color |
-| `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339870c%22%2F%3E%3C%2Fsvg%3E) `#39870c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239ceb6f%22%2F%3E%3C%2Fsvg%3E) `#9ceb6f` | defaults | Border success, Element success, Success color, Text success |
-| `--nldesign-color-success-rgb` | `57, 135, 12` | `156, 235, 111` | defaults | Success hover color |
-| `--nldesign-color-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | Body text colour, Main text color, Table header label, `--nldesign-component-form-field-label-color`, `--nldesign-component-heading-1-color` and 8 more |
-| `--nldesign-color-text-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | Muted text default color |
-| `--nldesign-color-text-muted` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | Text lighter, Text max contrast |
-| `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e17000%22%2F%3E%3C%2Fsvg%3E) `#e17000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f48c25%22%2F%3E%3C%2Fsvg%3E) `#f48c25` | defaults | Element warning, Text warning, Warning color |
-| `--nldesign-color-warning-rgb` | `225, 112, 0` | `244, 140, 37` | defaults | Warning hover color |
+| `--nldesign-color-nav-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--nldesign-color-placeholder-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | Placeholder dark |
+| `--nldesign-color-placeholder-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | Placeholder light |
+| `--nldesign-color-primary` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234da6ff%22%2F%3E%3C%2Fsvg%3E) `#4da6ff` | this set | Badge background, Primary button background, Primary color, Primary element color, Primary element light text and 7 more |
+| `--nldesign-color-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23005cb8%22%2F%3E%3C%2Fsvg%3E) `#005cb8` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23005cb8%22%2F%3E%3C%2Fsvg%3E) `#005cb8` | this set | Primary button hover, Primary element hover, Primary hover color |
+| `--nldesign-color-primary-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e6f0fa%22%2F%3E%3C%2Fsvg%3E) `#e6f0fa` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230d2135%22%2F%3E%3C%2Fsvg%3E) `#0d2135` | this set | Primary element light, Tertiary button hover, `--color-primary-element-text-dark` |
+| `--nldesign-color-primary-light-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cce0f5%22%2F%3E%3C%2Fsvg%3E) `#cce0f5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23122d4a%22%2F%3E%3C%2Fsvg%3E) `#122d4a` | this set | Primary element light hover, Primary light hover, Tertiary button pressed |
+| `--nldesign-color-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | this set | Badge number, Primary button label, Primary element text, Primary text color |
+| `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339870c%22%2F%3E%3C%2Fsvg%3E) `#39870c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239ceb6f%22%2F%3E%3C%2Fsvg%3E) `#9ceb6f` | this set | Border success, Element success, Success color, Text success |
+| `--nldesign-color-success-rgb` | `57, 135, 12` | `156, 235, 111` | this set | Success hover color |
+| `--nldesign-color-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1b%22%2F%3E%3C%2Fsvg%3E) `#1d1d1b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | this set | Body text colour, Main text color, Table header label, `--nldesign-component-form-field-label-color`, `--nldesign-component-heading-1-color` and 8 more |
+| `--nldesign-color-text-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | Muted text default color |
+| `--nldesign-color-text-muted` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | this set | Text lighter, Text max contrast |
+| `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a65600%22%2F%3E%3C%2Fsvg%3E) `#a65600` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f6a854%22%2F%3E%3C%2Fsvg%3E) `#f6a854` | this set | Element warning, Text warning, Warning color |
+| `--nldesign-color-warning-rgb` | `166, 86, 0` | `246, 168, 84` | this set | Warning hover color |
 | `--nldesign-component-badge-background-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
 | `--nldesign-component-badge-color` | `var(
 		--nldesign-color-primary-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | defaults | |
 | `--nldesign-component-button-active-background-color` | `var(
 		--nldesign-color-primary-light-hover
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23172d41%22%2F%3E%3C%2Fsvg%3E) `#172d41` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23122d4a%22%2F%3E%3C%2Fsvg%3E) `#122d4a` | defaults | |
 | `--nldesign-component-button-active-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238cb9ea%22%2F%3E%3C%2Fsvg%3E) `#8cb9ea` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233d9eff%22%2F%3E%3C%2Fsvg%3E) `#3d9eff` | defaults | |
 | `--nldesign-component-button-background-color` | `transparent` | | defaults | |
 | `--nldesign-component-button-border-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | |
-| `--nldesign-component-button-color` | `var(--nldesign-color-primary)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238cb9ea%22%2F%3E%3C%2Fsvg%3E) `#8cb9ea` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
+| `--nldesign-component-button-color` | `var(--nldesign-color-primary)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233d9eff%22%2F%3E%3C%2Fsvg%3E) `#3d9eff` | defaults | |
 | `--nldesign-component-button-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | defaults | |
 | `--nldesign-component-button-disabled-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b4b4b4%22%2F%3E%3C%2Fsvg%3E) `#b4b4b4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
 | `--nldesign-component-button-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
 | `--nldesign-component-button-focus-border-color` | `var(
 		--nldesign-color-focus
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf580%22%2F%3E%3C%2Fsvg%3E) `#39adf580` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f480%22%2F%3E%3C%2Fsvg%3E) `#3595f480` | defaults | |
 | `--nldesign-component-button-hover-background-color` | `var(
 		--nldesign-color-primary-light
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23112131%22%2F%3E%3C%2Fsvg%3E) `#112131` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230d2135%22%2F%3E%3C%2Fsvg%3E) `#0d2135` | defaults | |
 | `--nldesign-component-button-hover-border-color` | `var(
 		--nldesign-color-primary-hover
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236397da%22%2F%3E%3C%2Fsvg%3E) `#6397da` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23459df5%22%2F%3E%3C%2Fsvg%3E) `#459df5` | defaults | |
 | `--nldesign-component-button-hover-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238cb9ea%22%2F%3E%3C%2Fsvg%3E) `#8cb9ea` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233d9eff%22%2F%3E%3C%2Fsvg%3E) `#3d9eff` | defaults | |
 | `--nldesign-component-button-primary-action-background-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
 | `--nldesign-component-button-primary-action-border-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
 | `--nldesign-component-button-primary-action-color` | `var(
 		--nldesign-color-primary-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | defaults | |
 | `--nldesign-component-button-primary-action-hover-background-color` | `var(
 		--nldesign-color-primary-hover
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236397da%22%2F%3E%3C%2Fsvg%3E) `#6397da` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23459df5%22%2F%3E%3C%2Fsvg%3E) `#459df5` | defaults | |
 | `--nldesign-component-button-primary-action-hover-color` | `var(
 		--nldesign-color-primary-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | defaults | |
 | `--nldesign-component-button-secondary-action-background-color` | `transparent` | | defaults | |
 | `--nldesign-component-button-secondary-action-border-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2381afe2%22%2F%3E%3C%2Fsvg%3E) `#81afe2` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
 | `--nldesign-component-button-secondary-action-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238cb9ea%22%2F%3E%3C%2Fsvg%3E) `#8cb9ea` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233d9eff%22%2F%3E%3C%2Fsvg%3E) `#3d9eff` | defaults | |
 | `--nldesign-component-button-secondary-action-hover-background-color` | `var(
 		--nldesign-color-primary-light
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23112131%22%2F%3E%3C%2Fsvg%3E) `#112131` | defaults | |
-| `--nldesign-component-form-field-label-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230d2135%22%2F%3E%3C%2Fsvg%3E) `#0d2135` | defaults | |
+| `--nldesign-component-form-field-label-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
 | `--nldesign-component-form-fieldset-border-color` | `var(
 		--nldesign-color-border
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
-| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
-| `--nldesign-component-form-select-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf5%22%2F%3E%3C%2Fsvg%3E) `#39adf5` | defaults | |
-| `--nldesign-component-heading-1-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-2-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-3-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-4-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-5-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-6-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-link-color` | `var(--nldesign-color-link)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238cb9ea%22%2F%3E%3C%2Fsvg%3E) `#8cb9ea` | defaults | |
-| `--nldesign-component-link-hover-color` | `var(--nldesign-color-link-hover)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233db5ff%22%2F%3E%3C%2Fsvg%3E) `#3db5ff` | defaults | |
-| `--nldesign-component-link-visited-color` | `var(--nldesign-color-link-visited)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cea0eb%22%2F%3E%3C%2Fsvg%3E) `#cea0eb` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
+| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
+| `--nldesign-component-form-select-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
+| `--nldesign-component-heading-1-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
+| `--nldesign-component-heading-2-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
+| `--nldesign-component-heading-3-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
+| `--nldesign-component-heading-4-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
+| `--nldesign-component-heading-5-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
+| `--nldesign-component-heading-6-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
+| `--nldesign-component-heading-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
+| `--nldesign-component-link-color` | `var(--nldesign-color-link)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233d9eff%22%2F%3E%3C%2Fsvg%3E) `#3d9eff` | defaults | |
+| `--nldesign-component-link-hover-color` | `var(--nldesign-color-link-hover)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23797ad2%22%2F%3E%3C%2Fsvg%3E) `#797ad2` | defaults | |
+| `--nldesign-component-link-visited-color` | `var(--nldesign-color-link-visited)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233d9eff%22%2F%3E%3C%2Fsvg%3E) `#3d9eff` | defaults | |
 | `--nldesign-component-ordered-list-color` | `var(
 		--nldesign-color-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-paragraph-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-separator-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
-| `--nldesign-component-table-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
-| `--nldesign-component-table-header-background-color` | `var(
-		--nldesign-color-background-dark
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232c2e2f%22%2F%3E%3C%2Fsvg%3E) `#2c2e2f` | defaults | |
-| `--nldesign-component-table-header-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
+| `--nldesign-component-paragraph-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
+| `--nldesign-component-separator-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
+| `--nldesign-component-table-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
+| `--nldesign-component-table-header-background-color` | `transparent` | | this set | |
+| `--nldesign-component-table-header-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | this set | |
 | `--nldesign-component-table-row-hover-background-color` | `var(
 		--nldesign-color-background-hover
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23252728%22%2F%3E%3C%2Fsvg%3E) `#252728` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | defaults | |
 | `--nldesign-component-textbox-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | defaults | |
-| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23939393%22%2F%3E%3C%2Fsvg%3E) `#939393` | defaults | |
-| `--nldesign-component-textbox-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
+| `--nldesign-component-textbox-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
 | `--nldesign-component-textbox-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | defaults | |
 | `--nldesign-component-textbox-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
-| `--nldesign-component-textbox-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339adf5%22%2F%3E%3C%2Fsvg%3E) `#39adf5` | defaults | |
+| `--nldesign-component-textbox-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
 | `--nldesign-component-textbox-hover-border-color` | `var(
 		--nldesign-color-border-dark
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23929292%22%2F%3E%3C%2Fsvg%3E) `#929292` | defaults | |
-| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d83d32%22%2F%3E%3C%2Fsvg%3E) `#d83d32` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | defaults | |
+| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e72e2e%22%2F%3E%3C%2Fsvg%3E) `#e72e2e` | defaults | |
 | `--nldesign-component-unordered-list-color` | `var(
 		--nldesign-color-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | defaults | |
 
 ## Typography (Typografie)
 
@@ -158,19 +156,21 @@ Contrast: primary text on primary 10.20:1, primary on background 10.20:1 (pass).
 | `--nldesign-component-button-font-size` | `1rem` | | defaults | |
 | `--nldesign-component-button-font-weight` | `700` | | defaults | |
 | `--nldesign-component-form-field-label-font-weight` | `700` | | defaults | |
-| `--nldesign-component-heading-1-font-size` | `32px` | | this set | |
-| `--nldesign-component-heading-1-font-weight` | `700` | | this set | |
-| `--nldesign-component-heading-1-line-height` | `38.4px` | | this set | |
-| `--nldesign-component-heading-2-font-size` | `23px` | | this set | |
+| `--nldesign-component-heading-1-font-size` | `2.5rem` | | defaults | |
+| `--nldesign-component-heading-1-font-weight` | `var(
+		--nldesign-component-heading-font-weight
+	)` | | defaults | |
+| `--nldesign-component-heading-1-line-height` | `1.2` | | defaults | |
+| `--nldesign-component-heading-2-font-size` | `2rem` | | defaults | |
 | `--nldesign-component-heading-2-font-weight` | `var(
 		--nldesign-component-heading-font-weight
 	)` | | defaults | |
-| `--nldesign-component-heading-2-line-height` | `34.5px` | | this set | |
-| `--nldesign-component-heading-3-font-size` | `20px` | | this set | |
+| `--nldesign-component-heading-2-line-height` | `1.25` | | defaults | |
+| `--nldesign-component-heading-3-font-size` | `1.5rem` | | defaults | |
 | `--nldesign-component-heading-3-font-weight` | `var(
 		--nldesign-component-heading-font-weight
 	)` | | defaults | |
-| `--nldesign-component-heading-3-line-height` | `30px` | | this set | |
+| `--nldesign-component-heading-3-line-height` | `1.3` | | defaults | |
 | `--nldesign-component-heading-4-font-size` | `1.25rem` | | defaults | |
 | `--nldesign-component-heading-4-font-weight` | `var(
 		--nldesign-component-heading-font-weight
@@ -191,20 +191,19 @@ Contrast: primary text on primary 10.20:1, primary on background 10.20:1 (pass).
 | `--nldesign-component-link-font-weight` | `var(
 		--nldesign-font-weight-default
 	)` | | defaults | |
-| `--nldesign-component-link-text-decoration` | `underline` | | this set | |
+| `--nldesign-component-link-text-decoration` | `underline` | | defaults | |
 | `--nldesign-component-ordered-list-font-size` | `1rem` | | defaults | |
 | `--nldesign-component-ordered-list-line-height` | `1.5` | | defaults | |
 | `--nldesign-component-paragraph-font-family` | `var(--nldesign-font-family)` | | defaults | |
-| `--nldesign-component-paragraph-font-size` | `16px` | | this set | |
+| `--nldesign-component-paragraph-font-size` | `1rem` | | defaults | |
 | `--nldesign-component-paragraph-font-weight` | `var(--nldesign-font-weight-default)` | | defaults | |
 | `--nldesign-component-paragraph-line-height` | `1.5` | | defaults | |
-| `--nldesign-component-table-header-font-weight` | `700` | | this set | |
+| `--nldesign-component-table-header-font-weight` | `400` | | this set | |
 | `--nldesign-component-textbox-font-family` | `var(--nldesign-font-family)` | | defaults | |
 | `--nldesign-component-textbox-font-size` | `1rem` | | defaults | |
 | `--nldesign-component-unordered-list-font-size` | `1rem` | | defaults | |
 | `--nldesign-component-unordered-list-line-height` | `1.5` | | defaults | |
-| `--nldesign-font-family` | `'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-		Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif` | | defaults | Font family, `--nldesign-component-button-font-family`, `--nldesign-component-textbox-font-family` |
+| `--nldesign-font-family` | `Open Sans, sans-serif` | | this set | Font family, `--nldesign-component-button-font-family`, `--nldesign-component-textbox-font-family` |
 | `--nldesign-font-weight-default` | `400` | | defaults | Base font size |
 | `--nldesign-font-weight-element` | `500` | | defaults | Control font weight |
 | `--nldesign-font-weight-heading` | `700` | | defaults | Heading font weight |
@@ -213,18 +212,18 @@ Contrast: primary text on primary 10.20:1, primary on background 10.20:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
-| `--nldesign-border-radius` | `0` | | defaults | Border radius element, Button corner, Input border width, Select corner, Text input corner |
-| `--nldesign-border-radius-large` | `4px` | | defaults | Container radius |
-| `--nldesign-border-radius-pill` | `100px` | | defaults | Badge shape, Border radius pill |
-| `--nldesign-border-radius-rounded` | `0` | | defaults | Border radius rounded |
-| `--nldesign-border-radius-small` | `0` | | defaults | Border radius small |
+| `--nldesign-border-radius` | `8px` | | this set | Border radius element, Button corner, Input border width, Select corner, Text input corner |
+| `--nldesign-border-radius-large` | `8px` | | this set | Container radius |
+| `--nldesign-border-radius-pill` | `100px` | | this set | Badge shape, Border radius pill |
+| `--nldesign-border-radius-rounded` | `28px` | | this set | Border radius rounded |
+| `--nldesign-border-radius-small` | `4px` | | this set | Border radius small |
 | `--nldesign-component-badge-border-radius` | `var(
 		--nldesign-border-radius-pill
 	)` | | defaults | |
 | `--nldesign-component-badge-padding-block` | `0.125rem` | | defaults | |
 | `--nldesign-component-badge-padding-inline` | `0.5rem` | | defaults | |
-| `--nldesign-component-button-border-radius` | `0` | | this set | |
-| `--nldesign-component-button-border-width` | `0` | | this set | |
+| `--nldesign-component-button-border-radius` | `var(--nldesign-border-radius)` | | defaults | |
+| `--nldesign-component-button-border-width` | `1px` | | defaults | |
 | `--nldesign-component-button-padding-block` | `0.5rem` | | defaults | |
 | `--nldesign-component-button-padding-inline` | `1rem` | | defaults | |
 | `--nldesign-component-form-fieldset-border-width` | `1px` | | defaults | |
@@ -237,7 +236,7 @@ Contrast: primary text on primary 10.20:1, primary on background 10.20:1 (pass).
 | `--nldesign-component-textbox-border-width` | `1px` | | defaults | |
 | `--nldesign-component-textbox-padding-block` | `0.5rem` | | defaults | |
 | `--nldesign-component-textbox-padding-inline` | `0.75rem` | | defaults | |
-| `--nldesign-header-border-bottom` | `0` | | defaults | |
+| `--nldesign-header-border-bottom` | `1px solid #0066cc` | | this set | |
 | `--nldesign-logo-height` | `auto` | | defaults | |
 | `--nldesign-logo-width` | `62px` | | defaults | |
 | `--nldesign-size-lint` | `0px` | | defaults | |
@@ -261,143 +260,170 @@ Contrast: primary text on primary 10.20:1, primary on background 10.20:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
-| `--bodegraven-color-blue-30` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28239%2C%2050%25%2C%2035%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(239, 50%, 35%)` | | this set | |
-| `--bodegraven-color-blue-40` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28210%20100%25%2040%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(210 100% 40%)` | | this set | |
-| `--bodegraven-color-blue-45` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28214%2C%2062%25%2C%2043%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(214, 62%, 43%)` | | this set | |
-| `--bodegraven-color-blue-60` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28214%2C%2070%25%2C%2058%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(214, 70%, 58%)` | | this set | |
-| `--bodegraven-color-dataviz-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23bdcb44%22%2F%3E%3C%2Fsvg%3E) `#bdcb44` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a9b63b%22%2F%3E%3C%2Fsvg%3E) `#a9b63b` | this set | |
-| `--bodegraven-color-dataviz-2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a85dc1%22%2F%3E%3C%2Fsvg%3E) `#a85dc1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238944a0%22%2F%3E%3C%2Fsvg%3E) `#8944a0` | this set | |
-| `--bodegraven-color-dataviz-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374c3c6%22%2F%3E%3C%2Fsvg%3E) `#74c3c6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23408b8d%22%2F%3E%3C%2Fsvg%3E) `#408b8d` | this set | |
-| `--bodegraven-color-dataviz-4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ea9526%22%2F%3E%3C%2Fsvg%3E) `#ea9526` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d2841f%22%2F%3E%3C%2Fsvg%3E) `#d2841f` | this set | |
-| `--bodegraven-color-green-30` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28153%2C%20100%25%2C%2025%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(153, 100%, 25%)` | | this set | |
-| `--bodegraven-color-grey-0` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%280%200%25%200%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(0 0% 0%)` | | this set | |
-| `--bodegraven-color-grey-10` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%2860%2C%204%25%2C%2011%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(60, 4%, 11%)` | | this set | |
-| `--bodegraven-color-grey-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%280%200%25%20100%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(0 0% 100%)` | | this set | |
-| `--bodegraven-color-grey-30` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c0c0c0%22%2F%3E%3C%2Fsvg%3E) `#c0c0c0` | this set | |
-| `--bodegraven-color-grey-40` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28204%2027%25%2037%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(204 27% 37%)` | | this set | |
-| `--bodegraven-typography-sans-serif-font-family` | `Open Sans, sans-serif` | | this set | |
-| `--bodegraven-typography-scale-md-font-size` | `16px` | | this set | |
-| `--bodegraven-typography-scale-md-line-height` | `1.5` | | this set | |
-| `--bodegraven-typography-scale-sm-font-size` | `18px` | | this set | |
-| `--bodegraven-typography-scale-sm-line-height` | `1.35` | | this set | |
-| `--bodegraven-typography-weight-scale-bold-font-weight` | `700` | | this set | |
-| `--bodegraven-typography-weight-scale-normal-font-weight` | `400` | | this set | |
-| `--bodegraven-typography-weight-scale-semi-bold-font-weight` | `500` | | this set | |
-| `--nldesign-article-max-inline-size` | `830px` | | this set | |
-| `--nldesign-color-blue-30` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28239%2C%2050%25%2C%2035%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(239, 50%, 35%)` | | this set | |
-| `--nldesign-color-blue-40` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28210%20100%25%2040%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(210 100% 40%)` | | this set | |
-| `--nldesign-color-blue-45` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28214%2C%2062%25%2C%2043%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(214, 62%, 43%)` | | this set | |
-| `--nldesign-color-blue-60` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28214%2C%2070%25%2C%2058%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(214, 70%, 58%)` | | this set | |
-| `--nldesign-color-dataviz-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23bdcb44%22%2F%3E%3C%2Fsvg%3E) `#bdcb44` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a9b63b%22%2F%3E%3C%2Fsvg%3E) `#a9b63b` | this set | |
-| `--nldesign-color-dataviz-2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a85dc1%22%2F%3E%3C%2Fsvg%3E) `#a85dc1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238944a0%22%2F%3E%3C%2Fsvg%3E) `#8944a0` | this set | |
-| `--nldesign-color-dataviz-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374c3c6%22%2F%3E%3C%2Fsvg%3E) `#74c3c6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23408b8d%22%2F%3E%3C%2Fsvg%3E) `#408b8d` | this set | |
-| `--nldesign-color-dataviz-4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ea9526%22%2F%3E%3C%2Fsvg%3E) `#ea9526` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d2841f%22%2F%3E%3C%2Fsvg%3E) `#d2841f` | this set | |
-| `--nldesign-color-green-30` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28153%2C%20100%25%2C%2025%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(153, 100%, 25%)` | | this set | |
-| `--nldesign-color-grey-0` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%280%200%25%200%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(0 0% 0%)` | | this set | |
-| `--nldesign-color-grey-10` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%2860%2C%204%25%2C%2011%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(60, 4%, 11%)` | | this set | |
-| `--nldesign-color-grey-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%280%200%25%20100%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(0 0% 100%)` | | this set | |
-| `--nldesign-color-grey-30` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c0c0c0%22%2F%3E%3C%2Fsvg%3E) `#c0c0c0` | this set | |
-| `--nldesign-color-grey-40` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl%28204%2027%25%2037%25%29%22%2F%3E%3C%2Fsvg%3E) `hsl(204 27% 37%)` | | this set | |
-| `--nldesign-component-button-margin-inline-end` | `0` | | this set | |
-| `--nldesign-component-button-margin-inline-start` | `0` | | this set | |
-| `--nldesign-component-document-font-size` | `16px` | | this set | |
-| `--nldesign-component-document-line-height` | `1.5` | | this set | |
-| `--nldesign-component-form-input-block-size` | `44px` | | this set | |
-| `--nldesign-component-form-input-border-width` | `1px` | | this set | |
-| `--nldesign-component-form-input-font-size` | `16px` | | this set | |
-| `--nldesign-component-form-input-max-inline-size` | `460px` | | this set | |
-| `--nldesign-component-form-input-padding-block-end` | `10px` | | this set | |
-| `--nldesign-component-form-input-padding-block-start` | `10px` | | this set | |
-| `--nldesign-component-form-input-padding-inline-end` | `15px` | | this set | |
-| `--nldesign-component-form-input-padding-inline-start` | `15px` | | this set | |
-| `--nldesign-component-form-select-border-width` | `1px` | | this set | |
-| `--nldesign-component-form-select-font-size` | `16px` | | this set | |
-| `--nldesign-component-form-select-max-inline-size` | `100%` | | this set | |
-| `--nldesign-component-heading-1-margin-block-end` | `24px` | | this set | |
-| `--nldesign-component-heading-1-margin-block-start` | `0` | | this set | |
-| `--nldesign-component-heading-2-margin-block-end` | `17.25px` | | this set | |
-| `--nldesign-component-heading-2-margin-block-start` | `0` | | this set | |
-| `--nldesign-component-heading-3-margin-block-end` | `5px` | | this set | |
-| `--nldesign-component-heading-3-margin-block-start` | `0` | | this set | |
-| `--nldesign-component-ordered-list-item-margin-block-start` | `0` | | this set | |
-| `--nldesign-component-ordered-list-item-margin-inline-end` | `3.2px` | | this set | |
-| `--nldesign-component-ordered-list-margin-block-end` | `30px` | | this set | |
-| `--nldesign-component-ordered-list-margin-block-start` | `0` | | this set | |
-| `--nldesign-component-page-footer-padding-block-end` | `15px` | | this set | |
-| `--nldesign-component-page-footer-padding-block-start` | `15px` | | this set | |
-| `--nldesign-component-page-footer-padding-inline-end` | `15px` | | this set | |
-| `--nldesign-component-page-footer-padding-inline-start` | `15px` | | this set | |
-| `--nldesign-component-page-header-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e87%22%2F%3E%3C%2Fsvg%3E) `#2d2e87` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237879d2%22%2F%3E%3C%2Fsvg%3E) `#7879d2` | this set | |
-| `--nldesign-component-paragraph-lead-font-size` | `18px` | | this set | |
-| `--nldesign-component-paragraph-lead-font-weight` | `700` | | this set | |
-| `--nldesign-component-paragraph-lead-line-height` | `27px` | | this set | |
-| `--nldesign-component-paragraph-margin-block-end` | `30px` | | this set | |
-| `--nldesign-component-separator-block-size` | `2px` | | this set | |
-| `--nldesign-component-separator-margin-block-end` | `30px` | | this set | |
-| `--nldesign-component-separator-margin-block-start` | `30px` | | this set | |
-| `--nldesign-component-table-cell-padding-block-end` | `8px` | | this set | |
-| `--nldesign-component-table-cell-padding-block-start` | `8px` | | this set | |
-| `--nldesign-component-table-cell-padding-inline-end` | `8px` | | this set | |
-| `--nldesign-component-table-cell-padding-inline-start` | `8px` | | this set | |
-| `--nldesign-component-table-margin-block-end` | `30px` | | this set | |
-| `--nldesign-component-table-row-alternate-odd-background-color` | `transparent` | | this set | |
-| `--nldesign-component-table-row-border-block-end-width` | `1px` | | this set | |
-| `--nldesign-component-textarea-min-block-size` | `100px` | | this set | |
-| `--nldesign-component-unordered-list-item-margin-block-start` | `0` | | this set | |
-| `--nldesign-component-unordered-list-item-margin-inline-end` | `3.2px` | | this set | |
-| `--nldesign-component-unordered-list-margin-block-end` | `30px` | | this set | |
-| `--nldesign-component-unordered-list-margin-block-start` | `0` | | this set | |
-| `--nldesign-component-unordered-list-marker-content` | `■` | | this set | |
-| `--nldesign-main-margin-block-start` | `35px` | | this set | |
-| `--nldesign-main-margin-inline-end` | `35px` | | this set | |
-| `--nldesign-main-margin-inline-start` | `35px` | | this set | |
-| `--nldesign-space-block-2xl` | `28px` | | this set | |
-| `--nldesign-space-block-2xs` | `4px` | | this set | |
-| `--nldesign-space-block-3xl` | `32px` | | this set | |
-| `--nldesign-space-block-3xs` | `0` | | this set | |
-| `--nldesign-space-block-4xl` | `36px` | | this set | |
-| `--nldesign-space-block-5xl` | `40px` | | this set | |
-| `--nldesign-space-block-lg` | `20px` | | this set | |
-| `--nldesign-space-block-md` | `16px` | | this set | |
-| `--nldesign-space-block-sm` | `12px` | | this set | |
-| `--nldesign-space-block-xl` | `24px` | | this set | |
-| `--nldesign-space-block-xs` | `8px` | | this set | |
-| `--nldesign-space-column-2xl` | `28px` | | this set | |
-| `--nldesign-space-column-2xs` | `4px` | | this set | |
-| `--nldesign-space-column-3xl` | `32px` | | this set | |
-| `--nldesign-space-column-3xs` | `0` | | this set | |
-| `--nldesign-space-column-4xl` | `36px` | | this set | |
-| `--nldesign-space-column-5xl` | `40px` | | this set | |
-| `--nldesign-space-column-lg` | `20px` | | this set | |
-| `--nldesign-space-column-md` | `16px` | | this set | |
-| `--nldesign-space-column-sm` | `12px` | | this set | |
-| `--nldesign-space-column-xl` | `24px` | | this set | |
-| `--nldesign-space-column-xs` | `8px` | | this set | |
-| `--nldesign-space-inline-2xl` | `2ch` | | this set | |
-| `--nldesign-space-inline-2xs` | `0.25ch` | | this set | |
-| `--nldesign-space-inline-3xl` | `3ch` | | this set | |
-| `--nldesign-space-inline-3xs` | `0.125ch` | | this set | |
-| `--nldesign-space-inline-lg` | `1.5ch` | | this set | |
-| `--nldesign-space-inline-md` | `1ch` | | this set | |
-| `--nldesign-space-inline-sm` | `0.75ch` | | this set | |
-| `--nldesign-space-inline-xl` | `1.75ch` | | this set | |
-| `--nldesign-space-inline-xs` | `0.5ch` | | this set | |
-| `--nldesign-space-row-2xl` | `28px` | | this set | |
-| `--nldesign-space-row-2xs` | `4px` | | this set | |
-| `--nldesign-space-row-3xl` | `32px` | | this set | |
-| `--nldesign-space-row-3xs` | `0` | | this set | |
-| `--nldesign-space-row-4xl` | `36px` | | this set | |
-| `--nldesign-space-row-5xl` | `40px` | | this set | |
-| `--nldesign-space-row-lg` | `20px` | | this set | |
-| `--nldesign-space-row-md` | `16px` | | this set | |
-| `--nldesign-space-row-sm` | `12px` | | this set | |
-| `--nldesign-space-row-xl` | `24px` | | this set | |
-| `--nldesign-space-row-xs` | `8px` | | this set | |
-| `--nldesign-typography-sans-serif-font-family` | `Open Sans, sans-serif` | | this set | |
-| `--nldesign-typography-scale-md-font-size` | `16px` | | this set | |
-| `--nldesign-typography-scale-md-line-height` | `1.5` | | this set | |
-| `--nldesign-typography-scale-sm-font-size` | `18px` | | this set | |
-| `--nldesign-typography-scale-sm-line-height` | `1.35` | | this set | |
-| `--nldesign-typography-weight-scale-bold-font-weight` | `700` | | this set | |
-| `--nldesign-typography-weight-scale-normal-font-weight` | `400` | | this set | |
-| `--nldesign-typography-weight-scale-semi-bold-font-weight` | `500` | | this set | |
+| `--bodegraven-reeuwijk-color-blue-30` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e86%22%2F%3E%3C%2Fsvg%3E) `#2d2e86` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237576ca%22%2F%3E%3C%2Fsvg%3E) `#7576ca` | this set | |
+| `--bodegraven-reeuwijk-color-blue-40` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | |
+| `--bodegraven-reeuwijk-color-blue-45` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a65b2%22%2F%3E%3C%2Fsvg%3E) `#2a65b2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234f86cd%22%2F%3E%3C%2Fsvg%3E) `#4f86cd` | this set | |
+| `--bodegraven-reeuwijk-color-blue-60` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23498adf%22%2F%3E%3C%2Fsvg%3E) `#498adf` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232965b4%22%2F%3E%3C%2Fsvg%3E) `#2965b4` | this set | |
+| `--bodegraven-reeuwijk-color-dataviz-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23bdcb44%22%2F%3E%3C%2Fsvg%3E) `#bdcb44` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a9b63b%22%2F%3E%3C%2Fsvg%3E) `#a9b63b` | this set | |
+| `--bodegraven-reeuwijk-color-dataviz-2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a85dc1%22%2F%3E%3C%2Fsvg%3E) `#a85dc1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238944a0%22%2F%3E%3C%2Fsvg%3E) `#8944a0` | this set | |
+| `--bodegraven-reeuwijk-color-dataviz-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374c3c6%22%2F%3E%3C%2Fsvg%3E) `#74c3c6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23408b8d%22%2F%3E%3C%2Fsvg%3E) `#408b8d` | this set | |
+| `--bodegraven-reeuwijk-color-dataviz-4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ea9526%22%2F%3E%3C%2Fsvg%3E) `#ea9526` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d2841f%22%2F%3E%3C%2Fsvg%3E) `#d2841f` | this set | |
+| `--bodegraven-reeuwijk-color-green-30` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23008046%22%2F%3E%3C%2Fsvg%3E) `#008046` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2372f8bb%22%2F%3E%3C%2Fsvg%3E) `#72f8bb` | this set | |
+| `--bodegraven-reeuwijk-color-grey-0` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--bodegraven-reeuwijk-color-grey-10` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1b%22%2F%3E%3C%2Fsvg%3E) `#1d1d1b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4d4d2%22%2F%3E%3C%2Fsvg%3E) `#d4d4d2` | this set | |
+| `--bodegraven-reeuwijk-color-grey-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--bodegraven-reeuwijk-color-grey-30` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c0c0c0%22%2F%3E%3C%2Fsvg%3E) `#c0c0c0` | this set | |
+| `--bodegraven-reeuwijk-color-grey-40` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23456378%22%2F%3E%3C%2Fsvg%3E) `#456378` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23839fb3%22%2F%3E%3C%2Fsvg%3E) `#839fb3` | this set | |
+| `--bodegraven-reeuwijk-reeuwijk-color-primary` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | |
+| `--bodegraven-reeuwijk-space-block-2-xl` | `28px` | | this set | |
+| `--bodegraven-reeuwijk-space-block-2-xs` | `4px` | | this set | |
+| `--bodegraven-reeuwijk-space-block-3-xl` | `32px` | | this set | |
+| `--bodegraven-reeuwijk-space-block-3-xs` | `0` | | this set | |
+| `--bodegraven-reeuwijk-space-block-4-xl` | `36px` | | this set | |
+| `--bodegraven-reeuwijk-space-block-5-xl` | `40px` | | this set | |
+| `--bodegraven-reeuwijk-space-block-lg` | `20px` | | this set | |
+| `--bodegraven-reeuwijk-space-block-md` | `16px` | | this set | |
+| `--bodegraven-reeuwijk-space-block-sm` | `12px` | | this set | |
+| `--bodegraven-reeuwijk-space-block-xl` | `24px` | | this set | |
+| `--bodegraven-reeuwijk-space-block-xs` | `8px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-2-xl` | `28px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-2-xs` | `4px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-3-xl` | `32px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-3-xs` | `0` | | this set | |
+| `--bodegraven-reeuwijk-space-column-4-xl` | `36px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-5-xl` | `40px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-lg` | `20px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-md` | `16px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-sm` | `12px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-xl` | `24px` | | this set | |
+| `--bodegraven-reeuwijk-space-column-xs` | `8px` | | this set | |
+| `--bodegraven-reeuwijk-space-inline-2-xl` | `2ch` | | this set | |
+| `--bodegraven-reeuwijk-space-inline-2-xs` | `0.25ch` | | this set | |
+| `--bodegraven-reeuwijk-space-inline-3-xl` | `3ch` | | this set | |
+| `--bodegraven-reeuwijk-space-inline-3-xs` | `0.125ch` | | this set | |
+| `--bodegraven-reeuwijk-space-inline-lg` | `1.5ch` | | this set | |
+| `--bodegraven-reeuwijk-space-inline-md` | `1ch` | | this set | |
+| `--bodegraven-reeuwijk-space-inline-sm` | `0.75ch` | | this set | |
+| `--bodegraven-reeuwijk-space-inline-xl` | `1.75ch` | | this set | |
+| `--bodegraven-reeuwijk-space-inline-xs` | `0.5ch` | | this set | |
+| `--bodegraven-reeuwijk-space-row-2-xl` | `28px` | | this set | |
+| `--bodegraven-reeuwijk-space-row-2-xs` | `4px` | | this set | |
+| `--bodegraven-reeuwijk-space-row-3-xl` | `32px` | | this set | |
+| `--bodegraven-reeuwijk-space-row-3-xs` | `0` | | this set | |
+| `--bodegraven-reeuwijk-space-row-4-xl` | `36px` | | this set | |
+| `--bodegraven-reeuwijk-space-row-5-xl` | `40px` | | this set | |
+| `--bodegraven-reeuwijk-space-row-lg` | `20px` | | this set | |
+| `--bodegraven-reeuwijk-space-row-md` | `16px` | | this set | |
+| `--bodegraven-reeuwijk-space-row-sm` | `12px` | | this set | |
+| `--bodegraven-reeuwijk-space-row-xl` | `24px` | | this set | |
+| `--bodegraven-reeuwijk-space-row-xs` | `8px` | | this set | |
+| `--bodegraven-reeuwijk-typography-sans-serif-font-family` | `Open Sans, sans-serif` | | this set | |
+| `--bodegraven-reeuwijk-typography-scale-md-font-size` | `16px` | | this set | |
+| `--bodegraven-reeuwijk-typography-scale-md-line-height` | `1.5` | | this set | |
+| `--bodegraven-reeuwijk-typography-scale-sm-font-size` | `18px` | | this set | |
+| `--bodegraven-reeuwijk-typography-scale-sm-line-height` | `1.35` | | this set | |
+| `--bodegraven-reeuwijk-typography-weight-scale-bold-font-weight` | `700` | | this set | |
+| `--bodegraven-reeuwijk-typography-weight-scale-normal-font-weight` | `400` | | this set | |
+| `--bodegraven-reeuwijk-typography-weight-scale-semi-bold-font-weight` | `500` | | this set | |
+| `--utrecht-article-max-inline-size` | `830px` | | this set | |
+| `--utrecht-button-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | |
+| `--utrecht-button-border-radius` | `0` | | this set | |
+| `--utrecht-button-border-width` | `0` | | this set | |
+| `--utrecht-button-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-button-focus-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e86%22%2F%3E%3C%2Fsvg%3E) `#2d2e86` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237576ca%22%2F%3E%3C%2Fsvg%3E) `#7576ca` | this set | |
+| `--utrecht-button-font-family` | `Open Sans, sans-serif` | | this set | |
+| `--utrecht-button-font-size` | `16px` | | this set | |
+| `--utrecht-button-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e86%22%2F%3E%3C%2Fsvg%3E) `#2d2e86` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237576ca%22%2F%3E%3C%2Fsvg%3E) `#7576ca` | this set | |
+| `--utrecht-button-margin-block-end` | `8px` | | this set | |
+| `--utrecht-button-margin-block-start` | `8px` | | this set | |
+| `--utrecht-button-margin-inline-end` | `0` | | this set | |
+| `--utrecht-button-margin-inline-start` | `0` | | this set | |
+| `--utrecht-button-secondary-action-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | |
+| `--utrecht-button-secondary-action-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-button-secondary-action-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e86%22%2F%3E%3C%2Fsvg%3E) `#2d2e86` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237576ca%22%2F%3E%3C%2Fsvg%3E) `#7576ca` | this set | |
+| `--utrecht-document-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-document-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1b%22%2F%3E%3C%2Fsvg%3E) `#1d1d1b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | this set | |
+| `--utrecht-document-font-family` | `Open Sans, sans-serif` | | this set | |
+| `--utrecht-form-field-margin-block-end` | `4px` | | this set | |
+| `--utrecht-form-field-margin-block-start` | `4px` | | this set | |
+| `--utrecht-form-input-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | |
+| `--utrecht-form-input-border-width` | `1px` | | this set | |
+| `--utrecht-form-input-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1b%22%2F%3E%3C%2Fsvg%3E) `#1d1d1b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | this set | |
+| `--utrecht-form-input-focus-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e86%22%2F%3E%3C%2Fsvg%3E) `#2d2e86` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237576ca%22%2F%3E%3C%2Fsvg%3E) `#7576ca` | this set | |
+| `--utrecht-form-input-font-family` | `Open Sans, sans-serif` | | this set | |
+| `--utrecht-form-input-font-size` | `16px` | | this set | |
+| `--utrecht-form-input-hover-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e86%22%2F%3E%3C%2Fsvg%3E) `#2d2e86` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237576ca%22%2F%3E%3C%2Fsvg%3E) `#7576ca` | this set | |
+| `--utrecht-form-input-max-inline-size` | `460px` | | this set | |
+| `--utrecht-form-input-padding-block-end` | `10px` | | this set | |
+| `--utrecht-form-input-padding-block-start` | `10px` | | this set | |
+| `--utrecht-form-input-padding-inline-end` | `15px` | | this set | |
+| `--utrecht-form-input-padding-inline-start` | `15px` | | this set | |
+| `--utrecht-form-input-placeholder-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | this set | |
+| `--utrecht-form-label-checkbox-font-weight` | `400` | | this set | |
+| `--utrecht-form-label-radio-font-weight` | `400` | | this set | |
+| `--utrecht-form-select-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-form-select-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | |
+| `--utrecht-form-select-border-width` | `1px` | | this set | |
+| `--utrecht-form-select-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-form-select-font-size` | `16px` | | this set | |
+| `--utrecht-form-select-max-inline-size` | `100%` | | this set | |
+| `--utrecht-form-select-padding-block-end` | `8px` | | this set | |
+| `--utrecht-form-select-padding-block-start` | `8px` | | this set | |
+| `--utrecht-form-select-padding-inline-end` | `12px` | | this set | |
+| `--utrecht-form-select-padding-inline-start` | `12px` | | this set | |
+| `--utrecht-heading-1-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23008046%22%2F%3E%3C%2Fsvg%3E) `#008046` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237fffc5%22%2F%3E%3C%2Fsvg%3E) `#7fffc5` | this set | |
+| `--utrecht-heading-1-font-weight` | `700` | | this set | |
+| `--utrecht-heading-1-margin-block-end` | `24px` | | this set | |
+| `--utrecht-heading-1-margin-block-start` | `0` | | this set | |
+| `--utrecht-heading-2-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233d9eff%22%2F%3E%3C%2Fsvg%3E) `#3d9eff` | this set | |
+| `--utrecht-heading-2-margin-block-end` | `17.25px` | | this set | |
+| `--utrecht-heading-2-margin-block-start` | `0` | | this set | |
+| `--utrecht-heading-3-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1b%22%2F%3E%3C%2Fsvg%3E) `#1d1d1b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e4e4e2%22%2F%3E%3C%2Fsvg%3E) `#e4e4e2` | this set | |
+| `--utrecht-heading-3-margin-block-end` | `5px` | | this set | |
+| `--utrecht-heading-3-margin-block-start` | `0` | | this set | |
+| `--utrecht-heading-font-weight` | `700` | | this set | |
+| `--utrecht-link-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233d9eff%22%2F%3E%3C%2Fsvg%3E) `#3d9eff` | this set | |
+| `--utrecht-link-focus-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e86%22%2F%3E%3C%2Fsvg%3E) `#2d2e86` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23797ad2%22%2F%3E%3C%2Fsvg%3E) `#797ad2` | this set | |
+| `--utrecht-link-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e86%22%2F%3E%3C%2Fsvg%3E) `#2d2e86` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23797ad2%22%2F%3E%3C%2Fsvg%3E) `#797ad2` | this set | |
+| `--utrecht-link-text-decoration` | `underline` | | this set | |
+| `--utrecht-main-margin-block-start` | `35px` | | this set | |
+| `--utrecht-main-margin-inline-end` | `35px` | | this set | |
+| `--utrecht-main-margin-inline-start` | `35px` | | this set | |
+| `--utrecht-ordered-list-item-margin-block-start` | `0` | | this set | |
+| `--utrecht-ordered-list-item-margin-inline-end` | `3.2px` | | this set | |
+| `--utrecht-ordered-list-margin-block-end` | `30px` | | this set | |
+| `--utrecht-ordered-list-margin-block-start` | `0` | | this set | |
+| `--utrecht-page-footer-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a65b2%22%2F%3E%3C%2Fsvg%3E) `#2a65b2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234f86cd%22%2F%3E%3C%2Fsvg%3E) `#4f86cd` | this set | |
+| `--utrecht-page-footer-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-page-footer-padding-block-end` | `15px` | | this set | |
+| `--utrecht-page-footer-padding-block-start` | `15px` | | this set | |
+| `--utrecht-page-footer-padding-inline-end` | `15px` | | this set | |
+| `--utrecht-page-footer-padding-inline-start` | `15px` | | this set | |
+| `--utrecht-page-header-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-page-header-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232d2e87%22%2F%3E%3C%2Fsvg%3E) `#2d2e87` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237879d2%22%2F%3E%3C%2Fsvg%3E) `#7879d2` | this set | |
+| `--utrecht-paragraph-font-weight` | `400` | | this set | |
+| `--utrecht-paragraph-lead-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a65b2%22%2F%3E%3C%2Fsvg%3E) `#2a65b2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236296da%22%2F%3E%3C%2Fsvg%3E) `#6296da` | this set | |
+| `--utrecht-paragraph-lead-font-size` | `18px` | | this set | |
+| `--utrecht-paragraph-lead-font-weight` | `700` | | this set | |
+| `--utrecht-paragraph-lead-line-height` | `27px` | | this set | |
+| `--utrecht-paragraph-margin-block-end` | `30px` | | this set | |
+| `--utrecht-separator-block-size` | `2px` | | this set | |
+| `--utrecht-separator-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230066cc%22%2F%3E%3C%2Fsvg%3E) `#0066cc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233595f4%22%2F%3E%3C%2Fsvg%3E) `#3595f4` | this set | |
+| `--utrecht-separator-margin-block-end` | `30px` | | this set | |
+| `--utrecht-separator-margin-block-start` | `30px` | | this set | |
+| `--utrecht-table-cell-padding-block-end` | `8px` | | this set | |
+| `--utrecht-table-cell-padding-block-start` | `8px` | | this set | |
+| `--utrecht-table-cell-padding-inline-end` | `8px` | | this set | |
+| `--utrecht-table-cell-padding-inline-start` | `8px` | | this set | |
+| `--utrecht-table-header-font-weight` | `700` | | this set | |
+| `--utrecht-table-margin-block-end` | `30px` | | this set | |
+| `--utrecht-table-row-alternate-even-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-table-row-alternate-odd-background-color` | `transparent` | | this set | |
+| `--utrecht-table-row-border-block-end-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a65b2%22%2F%3E%3C%2Fsvg%3E) `#2a65b2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234f86cd%22%2F%3E%3C%2Fsvg%3E) `#4f86cd` | this set | |
+| `--utrecht-table-row-border-block-end-width` | `1px` | | this set | |
+| `--utrecht-textarea-min-block-size` | `100px` | | this set | |
+| `--utrecht-unordered-list-item-margin-block-start` | `0` | | this set | |
+| `--utrecht-unordered-list-item-margin-inline-end` | `3.2px` | | this set | |
+| `--utrecht-unordered-list-margin-block-end` | `30px` | | this set | |
+| `--utrecht-unordered-list-margin-block-start` | `0` | | this set | |
+| `--utrecht-unordered-list-marker-content` | `■` | | this set | |

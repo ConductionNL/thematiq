@@ -37,6 +37,7 @@
  * Usage:
  *   node scripts/sync-upstream-tokens.mjs <themes-checkout> [themesCommitSha]
  *        [--report report.md] [--only a,b] [--gate "<command>"] [--no-gate]
+ *        [--pin <slug>:--nldesign-<token>=<value>]...   (writes a pin into the set's local overrides)
  *
  * Exit codes: 0 done (with or without changes), 1 usage error, 2 the gate
  * still fails after every rejected set was put back (the tree is not safe to
@@ -276,6 +277,16 @@ export function withOverrides(css, overrides) {
 	if (overrides.length === 0) {
 		return css
 	}
+	// An override is the one declaration of its name: a pinned colour the
+	// converter also emitted would otherwise appear twice in one block.
+	const names = new Set(overrides.map(([name]) => name))
+	css = css
+		.split('\n')
+		.filter((line) => {
+			const match = /^\t(--[\w-]+)\s*:.*;\s*$/.exec(line)
+			return match === null || names.has(match[1]) === false
+		})
+		.join('\n')
 	const close = css.lastIndexOf('}')
 	const block = [
 		'',
@@ -306,6 +317,7 @@ function parseArgs(argv) {
 		only: null,
 		gate: 'bash scripts/token-set-gate.sh',
 		runGate: true,
+		pins: {},
 	}
 	const positional = []
 	for (let index = 0; index < argv.length; index++) {
@@ -319,6 +331,17 @@ function parseArgs(argv) {
 			}
 			options[arg.slice(2)] =
 				arg === '--only' ? value.split(',').map((id) => id.trim()) : value
+		} else if (arg === '--pin') {
+			const pin = /^([a-z0-9-]+):(--nldesign-[\w-]+)=(.+)$/.exec(
+				argv[++index] ?? '',
+			)
+			if (pin === null) {
+				throw new Error('--pin needs <slug>:--nldesign-<token>=<value>.')
+			}
+			options.pins[pin[1]] = {
+				...(options.pins[pin[1]] ?? {}),
+				[pin[2]]: pin[3],
+			}
 		} else if (arg.startsWith('--')) {
 			throw new Error(`Unknown option ${arg}.`)
 		} else {
@@ -361,12 +384,65 @@ function writeRepo(path, content) {
 }
 
 /**
+ * The `--nldesign-color-*` values a person pinned in a converted set's local overrides
+ * (for example the committed primary of nijmegen, Ruben's decision on #996). The
+ * converter keeps them over its rules and its contrast repair, and repairs only
+ * the colours that depend on them, so the emitted set agrees with the overrides
+ * the file carries forward.
+ *
+ * @param {Object} org The organisation, with `oldCss` and `kind`.
+ * @return {Object<string,string>} Name => pinned value.
+ */
+export function pinnedValues(org) {
+	if (org.oldCss === null || org.kind !== 'converted') {
+		return { ...(org.extraPins ?? {}) }
+	}
+	return {
+		...Object.fromEntries(
+			localOverrides(org.oldCss, 'converted', new Set(), new Map()).filter(
+				([name]) => name.startsWith('--nldesign-color-'),
+			),
+		),
+		...(org.extraPins ?? {}),
+	}
+}
+
+/**
+ * Write pins given on the command line (`--pin`) into the set's local overrides,
+ * replacing an override of the same name. From then on the overrides section is
+ * their home and every later run carries them forward without the flag.
+ *
+ * @param {string} css The converted set, possibly with an overrides section.
+ * @param {Object<string,string>} pins Name => value.
+ * @return {string} The set with the pins in its overrides section.
+ */
+export function withPins(css, pins) {
+	const names = Object.keys(pins)
+	if (names.length === 0) {
+		return css
+	}
+	const kept = localOverrides(css, 'converted', new Set(), new Map()).filter(
+		([name]) => names.includes(name) === false,
+	)
+	let base = css
+	const start = css.indexOf(OVERRIDES_HEADING)
+	if (start !== -1) {
+		base =
+			css.slice(0, css.lastIndexOf('\n', start)).replace(/\s*$/, '') + '\n}\n'
+	}
+	return withOverrides(base, [...names.map((name) => [name, pins[name]]), ...kept])
+}
+
+/**
  * Give a theme without any primary token the set's committed primary colour.
  *
  * The converter's primary rule falls back to the manifest's `theming.primary_color`,
  * which only the server runtime can read. A few upstream themes (buren, venray) have
  * no primary token at all, so the sync hands the committed colour in as the theme's
  * own `--{slug}-color-primary`, the rule's second source.
+ * A set this script converted before carries that value in its palette section,
+ * and the sync hands that one back, not the manifest's: the manifest holds the
+ * repaired primary, and feeding it back would move the derived colours once more.
  *
  * @param {string} css The built theme CSS.
  * @param {Object} org The organisation, with `slug` and `manifestPrimary`.
@@ -434,6 +510,7 @@ function convertOrg(org, context) {
 				vocabulary: context.vocabulary,
 				fonts: [],
 				repairContrast: true,
+				pinned: pinnedValues(org),
 			},
 		)
 	} catch (error) {
@@ -483,6 +560,8 @@ function convertOrg(org, context) {
 			localOverrides(org.oldCss, org.kind, rawNames, declarations(css)),
 		)
 	}
+
+	css = withPins(css, org.extraPins ?? {})
 
 	return { ok: true, css, entry: result.manifestEntry }
 }
@@ -759,7 +838,13 @@ function main() {
 			name: config.fullName || config.name || slug,
 			prefix: config.prefix || slug,
 			version: readOrgVersion(dir, config),
-			manifestPrimary: manifestPrimaries.get(slug) ?? null,
+			manifestPrimary:
+				(kind === 'converted'
+					? declarations(oldCss).get(`--${slug}-color-primary`)
+					: undefined)
+				?? manifestPrimaries.get(slug)
+				?? null,
+			extraPins: options.pins[slug] ?? {},
 		}
 		const converted = convertOrg(org, context)
 		if (converted.ok === false) {
