@@ -385,3 +385,61 @@ correctly ordered, correctly scoped, and have no effect on the system under test
 - **WHEN** a design system ships no dark ramp for its own tokens
 - **THEN** that suite passes while the interface renders light
 - **AND** this requirement is therefore NOT met by such a suite
+
+### Requirement: Summer Breeze is legible in light and in both dark scopes
+
+Summer Breeze paints from its own `--summer-*` tokens, so the `--nldesign-*` pairs the dark
+generator and `ShippedDarkContrastTest` measure never reach it. The pairs its stylesheets paint
+SHALL reach WCAG AA in light mode and in EACH of the two dark scopes of
+`css/tokens/dark/summer-breeze.css` on its own: the `prefers-color-scheme` block for users on the
+auto theme and the explicit `data-theme-dark` block. The dark file SHALL be generated from the
+committed light file, and the dark generator SHALL repair the same pairs (thematiq#1022).
+
+The pairs: body and muted text on a panel, on the page, on a hovered row and on the view-toggle
+track; the primary button label on its fill at rest and on hover; the secondary button label on the
+primary-light wash at rest and on hover; links on a panel and on the page; each status colour on its
+badge fill and on a panel; all at 4.5:1. The input border on the input at 3:1 (WCAG SC 1.4.11).
+
+#### Scenario: Text, buttons, links and status colours reach AA in light mode
+
+- **GIVEN** the `summer-breeze` token set is active and the user is on the light theme
+- **WHEN** a page renders
+- **THEN** body text on the main background, the primary button label on its fill and links on
+  the main background reach 4.5:1
+- **AND** a text input's border reaches 3:1 against the input
+
+#### Scenario: Both dark scopes remap every colour token and stay legible
+
+- **GIVEN** the `summer-breeze` token set is active
+- **WHEN** the page renders on the auto theme with a dark OS, or on the explicit dark theme
+- **THEN** the main background resolves to a dark colour
+- **AND** body text, the primary button label and links reach 4.5:1 on it
+- **AND** a text input's border reaches 3:1 against the input
+- **AND** every `--summer-color-*` literal of the light file has a value in both dark scopes, and
+  the two scopes declare the same values
+
+#### Scenario: The Summer Breeze focus ring reaches 3:1
+
+- **GIVEN** the `summer-breeze` token set is active
+- **WHEN** an element receives keyboard focus, in light or in dark mode
+- **THEN** its 2px solid outline is `--summer-color-focus` made opaque and reaches 3:1 against the
+  page
+- **AND** the translucent `--summer-color-focus` stays as the halo around it
+
+#### Scenario: The shipped contrast audit reports the colours Summer Breeze paints
+
+@e2e exclude a generation-time audit over the shipped files; tests/Unit/Service/SummerBreezeContrastTest.php::testTheShippedAuditMeasuresSummerBreezeOnItsOwnColours.
+
+- **GIVEN** `css/tokens/summer-breeze.css` declares no `--nldesign-*` name
+- **WHEN** `ShippedTokenSetAuditService` audits it
+- **THEN** primary text on primary is measured on `--summer-color-primary-text` and
+  `--summer-color-primary`, and primary on background on `--summer-color-primary` and
+  `--summer-color-background-plain`, not on the Rijkshuisstijl defaults
+
+#### Scenario: A stale Summer Breeze dark file fails the gate
+
+@e2e exclude a build-time comparison of two shipped files; tests/Unit/Service/SummerBreezeContrastTest.php::testTheDarkFileWasGeneratedFromTheCurrentLightFile.
+
+- **GIVEN** `css/tokens/summer-breeze.css` changed
+- **WHEN** the token-set gate runs without regenerating the dark file
+- **THEN** it fails, naming `php scripts/generate-dark-variants.php`

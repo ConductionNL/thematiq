@@ -2,7 +2,7 @@
  * Summer Breeze — element-level overrides.
  *
  * The signature airy chrome that the core variable mapping (theme.css) cannot
- * express on its own: a pale-blue gradient navigation, floating rounded cards
+ * express on its own: a floating navigation card, floating rounded cards
  * with soft shadows, a solid pill for the active menu item, and pill-shaped
  * inputs. These reach Nextcloud core selectors directly with high specificity.
  */
@@ -34,7 +34,7 @@ body,
 }
 
 /* ============================================
-   NAVIGATION — pale-blue gradient floating card
+   NAVIGATION: floating white card
    ============================================ */
 
 /* Only the OUTER navigation container is the floating card. */
@@ -141,7 +141,8 @@ input[type='url'],
 input[type='tel'],
 .input-field__input {
 	border-radius: var(--summer-radius-pill) !important;
-	border: 1px solid var(--summer-color-border) !important;
+	/* The border is the control's only edge: 3:1 against the input fill. */
+	border: 1px solid var(--summer-color-border-input) !important;
 	box-shadow: var(--summer-shadow-panel) !important;
 	/* Form controls don't inherit font-family by default (the UA picks a
 	   system font) — force Inter so inputs match the rest of the page. */

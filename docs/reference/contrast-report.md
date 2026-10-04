@@ -58,7 +58,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | rijkshuisstijl | 10.20:1 | 4.5:1 | 9.43:1 | 3.0:1 | pass |
 | rotterdam | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |
 | stedebroec | 8.45:1 | 4.5:1 | 8.45:1 | 3.0:1 | pass |
-| summer-breeze | 10.20:1 | 4.5:1 | 9.03:1 | 3.0:1 | pass |
+| summer-breeze | 9.08:1 | 4.5:1 | 8.47:1 | 3.0:1 | pass |
 | tilburg | 12.61:1 | 4.5:1 | 12.61:1 | 3.0:1 | pass |
 | tubbergen | 5.91:1 | 4.5:1 | 5.91:1 | 3.0:1 | pass |
 | utrecht | 7.41:1 | 4.5:1 | 7.41:1 | 3.0:1 | pass |
