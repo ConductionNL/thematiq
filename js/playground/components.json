@@ -405,6 +405,21 @@
 					"name": "--nldesign-component-navigation-active-background-color",
 					"paints": "The selected entry's wash and its marker stripe",
 					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-navigation-active-color",
+					"paints": "The selected entry's label and icon, on the wash Nextcloud 34 and later draw",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-navigation-badge-background-color",
+					"paints": "The count badge of a navigation entry",
+					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-navigation-badge-color",
+					"paints": "Its number",
+					"callout": 2
 				}
 			],
 			"fixed": [
@@ -475,16 +490,19 @@
 					"name": "--nldesign-component-content-card-scrollbar-color",
 					"paints": "Scrollbar thumb",
 					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-content-card-shadow-color",
+					"paints": "The shadow under cards inside it",
+					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-content-surface-background-color",
+					"paints": "The surface cards sit on, not the cards themselves",
+					"callout": 1
 				}
 			],
-			"fixed": [
-				{
-					"callout": 1,
-					"what": "Content surface",
-					"why": "The surface every app draws on is Nextcloud's own main background, which Nextcloud theming owns.",
-					"code": "routed-to-core-theming"
-				}
-			]
+			"fixed": []
 		},
 		{
 			"id": "table",
@@ -1759,7 +1777,7 @@
 			"id": "badge-counter",
 			"tab": "status",
 			"title": "Badge & counter",
-			"subtitle": "NcCounterBubble and the favourite star",
+			"subtitle": "NcCounterBubble, the favourite star and status pills",
 			"ground": "content",
 			"classes": [],
 			"radiusToken": "--border-radius-pill",
@@ -1773,6 +1791,11 @@
 					"n": 2,
 					"id": "favorite",
 					"label": "favourite star"
+				},
+				{
+					"n": 3,
+					"id": "pill",
+					"label": "status pills"
 				}
 			],
 			"versionNotes": [
@@ -1803,6 +1826,46 @@
 					"name": "--nldesign-component-badge-favorite-color",
 					"paints": "The favourite star",
 					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-status-badge-info-background-color",
+					"paints": "The light tint of the info pill",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-status-badge-info-color",
+					"paints": "Its label",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-status-badge-success-background-color",
+					"paints": "The light tint of the success pill",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-status-badge-success-color",
+					"paints": "Its label",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-status-badge-warning-background-color",
+					"paints": "The light tint of the warning pill",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-status-badge-warning-color",
+					"paints": "Its label",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-status-badge-error-background-color",
+					"paints": "The light tint of the error pill",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-status-badge-error-color",
+					"paints": "Its label",
+					"callout": 3
 				}
 			],
 			"fixed": []
