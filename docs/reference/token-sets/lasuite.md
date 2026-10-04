@@ -101,7 +101,7 @@ Contrast: primary text on primary 7.76:1, primary on background 7.76:1 (pass).
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235956b5%22%2F%3E%3C%2Fsvg%3E) `#5956b5` | defaults | |
 | `--nldesign-component-button-secondary-action-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237774c8%22%2F%3E%3C%2Fsvg%3E) `#7774c8` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0cfec%22%2F%3E%3C%2Fsvg%3E) `#d0cfec` | defaults | |
 | `--nldesign-component-button-secondary-action-hover-background-color` | `var(
 		--nldesign-color-primary-light
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230f162c%22%2F%3E%3C%2Fsvg%3E) `#0f162c` | defaults | |

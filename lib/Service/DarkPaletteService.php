@@ -77,8 +77,12 @@ class DarkPaletteService {
 	 *
 	 * Version 5 keeps the page background dark whatever light value it
 	 * derives from (see {@see self::PAGE_BACKGROUND_MAX_LUMINANCE}, thematiq#952).
+	 *
+	 * Version 6 adds the secondary button labels and the link colour to
+	 * {@see self::CONTROL_PAIRS}, and measures a transparent fill against the
+	 * page it shows (thematiq#969).
 	 */
-	public const GENERATOR_VERSION = 5;
+	public const GENERATOR_VERSION = 6;
 
 	/**
 	 * The guaranteed-passing near-white snap value (matches NC's own dark
@@ -212,6 +216,33 @@ class DarkPaletteService {
 		[
 			'fg' => '--nldesign-component-badge-color',
 			'bg' => '--nldesign-component-badge-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			// Nextcloud's own secondary button: overrides.css maps its label
+			// to the primary colour and its fill to the primary-light wash.
+			'fg' => '--nldesign-color-primary',
+			'bg' => '--nldesign-color-primary-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-primary',
+			'bg' => '--nldesign-color-primary-light-hover',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-button-secondary-action-color',
+			'bg' => '--nldesign-component-button-secondary-action-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-button-secondary-action-color',
+			'bg' => '--nldesign-component-button-secondary-action-hover-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-link-color',
+			'bg' => '--nldesign-color-background',
 			'threshold' => 4.5,
 		],
 		[
@@ -783,9 +814,10 @@ class DarkPaletteService {
 
 				// An earlier repair in this round may already have fixed this pair
 				// through a shared foreground; repairing again would overshoot it.
+				$bgValue = (string)$this->pairBackground(declarations: $declarations, token: $bgName);
 				$ratio = $this->contrast->measure(
 					foreground: $declarations[$fgName],
-					background: $declarations[$bgName],
+					background: $bgValue,
 					page: ($declarations['--nldesign-color-background'] ?? null)
 				);
 				if ($ratio !== null && $ratio >= $warning['threshold']) {
@@ -795,7 +827,7 @@ class DarkPaletteService {
 				$fixableFound = true;
 				$declarations[$fgName] = $this->repairForeground(
 					fgValue: $declarations[$fgName],
-					bgValue: $declarations[$bgName],
+					bgValue: $bgValue,
 					threshold: $warning['threshold']
 				);
 			}//end foreach
@@ -835,7 +867,7 @@ class DarkPaletteService {
 
 		foreach ($pairs as $pair) {
 			$foreground = ($declarations[$pair['fg']] ?? null);
-			$background = ($declarations[$pair['bg']] ?? null);
+			$background = $this->pairBackground(declarations: $declarations, token: $pair['bg']);
 			if ($foreground === null || $background === null) {
 				continue;
 			}
@@ -858,6 +890,26 @@ class DarkPaletteService {
 
 		return $warnings;
 	}//end failingPairs()
+
+	/**
+	 * The fill a pair's label sits on: the token's value, or the page
+	 * background when the fill is `transparent` (a secondary button at rest).
+	 *
+	 * @param array<string, string> $declarations The dark declarations.
+	 * @param string $token The background token.
+	 *
+	 * @return string|null The colour, or null when the token is absent.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function pairBackground(array $declarations, string $token): ?string {
+		$value = ($declarations[$token] ?? null);
+		if ($value !== null && strtolower(trim($value)) === 'transparent') {
+			return ($declarations['--nldesign-color-background'] ?? $value);
+		}
+
+		return $value;
+	}//end pairBackground()
 
 	/**
 	 * Split a `ContrastService::check()` pair label ("fg vs bg") back into
@@ -1043,7 +1095,25 @@ class DarkPaletteService {
 			$merged['--nldesign-logo-url'] = "url('" . $this->relativeDarkLogoPath(logoDarkPath: $meta['theming']['logo_dark']) . "')";
 		}
 
+		// A fill that is transparent in light (a secondary button at rest) is
+		// not a colour, so it derives nothing; its label still has to read on
+		// the page it shows. It joins the repair as `transparent` and leaves
+		// before rendering, so the light value keeps applying (thematiq#969).
+		$transparentFills = [];
+		foreach (self::CONTROL_PAIRS as $pair) {
+			$fill = $pair['bg'];
+			if (isset($merged[$fill]) === false && isset($light[$fill]) === true
+				&& strtolower(trim($this->resolveAlias(value: $light[$fill], declarations: $light))) === 'transparent'
+			) {
+				$merged[$fill] = 'transparent';
+				$transparentFills[] = $fill;
+			}
+		}
+
 		$repaired = $this->verifyAndRepair(declarations: $merged, protectedTokens: array_keys($overrides));
+		foreach ($transparentFills as $fill) {
+			unset($repaired['declarations'][$fill]);
+		}
 
 		ksort($repaired['declarations']);
 
