@@ -781,6 +781,138 @@
 	}
 
 	/**
+	 * The value a token falls back to when the set does not declare it: the
+	 * table's `defaults` entry, a literal or a chain of tokens and literals
+	 * (the header background follows the primary, as the bridge does).
+	 *
+	 * @param {string} name The token.
+	 * @param {Object<string,string>} semantic The semantic layer.
+	 * @param {Object} defaults The table's defaults.
+	 * @return {string|undefined} The value.
+	 */
+	function fallbackValue(name, semantic, defaults) {
+		var chain = defaults[name]
+		if (chain === undefined) {
+			return undefined
+		}
+
+		var steps = Array.isArray(chain) ? chain : [chain]
+		for (var index = 0; index < steps.length; index++) {
+			var step = String(steps[index])
+			if (step.indexOf('--') !== 0) {
+				return step
+			}
+
+			if (semantic[step] !== undefined) {
+				return semantic[step]
+			}
+		}
+
+		return undefined
+	}
+
+	/**
+	 * Replace a listed colour token whose value is not a colour at all (an
+	 * upstream reference written as text, `transparent` where a fill is meant)
+	 * with its default, so it can be measured and drawn.
+	 *
+	 * @param {Object<string,string>} semantic The semantic layer (mutated).
+	 * @param {Object} spec The table's contrastRepair section.
+	 * @param {Array<Object>} report The conversion report.
+	 * @return {void}
+	 */
+	function replaceInvalid(semantic, spec, report) {
+		;(spec.replaceInvalid || []).forEach(function (name) {
+			var value = semantic[name]
+			if (value === undefined) {
+				return
+			}
+
+			var parsed = parseColorAlpha(value)
+			if (parsed !== null && parsed.a > 0) {
+				return
+			}
+
+			var replacement = fallbackValue(name, {}, spec.defaults || {})
+			if (replacement === undefined) {
+				return
+			}
+
+			semantic[name] = replacement
+			report.push({
+				source: name,
+				target: name,
+				action: 'adapted',
+				reason: 'not-a-colour',
+				value: replacement,
+				original: value,
+			})
+		})
+	}
+
+	/**
+	 * Repair one pair: the new value of the token it changes, or null.
+	 *
+	 * @param {Object} pair The pair spec.
+	 * @param {Object<string,string>} semantic The semantic layer.
+	 * @param {Object} defaults The table's defaults.
+	 * @param {Array<number>} page The page colour.
+	 * @return {Object|null} `{name, rgb}`.
+	 */
+	function repairPair(pair, semantic, defaults, page) {
+		var foregroundName = String(pair.foreground)
+		var backgroundName = String(pair.background)
+		var value = semantic[foregroundName]
+		var backgroundValue = semantic[backgroundName]
+		if (backgroundValue === undefined) {
+			backgroundValue = fallbackValue(backgroundName, semantic, defaults)
+		}
+
+		if (value === undefined || backgroundValue === undefined) {
+			return null
+		}
+
+		var foreground = opaque(value, page)
+		var background = opaque(backgroundValue, page)
+		var min = numberOr(pair.min, 4.5)
+		if (
+			foreground === null
+			|| background === null
+			|| ratio(foreground, background) >= min
+		) {
+			return null
+		}
+
+		// The fill gives way, not the text: only a background the set declares.
+		if (pair.repair === 'background') {
+			if (semantic[backgroundName] === undefined) {
+				return null
+			}
+
+			return {
+				name: backgroundName,
+				rgb: repairLightness(background, foreground, min),
+			}
+		}
+
+		if (pair.adjust === 'flip') {
+			return {
+				name: foregroundName,
+				rgb:
+					ratio([255, 255, 255], background)
+					>= ratio([0, 0, 0], background)
+						? [255, 255, 255]
+						: [0, 0, 0],
+			}
+		}
+
+		return {
+			name: foregroundName,
+			rgb: repairLightness(foreground, background, min),
+		}
+	}
+
+	/**
 	 * Bring every pair of the table's `contrastRepair` list to its threshold.
 	 *
 	 * @param {Object<string,string>} semantic The semantic layer (mutated).
@@ -800,45 +932,25 @@
 		var originals = {}
 		var oldPrimary = semantic['--nldesign-color-primary']
 
+		replaceInvalid(semantic, spec, report)
+
 		for (var pass = 0; pass < 4; pass++) {
 			var changed = false
 			spec.pairs.forEach(function (pair) {
-				var name = String(pair.foreground)
-				var value = semantic[name]
-				var backgroundValue = semantic[String(pair.background)]
-				if (backgroundValue === undefined) {
-					backgroundValue = defaults[String(pair.background)]
-				}
-
-				if (value === undefined || backgroundValue === undefined) {
+				var repaired = repairPair(pair, semantic, defaults, page)
+				if (repaired === null) {
 					return
 				}
 
-				var foreground = opaque(value, page)
-				var background = opaque(backgroundValue, page)
-				var min = numberOr(pair.min, 4.5)
-				if (
-					foreground === null
-					|| background === null
-					|| ratio(foreground, background) >= min
-				) {
-					return
+				if (originals[repaired.name] === undefined) {
+					originals[repaired.name] = semantic[repaired.name]
 				}
 
-				var repaired =
-					pair.adjust === 'flip'
-						? ratio([255, 255, 255], background)
-							>= ratio([0, 0, 0], background)
-							? [255, 255, 255]
-							: [0, 0, 0]
-						: repairLightness(foreground, background, min)
-				if (originals[name] === undefined) {
-					originals[name] = value
-				}
-
-				semantic[name] = toHex(repaired)
-				if (semantic[name + '-rgb'] !== undefined) {
-					semantic[name + '-rgb'] = rgbTriplet(semantic[name])
+				semantic[repaired.name] = toHex(repaired.rgb)
+				if (semantic[repaired.name + '-rgb'] !== undefined) {
+					semantic[repaired.name + '-rgb'] = rgbTriplet(
+						semantic[repaired.name],
+					)
 				}
 
 				changed = true
@@ -864,7 +976,8 @@
 		var primary = semantic['--nldesign-color-primary']
 		var declared = manifest['theming.primary_color']
 		if (
-			primary !== oldPrimary
+			primary !== undefined
+			&& primary !== oldPrimary
 			&& (declared === undefined
 				|| String(declared).toLowerCase()
 					=== String(oldPrimary).toLowerCase())

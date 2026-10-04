@@ -1,0 +1,67 @@
+{
+	"light-primary": {
+		"input": ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #f0b800;\n\t--utrecht-textbox-color: hsl(206 100% 16%);\n}\n",
+		"expected": {
+			"--nldesign-color-primary": "#896a00",
+			"--nldesign-color-primary-text": "#ffffff",
+			"--nldesign-color-link": "#947200",
+			"--nldesign-color-link-hover": "#937100",
+			"--nldesign-color-header-text": "#000000",
+			"--nldesign-color-header-background": "#f0b800",
+			"--utrecht-textbox-color": "#002e52"
+		},
+		"primary_color": "#896a00"
+	},
+	"mid-blue": {
+		"input": ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #4a90e2;\n\t--utrecht-link-color: #5aa0ff;\n\t--utrecht-link-hover-color: #7fb5ff;\n}\n",
+		"expected": {
+			"--nldesign-color-primary": "#1e67bd",
+			"--nldesign-color-primary-text": "#ffffff",
+			"--nldesign-color-link": "#016dff",
+			"--nldesign-color-link-hover": "#026dff",
+			"--nldesign-color-header-text": "#000000",
+			"--nldesign-color-header-background": "#4a90e2"
+		},
+		"primary_color": "#1e67bd"
+	},
+	"translucent-header": {
+		"input": ".demo-theme {\n\t--utrecht-button-primary-action-background-color: hsl(220 44% 50%);\n\t--utrecht-page-header-background-color: #012c9d99;\n\t--utrecht-page-header-color: #ffffff;\n\t--demo-color-veil: hsla(0deg 0% 0% / 50%);\n}\n",
+		"expected": {
+			"--nldesign-color-primary": "#4063a7",
+			"--nldesign-color-primary-text": "#ffffff",
+			"--nldesign-color-link": "#476db8",
+			"--nldesign-color-link-hover": "#4062a6",
+			"--nldesign-color-header-text": "#000000",
+			"--nldesign-color-header-background": "rgba(1, 44, 157, 0.6)",
+			"--demo-color-veil": "rgba(0, 0, 0, 0.5)"
+		},
+		"primary_color": "#4063a7"
+	},
+	"mid-tone-fill": {
+		"input": ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #154273;\n\t--utrecht-document-color: #222626;\n\t--utrecht-table-header-background-color: #1b7298;\n}\n",
+		"expected": {
+			"--nldesign-color-primary": "#154273",
+			"--nldesign-color-primary-text": "#ffffff",
+			"--nldesign-color-link": "#154273",
+			"--nldesign-color-link-hover": "#133b68",
+			"--nldesign-color-text": "#222626",
+			"--nldesign-color-header-text": "#ffffff",
+			"--nldesign-color-header-background": "#154273",
+			"--nldesign-color-background-dark": "#2396c8"
+		},
+		"primary_color": "#154273"
+	},
+	"transparent-fill": {
+		"input": ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #154273;\n\t--utrecht-table-header-background-color: transparent;\n\t--utrecht-link-color: #44ad34;\n}\n",
+		"expected": {
+			"--nldesign-color-primary": "#154273",
+			"--nldesign-color-primary-text": "#ffffff",
+			"--nldesign-color-link": "#358628",
+			"--nldesign-color-link-hover": "#358629",
+			"--nldesign-color-header-text": "#ffffff",
+			"--nldesign-color-header-background": "#154273",
+			"--nldesign-color-background-dark": "#e0e1e2"
+		},
+		"primary_color": "#154273"
+	}
+}

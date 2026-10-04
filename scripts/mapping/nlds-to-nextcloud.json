@@ -514,15 +514,28 @@
 			"(text on a brand fill carries no brand of its own). Pairs run in order, and the list runs",
 			"again until nothing changes, because repairing the primary can move its text colour.",
 			"A background the set does not declare is read from `defaults` (css/systems/nldesign/",
-			"defaults.css, and the white page). A translucent background is measured over `page`."
+			"defaults.css, and the white page); a list is a chain of tokens ending in a literal.",
+			"A translucent background is measured over `page`. `repair: background` makes the fill",
+			"give way instead of the text: body text must read on the page AND on the neutral fill",
+			"(the badge), and a mid-tone fill makes that impossible for any text colour.",
+			"`replaceInvalid` tokens whose value is not a visible colour (an upstream reference",
+			"written as text, `transparent` for a fill) get their default before anything is measured."
 		],
 		"page": "#ffffff",
 		"defaults": {
 			"--nldesign-color-background": "#ffffff",
 			"--nldesign-color-background-dark": "#e0e1e2",
 			"--nldesign-color-primary-light": "#e8f0f8",
-			"--nldesign-color-primary-light-hover": "#d4e4f2"
+			"--nldesign-color-primary-light-hover": "#d4e4f2",
+			"--nldesign-color-text": "#333333",
+			"--nldesign-color-text-muted": "#696969",
+			"--nldesign-color-header-background": ["--nldesign-color-primary", "#ffffff"]
 		},
+		"replaceInvalid": [
+			"--nldesign-color-background-dark",
+			"--nldesign-color-text",
+			"--nldesign-color-text-muted"
+		],
 		"pairs": [
 			{ "foreground": "--nldesign-color-primary", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--nldesign-color-primary", "background": "--nldesign-color-primary-light", "min": 4.5, "adjust": "lightness" },
@@ -532,7 +545,7 @@
 			{ "foreground": "--nldesign-color-link-hover", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--nldesign-color-link-visited", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
-			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background-dark", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background-dark", "min": 4.5, "adjust": "lightness", "repair": "background" },
 			{ "foreground": "--nldesign-color-text-muted", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--nldesign-color-header-text", "background": "--nldesign-color-header-background", "min": 4.5, "adjust": "flip" }
 		]
@@ -640,6 +653,7 @@
 		"contrast-separator-added": "A 1px header border was added because the theme's header and content are both the same colour.",
 		"contrast-adjusted": "The colour was darkened to reach WCAG AA 4.5:1 against its text colour. The original is shown for reference.",
 		"contrast-repaired": "The colour was made lighter or darker, keeping its hue, to reach WCAG AA against the background it is drawn on. The original is shown for reference.",
+		"not-a-colour": "The theme gave this colour token a value that is not a visible colour, so the Nextcloud default was used. The original is shown for reference.",
 		"colour-normalised": "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant.",
 		"kept-for-nlds-components": "Kept in the token set for NL Design System components used by Conduction apps; Nextcloud itself does not have this component.",
 		"external-url-blocked": "A value pointed to an external host and was removed; Thematiq only serves local assets.",

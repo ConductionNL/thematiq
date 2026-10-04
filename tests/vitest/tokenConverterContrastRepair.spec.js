@@ -191,3 +191,77 @@ describe('contrast repair', () => {
 		).toBeGreaterThanOrEqual(4.5)
 	})
 })
+
+describe('fills and values that are not colours', () => {
+	it('lightens a mid-tone neutral fill instead of making body text unreadable on the page', () => {
+		// drechterland: the table header (the neutral fill) is #1b7298.
+		const { decl } = convert({
+			'--utrecht-button-primary-action-background-color': '#154273',
+			'--utrecht-document-color': '#222626',
+			'--utrecht-table-header-background-color': '#1b7298',
+		})
+		const text = decl['--nldesign-color-text']
+		expect(contrast(text, '#ffffff')).toBeGreaterThanOrEqual(4.5)
+		expect(
+			contrast(text, decl['--nldesign-color-background-dark']),
+		).toBeGreaterThanOrEqual(4.5)
+		expect(decl['--nldesign-color-background-dark']).not.toBe('#1b7298')
+	})
+
+	it('gives a transparent neutral fill its default', () => {
+		const { decl, result } = convert({
+			'--utrecht-button-primary-action-background-color': '#154273',
+			'--utrecht-table-header-background-color': 'transparent',
+		})
+		expect(decl['--nldesign-color-background-dark']).toBe('#e0e1e2')
+		expect(result.report.some((entry) => entry.reason === 'not-a-colour')).toBe(
+			true,
+		)
+	})
+
+	it('measures a header without its own background on the primary, as the bridge draws it', () => {
+		const { decl } = convert({
+			'--utrecht-button-primary-action-background-color': '#154273',
+			'--utrecht-link-color': '#44ad34',
+		})
+		// The header text falls back to the link colour; the header to the primary.
+		expect(
+			contrast(
+				decl['--nldesign-color-header-text'],
+				decl['--nldesign-color-primary'],
+			),
+		).toBeGreaterThanOrEqual(4.5)
+	})
+})
+
+describe('parity fixture', () => {
+	const fixture = JSON.parse(
+		readFileSync(
+			join(ROOT, 'tests/Unit/fixtures/contrast-repair/expected.json'),
+			'utf8',
+		),
+	)
+
+	// TokenSetConverterContrastRepairTest asserts the PHP converter emits the same.
+	it.each(Object.keys(fixture))('%s', (name) => {
+		const result = converter.convert(fixture[name].input, {
+			slug: 'demo',
+			displayName: 'Demo',
+			table,
+			vocabulary,
+			fonts: [],
+		})
+		const decl = {}
+		for (const match of result.css
+			.replace(/\/\*[\s\S]*?\*\//g, '')
+			.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) {
+			decl[match[1]] = match[2].trim()
+		}
+		for (const [token, value] of Object.entries(fixture[name].expected)) {
+			expect(decl[token], token).toBe(value)
+		}
+		expect(result.manifestEntry.theming.primary_color).toBe(
+			fixture[name].primary_color,
+		)
+	})
+})

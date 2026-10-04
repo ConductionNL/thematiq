@@ -331,6 +331,11 @@ class TokenSetConverterService {
 		// source theme's own variables do not exist.
 		$declarations = $this->resolveVars(declarations: $declarations, report: $report);
 
+		// Colours written as hsl(), hsla() or an 8-digit hex become hex or rgba(),
+		// so they can be measured and given a dark variant (thematiq#993).
+		$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
+		$declarations = $colourRepair->normaliseColours(declarations: $declarations, report: $report);
+
 		// Lift the theme's logo out of the stylesheet and into a file, BEFORE
 		// the sections are built: Nextcloud's core theming takes a logo as a
 		// path on disk, never as a data URI, so this is the only step that can
@@ -373,6 +378,9 @@ class TokenSetConverterService {
 			manifest: $manifest,
 			report: $report
 		);
+
+		// Bring the converted brand and text pairs to WCAG AA, smallest change first (thematiq#993).
+		$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $manifest, report: $report);
 
 		if ($logo !== null) {
 			$semantic['--nldesign-logo-url'] = $logo['css'];
