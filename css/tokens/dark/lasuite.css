@@ -21,7 +21,7 @@
 		--nldesign-color-header-text: #dcdce4;
 		--nldesign-color-info: #3180e4;
 		--nldesign-color-info-rgb: 49, 128, 228;
-		--nldesign-color-link: #5956b5;
+		--nldesign-color-link: #b0afdc;
 		--nldesign-color-link-hover: #7f7dc3;
 		--nldesign-color-link-visited: #c392e3;
 		--nldesign-color-nav-background: #141414;
@@ -114,7 +114,7 @@ body[data-themes*=dark] {
 	--nldesign-color-header-text: #dcdce4;
 	--nldesign-color-info: #3180e4;
 	--nldesign-color-info-rgb: 49, 128, 228;
-	--nldesign-color-link: #5956b5;
+	--nldesign-color-link: #b0afdc;
 	--nldesign-color-link-hover: #7f7dc3;
 	--nldesign-color-link-visited: #c392e3;
 	--nldesign-color-nav-background: #141414;

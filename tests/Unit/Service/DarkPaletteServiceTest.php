@@ -845,7 +845,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * The hero band's foregrounds are repaired against the primary fill they
-	 * sit on, and a light footer's text against its derived surface.
+	 * sit on, a light footer's text against its derived surface, and the
+	 * semantic link colour and its hover against the page.
 	 */
 	public function testTheRepairLoopFixesTheHeroAndFooterForegrounds(): void {
 		$result = $this->service->verifyAndRepair(
@@ -857,6 +858,8 @@ class DarkPaletteServiceTest extends TestCase {
 				'--nldesign-hero-body-color' => '#6984d3',
 				'--nldesign-color-footer-background' => '#cbcbd6',
 				'--nldesign-color-footer-text' => '#9e9e9e',
+				'--nldesign-color-link' => '#5956b5',
+				'--nldesign-color-link-hover' => '#460ce1',
 			]
 		);
 
@@ -866,6 +869,8 @@ class DarkPaletteServiceTest extends TestCase {
 			['--nldesign-hero-title-color', '--nldesign-color-primary'],
 			['--nldesign-hero-body-color', '--nldesign-color-primary'],
 			['--nldesign-color-footer-text', '--nldesign-color-footer-background'],
+			['--nldesign-color-link', '--nldesign-color-background'],
+			['--nldesign-color-link-hover', '--nldesign-color-background'],
 		] as [$fg, $bg]) {
 			$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]), $fg . ' on ' . $bg);
 		}
@@ -874,7 +879,7 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * La Frankendesk's own bands read in its generated dark variant: the
 	 * footer foregrounds on the footer, the hero foregrounds on the primary
-	 * fill (thematiq#1021). Measured against the real tree, with the light
+	 * fill, its links on the page (thematiq#1021). Measured against the real tree, with the light
 	 * declarations underneath for every token the variant leaves out.
 	 *
 	 * @spec openspec/specs/frankendesk-token-set/spec.md
@@ -900,6 +905,8 @@ class DarkPaletteServiceTest extends TestCase {
 			['--frankendesk-footer-legal-link-color', '--nldesign-color-footer-background'],
 			['--nldesign-hero-title-color', '--nldesign-color-primary'],
 			['--nldesign-hero-body-color', '--nldesign-color-primary'],
+			['--nldesign-color-link', '--nldesign-color-background'],
+			['--nldesign-color-link-hover', '--nldesign-color-background'],
 		];
 		foreach ($pairs as [$fg, $bg]) {
 			$ratio = $this->contrast->measure(foreground: $dark[$fg], background: $dark[$bg]);

@@ -159,8 +159,8 @@
 		--nldesign-color-header-text: #9e9e9e;
 		--nldesign-color-info: #460ce1;
 		--nldesign-color-info-rgb: 70, 12, 225;
-		--nldesign-color-link: #460ce1;
-		--nldesign-color-link-hover: #5e2ce2;
+		--nldesign-color-link: #9875f8;
+		--nldesign-color-link-hover: #b49cf1;
 		--nldesign-color-link-visited: #460ce1;
 		--nldesign-color-nav-background: #141414;
 		--nldesign-color-placeholder-dark: #1d2328;
@@ -702,8 +702,8 @@ body[data-themes*=dark] {
 	--nldesign-color-header-text: #9e9e9e;
 	--nldesign-color-info: #460ce1;
 	--nldesign-color-info-rgb: 70, 12, 225;
-	--nldesign-color-link: #460ce1;
-	--nldesign-color-link-hover: #5e2ce2;
+	--nldesign-color-link: #9875f8;
+	--nldesign-color-link-hover: #b49cf1;
 	--nldesign-color-link-visited: #460ce1;
 	--nldesign-color-nav-background: #141414;
 	--nldesign-color-placeholder-dark: #1d2328;

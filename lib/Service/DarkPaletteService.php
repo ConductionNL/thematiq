@@ -83,8 +83,9 @@ class DarkPaletteService {
 	 * page it shows (thematiq#969).
 	 *
 	 * Version 7 leaves a band that is already dark alone (see
-	 * {@see self::DARK_BANDS}) and repairs the hero band's foregrounds against
-	 * the primary fill it sits on (thematiq#1021).
+	 * {@see self::DARK_BANDS}), repairs the hero band's foregrounds against
+	 * the primary fill it sits on, and the semantic link colour and its hover
+	 * against the page (thematiq#1021).
 	 */
 	public const GENERATOR_VERSION = 7;
 
@@ -264,6 +265,19 @@ class DarkPaletteService {
 		],
 		[
 			'fg' => '--nldesign-component-link-color',
+			'bg' => '--nldesign-color-background',
+			'threshold' => 4.5,
+		],
+		[
+			// The semantic link colour the bridges read directly (utrecht,
+			// denhaag): lasuite and frankendesk derived #5956b5 on #141414,
+			// 3.00:1 (thematiq#1021).
+			'fg' => '--nldesign-color-link',
+			'bg' => '--nldesign-color-background',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-link-hover',
 			'bg' => '--nldesign-color-background',
 			'threshold' => 4.5,
 		],
