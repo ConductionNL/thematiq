@@ -36,6 +36,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | groningen | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | haarlem | 7.19:1 | 4.5:1 | 7.19:1 | 3.0:1 | pass |
 | haarlemmermeer | 4.63:1 | 4.5:1 | 4.54:1 | 3.0:1 | pass |
+| hoeksche-waard | 4.56:1 | 4.5:1 | — | 3.0:1 | unevaluated |
 | hoog-contrast | 21.00:1 | 7.0:1 | 21.00:1 | 4.5:1 | pass |
 | hoorn | 11.96:1 | 4.5:1 | 11.96:1 | 3.0:1 | pass |
 | horstaandemaas | 6.64:1 | 4.5:1 | 6.64:1 | 3.0:1 | pass |
@@ -48,6 +49,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | noordwijk | 13.15:1 | 4.5:1 | 12.18:1 | 3.0:1 | pass |
 | opencatalogi | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |
 | provincie-zuid-holland | 5.82:1 | 4.5:1 | 5.82:1 | 3.0:1 | pass |
+| purmerend | 4.60:1 | 4.5:1 | — | 3.0:1 | unevaluated |
 | riddeliemers | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | ridderkerk | 4.63:1 | 4.5:1 | 4.53:1 | 3.0:1 | pass |
 | rijkshuisstijl | 10.20:1 | 4.5:1 | 9.43:1 | 3.0:1 | pass |
@@ -100,6 +102,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | groningen | 15 | 0 | 0 |  |
 | haarlem | 15 | 0 | 0 |  |
 | haarlemmermeer | 15 | 0 | 0 |  |
+| hoeksche-waard | 15 | 0 | 0 |  |
 | hoog-contrast | 15 | 0 | 0 |  |
 | hoorn | 15 | 0 | 0 |  |
 | horstaandemaas | 15 | 0 | 0 |  |
@@ -112,6 +115,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | noordwijk | 15 | 0 | 0 |  |
 | opencatalogi | 15 | 0 | 0 |  |
 | provincie-zuid-holland | 15 | 0 | 0 |  |
+| purmerend | 15 | 0 | 0 |  |
 | riddeliemers | 15 | 0 | 0 |  |
 | ridderkerk | 15 | 0 | 0 |  |
 | rijkshuisstijl | 15 | 0 | 0 |  |

@@ -209,10 +209,12 @@
 		"name": "Gemeente Leiden",
 		"description": "Design tokens for Gemeente Leiden",
 		"theming": {
-			"primary_color": "#d62410",
+			"primary_color": "#D62410",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/leiden.svg"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "3.0.0"
 	},
 	{
 		"id": "leidschendam-voorburg",
@@ -563,5 +565,27 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/example-gemeente.svg"
 		}
+	},
+	{
+		"id": "hoeksche-waard",
+		"name": "Gemeente Hoeksche Waard",
+		"description": "Design tokens for Gemeente Hoeksche Waard, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#2e8721"
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.1.0"
+	},
+	{
+		"id": "purmerend",
+		"name": "NL Design System Purmerend Thema",
+		"description": "Design tokens for NL Design System Purmerend Thema, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#00856A"
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.2.3"
 	}
 ]
