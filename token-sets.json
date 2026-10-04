@@ -66,18 +66,22 @@
 		"name": "Gemeente Buren",
 		"description": "Design tokens for Gemeente Buren",
 		"theming": {
-			"primary_color": "#D41422",
+			"primary_color": "#d41422",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "demodam",
 		"name": "Demodam",
 		"description": "Design tokens for Demodam",
 		"theming": {
-			"primary_color": "#03A9F4",
+			"primary_color": "#027db5",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "dinkelland",
