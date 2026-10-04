@@ -33,6 +33,14 @@ const fontFiles = [
 	'fira-sans-latin-400-normal.woff',
 	'fira-sans-latin-400-italic.woff2',
 	'fira-sans-latin-400-italic.woff',
+	'fira-sans-latin-500-normal.woff2',
+	'fira-sans-latin-500-normal.woff',
+	'fira-sans-latin-500-italic.woff2',
+	'fira-sans-latin-500-italic.woff',
+	'fira-sans-latin-600-normal.woff2',
+	'fira-sans-latin-600-normal.woff',
+	'fira-sans-latin-600-italic.woff2',
+	'fira-sans-latin-600-italic.woff',
 	'fira-sans-latin-700-normal.woff2',
 	'fira-sans-latin-700-normal.woff',
 	'fira-sans-latin-700-italic.woff2',
@@ -79,6 +87,46 @@ const fontsCss = `/**
          url('fonts/fira-sans-latin-400-italic.woff2') format('woff2'),
          url('fonts/fira-sans-latin-400-italic.woff') format('woff');
     font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: local('Fira Sans Medium'),
+         url('fonts/fira-sans-latin-500-normal.woff2') format('woff2'),
+         url('fonts/fira-sans-latin-500-normal.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: local('Fira Sans Medium Italic'),
+         url('fonts/fira-sans-latin-500-italic.woff2') format('woff2'),
+         url('fonts/fira-sans-latin-500-italic.woff') format('woff');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: local('Fira Sans SemiBold'),
+         url('fonts/fira-sans-latin-600-normal.woff2') format('woff2'),
+         url('fonts/fira-sans-latin-600-normal.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: local('Fira Sans SemiBold Italic'),
+         url('fonts/fira-sans-latin-600-italic.woff2') format('woff2'),
+         url('fonts/fira-sans-latin-600-italic.woff') format('woff');
+    font-weight: 600;
     font-style: italic;
     font-display: swap;
 }
