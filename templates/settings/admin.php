@@ -766,7 +766,7 @@ if ($_['mockUi'] === true) {
 			<?php p($l->t('Workplace layout')); ?>
 		</label>
 		<select name="thematiq-workplace-layout" id="thematiq-workplace-layout">
-			<option value="" <?php if ($_['workplaceLayout'] === ''): ?>selected<?php endif; ?>>
+			<option value="" <?php if (in_array($_['workplaceLayout'], ['default', 'light'], true) === false): ?>selected<?php endif; ?>>
 				<?php p($l->t('Follow the theme')); ?>
 			</option>
 			<option value="default" <?php if ($_['workplaceLayout'] === 'default'): ?>selected<?php endif; ?>>
@@ -786,7 +786,7 @@ if ($_['mockUi'] === true) {
 			<?php p($l->t('Brand stripe under the top bar')); ?>
 		</label>
 		<select name="thematiq-brand-stripe" id="thematiq-brand-stripe">
-			<option value="" <?php if ($_['brandStripe'] === ''): ?>selected<?php endif; ?>>
+			<option value="" <?php if (in_array($_['brandStripe'], ['0', '1'], true) === false): ?>selected<?php endif; ?>>
 				<?php p($l->t('Follow the theme')); ?>
 			</option>
 			<option value="1" <?php if ($_['brandStripe'] === '1'): ?>selected<?php endif; ?>>

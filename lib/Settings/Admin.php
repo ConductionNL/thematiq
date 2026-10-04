@@ -27,7 +27,6 @@ namespace OCA\Thematiq\Settings;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
-use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetSelectionPolicy;
@@ -278,7 +277,13 @@ class Admin implements IDelegatedSettings {
 
 	/**
 	 * The administrator's own layout choices, as stored. An empty value means
-	 * the option follows the active token set (see LayoutOptionsService).
+	 * the option follows the active token set.
+	 *
+	 * Read straight from the app config, under the two keys
+	 * `LayoutOptionsService` owns, rather than through that service: this
+	 * class is at PHPMD's coupling limit, and the template needs only the raw
+	 * strings. It selects "Follow the theme" for any value it does not know,
+	 * which is how the service reads one too.
 	 *
 	 * @return array{workplaceLayout: string, brandStripe: string} The template parameters.
 	 *
@@ -286,11 +291,9 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 */
 	private function layoutParams(): array {
-		$layoutOptions = new LayoutOptionsService(config: $this->config, designSystemService: $this->designSystemService);
-
 		return [
-			'workplaceLayout' => $layoutOptions->workplaceLayoutSetting(),
-			'brandStripe' => $layoutOptions->brandStripeSetting(),
+			'workplaceLayout' => $this->config->getAppValue(Application::APP_ID, 'workplace_layout', ''),
+			'brandStripe' => $this->config->getAppValue(Application::APP_ID, 'brand_stripe', ''),
 		];
 	}//end layoutParams()
 
