@@ -30,6 +30,11 @@ namespace OCA\Thematiq\Service;
  */
 class CssParserService {
 	/**
+	 * How many `var()` hops {@see self::resolveVarChain()} follows.
+	 */
+	public const VAR_CHAIN_MAX_DEPTH = 4;
+
+	/**
 	 * Parse CSS custom property declarations from a raw CSS string.
 	 *
 	 * Matches all lines like: --some-token: some-value;
@@ -267,4 +272,94 @@ class CssParserService {
 
 		return ($this->parseDeclarations(content: $match[1]) ?? []);
 	}//end parseDarkBlock()
+
+	/**
+	 * Resolve a declaration value through its `var(--token)` indirections.
+	 *
+	 * A browser resolves `--a: var(--b)` by looking `--b` up in the same
+	 * cascade, so anything that measures a token value has to do the same or it
+	 * reads an indirection as "not a colour". Both an un-parenthesised
+	 * reference (`var(--b)`) and a reference with a fallback
+	 * (`var(--b, #fff)`) are followed; the fallback is used only when the
+	 * referenced token is absent from the map, which is what the browser does.
+	 *
+	 * The depth cap is four hops. Measured on the shipped sets, the longest
+	 * real chain is two (`--nldesign-color-primary` ->
+	 * `--conduction-color-brand-primary` -> `--c-blue-cobalt`), and the cap is
+	 * what stops a cyclic set (`--a: var(--b); --b: var(--a)`) from recursing
+	 * forever. A value that is still a reference at the cap is reported
+	 * unresolved rather than guessed.
+	 *
+	 * @param string $value The raw declaration value.
+	 * @param array<string,string> $declarations The declaration map to resolve against.
+	 * @param int $depth The current recursion depth (internal).
+	 *
+	 * @return array{value: string|null, unresolved: string|null} The resolved
+	 *                                                            literal, or the name of the token the chain could not resolve.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
+	 */
+	public function resolveVarChain(string $value, array $declarations, int $depth = 0): array {
+		$trimmed = trim($value);
+
+		if (preg_match('/^var\(\s*(--[\w-]+)\s*(?:,(.*))?\)$/s', $trimmed, $matches) !== 1) {
+			// Not a var() indirection - a literal (parseable or not).
+			return ['value' => $trimmed, 'unresolved' => null];
+		}
+
+		$reference = $matches[1];
+		$fallback = trim(($matches[2] ?? ''));
+
+		if ($depth >= self::VAR_CHAIN_MAX_DEPTH) {
+			return ['value' => null, 'unresolved' => $reference];
+		}
+
+		if (array_key_exists($reference, $declarations) === true) {
+			return $this->resolveVarChain(
+				value: $declarations[$reference],
+				declarations: $declarations,
+				depth: ($depth + 1)
+			);
+		}
+
+		// The referenced token is absent, so the browser takes the fallback.
+		if ($fallback !== '') {
+			return $this->resolveVarChain(
+				value: $fallback,
+				declarations: $declarations,
+				depth: ($depth + 1)
+			);
+		}
+
+		return ['value' => null, 'unresolved' => $reference];
+	}//end resolveVarChain()
+
+	/**
+	 * Replace every value in a declaration map by the literal its `var()` chain
+	 * reaches, resolving against the map itself.
+	 *
+	 * A browser resolves `--nldesign-color-primary: var(--c-blue-cobalt)` out of
+	 * the same cascade; anything that MEASURES a token value has to do the same
+	 * or it reads an indirection as "not a colour". That is how conduction-new's
+	 * two contrast pairs went unmeasured.
+	 *
+	 * A chain that genuinely does not resolve — a reference no layer declares, or
+	 * a cycle — keeps its raw value, so a caller still sees "not a colour" rather
+	 * than a fabricated one.
+	 *
+	 * @param array<string, string> $declarations The declaration map.
+	 *
+	 * @return array<string, string> The same keys, with var() chains resolved.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
+	 */
+	public function resolveAll(array $declarations): array {
+		$resolved = [];
+		foreach ($declarations as $name => $value) {
+			$chain = $this->resolveVarChain(value: $value, declarations: $declarations);
+			$resolved[$name] = ($chain['value'] ?? $value);
+		}
+
+		return $resolved;
+	}//end resolveAll()
 }//end class

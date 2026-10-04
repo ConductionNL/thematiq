@@ -23,6 +23,7 @@
             <file>tests/Unit/Service/ShippedDarkContrastTest.php</file>
             <file>tests/Unit/Service/ShippedDarkLogoTest.php</file>
             <file>tests/Unit/Service/DenhaagContrastPairsTest.php</file>
+            <file>tests/Unit/Service/TokenSetFontAuditTest.php</file>
             <file>tests/Unit/Service/SetLogoReachTest.php</file>
             <file>tests/Unit/IconAssetsTest.php</file>
             <file>tests/Unit/TokenCssShapeTest.php</file>

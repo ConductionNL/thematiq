@@ -62,6 +62,17 @@ class ShippedTokenSetAuditService {
 	public const AAA_UI = 4.5;
 
 	/**
+	 * The page a set sits on when it names no background of its own.
+	 *
+	 * The same `#ffffff` `css/public-bridge.css`,
+	 * `scripts/mapping/nlds-to-nextcloud.json` (`page`, and its
+	 * `--nldesign-color-background` default) and `ComplianceReportService`
+	 * already use, so the four layers cannot disagree about what colour a
+	 * primary is measured against.
+	 */
+	public const PAGE_BACKGROUND = '#ffffff';
+
+	/**
 	 * TTL (seconds) for a cached per-set WCAG level — matches
 	 * `Capabilities::WCAG_CACHE_TTL` exactly so a set that is both the active
 	 * theme and a catalogue entry shares one cache entry rather than two.
@@ -129,15 +140,28 @@ class ShippedTokenSetAuditService {
 
 		// Background is managed by Nextcloud theming for many sets, so it is
 		// frequently absent from the token CSS. Fall back to the declared
-		// theming.background_color so the primary/background pair can evaluate.
-		if (isset($declarations['--nldesign-color-background']) === false
-			&& isset($theming['background_color']) === true
-			&& is_string($theming['background_color']) === true
-		) {
-			$declarations['--nldesign-color-background'] = $theming['background_color'];
+		// theming.background_color, and then to the white page the rest of the
+		// app already assumes: `css/public-bridge.css` paints the document with
+		// `var(--nldesign-color-background, #fff)`,
+		// `scripts/mapping/nlds-to-nextcloud.json` declares `"page": "#ffffff"`
+		// and the same `--nldesign-color-background` default, and
+		// ComplianceReportService documents the identical chain.
+		//
+		// Without that terminus six shipped sets (enschede, hoeksche-waard,
+		// losser, nora, purmerend, zaanstad) reported `unevaluated` forever:
+		// they declare no background token AND no theming.background_color, so
+		// the pair had no second colour at all, and `unevaluated` is never a
+		// pass.
+		if (isset($declarations['--nldesign-color-background']) === false) {
+			$fallback = ($theming['background_color'] ?? null);
+			if (is_string($fallback) === false) {
+				$fallback = self::PAGE_BACKGROUND;
+			}
+
+			$declarations['--nldesign-color-background'] = $fallback;
 		}
 
-		return $declarations;
+		return $this->parser->resolveAll(declarations: $declarations);
 	}//end resolveDeclarations()
 
 	/**
@@ -236,7 +260,10 @@ class ShippedTokenSetAuditService {
 		// portal never paints its page with it. The bridge paints the page from
 		// --nldesign-color-background with a white fallback, so that is what
 		// a component sits on.
-		return $declarations + ['--nldesign-color-background' => '#ffffff'];
+		// NOT resolved through var() here: DenhaagContrastPairs::resolve() does
+		// its own chain resolution and the pair tests read the raw reference to
+		// prove a set with no own value is judged through the bridge.
+		return $declarations + ['--nldesign-color-background' => self::PAGE_BACKGROUND];
 	}//end portalCascade()
 
 	/**
@@ -384,7 +411,13 @@ class ShippedTokenSetAuditService {
 		$lines[] = '';
 		$lines[] = '- **primary/text** = `--nldesign-color-primary` vs `--nldesign-color-primary-text` (AA text threshold 4.5:1)';
 		$lines[] = '- **primary/bg** = `--nldesign-color-primary` vs the set background (AA UI threshold 3.0:1)';
-		$lines[] = '- `unevaluated` = a pair whose colours are not literal (e.g. `var()`); never treated as passing.';
+		$lines[] = '- The set background is the first of: the set\'s own `--nldesign-color-background`,';
+		$lines[] = '  `defaults.css`, the manifest `theming.background_color`, then the white page';
+		$lines[] = '  `#ffffff` the public bridge and the converter mapping already assume.';
+		$lines[] = '- A `var(--token)` value is followed through the same cascade a browser would read,';
+		$lines[] = '  up to four hops.';
+		$lines[] = '- `unevaluated` = a pair one of whose colours still is not a colour after that';
+		$lines[] = '  resolution; never treated as passing.';
 		$lines[] = '';
 		$lines[] = '| Token set | primary/text | text ≥ | primary/bg | bg ≥ | Verdict |';
 		$lines[] = '|-----------|-------------:|:------:|-----------:|:----:|:-------:|';

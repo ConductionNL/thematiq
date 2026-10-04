@@ -126,4 +126,84 @@ class CssParserServiceTest extends TestCase {
 		$this->assertSame('0', ($root['--nldesign-border-radius'] ?? null));
 		$this->assertSame('4px', ($root['--nldesign-border-radius-large'] ?? null));
 	}//end testDefaultsLayerIsReadWhole()
+
+	/**
+	 * A literal value is returned unchanged, and `unresolved` stays null.
+	 *
+	 * @return void
+	 */
+	public function testALiteralResolvesToItself(): void {
+		$this->assertSame(
+			['value' => '#21468B', 'unresolved' => null],
+			$this->parser->resolveVarChain(value: ' #21468B ', declarations: [])
+		);
+		$this->assertSame(
+			['value' => 'rgba(0, 0, 0, .5)', 'unresolved' => null],
+			$this->parser->resolveVarChain(value: 'rgba(0, 0, 0, .5)', declarations: [])
+		);
+	}//end testALiteralResolvesToItself()
+
+	/**
+	 * A `var()` chain is followed to its literal, two hops deep — the longest
+	 * chain any shipped set has (conduction-new's
+	 * `--nldesign-color-primary` -> `--conduction-color-brand-primary` ->
+	 * `--c-blue-cobalt`).
+	 *
+	 * @return void
+	 */
+	public function testAVarChainIsFollowedToItsLiteral(): void {
+		$declarations = [
+			'--nldesign-color-primary' => 'var(--conduction-color-brand-primary)',
+			'--conduction-color-brand-primary' => 'var(--c-blue-cobalt)',
+			'--c-blue-cobalt' => '#21468B',
+		];
+
+		$this->assertSame(
+			['value' => '#21468B', 'unresolved' => null],
+			$this->parser->resolveVarChain(
+				value: $declarations['--nldesign-color-primary'],
+				declarations: $declarations
+			)
+		);
+	}//end testAVarChainIsFollowedToItsLiteral()
+
+	/**
+	 * A fallback is taken only when the referenced token is absent, which is
+	 * what a browser does — the declared value wins over the fallback.
+	 *
+	 * @return void
+	 */
+	public function testAFallbackIsTakenOnlyWhenTheTokenIsAbsent(): void {
+		$this->assertSame(
+			['value' => '#fff', 'unresolved' => null],
+			$this->parser->resolveVarChain(value: 'var(--missing, #fff)', declarations: [])
+		);
+		$this->assertSame(
+			['value' => '#000000', 'unresolved' => null],
+			$this->parser->resolveVarChain(
+				value: 'var(--present, #fff)',
+				declarations: ['--present' => '#000000']
+			)
+		);
+	}//end testAFallbackIsTakenOnlyWhenTheTokenIsAbsent()
+
+	/**
+	 * A reference nothing declares, and a cycle, are reported unresolved
+	 * rather than guessed — the caller must be able to tell "not a colour"
+	 * from a colour.
+	 *
+	 * @return void
+	 */
+	public function testAnUnresolvableChainIsReportedNotGuessed(): void {
+		$this->assertSame(
+			['value' => null, 'unresolved' => '--nowhere'],
+			$this->parser->resolveVarChain(value: 'var(--nowhere)', declarations: [])
+		);
+
+		$cycle = ['--a' => 'var(--b)', '--b' => 'var(--a)'];
+		$result = $this->parser->resolveVarChain(value: $cycle['--a'], declarations: $cycle);
+
+		$this->assertNull($result['value'], 'A cycle must not resolve to a value.');
+		$this->assertNotNull($result['unresolved'], 'A cycle must name the token it stopped on.');
+	}//end testAnUnresolvableChainIsReportedNotGuessed()
 }//end class
