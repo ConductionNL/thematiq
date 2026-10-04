@@ -300,12 +300,12 @@
 	 * band, and measured on docs.conduction.nl its bottom corners are 0px. A
 	 * rounded band over a white page reads as a card that failed to fit.
 	 */
-	--nldesign-hero-radius: 0px;
+	--conduction-new-hero-radius: 0px;
 	--nldesign-hero-title-color: var(--conduction-color-text-inverse);
 	/* MEASURED on docs.conduction.nl: 48px between the cobalt band's bottom edge
 	   and the top of the first card below it. */
-	--nldesign-section-gap: 48px;
-	--nldesign-list-gap: 16px;
+	--conduction-new-section-gap: 48px;
+	--conduction-new-list-gap: 16px;
 	--nldesign-header-link-color: var(--nldesign-color-header-text);
 
 	/*
@@ -314,55 +314,55 @@
 	 * a 6px radius with 13px/22px padding and 15px/500 type — the primary in the
 	 * brand orange, the secondary white on the band.
 	 */
-	--nldesign-hero-title-gap: 20px;
+	--conduction-new-hero-title-gap: 20px;
 	/*
 	 * The heading's own hexagon tile: 80x92 in the brand orange with a 38px white
 	 * glyph, 22px from the title text. Measured, including the fact that it is
 	 * taller than it is wide — it is the same pointy-top hexagon as the cards'.
 	 */
-	--nldesign-hero-title-icon-size: 80px;
-	--nldesign-hero-title-icon-block-size: 92px;
-	--nldesign-hero-title-icon-gap: 22px;
-	--nldesign-hero-title-icon-background: var(--c-orange-knvb);
-	--nldesign-hero-title-icon-color: var(--c-white);
-	--nldesign-hero-title-icon-clip: var(--hex-pointy-top);
+	--conduction-new-hero-title-icon-size: 80px;
+	--conduction-new-hero-title-icon-block-size: 92px;
+	--conduction-new-hero-title-icon-gap: 22px;
+	--conduction-new-hero-title-icon-background: var(--c-orange-knvb);
+	--conduction-new-hero-title-icon-color: var(--c-white);
+	--conduction-new-hero-title-icon-clip: var(--hex-pointy-top);
 	/*
 	 * The honeycomb: 92x106 cells at 8% white, one orange centre, 22px/700 for
-	 * the letter it carries. `--nldesign-hero-column-gap` is what keeps the
+	 * the letter it carries. `--conduction-new-hero-column-gap` is what keeps the
 	 * content column off it.
 	 */
-	--nldesign-hero-column-gap: 64px;
-	--nldesign-hero-cell-size: 92px;
-	--nldesign-hero-cell-block-size: 106px;
+	--conduction-new-hero-column-gap: 64px;
+	--conduction-new-hero-cell-size: 92px;
+	--conduction-new-hero-cell-block-size: 106px;
 	/* 78px, measured. Three quarters of 106 is 79.5, and the reference tiles
 	   1.5px tighter than that. */
-	--nldesign-hero-cell-step-block: 78px;
-	--nldesign-hero-cell-background: rgba(255, 255, 255, 0.08);
-	--nldesign-hero-cell-color: var(--c-white);
-	--nldesign-hero-cell-clip: var(--hex-pointy-top);
-	--nldesign-hero-cell-font-size: 22px;
-	--nldesign-hero-cell-font-weight: 700;
-	--nldesign-hero-cell-accent-background: var(--c-orange-knvb);
+	--conduction-new-hero-cell-step-block: 78px;
+	--conduction-new-hero-cell-background: rgba(255, 255, 255, 0.08);
+	--conduction-new-hero-cell-color: var(--c-white);
+	--conduction-new-hero-cell-clip: var(--hex-pointy-top);
+	--conduction-new-hero-cell-font-size: 22px;
+	--conduction-new-hero-cell-font-weight: 700;
+	--conduction-new-hero-cell-accent-background: var(--c-orange-knvb);
 	/* Deep cobalt for the same reason as the primary button's label: white on
 	   this orange is 3.01:1. The cell is decoration and a brand mark could claim
 	   the logotype exemption, but one rule for "text on brand orange" is cheaper
 	   to keep true than an exemption argued case by case. */
-	--nldesign-hero-cell-accent-color: var(--c-cobalt-900);
+	--conduction-new-hero-cell-accent-color: var(--c-cobalt-900);
 	--nldesign-hero-body-color: var(--c-cobalt-100);
-	--nldesign-hero-body-size: 22px;
-	--nldesign-hero-body-line-height: 33px;
-	--nldesign-hero-body-weight: 400;
-	--nldesign-hero-body-measure: 840px;
-	--nldesign-hero-body-gap: 32px;
-	--nldesign-hero-action-gap: 16px;
-	--nldesign-hero-action-padding: 13px 22px;
-	--nldesign-hero-action-radius: 6px;
-	--nldesign-hero-action-font-size: 15px;
-	--nldesign-hero-action-font-weight: 500;
-	--nldesign-hero-action-line-height: 22.5px;
-	--nldesign-hero-action-border-width: 1px;
-	--nldesign-hero-action-decoration: none;
-	--nldesign-hero-action-primary-background: var(--c-orange-knvb);
+	--conduction-new-hero-body-size: 22px;
+	--conduction-new-hero-body-line-height: 33px;
+	--conduction-new-hero-body-weight: 400;
+	--conduction-new-hero-body-measure: 840px;
+	--conduction-new-hero-body-gap: 32px;
+	--conduction-new-hero-action-gap: 16px;
+	--conduction-new-hero-action-padding: 13px 22px;
+	--conduction-new-hero-action-radius: 6px;
+	--conduction-new-hero-action-font-size: 15px;
+	--conduction-new-hero-action-font-weight: 500;
+	--conduction-new-hero-action-line-height: 22.5px;
+	--conduction-new-hero-action-border-width: 1px;
+	--conduction-new-hero-action-decoration: none;
+	--conduction-new-hero-action-primary-background: var(--c-orange-knvb);
 	/*
 	 * THE LABEL IS DEEP COBALT, NOT WHITE — a deliberate departure.
 	 *
@@ -372,9 +372,9 @@
 	 * own deepest cobalt, which measures 5.93:1 on it. Darkening the orange
 	 * instead would have cleared AA too and cost the brand its colour.
 	 */
-	--nldesign-hero-action-primary-color: var(--c-cobalt-900);
-	--nldesign-hero-action-secondary-background: var(--c-white);
-	--nldesign-hero-action-secondary-color: var(--c-blue-cobalt);
+	--conduction-new-hero-action-primary-color: var(--c-cobalt-900);
+	--conduction-new-hero-action-secondary-background: var(--c-white);
+	--conduction-new-hero-action-secondary-color: var(--c-blue-cobalt);
 	/*
 	 * CHROME GEOMETRY — measured in a browser on docs.conduction.nl, not
 	 * estimated from a screenshot. My own estimates had the content column at
@@ -386,25 +386,25 @@
 	 * `position: sticky; top: 0; z-index: 100`, a 32px mark 10px from a 22px/700
 	 * wordmark tracked -0.44px, and a 60px bar.
 	 */
-	--nldesign-header-position: sticky;
-	--nldesign-header-z-index: 100;
-	--nldesign-header-height: 60px;
-	--nldesign-header-logo-inset: 0px;
-	--nldesign-header-logo-size: 32px;
-	--nldesign-header-logo-gap: 10px;
-	--nldesign-header-logo-clip: var(--hex-pointy-top);
-	--nldesign-header-logo-background: var(--c-blue-cobalt);
-	--nldesign-header-logo-color: var(--c-white);
-	--nldesign-header-logo-font: var(--conduction-typography-font-family-heading);
-	--nldesign-header-logo-font-size: 18px;
-	--nldesign-header-logo-font-weight: 700;
-	--nldesign-header-wordmark-font: var(
+	--conduction-new-header-position: sticky;
+	--conduction-new-header-z-index: 100;
+	--conduction-new-header-height: 60px;
+	--conduction-new-header-logo-inset: 0px;
+	--conduction-new-header-logo-size: 32px;
+	--conduction-new-header-logo-gap: 10px;
+	--conduction-new-header-logo-clip: var(--hex-pointy-top);
+	--conduction-new-header-logo-background: var(--c-blue-cobalt);
+	--conduction-new-header-logo-color: var(--c-white);
+	--conduction-new-header-logo-font: var(--conduction-typography-font-family-heading);
+	--conduction-new-header-logo-font-size: 18px;
+	--conduction-new-header-logo-font-weight: 700;
+	--conduction-new-header-wordmark-font: var(
 		--conduction-typography-font-family-heading
 	);
-	--nldesign-header-wordmark-size: 22px;
-	--nldesign-header-wordmark-weight: 700;
-	--nldesign-header-wordmark-spacing: -0.44px;
-	--nldesign-header-wordmark-transform: none;
+	--conduction-new-header-wordmark-size: 22px;
+	--conduction-new-header-wordmark-weight: 700;
+	--conduction-new-header-wordmark-spacing: -0.44px;
+	--conduction-new-header-wordmark-transform: none;
 
 	/*
 	 * The two header controls take the hero buttons' geometry at a smaller size,
@@ -413,26 +413,26 @@
 	 * is the hero's call to action, and two competing primaries on one screen is
 	 * one too many.
 	 */
-	--nldesign-header-action-padding: 8px 16px;
-	--nldesign-header-action-radius: 6px;
-	--nldesign-header-action-font-size: 14px;
-	--nldesign-header-action-font-weight: 500;
-	--nldesign-header-action-line-height: 20px;
-	--nldesign-header-action-decoration: none;
-	--nldesign-header-action-border-width: 1px;
-	--nldesign-header-action-primary-background: var(--c-blue-cobalt);
-	--nldesign-header-action-primary-color: var(--c-white);
-	--nldesign-header-action-secondary-color: var(--c-blue-cobalt);
-	--nldesign-header-action-secondary-border-color: var(--c-cobalt-200);
+	--conduction-new-header-action-padding: 8px 16px;
+	--conduction-new-header-action-radius: 6px;
+	--conduction-new-header-action-font-size: 14px;
+	--conduction-new-header-action-font-weight: 500;
+	--conduction-new-header-action-line-height: 20px;
+	--conduction-new-header-action-decoration: none;
+	--conduction-new-header-action-border-width: 1px;
+	--conduction-new-header-action-primary-background: var(--c-blue-cobalt);
+	--conduction-new-header-action-primary-color: var(--c-white);
+	--conduction-new-header-action-secondary-color: var(--c-blue-cobalt);
+	--conduction-new-header-action-secondary-border-color: var(--c-cobalt-200);
 
-	--nldesign-header-background: var(--c-white);
-	--nldesign-header-padding-inline: 56px;
-	--nldesign-header-border-width: 1px;
-	--nldesign-header-border-color: var(--c-cobalt-100);
-	--nldesign-nav-font-size: 14px;
-	--nldesign-nav-font-weight: 500;
-	--nldesign-nav-item-padding-inline: 12px;
-	--nldesign-header-nav-gap: 0px;
+	--conduction-new-header-background: var(--c-white);
+	--conduction-new-header-padding-inline: 56px;
+	--conduction-new-header-border-width: 1px;
+	--conduction-new-header-border-color: var(--c-cobalt-100);
+	--conduction-new-nav-font-size: 14px;
+	--conduction-new-nav-font-weight: 500;
+	--conduction-new-nav-item-padding-inline: 12px;
+	--conduction-new-header-nav-gap: 0px;
 	--nldesign-body-font-family: var(--conduction-typography-font-family-body);
 	--nldesign-nav-link-color: var(--c-blue-cobalt);
 	/*
@@ -451,8 +451,8 @@
 	 * accent colour taken from one word of running text. The reference's actual
 	 * link colour is 85% white on navy — 13:1, and nothing to work around.
 	 */
-	--nldesign-footer-padding-block: 88px;
-	--nldesign-footer-padding-block-end: 28px;
+	--conduction-new-footer-padding-block: 88px;
+	--conduction-new-footer-padding-block-end: 28px;
 
 	/*
 	 * THE CANAL SCENE — measured, and it is the footer's whole character.
@@ -467,121 +467,121 @@
 	 * wavelengths — 140px, 180px and 220px between crests. A gradient would
 	 * have been shorter and would have drawn a different sea.
 	 */
-	--nldesign-footer-skyline-height: 152px;
-	--nldesign-footer-skyline-color: var(--c-orange-knvb);
-	--nldesign-footer-window-lit-color: #fff7d2;
-	--nldesign-footer-window-dark-color: var(--c-cobalt-900);
-	--nldesign-footer-quay-height: 30px;
-	--nldesign-footer-quay-color: #9b9da3;
-	--nldesign-footer-quay-ink-color: var(--c-cobalt-900);
-	--nldesign-footer-quay-accent-color: #c8482f;
-	--nldesign-footer-quay-highlight-color: rgba(255, 255, 255, 0.5);
+	--conduction-new-footer-skyline-height: 152px;
+	--conduction-new-footer-skyline-color: var(--c-orange-knvb);
+	--conduction-new-footer-window-lit-color: #fff7d2;
+	--conduction-new-footer-window-dark-color: var(--c-cobalt-900);
+	--conduction-new-footer-quay-height: 30px;
+	--conduction-new-footer-quay-color: #9b9da3;
+	--conduction-new-footer-quay-ink-color: var(--c-cobalt-900);
+	--conduction-new-footer-quay-accent-color: #c8482f;
+	--conduction-new-footer-quay-highlight-color: rgba(255, 255, 255, 0.5);
 	/* The water: seven vessels in the brand accent, the tour boat flying the
 	   Dutch tricolour and the house boat carrying the hexagon mark. */
-	--nldesign-footer-water-height: 76px;
-	--nldesign-footer-water-background: var(--c-cobalt-900);
-	--nldesign-footer-boat-offset: 6px;
-	--nldesign-footer-boat-color: var(--c-orange-knvb);
-	--nldesign-footer-boat-mark-color: var(--c-white);
-	--nldesign-footer-flag-top-color: var(--c-red-vermillion);
-	--nldesign-footer-flag-middle-color: var(--c-white);
-	--nldesign-footer-flag-bottom-color: var(--c-blue-cobalt);
-	--nldesign-footer-ripple-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 500' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.11' stroke-width='2'%3E%3Cpath d='M 0,96 L 140,82 L 280,96 L 420,82 L 560,96 L 700,82 L 840,96 L 980,82 L 1120,96 L 1260,82 L 1400,96'/%3E%3Cpath d='M 0,206 L 180,182 L 360,206 L 540,182 L 720,206 L 900,182 L 1080,206 L 1260,182 L 1400,200'/%3E%3Cpath d='M 0,362 L 220,332 L 440,362 L 660,332 L 880,362 L 1100,332 L 1320,362 L 1400,348'/%3E%3C/g%3E%3C/svg%3E");
-	--nldesign-footer-grid-columns: 297px repeat(auto-fill, 198px);
-	--nldesign-footer-column-gap: 48px;
+	--conduction-new-footer-water-height: 76px;
+	--conduction-new-footer-water-background: var(--c-cobalt-900);
+	--conduction-new-footer-boat-offset: 6px;
+	--conduction-new-footer-boat-color: var(--c-orange-knvb);
+	--conduction-new-footer-boat-mark-color: var(--c-white);
+	--conduction-new-footer-flag-top-color: var(--c-red-vermillion);
+	--conduction-new-footer-flag-middle-color: var(--c-white);
+	--conduction-new-footer-flag-bottom-color: var(--c-blue-cobalt);
+	--conduction-new-footer-ripple-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 500' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.11' stroke-width='2'%3E%3Cpath d='M 0,96 L 140,82 L 280,96 L 420,82 L 560,96 L 700,82 L 840,96 L 980,82 L 1120,96 L 1260,82 L 1400,96'/%3E%3Cpath d='M 0,206 L 180,182 L 360,206 L 540,182 L 720,206 L 900,182 L 1080,206 L 1260,182 L 1400,200'/%3E%3Cpath d='M 0,362 L 220,332 L 440,362 L 660,332 L 880,362 L 1100,332 L 1320,362 L 1400,348'/%3E%3C/g%3E%3C/svg%3E");
+	--conduction-new-footer-grid-columns: 297px repeat(auto-fill, 198px);
+	--conduction-new-footer-column-gap: 48px;
 
 	/* The brand column. */
-	--nldesign-footer-wordmark-font: var(
+	--conduction-new-footer-wordmark-font: var(
 		--conduction-typography-font-family-heading
 	);
-	--nldesign-footer-wordmark-size: 22px;
-	--nldesign-footer-wordmark-weight: 700;
-	--nldesign-footer-wordmark-color: var(--c-white);
-	--nldesign-footer-wordmark-spacing: -0.44px;
-	--nldesign-footer-wordmark-line-height: 33px;
-	--nldesign-footer-brand-font: var(--conduction-typography-font-family-body);
-	--nldesign-footer-brand-size: 14px;
-	--nldesign-footer-brand-line-height: 21.7px;
-	--nldesign-footer-brand-color: rgba(255, 255, 255, 0.7);
-	--nldesign-footer-brand-margin-block: 12px 0;
-	--nldesign-footer-brand-measure: 288px;
-	--nldesign-footer-social-size: 34px;
-	--nldesign-footer-social-radius: 8px;
-	--nldesign-footer-social-gap: 10px;
-	--nldesign-footer-social-color: rgba(255, 255, 255, 0.78);
-	--nldesign-footer-social-border-width: 1px;
-	--nldesign-footer-social-border-color: rgba(255, 255, 255, 0.18);
-	--nldesign-footer-social-margin-block: 24px 0;
+	--conduction-new-footer-wordmark-size: 22px;
+	--conduction-new-footer-wordmark-weight: 700;
+	--conduction-new-footer-wordmark-color: var(--c-white);
+	--conduction-new-footer-wordmark-spacing: -0.44px;
+	--conduction-new-footer-wordmark-line-height: 33px;
+	--conduction-new-footer-brand-font: var(--conduction-typography-font-family-body);
+	--conduction-new-footer-brand-size: 14px;
+	--conduction-new-footer-brand-line-height: 21.7px;
+	--conduction-new-footer-brand-color: rgba(255, 255, 255, 0.7);
+	--conduction-new-footer-brand-margin-block: 12px 0;
+	--conduction-new-footer-brand-measure: 288px;
+	--conduction-new-footer-social-size: 34px;
+	--conduction-new-footer-social-radius: 8px;
+	--conduction-new-footer-social-gap: 10px;
+	--conduction-new-footer-social-color: rgba(255, 255, 255, 0.78);
+	--conduction-new-footer-social-border-width: 1px;
+	--conduction-new-footer-social-border-color: rgba(255, 255, 255, 0.18);
+	--conduction-new-footer-social-margin-block: 24px 0;
 
 	/* The column headings: mono, uppercase, tracked out. */
-	--nldesign-footer-heading-font: var(--conduction-typography-font-family-code);
-	--nldesign-footer-heading-size: 11px;
-	--nldesign-footer-heading-weight: 500;
-	--nldesign-footer-heading-color: rgba(255, 255, 255, 0.55);
-	--nldesign-footer-heading-spacing: 1.54px;
-	--nldesign-footer-heading-line-height: 13px;
-	--nldesign-footer-heading-transform: uppercase;
-	--nldesign-footer-heading-margin-block-end: 16px;
+	--conduction-new-footer-heading-font: var(--conduction-typography-font-family-code);
+	--conduction-new-footer-heading-size: 11px;
+	--conduction-new-footer-heading-weight: 500;
+	--conduction-new-footer-heading-color: rgba(255, 255, 255, 0.55);
+	--conduction-new-footer-heading-spacing: 1.54px;
+	--conduction-new-footer-heading-line-height: 13px;
+	--conduction-new-footer-heading-transform: uppercase;
+	--conduction-new-footer-heading-margin-block-end: 16px;
 
 	/* The column links. */
-	--nldesign-footer-link-font: var(--conduction-typography-font-family-body);
-	--nldesign-footer-link-size: 14px;
-	--nldesign-footer-link-line-height: 21px;
-	--nldesign-footer-link-color: rgba(255, 255, 255, 0.85);
+	--conduction-new-footer-link-font: var(--conduction-typography-font-family-body);
+	--conduction-new-footer-link-size: 14px;
+	--conduction-new-footer-link-line-height: 21px;
+	--conduction-new-footer-link-color: rgba(255, 255, 255, 0.85);
 	/* 13px, so the ROW STEP lands on the reference's 34px. It was 9px while a
 	   list marker was still adding height to each row; removing the bullet
 	   changed the arithmetic, which is the sort of coupling only a measured
 	   step catches. */
-	--nldesign-footer-item-margin-block-end: 13px;
+	--conduction-new-footer-item-margin-block-end: 13px;
 	/* No bullets: the reference's footer lists carry no marker at all. */
-	--nldesign-footer-item-marker: none;
+	--conduction-new-footer-item-marker: none;
 
 	/* One surface for the whole footer, so a link colour only has to satisfy one
 	   background — the vendored CSS otherwise paints the legal strip in the
 	   brand primary. */
-	--nldesign-footer-legal-background: var(--c-cobalt-900);
-	--nldesign-footer-legal-font: var(--conduction-typography-font-family-code);
-	--nldesign-footer-legal-size: 12px;
-	--nldesign-footer-legal-color: rgba(255, 255, 255, 0.55);
+	--conduction-new-footer-legal-background: var(--c-cobalt-900);
+	--conduction-new-footer-legal-font: var(--conduction-typography-font-family-code);
+	--conduction-new-footer-legal-size: 12px;
+	--conduction-new-footer-legal-color: rgba(255, 255, 255, 0.55);
 	/* 18px, measured. At 12px the browser's `normal` leading gives 15px, and
 	   every box in the legal bar came out exactly 3px short of the reference. */
-	--nldesign-footer-legal-line-height: 18px;
-	--nldesign-footer-legal-link-color: rgba(255, 255, 255, 0.65);
-	--nldesign-footer-legal-link-decoration: none;
-	--nldesign-footer-legal-rule-width: 1px;
-	--nldesign-footer-legal-rule-color: rgba(255, 255, 255, 0.1);
-	--nldesign-footer-legal-padding-block-start: 24px;
-	--nldesign-footer-legal-gap: 16px;
-	--nldesign-footer-legal-link-gap: 8px;
+	--conduction-new-footer-legal-line-height: 18px;
+	--conduction-new-footer-legal-link-color: rgba(255, 255, 255, 0.65);
+	--conduction-new-footer-legal-link-decoration: none;
+	--conduction-new-footer-legal-rule-width: 1px;
+	--conduction-new-footer-legal-rule-color: rgba(255, 255, 255, 0.1);
+	--conduction-new-footer-legal-padding-block-start: 24px;
+	--conduction-new-footer-legal-gap: 16px;
+	--conduction-new-footer-legal-link-gap: 8px;
 
 	/* Certification badges. */
-	--nldesign-footer-badge-font: var(--conduction-typography-font-family-code);
-	--nldesign-footer-badge-size: 11px;
-	--nldesign-footer-badge-line-height: 17px;
-	--nldesign-footer-badge-mark-weight: 700;
+	--conduction-new-footer-badge-font: var(--conduction-typography-font-family-code);
+	--conduction-new-footer-badge-size: 11px;
+	--conduction-new-footer-badge-line-height: 17px;
+	--conduction-new-footer-badge-mark-weight: 700;
 	/* The mark is tracked out further than the value — 0.88px against 0.44px,
 	   measured. It is what makes "ISO" read as a mark. */
-	--nldesign-footer-badge-mark-spacing: 0.88px;
-	--nldesign-footer-badge-value-spacing: 0.44px;
-	--nldesign-footer-badge-value-weight: 400;
-	--nldesign-footer-badge-color: rgba(255, 255, 255, 0.85);
-	--nldesign-footer-badge-border-width: 1px;
-	--nldesign-footer-badge-border-color: rgba(255, 255, 255, 0.25);
-	--nldesign-footer-badge-radius: 4px;
-	--nldesign-footer-badge-padding: 5px 9px;
-	--nldesign-footer-badge-gap: 20px;
-	--nldesign-footer-badge-inner-gap: 6px;
+	--conduction-new-footer-badge-mark-spacing: 0.88px;
+	--conduction-new-footer-badge-value-spacing: 0.44px;
+	--conduction-new-footer-badge-value-weight: 400;
+	--conduction-new-footer-badge-color: rgba(255, 255, 255, 0.85);
+	--conduction-new-footer-badge-border-width: 1px;
+	--conduction-new-footer-badge-border-color: rgba(255, 255, 255, 0.25);
+	--conduction-new-footer-badge-radius: 4px;
+	--conduction-new-footer-badge-padding: 5px 9px;
+	--conduction-new-footer-badge-gap: 20px;
+	--conduction-new-footer-badge-inner-gap: 6px;
 	/* 1280px, remeasured. The reference's content column appears at 1280 three
 	   times over and at 1320 once — I had taken the outlier. It is why the
 	   footer's legal bar was 40px wider than the reference's. */
-	--nldesign-container-max: 1280px;
-	--nldesign-container-padding-inline: 24px;
+	--conduction-new-container-max: 1280px;
+	--conduction-new-container-padding-inline: 24px;
 
-	--nldesign-card-radius: 12px;
-	--nldesign-card-border-width: 1px;
-	--nldesign-card-border-color: #EBEDF0;
-	--nldesign-card-background: var(--c-white);
-	--nldesign-card-padding: 24px;
+	--conduction-new-card-radius: 12px;
+	--conduction-new-card-border-width: 1px;
+	--conduction-new-card-border-color: #EBEDF0;
+	--conduction-new-card-background: var(--c-white);
+	--conduction-new-card-padding: 24px;
 	/*
 	 * ZERO, and the spacing inside a card comes from the elements themselves.
 	 *
@@ -590,16 +590,16 @@
 	 * than the reference's. The heading names its own rhythm; the card does not
 	 * add a second one on top.
 	 */
-	--nldesign-card-gap: 0px;
-	--nldesign-card-heading-color: var(--c-blue-cobalt);
-	--nldesign-card-heading-size: 19.2px;
-	--nldesign-card-heading-font: var(--conduction-typography-font-family-heading);
-	--nldesign-card-body-size: 15.2px;
-	--nldesign-card-body-line-height: 22.8px;
-	--nldesign-card-body-font: var(--conduction-typography-font-family-body);
+	--conduction-new-card-gap: 0px;
+	--conduction-new-card-heading-color: var(--c-blue-cobalt);
+	--conduction-new-card-heading-size: 19.2px;
+	--conduction-new-card-heading-font: var(--conduction-typography-font-family-heading);
+	--conduction-new-card-body-size: 15.2px;
+	--conduction-new-card-body-line-height: 22.8px;
+	--conduction-new-card-body-font: var(--conduction-typography-font-family-body);
 	/* Hero band and headline — measured on docs.conduction.nl */
-	--nldesign-hero-padding-block-start: 56px;
-	--nldesign-hero-padding-block-end: 64px;
+	--conduction-new-hero-padding-block-start: 56px;
+	--conduction-new-hero-padding-block-end: 64px;
 	/*
 	 * FLUID, and it has to be: at 64px fixed, "klantportaal" plus the heading's
 	 * 80px icon tile overflowed a 390px viewport by 90px.
@@ -614,12 +614,12 @@
 	 * reference's 67.2px at 64px and keeps its proportion at every other size,
 	 * where a fixed 67.2px would crush a 38px headline's descenders.
 	 */
-	--nldesign-hero-title-size: clamp(32px, 28px + 2.5vw, 64px);
-	--nldesign-hero-title-weight: 700;
-	--nldesign-hero-title-line-height: 1.05;
-	--nldesign-hero-title-font: var(--conduction-typography-font-family-heading);
-	--nldesign-card-heading-weight: 700;
-	--nldesign-card-body-color: var(--c-blue-cobalt);
+	--conduction-new-hero-title-size: clamp(32px, 28px + 2.5vw, 64px);
+	--conduction-new-hero-title-weight: 700;
+	--conduction-new-hero-title-line-height: 1.05;
+	--conduction-new-hero-title-font: var(--conduction-typography-font-family-heading);
+	--conduction-new-card-heading-weight: 700;
+	--conduction-new-card-body-color: var(--c-blue-cobalt);
 
 	/*
 	 * The hexagon: the brand's one unmistakable shape, from the identity set.
@@ -629,19 +629,19 @@
 	 * the title, and not square. 56px was my estimate before I measured.
 	 */
 	--hex-pointy-top: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-	--nldesign-card-icon-size: 44px;
-	--nldesign-card-icon-block-size: 50px;
-	--nldesign-card-icon-padding: 11px;
-	--nldesign-card-icon-background: var(--c-blue-cobalt);
-	--nldesign-card-icon-color: var(--c-white);
-	--nldesign-card-icon-clip: var(--hex-pointy-top);
-	--nldesign-card-heading-direction: column;
-	--nldesign-card-heading-align: flex-start;
+	--conduction-new-card-icon-size: 44px;
+	--conduction-new-card-icon-block-size: 50px;
+	--conduction-new-card-icon-padding: 11px;
+	--conduction-new-card-icon-background: var(--c-blue-cobalt);
+	--conduction-new-card-icon-color: var(--c-white);
+	--conduction-new-card-icon-clip: var(--hex-pointy-top);
+	--conduction-new-card-heading-direction: column;
+	--conduction-new-card-heading-align: flex-start;
 	/* 14px, measured: the tile ends at 75px and the heading starts at 89px. */
-	--nldesign-card-icon-gap: 14px;
-	--nldesign-card-heading-margin-block-end: 6px;
-	--nldesign-card-shadow: none;
-	--nldesign-card-shadow-hover: var(--shadow-2);
+	--conduction-new-card-icon-gap: 14px;
+	--conduction-new-card-heading-margin-block-end: 6px;
+	--conduction-new-card-shadow: none;
+	--conduction-new-card-shadow-hover: var(--shadow-2);
 
 	/* Nextcloud-facing tokens, so the same set themes the admin UI too */
 	--nldesign-color-primary: var(--conduction-color-brand-primary);
@@ -655,5 +655,23 @@
 	--nldesign-color-background-hover: var(--conduction-color-background-muted);
 	--nldesign-color-background-dark: var(--c-cobalt-100);
 	--nldesign-color-link: var(--conduction-color-link-default);
+	/* Completed for the vocabulary (thematiq#1006), from this set's own roles
+	 * where it has one (borders, link hover, error, radii) and Nextcloud's
+	 * NL Design defaults, the values these resolved to before, where it does not. */
+	--nldesign-color-primary-light-hover: var(--c-cobalt-100);
+	--nldesign-color-border: var(--conduction-color-border-default);
+	--nldesign-color-border-dark: var(--conduction-color-border-strong);
+	--nldesign-color-link-hover: var(--conduction-color-link-hover);
+	--nldesign-color-error: var(--conduction-color-status-error);
+	--nldesign-color-error-rgb: 174, 28, 40;
+	--nldesign-color-warning: #e17000;
+	--nldesign-color-warning-rgb: 225, 112, 0;
+	--nldesign-color-success: #39870c;
+	--nldesign-color-success-rgb: 57, 135, 12;
+	--nldesign-color-info: #007bc7;
+	--nldesign-color-info-rgb: 0, 123, 199;
+	--nldesign-border-radius: var(--radius-md);
+	--nldesign-border-radius-small: var(--radius-sm);
+	--nldesign-border-radius-large: var(--radius-lg);
 	--nldesign-font-family: var(--conduction-typography-font-family-body);
 }

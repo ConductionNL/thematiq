@@ -444,6 +444,20 @@ function main() {
 		}
 		semantic.push({ name: `--nldesign-color-${key}`, value })
 	}
+	// Nextcloud reads the status colours twice: as a colour and as the bare
+	// `r, g, b` triple its translucent fills are mixed from. A brand file names
+	// the colour once; the triple follows from it (thematiq#1006).
+	for (const key of ['error', 'warning', 'success', 'info']) {
+		const hex = brand.semantic[key]
+		if (typeof hex !== 'string' || brand.semantic[`${key}-rgb`] !== undefined) {
+			continue
+		}
+		const digits = normaliseHex(hex).slice(1)
+		semantic.push({
+			name: `--nldesign-color-${key}-rgb`,
+			value: [0, 2, 4].map((offset) => parseInt(digits.slice(offset, offset + 2), 16)).join(', '),
+		})
+	}
 	semantic.push({
 		name: '--nldesign-logo-url',
 		value: `url('../../${brand.logo}')`,
@@ -463,34 +477,35 @@ function main() {
 	}
 
 	// The weight, size and space steps below are OPTIONAL. No layer in the app
-	// reads them under the --nldesign- prefix, so the vocabulary audit counts
-	// them as foreign names. A brand that wants to pass that audit omits them.
+	// reads them under the --nldesign- prefix, so they are written under the
+	// brand's own prefix, where the vocabulary audit leaves them alone
+	// (thematiq#1006; they used to be foreign --nldesign-* names).
 	if (brand.typography.weightNormal !== undefined) {
 		semantic.push({
-			name: '--nldesign-font-weight-normal',
+			name: `--${brand.id}-font-weight-normal`,
 			value: brand.typography.weightNormal,
 		})
 	}
 	if (brand.typography.weightBold !== undefined) {
 		semantic.push({
-			name: '--nldesign-font-weight-bold',
+			name: `--${brand.id}-font-weight-bold`,
 			value: brand.typography.weightBold,
 		})
 	}
 
 	for (const [step, sizes] of Object.entries(brand.typography.scale ?? {})) {
 		semantic.push({
-			name: `--nldesign-font-size-${step}`,
+			name: `--${brand.id}-font-size-${step}`,
 			value: sizes.fontSize,
 		})
 		semantic.push({
-			name: `--nldesign-line-height-${step}`,
+			name: `--${brand.id}-line-height-${step}`,
 			value: sizes.lineHeight,
 		})
 	}
 
 	for (const [step, size] of Object.entries(brand.space ?? {})) {
-		semantic.push({ name: `--nldesign-space-${step}`, value: size })
+		semantic.push({ name: `--${brand.id}-space-${step}`, value: size })
 	}
 
 	for (const [key, size] of Object.entries(brand.borderRadius)) {

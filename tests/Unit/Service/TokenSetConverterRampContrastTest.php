@@ -109,16 +109,21 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	}//end testAWhiteOnlyRampSuppliesNoRole()
 
 	/**
-	 * Control from the issue: a set with only the primary colour has no ramp
-	 * at all and leaves the roles to the defaults. It must stay that way.
+	 * Control from #933: a set with only the primary colour has no ramp at all
+	 * and its roles take the defaults. Since #1006 the converter writes those
+	 * default values into the set (the same values defaults.css holds, so the
+	 * rendering is unchanged) instead of leaving the tokens out, because a
+	 * shipped set must declare the required vocabulary itself.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
 	 */
 	public function testAPrimaryOnlySetStillFallsBackToTheDefaults(): void {
 		$report = $this->reportFor(':root{--nldesign-color-primary:#8a2be2}');
 
-		$this->assertArrayNotHasKey('--nldesign-color-text', $report);
-		$this->assertArrayNotHasKey('--nldesign-color-border', $report);
+		$this->assertSame('(Nextcloud default)', $report['--nldesign-color-text']['source'] ?? null);
+		$this->assertSame('#333333', $report['--nldesign-color-text']['value'] ?? null);
+		$this->assertSame('#b4b4b4', $report['--nldesign-color-border']['value'] ?? null);
 	}//end testAPrimaryOnlySetStillFallsBackToTheDefaults()
 
 	/**
