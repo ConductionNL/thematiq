@@ -1145,7 +1145,13 @@ test.describe('token-sets', () => {
 				.replace(/\/\*[\s\S]*?\*\//g, '')
 				.matchAll(/(--[\w-]+)\s*:/g),
 		].map((m) => m[1])
-		for (const n of names) expect(n.startsWith('--nldesign-'), n).toBe(true)
+		// The semantic layer, plus the Den Haag component tokens #899 gave
+		// every set (openspec/changes/denhaag-component-tokens: a set's own
+		// `--denhaag-*` or `--nl-data-badge-*` value wins over the bridge).
+		for (const n of names) {
+			expect(/^--(nldesign|denhaag|nl-data-badge)-/.test(n), n).toBe(true)
+		}
+		expect(names.some((n) => n.startsWith('--nldesign-'))).toBe(true)
 
 		const cunningham = fileLayers(await layerManifest(page, 'cunningham'))
 		const bundle =

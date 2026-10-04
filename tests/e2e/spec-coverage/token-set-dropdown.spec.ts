@@ -224,10 +224,14 @@ test.describe('token-set-dropdown', () => {
 			const response = await request.response()
 			expect(response?.status()).toBe(200)
 
+			// Nextcloud 32-34 render toasts as `.toastify`; 35 uses CSS-module
+			// classes (`_toastContainer_…`, `_toast_…`). Both carry "toast" in
+			// a class name, so the toast is found by that and its text.
 			await expect(
 				page
-					.locator('.toastify')
-					.filter({ hasText: /Applied|Theme updated/ }),
+					.locator('.toastify, [class*="_toast_"]')
+					.filter({ hasText: /Applied|Theme updated/ })
+					.first(),
 			).toBeVisible({ timeout: 15_000 })
 			expect(await getTokenSet(page, token)).toBe(target)
 

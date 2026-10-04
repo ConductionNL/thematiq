@@ -78,6 +78,41 @@ async function probeLayers(page: Page): Promise<string[]> {
 	return thematiqLayers(page)
 }
 
+/**
+ * A computed colour as `#rrggbb`, or `#rrggbbaa` when it is not opaque.
+ * Reads `rgb()`/`rgba()` (0-255 channels) and `color(srgb r g b [/ a])`
+ * (0-1 channels), the two forms Chromium serialises a computed colour in.
+ */
+function asHex(value: string): string {
+	const v = value.trim()
+	let channels: number[]
+	let alpha = 1
+	const srgb =
+		/^color\(srgb\s+([\d.e-]+)\s+([\d.e-]+)\s+([\d.e-]+)(?:\s*\/\s*([\d.e-]+%?))?\s*\)$/i.exec(
+			v,
+		)
+	const rgb =
+		/^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?\s*\)$/i.exec(
+			v,
+		)
+	const readAlpha = (a: string | undefined) =>
+		a === undefined ? 1 : a.endsWith('%') ? parseFloat(a) / 100 : parseFloat(a)
+	if (srgb !== null) {
+		channels = srgb.slice(1, 4).map((c) => parseFloat(c) * 255)
+		alpha = readAlpha(srgb[4])
+	} else if (rgb !== null) {
+		channels = rgb.slice(1, 4).map((c) => parseFloat(c))
+		alpha = readAlpha(rgb[4])
+	} else {
+		throw new Error(`not an rgb() or color(srgb) value: ${value}`)
+	}
+	const hex = (n: number) =>
+		Math.round(Math.min(255, Math.max(0, n)))
+			.toString(16)
+			.padStart(2, '0')
+	return '#' + channels.map(hex).join('') + (alpha < 1 ? hex(alpha * 255) : '')
+}
+
 /** The highest index of any layer matching `pred`, or -1. */
 function lastIndex(layers: string[], pred: (l: string) => boolean): number {
 	let last = -1
@@ -843,17 +878,11 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 			await rootVar(page, '--nldesign-color-focus'),
 		)
 		const [r, g, b] = parseRgb(token)
-		// Normalised through a canvas: a relative colour may serialise as
-		// color(srgb ...) rather than rgb(), depending on the browser version.
-		const asHex = (c: string) =>
-			page.evaluate((v) => {
-				const ctx = document
-					.createElement('canvas')
-					.getContext('2d') as CanvasRenderingContext2D
-				ctx.fillStyle = v
-				return ctx.fillStyle
-			}, c)
-		expect(await asHex(outline.color)).toBe(await asHex(`rgb(${r}, ${g}, ${b})`))
+		// A relative colour may serialise as color(srgb r g b [/ a]) rather than
+		// rgb(), and Chromium 151's canvas hands color() back unchanged, so both
+		// forms are parsed here. An alpha below 1 is kept, so a translucent ring
+		// can never compare equal to the opaque token.
+		expect(asHex(outline.color)).toBe(asHex(`rgb(${r}, ${g}, ${b})`))
 		expect(outline.shadow).toContain(token)
 	})
 
