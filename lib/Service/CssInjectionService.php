@@ -467,6 +467,9 @@ class CssInjectionService {
 		$withDark = $this->hasDarkVariantLayer(tokenSet: $tokenSet);
 		if ($withDark === true) {
 			$layers[] = $this->fileLayer(layer: 'dark-variant', file: 'tokens/dark/' . $tokenSet);
+			// 3b-1. The dark logo as an absolute url, after the dark file that
+			// names it relatively. See LogoLayerService::darkLayers().
+			$layers = array_merge($layers, $this->logoLayer->darkLayers(tokenSet: $tokenSet, brandLogo: ($this->brandLogo !== null)));
 		}
 
 		// Functional contrast fix shared by all design systems: app icons
@@ -842,6 +845,15 @@ class CssInjectionService {
 	 * @var string
 	 */
 	public const LOGO_STYLE_ID = 'nldesign-logo-url';
+
+	/**
+	 * The `id` the dark logo `<style>` carries on the page (see
+	 * {@see LogoLayerService::darkLayer()}), on the same contract as
+	 * {@see self::LOGO_STYLE_ID}.
+	 *
+	 * @var string
+	 */
+	public const DARK_LOGO_STYLE_ID = 'thematiq-dark-logo-url';
 
 	/**
 	 * The token set that means "look like this Nextcloud", and therefore the

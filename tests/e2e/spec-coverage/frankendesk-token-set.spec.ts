@@ -282,11 +282,30 @@ test.describe('La Frankendesk token set', () => {
 	})
 
 	for (const [scope, enter] of DARK_SCOPES) {
-		// @e2e frankendesk-token-set::the-logo-stays-in-dark-mode
-		test(`the logo stays in dark mode (${scope})`, async ({ page }) => {
+		// @e2e frankendesk-token-set::the-header-shows-the-dark-mark-in-dark-mode
+		test(`the header shows the dark mark in dark mode (${scope})`, async ({
+			page,
+		}) => {
 			await enter(page)
-			const logo = await headerLogo(page)
-			expect(logo.image).toMatch(new RegExp(`img/logos/${SET_ID}\\.svg`))
+			const dark = await headerLogo(page)
+			const url = /url\("?([^")]+)"?\)/.exec(dark.image)?.[1]
+			expect(url, `background-image ${dark.image}`).toMatch(
+				new RegExp(`img/logos/${SET_ID}-dark\\.svg$`),
+			)
+			expect(dark.mask).toBe('none')
+			const res = await page.request.get(url as string)
+			expect(res.status()).toBe(200)
+			expect(res.headers()['content-type']).toContain('image/svg+xml')
+
+			// And back: leaving dark mode brings the light mark back.
+			await page.emulateMedia({ colorScheme: 'light' })
+			await page.evaluate(() => {
+				document.body.removeAttribute('data-theme-dark')
+				document.body.setAttribute('data-themes', 'default')
+				document.body.setAttribute('data-theme-default', '')
+			})
+			const light = await headerLogo(page)
+			expect(light.image).toMatch(new RegExp(`img/logos/${SET_ID}\\.svg`))
 		})
 
 		// @e2e frankendesk-token-set::dark-mode-text-reaches-aa-in-both-dark-scopes

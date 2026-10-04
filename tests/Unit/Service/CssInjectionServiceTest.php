@@ -1246,6 +1246,68 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testASetWithElementOverridesGetsThemAfterItsTokens()
 
 	/**
+	 * A set with a dark logo carries it AFTER its generated dark variant
+	 * (thematiq#1021).
+	 *
+	 * The dark file declares the dark logo as a relative url, which resolves
+	 * against the stylesheet that uses it and so breaks from
+	 * css/token-overrides/. The inline dark layer restates it as an absolute
+	 * url, and it can only win by coming later at the same specificity. It is
+	 * part of the manifest, so applying the set without a reload carries it.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 */
+	public function testADarkLogoLayerFollowsTheDarkVariant(): void {
+		$this->configureAppValues(['token_set' => 'frankendesk']);
+		$this->designSystemService->method('getTokenSetMeta')->with('frankendesk')
+			->willReturn(['design_system' => 'lasuite']);
+		$this->designSystemService->method('getDesignSystem')->with('lasuite')->willReturn(
+			[
+				'id' => 'lasuite',
+				'name' => 'La Suite',
+				'description' => '',
+				'stylesheets' => ['systems/lasuite/element-overrides'],
+			]
+		);
+		$this->designSystemService->method('hasGeneratedDarkVariant')->willReturn(true);
+		// The shared locator's url generator answers routes only; this one also
+		// links shipped files, so the layer has a url to declare.
+		$appManager = $this->createMock(IAppManager::class);
+		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
+		$links = $this->createMock(IURLGenerator::class);
+		$links->method('linkTo')->willReturnCallback(static fn (string $appName, string $file): string => '/custom_apps/' . $appName . '/' . $file);
+		$this->runtimeFiles = new RuntimeFileLocator(
+			$appManager,
+			new DirectoryRuntimeFileStore($this->runtimeDir . '/store'),
+			$links,
+			$this->createMock(ITempManager::class)
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$layers = $this->buildService(styleLog: $styleLog, fontLog: $fontLog)->getStylesheetManifest('frankendesk')['layers'];
+
+		$darkFile = null;
+		$darkLogo = null;
+		foreach ($layers as $index => $layer) {
+			if ($layer['kind'] !== 'inline' && str_contains((string)($layer['href'] ?? ''), '/css/tokens/dark/frankendesk.css') === true) {
+				$darkFile = $index;
+			}
+
+			if ($layer['kind'] === 'inline' && $layer['id'] === CssInjectionService::DARK_LOGO_STYLE_ID) {
+				$darkLogo = $index;
+			}
+		}
+
+		$this->assertNotNull($darkFile, 'the dark variant is in the manifest');
+		$this->assertNotNull($darkLogo, 'the dark logo layer is in the manifest');
+		$this->assertGreaterThan($darkFile, $darkLogo, 'the dark logo layer must come after the dark variant, or its relative url wins');
+		$this->assertStringContainsString('url(/custom_apps/thematiq/img/logos/frankendesk-dark.svg)', $layers[$darkLogo]['css']);
+	}//end testADarkLogoLayerFollowsTheDarkVariant()
+
+	/**
 	 * A set without an overrides file loads nothing extra.
 	 *
 	 * The control: without this, the test above would pass on an

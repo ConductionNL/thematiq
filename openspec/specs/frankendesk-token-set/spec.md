@@ -96,8 +96,17 @@ On the header, `LogoLayerService` MUST find the shipped file and declare the abs
 the three `--nldesign-header-logo-*` variables (#968), so the shared lasuite element overrides show
 the image instead of the brand-coloured Nextcloud mask. `css/token-overrides/frankendesk.css`, which
 loads after them, MUST also show the image with no mask and a transparent fill, because the mark is
-two-tone and a single-colour mask would flatten it. The set declares no `logo_dark`, so the same
-mark MUST show in dark mode.
+two-tone and a single-colour mask would flatten it.
+
+In dark mode the header MUST show `img/logos/frankendesk-dark.svg`, named by `theming.logo_dark`.
+It is the light mark with only the stitches and neck bolts recoloured from `#111111` (1.03:1 on the
+dark header `#141414`) to `#c8c8d0`, which reaches at least 3:1 there; every other shape and colour
+is unchanged. The generated dark file names it as a relative url, which resolves against the
+stylesheet that uses it and so breaks from `css/token-overrides/`, and `--nldesign-header-logo-image`
+is substituted on `:root`. So `LogoLayerService::darkLayer()` MUST restate both
+`--nldesign-logo-url` and `--nldesign-header-logo-image` as the absolute dark url, in both dark
+scopes, in an inline layer emitted after the dark file. A set ships a dark logo as
+`img/logos/<set>-dark.<ext>`, which is also what its `logo_dark` names.
 
 #### Scenario: The header shows the La Frankendesk mark unmasked
 
@@ -108,12 +117,14 @@ mark MUST show in dark mode.
 - AND its computed `mask-image` MUST be `none`
 - AND its computed `background-color` MUST be transparent
 
-#### Scenario: The logo stays in dark mode
+#### Scenario: The header shows the dark mark in dark mode
 
 - GIVEN `frankendesk` is the active token set
 - WHEN the page is in dark mode, by OS preference or by an explicit dark theme
-- THEN the computed `background-image` of `#header .logo` MUST still end in
-  `img/logos/frankendesk.svg`
+- THEN the computed `background-image` of `#header .logo` MUST end in
+  `img/logos/frankendesk-dark.svg`, and that url MUST be served as an SVG
+- AND its computed `mask-image` MUST be `none`
+- AND back in light mode it MUST end in `img/logos/frankendesk.svg` again
 
 ### Requirement: Every foreground of the set reaches WCAG AA in light and dark
 
@@ -158,8 +169,5 @@ These are recorded, not required, and belong to other capabilities or need a dec
 - The parent's `--nldesign-color-text-muted` `#75758a` measures 4.499:1 on white (inherited from
   `lasuite`). This set keeps it for parity and uses `#6b6b80` for card body copy.
 - The parent's status colours no longer match the ramp's status steps (see the first requirement).
-- The mark's black stitches and neck bolts (`#111111`) nearly vanish on the dark header
-  (`#141414`). The white-centred frames stay visible. A `frankendesk-dark.svg` would fix it; that is
-  a brand decision.
 - No public portal links the dark variant yet (portaliq `templates/site.php` explains why), so the
   dark values of the portal layer are reached only by a consumer that reads the tokens directly.

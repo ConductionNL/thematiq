@@ -497,7 +497,8 @@
 		"theming": {
 			"primary_color": "#4844AD",
 			"background_color": "#FFFFFF",
-			"logo": "img/logos/frankendesk.svg"
+			"logo": "img/logos/frankendesk.svg",
+			"logo_dark": "img/logos/frankendesk-dark.svg"
 		},
 		"extends": "lasuite"
 	},
