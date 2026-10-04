@@ -14,7 +14,6 @@
 		--buren-color-rood-40: #e54d58;
 		--buren-color-rood-50: #e1313e;
 		--buren-color-rood-70: #92151f;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #2c2e2f;
 		--nldesign-color-background-darker: #3a3b3c;
 		--nldesign-color-background-hover: #252728;
@@ -50,7 +49,7 @@
 		--nldesign-color-nav-background: #141414;
 		--nldesign-color-placeholder-dark: #3f3f3f;
 		--nldesign-color-placeholder-light: #2a2a2a;
-		--nldesign-color-primary: #9bc2ed;
+		--nldesign-color-primary: #64a1e3;
 		--nldesign-color-primary-hover: #1d5499;
 		--nldesign-color-primary-light: #112131;
 		--nldesign-color-primary-light-hover: #172d41;
@@ -133,7 +132,6 @@ body[data-themes*=dark] {
 	--buren-color-rood-40: #e54d58;
 	--buren-color-rood-50: #e1313e;
 	--buren-color-rood-70: #92151f;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #2c2e2f;
 	--nldesign-color-background-darker: #3a3b3c;
 	--nldesign-color-background-hover: #252728;
@@ -169,7 +167,7 @@ body[data-themes*=dark] {
 	--nldesign-color-nav-background: #141414;
 	--nldesign-color-placeholder-dark: #3f3f3f;
 	--nldesign-color-placeholder-light: #2a2a2a;
-	--nldesign-color-primary: #9bc2ed;
+	--nldesign-color-primary: #64a1e3;
 	--nldesign-color-primary-hover: #1d5499;
 	--nldesign-color-primary-light: #112131;
 	--nldesign-color-primary-light-hover: #172d41;

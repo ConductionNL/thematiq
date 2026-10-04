@@ -117,7 +117,6 @@
 		--example-voortgezet-color-red-300: #cf3f3f;
 		--example-voortgezet-color-red-400: #d95c5c;
 		--example-voortgezet-color-white: #141414;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #161b25;
 		--nldesign-color-background-darker: #1e2531;
 		--nldesign-color-background-hover: #13171f;
@@ -726,7 +725,6 @@ body[data-themes*=dark] {
 	--example-voortgezet-color-red-300: #cf3f3f;
 	--example-voortgezet-color-red-400: #d95c5c;
 	--example-voortgezet-color-white: #141414;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #161b25;
 	--nldesign-color-background-darker: #1e2531;
 	--nldesign-color-background-hover: #13171f;

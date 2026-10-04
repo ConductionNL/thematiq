@@ -5,7 +5,6 @@
 		--nldesign-card-body-color: #9595a7;
 		--nldesign-card-border-color: #23232f;
 		--nldesign-card-heading-color: #dcdce4;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #23232f;
 		--nldesign-color-background-darker: #353747;
 		--nldesign-color-background-hover: #1d1d23;
@@ -119,7 +118,6 @@ body[data-themes*=dark] {
 	--nldesign-card-body-color: #9595a7;
 	--nldesign-card-border-color: #23232f;
 	--nldesign-card-heading-color: #dcdce4;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #23232f;
 	--nldesign-color-background-darker: #353747;
 	--nldesign-color-background-hover: #1d1d23;

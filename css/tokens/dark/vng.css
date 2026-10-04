@@ -82,7 +82,6 @@
 		--denhaag-step-marker-warning-color: #141414;
 		--denhaag-step-marker-warning-nested-background-color: #141414;
 		--denhaag-step-marker-warning-nested-border-color: #ed7719;
-		--nldesign-color-background: #04253a;
 		--nldesign-color-background-dark: #22262e;
 		--nldesign-color-background-darker: #2e363f;
 		--nldesign-color-background-hover: #191e22;
@@ -108,7 +107,7 @@
 		--nldesign-color-nav-background: #141414;
 		--nldesign-color-placeholder-dark: #2e363f;
 		--nldesign-color-placeholder-light: #22262e;
-		--nldesign-color-primary: #66bbff;
+		--nldesign-color-primary: #a5d7ff;
 		--nldesign-color-primary-hover: #026596;
 		--nldesign-color-primary-light: #03273b;
 		--nldesign-color-primary-light-hover: #093f5d;
@@ -171,7 +170,6 @@
 		--nldesign-component-textbox-hover-border-color: #637186;
 		--nldesign-component-textbox-invalid-border-color: #e34a42;
 		--nldesign-component-unordered-list-color: #cccccc;
-		--nldesign-logo-url: url('../../../img/logos/vng-dark.svg');
 		--tilburg-color-black: #d5d5d5;
 		--tilburg-color-black-txt: #c0c0c0;
 		--tilburg-color-blue-100: #03273b;
@@ -657,7 +655,6 @@ body[data-themes*=dark] {
 	--denhaag-step-marker-warning-color: #141414;
 	--denhaag-step-marker-warning-nested-background-color: #141414;
 	--denhaag-step-marker-warning-nested-border-color: #ed7719;
-	--nldesign-color-background: #04253a;
 	--nldesign-color-background-dark: #22262e;
 	--nldesign-color-background-darker: #2e363f;
 	--nldesign-color-background-hover: #191e22;
@@ -683,7 +680,7 @@ body[data-themes*=dark] {
 	--nldesign-color-nav-background: #141414;
 	--nldesign-color-placeholder-dark: #2e363f;
 	--nldesign-color-placeholder-light: #22262e;
-	--nldesign-color-primary: #66bbff;
+	--nldesign-color-primary: #a5d7ff;
 	--nldesign-color-primary-hover: #026596;
 	--nldesign-color-primary-light: #03273b;
 	--nldesign-color-primary-light-hover: #093f5d;
@@ -746,7 +743,6 @@ body[data-themes*=dark] {
 	--nldesign-component-textbox-hover-border-color: #637186;
 	--nldesign-component-textbox-invalid-border-color: #e34a42;
 	--nldesign-component-unordered-list-color: #cccccc;
-	--nldesign-logo-url: url('../../../img/logos/vng-dark.svg');
 	--tilburg-color-black: #d5d5d5;
 	--tilburg-color-black-txt: #c0c0c0;
 	--tilburg-color-blue-100: #03273b;

@@ -117,7 +117,6 @@
 		--example-gemeente-color-red-300: #da6760;
 		--example-gemeente-color-red-400: #e2807b;
 		--example-gemeente-color-white: #141414;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #1c2226;
 		--nldesign-color-background-darker: #242c30;
 		--nldesign-color-background-hover: #171d20;
@@ -726,7 +725,6 @@ body[data-themes*=dark] {
 	--example-gemeente-color-red-300: #da6760;
 	--example-gemeente-color-red-400: #e2807b;
 	--example-gemeente-color-white: #141414;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #1c2226;
 	--nldesign-color-background-darker: #242c30;
 	--nldesign-color-background-hover: #171d20;

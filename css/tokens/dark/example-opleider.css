@@ -117,7 +117,6 @@
 		--example-opleider-color-red-300: #cf3f3f;
 		--example-opleider-color-red-400: #d95c5c;
 		--example-opleider-color-white: #141414;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #1b2124;
 		--nldesign-color-background-darker: #262d30;
 		--nldesign-color-background-hover: #161d1d;
@@ -726,7 +725,6 @@ body[data-themes*=dark] {
 	--example-opleider-color-red-300: #cf3f3f;
 	--example-opleider-color-red-400: #d95c5c;
 	--example-opleider-color-white: #141414;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #1b2124;
 	--nldesign-color-background-darker: #262d30;
 	--nldesign-color-background-hover: #161d1d;

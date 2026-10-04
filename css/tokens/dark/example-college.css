@@ -117,7 +117,6 @@
 		--example-college-color-red-300: #cf3f3f;
 		--example-college-color-red-400: #d95c5c;
 		--example-college-color-white: #141414;
-		--nldesign-color-background: #141414;
 		--nldesign-color-background-dark: #221e22;
 		--nldesign-color-background-darker: #2f292d;
 		--nldesign-color-background-hover: #1c181c;
@@ -143,7 +142,7 @@
 		--nldesign-color-nav-background: #141414;
 		--nldesign-color-placeholder-dark: #423b40;
 		--nldesign-color-placeholder-light: #221e22;
-		--nldesign-color-primary: #ebaee3;
+		--nldesign-color-primary: #f7e0f4;
 		--nldesign-color-primary-hover: #5e1755;
 		--nldesign-color-primary-light: #2f1329;
 		--nldesign-color-primary-light-hover: #5a274e;
@@ -726,7 +725,6 @@ body[data-themes*=dark] {
 	--example-college-color-red-300: #cf3f3f;
 	--example-college-color-red-400: #d95c5c;
 	--example-college-color-white: #141414;
-	--nldesign-color-background: #141414;
 	--nldesign-color-background-dark: #221e22;
 	--nldesign-color-background-darker: #2f292d;
 	--nldesign-color-background-hover: #1c181c;
@@ -752,7 +750,7 @@ body[data-themes*=dark] {
 	--nldesign-color-nav-background: #141414;
 	--nldesign-color-placeholder-dark: #423b40;
 	--nldesign-color-placeholder-light: #221e22;
-	--nldesign-color-primary: #ebaee3;
+	--nldesign-color-primary: #f7e0f4;
 	--nldesign-color-primary-hover: #5e1755;
 	--nldesign-color-primary-light: #2f1329;
 	--nldesign-color-primary-light-hover: #5a274e;

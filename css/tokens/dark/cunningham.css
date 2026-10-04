@@ -3,7 +3,6 @@
 	body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast]) {
 		--denhaag-case-card-subtitle-color: #9b9da2;
 		--denhaag-step-marker-not-checked-color: #8c8f94;
-		--nldesign-color-background: #292b2f;
 		--nldesign-color-background-dark: #292b2f;
 		--nldesign-color-background-darker: #3f4247;
 		--nldesign-color-background-hover: #1e2022;
@@ -97,7 +96,6 @@ body[data-theme-dark],
 body[data-themes*=dark] {
 	--denhaag-case-card-subtitle-color: #9b9da2;
 	--denhaag-step-marker-not-checked-color: #8c8f94;
-	--nldesign-color-background: #292b2f;
 	--nldesign-color-background-dark: #292b2f;
 	--nldesign-color-background-darker: #3f4247;
 	--nldesign-color-background-hover: #1e2022;
