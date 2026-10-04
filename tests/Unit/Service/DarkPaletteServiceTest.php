@@ -682,6 +682,53 @@ class DarkPaletteServiceTest extends TestCase {
 	}//end testGenerateForSetHandAuthoredOverrideWins()
 
 	/**
+	 * The dark variant gives the error label a colour that reads on the
+	 * derived error fill (thematiq#1027). error-contrast.css paints the error
+	 * chip and button label from `--nldesign-component-button-error-color`,
+	 * falling back to white; white on the lighter red a dark variant derives
+	 * from #d70d0d (#e72e2e) is 4.35:1, and so is near-black #111111.
+	 */
+	public function testGenerateForSetGivesTheErrorLabelAReadableColour(): void {
+		file_put_contents(
+			$this->appDir . '/token-sets.json',
+			json_encode([['id' => 'example', 'design_system' => 'nldesign']])
+		);
+		file_put_contents(
+			$this->appDir . '/css/tokens/example.css',
+			":root {\n\t--nldesign-color-background: #ffffff;\n\t--nldesign-color-error: #d70d0d;\n}\n"
+		);
+
+		$generated = $this->service->generateForSet(setId: 'example');
+
+		$this->assertNotNull($generated);
+		$fill = [];
+		$label = [];
+		$this->assertSame(1, preg_match('/--nldesign-color-error: (#[0-9a-f]{6});/', $generated['css'], $fill));
+		$this->assertSame(1, preg_match('/--nldesign-component-button-error-color: (#[0-9a-f]{6});/', $generated['css'], $label), 'no error label in the dark variant');
+		$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $label[1], background: $fill[1]));
+	}//end testGenerateForSetGivesTheErrorLabelAReadableColour()
+
+	/**
+	 * A label the set chooses itself is kept when it reads, never replaced.
+	 */
+	public function testGenerateForSetKeepsAReadableHandAuthoredErrorLabel(): void {
+		file_put_contents(
+			$this->appDir . '/token-sets.json',
+			json_encode([['id' => 'example', 'design_system' => 'nldesign']])
+		);
+		file_put_contents(
+			$this->appDir . '/css/tokens/example.css',
+			":root {\n\t--nldesign-color-error: #d70d0d;\n}\n\n"
+			. "@media (prefers-color-scheme: dark) {\n\t:root {\n\t\t--nldesign-color-error: #ff9999;\n\t\t--nldesign-component-button-error-color: #1a0000;\n\t}\n}\n"
+		);
+
+		$generated = $this->service->generateForSet(setId: 'example');
+
+		$this->assertNotNull($generated);
+		$this->assertStringContainsString('--nldesign-component-button-error-color: #1a0000;', $generated['css']);
+	}//end testGenerateForSetKeepsAReadableHandAuthoredErrorLabel()
+
+	/**
 	 * `generateForSet()` returns null for an ineligible design system
 	 * (`none`) — no dark output is built at all.
 	 */
