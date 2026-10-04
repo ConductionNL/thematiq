@@ -169,10 +169,11 @@ class TokenSetContrastAuditTest extends TestCase {
 		$service = $this->service();
 		$manifest = array_column($this->auditableManifest(), null, 'id');
 
-		// noaberkracht (primary/text below 4.5) and vng (primary/bg below 3.0) are
-		// known sub-AA community sets: the audit must classify them `fail`, and the
-		// report must record that fact rather than launder them into a pass.
-		foreach (['noaberkracht', 'vng'] as $id) {
+		// vng (primary/bg below 3.0) is a known sub-AA community set: the audit must
+		// classify it `fail`, and the report must record that fact rather than
+		// launder it into a pass. noaberkracht left this list when the token sync
+		// converted it with the contrast repair (thematiq#993, Ruben's decision).
+		foreach (['vng'] as $id) {
 			if (isset($manifest[$id]) === false) {
 				continue;
 			}

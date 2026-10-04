@@ -206,6 +206,35 @@ describe('contrast repair', () => {
 	})
 })
 
+describe('pinned values', () => {
+	it('keeps a pinned primary over the theme and the repair, and repairs what depends on it', () => {
+		const result = converter.convert(
+			'.demo-theme {\n\t--utrecht-button-primary-action-background-color: #5616ff;\n\t--utrecht-button-primary-action-color: #5616ff;\n}\n',
+			{
+				slug: 'demo',
+				displayName: 'Demo',
+				table,
+				vocabulary,
+				fonts: [],
+				repairContrast: true,
+				pinned: { '--nldesign-color-primary': '#157c68' },
+			},
+		)
+		const decl = {}
+		for (const match of result.css
+			.replace(/\/\*[\s\S]*?\*\//g, '')
+			.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) {
+			decl[match[1]] = match[2].trim()
+		}
+		expect(decl['--nldesign-color-primary']).toBe('#157c68')
+		expect(result.manifestEntry.theming.primary_color).toBe('#157c68')
+		// The theme's own button text (#5616ff) is unreadable on the pinned primary: it is repaired.
+		expect(
+			contrast(decl['--nldesign-color-primary-text'], '#157c68'),
+		).toBeGreaterThanOrEqual(4.5)
+	})
+})
+
 describe('fills and values that are not colours', () => {
 	it('lightens a mid-tone neutral fill instead of making body text unreadable on the page', () => {
 		// drechterland: the table header (the neutral fill) is #1b7298.

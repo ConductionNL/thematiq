@@ -361,6 +361,27 @@ function writeRepo(path, content) {
 }
 
 /**
+ * The `--nldesign-*` values a person pinned in a converted set's local overrides
+ * (for example the committed primary of nijmegen, Ruben's decision on #996). The
+ * converter keeps them over its rules and its contrast repair, and repairs only
+ * the colours that depend on them, so the emitted set agrees with the overrides
+ * the file carries forward.
+ *
+ * @param {Object} org The organisation, with `oldCss` and `kind`.
+ * @return {Object<string,string>} Name => pinned value.
+ */
+export function pinnedValues(org) {
+	if (org.oldCss === null || org.kind !== 'converted') {
+		return {}
+	}
+	return Object.fromEntries(
+		localOverrides(org.oldCss, 'converted', new Set(), new Map()).filter(
+			([name]) => name.startsWith('--nldesign-'),
+		),
+	)
+}
+
+/**
  * Give a theme without any primary token the set's committed primary colour.
  *
  * The converter's primary rule falls back to the manifest's `theming.primary_color`,
@@ -434,6 +455,7 @@ function convertOrg(org, context) {
 				vocabulary: context.vocabulary,
 				fonts: [],
 				repairContrast: true,
+				pinned: pinnedValues(org),
 			},
 		)
 	} catch (error) {
