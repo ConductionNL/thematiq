@@ -318,8 +318,8 @@
         },
         "summer-breeze": {
             "verdict": "pass",
-            "textRatio": 10.2,
-            "uiRatio": 9.03,
+            "textRatio": 9.08,
+            "uiRatio": 8.47,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
