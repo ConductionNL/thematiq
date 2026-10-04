@@ -307,6 +307,43 @@ class ShippedDarkContrastTest extends TestCase {
 	}//end testInputsAndPrimaryButtonsReachAa()
 
 	/**
+	 * The error chip and error button label read on the error fill in the
+	 * shipped dark variant (thematiq#1027). css/error-contrast.css paints both
+	 * labels from `--nldesign-component-button-error-color`, white when the
+	 * set leaves it out, on `--color-error`: `--nldesign-color-error`, or
+	 * `--summer-color-error` on the summer-breeze system. The lasuite system
+	 * paints its own ramp's red, which no token file declares;
+	 * tests/vitest/errorLabelContrast.spec.js resolves every system's real
+	 * cascade, lasuite included.
+	 *
+	 * @dataProvider darkSetProvider
+	 *
+	 * @param string $setId The token set id.
+	 */
+	public function testTheErrorLabelReadsOnTheErrorFill(string $setId): void {
+		$contrast = new ContrastService();
+		$value = $this->darkValues(setId: $setId);
+		$label = ($value('--nldesign-component-button-error-color') ?? '#ffffff');
+
+		$manifest = json_decode((string)file_get_contents(dirname(__DIR__, 3) . '/token-sets.json'), true);
+		$designSystem = (array_column((is_array($manifest) === true ? $manifest : []), 'design_system', 'id')[$setId] ?? 'nldesign');
+		$fillToken = ([
+			'nldesign' => '--nldesign-color-error',
+			'high-contrast' => '--nldesign-color-error',
+			'summer-breeze' => '--summer-color-error',
+		][$designSystem] ?? null);
+		if ($fillToken === null) {
+			$this->addToAssertionCount(1);
+			return;
+		}
+
+		$fill = $value($fillToken);
+		$this->assertNotNull($fill, $setId . ' dark declares no ' . $fillToken);
+		$ratio = $contrast->measure(foreground: $label, background: $fill);
+		$this->assertGreaterThanOrEqual(4.5, (float)$ratio, sprintf('%s dark error label %s on %s', $setId, $label, $fill));
+	}//end testTheErrorLabelReadsOnTheErrorFill()
+
+	/**
 	 * The page background of a dark variant is dark (thematiq#952).
 	 *
 	 * vng shipped `#42b1f3`: its manifest's theming `background_color`

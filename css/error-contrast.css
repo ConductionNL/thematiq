@@ -28,15 +28,14 @@
 
 /* NcButton type="error" and NcChip variant="error" both render
    `background: var(--color-error); color: var(--color-error-text)`.
-   The button reads its own label token first, so an admin who sets one — a
-   dark label on a theme whose error colour is pale — is not overruled here. */
+   Both read one label token first, so an admin who sets one (a dark label on
+   a theme whose error colour is pale) is not overruled here. Every generated
+   dark variant declares it, because white fails on the lighter red a dark
+   variant derives (thematiq#1027); light mode leaves it out and gets white. */
 .button-vue--vue-error,
-.button-vue--error {
-	color: var(--nldesign-component-button-error-color, #fff) !important;
-}
-
+.button-vue--error,
 .nc-chip--error {
-	color: #fff !important;
+	color: var(--nldesign-component-button-error-color, #fff) !important;
 }
 
 /**

@@ -86,8 +86,11 @@ class DarkPaletteService {
 	 * {@see self::DARK_BANDS}), repairs the hero band's foregrounds against
 	 * the primary fill it sits on, and the semantic link colour and its hover
 	 * against the page (thematiq#1021).
+	 *
+	 * Version 8 gives the error chip and button label a colour that reads on
+	 * the derived error fill (see {@see self::withErrorLabel()}, thematiq#1027).
 	 */
-	public const GENERATOR_VERSION = 7;
+	public const GENERATOR_VERSION = 8;
 
 	/**
 	 * The guaranteed-passing near-white snap value (matches NC's own dark
@@ -152,6 +155,27 @@ class DarkPaletteService {
 	 * @var string[]
 	 */
 	private const SKIPPED_DESIGN_SYSTEMS = ['none', 'high-contrast'];
+
+	/**
+	 * The label css/error-contrast.css paints on the error fill, for
+	 * `NcChip variant="error"` and `NcButton type="error"` alike. Light mode
+	 * leaves it out and gets the stylesheet's white fallback.
+	 */
+	private const ERROR_LABEL = '--nldesign-component-button-error-color';
+
+	/**
+	 * The token each design system maps `--color-error` (the error fill) to,
+	 * where a dark variant derives it. lasuite is absent on purpose: its fill
+	 * is `--lasuite-color-error-550` from the system's own ramp, which no
+	 * token set declares and no dark variant changes, so the white label
+	 * keeps reading there. high-contrast ships a hand-written variant.
+	 *
+	 * @var array<string, string>
+	 */
+	public const ERROR_FILL_TOKENS = [
+		'nldesign' => '--nldesign-color-error',
+		'summer-breeze' => '--summer-color-error',
+	];
 
 	/**
 	 * Maximum outer verify/repair rounds (a fix to one pair's shared token
@@ -1340,7 +1364,11 @@ class DarkPaletteService {
 		$derived = $this->deriveDarkDeclarations(lightDeclarations: $light);
 		$overrides = $this->parser->parseDarkBlock(css: $tokenCss);
 
-		$merged = array_merge($derived, $overrides);
+		$merged = $this->withErrorLabel(
+			declarations: array_merge($derived, $overrides),
+			designSystemId: $meta['design_system'],
+			protectedTokens: array_keys($overrides)
+		);
 
 		if (isset($meta['theming']['logo_dark']) === true && is_string($meta['theming']['logo_dark']) === true) {
 			$merged['--nldesign-logo-url'] = "url('" . $this->relativeDarkLogoPath(logoDarkPath: $meta['theming']['logo_dark']) . "')";
@@ -1354,6 +1382,14 @@ class DarkPaletteService {
 		$merged = array_merge($merged, array_fill_keys($transparentFills, 'transparent'));
 
 		$repaired = $this->verifyAndRepair(declarations: $merged, protectedTokens: array_keys($overrides));
+		// The repair may move the error fill itself (summer-breeze repairs
+		// --summer-color-error as text on its surface), so the label is
+		// checked again against the fill that ships.
+		$repaired['declarations'] = $this->withErrorLabel(
+			declarations: $repaired['declarations'],
+			designSystemId: $meta['design_system'],
+			protectedTokens: array_keys($overrides)
+		);
 		foreach ($transparentFills as $fill) {
 			unset($repaired['declarations'][$fill]);
 		}
@@ -1365,6 +1401,48 @@ class DarkPaletteService {
 
 		return ['css' => $css, 'warnings' => $repaired['warnings']];
 	}//end generateForSet()
+
+	/**
+	 * Give the error label a dark value that reads on the error fill (thematiq#1027).
+	 *
+	 * The stylesheet css/error-contrast.css paints the error chip and button label from
+	 * {@see self::ERROR_LABEL}, white when it is absent. White suits the
+	 * saturated light reds, but a dark variant derives a lighter red, and
+	 * white on the usual #e72e2e is 4.35:1. The generic repair loop cannot
+	 * help: it moves a label away from its fill and, when that fails, snaps
+	 * to near-black #111111, which is 4.34:1 on the same red. Pure black
+	 * reaches 4.83:1. So a missing or failing label becomes pure white or
+	 * pure black, whichever reads better, white on a tie. A label the set
+	 * authors in its own dark block is never rewritten.
+	 *
+	 * @param array<string, string> $declarations The dark declarations so far.
+	 * @param string $designSystemId The design system the set wears (decides the fill token).
+	 * @param array<int, string> $protectedTokens Tokens the set authored in its dark block.
+	 *
+	 * @return array<string, string> The declarations, with a readable error label where one was owed.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function withErrorLabel(array $declarations, string $designSystemId, array $protectedTokens): array {
+		$fill = ($declarations[(self::ERROR_FILL_TOKENS[$designSystemId] ?? '')] ?? null);
+		if ($fill === null || in_array(self::ERROR_LABEL, $protectedTokens, true) === true) {
+			return $declarations;
+		}
+
+		$current = ($declarations[self::ERROR_LABEL] ?? null);
+		if ($current !== null && ($this->contrast->measure(foreground: $current, background: $fill) ?? 0.0) >= 4.5) {
+			return $declarations;
+		}
+
+		$white = ($this->contrast->measure(foreground: '#ffffff', background: $fill) ?? 0.0);
+		$black = ($this->contrast->measure(foreground: '#000000', background: $fill) ?? 0.0);
+		$declarations[self::ERROR_LABEL] = '#ffffff';
+		if ($black > $white) {
+			$declarations[self::ERROR_LABEL] = '#000000';
+		}
+
+		return $declarations;
+	}//end withErrorLabel()
 
 	/**
 	 * Build the dark-scoped logo url()'s path, relative to `css/tokens/dark/`.

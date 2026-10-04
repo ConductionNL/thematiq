@@ -80,6 +80,41 @@ there MUST produce warnings only.
 - THEN the hand-authored values MUST be emitted unchanged
 - AND the generation output MUST contain a contrast warning for that pair
 
+### Requirement: Error Labels Read on the Error Fill
+
+The error chip (`NcChip variant="error"`) and the error button (`NcButton type="error"`) paint
+their label on `--color-error`. `css/error-contrast.css` MUST paint both labels from
+`--nldesign-component-button-error-color`, falling back to white, and MUST NOT pin a literal
+colour on either. Every generated dark variant MUST declare that token whenever the fill its
+design system paints is a token the variant derives (`--nldesign-color-error` for nldesign,
+`--summer-color-error` for summer-breeze): pure white or pure black, whichever reads better on the
+derived fill, and at least 4.5:1. A label the set authors in its own dark block MUST NOT be
+rewritten. The lasuite system paints the red of its own ramp, which no dark variant changes, so
+its variants leave the token out and the white fallback applies. The hand-written high-contrast
+variant declares its own label at 7:1.
+
+@e2e exclude computed over the shipped stylesheets: no shipped page shows an error chip on demand; proven by tests/vitest/errorLabelContrast.spec.js (both labels resolved through each shipped set's real cascade, light and both dark scopes), tests/Unit/Service/ShippedDarkContrastTest.php (testTheErrorLabelReadsOnTheErrorFill) and tests/Unit/Service/DarkPaletteServiceTest.php (testGenerateForSetGivesTheErrorLabelAReadableColour, testGenerateForSetKeepsAReadableHandAuthoredErrorLabel).
+
+#### Scenario: The error chip label reads in light and dark
+
+- GIVEN any shipped token set and its dark variant
+- WHEN its stylesheets resolve in the light theme, under a dark system preference, and under an
+  explicit dark theme
+- THEN the error chip label and the error button label MUST each reach 4.5:1 on `--color-error`
+
+#### Scenario: The generator picks the label that reads
+
+- GIVEN a set whose light error red is `#d70d0d`, derived in dark to `#e72e2e`
+- WHEN its dark variant is generated
+- THEN `--nldesign-component-button-error-color` MUST be declared at 4.5:1 or more on the derived
+  red (white reaches 4.35:1 there and near-black `#111111` 4.34:1, so it is pure black)
+
+#### Scenario: A hand-authored error label stands
+
+- GIVEN a set whose dark block declares `--nldesign-component-button-error-color`
+- WHEN its dark variant is generated
+- THEN that value MUST be emitted unchanged
+
 ### Requirement: Hand-Authored Dark Overrides Win
 
 The generator MUST honour hand-authored dark overrides: a token set CSS file MAY contain a
