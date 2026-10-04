@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    The shipped token-set gate: every unit test that reads css/tokens/, token-sets.json,
+    img/logos/ or the generated docs about them, and needs no Nextcloud runtime.
+    scripts/token-set-gate.sh runs it, and the nightly token sync
+    (.github/workflows/sync-tokens.yml) refuses to open a PR when it fails.
+    The full suite stays the authority in code-quality.yml; this is the subset that can
+    run in the sync job.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="false"
+         cacheDirectory=".phpunit.cache"
+         requireCoverageMetadata="false"
+         failOnRisky="true"
+         failOnWarning="false"
+         failOnDeprecation="false">
+    <testsuites>
+        <testsuite name="Shipped token sets">
+            <file>tests/Unit/TokenSetVocabularyTest.php</file>
+            <file>tests/Unit/TokenSetContrastAuditTest.php</file>
+            <file>tests/Unit/Service/ShippedDarkContrastTest.php</file>
+            <file>tests/Unit/Service/ShippedDarkLogoTest.php</file>
+            <file>tests/Unit/Service/DenhaagContrastPairsTest.php</file>
+            <file>tests/Unit/Service/SetLogoReachTest.php</file>
+            <file>tests/Unit/IconAssetsTest.php</file>
+            <file>tests/Unit/TokenCssShapeTest.php</file>
+            <file>tests/Unit/TokenValueTypesTest.php</file>
+            <file>tests/Unit/OrgTokenPrefixReservedTest.php</file>
+            <file>tests/Unit/TokenReferenceDocsTest.php</file>
+            <file>tests/Unit/ErrorForegroundContrastTest.php</file>
+            <file>tests/Unit/NoteCardFillContrastTest.php</file>
+            <file>tests/Unit/ClaimAccuracyTest.php</file>
+        </testsuite>
+    </testsuites>
+    <php>
+        <ini name="memory_limit" value="2G"/>
+        <env name="PHPUNIT_RUN" value="1"/>
+    </php>
+</phpunit>
