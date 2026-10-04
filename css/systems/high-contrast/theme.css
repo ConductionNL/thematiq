@@ -129,9 +129,8 @@ body,
 		--color-text-maxcontrast: var(--nldesign-color-text) !important;
 	}
 
-	*:focus-visible {
-		outline-width: 4px !important;
-	}
+	/* The 4px focus ring lives in element-overrides.css, after the 3px rule it
+	 * has to beat. */
 }
 
 /* forced-colors:active — cooperate with Windows High Contrast Mode. Use CSS
