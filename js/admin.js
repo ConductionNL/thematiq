@@ -2608,7 +2608,8 @@
 					var locked = isTokenLocked(row.dataset.tokenRow)
 					var reason = lockReason(row.dataset.tokenRow)
 					row.classList.toggle('nldesign-token-row--locked', locked)
-					row.querySelectorAll('input').forEach(function (input) {
+					// Every control, not only inputs: easing and duration units are selects (#936).
+					row.querySelectorAll('input, select').forEach(function (input) {
 						input.disabled = locked
 						if (reason === '') {
 							input.removeAttribute('title')
