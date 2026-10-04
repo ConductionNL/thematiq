@@ -30,6 +30,30 @@ namespace OCA\Thematiq\Service;
 class ColourLiteralParser {
 
 	/**
+	 * The CSS basic named colours a theme may write (buren: `white`); `transparent` is not one.
+	 */
+	private const NAMED_COLOURS = [
+		'black' => '#000000',
+		'white' => '#ffffff',
+		'red' => '#ff0000',
+		'green' => '#008000',
+		'blue' => '#0000ff',
+		'yellow' => '#ffff00',
+		'orange' => '#ffa500',
+		'purple' => '#800080',
+		'gray' => '#808080',
+		'grey' => '#808080',
+		'silver' => '#c0c0c0',
+		'maroon' => '#800000',
+		'navy' => '#000080',
+		'teal' => '#008080',
+		'olive' => '#808000',
+		'lime' => '#00ff00',
+		'aqua' => '#00ffff',
+		'fuchsia' => '#ff00ff',
+	];
+
+	/**
 	 * Parse a colour literal into channels and alpha.
 	 *
 	 * @param string $value The raw value.
@@ -40,6 +64,7 @@ class ColourLiteralParser {
 	 */
 	public function parse(string $value): ?array {
 		$trimmed = strtolower(trim($value));
+		$trimmed = (self::NAMED_COLOURS[$trimmed] ?? $trimmed);
 		if (preg_match('/^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/', $trimmed, $hex) === 1) {
 			return $this->parseHex(digits: $hex[1]);
 		}

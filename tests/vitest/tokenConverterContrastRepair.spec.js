@@ -79,6 +79,12 @@ describe('colour literals', () => {
 		expect(decl['--demo-color-tint']).toBe('rgba(1, 44, 157, 0.6)')
 	})
 
+	it('writes a basic named colour as hex, but never transparent', () => {
+		expect(converter.normaliseColour('white')).toBe('#ffffff')
+		expect(converter.normaliseColour('Grey')).toBe('#808080')
+		expect(converter.normaliseColour('transparent')).toBe(null)
+	})
+
 	it('leaves a value that is not a single colour alone', () => {
 		const { decl } = convert({
 			'--utrecht-button-primary-action-background-color': '#154273',

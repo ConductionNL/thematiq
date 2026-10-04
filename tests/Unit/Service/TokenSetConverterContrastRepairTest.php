@@ -138,5 +138,7 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 		$this->assertSame('rgba(0, 0, 0, 0.5)', $repair->normalise(value: 'hsla(0deg 0% 0% / 50%)'));
 		$this->assertSame('rgba(1, 44, 157, 0.6)', $repair->normalise(value: '#012c9d99'));
 		$this->assertNull($repair->normalise(value: 'inset 0 -4px hsl(0 0% 0%)'));
+		$this->assertSame('#ffffff', $repair->normalise(value: 'white'));
+		$this->assertNull($repair->normalise(value: 'transparent'));
 	}//end testNormalisesColourLiterals()
 }//end class

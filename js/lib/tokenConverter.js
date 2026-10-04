@@ -62,6 +62,31 @@
 	var MAX_VAR_DEPTH = 10
 	var MAX_CONTRAST_STEPS = 10
 
+	/**
+	 * The CSS basic named colours a theme may write (buren: `white`). `transparent`
+	 * is not here on purpose: it is not a colour a pair can be measured against.
+	 */
+	var NAMED_COLOURS = {
+		black: '#000000',
+		white: '#ffffff',
+		red: '#ff0000',
+		green: '#008000',
+		blue: '#0000ff',
+		yellow: '#ffff00',
+		orange: '#ffa500',
+		purple: '#800080',
+		gray: '#808080',
+		grey: '#808080',
+		silver: '#c0c0c0',
+		maroon: '#800000',
+		navy: '#000080',
+		teal: '#008080',
+		olive: '#808000',
+		lime: '#00ff00',
+		aqua: '#00ffff',
+		fuchsia: '#ff00ff',
+	}
+
 	/** Font families this app bundles itself. Mirrors `fontIsAvailable()`. */
 	var BUNDLED_FONTS = ['marianne', 'inter']
 	var GENERIC_FONTS = [
@@ -522,6 +547,10 @@
 	 */
 	function parseColorAlpha(value) {
 		var trimmed = String(value).trim().toLowerCase()
+		if (NAMED_COLOURS[trimmed] !== undefined) {
+			trimmed = NAMED_COLOURS[trimmed]
+		}
+
 		var hex = /^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/.exec(trimmed)
 		if (hex !== null) {
 			var digits = hex[1]
