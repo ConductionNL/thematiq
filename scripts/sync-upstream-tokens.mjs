@@ -361,6 +361,32 @@ function writeRepo(path, content) {
 }
 
 /**
+ * Give a theme without any primary token the set's committed primary colour.
+ *
+ * The converter's primary rule falls back to the manifest's `theming.primary_color`,
+ * which only the server runtime can read. A few upstream themes (buren, venray) have
+ * no primary token at all, so the sync hands the committed colour in as the theme's
+ * own `--{slug}-color-primary`, the rule's second source.
+ *
+ * @param {string} css The built theme CSS.
+ * @param {Object} org The organisation, with `slug` and `manifestPrimary`.
+ * @return {string} The CSS, with the primary added when the theme had none.
+ */
+export function withManifestPrimary(css, org) {
+	const primary = org.manifestPrimary
+	if (
+		typeof primary !== 'string'
+		|| /^#[0-9a-f]{6}$/i.test(primary) === false
+		|| /--utrecht-button-primary-action-background-color\s*:/.test(css)
+		|| new RegExp(`--${org.slug}-color-primary\\s*:`).test(css)
+	) {
+		return css
+	}
+	const close = css.lastIndexOf('}')
+	return `${css.slice(0, close)}\t--${org.slug}-color-primary: ${primary.toLowerCase()};\n${css.slice(close)}`
+}
+
+/**
  * Convert one organisation into a candidate, or say why it cannot be.
  *
  * @param {Object} org `{dir, slug, name, prefix, version, kind, oldCss}`.
@@ -396,16 +422,20 @@ function convertOrg(org, context) {
 
 	let result
 	try {
-		result = context.converter.convert(buildThemeCss(merged, org.prefix), {
-			slug: org.slug,
-			displayName: org.name,
-			sourceName: SOURCE_PREFIX + org.dirName,
-			sourceVersion: org.version,
-			table: context.table,
-			tableHash: context.tableHash,
-			vocabulary: context.vocabulary,
-			fonts: [],
-		})
+		result = context.converter.convert(
+			withManifestPrimary(buildThemeCss(merged, org.prefix), org),
+			{
+				slug: org.slug,
+				displayName: org.name,
+				sourceName: SOURCE_PREFIX + org.dirName,
+				sourceVersion: org.version,
+				table: context.table,
+				tableHash: context.tableHash,
+				vocabulary: context.vocabulary,
+				fonts: [],
+				repairContrast: true,
+			},
+		)
 	} catch (error) {
 		return { ok: false, reason: `converter refused the theme: ${error.message}` }
 	}
@@ -693,6 +723,12 @@ function main() {
 	const manifestIds = new Set(
 		JSON.parse(baseline.manifest).map((entry) => entry.id),
 	)
+	const manifestPrimaries = new Map(
+		JSON.parse(baseline.manifest).map((entry) => [
+			entry.id,
+			entry.theming?.primary_color,
+		]),
+	)
 	const proprietary = join(resolve(options.themes), 'proprietary')
 	const summary = { changed: [], rejected: [], hand: [], same: [] }
 	const candidates = []
@@ -723,6 +759,7 @@ function main() {
 			name: config.fullName || config.name || slug,
 			prefix: config.prefix || slug,
 			version: readOrgVersion(dir, config),
+			manifestPrimary: manifestPrimaries.get(slug) ?? null,
 		}
 		const converted = convertOrg(org, context)
 		if (converted.ok === false) {
