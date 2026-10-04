@@ -504,6 +504,39 @@
 			"reason": "routed-to-core-theming"
 		}
 	],
+	"contrastRepair": {
+		"$comment": [
+			"RUN AFTER EVERY RULE (thematiq#993). A converted brand colour is only useful if it can be",
+			"read on what Nextcloud and the public bridge draw it on. Each pair names a foreground, the",
+			"background it sits on and the WCAG threshold. A pair that misses it gets the smallest",
+			"change that passes: `lightness` moves the foreground's HSL lightness one step at a time",
+			"and keeps hue and saturation (the brand stays recognisable), `flip` picks white or black",
+			"(text on a brand fill carries no brand of its own). Pairs run in order, and the list runs",
+			"again until nothing changes, because repairing the primary can move its text colour.",
+			"A background the set does not declare is read from `defaults` (css/systems/nldesign/",
+			"defaults.css, and the white page). A translucent background is measured over `page`."
+		],
+		"page": "#ffffff",
+		"defaults": {
+			"--nldesign-color-background": "#ffffff",
+			"--nldesign-color-background-dark": "#e0e1e2",
+			"--nldesign-color-primary-light": "#e8f0f8",
+			"--nldesign-color-primary-light-hover": "#d4e4f2"
+		},
+		"pairs": [
+			{ "foreground": "--nldesign-color-primary", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-primary", "background": "--nldesign-color-primary-light", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-primary", "background": "--nldesign-color-primary-light-hover", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-primary-text", "background": "--nldesign-color-primary", "min": 4.5, "adjust": "flip" },
+			{ "foreground": "--nldesign-color-link", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-link-hover", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-link-visited", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background-dark", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-text-muted", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-header-text", "background": "--nldesign-color-header-background", "min": 4.5, "adjust": "flip" }
+		]
+	},
 	"never": [
 		{ "match": "--utrecht-page-max-inline-size", "action": "skip", "reason": "layout-fixed-by-nextcloud" },
 		{ "match": "--utrecht-page-padding-*", "action": "skip", "reason": "layout-fixed-by-nextcloud" },
@@ -606,6 +639,8 @@
 		"font-not-bundled": "The theme's font is referenced but not installed. Upload it under Custom fonts or the next font in the stack is used.",
 		"contrast-separator-added": "A 1px header border was added because the theme's header and content are both the same colour.",
 		"contrast-adjusted": "The colour was darkened to reach WCAG AA 4.5:1 against its text colour. The original is shown for reference.",
+		"contrast-repaired": "The colour was made lighter or darker, keeping its hue, to reach WCAG AA against the background it is drawn on. The original is shown for reference.",
+		"colour-normalised": "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant.",
 		"kept-for-nlds-components": "Kept in the token set for NL Design System components used by Conduction apps; Nextcloud itself does not have this component.",
 		"external-url-blocked": "A value pointed to an external host and was removed; Thematiq only serves local assets.",
 		"unmapped": "No Nextcloud equivalent was found. Listed so it can be added to the mapping table.",
