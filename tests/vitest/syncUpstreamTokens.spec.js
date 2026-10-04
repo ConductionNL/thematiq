@@ -296,3 +296,25 @@ describe('Tokens Studio exports (thematiq#994)', () => {
 		}
 	})
 })
+
+describe('count claims (thematiq#994)', () => {
+	it('rewrites the README and project.md set counts a new organisation changes', async () => {
+		const { rewriteReadme, rewriteProject } =
+			await import('../../scripts/update-coverage-claims.mjs')
+		const counts = {
+			listed: 57,
+			roleLayer: 0,
+			nldesignOnly: 0,
+			denhaagComponents: 0,
+		}
+		expect(rewriteReadme('- **52 token sets**: Choose', counts)).toBe(
+			'- **57 token sets**: Choose',
+		)
+		expect(
+			rewriteProject(
+				'It provides 52 token sets covering\n## Token Sets (52)\n',
+				counts,
+			),
+		).toBe('It provides 57 token sets covering\n## Token Sets (57)\n')
+	})
+})

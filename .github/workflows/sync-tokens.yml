@@ -70,7 +70,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          git add css/tokens/ css/public-bridge.css token-sets.json tests/Unit/fixtures/token-set-vocabulary-allowlist.json docs/reference/ docs/features/
+          git add css/tokens/ css/public-bridge.css token-sets.json tests/Unit/fixtures/token-set-vocabulary-allowlist.json docs/reference/ docs/features/ README.md project.md
           if git diff --cached --quiet; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           else

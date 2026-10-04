@@ -471,17 +471,25 @@ function convertOrg(org, context) {
 
 	// The manifest colours reach Nextcloud's own theming. The converter copies
 	// them from the theme as written, so an upstream typo (demodam's page
-	// background `F5FaFD`, no `#`) would land there verbatim.
-	for (const key of ['primary_color', 'background_color']) {
-		const value = result.manifestEntry.theming?.[key]
-		if (
-			value !== undefined
-			&& /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value)) === false
-		) {
-			return {
-				ok: false,
-				reason: `the theme's ${key} is not a colour (\`${value}\`); fix it upstream or set it by hand`,
-			}
+	// background `F5FaFD`, no `#`) or a transparent page (leiden's
+	// `rgba(0, 0, 0, 0)`) would land there verbatim. A background that is not a
+	// colour is dropped, so the committed one stays; a primary that is not one
+	// refuses the set, because the set file and the manifest must agree on it.
+	const theming = result.manifestEntry.theming ?? {}
+	const isHex = (value) => /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value))
+	if (
+		theming.background_color !== undefined
+		&& isHex(theming.background_color) === false
+	) {
+		delete theming.background_color
+	}
+	if (
+		theming.primary_color !== undefined
+		&& isHex(theming.primary_color) === false
+	) {
+		return {
+			ok: false,
+			reason: `the theme's primary_color is not a colour (\`${theming.primary_color}\`); fix it upstream or set it by hand`,
 		}
 	}
 
