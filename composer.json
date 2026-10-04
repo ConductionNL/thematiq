@@ -35,6 +35,7 @@
     },
     "scripts": {
         "docs:token-reference": "php scripts/generate-token-reference.php",
+        "docs:contrast-report": "php scripts/generate-contrast-report.php",
         "lint": "find . -name \\*.php -not -path './vendor/*' -not -path './build/*' -print0 | xargs -0 -n1 php -l",
         "cs:check": "php-cs-fixer fix --dry-run --diff --using-cache=no",
         "cs:fix": "php-cs-fixer fix",

@@ -74,9 +74,9 @@ fields are the comparison baseline for the deployed instances' upstream-freshnes
 #### Scenario: Script reads upstream tokens
 
 - GIVEN the themes repository is cloned to a local path
-- WHEN `node scripts/generate-tokens.mjs /path/to/themes` is executed
+- WHEN `node scripts/sync-upstream-tokens.mjs /path/to/themes` is executed
 - THEN the script MUST process all directories under `proprietary/` that contain token files
-- AND the script MUST output CSS files to `css/tokens/`
+- AND the script MUST output converted CSS files to `css/tokens/`
 
 #### Scenario: Script handles malformed input
 
@@ -107,6 +107,57 @@ fields are the comparison baseline for the deployed instances' upstream-freshnes
 - WHEN it invokes the generation script
 - THEN it MUST pass the checkout's commit SHA to the script (argument or environment)
 - AND the recorded `upstreamRef` MUST equal that SHA
+
+### Requirement: Converted and gated sync
+
+The sync MUST convert upstream themes onto the nldesign vocabulary through the theme
+converter (`js/lib/tokenConverter.js`), MUST NOT write a set that was not generated from
+upstream, and MUST NOT open a PR unless the shipped token-set tests pass. The workflow runs
+`scripts/sync-upstream-tokens.mjs`; the gate is `scripts/token-set-gate.sh`.
+
+#### Scenario: Hand-resolved set is never overwritten
+
+- GIVEN `css/tokens/zwolle.css` was resolved by hand and carries neither the raw-sync header
+  nor the converter provenance naming `nl-design-system/themes`
+- WHEN upstream ships a `zwolle-design-tokens` theme
+- THEN the sync MUST leave `css/tokens/zwolle.css` and its manifest entry unchanged
+- AND the PR body MUST list it as not touched
+
+#### Scenario: Local overrides survive a conversion
+
+- GIVEN an upstream-managed set declares values upstream does not produce (for example
+  `--denhaag-*` colours or a footer band chosen for contrast)
+- WHEN the sync converts the set again
+- THEN those declarations MUST be kept in the set's local overrides section
+
+#### Scenario: A set that fails the gate is left unchanged
+
+- GIVEN a converted set makes a shipped token-set test fail
+- WHEN the sync runs the gate
+- THEN that set MUST be restored exactly as committed
+- AND the PR body MUST name it with the failing tests
+- AND a new organisation MUST only be added when its conversion is vocabulary complete
+
+#### Scenario: Upstream publishes a Tokens Studio export
+
+- GIVEN an organisation upstream has no `src/**/*.tokens.json` but has `figma/*.tokens.json`
+- WHEN the sync runs
+- THEN it MUST merge the export's token sets in their `tokenSetOrder`, without the dark colour scheme
+- AND convert and gate the result like any other theme
+- AND a new organisation MUST NOT join the vocabulary allow-list or bring a logo
+
+#### Scenario: Generated docs follow the sets
+
+- GIVEN the sync changed at least one set
+- WHEN it finishes
+- THEN dark variants, `docs/reference/contrast-report.md` and the token reference pages MUST be
+  regenerated and committed in the same PR
+
+#### Scenario: A red tree opens no PR
+
+- GIVEN the shipped token-set tests fail on the tree the sync would commit
+- WHEN the workflow reaches its verification step
+- THEN the job MUST fail before any branch is pushed or PR opened
 
 ### Requirement: README Sources Section
 The README MUST document the token sync architecture and link to upstream sources.

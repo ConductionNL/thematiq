@@ -231,6 +231,8 @@ class TokenSetConverterService {
 	 *                               uploaded theme can never overwrite a shipped `img/logos/{slug}.svg`.
 	 * @param array<int, string> $referenceOnlyPaths Dotted token paths that resolve aliases but are not
 	 *                                               emitted (a Tokens Studio `source` set of one brand).
+	 * @param bool $repairContrast Bring the converted pairs to WCAG AA (the nightly sync); off for an admin's upload,
+	 *                             which keeps its own colours and reports contrast warnings instead (thematiq#993).
 	 *
 	 * @return array{
 	 *     css: string,
@@ -249,6 +251,8 @@ class TokenSetConverterService {
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
 	 *
+	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - `$repairContrast` switches one optional stage of the pipeline on for the
+	 *   nightly sync; the upload path is the same pipeline without it, not a second responsibility.
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
 	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
 	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the conversion pipeline reads top to bottom as the order it runs in — detect, parse,
@@ -261,6 +265,7 @@ class TokenSetConverterService {
 		?string $sourceName = null,
 		?string $assetName = null,
 		array $referenceOnlyPaths = [],
+		bool $repairContrast = false,
 	): array {
 		$this->referenceOnlyPaths = $referenceOnlyPaths;
 		$report = [];
@@ -331,6 +336,11 @@ class TokenSetConverterService {
 		// source theme's own variables do not exist.
 		$declarations = $this->resolveVars(declarations: $declarations, report: $report);
 
+		// Colours written as hsl(), hsla() or an 8-digit hex become hex or rgba(),
+		// so they can be measured and given a dark variant (thematiq#993).
+		$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
+		$declarations = $colourRepair->normaliseColours(declarations: $declarations, report: $report);
+
 		// Lift the theme's logo out of the stylesheet and into a file, BEFORE
 		// the sections are built: Nextcloud's core theming takes a logo as a
 		// path on disk, never as a data URI, so this is the only step that can
@@ -373,6 +383,12 @@ class TokenSetConverterService {
 			manifest: $manifest,
 			report: $report
 		);
+
+		// Bring the converted brand and text pairs to WCAG AA, smallest change first (thematiq#993).
+		// Only on request: an admin's own upload keeps its colours and gets contrast warnings instead.
+		if ($repairContrast === true) {
+			$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $manifest, report: $report);
+		}
 
 		if ($logo !== null) {
 			$semantic['--nldesign-logo-url'] = $logo['css'];
