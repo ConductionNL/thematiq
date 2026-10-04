@@ -388,6 +388,12 @@ class TokenSetConverterService {
 		// Only on request: an admin's own upload keeps its colours and gets contrast warnings instead.
 		if ($repairContrast === true) {
 			$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $manifest, report: $report);
+			$sections['component'] = $colourRepair->repairComponents(
+				component: $sections['component'],
+				semantic: $semantic,
+				table: $this->table(),
+				report: $report
+			);
 		}
 
 		if ($logo !== null) {
@@ -1892,8 +1898,15 @@ class TokenSetConverterService {
 	 */
 	private function pickFromRamp(array $spec, array $declarations, array $semantic): ?array {
 		$ramp = $this->neutralRamp(declarations: $declarations);
+		$default = ($spec['default'] ?? null);
 		if ($ramp === []) {
-			return null;
+			// A theme with no neutral greys still needs a body text and a border
+			// colour: the table's default, not a missing token (thematiq#1006).
+			if (is_string($default) === false || $default === '') {
+				return null;
+			}
+
+			return ['value' => $default, 'source' => '(Nextcloud default)', 'reason' => 'nextcloud-default-used'];
 		}
 
 		$picked = $this->pickByCriterion(spec: $spec, ramp: $ramp, semantic: $semantic);
@@ -1901,7 +1914,6 @@ class TokenSetConverterService {
 			return ['value' => $picked, 'source' => '(brand ramp)', 'reason' => 'derived-from-brand'];
 		}
 
-		$default = ($spec['default'] ?? null);
 		if (is_string($default) === false || $default === '') {
 			return null;
 		}

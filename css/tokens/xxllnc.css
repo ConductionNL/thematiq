@@ -641,8 +641,6 @@
 
 	/* 5. Local overrides, kept by the token sync: values a person set on top of upstream.
 	 *    The sync carries them into every run; edit them here, nowhere else. */
-	--nldesign-color-alert-success: #155724;
-	--nldesign-color-alert-success-background: #d4edda;
 	--xxllnc-color-success: #28a745;
 	--xxllnc-color-alert-success: #155724;
 	--xxllnc-color-alert-success-background: #d4edda;

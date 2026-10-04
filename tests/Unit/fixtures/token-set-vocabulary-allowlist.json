@@ -11,16 +11,8 @@
 	],
 	"sets": [
 		"buren",
-		"conduction-new",
-		"cunningham",
 		"demodam",
-		"frankendesk",
 		"groningen",
-		"hoog-contrast",
-		"lasuite",
-		"opencatalogi",
-		"riddeliemers",
-		"rijkshuisstijl",
-		"xxllnc"
+		"riddeliemers"
 	]
 }
