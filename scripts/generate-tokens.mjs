@@ -36,7 +36,7 @@ const TOKEN_SETS_PATH = join(__dirname, '..', 'token-sets.json');
 /**
  * Recursively find all *.tokens.json files in a directory.
  */
-function findTokenFiles(dir) {
+export function findTokenFiles(dir) {
 	const results = [];
 	if (!existsSync(dir) || !statSync(dir).isDirectory()) return results;
 
@@ -57,7 +57,7 @@ function findTokenFiles(dir) {
  * Leaf nodes have a "value" or "$value" property.
  * Skips tokens with empty values or reference values like "{org.token.path}".
  */
-function flattenTokens(obj, prefix = '') {
+export function flattenTokens(obj, prefix = '') {
 	const result = [];
 
 	for (const [key, value] of Object.entries(obj)) {
@@ -131,7 +131,7 @@ function toCSSVar(tokenPath, orgPrefixes) {
 /**
  * Extract org ID from directory name (e.g., "amsterdam-design-tokens" → "amsterdam").
  */
-function extractOrgId(dirName) {
+export function extractOrgId(dirName) {
 	return dirName
 		.replace(/-design-tokens$/, '')
 		.toLowerCase()
@@ -141,7 +141,7 @@ function extractOrgId(dirName) {
 /**
  * Read config.json for an organization to get display name.
  */
-function readOrgConfig(orgDir) {
+export function readOrgConfig(orgDir) {
 	const configPath = join(orgDir, 'src', 'config.json');
 	if (existsSync(configPath)) {
 		try {
@@ -161,7 +161,7 @@ function readOrgConfig(orgDir) {
  * upstreamVersion field is then simply omitted (optional per the
  * token-sets manifest schema).
  */
-function readOrgVersion(orgDir, config) {
+export function readOrgVersion(orgDir, config) {
 	const pkgPath = join(orgDir, 'package.json');
 	if (existsSync(pkgPath)) {
 		try {
@@ -184,7 +184,7 @@ function readOrgVersion(orgDir, config) {
 /**
  * Generate a CSS file for a single organization.
  */
-function generateOrgCSS(orgId, displayName, tokens, orgPrefixes) {
+export function generateOrgCSS(orgId, displayName, tokens, orgPrefixes) {
 	const lines = [
 		`/**`,
 		` * ${displayName} Design Tokens`,

@@ -245,7 +245,7 @@ class TokenSetContrastAuditTest extends TestCase {
 		$this->assertSame(
 			$first,
 			$committed,
-			'docs/reference/contrast-report.md is stale — regenerate it from the current token files.'
+			'docs/reference/contrast-report.md is stale. Run: composer docs:contrast-report'
 		);
 	}
 }
