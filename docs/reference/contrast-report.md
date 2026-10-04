@@ -26,6 +26,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | duiven | 7.13:1 | 4.5:1 | 7.13:1 | 3.0:1 | pass |
 | duo | 7.93:1 | 4.5:1 | 7.93:1 | 3.0:1 | pass |
 | enkhuizen | 7.23:1 | 4.5:1 | 7.23:1 | 3.0:1 | pass |
+| enschede | 4.88:1 | 4.5:1 | — | 3.0:1 | unevaluated |
 | epe | 7.60:1 | 4.5:1 | 7.60:1 | 3.0:1 | pass |
 | example-basisschool | 6.07:1 | 4.5:1 | 6.07:1 | 3.0:1 | pass |
 | example-college | 9.34:1 | 4.5:1 | 9.34:1 | 3.0:1 | pass |
@@ -43,6 +44,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | lasuite | 7.76:1 | 4.5:1 | 7.76:1 | 3.0:1 | pass |
 | leiden | 5.10:1 | 4.5:1 | 5.10:1 | 3.0:1 | pass |
 | leidschendam-voorburg | 15.67:1 | 4.5:1 | 15.67:1 | 3.0:1 | pass |
+| losser | 6.07:1 | 4.5:1 | — | 3.0:1 | unevaluated |
 | nijmegen | 5.10:1 | 4.5:1 | 5.10:1 | 3.0:1 | pass |
 | noaberkracht | 4.50:1 | 4.5:1 | 4.50:1 | 3.0:1 | pass |
 | noordoostpolder | 4.56:1 | 4.5:1 | 4.61:1 | 3.0:1 | pass |
@@ -64,6 +66,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | vught | 4.62:1 | 4.5:1 | 4.55:1 | 3.0:1 | pass |
 | westervoort | 11.30:1 | 4.5:1 | 11.30:1 | 3.0:1 | pass |
 | xxllnc | 11.24:1 | 4.5:1 | 14.16:1 | 3.0:1 | pass |
+| zaanstad | 5.23:1 | 4.5:1 | — | 3.0:1 | unevaluated |
 | zevenaar | 5.70:1 | 4.5:1 | 5.70:1 | 3.0:1 | pass |
 | zwolle | 5.06:1 | 4.5:1 | 5.06:1 | 3.0:1 | pass |
 
@@ -92,6 +95,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | duiven | 15 | 0 | 0 |  |
 | duo | 15 | 0 | 0 |  |
 | enkhuizen | 15 | 0 | 0 |  |
+| enschede | 15 | 0 | 0 |  |
 | epe | 15 | 0 | 0 |  |
 | example-basisschool | 15 | 0 | 0 |  |
 | example-college | 15 | 0 | 0 |  |
@@ -109,6 +113,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | lasuite | 15 | 0 | 0 |  |
 | leiden | 15 | 0 | 0 |  |
 | leidschendam-voorburg | 15 | 0 | 0 |  |
+| losser | 15 | 0 | 0 |  |
 | nijmegen | 15 | 0 | 0 |  |
 | noaberkracht | 15 | 0 | 0 |  |
 | noordoostpolder | 15 | 0 | 0 |  |
@@ -130,6 +135,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | vught | 15 | 0 | 0 |  |
 | westervoort | 15 | 0 | 0 |  |
 | xxllnc | 15 | 0 | 0 |  |
+| zaanstad | 15 | 0 | 0 |  |
 | zevenaar | 15 | 0 | 0 |  |
 | zwolle | 15 | 0 | 0 |  |
 
