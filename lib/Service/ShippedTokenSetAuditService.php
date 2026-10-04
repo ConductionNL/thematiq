@@ -144,12 +144,14 @@ class ShippedTokenSetAuditService {
 		$tokenCss = $this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/' . $id . '.css');
 		if ($tokenCss !== null) {
 			$own = ($this->parser->parseDeclarations(content: $tokenCss) ?? []);
-			$declarations = array_merge($declarations, $own);
-			foreach (self::OWN_VOCABULARY_ALIASES as $ownToken => $nldesignToken) {
-				if (isset($own[$ownToken]) === true && isset($own[$nldesignToken]) === false) {
-					$declarations[$nldesignToken] = $own[$ownToken];
-				}
-			}
+			// The aliases the set declares, re-keyed to the --nldesign-* name they
+			// stand for; a --nldesign-* name the set declares itself still wins.
+			$present = array_intersect_key(self::OWN_VOCABULARY_ALIASES, $own);
+			$aliased = array_combine(
+				array_values($present),
+				array_map(static fn (string $token): string => $own[$token], array_keys($present))
+			);
+			$declarations = array_merge($declarations, $own, array_diff_key($aliased, $own));
 		}
 
 		// Background is managed by Nextcloud theming for many sets, so it is

@@ -102,9 +102,7 @@ async function bodyValue(page: Page, name: string): Promise<string> {
 }
 
 /** A text input appended to the page, with its painted border and fill. */
-async function inputColours(
-	page: Page,
-): Promise<{ border: string; fill: string }> {
+async function inputColours(page: Page): Promise<{ border: string; fill: string }> {
 	return page.evaluate(() => {
 		let input = document.getElementById('e2e-summer-input') as HTMLInputElement
 		if (input === null) {
@@ -165,13 +163,22 @@ async function expectLegible(page: Page, scope: Scope): Promise<void> {
 	}
 
 	const input = await inputColours(page)
-	const border = ratio(await paint(page, input.border), await paint(page, input.fill))
-	expect(border, `${scope}: input border ${border.toFixed(2)}:1`).toBeGreaterThanOrEqual(3)
+	const border = ratio(
+		await paint(page, input.border),
+		await paint(page, input.fill),
+	)
+	expect(
+		border,
+		`${scope}: input border ${border.toFixed(2)}:1`,
+	).toBeGreaterThanOrEqual(3)
 
 	if (scope === 'light') {
 		expect(luminance(main)).toBeGreaterThan(0.8)
 	} else {
-		expect(luminance(main), `${scope}: the main background is dark`).toBeLessThan(0.05)
+		expect(
+			luminance(main),
+			`${scope}: the main background is dark`,
+		).toBeLessThan(0.05)
 	}
 }
 
@@ -202,9 +209,15 @@ test.describe('summer-breeze', () => {
 					.poll(
 						async () =>
 							luminance(
-								await paint(page, await bodyValue(page, '--summer-color-surface')),
+								await paint(
+									page,
+									await bodyValue(page, '--summer-color-surface'),
+								),
 							),
-						{ message: `${scope}: --summer-color-surface turns dark`, timeout: 10_000 },
+						{
+							message: `${scope}: --summer-color-surface turns dark`,
+							timeout: 10_000,
+						},
 					)
 					.toBeLessThan(0.05)
 				await expectLegible(page, scope)
@@ -250,19 +263,31 @@ test.describe('summer-breeze', () => {
 				expect(ring.style).toBe('solid')
 				expect(ring.width).toBe('2px')
 
-				const token = await paint(page, await bodyValue(page, '--summer-color-focus'))
+				const token = await paint(
+					page,
+					await bodyValue(page, '--summer-color-focus'),
+				)
 				const outline = await paint(page, ring.color)
 				expect(outline[3], `${scope}: the outline is opaque`).toBe(1)
 				expect(outline.slice(0, 3)).toEqual(token.slice(0, 3))
-				expect(token[3], `${scope}: the focus token stays translucent`).toBeLessThan(1)
-				expect(ring.shadow, `${scope}: the translucent token is the halo`).not.toBe('none')
+				expect(
+					token[3],
+					`${scope}: the focus token stays translucent`,
+				).toBeLessThan(1)
+				expect(
+					ring.shadow,
+					`${scope}: the translucent token is the halo`,
+				).not.toBe('none')
 
 				const page_ = await paint(
 					page,
 					await bodyValue(page, '--summer-color-background-plain'),
 				)
 				const r = ratio(outline, page_)
-				expect(r, `${scope}: focus outline ${r.toFixed(2)}:1`).toBeGreaterThanOrEqual(3)
+				expect(
+					r,
+					`${scope}: focus outline ${r.toFixed(2)}:1`,
+				).toBeGreaterThanOrEqual(3)
 			}
 		})
 	})

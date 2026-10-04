@@ -264,7 +264,10 @@ const BUNDLES = [
 		light: ['css/tokens/summer-breeze.css'],
 		dark: ['css/tokens/dark/summer-breeze.css'],
 		halo: '--summer-color-focus',
-		grounds: { light: '--summer-color-background-plain', dark: '--summer-color-background-plain' },
+		grounds: {
+			light: '--summer-color-background-plain',
+			dark: '--summer-color-background-plain',
+		},
 	},
 ]
 
@@ -303,7 +306,10 @@ for (const bundle of BUNDLES) {
 				['on its own dark page', DARK, bundle.grounds.dark],
 			]) {
 				it(`every outline colour clears 3:1 ${name}`, () => {
-					const bg = parseColour(substitute(`var(${token})`, vars)).slice(0, 3)
+					const bg = parseColour(substitute(`var(${token})`, vars)).slice(
+						0,
+						3,
+					)
 					for (const { value, vars: scoped } of outlineVariants(
 						bundle.sheet,
 						vars,
