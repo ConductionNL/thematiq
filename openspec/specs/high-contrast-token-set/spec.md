@@ -36,6 +36,30 @@ The high-contrast design system stylesheet MUST honor `@media (prefers-contrast:
 - WHEN a themed page is rendered with the `hoog-contrast` set
 - THEN the applied contrast MUST be at least as strong as the default `hoog-contrast` values
 
+### Requirement: Dark Variant at AAA
+Every set bound to the `high-contrast` design system MUST ship a dark variant `css/tokens/dark/<set>.css` (for `hoog-contrast`: `css/tokens/dark/hoog-contrast.css`), so its surfaces follow Nextcloud's dark themes instead of staying white. The variant MUST be hand-written, not derived: the dark-mode generator repairs pairs only to AA 4.5:1, so it skips this design system and never writes, rewrites or deletes the file. The variant MUST put near-white text on a black page and MUST reach WCAG 2.2 AAA in the dark scope: at least 7:1 for every text pair the high-contrast stylesheets paint (body, muted and light text on the page and on its hover, dark and darker surfaces and the navigation; primary and secondary button labels at rest and on hover; header text; links; placeholders; status colours; the error button label) and at least 4.5:1 against the page for borders, the primary fill and the focus ring. The focus ring MUST stay at least 3px wide and MUST NOT share the border colour. The variant MUST use the same two scopes as every generated dark file, with identical declarations in both: `@media (prefers-color-scheme: dark)` around `body` without an explicit theme choice, and `body[data-theme-dark], body[data-themes*=dark]`, which also matches Nextcloud's `dark-highcontrast` theme. An explicit light or light-highcontrast choice MUST stay light. The `prefers-contrast: more` branch MUST strengthen through the set's strongest tokens rather than literal colours, so it stays visible in both modes.
+
+#### Scenario: Dark mode turns the high-contrast set white on black
+- GIVEN the `hoog-contrast` set is active
+- WHEN a themed page renders with a dark system preference and no explicit theme, or with Nextcloud's dark or dark-highcontrast theme
+- THEN the page background MUST be black
+- AND the main text MUST be near-white at a contrast of at least 7:1
+
+#### Scenario: The dark variant reaches AAA through the real bundle
+@e2e exclude computed over the shipped stylesheets: asserted by tests/Unit/Service/ShippedDarkContrastTest.php (testHighContrastSetShipsADarkVariant, testHighContrastDarkVariantReachesAaa, testHighContrastDarkVariantCoversBothScopesAlike) and tests/vitest/highContrastDark.spec.js, which resolve Nextcloud's variables through the high-contrast stylesheets, the token set and its dark variant in five dark environments
+- GIVEN the high-contrast stylesheets, `css/tokens/hoog-contrast.css` and `css/tokens/dark/hoog-contrast.css`, in load order
+- WHEN Nextcloud's `--color-*` variables are resolved in each dark scope, with and without `prefers-contrast: more`
+- THEN every text pair MUST be at least 7:1 and every border, fill and focus pair at least 4.5:1
+- AND the focus ring MUST be at least 3px wide
+- AND both dark scopes MUST declare the same values
+
+#### Scenario: The generator leaves the hand-written variant alone
+@e2e exclude build-time file lifecycle: proven by tests/Unit/Command/GenerateDarkVariantsTest.php (testFullRunSkipsIneligibleSetsWithZeroExitCode) and tests/Unit/Service/DarkPaletteServiceTest.php (eligibility)
+- GIVEN `css/tokens/dark/hoog-contrast.css` is shipped
+- WHEN `occ thematiq:generate-dark-variants` or `scripts/generate-dark-variants.php` runs, with or without `--force`
+- THEN the set MUST be reported as skipped (ineligible)
+- AND the file MUST NOT be written, rewritten or deleted
+
 ### Requirement: Status Reflects the Verified Feature
 `GOVERNMENT-FEATURES.md` A-08 MUST NOT be marked "Beschikbaar" until the `hoog-contrast` set ships AND passes the AAA verdict in the contrast audit. Until both hold, A-08 MUST remain "Gepland".
 
