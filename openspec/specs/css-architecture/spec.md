@@ -297,7 +297,7 @@ The element-overrides layer MUST apply NL Design styling to specific HTML elemen
 - AND the former 30px right margin MUST NOT return: it opened empty flex space inside `#content`, and the page background showed through it as a vertical strip between the menu and the content
 
 #### Scenario: App-specific exclusions
-@e2e exclude browser-observable (computed color of a span, div and link inside a .tile-widget against the same element outside one), but no shipped page renders a .tile-widget, so a test needs a fixture element; the test is owed under #897
+@e2e exclude browser-observable (computed color of a span, div and link inside a .tile-widget against the same element outside one), but no shipped page renders a .tile-widget, so a browser test needs a fixture element (owed under #897); until then tests/vitest/tileWidgetOptOut.spec.js matches every forcing selector against a tile fixture
 - GIVEN Layer 7 forces `color: var(--nldesign-color-on-surface, var(--nldesign-color-text))` with `!important` onto `body`, `#app`, `#content`, `.app-content`, `p`, `span`, `div`, `li` and `a`, and the link colour onto `a`
 - WHEN an element renders that is a `.tile-widget` or sits inside one
 - THEN its `span`, `div` and `a` elements MUST be excluded from both rules, so the tile keeps the colours its app paints

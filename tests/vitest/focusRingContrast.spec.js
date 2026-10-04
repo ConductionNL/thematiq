@@ -110,11 +110,22 @@ function painted(value, vars, bg) {
 	const v = substitute(value.replace(/!important/, ''), vars)
 		.replace(/^\s*\d+px\s+solid\s+/, '')
 		.trim()
-	// Relative colour syntax with the channels kept: the same colour, opaque.
-	const relative = v.match(/^rgb\(\s*from\s+(.+?)\s+r\s+g\s+b\s*\)$/i)
+	// Relative colour syntax keeps the origin's channels AND its alpha unless
+	// an explicit `/ <alpha>` replaces it (CSS Color 5): `rgb(from X r g b)`
+	// on a translucent X is just as translucent (#931).
+	const relative = v.match(
+		/^rgb\(\s*from\s+(.+?)\s+r\s+g\s+b\s*(?:\/\s*([\d.]+%?)\s*)?\)$/i,
+	)
 	let colour
 	if (relative) {
-		colour = [...parseColour(relative[1]).slice(0, 3), 1]
+		const origin = parseColour(relative[1])
+		let alpha = origin[3]
+		if (relative[2] !== undefined) {
+			alpha = relative[2].endsWith('%')
+				? parseFloat(relative[2]) / 100
+				: Number(relative[2])
+		}
+		colour = [...origin.slice(0, 3), alpha]
 	} else {
 		colour = parseColour(v)
 	}
