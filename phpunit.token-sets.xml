@@ -33,6 +33,7 @@
             <file>tests/Unit/ErrorForegroundContrastTest.php</file>
             <file>tests/Unit/NoteCardFillContrastTest.php</file>
             <file>tests/Unit/ClaimAccuracyTest.php</file>
+            <file>tests/Unit/Service/LayoutOptionsServiceTest.php</file>
         </testsuite>
     </testsuites>
     <php>

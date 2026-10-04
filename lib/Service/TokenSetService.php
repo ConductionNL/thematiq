@@ -121,9 +121,13 @@ class TokenSetService {
 	 * the audit learns to judge a bridge-based system by its bundle rather than
 	 * by its set file, that entry goes and this paragraph with it.
 	 *
+	 * `zuiddrecht` IS LISTED BECAUSE IT PASSES. It was written on the vocabulary
+	 * the theme reads, it passes `TokenSetVocabularyAuditService` and it was
+	 * never in the allow-list, so it meets the rule above the day it ships.
+	 *
 	 * @var array<int, string>
 	 */
-	public const SELECTABLE_SHIPPED_SETS = ['nextcloud', 'cunningham'];
+	public const SELECTABLE_SHIPPED_SETS = ['nextcloud', 'cunningham', 'zuiddrecht'];
 
 	/**
 	 * The app manager for resolving paths.
