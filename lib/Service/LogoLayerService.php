@@ -233,15 +233,40 @@ class LogoLayerService {
 		$declarations = '{--nldesign-logo-url:' . $url . ';--nldesign-header-logo-image:' . $url . '}';
 
 		return [
-			'layer'  => 'dark-logo-url',
-			'kind'   => 'inline',
-			'css'    => '@media (prefers-color-scheme: dark){'
+			'layer' => 'dark-logo-url',
+			'kind' => 'inline',
+			'css' => '@media (prefers-color-scheme: dark){'
 				. 'body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])'
 				. $declarations . '}'
 				. 'body[data-theme-dark],body[data-themes*=dark]' . $declarations,
-			'id'     => CssInjectionService::DARK_LOGO_STYLE_ID,
+			'id' => CssInjectionService::DARK_LOGO_STYLE_ID,
 		];
 	}//end darkLayer()
+
+	/**
+	 * The dark logo layer as a list the injector can append: none when an
+	 * admin's brand logo replaces the set's logo in both modes, or when the
+	 * set ships no dark logo (see {@see self::darkLayer()}).
+	 *
+	 * @param string $tokenSet The selected token set id.
+	 * @param bool $brandLogo Whether an admin's brand logo is active.
+	 *
+	 * @return array<int, array{layer: string, kind: string, css: string, id: string}> Zero or one layer.
+	 *
+	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 */
+	public function darkLayers(string $tokenSet, bool $brandLogo): array {
+		if ($brandLogo === true) {
+			return [];
+		}
+
+		$layer = $this->darkLayer(tokenSet: $tokenSet);
+		if ($layer === null) {
+			return [];
+		}
+
+		return [$layer];
+	}//end darkLayers()
 
 	/**
 	 * The first shipped or uploaded `img/logos/<name>.<ext>`, by the order

@@ -468,16 +468,8 @@ class CssInjectionService {
 		if ($withDark === true) {
 			$layers[] = $this->fileLayer(layer: 'dark-variant', file: 'tokens/dark/' . $tokenSet);
 			// 3b-1. The dark logo as an absolute url, after the dark file that
-			// names it relatively. See LogoLayerService::darkLayer(). An
-			// admin's brand logo replaces the set's logo in both modes.
-			$darkLogo = null;
-			if ($this->brandLogo === null) {
-				$darkLogo = $this->logoLayer->darkLayer(tokenSet: $tokenSet);
-			}
-
-			if ($darkLogo !== null) {
-				$layers[] = $darkLogo;
-			}
+			// names it relatively. See LogoLayerService::darkLayers().
+			$layers = array_merge($layers, $this->logoLayer->darkLayers(tokenSet: $tokenSet, brandLogo: ($this->brandLogo !== null)));
 		}
 
 		// Functional contrast fix shared by all design systems: app icons
