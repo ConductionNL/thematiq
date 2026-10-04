@@ -1824,28 +1824,53 @@ test.describe('token-sets', () => {
 	test('sets of systems that read no --nldesign-* name are not audited; bridged systems are', async ({
 		page,
 	}) => {
+		// Summer Breeze reads a vocabulary of its own, never an --nldesign-* name.
 		const summer =
 			DESIGN_SYSTEMS.find((d) => d.id === 'summer-breeze')?.stylesheets ?? []
 		for (const s of summer)
 			expect(readRepoFile(`css/${s}.css`)).not.toMatch(/--nldesign-/)
-		const bridged = ['hoog-contrast', 'lasuite', 'cunningham'].filter((id) =>
-			ALLOWLIST.includes(id),
-		)
-		expect(bridged.length).toBeGreaterThan(0)
+
+		// The bridged systems DO read the vocabulary, so their sets are audited
+		// like any nldesign set.
+		for (const system of ['high-contrast', 'lasuite']) {
+			const sheets =
+				DESIGN_SYSTEMS.find((d) => d.id === system)?.stylesheets ?? []
+			expect(sheets.length, `${system} has stylesheets`).toBeGreaterThan(0)
+			expect(
+				sheets.some((s) =>
+					/var\(\s*--nldesign-/.test(readRepoFile(`css/${s}.css`)),
+				),
+				`${system} reads the --nldesign-* vocabulary`,
+			).toBe(true)
+		}
+
+		// The contract since every shipped set was completed (#1006, #1008):
+		// the allow-list of known-incomplete sets is empty, so no set is exempt
+		// from the audit. This test used to pick its bridged subjects FROM the
+		// allow-list and expect an incomplete warning on them; with the list
+		// empty it found none and failed on `bridged.length > 0`.
+		expect(ALLOWLIST).toEqual([])
+
+		// Live: audited and complete, so none of them carries the warning. That
+		// an incomplete set DOES carry it is held by the PHPUnit gate
+		// (TokenSetVocabularyTest::testAuditDistinguishesCompleteFromIncompleteSets).
+		const ids = [
+			'summer-breeze',
+			'nextcloud',
+			'hoog-contrast',
+			'lasuite',
+			'cunningham',
+		]
 		await openSettings(page)
-		await withEntries(
-			page,
-			['summer-breeze', 'nextcloud', ...bridged],
-			async (byId) => {
-				expect(incompleteWarning(byId['summer-breeze'])).toBeUndefined()
-				expect(incompleteWarning(byId.nextcloud)).toBeUndefined()
-				for (const id of bridged)
-					expect(
-						incompleteWarning(byId[id]),
-						`${id} is audited`,
-					).toBeTruthy()
-			},
-		)
+		await withEntries(page, ids, async (byId) => {
+			for (const id of ids) {
+				expect(byId[id], `${id} is listed`).toBeTruthy()
+				expect(
+					incompleteWarning(byId[id]),
+					`${id} carries no incomplete warning`,
+				).toBeUndefined()
+			}
+		})
 	})
 
 	// @e2e openspec/specs/token-sets/spec.md#a-complete-summer-breeze-set-raises-no-incomplete-warning-in-the-admin-dropdown
