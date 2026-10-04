@@ -11,7 +11,9 @@
  * the 2px outline itself is the SAME colour made opaque.
  *
  * Read from the stylesheets themselves: every `outline` / `outline-color`
- * declaration in a `*:focus-visible` rule of css/systems/nldesign/theme.css is
+ * declaration in a `*:focus-visible` rule of each bundle's ring stylesheet
+ * (css/systems/nldesign/theme.css, and css/systems/lasuite/bridge.css for
+ * lasuite and cunningham, #970) is
  * resolved against the default set's tokens (defaults.css, then
  * tokens/rijkshuisstijl.css) on white, and against the generated dark variant
  * on Nextcloud's dark main background. A translucent colour is composited over
@@ -160,13 +162,14 @@ function contrast(a, b) {
 }
 
 /**
- * The *:focus-visible rules of theme.css, in source order.
+ * The *:focus-visible rules of a bundle's stylesheet, in source order.
  *
+ * @param {string} sheet The stylesheet that draws the ring.
  * @return {import('postcss').Rule[]} The rules, @supports variants included.
  */
-function focusRules() {
+function focusRules(sheet) {
 	const rules = []
-	postcss.parse(read('css/systems/nldesign/theme.css')).walkRules((rule) => {
+	postcss.parse(read(sheet)).walkRules((rule) => {
 		if (/(^|,)\s*\*:focus-visible\s*(,|$)/.test(rule.selector)) {
 			rules.push(rule)
 		}
@@ -192,11 +195,12 @@ function ownProps(rule) {
  * Every outline colour a browser can paint, one per rule variant: the plain
  * rule alone, and the plain rule with each @supports rule applied on top.
  *
+ * @param {string} sheet The stylesheet that draws the ring.
  * @param {Record<string, string>} tokens The set's tokens.
  * @return {Array<{value: string, vars: Record<string, string>}>} Each outline with the variables it resolves against.
  */
-function outlineVariants(tokens) {
-	const rules = focusRules()
+function outlineVariants(sheet, tokens) {
+	const rules = focusRules(sheet)
 	const outlines = []
 	const base = {}
 	for (const rule of rules) {
@@ -214,42 +218,80 @@ function outlineVariants(tokens) {
 	return outlines.flatMap((value) => variants.map((vars) => ({ value, vars })))
 }
 
-const LIGHT = tokens([
-	'css/systems/nldesign/defaults.css',
-	'css/tokens/rijkshuisstijl.css',
-])
-const DARK = {
-	...LIGHT,
-	...tokens(['css/tokens/dark/rijkshuisstijl.css']),
-}
+/**
+ * Each bundle's ring, resolved against its default set: the stylesheet that
+ * draws it, and the token files in cascade order for light and for dark. The
+ * La Suite bundle (lasuite and cunningham share its bridge) drew the
+ * translucent token as the outline itself (#970).
+ */
+const BUNDLES = [
+	{
+		name: 'nldesign (rijkshuisstijl)',
+		sheet: 'css/systems/nldesign/theme.css',
+		light: [
+			'css/systems/nldesign/defaults.css',
+			'css/tokens/rijkshuisstijl.css',
+		],
+		dark: ['css/tokens/dark/rijkshuisstijl.css'],
+	},
+	{
+		name: 'lasuite',
+		sheet: 'css/systems/lasuite/bridge.css',
+		light: [
+			'css/systems/lasuite/defaults.css',
+			'css/systems/lasuite/brand-override.css',
+			'css/systems/lasuite/bridge.css',
+			'css/tokens/lasuite.css',
+		],
+		dark: ['css/tokens/dark/lasuite.css'],
+	},
+	{
+		name: 'cunningham',
+		sheet: 'css/systems/lasuite/bridge.css',
+		light: [
+			'css/systems/lasuite/defaults.css',
+			'css/systems/lasuite/bridge.css',
+			'css/tokens/cunningham.css',
+		],
+		dark: ['css/tokens/dark/cunningham.css'],
+	},
+]
 
-describe('the nldesign focus ring reaches 3:1 for the default set', () => {
-	it('has an outline colour declared on *:focus-visible', () => {
-		expect(outlineVariants(LIGHT).length).toBeGreaterThan(0)
-	})
+for (const bundle of BUNDLES) {
+	const LIGHT = tokens(bundle.light)
+	const DARK = { ...LIGHT, ...tokens(bundle.dark) }
 
-	for (const [name, vars, bg] of [
-		['on white', LIGHT, WHITE],
-		['on the dark surface', DARK, NC_DARK],
-	]) {
-		it(`every outline colour clears 3:1 ${name}`, () => {
-			for (const { value, vars: scoped } of outlineVariants(vars)) {
-				const ratio = contrast(painted(value, scoped, bg), bg)
-				expect(
-					ratio,
-					`${value} paints ${ratio.toFixed(2)}:1 ${name}`,
-				).toBeGreaterThanOrEqual(3)
-			}
+	describe(`the ${bundle.name} focus ring reaches 3:1`, () => {
+		it('has an outline colour declared on *:focus-visible', () => {
+			expect(outlineVariants(bundle.sheet, LIGHT).length).toBeGreaterThan(0)
 		})
-	}
 
-	it('keeps the translucent token as the halo', () => {
-		const shadows = []
-		for (const rule of focusRules()) {
-			rule.walkDecls('box-shadow', (d) => shadows.push(d.value))
+		for (const [name, vars, bg] of [
+			['on white', LIGHT, WHITE],
+			['on the dark surface', DARK, NC_DARK],
+		]) {
+			it(`every outline colour clears 3:1 ${name}`, () => {
+				for (const { value, vars: scoped } of outlineVariants(
+					bundle.sheet,
+					vars,
+				)) {
+					const ratio = contrast(painted(value, scoped, bg), bg)
+					expect(
+						ratio,
+						`${value} paints ${ratio.toFixed(2)}:1 ${name}`,
+					).toBeGreaterThanOrEqual(3)
+				}
+			})
 		}
-		expect(shadows.some((s) => s.includes('var(--nldesign-color-focus)'))).toBe(
-			true,
-		)
+
+		it('keeps the translucent token as the halo', () => {
+			const shadows = []
+			for (const rule of focusRules(bundle.sheet)) {
+				rule.walkDecls('box-shadow', (d) => shadows.push(d.value))
+			}
+			expect(
+				shadows.some((s) => s.includes('var(--nldesign-color-focus)')),
+			).toBe(true)
+		})
 	})
-})
+}
