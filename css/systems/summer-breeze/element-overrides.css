@@ -2,7 +2,7 @@
  * Summer Breeze — element-level overrides.
  *
  * The signature airy chrome that the core variable mapping (theme.css) cannot
- * express on its own: a pale-blue gradient navigation, floating rounded cards
+ * express on its own: a floating navigation card, floating rounded cards
  * with soft shadows, a solid pill for the active menu item, and pill-shaped
  * inputs. These reach Nextcloud core selectors directly with high specificity.
  */
@@ -34,7 +34,7 @@ body,
 }
 
 /* ============================================
-   NAVIGATION — pale-blue gradient floating card
+   NAVIGATION: floating white card
    ============================================ */
 
 /* Only the OUTER navigation container is the floating card. */
