@@ -10,16 +10,12 @@
 		"passes. This array MUST be empty once every shipped set is complete."
 	],
 	"sets": [
-		"buren",
 		"conduction-new",
 		"cunningham",
-		"demodam",
 		"frankendesk",
-		"groningen",
 		"hoog-contrast",
 		"lasuite",
 		"opencatalogi",
-		"riddeliemers",
 		"rijkshuisstijl",
 		"xxllnc"
 	]
