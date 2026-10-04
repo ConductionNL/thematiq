@@ -244,3 +244,23 @@ describe('pinnedValues', () => {
 		expect(pinnedValues({ oldCss: css, kind: 'raw-sync' })).toEqual({})
 	})
 })
+
+describe('withPins', () => {
+	it('writes a command-line pin into the overrides section, replacing one of the same name', async () => {
+		const { withPins, withOverrides, localOverrides } =
+			await import('../../scripts/sync-upstream-tokens.mjs')
+		const base = withOverrides(
+			':root {\n\t--nldesign-color-primary: #5616ff;\n}\n',
+			[
+				['--nldesign-color-primary', '#000000'],
+				['--nldesign-logo-url', "url('../../img/logos/nijmegen.svg')"],
+			],
+		)
+		const pinned = withPins(base, { '--nldesign-color-primary': '#157c68' })
+		expect(localOverrides(pinned, 'converted', new Set(), new Map())).toEqual([
+			['--nldesign-color-primary', '#157c68'],
+			['--nldesign-logo-url', "url('../../img/logos/nijmegen.svg')"],
+		])
+		expect(withPins(base, {})).toBe(base)
+	})
+})
