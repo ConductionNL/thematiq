@@ -1849,16 +1849,7 @@ class TokenSetConverterService {
 		}
 
 		if ($kind === 'ramp') {
-			$picked = $this->pickFromRamp(spec: $fallback, declarations: $declarations, semantic: $semantic);
-			if ($picked === null) {
-				return null;
-			}
-
-			return [
-				'value' => $picked,
-				'source' => '(brand ramp)',
-				'reason' => 'derived-from-brand',
-			];
+			return $this->pickFromRamp(spec: $fallback, declarations: $declarations, semantic: $semantic);
 		}
 
 		return null;
@@ -1876,12 +1867,40 @@ class TokenSetConverterService {
 	 * @param array<string, string> $declarations The resolved input.
 	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
-	 * @return string|null The picked colour, or null when the theme has no usable ramp.
+	 * A theme that declares greys but none that stands apart from the page
+	 * background (its only grey is white, #933) gets the role's default from
+	 * the rule instead, so the set still carries every semantic token. A theme
+	 * with no greys at all gets nothing here, as before.
 	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
+	 * @return array{value: string, source: string, reason: string}|null The derived value, or null when the theme has no ramp.
 	 */
-	private function pickFromRamp(array $spec, array $declarations, array $semantic): ?string {
+	private function pickFromRamp(array $spec, array $declarations, array $semantic): ?array {
+		$ramp = $this->neutralRamp(declarations: $declarations);
+		if ($ramp === []) {
+			return null;
+		}
+
+		$picked = $this->pickByCriterion(spec: $spec, ramp: $ramp, semantic: $semantic);
+		if ($picked !== null) {
+			return ['value' => $picked, 'source' => '(brand ramp)', 'reason' => 'derived-from-brand'];
+		}
+
+		$default = ($spec['default'] ?? null);
+		if (is_string($default) === false || $default === '') {
+			return null;
+		}
+
+		return ['value' => $default, 'source' => '(Nextcloud default)', 'reason' => 'nextcloud-default-used'];
+	}//end pickFromRamp()
+
+	/**
+	 * Every near-grey colour the theme declares (channels within 12 of each other).
+	 *
+	 * @param array<string, string> $declarations The resolved input.
+	 *
+	 * @return array<string, array{0: int, 1: int, 2: int}> Hex => channels.
+	 */
+	private function neutralRamp(array $declarations): array {
 		$ramp = [];
 		foreach ($declarations as $value) {
 			$rgb = $this->contrast->parseColor(value: $value);
@@ -1896,16 +1915,45 @@ class TokenSetConverterService {
 			$ramp[$this->toHex(rgb: $rgb)] = $rgb;
 		}
 
-		if (empty($ramp) === true) {
-			return null;
-		}
+		return $ramp;
+	}//end neutralRamp()
 
+	/**
+	 * Pick a grey out of a non-empty ramp by the rule's criterion.
+	 *
+	 * @param array<string, mixed> $spec The ramp spec.
+	 * @param array<string, array{0: int, 1: int, 2: int}> $ramp Hex => channels.
+	 * @param array<string, string> $semantic The semantic layer so far.
+	 *
+	 * @return string|null The picked colour, or null when no grey in the ramp qualifies.
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
+	 * @SuppressWarnings(PHPMD.NPathComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
+	 */
+	private function pickByCriterion(array $spec, array $ramp, array $semantic): ?string {
 		$criterion = (string)($spec['criterion'] ?? 'darkest');
+
+		// The page background the picked grey has to stand apart from. A ramp
+		// of one grey still has a "darkest" and a "nearest" member, and when
+		// that grey is the background itself every role came out white on
+		// white (#933). No readable candidate means no pick: the role then
+		// falls back to the defaults, like a set that declares no greys.
+		$background = $this->contrast->parseColor(
+			value: ($semantic[(string)($spec['background'] ?? '--nldesign-color-nav-background')] ?? '#ffffff')
+		);
+		if ($background === null) {
+			$background = [255, 255, 255];
+		}
 
 		if ($criterion === 'darkest') {
 			uasort($ramp, fn (array $a, array $b) => array_sum($a) <=> array_sum($b));
 
-			return array_key_first($ramp);
+			$darkest = array_key_first($ramp);
+			if ($this->contrast->ratio(first: $ramp[$darkest], second: $background) < (float)($spec['min'] ?? 4.5)) {
+				return null;
+			}
+
+			return $darkest;
 		}
 
 		if ($criterion === 'nearestLuminance') {
@@ -1918,6 +1966,13 @@ class TokenSetConverterService {
 			$bestDistance = null;
 			foreach ($ramp as $hex => $rgb) {
 				$distance = abs(array_sum($rgb) - array_sum($targetRgb));
+
+				// A grey nearer the background than the target reads as the
+				// background: a border or hover in that colour is invisible.
+				if ($distance >= abs(array_sum($rgb) - array_sum($background))) {
+					continue;
+				}
+
 				if ($bestDistance === null || $distance < $bestDistance) {
 					$bestDistance = $distance;
 					$best = $hex;
@@ -1949,7 +2004,7 @@ class TokenSetConverterService {
 		}//end if
 
 		return null;
-	}//end pickFromRamp()
+	}//end pickByCriterion()
 
 	/**
 	 * Apply one of the closed transform set.
