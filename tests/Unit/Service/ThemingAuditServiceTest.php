@@ -442,6 +442,72 @@ class ThemingAuditServiceTest extends TestCase {
 	}//end testArrayValuesSummarizedWithChangedKeys()
 
 	/**
+	 * Issue #943: POST /settings/group-theming logs the mapping as a list of
+	 * `{group, tokenSet}` objects. That list was run through strval(), which
+	 * raised "Array to string conversion" and audited `"changed":["Array"]`.
+	 * The changed GROUPS are recorded: added, removed, re-pointed, delegated,
+	 * or moved in priority.
+	 */
+	public function testGroupThemingMappingRecordsTheChangedGroups(): void {
+		$service = $this->makeService();
+		$warnings = [];
+		set_error_handler(
+			static function (int $severity, string $message) use (&$warnings): bool {
+				$warnings[] = $message;
+
+				return true;
+			},
+			E_WARNING | E_NOTICE
+		);
+
+		try {
+			// The shape GroupThemingService::getMapping() and setMapping() return.
+			$service->log(
+				action: 'group_theming_changed',
+				context: [
+					'old' => [
+						['group' => 'admin', 'tokenSet' => 'rijkshuisstijl'],
+						['group' => 'staff', 'tokenSet' => 'utrecht'],
+						['group' => 'guests', 'tokenSet' => 'nextcloud'],
+					],
+					'new' => [
+						['group' => 'admin', 'tokenSet' => 'rijkshuisstijl'],
+						['group' => 'staff', 'tokenSet' => 'amsterdam'],
+						['group' => 'students', 'tokenSet' => 'utrecht', 'delegated' => true, 'allowedTokenSets' => ['utrecht', 'amsterdam']],
+					],
+				]
+			);
+		} finally {
+			restore_error_handler();
+		}
+
+		$this->assertSame([], $warnings);
+		$entry = $service->getRecent(limit: 1)[0];
+		$this->assertSame(['count' => 3], $entry['old']);
+		$this->assertSame(['count' => 3], $entry['new']);
+		sort($entry['changed']);
+		$this->assertSame(['guests', 'staff', 'students'], $entry['changed']);
+	}//end testGroupThemingMappingRecordsTheChangedGroups()
+
+	/**
+	 * Reordering the mapping changes which theme wins, so both moved groups are recorded;
+	 * an unchanged mapping records none.
+	 */
+	public function testGroupThemingReorderAndNoChange(): void {
+		$service = $this->makeService();
+		$admin = ['group' => 'admin', 'tokenSet' => 'rijkshuisstijl'];
+		$staff = ['group' => 'staff', 'tokenSet' => 'utrecht'];
+
+		$service->log(action: 'group_theming_changed', context: ['old' => [$admin, $staff], 'new' => [$staff, $admin]]);
+		$moved = $service->getRecent(limit: 1)[0]['changed'];
+		sort($moved);
+		$this->assertSame(['admin', 'staff'], $moved);
+
+		$service->log(action: 'group_theming_changed', context: ['old' => [$admin, $staff], 'new' => [$admin, $staff]]);
+		$this->assertSame([], $service->getRecent(limit: 1)[0]['changed']);
+	}//end testGroupThemingReorderAndNoChange()
+
+	/**
 	 * Rotation at the 1 MB size cap keeps exactly one generation, and the
 	 * overflowing entry lands in the rotated file.
 	 */
