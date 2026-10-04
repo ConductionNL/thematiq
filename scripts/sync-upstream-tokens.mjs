@@ -138,6 +138,73 @@ export function mergeTokens(target, source) {
 }
 
 /**
+ * Read one organisation's upstream tokens: the style-dictionary sources under
+ * `src/`, or, when upstream has moved on to it, the Tokens Studio export under
+ * `figma/` (thematiq#994).
+ *
+ * @param {string} orgDir The organisation's directory in the themes checkout.
+ * @return {Object} `{kind, tokens, rawTokens, error}`; error is null when it read.
+ */
+export function readUpstreamTokens(orgDir) {
+	const out = { kind: 'style-dictionary', tokens: {}, rawTokens: [], error: null }
+	let files = findTokenFiles(join(orgDir, 'src')).sort()
+	if (files.length === 0) {
+		out.kind = 'tokens-studio'
+		files = findTokenFiles(join(orgDir, 'figma'))
+			.filter((file) => /dark/i.test(file.slice(orgDir.length)) === false)
+			.sort()
+	}
+	if (files.length === 0) {
+		out.error = 'no *.tokens.json files upstream'
+		return out
+	}
+	for (const file of files) {
+		let json
+		try {
+			json = JSON.parse(readFileSync(file, 'utf8'))
+		} catch (error) {
+			out.error = `malformed upstream JSON in ${relative(orgDir, file)}: ${error.message}`
+			return out
+		}
+		if (out.kind === 'tokens-studio') {
+			json = tokensStudioTree(json)
+		}
+		mergeTokens(out.tokens, json)
+		out.rawTokens.push(...flattenTokens(json))
+	}
+	return out
+}
+
+/**
+ * Merge a Tokens Studio export's token sets into one tree, in the export's own
+ * set order, leaving out its dark colour scheme. A set's name is not part of a
+ * token's path: `{basis.color.default.color-default}` reads from whichever set
+ * defines it, which is what merging the sets reproduces.
+ *
+ * @param {Object} document The parsed export.
+ * @return {Object} The merged token tree.
+ */
+export function tokensStudioTree(document) {
+	const order = Array.isArray(document.$metadata?.tokenSetOrder)
+		? document.$metadata.tokenSetOrder
+		: Object.keys(document)
+	const tree = {}
+	for (const name of order) {
+		const set = document[name]
+		if (
+			name.startsWith('$')
+			|| /(^|\/)color-scheme-dark(\/|$)/.test(name)
+			|| set === null
+			|| typeof set !== 'object'
+		) {
+			continue
+		}
+		mergeTokens(tree, set)
+	}
+	return tree
+}
+
+/**
  * Render a token value as CSS, references as `var()` (`outputReferences`).
  *
  * @param {*} value A leaf value.
@@ -470,31 +537,12 @@ export function withManifestPrimary(css, org) {
  * @return {Object} `{ok: true, css, entry}` or `{ok: false, reason}`.
  */
 function convertOrg(org, context) {
-	const tokenFiles = findTokenFiles(join(org.dir, 'src'))
-	if (tokenFiles.length === 0) {
-		const figma = existsSync(join(org.dir, 'figma'))
-		return {
-			ok: false,
-			reason: figma
-				? 'upstream now publishes only a Tokens Studio export (figma/), which the sync does not convert yet'
-				: 'no *.tokens.json files upstream',
-		}
+	const source = readUpstreamTokens(org.dir)
+	if (source.error !== null) {
+		return { ok: false, reason: source.error }
 	}
-	const merged = {}
-	const rawTokens = []
-	for (const file of tokenFiles.sort()) {
-		let json
-		try {
-			json = JSON.parse(readFileSync(file, 'utf8'))
-		} catch (error) {
-			return {
-				ok: false,
-				reason: `malformed upstream JSON in ${relative(org.dir, file)}: ${error.message}`,
-			}
-		}
-		mergeTokens(merged, json)
-		rawTokens.push(...flattenTokens(json))
-	}
+	const merged = source.tokens
+	const rawTokens = source.rawTokens
 
 	let result
 	try {
@@ -530,22 +578,45 @@ function convertOrg(org, context) {
 
 	// The manifest colours reach Nextcloud's own theming. The converter copies
 	// them from the theme as written, so an upstream typo (demodam's page
-	// background `F5FaFD`, no `#`) would land there verbatim.
-	for (const key of ['primary_color', 'background_color']) {
-		const value = result.manifestEntry.theming?.[key]
-		if (
-			value !== undefined
-			&& /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value)) === false
-		) {
-			return {
-				ok: false,
-				reason: `the theme's ${key} is not a colour (\`${value}\`); fix it upstream or set it by hand`,
-			}
+	// background `F5FaFD`, no `#`) or a transparent page (leiden's
+	// `rgba(0, 0, 0, 0)`) would land there verbatim. A background that is not a
+	// colour is dropped, so the committed one stays; a primary that is not one
+	// refuses the set, because the set file and the manifest must agree on it.
+	const theming = result.manifestEntry.theming ?? {}
+	const isHex = (value) => /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value))
+	if (
+		theming.background_color !== undefined
+		&& isHex(theming.background_color) === false
+	) {
+		delete theming.background_color
+	}
+	if (
+		theming.primary_color !== undefined
+		&& isHex(theming.primary_color) === false
+	) {
+		return {
+			ok: false,
+			reason: `the theme's primary_color is not a colour (\`${theming.primary_color}\`); fix it upstream or set it by hand`,
 		}
 	}
 
 	let css = result.css
-	if (org.oldCss !== null) {
+	if (org.oldCss !== null && source.kind === 'tokens-studio') {
+		// The old raw dump was made from the src/ format upstream has since
+		// dropped, so the names it wrote cannot be recomputed. It only ever wrote
+		// `--nldesign-*` and `--{slug}-*`; anything else a person added.
+		const rawNames = new Set(
+			[...declarations(org.oldCss).keys()].filter(
+				(name) =>
+					name.startsWith('--nldesign-')
+					|| name.startsWith(`--${org.slug}-`),
+			),
+		)
+		css = withOverrides(
+			css,
+			localOverrides(org.oldCss, org.kind, rawNames, declarations(css)),
+		)
+	} else if (org.oldCss !== null) {
 		const rawNames = new Set(
 			declarations(
 				generateOrgCSS(org.slug, org.name, rawTokens, [

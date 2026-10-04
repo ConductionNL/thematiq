@@ -138,6 +138,14 @@ upstream, and MUST NOT open a PR unless the shipped token-set tests pass. The wo
 - AND the PR body MUST name it with the failing tests
 - AND a new organisation MUST only be added when its conversion is vocabulary complete
 
+#### Scenario: Upstream publishes a Tokens Studio export
+
+- GIVEN an organisation upstream has no `src/**/*.tokens.json` but has `figma/*.tokens.json`
+- WHEN the sync runs
+- THEN it MUST merge the export's token sets in their `tokenSetOrder`, without the dark colour scheme
+- AND convert and gate the result like any other theme
+- AND a new organisation MUST NOT join the vocabulary allow-list or bring a logo
+
 #### Scenario: Generated docs follow the sets
 
 - GIVEN the sync changed at least one set

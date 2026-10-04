@@ -11,7 +11,8 @@
  * and how many Den Haag component properties. tests/vitest/denhaagBridge.spec.js
  * recomputes the machine line and fails when it drifts. A converted set changes
  * those numbers, so the token-set gate runs this script after every change.
- * The counting rule is the test's, copied exactly.
+ * The counting rule is the test's, copied exactly. README.md and project.md state how many
+ * sets are listed (ClaimAccuracyTest), which a new upstream organisation changes.
  *
  * Usage:
  *   node scripts/update-coverage-claims.mjs           rewrite the numbers
@@ -27,6 +28,8 @@ import { fileURLToPath } from 'node:url'
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const BRIDGE = 'css/public-bridge.css'
 const DOC = 'docs/features/public-portals-as-consumers.md'
+const README = 'README.md'
+const PROJECT = 'project.md'
 
 /**
  * Count the coverage the way tests/vitest/denhaagBridge.spec.js does.
@@ -106,6 +109,30 @@ export function rewriteDoc(text, c) {
 }
 
 /**
+ * Apply the listed-set count to README.md (ClaimAccuracyTest::testReadmeCountEqualsInventory).
+ *
+ * @param {string} text The README.
+ * @param {Object} c The counts.
+ * @return {string} The rewritten README.
+ */
+export function rewriteReadme(text, c) {
+	return text.replace(/\*\*\d+ token sets\*\*/, `**${c.listed} token sets**`)
+}
+
+/**
+ * Apply the listed-set count to project.md, in its overview and its section heading.
+ *
+ * @param {string} text The project page.
+ * @param {Object} c The counts.
+ * @return {string} The rewritten page.
+ */
+export function rewriteProject(text, c) {
+	return text
+		.replace(/provides \d+ token sets/, `provides ${c.listed} token sets`)
+		.replace(/## Token Sets \(\d+\)/, `## Token Sets (${c.listed})`)
+}
+
+/**
  * Entry point.
  *
  * @return {number} Exit code.
@@ -117,6 +144,8 @@ function main() {
 	for (const [path, rewrite] of [
 		[BRIDGE, rewriteBridge],
 		[DOC, rewriteDoc],
+		[README, rewriteReadme],
+		[PROJECT, rewriteProject],
 	]) {
 		const before = readFileSync(join(ROOT, path), 'utf8')
 		const after = rewrite(before, counts)
