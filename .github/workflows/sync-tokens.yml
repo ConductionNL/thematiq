@@ -18,6 +18,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Generate against development, where token work lands; main is the
+          # release branch and lags by a release, so a sync built on it went
+          # stale and conflicted (#526).
+          ref: development
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -96,7 +101,7 @@ jobs:
           ---
           *This PR was automatically created by the nightly token sync workflow.*" \
             --head chore/sync-nldesign-tokens \
-            --base main
+            --base development
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
