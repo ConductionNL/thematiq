@@ -432,6 +432,80 @@ class DarkPaletteServiceTest extends TestCase {
 	}//end testTheUtrechtColorConventionSplitsTextFromSurface()
 
 	/**
+	 * A `textbox` token is a control, not text: its surfaces darken (thematiq#938).
+	 *
+	 * "text" used to be matched as a substring, so a white
+	 * `--nldesign-component-textbox-background-color` took the text clamp and
+	 * shipped as mid-grey #9e9e9e under light #d5ddf0 input text (1.96:1).
+	 */
+	public function testATextboxSurfaceIsNotTextClass(): void {
+		$derived = $this->service->deriveDarkDeclarations(
+			[
+				'--nldesign-component-textbox-background-color' => '#FFFFFF',
+				'--nldesign-component-textbox-border-color' => '#808080',
+				'--nldesign-component-textbox-color' => '#222222',
+				'--nldesign-color-button-primary-text' => '#222222',
+			]
+		);
+
+		$this->assertLessThanOrEqual(0.16, $this->lightnessOf(hex: $derived['--nldesign-component-textbox-background-color']));
+		$this->assertLessThan(0.60, $this->lightnessOf(hex: $derived['--nldesign-component-textbox-border-color']));
+		// The typed text and a `-text` token stay text-class.
+		$this->assertGreaterThanOrEqual(0.60, $this->lightnessOf(hex: $derived['--nldesign-component-textbox-color']));
+		$this->assertGreaterThanOrEqual(0.60, $this->lightnessOf(hex: $derived['--nldesign-color-button-primary-text']));
+	}//end testATextboxSurfaceIsNotTextClass()
+
+	/**
+	 * The repair loop also covers the labels on control fills (thematiq#938).
+	 *
+	 * These are the dark values development shipped for rijkshuisstijl: a
+	 * white label clamped to #9e9e9e on the derived light-blue primary fill.
+	 */
+	public function testTheRepairLoopFixesControlLabels(): void {
+		$result = $this->service->verifyAndRepair(
+			[
+				'--nldesign-color-background' => '#191c1f',
+				'--nldesign-color-button-primary-background' => '#81afe2',
+				'--nldesign-color-button-primary-hover' => '#9fbbe0',
+				'--nldesign-color-button-primary-text' => '#9e9e9e',
+				'--nldesign-component-button-primary-action-background-color' => '#81afe2',
+				'--nldesign-component-button-primary-action-color' => '#9e9e9e',
+				'--nldesign-component-button-primary-action-hover-background-color' => '#9fbbe0',
+				'--nldesign-component-button-primary-action-hover-color' => '#9e9e9e',
+				'--nldesign-component-textbox-background-color' => '#9e9e9e',
+				'--nldesign-component-textbox-color' => '#d5ddf0',
+			]
+		);
+
+		$this->assertSame([], $result['warnings']);
+		$d = $result['declarations'];
+		foreach ([
+			['--nldesign-color-button-primary-text', '--nldesign-color-button-primary-background'],
+			['--nldesign-component-button-primary-action-color', '--nldesign-component-button-primary-action-background-color'],
+			['--nldesign-component-button-primary-action-hover-color', '--nldesign-component-button-primary-action-hover-background-color'],
+			['--nldesign-component-textbox-color', '--nldesign-component-textbox-background-color'],
+		] as [$fg, $bg]) {
+			$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]), $fg . ' on ' . $bg);
+		}
+	}//end testTheRepairLoopFixesControlLabels()
+
+	/**
+	 * A mid-tone page background still derives to a dark page (thematiq#952).
+	 *
+	 * vng's theming background_color #0277BD stood in for the page background
+	 * and inverted to #42b1f3. The page keeps its hue but lands dark.
+	 */
+	public function testAMidTonePageBackgroundDerivesDark(): void {
+		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-background' => '#0277BD']);
+
+		$page = $derived['--nldesign-color-background'];
+		$this->assertLessThanOrEqual(0.125, $this->lightnessOf(hex: $page));
+		$this->assertEqualsWithDelta($this->hueOf(hex: '#0277BD'), $this->hueOf(hex: $page), 2.0);
+		// Light body text still reads on it.
+		$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: '#d5ddf0', background: $page));
+	}//end testAMidTonePageBackgroundDerivesDark()
+
+	/**
 	 * `-rgb` companion tokens are regenerated from their derived base token.
 	 */
 	public function testRgbCompanionsMatchDerivedBase(): void {

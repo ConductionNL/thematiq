@@ -370,6 +370,14 @@ function allowedReason(selector: string): string | null {
  */
 const SINCE: Array<{ pattern: RegExp; since: number; reason: string }> = [
 	{
+		// Before the generic NC33+ header entry: the first match wins.
+		pattern: /^#header \.unified-search-input__field$/,
+		since: 35,
+		reason:
+			'NC35 header search markup (thematiq#932). NC 35 rewrote UnifiedSearchInput.vue around '
+			+ 'unified-search-input__field; NC 33/34 render __button and __icon instead.',
+	},
+	{
 		pattern:
 			/^#header \.(app-menu__waffle|app-menu__current-app|unified-search-input|header-start (\.button-vue__icon|svg))/,
 		since: 33,

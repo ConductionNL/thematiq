@@ -184,6 +184,53 @@ describe('playground: your component', () => {
 		).toBe('CSS')
 	})
 
+	it('gives the frame the house style fonts at addresses that load (#940)', async () => {
+		const origin = window.location.origin
+		vi.spyOn(document, 'styleSheets', 'get').mockReturnValue([
+			{
+				href: origin + '/apps/thematiq/css/systems/nldesign/fonts.css?v=34',
+				cssRules: [
+					{
+						type: 5,
+						cssText:
+							'@font-face { font-family: "Fira Sans"; src: url("fonts/fira-sans.woff2") format("woff2"), url(\'../shared/fira.woff\') format("woff"); }',
+					},
+					{ type: 1, cssText: 'p { color: red; }' },
+				],
+			},
+			{
+				href: null,
+				cssRules: [
+					{
+						type: 5,
+						cssText:
+							'@font-face { font-family: Inline; src: url(data:font/woff2;base64,AAAA); }',
+					},
+				],
+			},
+		])
+		await boot()
+		chip('Your component').click()
+		type(document.getElementById('nldesign-own-html'), '<p>Tekst</p>')
+
+		const srcdoc = document
+			.querySelector('.nldesign-pg-stage iframe')
+			.getAttribute('srcdoc')
+		expect(srcdoc).toContain(
+			'url("'
+				+ origin
+				+ '/apps/thematiq/css/systems/nldesign/fonts/fira-sans.woff2")',
+		)
+		expect(srcdoc).toContain(
+			'url("' + origin + '/apps/thematiq/css/systems/shared/fira.woff")',
+		)
+		expect(srcdoc).not.toContain('url("fonts/')
+		expect(srcdoc).toContain('url(data:font/woff2;base64,AAAA)')
+		expect(srcdoc).not.toContain('p { color: red; }')
+		// The frame's own policy lets those same-origin fonts in.
+		expect(srcdoc).toContain("font-src 'self' " + origin + ' data:')
+	})
+
 	it('lists exactly the tokens the code reads, read-only where the editor cannot write', async () => {
 		await boot()
 		chip('Your component').click()

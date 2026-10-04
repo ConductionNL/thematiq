@@ -382,6 +382,44 @@ describe('admin.js token editor', () => {
 			).toBeNull()
 		})
 
+		it('unlocks the easing and duration-unit selects with the base tokens (#936)', async () => {
+			const QUICK = '--animation-quick'
+			const EASING = '--nldesign-animation-easing'
+			REGISTRY[QUICK] = {
+				tab: 'content',
+				type: 'duration',
+				label: 'Animation quick',
+				group: 'brand',
+			}
+			REGISTRY[EASING] = {
+				tab: 'content',
+				type: 'easing',
+				label: 'Animation easing',
+				group: 'brand',
+			}
+			try {
+				await mount()
+
+				const selects = () => [
+					row(QUICK).el.querySelector('select.nldesign-duration-unit'),
+					row(EASING).el.querySelector('select.nldesign-easing-select'),
+				]
+				selects().forEach((select) => expect(select.disabled).toBe(true))
+
+				unlockBase()
+				selects().forEach((select) => expect(select.disabled).toBe(false))
+				expect(
+					row(EASING).el.querySelector('select').hasAttribute('title'),
+				).toBe(false)
+
+				tick(document.getElementById('nldesign-base-unlock'), false)
+				selects().forEach((select) => expect(select.disabled).toBe(true))
+			} finally {
+				delete REGISTRY[QUICK]
+				delete REGISTRY[EASING]
+			}
+		})
+
 		it("draws its checkboxes as Nextcloud's own input.checkbox and label pair", async () => {
 			await mount()
 

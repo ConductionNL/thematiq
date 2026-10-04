@@ -4,7 +4,8 @@
  * Thematiq overrides CSS builder.
  *
  * Builds the content of a custom overrides file: the editor's values in `:root`
- * with `!important`, the thematiq twin of each motion token, the dark value of each
+ * with `!important`, the thematiq twin of each motion token, the motion tokens again
+ * on body for a user who chose a theme, the dark value of each
  * brand-layer colour in the two dark scopes, and the administrator's own tokens
  * after them without `!important`. Split out of {@see CustomOverridesService},
  * which keeps the file reading and writing.
@@ -51,6 +52,15 @@ class OverridesCssBuilder {
 	private const CHOSEN_DARK_SELECTOR = 'body[data-theme-dark],' . PHP_EOL . 'body[data-themes*=dark]';
 
 	/**
+	 * The scope of every user but one who chose reduced motion. A chosen theme
+	 * declares Nextcloud's durations on body, so the motion overrides go there
+	 * too; the reduced-motion theme sets them to 0 on purpose and keeps that.
+	 *
+	 * @var string
+	 */
+	private const MOTION_SELECTOR = 'body:not([data-theme-reduced-motion])';
+
+	/**
 	 * The CSS file header comment.
 	 *
 	 * @var string
@@ -66,6 +76,24 @@ class OverridesCssBuilder {
 	public const MOTION_TWINS = [
 		'--animation-quick' => '--nldesign-animation-quick',
 		'--animation-slow' => '--nldesign-animation-slow',
+	];
+
+	/**
+	 * Label and fill pairs among Nextcloud's own variables that the dark scopes
+	 * repair, as DarkPaletteService::CONTROL_PAIRS does for the generated dark
+	 * stylesheets. Each override derives its dark value on its own, so a white
+	 * label took the text clamp to mid-grey #9e9e9e on a fill that turned light
+	 * blue (thematiq#953). A pair is repaired only when the editor overrides
+	 * both sides; the other side otherwise comes from elsewhere and is not
+	 * this file's to measure.
+	 *
+	 * @var array<int, array{fg: string, bg: string, threshold: float}>
+	 */
+	public const DARK_PAIRS = [
+		['fg' => '--color-primary-text', 'bg' => '--color-primary', 'threshold' => 4.5],
+		['fg' => '--color-primary-element-text', 'bg' => '--color-primary-element', 'threshold' => 4.5],
+		['fg' => '--color-primary-light-text', 'bg' => '--color-primary-light', 'threshold' => 4.5],
+		['fg' => '--color-primary-element-light-text', 'bg' => '--color-primary-element-light', 'threshold' => 4.5],
 	];
 
 	/**
@@ -104,6 +132,14 @@ class OverridesCssBuilder {
 
 		$css = self::CSS_HEADER . PHP_EOL . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
 
+		// A user who chose a theme, dark or light, gets Nextcloud's durations
+		// declared on body (`[data-theme-dark] { --animation-quick: 100ms }`),
+		// which a :root value never reaches (#937).
+		$motionLines = $this->declarationLines(tokens: array_intersect_key($tokens, self::MOTION_TWINS), important: true);
+		if ($motionLines !== []) {
+			$css .= self::MOTION_SELECTOR . ' {' . PHP_EOL . implode(PHP_EOL, $motionLines) . PHP_EOL . '}' . PHP_EOL;
+		}
+
 		// The administrator's own dark value replaces a derived one, and is the
 		// only dark value of a settable or internal colour, which derive none.
 		$ownDark = array_filter(
@@ -137,6 +173,7 @@ class OverridesCssBuilder {
 	 * The dark value of every brand-layer colour override: derived as the
 	 * generated dark stylesheets derive it, or the light value when it is not
 	 * a colour literal, so both kinds of dark user still see the same thing.
+	 * Label and fill pairs in {@see self::DARK_PAIRS} are then repaired.
 	 *
 	 * Only the brand layer (Nextcloud's own variables) is split, because only
 	 * those does Nextcloud re-declare on body for a chosen theme. Component
@@ -165,7 +202,9 @@ class OverridesCssBuilder {
 			$dark[$name] = ($this->darkPalette->deriveDarkValue(token: $name, lightValue: $value, context: $tokens) ?? $value);
 		}
 
-		return $dark;
+		// The same repair the generated dark stylesheets get. An administrator's
+		// own dark value is not in this map, so it is never rewritten.
+		return $this->darkPalette->verifyAndRepair(declarations: $dark, pairs: self::DARK_PAIRS)['declarations'];
 	}//end darkValues()
 
 	/**

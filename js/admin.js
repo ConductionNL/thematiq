@@ -2608,7 +2608,8 @@
 					var locked = isTokenLocked(row.dataset.tokenRow)
 					var reason = lockReason(row.dataset.tokenRow)
 					row.classList.toggle('nldesign-token-row--locked', locked)
-					row.querySelectorAll('input').forEach(function (input) {
+					// Every control, not only inputs: easing and duration units are selects (#936).
+					row.querySelectorAll('input, select').forEach(function (input) {
 						input.disabled = locked
 						if (reason === '') {
 							input.removeAttribute('title')
@@ -8591,6 +8592,35 @@
 		}
 
 		/**
+		 * Return focus to an element once a Nextcloud dialog has closed.
+		 *
+		 * Nextcloud 35 calls the dialog callback first and closes the dialog
+		 * after it, and the closing focus trap moves focus again, to the body
+		 * (#934). Focusing inside the callback is therefore undone. This
+		 * focuses now and again on the next ticks of the teardown, but only
+		 * while focus sits on the body, so it never takes focus back from
+		 * wherever the administrator has moved on to.
+		 *
+		 * @param {HTMLElement} element The element that opened the dialog.
+		 * @spec openspec/specs/theme-versions/spec.md
+		 */
+		function focusAfterDialog(element) {
+			element.focus()
+			;[0, 100, 300, 600].forEach(function (delay) {
+				window.setTimeout(function () {
+					var active = document.activeElement
+					if (
+						(active === null || active === document.body)
+						&& element.isConnected
+						&& element.disabled !== true
+					) {
+						element.focus()
+					}
+				}, delay)
+			})
+		}
+
+		/**
 		 * Preview a version, confirm with the changes listed, then restore.
 		 * Nothing is written until the administrator confirms; on cancel the
 		 * focus returns to the button that opened the dialog.
@@ -8621,12 +8651,15 @@
 						button.focus()
 						return
 					}
+					// The dialog's focus trap returns focus to whatever held it
+					// on open; the button lost it while it was disabled.
+					button.focus()
 					OC.dialogs.confirm(
 						describeVersionPreview(preview),
 						t('thematiq', 'Restore this version?'),
 						function (confirmed) {
 							if (confirmed !== true) {
-								button.focus()
+								focusAfterDialog(button)
 								return
 							}
 							fetch(base + '/restore', post)
