@@ -99,6 +99,7 @@
 		--nldesign-component-unordered-list-color: #dcdce4;
 		--nldesign-hero-body-color: #1c2e60;
 		--nldesign-hero-title-color: #2e2e2e;
+		--nldesign-logo-url: url('../../../img/logos/frankendesk-dark.svg');
 		--nldesign-nav-link-color: #dcdce4;
 	}
 }
@@ -202,5 +203,6 @@ body[data-themes*=dark] {
 	--nldesign-component-unordered-list-color: #dcdce4;
 	--nldesign-hero-body-color: #1c2e60;
 	--nldesign-hero-title-color: #2e2e2e;
+	--nldesign-logo-url: url('../../../img/logos/frankendesk-dark.svg');
 	--nldesign-nav-link-color: #dcdce4;
 }

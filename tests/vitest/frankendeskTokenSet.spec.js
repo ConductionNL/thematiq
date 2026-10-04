@@ -410,7 +410,7 @@ describe('the La Frankendesk logo reaches the header', () => {
 	})
 
 	it('is the file LogoLayerService looks for first', () => {
-		expect(LOGO_SERVICE).toContain("'img/logos/' . $tokenSet . '.' . $extension")
+		expect(LOGO_SERVICE).toContain("'img/logos/' . $name . '.' . $extension")
 		expect(LOGO_SERVICE).toMatch(/\['svg',/)
 	})
 
@@ -431,11 +431,66 @@ describe('the La Frankendesk logo reaches the header', () => {
 		expect(resolve(strip(rule['-webkit-mask']), LIGHT)).toBe('none')
 		expect(resolve(strip(rule['background-color']), LIGHT)).toBe('transparent')
 	})
+})
 
-	it('keeps the same logo in dark mode (no logo_dark)', () => {
-		expect(ENTRY.theming.logo_dark).toBeUndefined()
-		expect(DARK_FILE.media['--nldesign-logo-url']).toBeUndefined()
-		expect(DARK_FILE.explicit['--nldesign-logo-url']).toBeUndefined()
+describe('the La Frankendesk dark logo (thematiq#1021)', () => {
+	// The light mark's stitches and neck bolts are #111111, which nearly
+	// vanishes on the dark header (#141414, 1.03:1). The dark mark recolours
+	// exactly those, and nothing else.
+	const DARK_HEADER = '#141414'
+	const LIGHT_INK = '#111111'
+	const svgColours = (svg) =>
+		[...svg.matchAll(/(fill|stroke)="(#[0-9a-f]{3,8})"/gi)].map((m) =>
+			m[2].toLowerCase(),
+		)
+	const stripComments = (svg) => svg.replace(/<!--[\s\S]*?-->/g, '')
+
+	it('names a dark logo in the manifest, shipped and listed in img/ICONS.md', () => {
+		expect(ENTRY.theming.logo_dark).toBe(`img/logos/${SET_ID}-dark.svg`)
+		expect(read(ENTRY.theming.logo_dark)).toMatch(/^<svg[\s>]/)
+		expect(read('img/ICONS.md')).toMatch(new RegExp(`^- ${SET_ID}-dark$`, 'm'))
+	})
+
+	it('recolours only the dark ink, to a colour that reaches 3:1 on the dark header', () => {
+		const light = read(ENTRY.theming.logo)
+		const dark = read(ENTRY.theming.logo_dark)
+		const lightColours = svgColours(light)
+		const darkColours = svgColours(dark)
+		expect(darkColours).toHaveLength(lightColours.length)
+		const recoloured = new Set()
+		lightColours.forEach((colour, i) => {
+			if (colour === LIGHT_INK) {
+				recoloured.add(darkColours[i])
+			} else {
+				expect(darkColours[i], `colour ${i} must not change`).toBe(colour)
+			}
+		})
+		expect(recoloured.size).toBe(1)
+		const [ink] = [...recoloured]
+		expect(contrast(LIGHT_INK, DARK_HEADER)).toBeLessThan(3)
+		expect(contrast(ink, DARK_HEADER)).toBeGreaterThanOrEqual(3)
+		// The artwork is otherwise identical: same shapes, same geometry.
+		expect(stripComments(dark).split(ink).join(LIGHT_INK)).toBe(
+			stripComments(light),
+		)
+	})
+
+	it('is declared by both scopes of the generated dark variant', () => {
+		for (const scope of [DARK_FILE.media, DARK_FILE.explicit]) {
+			const m = (scope['--nldesign-logo-url'] ?? '').match(
+				/^url\(['"]?([^'")]+)['"]?\)$/,
+			)
+			expect(m, 'the dark file declares --nldesign-logo-url').toBeTruthy()
+			expect(path.normalize(path.join('css/tokens/dark', m[1]))).toBe(
+				path.normalize(ENTRY.theming.logo_dark),
+			)
+		}
+	})
+
+	it('follows the <set>-dark name LogoLayerService looks for, for every set', () => {
+		for (const set of MANIFEST.filter((e) => e.theming?.logo_dark)) {
+			expect(set.theming.logo_dark).toBe(`img/logos/${set.id}-dark.svg`)
+		}
 	})
 })
 

@@ -134,14 +134,7 @@ class LogoLayerService {
 	public function layer(string $tokenSet): ?array {
 		// A converter-extracted logo may be any raster or vector type Nextcloud's
 		// ImageManager accepts; a shipped set's is an .svg. First match wins.
-		$relative = null;
-		foreach (['svg', 'png', 'jpg', 'gif', 'webp'] as $extension) {
-			$candidate = 'img/logos/' . $tokenSet . '.' . $extension;
-			if ($this->files->exists(name: $candidate) === true) {
-				$relative = $candidate;
-				break;
-			}
-		}
+		$relative = $this->shippedLogo(name: $tokenSet);
 
 		// UNQUOTED on purpose, here and below. `Util::addHeader()` HTML-escapes
 		// its text, so a quoted `url("…")` reaches the page as
@@ -199,6 +192,75 @@ class LogoLayerService {
 				. 'mask:' . $mask . '}'
 		);
 	}//end layer()
+
+	/**
+	 * Re-declare the active set's DARK logo as an absolute url, in both dark
+	 * scopes, for a set that ships `img/logos/<set>-dark.<ext>` next to its
+	 * light logo.
+	 *
+	 * The generated dark file already names the dark logo, but as a RELATIVE
+	 * url on body, and for the reason {@see self::layer()} explains that url
+	 * resolves against the stylesheet that uses it: right from
+	 * css/systems/<bundle>/, out of the app from css/token-overrides/. And
+	 * `--nldesign-header-logo-image` is substituted where it is declared, on
+	 * :root, so the La Suite header kept the LIGHT logo whatever body said
+	 * (thematiq#1021). This layer restates both on body as absolute urls. It is
+	 * emitted after the dark file, which uses the same selectors, so it wins.
+	 *
+	 * @param string $tokenSet The selected token set id.
+	 *
+	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline layer, or null when the
+	 *                                                                          set ships no light and dark logo pair.
+	 *
+	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 */
+	public function darkLayer(string $tokenSet): ?array {
+		if ($this->shippedLogo(name: $tokenSet) === null) {
+			return null;
+		}
+
+		$dark = $this->shippedLogo(name: $tokenSet . '-dark');
+		if ($dark === null) {
+			return null;
+		}
+
+		$href = $this->files->url(name: $dark);
+		if ($href === null || $href === '') {
+			return null;
+		}
+
+		$url = 'url(' . $href . ')';
+		$declarations = '{--nldesign-logo-url:' . $url . ';--nldesign-header-logo-image:' . $url . '}';
+
+		return [
+			'layer'  => 'dark-logo-url',
+			'kind'   => 'inline',
+			'css'    => '@media (prefers-color-scheme: dark){'
+				. 'body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])'
+				. $declarations . '}'
+				. 'body[data-theme-dark],body[data-themes*=dark]' . $declarations,
+			'id'     => CssInjectionService::DARK_LOGO_STYLE_ID,
+		];
+	}//end darkLayer()
+
+	/**
+	 * The first shipped or uploaded `img/logos/<name>.<ext>`, by the order
+	 * {@see self::layer()} uses.
+	 *
+	 * @param string $name The file name without extension.
+	 *
+	 * @return string|null The app-relative path, or null when there is none.
+	 */
+	private function shippedLogo(string $name): ?string {
+		foreach (['svg', 'png', 'jpg', 'gif', 'webp'] as $extension) {
+			$candidate = 'img/logos/' . $name . '.' . $extension;
+			if ($this->files->exists(name: $candidate) === true) {
+				return $candidate;
+			}
+		}
+
+		return null;
+	}//end shippedLogo()
 
 	/**
 	 * Build the logo layer entry.
