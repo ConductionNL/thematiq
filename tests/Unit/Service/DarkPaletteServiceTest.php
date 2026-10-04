@@ -796,6 +796,119 @@ class DarkPaletteServiceTest extends TestCase {
 	}//end testLogoDarkEmitsRelativeLogoUrlOverride()
 
 	/**
+	 * A band that is already dark in light mode is left out of the dark
+	 * variant, surface and text together, so the light values keep applying
+	 * (thematiq#1021). Inverted, La Frankendesk's #1b1b23 footer became
+	 * #cbcbd6 under a #9e9e9e label.
+	 */
+	public function testAnAlreadyDarkFooterKeepsItsLightValues(): void {
+		$derived = $this->service->deriveDarkDeclarations(
+			[
+				'--nldesign-color-background' => '#ffffff',
+				'--nldesign-color-footer-background' => '#1b1b23',
+				'--nldesign-color-footer-text' => '#ffffff',
+				'--frankendesk-footer-link-color' => '#c5c6d5',
+				'--frankendesk-footer-brand-color' => 'rgba(255, 255, 255, 0.75)',
+			]
+		);
+
+		$this->assertArrayHasKey('--nldesign-color-background', $derived);
+		foreach (['--nldesign-color-footer-background', '--nldesign-color-footer-text', '--frankendesk-footer-link-color', '--frankendesk-footer-brand-color'] as $token) {
+			$this->assertArrayNotHasKey($token, $derived, $token . ' belongs to a dark footer and must keep its light value');
+		}
+	}//end testAnAlreadyDarkFooterKeepsItsLightValues()
+
+	/**
+	 * A light footer still derives dark, and an alias to a dark literal
+	 * counts as dark (conduction-new's `var(--c-cobalt-900)`).
+	 */
+	public function testOnlyAnAlreadyDarkFooterIsLeftAlone(): void {
+		$light = $this->service->deriveDarkDeclarations(
+			[
+				'--nldesign-color-footer-background' => '#f3f3f3',
+				'--nldesign-color-footer-text' => '#333333',
+			]
+		);
+		$this->assertArrayHasKey('--nldesign-color-footer-background', $light);
+		$this->assertArrayHasKey('--nldesign-color-footer-text', $light);
+
+		$aliased = $this->service->deriveDarkDeclarations(
+			[
+				'--c-cobalt-900' => '#0a172f',
+				'--nldesign-color-footer-background' => 'var(--c-cobalt-900)',
+				'--nldesign-color-footer-text' => '#ffffff',
+			]
+		);
+		$this->assertArrayNotHasKey('--nldesign-color-footer-background', $aliased);
+		$this->assertArrayNotHasKey('--nldesign-color-footer-text', $aliased);
+	}//end testOnlyAnAlreadyDarkFooterIsLeftAlone()
+
+	/**
+	 * The hero band's foregrounds are repaired against the primary fill they
+	 * sit on, and a light footer's text against its derived surface.
+	 */
+	public function testTheRepairLoopFixesTheHeroAndFooterForegrounds(): void {
+		$result = $this->service->verifyAndRepair(
+			[
+				'--nldesign-color-background' => '#141414',
+				'--nldesign-color-primary' => '#9c99d7',
+				'--nldesign-color-primary-text' => '#111111',
+				'--nldesign-hero-title-color' => '#9e9e9e',
+				'--nldesign-hero-body-color' => '#6984d3',
+				'--nldesign-color-footer-background' => '#cbcbd6',
+				'--nldesign-color-footer-text' => '#9e9e9e',
+			]
+		);
+
+		$this->assertSame([], $result['warnings']);
+		$d = $result['declarations'];
+		foreach ([
+			['--nldesign-hero-title-color', '--nldesign-color-primary'],
+			['--nldesign-hero-body-color', '--nldesign-color-primary'],
+			['--nldesign-color-footer-text', '--nldesign-color-footer-background'],
+		] as [$fg, $bg]) {
+			$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]), $fg . ' on ' . $bg);
+		}
+	}//end testTheRepairLoopFixesTheHeroAndFooterForegrounds()
+
+	/**
+	 * La Frankendesk's own bands read in its generated dark variant: the
+	 * footer foregrounds on the footer, the hero foregrounds on the primary
+	 * fill (thematiq#1021). Measured against the real tree, with the light
+	 * declarations underneath for every token the variant leaves out.
+	 *
+	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 */
+	public function testFrankendeskBandsReadInItsGeneratedDarkVariant(): void {
+		$realAppRoot = dirname(__DIR__, 3);
+		$service = $this->makeService(appDir: $realAppRoot);
+		$generated = $service->generateForSet(setId: 'frankendesk');
+		$this->assertNotNull($generated);
+
+		$parser = new CssParserService();
+		$light = ($parser->parseDeclarations(content: (string)file_get_contents($realAppRoot . '/css/tokens/frankendesk.css')) ?? []);
+		$this->assertSame(1, preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\]\s*\{([^}]*)\}/', $generated['css'], $block));
+		$dark = array_merge($light, ($parser->parseDeclarations(content: $block[1]) ?? []));
+
+		$pairs = [
+			['--nldesign-color-footer-text', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-wordmark-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-brand-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-heading-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-link-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-legal-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-legal-link-color', '--nldesign-color-footer-background'],
+			['--nldesign-hero-title-color', '--nldesign-color-primary'],
+			['--nldesign-hero-body-color', '--nldesign-color-primary'],
+		];
+		foreach ($pairs as [$fg, $bg]) {
+			$ratio = $this->contrast->measure(foreground: $dark[$fg], background: $dark[$bg]);
+			$this->assertNotNull($ratio, $fg);
+			$this->assertGreaterThanOrEqual(4.5, $ratio, $fg . ' ' . $dark[$fg] . ' on ' . $bg . ' ' . $dark[$bg]);
+		}
+	}//end testFrankendeskBandsReadInItsGeneratedDarkVariant()
+
+	/**
 	 * Real shipped-set integration: `rijkshuisstijl` and `amsterdam`'s
 	 * generated dark declarations pass every evaluable ContrastService pair
 	 * at its AA threshold — the verification-loop contract, exercised
@@ -833,6 +946,8 @@ class DarkPaletteServiceTest extends TestCase {
 		return [
 			'rijkshuisstijl' => ['rijkshuisstijl'],
 			'amsterdam' => ['amsterdam'],
+			'frankendesk' => ['frankendesk'],
+			'conduction-new' => ['conduction-new'],
 		];
 	}//end shippedSetProvider()
 }//end class
