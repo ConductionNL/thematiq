@@ -4,7 +4,7 @@
 
 Token set `losser`: 2846 declared by this set, 128 from the defaults layer.
 
-Contrast: primary text on primary 6.07:1, primary on background not evaluated (unevaluated).
+Contrast: primary text on primary 6.07:1, primary on background 6.07:1 (pass).
 
 ## Colours (Kleuren)
 

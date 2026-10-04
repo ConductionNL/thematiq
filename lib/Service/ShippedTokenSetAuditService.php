@@ -62,6 +62,17 @@ class ShippedTokenSetAuditService {
 	public const AAA_UI = 4.5;
 
 	/**
+	 * The page a set sits on when it names no background of its own.
+	 *
+	 * The same `#ffffff` `css/public-bridge.css`,
+	 * `scripts/mapping/nlds-to-nextcloud.json` (`page`, and its
+	 * `--nldesign-color-background` default) and `ComplianceReportService`
+	 * already use, so the four layers cannot disagree about what colour a
+	 * primary is measured against.
+	 */
+	public const PAGE_BACKGROUND = '#ffffff';
+
+	/**
 	 * TTL (seconds) for a cached per-set WCAG level — matches
 	 * `Capabilities::WCAG_CACHE_TTL` exactly so a set that is both the active
 	 * theme and a catalogue entry shares one cache entry rather than two.
@@ -137,8 +148,46 @@ class ShippedTokenSetAuditService {
 			$declarations['--nldesign-color-background'] = $theming['background_color'];
 		}
 
-		return $declarations;
+		// Last resort: the white page the rest of the app already assumes for a
+		// set that names no background. `css/public-bridge.css` paints the
+		// document with `var(--nldesign-color-background, #fff)`,
+		// `scripts/mapping/nlds-to-nextcloud.json` declares
+		// `"page": "#ffffff"` and `defaults["--nldesign-color-background"]:
+		// "#ffffff"`, and ComplianceReportService documents the same chain.
+		// Without this terminus six shipped sets (enschede, hoeksche-waard,
+		// losser, nora, purmerend, zaanstad) reported `unevaluated` forever:
+		// they declare no background token AND no theming.background_color, so
+		// the pair had no second colour, and `unevaluated` is never a pass.
+		if (isset($declarations['--nldesign-color-background']) === false) {
+			$declarations['--nldesign-color-background'] = self::PAGE_BACKGROUND;
+		}
+
+		return $this->resolveVars(declarations: $declarations);
 	}//end resolveDeclarations()
+
+	/**
+	 * Replace every declaration value by the literal its `var()` chain reaches.
+	 *
+	 * A browser resolves `--nldesign-color-primary: var(--c-blue-cobalt)` out of
+	 * the same cascade; an audit that does not reads the indirection as "not a
+	 * colour" and reports `unevaluated`, which is how conduction-new's two pairs
+	 * went unmeasured. A chain that genuinely does not resolve (a reference to a
+	 * token no layer declares, or a cycle) keeps its raw value, so it still
+	 * reports `unevaluated` rather than a fabricated number.
+	 *
+	 * @param array<string, string> $declarations The merged declarations.
+	 *
+	 * @return array<string, string> The declarations with var() chains resolved.
+	 */
+	private function resolveVars(array $declarations): array {
+		$resolved = [];
+		foreach ($declarations as $name => $value) {
+			$chain = $this->parser->resolveVarChain(value: $value, declarations: $declarations);
+			$resolved[$name] = ($chain['value'] ?? $value);
+		}
+
+		return $resolved;
+	}//end resolveVars()
 
 	/**
 	 * Compute the audit verdict for a single token set at the given level.
@@ -236,7 +285,10 @@ class ShippedTokenSetAuditService {
 		// portal never paints its page with it. The bridge paints the page from
 		// --nldesign-color-background with a white fallback, so that is what
 		// a component sits on.
-		return $declarations + ['--nldesign-color-background' => '#ffffff'];
+		// NOT resolved through var() here: DenhaagContrastPairs::resolve() does
+		// its own chain resolution and the pair tests read the raw reference to
+		// prove a set with no own value is judged through the bridge.
+		return $declarations + ['--nldesign-color-background' => self::PAGE_BACKGROUND];
 	}//end portalCascade()
 
 	/**
@@ -384,7 +436,13 @@ class ShippedTokenSetAuditService {
 		$lines[] = '';
 		$lines[] = '- **primary/text** = `--nldesign-color-primary` vs `--nldesign-color-primary-text` (AA text threshold 4.5:1)';
 		$lines[] = '- **primary/bg** = `--nldesign-color-primary` vs the set background (AA UI threshold 3.0:1)';
-		$lines[] = '- `unevaluated` = a pair whose colours are not literal (e.g. `var()`); never treated as passing.';
+		$lines[] = '- The set background is the first of: the set\'s own `--nldesign-color-background`,';
+		$lines[] = '  `defaults.css`, the manifest `theming.background_color`, then the white page';
+		$lines[] = '  `#ffffff` the public bridge and the converter mapping already assume.';
+		$lines[] = '- A `var(--token)` value is followed through the same cascade a browser would read,';
+		$lines[] = '  up to four hops.';
+		$lines[] = '- `unevaluated` = a pair one of whose colours still is not a colour after that';
+		$lines[] = '  resolution; never treated as passing.';
 		$lines[] = '';
 		$lines[] = '| Token set | primary/text | text ≥ | primary/bg | bg ≥ | Verdict |';
 		$lines[] = '|-----------|-------------:|:------:|-----------:|:----:|:-------:|';
