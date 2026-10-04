@@ -36,7 +36,7 @@
  * @category Service
  * @package  OCA\Thematiq
  *
- * @spec openspec/changes/honest-token-set-coverage/specs/token-sets/spec.md
+ * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
  */
 
 declare(strict_types=1);
@@ -45,6 +45,8 @@ namespace OCA\Thematiq\Service;
 
 /**
  * Measures whether each shipped set's named typeface is actually served.
+ *
+ * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
  */
 class TokenSetFontAuditService {
 
@@ -106,10 +108,12 @@ class TokenSetFontAuditService {
 	 * declared only there never loads on an instance however correct it looks in
 	 * the repository.
 	 *
-	 * @param string $appPath      The app root path.
+	 * @param string $appPath The app root path.
 	 * @param string $designSystem The design system id.
 	 *
 	 * @return array<int, string> The self-hosted family names.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function selfHostedFamilies(string $appPath, string $designSystem): array {
 		$manifestPath = $appPath . '/design-systems.json';
@@ -148,9 +152,9 @@ class TokenSetFontAuditService {
 	/**
 	 * Audit one shipped set's typeface.
 	 *
-	 * @param string              $appPath The app root path.
-	 * @param string              $id      The token set id.
-	 * @param array<string,mixed> $meta    The set's `token-sets.json` entry.
+	 * @param string $appPath The app root path.
+	 * @param string $id The token set id.
+	 * @param array<string,mixed> $meta The set's `token-sets.json` entry.
 	 *
 	 * @return array{
 	 *     id: string,
@@ -161,6 +165,8 @@ class TokenSetFontAuditService {
 	 *     declared: array<string, mixed>|null,
 	 *     ok: bool
 	 * }
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function auditSet(string $appPath, string $id, array $meta): array {
 		$designSystem = (string)($meta['design_system'] ?? 'nldesign');
@@ -187,22 +193,7 @@ class TokenSetFontAuditService {
 		$selfHosted = ($family !== null
 			&& \in_array($family, $this->selfHostedFamilies(appPath: $appPath, designSystem: $designSystem), true) === true);
 
-		$kind = 'undeclared';
-		if ($family === null) {
-			// The set names no family of its own, so its design system's own
-			// stylesheet decides; there is nothing here to serve or to declare.
-			$kind = 'system';
-		} elseif ($selfHosted === true) {
-			$kind = 'self-hosted';
-		} elseif (\in_array($family, self::SYSTEM_FAMILIES, true) === true) {
-			$kind = 'system';
-		} elseif ($declared !== null
-			&& is_string(($declared['licence'] ?? null)) === true
-			&& is_string(($declared['action'] ?? null)) === true
-			&& is_string(($declared['note'] ?? null)) === true
-		) {
-			$kind = 'declared';
-		}
+		$kind = $this->classify(family: $family, selfHosted: $selfHosted, declared: $declared);
 
 		return [
 			'id' => $id,
@@ -221,6 +212,8 @@ class TokenSetFontAuditService {
 	 * @param string $appPath The app root path.
 	 *
 	 * @return array<int, array<string, mixed>> One result per shipped set.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function auditAll(string $appPath): array {
 		$manifest = [];
@@ -236,8 +229,13 @@ class TokenSetFontAuditService {
 			}
 		}
 
+		$files = glob($appPath . '/css/tokens/*.css');
+		if (is_array($files) === false) {
+			$files = [];
+		}
+
 		$results = [];
-		foreach ((glob($appPath . '/css/tokens/*.css') ?: []) as $file) {
+		foreach ($files as $file) {
 			$id = basename($file, '.css');
 			$results[] = $this->auditSet(appPath: $appPath, id: $id, meta: ($manifest[$id] ?? []));
 		}
@@ -258,11 +256,13 @@ class TokenSetFontAuditService {
 	 * Shaped like the entries `TokenSetService::applyWarnings()` already passes
 	 * to the admin UI, so there is no second warnings channel.
 	 *
-	 * @param string              $appPath The app root path.
-	 * @param string              $id      The token set id.
-	 * @param array<string,mixed> $meta    The set's manifest entry.
+	 * @param string $appPath The app root path.
+	 * @param string $id The token set id.
+	 * @param array<string,mixed> $meta The set's manifest entry.
 	 *
 	 * @return array<int, array<string, mixed>> The warning entries (empty when the font loads).
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function warningsFor(string $appPath, string $id, array $meta): array {
 		$result = $this->auditSet(appPath: $appPath, id: $id, meta: $meta);
@@ -283,6 +283,55 @@ class TokenSetFontAuditService {
 			],
 		];
 	}//end warningsFor()
+
+	/**
+	 * Classify one set's typeface into the three acceptable outcomes, or
+	 * `undeclared`.
+	 *
+	 * @param string|null $family The first family the set names, or null.
+	 * @param bool $selfHosted Whether a linked stylesheet declares it.
+	 * @param array<string,mixed>|null $declared The set's `font` block, when it has one.
+	 *
+	 * @return string One of `self-hosted`, `system`, `declared`, `undeclared`.
+	 */
+	private function classify(?string $family, bool $selfHosted, ?array $declared): string {
+		// A set that names no family of its own leaves the choice to its design
+		// system's own stylesheet; there is nothing here to serve or to declare.
+		if ($family === null || \in_array($family, self::SYSTEM_FAMILIES, true) === true) {
+			return 'system';
+		}
+
+		if ($selfHosted === true) {
+			return 'self-hosted';
+		}
+
+		if ($this->declaresUndistributable(declared: $declared) === true) {
+			return 'declared';
+		}
+
+		return 'undeclared';
+	}//end classify()
+
+	/**
+	 * Whether a `font` block says, in full, that the family cannot be served.
+	 *
+	 * All three of licence, action and note are required: a block with a family
+	 * name and nothing else tells an administrator nothing, so it must not count
+	 * as having declared anything.
+	 *
+	 * @param array<string,mixed>|null $declared The set's `font` block, when it has one.
+	 *
+	 * @return bool True when the declaration is complete.
+	 */
+	private function declaresUndistributable(?array $declared): bool {
+		if ($declared === null) {
+			return false;
+		}
+
+		return (is_string(($declared['licence'] ?? null)) === true
+			&& is_string(($declared['action'] ?? null)) === true
+			&& is_string(($declared['note'] ?? null)) === true);
+	}//end declaresUndistributable()
 
 	/**
 	 * The first family of a CSS font stack, unquoted.

@@ -290,12 +290,14 @@ class CssParserService {
 	 * forever. A value that is still a reference at the cap is reported
 	 * unresolved rather than guessed.
 	 *
-	 * @param string               $value        The raw declaration value.
+	 * @param string $value The raw declaration value.
 	 * @param array<string,string> $declarations The declaration map to resolve against.
-	 * @param int                  $depth        The current recursion depth (internal).
+	 * @param int $depth The current recursion depth (internal).
 	 *
 	 * @return array{value: string|null, unresolved: string|null} The resolved
-	 *         literal, or the name of the token the chain could not resolve.
+	 *                                                            literal, or the name of the token the chain could not resolve.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
 	 */
 	public function resolveVarChain(string $value, array $declarations, int $depth = 0): array {
 		$trimmed = trim($value);
@@ -331,4 +333,33 @@ class CssParserService {
 
 		return ['value' => null, 'unresolved' => $reference];
 	}//end resolveVarChain()
+
+	/**
+	 * Replace every value in a declaration map by the literal its `var()` chain
+	 * reaches, resolving against the map itself.
+	 *
+	 * A browser resolves `--nldesign-color-primary: var(--c-blue-cobalt)` out of
+	 * the same cascade; anything that MEASURES a token value has to do the same
+	 * or it reads an indirection as "not a colour". That is how conduction-new's
+	 * two contrast pairs went unmeasured.
+	 *
+	 * A chain that genuinely does not resolve — a reference no layer declares, or
+	 * a cycle — keeps its raw value, so a caller still sees "not a colour" rather
+	 * than a fabricated one.
+	 *
+	 * @param array<string, string> $declarations The declaration map.
+	 *
+	 * @return array<string, string> The same keys, with var() chains resolved.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
+	 */
+	public function resolveAll(array $declarations): array {
+		$resolved = [];
+		foreach ($declarations as $name => $value) {
+			$chain = $this->resolveVarChain(value: $value, declarations: $declarations);
+			$resolved[$name] = ($chain['value'] ?? $value);
+		}
+
+		return $resolved;
+	}//end resolveAll()
 }//end class

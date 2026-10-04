@@ -140,54 +140,29 @@ class ShippedTokenSetAuditService {
 
 		// Background is managed by Nextcloud theming for many sets, so it is
 		// frequently absent from the token CSS. Fall back to the declared
-		// theming.background_color so the primary/background pair can evaluate.
-		if (isset($declarations['--nldesign-color-background']) === false
-			&& isset($theming['background_color']) === true
-			&& is_string($theming['background_color']) === true
-		) {
-			$declarations['--nldesign-color-background'] = $theming['background_color'];
-		}
-
-		// Last resort: the white page the rest of the app already assumes for a
-		// set that names no background. `css/public-bridge.css` paints the
-		// document with `var(--nldesign-color-background, #fff)`,
-		// `scripts/mapping/nlds-to-nextcloud.json` declares
-		// `"page": "#ffffff"` and `defaults["--nldesign-color-background"]:
-		// "#ffffff"`, and ComplianceReportService documents the same chain.
-		// Without this terminus six shipped sets (enschede, hoeksche-waard,
+		// theming.background_color, and then to the white page the rest of the
+		// app already assumes: `css/public-bridge.css` paints the document with
+		// `var(--nldesign-color-background, #fff)`,
+		// `scripts/mapping/nlds-to-nextcloud.json` declares `"page": "#ffffff"`
+		// and the same `--nldesign-color-background` default, and
+		// ComplianceReportService documents the identical chain.
+		//
+		// Without that terminus six shipped sets (enschede, hoeksche-waard,
 		// losser, nora, purmerend, zaanstad) reported `unevaluated` forever:
 		// they declare no background token AND no theming.background_color, so
-		// the pair had no second colour, and `unevaluated` is never a pass.
+		// the pair had no second colour at all, and `unevaluated` is never a
+		// pass.
 		if (isset($declarations['--nldesign-color-background']) === false) {
-			$declarations['--nldesign-color-background'] = self::PAGE_BACKGROUND;
+			$fallback = ($theming['background_color'] ?? null);
+			if (is_string($fallback) === false) {
+				$fallback = self::PAGE_BACKGROUND;
+			}
+
+			$declarations['--nldesign-color-background'] = $fallback;
 		}
 
-		return $this->resolveVars(declarations: $declarations);
+		return $this->parser->resolveAll(declarations: $declarations);
 	}//end resolveDeclarations()
-
-	/**
-	 * Replace every declaration value by the literal its `var()` chain reaches.
-	 *
-	 * A browser resolves `--nldesign-color-primary: var(--c-blue-cobalt)` out of
-	 * the same cascade; an audit that does not reads the indirection as "not a
-	 * colour" and reports `unevaluated`, which is how conduction-new's two pairs
-	 * went unmeasured. A chain that genuinely does not resolve (a reference to a
-	 * token no layer declares, or a cycle) keeps its raw value, so it still
-	 * reports `unevaluated` rather than a fabricated number.
-	 *
-	 * @param array<string, string> $declarations The merged declarations.
-	 *
-	 * @return array<string, string> The declarations with var() chains resolved.
-	 */
-	private function resolveVars(array $declarations): array {
-		$resolved = [];
-		foreach ($declarations as $name => $value) {
-			$chain = $this->parser->resolveVarChain(value: $value, declarations: $declarations);
-			$resolved[$name] = ($chain['value'] ?? $value);
-		}
-
-		return $resolved;
-	}//end resolveVars()
 
 	/**
 	 * Compute the audit verdict for a single token set at the given level.

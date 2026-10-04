@@ -48,6 +48,8 @@
 		"check:manifest": "node tests/validate-manifest.js",
 		"audit:token-sets": "node scripts/audit-token-sets.mjs",
 		"audit:token-sets:check": "node scripts/audit-token-sets.mjs --check",
+		"audit:token-sets:report": "node scripts/audit-token-sets.mjs --markdown",
+		"test:token-set-coverage": "node scripts/audit-token-sets.mjs --markdown --check",
 		"format": "prettier --check \"**/*.{js,ts,vue,css,scss}\"",
 		"format:fix": "prettier --write \"**/*.{js,ts,vue,css,scss}\"",
 		"prepare": "git config core.hooksPath .githooks || true",

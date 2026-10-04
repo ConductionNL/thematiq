@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit;
 
 use OCA\Thematiq\Service\ContrastService;
+use OCA\Thematiq\Service\ContrastVerdictDocument;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use PHPUnit\Framework\TestCase;
@@ -210,6 +211,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * second indirection. Both pairs read `unevaluated` until the audit
 	 * resolved the chain the way a browser does, and `unevaluated` is never a
 	 * pass, so the set could not be judged at all.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
 	 */
 	public function testAVarChainPairIsMeasuredRatherThanUnevaluated(): void {
 		$manifest = array_column($this->auditableManifest(), null, 'id');
@@ -247,6 +250,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * `theming.background_color`, and its upstream theme carries no page
 	 * background token to derive one from, so before the terminus its UI pair
 	 * had no second colour.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
 	 */
 	public function testASetWithNoBackgroundIsMeasuredAgainstTheWhitePage(): void {
 		$this->assertNull(
@@ -267,6 +272,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * vng's primary is measured against vng's own page, not against Nextcloud's
 	 * login background. The set declares the page itself so the verdict does
 	 * not depend on a fallback, and the login colour is unchanged.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
 	 */
 	public function testVngIsMeasuredAgainstItsOwnPageNotTheLoginBackground(): void {
 		$manifest = array_column($this->auditableManifest(), null, 'id');
@@ -286,7 +293,7 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * and no resolution — so a test can state what the FILE says apart from
 	 * what the audit computes.
 	 *
-	 * @param string $id    The token set id.
+	 * @param string $id The token set id.
 	 * @param string $token The custom-property name.
 	 *
 	 * @return string|null The raw value, or null when the set does not declare it.
@@ -301,9 +308,9 @@ class TokenSetContrastAuditTest extends TestCase {
 	/**
 	 * A throwaway app root with one token set whose colours genuinely fail.
 	 *
-	 * @param string $primary     The probe primary colour.
+	 * @param string $primary The probe primary colour.
 	 * @param string $primaryText The probe primary text colour.
-	 * @param string $background  The probe page background.
+	 * @param string $background The probe page background.
 	 *
 	 * @return string The probe app path.
 	 */
@@ -389,5 +396,46 @@ class TokenSetContrastAuditTest extends TestCase {
 			$committed,
 			'docs/reference/contrast-report.md is stale. Run: composer docs:contrast-report'
 		);
+	}
+
+	/**
+	 * The JSON the Node coverage audit reads carries the same verdicts as the
+	 * markdown, is deterministic, and is up to date.
+	 *
+	 * Two files from one engine is the point: `scripts/audit-token-sets.mjs`
+	 * folds the contrast verdict into its coverage table, and a second WCAG
+	 * implementation in JavaScript would be a second answer to the same
+	 * question.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-reproducible-contrast-report
+	 */
+	public function testTheVerdictJsonMatchesTheReportAndIsCommitted(): void {
+		$service = $this->service();
+		$document = new ContrastVerdictDocument();
+		$rendered = $document->render($service->auditAll($this->repoRoot()));
+
+		$this->assertSame(
+			$rendered,
+			$document->render($service->auditAll($this->repoRoot())),
+			'The verdict document must be deterministic.'
+		);
+
+		$this->assertSame(
+			$rendered,
+			file_get_contents($this->repoRoot() . '/docs/reference/contrast-report.json'),
+			'docs/reference/contrast-report.json is stale. Run: composer docs:contrast-report'
+		);
+
+		$decoded = json_decode($rendered, true);
+		$this->assertIsArray($decoded);
+		$this->assertIsArray(($decoded['sets'] ?? null));
+
+		foreach ($service->auditAll($this->repoRoot()) as $row) {
+			$this->assertSame(
+				$row['verdict'],
+				($decoded['sets'][$row['id']]['verdict'] ?? null),
+				$row['id'] . ': the JSON verdict must be the audit verdict.'
+			);
+		}
 	}
 }

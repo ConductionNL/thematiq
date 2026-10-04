@@ -186,9 +186,9 @@ class TokenSetService {
 	 * @param ShippedTokenSetAuditService $audit The shipped-set contrast audit service.
 	 * @param ICacheFactory $cacheFactory Creates the distributed WCAG-level cache.
 	 * @param TokenSetVocabularyAuditService $vocabularyAudit The vocabulary-completeness audit service.
-	 * @param TokenSetFontAuditService $fontAudit The typeface audit service.
 	 * @param RuntimeFileStore|null $store Where uploaded sets are kept (app data).
 	 * @param SetFileReader $files Lists and checks a set's file in the release or the store.
+	 * @param TokenSetFontAuditService $fontAudit The typeface audit service.
 	 */
 	public function __construct(
 		IAppManager $appManager,

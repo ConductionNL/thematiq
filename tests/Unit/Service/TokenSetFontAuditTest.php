@@ -15,7 +15,7 @@
  * No Nextcloud runtime required — filesystem work over `css/tokens/`,
  * `css/systems/*` and `token-sets.json`.
  *
- * @spec openspec/changes/honest-token-set-coverage/specs/token-sets/spec.md
+ * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
  */
 
 declare(strict_types=1);
@@ -52,6 +52,8 @@ class TokenSetFontAuditTest extends TestCase {
 	 * No shipped set names a typeface that neither loads nor is declared.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function testEverySetsTypefaceEitherLoadsOrIsDeclared(): void {
 		$offenders = [];
@@ -82,6 +84,8 @@ class TokenSetFontAuditTest extends TestCase {
 	 * the assertion above too.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function testTheAuditDistinguishesAServedFamilyFromAnUnservedOne(): void {
 		$service = $this->service();
@@ -111,6 +115,8 @@ class TokenSetFontAuditTest extends TestCase {
 	 * typeface.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function testAFamilyBehindAVarChainIsResolved(): void {
 		$result = $this->service()->auditSet(
@@ -129,6 +135,8 @@ class TokenSetFontAuditTest extends TestCase {
 	 * and the action, and the warning passes them to the admin UI.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function testAnUndistributableFamilyCarriesItsLicencePositionAndAction(): void {
 		$manifest = $this->manifest();
@@ -156,6 +164,8 @@ class TokenSetFontAuditTest extends TestCase {
 	 * the manifest cannot drift away from the stylesheet it describes.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function testADeclaredFontBlockMatchesTheSetsOwnCss(): void {
 		$drift = [];
@@ -185,6 +195,8 @@ class TokenSetFontAuditTest extends TestCase {
 	 * missing upload: there is nothing to self-host and nothing to ask for.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function testASystemFamilyIsNotReportedAsMissing(): void {
 		$result = $this->service()->auditSet($this->repoRoot(), 'tilburg', $this->manifest()['tilburg'] ?? []);
