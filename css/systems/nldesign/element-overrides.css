@@ -62,8 +62,8 @@ label {
 	background-color: var(--color-main-background) !important;
 
 	/* Navigation entries are chrome, not content links: they take the body text
-	 * colour, and the selected entry takes the primary colour's paired
-	 * foreground. See NAVIGATION ENTRIES below for why the colour travels as an
+	 * colour, and a solid (legacy) selected entry takes the primary colour's
+	 * paired foreground. See NAVIGATION ENTRIES below for why the colour travels as an
 	 * inherited property instead of a `color` rule, and why it is declared here
 	 * rather than in its own block (one selector, one rule). */
 	--nldesign-color-on-surface: var(--color-main-text);
@@ -434,10 +434,20 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
  * navigation's own declaration lives in the CONTAINER OVERRIDES rule at the top
  * of this file, which already carries that exact selector.
  */
+/*
+ * Only the SOLID selection takes the primary colour's paired foreground: the
+ * server-rendered navigation (`#app-navigation li.active`) and an
+ * NcAppNavigationItem marked `--legacy`. Since Nextcloud 34 every other
+ * selected entry is a 16% wash of `--color-primary-element` over the
+ * navigation (22% hovered) with the label in `--color-main-text`, so it keeps
+ * the navigation's own on-surface colour. Handing it the solid fill's label
+ * painted #111111 on a dark wash in Utrecht dark and white on a pale wash in
+ * light (thematiq#1051, tests/vitest/selectedNavText.spec.js).
+ */
 #app-navigation li.active,
-#app-navigation .app-navigation-entry.active,
-#app-navigation-vue .app-navigation-entry.active,
-.app-navigation .app-navigation-entry.active {
+#app-navigation .app-navigation-entry--legacy.active,
+#app-navigation-vue .app-navigation-entry--legacy.active,
+.app-navigation .app-navigation-entry--legacy.active {
 	--nldesign-color-on-surface: var(--color-primary-element-text);
 }
 

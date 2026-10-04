@@ -89,8 +89,25 @@ class DarkPaletteService {
 	 *
 	 * Version 8 gives the error chip and button label a colour that reads on
 	 * the derived error fill (see {@see self::withErrorLabel()}, thematiq#1027).
+	 *
+	 * Version 9 repairs the body text against the selected navigation entry's
+	 * wash, at rest and hovered (see {@see self::WASH_PATTERN}, thematiq#1051).
 	 */
-	public const GENERATOR_VERSION = 8;
+	public const GENERATOR_VERSION = 9;
+
+	/**
+	 * Nextcloud's own dark main background, which the navigation paints and
+	 * the nldesign stylesheets leave alone (REQ-CSS-007).
+	 */
+	private const NEXTCLOUD_DARK_MAIN_BACKGROUND = '#171717';
+
+	/**
+	 * A CONTROL_PAIRS background written as the wash Nextcloud paints:
+	 * `color-mix(in srgb, var(<token>) <n>%, transparent)` over the
+	 * navigation. NcAppNavigationItem draws a selected entry that way since
+	 * Nextcloud 34, with the label in `--color-main-text`.
+	 */
+	private const WASH_PATTERN = '/^color-mix\(in srgb, var\((--[A-Za-z0-9_-]+)\) (\d+)%, transparent\)$/';
 
 	/**
 	 * The guaranteed-passing near-white snap value (matches NC's own dark
@@ -331,6 +348,21 @@ class DarkPaletteService {
 		[
 			'fg' => '--nldesign-hero-body-color',
 			'bg' => '--nldesign-color-primary',
+			'threshold' => 4.5,
+		],
+		[
+			// The selected navigation entry: Nextcloud 34+ draws a 16% wash
+			// of the primary colour over the navigation (22% hovered) with
+			// the label in the main text colour. Utrecht's dark text was
+			// fine on the page and the wash still needs its own check:
+			// conduction-new's #7499de read 4.37:1 on it (thematiq#1051).
+			'fg' => '--nldesign-color-text',
+			'bg' => 'color-mix(in srgb, var(--nldesign-color-primary) 16%, transparent)',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-text',
+			'bg' => 'color-mix(in srgb, var(--nldesign-color-primary) 22%, transparent)',
 			'threshold' => 4.5,
 		],
 		[
@@ -1178,6 +1210,11 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	private function pairBackground(array $declarations, string $token): ?string {
+		$wash = [];
+		if (preg_match(self::WASH_PATTERN, $token, $wash) === 1) {
+			return $this->washOver(declarations: $declarations, token: $wash[1], percent: (int)$wash[2]);
+		}
+
 		$value = ($declarations[$token] ?? null);
 		if ($value !== null && strtolower(trim($value)) === 'transparent') {
 			return ($declarations['--nldesign-color-background'] ?? $value);
@@ -1185,6 +1222,38 @@ class DarkPaletteService {
 
 		return $value;
 	}//end pairBackground()
+
+	/**
+	 * The colour a share of a token paints over Nextcloud's dark navigation.
+	 *
+	 * @param array<string, string> $declarations The dark declarations.
+	 * @param string $token The washed token.
+	 * @param int $percent Its share, 0 to 100.
+	 *
+	 * @return string|null The composited hex, or null when the token is absent or not a colour.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function washOver(array $declarations, string $token, int $percent): ?string {
+		$value = ($declarations[$token] ?? null);
+		if ($value === null) {
+			return null;
+		}
+
+		$top = $this->contrast->parseColor(value: $value);
+		$under = $this->contrast->parseColor(value: self::NEXTCLOUD_DARK_MAIN_BACKGROUND);
+		if ($top === null || $under === null) {
+			return null;
+		}
+
+		$share = ($percent / 100);
+		$channels = [];
+		foreach ([0, 1, 2] as $i) {
+			$channels[] = (int)round(($top[$i] * $share) + ($under[$i] * (1 - $share)));
+		}
+
+		return sprintf('#%02x%02x%02x', $channels[0], $channels[1], $channels[2]);
+	}//end washOver()
 
 	/**
 	 * Split a `ContrastService::check()` pair label ("fg vs bg") back into
