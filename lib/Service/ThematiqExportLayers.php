@@ -35,9 +35,9 @@ class ThematiqExportLayers {
 	/**
 	 * Split, rename the palette, and report each declaration.
 	 *
-	 * @param array<string, string>            $declarations Name => value, as the export carried them.
-	 * @param string                           $slug         The new set's slug.
-	 * @param array<int, array<string, mixed>> $report       The conversion report, appended to.
+	 * @param array<string, string> $declarations Name => value, as the export carried them.
+	 * @param string $slug The new set's slug.
+	 * @param array<int, array<string, mixed>> $report The conversion report, appended to.
 	 *
 	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>}
 	 *
@@ -54,7 +54,7 @@ class ThematiqExportLayers {
 		$layers = ['palette' => [], 'component' => [], 'semantic' => []];
 		foreach ($declarations as $name => $value) {
 			$target = ($renames[$name] ?? $name);
-			$value  = $this->followRenames(value: $value, renames: $renames);
+			$value = $this->followRenames(value: $value, renames: $renames);
 			$layers[$this->layerOf(name: $name)][$target] = $value;
 			$entry = ['source' => $name, 'target' => $target, 'action' => 'kept', 'reason' => 'thematiq-export', 'value' => $value];
 			if ($target !== $name) {
@@ -92,7 +92,7 @@ class ThematiqExportLayers {
 	/**
 	 * Point every `var()` at a moved name's new name.
 	 *
-	 * @param string                $value   The value.
+	 * @param string $value The value.
 	 * @param array<string, string> $renames Old name => new name.
 	 *
 	 * @return string

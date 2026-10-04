@@ -16,7 +16,6 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
-use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
@@ -58,7 +57,6 @@ class CssInjectionServiceTest extends TestCase {
 	 * @var DesignSystemService&MockObject
 	 */
 	private $designSystemService;
-
 
 	/**
 	 * Gates and reads the freeform custom CSS layer.
@@ -191,8 +189,8 @@ class CssInjectionServiceTest extends TestCase {
 	/**
 	 * The position of the first entry that starts with a prefix, failing the test when there is none.
 	 *
-	 * @param array<int, string> $log    The emitted entries, in order.
-	 * @param string             $prefix The start to look for.
+	 * @param array<int, string> $log The emitted entries, in order.
+	 * @param string $prefix The start to look for.
 	 *
 	 * @return int The index.
 	 */
@@ -205,6 +203,24 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->fail('no entry starts with ' . $prefix . ' in ' . json_encode($log));
 	}//end indexStartingWith()
+
+	/**
+	 * Whether a static app stylesheet was linked as a header.
+	 *
+	 * @param array<int, string> $linkLog The emitted link URLs.
+	 * @param string $file The stylesheet path relative to `css/`, without extension.
+	 *
+	 * @return bool True when one link points at it.
+	 */
+	private function linksStylesheet(array $linkLog, string $file): bool {
+		foreach ($linkLog as $url) {
+			if (str_starts_with($url, '/custom_apps/thematiq/css/' . $file . '.css?v=') === true) {
+				return true;
+			}
+		}
+
+		return false;
+	}//end linksStylesheet()
 
 	protected function tearDown(): void {
 		$remove = function (string $path) use (&$remove): void {
@@ -462,9 +478,17 @@ class CssInjectionServiceTest extends TestCase {
 	/**
 	 * hide-slogan and show-menu-labels load last, after custom-overrides,
 	 * only when their respective appconfig flags are enabled.
+	 *
+	 * Nextcloud prints every addStyle() stylesheet before every header, and
+	 * the saved overrides are a header, so the two toggles must be headers
+	 * too: as addStyle() entries they landed BEFORE custom-overrides (#944).
+	 *
+	 * @spec openspec/specs/css-architecture/spec.md#conditional-css-loading
+	 * @spec openspec/specs/menu-labels/spec.md#css-loading-order-relative-to-other-conditionals
 	 */
 	public function testConditionalStylesheetsLoadedWhenEnabled(): void {
 		$this->configureAppValues(['hide_slogan' => '1', 'show_menu_labels' => '1']);
+		$this->runtimeFiles->store()->write('css/custom-overrides-nextcloud.css', ':root {}');
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
 			[
@@ -480,10 +504,14 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame(
-			['tokens/nextcloud', 'icon-contrast', 'error-contrast', 'theme-scopes', 'component-scopes', 'hide-slogan', 'show-menu-labels'],
-			$styleLog
-		);
+		$this->assertNotContains('hide-slogan', $styleLog, 'an addStyle() entry is printed before every header');
+		$this->assertNotContains('show-menu-labels', $styleLog, 'an addStyle() entry is printed before every header');
+		$overrides = $this->indexStartingWith($fontLog, 'runtime:css/custom-overrides-nextcloud.css');
+		$slogan = $this->indexStartingWith($fontLog, '/custom_apps/thematiq/css/hide-slogan.css?v=');
+		$labels = $this->indexStartingWith($fontLog, '/custom_apps/thematiq/css/show-menu-labels.css?v=');
+		$this->assertGreaterThanOrEqual(0, $overrides, 'the saved overrides are linked');
+		$this->assertGreaterThan($overrides, $slogan, 'hide-slogan loads after custom-overrides');
+		$this->assertGreaterThan($slogan, $labels, 'show-menu-labels loads after hide-slogan');
 	}//end testConditionalStylesheetsLoadedWhenEnabled()
 
 	/**
@@ -508,6 +536,8 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertNotContains('hide-slogan', $styleLog);
 		$this->assertNotContains('show-menu-labels', $styleLog);
+		$this->assertFalse($this->linksStylesheet($fontLog, 'hide-slogan'));
+		$this->assertFalse($this->linksStylesheet($fontLog, 'show-menu-labels'));
 		$this->assertNotContains('primary-lock', $styleLog);
 	}//end testConditionalStylesheetsAbsentWhenDisabled()
 
@@ -542,6 +572,8 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertNotContains('hide-slogan', $styleLog);
 		$this->assertNotContains('show-menu-labels', $styleLog);
+		$this->assertFalse($this->linksStylesheet($fontLog, 'hide-slogan'));
+		$this->assertFalse($this->linksStylesheet($fontLog, 'show-menu-labels'));
 	}//end testTogglesAbsentFromConfigDefaultToOff()
 
 	/**
@@ -573,6 +605,8 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertNotContains('hide-slogan', $styleLog);
 		$this->assertNotContains('show-menu-labels', $styleLog);
+		$this->assertFalse($this->linksStylesheet($fontLog, 'hide-slogan'));
+		$this->assertFalse($this->linksStylesheet($fontLog, 'show-menu-labels'));
 	}//end testConditionalStylesheetsIgnoreLooseTruthyValues()
 
 	/**
@@ -1033,10 +1067,10 @@ class CssInjectionServiceTest extends TestCase {
 		$this->assertFalse($this->runtimeFiles->store()->exists('css/custom-overrides-nextcloud.css'), 'rendering created an overrides file');
 		$this->assertSame([], $this->runtimeFiles->store()->listDirectory('css'), 'rendering stored a file');
 		$this->assertContains('systems/nldesign/fonts', $styleLog);
-		$this->assertCount(1, $fontLog, 'only the fonts link: nothing was saved, so no overrides link');
+		$this->assertCount(3, $fontLog, 'the fonts link and the two toggles: nothing was saved, so no overrides link');
 		$this->assertStringContainsString('/index.php/apps/thematiq/fonts.css', $fontLog[0]);
-		$this->assertContains('hide-slogan', $styleLog, 'layer 5 was cancelled');
-		$this->assertContains('show-menu-labels', $styleLog, 'layer 5 was cancelled');
+		$this->assertTrue($this->linksStylesheet($fontLog, 'hide-slogan'), 'layer 5 was cancelled');
+		$this->assertTrue($this->linksStylesheet($fontLog, 'show-menu-labels'), 'layer 5 was cancelled');
 		$this->assertTrue($bannerInjected, 'layer 6 (preview banner) was cancelled');
 	}//end testRenderingWritesNothingAndLaterLayersStillRun()
 
@@ -1091,7 +1125,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertStringStartsWith('runtime:css/custom-overrides-nextcloud.css', (string)($fontLog[0] ?? ''), 'layer 4 was cancelled');
-		$this->assertContains('hide-slogan', $styleLog, 'layer 5 was cancelled');
+		$this->assertTrue($this->linksStylesheet($fontLog, 'hide-slogan'), 'layer 5 was cancelled');
 		$this->assertTrue($bannerInjected, 'layer 6 (preview banner) was cancelled');
 	}//end testAFailingDesignSystemLayerDoesNotCancelTheLaterLayers()
 

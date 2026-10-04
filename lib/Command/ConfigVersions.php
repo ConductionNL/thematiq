@@ -56,7 +56,7 @@ class ConfigVersions extends Command {
 	/**
 	 * Print one line per version.
 	 *
-	 * @param InputInterface  $input  The input.
+	 * @param InputInterface $input The input.
 	 * @param OutputInterface $output The output.
 	 *
 	 * @return int The exit code.

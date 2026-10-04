@@ -42,6 +42,8 @@ import {
 	readToggles,
 	resolveColor,
 	rootVar,
+	servedCss,
+	stripComments,
 	thematiqLayers,
 	withThemeState,
 } from './_theme-state'
@@ -337,15 +339,35 @@ test.describe('menu-labels', () => {
 	})
 
 	test(// @e2e openspec/specs/menu-labels/spec.md#labels-made-visible
-	'labels compute to inline-block, visible and fully opaque', async ({
+	'labels are declared inline-block and compute visible and fully opaque', async ({
 		browser,
 		page,
 	}) => {
 		await withLabels(browser, page, async () => {
+			// The stylesheet declares what the spec names ...
+			const rule = new RegExp(
+				'#header nav\\.app-menu \\.app-menu-entry__label \\{[^}]*'
+					+ 'display: inline-block !important;',
+			)
+			expect(stripComments(await servedCss(page, 'show-menu-labels'))).toMatch(
+				rule,
+			)
+			// ... and the browser blockifies it: the label is a flex item of the
+			// column-flex entry link (asserted in the tests below), and a flex
+			// item's inline-block computes to block (CSS Display 3, 2.7).
+			expect(
+				await page
+					.locator(LABEL)
+					.first()
+					.evaluate(
+						(el) =>
+							getComputedStyle(el.parentElement as Element).display,
+					),
+			).toBe('flex')
 			expect(
 				await styleOf(page, LABEL, ['display', 'visibility', 'opacity']),
 			).toEqual({
-				display: 'inline-block',
+				display: 'block',
 				visibility: 'visible',
 				opacity: '1',
 			})

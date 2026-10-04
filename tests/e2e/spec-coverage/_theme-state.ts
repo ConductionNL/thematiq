@@ -215,13 +215,27 @@ export async function openLoginPage(page: Page): Promise<void> {
 }
 
 /**
+ * A Thematiq stylesheet path, as its name under `css/` without the extension,
+ * or null for any other stylesheet.
+ *
+ * Shipped layers are static files (`/apps/thematiq/css/<name>.css`); the files
+ * an admin writes at runtime live in app data and are served by route
+ * (`/index.php/apps/thematiq/runtime/css/<name>.css`, RuntimeFileController,
+ * #811). Both are the same layer to the cascade, so both map to `<name>`.
+ */
+export function thematiqLayerName(pathname: string): string | null {
+	const match = /\/thematiq\/(?:runtime\/)?css\/(.+)\.css$/.exec(pathname)
+	return match === null ? null : match[1]
+}
+
+/**
  * The Thematiq stylesheets a page loaded, in document order, as their path
  * under `css/` without the extension: `systems/nldesign/fonts`,
  * `tokens/rijkshuisstijl`, `custom-overrides`, `hide-slogan`, ...
  *
- * These are the same names `CssInjectionService` passes to
- * `\OCP\Util::addStyle()`, so a list read here compares directly with
- * design-systems.json.
+ * These are the names `CssInjectionService` emits, so a list read here
+ * compares directly with design-systems.json. Runtime files (custom-overrides,
+ * custom-css, uploaded sets) are listed under the same names.
  */
 export async function thematiqLayers(page: Page): Promise<string[]> {
 	const hrefs = await page.evaluate(() =>
@@ -231,35 +245,50 @@ export async function thematiqLayers(page: Page): Promise<string[]> {
 	)
 	const layers: string[] = []
 	for (const href of hrefs) {
-		const match = /\/thematiq\/css\/(.+)\.css$/.exec(new URL(href).pathname)
-		if (match !== null) layers.push(match[1])
+		const name = thematiqLayerName(new URL(href).pathname)
+		if (name !== null) layers.push(name)
 	}
 	return layers
 }
 
 /** The absolute href of one loaded Thematiq layer, or null when not loaded. */
 export async function layerHref(page: Page, layer: string): Promise<string | null> {
-	return page.evaluate((name) => {
-		const link = [...document.querySelectorAll('link[rel="stylesheet"]')].find(
-			(l) =>
-				new URL((l as HTMLLinkElement).href).pathname.endsWith(
-					`/thematiq/css/${name}.css`,
-				),
-		) as HTMLLinkElement | undefined
-		return link === undefined ? null : link.href
-	}, layer)
+	const hrefs = await page.evaluate(() =>
+		[...document.querySelectorAll('link[rel="stylesheet"]')].map(
+			(l) => (l as HTMLLinkElement).href,
+		),
+	)
+	return (
+		hrefs.find((href) => thematiqLayerName(new URL(href).pathname) === layer)
+		?? null
+	)
 }
+
+/**
+ * The stylesheets thematiq writes at runtime, by their name under `css/`.
+ * Mirrors the css patterns of lib/Service/RuntimeFile/RuntimeFileNames.php.
+ * A shipped token set is a static file; an uploaded one (`custom-*`) is not.
+ */
+const RUNTIME_CSS =
+	/^(custom-overrides(-[a-z0-9-]+)?|custom-css|tokens\/(dark\/)?custom-[a-z0-9-]+)$/
 
 /**
  * Fetch a stylesheet as the server serves it to this page.
  *
- * The URL comes from `OC.filePath()`, the platform's own resolver, so it is
- * right under both `apps/` and `custom_apps/` (see appAssetUrl in _helpers).
+ * A shipped file's URL comes from `OC.filePath()`, the platform's own
+ * resolver, so it is right under both `apps/` and `custom_apps/` (see
+ * appAssetUrl in _helpers). A runtime file is served by the
+ * `runtimeFile#serve` route from app data, never from the app folder.
  */
 export async function servedCss(page: Page, file: string): Promise<string> {
 	const url = await page.evaluate(
-		(f) => (window as any).OC.filePath('thematiq', 'css', f + '.css'),
-		file,
+		({ f, runtime }) =>
+			runtime
+				? (window as any).OC.generateUrl(
+						'/apps/thematiq/runtime/css/' + f + '.css',
+					)
+				: (window as any).OC.filePath('thematiq', 'css', f + '.css'),
+		{ f: file, runtime: RUNTIME_CSS.test(file) },
 	)
 	const res = await page.request.get(url)
 	expect(res.status(), `css/${file}.css must be served (${url})`).toBe(200)

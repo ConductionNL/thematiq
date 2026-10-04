@@ -43,11 +43,11 @@ class UserTokenSetResolver {
 	 * Constructor.
 	 *
 	 * @param GroupThemingService $groupTheming The group mapping and the session resolution.
-	 * @param TokenSetService     $tokenSets    Which sets exist.
-	 * @param IGroupManager       $groupManager A user's groups.
-	 * @param IUserManager        $userManager  Users by id.
-	 * @param IUserSession        $userSession  The signed-in user.
-	 * @param IConfig             $config       The instance default set.
+	 * @param TokenSetService $tokenSets Which sets exist.
+	 * @param IGroupManager $groupManager A user's groups.
+	 * @param IUserManager $userManager Users by id.
+	 * @param IUserSession $userSession The signed-in user.
+	 * @param IConfig $config The instance default set.
 	 */
 	public function __construct(
 		private readonly GroupThemingService $groupTheming,

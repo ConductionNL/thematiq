@@ -138,6 +138,13 @@ export async function api(
 	path: string,
 	body?: unknown,
 ): Promise<{ status: number; json: any }> {
+	// `OC` arrives with the page's scripts: wait for it rather than read an
+	// undefined global from a page that is still loading.
+	await page.waitForFunction(
+		() => typeof (window as any).OC?.requestToken === 'string',
+		null,
+		{ timeout: 30_000 },
+	)
 	return page.evaluate(
 		async ({ method, path, body }) => {
 			const headers: Record<string, string> = {

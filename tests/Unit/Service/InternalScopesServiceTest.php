@@ -93,7 +93,7 @@ class InternalScopesServiceTest extends TestCase {
 
 		$this->assertStringContainsString('@media (prefers-color-scheme: dark)', $css);
 		$this->assertStringContainsString(':where(body[data-theme-dark], body[data-themes*=dark]) :is(', $css);
-		$this->assertStringNotContainsString(":is(.vue-date-time-picker__wrapper[data-v-02e90461] .dp__theme_light)" . InternalScopesService::BUMP . " {", $css, 'no unscoped rule');
+		$this->assertStringNotContainsString(':is(.vue-date-time-picker__wrapper[data-v-02e90461] .dp__theme_light)' . InternalScopesService::BUMP . ' {', $css, 'no unscoped rule');
 		$this->assertStringNotContainsString(':root', $css);
 	}
 

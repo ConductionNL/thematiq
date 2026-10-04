@@ -115,7 +115,7 @@ class ClaimAccuracyTest extends TestCase {
 		foreach (['summary', 'description'] as $tag) {
 			$byLang = [];
 			foreach ($info->{$tag} as $node) {
-				$byLang[(string) $node['lang']] = trim((string) $node);
+				$byLang[(string)$node['lang']] = trim((string)$node);
 			}
 
 			$this->assertNotEmpty($byLang['en'] ?? '', "<{$tag} lang=\"en\"> must be present.");
@@ -125,7 +125,7 @@ class ClaimAccuracyTest extends TestCase {
 
 		$names = [];
 		foreach ($info->name as $node) {
-			$names[] = (string) $node['lang'];
+			$names[] = (string)$node['lang'];
 		}
 
 		$this->assertEqualsCanonicalizing(['en', 'nl'], $names, '<name> must come as an en and an nl pair.');

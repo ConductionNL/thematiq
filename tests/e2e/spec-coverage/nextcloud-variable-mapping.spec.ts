@@ -500,6 +500,11 @@ test.describe('nextcloud-variable-mapping', () => {
 				'--nldesign-',
 			)
 			const consumed = new Set<string>()
+			// A token a stylesheet declares on an element and reads in the same
+			// rule is a local variable, not a theme token: the focus ring derives
+			// --nldesign-focus-ring-color on `*:focus-visible` itself (#912), so
+			// it has no :root value and no default to have.
+			const elementScoped = new Set<string>()
 			for (const file of [
 				OVERRIDES,
 				'systems/nldesign/theme.css',
@@ -510,6 +515,16 @@ test.describe('nextcloud-variable-mapping', () => {
 				for (const m of css.matchAll(/var\(\s*(--nldesign-[\w-]+)\s*\)/g)) {
 					consumed.add(m[1])
 				}
+				for (const rule of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+					if (rule[1].trim() === ':root') continue
+					for (const d of rule[2].matchAll(/(--nldesign-[\w-]+)\s*:/g)) {
+						elementScoped.add(d[1])
+					}
+				}
+			}
+			// A theme token that is also re-declared on an element keeps its check.
+			for (const name of elementScoped) {
+				if (defaults.has(name) === false) consumed.delete(name)
 			}
 			expect(consumed.size).toBeGreaterThan(50)
 			const noDefault = [...consumed].filter((n) => defaults.has(n) === false)

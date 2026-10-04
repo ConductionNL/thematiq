@@ -176,8 +176,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * BEFORE the write: after it, `old` would always equal `new` and the trail
 	 * would record every toggle as a no-op.
 	 *
-	 * @param string $method   The controller method.
-	 * @param string $key      The app config key.
+	 * @param string $method The controller method.
+	 * @param string $key The app config key.
 	 * @param string $property The response property echoing the new value.
 	 *
 	 * @dataProvider toggleProvider
@@ -187,7 +187,7 @@ class SettingsControllerEndpointsTest extends TestCase {
 	public function testATogglePersistsEchoesAndAuditsThePreviousValue(
 		string $method,
 		string $key,
-		string $property
+		string $property,
 	): void {
 		$this->appConfig['thematiq|' . $key] = '1';
 
@@ -208,8 +208,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	/**
 	 * Turning a toggle ON is stored as the `'1'` the rest of the app reads.
 	 *
-	 * @param string $method   The controller method.
-	 * @param string $key      The app config key.
+	 * @param string $method The controller method.
+	 * @param string $key The app config key.
 	 * @param string $property The response property echoing the new value.
 	 *
 	 * @dataProvider toggleProvider

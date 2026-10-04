@@ -48,12 +48,12 @@ class AppBrandController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string            $appName    The app name.
-	 * @param IRequest          $request    The request.
-	 * @param AppBrandService   $brands     The brands.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param AppBrandService $brands The brands.
 	 * @param AppThemingService $appTheming The apps that can be themed.
-	 * @param TokenSetService   $tokenSets  The selectable sets.
-	 * @param IL10N             $l10n       Translations.
+	 * @param TokenSetService $tokenSets The selectable sets.
+	 * @param IL10N $l10n Translations.
 	 */
 	public function __construct(
 		string $appName,

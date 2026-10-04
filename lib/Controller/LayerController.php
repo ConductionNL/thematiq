@@ -63,10 +63,10 @@ class LayerController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string              $appName   The app id.
-	 * @param IRequest            $request   The current request.
+	 * @param string $appName The app id.
+	 * @param IRequest $request The current request.
 	 * @param CssInjectionService $injection The cascade owner.
-	 * @param TokenSetService     $tokenSets The token set catalogue.
+	 * @param TokenSetService $tokenSets The token set catalogue.
 	 */
 	public function __construct(
 		string $appName,

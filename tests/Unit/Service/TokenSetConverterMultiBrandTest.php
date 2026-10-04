@@ -53,12 +53,12 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 * Convert one brand through the real converter.
 	 *
 	 * @param string $content The source.
-	 * @param string $key     The brand.
+	 * @param string $key The brand.
 	 *
 	 * @return array<string, mixed> The converter result, plus the parsed declarations under `declarations`.
 	 */
 	private function convertBrand(string $content, string $key): array {
-		$cut        = (new MultiBrandSource())->cut(content: $content, key: $key);
+		$cut = (new MultiBrandSource())->cut(content: $content, key: $key);
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$result = (new TokenSetConverterService($appManager, new CssParserService(), new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class)))
@@ -143,8 +143,8 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 */
 	public function testLaterTokenSetWins(): void {
 		$source = $this->fixture('three-themes.tokens.json');
-		$noord  = $this->convertBrand($source, 'noord');
-		$zuid   = $this->convertBrand($source, 'zuid');
+		$noord = $this->convertBrand($source, 'noord');
+		$zuid = $this->convertBrand($source, 'zuid');
 
 		$this->assertSame('#154273', strtolower($noord['declarations']['--nldesign-color-primary']));
 		$this->assertSame('#c8102e', strtolower($zuid['declarations']['--nldesign-color-primary']));
@@ -178,11 +178,11 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 */
 	public function testParityFixtureMatchesPhp(): void {
 		$expected = json_decode($this->fixture('expected.json'), true);
-		$source   = new MultiBrandSource();
+		$source = new MultiBrandSource();
 		foreach ($expected as $file => $answer) {
 			$content = $this->fixture($file);
-			$brands  = $source->detectBrands(content: $content);
-			$cuts    = [];
+			$brands = $source->detectBrands(content: $content);
+			$cuts = [];
 			foreach ($brands as $brand) {
 				$cuts[$brand['key']] = $source->cut(content: $content, key: $brand['key']);
 			}

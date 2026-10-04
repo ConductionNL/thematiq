@@ -103,6 +103,50 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	}//end testDarkScopesWritten()
 
 	/**
+	 * A white label override stays readable on its derived dark fill
+	 * (thematiq#953).
+	 *
+	 * Each override derives its dark value on its own: the primary element
+	 * #154273 turns light blue, and white text takes the text clamp to mid-grey
+	 * #9e9e9e, about 1.2:1 on it. The generated dark stylesheets repair such
+	 * pairs; the editor's dark scopes now run the same repair.
+	 */
+	public function testAWhiteLabelOverrideStaysReadableInDark(): void {
+		$this->service->write(tokens: [
+			'--color-primary' => '#154273',
+			'--color-primary-text' => '#ffffff',
+			'--color-primary-element' => '#154273',
+			'--color-primary-element-text' => '#ffffff',
+		]);
+		$css = $this->service->getRawContent();
+		$contrast = new ContrastService();
+
+		foreach ([self::SYSTEM_DARK, self::CHOSEN_DARK] as $selector) {
+			$dark = $this->block(css: $css, selector: $selector);
+			foreach ([['--color-primary-text', '--color-primary'], ['--color-primary-element-text', '--color-primary-element']] as [$fg, $bg]) {
+				$this->assertArrayHasKey($fg, $dark);
+				$ratio = $contrast->measure(foreground: $dark[$fg], background: $dark[$bg]);
+				$this->assertGreaterThanOrEqual(4.5, $ratio, sprintf('%s %s on %s in %s', $dark[$fg], $fg, $bg, $selector));
+			}
+		}
+
+		// The editor shows the same dark value the file carries.
+		$this->assertSame($this->block(css: $css, selector: self::CHOSEN_DARK)['--color-primary-element-text'], $this->service->derivedDark()['--color-primary-element-text']);
+	}//end testAWhiteLabelOverrideStaysReadableInDark()
+
+	/**
+	 * An administrator's own dark label is never rewritten, even when it fails.
+	 */
+	public function testAnOwnDarkLabelIsNotRepaired(): void {
+		$this->service->write(
+			tokens: ['--color-primary-element' => '#154273', '--color-primary-element-text' => '#ffffff'],
+			darkTokens: ['--color-primary-element-text' => '#aaaaaa']
+		);
+
+		$this->assertSame('#aaaaaa', $this->block(css: $this->service->getRawContent(), selector: self::CHOSEN_DARK)['--color-primary-element-text']);
+	}//end testAnOwnDarkLabelIsNotRepaired()
+
+	/**
 	 * A component token gets no dark copy: the generated dark stylesheet already
 	 * gives both kinds of dark user the same body value, and a body-level copy
 	 * here would outrank the primary-lock layer.

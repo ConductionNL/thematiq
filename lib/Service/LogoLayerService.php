@@ -40,12 +40,27 @@ use Throwable;
 class LogoLayerService {
 
 	/**
+	 * What a bundle that masks the header logo reads when a logo exists.
+	 *
+	 * The La Suite element overrides, which Cunningham shares, paint
+	 * `#header .logo` as a brand-coloured mask of Nextcloud's logo.svg with
+	 * `background-image: none !important`, so a set's own logo or an admin's
+	 * upload never showed there (#968). That rule reads these three variables,
+	 * with the mask, the brand fill and no image as fallbacks. Declared only
+	 * when a logo exists, so without one the Nextcloud mark stays. The nldesign
+	 * bundle reads `--nldesign-logo-url` directly and ignores them.
+	 */
+	private const HEADER_LOGO_VARIABLES = '--nldesign-header-logo-image:var(--nldesign-logo-url);'
+		. '--nldesign-header-logo-mask:none;'
+		. '--nldesign-header-logo-fill:transparent';
+
+	/**
 	 * Constructor.
 	 *
-	 * @param IConfig            $config       Reads the theming app's uploaded-logo flags.
-	 * @param IURLGenerator      $urlGenerator Resolves core's logo.
-	 * @param LoggerInterface    $logger       Logs an unresolvable core logo.
-	 * @param RuntimeFileLocator $files        Finds a shipped or uploaded logo.
+	 * @param IConfig $config Reads the theming app's uploaded-logo flags.
+	 * @param IURLGenerator $urlGenerator Resolves core's logo.
+	 * @param LoggerInterface $logger Logs an unresolvable core logo.
+	 * @param RuntimeFileLocator $files Finds a shipped or uploaded logo.
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
@@ -112,7 +127,7 @@ class LogoLayerService {
 	 * @param string $tokenSet The selected token set id.
 	 *
 	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline layer, or null when
-	 *         nothing can be said about the logo (core's logo.svg unresolvable).
+	 *                                                                          nothing can be said about the logo (core's logo.svg unresolvable).
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
@@ -135,7 +150,7 @@ class LogoLayerService {
 		// unquoted is both valid and safe.
 		if ($relative !== null) {
 			return $this->inlineLayer(
-				css: ':root{--nldesign-logo-url:url(' . $this->files->url(name: $relative) . ')}'
+				css: ':root{--nldesign-logo-url:url(' . $this->files->url(name: $relative) . ');' . self::HEADER_LOGO_VARIABLES . '}'
 			);
 		}
 
@@ -146,7 +161,7 @@ class LogoLayerService {
 		if ($hasUploadedLogo === true) {
 			return $this->inlineLayer(
 				css: ':root{--nldesign-logo-url:var(--image-logoheader,var(--image-logo));'
-					. '--nldesign-logo-filter:none}'
+					. '--nldesign-logo-filter:none;' . self::HEADER_LOGO_VARIABLES . '}'
 			);
 		}
 
@@ -170,9 +185,15 @@ class LogoLayerService {
 
 		$mask = 'url(' . $logo . ') no-repeat center / contain!important';
 
+		// A bundle that paints the mark in its own colour declares
+		// --nldesign-header-mark-fill on the logo element: the La Suite element
+		// overrides fill it with the brand, and this rule, which renders over
+		// theirs, read only the header text colour, near-black there (#975).
+		// The nldesign bundle declares none and keeps the header text colour.
+
 		return $this->inlineLayer(
 			css: '#nextcloud .logo{background-image:none!important;'
-				. 'background-color:var(--nldesign-color-header-text,#333333)!important;'
+				. 'background-color:var(--nldesign-header-mark-fill,var(--nldesign-color-header-text,#333333))!important;'
 				. 'filter:none!important;'
 				. '-webkit-mask:' . $mask . ';'
 				. 'mask:' . $mask . '}'

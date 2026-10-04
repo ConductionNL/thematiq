@@ -161,8 +161,9 @@ The active token set MUST be stored in Nextcloud's `IConfig` and default to `nex
 
 #### Scenario: Token set retrieved via API
 - GIVEN the active token set is `amsterdam`
-- WHEN `GET /settings/tokenset` is called
-- THEN the response MUST be JSON with `{"tokenSet": "amsterdam"}`
+- WHEN the public capability is read (`GET /ocs/v2.php/cloud/capabilities`)
+- THEN `nldesign.tokenSet.id` MUST be `"amsterdam"`
+- AND there is no `GET /settings/tokenset` (removed for #664; see "No separate read route for the active token set")
 
 #### Scenario: Token set read during boot
 - GIVEN the active token set is stored as `amsterdam` in IConfig
@@ -252,8 +253,8 @@ The app MUST expose admin-only API endpoints for listing, getting, and setting t
 
 #### Scenario: Get current token set
 - GIVEN the admin is authenticated
-- WHEN `GET /apps/nldesign/settings/tokenset` is called
-- THEN the response MUST be JSON with `{"tokenSet": "<current-id>"}`
+- WHEN the public capability is read
+- THEN `nldesign.tokenSet.id` MUST be the current set id, the same id the admin dropdown shows
 - AND the default MUST be `"nextcloud"` if not configured
 
 #### Scenario: Set active token set
@@ -329,7 +330,8 @@ additionally ship the published Cunningham blue base as a `cunningham` set.
 - AND its `theming` object MUST contain `primary_color: "#1A509F"` (brand-650 of the published
   Cunningham blue base — the same scale step the shared bridge/element-overrides derive
   `--color-primary` from for lasuite's violet `#4844AD`, so the swatch matches what actually
-  renders) and `background_color: "#FFFFFF"`
+  renders) and `background_color: "#E1E2E5"` (the set's own `--nldesign-color-background-dark`,
+  so Nextcloud's core theming matches the background the stylesheet paints)
 - AND it MUST NOT contain a `logo` key
 - AND `css/tokens/cunningham.css` MUST exist as a standard Layer-3 `--nldesign-*` set pinning the blue
   identity, reusing the shared generated `defaults.css` via its design system bundle

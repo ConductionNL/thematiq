@@ -39,7 +39,7 @@ final class ColorSpaceConverterTest extends TestCase {
 	 */
 	public static function fixture(): array {
 		$document = json_decode((string)file_get_contents(\dirname(__DIR__) . '/fixtures/dtcg/colour-spaces.tokens.json'), true);
-		$cases    = [];
+		$cases = [];
 		foreach ($document['color'] as $space => $token) {
 			if (is_array($token) === true && isset($token['$value']) === true) {
 				$cases[$space] = [$token['$value']['colorSpace'], $token['$value']['components'], $token['$description']];
@@ -61,16 +61,16 @@ final class ColorSpaceConverterTest extends TestCase {
 	/**
 	 * Each conversion lands within 1 per channel of the reference.
 	 *
-	 * @param string            $space      The colour space.
+	 * @param string $space The colour space.
 	 * @param array<int, float> $components The components.
-	 * @param string            $expected   The reference hex.
+	 * @param string $expected The reference hex.
 	 *
 	 * @return void
 	 */
 	#[DataProvider('fixture')]
 	public function testConvertsToTheReference(string $space, array $components, string $expected): void {
 		$converter = new ColorSpaceConverter();
-		$actual    = $converter->toHex(rgb: (array)$converter->toSrgb(space: $space, components: $components));
+		$actual = $converter->toHex(rgb: (array)$converter->toSrgb(space: $space, components: $components));
 
 		foreach ([1, 3, 5] as $offset) {
 			$this->assertEqualsWithDelta(hexdec(substr($expected, $offset, 2)), hexdec(substr($actual, $offset, 2)), 1, $space . ': ' . $actual . ' vs ' . $expected);
@@ -84,7 +84,7 @@ final class ColorSpaceConverterTest extends TestCase {
 	 */
 	public function testGamutAndUnknownSpace(): void {
 		$converter = new ColorSpaceConverter();
-		$red       = (array)$converter->toSrgb(space: 'display-p3', components: [1, 0, 0]);
+		$red = (array)$converter->toSrgb(space: 'display-p3', components: [1, 0, 0]);
 
 		$this->assertFalse($converter->isInGamut(rgb: $red));
 		$this->assertSame('#ff0000', $converter->toHex(rgb: $red));

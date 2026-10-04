@@ -37,6 +37,16 @@ describe('ownComponentFrame', () => {
 		expect(doc).not.toMatch(/script-src/)
 	})
 
+	it('names the page origin next to self for fonts, and nothing else (#940)', () => {
+		expect(
+			frame.srcdoc('<p>x</p>', '', '', 'https://cloud.example.nl:8443'),
+		).toContain(
+			"font-src 'self' https://cloud.example.nl:8443 data:; img-src 'self' data:",
+		)
+		expect(frame.policyFor('https://x.nl" onload="a')).toBe(frame.POLICY)
+		expect(frame.policyFor('')).toBe(frame.POLICY)
+	})
+
 	it('scans the names a component reads, from the CSS and style attributes', () => {
 		expect(
 			frame.scanVars(

@@ -544,7 +544,6 @@ class TokenSetService {
 		return $this->files->exists(appPath: $this->getAppPath(), name: 'css/tokens/' . $tokenSetId . '.css', store: $this->store);
 	}//end isValidTokenSet()
 
-
 	/**
 	 * Read the token-sets.json manifest and index by id.
 	 *

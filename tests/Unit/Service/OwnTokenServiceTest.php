@@ -67,9 +67,9 @@ final class OwnTokenServiceTest extends TestCase {
 	/**
 	 * Assert a create is refused with this field and status.
 	 *
-	 * @param array<string, mixed> $input  The fields.
-	 * @param string               $field  The field the refusal names.
-	 * @param int                  $status The status.
+	 * @param array<string, mixed> $input The fields.
+	 * @param string $field The field the refusal names.
+	 * @param int $status The status.
 	 *
 	 * @return void
 	 */

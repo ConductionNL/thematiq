@@ -46,12 +46,13 @@ class BrandingPackageService {
 	/**
 	 * Constructor.
 	 *
-	 * @param BrandingPackageReader    $reader        Reads and writes the package files.
-	 * @param ConfigBundleService      $bundleService The existing bundle import and export.
-	 * @param FontService              $fontService   Font storage.
-	 * @param FontValidator            $fontValidator The upload rules for fonts.
-	 * @param TokenSetConverterService $converter     DTCG to token set conversion.
-	 * @param CustomTokenSetService    $customSets    For the custom set id rules.
+	 * @param BrandingPackageReader $reader Reads and writes the package files.
+	 * @param ConfigBundleService $bundleService The existing bundle import and export.
+	 * @param FontService $fontService Font storage.
+	 * @param FontValidator $fontValidator The upload rules for fonts.
+	 * @param TokenSetConverterService $converter DTCG to token set conversion.
+	 * @param CustomTokenSetService $customSets For the custom set id rules.
+	 * @param DtcgValueChecker $values The value rules the editor and the overrides API apply.
 	 */
 	public function __construct(
 		private readonly BrandingPackageReader $reader,
@@ -60,6 +61,7 @@ class BrandingPackageService {
 		private readonly FontValidator $fontValidator,
 		private readonly TokenSetConverterService $converter,
 		private readonly CustomTokenSetService $customSets,
+		private readonly DtcgValueChecker $values,
 	) {
 	}//end __construct()
 
@@ -122,8 +124,8 @@ class BrandingPackageService {
 	/**
 	 * Validate a package and, unless `$dryRun`, apply it.
 	 *
-	 * @param string $path   The package directory or ZIP.
-	 * @param bool   $dryRun When true, validate only.
+	 * @param string $path The package directory or ZIP.
+	 * @param bool $dryRun When true, validate only.
 	 *
 	 * @return array<string, mixed> `{valid, dryRun, applied, sections?, errors?, revision, hash}`.
 	 *
@@ -253,6 +255,13 @@ class BrandingPackageService {
 			return null;
 		}
 
+		$invalid = $this->invalidValueErrors(id: $id, content: $content);
+		if ($invalid !== []) {
+			array_push($errors, ...$invalid);
+
+			return null;
+		}
+
 		$slug = substr($id, strlen(CustomTokenSetService::ID_PREFIX));
 		$name = trim((string)($existing['name'] ?? ''));
 		if ($name === '') {
@@ -291,6 +300,37 @@ class BrandingPackageService {
 
 		return $entry;
 	}//end convertOne()
+
+	/**
+	 * One error per DTCG colour token whose value is not a colour.
+	 *
+	 * The same value rules as the editor and the overrides API (#809): a
+	 * colour that is not one would otherwise be served as it is (#941).
+	 *
+	 * @param string $id The custom set id.
+	 * @param string $content The DTCG document.
+	 *
+	 * @return array<int, array{section: string, id: string, message: string}> The errors, naming each token.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function invalidValueErrors(string $id, string $content): array {
+		$decoded = json_decode($content, true);
+		if (is_array($decoded) === false) {
+			return [];
+		}
+
+		$errors = [];
+		foreach ($this->values->findInvalidColours(document: $decoded) as $path => $value) {
+			$errors[] = [
+				'section' => 'tokens',
+				'id' => $id,
+				'message' => 'tokens/' . $id . '.json: ' . $path . ': "' . $value . '" is not a valid color value.',
+			];
+		}
+
+		return $errors;
+	}//end invalidValueErrors()
 
 	/**
 	 * The index of the set with an id in a list of bundle sets.

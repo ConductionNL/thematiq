@@ -54,13 +54,13 @@ class BrandFormController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string                $appName The app name.
-	 * @param IRequest              $request The request.
-	 * @param BrandFormService      $brandForm The derivation.
-	 * @param CustomTokenSetService $store     The custom set store.
-	 * @param IAppManager           $apps      Resolves the app root (rules and defaults).
-	 * @param ThemingAuditService   $audit     The theming audit log.
-	 * @param IL10N                 $l         Translations.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param BrandFormService $brandForm The derivation.
+	 * @param CustomTokenSetService $store The custom set store.
+	 * @param IAppManager $apps Resolves the app root (rules and defaults).
+	 * @param ThemingAuditService $audit The theming audit log.
+	 * @param IL10N $l Translations.
 	 */
 	public function __construct(
 		string $appName,
@@ -183,7 +183,7 @@ class BrandFormController extends Controller {
 	 * of an uploaded or gallery theme do not come through this check at all.
 	 *
 	 * @param string $extension The claimed type.
-	 * @param string $contents  The bytes.
+	 * @param string $contents The bytes.
 	 *
 	 * @return boolean True when it is a plain image.
 	 */

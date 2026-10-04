@@ -108,7 +108,7 @@ class LasuiteShellGeometryTest extends TestCase {
 	/**
 	 * The stylesheet paths of a set's manifest, in cascade order.
 	 *
-	 * @param string $tokenSet      The token set id.
+	 * @param string $tokenSet The token set id.
 	 * @param string $serverVersion The server version.
 	 *
 	 * @return array<int, string> The app-relative paths without `.css` and query.
@@ -195,6 +195,10 @@ class LasuiteShellGeometryTest extends TestCase {
 		$css = (string)file_get_contents($this->root() . '/css/systems/lasuite/element-overrides.css');
 		$this->assertDoesNotMatchRegularExpression('/margin:\s*50px\s+0\s+0/', $css, '#content must clear var(--header-height), not 50px.');
 		$this->assertDoesNotMatchRegularExpression('/inset-block-start:\s*8px/', $css, 'The search field must centre on var(--header-height).');
-		$this->assertStringContainsString('inset-block-start: calc((var(--header-height, 50px) - 34px) / 2) !important;', $css);
+		// #932: core centres the field's row on NC 35, so the field sits on it
+		// with inset-block: 0 and auto block margins instead of a fixed offset.
+		$this->assertDoesNotMatchRegularExpression('/inset-block-start:\s*15px/', $css, 'A fixed 15px offset pushes the field below the centre of the 64px header.');
+		$this->assertStringContainsString('inset-block: 0 !important;', $css);
+		$this->assertStringContainsString('margin-block: auto !important;', $css);
 	}//end testTheSharedOverridesFollowTheHeaderHeight()
 }//end class

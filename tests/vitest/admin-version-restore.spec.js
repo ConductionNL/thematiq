@@ -188,4 +188,30 @@ describe('admin.js version restore', () => {
 		)
 		expect(document.activeElement).toBe(button)
 	})
+
+	it('returns focus to the button after Nextcloud tears the dialog down (#934)', async () => {
+		confirmAnswer = false
+		await load()
+		// Nextcloud 35 runs the callback first and only then closes the dialog;
+		// its focus trap hands focus back to whatever held it when the dialog
+		// opened. Model that order: answer, then drop focus on the body a
+		// moment later, the way the teardown does.
+		OC.dialogs.confirm.mockImplementation((text, title, callback) => {
+			calls.push({ dialog: text })
+			callback(confirmAnswer)
+			setTimeout(() => {
+				if (document.activeElement && document.activeElement.blur) {
+					document.activeElement.blur()
+				}
+			}, 50)
+		})
+
+		const button = document.querySelectorAll('button.nldesign-audit-restore')[1]
+		button.focus()
+		button.click()
+		await flush()
+		await new Promise((resolve) => setTimeout(resolve, 800))
+
+		expect(document.activeElement === button).toBe(true)
+	})
 })

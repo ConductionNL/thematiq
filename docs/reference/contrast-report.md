@@ -29,6 +29,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | epe | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | example-basisschool | 6.07:1 | 4.5:1 | 6.07:1 | 3.0:1 | pass |
 | example-college | 9.34:1 | 4.5:1 | 9.34:1 | 3.0:1 | pass |
+| example-gemeente | 8.80:1 | 4.5:1 | 8.80:1 | 3.0:1 | pass |
 | example-opleider | 9.40:1 | 4.5:1 | 9.40:1 | 3.0:1 | pass |
 | example-voortgezet | 7.67:1 | 4.5:1 | 7.67:1 | 3.0:1 | pass |
 | frankendesk | 7.76:1 | 4.5:1 | 7.76:1 | 3.0:1 | pass |
@@ -63,4 +64,68 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | xxllnc | 21.00:1 | 4.5:1 | 21.00:1 | 3.0:1 | pass |
 | zevenaar | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | zwolle | 5.06:1 | 4.5:1 | 5.06:1 | 3.0:1 | pass |
+
+## Den Haag component pairs
+
+The text the Den Haag mijn-omgeving components draw, and the site header title and
+footer text, measured as a portal sees it:
+`css/systems/nldesign/defaults.css`, then `css/public-bridge.css`, then the set.
+Threshold 4.5:1 for every pair. These pairs are reported; they are not part of
+the verdict above.
+
+Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, action-date-warning, badge-neutral, badge-success, badge-warning, badge-error, nav-link, nav-link-active, file-link, header-title, footer-text.
+
+| Token set | pass | fail | unevaluated | Below 4.5:1 or unevaluated |
+|-----------|-----:|-----:|------------:|----------------------------|
+| amsterdam | 15 | 0 | 0 |  |
+| bodegraven-reeuwijk | 15 | 0 | 0 |  |
+| borne | 15 | 0 | 0 |  |
+| buren | 15 | 0 | 0 |  |
+| conduction-new | 15 | 0 | 0 |  |
+| cunningham | 15 | 0 | 0 |  |
+| demodam | 15 | 0 | 0 |  |
+| denhaag | 15 | 0 | 0 |  |
+| dinkelland | 15 | 0 | 0 |  |
+| drechterland | 15 | 0 | 0 |  |
+| duiven | 15 | 0 | 0 |  |
+| duo | 15 | 0 | 0 |  |
+| enkhuizen | 15 | 0 | 0 |  |
+| epe | 15 | 0 | 0 |  |
+| example-basisschool | 15 | 0 | 0 |  |
+| example-college | 15 | 0 | 0 |  |
+| example-gemeente | 15 | 0 | 0 |  |
+| example-opleider | 15 | 0 | 0 |  |
+| example-voortgezet | 15 | 0 | 0 |  |
+| frankendesk | 15 | 0 | 0 |  |
+| groningen | 15 | 0 | 0 |  |
+| haarlem | 15 | 0 | 0 |  |
+| haarlemmermeer | 15 | 0 | 0 |  |
+| hoog-contrast | 15 | 0 | 0 |  |
+| hoorn | 15 | 0 | 0 |  |
+| horstaandemaas | 15 | 0 | 0 |  |
+| lasuite | 15 | 0 | 0 |  |
+| leiden | 15 | 0 | 0 |  |
+| leidschendam-voorburg | 15 | 0 | 0 |  |
+| nijmegen | 15 | 0 | 0 |  |
+| noaberkracht | 15 | 0 | 0 |  |
+| noordoostpolder | 15 | 0 | 0 |  |
+| noordwijk | 15 | 0 | 0 |  |
+| opencatalogi | 15 | 0 | 0 |  |
+| provincie-zuid-holland | 15 | 0 | 0 |  |
+| riddeliemers | 15 | 0 | 0 |  |
+| ridderkerk | 15 | 0 | 0 |  |
+| rijkshuisstijl | 15 | 0 | 0 |  |
+| rotterdam | 15 | 0 | 0 |  |
+| stedebroec | 15 | 0 | 0 |  |
+| summer-breeze | 15 | 0 | 0 |  |
+| tilburg | 15 | 0 | 0 |  |
+| tubbergen | 15 | 0 | 0 |  |
+| utrecht | 15 | 0 | 0 |  |
+| venray | 15 | 0 | 0 |  |
+| vng | 15 | 0 | 0 |  |
+| vught | 15 | 0 | 0 |  |
+| westervoort | 15 | 0 | 0 |  |
+| xxllnc | 15 | 0 | 0 |  |
+| zevenaar | 15 | 0 | 0 |  |
+| zwolle | 15 | 0 | 0 |  |
 

@@ -35,7 +35,7 @@ final class DesignTokensWriterTest extends TestCase {
 	/**
 	 * Write and decode, as a download would.
 	 *
-	 * @param array<string, string>               $declarations The set.
+	 * @param array<string, string> $declarations The set.
 	 * @param array<string, array<string, mixed>> $deprecations Deprecations.
 	 *
 	 * @return array<string, mixed>
@@ -52,7 +52,7 @@ final class DesignTokensWriterTest extends TestCase {
 	 * @return void
 	 */
 	public function testPathExtensionAndRoot(): void {
-		$doc   = $this->write(['--nldesign-color-primary-hover' => '#0f3059', '--utrecht-button-background-color' => '#154273']);
+		$doc = $this->write(['--nldesign-color-primary-hover' => '#0f3059', '--utrecht-button-background-color' => '#154273']);
 		$token = $doc['nldesign']['color']['primary-hover'];
 
 		$this->assertSame('--nldesign-color-primary-hover', $token['$extensions']['nl.conduction.thematiq']['cssVariable']);
@@ -110,8 +110,8 @@ final class DesignTokensWriterTest extends TestCase {
 	 */
 	public function testUntypedValuesGoToCssOnly(): void {
 		$gradient = 'linear-gradient(90deg, #154273, #01689b)';
-		$doc      = $this->write(['--nldesign-header-background' => $gradient, '--nldesign-color-text' => 'var(--color-main-text)', '--nldesign-gap' => '1.0rem', '--nldesign-animation-bounce' => 'cubic-bezier(1.5, 0, 0, 1)']);
-		$cssOnly  = $doc['$extensions']['nl.conduction.thematiq']['cssOnly'];
+		$doc = $this->write(['--nldesign-header-background' => $gradient, '--nldesign-color-text' => 'var(--color-main-text)', '--nldesign-gap' => '1.0rem', '--nldesign-animation-bounce' => 'cubic-bezier(1.5, 0, 0, 1)']);
+		$cssOnly = $doc['$extensions']['nl.conduction.thematiq']['cssOnly'];
 
 		$this->assertSame($gradient, $cssOnly['--nldesign-header-background']);
 		$this->assertSame('var(--color-main-text)', $cssOnly['--nldesign-color-text']);
@@ -161,7 +161,7 @@ final class DesignTokensWriterTest extends TestCase {
 	 */
 	public function testEveryColourObjectImports(): void {
 		$colours = ['--nldesign-a-b' => 'navy', '--nldesign-a-c' => 'rgb(21 66 115 / 50%)', '--nldesign-a-d' => 'hsl(210, 50%, 40%)', '--nldesign-a-e' => 'lab(50 20 -30)', '--nldesign-a-f' => 'color(display-p3 0.5 0.3 0.7)', '--nldesign-a-g' => 'hwb(210 20% 30%)'];
-		$result  = (new DesignTokensMapper())->map(document: $this->write($colours));
+		$result = (new DesignTokensMapper())->map(document: $this->write($colours));
 
 		$this->assertSame([], $result['errors']);
 		$this->assertSame(['--nldesign-a-b' => '#000080', '--nldesign-a-c' => '#15427380', '--nldesign-a-d' => '#336699', '--nldesign-a-e' => '#856caa', '--nldesign-a-f' => '#8849b8', '--nldesign-a-g' => '#3373b3'], $result['declarations']);
@@ -185,7 +185,7 @@ final class DesignTokensWriterTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeprecatedTokenCarriesNotice(): void {
-		$doc   = $this->write(
+		$doc = $this->write(
 			['--nldesign-color-primary-light' => '#e6ecf3', '--nldesign-color-primary' => '#154273'],
 			[
 				'--nldesign-color-primary-light' => ['severity' => 'critical', 'replacement' => '--nldesign-color-primary', 'removalDate' => '2027-03-01', 'state' => 'active'],

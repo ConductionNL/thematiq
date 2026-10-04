@@ -343,10 +343,28 @@ body,
 	font-family: var(--lasuite-font-family);
 }
 
-/* Focus ring — WCAG 2.1 AA SC 2.4.7. */
+/* Focus ring — WCAG 2.1 AA SC 2.4.7, and 3:1 for SC 1.4.11 (#970).
+ *
+ * The same two-tone ring as css/systems/nldesign/theme.css (#896, #931): the
+ * translucent --nldesign-color-focus stays as the outer halo, and the 2px
+ * outline is that colour made opaque. Drawn translucent, the outline painted
+ * about 2.2:1 on white. Browsers without relative colour syntax take the
+ * `-rgb` triplet, the same colour. The `/ 1` matters: relative colour syntax
+ * keeps the origin's alpha otherwise. Derived on the focused element, not on
+ * :root, so a dark variant's body-level focus token is the one it reads.
+ * tests/vitest/focusRingContrast.spec.js resolves both. */
 *:focus-visible {
-	outline: 2px solid var(--nldesign-color-focus) !important;
+	--nldesign-focus-ring-color: rgb(var(--nldesign-color-focus-rgb));
+
+	outline: 2px solid var(--nldesign-focus-ring-color) !important;
 	outline-offset: 2px !important;
+	box-shadow: 0 0 0 6px var(--nldesign-color-focus) !important;
+}
+
+@supports (color: rgb(from red r g b)) {
+	*:focus-visible {
+		--nldesign-focus-ring-color: rgb(from var(--nldesign-color-focus) r g b / 1);
+	}
 }
 
 /* ===================================================================

@@ -39,9 +39,9 @@ class BundleExtraSections {
 	/**
 	 * Constructor.
 	 *
-	 * @param AssistantMarkService $assistantMark  The approved mark for the AI assistant.
+	 * @param AssistantMarkService $assistantMark The approved mark for the AI assistant.
 	 * @param DocumentAssetService $documentAssets The document footer line (images travel as metadata).
-	 * @param AppBrandService      $appBrands      The brand per app (logos travel as metadata).
+	 * @param AppBrandService $appBrands The brand per app (logos travel as metadata).
 	 */
 	public function __construct(
 		private readonly AssistantMarkService $assistantMark,

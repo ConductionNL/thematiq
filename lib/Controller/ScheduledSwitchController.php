@@ -44,10 +44,10 @@ class ScheduledSwitchController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string                 $appName     The app name.
-	 * @param IRequest               $request     The request.
-	 * @param ScheduledSwitchService $service     The planner.
-	 * @param IUserSession           $userSession The signed-in administrator.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
+	 * @param ScheduledSwitchService $service The planner.
+	 * @param IUserSession $userSession The signed-in administrator.
 	 */
 	public function __construct(
 		string $appName,
@@ -73,9 +73,9 @@ class ScheduledSwitchController extends Controller {
 	/**
 	 * Plan a switch.
 	 *
-	 * @param string      $tokenSet The set to switch to.
-	 * @param string      $startAt  The start, ISO 8601 with an offset.
-	 * @param string|null $endAt    The optional end; empty means none.
+	 * @param string $tokenSet The set to switch to.
+	 * @param string $startAt The start, ISO 8601 with an offset.
+	 * @param string|null $endAt The optional end; empty means none.
 	 *
 	 * @return JSONResponse 201 `{switch}`, or 400 `{error}` with the reason.
 	 *

@@ -46,11 +46,11 @@ class DelegatedGroupThemingService {
 	 * Constructor.
 	 *
 	 * @param GroupThemingService $groupTheming The group mapping.
-	 * @param TokenSetService     $tokenSets    The token set catalogue, for names and contrast.
-	 * @param IGroupManager       $groupManager Groups.
-	 * @param IUserManager        $userManager  Users.
-	 * @param ISubAdmin           $subAdmin     Nextcloud's group subadmin role.
-	 * @param ThemingAuditService $audit        The audit log.
+	 * @param TokenSetService $tokenSets The token set catalogue, for names and contrast.
+	 * @param IGroupManager $groupManager Groups.
+	 * @param IUserManager $userManager Users.
+	 * @param ISubAdmin $subAdmin Nextcloud's group subadmin role.
+	 * @param ThemingAuditService $audit The audit log.
 	 */
 	public function __construct(
 		private readonly GroupThemingService $groupTheming,

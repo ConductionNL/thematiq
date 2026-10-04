@@ -66,10 +66,10 @@ class ThemeVersionService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppDataFactory     $appDataFactory The app data factory.
-	 * @param ConfigBundleService $bundleService  Produces the bundle a version holds.
-	 * @param ITimeFactory        $timeFactory    The clock.
-	 * @param LoggerInterface     $logger         Records a version that could not be kept.
+	 * @param IAppDataFactory $appDataFactory The app data factory.
+	 * @param ConfigBundleService $bundleService Produces the bundle a version holds.
+	 * @param ITimeFactory $timeFactory The clock.
+	 * @param LoggerInterface $logger Records a version that could not be kept.
 	 */
 	public function __construct(
 		private readonly IAppDataFactory $appDataFactory,
@@ -83,7 +83,7 @@ class ThemeVersionService {
 	 * Keep the current configuration as a new version.
 	 *
 	 * @param string $auditAction The audit action that produced this state.
-	 * @param string $actor       The actor of that action.
+	 * @param string $actor The actor of that action.
 	 *
 	 * @return string|null The version id, or null when no version was kept.
 	 *
@@ -95,9 +95,9 @@ class ThemeVersionService {
 			$folder = $this->getFolder();
 			$id = $this->nextId(folder: $folder, prefix: gmdate('YmdHis', $time));
 			$record = [
-				'id'     => $id,
-				'ts'     => gmdate('Y-m-d\TH:i:s\Z', $time),
-				'actor'  => $actor,
+				'id' => $id,
+				'ts' => gmdate('Y-m-d\TH:i:s\Z', $time),
+				'actor' => $actor,
 				'action' => $auditAction,
 				'bundle' => $this->bundleService->export(),
 			];
@@ -137,9 +137,9 @@ class ThemeVersionService {
 			}
 
 			$versions[] = [
-				'id'     => (string)$record['id'],
-				'ts'     => (string)($record['ts'] ?? ''),
-				'actor'  => (string)($record['actor'] ?? ''),
+				'id' => (string)$record['id'],
+				'ts' => (string)($record['ts'] ?? ''),
+				'actor' => (string)($record['actor'] ?? ''),
 				'action' => (string)($record['action'] ?? ''),
 			];
 		}
@@ -172,7 +172,7 @@ class ThemeVersionService {
 	 * Read and decode one version file.
 	 *
 	 * @param ISimpleFolder $folder The versions folder.
-	 * @param string        $name   The file name.
+	 * @param string $name The file name.
 	 *
 	 * @return array<string, mixed>|null The record, or null when absent or unreadable.
 	 */
@@ -193,7 +193,7 @@ class ThemeVersionService {
 	 * The next free id for this second.
 	 *
 	 * @param ISimpleFolder $folder The versions folder.
-	 * @param string        $prefix The `YmdHis` second.
+	 * @param string $prefix The `YmdHis` second.
 	 *
 	 * @return string The id.
 	 */

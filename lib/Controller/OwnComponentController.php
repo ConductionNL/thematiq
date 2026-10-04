@@ -44,10 +44,10 @@ class OwnComponentController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param string              $appName    The app name.
-	 * @param IRequest            $request    The request.
+	 * @param string $appName The app name.
+	 * @param IRequest $request The request.
 	 * @param OwnComponentService $components The store.
-	 * @param IL10N               $l          The error texts.
+	 * @param IL10N $l The error texts.
 	 */
 	public function __construct(
 		string $appName,

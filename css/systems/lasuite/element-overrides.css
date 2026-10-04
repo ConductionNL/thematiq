@@ -144,16 +144,34 @@ header#header {
    `/core/…` would break. */
 #header .logo,
 #header .logo-icon {
-	background-color: var(
+	/* A set's own logo or an admin's upload takes the mark's place (#968):
+	   LogoLayerService declares the three --nldesign-header-logo-* variables
+	   only when a logo exists, so the fallbacks below are the Nextcloud mark
+	   in brand colour. tests/Unit/Service/SetLogoReachTest.php.
+
+	   --nldesign-header-mark-fill names that brand colour on the element, for
+	   LogoLayerService's no-logo rule, which renders over this one and would
+	   otherwise fill the mark with the header text colour (#975). */
+	--nldesign-header-mark-fill: var(
 		--lasuite-content-brand-icon,
 		var(--lasuite-color-brand-550)
+	);
+
+	background-color: var(
+		--nldesign-header-logo-fill,
+		var(--lasuite-content-brand-icon, var(--lasuite-color-brand-550))
 	) !important;
-	background-image: none !important;
+	background-image: var(--nldesign-header-logo-image, none) !important;
 	filter: none !important;
 	-webkit-filter: none !important;
-	-webkit-mask: url('../../../../../core/img/logo/logo.svg') no-repeat center /
-		contain !important;
-	mask: url('../../../../../core/img/logo/logo.svg') no-repeat center / contain !important;
+	-webkit-mask: var(
+		--nldesign-header-logo-mask,
+		url('../../../../../core/img/logo/logo.svg') no-repeat center / contain
+	) !important;
+	mask: var(
+		--nldesign-header-logo-mask,
+		url('../../../../../core/img/logo/logo.svg') no-repeat center / contain
+	) !important;
 }
 
 /* CURRENT APP NAME — La Suite sets its product wordmark noticeably larger than
@@ -211,12 +229,25 @@ header#header {
 	border-radius: var(--lasuite-border-radius) !important;
 	color: var(--lasuite-content-primary, var(--lasuite-color-gray-850)) !important;
 	box-shadow: none !important;
-	/* Nextcloud stretches the control to the full header height (50px on NC 34, 44px on NC 35); La Suite's
-	   is a 34px field centred in the bar. Height alone is not enough — the
-	   element is absolutely positioned, so it also has to be re-centred. */
+	/* La Suite's field is 34px, borders included, centred in the bar.
+	   `border-box` keeps the 1px borders inside the 34px (#932: 36px without).
+	   Centring: Nextcloud 35 renders the field `position: relative` inside a
+	   flex row that already centres it, so a top inset only pushes it down
+	   (#932: a 15px inset sat it 14.5px low on the 64px header). A zero inset
+	   with auto block margins centres it in both cases: in a flex row, and
+	   where an older major positions it absolutely in the header.
+	   tests/vitest/lasuiteSearchGeometry.spec.js resolves this layout. */
+	box-sizing: border-box !important;
 	block-size: 34px !important;
-	inset-block-start: calc((var(--header-height, 50px) - 34px) / 2) !important;
+	inset-block: 0 !important;
+	margin-block: auto !important;
 	min-block-size: 0 !important;
+}
+
+/* Nextcloud 35's inner field is as tall as a clickable area (34px), which
+   would overflow the 32px inside the borders and paint over them. */
+#header .unified-search-input__field {
+	block-size: 100% !important;
 }
 
 /* The control is a BUTTON, not a text field. Nextcloud 34 renders:
@@ -730,12 +761,16 @@ input.primary,
 	),
 .button-vue.button-vue--primary:not(:where([class*='_colorPickerField__button'])),
 button[class*='primary']:not(:where([class*='_colorPickerField__button'])) {
+	/* Cunningham's own brand fill token, not the header-icon alias: the dark
+	   blocks turn that alias brand-050 for icons on a dark header, which made
+	   the fill as pale as the brand-050 label (#935). Cunningham's dark theme
+	   keeps brand-550 here, and so do the dark blocks below. */
 	background-color: var(
-		--lasuite-content-brand-icon,
+		--lasuite--contextuals--background--semantic--brand--primary,
 		var(--lasuite-color-brand-550)
 	) !important;
 	border-color: var(
-		--lasuite-content-brand-icon,
+		--lasuite--contextuals--background--semantic--brand--primary,
 		var(--lasuite-color-brand-550)
 	) !important;
 	border-radius: var(--lasuite-border-radius) !important;
@@ -804,11 +839,11 @@ button.primary:hover,
 		:where([class*='_colorPickerField__button'])
 	) {
 	background-color: var(
-		--lasuite-content-brand,
+		--lasuite--contextuals--background--semantic--brand--primary-hover,
 		var(--lasuite-color-brand-650)
 	) !important;
 	border-color: var(
-		--lasuite-content-brand,
+		--lasuite--contextuals--background--semantic--brand--primary-hover,
 		var(--lasuite-color-brand-650)
 	) !important;
 }
@@ -1072,6 +1107,12 @@ h6 {
 		--lasuite-content-muted: var(--lasuite-color-gray-200);
 		--lasuite-content-brand: var(--lasuite-color-brand-050);
 		--lasuite-content-brand-icon: var(--lasuite-color-brand-050);
+		--lasuite--contextuals--background--semantic--brand--primary: var(
+			--lasuite--globals--colors--brand-550
+		);
+		--lasuite--contextuals--background--semantic--brand--primary-hover: var(
+			--lasuite--globals--colors--brand-650
+		);
 	}
 }
 
@@ -1109,6 +1150,12 @@ body[data-themes*='dark'] {
 	--lasuite-content-muted: var(--lasuite-color-gray-200);
 	--lasuite-content-brand: var(--lasuite-color-brand-050);
 	--lasuite-content-brand-icon: var(--lasuite-color-brand-050);
+	--lasuite--contextuals--background--semantic--brand--primary: var(
+		--lasuite--globals--colors--brand-550
+	);
+	--lasuite--contextuals--background--semantic--brand--primary-hover: var(
+		--lasuite--globals--colors--brand-650
+	);
 }
 
 /* ============================================

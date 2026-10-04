@@ -13,10 +13,10 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
  */
 
 declare(strict_types=1);
@@ -34,10 +34,10 @@ use OCA\Theming\ThemingDefaults;
  * Handles validation and application of color and image changes
  * to the Nextcloud theming system.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
  */
 class ThemingService {
 
@@ -86,7 +86,7 @@ class ThemingService {
 	 *
 	 * @return bool True if valid hex color.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
 	 */
 	public function isValidHexColor(string $color): bool {
 		return (bool)preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $color);
@@ -99,7 +99,7 @@ class ThemingService {
 	 *
 	 * @return string|null An error message if validation fails, or null on success.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
 	 */
 	public function validateColors(array $params): ?string {
 		foreach (['primary_color', 'background_color'] as $colorKey) {
@@ -120,7 +120,7 @@ class ThemingService {
 	 *
 	 * @return string|null An error message if validation fails, or null on success.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
 	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function validateImagePaths(array $params): ?string {
@@ -158,7 +158,7 @@ class ThemingService {
 	 *
 	 * @return string|null An error message if validation fails, or null on success.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
 	 */
 	private function validateSinglePath(string $imageKey, string $imagePath): ?string {
 		$hasDotDot = str_contains($imagePath, '..');
@@ -187,7 +187,7 @@ class ThemingService {
 	 *
 	 * @return array The list of updated color keys.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
 	 */
 	public function applyColors(array $params): array {
 		$updated = [];
@@ -210,7 +210,7 @@ class ThemingService {
 	 *
 	 * @return array The updated keys, plus `background_mode` when a mode was applied.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
 	 */
 	private function applyBackgroundMode(array $params, array $updated): array {
 		// A theme that CAPTURED Nextcloud's branding says which of the three
@@ -266,7 +266,7 @@ class ThemingService {
 	 *
 	 * @return array The list of updated image keys.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
 	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function applyImages(array $params): array {
@@ -352,7 +352,7 @@ class ThemingService {
 	 *
 	 * @return ImageManager The image manager instance.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
 	 */
 	public function getImageManager(): ImageManager {
 		return $this->imageManager;

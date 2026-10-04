@@ -109,10 +109,10 @@ class SettableContrastPairs {
 	/**
 	 * One reported pair.
 	 *
-	 * @param string     $name       The pair name.
-	 * @param string     $foreground What the foreground is.
-	 * @param string     $background What the background is.
-	 * @param float|null $ratio      The measured ratio, or null when a value could not be resolved.
+	 * @param string $name The pair name.
+	 * @param string $foreground What the foreground is.
+	 * @param string $background What the background is.
+	 * @param float|null $ratio The measured ratio, or null when a value could not be resolved.
 	 *
 	 * @return array{pair: string, foreground: string, background: string, ratio: float|null, threshold: float, passes: bool} The pair.
 	 */

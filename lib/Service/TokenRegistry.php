@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
  */
 
 declare(strict_types=1);
@@ -58,9 +58,9 @@ namespace OCA\Thematiq\Service;
  * Types: color | text
  * Groups: `brand`, or the id of the component the token belongs to
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
  */
 class TokenRegistry implements TokenRegistryInterface {
 	/**
@@ -146,7 +146,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *     perScheme?: bool
 	 * }> The token registry.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
 	public static function getTokens(): array {
 		return array_merge(self::getBrandTokens(), self::getComponentTokens());
@@ -196,8 +196,9 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * A missing or malformed table yields none, so the brand tokens still edit.
 	 *
+	 * Returns name => tab, type, label, settable, token, advanced and perScheme.
+	 *
 	 * @return array<string, array{tab: string, type: string, label: string, settable: true, token: string, advanced: bool, perScheme: bool}>
-	 *         Name => tab, type, label, settable, token, advanced and perScheme.
 	 *
 	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
@@ -321,7 +322,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return array<string, array{tab: string, type: string, label: string}> Login tokens.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
 	private static function getLoginTokens(): array {
 		return [
@@ -345,7 +346,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return array<string, array{tab: string, type: string, label: string}> Content tokens.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
 	private static function getContentTokens(): array {
 		return [
@@ -376,7 +377,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return array<string, array{tab: string, type: string, label: string}> Status tokens.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
 	private static function getStatusTokens(): array {
 		return [
@@ -403,7 +404,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return array<string, array{tab: string, type: string, label: string}> Typography tokens.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
 	private static function getTypographyTokens(): array {
 		return [
@@ -426,7 +427,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return array<string, string> Map of tab id to display label.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
 	 */
 	public static function getTabLabels(): array {
 		return [
@@ -442,7 +443,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return array<string> List of token names.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
 	 */
 	public static function getTokenNames(): array {
 		return array_keys(self::getTokens());
@@ -468,7 +469,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @return bool True if the token is in the registry.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-47
 	 */
 	public static function isEditable(string $tokenName): bool {
 		return array_key_exists($tokenName, self::getTokens()) === true
@@ -556,7 +557,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * }>>
 	 *         Tokens grouped by tab id.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-46
 	 */
 	public static function getTokensByTab(): array {
 		$grouped = [];

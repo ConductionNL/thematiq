@@ -389,12 +389,14 @@ class CssInjectionService {
 	 * do not change when the set changes, and must keep their position AFTER
 	 * the set layers so an admin's overrides still win.
 	 *
+	 * Returns ordered entries: `kind` is `file` (a stylesheet under `css/`, `file` without
+	 * extension) or `inline` (a `<style>` block, `css`, with the element `id` the client
+	 * replaces).
+	 *
 	 * @param string $designSystemId The resolved design system id.
-	 * @param string $tokenSet       The token set id.
+	 * @param string $tokenSet The token set id.
 	 *
 	 * @return array<int, array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string}>
-	 *         Ordered entries: `kind` is `file` (a stylesheet under `css/`, `file` without extension)
-	 *         or `inline` (a `<style>` block, `css`, with the element `id` the client replaces).
 	 *
 	 * @SuppressWarnings(PHPMD.NPathComplexity) - the path count IS the number of
 	 *   layer combinations a page can emit, and each branch here is one
@@ -529,7 +531,7 @@ class CssInjectionService {
 	 * @param string $tokenSet The token set id.
 	 *
 	 * @return array<int, array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string}>
-	 *         The entries, in cascade order.
+	 *                                                                                                                 The entries, in cascade order.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
@@ -563,9 +565,9 @@ class CssInjectionService {
 	 *
 	 * Its own failure degrades only itself: the set's other layers still emit.
 	 *
-	 * @param string $tokenSet       The token set.
+	 * @param string $tokenSet The token set.
 	 * @param string $designSystemId The design system the set wears.
-	 * @param bool   $withDark       Whether the set's dark variant is part of the cascade.
+	 * @param bool $withDark Whether the set's dark variant is part of the cascade.
 	 *
 	 * @return array<int, array{layer: string, kind: string, css: string, id: string}> Zero or one entry.
 	 *
@@ -600,7 +602,7 @@ class CssInjectionService {
 	 * why a stylesheet cannot do this with var().
 	 *
 	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline
-	 *         layer, or null when the instance could not be read.
+	 *                                                                          layer, or null when the instance could not be read.
 	 *
 	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
 	 */
@@ -643,7 +645,7 @@ class CssInjectionService {
 	 * A stylesheet layer: a shipped static file, or a runtime file linked by route.
 	 *
 	 * @param string $layer The layer name.
-	 * @param string $file  The stylesheet path relative to `css/`, without extension.
+	 * @param string $file The stylesheet path relative to `css/`, without extension.
 	 *
 	 * @return array{layer: string, kind: string, file?: string, name?: string} The layer entry.
 	 */
@@ -732,7 +734,7 @@ class CssInjectionService {
 	 * Emit the admin-authored override layers: the always-present
 	 * custom-overrides stylesheet, then the freeform custom CSS.
 	 *
-	 * @param string $tokenSet       The token set this page renders.
+	 * @param string $tokenSet The token set this page renders.
 	 * @param string $designSystemId The design system that set wears.
 	 *
 	 * @return void
@@ -810,12 +812,17 @@ class CssInjectionService {
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	private function injectConditionalStyles(): void {
+		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet
+		// before every header, and the saved overrides are a header, so as
+		// addStyle() entries the toggles landed before custom-overrides. The
+		// spec puts them after it (css-architecture, hide-slogan, menu-labels),
+		// which is also where the admin page appends them on a toggle.
 		if ($this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1') {
-			$this->emitStyle(file: 'hide-slogan');
+			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'hide-slogan'));
 		}
 
 		if ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1') {
-			$this->emitStyle(file: 'show-menu-labels');
+			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
 		// A header, so it follows the overrides and custom CSS links: it must
@@ -865,9 +872,9 @@ class CssInjectionService {
 	 * Indirected for the same reason as `emitStyle()`: it is a side effect on a
 	 * Nextcloud static, and a test can capture it only if it is overridable.
 	 *
-	 * @param string      $css The stylesheet body.
-	 * @param string|null $id  Element id, so the client can find and replace this
-	 *                         exact block when a set is applied without a reload.
+	 * @param string $css The stylesheet body.
+	 * @param string|null $id Element id, so the client can find and replace this
+	 *                        exact block when a set is applied without a reload.
 	 *
 	 * @return void
 	 *

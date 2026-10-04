@@ -121,7 +121,7 @@ class GroupThemingService {
 	 * an error — reproducing today's global-theming behavior exactly.
 	 *
 	 * @return array<int, array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>}>
-	 *         The ordered mapping.
+	 *                                                                                                               The ordered mapping.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
@@ -165,7 +165,7 @@ class GroupThemingService {
 	 * @param array<int, mixed> $entries The desired ordered mapping (`{group, tokenSet}` each).
 	 *
 	 * @return array<int, array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>}>
-	 *         The persisted mapping.
+	 *                                                                                                               The persisted mapping.
 	 *
 	 * @throws GroupThemingValidationException When any entry fails validation.
 	 *

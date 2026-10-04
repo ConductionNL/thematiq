@@ -70,9 +70,9 @@ final class DtcgExportControllerTest extends TestCase {
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->stored[$key] ?? $default));
 		$cache = $this->createMock(ICacheFactory::class);
 		$cache->method('createDistributed')->willReturn($this->createMock(ICache::class));
-		$parser    = new CssParserService();
+		$parser = new CssParserService();
 		$tokenSets = new TokenSetService($appManager, $config, $this->createMock(LoggerInterface::class), new ShippedTokenSetAuditService(new ContrastService(), $parser), $cache, new TokenSetVocabularyAuditService($parser));
-		$l         = $this->createMock(IL10N::class);
+		$l = $this->createMock(IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
 		return new DtcgExportController('thematiq', $this->createMock(IRequest::class), $tokenSets, $appManager, $parser, new DesignTokensWriter(), new DeprecationRecords($config), $l);
@@ -104,9 +104,9 @@ final class DtcgExportControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testOnlyTheSetsOwnDeclarations(): void {
-		$own      = (new CssParserService())->parseRootBlock(css: (string)file_get_contents(\dirname(__DIR__, 3) . '/css/tokens/amsterdam.css'));
+		$own = (new CssParserService())->parseRootBlock(css: (string)file_get_contents(\dirname(__DIR__, 3) . '/css/tokens/amsterdam.css'));
 		$document = json_decode((string)json_encode($this->controller()->export(id: 'amsterdam')->getData()), true);
-		$names    = array_keys($document['$extensions']['nl.conduction.thematiq']['cssOnly']);
+		$names = array_keys($document['$extensions']['nl.conduction.thematiq']['cssOnly']);
 		array_walk_recursive(
 			$document,
 			static function ($value, $key) use (&$names): void {

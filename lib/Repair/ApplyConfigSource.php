@@ -37,7 +37,7 @@ class ApplyConfigSource implements IRepairStep {
 	 * Constructor.
 	 *
 	 * @param ConfigSourceService $source The configuration source service.
-	 * @param LoggerInterface     $logger The logger.
+	 * @param LoggerInterface $logger The logger.
 	 */
 	public function __construct(
 		private readonly ConfigSourceService $source,

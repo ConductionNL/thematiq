@@ -262,6 +262,58 @@ describe('the shipped La Suite overrides', () => {
 	})
 })
 
+describe('the La Suite primary button in dark mode (#935)', () => {
+	// Cunningham's own dark theme keeps the brand fill (brand-550 at rest,
+	// brand-650 on hover, `.cunningham-theme--dark` in defaults.css) and the
+	// brand-050 on-brand label, so the label has to clear 4.5:1 on both fills,
+	// on the cunningham ramp (defaults.css alone) and the lasuite one.
+	const CUNNINGHAM_LIGHT = rootTokens(read('css/systems/lasuite/defaults.css'))
+	const RAMPS = [
+		['cunningham', { ...CUNNINGHAM_LIGHT, ...darkTokens() }],
+		['lasuite', DARK],
+	]
+	const FILL = '.button-vue--vue-primary:not(:where('
+	const HOVER = '.button-vue--vue-primary:hover'
+	const LABEL =
+		'.button-vue--vue-primary:not([data-admin-theming-setting-color-picker])'
+
+	it.each(RAMPS)(
+		'keeps the label readable on the fill at rest (%s)',
+		(name, tokens) => {
+			const label = resolve(shellValue(LABEL, 'color'), tokens)
+			const fill = resolve(shellValue(FILL, 'background-color'), tokens)
+			expect(
+				contrast(label, fill),
+				`${label} on ${fill}`,
+			).toBeGreaterThanOrEqual(4.5)
+		},
+	)
+
+	it.each(RAMPS)(
+		'keeps the label readable on the hover fill (%s)',
+		(name, tokens) => {
+			const label = resolve(shellValue(LABEL, 'color'), tokens)
+			const fill = resolve(shellValue(HOVER, 'background-color'), tokens)
+			expect(
+				contrast(label, fill),
+				`${label} on ${fill}`,
+			).toBeGreaterThanOrEqual(4.5)
+		},
+	)
+
+	it.each(RAMPS)(
+		'fills with the Cunningham dark brand steps (%s)',
+		(name, tokens) => {
+			expect(resolve(shellValue(FILL, 'background-color'), tokens)).toBe(
+				resolve('var(--lasuite-color-brand-550)', tokens),
+			)
+			expect(resolve(shellValue(HOVER, 'background-color'), tokens)).toBe(
+				resolve('var(--lasuite-color-brand-650)', tokens),
+			)
+		},
+	)
+})
+
 describe('the dark-ramp check', () => {
 	it('fails when a dark variant redefines only the shared layer', () => {
 		const css = `

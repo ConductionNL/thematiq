@@ -96,7 +96,7 @@ class DocumentAssetService {
 	 * Constructor.
 	 *
 	 * @param IAppData $appData The app's data store.
-	 * @param IConfig  $config  App config.
+	 * @param IConfig $config App config.
 	 */
 	public function __construct(
 		private readonly IAppData $appData,
@@ -123,7 +123,7 @@ class DocumentAssetService {
 	/**
 	 * Validate and store an asset, replacing the previous one of its kind.
 	 *
-	 * @param string $kind  `logo` or `cover`.
+	 * @param string $kind `logo` or `cover`.
 	 * @param string $bytes The uploaded file.
 	 *
 	 * @return array{mime: string, size: int, uploadedAt: int} The stored metadata.

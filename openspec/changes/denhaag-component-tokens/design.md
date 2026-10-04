@@ -113,6 +113,22 @@ A set that declares a `--denhaag-*` or `--nl-data-badge-*` property keeps it: th
 after the bridge. The audit judges the set's own value, not the bridge's. Uploaded custom sets
 may carry such properties once `nlds-theme-converter` widens the validator.
 
+## Build notes (2026-10-02)
+
+- **37 properties the components read without a fallback are not in
+  design-tokens-components 5.1.0.** 12 are older `sidenav-*` names; they read the newer
+  `side-navigation-*` value. 13 are geometry, chosen from Den Haag's own common scale
+  (`design-tokens-common` 4.0.0) and named with their source in the mapping's `explicit`
+  block. The rest are colours and are mapped like every other colour.
+- **The generator refuses a Den Haag colour the mapping does not name.** The first run found
+  one (`--denhaag-case-card-list-background-hover-background-color`).
+- **The portal page is white, not the login colour.** `resolveDeclarations()` falls back to
+  `theming.background_color`, which is Nextcloud's login background (vng: `#0277BD`). A portal
+  paints its page from `--nldesign-color-background` with the bridge's white fallback, so the
+  Den Haag pairs are measured on that.
+- **The Den Haag section sits inside the bridge's one `:root` block**, between markers, because
+  a second `:root` is a duplicate selector to stylelint.
+
 ## Risks
 
 - **Geometry differs from today's three sets.** `rotterdam`, `vng` and the school sets declare

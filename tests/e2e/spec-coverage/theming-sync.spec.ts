@@ -144,6 +144,16 @@ async function coreImage(
 	return fetchText(page, url)
 }
 
+/**
+ * What a core image slot holds: its status, and its bytes when there is an
+ * image. With no image core answers its HTML 404 page, which carries a fresh
+ * CSP nonce and request token on every load, so two reads of the same empty
+ * slot never match byte for byte.
+ */
+function imageState(r: { status: number; text: string }) {
+	return { status: r.status, body: r.status === 200 ? r.text : null }
+}
+
 /** The fields a refused request must leave untouched. */
 function stateOf(s: ThemingSnapshot) {
 	return {
@@ -1096,7 +1106,9 @@ test.describe('theming-sync', () => {
 		expect(res.status).toBe(400)
 		const after = await readTheming(page)
 		expect(stateOf(after)).toEqual(stateOf(before))
-		expect(await coreImage(page, 'logo')).toEqual(logoBefore)
+		expect(imageState(await coreImage(page, 'logo'))).toEqual(
+			imageState(logoBefore),
+		)
 	})
 
 	// @e2e openspec/specs/theming-sync/spec.md#params-read-from-request

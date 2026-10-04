@@ -61,10 +61,10 @@ class TokenDeprecationService {
 	/**
 	 * Constructor.
 	 *
-	 * @param DeprecationRecords $records  The stored records.
-	 * @param OwnTokenService  $ownTokens  The own tokens, which can be replacements.
-	 * @param IAppManager      $appManager For the thematiq vocabulary in `defaults.css`.
-	 * @param CssParserService $cssParser  Reads that vocabulary.
+	 * @param DeprecationRecords $records The stored records.
+	 * @param OwnTokenService $ownTokens The own tokens, which can be replacements.
+	 * @param IAppManager $appManager For the thematiq vocabulary in `defaults.css`.
+	 * @param CssParserService $cssParser Reads that vocabulary.
 	 */
 	public function __construct(
 		private readonly DeprecationRecords $records,
@@ -84,11 +84,11 @@ class TokenDeprecationService {
 	 * @spec openspec/specs/token-deprecations/spec.md#requirement-an-administrator-deprecates-a-token
 	 */
 	public function list(?string $today = null): array {
-		$today   = ($today ?? gmdate('Y-m-d'));
+		$today = ($today ?? gmdate('Y-m-d'));
 		$records = [];
 		foreach ($this->records->all() as $token => $record) {
 			$record['state'] = (string)($record['state'] ?? 'active');
-			$record['due']   = (($record['removalDate'] ?? '') !== '' && (string)$record['removalDate'] < $today);
+			$record['due'] = (($record['removalDate'] ?? '') !== '' && (string)$record['removalDate'] < $today);
 			$records[$token] = $record;
 		}
 
@@ -123,10 +123,10 @@ class TokenDeprecationService {
 	/**
 	 * Record or change a deprecation.
 	 *
-	 * @param string               $token  The deprecated name.
-	 * @param array<string, mixed> $input  {severity, replacement?, removalDate?, message?}.
-	 * @param string               $source `admin` or `import`.
-	 * @param string|null          $today  The date a removal date may not lie before, today when null.
+	 * @param string $token The deprecated name.
+	 * @param array<string, mixed> $input {severity, replacement?, removalDate?, message?}.
+	 * @param string $source `admin` or `import`.
+	 * @param string|null $today The date a removal date may not lie before, today when null.
 	 *
 	 * @return array<string, mixed> The stored record.
 	 *
@@ -139,12 +139,12 @@ class TokenDeprecationService {
 			throw new InvalidArgumentException('token', 400);
 		}
 
-		$records  = $this->records->all();
+		$records = $this->records->all();
 		$existing = ($records[$token] ?? []);
-		$record   = $this->checked(token: $token, input: $input, today: ($today ?? gmdate('Y-m-d')));
+		$record = $this->checked(token: $token, input: $input, today: ($today ?? gmdate('Y-m-d')));
 		$record['deprecatedAt'] = (string)($existing['deprecatedAt'] ?? gmdate(DATE_ATOM));
-		$record['source']       = (string)($existing['source'] ?? $source);
-		$record['state']        = (string)($existing['state'] ?? 'active');
+		$record['source'] = (string)($existing['source'] ?? $source);
+		$record['state'] = (string)($existing['state'] ?? 'active');
 
 		$records[$token] = $record;
 		$this->records->save(records: $records);
@@ -209,7 +209,7 @@ class TokenDeprecationService {
 	 * @spec openspec/specs/token-deprecations/spec.md#requirement-imported-deprecation-notices-can-be-recorded
 	 */
 	public function adoptImportNotices(array $notices): array {
-		$records  = $this->records->all();
+		$records = $this->records->all();
 		$recorded = [];
 		foreach ($notices as $notice) {
 			$token = (string)($notice['token'] ?? '');
@@ -228,7 +228,7 @@ class TokenDeprecationService {
 			}
 
 			$records[$token] = $record;
-			$recorded[]      = $token;
+			$recorded[] = $token;
 		}
 
 		$this->records->save(records: $records);
@@ -322,9 +322,9 @@ class TokenDeprecationService {
 	/**
 	 * The checked fields of a record.
 	 *
-	 * @param string               $token The deprecated name.
+	 * @param string $token The deprecated name.
 	 * @param array<string, mixed> $input The submitted fields.
-	 * @param string               $today Today, `Y-m-d`.
+	 * @param string $today Today, `Y-m-d`.
 	 *
 	 * @return array<string, string> Shape: {severity, replacement?, removalDate?, message?}.
 	 *
@@ -350,7 +350,7 @@ class TokenDeprecationService {
 	/**
 	 * A replacement that exists and is not the token itself, or ''.
 	 *
-	 * @param string $token       The deprecated name.
+	 * @param string $token The deprecated name.
 	 * @param string $replacement The submitted replacement.
 	 *
 	 * @return string
@@ -368,7 +368,7 @@ class TokenDeprecationService {
 	/**
 	 * A real `Y-m-d` date, today or later, or ''.
 	 *
-	 * @param string $date  The submitted date.
+	 * @param string $date The submitted date.
 	 * @param string $today Today, `Y-m-d`.
 	 *
 	 * @return string

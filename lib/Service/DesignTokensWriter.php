@@ -54,10 +54,10 @@ class DesignTokensWriter {
 	/**
 	 * Write a document.
 	 *
-	 * @param array<string, string>               $declarations Custom property => value, as the set declares them.
-	 * @param string                              $setId        The set id.
-	 * @param string                              $setName      The set name, the root `$description`.
-	 * @param string                              $appVersion   The app version, in the root extension.
+	 * @param array<string, string> $declarations Custom property => value, as the set declares them.
+	 * @param string $setId The set id.
+	 * @param string $setName The set name, the root `$description`.
+	 * @param string $appVersion The app version, in the root extension.
 	 * @param array<string, array<string, mixed>> $deprecations Token name => deprecation record, written as `$deprecated`.
 	 *
 	 * @return array<string, mixed> The DTCG document.
@@ -65,7 +65,7 @@ class DesignTokensWriter {
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
 	 */
 	public function write(array $declarations, string $setId, string $setName, string $appVersion, array $deprecations = []): array {
-		$typed   = [];
+		$typed = [];
 		$cssOnly = [];
 		foreach ($declarations as $name => $value) {
 			$token = $this->typer->typed(name: (string)$name, value: trim((string)$value));
@@ -128,22 +128,21 @@ class DesignTokensWriter {
 		return array_values(array_filter($parts, static fn (string $part): bool => $part !== ''));
 	}//end pathOf()
 
-
 	/**
 	 * The path of every typed token. A name whose path would sit inside another token's path
 	 * (a group and a token at once) is written to cssOnly instead.
 	 *
-	 * @param array<int, string>    $names        The typed names.
-	 * @param array<string, string> $cssOnly      The untyped map, extended in place.
+	 * @param array<int, string> $names The typed names.
+	 * @param array<string, string> $cssOnly The untyped map, extended in place.
 	 * @param array<string, string> $declarations The declared values.
 	 *
 	 * @return array<string, array<int, string>> Name => path.
 	 */
 	private function paths(array $names, array &$cssOnly, array $declarations): array {
-		$paths  = [];
+		$paths = [];
 		$joined = [];
 		foreach ($names as $name) {
-			$paths[$name]  = $this->pathOf(name: $name);
+			$paths[$name] = $this->pathOf(name: $name);
 			$joined[$name] = implode('.', $paths[$name]);
 		}
 
@@ -164,10 +163,10 @@ class DesignTokensWriter {
 	 * Turn each `var()` into a DTCG alias to its target's path, with the target's type. A
 	 * `var()` whose target is not a token of this document goes to cssOnly.
 	 *
-	 * @param array<string, array<string, mixed>> $typed        Name => token.
-	 * @param array<string, array<int, string>>   $paths        Name => path.
-	 * @param array<string, string>               $cssOnly      The untyped map, extended in place.
-	 * @param array<string, string>               $declarations The declared values.
+	 * @param array<string, array<string, mixed>> $typed Name => token.
+	 * @param array<string, array<int, string>> $paths Name => path.
+	 * @param array<string, string> $cssOnly The untyped map, extended in place.
+	 * @param array<string, string> $declarations The declared values.
 	 *
 	 * @return array<string, array<string, mixed>> The tokens, aliases resolved.
 	 */
@@ -193,7 +192,7 @@ class DesignTokensWriter {
 	/**
 	 * The type at the end of an alias chain, or null when the chain leaves the document or loops.
 	 *
-	 * @param string                              $name  The alias target.
+	 * @param string $name The alias target.
 	 * @param array<string, array<string, mixed>> $typed Name => token.
 	 *
 	 * @return string|null
@@ -202,7 +201,7 @@ class DesignTokensWriter {
 		$seen = [];
 		while (isset($typed[$name]['$alias']) === true && isset($seen[$name]) === false) {
 			$seen[$name] = true;
-			$name        = $typed[$name]['$alias'];
+			$name = $typed[$name]['$alias'];
 		}
 
 		return ($typed[$name]['$type'] ?? null);
@@ -211,7 +210,7 @@ class DesignTokensWriter {
 	/**
 	 * Add `$deprecated` and the extension fields of a deprecation.
 	 *
-	 * @param array<string, mixed>      $token  The token.
+	 * @param array<string, mixed> $token The token.
 	 * @param array<string, mixed>|null $record The deprecation, or null.
 	 *
 	 * @return array<string, mixed>
@@ -254,8 +253,8 @@ class DesignTokensWriter {
 	 * Put a token at its path.
 	 *
 	 * @param array<string, mixed> $document The document, changed in place.
-	 * @param array<int, string>   $path     The path.
-	 * @param array<string, mixed> $token    The token.
+	 * @param array<int, string> $path The path.
+	 * @param array<string, mixed> $token The token.
 	 *
 	 * @return void
 	 */
@@ -266,8 +265,8 @@ class DesignTokensWriter {
 	/**
 	 * A node with the token set at the path below it.
 	 *
-	 * @param array<string, mixed> $node  The node.
-	 * @param array<int, string>   $path  The path below it.
+	 * @param array<string, mixed> $node The node.
+	 * @param array<int, string> $path The path below it.
 	 * @param array<string, mixed> $token The token.
 	 *
 	 * @return array<string, mixed>
@@ -279,7 +278,7 @@ class DesignTokensWriter {
 			return $node;
 		}
 
-		$child          = (array)($node[$segment] ?? []);
+		$child = (array)($node[$segment] ?? []);
 		$node[$segment] = $this->placed(node: $child, path: $path, token: $token);
 
 		return $node;

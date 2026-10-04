@@ -115,13 +115,13 @@ final class OwnTokenControllerTest extends TestCase {
 		});
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
-		$parser  = new CssParserService();
+		$parser = new CssParserService();
 		$records = new DeprecationRecords($config);
-		$this->ownTokens    = new OwnTokenService($config, new TokenValueValidator(), $records);
+		$this->ownTokens = new OwnTokenService($config, new TokenValueValidator(), $records);
 		$this->deprecations = new TokenDeprecationService($records, $this->ownTokens, $appManager, $parser);
 		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
 		$this->overrides = new CustomOverridesService(new DirectoryRuntimeFileStore($this->appDir), $parser, $dark, null, null, null, $this->ownTokens);
-		$this->audit     = $this->createMock(ThemingAuditService::class);
+		$this->audit = $this->createMock(ThemingAuditService::class);
 	}//end setUp()
 
 	/**
@@ -290,7 +290,7 @@ final class OwnTokenControllerTest extends TestCase {
 		$this->deprecations->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'warning', 'replacement' => '--nldesign-org-brand-accent', 'removalDate' => '2027-03-01'], today: '2026-10-02');
 
 		$catalog = new CatalogController('thematiq', $this->createMock(IRequest::class), $this->createMock(TokenSetService::class), $this->deprecations);
-		$rows    = $catalog->deprecations()->getData()['deprecations'];
+		$rows = $catalog->deprecations()->getData()['deprecations'];
 
 		$this->assertSame(['token', 'severity', 'replacement', 'removalDate', 'message', 'deprecatedAt', 'due', 'state'], array_keys($rows[0]));
 		$this->assertSame('--nldesign-org-brand-accent', $rows[0]['replacement']);

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ namespace OCA\Thematiq\Service;
  *
  * Extracts --token-name: value pairs from raw CSS strings.
  *
- * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+ * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
  * @spec openspec/specs/dark-mode/spec.md
  */
 class CssParserService {
@@ -38,7 +38,7 @@ class CssParserService {
 	 *
 	 * @return array<string, string>|null Parsed token map, or null if none found.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
 	 *
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - a CSS tokenizer is a state machine: comments, strings, nesting and fallbacks are states,
 	 *   not helpers, and extracting them would pass the whole state between methods.
@@ -159,7 +159,7 @@ class CssParserService {
 	 * custom-property name is located inside it rather than assumed to start it.
 	 * A chunk with no `--name:` at all is not a declaration and is dropped.
 	 *
-	 * @param string                $chunk  The raw text between two terminators.
+	 * @param string $chunk The raw text between two terminators.
 	 * @param array<string, string> $parsed The declaration map, appended to by reference.
 	 *
 	 * @return void
@@ -194,7 +194,7 @@ class CssParserService {
 	 *
 	 * @return array<string, string> Map of token name => value.
 	 *
-	 * @spec openspec/changes/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
 	 */
 	public function parseRootBlock(string $css): array {
 		// Comments first: one holding braces (defaults.css has `{normal,bold}`) ended the block early.

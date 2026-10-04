@@ -34,9 +34,9 @@ class HealthControllerEngineResultTest extends TestCase {
 	/**
 	 * Build a controller whose container hands back a fake engine.
 	 *
-	 * @param string               $status   The engine's overall status.
-	 * @param array<string,string> $checks   The engine's per-check results.
-	 * @param int                  $httpCode The HTTP code the engine's policy resolved.
+	 * @param string $status The engine's overall status.
+	 * @param array<string,string> $checks The engine's per-check results.
+	 * @param int $httpCode The HTTP code the engine's policy resolved.
 	 *
 	 * @return HealthController
 	 */
@@ -46,7 +46,9 @@ class HealthControllerEngineResultTest extends TestCase {
 		};
 
 		$loader = new class($manifest) {
-			public function __construct(private object $manifest) {
+			public function __construct(
+				private object $manifest,
+			) {
 			}
 
 			public function load(string $appId): object {
@@ -68,7 +70,9 @@ class HealthControllerEngineResultTest extends TestCase {
 		};
 
 		$executor = new class($result) {
-			public function __construct(private object $result) {
+			public function __construct(
+				private object $result,
+			) {
 			}
 
 			public function execute(object $manifest): object {

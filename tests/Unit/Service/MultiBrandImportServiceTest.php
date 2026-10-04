@@ -118,11 +118,11 @@ final class MultiBrandImportServiceTest extends TestCase {
 		$repoApp = $this->createMock(IAppManager::class);
 		$repoApp->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$parser = new CssParserService();
-		$store  = new DirectoryRuntimeFileStore($this->appDir);
-		$dark   = new DarkPaletteService(new ContrastService(), $parser, $tempApp, $this->createMock(LoggerInterface::class), $store);
-		$this->sets  = new CustomTokenSetService($store, $this->config, new CustomTokenSetValidator(), new ContrastService(), $dark);
+		$store = new DirectoryRuntimeFileStore($this->appDir);
+		$dark = new DarkPaletteService(new ContrastService(), $parser, $tempApp, $this->createMock(LoggerInterface::class), $store);
+		$this->sets = new CustomTokenSetService($store, $this->config, new CustomTokenSetValidator(), new ContrastService(), $dark);
 		$this->audit = $this->createMock(ThemingAuditService::class);
-		$converter   = new TokenSetConverterService($repoApp, $parser, new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class));
+		$converter = new TokenSetConverterService($repoApp, $parser, new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class));
 		$this->imports = new MultiBrandImportService(new MultiBrandSource(), $converter, new CustomTokenSetValidator(), $this->sets, $parser, new ContrastService(), $dark, $this->config, $this->audit);
 	}//end setUp()
 
@@ -319,7 +319,7 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testEachBrandCarriesItsOwnContrastWarnings(): void {
-		$css    = ":root { --voorbeeld-x: 1px; }\n.licht-theme { --nldesign-color-primary: #ffff00; --nldesign-color-primary-text: #ffffff; }\n.donker-theme { --nldesign-color-primary: #154273; --nldesign-color-primary-text: #ffffff; }\n";
+		$css = ":root { --voorbeeld-x: 1px; }\n.licht-theme { --nldesign-color-primary: #ffff00; --nldesign-color-primary-text: #ffffff; }\n.donker-theme { --nldesign-color-primary: #154273; --nldesign-color-primary-text: #ffffff; }\n";
 		$result = $this->imports->import(sourceName: 'Proef', content: $css, keys: ['licht', 'donker']);
 		$warnings = array_column($result['sets'], 'warnings', 'brand');
 

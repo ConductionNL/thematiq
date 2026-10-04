@@ -117,7 +117,7 @@
 			"target": "--nldesign-color-text",
 			"nextcloud": ["--color-main-text"],
 			"sources": ["--utrecht-document-color", "--utrecht-paragraph-color"],
-			"fallback": { "kind": "ramp", "ramp": "neutral", "criterion": "darkest" },
+			"fallback": { "kind": "ramp", "ramp": "neutral", "default": "#333333", "criterion": "darkest" },
 			"transform": "copy"
 		},
 		{
@@ -126,7 +126,7 @@
 			"sources": ["--utrecht-form-field-description-color"],
 			"fallback": {
 				"kind": "ramp",
-				"ramp": "neutral",
+				"ramp": "neutral", "default": "#696969",
 				"criterion": "minContrast",
 				"min": 4.5,
 				"against": "--nldesign-color-nav-background"
@@ -152,7 +152,7 @@
 			"sources": ["--utrecht-textbox-border-color", "--utrecht-separator-color"],
 			"fallback": {
 				"kind": "ramp",
-				"ramp": "neutral",
+				"ramp": "neutral", "default": "#b4b4b4",
 				"criterion": "nearestLuminance",
 				"target": "#d1d1d1"
 			},
@@ -164,7 +164,7 @@
 			"sources": ["--utrecht-textbox-hover-border-color", "--utrecht-form-input-border-color"],
 			"fallback": {
 				"kind": "ramp",
-				"ramp": "neutral",
+				"ramp": "neutral", "default": "#696969",
 				"criterion": "minContrast",
 				"min": 3.0,
 				"against": "--nldesign-color-nav-background"
@@ -175,21 +175,21 @@
 			"target": "--nldesign-color-background-hover",
 			"nextcloud": ["--color-background-hover"],
 			"sources": ["--utrecht-table-row-hover-background-color", "--{p}-color-grey-97"],
-			"fallback": { "kind": "ramp", "ramp": "neutral", "criterion": "nearestLuminance", "target": "#f7f7f7" },
+			"fallback": { "kind": "ramp", "ramp": "neutral", "default": "#e8e9ea", "criterion": "nearestLuminance", "target": "#f7f7f7" },
 			"transform": "copy"
 		},
 		{
 			"target": "--nldesign-color-background-dark",
 			"nextcloud": ["--color-background-dark"],
 			"sources": ["--utrecht-table-header-background-color", "--{p}-color-grey-95"],
-			"fallback": { "kind": "ramp", "ramp": "neutral", "criterion": "nearestLuminance", "target": "#f2f2f2" },
+			"fallback": { "kind": "ramp", "ramp": "neutral", "default": "#e0e1e2", "criterion": "nearestLuminance", "target": "#f2f2f2" },
 			"transform": "copy"
 		},
 		{
 			"target": "--nldesign-color-background-darker",
 			"nextcloud": ["--color-background-darker"],
 			"sources": ["--{p}-color-grey-90"],
-			"fallback": { "kind": "ramp", "ramp": "neutral", "criterion": "nearestLuminance", "target": "#e6e6e6" },
+			"fallback": { "kind": "ramp", "ramp": "neutral", "default": "#d0d1d2", "criterion": "nearestLuminance", "target": "#e6e6e6" },
 			"transform": "copy"
 		},
 		{
@@ -369,14 +369,14 @@
 			"target": "--nldesign-color-placeholder-light",
 			"nextcloud": ["--color-placeholder-light"],
 			"sources": [],
-			"fallback": { "kind": "ramp", "ramp": "neutral", "criterion": "nearestLuminance", "target": "#f2f2f2" },
+			"fallback": { "kind": "ramp", "ramp": "neutral", "default": "#e5e5e5", "criterion": "nearestLuminance", "target": "#f2f2f2" },
 			"transform": "copy"
 		},
 		{
 			"target": "--nldesign-color-placeholder-dark",
 			"nextcloud": ["--color-placeholder-dark"],
 			"sources": [],
-			"fallback": { "kind": "ramp", "ramp": "neutral", "criterion": "nearestLuminance", "target": "#e6e6e6" },
+			"fallback": { "kind": "ramp", "ramp": "neutral", "default": "#cccccc", "criterion": "nearestLuminance", "target": "#e6e6e6" },
 			"transform": "copy"
 		},
 		{
