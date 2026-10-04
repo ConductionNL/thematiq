@@ -61,7 +61,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | vng | 11.98:1 | 4.5:1 | 2.50:1 | 3.0:1 | fail |
 | vught | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | westervoort | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
-| xxllnc | 21.00:1 | 4.5:1 | 21.00:1 | 3.0:1 | pass |
+| xxllnc | 11.24:1 | 4.5:1 | 14.16:1 | 3.0:1 | pass |
 | zevenaar | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | zwolle | 5.06:1 | 4.5:1 | 5.06:1 | 3.0:1 | pass |
 

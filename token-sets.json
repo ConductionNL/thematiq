@@ -130,7 +130,9 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/epe.svg",
 			"logo_dark": "img/logos/epe-dark.svg"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.3"
 	},
 	{
 		"id": "groningen",
@@ -139,7 +141,9 @@
 		"theming": {
 			"primary_color": "#154273",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "4.0.0"
 	},
 	{
 		"id": "haarlem",
@@ -148,7 +152,9 @@
 		"theming": {
 			"primary_color": "#1457A3",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "haarlemmermeer",
@@ -256,7 +262,8 @@
 		"theming": {
 			"primary_color": "#154273",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09"
 	},
 	{
 		"id": "ridderkerk",
@@ -265,7 +272,9 @@
 		"theming": {
 			"primary_color": "#008937",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "stedebroec",
@@ -380,11 +389,13 @@
 		"name": "xxllnc",
 		"description": "Design tokens for xxllnc",
 		"theming": {
-			"primary_color": "#333333",
-			"background_color": "#FFFFFF",
+			"primary_color": "#2b2b2b",
+			"background_color": "#ffffff",
 			"logo": "img/logos/xxllnc.svg",
 			"logo_dark": "img/logos/xxllnc-dark.svg"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "zevenaar",
