@@ -206,4 +206,52 @@ class SetLogoReachTest extends TestCase {
 		$this->assertStringContainsString('core/img/logo/logo.svg', $this->resolve(value: ($rule['mask'] ?? ''), vars: $vars));
 		$this->assertStringContainsString('brand-550', $this->resolve(value: ($rule['background-color'] ?? ''), vars: $vars));
 	}//end testWithoutALogoTheBrandColouredMarkStays()
+
+	/**
+	 * The declarations of the no-logo layer's own `#nextcloud .logo` rule.
+	 *
+	 * @param string $css The layer CSS.
+	 *
+	 * @return array<string, string> Property => value, `!important` dropped.
+	 */
+	private function layerLogoRule(string $css): array {
+		$this->assertSame(1, preg_match('/#nextcloud \.logo\{([^}]*)\}/', $css, $match), 'the no-logo layer paints #nextcloud .logo');
+		$declarations = [];
+		foreach (explode(';', $match[1]) as $declaration) {
+			$parts = explode(':', $declaration, 2);
+			if (count($parts) === 2) {
+				$declarations[strtolower(trim($parts[0]))] = trim((string)preg_replace('/\s*!important\s*$/', '', trim($parts[1])));
+			}
+		}
+
+		return $declarations;
+	}//end layerLogoRule()
+
+	/**
+	 * Without a logo the mark keeps the La Suite brand fill, not the header text
+	 * colour (thematiq#975).
+	 *
+	 * The no-logo layer paints `#nextcloud .logo` with !important, the same
+	 * specificity as the bundle's `#header .logo` and later in the page, so its
+	 * fill is the one that renders. It filled with `--nldesign-color-header-text`,
+	 * near-black on La Suite. The custom properties the bundle rule declares on
+	 * the element itself are what the layer's var() resolves against.
+	 */
+	public function testWithoutALogoTheLayerKeepsTheLaSuiteBrandFill(): void {
+		$layer = $this->layerLogoRule(css: $this->layerCss(shipped: false, uploaded: false));
+		$element = array_filter($this->headerLogoRule(), static fn (string $name): bool => str_starts_with($name, '--'), ARRAY_FILTER_USE_KEY);
+
+		$fill = $this->resolve(value: ($layer['background-color'] ?? ''), vars: $element);
+		$this->assertStringContainsString('brand-550', $fill, 'the no-logo mark on La Suite fills with ' . $fill);
+	}//end testWithoutALogoTheLayerKeepsTheLaSuiteBrandFill()
+
+	/**
+	 * On the nldesign bundle, which declares no such property, the mark still
+	 * takes the set's header text colour.
+	 */
+	public function testWithoutALogoNldesignKeepsTheHeaderTextFill(): void {
+		$layer = $this->layerLogoRule(css: $this->layerCss(shipped: false, uploaded: false));
+
+		$this->assertSame('#123456', $this->resolve(value: ($layer['background-color'] ?? ''), vars: ['--nldesign-color-header-text' => '#123456']));
+	}//end testWithoutALogoNldesignKeepsTheHeaderTextFill()
 }//end class
