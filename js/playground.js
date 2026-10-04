@@ -1225,7 +1225,36 @@
 	}
 
 	/**
-	 * The house style's @font-face rules, from the page's readable stylesheets.
+	 * Rewrite every url() in a rule to an absolute address.
+	 *
+	 * A stylesheet's url() is relative to that stylesheet. Copied into the
+	 * frame's srcdoc it would resolve against the settings page instead, and
+	 * `fonts/x.woff2` became `/settings/admin/fonts/x.woff2`, a 404 (#940).
+	 * data: addresses are left as they are.
+	 *
+	 * @param {string} cssText The rule.
+	 * @param {string} base The address the rule's url()s are relative to.
+	 * @return {string} The rule with absolute addresses.
+	 */
+	function absoluteUrls(cssText, base) {
+		return String(cssText).replace(
+			/url\(\s*(['"]?)([^'")]+)\1\s*\)/g,
+			function (whole, quote, address) {
+				if (/^data:/i.test(address.trim())) {
+					return whole
+				}
+				try {
+					return 'url("' + new URL(address.trim(), base).href + '")'
+				} catch (error) {
+					return whole
+				}
+			},
+		)
+	}
+
+	/**
+	 * The house style's @font-face rules, from the page's readable stylesheets,
+	 * with their font addresses made absolute so the frame can load them.
 	 *
 	 * @return {string}
 	 */
@@ -1233,9 +1262,10 @@
 		var rules = []
 		Array.prototype.forEach.call(document.styleSheets || [], function (sheet) {
 			try {
+				var base = sheet.href || document.baseURI
 				Array.prototype.forEach.call(sheet.cssRules || [], function (rule) {
 					if (rule.type === 5) {
-						rules.push(rule.cssText)
+						rules.push(absoluteUrls(rule.cssText, base))
 					}
 				})
 			} catch (error) {
@@ -1398,7 +1428,12 @@
 			var cleanHtml = sanitizer.sanitizeHtml(html.value)
 			var cleanCss = sanitizer.sanitizeCss(css.value)
 			names = frames.scanVars(cleanHtml.html, cleanCss.css)
-			frame.srcdoc = frames.srcdoc(cleanHtml.html, cleanCss.css, fonts)
+			frame.srcdoc = frames.srcdoc(
+				cleanHtml.html,
+				cleanCss.css,
+				fonts,
+				window.location.origin,
+			)
 			report.textContent = removalText(
 				sanitizer.merge(cleanHtml.removed, cleanCss.removed),
 			)

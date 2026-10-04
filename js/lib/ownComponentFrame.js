@@ -38,6 +38,24 @@
 		"default-src 'none'; style-src 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:"
 
 	/**
+	 * The policy with the page's origin named next to 'self' for fonts.
+	 *
+	 * 'self' in a srcdoc document should mean the page's origin, but Firefox
+	 * blocked the house style fonts under it (#940). Naming the origin as well
+	 * lets the same same-origin fonts in on every engine and nothing more. An
+	 * origin that is not a plain scheme and host is ignored.
+	 *
+	 * @param {string} [origin] The page's origin, such as `https://cloud.example.nl`.
+	 * @return {string} The policy.
+	 */
+	function policyFor(origin) {
+		if (!/^https?:\/\/[A-Za-z0-9.-]+(:[0-9]+)?$/.test(String(origin || ''))) {
+			return POLICY
+		}
+		return POLICY.replace("font-src 'self'", "font-src 'self' " + origin)
+	}
+
+	/**
 	 * The custom properties the code reads, in order of first use.
 	 *
 	 * @param {string} html The HTML (its `style` attributes are read too).
@@ -63,13 +81,14 @@
 	 * @param {string} html Cleaned HTML.
 	 * @param {string} css Cleaned CSS.
 	 * @param {string} [fontCss] The house style's @font-face rules.
+	 * @param {string} [origin] The page's origin, named in the font policy.
 	 * @return {string} The srcdoc.
 	 */
-	function srcdoc(html, css, fontCss) {
+	function srcdoc(html, css, fontCss, origin) {
 		return (
 			'<!doctype html><html><head><meta charset="utf-8">'
 			+ '<meta http-equiv="Content-Security-Policy" content="'
-			+ POLICY
+			+ policyFor(origin)
 			+ '">'
 			+ '<style>'
 			+ String(fontCss || '')
@@ -125,6 +144,7 @@
 	return {
 		SANDBOX: SANDBOX,
 		POLICY: POLICY,
+		policyFor: policyFor,
 		scanVars: scanVars,
 		srcdoc: srcdoc,
 		createFrame: createFrame,
