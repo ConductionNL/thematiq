@@ -63,3 +63,22 @@ and MUST leave the login page alone.
 - GIVEN `css/workplace-layout.css`
 - WHEN its declarations are read
 - THEN the bar and its text MUST read Nextcloud's main background and main text variables, and no colour literal
+
+### Requirement: The Light Layout May Draw A Login Watermark
+While the layout is `light`, the login page MUST draw the image a set names in
+`--nldesign-login-watermark-image` as a large, faint mark in the bottom corner, behind the login
+card, at the opacity in `--nldesign-login-watermark-opacity` (0.07 when unset). A set that names no
+image MUST get nothing drawn. A set that ships `img/logos/<set>-emblem-grey.svg` MUST get that
+file's absolute url in the logo layer, and no other set's logo layer MUST change.
+
+#### Scenario: A set without a watermark draws nothing
+@e2e exclude Static file check: tests/vitest/workplaceLayout.spec.js reads the rule and its fallback
+- GIVEN the light layout and a set that declares no watermark image
+- WHEN the watermark rule is resolved
+- THEN its background image MUST be `none`
+
+#### Scenario: Zuiddrecht draws its grey shield
+@e2e exclude Pure service logic: PHPUnit tests/Unit/Service/SetLogoReachTest.php asserts the logo layer with and without the emblem file
+- GIVEN the set `zuiddrecht`, which ships `img/logos/zuiddrecht-emblem-grey.svg`
+- WHEN its logo layer is built
+- THEN the layer MUST declare `--nldesign-login-watermark-image` with the absolute url of that file

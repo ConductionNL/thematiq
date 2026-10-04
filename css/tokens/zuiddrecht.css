@@ -155,6 +155,10 @@
 	--nldesign-component-status-badge-error-background-color: #FCEDEC;
 	--nldesign-component-status-badge-error-color: #A30000;
 
+	/* The login watermark: the grey shield, large and faint, in the bottom
+	 * corner of the login page while the workplace layout is light. */
+	--nldesign-login-watermark-image: url('../../img/logos/zuiddrecht-emblem-grey.svg');
+
 	/* The brand stripe, "de drie banen": red, blue, red in the ratio 6 : 3 : 1,
 	 * 5px high. Drawn under the header while the brand stripe option is on. */
 	--nldesign-brand-stripe-color-1: #CC0000;

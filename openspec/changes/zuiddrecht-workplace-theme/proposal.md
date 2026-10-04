@@ -36,8 +36,8 @@ bar for a set that was drawn with a coloured one, and a brand stripe under the h
 - **A token set may carry layout defaults** in a `layout` block in `token-sets.json`. Zuiddrecht
   turns both options on. An administrator's own choice always wins.
 
-**Out of scope:** the two options do not travel in the configuration bundle yet. The login card
-does not draw the stripe. On Nextcloud 32 and 33 the selected navigation entry keeps Nextcloud's
+**Out of scope:** the two options do not travel in the configuration bundle yet. A token set
+carries no instance name, so the login heading keeps the name Nextcloud theming holds. On Nextcloud 32 and 33 the selected navigation entry keeps Nextcloud's
 solid fill; the soft wash is how Nextcloud 34 and later draw it.
 
 ## Capabilities

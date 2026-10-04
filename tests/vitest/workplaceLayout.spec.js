@@ -89,8 +89,9 @@ function percentage(expression) {
 describe('workplace layout: the light top bar', () => {
 	const rules = rulesOf('css/workplace-layout.css')
 
-	it('is one rule on the top bar, and leaves the login page alone', () => {
-		expect(rules.length).toBe(1)
+	it('is one rule on the top bar, which leaves the login page alone, and one for the login watermark', () => {
+		expect(rules.length).toBe(2)
+		expect(rules[1].selectors).toEqual(['body#body-login::before'])
 		for (const selector of rules[0].selectors) {
 			expect(selector).toMatch(
 				/^:where\(body:not\(#body-login\)\) (header)?#header$/,
@@ -151,19 +152,142 @@ describe('workplace layout: the light top bar', () => {
 	})
 })
 
+describe('workplace layout: the login watermark', () => {
+	const watermark = rulesOf('css/workplace-layout.css')[1].decls
+
+	it('draws nothing for a set that names no image', () => {
+		expect(watermark['background-image']).toBe(
+			'var(--nldesign-login-watermark-image, none)',
+		)
+	})
+
+	it('is faint, fixed in the bottom corner, and takes no pointer events', () => {
+		expect(watermark.content).toBe("''")
+		expect(watermark.opacity).toBe(
+			'var(--nldesign-login-watermark-opacity, 0.07)',
+		)
+		expect(watermark.position).toBe('fixed')
+		expect(watermark['inset-inline-end']).toBeDefined()
+		expect(watermark.bottom).toBeDefined()
+		expect(watermark['pointer-events']).toBe('none')
+	})
+
+	it('is named by Zuiddrecht only among the shipped sets', () => {
+		const dir = path.join(ROOT, 'css/tokens')
+		const namers = fs
+			.readdirSync(dir)
+			.filter((file) => file.endsWith('.css'))
+			.filter((file) =>
+				fs
+					.readFileSync(path.join(dir, file), 'utf8')
+					.includes('--nldesign-login-watermark-image'),
+			)
+		expect(namers).toEqual(['zuiddrecht.css'])
+	})
+})
+
+/**
+ * Every stylesheet a design system ships, as `[name, rules]`.
+ *
+ * @return {Array<[string, Array<{selectors: Array<string>, decls: Record<string, string>}>]>} The sheets.
+ */
+function systemSheets() {
+	const sheets = []
+	const systems = path.join(ROOT, 'css/systems')
+	for (const system of fs.readdirSync(systems)) {
+		for (const file of fs.readdirSync(path.join(systems, system))) {
+			if (file.endsWith('.css') === true) {
+				const name = system + '/' + file
+				sheets.push([name, rulesOf('css/systems/' + name)])
+			}
+		}
+	}
+	return sheets
+}
+
+/**
+ * Specificity of a selector as [ids, classes, elements]. `:where()` counts
+ * for nothing.
+ *
+ * @param {string} selector A selector.
+ * @return {Array<number>} The three counts.
+ */
+function specificity(selector) {
+	const bare = selector.replace(/:where\([^()]*(?:\([^()]*\)[^()]*)*\)/g, '')
+	const ids = (bare.match(/#[\w-]+/g) || []).length
+	const classes = (bare.match(/\.[\w-]+|\[[^\]]*\]/g) || []).length
+	const elements = (bare.match(/(^|[\s>+~])[a-z][\w-]*|::[\w-]+/g) || []).length
+	return [ids, classes, elements]
+}
+
 describe('brand stripe', () => {
 	const rules = rulesOf('css/brand-stripe.css')
 	const stripe = rules[0].decls
+	const HEADER = ':where(body:not(#body-login)) #header::after'
+	const LOGIN = "#body-login div[class*='login-box__wrapper']::before"
 
-	it('is one pseudo-element on the top bar that takes no pointer events and no layout', () => {
-		expect(rules.length).toBe(1)
-		expect(rules[0].selectors).toEqual([
-			':where(body:not(#body-login)) #header::after',
-		])
+	it('is one shared rule for the top bar and the login card, plus where each one sits', () => {
+		expect(rules.length).toBe(3)
+		expect([...rules[0].selectors].sort()).toEqual([LOGIN, HEADER].sort())
+		expect(rules[1]).toEqual({ selectors: [HEADER], decls: { bottom: '0' } })
+		expect(rules[2]).toEqual({ selectors: [LOGIN], decls: { top: '0' } })
 		expect(stripe['pointer-events']).toBe('none')
 		expect(stripe.position).toBe('absolute')
-		expect(stripe.bottom).toBe('0')
 		expect(stripe.height).toBe('var(--nldesign-brand-stripe-height, 4px)')
+	})
+
+	it('is really drawn: content and display are declared, and important', () => {
+		// The defect this guards: the stripe once declared a plain
+		// `content: ''`. The NL Design and La Suite sheets switch the header's
+		// pseudo-elements off with `!important`, so the stripe computed its
+		// height and its gradient and was never rendered.
+		expect(stripe.content).toBe("'' !important")
+		expect(stripe.display).toBe('block !important')
+	})
+
+	it('outranks every design system rule that switches the header pseudo-element off', () => {
+		const resets = []
+		for (const [name, sheet] of systemSheets()) {
+			for (const rule of sheet) {
+				if (/none/.test(rule.decls.content || '') === false) {
+					continue
+				}
+				for (const selector of rule.selectors) {
+					if (/#header::after$/.test(selector)) {
+						resets.push({ from: name, selector })
+					}
+				}
+			}
+		}
+
+		// The control: the resets exist. Without them this test proves nothing.
+		expect(resets.map((reset) => reset.from).sort()).toEqual([
+			'lasuite/element-overrides.css',
+			'nldesign/element-overrides.css',
+		])
+		// Equal specificity is enough: this sheet loads after theirs.
+		expect(specificity(HEADER)).toEqual([1, 0, 1])
+		for (const reset of resets) {
+			expect(specificity(reset.selector), reset.selector).toEqual([1, 0, 1])
+		}
+	})
+
+	it('uses a login pseudo-element no design system stylesheet claims', () => {
+		// The login card's own two pseudo-elements carry the ribbon and the
+		// logo, so the stripe uses the inner wrapper's `::before`.
+		const claimed = []
+		for (const [name, sheet] of systemSheets()) {
+			for (const rule of sheet) {
+				if (
+					rule.selectors.some((selector) =>
+						/login-box__wrapper[^\s]*::?(before|after)$/.test(selector),
+					)
+				) {
+					claimed.push(name)
+				}
+			}
+		}
+		expect(claimed).toEqual([])
 	})
 
 	/**

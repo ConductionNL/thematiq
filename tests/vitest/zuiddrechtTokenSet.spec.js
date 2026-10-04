@@ -346,8 +346,10 @@ describe('zuiddrecht: every text pair reaches AA', () => {
 })
 
 describe('zuiddrecht: the dark workspace', () => {
-	it('sets the dark page and surface in both dark scopes, and nothing in the light', () => {
-		let outsideDark = 0
+	it('sets the dark page and surface in both dark scopes, and no colour in the light', () => {
+		// The one rule outside the dark scopes is the login logo box, which
+		// is geometry and declares no custom property.
+		const outsideDark = []
 		postcss
 			.parse(read('css/token-overrides/zuiddrecht.css'))
 			.walkRules((rule) => {
@@ -355,10 +357,10 @@ describe('zuiddrecht: the dark workspace', () => {
 					rule.parent.type === 'atrule'
 					&& /prefers-color-scheme:\s*dark/.test(rule.parent.params)
 				if (!inMedia && !/data-theme/.test(rule.selector)) {
-					outsideDark++
+					rule.walkDecls((d) => outsideDark.push(d.prop))
 				}
 			})
-		expect(outsideDark).toBe(0)
+		expect(outsideDark.sort()).toEqual(['height', 'top', 'width'])
 
 		for (const scope of [OVERRIDES.media, OVERRIDES.explicit]) {
 			expect(Object.keys(scope).sort()).toEqual([
@@ -380,15 +382,78 @@ describe('zuiddrecht: the dark workspace', () => {
 
 	it('outranks the generated dark file, which loads after it', () => {
 		// Same scopes, one more simple selector in front: (0,2,1) against (0,1,1).
-		const css = read('css/token-overrides/zuiddrecht.css')
 		const selectors = []
-		postcss.parse(css).walkRules((rule) => {
-			selectors.push(
-				...rule.selectors.map((s) => s.replace(/\s+/g, ' ').trim()),
-			)
+		postcss
+			.parse(read('css/token-overrides/zuiddrecht.css'))
+			.walkRules((rule) => {
+				if (rule.nodes.some((node) => node.prop === SURFACE)) {
+					selectors.push(
+						...rule.selectors.map((sel) =>
+							sel.replace(/\s+/g, ' ').trim(),
+						),
+					)
+				}
+			})
+		expect(selectors.length).toBe(3)
+		expect(selectors.every((sel) => sel.startsWith(':root body'))).toBe(true)
+	})
+})
+
+describe('zuiddrecht: the logo on the login card', () => {
+	/**
+	 * The rule that sizes the login logo in a stylesheet: the one whose
+	 * selector list names the login card's `::after`.
+	 *
+	 * @param {string} rel The stylesheet.
+	 * @return {{selectors: Array<string>, decls: Record<string, string>}} The rule.
+	 */
+	function loginLogoRule(rel) {
+		let found = null
+		postcss.parse(read(rel)).walkRules((rule) => {
+			const selectors = rule.selectors.map((sel) => sel.trim())
+			if (
+				found === null
+				&& selectors.includes('#body-login .guest-box.login-box::after')
+			) {
+				const decls = {}
+				rule.walkDecls((d) => {
+					decls[d.prop] = d.value + (d.important ? ' !important' : '')
+				})
+				found = { selectors, decls }
+			}
 		})
-		expect(selectors.length).toBeGreaterThan(0)
-		expect(selectors.every((s) => s.startsWith(':root body'))).toBe(true)
+		return found
+	}
+
+	const base = loginLogoRule('css/systems/nldesign/theme.css')
+	const override = loginLogoRule('css/token-overrides/zuiddrecht.css')
+
+	it('follows the NL Design rule it overrides, selector for selector', () => {
+		// Same selectors and the same importance, in a file that loads later:
+		// that is what makes the override win, and a selector the base rule
+		// gains later shows up here.
+		expect(base.decls.width).toBe('40px !important')
+		expect(override.selectors).toEqual(base.selectors)
+	})
+
+	it('gives the wordmark 200 by 44 pixels, centred in the 100px above the form', () => {
+		expect(override.decls).toEqual({
+			top: '28px !important',
+			width: '200px !important',
+			height: '44px !important',
+		})
+		// 4545 by 970 artwork at 200px wide is 42.7px high, so 44px holds it.
+		expect((200 * 970) / 4545).toBeLessThan(44)
+		expect(28 + 44 + 28).toBe(100)
+	})
+
+	it('names the grey emblem as its login watermark, and the file exists', () => {
+		expect(LIGHT['--nldesign-login-watermark-image']).toBe(
+			"url('../../img/logos/zuiddrecht-emblem-grey.svg')",
+		)
+		expect(
+			fs.existsSync(path.join(ROOT, 'img/logos/zuiddrecht-emblem-grey.svg')),
+		).toBe(true)
 	})
 })
 

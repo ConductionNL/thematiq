@@ -59,3 +59,14 @@ own files, with the SIL Open Font License beside them.
 - GIVEN `css/systems/nldesign/fonts.css`
 - WHEN its `@font-face` rules are read
 - THEN each of the four weights MUST have a rule whose file exists
+
+### Requirement: The Wordmark Is Legible On The Login Card
+The NL Design stylesheet draws a set's logo on the login card in a 40 by 32 pixel box.
+`css/token-overrides/zuiddrecht.css` MUST give this set's wordmark 200 by 44 pixels there, and
+MUST NOT change the box for any other set.
+
+#### Scenario: The login logo is 200 pixels wide
+@e2e exclude Static file check: tests/vitest/zuiddrechtTokenSet.spec.js reads the override rule and the rule it follows
+- GIVEN the set's overrides file
+- WHEN the login logo rule is read
+- THEN it MUST use the selectors of the NL Design login logo rule and set a width of 200px

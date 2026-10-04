@@ -65,6 +65,8 @@ One limit: the layout cannot redraw a logo. A theme whose logo is white, drawn f
 
 **How it works:** while the layout is `light`, Thematiq loads `css/workplace-layout.css`. It redeclares the variables the header rules already read, so it writes no colour of its own.
 
+**Login watermark.** With the light layout, a theme can show its emblem on the login page: large, faint, in the bottom corner behind the login card. The theme names the image in `--nldesign-login-watermark-image` and may set `--nldesign-login-watermark-opacity` (0.07 when unset). A shipped set gets this by adding `img/logos/<set>-emblem-grey.svg`. A theme that names no image shows none.
+
 ## Brand stripe
 
 **Setting:** `thematiq:brand_stripe` (`1`, `0`, or not set)
@@ -83,7 +85,7 @@ A theme sets the stripe with seven tokens:
 
 A theme without these tokens gets three equal bands in its primary colours, 4px high.
 
-**How it works:** while the stripe is on, Thematiq loads `css/brand-stripe.css`. The stripe sits inside the bar, so no app moves. It takes no clicks, so the controls in the bar keep working.
+**How it works:** while the stripe is on, Thematiq loads `css/brand-stripe.css`. The stripe sits inside the bar, so no app moves. It takes no clicks, so the controls in the bar keep working. On the login page the stripe runs along the top edge of the login card.
 
 ```bash
 # Light top bar and brand stripe, whatever the theme says

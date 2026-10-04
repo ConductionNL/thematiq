@@ -36,3 +36,26 @@ A set that declares none MUST get three equal bands in the primary colours, 4px 
 - GIVEN the `zuiddrecht` tokens
 - WHEN the stops are resolved
 - THEN red MUST run to 60%, blue to 90% and red to the end, 5px high
+
+### Requirement: The Stripe Is Drawn Where A Design System Switches Pseudo-Elements Off
+The NL Design and La Suite stylesheets disable the top bar's pseudo-elements with
+`content: none !important` and `display: none !important`. The stripe rule MUST declare `content`
+and `display` with `!important` at a specificity that is not lower, so the stripe is drawn.
+
+#### Scenario: The stripe outranks the reset
+@e2e exclude Static file check: tests/vitest/workplaceLayout.spec.js compares the stripe rule with every reset of the header pseudo-element in css/systems
+- GIVEN every rule under `css/systems/` that sets `content: none` on `#header::after`
+- WHEN the stripe rule is read
+- THEN it MUST declare `content: ''` and `display: block`, both `!important`
+- AND its specificity MUST be at least that of each reset
+
+### Requirement: The Login Card Carries The Stripe
+While the stripe is on, the login page MUST draw it along the top edge of the login card, from
+the same tokens.
+
+#### Scenario: One set of tokens, two places
+@e2e exclude Static file check: tests/vitest/workplaceLayout.spec.js reads the selectors that share the stripe declarations
+- GIVEN `css/brand-stripe.css`
+- WHEN its rules are read
+- THEN the header stripe and the login card stripe MUST share one rule for the colours, the stops and the height
+- AND the login card stripe MUST sit at `top: 0`

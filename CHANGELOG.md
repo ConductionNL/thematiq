@@ -22,9 +22,12 @@ All notable changes to this project will be documented in this file.
 - **A workplace layout option.** `Light top bar` gives any theme a top bar on the main
   background. The setting can also follow the theme: a token set may carry the default in a
   `layout` block in `token-sets.json`.
-- **A brand stripe option.** Three colours along the bottom edge of the top bar, with the
-  colours, their ratio and the height from tokens. Off unless a theme or an administrator
-  turns it on.
+- **A brand stripe option.** Three colours along the bottom edge of the top bar and along the
+  top edge of the login card, with the colours, their ratio and the height from tokens. Off
+  unless a theme or an administrator turns it on.
+- **A login watermark.** With the light workplace layout, a theme can show its emblem large
+  and faint on the login page, through `--nldesign-login-watermark-image`. Zuiddrecht shows
+  its grey shield.
 - **A fictional example municipality token set.** `example-gemeente`, "(EXAMPLE) Gemeente",
   carries the palette of the approved dossiq portal mockups: deep sea blue `#12506B` with a
   brown accent. It bundles Source Sans 3 (OFL 1.1). The font is one value in the brand file,

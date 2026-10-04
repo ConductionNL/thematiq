@@ -54,3 +54,30 @@
 	background-image: none !important;
 	border-bottom: 1px solid var(--color-border) !important;
 }
+
+/*
+ * The login watermark.
+ *
+ * A set may name an image in `--nldesign-login-watermark-image`: its emblem,
+ * drawn large and faint in the bottom corner of the login page, behind the
+ * login card. A set that names none gets `none`, so nothing is drawn. The
+ * opacity is a token too, 0.07 unless the set says otherwise.
+ *
+ * `::before`, not `::after`: both are fixed and take no space, but the one
+ * that comes first in the document is painted under the login card.
+ */
+body#body-login::before {
+	content: '';
+	position: fixed;
+	inset-inline-end: -4vmin;
+	bottom: -6vmin;
+	z-index: 0;
+	width: 62vmin;
+	height: 78vmin;
+	pointer-events: none;
+	background-image: var(--nldesign-login-watermark-image, none);
+	background-repeat: no-repeat;
+	background-position: right bottom;
+	background-size: contain;
+	opacity: var(--nldesign-login-watermark-opacity, 0.07);
+}

@@ -44,3 +44,20 @@
 	--color-background-plain-text: var(--color-main-text);
 	--nldesign-component-content-surface-background-color: #121315;
 }
+
+/* The logo on the login card.
+ *
+ * The NL Design sheet draws every set's logo there in a 40 by 32 pixel box,
+ * which suits an emblem. This logo is a wordmark, 4.7 times as wide as it is
+ * high: in that box it is 40px wide and under 9px high. Here it gets 200 by
+ * 44 pixels, centred in the 100px the card keeps free above the form. Same
+ * selectors as the rule it follows (css/systems/nldesign/theme.css), and this
+ * file loads after that one. */
+#body-login .guest-box.login-box::after,
+#body-login div.guest-box::after,
+.guest-box.login-box::after,
+div.guest-box.login-box::after {
+	top: 28px !important;
+	width: 200px !important;
+	height: 44px !important;
+}
