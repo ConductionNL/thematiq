@@ -1031,6 +1031,22 @@
 			return null
 		}
 
+		// The typeface warning carried on the same `warnings` channel, or null
+		// when the set's named family actually loads. Emitted by
+		// TokenSetFontAuditService::warningsFor().
+		function fontWarningFor(tokenSetId) {
+			var ts = tokenSetsData[tokenSetId]
+			if (!ts || !ts.warnings) {
+				return null
+			}
+			for (var i = 0; i < ts.warnings.length; i++) {
+				if (ts.warnings[i] && ts.warnings[i].kind === 'font') {
+					return ts.warnings[i]
+				}
+			}
+			return null
+		}
+
 		// How many token names a warning line enumerates before it stops. The
 		// counts already carry the magnitude, and a set like `tilburg` declares
 		// 119 unread names — enumerating them all turned the apply dialog into a
@@ -6807,6 +6823,75 @@
 			return (
 				buildContrastWarningHtml(tokenSetId)
 				+ buildIncompleteWarningHtml(tokenSetId)
+				+ buildFontWarningHtml(tokenSetId)
+			)
+		}
+
+		// Build the "this theme's typeface is not installed" banner. Empty for a
+		// set whose family loads, and for one that names only system families.
+		//
+		// This banner exists because the alternative is silence: a set naming
+		// Avenir or DIN renders the next family in its stack, usually Arial, and
+		// the page simply looks like a different organisation. The note comes
+		// from the set's own `font` block in token-sets.json, which records the
+		// licence position per set, so the text is the measured one and not a
+		// generic apology.
+		function buildFontWarningHtml(tokenSetId) {
+			var warning = fontWarningFor(tokenSetId)
+			if (warning === null) {
+				return ''
+			}
+
+			var family = warning.family || '?'
+			var heading =
+				warning.action === 'acknowledge'
+					? t('thematiq', 'Typeface needs an acknowledgement')
+					: t('thematiq', 'Typeface needs an upload')
+			var lead = t(
+				'thematiq',
+				"This theme asks for {family}, which this instance does not serve, so pages render the next typeface in the theme's list instead.",
+			).replace('{family}', family)
+
+			var items = []
+			if (warning.licence) {
+				items.push(
+					t('thematiq', 'Licence: {licence} ({holder}).')
+						.replace('{licence}', warning.licence)
+						.replace(
+							'{holder}',
+							warning.licenceHolder
+								|| t('thematiq', 'holder not recorded'),
+						),
+				)
+			}
+			if (warning.note) {
+				items.push(warning.note)
+			}
+			if (warning.action === 'upload') {
+				items.push(
+					t(
+						'thematiq',
+						'Upload the licensed webfont under Custom fonts below, then select it as the heading and body font.',
+					),
+				)
+			}
+
+			return (
+				'<div class="nldesign-contrast-warning" role="alert">'
+				+ '<strong>'
+				+ escapeHtml(heading)
+				+ '</strong>'
+				+ '<p>'
+				+ escapeHtml(lead)
+				+ '</p>'
+				+ '<ul>'
+				+ items
+					.map(function (line) {
+						return '<li>' + escapeHtml(line) + '</li>'
+					})
+					.join('')
+				+ '</ul>'
+				+ '</div>'
 			)
 		}
 
@@ -6851,9 +6936,10 @@
 			}
 			var items = ts.warnings
 				.filter(function (w) {
-					// The vocabulary finding travels on the same channel but has
-					// no contrast pair; it gets its own banner above.
-					return w && w.kind !== 'incomplete'
+					// The vocabulary and typeface findings travel on the same
+					// channel but have no contrast pair; each gets its own
+					// banner above.
+					return w && w.kind !== 'incomplete' && w.kind !== 'font'
 				})
 				.map(function (w) {
 					if (w.unevaluated === true) {

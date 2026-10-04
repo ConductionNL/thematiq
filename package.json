@@ -33,6 +33,7 @@
 		"test:lasuite-dark-ramp": "node tests/css/check-lasuite-dark-ramp.js",
 		"build": "npm run build:fonts && npm run build:fonts:marianne && npm run build:icons",
 		"build:fonts": "node scripts/build-fonts.js",
+		"test:fonts": "node scripts/build-fonts.js --check",
 		"build:fonts:marianne": "node scripts/build-fonts-marianne.js",
 		"build:icons": "node scripts/build-icons.js",
 		"lint": "eslint js tests/vitest tests/css tests/l10n",
