@@ -134,10 +134,15 @@
 		--nldesign-color-header-background,
 		var(--nldesign-color-primary, #fff)
 	);
-	--tilburg-header-logo-text-color: var(
-		--nldesign-color-header-text,
-		var(--nldesign-color-primary-text, #1b1b23)
-	);
+	/*
+	 * The site title follows the logo colour, not the header text directly.
+	 * A set with its own Tilburg header (the example sets, vng, rotterdam,
+	 * opencatalogi, conduction) sets --tilburg-logo-color for its own header
+	 * background but not this one; read from --nldesign-color-header-text,
+	 * which such a set aims at Nextcloud's header, the title came out white on
+	 * a white site header. The contrast report measures this pair per set.
+	 */
+	--tilburg-header-logo-text-color: var(--tilburg-logo-color);
 	--tilburg-logo-color: var(
 		--nldesign-color-header-text,
 		var(--nldesign-color-primary-text, #1b1b23)

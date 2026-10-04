@@ -264,4 +264,8 @@
 	--denhaag-step-marker-current-nested-color: #000000;
 	--denhaag-side-navigation-link-active-color: #2e5ed9;
 	--denhaag-sidenav-link-active-color: #2e5ed9;
+	/* Site footer band (fix/site-header-title-is-readable). The bridge paints it
+	   in the primary #4376fc, where white text is 4.01:1. The set's own
+	   primary-hover #2e5ed9 carries white at 5.65:1. */
+	--nldesign-color-footer-background: #2e5ed9;
 }
