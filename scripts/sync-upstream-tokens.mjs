@@ -41,15 +41,32 @@
  * Exit codes: 0 done (with or without changes), 1 usage error, 2 the gate
  * still fails after every rejected set was put back (the tree is not safe to
  * open a PR from).
+ *
+ * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, rmSync, mkdirSync } from 'node:fs'
+import {
+	readFileSync,
+	writeFileSync,
+	existsSync,
+	readdirSync,
+	statSync,
+	rmSync,
+	mkdirSync,
+} from 'node:fs'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { join, dirname, resolve, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
-import { extractOrgId, findTokenFiles, flattenTokens, generateOrgCSS, readOrgConfig, readOrgVersion } from './generate-tokens.mjs'
+import {
+	extractOrgId,
+	findTokenFiles,
+	flattenTokens,
+	generateOrgCSS,
+	readOrgConfig,
+	readOrgVersion,
+} from './generate-tokens.mjs'
 
 const require = createRequire(import.meta.url)
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -99,9 +116,18 @@ export function kebabName(path) {
  */
 export function mergeTokens(target, source) {
 	for (const [key, value] of Object.entries(source)) {
-		const isLeaf = value !== null && typeof value === 'object' && ('value' in value || '$value' in value)
-		if (value !== null && typeof value === 'object' && Array.isArray(value) === false && isLeaf === false
-			&& target[key] !== null && typeof target[key] === 'object') {
+		const isLeaf =
+			value !== null
+			&& typeof value === 'object'
+			&& ('value' in value || '$value' in value)
+		if (
+			value !== null
+			&& typeof value === 'object'
+			&& Array.isArray(value) === false
+			&& isLeaf === false
+			&& target[key] !== null
+			&& typeof target[key] === 'object'
+		) {
 			mergeTokens(target[key], value)
 		} else {
 			target[key] = value
@@ -127,7 +153,10 @@ export function cssValue(value) {
 	if (text === '') {
 		return null
 	}
-	return text.replace(/\{([^{}]+)\}/g, (match, ref) => `var(--${kebabName(ref.split('.'))})`)
+	return text.replace(
+		/\{([^{}]+)\}/g,
+		(match, ref) => `var(--${kebabName(ref.split('.'))})`,
+	)
 }
 
 /**
@@ -177,7 +206,10 @@ export function classifySet(css, inManifest) {
 	if (head.includes(RAW_SYNC_MARKER)) {
 		return 'raw-sync'
 	}
-	if (head.includes(CONVERTER_MARKER) && css.includes(`source:          ${SOURCE_PREFIX}`)) {
+	if (
+		head.includes(CONVERTER_MARKER)
+		&& css.includes(`source:          ${SOURCE_PREFIX}`)
+	) {
 		return 'converted'
 	}
 	return 'hand'
@@ -251,7 +283,13 @@ export function withOverrides(css, overrides) {
 		'\t *    The sync carries them into every run; edit them here, nowhere else. */',
 		...overrides.map(([name, value]) => `\t${name}: ${value};`),
 	].join('\n')
-	return css.slice(0, close).replace(/\s*$/, '') + '\n' + block + '\n' + css.slice(close)
+	return (
+		css.slice(0, close).replace(/\s*$/, '')
+		+ '\n'
+		+ block
+		+ '\n'
+		+ css.slice(close)
+	)
 }
 
 /**
@@ -261,7 +299,14 @@ export function withOverrides(css, overrides) {
  * @return {Object} Options.
  */
 function parseArgs(argv) {
-	const options = { themes: null, sha: process.env.THEMES_COMMIT_SHA || null, report: null, only: null, gate: 'bash scripts/token-set-gate.sh', runGate: true }
+	const options = {
+		themes: null,
+		sha: process.env.THEMES_COMMIT_SHA || null,
+		report: null,
+		only: null,
+		gate: 'bash scripts/token-set-gate.sh',
+		runGate: true,
+	}
 	const positional = []
 	for (let index = 0; index < argv.length; index++) {
 		const arg = argv[index]
@@ -272,7 +317,8 @@ function parseArgs(argv) {
 			if (value === undefined) {
 				throw new Error(`${arg} needs a value.`)
 			}
-			options[arg.slice(2)] = arg === '--only' ? value.split(',').map((id) => id.trim()) : value
+			options[arg.slice(2)] =
+				arg === '--only' ? value.split(',').map((id) => id.trim()) : value
 		} else if (arg.startsWith('--')) {
 			throw new Error(`Unknown option ${arg}.`)
 		} else {
@@ -325,7 +371,12 @@ function convertOrg(org, context) {
 	const tokenFiles = findTokenFiles(join(org.dir, 'src'))
 	if (tokenFiles.length === 0) {
 		const figma = existsSync(join(org.dir, 'figma'))
-		return { ok: false, reason: figma ? 'upstream now publishes only a Tokens Studio export (figma/), which the sync does not convert yet' : 'no *.tokens.json files upstream' }
+		return {
+			ok: false,
+			reason: figma
+				? 'upstream now publishes only a Tokens Studio export (figma/), which the sync does not convert yet'
+				: 'no *.tokens.json files upstream',
+		}
 	}
 	const merged = {}
 	const rawTokens = []
@@ -334,7 +385,10 @@ function convertOrg(org, context) {
 		try {
 			json = JSON.parse(readFileSync(file, 'utf8'))
 		} catch (error) {
-			return { ok: false, reason: `malformed upstream JSON in ${relative(org.dir, file)}: ${error.message}` }
+			return {
+				ok: false,
+				reason: `malformed upstream JSON in ${relative(org.dir, file)}: ${error.message}`,
+			}
 		}
 		mergeTokens(merged, json)
 		rawTokens.push(...flattenTokens(json))
@@ -360,14 +414,44 @@ function convertOrg(org, context) {
 	// sync keeps a shipped one and never adds one on its own.
 	if (result.logoAsset) {
 		if (existsSync(join(REPO_ROOT, result.logoAsset.path)) === false) {
-			return { ok: false, reason: `the theme carries a logo the app does not ship yet (${result.logoAsset.path}); add it to img/logos and img/ICONS.md by hand first` }
+			return {
+				ok: false,
+				reason: `the theme carries a logo the app does not ship yet (${result.logoAsset.path}); add it to img/logos and img/ICONS.md by hand first`,
+			}
+		}
+	}
+
+	// The manifest colours reach Nextcloud's own theming. The converter copies
+	// them from the theme as written, so an upstream typo (demodam's page
+	// background `F5FaFD`, no `#`) would land there verbatim.
+	for (const key of ['primary_color', 'background_color']) {
+		const value = result.manifestEntry.theming?.[key]
+		if (
+			value !== undefined
+			&& /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value)) === false
+		) {
+			return {
+				ok: false,
+				reason: `the theme's ${key} is not a colour (\`${value}\`); fix it upstream or set it by hand`,
+			}
 		}
 	}
 
 	let css = result.css
 	if (org.oldCss !== null) {
-		const rawNames = new Set(declarations(generateOrgCSS(org.slug, org.name, rawTokens, [org.slug, org.slug.replace(/-/g, ''), org.prefix])).keys())
-		css = withOverrides(css, localOverrides(org.oldCss, org.kind, rawNames, declarations(css)))
+		const rawNames = new Set(
+			declarations(
+				generateOrgCSS(org.slug, org.name, rawTokens, [
+					org.slug,
+					org.slug.replace(/-/g, ''),
+					org.prefix,
+				]),
+			).keys(),
+		)
+		css = withOverrides(
+			css,
+			localOverrides(org.oldCss, org.kind, rawNames, declarations(css)),
+		)
 	}
 
 	return { ok: true, css, entry: result.manifestEntry }
@@ -420,10 +504,19 @@ function mergeEntry(manifest, entry, org, sha) {
  * @return {Map<string, boolean>} Set id to complete.
  */
 function vocabularyComplete() {
-	const run = spawnSync(process.execPath, [join(REPO_ROOT, 'scripts/audit-token-sets.mjs'), '--json'], { cwd: REPO_ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
+	const run = spawnSync(
+		process.execPath,
+		[join(REPO_ROOT, 'scripts/audit-token-sets.mjs'), '--json'],
+		{ cwd: REPO_ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
+	)
 	const parsed = JSON.parse(run.stdout)
 	const rows = Array.isArray(parsed) ? parsed : (parsed.results ?? [])
-	return new Map(rows.map((row) => [row.id, row.complete === true || row.auditable === false]))
+	return new Map(
+		rows.map((row) => [
+			row.id,
+			row.complete === true || row.auditable === false,
+		]),
+	)
 }
 
 /**
@@ -446,7 +539,9 @@ function apply(baseline, accepted, sha) {
 	const allowlist = JSON.parse(baseline.allowlist)
 	const complete = vocabularyComplete()
 	const touched = new Set(accepted.map((candidate) => candidate.org.slug))
-	allowlist.sets = allowlist.sets.filter((id) => touched.has(id) === false || complete.get(id) !== true)
+	allowlist.sets = allowlist.sets.filter(
+		(id) => touched.has(id) === false || complete.get(id) !== true,
+	)
 	writeRepo(ALLOWLIST_PATH, JSON.stringify(allowlist, null, '\t') + '\n')
 }
 
@@ -471,9 +566,19 @@ function restore(baseline) {
  * @return {Object} `{ok, failures}`; failures names the failing tests.
  */
 function runGate(command) {
-	const run = spawnSync('bash', ['-c', command], { cwd: REPO_ROOT, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 })
+	const run = spawnSync('bash', ['-c', command], {
+		cwd: REPO_ROOT,
+		encoding: 'utf8',
+		maxBuffer: 256 * 1024 * 1024,
+	})
 	const output = `${run.stdout}\n${run.stderr}`
-	const failures = [...new Set([...output.matchAll(/^\d+\) (\S+)/gm)].map((match) => match[1]))]
+	const failures = [
+		...new Set(
+			[...output.matchAll(/^\d+\) (\S+)/gm)].map((match) =>
+				match[1].replace(/^OCA\\Thematiq\\Tests\\Unit\\/, ''),
+			),
+		),
+	]
 	if (run.status !== 0 && failures.length === 0) {
 		failures.push(output.trim().split('\n').slice(-3).join(' ').slice(0, 300))
 	}
@@ -489,20 +594,46 @@ function runGate(command) {
  */
 function renderReport(summary, options) {
 	const lines = []
-	lines.push('Converted from [nl-design-system/themes](https://github.com/nl-design-system/themes)'
-		+ (options.sha ? ` at \`${options.sha}\`` : '') + ' by `scripts/sync-upstream-tokens.mjs`.')
-	lines.push('Every changed set went through the converter and passed the token-set gate (`scripts/token-set-gate.sh`).')
+	lines.push(
+		'Converted from [nl-design-system/themes](https://github.com/nl-design-system/themes)'
+			+ (options.sha ? ` at \`${options.sha}\`` : '')
+			+ ' by `scripts/sync-upstream-tokens.mjs`.',
+	)
+	lines.push(
+		'Every changed set went through the converter and passed the token-set gate (`scripts/token-set-gate.sh`).',
+	)
 	lines.push('')
 	const section = (title, rows) => {
 		lines.push(`### ${title} (${rows.length})`)
 		lines.push(rows.length === 0 ? '- none' : rows.join('\n'))
 		lines.push('')
 	}
-	section('Changed', summary.changed.map((row) => `- \`${row.slug}\`${row.version ? ` ${row.version}` : ''}${row.isNew ? ' (new)' : ''}${row.overrides > 0 ? `, ${row.overrides} local overrides kept` : ''}`))
-	section('Left unchanged: could not be converted cleanly', summary.rejected.filter((row) => row.shipped).map((row) => `- \`${row.slug}\`: ${row.reason}`))
-	section('Not added: new upstream organisations that could not be converted cleanly', summary.rejected.filter((row) => row.shipped === false).map((row) => `- \`${row.slug}\`: ${row.reason}`))
-	section('Not touched: hand authored or hand resolved', summary.hand.map((slug) => `- \`${slug}\``))
-	lines.push(`Unchanged after conversion: ${summary.same.length === 0 ? 'none' : summary.same.map((slug) => `\`${slug}\``).join(', ')}.`)
+	section(
+		'Changed',
+		summary.changed.map(
+			(row) =>
+				`- \`${row.slug}\`${row.version ? ` ${row.version}` : ''}${row.isNew ? ' (new)' : ''}${row.overrides > 0 ? `, ${row.overrides} local overrides kept` : ''}${row.primary ? `, primary colour ${row.primary}` : ''}`,
+		),
+	)
+	section(
+		'Left unchanged: could not be converted cleanly',
+		summary.rejected
+			.filter((row) => row.shipped)
+			.map((row) => `- \`${row.slug}\`: ${row.reason}`),
+	)
+	section(
+		'Not added: new upstream organisations that could not be converted cleanly',
+		summary.rejected
+			.filter((row) => row.shipped === false)
+			.map((row) => `- \`${row.slug}\`: ${row.reason}`),
+	)
+	section(
+		'Not touched: hand authored or hand resolved',
+		summary.hand.map((slug) => `- \`${slug}\``),
+	)
+	lines.push(
+		`Unchanged after conversion: ${summary.same.length === 0 ? 'none' : summary.same.map((slug) => `\`${slug}\``).join(', ')}.`,
+	)
 	lines.push('')
 	return lines.join('\n')
 }
@@ -520,8 +651,13 @@ function main() {
 		console.error(`[${LABEL}] ${error.message}`)
 		return 1
 	}
-	if (options.themes === null || existsSync(join(resolve(options.themes), 'proprietary')) === false) {
-		console.error(`[${LABEL}] usage: node scripts/sync-upstream-tokens.mjs <themes-checkout> [sha] [--report out.md] [--only a,b] [--no-gate]`)
+	if (
+		options.themes === null
+		|| existsSync(join(resolve(options.themes), 'proprietary')) === false
+	) {
+		console.error(
+			`[${LABEL}] usage: node scripts/sync-upstream-tokens.mjs <themes-checkout> [sha] [--report out.md] [--only a,b] [--no-gate]`,
+		)
 		return 1
 	}
 
@@ -533,13 +669,25 @@ function main() {
 		table: JSON.parse(tableRaw),
 		tableHash: createHash('sha256').update(tableRaw).digest('hex'),
 		vocabulary: converter.vocabularyFrom([
-			readFileSync(join(REPO_ROOT, 'css/systems/nldesign/defaults.css'), 'utf8'),
-			readFileSync(join(REPO_ROOT, 'css/systems/nldesign/utrecht-bridge.css'), 'utf8'),
+			readFileSync(
+				join(REPO_ROOT, 'css/systems/nldesign/defaults.css'),
+				'utf8',
+			),
+			readFileSync(
+				join(REPO_ROOT, 'css/systems/nldesign/utrecht-bridge.css'),
+				'utf8',
+			),
 		]),
 	}
 
-	const baseline = { manifest: readRepo(MANIFEST_PATH), allowlist: readRepo(ALLOWLIST_PATH), files: new Map() }
-	const manifestIds = new Set(JSON.parse(baseline.manifest).map((entry) => entry.id))
+	const baseline = {
+		manifest: readRepo(MANIFEST_PATH),
+		allowlist: readRepo(ALLOWLIST_PATH),
+		files: new Map(),
+	}
+	const manifestIds = new Set(
+		JSON.parse(baseline.manifest).map((entry) => entry.id),
+	)
 	const proprietary = join(resolve(options.themes), 'proprietary')
 	const summary = { changed: [], rejected: [], hand: [], same: [] }
 	const candidates = []
@@ -573,7 +721,11 @@ function main() {
 		}
 		const converted = convertOrg(org, context)
 		if (converted.ok === false) {
-			summary.rejected.push({ slug, reason: converted.reason, shipped: kind !== 'new' })
+			summary.rejected.push({
+				slug,
+				reason: converted.reason,
+				shipped: kind !== 'new',
+			})
 			console.log(`  SKIP ${slug}: ${converted.reason}`)
 			continue
 		}
@@ -582,8 +734,18 @@ function main() {
 			continue
 		}
 		baseline.files.set(`css/tokens/${slug}.css`, oldCss)
-		baseline.files.set(`css/tokens/dark/${slug}.css`, readRepo(`css/tokens/dark/${slug}.css`))
-		candidates.push({ org, css: converted.css, entry: converted.entry, overrides: (converted.css.split(OVERRIDES_HEADING)[1] ?? '').split('\n').filter((line) => /^\t--/.test(line)).length })
+		baseline.files.set(
+			`css/tokens/dark/${slug}.css`,
+			readRepo(`css/tokens/dark/${slug}.css`),
+		)
+		candidates.push({
+			org,
+			css: converted.css,
+			entry: converted.entry,
+			overrides: (converted.css.split(OVERRIDES_HEADING)[1] ?? '')
+				.split('\n')
+				.filter((line) => /^\t--/.test(line)).length,
+		})
 		console.log(`  CONV ${slug} (${kind})`)
 	}
 
@@ -592,11 +754,21 @@ function main() {
 	if (accepted.length > 0) {
 		apply(baseline, accepted, options.sha)
 		const complete = vocabularyComplete()
-		const incomplete = accepted.filter((candidate) => candidate.org.kind === 'new' && complete.get(candidate.org.slug) !== true)
+		const incomplete = accepted.filter(
+			(candidate) =>
+				candidate.org.kind === 'new'
+				&& complete.get(candidate.org.slug) !== true,
+		)
 		for (const candidate of incomplete) {
-			summary.rejected.push({ slug: candidate.org.slug, reason: 'the conversion is not vocabulary complete (scripts/audit-token-sets.mjs), and a new set may not join the allow-list', shipped: false })
+			summary.rejected.push({
+				slug: candidate.org.slug,
+				reason: 'the conversion is not vocabulary complete (scripts/audit-token-sets.mjs), and a new set may not join the allow-list',
+				shipped: false,
+			})
 		}
-		accepted = accepted.filter((candidate) => incomplete.includes(candidate) === false)
+		accepted = accepted.filter(
+			(candidate) => incomplete.includes(candidate) === false,
+		)
 		restore(baseline)
 	}
 
@@ -604,7 +776,9 @@ function main() {
 		apply(baseline, accepted, options.sha)
 		let gate = runGate(options.gate)
 		if (gate.ok === false && accepted.length > 0) {
-			console.log(`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying one set at a time`)
+			console.log(
+				`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying one set at a time`,
+			)
 			restore(baseline)
 			const kept = []
 			for (const candidate of accepted) {
@@ -614,8 +788,14 @@ function main() {
 					kept.push(candidate)
 					console.log(`  OK   ${candidate.org.slug}`)
 				} else {
-					summary.rejected.push({ slug: candidate.org.slug, reason: `fails the gate: ${single.failures.slice(0, 6).join(', ')}`, shipped: candidate.org.kind !== 'new' })
-					console.log(`  FAIL ${candidate.org.slug}: ${single.failures.join(', ')}`)
+					summary.rejected.push({
+						slug: candidate.org.slug,
+						reason: `fails the gate: ${single.failures.slice(0, 6).join(', ')}`,
+						shipped: candidate.org.kind !== 'new',
+					})
+					console.log(
+						`  FAIL ${candidate.org.slug}: ${single.failures.join(', ')}`,
+					)
 				}
 				restore(baseline)
 			}
@@ -625,15 +805,37 @@ function main() {
 		}
 		if (gate.ok === false) {
 			console.error(gate.output.split('\n').slice(-40).join('\n'))
-			console.error(`[${LABEL}] the gate fails even with every rejected set put back: ${gate.failures.join(', ')}`)
+			console.error(
+				`[${LABEL}] the gate fails even with every rejected set put back: ${gate.failures.join(', ')}`,
+			)
 			return 2
 		}
 	} else {
 		apply(baseline, accepted, options.sha)
 	}
 
+	const before = new Map(
+		JSON.parse(baseline.manifest).map((entry) => [
+			entry.id,
+			entry.theming?.primary_color,
+		]),
+	)
 	for (const candidate of accepted) {
-		summary.changed.push({ slug: candidate.org.slug, version: candidate.org.version, isNew: candidate.org.kind === 'new', overrides: candidate.overrides })
+		const oldPrimary = before.get(candidate.org.slug)
+		const newPrimary = candidate.entry.theming?.primary_color
+		const primary =
+			oldPrimary !== undefined
+			&& newPrimary !== undefined
+			&& String(oldPrimary).toLowerCase() !== String(newPrimary).toLowerCase()
+				? `${oldPrimary} to ${newPrimary}`
+				: null
+		summary.changed.push({
+			slug: candidate.org.slug,
+			version: candidate.org.version,
+			isNew: candidate.org.kind === 'new',
+			overrides: candidate.overrides,
+			primary,
+		})
 	}
 	summary.rejected.sort((left, right) => left.slug.localeCompare(right.slug))
 
@@ -645,6 +847,9 @@ function main() {
 	return 0
 }
 
-if (process.argv[1] !== undefined && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (
+	process.argv[1] !== undefined
+	&& resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
 	process.exitCode = main()
 }

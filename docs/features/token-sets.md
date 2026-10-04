@@ -56,7 +56,24 @@ Thematiq includes **39 token sets** — pre-configured themes for Dutch governme
 
 ## Token Set Sources
 
-Token sets are sourced from the official [NL Design System themes repository](https://github.com/nl-design-system/themes) and individual organization design systems. The token generation script (`scripts/generate-tokens.mjs`) translates upstream design tokens into the `--nldesign-*` CSS variable namespace.
+Token sets are sourced from the official [NL Design System themes repository](https://github.com/nl-design-system/themes) and individual organization design systems.
+
+A nightly workflow (`.github/workflows/sync-tokens.yml`) keeps the upstream sets current. It runs `scripts/sync-upstream-tokens.mjs`, which works like this:
+
+- It converts each upstream theme onto the `--nldesign-*` vocabulary with the theme converter (`js/lib/tokenConverter.js`).
+- It only touches sets that came from upstream: the old raw sync, an earlier conversion, or a new organisation.
+- A hand-authored or hand-resolved set, such as `zwolle`, is never written.
+- Values you add to an upstream set are kept. They live in its "Local overrides" section.
+- A set is accepted only when `scripts/token-set-gate.sh` passes with it in. Any other set stays as it was, and the PR names it.
+
+You can run the same sync locally:
+
+```bash
+git clone --depth 1 https://github.com/nl-design-system/themes.git /tmp/themes
+node scripts/sync-upstream-tokens.mjs /tmp/themes "$(git -C /tmp/themes rev-parse HEAD)" --report report.md
+```
+
+After editing a set by hand, run `bash scripts/token-set-gate.sh`. It regenerates the dark variants, the contrast report and the token reference, then runs the token-set tests.
 
 ## Adding a New Token Set
 
