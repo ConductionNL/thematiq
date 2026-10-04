@@ -232,7 +232,7 @@ class TokenSetConverterService {
 	 * @param array<int, string> $referenceOnlyPaths Dotted token paths that resolve aliases but are not
 	 *                                               emitted (a Tokens Studio `source` set of one brand).
 	 * @param bool $repairContrast Bring the converted pairs to WCAG AA (the nightly sync); off for an admin's upload,
-	 *   which keeps its own colours and reports contrast warnings instead (thematiq#993).
+	 *                             which keeps its own colours and reports contrast warnings instead (thematiq#993).
 	 *
 	 * @return array{
 	 *     css: string,
@@ -251,6 +251,8 @@ class TokenSetConverterService {
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
 	 *
+	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - `$repairContrast` switches one optional stage of the pipeline on for the
+	 *   nightly sync; the upload path is the same pipeline without it, not a second responsibility.
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
 	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
 	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the conversion pipeline reads top to bottom as the order it runs in — detect, parse,
