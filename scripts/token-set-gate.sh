@@ -23,6 +23,7 @@ php vendor/bin/phpunit --no-coverage -c phpunit.token-sets.xml
 npx vitest run \
 	tests/vitest/denhaagBridge.spec.js \
 	tests/vitest/focusRingContrast.spec.js \
+	tests/vitest/frankendeskTokenSet.spec.js \
 	tests/vitest/layerSwap.spec.js \
 	tests/vitest/layerSwapDom.spec.js \
 	tests/vitest/playgroundSelection.spec.js \

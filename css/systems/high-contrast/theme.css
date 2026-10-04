@@ -5,7 +5,10 @@
  * --nldesign-* values from css/tokens/hoog-contrast.css, so the black-on-white
  * theme cascades through core and every Cn* component without touching source.
  *
- * Load order: fonts -> theme -> element-overrides, then tokens/hoog-contrast.
+ * Load order: fonts -> theme -> element-overrides, then tokens/hoog-contrast,
+ * then tokens/dark/hoog-contrast. The dark variant only redefines --nldesign-*
+ * values on body in the dark scopes, so everything here turns white on black
+ * in Nextcloud's dark and dark-highcontrast themes (thematiq#1023).
  *
  * The @media blocks add EN 301 549 cooperation: prefers-contrast:more strengthens
  * the theme, and forced-colors:active hands control to the OS (Windows High
@@ -109,13 +112,15 @@ body,
 	outline-offset: 2px !important;
 }
 
-/* prefers-contrast:more — strengthen focus and borders further. */
+/* prefers-contrast:more: strengthen focus and borders further. Through the
+ * strongest tokens, not literal black, so the dark variant (white on black)
+ * keeps them visible too (thematiq#1023). */
 @media (prefers-contrast: more) {
 	body[data-themes],
 	body {
-		--color-border: #000000 !important;
-		--color-border-dark: #000000 !important;
-		--color-text-maxcontrast: #000000 !important;
+		--color-border: var(--nldesign-color-border-dark) !important;
+		--color-border-dark: var(--nldesign-color-border-dark) !important;
+		--color-text-maxcontrast: var(--nldesign-color-text) !important;
 	}
 
 	*:focus-visible {

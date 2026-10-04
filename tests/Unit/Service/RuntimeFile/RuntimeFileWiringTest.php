@@ -267,11 +267,22 @@ class RuntimeFileWiringTest extends TestCase {
 		// rewrite them, so a generator change without regeneration has to fail here.
 		$repo = \dirname(__DIR__, 4);
 		$reader = new SetFileReader();
+		// A set the generator skips may ship a hand-written variant instead
+		// (hoog-contrast, thematiq#1023): the generator never touches it, so
+		// it cannot go stale. Only an ineligible set may carry one.
+		$skipped = (new \ReflectionClassConstant(DarkPaletteService::class, 'SKIPPED_DESIGN_SYSTEMS'))->getValue();
+		$designSystems = array_column((json_decode((string)file_get_contents($repo . '/token-sets.json'), true) ?: []), 'design_system', 'id');
 		$stale = [];
 		foreach (glob($repo . '/css/tokens/dark/*.css') ?: [] as $dark) {
 			$id = basename($dark, '.css');
 			$source = $reader->read($repo, 'css/tokens/' . $id . '.css', null);
 			$header = substr((string)file_get_contents($dark), 0, 512);
+			if (str_starts_with($header, '/* HAND-WRITTEN ') === true
+				&& in_array(($designSystems[$id] ?? 'nldesign'), $skipped, true) === true
+			) {
+				continue;
+			}
+
 			if ($source === null
 				|| str_contains($header, 'DarkPaletteService v' . DarkPaletteService::GENERATOR_VERSION . ' ') === false
 				|| str_contains($header, 'sha256:' . hash('sha256', $source)) === false

@@ -81,8 +81,13 @@ class DarkPaletteService {
 	 * Version 6 adds the secondary button labels and the link colour to
 	 * {@see self::CONTROL_PAIRS}, and measures a transparent fill against the
 	 * page it shows (thematiq#969).
+	 *
+	 * Version 7 leaves a band that is already dark alone (see
+	 * {@see self::DARK_BANDS}), repairs the hero band's foregrounds against
+	 * the primary fill it sits on, and the semantic link colour and its hover
+	 * against the page (thematiq#1021).
 	 */
-	public const GENERATOR_VERSION = 6;
+	public const GENERATOR_VERSION = 7;
 
 	/**
 	 * The guaranteed-passing near-white snap value (matches NC's own dark
@@ -118,11 +123,31 @@ class DarkPaletteService {
 	private const PAGE_BACKGROUND_DARK_LIGHTNESS = 0.12;
 
 	/**
+	 * Bands a set may already paint dark in light mode: the word that names
+	 * the band's tokens, and the token that is its surface.
+	 *
+	 * Inverting every colour turns a dark band light. La Frankendesk's footer
+	 * is #1b1b23 with white text; inverted it became #cbcbd6 under a #9e9e9e
+	 * label, 1.67:1, and every other footer foreground followed it down
+	 * (thematiq#1021). A band whose surface is already as dark as a dark page
+	 * (see {@see self::PAGE_BACKGROUND_MAX_LUMINANCE}) is already dark-mode
+	 * ready, so none of its tokens is derived: the dark file leaves them out
+	 * and the light values keep applying, the surface and its text together.
+	 *
+	 * @var array<string, string>
+	 */
+	private const DARK_BANDS = [
+		'footer' => '--nldesign-color-footer-background',
+	];
+
+	/**
 	 * Design systems that are never eligible for dark-variant generation:
 	 * `none` has no `--nldesign-*` tokens to darken (stock Nextcloud handles
-	 * its own dark theme), and `high-contrast` is a AAA black-on-white set
-	 * whose purpose auto-darkening would defeat (hand-authored dark blocks
-	 * remain possible for it).
+	 * its own dark theme), and `high-contrast` is a AAA set whose purpose
+	 * auto-darkening would defeat: the repair here stops at AA 4.5:1. Its
+	 * dark variant is hand-written instead (`css/tokens/dark/hoog-contrast.css`,
+	 * thematiq#1023), and skipping the design system is what keeps this
+	 * service from ever writing over it.
 	 *
 	 * @var string[]
 	 */
@@ -246,8 +271,42 @@ class DarkPaletteService {
 			'threshold' => 4.5,
 		],
 		[
+			// The semantic link colour the bridges read directly (utrecht,
+			// denhaag): lasuite and frankendesk derived #5956b5 on #141414,
+			// 3.00:1 (thematiq#1021).
+			'fg' => '--nldesign-color-link',
+			'bg' => '--nldesign-color-background',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-link-hover',
+			'bg' => '--nldesign-color-background',
+			'threshold' => 4.5,
+		],
+		[
 			'fg' => '--nldesign-color-logo-text',
 			'bg' => '--nldesign-color-logo-background',
+			'threshold' => 4.5,
+		],
+		[
+			// A footer that is light in light mode turns dark, and its text
+			// has to follow (a footer that is already dark is left alone, see
+			// DARK_BANDS).
+			'fg' => '--nldesign-color-footer-text',
+			'bg' => '--nldesign-color-footer-background',
+			'threshold' => 4.5,
+		],
+		[
+			// The hero band paints the primary colour and names its own
+			// foregrounds (css/public-bridge.css): La Frankendesk's title
+			// derived to #9e9e9e on a #9c99d7 fill, 1.01:1 (thematiq#1021).
+			'fg' => '--nldesign-hero-title-color',
+			'bg' => '--nldesign-color-primary',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-hero-body-color',
+			'bg' => '--nldesign-color-primary',
 			'threshold' => 4.5,
 		],
 		[
@@ -593,10 +652,16 @@ class DarkPaletteService {
 	 */
 	public function deriveDarkDeclarations(array $lightDeclarations): array {
 		$dark = [];
+		$keptBands = $this->darkBands(lightDeclarations: $lightDeclarations);
 
 		foreach ($lightDeclarations as $token => $value) {
 			if (str_ends_with($token, '-rgb') === true) {
 				// Regenerated after the main pass, from the derived base token.
+				continue;
+			}
+
+			if ($this->isInBand(token: $token, bands: $keptBands) === true) {
+				// An already-dark band keeps its light values (DARK_BANDS).
 				continue;
 			}
 
@@ -628,6 +693,55 @@ class DarkPaletteService {
 
 		return $this->regenerateRgbCompanions(lightDeclarations: $lightDeclarations, darkDeclarations: $dark);
 	}//end deriveDarkDeclarations()
+
+	/**
+	 * The bands of {@see self::DARK_BANDS} whose surface is already dark in
+	 * the light declarations.
+	 *
+	 * @param array<string, string> $lightDeclarations The effective light declarations.
+	 *
+	 * @return array<int, string> The band words, e.g. `['footer']`.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function darkBands(array $lightDeclarations): array {
+		$bands = [];
+		foreach (self::DARK_BANDS as $band => $surface) {
+			if (isset($lightDeclarations[$surface]) === false) {
+				continue;
+			}
+
+			$literal = $this->resolveAlias(value: $lightDeclarations[$surface], declarations: $lightDeclarations);
+			$rgb = $this->contrast->parseColor(value: $literal);
+			if ($rgb !== null && $this->luminanceOf(rgb: $rgb) <= self::PAGE_BACKGROUND_MAX_LUMINANCE) {
+				$bands[] = $band;
+			}
+		}
+
+		return $bands;
+	}//end darkBands()
+
+	/**
+	 * Whether a token belongs to one of the given bands: the band word is a
+	 * whole word of its name (`--nldesign-color-footer-text`,
+	 * `--frankendesk-footer-link-color`, `--tilburg-footer-color`).
+	 *
+	 * @param string $token The token name.
+	 * @param array<int, string> $bands The band words.
+	 *
+	 * @return bool True when the token names a part of one of the bands.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function isInBand(string $token, array $bands): bool {
+		foreach ($bands as $band) {
+			if (preg_match('/-' . preg_quote($band, '/') . '(-|$)/', $token) === 1) {
+				return true;
+			}
+		}
+
+		return false;
+	}//end isInBand()
 
 	/**
 	 * Derive the dark value of one colour literal, as the generated dark
