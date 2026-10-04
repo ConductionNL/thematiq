@@ -188,6 +188,7 @@ class TokenSetService {
 	 * @param TokenSetVocabularyAuditService $vocabularyAudit The vocabulary-completeness audit service.
 	 * @param RuntimeFileStore|null $store Where uploaded sets are kept (app data).
 	 * @param SetFileReader $files Lists and checks a set's file in the release or the store.
+	 * @param TokenSetFontAuditService $fontAudit The typeface audit service.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -198,6 +199,7 @@ class TokenSetService {
 		TokenSetVocabularyAuditService $vocabularyAudit,
 		private readonly ?RuntimeFileStore $store = null,
 		private readonly SetFileReader $files = new SetFileReader(),
+		private readonly TokenSetFontAuditService $fontAudit = new TokenSetFontAuditService(),
 	) {
 		$this->appManager = $appManager;
 		$this->config = $config;
@@ -517,6 +519,18 @@ class TokenSetService {
 		$warnings = array_merge(
 			$warnings,
 			$this->vocabularyAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
+		);
+
+		// ...and the typeface verdict, on the same channel. A set that names a
+		// family nothing serves renders the next one in its stack, usually
+		// Arial, and no contrast ratio or missing-token count reveals that: the
+		// page just looks like another organisation. Where the family cannot be
+		// redistributed, the warning carries the licence position and the action
+		// from the set's own `font` block, so the administrator is told rather
+		// than left to notice.
+		$warnings = array_merge(
+			$warnings,
+			$this->fontAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
 		);
 
 		if (empty($warnings) === false) {

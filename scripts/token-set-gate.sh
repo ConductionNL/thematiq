@@ -18,10 +18,18 @@ php scripts/generate-contrast-report.php > /dev/null
 php scripts/generate-token-reference.php > /dev/null
 # The set counts css/public-bridge.css and the public-portals doc state.
 node scripts/update-coverage-claims.mjs > /dev/null
+# The per-set instance-coverage table (bridge/font/logo/contrast). Regenerated
+# here for the same reason the contrast report is: a set change moves the numbers,
+# and tests/vitest/tokenSetCoverage.spec.js compares the committed file to a fresh
+# render, so a sync that forgets this step fails rather than publishing stale
+# coverage claims.
+node scripts/audit-token-sets.mjs --markdown > /dev/null
 php vendor/bin/phpunit --no-coverage -c phpunit.token-sets.xml
 # The JavaScript tests that read the shipped sets (needs npm ci).
 npx vitest run \
 	tests/vitest/denhaagBridge.spec.js \
+	tests/vitest/fontLicences.spec.js \
+	tests/vitest/tokenSetCoverage.spec.js \
 	tests/vitest/focusRingContrast.spec.js \
 	tests/vitest/frankendeskTokenSet.spec.js \
 	tests/vitest/layerSwap.spec.js \

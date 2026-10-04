@@ -20,11 +20,21 @@ declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use OCA\Thematiq\Service\ContrastService;
+use OCA\Thematiq\Service\ContrastVerdictDocument;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 
 $root = dirname(__DIR__);
-$report = (new ShippedTokenSetAuditService(new ContrastService(), new CssParserService()))->renderReport($root);
+$service = new ShippedTokenSetAuditService(new ContrastService(), new CssParserService());
 
-file_put_contents($root . '/docs/reference/contrast-report.md', $report);
+file_put_contents($root . '/docs/reference/contrast-report.md', $service->renderReport($root));
 fwrite(STDOUT, "Wrote docs/reference/contrast-report.md.\n");
+
+// The same verdicts as data, for scripts/audit-token-sets.mjs: one contrast
+// engine, two files, so the Node coverage table cannot disagree with the PHP
+// report about whether a set passes.
+file_put_contents(
+    $root . '/docs/reference/contrast-report.json',
+    (new ContrastVerdictDocument())->render($service->auditAll($root))
+);
+fwrite(STDOUT, "Wrote docs/reference/contrast-report.json.\n");

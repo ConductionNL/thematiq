@@ -4,7 +4,7 @@
 
 Token set `hoeksche-waard`: 1242 declared by this set, 128 from the defaults layer.
 
-Contrast: primary text on primary 4.56:1, primary on background not evaluated (unevaluated).
+Contrast: primary text on primary 4.56:1, primary on background 4.56:1 (pass).
 
 ## Colours (Kleuren)
 

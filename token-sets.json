@@ -59,7 +59,15 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "Droid Sans W01",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Monotype (Fonts.com web edition)",
+			"action": "upload",
+			"note": "`W01` is a Monotype web-font edition, not the retired Apache-2.0 Droid Sans, and no libre release of either exists on the @fontsource registry (checked 2026-10-04). Shipping a different file under this name would misstate what it is, so an administrator uploads the licensed one."
+		}
 	},
 	{
 		"id": "buren",
@@ -126,7 +134,15 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "RijksoverheidSans",
+			"selfHosted": false,
+			"licence": "restricted",
+			"licenceHolder": "Rijksoverheid",
+			"action": "upload",
+			"note": "The Dutch State's own typeface, licensed for rijksoverheid use only. Thematiq self-hosts Fira Sans as its open stand-in, which is what this set renders until an entitled administrator uploads the real one."
+		}
 	},
 	{
 		"id": "enkhuizen",
@@ -172,7 +188,15 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "Sofia Pro",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Mostardesign",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		}
 	},
 	{
 		"id": "haarlemmermeer",
@@ -183,7 +207,15 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "Calibri",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Microsoft",
+			"action": "upload",
+			"note": "Not redistributable. It is installed with Windows and with Microsoft Office, so it renders on those machines and nowhere else; an administrator uploads it for the rest."
+		}
 	},
 	{
 		"id": "hoorn",
@@ -206,7 +238,15 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "DIN",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Monotype / Linotype",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		}
 	},
 	{
 		"id": "leiden",
@@ -254,7 +294,15 @@
 		},
 		"note": "primary_color #4376fc is legacy Conduction cobalt (retired 2026-05-13) — verify with municipality upstream",
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "greycliff-cf",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Connary Fagen",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		}
 	},
 	{
 		"id": "noordoostpolder",
@@ -291,7 +339,15 @@
 			"logo_dark": "img/logos/provincie-zuid-holland-dark.svg"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "Karbon",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Klim Type Foundry",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		}
 	},
 	{
 		"id": "riddeliemers",
@@ -357,7 +413,15 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "DIN",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Monotype / Linotype",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		}
 	},
 	{
 		"id": "vught",
@@ -368,7 +432,15 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "DIN",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Monotype / Linotype",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		}
 	},
 	{
 		"id": "vng",
@@ -379,6 +451,14 @@
 			"background_color": "#0277BD",
 			"logo": "img/logos/vng.svg",
 			"logo_dark": "img/logos/vng-dark.svg"
+		},
+		"font": {
+			"family": "Avenir",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Linotype / Monotype",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
 		}
 	},
 	{
@@ -422,7 +502,15 @@
 			"logo": "img/logos/rotterdam.svg"
 		},
 		"upstreamPackage": "@gemeente-rotterdam/design-tokens",
-		"upstreamVersion": "1.1.0"
+		"upstreamVersion": "1.1.0",
+		"font": {
+			"family": "Bolder",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "commissioned for the municipality",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		}
 	},
 	{
 		"id": "opencatalogi",
@@ -432,6 +520,14 @@
 			"primary_color": "#00811f",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/opencatalogi.svg"
+		},
+		"font": {
+			"family": "Bolder",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "commissioned for the municipality",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
 		}
 	},
 	{
@@ -445,7 +541,15 @@
 			"logo_dark": "img/logos/xxllnc-dark.svg"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "neue-haas-grotesk-text",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Monotype",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		}
 	},
 	{
 		"id": "zevenaar",
@@ -467,7 +571,15 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamPackage": "@nl-design-system-unstable/zwolle-design-tokens",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"font": {
+			"family": "DIN",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Monotype / Linotype",
+			"action": "upload",
+			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		}
 	},
 	{
 		"id": "hoog-contrast",
@@ -487,6 +599,14 @@
 		"theming": {
 			"primary_color": "#4844AD",
 			"background_color": "#FFFFFF"
+		},
+		"font": {
+			"family": "Marianne",
+			"selfHosted": false,
+			"licence": "restricted",
+			"licenceHolder": "Gouvernement français",
+			"action": "acknowledge",
+			"note": "Reserved for French State bodies. The bytes ship behind the admin acknowledgement gate (css/systems/lasuite/marianne.css, AGREEMENT-MARIANNE.md); without that acknowledgement the family resolves through local() only and Inter carries the page."
 		}
 	},
 	{
@@ -510,6 +630,14 @@
 		"theming": {
 			"primary_color": "#1A509F",
 			"background_color": "#E1E2E5"
+		},
+		"font": {
+			"family": "Marianne",
+			"selfHosted": false,
+			"licence": "restricted",
+			"licenceHolder": "Gouvernement français",
+			"action": "acknowledge",
+			"note": "Reserved for French State bodies. The bytes ship behind the admin acknowledgement gate (css/systems/lasuite/marianne.css, AGREEMENT-MARIANNE.md); without that acknowledgement the family resolves through local() only and Inter carries the page."
 		}
 	},
 	{

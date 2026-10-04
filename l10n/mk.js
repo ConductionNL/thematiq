@@ -1053,7 +1053,13 @@ OC.L10N.register(
         "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.": "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.",
         "The colour was made lighter or darker, keeping its hue, to reach WCAG AA against the background it is drawn on. The original is shown for reference.": "The colour was made lighter or darker, keeping its hue, to reach WCAG AA against the background it is drawn on. The original is shown for reference.",
         "The theme gave this colour token a value that is not a visible colour, so the Nextcloud default was used. The original is shown for reference.": "The theme gave this colour token a value that is not a visible colour, so the Nextcloud default was used. The original is shown for reference.",
-        "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant.": "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant."
+        "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant.": "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant.",
+        "holder not recorded": "holder not recorded",
+        "Licence: {licence} ({holder}).": "Licence: {licence} ({holder}).",
+        "This theme asks for {family}, which this instance does not serve, so pages render the next typeface in the theme's list instead.": "This theme asks for {family}, which this instance does not serve, so pages render the next typeface in the theme's list instead.",
+        "Typeface needs an acknowledgement": "Typeface needs an acknowledgement",
+        "Typeface needs an upload": "Typeface needs an upload",
+        "Upload the licensed webfont under Custom fonts below, then select it as the heading and body font.": "Upload the licensed webfont under Custom fonts below, then select it as the heading and body font."
     },
     "nplurals=2; plural=(n != 1);"
 )

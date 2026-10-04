@@ -74,6 +74,18 @@
 	/* Primary — VNG dark blue */
 	--nldesign-color-primary: #003865;
 	--nldesign-color-primary-text: #ffffff;
+
+	/* Page background — VNG's own document surface, which this set already
+	 * declares further down as
+	 * `--utrecht-document-background-color: var(--tilburg-color-white)`. Named
+	 * here too because the contrast audit measures the primary against
+	 * `--nldesign-color-background`, and without it the audit fell back to
+	 * `theming.background_color` (#0277BD). That value is Nextcloud's LOGIN
+	 * background, not a page: measured against it, #003865 reads 2.50:1 and the
+	 * set failed the 3.0:1 UI threshold while every button it actually draws
+	 * sits on white at 11.98:1. No brand colour changed; the login background
+	 * stays #0277BD. */
+	--nldesign-color-background: #ffffff;
 	--nldesign-color-primary-hover: #026596;
 	--nldesign-color-primary-light: #e6f6ff;
 	--nldesign-color-primary-light-hover: #b9e4fc;
