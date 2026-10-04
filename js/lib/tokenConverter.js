@@ -62,6 +62,31 @@
 	var MAX_VAR_DEPTH = 10
 	var MAX_CONTRAST_STEPS = 10
 
+	/**
+	 * The CSS basic named colours a theme may write (buren: `white`). `transparent`
+	 * is not here on purpose: it is not a colour a pair can be measured against.
+	 */
+	var NAMED_COLOURS = {
+		black: '#000000',
+		white: '#ffffff',
+		red: '#ff0000',
+		green: '#008000',
+		blue: '#0000ff',
+		yellow: '#ffff00',
+		orange: '#ffa500',
+		purple: '#800080',
+		gray: '#808080',
+		grey: '#808080',
+		silver: '#c0c0c0',
+		maroon: '#800000',
+		navy: '#000080',
+		teal: '#008080',
+		olive: '#808000',
+		lime: '#00ff00',
+		aqua: '#00ffff',
+		fuchsia: '#ff00ff',
+	}
+
 	/** Font families this app bundles itself. Mirrors `fontIsAvailable()`. */
 	var BUNDLED_FONTS = ['marianne', 'inter']
 	var GENERIC_FONTS = [
@@ -509,6 +534,487 @@
 		}
 
 		return dark
+	}
+
+	// ------------------------------------------------------- colour literals
+
+	/**
+	 * Parse any single CSS colour literal a theme writes: #rgb, #rgba, #rrggbb,
+	 * #rrggbbaa, rgb()/rgba() and hsl()/hsla() in comma or space syntax.
+	 *
+	 * @param {string} value Raw value.
+	 * @return {Object|null} `{rgb: [r, g, b], a}` with a in [0, 1], or null.
+	 */
+	function parseColorAlpha(value) {
+		var trimmed = String(value).trim().toLowerCase()
+		if (NAMED_COLOURS[trimmed] !== undefined) {
+			trimmed = NAMED_COLOURS[trimmed]
+		}
+
+		var hex = /^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/.exec(trimmed)
+		if (hex !== null) {
+			var digits = hex[1]
+			if (digits.length <= 4) {
+				digits = digits
+					.split('')
+					.map(function (digit) {
+						return digit + digit
+					})
+					.join('')
+			}
+
+			return {
+				rgb: [0, 2, 4].map(function (offset) {
+					return parseInt(digits.slice(offset, offset + 2), 16)
+				}),
+				a: digits.length === 8 ? parseInt(digits.slice(6, 8), 16) / 255 : 1,
+			}
+		}
+
+		var fn = /^(rgba?|hsla?)\(\s*([^)]*)\)$/.exec(trimmed)
+		if (fn === null) {
+			return null
+		}
+
+		var parts = fn[2]
+			.replace(/\s*\/\s*/, ',')
+			.replace(/\s*,\s*/g, ',')
+			.replace(/\s+/g, ',')
+			.split(',')
+		if (parts.length < 3 || parts.length > 4) {
+			return null
+		}
+
+		var alphaValue = 1
+		if (parts.length === 4) {
+			alphaValue = /%$/.test(parts[3])
+				? parseFloat(parts[3]) / 100
+				: parseFloat(parts[3])
+			if (isNaN(alphaValue)) {
+				return null
+			}
+		}
+
+		var rgb
+		if (fn[1].indexOf('rgb') === 0) {
+			rgb = parts.slice(0, 3).map(function (part) {
+				return /%$/.test(part)
+					? (parseFloat(part) * 255) / 100
+					: parseFloat(part)
+			})
+		} else {
+			var hue = parseFloat(parts[0])
+			if (/turn$/.test(parts[0])) {
+				hue = hue * 360
+			} else if (/rad$/.test(parts[0])) {
+				hue = (hue * 180) / Math.PI
+			}
+
+			if (/%$/.test(parts[1]) === false || /%$/.test(parts[2]) === false) {
+				return null
+			}
+
+			rgb = hslToRgb(
+				hue,
+				parseFloat(parts[1]) / 100,
+				parseFloat(parts[2]) / 100,
+			)
+		}
+
+		if (rgb.some(isNaN)) {
+			return null
+		}
+
+		return {
+			rgb: rgb.map(function (channel) {
+				return Math.max(0, Math.min(255, Math.round(channel)))
+			}),
+			a: Math.max(0, Math.min(1, alphaValue)),
+		}
+	}
+
+	/**
+	 * HSL (hue in degrees, saturation and lightness in [0, 1]) to [r, g, b].
+	 *
+	 * @param {number} hue Hue.
+	 * @param {number} saturation Saturation.
+	 * @param {number} lightness Lightness.
+	 * @return {Array<number>} Unrounded channels in [0, 255].
+	 */
+	function hslToRgb(hue, saturation, lightness) {
+		var h = (((hue % 360) + 360) % 360) / 60
+		var chroma = (1 - Math.abs(2 * lightness - 1)) * saturation
+		var x = chroma * (1 - Math.abs((h % 2) - 1))
+		var sector = [
+			[chroma, x, 0],
+			[x, chroma, 0],
+			[0, chroma, x],
+			[0, x, chroma],
+			[x, 0, chroma],
+			[chroma, 0, x],
+		][Math.min(5, Math.floor(h))]
+		var m = lightness - chroma / 2
+
+		return sector.map(function (channel) {
+			return (channel + m) * 255
+		})
+	}
+
+	/**
+	 * [r, g, b] to `[hue, saturation, lightness]` (degrees, [0, 1], [0, 1]).
+	 *
+	 * @param {Array<number>} rgb The colour.
+	 * @return {Array<number>} The HSL triple.
+	 */
+	function rgbToHsl(rgb) {
+		var r = rgb[0] / 255
+		var g = rgb[1] / 255
+		var b = rgb[2] / 255
+		var max = Math.max(r, g, b)
+		var min = Math.min(r, g, b)
+		var lightness = (max + min) / 2
+		var delta = max - min
+		if (delta === 0) {
+			return [0, 0, lightness]
+		}
+
+		var saturation = delta / (1 - Math.abs(2 * lightness - 1))
+		var hue
+		if (max === r) {
+			hue = 60 * (((g - b) / delta) % 6)
+		} else if (max === g) {
+			hue = 60 * ((b - r) / delta + 2)
+		} else {
+			hue = 60 * ((r - g) / delta + 4)
+		}
+
+		return [(hue + 360) % 360, saturation, lightness]
+	}
+
+	/**
+	 * Write a single colour literal the way the rest of the app reads colours:
+	 * `#rrggbb`, or `rgba(r, g, b, a)` when it is translucent.
+	 *
+	 * @param {string} value Raw value.
+	 * @return {string|null} The normalised colour, or null when it is not one.
+	 */
+	function normaliseColour(value) {
+		var parsed = parseColorAlpha(value)
+		if (parsed === null) {
+			return null
+		}
+
+		if (parsed.a >= 1) {
+			return toHex(parsed.rgb)
+		}
+
+		return alpha(toHex(parsed.rgb), Math.round(parsed.a * 100) / 100)
+	}
+
+	/**
+	 * Normalise every declaration whose whole value is one colour literal
+	 * written another way (hsl(), hsla(), an 8-digit hex, rgb() in space syntax).
+	 * ContrastService and the dark-variant generator read hex and rgb() only, so
+	 * an hsl() text colour could be neither measured nor inverted.
+	 *
+	 * @param {Object<string,string>} declarations Name => value.
+	 * @param {Array<Object>} report The conversion report.
+	 * @return {Object<string,string>} The normalised declarations.
+	 */
+	function normaliseColours(declarations, report) {
+		var out = {}
+
+		Object.keys(declarations).forEach(function (name) {
+			var value = declarations[name]
+			var trimmed = String(value).trim()
+			out[name] = value
+
+			// Already in a form every reader takes.
+			if (
+				/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(trimmed)
+				|| parseColor(trimmed) !== null
+			) {
+				return
+			}
+
+			var normalised = normaliseColour(trimmed)
+			if (normalised === null) {
+				return
+			}
+
+			out[name] = normalised
+			report.push({
+				source: name,
+				target: '',
+				action: 'kept',
+				reason: 'colour-normalised',
+				value: normalised,
+				original: value,
+			})
+		})
+
+		return out
+	}
+
+	// --------------------------------------------------------- contrast repair
+
+	/**
+	 * Composite a colour over the page, so a translucent fill is measured as seen.
+	 *
+	 * @param {string} value The colour.
+	 * @param {Array<number>} page The page colour.
+	 * @return {Array<number>|null} The opaque colour, or null.
+	 */
+	function opaque(value, page) {
+		var parsed = parseColorAlpha(value)
+		if (parsed === null) {
+			return null
+		}
+
+		return parsed.rgb.map(function (channel, index) {
+			return Math.round(channel * parsed.a + page[index] * (1 - parsed.a))
+		})
+	}
+
+	/**
+	 * The smallest lightness change, hue and saturation kept, that lifts a
+	 * foreground to `min` against a background. Steps of half a percent in both
+	 * directions; the first that passes wins. Black or white when none does.
+	 *
+	 * @param {Array<number>} foreground The foreground.
+	 * @param {Array<number>} background The opaque background.
+	 * @param {number} min The threshold.
+	 * @return {Array<number>} The repaired foreground.
+	 */
+	function repairLightness(foreground, background, min) {
+		var hsl = rgbToHsl(foreground)
+		for (var step = 1; step <= 200; step++) {
+			var delta = step * 0.005
+			var candidates = [hsl[2] - delta, hsl[2] + delta]
+			for (var index = 0; index < candidates.length; index++) {
+				var lightness = candidates[index]
+				if (lightness < 0 || lightness > 1) {
+					continue
+				}
+
+				var rgb = hslToRgb(hsl[0], hsl[1], lightness).map(Math.round)
+				if (ratio(rgb, background) >= min) {
+					return rgb
+				}
+			}
+		}
+
+		return ratio([0, 0, 0], background) >= ratio([255, 255, 255], background)
+			? [0, 0, 0]
+			: [255, 255, 255]
+	}
+
+	/**
+	 * The value a token falls back to when the set does not declare it: the
+	 * table's `defaults` entry, a literal or a chain of tokens and literals
+	 * (the header background follows the primary, as the bridge does).
+	 *
+	 * @param {string} name The token.
+	 * @param {Object<string,string>} semantic The semantic layer.
+	 * @param {Object} defaults The table's defaults.
+	 * @return {string|undefined} The value.
+	 */
+	function fallbackValue(name, semantic, defaults) {
+		var chain = defaults[name]
+		if (chain === undefined) {
+			return undefined
+		}
+
+		var steps = Array.isArray(chain) ? chain : [chain]
+		for (var index = 0; index < steps.length; index++) {
+			var step = String(steps[index])
+			if (step.indexOf('--') !== 0) {
+				return step
+			}
+
+			if (semantic[step] !== undefined) {
+				return semantic[step]
+			}
+		}
+
+		return undefined
+	}
+
+	/**
+	 * Replace a listed colour token whose value is not a colour at all (an
+	 * upstream reference written as text, `transparent` where a fill is meant)
+	 * with its default, so it can be measured and drawn.
+	 *
+	 * @param {Object<string,string>} semantic The semantic layer (mutated).
+	 * @param {Object} spec The table's contrastRepair section.
+	 * @param {Array<Object>} report The conversion report.
+	 * @return {void}
+	 */
+	function replaceInvalid(semantic, spec, report) {
+		;(spec.replaceInvalid || []).forEach(function (name) {
+			var value = semantic[name]
+			if (value === undefined) {
+				return
+			}
+
+			var parsed = parseColorAlpha(value)
+			if (parsed !== null && parsed.a > 0) {
+				return
+			}
+
+			var replacement = fallbackValue(name, {}, spec.defaults || {})
+			if (replacement === undefined) {
+				return
+			}
+
+			semantic[name] = replacement
+			report.push({
+				source: name,
+				target: name,
+				action: 'adapted',
+				reason: 'not-a-colour',
+				value: replacement,
+				original: value,
+			})
+		})
+	}
+
+	/**
+	 * Repair one pair: the new value of the token it changes, or null.
+	 *
+	 * @param {Object} pair The pair spec.
+	 * @param {Object<string,string>} semantic The semantic layer.
+	 * @param {Object} defaults The table's defaults.
+	 * @param {Array<number>} page The page colour.
+	 * @return {Object|null} `{name, rgb}`.
+	 */
+	function repairPair(pair, semantic, defaults, page) {
+		var foregroundName = String(pair.foreground)
+		var backgroundName = String(pair.background)
+		var value = semantic[foregroundName]
+		var backgroundValue = semantic[backgroundName]
+		if (backgroundValue === undefined) {
+			backgroundValue = fallbackValue(backgroundName, semantic, defaults)
+		}
+
+		if (value === undefined || backgroundValue === undefined) {
+			return null
+		}
+
+		var foreground = opaque(value, page)
+		var background = opaque(backgroundValue, page)
+		var min = numberOr(pair.min, 4.5)
+		if (
+			foreground === null
+			|| background === null
+			|| ratio(foreground, background) >= min
+		) {
+			return null
+		}
+
+		// The fill gives way, not the text: only a background the set declares.
+		if (pair.repair === 'background') {
+			if (semantic[backgroundName] === undefined) {
+				return null
+			}
+
+			return {
+				name: backgroundName,
+				rgb: repairLightness(background, foreground, min),
+			}
+		}
+
+		if (pair.adjust === 'flip') {
+			return {
+				name: foregroundName,
+				rgb:
+					ratio([255, 255, 255], background)
+					>= ratio([0, 0, 0], background)
+						? [255, 255, 255]
+						: [0, 0, 0],
+			}
+		}
+
+		return {
+			name: foregroundName,
+			rgb: repairLightness(foreground, background, min),
+		}
+	}
+
+	/**
+	 * Bring every pair of the table's `contrastRepair` list to its threshold.
+	 *
+	 * @param {Object<string,string>} semantic The semantic layer (mutated).
+	 * @param {Object} table The mapping table.
+	 * @param {Object<string,string>} manifest Manifest values (mutated).
+	 * @param {Array<Object>} report The conversion report.
+	 * @return {Object<string,string>} The semantic layer.
+	 */
+	function repairContrast(semantic, table, manifest, report) {
+		var spec = table.contrastRepair
+		if (!spec || !Array.isArray(spec.pairs)) {
+			return semantic
+		}
+
+		var page = parseColor(String(spec.page || '#ffffff')) || [255, 255, 255]
+		var defaults = spec.defaults || {}
+		var originals = {}
+		var oldPrimary = semantic['--nldesign-color-primary']
+
+		replaceInvalid(semantic, spec, report)
+
+		for (var pass = 0; pass < 4; pass++) {
+			var changed = false
+			spec.pairs.forEach(function (pair) {
+				var repaired = repairPair(pair, semantic, defaults, page)
+				if (repaired === null) {
+					return
+				}
+
+				if (originals[repaired.name] === undefined) {
+					originals[repaired.name] = semantic[repaired.name]
+				}
+
+				semantic[repaired.name] = toHex(repaired.rgb)
+				if (semantic[repaired.name + '-rgb'] !== undefined) {
+					semantic[repaired.name + '-rgb'] = rgbTriplet(
+						semantic[repaired.name],
+					)
+				}
+
+				changed = true
+			})
+
+			if (changed === false) {
+				break
+			}
+		}
+
+		Object.keys(originals).forEach(function (name) {
+			report.push({
+				source: name,
+				target: name,
+				action: 'adapted',
+				reason: 'contrast-repaired',
+				value: semantic[name],
+				original: originals[name],
+			})
+		})
+
+		// The manifest's primary is the same colour as the set's: keep them one.
+		var primary = semantic['--nldesign-color-primary']
+		var declared = manifest['theming.primary_color']
+		if (
+			primary !== undefined
+			&& primary !== oldPrimary
+			&& (declared === undefined
+				|| String(declared).toLowerCase()
+					=== String(oldPrimary).toLowerCase())
+		) {
+			manifest['theming.primary_color'] = primary
+		}
+
+		return semantic
 	}
 
 	// ------------------------------------------------------------- transforms
@@ -2011,6 +2517,8 @@
 	 * @param {Object<string,boolean>} [options.vocabulary] The app's `--nldesign-*` names.
 	 * @param {Array<string>} [options.fonts] Available font family names.
 	 * @param {string|null} [options.sourceName] Provenance label.
+	 * @param {boolean} [options.repairContrast] Bring the converted pairs to WCAG AA (thematiq#993); off
+	 *        for an admin's upload, which keeps its own colours and gets contrast warnings instead.
 	 * @param {string} [options.assetName] Base name for an extracted logo, without extension.
 	 *        Defaults to the slug; the admin upload path passes `custom-{slug}` so an uploaded
 	 *        theme can never overwrite a shipped `img/logos/{slug}.svg`.
@@ -2068,6 +2576,7 @@
 
 		declarations = stripExternalUrls(declarations, report)
 		declarations = resolveVars(declarations, report)
+		declarations = normaliseColours(declarations, report)
 
 		// Lift the theme's logo out of the stylesheet and into a file before the
 		// sections are built; see `extractLogo()`.
@@ -2098,6 +2607,11 @@
 			manifest,
 			report,
 		)
+
+		// Only on request (the nightly sync): an admin's upload keeps its colours.
+		if (settings.repairContrast === true) {
+			semantic = repairContrast(semantic, table, manifest, report)
+		}
 
 		if (logo !== null) {
 			semantic['--nldesign-logo-url'] = logo.css
@@ -2189,6 +2703,8 @@
 		radiusScale: radiusScale,
 		onColor: onColor,
 		parseColor: parseColor,
+		parseColorAlpha: parseColorAlpha,
+		normaliseColour: normaliseColour,
 		ratio: ratio,
 		COMPONENT_PREFIXES: COMPONENT_PREFIXES,
 		PALETTE_ROLE_HEADS: PALETTE_ROLE_HEADS,

@@ -318,3 +318,31 @@ describe('count claims (thematiq#994)', () => {
 		).toBe('It provides 57 token sets covering\n## Token Sets (57)\n')
 	})
 })
+
+describe('withManifestPrimary', () => {
+	it('hands the committed primary to a theme that has no primary token (buren, venray)', async () => {
+		const { withManifestPrimary } =
+			await import('../../scripts/sync-upstream-tokens.mjs')
+		const css = withManifestPrimary(
+			'.buren-theme {\n\t--buren-color-red: #d41422;\n}\n',
+			{ slug: 'buren', manifestPrimary: '#D41422' },
+		)
+		expect(css).toContain('\t--buren-color-primary: #d41422;\n}')
+	})
+
+	it('never overrides a primary the theme declares', async () => {
+		const { withManifestPrimary } =
+			await import('../../scripts/sync-upstream-tokens.mjs')
+		const own =
+			'.x-theme {\n\t--utrecht-button-primary-action-background-color: #111111;\n}\n'
+		expect(
+			withManifestPrimary(own, { slug: 'x', manifestPrimary: '#222222' }),
+		).toBe(own)
+		expect(
+			withManifestPrimary('.x-theme {\n}\n', {
+				slug: 'x',
+				manifestPrimary: null,
+			}),
+		).toBe('.x-theme {\n}\n')
+	})
+})

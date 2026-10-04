@@ -1050,7 +1050,10 @@ OC.L10N.register(
         "There is no component with this name.": "There is no component with this name.",
         "The document is a Thematiq export, so the value came back under its own name, without conversion.": "The document is a Thematiq export, so the value came back under its own name, without conversion.",
         "The colour lies outside the sRGB range every part of Nextcloud reads, so the document's own sRGB fallback was used. The original is shown for reference.": "The colour lies outside the sRGB range every part of Nextcloud reads, so the document's own sRGB fallback was used. The original is shown for reference.",
-        "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.": "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference."
+        "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.": "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.",
+        "The colour was made lighter or darker, keeping its hue, to reach WCAG AA against the background it is drawn on. The original is shown for reference.": "The colour was made lighter or darker, keeping its hue, to reach WCAG AA against the background it is drawn on. The original is shown for reference.",
+        "The theme gave this colour token a value that is not a visible colour, so the Nextcloud default was used. The original is shown for reference.": "The theme gave this colour token a value that is not a visible colour, so the Nextcloud default was used. The original is shown for reference.",
+        "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant.": "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant."
     },
     "nplurals=2; plural=(n != 1);"
 )
