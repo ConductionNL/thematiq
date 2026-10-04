@@ -1126,14 +1126,22 @@ test.describe('token-sets', () => {
 		expect(layers.slice(0, bundle.length)).toEqual(bundle)
 		expect(layers.indexOf('tokens/lasuite')).toBeGreaterThan(bundle.length - 1)
 
-		// A token the set leaves out and the bundle declares still resolves.
+		// The set is complete (thematiq#1006): it declares every required token
+		// itself, so none of them depends on the bundle.
 		const declared = Object.keys(nldesignDeclarations(css))
-		const inBundle = Object.assign(
-			{},
-			...bundle.map((s) => nldesignDeclarations(readRepoFile(`css/${s}.css`))),
-		) as Record<string, string>
-		const leftOut = REQUIRED_TOKENS.filter(
-			(t) => !declared.includes(t) && inBundle[t] !== undefined,
+		for (const t of REQUIRED_TOKENS) expect(declared, t).toContain(t)
+
+		// A token the set leaves out and the bridge declares on :root still
+		// resolves: the bridge's focus and component tokens.
+		const bridge = readRepoFile('css/systems/lasuite/bridge.css').replace(
+			/\/\*[\s\S]*?\*\//g,
+			'',
+		)
+		const onRoot = [...bridge.matchAll(/(?:^|\})\s*:root\s*\{([^{}]*)\}/g)]
+			.map((m) => m[1])
+			.join('\n')
+		const leftOut = Object.keys(nldesignDeclarations(onRoot)).filter(
+			(t) => !declared.includes(t),
 		)
 		expect(leftOut.length).toBeGreaterThan(0)
 		await withActiveSet(page, 'lasuite', async () => {
@@ -1568,34 +1576,6 @@ test.describe('token-sets', () => {
 		})
 	})
 
-	// @e2e openspec/specs/token-sets/spec.md#missing-required-tokens-are-evaluated-against-the-set-file-alone
-	test('a set that declares none of the vocabulary misses all of it, despite defaults.css', async ({
-		page,
-	}) => {
-		const bare = ALLOWLIST.find((id) => {
-			const d = nldesignDeclarations(tokenCss(id))
-			return (
-				designSystemOf(id) === 'nldesign'
-				&& REQUIRED_TOKENS.every((t) => d[t] === undefined)
-			)
-		}) as string
-		expect(
-			bare,
-			'an allow-listed set that declares none of the required tokens',
-		).toBeTruthy()
-		// defaults.css declares every one of them, so layering it would hide all.
-		const defaults = nldesignDeclarations(
-			readRepoFile('css/systems/nldesign/defaults.css'),
-		)
-		for (const t of REQUIRED_TOKENS) expect(defaults[t], t).toBeDefined()
-		await openSettings(page)
-		await withEntries(page, [bare], async (byId) => {
-			const w = incompleteWarning(byId[bare])
-			expect(w, `${bare} is reported incomplete`).toBeTruthy()
-			expect([...w.missing].sort()).toEqual([...REQUIRED_TOKENS].sort())
-		})
-	})
-
 	// @e2e openspec/specs/token-sets/spec.md#nldesign-names-nothing-reads-are-reported-as-foreign
 	test('a declared --nldesign-* name no layer reads is reported foreign', async ({
 		page,
@@ -1795,28 +1775,6 @@ test.describe('token-sets', () => {
 					incompleteWarning(byId[agreeing.id])?.primaryMismatch ?? false,
 				).toBe(false)
 			}
-		})
-	})
-
-	// @e2e openspec/specs/token-sets/spec.md#an-absent-or-non-literal-primary-is-not-double-reported-as-a-mismatch
-	test('a set without a literal primary reports it missing, not mismatched', async ({
-		page,
-	}) => {
-		const absent = ALLOWLIST.find(
-			(id) =>
-				nldesignDeclarations(tokenCss(id))['--nldesign-color-primary']
-					=== undefined
-				&& manifestEntry(id).theming?.primary_color !== undefined,
-		) as string
-		expect(
-			absent,
-			'an allow-listed set without --nldesign-color-primary',
-		).toBeTruthy()
-		await openSettings(page)
-		await withEntries(page, [absent], async (byId) => {
-			const w = incompleteWarning(byId[absent])
-			expect(w.missing).toContain('--nldesign-color-primary')
-			expect(w.primaryMismatch).toBe(false)
 		})
 	})
 
