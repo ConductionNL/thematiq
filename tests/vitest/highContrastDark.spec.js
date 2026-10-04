@@ -278,9 +278,6 @@ function failures(p) {
 	check('link', p.link, bg, AAA_TEXT)
 	check('placeholder', p.placeholder, bg, AAA_TEXT)
 	check('focus ring', p.focusColour, bg, AAA_UI)
-	if (p.focusColour === p.v('--color-border')) {
-		out.push(`focus ring ${p.focusColour} is the border colour`)
-	}
 	return out
 }
 
@@ -308,8 +305,12 @@ describe('high-contrast dark variant (thematiq#1023)', () => {
 				expect(failures(page(env))).toEqual([])
 			})
 
-			it('keeps a thick focus ring', () => {
-				expect(page(env).focusWidth).toBeGreaterThanOrEqual(3)
+			it('keeps a thick focus ring that is not the border colour', () => {
+				const p = page(env)
+				expect(p.focusWidth).toBeGreaterThanOrEqual(3)
+				// White borders are on every control in dark, so a white ring
+				// would read as one more border.
+				expect(p.focusColour).not.toBe(p.v('--color-border'))
 			})
 		})
 	}
