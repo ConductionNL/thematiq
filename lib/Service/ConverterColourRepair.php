@@ -32,6 +32,9 @@ namespace OCA\Thematiq\Service;
  * change that keeps hue and saturation, or a white/black flip for text on a brand fill.
  *
  * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
+ *
+ * @phpstan-import-type ReportEntry from TokenSetConverterService
+ * @psalm-import-type   ReportEntry from TokenSetConverterService
  */
 class ConverterColourRepair {
 
@@ -70,7 +73,7 @@ class ConverterColourRepair {
 	 * Normalise every declaration whose whole value is one colour literal written another way.
 	 *
 	 * @param array<string, string> $declarations Name => value.
-	 * @param array<int, array<string, mixed>> $report The conversion report (appended to).
+	 * @param array<int, ReportEntry> $report The conversion report (appended to).
 	 *
 	 * @return array<string, string> The normalised declarations.
 	 *
@@ -105,7 +108,7 @@ class ConverterColourRepair {
 	 * @param array<string, string> $semantic The semantic layer.
 	 * @param array<string, mixed> $table The mapping table.
 	 * @param array<string, string> $manifest Manifest values (updated for the primary).
-	 * @param array<int, array<string, mixed>> $report The conversion report (appended to).
+	 * @param array<int, ReportEntry> $report The conversion report (appended to).
 	 *
 	 * @return array<string, string> The repaired semantic layer.
 	 *
@@ -256,7 +259,7 @@ class ConverterColourRepair {
 	 *
 	 * @param array<string, string> $semantic The semantic layer.
 	 * @param array<string, mixed> $spec The table's contrastRepair section.
-	 * @param array<int, array<string, mixed>> $report The conversion report (appended to).
+	 * @param array<int, ReportEntry> $report The conversion report (appended to).
 	 *
 	 * @return array<string, string> The semantic layer.
 	 */
