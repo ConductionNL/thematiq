@@ -460,6 +460,47 @@ const COVERAGE_REPORT_PATH = join(REPO_ROOT, 'docs/reference/token-set-coverage.
 const DIMENSIONS = ['bridge', 'font', 'logo', 'contrast']
 
 /**
+ * The dimensions the gate FAILS on. Every dimension in `DIMENSIONS` is measured
+ * and published; only these three are a bar.
+ *
+ * WHY `bridge` IS NOT A BAR, measured rather than assumed. The first version of
+ * this audit barred it, reasoning that a set declaring none of the 87
+ * `--utrecht-*` names "keeps the Rijkshuisstijl default, so every button, table
+ * and form control is the wrong brand". That reasoning was wrong, and wrong in
+ * the direction that overstates the defect.
+ *
+ * `css/systems/nldesign/utrecht-bridge.css` holds 84 declarations shaped
+ * `--nldesign-component-X: var(--utrecht-Y, <fallback>)`. Counted outside
+ * comments:
+ *
+ *   42  fall back to a `var(--nldesign-*)` token the SET declares
+ *   38  fall back to a non-colour literal: 1rem, 1px, 0.5rem, 700,
+ *       transparent, underline - geometry and type scale, not a brand colour
+ *    3  fall back to a colour literal, and those three are #e5e5e5 / #696969
+ *       (disabled button) and #ffffff (textbox fill)
+ *    1  falls back to another var()
+ *
+ * Resolved over the real cascade (defaults -> set -> bridge), `amsterdam` and
+ * `rijkshuisstijl` are BOTH bridge-zero and differ on 32 of the 84 component
+ * tokens: Amsterdam's buttons compute #004699 and Rijkshuisstijl's #154273. So
+ * a bridge-zero set adopts the NL Design System's component GEOMETRY and TYPE
+ * SCALE while branding the component COLOURS from its own semantic layer. That
+ * is a legitimate theme, and barring it withheld 8 working sets from the admin
+ * picker.
+ *
+ * The figure is still worth measuring and publishing: a set with its own
+ * `--utrecht-*` layer owns its radii, spacing and type scale, which is part of
+ * conformance to a house style. It is reported, not gated.
+ *
+ * Demoting a dimension is the one edit that lowers the allow-list count with no
+ * set improving, which is how a ratchet quietly stops ratcheting. So it is not a
+ * silent edit: `coverageFindings()` fails unless every non-barred dimension
+ * carries a written reason under `$reported` in the allow-list fixture, and
+ * fails again if `$reported` names a dimension that is barred after all.
+ */
+const BARRED_DIMENSIONS = ['font', 'logo', 'contrast']
+
+/**
  * Families the browser resolves with no webfont: the CSS generics, and the
  * faces an operating system supplies.
  *
@@ -727,6 +768,16 @@ function readCoverageAllowlist() {
 				? entries
 				: {}
 	}
+
+	// The written reason each non-barred dimension carries, so demoting a
+	// dimension out of the gate cannot be a silent edit.
+	allowlist.$reported =
+		parsed.$reported !== null
+		&& typeof parsed.$reported === 'object'
+		&& Array.isArray(parsed.$reported) === false
+			? parsed.$reported
+			: {}
+
 	return allowlist
 }
 
@@ -745,7 +796,7 @@ function coverageFindings(results, allowlist) {
 	const reasonless = []
 
 	for (const row of results) {
-		for (const dimension of DIMENSIONS) {
+		for (const dimension of BARRED_DIMENSIONS) {
 			const listed = Object.prototype.hasOwnProperty.call(
 				allowlist[dimension],
 				row.id,
@@ -770,6 +821,28 @@ function coverageFindings(results, allowlist) {
 			if (known.has(id) === false) {
 				stale.push(`${dimension}/${id} (no such shipped set)`)
 			}
+			// An entry under a dimension nothing bars is dead weight: it
+			// records a set as known-bad against a rule that cannot fail.
+			if (BARRED_DIMENSIONS.includes(dimension) === false) {
+				stale.push(
+					`${dimension}/${id} (${dimension} is reported-only, so this entry gates nothing)`,
+				)
+			}
+		}
+	}
+
+	// Demoting a dimension out of the gate must be written down, and a
+	// dimension that is barred must not claim to be reported-only.
+	for (const dimension of DIMENSIONS) {
+		const recorded = allowlist.$reported?.[dimension]
+		const barred = BARRED_DIMENSIONS.includes(dimension)
+		if (barred === false && (typeof recorded !== 'string' || recorded.trim().length < 20)) {
+			reasonless.push(
+				`$reported/${dimension} (measured but not gated, with no recorded reason)`,
+			)
+		}
+		if (barred === true && recorded !== undefined) {
+			stale.push(`$reported/${dimension} (this dimension IS gated — delete the entry)`)
 		}
 	}
 
@@ -812,10 +885,22 @@ function renderCoverageMarkdown(results, allowlist) {
 		'- **bridge** = of the `--utrecht-*` names `css/systems/nldesign/utrecht-bridge.css`',
 	)
 	lines.push(
-		'  reads, how many the set declares. A set at 0 dresses every button, table and',
+		'  reads, how many the set declares. MEASURED AND REPORTED, NOT GATED: 42 of the',
 	)
 	lines.push(
-		'  form control in the Rijkshuisstijl default, whatever its accent colour is.',
+		"  bridge's 84 declarations fall back to a `--nldesign-*` token the set itself",
+	)
+	lines.push(
+		'  declares, 38 to a non-colour literal (1rem, 1px, transparent, 700) and 3 to a',
+	)
+	lines.push(
+		'  colour literal, so a set at 0 adopts the design system component geometry and',
+	)
+	lines.push(
+		'  type scale and still brands the component colours from its own semantic layer.',
+	)
+	lines.push(
+		'  A higher figure means the set owns more of its own radii, spacing and type scale.',
 	)
 	lines.push(
 		'- **font** = whether the first family the set names has an `@font-face` in a',
@@ -838,7 +923,21 @@ function renderCoverageMarkdown(results, allowlist) {
 		'with a recorded reason. The list can only shrink: the gate fails on a set below',
 	)
 	lines.push(
-		'the bar that is not listed, AND on a listed set that has started passing.',
+		'the bar that is not listed, on a listed set that has started passing, and on an',
+	)
+	lines.push('entry under a dimension nothing gates.')
+	lines.push('')
+	lines.push(
+		'The gated dimensions are font, logo and contrast. `bridge` is measured and',
+	)
+	lines.push(
+		'published but never fails, and the measurement behind that decision is recorded',
+	)
+	lines.push(
+		'under `$reported.bridge` in the fixture: demoting a dimension is the one edit',
+	)
+	lines.push(
+		'that lowers the allow-list count with nothing fixed, so it has to be written down.',
 	)
 	lines.push('')
 	lines.push('| Token set | bridge | font | logo | contrast |')
@@ -890,10 +989,11 @@ function coverageSummaryLines(results) {
 
 	return [
 		`${results.length} sets measured; ${
-			results.filter((row) => DIMENSIONS.every((d) => row[d].ok === true))
-				.length
-		} pass all four dimensions.`,
-		`bridge: ${atZero} of ${bridged.length} bridged sets declare none of the ${
+			results.filter((row) =>
+				BARRED_DIMENSIONS.every((d) => row[d].ok === true),
+			).length
+		} pass every gated dimension (${BARRED_DIMENSIONS.join(', ')}).`,
+		`bridge (measured, NOT gated): ${atZero} of ${bridged.length} bridged sets declare none of the ${
 			bridged[0]?.bridge.total ?? 0
 		} --utrecht-* names; median ${median(bridged.map((row) => row.bridge.declared))}.`,
 		`font: ${Object.entries(fontKinds)
@@ -1097,6 +1197,7 @@ export {
 	readAllowlist,
 	readCoverageAllowlist,
 	renderCoverageMarkdown,
+	BARRED_DIMENSIONS,
 	DIMENSIONS,
 	REPO_ROOT,
 	REQUIRED_TOKENS,

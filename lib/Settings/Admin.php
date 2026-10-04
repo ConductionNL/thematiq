@@ -176,8 +176,9 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function getForm(): TemplateResponse {
-		// The PICKER, not the catalogue: only stock plus the admin's own
-		// imports. See TokenSetService::SELECTABLE_SHIPPED_SETS.
+		// The PICKER, not the catalogue: every named shipped set the vocabulary
+		// audit passes, plus the admin's own imports. See
+		// TokenSetService::getSelectableTokenSets().
 		$tokenSets = $this->tokenSetService->getSelectableTokenSets();
 
 		$currentTokenSet = $this->config->getAppValue(

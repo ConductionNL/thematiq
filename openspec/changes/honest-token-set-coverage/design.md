@@ -14,7 +14,7 @@ letting each one fail.
 
 | dimension | what it measures | bar | why that bar |
 |---|---|---|---|
-| `bridge` | of the 87 `--utrecht-*` names `css/systems/nldesign/utrecht-bridge.css` reads, how many the set declares | `> 0` | A set at zero dresses every component in Rijkshuisstijl whatever its accent colour is, which is a different failure from a set that is merely thin. The 28 sets between 8 and 27 are a later wave, deliberately above this bar. |
+| `bridge` | of the 87 `--utrecht-*` names `css/systems/nldesign/utrecht-bridge.css` reads, how many the set declares | `> 0` — **withdrawn**, see below | A set at zero was assumed to dress every component in Rijkshuisstijl. **That assumption was wrong.** The follow-up change `every-shipped-set-selectable` resolved the bridge's own fallbacks and found that 42 of its 84 declarations fall back to a `--nldesign-*` token the set declares, 38 to a non-colour literal and 3 to a colour literal, so a bridge-zero set brands its component colours from its own semantic layer. The dimension is now measured and reported, never gated. |
 | `font` | whether the first family the set names has an `@font-face` in a stylesheet its own design system **links** | served, a system family, or declared undistributable | A face declared in a stylesheet nothing links never loads, which is exactly how Figtree looked correct in the repository and rendered Arial on an instance. |
 | `logo` | whether the set points Nextcloud theming at a logo | present | Otherwise the Nextcloud logo stays in a municipality's header. |
 | `contrast` | the verdict in `docs/reference/contrast-report.md` | `pass` | `unevaluated` is not a pass, and two of the three reasons a set was unevaluated were fixable. |
@@ -164,7 +164,7 @@ the gate not running. That spec now derives its families from the generator's ta
 | | before | after |
 |---|---|---|
 | sets passing all four dimensions | not measured (stage 2 did not exist) | 17 of 56 |
-| bridge at zero (of bridged sets) | 8 of 52 | 8 of 52, each allow-listed with a reason |
+| bridge at zero (of bridged sets) | 8 of 52 | 8 of 52, allow-listed with a reason — withdrawn by the follow-up change, which demotes the dimension to reported-only |
 | font served (of the 58 manifest sets) | 19 | 36 |
 | font named but unserved and undeclared | 33 | 0 |
 | | | |

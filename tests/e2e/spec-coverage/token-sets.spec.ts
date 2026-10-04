@@ -83,14 +83,33 @@ const REQUIRED_TOKENS: string[] = (() => {
 		throw new Error('REQUIRED_TOKENS not found in scripts/audit-token-sets.mjs')
 	return [...block[1].matchAll(/'(--nldesign-[a-z0-9-]+)'/g)].map((m) => m[1])
 })()
-/** TokenSetService::SELECTABLE_SHIPPED_SETS, read from the PHP source. */
-const SELECTABLE_SHIPPED_SETS: string[] = (() => {
-	const match = readRepoFile('lib/Service/TokenSetService.php').match(
-		/SELECTABLE_SHIPPED_SETS = \[([^\]]*)\]/,
-	)
-	if (match === null) throw new Error('SELECTABLE_SHIPPED_SETS not found')
-	return [...match[1].matchAll(/'([a-z0-9-]+)'/g)].map((m) => m[1])
-})()
+/**
+ * The shipped sets the admin picker offers, derived the way
+ * `TokenSetService::getSelectableTokenSets()` derives it: every id named in
+ * `token-sets.json` that the vocabulary allow-list does not record incomplete.
+ *
+ * Read from the data rather than from a PHP constant, because the constant is
+ * gone: `SELECTABLE_SHIPPED_SETS = ['nextcloud', 'cunningham']` held two of 59
+ * shipped sets, so an administrator could not choose any municipality at all,
+ * and it stayed that way after its own stated exit condition was met because
+ * nothing failed when it went stale.
+ */
+const SELECTABLE_SHIPPED_SETS: string[] = MANIFEST.map((e) => e.id).filter(
+	(id) => !ALLOWLIST.includes(id),
+)
+
+/**
+ * Shipped token files the picker withholds: one with no `token-sets.json`
+ * entry. In this repository that is `css/tokens/conduction.css`, the shared
+ * role layer `scripts/generate-brand-set.mjs` copies into a brand set.
+ *
+ * These are what the "always selectable" rules below are exercised with, since
+ * every named set the audit passes is now offered anyway and a set that is
+ * offered regardless proves nothing about a survival rule.
+ */
+const UNNAMED_TOKEN_FILES: string[] = TOKEN_FILES.filter(
+	(id) => !MANIFEST.some((e) => e.id === id),
+)
 
 function manifestEntry(id: string): ManifestEntry {
 	const entry = MANIFEST.find((e) => e.id === id)
@@ -1407,7 +1426,7 @@ test.describe('token-sets', () => {
 	}
 
 	// @e2e openspec/specs/token-sets/spec.md#the-allowlist-is-the-only-shipped-set-offered
-	test('on a stock instance the dropdown offers only the allowlisted shipped sets', async ({
+	test('on a stock instance the dropdown offers every named set the audit passes', async ({
 		page,
 	}) => {
 		await openSettings(page)
@@ -1451,14 +1470,17 @@ test.describe('token-sets', () => {
 	})
 
 	// @e2e openspec/specs/token-sets/spec.md#the-active-set-is-always-selectable
-	test('the active set is offered and selected even when it is not allowlisted', async ({
+	test('the active set is offered and selected even when the picker withholds it', async ({
 		page,
 	}) => {
 		await openSettings(page)
 		const mapped = await mappedSets(page)
-		const target = TOKEN_FILES.find(
-			(id) => !SELECTABLE_SHIPPED_SETS.includes(id) && !mapped.includes(id),
+		// A shipped file the picker withholds, so the survival rule is what
+		// puts it back rather than the rule that offers every named set.
+		const target = UNNAMED_TOKEN_FILES.find(
+			(id) => !mapped.includes(id),
 		) as string
+		expect(target, 'no withheld shipped file to exercise the rule with').toBeTruthy()
 		await withActiveSet(page, target, async () => {
 			await openSettings(page)
 			expect((await adminList(page)).map((s) => s.id)).toContain(target)
@@ -1476,12 +1498,10 @@ test.describe('token-sets', () => {
 		const token = await requestToken(page)
 		const active = await getTokenSet(page, token)
 		const mapped = await mappedSets(page)
-		const target = TOKEN_FILES.find(
-			(id) =>
-				!SELECTABLE_SHIPPED_SETS.includes(id)
-				&& !mapped.includes(id)
-				&& id !== active,
+		const target = UNNAMED_TOKEN_FILES.find(
+			(id) => !mapped.includes(id) && id !== active,
 		) as string
+		expect(target, 'no withheld shipped file to exercise the rule with').toBeTruthy()
 		expect((await adminList(page)).map((s) => s.id)).not.toContain(target)
 		await withOffered(page, [target], async () => {
 			expect((await adminList(page)).map((s) => s.id)).toContain(target)

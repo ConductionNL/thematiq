@@ -8,8 +8,12 @@ rather than described. One row per set whose design system reads the
 `--nldesign-*` vocabulary.
 
 - **bridge** = of the `--utrecht-*` names `css/systems/nldesign/utrecht-bridge.css`
-  reads, how many the set declares. A set at 0 dresses every button, table and
-  form control in the Rijkshuisstijl default, whatever its accent colour is.
+  reads, how many the set declares. MEASURED AND REPORTED, NOT GATED: 42 of the
+  bridge's 84 declarations fall back to a `--nldesign-*` token the set itself
+  declares, 38 to a non-colour literal (1rem, 1px, transparent, 700) and 3 to a
+  colour literal, so a set at 0 adopts the design system component geometry and
+  type scale and still brands the component colours from its own semantic layer.
+  A higher figure means the set owns more of its own radii, spacing and type scale.
 - **font** = whether the first family the set names has an `@font-face` in a
   stylesheet its own design system LINKS. `declared` means the family cannot be
   redistributed and the set says so, with the action an administrator takes.
@@ -18,32 +22,38 @@ rather than described. One row per set whose design system reads the
 
 A cell marked `(known)` is on `tests/Unit/fixtures/token-set-coverage-allowlist.json`
 with a recorded reason. The list can only shrink: the gate fails on a set below
-the bar that is not listed, AND on a listed set that has started passing.
+the bar that is not listed, on a listed set that has started passing, and on an
+entry under a dimension nothing gates.
+
+The gated dimensions are font, logo and contrast. `bridge` is measured and
+published but never fails, and the measurement behind that decision is recorded
+under `$reported.bridge` in the fixture: demoting a dimension is the one edit
+that lowers the allow-list count with nothing fixed, so it has to be written down.
 
 | Token set | bridge | font | logo | contrast |
 |-----------|-------:|:-----|:----:|:--------:|
-| amsterdam | 0/87 (known) | self-hosted | yes | pass |
+| amsterdam | 0/87 | self-hosted | yes | pass |
 | bodegraven-reeuwijk | 18/87 | self-hosted | no (known) | pass |
 | borne | 8/87 | declared | no (known) | pass |
 | buren | 17/87 | self-hosted | no (known) | pass |
 | conduction-new | 26/87 | self-hosted | no (known) | pass |
 | cunningham | n/a | declared | no (known) | pass |
 | demodam | 21/87 | self-hosted | no (known) | pass |
-| denhaag | 0/87 (known) | self-hosted | yes | pass |
+| denhaag | 0/87 | self-hosted | yes | pass |
 | dinkelland | 53/87 | self-hosted | no (known) | pass |
 | drechterland | 19/87 | system | yes | pass |
 | duiven | 10/87 | self-hosted | no (known) | pass |
 | duo | 15/87 | declared | no (known) | pass |
 | enkhuizen | 19/87 | system | no (known) | pass |
 | enschede | 55/87 | self-hosted | no (known) | pass |
-| epe | 0/87 (known) | self-hosted | yes | pass |
+| epe | 0/87 | self-hosted | yes | pass |
 | example-basisschool | 74/87 | self-hosted | yes | pass |
 | example-college | 74/87 | self-hosted | yes | pass |
 | example-gemeente | 74/87 | self-hosted | yes | pass |
 | example-opleider | 74/87 | self-hosted | yes | pass |
 | example-voortgezet | 74/87 | self-hosted | yes | pass |
 | frankendesk | n/a | self-hosted | yes | pass |
-| groningen | 0/87 (known) | self-hosted | no (known) | pass |
+| groningen | 0/87 | self-hosted | no (known) | pass |
 | haarlem | 27/87 | declared | no (known) | pass |
 | haarlemmermeer | 16/87 | declared | no (known) | pass |
 | hoeksche-waard | 53/87 | self-hosted | no (known) | pass |
@@ -63,13 +73,13 @@ the bar that is not listed, AND on a listed set that has started passing.
 | provincie-zuid-holland | 23/87 | declared | yes | pass |
 | purmerend | 21/87 | self-hosted | no (known) | pass |
 | riddeliemers | 10/87 | self-hosted | no (known) | pass |
-| ridderkerk | 0/87 (known) | self-hosted | no (known) | pass |
-| rijkshuisstijl | 0/87 (known) | self-hosted | yes | pass |
+| ridderkerk | 0/87 | self-hosted | no (known) | pass |
+| rijkshuisstijl | 0/87 | self-hosted | yes | pass |
 | rotterdam | 79/87 | declared | yes | pass |
 | stedebroec | 21/87 | system | no (known) | pass |
 | tilburg | 25/87 | system | yes | pass |
 | tubbergen | 53/87 | self-hosted | no (known) | pass |
-| utrecht | 0/87 (known) | self-hosted | yes | pass |
+| utrecht | 0/87 | self-hosted | yes | pass |
 | venray | 23/87 | declared | no (known) | pass |
 | vng | 74/87 | declared | yes | pass |
 | vught | 23/87 | declared | no (known) | pass |
@@ -77,10 +87,10 @@ the bar that is not listed, AND on a listed set that has started passing.
 | xxllnc | 46/87 | declared | yes | pass |
 | zaanstad | 55/87 | self-hosted | no (known) | pass |
 | zevenaar | 8/87 | self-hosted | no (known) | pass |
-| zwolle | 0/87 (known) | declared | no (known) | pass |
+| zwolle | 0/87 | declared | no (known) | pass |
 
-- 56 sets measured; 17 pass all four dimensions.
-- bridge: 8 of 52 bridged sets declare none of the 87 --utrecht-* names; median 21.
+- 56 sets measured; 22 pass every gated dimension (font, logo, contrast).
+- bridge (measured, NOT gated): 8 of 52 bridged sets declare none of the 87 --utrecht-* names; median 21.
 - font: 16 declared, 36 self-hosted, 4 system.
 - logo: 34 of 56 point Nextcloud at no logo.
 - contrast: 0 of 56 do not pass.

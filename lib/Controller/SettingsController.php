@@ -255,8 +255,10 @@ class SettingsController extends Controller {
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getAvailableTokenSets(): JSONResponse {
 		// Feeds the admin dropdown, so it is the SELECTABLE list, not the full
-		// catalogue — see TokenSetService::SELECTABLE_SHIPPED_SETS. The public
-		// catalogue (CatalogController) still answers with everything shipped.
+		// catalogue — see TokenSetService::getSelectableTokenSets(), which
+		// offers every named shipped set the vocabulary audit passes. The public
+		// catalogue (CatalogController) still answers with everything shipped,
+		// including the shared role layer that has no manifest entry.
 		$tokenSets = $this->tokenSetService->getSelectableTokenSets();
 
 		return new JSONResponse(['tokenSets' => $tokenSets]);

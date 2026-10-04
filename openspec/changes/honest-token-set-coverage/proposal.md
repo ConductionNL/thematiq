@@ -15,9 +15,12 @@ organisation. Measured on 2026-10-04 on `origin/development` (3dc02602), the gap
 two was:
 
 - **8 of 52** sets whose design system links the Utrecht bridge declare **none** of the 87
-  `--utrecht-*` names it reads, so every button, table, form control and badge keeps the
-  Rijkshuisstijl default and only the accent colour moves: `amsterdam`, `denhaag`, `epe`,
-  `groningen`, `ridderkerk`, `rijkshuisstijl`, `utrecht`, `zwolle`.
+  `--utrecht-*` names it reads, so they adopt the design system's component geometry and type
+  scale rather than their own: `amsterdam`, `denhaag`, `epe`, `groningen`, `ridderkerk`,
+  `rijkshuisstijl`, `utrecht`, `zwolle`. (This bullet first said such a set "keeps the
+  Rijkshuisstijl default" on every control. That was wrong and overstated the defect; the
+  measurement that corrects it is in the follow-up change `every-shipped-set-selectable`, which
+  also demotes this dimension from a bar to reported-only.)
 - **33 of 58** sets name a typeface no stylesheet their design system links declares, so the
   page silently renders the next family in the stack. `conduction-new` asks for Figtree, whose
   bytes were already in the tree, declared only in `css/fonts-conduction.css`, a layer no
@@ -46,7 +49,8 @@ from recorded in the page.
 **reason**, not an array of ids. The gate fails three ways, which is what makes it a ratchet
 rather than a baseline: on a set below the bar that is not listed, on a listed set that has
 started passing (delete the entry), and on an entry whose reason is under 20 characters.
-Baseline recorded: bridge 8, font 0, logo 34, contrast 0.
+Baseline recorded: bridge 8, font 0, logo 34, contrast 0. (`bridge` was demoted to
+reported-only by the follow-up change, leaving font 0, logo 34, contrast 0 gated.)
 
 **3. The fonts the sets name are served.** Open Sans, Lato, Roboto, Source Sans Pro,
 IBM Plex Sans and Clear Sans are self-hosted (woff2, latin subset, from `@fontsource` 5.3.0),

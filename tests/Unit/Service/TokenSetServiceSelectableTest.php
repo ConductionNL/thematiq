@@ -61,6 +61,25 @@ class TokenSetServiceSelectableTest extends TestCase {
 	private static array $wcagStore = [];
 
 	/**
+	 * Named sets in the synthetic catalogue that the audit does not report
+	 * incomplete, and which must therefore be offered.
+	 *
+	 * @var array<int, string>
+	 */
+	private const COMPLETE_SETS = ['nextcloud', 'cunningham', 'rijkshuisstijl', 'amsterdam', 'utrecht'];
+
+	/**
+	 * A named set the vocabulary audit reports incomplete.
+	 */
+	private const INCOMPLETE_SET = 'halfbrand';
+
+	/**
+	 * A token file with no `token-sets.json` entry — the shape
+	 * `css/tokens/conduction.css` has in the real repository.
+	 */
+	private const UNNAMED_SET = 'rolelayer';
+
+	/**
 	 * The synthetic app directory holding the four-set catalogue.
 	 *
 	 * @var string
@@ -100,12 +119,11 @@ class TokenSetServiceSelectableTest extends TestCase {
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
 		$manifest = [];
-		$catalogue = array_merge(
-			TokenSetService::SELECTABLE_SHIPPED_SETS,
-			['rijkshuisstijl', 'amsterdam', 'utrecht']
-		);
 
-		foreach ($catalogue as $id) {
+		// Named sets whose design system reads no --nldesign-* vocabulary, so
+		// the audit reports them not auditable and therefore not incomplete:
+		// these are the ones that MUST be offered.
+		foreach (self::COMPLETE_SETS as $id) {
 			file_put_contents(
 				$this->appDir . '/css/tokens/' . $id . '.css',
 				":root {\n  --nldesign-color-primary: #154273;\n}\n"
@@ -118,6 +136,34 @@ class TokenSetServiceSelectableTest extends TestCase {
 			];
 		}
 
+		// A named nldesign set declaring only a primary: the vocabulary audit
+		// reports it incomplete, so it MUST NOT be offered. Without a set in
+		// this state the filter could stop filtering and every assertion below
+		// would still pass.
+		mkdir($this->appDir . '/css/systems/nldesign', 0777, true);
+		foreach (glob($this->repoRoot() . '/css/systems/nldesign/*.css') ?: [] as $layer) {
+			copy($layer, $this->appDir . '/css/systems/nldesign/' . basename($layer));
+		}
+        copy($this->repoRoot() . '/design-systems.json', $this->appDir . '/design-systems.json');
+		file_put_contents(
+			$this->appDir . '/css/tokens/' . self::INCOMPLETE_SET . '.css',
+			":root {\n  --nldesign-color-primary: #154273;\n}\n"
+		);
+		$manifest[] = [
+			'id' => self::INCOMPLETE_SET,
+			'name' => 'Halfbrand',
+			'design_system' => 'nldesign',
+			'theming' => ['primary_color' => '#154273', 'background_color' => '#ffffff'],
+		];
+
+		// A token file with NO manifest entry: the shared role layer's shape.
+		// Discovery finds it; the picker must not offer it, because it has no
+		// name, description or theming of its own to show.
+		file_put_contents(
+			$this->appDir . '/css/tokens/' . self::UNNAMED_SET . '.css',
+			":root {\n  --nldesign-color-primary: #154273;\n}\n"
+		);
+
 		file_put_contents($this->appDir . '/token-sets.json', json_encode($manifest));
 	}//end setUp()
 
@@ -129,7 +175,14 @@ class TokenSetServiceSelectableTest extends TestCase {
 			unlink($file);
 		}
 
+		foreach (glob($this->appDir . '/css/systems/nldesign/*') as $file) {
+			unlink($file);
+		}
+
 		unlink($this->appDir . '/token-sets.json');
+		@unlink($this->appDir . '/design-systems.json');
+		rmdir($this->appDir . '/css/systems/nldesign');
+		rmdir($this->appDir . '/css/systems');
 		rmdir($this->appDir . '/css/tokens');
 		rmdir($this->appDir . '/css');
 		rmdir($this->appDir);
@@ -191,38 +244,58 @@ class TokenSetServiceSelectableTest extends TestCase {
 	}//end ids()
 
 	/**
-	 * On a stock instance the dropdown offers the allowlist and nothing else,
-	 * even though the catalogue itself still holds every shipped set.
+	 * On a stock instance the dropdown offers every NAMED set the vocabulary
+	 * audit does not report incomplete, and nothing else.
+	 *
+	 * Both halves matter. The incomplete set must be absent, or the filter has
+	 * stopped filtering; the complete ones must be present, or it is narrowing
+	 * when it should not. The set with no manifest entry must be absent too:
+	 * discovery finds it, and it has no name to show.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
-	public function testStockInstanceOffersOnlyTheAllowlistedShippedSets(): void {
-		$service = $this->service(['token_set' => 'nextcloud'], $this->repoRoot());
+	public function testStockInstanceOffersEveryNamedCompleteSet(): void {
+		$service = $this->service(['token_set' => 'nextcloud']);
 
 		$selectable = $this->ids($service->getSelectableTokenSets());
 		$all = $this->ids($service->getAvailableTokenSets());
 
-		$this->assertEqualsCanonicalizing(TokenSetService::SELECTABLE_SHIPPED_SETS, $selectable);
-		$this->assertContains('nextcloud', $selectable);
+		$this->assertEqualsCanonicalizing(self::COMPLETE_SETS, $selectable);
+		$this->assertNotContains(self::INCOMPLETE_SET, $selectable, 'A vocabulary-incomplete set must not be offered.');
+		$this->assertNotContains(self::UNNAMED_SET, $selectable, 'A set with no manifest entry must not be offered.');
+
 		// The catalogue is NOT what was narrowed — only the picker is.
+		$this->assertContains(self::INCOMPLETE_SET, $all);
+		$this->assertContains(self::UNNAMED_SET, $all);
 		$this->assertGreaterThan(count($selectable), count($all));
-	}//end testStockInstanceOffersOnlyTheAllowlistedShippedSets()
+	}//end testStockInstanceOffersEveryNamedCompleteSet()
 
 	/**
-	 * The set the instance is running survives the filter even when it is not
-	 * allowlisted; otherwise the panel renders with no option selected and the
-	 * first save silently re-themes the instance.
+	 * The set the instance is running survives BOTH filters — the vocabulary
+	 * verdict and the manifest-entry rule — because narrowing a picker must
+	 * never change what the instance is doing. Otherwise the panel renders with
+	 * no option selected and the first save silently re-themes the instance.
+	 *
+	 * Asserted on the two sets that are otherwise filtered out, which is the
+	 * only way this rule can be exercised now that every named complete set is
+	 * offered anyway.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testTheActiveSetIsAlwaysSelectable(): void {
-		$service = $this->service(['token_set' => 'rijkshuisstijl']);
+		foreach ([self::INCOMPLETE_SET, self::UNNAMED_SET] as $id) {
+			$selectable = $this->ids($this->service(['token_set' => $id])->getSelectableTokenSets());
 
-		$selectable = $this->ids($service->getSelectableTokenSets());
+			$this->assertContains($id, $selectable, $id . ' is active, so it must still be offered.');
+			$this->assertContains('nextcloud', $selectable);
+		}
 
-		$this->assertContains('rijkshuisstijl', $selectable);
-		$this->assertContains('nextcloud', $selectable);
-		$this->assertNotContains('rijkshuisstijl', TokenSetService::SELECTABLE_SHIPPED_SETS);
+		// ...and it is genuinely filtered out when it is NOT the active set, so
+		// the assertion above is not passing on a filter that keeps everything.
+		$this->assertNotContains(
+			self::INCOMPLETE_SET,
+			$this->ids($this->service(['token_set' => 'nextcloud'])->getSelectableTokenSets())
+		);
 	}//end testTheActiveSetIsAlwaysSelectable()
 
 	/**
@@ -233,25 +306,28 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testASetUsedByAGroupMappingIsSelectable(): void {
+		// The mapping points at the two sets the filter would otherwise drop,
+		// because a mapping onto a set that is offered anyway proves nothing.
 		$mapping = json_encode(
 			[
-				['group' => 'gemeente', 'tokenSet' => 'amsterdam'],
-				['group' => 'ontwerp', 'tokenSet' => 'utrecht'],
+				['group' => 'gemeente', 'tokenSet' => self::INCOMPLETE_SET],
+				['group' => 'ontwerp', 'tokenSet' => self::UNNAMED_SET],
 			]
 		);
 
 		$service = $this->service(['token_set' => 'nextcloud', 'group_token_sets' => $mapping]);
 		$selectable = $this->ids($service->getSelectableTokenSets());
 
-		$this->assertContains('amsterdam', $selectable);
-		$this->assertContains('utrecht', $selectable);
+		$this->assertContains(self::INCOMPLETE_SET, $selectable);
+		$this->assertContains(self::UNNAMED_SET, $selectable);
 		$this->assertContains('nextcloud', $selectable);
 	}//end testASetUsedByAGroupMappingIsSelectable()
 
 	/**
 	 * A group mapping that is not usable JSON, or whose entries are not the
-	 * expected shape, narrows the list to the allowlist rather than throwing:
-	 * a corrupt appconfig value must not take the admin panel down with it.
+	 * expected shape, leaves the measured list alone rather than throwing: a
+	 * corrupt appconfig value must not take the admin panel down with it, and
+	 * must not widen the picker either.
 	 *
 	 * @param string $mapping The stored group-mapping value.
 	 *
@@ -263,7 +339,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 		$service = $this->service(['token_set' => 'nextcloud', 'group_token_sets' => $mapping]);
 
 		$this->assertEqualsCanonicalizing(
-			TokenSetService::SELECTABLE_SHIPPED_SETS,
+			self::COMPLETE_SETS,
 			$this->ids($service->getSelectableTokenSets())
 		);
 	}//end testAnUnusableGroupMappingIsIgnored()
@@ -286,18 +362,18 @@ class TokenSetServiceSelectableTest extends TestCase {
 
 	/**
 	 * An unset active set resolves to `nextcloud`, and an explicitly empty one
-	 * adds nothing — the allowlist already carries `nextcloud`, and keying the
+	 * adds nothing — `nextcloud` is offered on its own merits, and keying the
 	 * filter on an empty string would make every id with no name match.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testAnEmptyActiveSetAddsNothing(): void {
 		$this->assertEqualsCanonicalizing(
-			TokenSetService::SELECTABLE_SHIPPED_SETS,
+			self::COMPLETE_SETS,
 			$this->ids($this->service(['token_set' => ''])->getSelectableTokenSets())
 		);
 		$this->assertEqualsCanonicalizing(
-			TokenSetService::SELECTABLE_SHIPPED_SETS,
+			self::COMPLETE_SETS,
 			$this->ids($this->service([])->getSelectableTokenSets())
 		);
 	}//end testAnEmptyActiveSetAddsNothing()
@@ -311,7 +387,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testSelectableEntriesAreCatalogueEntriesInCatalogueOrder(): void {
-		$service = $this->service(['token_set' => 'rijkshuisstijl']);
+		$service = $this->service(['token_set' => 'nextcloud']);
 
 		$all = $service->getAvailableTokenSets();
 		$selectable = $service->getSelectableTokenSets();
@@ -321,10 +397,74 @@ class TokenSetServiceSelectableTest extends TestCase {
 			$this->assertContains($entry, $all);
 		}
 
-		$expected = array_merge(TokenSetService::SELECTABLE_SHIPPED_SETS, ['rijkshuisstijl']);
+		$expected = self::COMPLETE_SETS;
 		$order = array_values(
 			array_filter($this->ids($all), static fn (string $id): bool => in_array($id, $expected, true))
 		);
 		$this->assertSame($order, $this->ids($selectable));
 	}//end testSelectableEntriesAreCatalogueEntriesInCatalogueOrder()
+
+	/**
+	 * THE ANTI-NARROWING GATE, over the REAL shipped catalogue.
+	 *
+	 * Selectability used to be a hand-written constant holding two of the 59
+	 * shipped sets, so an administrator could not choose vng, leiden, zwolle,
+	 * rotterdam or any other municipality at all. That is the opposite of what
+	 * this app is for, and it stayed true for weeks after its own stated exit
+	 * condition was met, because nothing failed when it went stale.
+	 *
+	 * So this asserts the rule against the real `css/tokens/` and the real
+	 * `token-sets.json`: the picker offers EVERY named shipped set the
+	 * vocabulary audit does not report incomplete, and the only shipped file it
+	 * withholds is one with no manifest entry. A future change that narrows the
+	 * picker again fails here and names the sets it dropped.
+	 *
+	 * Run against the repository root rather than a synthetic catalogue on
+	 * purpose: a synthetic one would pass while the shipped sets were hidden.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 */
+	public function testEveryNamedShippedSetTheAuditPassesIsOfferedOnTheRealCatalogue(): void {
+		$service = $this->service(['token_set' => 'nextcloud'], $this->repoRoot());
+
+		$all = $service->getAvailableTokenSets();
+		$selectable = $this->ids($service->getSelectableTokenSets());
+
+		$manifest = json_decode((string)file_get_contents($this->repoRoot() . '/token-sets.json'), true);
+		$this->assertIsArray($manifest);
+		$named = array_column($manifest, 'id');
+
+		$audit = new TokenSetVocabularyAuditService(new CssParserService());
+		$incomplete = [];
+		foreach ($audit->auditAll($this->repoRoot()) as $result) {
+			if ($result['complete'] === false) {
+				$incomplete[] = $result['id'];
+			}
+		}
+
+		$expected = array_values(array_diff($named, $incomplete));
+
+		$this->assertEqualsCanonicalizing(
+			$expected,
+			$selectable,
+			"The admin picker must offer every named shipped set the vocabulary audit passes.\n"
+			. 'Withheld: ' . implode(', ', array_diff($expected, $selectable)) . "\n"
+			. 'Offered but should not be: ' . implode(', ', array_diff($selectable, $expected))
+		);
+
+		// The guarantee is not vacuous: the catalogue is strictly larger,
+		// and what it holds beyond the picker is a file with no manifest entry.
+		$unnamed = array_values(array_diff($this->ids($all), $named));
+		$this->assertNotSame([], $unnamed, 'This control needs at least one token file with no manifest entry.');
+		foreach ($unnamed as $id) {
+			$this->assertNotContains($id, $selectable, $id . ' has no manifest entry, so it must not be offered.');
+		}
+
+		// And it is a real widening, not a rename of the old two-set list.
+		$this->assertGreaterThan(
+			50,
+			count($selectable),
+			'All 59 shipped sets but the role layer are expected to be selectable; a count near 2 means the picker was narrowed again.'
+		);
+	}//end testEveryNamedShippedSetTheAuditPassesIsOfferedOnTheRealCatalogue()
 }//end class
