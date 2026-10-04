@@ -247,7 +247,9 @@ function failures(set, env) {
 describe('error labels on the error fill (thematiq#1027)', () => {
 	it('covers the shipped sets and their dark variants', () => {
 		expect(SETS.length).toBeGreaterThan(40)
-		expect(SETS.filter((s) => exists(`css/tokens/dark/${s.id}.css`)).length).toBeGreaterThan(40)
+		expect(
+			SETS.filter((s) => exists(`css/tokens/dark/${s.id}.css`)).length,
+		).toBeGreaterThan(40)
 	})
 
 	for (const [envName, env] of Object.entries(ENVIRONMENTS)) {

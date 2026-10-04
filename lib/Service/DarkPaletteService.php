@@ -1175,7 +1175,7 @@ class DarkPaletteService {
 	/**
 	 * Give the error label a dark value that reads on the error fill (thematiq#1027).
 	 *
-	 * error-contrast.css paints the error chip and button label from
+	 * The stylesheet css/error-contrast.css paints the error chip and button label from
 	 * {@see self::ERROR_LABEL}, white when it is absent. White suits the
 	 * saturated light reds, but a dark variant derives a lighter red, and
 	 * white on the usual #e72e2e is 4.35:1. The generic repair loop cannot
