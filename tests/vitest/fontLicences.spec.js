@@ -22,12 +22,31 @@ import path from 'path'
 
 const root = path.resolve(__dirname, '..', '..')
 
-const FAMILIES = [
-	{ prefix: 'fira-sans-', holder: 'The Mozilla Foundation and Telefonica S.A.' },
-	{ prefix: 'figtree-', holder: 'The Figtree Project Authors' },
-	{ prefix: 'ibm-plex-mono-', holder: 'IBM Corp.' },
-	{ prefix: 'inter-', holder: 'The Inter Project Authors' },
-]
+// Derived from the generator's own tables rather than retyped, because a
+// hand-maintained list here named Fira Sans, Figtree, IBM Plex Mono and Inter
+// and did NOT name Source Sans 3 — which both nldesign font directories had
+// shipped since the (EXAMPLE) Gemeente set. A licence gate that only checks
+// the families someone remembered to list is the gate not running.
+//
+// Inter and Marianne live under css/systems/lasuite and css/systems/summer-breeze
+// and are declared by those systems' own stylesheets, so they are not in the
+// nldesign generator; they are named here with their upstream holders.
+const BUNDLED = require('../../scripts/build-fonts.js')
+
+const GENERATED_FAMILIES = BUNDLED.FAMILIES.concat(BUNDLED.NOTICE_ONLY).map(
+	(family) => ({
+		prefix: family.faces[0].file.replace(/latin.*$/, ''),
+		holder: family.copyright
+			.replace(/^[\d-]+ (by )?/, '')
+			.replace(/ \(http.*$/, ''),
+		spdx: family.spdx,
+	}),
+)
+
+const FAMILIES = GENERATED_FAMILIES.concat([
+	{ prefix: 'inter-', holder: 'The Inter Project Authors', spdx: 'OFL-1.1' },
+	{ prefix: 'Inter-', holder: 'The Inter Project Authors', spdx: 'OFL-1.1' },
+])
 
 const FONT_DIRS = [
 	'css/fonts',
@@ -43,12 +62,24 @@ const FONT_DIRS = [
  * @return {Array<{file: string, family: object}>} Each font with its family.
  */
 function ofl(dir) {
+	return bundled(dir).filter((entry) => entry.family.spdx === 'OFL-1.1')
+}
+
+/**
+ * Every font file in a directory, paired with the family that claims it.
+ *
+ * @param {string} dir Directory relative to the repo root.
+ * @return {Array<{file: string, family: object}>} Each font with its family.
+ */
+function bundled(dir) {
 	return fs
 		.readdirSync(path.join(root, dir))
 		.filter((file) => /\.(woff2?|ttf|otf)$/i.test(file))
 		.map((file) => ({
 			file,
-			family: FAMILIES.find((f) => file.toLowerCase().startsWith(f.prefix)),
+			family: FAMILIES.find((f) =>
+				file.toLowerCase().startsWith(f.prefix.toLowerCase()),
+			),
 		}))
 		.filter((entry) => entry.family !== undefined)
 }
@@ -72,8 +103,52 @@ describe('bundled OFL fonts carry their licence', () => {
 		})
 	}
 
+	for (const dir of FONT_DIRS) {
+		it(`${dir} has no font binary without a recorded copyright holder`, () => {
+			const files = fs
+				.readdirSync(path.join(root, dir))
+				.filter((file) => /\.(woff2?|ttf|otf)$/i.test(file))
+			const claimed = bundled(dir).map((entry) => entry.file)
+			expect(files.length).toBeGreaterThan(0)
+			expect(files.filter((file) => claimed.includes(file) === false)).toEqual(
+				[],
+			)
+		})
+	}
+
+	it('LICENSES/ holds the Apache License 2.0 text, for Intel Clear Sans', () => {
+		const text = fs.readFileSync(
+			path.join(root, 'LICENSES/Apache-2.0.txt'),
+			'utf8',
+		)
+		expect(text).toContain('Apache License')
+		expect(text).toContain('Version 2.0, January 2004')
+	})
+
+	for (const dir of ['css/fonts', 'css/systems/nldesign/fonts']) {
+		it(`${dir} ships an APACHE-2.0.txt naming Intel for Clear Sans`, () => {
+			const text = fs.readFileSync(
+				path.join(root, dir, 'APACHE-2.0.txt'),
+				'utf8',
+			)
+			expect(text).toContain('Intel Corporation')
+			expect(text).toContain('Apache License')
+			expect(
+				fs
+					.readdirSync(path.join(root, dir))
+					.filter((f) => f.startsWith('clear-sans-')).length,
+			).toBeGreaterThan(0)
+		})
+	}
+
 	it('REUSE.toml labels every OFL font OFL-1.1 with its holder, overriding the EUPL blanket', () => {
-		const toml = fs.readFileSync(path.join(root, 'REUSE.toml'), 'utf8')
+		// `\"` in a TOML string is a literal quote, and two holders carry one
+		// (Reserved Font Name "Lato" / "Plex"), so the escape is undone before
+		// the text is compared. Without this the assertion failed on the escape
+		// rather than on a missing holder.
+		const toml = fs
+			.readFileSync(path.join(root, 'REUSE.toml'), 'utf8')
+			.replace(/\\"/g, '"')
 		const blocks = toml.split('[[annotations]]').slice(1)
 		for (const dir of FONT_DIRS) {
 			for (const { file, family } of ofl(dir)) {

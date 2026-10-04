@@ -24,6 +24,9 @@
             <file>tests/Unit/Service/SummerBreezeContrastTest.php</file>
             <file>tests/Unit/Service/ShippedDarkLogoTest.php</file>
             <file>tests/Unit/Service/DenhaagContrastPairsTest.php</file>
+            <file>tests/Unit/Service/TokenSetFontAuditTest.php</file>
+            <file>tests/Unit/Service/ContrastVerdictDocumentTest.php</file>
+            <file>tests/Unit/Service/TokenSetSelectionPolicyTest.php</file>
             <file>tests/Unit/Service/SetLogoReachTest.php</file>
             <file>tests/Unit/IconAssetsTest.php</file>
             <file>tests/Unit/TokenCssShapeTest.php</file>

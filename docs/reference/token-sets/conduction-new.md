@@ -4,7 +4,7 @@
 
 Token set `conduction-new`: 400 declared by this set, 141 from the defaults layer.
 
-Contrast: primary text on primary not evaluated, primary on background not evaluated (unevaluated).
+Contrast: primary text on primary 9.08:1, primary on background 9.08:1 (pass).
 
 ## Colours (Kleuren)
 

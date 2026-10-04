@@ -4,7 +4,7 @@
 
 Token set `purmerend`: 835 declared by this set, 127 from the defaults layer.
 
-Contrast: primary text on primary 4.60:1, primary on background not evaluated (unevaluated).
+Contrast: primary text on primary 4.60:1, primary on background 4.60:1 (pass).
 
 ## Colours (Kleuren)
 
