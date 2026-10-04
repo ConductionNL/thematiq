@@ -67,8 +67,16 @@ class ContrastVerdictDocument {
 		}
 
 		return json_encode(
-			['$comment' => self::HEADER, 'sets' => $sets],
-			(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+			// (object) so an empty audit renders `"sets": {}` and not `"sets": []`.
+			// PHP encodes an empty array as a JSON list, and the Node audit
+			// indexes this by set id, so a list would make an empty catalogue
+			// fail differently from a full one for no reason.
+			['$comment' => self::HEADER, 'sets' => (object)$sets],
+			// PRESERVE_ZERO_FRACTION keeps a threshold of 3.0 as `3.0` rather
+			// than `3`. The file is compared byte for byte by its staleness
+			// check, so a value whose type depends on whether it happens to be
+			// whole is a diff waiting to happen.
+			(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION)
 		) . "\n";
 	}//end render()
 }//end class
