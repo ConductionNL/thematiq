@@ -290,6 +290,7 @@ describe('high-contrast dark variant (thematiq#1023)', () => {
 	it('stays AAA in the light theme', () => {
 		expect(failures(page(LIGHT))).toEqual([])
 		expect(page(LIGHT).v('--color-main-background')).toBe('#ffffff')
+		expect(page(LIGHT).v('--color-main-background-blur')).toBe('#ffffff')
 	})
 
 	for (const [name, env] of Object.entries(DARK_ENVIRONMENTS)) {
@@ -303,6 +304,16 @@ describe('high-contrast dark variant (thematiq#1023)', () => {
 
 			it('holds every pair to AAA: 7:1 text, 4.5:1 borders, fills and focus', () => {
 				expect(failures(page(env))).toEqual([])
+			})
+
+			// Found in the live run: the app shell behind the navigation paints
+			// --color-main-background-blur through a backdrop blur. Left unmapped
+			// it keeps Nextcloud's translucent #171717 over the background image,
+			// so the navigation sat on a tinted picture instead of black.
+			it('paints the app shell black, with no translucent blur over the background image', () => {
+				const p = page(env)
+				expect(p.v('--color-main-background-blur')).toBe('#000000')
+				expect(p.v('--filter-background-blur')).toBe('none')
 			})
 
 			it('keeps a thick focus ring that is not the border colour', () => {

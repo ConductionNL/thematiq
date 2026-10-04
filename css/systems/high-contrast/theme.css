@@ -44,6 +44,12 @@ body {
 	--color-background-hover: var(--nldesign-color-background-hover) !important;
 	--color-background-dark: var(--nldesign-color-background-dark) !important;
 	--color-background-darker: var(--nldesign-color-background-darker) !important;
+	/* The app shell behind the navigation paints this through a backdrop blur.
+	 * Unmapped it stays Nextcloud's translucent surface over the background
+	 * image (#171717 at 85% in dark), so it is made opaque and the blur is
+	 * dropped, as Nextcloud's own high-contrast themes do (thematiq#1023). */
+	--color-main-background-blur: var(--nldesign-color-background) !important;
+	--filter-background-blur: none !important;
 
 	/* Text — black body text, dark "muted". */
 	--color-main-text: var(--nldesign-color-text) !important;

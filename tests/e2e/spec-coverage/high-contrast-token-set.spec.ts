@@ -171,6 +171,19 @@ test.describe('high-contrast-token-set', () => {
 				ratioOf(dark.text, dark.bg),
 				'dark text contrast',
 			).toBeGreaterThanOrEqual(7)
+			// The app shell behind the navigation is painted, not just declared:
+			// it uses --color-main-background-blur through a backdrop blur, and
+			// left unmapped it is Nextcloud's translucent #171717 over the
+			// background image (found in the live run).
+			const shell = await page.evaluate(() => {
+				const el = document.querySelector('#content, .content')
+				if (el === null) return null
+				const s = getComputedStyle(el)
+				return { bg: s.backgroundColor, filter: s.backdropFilter }
+			})
+			expect(shell, 'the app shell is on the page').not.toBeNull()
+			expect(shell?.bg, 'dark app shell').toBe('rgb(0, 0, 0)')
+			expect(shell?.filter, 'no blur over the background image').toBe('none')
 
 			// Nextcloud's dark-highcontrast theme, as its body attributes mark it.
 			await page.emulateMedia({ colorScheme: 'light' })
