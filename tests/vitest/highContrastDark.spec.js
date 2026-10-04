@@ -140,9 +140,7 @@ function cascade(env, matches) {
 			})
 		})
 	}
-	return Object.fromEntries(
-		Object.entries(won).map(([k, v]) => [k, v.value]),
-	)
+	return Object.fromEntries(Object.entries(won).map(([k, v]) => [k, v.value]))
 }
 
 /**
@@ -280,6 +278,9 @@ function failures(p) {
 	check('link', p.link, bg, AAA_TEXT)
 	check('placeholder', p.placeholder, bg, AAA_TEXT)
 	check('focus ring', p.focusColour, bg, AAA_UI)
+	if (p.focusColour === p.v('--color-border')) {
+		out.push(`focus ring ${p.focusColour} is the border colour`)
+	}
 	return out
 }
 
