@@ -33,6 +33,22 @@ a:focus,
 	outline-offset: 2px !important;
 }
 
+/* prefers-contrast:more widens the ring. It has to come after the rule above,
+ * with the same selectors: the shorthand there resets the width, and this file
+ * loads after theme.css, so a wider ring declared in theme.css never reached
+ * the page (thematiq#1023 live run). */
+@media (prefers-contrast: more) {
+	input:focus,
+	textarea:focus,
+	select:focus,
+	button:focus,
+	.button-vue:focus,
+	a:focus,
+	*:focus-visible {
+		outline-width: 4px !important;
+	}
+}
+
 /* Placeholders — no low-contrast grey. */
 ::placeholder {
 	color: var(--nldesign-color-placeholder-dark) !important;

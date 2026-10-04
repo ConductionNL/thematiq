@@ -398,6 +398,20 @@ body,
 		   and vice versa, otherwise both collapse to the same end of the ramp. */
 		--color-text-light: var(--lasuite-color-gray-050) !important;
 		--color-text-lighter: var(--lasuite-color-gray-300) !important;
+		/* The grounds those texts sit on, with Cunningham's own dark values
+		   (defaults.css `.cunningham-theme--dark`): neutral tertiary, secondary
+		   and primary-hover, and the surface border. Left on the light steps,
+		   an NcActions item hovered to #f0f0f3 under #f0f0f3 text (#1024). */
+		--color-background-hover: var(
+			--lasuite--globals--colors--gray-750
+		) !important;
+		--color-background-dark: var(
+			--lasuite--globals--colors--gray-700
+		) !important;
+		--color-background-darker: var(
+			--lasuite--globals--colors--gray-650
+		) !important;
+		--color-border: var(--lasuite--globals--colors--gray-750) !important;
 	}
 }
 
@@ -407,4 +421,8 @@ body[data-themes*='dark'] {
 	--color-text-maxcontrast: var(--lasuite-color-gray-200) !important;
 	--color-text-light: var(--lasuite-color-gray-050) !important;
 	--color-text-lighter: var(--lasuite-color-gray-300) !important;
+	--color-background-hover: var(--lasuite--globals--colors--gray-750) !important;
+	--color-background-dark: var(--lasuite--globals--colors--gray-700) !important;
+	--color-background-darker: var(--lasuite--globals--colors--gray-650) !important;
+	--color-border: var(--lasuite--globals--colors--gray-750) !important;
 }

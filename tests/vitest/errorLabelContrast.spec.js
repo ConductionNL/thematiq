@@ -268,5 +268,38 @@ describe('error labels on the error fill (thematiq#1027)', () => {
 			}
 			expect(all).toEqual({})
 		})
+
+		// Found in the live run (Utrecht, Nextcloud 35, the trash bin's "Empty
+		// deleted files" button): the label is a <span> inside the button, and
+		// nldesign's element-overrides.css paints every span with
+		// `var(--nldesign-color-on-surface, var(--nldesign-color-text))
+		// !important`. The button's own colour never reached it: the label
+		// read rgb(235, 235, 235) on the dark red and black on the light red.
+		// The documented opt-out is to set --nldesign-color-on-surface on the
+		// fill, so it inherits into every descendant.
+		it(`hands the same label to the text inside the fill in the ${envName}`, () => {
+			const all = {}
+			for (const set of SETS) {
+				if (env.scheme === 'dark' || env.themes !== 'light') {
+					if (!exists(`css/tokens/dark/${set.id}.css`)) {
+						continue
+					}
+				}
+				const files = bundle(set)
+				const vars = cascade(files, env, (s) => reachesBody(s, env))
+				for (const [name, selector] of Object.entries(LABELS)) {
+					const own = cascade(files, env, (s) => s.trim() === selector)
+					const inner = own['--nldesign-color-on-surface']
+					if (inner === undefined) {
+						all[`${set.id} ${name}`] =
+							'sets no --nldesign-color-on-surface'
+					} else if (resolve(inner, vars) !== resolve(own.color, vars)) {
+						all[`${set.id} ${name}`] =
+							`inner ${resolve(inner, vars)} vs own ${resolve(own.color, vars)}`
+					}
+				}
+			}
+			expect(all).toEqual({})
+		})
 	}
 })

@@ -344,3 +344,74 @@ describe('the dark-ramp check', () => {
 		expect(primaryVars('var(--a, var(--b)) var(--c)')).toEqual(['--a', '--c'])
 	})
 })
+
+/*
+ * The Nextcloud background states in dark mode (thematiq#1024 live run).
+ *
+ * bridge.css maps --color-background-hover, -dark and -darker and
+ * --color-border to light gray steps, unconditionally, and its dark blocks
+ * flipped only the text variables. In dark mode an NcActions menu item then
+ * hovered to #f0f0f3 under #f0f0f3 text: the label vanished, on La Suite and
+ * on Cunningham alike. The dark blocks have to remap the grounds as well,
+ * with the values of Cunningham's own dark block.
+ */
+const BRIDGE = strip(read('css/systems/lasuite/bridge.css'))
+
+/** The custom properties one of bridge.css's dark scopes declares. */
+function bridgeDark(scope) {
+	const out = {}
+	for (const rule of parseRules(BRIDGE)) {
+		const media = /prefers-color-scheme:\s*dark/.test(rule.context)
+		const explicit =
+			rule.context === '' && rule.selector.includes("data-themes*='dark'")
+		if ((scope === 'media' && media) || (scope === 'explicit' && explicit)) {
+			for (const d of parseDeclarations(rule.body)) {
+				out[d.property] = d.value.replace(/!important/, '').trim()
+			}
+		}
+	}
+	return out
+}
+
+describe('the La Suite bridge in dark mode', () => {
+	const GROUNDS = [
+		'--color-background-hover',
+		'--color-background-dark',
+		'--color-background-darker',
+	]
+	for (const scope of ['media', 'explicit']) {
+		it(`keeps the text readable on every background state (${scope} dark scope)`, () => {
+			const dark = bridgeDark(scope)
+			const text = resolve(dark['--color-main-text'], DARK)
+			const failures = []
+			for (const name of GROUNDS) {
+				if (dark[name] === undefined) {
+					failures.push(`${name} is not remapped`)
+					continue
+				}
+				const ground = resolve(dark[name], DARK)
+				const r = contrast(text, ground)
+				if (r < 4.5) {
+					failures.push(
+						`${name}: ${text} on ${ground} = ${r.toFixed(2)}:1`,
+					)
+				}
+			}
+			expect(failures).toEqual([])
+		})
+
+		it(`draws borders in the upstream dark border colour (${scope} dark scope)`, () => {
+			const dark = bridgeDark(scope)
+			expect(
+				dark['--color-border'],
+				'--color-border is remapped',
+			).toBeDefined()
+			expect(resolve(dark['--color-border'], DARK)).toBe(
+				resolve(
+					'var(--lasuite--contextuals--border--surface--primary)',
+					DARK,
+				),
+			)
+		})
+	}
+})

@@ -226,6 +226,36 @@ function page(env) {
 	}
 }
 
+/**
+ * The outline width a selector ends up with across the whole bundle.
+ *
+ * `cascade()` keeps `outline` and `outline-width` apart, but the shorthand
+ * resets the width: a later `outline: 3px ...` beats an earlier
+ * `outline-width: 4px`. This follows both, `!important` first, then order.
+ *
+ * @param {object} env The environment.
+ * @param {string} selector One selector, as written in the stylesheets.
+ * @return {number|null} The width in px, or null when nothing sets it.
+ */
+function outlineWidth(env, selector) {
+	let won = null
+	for (const file of BUNDLE) {
+		postcss.parse(read(file)).walkRules((rule) => {
+			if (!conditionsHold(rule, env) || !rule.selectors.includes(selector)) {
+				return
+			}
+			rule.walkDecls(/^outline(-width)?$/, (d) => {
+				const px = d.value.match(/(\d+)px/)
+				if (px === null || (won && won.important && !d.important)) {
+					return
+				}
+				won = { px: Number(px[1]), important: d.important }
+			})
+		})
+	}
+	return won === null ? null : won.px
+}
+
 /** Nextcloud's own variables: foreground, background, threshold. */
 const PAIRS = [
 	['--color-main-text', '--color-main-background', AAA_TEXT],
@@ -290,6 +320,7 @@ describe('high-contrast dark variant (thematiq#1023)', () => {
 	it('stays AAA in the light theme', () => {
 		expect(failures(page(LIGHT))).toEqual([])
 		expect(page(LIGHT).v('--color-main-background')).toBe('#ffffff')
+		expect(page(LIGHT).v('--color-main-background-blur')).toBe('#ffffff')
 	})
 
 	for (const [name, env] of Object.entries(DARK_ENVIRONMENTS)) {
@@ -305,6 +336,16 @@ describe('high-contrast dark variant (thematiq#1023)', () => {
 				expect(failures(page(env))).toEqual([])
 			})
 
+			// Found in the live run: the app shell behind the navigation paints
+			// --color-main-background-blur through a backdrop blur. Left unmapped
+			// it keeps Nextcloud's translucent #171717 over the background image,
+			// so the navigation sat on a tinted picture instead of black.
+			it('paints the app shell black, with no translucent blur over the background image', () => {
+				const p = page(env)
+				expect(p.v('--color-main-background-blur')).toBe('#000000')
+				expect(p.v('--filter-background-blur')).toBe('none')
+			})
+
 			it('keeps a thick focus ring that is not the border colour', () => {
 				const p = page(env)
 				expect(p.focusWidth).toBeGreaterThanOrEqual(3)
@@ -314,6 +355,48 @@ describe('high-contrast dark variant (thematiq#1023)', () => {
 			})
 		})
 	}
+
+	// Found in the live run: element-overrides.css loads after theme.css and
+	// re-declared `outline: 3px` for these selectors, so the 4px ring of the
+	// prefers-contrast branch never reached the page.
+	describe('prefers-contrast: more widens the focus ring to 4px', () => {
+		const FOCUS_SELECTORS = [
+			'*:focus-visible',
+			'a:focus',
+			'button:focus',
+			'input:focus',
+		]
+		const MORE = {
+			'light theme': { ...LIGHT, more: true },
+			'system dark preference':
+				DARK_ENVIRONMENTS[
+					'system dark preference with prefers-contrast: more'
+				],
+			'dark-highcontrast theme':
+				DARK_ENVIRONMENTS[
+					'dark-highcontrast theme with prefers-contrast: more'
+				],
+		}
+		for (const [name, env] of Object.entries(MORE)) {
+			it(`in the ${name}`, () => {
+				for (const selector of FOCUS_SELECTORS) {
+					expect(outlineWidth(env, selector), selector).toBe(4)
+				}
+			})
+		}
+		it('and stays 3px without it', () => {
+			for (const selector of FOCUS_SELECTORS) {
+				expect(outlineWidth(LIGHT, selector), selector).toBe(3)
+				expect(
+					outlineWidth(
+						DARK_ENVIRONMENTS['system dark preference'],
+						selector,
+					),
+					selector,
+				).toBe(3)
+			}
+		})
+	})
 
 	it('leaves an explicit light-highcontrast choice light under a dark system preference', () => {
 		const p = page({ scheme: 'dark', themes: 'light-highcontrast', more: false })
