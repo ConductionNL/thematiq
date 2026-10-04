@@ -27,6 +27,7 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [Gemeente Groningen](./groningen.md) `groningen`
 - [Gemeente Haarlem](./haarlem.md) `haarlem`
 - [Gemeente Haarlemmermeer](./haarlemmermeer.md) `haarlemmermeer`
+- [Gemeente Hoeksche Waard](./hoeksche-waard.md) `hoeksche-waard`
 - [Hoog contrast (WCAG AAA)](./hoog-contrast.md) `hoog-contrast`
 - [Gemeente Hoorn](./hoorn.md) `hoorn`
 - [Gemeente Horst aan de Maas](./horstaandemaas.md) `horstaandemaas`
@@ -40,6 +41,7 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [Gemeente Noordwijk](./noordwijk.md) `noordwijk`
 - [OpenCatalogi](./opencatalogi.md) `opencatalogi`
 - [Provincie Zuid-Holland](./provincie-zuid-holland.md) `provincie-zuid-holland`
+- [NL Design System Purmerend Thema](./purmerend.md) `purmerend`
 - [Riddeliemers](./riddeliemers.md) `riddeliemers`
 - [Ridderkerk](./ridderkerk.md) `ridderkerk`
 - [Rijkshuisstijl](./rijkshuisstijl.md) `rijkshuisstijl`
