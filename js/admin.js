@@ -305,6 +305,7 @@
 							pageTokenSetId = tokenSetId
 							pageManifest = manifests[1]
 							syncOverridesLink(tokenSetId)
+							syncLayoutLayers(manifests[1].layout)
 							// For what follows the page's theme, such as the
 							// brand form's starting colors.
 							document.dispatchEvent(
@@ -445,6 +446,26 @@
 			} else if (enabled !== true && existing !== null) {
 				existing.parentNode.removeChild(existing)
 			}
+		}
+
+		/**
+		 * The workplace layout and the brand stripe each own one stylesheet
+		 * too, and unlike the other toggles they can FOLLOW THE THEME: a token
+		 * set may carry their defaults. So the answer changes when the set on
+		 * this page changes, and the stylesheet manifest carries what the new
+		 * set resolves to. Absent on an older server answer: nothing moves.
+		 *
+		 * @param {{workplaceLayout: string, brandStripe: boolean}|undefined} layout The resolved state.
+		 */
+		function syncLayoutLayers(layout) {
+			if (layout === undefined || layout === null) {
+				return
+			}
+			setConditionalLayer(
+				'workplace-layout',
+				layout.workplaceLayout === 'light',
+			)
+			setConditionalLayer('brand-stripe', layout.brandStripe === true)
 		}
 
 		/**
@@ -2414,6 +2435,23 @@
 			})
 		}
 
+		// Handle the two layout options. They are saved together: one request
+		// carries both choices, so the page never holds a half-saved pair.
+		var workplaceLayoutSelect = document.getElementById(
+			'thematiq-workplace-layout',
+		)
+		var brandStripeSelect = document.getElementById('thematiq-brand-stripe')
+		if (workplaceLayoutSelect && brandStripeSelect) {
+			var onLayoutOptionChange = function () {
+				saveLayoutOptions(
+					workplaceLayoutSelect.value,
+					brandStripeSelect.value,
+				)
+			}
+			workplaceLayoutSelect.addEventListener('change', onLayoutOptionChange)
+			brandStripeSelect.addEventListener('change', onLayoutOptionChange)
+		}
+
 		// Handle dark mode variants checkbox — instance-wide toggle only; never
 		// touches the Nextcloud theme choice itself (openspec/specs/dark-mode/spec.md).
 		var darkVariantsCheckbox = document.getElementById('nldesign-dark-variants')
@@ -2622,6 +2660,40 @@
 					if (reset !== null) {
 						reset.disabled = locked
 					}
+				})
+		}
+
+		// Save the workplace layout and the brand stripe, then put this page in
+		// the state the server resolved: an empty choice follows the theme, so
+		// only the server knows whether a stylesheet is on or off now.
+		function saveLayoutOptions(workplaceLayout, brandStripe) {
+			var url = OC.generateUrl('/apps/thematiq/settings/layout')
+
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({
+					workplaceLayout: workplaceLayout,
+					brandStripe: brandStripe,
+				}),
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					if (data.status === 'ok') {
+						syncLayoutLayers(data.resolved)
+						notify(t('thematiq', 'Applied.'))
+					} else {
+						notify(t('thematiq', 'Failed to save setting.'))
+					}
+				})
+				.catch(function (error) {
+					console.error('Error saving layout options:', error)
+					notify(t('thematiq', 'Failed to save setting.'))
 				})
 		}
 

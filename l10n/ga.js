@@ -1053,7 +1053,18 @@ OC.L10N.register(
         "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.": "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.",
         "The colour was made lighter or darker, keeping its hue, to reach WCAG AA against the background it is drawn on. The original is shown for reference.": "The colour was made lighter or darker, keeping its hue, to reach WCAG AA against the background it is drawn on. The original is shown for reference.",
         "The theme gave this colour token a value that is not a visible colour, so the Nextcloud default was used. The original is shown for reference.": "The theme gave this colour token a value that is not a visible colour, so the Nextcloud default was used. The original is shown for reference.",
-        "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant.": "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant."
+        "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant.": "The colour was written as hex (or rgba() when it is translucent) so it can be measured and given a dark-mode variant.",
+        "Workplace layout": "Workplace layout",
+        "Follow the theme": "Follow the theme",
+        "Default": "Default",
+        "Light top bar": "Light top bar",
+        "The light layout paints the top bar in the main background, with its text color. A theme can turn it on by itself. Your choice here always wins.": "The light layout paints the top bar in the main background, with its text color. A theme can turn it on by itself. Your choice here always wins.",
+        "Brand stripe under the top bar": "Brand stripe under the top bar",
+        "Three colors along the bottom edge of the top bar. The theme sets the colors and their ratio.": "Three colors along the bottom edge of the top bar. The theme sets the colors and their ratio.",
+        "Received": "Received",
+        "Completed": "Completed",
+        "Waiting": "Waiting",
+        "Overdue": "Overdue"
     },
     "nplurals=2; plural=(n != 1);"
 )

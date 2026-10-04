@@ -1053,7 +1053,18 @@ OC.L10N.register(
         "There is no component with this name.": "Er is geen component met deze naam.",
         "The document is a Thematiq export, so the value came back under its own name, without conversion.": "Het document is een Thematiq-export, dus de waarde kwam terug onder haar eigen naam, zonder omzetting.",
         "The colour lies outside the sRGB range every part of Nextcloud reads, so the document's own sRGB fallback was used. The original is shown for reference.": "De kleur valt buiten het sRGB-bereik dat elk deel van Nextcloud leest, dus is de sRGB-terugvalwaarde uit het document zelf gebruikt. Het origineel staat erbij ter vergelijking.",
-        "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.": "De kleur valt buiten het sRGB-bereik dat elk deel van Nextcloud leest en het document geeft geen terugvalwaarde, dus is elk kanaal afgekapt op de dichtstbijzijnde sRGB-waarde. Het origineel staat erbij ter vergelijking."
+        "The colour lies outside the sRGB range every part of Nextcloud reads and the document gives no fallback, so each channel was clipped to the nearest sRGB value. The original is shown for reference.": "De kleur valt buiten het sRGB-bereik dat elk deel van Nextcloud leest en het document geeft geen terugvalwaarde, dus is elk kanaal afgekapt op de dichtstbijzijnde sRGB-waarde. Het origineel staat erbij ter vergelijking.",
+        "Workplace layout": "Indeling van de werkplek",
+        "Follow the theme": "Volg het thema",
+        "Default": "Standaard",
+        "Light top bar": "Lichte bovenbalk",
+        "The light layout paints the top bar in the main background, with its text color. A theme can turn it on by itself. Your choice here always wins.": "De lichte indeling geeft de bovenbalk de hoofdachtergrond, met de bijbehorende tekstkleur. Een thema kan dit zelf aanzetten. Uw keuze hier gaat altijd voor.",
+        "Brand stripe under the top bar": "Merkstreep onder de bovenbalk",
+        "Three colors along the bottom edge of the top bar. The theme sets the colors and their ratio.": "Drie kleuren langs de onderrand van de bovenbalk. Het thema bepaalt de kleuren en hun verhouding.",
+        "Received": "Ontvangen",
+        "Completed": "Afgehandeld",
+        "Waiting": "Wacht op reactie",
+        "Overdue": "Termijn verlopen"
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -27,6 +27,7 @@ namespace OCA\Thematiq\Settings;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
@@ -189,6 +190,10 @@ class Admin implements IDelegatedSettings {
 		$hideSlogan = $this->isFlagOn(key: 'hide_slogan');
 		$showMenuLabels = $this->isFlagOn(key: 'show_menu_labels');
 
+		// The administrator's own layout choices, as stored: empty means the
+		// option follows the active token set (see LayoutOptionsService).
+		$layoutOptions = new LayoutOptionsService(config: $this->config, designSystemService: $this->designSystemService);
+
 		// Whether the brand primary overrules every component token it used to
 		// drive. OFF by default, and that costs nothing visually: with no
 		// per-component value stored, the component tokens already resolve to the
@@ -257,6 +262,8 @@ class Admin implements IDelegatedSettings {
 				'currentDesignSystem' => $currentDesignSystem,
 				'hideSlogan' => $hideSlogan,
 				'showMenuLabels' => $showMenuLabels,
+				'workplaceLayout' => $layoutOptions->workplaceLayoutSetting(),
+				'brandStripe' => $layoutOptions->brandStripeSetting(),
 				'primaryDrivesComponents' => $drivesComponents,
 				'darkVariantsEnabled' => $darkVariantsEnabled,
 				'marianneEnabled' => $marianneEnabled,
@@ -510,6 +517,8 @@ class Admin implements IDelegatedSettings {
 				'/token_set/',
 				'/hide_slogan/',
 				'/show_menu_labels/',
+				'/workplace_layout/',
+				'/brand_stripe/',
 				'/dark_variants/',
 				'/marianne_enabled/',
 				'/disabled_apps/',
