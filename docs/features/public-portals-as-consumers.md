@@ -46,13 +46,13 @@ to travel through that bridge, or it reaches nothing.
 **Portaliq does not link it yet.** Its open change `site-links-the-theme-bridge`
 adds the link. Until then a portal paints from whatever the set itself declares.
 
-Measured coverage of the listed sets (`token-sets.json`, 54 sets):
+Measured coverage of the listed sets (`token-sets.json`, 58 sets):
 
 | What a set declares | Sets |
 | --- | --- |
-| the full `--utrecht-*` role layer | 22 |
+| the full `--utrecht-*` role layer | 25 |
 | only `--nldesign-*` | 11 |
-| Den Haag component properties | 14 |
+| Den Haag component properties | 17 |
 | a case card property | 0 |
 
 ### The Den Haag components

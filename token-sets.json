@@ -591,5 +591,49 @@
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
 		"upstreamVersion": "1.2.3"
+	},
+	{
+		"id": "enschede",
+		"name": "Gemeente Enschede",
+		"description": "Design tokens for Gemeente Enschede, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#e20d18"
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
+	},
+	{
+		"id": "losser",
+		"name": "Gemeente Losser",
+		"description": "Design tokens for Gemeente Losser, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#2065A4"
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.1"
+	},
+	{
+		"id": "zaanstad",
+		"name": "Gemeente Zaanstad",
+		"description": "Design tokens for Gemeente Zaanstad, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#007694"
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.1.0"
+	},
+	{
+		"id": "nora",
+		"name": "Nederlandse Overheid Referentie Architectuur (NORA)",
+		"description": "Design tokens for Nederlandse Overheid Referentie Architectuur (NORA), converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#431560"
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.7.2"
 	}
 ]
