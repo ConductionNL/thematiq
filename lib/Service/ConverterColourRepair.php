@@ -151,6 +151,32 @@ class ConverterColourRepair {
 	}//end repairContrast()
 
 	/**
+	 * Repair the component pairs the theme declares itself (thematiq#1006).
+	 *
+	 * @param array<string, string> $component The component layer.
+	 * @param array<string, string> $semantic The repaired semantic layer.
+	 * @param array<string, mixed> $table The mapping table.
+	 * @param array<int, ReportEntry> $report The conversion report (appended to).
+	 *
+	 * @return array<string, string> The repaired component layer.
+	 *
+	 * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
+	 */
+	public function repairComponents(array $component, array $semantic, array $table, array &$report): array {
+		$spec = ($table['contrastRepair'] ?? null);
+		if (is_array($spec) === false) {
+			return $component;
+		}
+
+		return (new ConverterComponentRepair(contrast: $this->contrast, adjuster: $this->adjuster))->repair(
+			component: $component,
+			semantic: $semantic,
+			spec: $spec,
+			report: $report
+		);
+	}//end repairComponents()
+
+	/**
 	 * Walk the pair list once.
 	 *
 	 * @param array<string, string> $semantic The semantic layer (updated).

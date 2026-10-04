@@ -277,6 +277,61 @@ describe('fills and values that are not colours', () => {
 	})
 })
 
+describe('component pairs a theme declares itself (thematiq#1006, #1007)', () => {
+	it('flips a step marker label that cannot be read on its own fill (buren)', () => {
+		const { decl } = convert({
+			'--utrecht-button-primary-action-background-color': '#154273',
+			'--denhaag-step-marker-current-background-color': '#f2757f',
+			'--denhaag-step-marker-current-color': 'white',
+		})
+		expect(decl['--denhaag-step-marker-current-color']).toBe('#000000')
+	})
+
+	it('darkens white side-navigation and file links that the page would swallow (enschede)', () => {
+		const { decl } = convert({
+			'--utrecht-button-primary-action-background-color': '#154273',
+			'--denhaag-side-navigation-link-color': '#FFFFFF',
+			'--denhaag-file-link-color': '#FFFFFF',
+		})
+		expect(
+			contrast(decl['--denhaag-side-navigation-link-color'], '#ffffff'),
+		).toBeGreaterThanOrEqual(4.5)
+		expect(
+			contrast(decl['--denhaag-file-link-color'], '#ffffff'),
+		).toBeGreaterThanOrEqual(4.5)
+	})
+
+	it('measures a transparent action background as the page it shows', () => {
+		const { decl } = convert({
+			'--utrecht-button-primary-action-background-color': '#154273',
+			'--denhaag-action-background-color': 'transparent',
+			'--denhaag-action-date-warning-color': '#B70000',
+		})
+		expect(decl['--denhaag-action-background-color']).toBe('#ffffff')
+		expect(decl['--denhaag-action-date-warning-color'].toLowerCase()).toBe(
+			'#b70000',
+		)
+	})
+
+	it('leaves a component colour the theme does not declare to the bridge', () => {
+		const { decl } = convert({
+			'--utrecht-button-primary-action-background-color': '#154273',
+		})
+		expect(decl['--denhaag-side-navigation-link-color']).toBeUndefined()
+	})
+})
+
+describe('a theme without neutral greys', () => {
+	it('gets the table default for body text and borders instead of no token at all (groningen)', () => {
+		const { decl } = convert({
+			'--utrecht-button-primary-action-background-color': '#154273',
+		})
+		expect(decl['--nldesign-color-text']).toBe('#333333')
+		expect(decl['--nldesign-color-border']).toBeDefined()
+		expect(decl['--nldesign-color-border-dark']).toBeDefined()
+	})
+})
+
 describe('parity fixture', () => {
 	const fixture = JSON.parse(
 		readFileSync(
