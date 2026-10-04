@@ -58,6 +58,33 @@ class ShippedDarkContrastTest extends TestCase {
 			'--nldesign-color-button-primary-text',
 			'--nldesign-color-button-primary-background',
 		],
+		// Nextcloud's own secondary button: primary-coloured text on the
+		// primary-light wash (overrides.css maps --color-primary-element-light
+		// and its -text there), at rest and on hover (thematiq#969).
+		'secondary button label' => [
+			'--nldesign-color-primary',
+			'--nldesign-color-primary-light',
+		],
+		'secondary button label on hover' => [
+			'--nldesign-color-primary',
+			'--nldesign-color-primary-light-hover',
+		],
+		'secondary button component label' => [
+			'--nldesign-component-button-secondary-action-color',
+			'--nldesign-component-button-secondary-action-background-color',
+		],
+		'secondary button component label on hover' => [
+			'--nldesign-component-button-secondary-action-color',
+			'--nldesign-component-button-secondary-action-hover-background-color',
+		],
+		'body text on the page' => [
+			'--nldesign-color-text',
+			'--nldesign-color-background',
+		],
+		'link on the page' => [
+			'--nldesign-component-link-color',
+			'--nldesign-color-background',
+		],
 	];
 
 	/**
@@ -102,6 +129,11 @@ class ShippedDarkContrastTest extends TestCase {
 			$background = $value($bgToken);
 			if ($foreground === null || $background === null) {
 				continue;
+			}
+
+			// A transparent fill shows the page through it.
+			if (strtolower($background) === 'transparent') {
+				$background = $page;
 			}
 
 			$ratio = $contrast->measure(foreground: $foreground, background: $background, page: $page);
