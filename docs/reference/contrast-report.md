@@ -75,6 +75,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | xxllnc | 11.24:1 | 4.5:1 | 14.16:1 | 3.0:1 | pass |
 | zaanstad | 5.23:1 | 4.5:1 | 5.23:1 | 3.0:1 | pass |
 | zevenaar | 5.70:1 | 4.5:1 | 5.70:1 | 3.0:1 | pass |
+| zuiddrecht | 5.64:1 | 4.5:1 | 5.22:1 | 3.0:1 | pass |
 | zwolle | 5.06:1 | 4.5:1 | 5.06:1 | 3.0:1 | pass |
 
 ## Den Haag component pairs
@@ -145,5 +146,6 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | xxllnc | 15 | 0 | 0 |  |
 | zaanstad | 15 | 0 | 0 |  |
 | zevenaar | 15 | 0 | 0 |  |
+| zuiddrecht | 15 | 0 | 0 |  |
 | zwolle | 15 | 0 | 0 |  |
 

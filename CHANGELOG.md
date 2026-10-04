@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **Gemeente Zuiddrecht, a demo municipality.** The `zuiddrecht` token set is a light
+  workplace: blue `#3669A5` for actions, red `#CC0000` as the accent, a white top bar and
+  navigation, a grey workspace with white cards, Nextcloud's own radius scale and a
+  generated dark variant. Every text pair reaches AA, and `tests/vitest/zuiddrechtTokenSet.spec.js`
+  computes each one. It ships a colour logo, a white logo and two emblems.
+- **Fira Sans in 500 and 600.** Medium and SemiBold join the bundled 400 and 700, from the
+  same package.
+- **Five new component token groups.** The selected navigation entry's label
+  (`--nldesign-component-navigation-active-color`), the count badge in the navigation only
+  (`--nldesign-component-navigation-badge-*`), the shadow colour of cards
+  (`--nldesign-component-content-card-shadow-color`), the content surface
+  (`--nldesign-component-content-surface-background-color`) and the tint and label of status
+  pills (`--nldesign-component-status-badge-*`). No stylesheet declares one by default, so a
+  set that sets none renders as before.
+- **A workplace layout option.** `Light top bar` gives any theme a top bar on the main
+  background. The setting can also follow the theme: a token set may carry the default in a
+  `layout` block in `token-sets.json`.
+- **A brand stripe option.** Three colours along the bottom edge of the top bar and along the
+  top edge of the login card, with the colours, their ratio and the height from tokens. Off
+  unless a theme or an administrator turns it on.
+- **A login watermark.** With the light workplace layout, a theme can show its emblem large
+  and faint on the login page, through `--nldesign-login-watermark-image`. Zuiddrecht shows
+  its grey shield.
 - **A fictional example municipality token set.** `example-gemeente`, "(EXAMPLE) Gemeente",
   carries the palette of the approved dossiq portal mockups: deep sea blue `#12506B` with a
   brown accent. It bundles Source Sans 3 (OFL 1.1). The font is one value in the brand file,

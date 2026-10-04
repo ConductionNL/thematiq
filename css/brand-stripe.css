@@ -1,0 +1,98 @@
+/**
+ * Brand stripe
+ * (openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded only while the brand stripe resolves to on: an administrator chose
+ * it, or the active token set names it in its `layout` block and the
+ * administrator left the choice to the theme. Off for every other set.
+ *
+ * A stripe of three colours along the bottom edge of the top bar. The colours,
+ * their ratio and the height come from tokens:
+ *
+ *   --nldesign-brand-stripe-color-1 / -2 / -3   the three colours, start to end
+ *   --nldesign-brand-stripe-ratio-1 / -2 / -3   unitless shares, e.g. 6, 3 and 1
+ *   --nldesign-brand-stripe-height              e.g. 5px
+ *
+ * A set that declares none gets three equal bands in its primary colour, the
+ * primary hover and the primary again, 4px high.
+ *
+ * IT SITS INSIDE THE BAR, NOT UNDER IT. Nextcloud places the content exactly
+ * one header height from the top, so a stripe hanging below the bar would lie
+ * over the first pixels of every app, and raising `--header-height` moves
+ * every app that positions against it. Drawn on the bar's own bottom edge the
+ * stripe costs no layout at all. Like the environment marker it takes no
+ * pointer events, so the controls in the bar stay clickable under it.
+ *
+ * The two stops are computed from the ratios: with 6, 3 and 1 the first colour
+ * runs to 6 / 10 = 60% and the second to (6 + 3) / 10 = 90%. Each band gets a
+ * hard edge by giving both colours the same stop.
+ *
+ * `content` AND `display` ARE `!important`, AND THEY HAVE TO BE. The NL Design
+ * and La Suite sheets switch the header's pseudo-elements off with
+ * `content: none !important; display: none !important`, at the same
+ * specificity as the rule below. An unmarked `content: ''` loses to that: the
+ * stripe computed its height, its position and its gradient and was never
+ * drawn. This sheet loads after theirs, so with the same weight it wins.
+ * tests/vitest/workplaceLayout.spec.js holds the rule to it.
+ *
+ * ON THE LOGIN PAGE the stripe runs along the top edge of the login card. The
+ * page's `#header` is hidden there, and the card's own two pseudo-elements
+ * carry the ribbon and the logo, so the stripe sits on the card's inner
+ * wrapper, which starts at the card's top edge.
+ */
+#body-login div[class*='login-box__wrapper']::before,
+:where(body:not(#body-login)) #header::after {
+	--thematiq-stripe-first: var(--nldesign-brand-stripe-ratio-1, 1);
+	--thematiq-stripe-second: var(--nldesign-brand-stripe-ratio-2, 1);
+	--thematiq-stripe-total: calc(
+		var(--thematiq-stripe-first) + var(--thematiq-stripe-second) +
+			var(--nldesign-brand-stripe-ratio-3, 1)
+	);
+	--thematiq-stripe-stop-1: calc(
+		var(--thematiq-stripe-first) / var(--thematiq-stripe-total) * 100%
+	);
+	--thematiq-stripe-stop-2: calc(
+		(var(--thematiq-stripe-first) + var(--thematiq-stripe-second)) /
+			var(--thematiq-stripe-total) * 100%
+	);
+	--thematiq-stripe-color-1: var(
+		--nldesign-brand-stripe-color-1,
+		var(--color-primary-element)
+	);
+	--thematiq-stripe-color-2: var(
+		--nldesign-brand-stripe-color-2,
+		var(--color-primary-element-hover)
+	);
+	--thematiq-stripe-color-3: var(
+		--nldesign-brand-stripe-color-3,
+		var(--thematiq-stripe-color-1)
+	);
+
+	content: '' !important;
+	display: block !important;
+	position: absolute;
+	inset-inline: 0;
+	z-index: 1;
+	height: var(--nldesign-brand-stripe-height, 4px);
+	pointer-events: none;
+	background-image: linear-gradient(
+		to right,
+		var(--thematiq-stripe-color-1) 0 var(--thematiq-stripe-stop-1),
+		var(--thematiq-stripe-color-2) var(--thematiq-stripe-stop-1)
+			var(--thematiq-stripe-stop-2),
+		var(--thematiq-stripe-color-3) var(--thematiq-stripe-stop-2) 100%
+	);
+}
+
+/* Inside the bottom edge of the top bar. */
+:where(body:not(#body-login)) #header::after {
+	bottom: 0;
+}
+
+/* Along the top edge of the login card. */
+#body-login div[class*='login-box__wrapper']::before {
+	top: 0;
+}
