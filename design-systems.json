@@ -23,7 +23,7 @@
 	{
 		"id": "summer-breeze",
 		"name": "Summer Breeze",
-		"description": "Soft, airy light-blue design — Inter typeface, large rounded surfaces, low-contrast shadows, pastel status colours and a pale-blue gradient navigation. Gentle on the eyes.",
+		"description": "Soft, airy light-blue design. Inter typeface, large rounded surfaces, low-contrast shadows, pastel status colours and a floating white navigation card. Gentle on the eyes.",
 		"stylesheets": [
 			"systems/summer-breeze/fonts",
 			"systems/summer-breeze/theme",
