@@ -46,7 +46,7 @@ to travel through that bridge, or it reaches nothing.
 **Portaliq does not link it yet.** Its open change `site-links-the-theme-bridge`
 adds the link. Until then a portal paints from whatever the set itself declares.
 
-Measured coverage of the listed sets (`token-sets.json`, 57 sets):
+Measured coverage of the listed sets (`token-sets.json`, 58 sets):
 
 | What a set declares | Sets |
 | --- | --- |

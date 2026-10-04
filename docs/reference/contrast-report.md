@@ -49,6 +49,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | noaberkracht | 4.50:1 | 4.5:1 | 4.50:1 | 3.0:1 | pass |
 | noordoostpolder | 4.56:1 | 4.5:1 | 4.61:1 | 3.0:1 | pass |
 | noordwijk | 13.15:1 | 4.5:1 | 12.18:1 | 3.0:1 | pass |
+| nora | 13.86:1 | 4.5:1 | — | 3.0:1 | unevaluated |
 | opencatalogi | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |
 | provincie-zuid-holland | 5.82:1 | 4.5:1 | 5.82:1 | 3.0:1 | pass |
 | purmerend | 4.60:1 | 4.5:1 | — | 3.0:1 | unevaluated |
@@ -118,6 +119,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | noaberkracht | 15 | 0 | 0 |  |
 | noordoostpolder | 15 | 0 | 0 |  |
 | noordwijk | 15 | 0 | 0 |  |
+| nora | 15 | 0 | 0 |  |
 | opencatalogi | 15 | 0 | 0 |  |
 | provincie-zuid-holland | 15 | 0 | 0 |  |
 | purmerend | 15 | 0 | 0 |  |

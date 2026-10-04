@@ -620,5 +620,16 @@
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
 		"upstreamVersion": "1.1.0"
+	},
+	{
+		"id": "nora",
+		"name": "Nederlandse Overheid Referentie Architectuur (NORA)",
+		"description": "Design tokens for Nederlandse Overheid Referentie Architectuur (NORA), converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#431560"
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.7.2"
 	}
 ]
