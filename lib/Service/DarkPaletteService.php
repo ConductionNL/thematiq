@@ -333,6 +333,116 @@ class DarkPaletteService {
 			'bg' => '--nldesign-color-primary',
 			'threshold' => 4.5,
 		],
+		[
+			// Summer Breeze paints from its own --summer-* tokens (theme.css
+			// maps them onto Nextcloud's variables), so the --nldesign-* pairs
+			// above never reach it. These are the pairs its stylesheets paint;
+			// tests/Unit/Service/SummerBreezeContrastTest.php measures the
+			// committed file against the same list (thematiq#1022).
+			'fg' => '--summer-color-primary-text',
+			'bg' => '--summer-color-primary',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary-text',
+			'bg' => '--summer-color-primary-hover',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary',
+			'bg' => '--summer-color-primary-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary',
+			'bg' => '--summer-color-primary-light-hover',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary',
+			'bg' => '--summer-color-background-plain',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text',
+			'bg' => '--summer-color-background-plain',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text',
+			'bg' => '--summer-color-background-hover',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text-muted',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text-muted',
+			'bg' => '--summer-color-background-plain',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text-muted',
+			'bg' => '--summer-color-toggle-track',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-border-input',
+			'bg' => '--summer-color-surface',
+			'threshold' => 3.0,
+		],
+		[
+			'fg' => '--summer-color-error',
+			'bg' => '--summer-color-error-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-error',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-warning',
+			'bg' => '--summer-color-warning-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-warning',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-success',
+			'bg' => '--summer-color-success-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-success',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-info',
+			'bg' => '--summer-color-info-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-info',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
 	];
 
 	/**
@@ -1272,6 +1382,14 @@ class DarkPaletteService {
 		$merged = array_merge($merged, array_fill_keys($transparentFills, 'transparent'));
 
 		$repaired = $this->verifyAndRepair(declarations: $merged, protectedTokens: array_keys($overrides));
+		// The repair may move the error fill itself (summer-breeze repairs
+		// --summer-color-error as text on its surface), so the label is
+		// checked again against the fill that ships.
+		$repaired['declarations'] = $this->withErrorLabel(
+			declarations: $repaired['declarations'],
+			designSystemId: $meta['design_system'],
+			protectedTokens: array_keys($overrides)
+		);
 		foreach ($transparentFills as $fill) {
 			unset($repaired['declarations'][$fill]);
 		}
