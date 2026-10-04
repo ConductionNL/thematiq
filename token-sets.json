@@ -44,9 +44,11 @@
 		"name": "Gemeente Bodegraven-Reeuwijk",
 		"description": "Design tokens for Gemeente Bodegraven-Reeuwijk",
 		"theming": {
-			"primary_color": "#0066CC",
+			"primary_color": "#0066cc",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "borne",
@@ -55,7 +57,9 @@
 		"theming": {
 			"primary_color": "#003352",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "buren",
@@ -80,53 +84,63 @@
 		"name": "Gemeente Dinkelland",
 		"description": "Design tokens for Gemeente Dinkelland",
 		"theming": {
-			"primary_color": "#006CB9",
-			"background_color": "#FFFFFF"
-		}
+			"primary_color": "#006cb9",
+			"background_color": "#ffffff"
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "drechterland",
 		"name": "Gemeente Drechterland",
 		"description": "Design tokens for Gemeente Drechterland",
 		"theming": {
-			"primary_color": "#1B6E8C",
+			"primary_color": "#1b6e8c",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/drechterland.svg"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "duiven",
 		"name": "Gemeente Duiven",
 		"description": "Design tokens for Gemeente Duiven",
 		"theming": {
-			"primary_color": "#1D5B8F",
+			"primary_color": "#1d5b8f",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "duo",
 		"name": "Duo",
 		"description": "Design tokens for Duo",
 		"theming": {
-			"primary_color": "#004FA3",
+			"primary_color": "#004fa3",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "enkhuizen",
 		"name": "Gemeente Enkhuizen",
 		"description": "Design tokens for Gemeente Enkhuizen",
 		"theming": {
-			"primary_color": "#0055AD",
+			"primary_color": "#0055ad",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "epe",
 		"name": "Gemeente Epe",
 		"description": "Design tokens for Gemeente Epe",
 		"theming": {
-			"primary_color": "#00549E",
+			"primary_color": "#00549e",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/epe.svg",
 			"logo_dark": "img/logos/epe-dark.svg"
@@ -150,7 +164,7 @@
 		"name": "Gemeente Haarlem",
 		"description": "Design tokens for Gemeente Haarlem",
 		"theming": {
-			"primary_color": "#1457A3",
+			"primary_color": "#1457a3",
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
@@ -161,28 +175,34 @@
 		"name": "Gemeente Haarlemmermeer",
 		"description": "Design tokens for Gemeente Haarlemmermeer",
 		"theming": {
-			"primary_color": "#068E8C",
+			"primary_color": "#068482",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "hoorn",
 		"name": "Gemeente Hoorn",
 		"description": "Design tokens for Gemeente Hoorn",
 		"theming": {
-			"primary_color": "#09366C",
+			"primary_color": "#09366c",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/hoorn.svg"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "horstaandemaas",
 		"name": "Gemeente Horst aan de Maas",
 		"description": "Design tokens for Gemeente Horst aan de Maas",
 		"theming": {
-			"primary_color": "#125EA4",
+			"primary_color": "#125ea4",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "leiden",
@@ -201,61 +221,73 @@
 		"name": "Gemeente Leidschendam Voorburg",
 		"description": "Design tokens for Gemeente Leidschendam Voorburg",
 		"theming": {
-			"primary_color": "#1E1B54",
+			"primary_color": "#1e1b54",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "nijmegen",
 		"name": "Gemeente Nijmegen",
 		"description": "Design tokens for Gemeente Nijmegen",
 		"theming": {
-			"primary_color": "#157C68",
+			"primary_color": "#157c68",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/nijmegen.svg",
 			"logo_dark": "img/logos/nijmegen-dark.svg"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "noaberkracht",
 		"name": "Noaberkracht",
 		"description": "Design tokens for Noaberkracht",
 		"theming": {
-			"primary_color": "#4376fc",
-			"background_color": "#FFFFFF"
+			"primary_color": "#947200",
+			"background_color": "#ffffff"
 		},
-		"note": "primary_color #4376fc is legacy Conduction cobalt (retired 2026-05-13) — verify with municipality upstream"
+		"note": "primary_color #4376fc is legacy Conduction cobalt (retired 2026-05-13) — verify with municipality upstream",
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "noordoostpolder",
 		"name": "Gemeente Noordoostpolder",
 		"description": "Design tokens for Gemeente Noordoostpolder",
 		"theming": {
-			"primary_color": "#389003",
+			"primary_color": "#348603",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "noordwijk",
 		"name": "Gemeente Noordwijk",
 		"description": "Design tokens for Gemeente Noordwijk",
 		"theming": {
-			"primary_color": "#2C2276",
-			"background_color": "#FFFFFF",
+			"primary_color": "#2c2276",
+			"background_color": "#f2f7fa",
 			"logo": "img/logos/noordwijk.svg",
 			"logo_dark": "img/logos/noordwijk-dark.svg"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "provincie-zuid-holland",
 		"name": "Provincie Zuid-Holland",
 		"description": "Design tokens for Provincie Zuid-Holland",
 		"theming": {
-			"primary_color": "#C42035",
+			"primary_color": "#c42035",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/provincie-zuid-holland.svg",
 			"logo_dark": "img/logos/provincie-zuid-holland-dark.svg"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "riddeliemers",
@@ -285,7 +317,9 @@
 		"theming": {
 			"primary_color": "#035935",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "tilburg",
@@ -295,7 +329,9 @@
 			"primary_color": "#003366",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/tilburg.svg"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "tubbergen",
@@ -303,26 +339,32 @@
 		"description": "Design tokens for Gemeente Tubbergen",
 		"theming": {
 			"primary_color": "#067432",
-			"background_color": "#FFFFFF"
-		}
+			"background_color": "#ffffff"
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "venray",
 		"name": "Gemeente Venray",
 		"description": "Design tokens for Gemeente Venray",
 		"theming": {
-			"primary_color": "#2A8113",
+			"primary_color": "#2a8113",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "vught",
 		"name": "Gemeente Vught",
 		"description": "Design tokens for Gemeente Vught",
 		"theming": {
-			"primary_color": "#0088AD",
+			"primary_color": "#0080a3",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "vng",
@@ -340,9 +382,11 @@
 		"name": "Gemeente Westervoort",
 		"description": "Design tokens for Gemeente Westervoort",
 		"theming": {
-			"primary_color": "#003C6B",
+			"primary_color": "#003c6b",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "utrecht",
@@ -404,9 +448,11 @@
 		"name": "Gemeente Zevenaar",
 		"description": "Design tokens for Gemeente Zevenaar",
 		"theming": {
-			"primary_color": "#596E28",
+			"primary_color": "#596e28",
 			"background_color": "#FFFFFF"
-		}
+		},
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "zwolle",

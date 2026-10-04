@@ -61,9 +61,11 @@ Token sets are sourced from the official [NL Design System themes repository](ht
 A nightly workflow (`.github/workflows/sync-tokens.yml`) keeps the upstream sets current. It runs `scripts/sync-upstream-tokens.mjs`, which works like this:
 
 - It converts each upstream theme onto the `--nldesign-*` vocabulary with the theme converter (`js/lib/tokenConverter.js`).
+- It reads a theme's style-dictionary sources, or its Tokens Studio export (`figma/*.tokens.json`) when upstream publishes only that.
 - It only touches sets that came from upstream: the old raw sync, an earlier conversion, or a new organisation.
 - A hand-authored or hand-resolved set, such as `zwolle`, is never written.
 - Values you add to an upstream set are kept. They live in its "Local overrides" section.
+- A colour in that section (`--nldesign-color-*`) is pinned: the converter keeps it and repairs only the colours that depend on it. To pin one the first time, run the sync with `--pin <slug>:--nldesign-color-primary=<value>`; it writes the pin into the section.
 - A set is accepted only when `scripts/token-set-gate.sh` passes with it in. Any other set stays as it was, and the PR names it.
 
 You can run the same sync locally:

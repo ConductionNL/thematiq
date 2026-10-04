@@ -948,9 +948,10 @@
 	 * @param {Object} table The mapping table.
 	 * @param {Object<string,string>} manifest Manifest values (mutated).
 	 * @param {Array<Object>} report The conversion report.
+	 * @param {Object<string,string>} [pinned] Tokens the repair must never move.
 	 * @return {Object<string,string>} The semantic layer.
 	 */
-	function repairContrast(semantic, table, manifest, report) {
+	function repairContrast(semantic, table, manifest, report, pinned) {
 		var spec = table.contrastRepair
 		if (!spec || !Array.isArray(spec.pairs)) {
 			return semantic
@@ -967,7 +968,10 @@
 			var changed = false
 			spec.pairs.forEach(function (pair) {
 				var repaired = repairPair(pair, semantic, defaults, page)
-				if (repaired === null) {
+				if (
+					repaired === null
+					|| (pinned || {})[repaired.name] !== undefined
+				) {
 					return
 				}
 
@@ -2517,6 +2521,8 @@
 	 * @param {Object<string,boolean>} [options.vocabulary] The app's `--nldesign-*` names.
 	 * @param {Array<string>} [options.fonts] Available font family names.
 	 * @param {string|null} [options.sourceName] Provenance label.
+	 * @param {Object<string,string>} [options.pinned] `--nldesign-*` values a person pinned; they win over the
+	 *        rules and the repair, which adjusts only what depends on them.
 	 * @param {boolean} [options.repairContrast] Bring the converted pairs to WCAG AA (thematiq#993); off
 	 *        for an admin's upload, which keeps its own colours and gets contrast warnings instead.
 	 * @param {string} [options.assetName] Base name for an extracted logo, without extension.
@@ -2608,9 +2614,32 @@
 			report,
 		)
 
+		// Values a person pinned in the set's local overrides (the nightly sync
+		// passes them): they win over the rules and the repair never moves them;
+		// only the colours that depend on them are repaired.
+		var pinned = settings.pinned || {}
+		Object.keys(pinned).forEach(function (name) {
+			if (name.indexOf('--nldesign-') !== 0) {
+				return
+			}
+
+			semantic[name] = String(pinned[name])
+			if (name === '--nldesign-color-primary') {
+				manifest['theming.primary_color'] = semantic[name]
+			}
+
+			report.push({
+				source: name,
+				target: name,
+				action: 'kept',
+				reason: 'kept-existing-value',
+				value: semantic[name],
+			})
+		})
+
 		// Only on request (the nightly sync): an admin's upload keeps its colours.
 		if (settings.repairContrast === true) {
-			semantic = repairContrast(semantic, table, manifest, report)
+			semantic = repairContrast(semantic, table, manifest, report, pinned)
 		}
 
 		if (logo !== null) {

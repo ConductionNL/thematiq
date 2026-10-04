@@ -37,6 +37,7 @@
  * Usage:
  *   node scripts/sync-upstream-tokens.mjs <themes-checkout> [themesCommitSha]
  *        [--report report.md] [--only a,b] [--gate "<command>"] [--no-gate]
+ *        [--pin <slug>:--nldesign-<token>=<value>]...   (writes a pin into the set's local overrides)
  *
  * Exit codes: 0 done (with or without changes), 1 usage error, 2 the gate
  * still fails after every rejected set was put back (the tree is not safe to
@@ -134,6 +135,73 @@ export function mergeTokens(target, source) {
 		}
 	}
 	return target
+}
+
+/**
+ * Read one organisation's upstream tokens: the style-dictionary sources under
+ * `src/`, or, when upstream has moved on to it, the Tokens Studio export under
+ * `figma/` (thematiq#994).
+ *
+ * @param {string} orgDir The organisation's directory in the themes checkout.
+ * @return {Object} `{kind, tokens, rawTokens, error}`; error is null when it read.
+ */
+export function readUpstreamTokens(orgDir) {
+	const out = { kind: 'style-dictionary', tokens: {}, rawTokens: [], error: null }
+	let files = findTokenFiles(join(orgDir, 'src')).sort()
+	if (files.length === 0) {
+		out.kind = 'tokens-studio'
+		files = findTokenFiles(join(orgDir, 'figma'))
+			.filter((file) => /dark/i.test(file.slice(orgDir.length)) === false)
+			.sort()
+	}
+	if (files.length === 0) {
+		out.error = 'no *.tokens.json files upstream'
+		return out
+	}
+	for (const file of files) {
+		let json
+		try {
+			json = JSON.parse(readFileSync(file, 'utf8'))
+		} catch (error) {
+			out.error = `malformed upstream JSON in ${relative(orgDir, file)}: ${error.message}`
+			return out
+		}
+		if (out.kind === 'tokens-studio') {
+			json = tokensStudioTree(json)
+		}
+		mergeTokens(out.tokens, json)
+		out.rawTokens.push(...flattenTokens(json))
+	}
+	return out
+}
+
+/**
+ * Merge a Tokens Studio export's token sets into one tree, in the export's own
+ * set order, leaving out its dark colour scheme. A set's name is not part of a
+ * token's path: `{basis.color.default.color-default}` reads from whichever set
+ * defines it, which is what merging the sets reproduces.
+ *
+ * @param {Object} document The parsed export.
+ * @return {Object} The merged token tree.
+ */
+export function tokensStudioTree(document) {
+	const order = Array.isArray(document.$metadata?.tokenSetOrder)
+		? document.$metadata.tokenSetOrder
+		: Object.keys(document)
+	const tree = {}
+	for (const name of order) {
+		const set = document[name]
+		if (
+			name.startsWith('$')
+			|| /(^|\/)color-scheme-dark(\/|$)/.test(name)
+			|| set === null
+			|| typeof set !== 'object'
+		) {
+			continue
+		}
+		mergeTokens(tree, set)
+	}
+	return tree
 }
 
 /**
@@ -276,6 +344,16 @@ export function withOverrides(css, overrides) {
 	if (overrides.length === 0) {
 		return css
 	}
+	// An override is the one declaration of its name: a pinned colour the
+	// converter also emitted would otherwise appear twice in one block.
+	const names = new Set(overrides.map(([name]) => name))
+	css = css
+		.split('\n')
+		.filter((line) => {
+			const match = /^\t(--[\w-]+)\s*:.*;\s*$/.exec(line)
+			return match === null || names.has(match[1]) === false
+		})
+		.join('\n')
 	const close = css.lastIndexOf('}')
 	const block = [
 		'',
@@ -306,6 +384,7 @@ function parseArgs(argv) {
 		only: null,
 		gate: 'bash scripts/token-set-gate.sh',
 		runGate: true,
+		pins: {},
 	}
 	const positional = []
 	for (let index = 0; index < argv.length; index++) {
@@ -319,6 +398,17 @@ function parseArgs(argv) {
 			}
 			options[arg.slice(2)] =
 				arg === '--only' ? value.split(',').map((id) => id.trim()) : value
+		} else if (arg === '--pin') {
+			const pin = /^([a-z0-9-]+):(--nldesign-[\w-]+)=(.+)$/.exec(
+				argv[++index] ?? '',
+			)
+			if (pin === null) {
+				throw new Error('--pin needs <slug>:--nldesign-<token>=<value>.')
+			}
+			options.pins[pin[1]] = {
+				...(options.pins[pin[1]] ?? {}),
+				[pin[2]]: pin[3],
+			}
 		} else if (arg.startsWith('--')) {
 			throw new Error(`Unknown option ${arg}.`)
 		} else {
@@ -361,12 +451,65 @@ function writeRepo(path, content) {
 }
 
 /**
+ * The `--nldesign-color-*` values a person pinned in a converted set's local overrides
+ * (for example the committed primary of nijmegen, Ruben's decision on #996). The
+ * converter keeps them over its rules and its contrast repair, and repairs only
+ * the colours that depend on them, so the emitted set agrees with the overrides
+ * the file carries forward.
+ *
+ * @param {Object} org The organisation, with `oldCss` and `kind`.
+ * @return {Object<string,string>} Name => pinned value.
+ */
+export function pinnedValues(org) {
+	if (org.oldCss === null || org.kind !== 'converted') {
+		return { ...(org.extraPins ?? {}) }
+	}
+	return {
+		...Object.fromEntries(
+			localOverrides(org.oldCss, 'converted', new Set(), new Map()).filter(
+				([name]) => name.startsWith('--nldesign-color-'),
+			),
+		),
+		...(org.extraPins ?? {}),
+	}
+}
+
+/**
+ * Write pins given on the command line (`--pin`) into the set's local overrides,
+ * replacing an override of the same name. From then on the overrides section is
+ * their home and every later run carries them forward without the flag.
+ *
+ * @param {string} css The converted set, possibly with an overrides section.
+ * @param {Object<string,string>} pins Name => value.
+ * @return {string} The set with the pins in its overrides section.
+ */
+export function withPins(css, pins) {
+	const names = Object.keys(pins)
+	if (names.length === 0) {
+		return css
+	}
+	const kept = localOverrides(css, 'converted', new Set(), new Map()).filter(
+		([name]) => names.includes(name) === false,
+	)
+	let base = css
+	const start = css.indexOf(OVERRIDES_HEADING)
+	if (start !== -1) {
+		base =
+			css.slice(0, css.lastIndexOf('\n', start)).replace(/\s*$/, '') + '\n}\n'
+	}
+	return withOverrides(base, [...names.map((name) => [name, pins[name]]), ...kept])
+}
+
+/**
  * Give a theme without any primary token the set's committed primary colour.
  *
  * The converter's primary rule falls back to the manifest's `theming.primary_color`,
  * which only the server runtime can read. A few upstream themes (buren, venray) have
  * no primary token at all, so the sync hands the committed colour in as the theme's
  * own `--{slug}-color-primary`, the rule's second source.
+ * A set this script converted before carries that value in its palette section,
+ * and the sync hands that one back, not the manifest's: the manifest holds the
+ * repaired primary, and feeding it back would move the derived colours once more.
  *
  * @param {string} css The built theme CSS.
  * @param {Object} org The organisation, with `slug` and `manifestPrimary`.
@@ -394,31 +537,12 @@ export function withManifestPrimary(css, org) {
  * @return {Object} `{ok: true, css, entry}` or `{ok: false, reason}`.
  */
 function convertOrg(org, context) {
-	const tokenFiles = findTokenFiles(join(org.dir, 'src'))
-	if (tokenFiles.length === 0) {
-		const figma = existsSync(join(org.dir, 'figma'))
-		return {
-			ok: false,
-			reason: figma
-				? 'upstream now publishes only a Tokens Studio export (figma/), which the sync does not convert yet'
-				: 'no *.tokens.json files upstream',
-		}
+	const source = readUpstreamTokens(org.dir)
+	if (source.error !== null) {
+		return { ok: false, reason: source.error }
 	}
-	const merged = {}
-	const rawTokens = []
-	for (const file of tokenFiles.sort()) {
-		let json
-		try {
-			json = JSON.parse(readFileSync(file, 'utf8'))
-		} catch (error) {
-			return {
-				ok: false,
-				reason: `malformed upstream JSON in ${relative(org.dir, file)}: ${error.message}`,
-			}
-		}
-		mergeTokens(merged, json)
-		rawTokens.push(...flattenTokens(json))
-	}
+	const merged = source.tokens
+	const rawTokens = source.rawTokens
 
 	let result
 	try {
@@ -434,6 +558,7 @@ function convertOrg(org, context) {
 				vocabulary: context.vocabulary,
 				fonts: [],
 				repairContrast: true,
+				pinned: pinnedValues(org),
 			},
 		)
 	} catch (error) {
@@ -453,22 +578,45 @@ function convertOrg(org, context) {
 
 	// The manifest colours reach Nextcloud's own theming. The converter copies
 	// them from the theme as written, so an upstream typo (demodam's page
-	// background `F5FaFD`, no `#`) would land there verbatim.
-	for (const key of ['primary_color', 'background_color']) {
-		const value = result.manifestEntry.theming?.[key]
-		if (
-			value !== undefined
-			&& /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value)) === false
-		) {
-			return {
-				ok: false,
-				reason: `the theme's ${key} is not a colour (\`${value}\`); fix it upstream or set it by hand`,
-			}
+	// background `F5FaFD`, no `#`) or a transparent page (leiden's
+	// `rgba(0, 0, 0, 0)`) would land there verbatim. A background that is not a
+	// colour is dropped, so the committed one stays; a primary that is not one
+	// refuses the set, because the set file and the manifest must agree on it.
+	const theming = result.manifestEntry.theming ?? {}
+	const isHex = (value) => /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value))
+	if (
+		theming.background_color !== undefined
+		&& isHex(theming.background_color) === false
+	) {
+		delete theming.background_color
+	}
+	if (
+		theming.primary_color !== undefined
+		&& isHex(theming.primary_color) === false
+	) {
+		return {
+			ok: false,
+			reason: `the theme's primary_color is not a colour (\`${theming.primary_color}\`); fix it upstream or set it by hand`,
 		}
 	}
 
 	let css = result.css
-	if (org.oldCss !== null) {
+	if (org.oldCss !== null && source.kind === 'tokens-studio') {
+		// The old raw dump was made from the src/ format upstream has since
+		// dropped, so the names it wrote cannot be recomputed. It only ever wrote
+		// `--nldesign-*` and `--{slug}-*`; anything else a person added.
+		const rawNames = new Set(
+			[...declarations(org.oldCss).keys()].filter(
+				(name) =>
+					name.startsWith('--nldesign-')
+					|| name.startsWith(`--${org.slug}-`),
+			),
+		)
+		css = withOverrides(
+			css,
+			localOverrides(org.oldCss, org.kind, rawNames, declarations(css)),
+		)
+	} else if (org.oldCss !== null) {
 		const rawNames = new Set(
 			declarations(
 				generateOrgCSS(org.slug, org.name, rawTokens, [
@@ -483,6 +631,8 @@ function convertOrg(org, context) {
 			localOverrides(org.oldCss, org.kind, rawNames, declarations(css)),
 		)
 	}
+
+	css = withPins(css, org.extraPins ?? {})
 
 	return { ok: true, css, entry: result.manifestEntry }
 }
@@ -759,7 +909,13 @@ function main() {
 			name: config.fullName || config.name || slug,
 			prefix: config.prefix || slug,
 			version: readOrgVersion(dir, config),
-			manifestPrimary: manifestPrimaries.get(slug) ?? null,
+			manifestPrimary:
+				(kind === 'converted'
+					? declarations(oldCss).get(`--${slug}-color-primary`)
+					: undefined)
+				?? manifestPrimaries.get(slug)
+				?? null,
+			extraPins: options.pins[slug] ?? {},
 		}
 		const converted = convertOrg(org, context)
 		if (converted.ok === false) {
