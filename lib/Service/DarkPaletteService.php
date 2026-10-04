@@ -892,6 +892,33 @@ class DarkPaletteService {
 	}//end failingPairs()
 
 	/**
+	 * The CONTROL_PAIRS fills that are transparent in light and absent from
+	 * the dark declarations.
+	 *
+	 * @param array<string, string> $light The light declarations.
+	 * @param array<string, string> $dark The dark declarations so far.
+	 *
+	 * @return array<int, string> The fill token names.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function transparentFills(array $light, array $dark): array {
+		$fills = [];
+		foreach (self::CONTROL_PAIRS as $pair) {
+			$fill = $pair['bg'];
+			if (isset($dark[$fill]) === true || isset($light[$fill]) === false || in_array($fill, $fills, true) === true) {
+				continue;
+			}
+
+			if (strtolower(trim($this->resolveAlias(value: $light[$fill], declarations: $light))) === 'transparent') {
+				$fills[] = $fill;
+			}
+		}
+
+		return $fills;
+	}//end transparentFills()
+
+	/**
 	 * The fill a pair's label sits on: the token's value, or the page
 	 * background when the fill is `transparent` (a secondary button at rest).
 	 *
@@ -1099,16 +1126,8 @@ class DarkPaletteService {
 		// not a colour, so it derives nothing; its label still has to read on
 		// the page it shows. It joins the repair as `transparent` and leaves
 		// before rendering, so the light value keeps applying (thematiq#969).
-		$transparentFills = [];
-		foreach (self::CONTROL_PAIRS as $pair) {
-			$fill = $pair['bg'];
-			if (isset($merged[$fill]) === false && isset($light[$fill]) === true
-				&& strtolower(trim($this->resolveAlias(value: $light[$fill], declarations: $light))) === 'transparent'
-			) {
-				$merged[$fill] = 'transparent';
-				$transparentFills[] = $fill;
-			}
-		}
+		$transparentFills = $this->transparentFills(light: $light, dark: $merged);
+		$merged = array_merge($merged, array_fill_keys($transparentFills, 'transparent'));
 
 		$repaired = $this->verifyAndRepair(declarations: $merged, protectedTokens: array_keys($overrides));
 		foreach ($transparentFills as $fill) {
