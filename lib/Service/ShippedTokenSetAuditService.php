@@ -69,6 +69,23 @@ class ShippedTokenSetAuditService {
 	public const WCAG_CACHE_TTL = 3600;
 
 	/**
+	 * Own-vocabulary tokens that stand for the audited `--nldesign-*` names.
+	 *
+	 * Summer Breeze's stack reads `--summer-*` and never `--nldesign-*`, so
+	 * layering its set over `defaults.css` measured the Rijkshuisstijl
+	 * defaults (10.20:1) instead of the colours the page paints
+	 * (thematiq#1022). A set that declares one of these tokens, and not the
+	 * `--nldesign-*` name itself, is measured on its own value.
+	 *
+	 * @var array<string, string>
+	 */
+	private const OWN_VOCABULARY_ALIASES = [
+		'--summer-color-primary' => '--nldesign-color-primary',
+		'--summer-color-primary-text' => '--nldesign-color-primary-text',
+		'--summer-color-background-plain' => '--nldesign-color-background',
+	];
+
+	/**
 	 * The WCAG contrast service (relative-luminance math).
 	 *
 	 * @var ContrastService
@@ -108,8 +125,10 @@ class ShippedTokenSetAuditService {
 	 * Resolve the fixed --nldesign-* colour declarations for a token set.
 	 *
 	 * Layers css/tokens/{id}.css over css/systems/nldesign/defaults.css (the same
-	 * order the runtime uses) and, when the token CSS omits an explicit
-	 * background, falls back to the set's theming.background_color.
+	 * order the runtime uses), measures an own-vocabulary set on its own primary,
+	 * label and page colours ({@see self::OWN_VOCABULARY_ALIASES}) and, when the
+	 * token CSS omits an explicit background, falls back to the set's
+	 * theming.background_color.
 	 *
 	 * @param string $appPath The app root path.
 	 * @param string $id The token set id.
@@ -124,7 +143,13 @@ class ShippedTokenSetAuditService {
 
 		$tokenCss = $this->files->read(store: $this->store, appPath: $appPath, name: 'css/tokens/' . $id . '.css');
 		if ($tokenCss !== null) {
-			$declarations = array_merge($declarations, ($this->parser->parseDeclarations(content: $tokenCss) ?? []));
+			$own = ($this->parser->parseDeclarations(content: $tokenCss) ?? []);
+			$declarations = array_merge($declarations, $own);
+			foreach (self::OWN_VOCABULARY_ALIASES as $ownToken => $nldesignToken) {
+				if (isset($own[$ownToken]) === true && isset($own[$nldesignToken]) === false) {
+					$declarations[$nldesignToken] = $own[$ownToken];
+				}
+			}
 		}
 
 		// Background is managed by Nextcloud theming for many sets, so it is

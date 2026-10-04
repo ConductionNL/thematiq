@@ -141,7 +141,8 @@ input[type='url'],
 input[type='tel'],
 .input-field__input {
 	border-radius: var(--summer-radius-pill) !important;
-	border: 1px solid var(--summer-color-border) !important;
+	/* The border is the control's only edge: 3:1 against the input fill. */
+	border: 1px solid var(--summer-color-border-input) !important;
 	box-shadow: var(--summer-shadow-panel) !important;
 	/* Form controls don't inherit font-family by default (the UA picks a
 	   system font) — force Inter so inputs match the rest of the page. */

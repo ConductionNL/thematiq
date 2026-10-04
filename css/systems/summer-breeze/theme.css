@@ -108,8 +108,26 @@ h6 {
 	color: var(--summer-color-text);
 }
 
-/* Accessible focus ring in the Summer Breeze blue. */
+/* Accessible focus ring in the Summer Breeze blue, two-tone like nldesign's:
+ * the translucent --summer-color-focus composites to about 2:1 on white, so the
+ * 2px outline is the same colour made opaque (3:1, WCAG 2.2 SC 1.4.11) and the
+ * translucent token stays as the halo around it.
+ *
+ * The opaque colour is derived on the focused element itself, not on :root:
+ * the dark variant declares its tokens on body, and a :root declaration would
+ * keep resolving the light value. */
 *:focus-visible {
-	outline: 2px solid var(--summer-color-focus) !important;
+	--summer-focus-ring-color: rgb(var(--summer-color-focus-rgb));
+
+	outline: 2px solid var(--summer-focus-ring-color) !important;
 	outline-offset: 2px !important;
+	box-shadow: 0 0 0 6px var(--summer-color-focus) !important;
+}
+
+/* The `/ 1` is the point: relative colour syntax keeps the origin's alpha
+ * unless one is given, so without it the ring stays translucent. */
+@supports (color: rgb(from red r g b)) {
+	*:focus-visible {
+		--summer-focus-ring-color: rgb(from var(--summer-color-focus) r g b / 1);
+	}
 }

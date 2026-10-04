@@ -15,7 +15,7 @@
 		"description": "Soft, airy light-blue theme — Inter, rounded surfaces, soft shadows, pastel status colours and a pale-blue gradient navigation. Gentle on the eyes.",
 		"design_system": "summer-breeze",
 		"theming": {
-			"primary_color": "#2874D1",
+			"primary_color": "#21468B",
 			"background_color": "#EAF2FB"
 		}
 	},
