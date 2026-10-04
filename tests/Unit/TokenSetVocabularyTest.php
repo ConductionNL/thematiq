@@ -102,7 +102,7 @@ class TokenSetVocabularyTest extends TestCase {
 			}
 
 			if ($result['foreignNldesignNames'] !== []) {
-				$reasons[] = \count($result['foreignNldesignNames']) . ' foreign --nldesign-* name(s) ('
+				$reasons[] = \count($result['foreignNldesignNames']) . ' declared name(s) nothing reads ('
 					. implode(', ', $result['foreignNldesignNames']) . ')';
 			}
 
@@ -218,9 +218,9 @@ class TokenSetVocabularyTest extends TestCase {
 	}//end probeAppWithAnIncompleteSet()
 
 	/**
-	 * A set whose design system reads no `--nldesign-*` token is reported as
-	 * not auditable rather than as failing — `none` (stock Nextcloud) and
-	 * `summer-breeze` (its own stack references no `--nldesign-*` name).
+	 * A set whose design system reads neither the `--nldesign-*` vocabulary
+	 * nor a vocabulary of its own is reported as not auditable rather than as
+	 * failing: `none` (stock Nextcloud).
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
 	 */
@@ -232,7 +232,9 @@ class TokenSetVocabularyTest extends TestCase {
 		$this->assertContains('nldesign', $consuming, 'The nldesign stack reads the --nldesign-* vocabulary.');
 
 		foreach ($service->auditAll($this->repoRoot()) as $result) {
-			if (\in_array($result['designSystem'], $consuming, true) === true) {
+			if (\in_array($result['designSystem'], $consuming, true) === true
+				|| isset(TokenSetVocabularyAuditService::OWN_VOCABULARIES[$result['designSystem']]) === true
+			) {
 				continue;
 			}
 
@@ -241,6 +243,65 @@ class TokenSetVocabularyTest extends TestCase {
 			$this->assertSame([], $result['missingRequired'], $result['id'] . ' must report no missing tokens when it is not audited.');
 		}
 	}//end testSetsOfNonConsumingDesignSystemsAreNotAudited()
+
+	/**
+	 * Summer Breeze is audited against its own `--summer-*` vocabulary
+	 * (thematiq#1022): everything its stylesheets read is declared by its
+	 * token file, nothing the file declares goes unread, and its primary agrees
+	 * with `token-sets.json`.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 */
+	public function testSummerBreezeIsCompleteForItsOwnVocabulary(): void {
+		$service = $this->service();
+		$byId = [];
+		foreach ($service->auditAll($this->repoRoot()) as $result) {
+			$byId[$result['id']] = $result;
+		}
+
+		$this->assertArrayHasKey('summer-breeze', $byId);
+		$result = $byId['summer-breeze'];
+
+		$this->assertTrue($result['auditable'], 'summer-breeze must be audited, not skipped.');
+		$this->assertSame([], $result['missingRequired'], 'Names the summer-breeze stylesheets read that its token file does not declare.');
+		$this->assertSame([], $result['foreignNldesignNames'], 'Names the summer-breeze token file declares that nothing reads.');
+		$this->assertFalse(
+			$result['primaryMismatch'],
+			'--summer-color-primary ' . (string)$result['cssPrimary'] . ' disagrees with token-sets.json ' . (string)$result['declaredPrimary']
+		);
+		$this->assertTrue($result['complete']);
+
+		// The audit reads the real stylesheets: the names it requires include
+		// what theme.css maps onto Nextcloud's primary and main background.
+		$layers = $service->ownVocabulary($this->repoRoot(), '--summer-');
+		$this->assertContains('--summer-color-primary', $layers['read']);
+		$this->assertContains('--summer-color-surface', $layers['read']);
+	}//end testSummerBreezeIsCompleteForItsOwnVocabulary()
+
+	/**
+	 * The Node CLI (`npm run audit:token-sets`) and this service MUST agree
+	 * about which design systems carry their own vocabulary, and under which
+	 * prefix and primary token.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 */
+	public function testNodeMirrorKnowsTheSameOwnVocabularies(): void {
+		$script = (string)file_get_contents($this->repoRoot() . '/scripts/audit-token-sets.mjs');
+
+		$this->assertSame(
+			1,
+			preg_match('/const OWN_VOCABULARIES = \{(.*?)\n\}/s', $script, $block),
+			'scripts/audit-token-sets.mjs must declare an OWN_VOCABULARIES object.'
+		);
+
+		preg_match_all("/'([a-z0-9-]+)': \{ prefix: '([^']+)', primary: '([^']+)' \}/", $block[1], $matches, PREG_SET_ORDER);
+		$mirror = [];
+		foreach ($matches as $match) {
+			$mirror[$match[1]] = ['prefix' => $match[2], 'primary' => $match[3]];
+		}
+
+		$this->assertSame(TokenSetVocabularyAuditService::OWN_VOCABULARIES, $mirror, 'OWN_VOCABULARIES has drifted between PHP and Node: update both.');
+	}//end testNodeMirrorKnowsTheSameOwnVocabularies()
 
 	/**
 	 * The Node CLI (`npm run audit:token-sets`) and this service MUST require

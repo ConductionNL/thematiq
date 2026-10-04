@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="8 17 114 104" width="114" height="104">
+  <!-- La Frankendesk mark: two stitched picture-frame squares (white centers,
+       purple outlines) + light grey neck bolts for a dark header, no wordmark -->
+
+  <!-- Back frame (lighter purple, white center) -->
+  <rect x="26" y="28" width="64" height="64" rx="12" ry="12" fill="#ffffff" stroke="#927afa" stroke-width="10"/>
+
+  <!-- Front frame (darker purple, white center) -->
+  <rect x="42" y="44" width="64" height="64" rx="12" ry="12" fill="#ffffff" stroke="#571efa" stroke-width="14"/>
+
+  <!-- Stitches running the entire perimeter of the front frame's band -->
+  <rect x="42" y="44" width="64" height="64" rx="12" ry="12" fill="none" stroke="#c8c8d0" stroke-width="3" stroke-linecap="round" stroke-dasharray="7 6"/>
+
+  <!-- Neck bolts, light grey so they read on a dark header -->
+  <rect x="14" y="68" width="14" height="8" rx="1.5" fill="#c8c8d0"/>
+  <rect x="102" y="68" width="14" height="8" rx="1.5" fill="#c8c8d0"/>
+</svg>

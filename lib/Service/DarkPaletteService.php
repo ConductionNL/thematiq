@@ -81,8 +81,16 @@ class DarkPaletteService {
 	 * Version 6 adds the secondary button labels and the link colour to
 	 * {@see self::CONTROL_PAIRS}, and measures a transparent fill against the
 	 * page it shows (thematiq#969).
+	 *
+	 * Version 7 leaves a band that is already dark alone (see
+	 * {@see self::DARK_BANDS}), repairs the hero band's foregrounds against
+	 * the primary fill it sits on, and the semantic link colour and its hover
+	 * against the page (thematiq#1021).
+	 *
+	 * Version 8 gives the error chip and button label a colour that reads on
+	 * the derived error fill (see {@see self::withErrorLabel()}, thematiq#1027).
 	 */
-	public const GENERATOR_VERSION = 6;
+	public const GENERATOR_VERSION = 8;
 
 	/**
 	 * The guaranteed-passing near-white snap value (matches NC's own dark
@@ -118,15 +126,56 @@ class DarkPaletteService {
 	private const PAGE_BACKGROUND_DARK_LIGHTNESS = 0.12;
 
 	/**
+	 * Bands a set may already paint dark in light mode: the word that names
+	 * the band's tokens, and the token that is its surface.
+	 *
+	 * Inverting every colour turns a dark band light. La Frankendesk's footer
+	 * is #1b1b23 with white text; inverted it became #cbcbd6 under a #9e9e9e
+	 * label, 1.67:1, and every other footer foreground followed it down
+	 * (thematiq#1021). A band whose surface is already as dark as a dark page
+	 * (see {@see self::PAGE_BACKGROUND_MAX_LUMINANCE}) is already dark-mode
+	 * ready, so none of its tokens is derived: the dark file leaves them out
+	 * and the light values keep applying, the surface and its text together.
+	 *
+	 * @var array<string, string>
+	 */
+	private const DARK_BANDS = [
+		'footer' => '--nldesign-color-footer-background',
+	];
+
+	/**
 	 * Design systems that are never eligible for dark-variant generation:
 	 * `none` has no `--nldesign-*` tokens to darken (stock Nextcloud handles
-	 * its own dark theme), and `high-contrast` is a AAA black-on-white set
-	 * whose purpose auto-darkening would defeat (hand-authored dark blocks
-	 * remain possible for it).
+	 * its own dark theme), and `high-contrast` is a AAA set whose purpose
+	 * auto-darkening would defeat: the repair here stops at AA 4.5:1. Its
+	 * dark variant is hand-written instead (`css/tokens/dark/hoog-contrast.css`,
+	 * thematiq#1023), and skipping the design system is what keeps this
+	 * service from ever writing over it.
 	 *
 	 * @var string[]
 	 */
 	private const SKIPPED_DESIGN_SYSTEMS = ['none', 'high-contrast'];
+
+	/**
+	 * The label css/error-contrast.css paints on the error fill, for
+	 * `NcChip variant="error"` and `NcButton type="error"` alike. Light mode
+	 * leaves it out and gets the stylesheet's white fallback.
+	 */
+	private const ERROR_LABEL = '--nldesign-component-button-error-color';
+
+	/**
+	 * The token each design system maps `--color-error` (the error fill) to,
+	 * where a dark variant derives it. lasuite is absent on purpose: its fill
+	 * is `--lasuite-color-error-550` from the system's own ramp, which no
+	 * token set declares and no dark variant changes, so the white label
+	 * keeps reading there. high-contrast ships a hand-written variant.
+	 *
+	 * @var array<string, string>
+	 */
+	public const ERROR_FILL_TOKENS = [
+		'nldesign' => '--nldesign-color-error',
+		'summer-breeze' => '--summer-color-error',
+	];
 
 	/**
 	 * Maximum outer verify/repair rounds (a fix to one pair's shared token
@@ -246,8 +295,152 @@ class DarkPaletteService {
 			'threshold' => 4.5,
 		],
 		[
+			// The semantic link colour the bridges read directly (utrecht,
+			// denhaag): lasuite and frankendesk derived #5956b5 on #141414,
+			// 3.00:1 (thematiq#1021).
+			'fg' => '--nldesign-color-link',
+			'bg' => '--nldesign-color-background',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-link-hover',
+			'bg' => '--nldesign-color-background',
+			'threshold' => 4.5,
+		],
+		[
 			'fg' => '--nldesign-color-logo-text',
 			'bg' => '--nldesign-color-logo-background',
+			'threshold' => 4.5,
+		],
+		[
+			// A footer that is light in light mode turns dark, and its text
+			// has to follow (a footer that is already dark is left alone, see
+			// DARK_BANDS).
+			'fg' => '--nldesign-color-footer-text',
+			'bg' => '--nldesign-color-footer-background',
+			'threshold' => 4.5,
+		],
+		[
+			// The hero band paints the primary colour and names its own
+			// foregrounds (css/public-bridge.css): La Frankendesk's title
+			// derived to #9e9e9e on a #9c99d7 fill, 1.01:1 (thematiq#1021).
+			'fg' => '--nldesign-hero-title-color',
+			'bg' => '--nldesign-color-primary',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-hero-body-color',
+			'bg' => '--nldesign-color-primary',
+			'threshold' => 4.5,
+		],
+		[
+			// Summer Breeze paints from its own --summer-* tokens (theme.css
+			// maps them onto Nextcloud's variables), so the --nldesign-* pairs
+			// above never reach it. These are the pairs its stylesheets paint;
+			// tests/Unit/Service/SummerBreezeContrastTest.php measures the
+			// committed file against the same list (thematiq#1022).
+			'fg' => '--summer-color-primary-text',
+			'bg' => '--summer-color-primary',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary-text',
+			'bg' => '--summer-color-primary-hover',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary',
+			'bg' => '--summer-color-primary-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary',
+			'bg' => '--summer-color-primary-light-hover',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-primary',
+			'bg' => '--summer-color-background-plain',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text',
+			'bg' => '--summer-color-background-plain',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text',
+			'bg' => '--summer-color-background-hover',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text-muted',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text-muted',
+			'bg' => '--summer-color-background-plain',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-text-muted',
+			'bg' => '--summer-color-toggle-track',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-border-input',
+			'bg' => '--summer-color-surface',
+			'threshold' => 3.0,
+		],
+		[
+			'fg' => '--summer-color-error',
+			'bg' => '--summer-color-error-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-error',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-warning',
+			'bg' => '--summer-color-warning-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-warning',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-success',
+			'bg' => '--summer-color-success-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-success',
+			'bg' => '--summer-color-surface',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-info',
+			'bg' => '--summer-color-info-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--summer-color-info',
+			'bg' => '--summer-color-surface',
 			'threshold' => 4.5,
 		],
 	];
@@ -483,10 +676,16 @@ class DarkPaletteService {
 	 */
 	public function deriveDarkDeclarations(array $lightDeclarations): array {
 		$dark = [];
+		$keptBands = $this->darkBands(lightDeclarations: $lightDeclarations);
 
 		foreach ($lightDeclarations as $token => $value) {
 			if (str_ends_with($token, '-rgb') === true) {
 				// Regenerated after the main pass, from the derived base token.
+				continue;
+			}
+
+			if ($this->isInBand(token: $token, bands: $keptBands) === true) {
+				// An already-dark band keeps its light values (DARK_BANDS).
 				continue;
 			}
 
@@ -518,6 +717,55 @@ class DarkPaletteService {
 
 		return $this->regenerateRgbCompanions(lightDeclarations: $lightDeclarations, darkDeclarations: $dark);
 	}//end deriveDarkDeclarations()
+
+	/**
+	 * The bands of {@see self::DARK_BANDS} whose surface is already dark in
+	 * the light declarations.
+	 *
+	 * @param array<string, string> $lightDeclarations The effective light declarations.
+	 *
+	 * @return array<int, string> The band words, e.g. `['footer']`.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function darkBands(array $lightDeclarations): array {
+		$bands = [];
+		foreach (self::DARK_BANDS as $band => $surface) {
+			if (isset($lightDeclarations[$surface]) === false) {
+				continue;
+			}
+
+			$literal = $this->resolveAlias(value: $lightDeclarations[$surface], declarations: $lightDeclarations);
+			$rgb = $this->contrast->parseColor(value: $literal);
+			if ($rgb !== null && $this->luminanceOf(rgb: $rgb) <= self::PAGE_BACKGROUND_MAX_LUMINANCE) {
+				$bands[] = $band;
+			}
+		}
+
+		return $bands;
+	}//end darkBands()
+
+	/**
+	 * Whether a token belongs to one of the given bands: the band word is a
+	 * whole word of its name (`--nldesign-color-footer-text`,
+	 * `--frankendesk-footer-link-color`, `--tilburg-footer-color`).
+	 *
+	 * @param string $token The token name.
+	 * @param array<int, string> $bands The band words.
+	 *
+	 * @return bool True when the token names a part of one of the bands.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function isInBand(string $token, array $bands): bool {
+		foreach ($bands as $band) {
+			if (preg_match('/-' . preg_quote($band, '/') . '(-|$)/', $token) === 1) {
+				return true;
+			}
+		}
+
+		return false;
+	}//end isInBand()
 
 	/**
 	 * Derive the dark value of one colour literal, as the generated dark
@@ -1116,7 +1364,11 @@ class DarkPaletteService {
 		$derived = $this->deriveDarkDeclarations(lightDeclarations: $light);
 		$overrides = $this->parser->parseDarkBlock(css: $tokenCss);
 
-		$merged = array_merge($derived, $overrides);
+		$merged = $this->withErrorLabel(
+			declarations: array_merge($derived, $overrides),
+			designSystemId: $meta['design_system'],
+			protectedTokens: array_keys($overrides)
+		);
 
 		if (isset($meta['theming']['logo_dark']) === true && is_string($meta['theming']['logo_dark']) === true) {
 			$merged['--nldesign-logo-url'] = "url('" . $this->relativeDarkLogoPath(logoDarkPath: $meta['theming']['logo_dark']) . "')";
@@ -1130,6 +1382,14 @@ class DarkPaletteService {
 		$merged = array_merge($merged, array_fill_keys($transparentFills, 'transparent'));
 
 		$repaired = $this->verifyAndRepair(declarations: $merged, protectedTokens: array_keys($overrides));
+		// The repair may move the error fill itself (summer-breeze repairs
+		// --summer-color-error as text on its surface), so the label is
+		// checked again against the fill that ships.
+		$repaired['declarations'] = $this->withErrorLabel(
+			declarations: $repaired['declarations'],
+			designSystemId: $meta['design_system'],
+			protectedTokens: array_keys($overrides)
+		);
 		foreach ($transparentFills as $fill) {
 			unset($repaired['declarations'][$fill]);
 		}
@@ -1141,6 +1401,48 @@ class DarkPaletteService {
 
 		return ['css' => $css, 'warnings' => $repaired['warnings']];
 	}//end generateForSet()
+
+	/**
+	 * Give the error label a dark value that reads on the error fill (thematiq#1027).
+	 *
+	 * The stylesheet css/error-contrast.css paints the error chip and button label from
+	 * {@see self::ERROR_LABEL}, white when it is absent. White suits the
+	 * saturated light reds, but a dark variant derives a lighter red, and
+	 * white on the usual #e72e2e is 4.35:1. The generic repair loop cannot
+	 * help: it moves a label away from its fill and, when that fails, snaps
+	 * to near-black #111111, which is 4.34:1 on the same red. Pure black
+	 * reaches 4.83:1. So a missing or failing label becomes pure white or
+	 * pure black, whichever reads better, white on a tie. A label the set
+	 * authors in its own dark block is never rewritten.
+	 *
+	 * @param array<string, string> $declarations The dark declarations so far.
+	 * @param string $designSystemId The design system the set wears (decides the fill token).
+	 * @param array<int, string> $protectedTokens Tokens the set authored in its dark block.
+	 *
+	 * @return array<string, string> The declarations, with a readable error label where one was owed.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function withErrorLabel(array $declarations, string $designSystemId, array $protectedTokens): array {
+		$fill = ($declarations[(self::ERROR_FILL_TOKENS[$designSystemId] ?? '')] ?? null);
+		if ($fill === null || in_array(self::ERROR_LABEL, $protectedTokens, true) === true) {
+			return $declarations;
+		}
+
+		$current = ($declarations[self::ERROR_LABEL] ?? null);
+		if ($current !== null && ($this->contrast->measure(foreground: $current, background: $fill) ?? 0.0) >= 4.5) {
+			return $declarations;
+		}
+
+		$white = ($this->contrast->measure(foreground: '#ffffff', background: $fill) ?? 0.0);
+		$black = ($this->contrast->measure(foreground: '#000000', background: $fill) ?? 0.0);
+		$declarations[self::ERROR_LABEL] = '#ffffff';
+		if ($black > $white) {
+			$declarations[self::ERROR_LABEL] = '#000000';
+		}
+
+		return $declarations;
+	}//end withErrorLabel()
 
 	/**
 	 * Build the dark-scoped logo url()'s path, relative to `css/tokens/dark/`.

@@ -64,10 +64,11 @@ class TokenSetVocabularyAuditServiceTest extends TestCase {
 	 * @return void
 	 */
 	protected function tearDown(): void {
-		foreach (['css/tokens/example.css', 'css/systems/nldesign/theme.css', 'design-systems.json'] as $file) {
+		foreach (['css/tokens/example.css', 'css/systems/nldesign/theme.css', 'css/systems/summer-breeze/theme.css', 'design-systems.json'] as $file) {
 			@unlink($this->appDir . '/' . $file);
 		}
 
+		@rmdir($this->appDir . '/css/systems/summer-breeze');
 		@rmdir($this->appDir . '/css/systems/nldesign');
 		@rmdir($this->appDir . '/css/systems');
 		@rmdir($this->appDir . '/css/tokens');
@@ -119,4 +120,61 @@ class TokenSetVocabularyAuditServiceTest extends TestCase {
 		);
 		$this->assertTrue($control['complete']);
 	}//end testCommentedOutDeclarationsNeverCount()
+
+	/**
+	 * A design system with its own vocabulary is audited against it: a name
+	 * its stylesheet reads and the set leaves out is missing, a name the set
+	 * declares and nothing reads is foreign, a name the stylesheet declares
+	 * itself is not required, and the primary is compared on its own token.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 */
+	public function testOwnVocabularySystemIsAuditedAgainstItsOwnNames(): void {
+		mkdir($this->appDir . '/css/systems/summer-breeze', 0777, true);
+		file_put_contents(
+			$this->appDir . '/design-systems.json',
+			json_encode([
+				['id' => 'nldesign', 'stylesheets' => ['systems/nldesign/theme']],
+				['id' => 'summer-breeze', 'stylesheets' => ['systems/summer-breeze/theme']],
+			])
+		);
+		file_put_contents(
+			$this->appDir . '/css/systems/summer-breeze/theme.css',
+			"body {\n\t--summer-local: 1px;\n\tcolor: var(--summer-color-text);\n\tbackground: var(--summer-color-surface, #fff);\n\tpadding: var(--summer-local);\n\t/* var(--summer-commented-out) */\n}\n"
+		);
+		file_put_contents(
+			$this->appDir . '/css/tokens/example.css',
+			":root {\n\t--summer-color-text: #02162e;\n\t--summer-color-primary: #21468b;\n\t--summer-unread: 4px;\n}\n"
+		);
+
+		$service = new TokenSetVocabularyAuditService(new CssParserService());
+		$result = $service->auditSet(
+			appPath: $this->appDir,
+			id: 'example',
+			meta: ['design_system' => 'summer-breeze', 'theming' => ['primary_color' => '#2874D1']]
+		);
+
+		$this->assertTrue($result['auditable']);
+		$this->assertSame('summer-breeze', $result['designSystem']);
+		$this->assertSame(['--summer-color-surface'], $result['missingRequired']);
+		$this->assertSame(['--summer-color-primary', '--summer-unread'], $result['foreignNldesignNames']);
+		$this->assertTrue($result['primaryMismatch']);
+		$this->assertSame('#21468b', $result['cssPrimary']);
+		$this->assertSame('#2874d1', $result['declaredPrimary']);
+		$this->assertFalse($result['complete']);
+		$this->assertNotSame([], $service->warningsFor(appPath: $this->appDir, id: 'example', meta: ['design_system' => 'summer-breeze']));
+
+		// The control: declare what is read, drop what is not, agree on the primary.
+		file_put_contents(
+			$this->appDir . '/css/tokens/example.css',
+			":root {\n\t--summer-color-text: #02162e;\n\t--summer-color-surface: #ffffff;\n}\n"
+		);
+		$control = (new TokenSetVocabularyAuditService(new CssParserService()))->auditSet(
+			appPath: $this->appDir,
+			id: 'example',
+			meta: ['design_system' => 'summer-breeze', 'theming' => ['primary_color' => '#2874D1']]
+		);
+		$this->assertTrue($control['complete']);
+		$this->assertSame([], $service->warningsFor(appPath: $this->appDir, id: 'missing', meta: ['design_system' => 'none']));
+	}//end testOwnVocabularySystemIsAuditedAgainstItsOwnNames()
 }//end class

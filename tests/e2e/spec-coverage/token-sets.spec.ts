@@ -1822,6 +1822,32 @@ test.describe('token-sets', () => {
 		)
 	})
 
+	// @e2e openspec/specs/token-sets/spec.md#a-complete-summer-breeze-set-raises-no-incomplete-warning-in-the-admin-dropdown
+	test('summer-breeze is audited against its own vocabulary and carries no incomplete warning', async ({
+		page,
+	}) => {
+		// The audit reads the same files the server reads: every --summer-*
+		// name the system's stylesheets read is declared by its token file.
+		const reads = new Set<string>()
+		for (const s of DESIGN_SYSTEMS.find((d) => d.id === 'summer-breeze')
+			?.stylesheets ?? []) {
+			const css = readRepoFile(`css/${s}.css`).replace(/\/\*[\s\S]*?\*\//g, '')
+			for (const m of css.matchAll(/var\(\s*(--summer-[A-Za-z0-9_-]+)/g))
+				reads.add(m[1])
+		}
+		expect(reads.size).toBeGreaterThan(10)
+		const declared = tokenCss('summer-breeze')
+		for (const name of reads)
+			expect(declared, `summer-breeze declares ${name}`).toMatch(
+				new RegExp(`${name}\\s*:`),
+			)
+		await openSettings(page)
+		await withEntries(page, ['summer-breeze'], async (byId) => {
+			expect(byId['summer-breeze'], 'summer-breeze is listed').toBeTruthy()
+			expect(incompleteWarning(byId['summer-breeze'])).toBeUndefined()
+		})
+	})
+
 	// -----------------------------------------------------------------------
 	// Requirement: Incomplete Sets Are Surfaced In The Admin Dropdown
 	// -----------------------------------------------------------------------
