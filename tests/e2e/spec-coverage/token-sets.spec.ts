@@ -1827,14 +1827,22 @@ test.describe('token-sets', () => {
 		page,
 	}) => {
 		// The audit reads the same files the server reads: every --summer-*
-		// name the system's stylesheets read is declared by its token file.
+		// name the system's stylesheets read, and do not declare themselves,
+		// is declared by its token file. A name a stylesheet declares (the
+		// focus ring's --summer-focus-ring-color) is a local, not a token, and
+		// the server's audit leaves it out too (TokenSetVocabularyAuditService:
+		// "read through var() and no such layer declares").
 		const reads = new Set<string>()
+		const local = new Set<string>()
 		for (const s of DESIGN_SYSTEMS.find((d) => d.id === 'summer-breeze')
 			?.stylesheets ?? []) {
 			const css = readRepoFile(`css/${s}.css`).replace(/\/\*[\s\S]*?\*\//g, '')
 			for (const m of css.matchAll(/var\(\s*(--summer-[A-Za-z0-9_-]+)/g))
 				reads.add(m[1])
+			for (const m of css.matchAll(/(--summer-[A-Za-z0-9_-]+)\s*:/g))
+				local.add(m[1])
 		}
+		for (const name of local) reads.delete(name)
 		expect(reads.size).toBeGreaterThan(10)
 		const declared = tokenCss('summer-breeze')
 		for (const name of reads)
