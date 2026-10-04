@@ -143,7 +143,7 @@ class DenhaagContrastPairsTest extends TestCase {
 		$report = $this->audit()->renderReport(appPath: $this->repoRoot());
 
 		$this->assertStringContainsString('## Den Haag component pairs', $report);
-		$this->assertMatchesRegularExpression('/^\| example-gemeente \| 13 \| 0 \| 0 \|/m', $report);
+		$this->assertMatchesRegularExpression('/^\| example-gemeente \| 15 \| 0 \| 0 \|/m', $report);
 	}
 
 	/**
@@ -179,7 +179,7 @@ class DenhaagContrastPairsTest extends TestCase {
 		$this->assertCount(1, $rows);
 		$row = $rows[0];
 
-		$this->assertStringStartsWith('| fixture | 0 | 1 | 12 |', $row);
+		$this->assertStringStartsWith('| fixture | 0 | 1 | 14 |', $row);
 		$this->assertStringContainsString('step-current 1.', $row);
 		$this->assertStringContainsString('case-title —', $row);
 	}
@@ -229,5 +229,30 @@ class DenhaagContrastPairsTest extends TestCase {
 
 		$this->assertSame('#ffffff', $cascade['--nldesign-color-background']);
 		$this->assertArrayHasKey('--thematiq-status-warning-text', $cascade);
+	}
+
+	/**
+	 * The site title reads on the site header for a set with its own Tilburg header.
+	 *
+	 * example-basisschool paints the site header white and its logo dark, and
+	 * aims its header text (#FFFFFF) at Nextcloud's orange header. The title
+	 * must follow the logo, not the Nextcloud header text.
+	 *
+	 * @return void
+	 */
+	public function testTheSiteTitleFollowsTheLogoNotTheNextcloudHeaderText(): void {
+		$cascade = $this->audit()->portalCascade(appPath: $this->repoRoot(), id: 'example-basisschool');
+		$pairs = new DenhaagContrastPairs();
+
+		$this->assertSame(
+			$pairs->resolve(declarations: $cascade, name: '--tilburg-logo-color'),
+			$pairs->resolve(declarations: $cascade, name: '--tilburg-header-logo-text-color')
+		);
+		$this->assertNotSame(
+			strtolower((string)$pairs->resolve(declarations: $cascade, name: '--nldesign-color-header-text')),
+			strtolower((string)$pairs->resolve(declarations: $cascade, name: '--tilburg-header-logo-text-color')),
+			'The title must not take the Nextcloud header text, which is white here.'
+		);
+		$this->assertSame('pass', $pairs->pairs(declarations: $cascade)['header-title']['verdict']);
 	}
 }

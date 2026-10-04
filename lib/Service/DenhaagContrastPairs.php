@@ -62,6 +62,8 @@ class DenhaagContrastPairs {
 		'nav-link' => ['--denhaag-side-navigation-link-color', self::PAGE],
 		'nav-link-active' => ['--denhaag-side-navigation-link-active-color', self::PAGE],
 		'file-link' => ['--denhaag-file-link-color', self::PAGE],
+		'header-title' => ['--tilburg-header-logo-text-color', '--tilburg-header-background-color'],
+		'footer-text' => ['--tilburg-footer-color', '--tilburg-footer-background-color'],
 	];
 
 	/**
@@ -144,7 +146,8 @@ class DenhaagContrastPairs {
 		$lines = [];
 		$lines[] = '## Den Haag component pairs';
 		$lines[] = '';
-		$lines[] = 'The text the Den Haag mijn-omgeving components draw, measured as a portal sees it:';
+		$lines[] = 'The text the Den Haag mijn-omgeving components draw, and the site header title and';
+		$lines[] = 'footer text, measured as a portal sees it:';
 		$lines[] = '`css/systems/nldesign/defaults.css`, then `css/public-bridge.css`, then the set.';
 		$lines[] = 'Threshold 4.5:1 for every pair. These pairs are reported; they are not part of';
 		$lines[] = 'the verdict above.';

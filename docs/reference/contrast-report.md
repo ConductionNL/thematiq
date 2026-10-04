@@ -67,64 +67,65 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 
 ## Den Haag component pairs
 
-The text the Den Haag mijn-omgeving components draw, measured as a portal sees it:
+The text the Den Haag mijn-omgeving components draw, and the site header title and
+footer text, measured as a portal sees it:
 `css/systems/nldesign/defaults.css`, then `css/public-bridge.css`, then the set.
 Threshold 4.5:1 for every pair. These pairs are reported; they are not part of
 the verdict above.
 
-Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, action-date-warning, badge-neutral, badge-success, badge-warning, badge-error, nav-link, nav-link-active, file-link.
+Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, action-date-warning, badge-neutral, badge-success, badge-warning, badge-error, nav-link, nav-link-active, file-link, header-title, footer-text.
 
 | Token set | pass | fail | unevaluated | Below 4.5:1 or unevaluated |
 |-----------|-----:|-----:|------------:|----------------------------|
-| amsterdam | 13 | 0 | 0 |  |
-| bodegraven-reeuwijk | 13 | 0 | 0 |  |
-| borne | 13 | 0 | 0 |  |
-| buren | 13 | 0 | 0 |  |
-| conduction-new | 13 | 0 | 0 |  |
-| cunningham | 13 | 0 | 0 |  |
-| demodam | 13 | 0 | 0 |  |
-| denhaag | 13 | 0 | 0 |  |
-| dinkelland | 13 | 0 | 0 |  |
-| drechterland | 13 | 0 | 0 |  |
-| duiven | 13 | 0 | 0 |  |
-| duo | 13 | 0 | 0 |  |
-| enkhuizen | 13 | 0 | 0 |  |
-| epe | 13 | 0 | 0 |  |
-| example-basisschool | 13 | 0 | 0 |  |
-| example-college | 13 | 0 | 0 |  |
-| example-gemeente | 13 | 0 | 0 |  |
-| example-opleider | 13 | 0 | 0 |  |
-| example-voortgezet | 13 | 0 | 0 |  |
-| frankendesk | 13 | 0 | 0 |  |
-| groningen | 13 | 0 | 0 |  |
-| haarlem | 13 | 0 | 0 |  |
-| haarlemmermeer | 13 | 0 | 0 |  |
-| hoog-contrast | 13 | 0 | 0 |  |
-| hoorn | 13 | 0 | 0 |  |
-| horstaandemaas | 13 | 0 | 0 |  |
-| lasuite | 13 | 0 | 0 |  |
-| leiden | 13 | 0 | 0 |  |
-| leidschendam-voorburg | 13 | 0 | 0 |  |
-| nijmegen | 13 | 0 | 0 |  |
-| noaberkracht | 13 | 0 | 0 |  |
-| noordoostpolder | 13 | 0 | 0 |  |
-| noordwijk | 13 | 0 | 0 |  |
-| opencatalogi | 13 | 0 | 0 |  |
-| provincie-zuid-holland | 13 | 0 | 0 |  |
-| riddeliemers | 13 | 0 | 0 |  |
-| ridderkerk | 13 | 0 | 0 |  |
-| rijkshuisstijl | 13 | 0 | 0 |  |
-| rotterdam | 13 | 0 | 0 |  |
-| stedebroec | 13 | 0 | 0 |  |
-| summer-breeze | 13 | 0 | 0 |  |
-| tilburg | 13 | 0 | 0 |  |
-| tubbergen | 13 | 0 | 0 |  |
-| utrecht | 13 | 0 | 0 |  |
-| venray | 13 | 0 | 0 |  |
-| vng | 13 | 0 | 0 |  |
-| vught | 13 | 0 | 0 |  |
-| westervoort | 13 | 0 | 0 |  |
-| xxllnc | 13 | 0 | 0 |  |
-| zevenaar | 13 | 0 | 0 |  |
-| zwolle | 13 | 0 | 0 |  |
+| amsterdam | 15 | 0 | 0 |  |
+| bodegraven-reeuwijk | 15 | 0 | 0 |  |
+| borne | 15 | 0 | 0 |  |
+| buren | 15 | 0 | 0 |  |
+| conduction-new | 15 | 0 | 0 |  |
+| cunningham | 15 | 0 | 0 |  |
+| demodam | 15 | 0 | 0 |  |
+| denhaag | 15 | 0 | 0 |  |
+| dinkelland | 15 | 0 | 0 |  |
+| drechterland | 15 | 0 | 0 |  |
+| duiven | 15 | 0 | 0 |  |
+| duo | 15 | 0 | 0 |  |
+| enkhuizen | 15 | 0 | 0 |  |
+| epe | 15 | 0 | 0 |  |
+| example-basisschool | 15 | 0 | 0 |  |
+| example-college | 15 | 0 | 0 |  |
+| example-gemeente | 15 | 0 | 0 |  |
+| example-opleider | 15 | 0 | 0 |  |
+| example-voortgezet | 15 | 0 | 0 |  |
+| frankendesk | 15 | 0 | 0 |  |
+| groningen | 15 | 0 | 0 |  |
+| haarlem | 15 | 0 | 0 |  |
+| haarlemmermeer | 15 | 0 | 0 |  |
+| hoog-contrast | 15 | 0 | 0 |  |
+| hoorn | 15 | 0 | 0 |  |
+| horstaandemaas | 15 | 0 | 0 |  |
+| lasuite | 15 | 0 | 0 |  |
+| leiden | 15 | 0 | 0 |  |
+| leidschendam-voorburg | 15 | 0 | 0 |  |
+| nijmegen | 15 | 0 | 0 |  |
+| noaberkracht | 15 | 0 | 0 |  |
+| noordoostpolder | 15 | 0 | 0 |  |
+| noordwijk | 15 | 0 | 0 |  |
+| opencatalogi | 15 | 0 | 0 |  |
+| provincie-zuid-holland | 15 | 0 | 0 |  |
+| riddeliemers | 15 | 0 | 0 |  |
+| ridderkerk | 15 | 0 | 0 |  |
+| rijkshuisstijl | 15 | 0 | 0 |  |
+| rotterdam | 15 | 0 | 0 |  |
+| stedebroec | 15 | 0 | 0 |  |
+| summer-breeze | 15 | 0 | 0 |  |
+| tilburg | 15 | 0 | 0 |  |
+| tubbergen | 15 | 0 | 0 |  |
+| utrecht | 15 | 0 | 0 |  |
+| venray | 15 | 0 | 0 |  |
+| vng | 15 | 0 | 0 |  |
+| vught | 15 | 0 | 0 |  |
+| westervoort | 15 | 0 | 0 |  |
+| xxllnc | 15 | 0 | 0 |  |
+| zevenaar | 15 | 0 | 0 |  |
+| zwolle | 15 | 0 | 0 |  |
 
