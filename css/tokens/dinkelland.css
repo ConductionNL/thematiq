@@ -644,11 +644,10 @@
 	--nldesign-color-nav-background: #ffffff;
 	--nldesign-color-placeholder-dark: #e4e4e4;
 	--nldesign-color-placeholder-light: #f2f4f7;
-	--nldesign-color-primary: #397baa;
 	--nldesign-color-primary-hover: #deebf4;
 	--nldesign-color-primary-light: #fcfdfe;
 	--nldesign-color-primary-light-hover: #f8fbfd;
-	--nldesign-color-primary-text: #000000;
+	--nldesign-color-primary-text: #ffffff;
 	--nldesign-color-success: #28a745;
 	--nldesign-color-success-rgb: 40, 167, 69;
 	--nldesign-color-text: #333333;
@@ -670,8 +669,12 @@
 	 *    converter:       1.0.0
 	 *    mapping table:   v1 sha256:a83cd3afb43901ad
 	 *    applied:         20
-	 *    adapted:         27
-	 *    kept:            585
+	 *    adapted:         26
+	 *    kept:            586
 	 *    skipped:         18
 	 */
+
+	/* 5. Local overrides, kept by the token sync: values a person set on top of upstream.
+	 *    The sync carries them into every run; edit them here, nowhere else. */
+	--nldesign-color-primary: #006cb9;
 }

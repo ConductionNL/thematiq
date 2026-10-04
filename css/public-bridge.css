@@ -23,8 +23,8 @@
  *
  * MEASURED COVERAGE (a test recomputes these from token-sets.json and
  * css/tokens/, and fails when they drift):
- *   coverage: listed=52 roleLayer=18 nldesignOnly=15 denhaagComponents=11
- * Of the listed sets, 18 carry the full `--utrecht-*` role layer, 15 declare
+ *   coverage: listed=52 roleLayer=19 nldesignOnly=14 denhaagComponents=11
+ * Of the listed sets, 19 carry the full `--utrecht-*` role layer, 14 declare
  * only `--nldesign-*`, and 11 declare Den Haag component properties. No set
  * declares a case card property; the Den Haag section at the end of this
  * block gives every set one.

@@ -167,7 +167,6 @@
 	--nldesign-color-nav-background: #ffffff;
 	--nldesign-color-placeholder-dark: #e7e6ea;
 	--nldesign-color-placeholder-light: #f5f5f5;
-	--nldesign-color-primary: #281f6b;
 	--nldesign-color-primary-hover: #16113b;
 	--nldesign-color-primary-light: #eae9f0;
 	--nldesign-color-primary-light-hover: #d4d2e1;
@@ -194,11 +193,12 @@
 	 *    mapping table:   v1 sha256:a83cd3afb43901ad
 	 *    applied:         9
 	 *    adapted:         36
-	 *    kept:            185
+	 *    kept:            186
 	 *    skipped:         14
 	 */
 
 	/* 5. Local overrides, kept by the token sync: values a person set on top of upstream.
 	 *    The sync carries them into every run; edit them here, nowhere else. */
+	--nldesign-color-primary: #c42035;
 	--nldesign-logo-url: url('../../img/logos/provincie-zuid-holland.svg');
 }

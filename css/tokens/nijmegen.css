@@ -1067,7 +1067,6 @@
 	--nldesign-color-nav-background: #ffffff;
 	--nldesign-color-placeholder-dark: #ebeef1;
 	--nldesign-color-placeholder-light: #efefef;
-	--nldesign-color-primary: #5616ff;
 	--nldesign-color-primary-hover: #4a13db;
 	--nldesign-color-primary-light: #eee8ff;
 	--nldesign-color-primary-light-hover: #ddd0ff;
@@ -1094,11 +1093,12 @@
 	 *    mapping table:   v1 sha256:a83cd3afb43901ad
 	 *    applied:         15
 	 *    adapted:         31
-	 *    kept:            1018
+	 *    kept:            1019
 	 *    skipped:         21
 	 */
 
 	/* 5. Local overrides, kept by the token sync: values a person set on top of upstream.
 	 *    The sync carries them into every run; edit them here, nowhere else. */
+	--nldesign-color-primary: #157c68;
 	--nldesign-logo-url: url('../../img/logos/nijmegen.svg');
 }

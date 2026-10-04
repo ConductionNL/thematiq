@@ -84,7 +84,7 @@
 		"name": "Gemeente Dinkelland",
 		"description": "Design tokens for Gemeente Dinkelland",
 		"theming": {
-			"primary_color": "#397baa",
+			"primary_color": "#006cb9",
 			"background_color": "#ffffff"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
@@ -230,7 +230,7 @@
 		"name": "Gemeente Nijmegen",
 		"description": "Design tokens for Gemeente Nijmegen",
 		"theming": {
-			"primary_color": "#5616ff",
+			"primary_color": "#157c68",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/nijmegen.svg",
 			"logo_dark": "img/logos/nijmegen-dark.svg"
@@ -243,10 +243,12 @@
 		"name": "Noaberkracht",
 		"description": "Design tokens for Noaberkracht",
 		"theming": {
-			"primary_color": "#4376fc",
-			"background_color": "#FFFFFF"
+			"primary_color": "#947200",
+			"background_color": "#ffffff"
 		},
-		"note": "primary_color #4376fc is legacy Conduction cobalt (retired 2026-05-13) — verify with municipality upstream"
+		"note": "primary_color #4376fc is legacy Conduction cobalt (retired 2026-05-13) — verify with municipality upstream",
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamVersion": "1.0.0"
 	},
 	{
 		"id": "noordoostpolder",
@@ -277,7 +279,7 @@
 		"name": "Provincie Zuid-Holland",
 		"description": "Design tokens for Provincie Zuid-Holland",
 		"theming": {
-			"primary_color": "#281f6b",
+			"primary_color": "#c42035",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/provincie-zuid-holland.svg",
 			"logo_dark": "img/logos/provincie-zuid-holland-dark.svg"
@@ -322,7 +324,7 @@
 		"name": "Gemeente Tilburg",
 		"description": "Design tokens for Gemeente Tilburg",
 		"theming": {
-			"primary_color": "#be5804",
+			"primary_color": "#003366",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/tilburg.svg"
 		},
@@ -334,7 +336,7 @@
 		"name": "Gemeente Tubbergen",
 		"description": "Design tokens for Gemeente Tubbergen",
 		"theming": {
-			"primary_color": "#46815d",
+			"primary_color": "#067432",
 			"background_color": "#ffffff"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
