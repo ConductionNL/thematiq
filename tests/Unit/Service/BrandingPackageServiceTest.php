@@ -30,9 +30,11 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\DesignTokensMapper;
+use OCA\Thematiq\Service\DtcgValueChecker;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\FontValidator;
 use OCA\Thematiq\Service\TokenSetConverterService;
+use OCA\Thematiq\Service\TokenValueValidator;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -191,7 +193,8 @@ class BrandingPackageServiceTest extends TestCase {
 			$this->fontService,
 			new FontValidator(),
 			$converter,
-			$customSets
+			$customSets,
+			new DtcgValueChecker(new TokenValueValidator())
 		);
 	}//end service()
 
@@ -301,6 +304,76 @@ class BrandingPackageServiceTest extends TestCase {
 		$this->assertSame('tokens', $result['errors'][0]['section']);
 		$this->assertSame([], $this->stored);
 	}//end testUnconvertibleTokenSourceRefusesThePackage()
+
+	/**
+	 * Issue #941: a DTCG colour that is not a colour refuses the package and
+	 * the error names the token, as the editor and the overrides API do.
+	 *
+	 * @return void
+	 */
+	public function testInvalidDtcgColourRefusesThePackageNamingTheToken(): void {
+		$package = $this->dir . '/branding';
+		$this->service()->export(dir: $package);
+		mkdir($package . '/tokens');
+		file_put_contents(
+			$package . '/tokens/custom-gemeente.json',
+			(string)json_encode(
+				[
+					'nldesign' => [
+						'color' => [
+							'$type' => 'color',
+							'primary' => ['$value' => 'not-a-colour'],
+							'primary-text' => ['$value' => '#ffffff'],
+						],
+					],
+				]
+			)
+		);
+
+		$this->imported = [];
+		$result = $this->service()->import(path: $package);
+
+		$this->assertFalse($result['valid']);
+		$messages = implode("\n", array_map(fn (array $error): string => (string)$error['message'], $result['errors']));
+		$this->assertStringContainsString('nldesign.color.primary', $messages);
+		$this->assertStringContainsString('not-a-colour', $messages);
+		$this->assertStringNotContainsString('primary-text', $messages);
+		$this->assertSame('tokens', $result['errors'][0]['section']);
+		foreach ($this->imported as [$bundle, $dryRun]) {
+			$this->assertTrue($dryRun, 'nothing is applied');
+		}
+	}//end testInvalidDtcgColourRefusesThePackageNamingTheToken()
+
+	/**
+	 * Control: valid colours, aliases and the colour object form still apply.
+	 *
+	 * @return void
+	 */
+	public function testValidDtcgColoursStillApply(): void {
+		$package = $this->dir . '/branding';
+		$this->service()->export(dir: $package);
+		mkdir($package . '/tokens');
+		file_put_contents(
+			$package . '/tokens/custom-gemeente.json',
+			(string)json_encode(
+				[
+					'nldesign' => [
+						'color' => [
+							'$type' => 'color',
+							'primary' => ['$value' => '#8a2be2'],
+							'primary-text' => ['$value' => 'white'],
+							'primary-hover' => ['$value' => '{nldesign.color.primary}'],
+							'primary-light' => ['$value' => ['colorSpace' => 'srgb', 'components' => [1, 0.9, 1]]],
+						],
+					],
+				]
+			)
+		);
+
+		$result = $this->service()->import(path: $package);
+
+		$this->assertTrue($result['valid'], json_encode($result['errors'] ?? []));
+	}//end testValidDtcgColoursStillApply()
 
 	/**
 	 * A dry run validates fonts and writes nothing.
