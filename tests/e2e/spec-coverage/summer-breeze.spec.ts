@@ -76,6 +76,49 @@ async function paint(page: Page, value: string): Promise<number[]> {
 	}, value)
 }
 
+/**
+ * The channels of a colour as the browser resolves it, read from the computed
+ * value rather than painted. `paint()` goes through a canvas, which stores
+ * premultiplied alpha: a translucent colour comes back off by one (#367ace80
+ * reads 205 for 206), so it cannot be compared channel by channel with the
+ * same colour made opaque. Handles `rgb()`/`rgba()` and `color(srgb ...)`,
+ * the form relative colour syntax computes to.
+ */
+async function channels(page: Page, value: string): Promise<number[]> {
+	const resolved = await page.evaluate((v) => {
+		const probe = document.createElement('span')
+		probe.style.setProperty('color', v, 'important')
+		document.body.appendChild(probe)
+		const c = getComputedStyle(probe).color
+		probe.remove()
+		return c
+	}, value)
+	const rgb =
+		/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)$/.exec(
+			resolved,
+		)
+	if (rgb !== null) {
+		return [
+			Number(rgb[1]),
+			Number(rgb[2]),
+			Number(rgb[3]),
+			rgb[4] === undefined ? 1 : Number(rgb[4]),
+		]
+	}
+	const srgb =
+		/^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)$/.exec(
+			resolved,
+		)
+	expect(srgb, `a colour the test can read: ${resolved}`).not.toBeNull()
+	const [, r, g, b, a] = srgb as RegExpExecArray
+	return [
+		Math.round(Number(r) * 255),
+		Math.round(Number(g) * 255),
+		Math.round(Number(b) * 255),
+		a === undefined ? 1 : Number(a),
+	]
+}
+
 /** WCAG relative luminance of an opaque colour. */
 function luminance([r, g, b]: number[]): number {
 	const lin = (c: number) => {
@@ -269,7 +312,18 @@ test.describe('summer-breeze', () => {
 				)
 				const outline = await paint(page, ring.color)
 				expect(outline[3], `${scope}: the outline is opaque`).toBe(1)
-				expect(outline.slice(0, 3)).toEqual(token.slice(0, 3))
+				// Compare the resolved values, not the painted ones: the canvas
+				// rounds the translucent token's channels (see channels()).
+				const tokenRgb = await channels(
+					page,
+					await bodyValue(page, '--summer-color-focus'),
+				)
+				const outlineRgb = await channels(page, ring.color)
+				expect(outlineRgb[3], `${scope}: the outline is opaque`).toBe(1)
+				expect(
+					outlineRgb.slice(0, 3),
+					`${scope}: the outline is the focus colour`,
+				).toEqual(tokenRgb.slice(0, 3))
 				expect(
 					token[3],
 					`${scope}: the focus token stays translucent`,
