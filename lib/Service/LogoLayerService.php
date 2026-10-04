@@ -40,6 +40,13 @@ use Throwable;
 class LogoLayerService {
 
 	/**
+	 * What a set's login watermark file is called, after the set id.
+	 *
+	 * @var string
+	 */
+	private const WATERMARK_SUFFIX = '-emblem-grey';
+
+	/**
 	 * What a bundle that masks the header logo reads when a logo exists.
 	 *
 	 * The La Suite element overrides, which Cunningham shares, paint
@@ -143,7 +150,8 @@ class LogoLayerService {
 		// unquoted is both valid and safe.
 		if ($relative !== null) {
 			return $this->inlineLayer(
-				css: ':root{--nldesign-logo-url:url(' . $this->files->url(name: $relative) . ');' . self::HEADER_LOGO_VARIABLES . '}'
+				css: ':root{--nldesign-logo-url:url(' . $this->files->url(name: $relative) . ');' . self::HEADER_LOGO_VARIABLES
+					. $this->watermarkDeclaration(tokenSet: $tokenSet) . '}'
 			);
 		}
 
@@ -242,6 +250,31 @@ class LogoLayerService {
 			'id' => CssInjectionService::DARK_LOGO_STYLE_ID,
 		];
 	}//end darkLayer()
+
+	/**
+	 * The login watermark of a set, as an absolute url, or nothing.
+	 *
+	 * A set that ships a grey emblem beside its logo, `img/logos/<set>-emblem-grey.svg`,
+	 * names it as its login watermark in `--nldesign-login-watermark-image`. The
+	 * token file spells that url relative to itself; the rule that draws it
+	 * (css/workplace-layout.css) sits at another depth, which is the same
+	 * problem the logo has, so the same layer carries the absolute url. A set
+	 * without that file gets no declaration, and the watermark rule draws nothing.
+	 *
+	 * @param string $tokenSet The selected token set id.
+	 *
+	 * @return string One declaration starting with `;`, or the empty string.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 */
+	private function watermarkDeclaration(string $tokenSet): string {
+		$watermark = $this->shippedLogo(name: $tokenSet . self::WATERMARK_SUFFIX);
+		if ($watermark === null) {
+			return '';
+		}
+
+		return ';--nldesign-login-watermark-image:url(' . $this->files->url(name: $watermark) . ')';
+	}//end watermarkDeclaration()
 
 	/**
 	 * The dark logo layer as a list the injector can append: none when an

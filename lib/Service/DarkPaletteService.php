@@ -268,6 +268,52 @@ class DarkPaletteService {
 			'threshold' => 4.5,
 		],
 		[
+			// The count badge in the navigation, where a set gives it a colour
+			// of its own (zuiddrecht: white on red). Derived unrepaired, its
+			// white number clamped to #9e9e9e on #f43535, 1.45:1.
+			'fg' => '--nldesign-component-navigation-badge-color',
+			'bg' => '--nldesign-component-navigation-badge-background-color',
+			'threshold' => 4.5,
+		],
+		// Text written straight on the content surface, for a set that gives
+		// that surface a colour of its own. The page pairs above check the
+		// main background, and a derived surface is not that colour.
+		[
+			'fg' => '--nldesign-color-text',
+			'bg' => '--nldesign-component-content-surface-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-text-muted',
+			'bg' => '--nldesign-component-content-surface-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-link',
+			'bg' => '--nldesign-component-content-surface-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-status-badge-info-color',
+			'bg' => '--nldesign-component-status-badge-info-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-status-badge-success-color',
+			'bg' => '--nldesign-component-status-badge-success-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-status-badge-warning-color',
+			'bg' => '--nldesign-component-status-badge-warning-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-status-badge-error-color',
+			'bg' => '--nldesign-component-status-badge-error-background-color',
+			'threshold' => 4.5,
+		],
+		[
 			// Nextcloud's own secondary button: overrides.css maps its label
 			// to the primary colour and its fill to the primary-light wash.
 			'fg' => '--nldesign-color-primary',

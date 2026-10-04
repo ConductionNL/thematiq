@@ -332,4 +332,63 @@ class SetLogoReachTest extends TestCase {
 	public function testWithoutADarkFileThereIsNoDarkLayer(): void {
 		$this->assertNull($this->darkLayer(darkShipped: false));
 	}//end testWithoutADarkFileThereIsNoDarkLayer()
+
+	/**
+	 * The logo layer of a set, with or without a grey emblem beside its logo.
+	 *
+	 * @param bool $emblemShipped Whether `img/logos/zuiddrecht-emblem-grey.svg` exists.
+	 *
+	 * @return string The layer CSS.
+	 */
+	private function layerWithEmblem(bool $emblemShipped): string {
+		$config = $this->createMock(IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, string $default = ''): string => $default);
+		$files = $this->createMock(RuntimeFileLocator::class);
+		$files->method('exists')->willReturnCallback(
+			static fn (string $name): bool => $name === 'img/logos/zuiddrecht.svg' || ($emblemShipped === true && $name === 'img/logos/zuiddrecht-emblem-grey.svg')
+		);
+		$files->method('url')->willReturnCallback(static fn (string $name): string => '/custom_apps/thematiq/' . $name);
+
+		$layer = (new LogoLayerService($config, $this->createMock(IURLGenerator::class), $this->createMock(LoggerInterface::class), $files))->layer(tokenSet: 'zuiddrecht');
+		$this->assertNotNull($layer);
+
+		return $layer['css'];
+	}//end layerWithEmblem()
+
+	/**
+	 * A set that ships a grey emblem gets its login watermark as an absolute
+	 * url in the same layer as its logo, because the rule that draws it sits
+	 * at another depth than the token file that names it.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 */
+	public function testAGreyEmblemBecomesTheLoginWatermark(): void {
+		$css = $this->layerWithEmblem(emblemShipped: true);
+
+		$this->assertStringContainsString('--nldesign-logo-url:url(/custom_apps/thematiq/img/logos/zuiddrecht.svg)', $css);
+		$this->assertStringContainsString(';--nldesign-login-watermark-image:url(/custom_apps/thematiq/img/logos/zuiddrecht-emblem-grey.svg)}', $css);
+		$this->assertStringStartsWith(':root{', $css);
+	}//end testAGreyEmblemBecomesTheLoginWatermark()
+
+	/**
+	 * A set without that file gets no watermark declaration at all, so the
+	 * layer of every set that existed before is unchanged.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 */
+	public function testWithoutAGreyEmblemThereIsNoWatermark(): void {
+		$this->assertStringNotContainsString('watermark', $this->layerWithEmblem(emblemShipped: false));
+	}//end testWithoutAGreyEmblemThereIsNoWatermark()
+
+	/**
+	 * Only Zuiddrecht ships a grey emblem, so only its layer changes. Read off
+	 * the real directory, not a mock.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 */
+	public function testOnlyZuiddrechtShipsAGreyEmblem(): void {
+		$emblems = array_map('basename', (array)glob(\dirname(__DIR__, 3) . '/img/logos/*-emblem-grey.*'));
+
+		$this->assertSame(['zuiddrecht-emblem-grey.svg'], $emblems);
+	}//end testOnlyZuiddrechtShipsAGreyEmblem()
 }//end class

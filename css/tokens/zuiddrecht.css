@@ -1,0 +1,171 @@
+/**
+ * Gemeente Zuiddrecht Design Tokens
+ *
+ * Zuiddrecht is a demo municipality: it does not exist, so a demonstration
+ * never borrows the house style of a real one. The palette is Conduction's own
+ * design for it. Blue is an action, red is urgency or your place in the menu.
+ *
+ * Blue #3669A5 is the interactive colour for buttons and links, deep blue
+ * #234A78 its hover. Red #CC0000 is the accent, NOT the interactive primary:
+ * it marks the selected navigation entry (a soft red wash with a dark red
+ * label), the count badge in the navigation and the brand stripe.
+ *
+ * THE WORKPLACE LOOK. This set wears the light workplace layout: a white top
+ * bar with dark text, a white app navigation, a grey workspace (#F5F6F8) and
+ * white cards with a hairline border. token-sets.json turns the workplace
+ * layout and the brand stripe on for this set (its `layout` block), and an
+ * administrator can switch either off again.
+ *
+ * Every text pair below reaches WCAG AA (4.5:1), computed, not estimated:
+ * white on #3669A5 5.64, #3669A5 on white 5.64 and on the workspace 5.22,
+ * #1B1C1D on white 17.07, #5E6168 on white 6.20 and on the workspace 5.74,
+ * #A30000 on #FCEDEC 7.22 and on the selected-entry wash #F7D6D6 6.08, white
+ * on #CC0000 5.89, #234A78 on #EAF0F7 7.88, #1E6B2A on #E7F3EA 5.77, #7A4F00
+ * on #FFF4DE 6.53.
+ */
+
+:root {
+	/* Zuiddrecht primary interactive colour: blue */
+	--nldesign-color-primary: #3669A5;
+	--nldesign-color-primary-text: #ffffff;
+	--nldesign-color-primary-hover: #234A78;
+	--nldesign-color-primary-light: #EAF0F7;
+	--nldesign-color-primary-light-hover: #DCE6F2;
+
+	/* Zuiddrecht palette */
+	--zuiddrecht-color-red: #CC0000;
+	--zuiddrecht-color-red-dark: #A30000;
+	--zuiddrecht-color-red-light: #FCEDEC;
+	--zuiddrecht-color-blue: #3669A5;
+	--zuiddrecht-color-blue-dark: #234A78;
+	--zuiddrecht-color-blue-light: #EAF0F7;
+	--zuiddrecht-color-ink: #1B1C1D;
+	--zuiddrecht-color-muted: #5E6168;
+	--zuiddrecht-color-line: #E4E6EA;
+	--zuiddrecht-color-surface: #F5F6F8;
+
+	/* Logo image */
+	--nldesign-logo-url: url('../../img/logos/zuiddrecht.svg');
+	/* The logo is a wordmark, 4.7 times as wide as it is high. In Nextcloud's
+	 * 62px slot it would be 13px high; 150px gives it 32px. */
+	--nldesign-logo-width: 150px;
+
+	/* Background colours, for hover states and the darker steps. The main
+	 * background is managed by Nextcloud's theming system. */
+	--nldesign-color-background-hover: #F0F1F3;
+	--nldesign-color-background-dark: #EDEFF2;
+	--nldesign-color-background-darker: #D3D8DF;
+
+	/* Header: white with dark text and a hairline under it */
+	--nldesign-color-header-background: #ffffff;
+	--nldesign-color-header-text: #1B1C1D;
+	/* The hairline is the border-dark grey at 25%: #E2E4E7 on the white bar,
+	 * and still a quiet line on the dark one, where a literal #E4E6EA would
+	 * be a bright rule (this token holds a whole border, so the dark variant
+	 * cannot derive it). */
+	--nldesign-header-border-bottom: 1px solid rgba(138, 146, 158, 0.25);
+
+	/* Navigation */
+	--nldesign-color-nav-background: #ffffff;
+
+	/* Text colours. Muted is #5E6168, not Cunningham's #74777c: that one is
+	 * 4.49:1 on white, just under AA. */
+	--nldesign-color-text: #1B1C1D;
+	--nldesign-color-text-muted: #5E6168;
+	--nldesign-color-text-light: #ffffff;
+
+	/* Status colours. Each is dark enough to carry white text as a fill and
+	 * to be the text on its own light tint (see the status pills below). */
+	--nldesign-color-error: #CC0000;
+	--nldesign-color-error-rgb: 204, 0, 0;
+	--nldesign-color-error-hover: #A30000;
+	--nldesign-color-warning: #7A4F00;
+	--nldesign-color-warning-rgb: 122, 79, 0;
+	--nldesign-color-success: #1E6B2A;
+	--nldesign-color-success-rgb: 30, 107, 42;
+	--nldesign-color-info: #3669A5;
+	--nldesign-color-info-rgb: 54, 105, 165;
+
+	/* Border colours. The hairline is for cards and dividers; the dark step
+	 * is for control borders, which need 3:1 against white (#8A929E is 3.14). */
+	--nldesign-color-border: #E4E6EA;
+	--nldesign-color-border-dark: #8A929E;
+
+	/* Focus colour */
+	--nldesign-color-focus: rgba(54, 105, 165, 0.5);
+	--nldesign-color-focus-rgb: 54, 105, 165;
+
+	/* Link colours (interactive blue, not the red accent) */
+	--nldesign-color-link: #3669A5;
+	--nldesign-color-link-hover: #234A78;
+
+	/* Button colours (interactive blue) */
+	--nldesign-color-button-primary-background: #3669A5;
+	--nldesign-color-button-primary-text: #ffffff;
+	--nldesign-color-button-primary-border: #3669A5;
+	--nldesign-color-button-primary-hover: #234A78;
+
+	/* Typography: Fira Sans in 400, 500, 600 and 700, bundled by thematiq */
+	--nldesign-font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
+
+	/* Border radius: NEXTCLOUD'S SCALE, NOT THE WEBSITE'S.
+	 *
+	 * The Zuiddrecht website uses 4px controls and 6px cards. Applying those
+	 * here would square off the Nextcloud chrome the way any near-square brand
+	 * radius does: app shell, navigation entries, search field, buttons and
+	 * modals all read a control radius where a stock instance rounds them (see
+	 * cunningham.css, which made the same decision for the same reason). The
+	 * workplace therefore carries Nextcloud's own scale: 8px for controls and
+	 * 12px for cards and other containers, so built-in apps round the same way
+	 * the Conduction apps do. Literals, not `var()` references: overrides.css
+	 * maps Nextcloud's scale FROM these tokens, so referencing it back is a
+	 * cycle. */
+	--nldesign-border-radius: 8px;
+	--nldesign-border-radius-small: 4px;
+	--nldesign-border-radius-large: 12px;
+	--nldesign-border-radius-rounded: 28px;
+	--nldesign-border-radius-pill: 100px;
+
+	/* The selected navigation entry: red, where Nextcloud uses the primary
+	 * colour. Nextcloud 34 and later draw it as a 16% wash of this colour with
+	 * a stripe in it: a soft red (#F7D6D6 on white) that the dark red label
+	 * reads on at 6.08:1. Nextcloud 32 and 33 fill the entry solid and keep
+	 * the white primary label, 5.89:1 on #CC0000. */
+	--nldesign-component-navigation-active-background-color: #CC0000;
+	--nldesign-component-navigation-active-color: #A30000;
+
+	/* The count badge, red in the navigation only (white on it is 5.89:1).
+	 * Every other counter keeps the primary blue. */
+	--nldesign-component-navigation-badge-background-color: #CC0000;
+	--nldesign-component-navigation-badge-color: #ffffff;
+
+	/* The workspace: a grey surface that white cards sit on. Cards get a
+	 * hairline border and a very light shadow (4% ink). */
+	--nldesign-component-content-surface-background-color: #F5F6F8;
+	--nldesign-component-content-card-shadow-color: rgba(27, 28, 29, 0.04);
+
+	/* Status pills: a light tint with dark text of the same hue.
+	 * info 7.88:1, success 5.77:1, warning 6.53:1, error 7.22:1. */
+	--nldesign-component-status-badge-info-background-color: #EAF0F7;
+	--nldesign-component-status-badge-info-color: #234A78;
+	--nldesign-component-status-badge-success-background-color: #E7F3EA;
+	--nldesign-component-status-badge-success-color: #1E6B2A;
+	--nldesign-component-status-badge-warning-background-color: #FFF4DE;
+	--nldesign-component-status-badge-warning-color: #7A4F00;
+	--nldesign-component-status-badge-error-background-color: #FCEDEC;
+	--nldesign-component-status-badge-error-color: #A30000;
+
+	/* The login watermark: the grey shield, large and faint, in the bottom
+	 * corner of the login page while the workplace layout is light. */
+	--nldesign-login-watermark-image: url('../../img/logos/zuiddrecht-emblem-grey.svg');
+
+	/* The brand stripe, "de drie banen": red, blue, red in the ratio 6 : 3 : 1,
+	 * 5px high. Drawn under the header while the brand stripe option is on. */
+	--nldesign-brand-stripe-color-1: #CC0000;
+	--nldesign-brand-stripe-color-2: #3669A5;
+	--nldesign-brand-stripe-color-3: #CC0000;
+	--nldesign-brand-stripe-ratio-1: 6;
+	--nldesign-brand-stripe-ratio-2: 3;
+	--nldesign-brand-stripe-ratio-3: 1;
+	--nldesign-brand-stripe-height: 5px;
+}

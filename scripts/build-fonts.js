@@ -74,7 +74,7 @@ const FAMILIES = [
 		copyright:
 			'2012-2015 The Mozilla Foundation and Telefonica S.A. (https://github.com/mozilla/Fira)',
 		upstream: '@fontsource/fira-sans',
-		note: 'The NL Design System default, and the open-source stand-in for RijksoverheidSansWebText.',
+		note: 'The NL Design System default, and the open-source stand-in for RijksoverheidSansWebText. Medium and SemiBold are there for sets whose design uses four weights (zuiddrecht).',
 		faces: [
 			{
 				weight: 400,
@@ -88,6 +88,34 @@ const FAMILIES = [
 				style: 'italic',
 				local: 'Fira Sans Italic',
 				file: 'fira-sans-latin-400-italic',
+				formats: ['woff2', 'woff'],
+			},
+			{
+				weight: 500,
+				style: 'normal',
+				local: 'Fira Sans Medium',
+				file: 'fira-sans-latin-500-normal',
+				formats: ['woff2', 'woff'],
+			},
+			{
+				weight: 500,
+				style: 'italic',
+				local: 'Fira Sans Medium Italic',
+				file: 'fira-sans-latin-500-italic',
+				formats: ['woff2', 'woff'],
+			},
+			{
+				weight: 600,
+				style: 'normal',
+				local: 'Fira Sans SemiBold',
+				file: 'fira-sans-latin-600-normal',
+				formats: ['woff2', 'woff'],
+			},
+			{
+				weight: 600,
+				style: 'italic',
+				local: 'Fira Sans SemiBold Italic',
+				file: 'fira-sans-latin-600-italic',
 				formats: ['woff2', 'woff'],
 			},
 			{

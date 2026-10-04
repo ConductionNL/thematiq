@@ -102,6 +102,48 @@ function captureName(global) {
 	return mapping.capturePrefix + global.replace(/^--/, '')
 }
 
+/**
+ * Every Nextcloud variable a token redirects: its `global`, then `alsoGlobals`.
+ *
+ * One role can be read from different variables in different versions of a
+ * component. The selected navigation entry writes its label in
+ * `--color-main-text` and, where thematiq's own link rule reaches it first, in
+ * `--color-primary-element-text`. `alsoGlobals` lets one token answer for the
+ * role wherever it is read. `global` stays the one the editor reads the live
+ * value from.
+ *
+ * @param {object} token A token's mapping entry.
+ *
+ * @return {Array<string>} The variable names, `global` first.
+ */
+function globalsOf(token) {
+	return [token.global].concat(token.alsoGlobals === undefined ? [] : token.alsoGlobals)
+}
+
+/**
+ * What a redirect falls back to when its own token is unset.
+ *
+ * Normally the captured global. A token that refines another component token,
+ * the selected entry's label refining the label of every entry, names that
+ * token as `fallback`, and it is tried first. Without it the more specific
+ * rule would hand the element the global and silently drop a value an
+ * instance had set on the broader token. Only the token's own `global` has
+ * that parent: an `alsoGlobals` variable falls back to its capture.
+ *
+ * @param {object} token A token's mapping entry.
+ * @param {string} global The variable being redirected.
+ *
+ * @return {string} The fallback expression.
+ */
+function redirectFallback(token, global) {
+	const captured = 'var(' + captureName(global) + ')'
+	if (token.fallback === undefined || global !== token.global) {
+		return captured
+	}
+
+	return 'var(' + token.fallback + ', ' + captured + ')'
+}
+
 /*
  * A component that mapped two of its tokens onto the SAME global would emit two
  * declarations of one property in one rule, and the second would silently win —
@@ -116,18 +158,20 @@ for (const [id, component] of Object.entries(mapping.components)) {
 		if (token.paint !== undefined) {
 			continue
 		}
-		if (seen.has(token.global) === true) {
-			collisions.push(
-				id
-					+ ': '
-					+ seen.get(token.global)
-					+ ' and '
-					+ name
-					+ ' both re-scope '
-					+ token.global,
-			)
+		for (const global of globalsOf(token)) {
+			if (seen.has(global) === true) {
+				collisions.push(
+					id
+						+ ': '
+						+ seen.get(global)
+						+ ' and '
+						+ name
+						+ ' both re-scope '
+						+ global,
+				)
+			}
+			seen.set(global, name)
 		}
-		seen.set(token.global, name)
 	}
 }
 if (collisions.length > 0) {
@@ -199,8 +243,10 @@ const scopes = [
 const captured = []
 for (const component of Object.values(mapping.components)) {
 	for (const token of Object.values(component.tokens)) {
-		if (captured.includes(token.global) === false) {
-			captured.push(token.global)
+		for (const global of globalsOf(token)) {
+			if (captured.includes(global) === false) {
+				captured.push(global)
+			}
 		}
 	}
 }
@@ -394,16 +440,51 @@ function paintRules(component) {
 	return lines
 }
 
+/*
+ * Self-only tokens: a redirect for the component's own box, not its subtree.
+ *
+ * A custom property inherits, so a redirect on a component normally reaches
+ * everything inside it, and for most tokens that is the point. It is wrong for
+ * a SURFACE. The app content paints itself with `--color-main-background`, and
+ * so does every card, table head and dialog drawn on it: redirect that variable
+ * on the content and the cards turn the same colour as the surface they are
+ * meant to stand out from.
+ *
+ * A token flagged `selfOnly` therefore gets a second rule that hands the
+ * global back to the component's children. `:where()` gives that rule no
+ * specificity, so a nested component with a redirect of its own, another
+ * surface included, still wins. With the token unset both rules resolve to
+ * the captured global, which is the value the children had anyway, so an
+ * instance that sets nothing renders exactly as before.
+ */
+function selfOnlyRules(component) {
+	const restored = Object.values(component.tokens).filter(
+		(token) => token.selfOnly === true && token.paint === undefined,
+	)
+	if (restored.length === 0) {
+		return []
+	}
+
+	return [
+		':where(' + component.selectors.join(', ') + ') > * {',
+		...restored.map((token) => '\t' + token.global + ': var(' + captureName(token.global) + ');'),
+		'}',
+		'',
+	]
+}
+
 for (const [id, component] of Object.entries(mapping.components)) {
 	const declarations = []
 	for (const [name, token] of Object.entries(component.tokens)) {
 		if (token.paint !== undefined) {
 			continue
 		}
-		declarations.push('\t' + token.global + ': var(')
-		declarations.push('\t\t' + name + ',')
-		declarations.push('\t\tvar(' + captureName(token.global) + ')')
-		declarations.push('\t);')
+		for (const global of globalsOf(token)) {
+			declarations.push('\t' + global + ': var(')
+			declarations.push('\t\t' + name + ',')
+			declarations.push('\t\t' + redirectFallback(token, global))
+			declarations.push('\t);')
+		}
 	}
 	for (const [target, source] of Object.entries(aliasesOf(component))) {
 		declarations.push('\t' + target + ': var(')
@@ -420,6 +501,8 @@ for (const [id, component] of Object.entries(mapping.components)) {
 		scopes.push(...declarations)
 		scopes.push('}', '')
 	}
+
+	scopes.push(...selfOnlyRules(component))
 
 	scopes.push(...paintRules(component))
 }

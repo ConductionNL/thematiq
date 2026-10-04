@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Optional Toggles
 
-Thematiq provides two optional CSS-based toggles that adjust Nextcloud's interface beyond color theming.
+Thematiq provides optional CSS-based toggles and two layout options that adjust Nextcloud's interface beyond color theming.
 
 ## Hide Login Slogan
 
@@ -46,6 +46,69 @@ php occ config:app:set thematiq show_menu_labels --value=1
 # Disable (set back to 0)
 php occ config:app:set thematiq hide_slogan --value=0
 ```
+
+## Workplace layout
+
+**Setting:** `thematiq:workplace_layout` (`default`, `light`, or not set)
+
+The light workplace layout gives the top bar the main background and its text colour: white in the light scheme, dark in the dark one. Use it when a theme paints the top bar in a brand colour and you want a calm, light bar instead.
+
+The setting has three states in the admin panel:
+
+- **Follow the theme.** Nothing is stored. The layout takes the default of the active token set. Most sets have none, so they keep the top bar they always had. Gemeente Zuiddrecht turns the light layout on.
+- **Default.** The top bar the theme paints.
+- **Light top bar.** The light layout, whatever the theme says.
+
+Your choice always wins over the theme. A header colour you set in the token editor still wins over the layout.
+
+One limit: the layout cannot redraw a logo. A theme whose logo is white, drawn for a coloured bar, needs a logo that reads on a light bar first.
+
+**How it works:** while the layout is `light`, Thematiq loads `css/workplace-layout.css`. It redeclares the variables the header rules already read, so it writes no colour of its own.
+
+**Login watermark.** With the light layout, a theme can show its emblem on the login page: large, faint, in the bottom corner behind the login card. The theme names the image in `--nldesign-login-watermark-image` and may set `--nldesign-login-watermark-opacity` (0.07 when unset). A shipped set gets this by adding `img/logos/<set>-emblem-grey.svg`. A theme that names no image shows none.
+
+## Brand stripe
+
+**Setting:** `thematiq:brand_stripe` (`1`, `0`, or not set)
+
+A stripe of three colours along the bottom edge of the top bar. It is off for every theme that does not turn it on. Gemeente Zuiddrecht does: red, blue and red in the ratio 6 : 3 : 1, 5px high.
+
+The setting has the same three states: **Follow the theme**, **On** and **Off**.
+
+A theme sets the stripe with seven tokens:
+
+| Token | What it sets |
+|---|---|
+| `--nldesign-brand-stripe-color-1`, `-2`, `-3` | The three colours, from start to end |
+| `--nldesign-brand-stripe-ratio-1`, `-2`, `-3` | Their shares, as plain numbers such as `6`, `3` and `1` |
+| `--nldesign-brand-stripe-height` | The height, such as `5px` |
+
+A theme without these tokens gets three equal bands in its primary colours, 4px high.
+
+**How it works:** while the stripe is on, Thematiq loads `css/brand-stripe.css`. The stripe sits inside the bar, so no app moves. It takes no clicks, so the controls in the bar keep working. On the login page the stripe runs along the top edge of the login card.
+
+```bash
+# Light top bar and brand stripe, whatever the theme says
+php occ config:app:set thematiq workplace_layout --value=light
+php occ config:app:set thematiq brand_stripe --value=1
+
+# Follow the theme again
+php occ config:app:delete thematiq workplace_layout
+php occ config:app:delete thematiq brand_stripe
+```
+
+### Layout defaults in a token set
+
+A shipped token set can carry defaults for both settings in `token-sets.json`:
+
+```json
+"layout": {
+	"workplace_layout": "light",
+	"brand_stripe": true
+}
+```
+
+They apply only while the administrator has stored no choice.
 
 ## Theming per App
 

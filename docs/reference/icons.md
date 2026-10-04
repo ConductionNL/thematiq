@@ -127,7 +127,7 @@ release** — do not build new integrations against them; migrate to the set-pre
 
 ## Logos
 
-The 37 logos in `img/logos/` cover government and municipal organizations, plus five fictional example sets. A representative sample:
+The 41 logos in `img/logos/` cover government and municipal organizations, plus five fictional example sets and the demo municipality Zuiddrecht. A representative sample:
 - `amsterdam.svg` - City of Amsterdam logo
 - `ggd-amsterdam.svg` - GGD Amsterdam logo
 - `stadsarchief.svg` - Amsterdam City Archives

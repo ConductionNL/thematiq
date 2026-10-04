@@ -61,4 +61,5 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [xxllnc](./xxllnc.md) `xxllnc`
 - [Gemeente Zaanstad](./zaanstad.md) `zaanstad`
 - [Gemeente Zevenaar](./zevenaar.md) `zevenaar`
+- [Gemeente Zuiddrecht](./zuiddrecht.md) `zuiddrecht`
 - [Gemeente Zwolle](./zwolle.md) `zwolle`
