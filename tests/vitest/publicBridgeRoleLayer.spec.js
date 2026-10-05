@@ -222,6 +222,15 @@ describe('the stripe and the motif', () => {
 	})
 })
 
+describe('the footer bottom band', () => {
+	it('is the footer ground a step darker for a set that names one, nothing otherwise', () => {
+		expect(token('wilgenboom', '--thematiq-footer-legal-background-color')).toBe(
+			'color-mix( in srgb, #1F4A33 80%, #000 )',
+		)
+		expect(token('vng', '--thematiq-footer-legal-background-color')).toBeNull()
+	})
+})
+
 describe('a set with a role layer of its own keeps it', () => {
 	it('example-basisschool still paints its primary button with its own value', () => {
 		const own = rootTokens(read('css/tokens/example-basisschool.css'))

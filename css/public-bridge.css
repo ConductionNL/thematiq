@@ -1064,6 +1064,17 @@
 	);
 
 	/*
+	 * The footer's bottom band: the footer's own ground one step darker, as
+	 * the school designs draw it. No fallback: a set that names no footer
+	 * colour keeps the band it had.
+	 */
+	--thematiq-footer-legal-background-color: color-mix(
+		in srgb,
+		var(--nldesign-color-footer-background) 80%,
+		#000
+	);
+
+	/*
 	 * THE BRAND STRIPE ON THE PORTAL (openspec/changes/brand-motif-on-portals).
 	 *
 	 * css/brand-stripe.css draws the stripe on Nextcloud's own pages; a portal
