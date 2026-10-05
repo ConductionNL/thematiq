@@ -2,7 +2,7 @@
 
 # La Suite numérique
 
-Token set `lasuite`: 31 declared by this set, 139 from the defaults layer.
+Token set `lasuite`: 32 declared by this set, 138 from the defaults layer.
 
 Contrast: primary text on primary 7.76:1, primary on background 7.76:1 (pass).
 
@@ -127,9 +127,7 @@ Contrast: primary text on primary 7.76:1, primary on background 7.76:1 (pass).
 | `--nldesign-component-paragraph-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dcdce4%22%2F%3E%3C%2Fsvg%3E) `#dcdce4` | defaults | |
 | `--nldesign-component-separator-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23353747%22%2F%3E%3C%2Fsvg%3E) `#353747` | defaults | |
 | `--nldesign-component-table-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23353747%22%2F%3E%3C%2Fsvg%3E) `#353747` | defaults | |
-| `--nldesign-component-table-header-background-color` | `var(
-		--nldesign-color-background-dark
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2323232f%22%2F%3E%3C%2Fsvg%3E) `#23232f` | defaults | |
+| `--nldesign-component-table-header-background-color` | `transparent` | | this set | |
 | `--nldesign-component-table-header-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dcdce4%22%2F%3E%3C%2Fsvg%3E) `#dcdce4` | defaults | |
 | `--nldesign-component-table-row-hover-background-color` | `var(
 		--nldesign-color-background-hover
