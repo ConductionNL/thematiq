@@ -2668,7 +2668,11 @@
 .nldesign-deprecation-badge--critical {
 	border-color: var(--color-error);
 }
+/* The same core reset zeroes margin and padding on `dialog`, which takes away
+   the `margin: auto` that centres a modal and its inner spacing. */
 .nldesign-own-dialog {
+	margin: auto;
+	padding: 16px;
 	max-width: 520px;
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-large);
