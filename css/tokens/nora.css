@@ -49,6 +49,7 @@
 	--nora-color-green-900: #082F13;
 	--nora-color-green-950: #051C0B;
 	--nora-color-link-blue-500: #0049E5;
+	--nora-color-primary: #431560;
 	--nora-color-purple-100: #C5B6CE;
 	--nora-color-purple-200: #A993B6;
 	--nora-color-purple-300: #816294;
@@ -766,6 +767,7 @@
 	--nldesign-component-table-header-color: #727678;
 	--nldesign-component-table-header-font-weight: 400;
 	--nldesign-font-family: "Source Sans 3", sans-serif;
+	--nldesign-header-icon-filter: none;
 
 	/* 4. Provenance — enough to tell two runs apart without running anything.
 	 *    input kind:      A (built theme CSS)
@@ -774,8 +776,8 @@
 	 *    slug:            nora
 	 *    converter:       1.0.0
 	 *    mapping table:   v1 sha256:d34522588fb60c0c
-	 *    applied:         9
-	 *    adapted:         27
+	 *    applied:         10
+	 *    adapted:         36
 	 *    kept:            723
 	 *    skipped:         25
 	 */
