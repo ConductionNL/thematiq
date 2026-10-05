@@ -148,7 +148,7 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
 The active token set MUST be stored in Nextcloud's `IConfig` and default to `nextcloud`.
 
 #### Scenario: No token set configured (fresh install)
-@e2e exclude The GIVEN is the app value never having been written. No route clears it (POST /settings/tokenset only writes a valid id), so an instance that has run this suite cannot be put back in that state. tests/Unit/Controller/SettingsControllerEndpointsTest.php::testTheActiveTokenSetDefaultsToStock asserts the default.
+@e2e exclude The GIVEN is the app value never having been written. No route clears it (POST /settings/tokenset only writes a valid id), so an instance that has run this suite cannot be put back in that state. The read route that test covered is gone (#873); the active set is now queried through the public capability. tests/Unit/CapabilitiesTest.php::testDefaultConfigNoTokenSet asserts that with no `token_set` value the capability answers `nextcloud`.
 - GIVEN no value has been set for `nldesign:token_set` in IConfig
 - WHEN the active token set is queried
 - THEN the default value MUST be `'nextcloud'` (stock Nextcloud theming)
