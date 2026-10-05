@@ -352,8 +352,14 @@ body,
  * `-rgb` triplet, the same colour. The `/ 1` matters: relative colour syntax
  * keeps the origin's alpha otherwise. Derived on the focused element, not on
  * :root, so a dark variant's body-level focus token is the one it reads.
- * tests/vitest/focusRingContrast.spec.js resolves both. */
-*:focus-visible {
+ * tests/vitest/focusRingContrast.spec.js resolves both.
+ *
+ * The second selector is for NcButton: its scoped `.button-vue[data-v-…]:focus-visible`
+ * ring is `!important` at 0,3,0 and beat `*:focus-visible`, so buttons kept
+ * Nextcloud's 2px ring in the main text colour (#1050). The doubled class and
+ * `body` reach 0,3,1. tests/vitest/buttonFocusRing.spec.js holds every system. */
+*:focus-visible,
+body .button-vue.button-vue:focus-visible {
 	--nldesign-focus-ring-color: rgb(var(--nldesign-color-focus-rgb));
 
 	outline: 2px solid var(--nldesign-focus-ring-color) !important;
