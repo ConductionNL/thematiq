@@ -21,4 +21,4 @@
 - [x] 4.3 `bash scripts/token-set-gate.sh` runs the new spec.
 
 ## 5. Verify
-- [ ] 5.1 Live check on a portal (:8091) with each school set and zuiddrecht: logo, styled buttons, stripe under the header and over the footer (needs portaliq `site-chrome-follows-the-design`).
+- [x] 5.1 Live check on a portal (:8091) with each school set and zuiddrecht: logo, styled buttons, stripe under the header and over the footer (needs portaliq `site-chrome-follows-the-design`).
