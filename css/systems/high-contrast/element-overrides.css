@@ -21,14 +21,17 @@ button:not(.action-button),
 	font-family: var(--nldesign-font-family);
 }
 
-/* Focus — thick ring on every interactive element. */
+/* Focus — thick ring on every interactive element. `.button-vue:focus` alone
+ * loses to NcButton's scoped `!important` ring (0,3,0), so the last selector
+ * reaches 0,3,1 (#1050). The same holds in the two media branches below. */
 input:focus,
 textarea:focus,
 select:focus,
 button:focus,
 .button-vue:focus,
 a:focus,
-*:focus-visible {
+*:focus-visible,
+body .button-vue.button-vue:focus-visible {
 	outline: 3px solid var(--nldesign-color-focus) !important;
 	outline-offset: 2px !important;
 }
@@ -44,7 +47,8 @@ a:focus,
 	button:focus,
 	.button-vue:focus,
 	a:focus,
-	*:focus-visible {
+	*:focus-visible,
+	body .button-vue.button-vue:focus-visible {
 		outline-width: 4px !important;
 	}
 }
@@ -97,7 +101,8 @@ input[type='radio']:checked {
 	select:focus,
 	button:focus,
 	.button-vue:focus,
-	*:focus-visible {
+	*:focus-visible,
+	body .button-vue.button-vue:focus-visible {
 		outline: 3px solid CanvasText !important;
 		outline-offset: 2px !important;
 	}

@@ -115,8 +115,14 @@ h6 {
  *
  * The opaque colour is derived on the focused element itself, not on :root:
  * the dark variant declares its tokens on body, and a :root declaration would
- * keep resolving the light value. */
-*:focus-visible {
+ * keep resolving the light value.
+ *
+ * The second selector is for NcButton: its scoped `.button-vue[data-v-…]:focus-visible`
+ * ring is `!important` at 0,3,0 and beat `*:focus-visible`, so buttons kept
+ * Nextcloud's 2px ring in the main text colour (#1050). The doubled class and
+ * `body` reach 0,3,1. tests/vitest/buttonFocusRing.spec.js holds every system. */
+*:focus-visible,
+body .button-vue.button-vue:focus-visible {
 	--summer-focus-ring-color: rgb(var(--summer-color-focus-rgb));
 
 	outline: 2px solid var(--summer-focus-ring-color) !important;
