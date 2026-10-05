@@ -346,7 +346,16 @@ jobs:
       # lands. 90 of 189 tracked frontend files are in scope — the gap is
       # css/tokens/ (87 GENERATED design-token files, excluded deliberately: a
       # formatter there would fight the token generator on every sync).
-      frontend-checks: '["check:manifest", "test:l10n", "format"]'
+      #
+      # `test:fonts` and `test:token-set-coverage` are the two new legs. Both are
+      # self-contained node scripts and both fail on a tree that LOOKS fine:
+      # `test:fonts` on a hand edit to a generated font stylesheet, a missing
+      # woff2, a licence notice that does not name a bundled family, or a font
+      # binary whose copyright holder is recorded nowhere;
+      # `test:token-set-coverage` on docs/reference/token-set-coverage.md being
+      # stale, which is the only thing that keeps the published per-set coverage
+      # table honest between syncs.
+      frontend-checks: '["check:manifest", "test:l10n", "format", "test:fonts", "test:token-set-coverage"]'
 
       # ── Coverage ratchet ─────────────────────────────────────────────────
       # `enable-coverage-guard` defaults to FALSE, which is why both

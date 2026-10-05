@@ -39,6 +39,9 @@ body {
 	--nldesign-component-logo-slogan-color: var(--thematiq-global-color-primary-text) !important;
 	/* app-navigation */
 	--nldesign-component-navigation-active-background-color: var(--thematiq-global-color-primary-element) !important;
+	/* navigation-badge */
+	--nldesign-component-navigation-badge-background-color: var(--thematiq-global-color-primary-element-light) !important;
+	--nldesign-component-navigation-badge-color: var(--thematiq-global-color-primary-element-light-text) !important;
 	/* sidebar */
 	--nldesign-component-sidebar-active-color: var(--thematiq-global-color-primary-element) !important;
 	/* list-item */

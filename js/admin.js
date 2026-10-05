@@ -305,6 +305,7 @@
 							pageTokenSetId = tokenSetId
 							pageManifest = manifests[1]
 							syncOverridesLink(tokenSetId)
+							syncLayoutLayers(manifests[1].layout)
 							// For what follows the page's theme, such as the
 							// brand form's starting colors.
 							document.dispatchEvent(
@@ -445,6 +446,26 @@
 			} else if (enabled !== true && existing !== null) {
 				existing.parentNode.removeChild(existing)
 			}
+		}
+
+		/**
+		 * The workplace layout and the brand stripe each own one stylesheet
+		 * too, and unlike the other toggles they can FOLLOW THE THEME: a token
+		 * set may carry their defaults. So the answer changes when the set on
+		 * this page changes, and the stylesheet manifest carries what the new
+		 * set resolves to. Absent on an older server answer: nothing moves.
+		 *
+		 * @param {{workplaceLayout: string, brandStripe: boolean}|undefined} layout The resolved state.
+		 */
+		function syncLayoutLayers(layout) {
+			if (layout === undefined || layout === null) {
+				return
+			}
+			setConditionalLayer(
+				'workplace-layout',
+				layout.workplaceLayout === 'light',
+			)
+			setConditionalLayer('brand-stripe', layout.brandStripe === true)
 		}
 
 		/**
@@ -1025,6 +1046,22 @@
 			}
 			for (var i = 0; i < ts.warnings.length; i++) {
 				if (ts.warnings[i] && ts.warnings[i].kind === 'incomplete') {
+					return ts.warnings[i]
+				}
+			}
+			return null
+		}
+
+		// The typeface warning carried on the same `warnings` channel, or null
+		// when the set's named family actually loads. Emitted by
+		// TokenSetFontAuditService::warningsFor().
+		function fontWarningFor(tokenSetId) {
+			var ts = tokenSetsData[tokenSetId]
+			if (!ts || !ts.warnings) {
+				return null
+			}
+			for (var i = 0; i < ts.warnings.length; i++) {
+				if (ts.warnings[i] && ts.warnings[i].kind === 'font') {
 					return ts.warnings[i]
 				}
 			}
@@ -2414,6 +2451,23 @@
 			})
 		}
 
+		// Handle the two layout options. They are saved together: one request
+		// carries both choices, so the page never holds a half-saved pair.
+		var workplaceLayoutSelect = document.getElementById(
+			'thematiq-workplace-layout',
+		)
+		var brandStripeSelect = document.getElementById('thematiq-brand-stripe')
+		if (workplaceLayoutSelect && brandStripeSelect) {
+			var onLayoutOptionChange = function () {
+				saveLayoutOptions(
+					workplaceLayoutSelect.value,
+					brandStripeSelect.value,
+				)
+			}
+			workplaceLayoutSelect.addEventListener('change', onLayoutOptionChange)
+			brandStripeSelect.addEventListener('change', onLayoutOptionChange)
+		}
+
 		// Handle dark mode variants checkbox — instance-wide toggle only; never
 		// touches the Nextcloud theme choice itself (openspec/specs/dark-mode/spec.md).
 		var darkVariantsCheckbox = document.getElementById('nldesign-dark-variants')
@@ -2622,6 +2676,40 @@
 					if (reset !== null) {
 						reset.disabled = locked
 					}
+				})
+		}
+
+		// Save the workplace layout and the brand stripe, then put this page in
+		// the state the server resolved: an empty choice follows the theme, so
+		// only the server knows whether a stylesheet is on or off now.
+		function saveLayoutOptions(workplaceLayout, brandStripe) {
+			var url = OC.generateUrl('/apps/thematiq/settings/layout')
+
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({
+					workplaceLayout: workplaceLayout,
+					brandStripe: brandStripe,
+				}),
+			})
+				.then(function (response) {
+					return response.json()
+				})
+				.then(function (data) {
+					if (data.status === 'ok') {
+						syncLayoutLayers(data.resolved)
+						notify(t('thematiq', 'Applied.'))
+					} else {
+						notify(t('thematiq', 'Failed to save setting.'))
+					}
+				})
+				.catch(function (error) {
+					console.error('Error saving layout options:', error)
+					notify(t('thematiq', 'Failed to save setting.'))
 				})
 		}
 
@@ -6807,6 +6895,75 @@
 			return (
 				buildContrastWarningHtml(tokenSetId)
 				+ buildIncompleteWarningHtml(tokenSetId)
+				+ buildFontWarningHtml(tokenSetId)
+			)
+		}
+
+		// Build the "this theme's typeface is not installed" banner. Empty for a
+		// set whose family loads, and for one that names only system families.
+		//
+		// This banner exists because the alternative is silence: a set naming
+		// Avenir or DIN renders the next family in its stack, usually Arial, and
+		// the page simply looks like a different organisation. The note comes
+		// from the set's own `font` block in token-sets.json, which records the
+		// licence position per set, so the text is the measured one and not a
+		// generic apology.
+		function buildFontWarningHtml(tokenSetId) {
+			var warning = fontWarningFor(tokenSetId)
+			if (warning === null) {
+				return ''
+			}
+
+			var family = warning.family || '?'
+			var heading =
+				warning.action === 'acknowledge'
+					? t('thematiq', 'Typeface needs an acknowledgement')
+					: t('thematiq', 'Typeface needs an upload')
+			var lead = t(
+				'thematiq',
+				"This theme asks for {family}, which this instance does not serve, so pages render the next typeface in the theme's list instead.",
+			).replace('{family}', family)
+
+			var items = []
+			if (warning.licence) {
+				items.push(
+					t('thematiq', 'Licence: {licence} ({holder}).')
+						.replace('{licence}', warning.licence)
+						.replace(
+							'{holder}',
+							warning.licenceHolder
+								|| t('thematiq', 'holder not recorded'),
+						),
+				)
+			}
+			if (warning.note) {
+				items.push(warning.note)
+			}
+			if (warning.action === 'upload') {
+				items.push(
+					t(
+						'thematiq',
+						'Upload the licensed webfont under Custom fonts below, then select it as the heading and body font.',
+					),
+				)
+			}
+
+			return (
+				'<div class="nldesign-contrast-warning" role="alert">'
+				+ '<strong>'
+				+ escapeHtml(heading)
+				+ '</strong>'
+				+ '<p>'
+				+ escapeHtml(lead)
+				+ '</p>'
+				+ '<ul>'
+				+ items
+					.map(function (line) {
+						return '<li>' + escapeHtml(line) + '</li>'
+					})
+					.join('')
+				+ '</ul>'
+				+ '</div>'
 			)
 		}
 
@@ -6851,9 +7008,10 @@
 			}
 			var items = ts.warnings
 				.filter(function (w) {
-					// The vocabulary finding travels on the same channel but has
-					// no contrast pair; it gets its own banner above.
-					return w && w.kind !== 'incomplete'
+					// The vocabulary and typeface findings travel on the same
+					// channel but have no contrast pair; each gets its own
+					// banner above.
+					return w && w.kind !== 'incomplete' && w.kind !== 'font'
 				})
 				.map(function (w) {
 					if (w.unevaluated === true) {

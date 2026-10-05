@@ -1246,6 +1246,68 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testASetWithElementOverridesGetsThemAfterItsTokens()
 
 	/**
+	 * A set with a dark logo carries it AFTER its generated dark variant
+	 * (thematiq#1021).
+	 *
+	 * The dark file declares the dark logo as a relative url, which resolves
+	 * against the stylesheet that uses it and so breaks from
+	 * css/token-overrides/. The inline dark layer restates it as an absolute
+	 * url, and it can only win by coming later at the same specificity. It is
+	 * part of the manifest, so applying the set without a reload carries it.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 */
+	public function testADarkLogoLayerFollowsTheDarkVariant(): void {
+		$this->configureAppValues(['token_set' => 'frankendesk']);
+		$this->designSystemService->method('getTokenSetMeta')->with('frankendesk')
+			->willReturn(['design_system' => 'lasuite']);
+		$this->designSystemService->method('getDesignSystem')->with('lasuite')->willReturn(
+			[
+				'id' => 'lasuite',
+				'name' => 'La Suite',
+				'description' => '',
+				'stylesheets' => ['systems/lasuite/element-overrides'],
+			]
+		);
+		$this->designSystemService->method('hasGeneratedDarkVariant')->willReturn(true);
+		// The shared locator's url generator answers routes only; this one also
+		// links shipped files, so the layer has a url to declare.
+		$appManager = $this->createMock(IAppManager::class);
+		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
+		$links = $this->createMock(IURLGenerator::class);
+		$links->method('linkTo')->willReturnCallback(static fn (string $appName, string $file): string => '/custom_apps/' . $appName . '/' . $file);
+		$this->runtimeFiles = new RuntimeFileLocator(
+			$appManager,
+			new DirectoryRuntimeFileStore($this->runtimeDir . '/store'),
+			$links,
+			$this->createMock(ITempManager::class)
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$layers = $this->buildService(styleLog: $styleLog, fontLog: $fontLog)->getStylesheetManifest('frankendesk')['layers'];
+
+		$darkFile = null;
+		$darkLogo = null;
+		foreach ($layers as $index => $layer) {
+			if ($layer['kind'] !== 'inline' && str_contains((string)($layer['href'] ?? ''), '/css/tokens/dark/frankendesk.css') === true) {
+				$darkFile = $index;
+			}
+
+			if ($layer['kind'] === 'inline' && $layer['id'] === CssInjectionService::DARK_LOGO_STYLE_ID) {
+				$darkLogo = $index;
+			}
+		}
+
+		$this->assertNotNull($darkFile, 'the dark variant is in the manifest');
+		$this->assertNotNull($darkLogo, 'the dark logo layer is in the manifest');
+		$this->assertGreaterThan($darkFile, $darkLogo, 'the dark logo layer must come after the dark variant, or its relative url wins');
+		$this->assertStringContainsString('url(/custom_apps/thematiq/img/logos/frankendesk-dark.svg)', $layers[$darkLogo]['css']);
+	}//end testADarkLogoLayerFollowsTheDarkVariant()
+
+	/**
 	 * A set without an overrides file loads nothing extra.
 	 *
 	 * The control: without this, the test above would pass on an
@@ -1479,4 +1541,126 @@ class CssInjectionServiceTest extends TestCase {
 			$log
 		);
 	}//end testInjectEmitsTheInstanceResolvedStockTokensOnAStockPage()
+
+	/**
+	 * Point the design-system mock at the nldesign system with no stylesheets,
+	 * and at a token-set manifest entry that may carry a `layout` block.
+	 *
+	 * @param array<string, mixed> $meta The manifest entry of the active set.
+	 *
+	 * @return void
+	 */
+	private function configureLayoutSet(array $meta): void {
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(array_merge(['design_system' => 'nldesign'], $meta));
+		$this->designSystemService->method('getDesignSystem')->willReturn(
+			[
+				'id' => 'nldesign',
+				'name' => 'NL Design System',
+				'description' => '',
+				'stylesheets' => [],
+			]
+		);
+	}//end configureLayoutSet()
+
+	/**
+	 * With no stored choice and a set that names no layout, neither layout
+	 * stylesheet is emitted: every set that existed before the options did
+	 * renders exactly as it did.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
+	 */
+	public function testLayoutStylesheetsAreAbsentByDefault(): void {
+		$this->configureAppValues(['token_set' => 'rijkshuisstijl']);
+		$this->configureLayoutSet(meta: []);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject('user');
+
+		$this->assertFalse($this->linksStylesheet($linkLog, 'workplace-layout'));
+		$this->assertFalse($this->linksStylesheet($linkLog, 'brand-stripe'));
+	}//end testLayoutStylesheetsAreAbsentByDefault()
+
+	/**
+	 * A set that carries layout defaults wears them while the administrator
+	 * has stored no choice, and both stylesheets come after the other toggles.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 */
+	public function testASetsLayoutDefaultsEmitBothStylesheets(): void {
+		$this->configureAppValues(['token_set' => 'zuiddrecht', 'show_menu_labels' => '1']);
+		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light', 'brand_stripe' => true]]);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject('user');
+
+		$labels = $this->indexStartingWith($linkLog, '/custom_apps/thematiq/css/show-menu-labels.css');
+		$layout = $this->indexStartingWith($linkLog, '/custom_apps/thematiq/css/workplace-layout.css');
+		$stripe = $this->indexStartingWith($linkLog, '/custom_apps/thematiq/css/brand-stripe.css');
+		$this->assertGreaterThan($labels, $layout);
+		$this->assertGreaterThan($layout, $stripe);
+	}//end testASetsLayoutDefaultsEmitBothStylesheets()
+
+	/**
+	 * A stored choice wins over the set, in both directions: an administrator
+	 * can switch a set's layout off, and can give a set without one the light
+	 * layout and the stripe.
+	 *
+	 * @param array<string, string> $stored The stored app values.
+	 * @param array<string, mixed> $meta The active set's manifest entry.
+	 * @param bool $expectLayout Whether workplace-layout is emitted.
+	 * @param bool $expectStripe Whether brand-stripe is emitted.
+	 *
+	 * @return void
+	 *
+	 * @dataProvider storedLayoutChoiceProvider
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 */
+	public function testAStoredLayoutChoiceWinsOverTheSet(array $stored, array $meta, bool $expectLayout, bool $expectStripe): void {
+		$this->configureAppValues(array_merge(['token_set' => 'rijkshuisstijl'], $stored));
+		$this->configureLayoutSet(meta: $meta);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject('user');
+
+		$this->assertSame($expectLayout, $this->linksStylesheet($linkLog, 'workplace-layout'));
+		$this->assertSame($expectStripe, $this->linksStylesheet($linkLog, 'brand-stripe'));
+	}//end testAStoredLayoutChoiceWinsOverTheSet()
+
+	/**
+	 * Stored choices against set defaults.
+	 *
+	 * @return array<string, array{0: array<string, string>, 1: array<string, mixed>, 2: bool, 3: bool}>
+	 */
+	public static function storedLayoutChoiceProvider(): array {
+		$carries = ['layout' => ['workplace_layout' => 'light', 'brand_stripe' => true]];
+
+		return [
+			'switched off on a set that carries both' => [['workplace_layout' => 'default', 'brand_stripe' => '0'], $carries, false, false],
+			'switched on for a set that carries none' => [['workplace_layout' => 'light', 'brand_stripe' => '1'], [], true, true],
+			'an unknown stored layout follows the set' => [['workplace_layout' => 'wide', 'brand_stripe' => 'yes'], [], false, false],
+			'only the stripe switched off' => [['brand_stripe' => '0'], $carries, true, false],
+		];
+	}//end storedLayoutChoiceProvider()
+
+	/**
+	 * The stylesheet manifest carries what the set resolves to, so the admin
+	 * panel can add or drop the two stylesheets when it swaps sets in place.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 */
+	public function testTheManifestCarriesTheResolvedLayout(): void {
+		$this->configureAppValues(['token_set' => 'nextcloud']);
+		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light', 'brand_stripe' => true]]);
+
+		$styleLog = [];
+		$linkLog = [];
+		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $linkLog)->getStylesheetManifest('zuiddrecht');
+
+		$this->assertSame(['workplaceLayout' => 'light', 'brandStripe' => true], $manifest['layout']);
+	}//end testTheManifestCarriesTheResolvedLayout()
 }//end class

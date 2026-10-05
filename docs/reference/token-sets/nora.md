@@ -2,9 +2,9 @@
 
 # Nederlandse Overheid Referentie Architectuur (NORA)
 
-Token set `nora`: 764 declared by this set, 128 from the defaults layer.
+Token set `nora`: 766 declared by this set, 127 from the defaults layer.
 
-Contrast: primary text on primary 13.86:1, primary on background not evaluated (unevaluated).
+Contrast: primary text on primary 13.86:1, primary on background 13.86:1 (pass).
 
 ## Colours (Kleuren)
 
@@ -249,7 +249,7 @@ Contrast: primary text on primary 13.86:1, primary on background not evaluated (
 | `--nldesign-animation-easing` | `ease` | | defaults | |
 | `--nldesign-animation-quick` | `100ms` | | defaults | Header menu item height |
 | `--nldesign-animation-slow` | `300ms` | | defaults | Animation slow |
-| `--nldesign-header-icon-filter` | `invert(1) brightness(0) contrast(100)` | | defaults | |
+| `--nldesign-header-icon-filter` | `none` | | this set | |
 | `--nldesign-logo-bottom` | `1px` | | defaults | |
 | `--nldesign-logo-center` | `50%` | | defaults | |
 | `--nldesign-logo-filter` | `none` | | defaults | |
@@ -369,6 +369,7 @@ Contrast: primary text on primary 13.86:1, primary on background not evaluated (
 | `--nora-color-green-900` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23082F13%22%2F%3E%3C%2Fsvg%3E) `#082F13` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b8efc7%22%2F%3E%3C%2Fsvg%3E) `#b8efc7` | this set | |
 | `--nora-color-green-950` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23051C0B%22%2F%3E%3C%2Fsvg%3E) `#051C0B` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c7f2d2%22%2F%3E%3C%2Fsvg%3E) `#c7f2d2` | this set | |
 | `--nora-color-link-blue-500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230049E5%22%2F%3E%3C%2Fsvg%3E) `#0049E5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232164f3%22%2F%3E%3C%2Fsvg%3E) `#2164f3` | this set | |
+| `--nora-color-primary` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23431560%22%2F%3E%3C%2Fsvg%3E) `#431560` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c391e2%22%2F%3E%3C%2Fsvg%3E) `#c391e2` | this set | |
 | `--nora-color-purple-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23C5B6CE%22%2F%3E%3C%2Fsvg%3E) `#C5B6CE` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234b3b54%22%2F%3E%3C%2Fsvg%3E) `#4b3b54` | this set | |
 | `--nora-color-purple-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23A993B6%22%2F%3E%3C%2Fsvg%3E) `#A993B6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23655071%22%2F%3E%3C%2Fsvg%3E) `#655071` | this set | |
 | `--nora-color-purple-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23816294%22%2F%3E%3C%2Fsvg%3E) `#816294` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23896d9a%22%2F%3E%3C%2Fsvg%3E) `#896d9a` | this set | |

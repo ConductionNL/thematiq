@@ -2,7 +2,7 @@
 
 ## Overview
 
-NL Design is a Nextcloud theming app that applies Dutch government design standards (NL Design System) to the Nextcloud interface. It provides 58 token sets covering national government (Rijkshuisstijl), municipalities, organizations, and the European sovereign-workplace La Suite numérique (Cunningham) design system, plus its published blue base as an optional sibling. Admins select a token set via a settings panel, and the app injects a design-system-driven CSS architecture that overrides Nextcloud's default styling with the selected organization's brand identity.
+NL Design is a Nextcloud theming app that applies Dutch government design standards (NL Design System) to the Nextcloud interface. It provides 59 token sets covering national government (Rijkshuisstijl), municipalities, organizations, and the European sovereign-workplace La Suite numérique (Cunningham) design system, plus its published blue base as an optional sibling. Admins select a token set via a settings panel, and the app injects a design-system-driven CSS architecture that overrides Nextcloud's default styling with the selected organization's brand identity.
 
 ## Architecture
 
@@ -34,7 +34,7 @@ NL Design is a Nextcloud theming app that applies Dutch government design standa
 | 6 | `css/overrides.css` | Maps Nextcloud `--color-*` vars to `--nldesign-*` |
 | 7 | `css/element-overrides.css` | Low-level element styling (fonts, containers) |
 
-## Token Sets (58)
+## Token Sets (59)
 
 - **National**: Rijkshuisstijl (default)
 - **Major cities**: Amsterdam, Utrecht, Rotterdam, Den Haag

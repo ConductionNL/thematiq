@@ -45,6 +45,7 @@ use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
+use OCA\Thematiq\Service\TokenSetSelectionPolicy;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCA\Thematiq\Settings\Admin;
@@ -255,9 +256,15 @@ class SettingsController extends Controller {
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getAvailableTokenSets(): JSONResponse {
 		// Feeds the admin dropdown, so it is the SELECTABLE list, not the full
-		// catalogue — see TokenSetService::SELECTABLE_SHIPPED_SETS. The public
-		// catalogue (CatalogController) still answers with everything shipped.
-		$tokenSets = $this->tokenSetService->getSelectableTokenSets();
+		// catalogue — see TokenSetSelectionPolicy::selectable(), which
+		// offers every named shipped set the vocabulary audit passes. The public
+		// catalogue (CatalogController) still answers with everything shipped,
+		// including the shared role layer that has no manifest entry.
+		$tokenSets = (new TokenSetSelectionPolicy())->selectable(
+			tokenSets: $this->tokenSetService,
+			config: $this->config,
+			appPath: $this->tokenSetService->getAppPath()
+		);
 
 		return new JSONResponse(['tokenSets' => $tokenSets]);
 	}//end getAvailableTokenSets()
@@ -962,10 +969,14 @@ class SettingsController extends Controller {
 			[
 				'mapping' => $this->groupThemingService->getMapping(),
 				'groups' => $this->groupThemingService->getAvailableGroups(),
-				// Also a picker. `getSelectableTokenSets()` keeps any set an
+				// Also a picker. The policy keeps any set an
 				// existing mapping already points at, so narrowing this list
 				// can never hide a group's current theme.
-				'tokenSets' => $this->tokenSetService->getSelectableTokenSets(),
+				'tokenSets' => (new TokenSetSelectionPolicy())->selectable(
+					tokenSets: $this->tokenSetService,
+					config: $this->config,
+					appPath: $this->tokenSetService->getAppPath()
+				),
 			]
 		);
 	}//end getGroupTheming()

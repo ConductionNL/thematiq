@@ -3796,6 +3796,27 @@
 			if (state === 'favorite') {
 				return '<span class="nldesign-pg-star">★</span>'
 			}
+			if (state === 'pill') {
+				// The Conduction apps' own class, so the status-badge scope in
+				// css/component-scopes.css reaches these the way it reaches a
+				// real pill.
+				return [
+					['info', t('thematiq', 'Received')],
+					['success', t('thematiq', 'Completed')],
+					['warning', t('thematiq', 'Waiting')],
+					['error', t('thematiq', 'Overdue')],
+				]
+					.map(function (def) {
+						return (
+							'<span class="cn-status-badge nldesign-pg-pill is-'
+							+ def[0]
+							+ '">'
+							+ def[1]
+							+ '</span>'
+						)
+					})
+					.join('')
+			}
 			return '<span class="nldesign-pg-bubble">12</span>'
 		},
 		toast: function () {
@@ -4428,7 +4449,9 @@
 			+ label
 			+ '</span>'
 			+ (counter
-				? '<span class="nldesign-pg-bubble">' + counter + '</span>'
+				? '<span class="counter-bubble__counter nldesign-pg-bubble nldesign-pg-bubble--nav">'
+					+ counter
+					+ '</span>'
 				: '')
 			+ '</li>'
 		)

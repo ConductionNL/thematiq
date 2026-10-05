@@ -1,15 +1,24 @@
 /**
- * La Frankendesk — Token Set
+ * La Frankendesk: token set
  *
- * Standard Layer-3 `--nldesign-*` overrides for the `frankendesk` token set
- * (REQ-TSET-005). Same identity values as `lasuite.css` — this set shares
- * `design_system: "lasuite"` and is a deliberate visual copy of the lasuite
- * bundle, distinguished only by carrying Conduction's own "La Frankendesk"
- * logo (img/logos/frankendesk.svg), which the `lasuite` entry itself may
- * not (its logo slot is compliance-locked empty — see
- * openspec/specs/lasuite-stack/spec.md).
+ * Layer-3 `--nldesign-*` overrides for the `frankendesk` token set
+ * (REQ-TSET-005), on the `lasuite` design system. Spec:
+ * openspec/specs/frankendesk-token-set/spec.md.
  *
- * Colour source: Cunningham (`@gouvfr-lasuite/cunningham-react`, MIT) —
+ * THIS FILE IS SELF-CONTAINED. The renderer loads exactly one token file per
+ * set (CssInjectionService::designSystemLayers()), so `"extends": "lasuite"`
+ * in token-sets.json does not load lasuite.css first. It names the parent
+ * whose every token this file must carry with the same value, and
+ * tests/vitest/frankendeskTokenSet.spec.js fails when the two drift. The one
+ * deliberate departure is the font stack (see below).
+ *
+ * What the set adds over `lasuite`:
+ *   - the La Frankendesk mark (img/logos/frankendesk.svg), which the
+ *     `lasuite` entry may not carry (its logo slot is compliance-locked empty,
+ *     openspec/specs/lasuite-stack/spec.md);
+ *   - a public-portal layer: footer, hero, cards, rhythm and chrome geometry.
+ *
+ * Colour source: Cunningham (`@gouvfr-lasuite/cunningham-react`, MIT),
  * see css/systems/lasuite/defaults.css for full attribution.
  */
 
@@ -77,6 +86,9 @@
 	--nldesign-border-radius-small: 4px;
 	--nldesign-border-radius-large: 4px;
 	--nldesign-border-radius-rounded: 4px;
+
+	/* Table headers without a fill of their own, as lasuite.css (#1052). */
+	--nldesign-component-table-header-background-color: transparent;
 
 	/* La Frankendesk mark. Path is relative to THIS file's served URL
 	   (css/tokens/{id}.css → two levels up is the app root, e.g.

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\LogoLayerService;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCP\IConfig;
@@ -87,10 +88,11 @@ class SetLogoReachTest extends TestCase {
 	/**
 	 * The declarations of the bundle's `#header .logo` rule, comments removed.
 	 *
+	 * @param string $file The stylesheet, relative to the app root.
 	 * @return array<string, string> Property => value, `!important` dropped.
 	 */
-	private function headerLogoRule(): array {
-		$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)file_get_contents(\dirname(__DIR__, 3) . '/' . self::BUNDLE));
+	private function headerLogoRule(string $file = self::BUNDLE): array {
+		$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)file_get_contents(\dirname(__DIR__, 3) . '/' . $file));
 		preg_match_all('/([^{}]+)\{([^{}]*)\}/', $css, $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
 			$selectors = array_map('trim', explode(',', trim($match[1])));
@@ -109,7 +111,7 @@ class SetLogoReachTest extends TestCase {
 			return $declarations;
 		}
 
-		$this->fail(self::BUNDLE . ' has no #header .logo rule');
+		$this->fail($file . ' has no #header .logo rule');
 	}//end headerLogoRule()
 
 	/**
@@ -254,4 +256,139 @@ class SetLogoReachTest extends TestCase {
 
 		$this->assertSame('#123456', $this->resolve(value: ($layer['background-color'] ?? ''), vars: ['--nldesign-color-header-text' => '#123456']));
 	}//end testWithoutALogoNldesignKeepsTheHeaderTextFill()
+
+	/**
+	 * The dark logo layer for a set that ships `<set>.svg` and `<set>-dark.svg`.
+	 *
+	 * @param bool $darkShipped Whether the dark file exists.
+	 *
+	 * @return array{layer: string, kind: string, css: string, id: string}|null The layer.
+	 */
+	private function darkLayer(bool $darkShipped): ?array {
+		$config = $this->createMock(IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, string $default = ''): string => $default);
+		$files = $this->createMock(RuntimeFileLocator::class);
+		$files->method('exists')->willReturnCallback(
+			static fn (string $name): bool => $name === 'img/logos/frankendesk.svg' || ($darkShipped === true && $name === 'img/logos/frankendesk-dark.svg')
+		);
+		$files->method('url')->willReturnCallback(static fn (string $name): string => '/custom_apps/thematiq/' . $name);
+
+		return (new LogoLayerService($config, $this->createMock(IURLGenerator::class), $this->createMock(LoggerInterface::class), $files))->darkLayer(tokenSet: 'frankendesk');
+	}//end darkLayer()
+
+	/**
+	 * The custom properties one scope of the dark layer declares.
+	 *
+	 * @param string $css The layer CSS.
+	 * @param string $scope A regex matching the scope's selector.
+	 *
+	 * @return array<string, string> Name => value.
+	 */
+	private function scopeVariables(string $css, string $scope): array {
+		$this->assertSame(1, preg_match('/' . $scope . '\{([^{}]*)\}/', $css, $match), 'the dark logo layer has a ' . $scope . ' scope');
+		$vars = [];
+		foreach (explode(';', $match[1]) as $declaration) {
+			$parts = explode(':', $declaration, 2);
+			if (count($parts) === 2) {
+				$vars[trim($parts[0])] = trim($parts[1]);
+			}
+		}
+
+		return $vars;
+	}//end scopeVariables()
+
+	/**
+	 * A set's dark logo reaches the header in both dark scopes (thematiq#1021).
+	 *
+	 * The generated dark file declares the dark logo as a RELATIVE url on body,
+	 * and a relative url in a custom property resolves against the stylesheet
+	 * that uses it: from css/token-overrides/ that path leaves the app. And
+	 * `--nldesign-header-logo-image` is substituted on :root, so the light logo
+	 * would reach the La Suite header anyway. The dark layer restates both as
+	 * absolute urls on body, in the OS-preference scope and the explicit one.
+	 *
+	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 */
+	public function testADarkSetLogoReachesTheHeaderInBothDarkScopes(): void {
+		$layer = $this->darkLayer(darkShipped: true);
+		$this->assertNotNull($layer);
+		$this->assertSame('inline', $layer['kind']);
+		$this->assertNotSame(CssInjectionService::LOGO_STYLE_ID, $layer['id'], 'its own id, so the client can swap it');
+
+		$url = 'url(/custom_apps/thematiq/img/logos/frankendesk-dark.svg)';
+		$this->assertStringContainsString('@media (prefers-color-scheme: dark)', $layer['css']);
+		foreach (['body:not\(\[data-theme-light\]\)[^{]*', 'body\[data-theme-dark\],body\[data-themes\*=dark\]'] as $scope) {
+			$vars = $this->scopeVariables(css: $layer['css'], scope: $scope);
+			foreach ([self::BUNDLE, 'css/token-overrides/frankendesk.css'] as $file) {
+				$rule = $this->headerLogoRule(file: $file);
+				$this->assertSame($url, $this->resolve(value: ($rule['background-image'] ?? 'none'), vars: $vars), $file . ' in ' . $scope);
+			}
+		}
+	}//end testADarkSetLogoReachesTheHeaderInBothDarkScopes()
+
+	/**
+	 * Without a dark file there is no dark layer, so the light logo stays.
+	 */
+	public function testWithoutADarkFileThereIsNoDarkLayer(): void {
+		$this->assertNull($this->darkLayer(darkShipped: false));
+	}//end testWithoutADarkFileThereIsNoDarkLayer()
+
+	/**
+	 * The logo layer of a set, with or without a grey emblem beside its logo.
+	 *
+	 * @param bool $emblemShipped Whether `img/logos/zuiddrecht-emblem-grey.svg` exists.
+	 *
+	 * @return string The layer CSS.
+	 */
+	private function layerWithEmblem(bool $emblemShipped): string {
+		$config = $this->createMock(IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, string $default = ''): string => $default);
+		$files = $this->createMock(RuntimeFileLocator::class);
+		$files->method('exists')->willReturnCallback(
+			static fn (string $name): bool => $name === 'img/logos/zuiddrecht.svg' || ($emblemShipped === true && $name === 'img/logos/zuiddrecht-emblem-grey.svg')
+		);
+		$files->method('url')->willReturnCallback(static fn (string $name): string => '/custom_apps/thematiq/' . $name);
+
+		$layer = (new LogoLayerService($config, $this->createMock(IURLGenerator::class), $this->createMock(LoggerInterface::class), $files))->layer(tokenSet: 'zuiddrecht');
+		$this->assertNotNull($layer);
+
+		return $layer['css'];
+	}//end layerWithEmblem()
+
+	/**
+	 * A set that ships a grey emblem gets its login watermark as an absolute
+	 * url in the same layer as its logo, because the rule that draws it sits
+	 * at another depth than the token file that names it.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 */
+	public function testAGreyEmblemBecomesTheLoginWatermark(): void {
+		$css = $this->layerWithEmblem(emblemShipped: true);
+
+		$this->assertStringContainsString('--nldesign-logo-url:url(/custom_apps/thematiq/img/logos/zuiddrecht.svg)', $css);
+		$this->assertStringContainsString(';--nldesign-login-watermark-image:url(/custom_apps/thematiq/img/logos/zuiddrecht-emblem-grey.svg)}', $css);
+		$this->assertStringStartsWith(':root{', $css);
+	}//end testAGreyEmblemBecomesTheLoginWatermark()
+
+	/**
+	 * A set without that file gets no watermark declaration at all, so the
+	 * layer of every set that existed before is unchanged.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 */
+	public function testWithoutAGreyEmblemThereIsNoWatermark(): void {
+		$this->assertStringNotContainsString('watermark', $this->layerWithEmblem(emblemShipped: false));
+	}//end testWithoutAGreyEmblemThereIsNoWatermark()
+
+	/**
+	 * Only Zuiddrecht ships a grey emblem, so only its layer changes. Read off
+	 * the real directory, not a mock.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 */
+	public function testOnlyZuiddrechtShipsAGreyEmblem(): void {
+		$emblems = array_map('basename', (array)glob(\dirname(__DIR__, 3) . '/img/logos/*-emblem-grey.*'));
+
+		$this->assertSame(['zuiddrecht-emblem-grey.svg'], $emblems);
+	}//end testOnlyZuiddrechtShipsAGreyEmblem()
 }//end class

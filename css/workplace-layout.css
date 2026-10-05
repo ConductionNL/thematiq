@@ -1,0 +1,83 @@
+/**
+ * Workplace layout: light
+ * (openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded only while the workplace layout resolves to `light`: an administrator
+ * chose it, or the active token set names it in its `layout` block and the
+ * administrator left the choice to the theme.
+ *
+ * WHAT IT DOES. The top bar stops being the page background (or the brand
+ * colour a set paints it with) and becomes a sheet of the main background with
+ * the main text colour on it and a hairline under it: the same white bar as
+ * the app navigation and the cards below it.
+ *
+ * IT REDECLARES VARIABLES, IT DOES NOT REPAINT ELEMENTS. Every design system
+ * here already paints the header from variables: Nextcloud's own rules read
+ * `--color-background-plain-text` and `--background-image-invert-if-bright`,
+ * and the NL Design sheets read the `--nldesign-color-header-*` tokens. So the
+ * rule below hands those variables new values inside the header, and the rules
+ * that already win keep winning. That is also why no colour is written here:
+ * the bar is the scheme's own main background, so it is white in the light and
+ * dark in the dark without a second block.
+ *
+ * `--background-invert-if-bright` is Nextcloud's own answer to "is this scheme
+ * light": `invert(100%)` in the light, where its white header icons have to
+ * turn black, and `no` in the dark, which is not a filter and so leaves them
+ * white.
+ *
+ * A header token a set or an administrator has set still wins: the component
+ * tokens are tried first. The login page is left alone; its `#header` is the
+ * logo's own wrapper (see `header-bar` in scripts/mapping/component-tokens.json).
+ *
+ * WHAT IT CANNOT DO. It cannot redraw a logo. A set whose logo was drawn for a
+ * coloured bar, white artwork for one, needs a logo that reads on a light bar
+ * before this layout suits it.
+ */
+:where(body:not(#body-login)) #header,
+:where(body:not(#body-login)) header#header {
+	--color-background-plain-text: var(
+		--nldesign-component-header-color,
+		var(--color-main-text)
+	);
+	--background-image-invert-if-bright: var(--background-invert-if-bright);
+	--nldesign-color-header-background: var(--color-main-background);
+	--nldesign-color-header-text: var(--color-main-text);
+	--nldesign-header-icon-filter: var(--background-invert-if-bright);
+
+	background-color: var(
+		--nldesign-component-header-background-color,
+		var(--color-main-background)
+	) !important;
+	background-image: none !important;
+	border-bottom: 1px solid var(--color-border) !important;
+}
+
+/*
+ * The login watermark.
+ *
+ * A set may name an image in `--nldesign-login-watermark-image`: its emblem,
+ * drawn large and faint in the bottom corner of the login page, behind the
+ * login card. A set that names none gets `none`, so nothing is drawn. The
+ * opacity is a token too, 0.07 unless the set says otherwise.
+ *
+ * `::before`, not `::after`: both are fixed and take no space, but the one
+ * that comes first in the document is painted under the login card.
+ */
+body#body-login::before {
+	content: '';
+	position: fixed;
+	inset-inline-end: -4vmin;
+	bottom: -6vmin;
+	z-index: 0;
+	width: 62vmin;
+	height: 78vmin;
+	pointer-events: none;
+	background-image: var(--nldesign-login-watermark-image, none);
+	background-repeat: no-repeat;
+	background-position: right bottom;
+	background-size: contain;
+	opacity: var(--nldesign-login-watermark-opacity, 0.07);
+}

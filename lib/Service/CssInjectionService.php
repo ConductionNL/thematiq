@@ -157,6 +157,9 @@ class CssInjectionService {
 	 */
 	private InternalScopesService $internalScopes;
 
+	/** @var LayoutOptionsService Resolves the workplace layout and the brand stripe for a token set. */
+	private LayoutOptionsService $layoutOptions;
+
 	/**
 	 * Constructor.
 	 *
@@ -173,6 +176,7 @@ class CssInjectionService {
 	 * @param LogoLayerService $logoLayer Resolves the active set's logo layer.
 	 * @param AppBrandService $appBrands The brand per app.
 	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
+	 * @param LayoutOptionsService|null $layoutOptions Resolves the workplace layout and the brand stripe; defaults to one reading $config.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -191,6 +195,7 @@ class CssInjectionService {
 		private readonly LogoLayerService $logoLayer,
 		AppBrandService $appBrands,
 		?InternalScopesService $internalScopes = null,
+		?LayoutOptionsService $layoutOptions = null,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
@@ -204,6 +209,7 @@ class CssInjectionService {
 		$this->runtimeFiles = $runtimeFiles;
 		$this->appBrands = $appBrands;
 		$this->internalScopes = ($internalScopes ?? new InternalScopesService(files: $runtimeFiles));
+		$this->layoutOptions = ($layoutOptions ?? new LayoutOptionsService(config: $config, designSystemService: $designSystemService));
 	}//end __construct()
 
 	/**
@@ -318,7 +324,7 @@ class CssInjectionService {
 		);
 
 		// 5. Conditional stylesheets.
-		$this->runLayer(layer: 'conditional-styles', work: fn () => $this->injectConditionalStyles());
+		$this->runLayer(layer: 'conditional-styles', work: fn () => $this->injectConditionalStyles(tokenSet: $tokenSet));
 
 		// 6. Preview banner — ONLY when a theme preview is active for this
 		// request's user. Every other user (and every anonymous render) pays
@@ -467,6 +473,9 @@ class CssInjectionService {
 		$withDark = $this->hasDarkVariantLayer(tokenSet: $tokenSet);
 		if ($withDark === true) {
 			$layers[] = $this->fileLayer(layer: 'dark-variant', file: 'tokens/dark/' . $tokenSet);
+			// 3b-1. The dark logo as an absolute url, after the dark file that
+			// names it relatively. See LogoLayerService::darkLayers().
+			$layers = array_merge($layers, $this->logoLayer->darkLayers(tokenSet: $tokenSet, brandLogo: ($this->brandLogo !== null)));
 		}
 
 		// Functional contrast fix shared by all design systems: app icons
@@ -681,10 +690,12 @@ class CssInjectionService {
 	 * @return array{
 	 *     tokenSet: string,
 	 *     designSystem: string,
-	 *     layers: array<int, array{layer: string, kind: string, href?: string, css?: string, id?: string}>
+	 *     layers: array<int, array{layer: string, kind: string, href?: string, css?: string, id?: string}>,
+	 *     layout: array{workplaceLayout: string, brandStripe: bool}
 	 * }
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function getStylesheetManifest(string $tokenSet): array {
 		$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
@@ -727,6 +738,8 @@ class CssInjectionService {
 			'tokenSet' => $tokenSet,
 			'designSystem' => $designSystemId,
 			'layers' => $layers,
+			// Not layers of the set: the two conditional stylesheets that can follow it.
+			'layout' => $this->layoutOptions->resolved(tokenSet: $tokenSet),
 		];
 	}//end getStylesheetManifest()
 
@@ -796,8 +809,9 @@ class CssInjectionService {
 	}//end injectCustomFontLink()
 
 	/**
-	 * Emit the appconfig-gated hide-slogan, show-menu-labels and primary-lock
-	 * stylesheets.
+	 * Emit the appconfig-gated hide-slogan, show-menu-labels, workplace-layout,
+	 * brand-stripe and primary-lock stylesheets. The layout pair is resolved for
+	 * this page's token set, which may carry its defaults ({@see LayoutOptionsService}).
 	 *
 	 * `primary-lock` is emitted LAST on purpose. It and `custom-overrides.css`
 	 * both write `--nldesign-component-*` at `:root` with `!important`, so the
@@ -806,12 +820,16 @@ class CssInjectionService {
 	 * deleted: turning the setting off drops this layer and the stored values
 	 * take effect again.
 	 *
+	 * @param string $tokenSet The token set this page renders with.
+	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/component-tokens/spec.md
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
 	 */
-	private function injectConditionalStyles(): void {
+	private function injectConditionalStyles(string $tokenSet): void {
 		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet
 		// before every header, and the saved overrides are a header, so as
 		// addStyle() entries the toggles landed before custom-overrides. The
@@ -823,6 +841,11 @@ class CssInjectionService {
 
 		if ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1') {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
+		}
+
+		// The workplace layout and the brand stripe, for the set this page wears.
+		foreach ($this->layoutOptions->stylesheets(tokenSet: $tokenSet) as $file) {
+			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: $file));
 		}
 
 		// A header, so it follows the overrides and custom CSS links: it must
@@ -842,6 +865,15 @@ class CssInjectionService {
 	 * @var string
 	 */
 	public const LOGO_STYLE_ID = 'nldesign-logo-url';
+
+	/**
+	 * The `id` the dark logo `<style>` carries on the page (see
+	 * {@see LogoLayerService::darkLayer()}), on the same contract as
+	 * {@see self::LOGO_STYLE_ID}.
+	 *
+	 * @var string
+	 */
+	public const DARK_LOGO_STYLE_ID = 'thematiq-dark-logo-url';
 
 	/**
 	 * The token set that means "look like this Nextcloud", and therefore the

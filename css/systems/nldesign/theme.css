@@ -682,8 +682,14 @@ a:not(:where(.tile-widget)):not(:where(.tile-widget a)):visited {
  *
  * The opaque colour is derived into --nldesign-focus-ring-color on the focused
  * element itself, not on :root: a set's dark variant declares its focus tokens
- * on body, and a :root declaration would keep resolving the light value. */
-*:focus-visible {
+ * on body, and a :root declaration would keep resolving the light value.
+ *
+ * The second selector is for NcButton: its scoped `.button-vue[data-v-…]:focus-visible`
+ * ring is `!important` at 0,3,0 and beat `*:focus-visible`, so buttons kept
+ * Nextcloud's 2px ring in the main text colour (#1050). The doubled class and
+ * `body` reach 0,3,1. tests/vitest/buttonFocusRing.spec.js holds every system. */
+*:focus-visible,
+body .button-vue.button-vue:focus-visible {
 	--nldesign-focus-ring-color: rgb(var(--nldesign-color-focus-rgb));
 
 	outline: 2px solid var(--nldesign-focus-ring-color) !important;

@@ -2,9 +2,9 @@
 
 # VNG Vereniging Nederlandse Gemeenten
 
-Token set `vng`: 1225 declared by this set, 124 from the defaults layer.
+Token set `vng`: 1226 declared by this set, 124 from the defaults layer.
 
-Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
+Contrast: primary text on primary 11.98:1, primary on background 11.98:1 (pass).
 
 ## Colours (Kleuren)
 
@@ -596,6 +596,7 @@ Contrast: primary text on primary 11.98:1, primary on background 2.50:1 (fail).
 | `--denhaag-step-marker-warning-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--denhaag-step-marker-warning-nested-background-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--denhaag-step-marker-warning-nested-border-color` | `var(--tilburg-color-orange-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed7719%22%2F%3E%3C%2Fsvg%3E) `#ed7719` | this set | |
+| `--nldesign-color-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--nldesign-logo-url` | `url('../../img/logos/vng.svg')` | `url('../../../img/logos/vng-dark.svg')` | this set | |
 | `--tilburg-border-radius-lg` | `16px` | | this set | |
 | `--tilburg-border-radius-md` | `8px` | | this set | |

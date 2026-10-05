@@ -124,6 +124,23 @@ class TokenSetVocabularyAuditService {
 	];
 
 	/**
+	 * Design systems that read their OWN token vocabulary instead of
+	 * `--nldesign-*`, keyed by design-system id: the prefix their stylesheets
+	 * read and the token that carries the brand primary.
+	 *
+	 * A set of such a system is audited against that vocabulary (thematiq#1022):
+	 * there is no defaults layer under it, so every name its stylesheets read
+	 * and no layer declares is required, and a declared name nothing reads is
+	 * dead weight. Kept byte-identical to `scripts/audit-token-sets.mjs`'s
+	 * `OWN_VOCABULARIES`.
+	 *
+	 * @var array<string, array{prefix: string, primary: string}>
+	 */
+	public const OWN_VOCABULARIES = [
+		'summer-breeze' => ['prefix' => '--summer-', 'primary' => '--summer-color-primary'],
+	];
+
+	/**
 	 * Runtime-generated CSS files under `css/` that are admin data, not app
 	 * source. Excluded from the vocabulary scan so a value an admin typed into
 	 * the theme editor can never widen the accepted vocabulary.
@@ -156,6 +173,14 @@ class TokenSetVocabularyAuditService {
 	private array $consumingCache = [];
 
 	/**
+	 * Memoised per-app-root, per-prefix names the non-token CSS layers read
+	 * (`var()`) and declare, for the own-vocabulary systems.
+	 *
+	 * @var array<string, array{read: array<int, string>, declared: array<int, string>}>
+	 */
+	private array $ownVocabularyCache = [];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param CssParserService $parser The CSS custom-property parser.
@@ -181,6 +206,10 @@ class TokenSetVocabularyAuditService {
 		$designSystem = ($meta['design_system'] ?? 'nldesign');
 		if (is_string($designSystem) === false) {
 			$designSystem = 'nldesign';
+		}
+
+		if (isset(self::OWN_VOCABULARIES[$designSystem]) === true) {
+			return $this->auditOwnVocabulary(appPath: $appPath, id: $id, designSystem: $designSystem, meta: $meta);
 		}
 
 		$auditable = in_array($designSystem, $this->nldesignConsumingSystems(appPath: $appPath), true);
@@ -235,6 +264,112 @@ class TokenSetVocabularyAuditService {
 			'complete' => $complete,
 		];
 	}//end auditSet()
+
+	/**
+	 * Audit a set of a design system that reads its own vocabulary
+	 * ({@see self::OWN_VOCABULARIES}), with the same three rules:
+	 *
+	 * 1. `missingRequired`: every own-prefix name a non-token CSS layer reads
+	 *    through `var()` and no such layer declares, that the set file does
+	 *    not declare. Nothing sits under such a set, so a missing name leaves
+	 *    the property it feeds invalid.
+	 * 2. `foreignNldesignNames`: own-prefix names the set declares that no
+	 *    non-token CSS layer declares or reads. The key keeps its name so the
+	 *    admin UI reads one warning shape for every design system.
+	 * 3. `primaryMismatch`: the system's primary token disagrees with the
+	 *    set's `token-sets.json` `theming.primary_color`.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param string $id The token set id.
+	 * @param string $designSystem The design-system id (a key of OWN_VOCABULARIES).
+	 * @param array<string, mixed> $meta The set's manifest entry.
+	 *
+	 * The per-set vocabulary verdict.
+	 *
+	 * @return VocabularyAuditResult
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 */
+	private function auditOwnVocabulary(string $appPath, string $id, string $designSystem, array $meta): array {
+		$prefix = self::OWN_VOCABULARIES[$designSystem]['prefix'];
+		$primaryToken = self::OWN_VOCABULARIES[$designSystem]['primary'];
+
+		$declarations = $this->declarationsOf(filePath: $appPath . '/css/tokens/' . $id . '.css', prefix: $prefix);
+		$declaredNames = array_keys($declarations);
+		$layers = $this->ownVocabulary(appPath: $appPath, prefix: $prefix);
+
+		$required = array_values(array_diff($layers['read'], $layers['declared']));
+		$missingRequired = array_values(array_diff($required, $declaredNames));
+		sort($missingRequired);
+
+		$known = array_merge($layers['read'], $layers['declared']);
+		$foreign = array_values(array_diff($declaredNames, $known));
+		sort($foreign);
+
+		$declaredPrimary = $this->normaliseHex(value: ($meta['theming']['primary_color'] ?? null));
+		$cssPrimary = $this->normaliseHex(value: ($declarations[$primaryToken] ?? null));
+		$primaryMismatch = ($declaredPrimary !== null && $cssPrimary !== null && $declaredPrimary !== $cssPrimary);
+
+		return [
+			'id' => $id,
+			'designSystem' => $designSystem,
+			'auditable' => true,
+			'missingRequired' => $missingRequired,
+			'foreignNldesignNames' => $foreign,
+			'primaryMismatch' => $primaryMismatch,
+			'declaredPrimary' => $declaredPrimary,
+			'cssPrimary' => $cssPrimary,
+			'complete' => ($missingRequired === [] && $foreign === [] && $primaryMismatch === false),
+		];
+	}//end auditOwnVocabulary()
+
+	/**
+	 * The own-prefix names the non-token CSS layers read through `var()`, and
+	 * the ones they declare, each sorted and unique.
+	 *
+	 * Walks the same files as {@see self::declaredVocabulary()}: everything
+	 * under `css/` except `css/tokens/` and the runtime admin files.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param string $prefix The token prefix, e.g. `--summer-`.
+	 *
+	 * @return array{read: array<int, string>, declared: array<int, string>} The names.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 */
+	public function ownVocabulary(string $appPath, string $prefix): array {
+		$key = $appPath . '|' . $prefix;
+		if (isset($this->ownVocabularyCache[$key]) === true) {
+			return $this->ownVocabularyCache[$key];
+		}
+
+		$quoted = preg_quote($prefix, '/');
+		$read = [];
+		$declared = [];
+		foreach ($this->collectCssFiles(directory: $appPath . '/css') as $file) {
+			$css = $this->stripComments(css: $this->readFile(filePath: $file));
+			if (preg_match_all('/var\(\s*(' . $quoted . '[A-Za-z0-9_-]+)/', $css, $matches) > 0) {
+				foreach ($matches[1] as $name) {
+					$read[$name] = true;
+				}
+			}
+
+			if (preg_match_all('/(' . $quoted . '[A-Za-z0-9_-]+)\s*:/', $css, $matches) > 0) {
+				foreach ($matches[1] as $name) {
+					$declared[$name] = true;
+				}
+			}
+		}
+
+		$read = array_keys($read);
+		$declared = array_keys($declared);
+		sort($read);
+		sort($declared);
+
+		$this->ownVocabularyCache[$key] = ['read' => $read, 'declared' => $declared];
+
+		return $this->ownVocabularyCache[$key];
+	}//end ownVocabulary()
 
 	/**
 	 * Audit every shipped token set in `css/tokens/`, ordered by id.
@@ -352,12 +487,13 @@ class TokenSetVocabularyAuditService {
 	 * tokens at all.
 	 *
 	 * A set belonging to any other system cannot be judged against this
-	 * vocabulary and is reported as not auditable: `none` (stock Nextcloud,
-	 * loads no stylesheet) and `summer-breeze` (its `theme.css` and
-	 * `element-overrides.css` reference no `--nldesign-*` name, so a
-	 * summer-breeze set legitimately declares none). `high-contrast`,
-	 * `lasuite` and `cunningham` DO read the vocabulary through their bridge
-	 * layers, so their sets are audited like any nldesign set.
+	 * vocabulary: `none` (stock Nextcloud, loads no stylesheet) is reported as
+	 * not auditable, and `summer-breeze` (its `theme.css` and
+	 * `element-overrides.css` reference no `--nldesign-*` name) is audited
+	 * against its own `--summer-*` vocabulary instead
+	 * ({@see self::OWN_VOCABULARIES}). `high-contrast`, `lasuite` and
+	 * `cunningham` DO read the vocabulary through their bridge layers, so
+	 * their sets are audited like any nldesign set.
 	 *
 	 * @param string $appPath The app root path.
 	 *
@@ -480,13 +616,15 @@ class TokenSetVocabularyAuditService {
 	}//end nldesignNames()
 
 	/**
-	 * The `--nldesign-*` custom properties a CSS file DECLARES, name => value.
+	 * The custom properties under one prefix (`--nldesign-` unless told
+	 * otherwise) a CSS file DECLARES, name => value.
 	 *
 	 * @param string $filePath The absolute file path.
+	 * @param string $prefix The token prefix to keep.
 	 *
 	 * @return array<string, string> The declarations (empty when absent).
 	 */
-	private function declarationsOf(string $filePath): array {
+	private function declarationsOf(string $filePath, string $prefix = '--nldesign-'): array {
 		// Comments are stripped BEFORE parsing: CssParserService::parseDeclarations()
 		// does not strip them, so a commented-out `--nldesign-color-primary: red;`
 		// would otherwise count as a declaration and hide a missing token. The Node
@@ -496,7 +634,7 @@ class TokenSetVocabularyAuditService {
 
 		return array_filter(
 			$declarations,
-			static fn (string $name): bool => str_starts_with($name, '--nldesign-'),
+			static fn (string $name): bool => str_starts_with($name, $prefix),
 			ARRAY_FILTER_USE_KEY
 		);
 	}//end declarationsOf()

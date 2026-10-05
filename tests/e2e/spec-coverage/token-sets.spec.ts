@@ -83,14 +83,33 @@ const REQUIRED_TOKENS: string[] = (() => {
 		throw new Error('REQUIRED_TOKENS not found in scripts/audit-token-sets.mjs')
 	return [...block[1].matchAll(/'(--nldesign-[a-z0-9-]+)'/g)].map((m) => m[1])
 })()
-/** TokenSetService::SELECTABLE_SHIPPED_SETS, read from the PHP source. */
-const SELECTABLE_SHIPPED_SETS: string[] = (() => {
-	const match = readRepoFile('lib/Service/TokenSetService.php').match(
-		/SELECTABLE_SHIPPED_SETS = \[([^\]]*)\]/,
-	)
-	if (match === null) throw new Error('SELECTABLE_SHIPPED_SETS not found')
-	return [...match[1].matchAll(/'([a-z0-9-]+)'/g)].map((m) => m[1])
-})()
+/**
+ * The shipped sets the admin picker offers, derived the way
+ * `TokenSetSelectionPolicy::selectable()` derives it: every id named in
+ * `token-sets.json` that the vocabulary allow-list does not record incomplete.
+ *
+ * Read from the data rather than from a PHP constant, because the constant is
+ * gone: `SELECTABLE_SHIPPED_SETS = ['nextcloud', 'cunningham']` held two of 59
+ * shipped sets, so an administrator could not choose any municipality at all,
+ * and it stayed that way after its own stated exit condition was met because
+ * nothing failed when it went stale.
+ */
+const SELECTABLE_SHIPPED_SETS: string[] = MANIFEST.map((e) => e.id).filter(
+	(id) => !ALLOWLIST.includes(id),
+)
+
+/**
+ * Shipped token files the picker withholds: one with no `token-sets.json`
+ * entry. In this repository that is `css/tokens/conduction.css`, the shared
+ * role layer `scripts/generate-brand-set.mjs` copies into a brand set.
+ *
+ * These are what the "always selectable" rules below are exercised with, since
+ * every named set the audit passes is now offered anyway and a set that is
+ * offered regardless proves nothing about a survival rule.
+ */
+const UNNAMED_TOKEN_FILES: string[] = TOKEN_FILES.filter(
+	(id) => !MANIFEST.some((e) => e.id === id),
+)
 
 function manifestEntry(id: string): ManifestEntry {
 	const entry = MANIFEST.find((e) => e.id === id)
@@ -162,51 +181,6 @@ function nldesignDeclarations(css: string): Record<string, string> {
 		}
 	}
 	return out
-}
-
-/**
- * TokenSetVocabularyAuditService::declaredVocabulary(), from the checkout:
- * every `--nldesign-*` name any CSS file under css/ declares or reads, except
- * under a `tokens` directory and in the two runtime files.
- */
-const VOCABULARY: Set<string> = (() => {
-	const names = new Set<string>()
-	const walk = (dir: string) => {
-		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-			const full = path.join(dir, entry.name)
-			if (entry.isDirectory()) {
-				if (entry.name !== 'tokens') walk(full)
-			} else if (
-				entry.name.endsWith('.css')
-				&& entry.name !== 'custom-overrides.css'
-				&& entry.name !== 'custom-css.css'
-			) {
-				const css = fs
-					.readFileSync(full, 'utf8')
-					.replace(/\/\*[\s\S]*?\*\//g, '')
-				for (const m of css.matchAll(/--nldesign-[A-Za-z0-9_-]+/g))
-					names.add(m[0])
-			}
-		}
-	}
-	walk(path.join(REPO, 'css'))
-	return names
-})()
-
-/** The foreign names the audit must report for a set: declared, never in the vocabulary. */
-function expectedForeign(id: string): string[] {
-	return Object.keys(nldesignDeclarations(tokenCss(id)))
-		.filter((n) => !VOCABULARY.has(n))
-		.sort()
-}
-
-/** TokenSetVocabularyAuditService::normaliseHex(). */
-function normaliseHex(value: string | undefined): string | null {
-	const candidate = (value ?? '').trim().toLowerCase()
-	const m = candidate.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/)
-	if (m === null) return null
-	const d = m[1]
-	return '#' + (d.length === 3 ? d[0] + d[0] + d[1] + d[1] + d[2] + d[2] : d)
 }
 
 /** PHP strcasecmp: ASCII-only case folding, then byte order. */
@@ -1107,14 +1081,22 @@ test.describe('token-sets', () => {
 		expect(layers.slice(0, bundle.length)).toEqual(bundle)
 		expect(layers.indexOf('tokens/lasuite')).toBeGreaterThan(bundle.length - 1)
 
-		// A token the set leaves out and the bundle declares still resolves.
+		// The set is complete (thematiq#1006): it declares every required token
+		// itself, so none of them depends on the bundle.
 		const declared = Object.keys(nldesignDeclarations(css))
-		const inBundle = Object.assign(
-			{},
-			...bundle.map((s) => nldesignDeclarations(readRepoFile(`css/${s}.css`))),
-		) as Record<string, string>
-		const leftOut = REQUIRED_TOKENS.filter(
-			(t) => !declared.includes(t) && inBundle[t] !== undefined,
+		for (const t of REQUIRED_TOKENS) expect(declared, t).toContain(t)
+
+		// A token the set leaves out and the bridge declares on :root still
+		// resolves: the bridge's focus and component tokens.
+		const bridge = readRepoFile('css/systems/lasuite/bridge.css').replace(
+			/\/\*[\s\S]*?\*\//g,
+			'',
+		)
+		const onRoot = [...bridge.matchAll(/(?:^|\})\s*:root\s*\{([^{}]*)\}/g)]
+			.map((m) => m[1])
+			.join('\n')
+		const leftOut = Object.keys(nldesignDeclarations(onRoot)).filter(
+			(t) => !declared.includes(t),
 		)
 		expect(leftOut.length).toBeGreaterThan(0)
 		await withActiveSet(page, 'lasuite', async () => {
@@ -1406,8 +1388,9 @@ test.describe('token-sets', () => {
 		return (res.json?.mapping ?? []).map((m: any) => m.tokenSet)
 	}
 
-	// @e2e openspec/specs/token-sets/spec.md#the-allowlist-is-the-only-shipped-set-offered
-	test('on a stock instance the dropdown offers only the allowlisted shipped sets', async ({
+	// @e2e openspec/specs/token-sets/spec.md#every-named-shipped-set-the-audit-passes-is-offered
+	// @e2e openspec/specs/token-sets/spec.md#a-set-that-declares-no-component-tokens-is-still-offered
+	test('on a stock instance the dropdown offers every named set the audit passes', async ({
 		page,
 	}) => {
 		await openSettings(page)
@@ -1435,6 +1418,20 @@ test.describe('token-sets', () => {
 				.sort()
 			expect(options).toEqual(expected)
 
+			// A named set that declares none of the --utrecht-* names the bridge
+			// reads is offered all the same.
+			const noComponentTokens = expected.find(
+				(id) =>
+					id !== 'nextcloud'
+					&& designSystemOf(id) === 'nldesign'
+					&& !/--utrecht-/.test(tokenCss(id)),
+			)
+			expect(
+				noComponentTokens,
+				'a named nldesign set without --utrecht-* tokens',
+			).toBeTruthy()
+			expect(options).toContain(noComponentTokens)
+
 			// The catalogue and the preview still answer for a set not offered.
 			const hidden = TOKEN_FILES.find((id) => !expected.includes(id)) as string
 			expect((await publicCatalogue(page)).map((s) => s.id)).toContain(hidden)
@@ -1451,14 +1448,20 @@ test.describe('token-sets', () => {
 	})
 
 	// @e2e openspec/specs/token-sets/spec.md#the-active-set-is-always-selectable
-	test('the active set is offered and selected even when it is not allowlisted', async ({
+	test('the active set is offered and selected even when the picker withholds it', async ({
 		page,
 	}) => {
 		await openSettings(page)
 		const mapped = await mappedSets(page)
-		const target = TOKEN_FILES.find(
-			(id) => !SELECTABLE_SHIPPED_SETS.includes(id) && !mapped.includes(id),
+		// A shipped file the picker withholds, so the survival rule is what
+		// puts it back rather than the rule that offers every named set.
+		const target = UNNAMED_TOKEN_FILES.find(
+			(id) => !mapped.includes(id),
 		) as string
+		expect(
+			target,
+			'no withheld shipped file to exercise the rule with',
+		).toBeTruthy()
 		await withActiveSet(page, target, async () => {
 			await openSettings(page)
 			expect((await adminList(page)).map((s) => s.id)).toContain(target)
@@ -1476,12 +1479,13 @@ test.describe('token-sets', () => {
 		const token = await requestToken(page)
 		const active = await getTokenSet(page, token)
 		const mapped = await mappedSets(page)
-		const target = TOKEN_FILES.find(
-			(id) =>
-				!SELECTABLE_SHIPPED_SETS.includes(id)
-				&& !mapped.includes(id)
-				&& id !== active,
+		const target = UNNAMED_TOKEN_FILES.find(
+			(id) => !mapped.includes(id) && id !== active,
 		) as string
+		expect(
+			target,
+			'no withheld shipped file to exercise the rule with',
+		).toBeTruthy()
 		expect((await adminList(page)).map((s) => s.id)).not.toContain(target)
 		await withOffered(page, [target], async () => {
 			expect((await adminList(page)).map((s) => s.id)).toContain(target)
@@ -1542,284 +1546,91 @@ test.describe('token-sets', () => {
 		})
 	})
 
-	// @e2e openspec/specs/token-sets/spec.md#missing-required-tokens-are-evaluated-against-the-set-file-alone
-	test('a set that declares none of the vocabulary misses all of it, despite defaults.css', async ({
-		page,
-	}) => {
-		const bare = ALLOWLIST.find((id) => {
-			const d = nldesignDeclarations(tokenCss(id))
-			return (
-				designSystemOf(id) === 'nldesign'
-				&& REQUIRED_TOKENS.every((t) => d[t] === undefined)
-			)
-		}) as string
-		expect(
-			bare,
-			'an allow-listed set that declares none of the required tokens',
-		).toBeTruthy()
-		// defaults.css declares every one of them, so layering it would hide all.
-		const defaults = nldesignDeclarations(
-			readRepoFile('css/systems/nldesign/defaults.css'),
-		)
-		for (const t of REQUIRED_TOKENS) expect(defaults[t], t).toBeDefined()
-		await openSettings(page)
-		await withEntries(page, [bare], async (byId) => {
-			const w = incompleteWarning(byId[bare])
-			expect(w, `${bare} is reported incomplete`).toBeTruthy()
-			expect([...w.missing].sort()).toEqual([...REQUIRED_TOKENS].sort())
-		})
-	})
-
-	// @e2e openspec/specs/token-sets/spec.md#nldesign-names-nothing-reads-are-reported-as-foreign
-	test('a declared --nldesign-* name no layer reads is reported foreign', async ({
-		page,
-	}) => {
-		const candidate = ALLOWLIST.find((id) =>
-			expectedForeign(id).some((n) => /^--nldesign-color-[a-z]+-\d+$/.test(n)),
-		) as string
-		expect(
-			candidate,
-			'an allow-listed set declaring a raw palette step nothing reads',
-		).toBeTruthy()
-		await openSettings(page)
-		await withEntries(page, [candidate], async (byId) => {
-			const w = incompleteWarning(byId[candidate])
-			// Exactly the declared names no non-token layer mentions, sorted.
-			expect(w.foreign).toEqual(expectedForeign(candidate))
-			expect(
-				w.foreign.some((n: string) =>
-					/^--nldesign-color-[a-z]+-\d+$/.test(n),
-				),
-			).toBe(true)
-		})
-	})
-
-	// @e2e openspec/specs/token-sets/spec.md#the-accepted-vocabulary-is-every-name-any-non-token-set-css-layer-declares-or-reads
-	test('the vocabulary is every non-token layer, never the runtime files an admin writes', async ({
-		page,
-	}) => {
-		// theme.css reads --nldesign-logo-url; a complete set declaring it is
-		// therefore not reported.
-		expect(readRepoFile('css/systems/nldesign/theme.css')).toContain(
-			'--nldesign-logo-url',
-		)
-		const logoSet = TOKEN_FILES.find(
-			(id) =>
-				!ALLOWLIST.includes(id)
-				&& designSystemOf(id) === 'nldesign'
-				&& nldesignDeclarations(tokenCss(id))['--nldesign-logo-url']
-					!== undefined,
-		) as string
-		const foreignSet = ALLOWLIST.find(
-			(id) =>
-				designSystemOf(id) === 'nldesign'
-				&& Object.keys(nldesignDeclarations(tokenCss(id))).length > 0,
-		) as string
-
-		await openSettings(page)
-		const token = await requestToken(page)
-		const cssBefore = (
-			await call(page, 'GET', '/apps/thematiq/settings/custom-css')
-		).json
-		const overridesBefore = await page.evaluate(async (t) => {
-			const OC = (
-				window as unknown as { OC: { generateUrl: (u: string) => string } }
-			).OC
-			const r = await fetch(
-				OC.generateUrl('/apps/thematiq/settings/overrides')
-					+ '?tokenSet=amsterdam',
-				{
-					headers: { requesttoken: t },
-				},
-			)
-			return (await r.json()).overrides || {}
-		}, token)
-		await withEntries(page, [logoSet, foreignSet], async (byId) => {
-			expect(incompleteWarning(byId[logoSet])).toBeUndefined()
-			const foreign: string[] = incompleteWarning(byId[foreignSet]).foreign
-			expect(foreign.length).toBeGreaterThan(0)
-			const name = foreign[0]
-			// Declared in its own token file, and still foreign: css/tokens/ is
-			// not part of the vocabulary.
-			expect(nldesignDeclarations(tokenCss(foreignSet))[name]).toBeDefined()
-			try {
-				// Make the name appear in the custom CSS runtime file.
-				const written = await call(
-					page,
-					'POST',
-					'/apps/thematiq/settings/custom-css',
-					{
-						css: `.thematiq-e2e-probe { color: var(${name}, #222); }`,
-						enabled: false,
-					},
-				)
-				expect(written.status, JSON.stringify(written.json)).toBe(200)
-				// The overrides file cannot carry the name: a var() value is
-				// not a colour, and #809 refuses it before anything is written.
-				const refused = await call(
-					page,
-					'POST',
-					'/apps/thematiq/settings/overrides',
-					{
-						overrides: {
-							...overridesBefore,
-							'--color-main-text': `var(${name}, #222)`,
-						},
-						tokenSet: 'amsterdam',
-					},
-				)
-				expect(refused.status, JSON.stringify(refused.json)).toBe(400)
-				expect(Object.keys(refused.json.rejected)).toEqual([
-					'--color-main-text',
-				])
-				const overridesAfter = (
-					await call(
-						page,
-						'GET',
-						'/apps/thematiq/settings/overrides?tokenSet=amsterdam',
-					)
-				).json.overrides
-				expect(overridesAfter ?? {}).toEqual(overridesBefore)
-
-				const again = (await adminList(page)).find(
-					(s) => s.id === foreignSet,
-				)
-				expect(incompleteWarning(again).foreign).toContain(name)
-			} finally {
-				await call(page, 'POST', '/apps/thematiq/settings/custom-css', {
-					css: cssBefore.css ?? '',
-					enabled: cssBefore.enabled === true,
-				})
-				await call(page, 'POST', '/apps/thematiq/settings/overrides', {
-					overrides: overridesBefore,
-					tokenSet: 'amsterdam',
-				})
-			}
-		})
-	})
-
-	// @e2e openspec/specs/token-sets/spec.md#token-names-are-matched-case-sensitively-but-not-case-restrictively
-	test('a camelCase --nldesign-* name is recognised, kept as written, and reported', async ({
-		page,
-	}) => {
-		const found = TOKEN_FILES.map((id) => ({
-			id,
-			name: Object.keys(nldesignDeclarations(tokenCss(id))).find((n) =>
-				/[A-Z]/.test(n),
-			),
-		})).find((x) => x.name !== undefined && ALLOWLIST.includes(x.id)) as {
-			id: string
-			name: string
-		}
-		expect(
-			found,
-			'a shipped set declaring a camelCase --nldesign-* name',
-		).toBeTruthy()
-		await openSettings(page)
-		await withEntries(page, [found.id], async (byId) => {
-			const foreign: string[] = incompleteWarning(byId[found.id]).foreign
-			expect(expectedForeign(found.id)).toContain(found.name)
-			expect(foreign).toContain(found.name)
-			expect(foreign).not.toContain(found.name.toLowerCase())
-		})
-	})
-
-	// @e2e openspec/specs/token-sets/spec.md#a-primary-colour-that-disagrees-with-the-manifest-is-a-mismatch
-	test('a CSS primary that disagrees with the manifest is a mismatch, compared normalised', async ({
-		page,
-	}) => {
-		const mismatched = MANIFEST.find((e) => {
-			const css = normaliseHex(
-				nldesignDeclarations(tokenCss(e.id))['--nldesign-color-primary'],
-			)
-			const declared = normaliseHex(e.theming?.primary_color)
-			return css !== null && declared !== null && css !== declared
-		}) as ManifestEntry
-		expect(
-			mismatched,
-			'a shipped set whose CSS primary disagrees with its manifest',
-		).toBeTruthy()
-		const cssValue = nldesignDeclarations(tokenCss(mismatched.id))[
-			'--nldesign-color-primary'
-		]
-		// And one that agrees once normalised, but not as written.
-		const agreeing = MANIFEST.find((e) => {
-			const raw = nldesignDeclarations(tokenCss(e.id))[
-				'--nldesign-color-primary'
-			]
-			return (
-				raw !== undefined
-				&& raw !== e.theming?.primary_color
-				&& normaliseHex(raw) !== null
-				&& normaliseHex(raw) === normaliseHex(e.theming?.primary_color)
-			)
-		})
-		await openSettings(page)
-		const ids =
-			agreeing === undefined ? [mismatched.id] : [mismatched.id, agreeing.id]
-		await withEntries(page, ids, async (byId) => {
-			const w = incompleteWarning(byId[mismatched.id])
-			expect(w.primaryMismatch).toBe(true)
-			expect(w.declaredPrimary).toBe(
-				normaliseHex(mismatched.theming?.primary_color),
-			)
-			expect(w.cssPrimary).toBe(normaliseHex(cssValue))
-			if (agreeing !== undefined) {
-				expect(
-					incompleteWarning(byId[agreeing.id])?.primaryMismatch ?? false,
-				).toBe(false)
-			}
-		})
-	})
-
-	// @e2e openspec/specs/token-sets/spec.md#an-absent-or-non-literal-primary-is-not-double-reported-as-a-mismatch
-	test('a set without a literal primary reports it missing, not mismatched', async ({
-		page,
-	}) => {
-		const absent = ALLOWLIST.find(
-			(id) =>
-				nldesignDeclarations(tokenCss(id))['--nldesign-color-primary']
-					=== undefined
-				&& manifestEntry(id).theming?.primary_color !== undefined,
-		) as string
-		expect(
-			absent,
-			'an allow-listed set without --nldesign-color-primary',
-		).toBeTruthy()
-		await openSettings(page)
-		await withEntries(page, [absent], async (byId) => {
-			const w = incompleteWarning(byId[absent])
-			expect(w.missing).toContain('--nldesign-color-primary')
-			expect(w.primaryMismatch).toBe(false)
-		})
-	})
-
 	// @e2e openspec/specs/token-sets/spec.md#a-set-whose-design-system-reads-no-nldesign-name-is-not-auditable
 	test('sets of systems that read no --nldesign-* name are not audited; bridged systems are', async ({
 		page,
 	}) => {
+		// Summer Breeze reads a vocabulary of its own, never an --nldesign-* name.
 		const summer =
 			DESIGN_SYSTEMS.find((d) => d.id === 'summer-breeze')?.stylesheets ?? []
 		for (const s of summer)
 			expect(readRepoFile(`css/${s}.css`)).not.toMatch(/--nldesign-/)
-		const bridged = ['hoog-contrast', 'lasuite', 'cunningham'].filter((id) =>
-			ALLOWLIST.includes(id),
-		)
-		expect(bridged.length).toBeGreaterThan(0)
+
+		// The bridged systems DO read the vocabulary, so their sets are audited
+		// like any nldesign set.
+		for (const system of ['high-contrast', 'lasuite']) {
+			const sheets =
+				DESIGN_SYSTEMS.find((d) => d.id === system)?.stylesheets ?? []
+			expect(sheets.length, `${system} has stylesheets`).toBeGreaterThan(0)
+			expect(
+				sheets.some((s) =>
+					/var\(\s*--nldesign-/.test(readRepoFile(`css/${s}.css`)),
+				),
+				`${system} reads the --nldesign-* vocabulary`,
+			).toBe(true)
+		}
+
+		// The contract since every shipped set was completed (#1006, #1008):
+		// the allow-list of known-incomplete sets is empty, so no set is exempt
+		// from the audit. This test used to pick its bridged subjects FROM the
+		// allow-list and expect an incomplete warning on them; with the list
+		// empty it found none and failed on `bridged.length > 0`.
+		expect(ALLOWLIST).toEqual([])
+
+		// Live: audited and complete, so none of them carries the warning. That
+		// an incomplete set DOES carry it is held by the PHPUnit gate
+		// (TokenSetVocabularyTest::testAuditDistinguishesCompleteFromIncompleteSets).
+		const ids = [
+			'summer-breeze',
+			'nextcloud',
+			'hoog-contrast',
+			'lasuite',
+			'cunningham',
+		]
 		await openSettings(page)
-		await withEntries(
-			page,
-			['summer-breeze', 'nextcloud', ...bridged],
-			async (byId) => {
-				expect(incompleteWarning(byId['summer-breeze'])).toBeUndefined()
-				expect(incompleteWarning(byId.nextcloud)).toBeUndefined()
-				for (const id of bridged)
-					expect(
-						incompleteWarning(byId[id]),
-						`${id} is audited`,
-					).toBeTruthy()
-			},
-		)
+		await withEntries(page, ids, async (byId) => {
+			for (const id of ids) {
+				expect(byId[id], `${id} is listed`).toBeTruthy()
+				expect(
+					incompleteWarning(byId[id]),
+					`${id} carries no incomplete warning`,
+				).toBeUndefined()
+			}
+		})
+	})
+
+	// @e2e openspec/specs/token-sets/spec.md#a-complete-summer-breeze-set-raises-no-incomplete-warning-in-the-admin-dropdown
+	test('summer-breeze is audited against its own vocabulary and carries no incomplete warning', async ({
+		page,
+	}) => {
+		// The audit reads the same files the server reads: every --summer-*
+		// name the system's stylesheets read, and do not declare themselves,
+		// is declared by its token file. A name a stylesheet declares (the
+		// focus ring's --summer-focus-ring-color) is a local, not a token, and
+		// the server's audit leaves it out too (TokenSetVocabularyAuditService:
+		// "read through var() and no such layer declares").
+		const reads = new Set<string>()
+		const local = new Set<string>()
+		for (const s of DESIGN_SYSTEMS.find((d) => d.id === 'summer-breeze')
+			?.stylesheets ?? []) {
+			const css = readRepoFile(`css/${s}.css`).replace(/\/\*[\s\S]*?\*\//g, '')
+			for (const m of css.matchAll(/var\(\s*(--summer-[A-Za-z0-9_-]+)/g))
+				reads.add(m[1])
+			for (const m of css.matchAll(/(--summer-[A-Za-z0-9_-]+)\s*:/g))
+				local.add(m[1])
+		}
+		for (const name of local) reads.delete(name)
+		expect(reads.size).toBeGreaterThan(10)
+		const declared = tokenCss('summer-breeze')
+		for (const name of reads)
+			expect(declared, `summer-breeze declares ${name}`).toMatch(
+				new RegExp(`${name}\\s*:`),
+			)
+		await openSettings(page)
+		await withEntries(page, ['summer-breeze'], async (byId) => {
+			expect(byId['summer-breeze'], 'summer-breeze is listed').toBeTruthy()
+			expect(incompleteWarning(byId['summer-breeze'])).toBeUndefined()
+		})
 	})
 
 	// -----------------------------------------------------------------------
@@ -1864,151 +1675,6 @@ test.describe('token-sets', () => {
 			}
 		})
 	}
-
-	const INCOMPLETE_SET = ALLOWLIST.find(
-		(id) => designSystemOf(id) === 'nldesign',
-	) as string
-
-	// @e2e openspec/specs/token-sets/spec.md#selecting-an-incomplete-set-shows-the-incomplete-set-badge
-	test('selecting an incomplete set shows the badge with its findings; a complete one hides it', async ({
-		page,
-	}) => {
-		await openSettings(page)
-		await withOffered(page, [INCOMPLETE_SET, COMPLETE_SET], async () => {
-			const token = await requestToken(page)
-			const previous = await getTokenSet(page, token)
-			try {
-				// selectOption only fires `change` when the value changes.
-				if (previous === INCOMPLETE_SET || previous === COMPLETE_SET) {
-					await setTokenSet(page, token, 'nextcloud')
-				}
-				await openSettings(page)
-				const w = incompleteWarning(
-					(await adminList(page)).find((s) => s.id === INCOMPLETE_SET),
-				)
-				expect(
-					w,
-					`${INCOMPLETE_SET} carries a vocabulary finding`,
-				).toBeTruthy()
-				// One certain token difference, so each selection opens the apply
-				// dialog and nothing is saved before it is confirmed.
-				await page.route(
-					/\/apps\/thematiq\/settings\/tokenset-preview\//,
-					(route: Route) =>
-						route.fulfill({
-							json: {
-								resolved: { '--thematiq-e2e-probe': '#010203' },
-							},
-						}),
-				)
-				const select = page.locator('#nldesign-token-set-select')
-				const badge = page.locator('#nldesign-token-set-completeness-badge')
-				const dialog = page.locator('#nldesign-apply-dialog-overlay')
-
-				await select.selectOption(INCOMPLETE_SET)
-				await expect(badge).toBeVisible()
-				await expect(badge).toHaveText('Incomplete set')
-				const title = (await badge.getAttribute('title')) ?? ''
-				if (w.missing.length > 0) expect(title).toContain(w.missing[0])
-				if (w.foreign.length > 0) expect(title).toContain(w.foreign[0])
-				if (w.primaryMismatch === true) expect(title).toContain(w.cssPrimary)
-				// Next to the design-system badge.
-				const sameRow = await page.evaluate(
-					() =>
-						document.getElementById(
-							'nldesign-token-set-completeness-badge',
-						)?.parentElement
-						=== document.getElementById('nldesign-design-system-badge')
-							?.parentElement,
-				)
-				expect(sameRow).toBe(true)
-				await dialog.locator('.nldesign-dialog-cancel').click()
-				await expect(dialog).toHaveCount(0)
-
-				await select.selectOption(COMPLETE_SET)
-				await expect(badge).toBeHidden()
-				await dialog.locator('.nldesign-dialog-cancel').click()
-			} finally {
-				await page.unrouteAll({ behavior: 'ignoreErrors' })
-				await setTokenSet(page, token, previous)
-			}
-		})
-	})
-
-	// @e2e openspec/specs/token-sets/spec.md#the-apply-dialog-explains-the-fallback
-	test('the apply dialog explains the fallback in its own banner and still applies', async ({
-		page,
-	}) => {
-		await selectIntoApplyDialog(page, INCOMPLETE_SET, async () => {
-			const dialog = page.locator('#nldesign-apply-dialog-overlay')
-			await expect(dialog).toBeVisible({ timeout: 15_000 })
-			const banner = dialog.locator('.nldesign-contrast-warning', {
-				hasText: 'Incomplete set',
-			})
-			await expect(banner).toHaveCount(1)
-			await expect(banner).toContainText(
-				'fall back to the Rijkshuisstijl defaults',
-			)
-			await expect(banner).not.toContainText('WCAG 2.1 AA contrast warning')
-			await expect(dialog.locator('.nldesign-dialog-confirm')).toBeEnabled()
-			await dialog.locator('.nldesign-dialog-cancel').click()
-		})
-	})
-
-	// @e2e openspec/specs/token-sets/spec.md#the-vocabulary-finding-is-distinguishable-from-a-contrast-finding
-	test('the vocabulary finding has its own kind and shape; contrast findings have none', async ({
-		page,
-	}) => {
-		await openSettings(page)
-		// Every allow-listed set: each carries the vocabulary entry, and any
-		// contrast entries beside it keep the contrast shape.
-		const ids = ALLOWLIST.filter((id) => TOKEN_FILES.includes(id))
-		await withEntries(page, ids, async (byId) => {
-			let both: string | undefined
-			for (const id of ids) {
-				const warnings: any[] = byId[id]?.warnings ?? []
-				const vocab = warnings.filter((w) => w.kind === 'incomplete')
-				expect(vocab.length, `${id} has one vocabulary entry`).toBe(1)
-				expect(Object.keys(vocab[0]).sort()).toEqual(
-					[
-						'cssPrimary',
-						'declaredPrimary',
-						'foreign',
-						'kind',
-						'missing',
-						'primaryMismatch',
-					].sort(),
-				)
-				const contrast = warnings.filter((w) => w.kind !== 'incomplete')
-				for (const c of contrast) {
-					expect('kind' in c).toBe(false)
-					expect(typeof c.pair).toBe('string')
-				}
-				if (contrast.length > 0 && both === undefined) both = id
-			}
-			expect(
-				both,
-				'an allow-listed set with a contrast warning as well',
-			).toBeTruthy()
-
-			// In the dialog, the contrast banner lists only contrast pairs.
-			await selectIntoApplyDialog(page, both as string, async () => {
-				const dialog = page.locator('#nldesign-apply-dialog-overlay')
-				await expect(dialog).toBeVisible({ timeout: 15_000 })
-				const contrastBanner = dialog.locator('.nldesign-contrast-warning', {
-					hasText: 'WCAG 2.1 AA contrast warning',
-				})
-				await expect(contrastBanner).toHaveCount(1)
-				await expect(contrastBanner.locator('li')).toHaveCount(
-					(byId[both as string].warnings as any[]).filter(
-						(w) => w.kind !== 'incomplete',
-					).length,
-				)
-				await expect(contrastBanner).not.toContainText('Incomplete set')
-				await dialog.locator('.nldesign-dialog-cancel').click()
-			})
-		})
-	})
 
 	// @e2e openspec/specs/token-sets/spec.md#the-custom-set-list-badge-has-three-states-ranked
 	test('the custom-set list badge ranks incomplete over contrast over OK', async ({

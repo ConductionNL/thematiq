@@ -352,8 +352,14 @@ body,
  * `-rgb` triplet, the same colour. The `/ 1` matters: relative colour syntax
  * keeps the origin's alpha otherwise. Derived on the focused element, not on
  * :root, so a dark variant's body-level focus token is the one it reads.
- * tests/vitest/focusRingContrast.spec.js resolves both. */
-*:focus-visible {
+ * tests/vitest/focusRingContrast.spec.js resolves both.
+ *
+ * The second selector is for NcButton: its scoped `.button-vue[data-v-…]:focus-visible`
+ * ring is `!important` at 0,3,0 and beat `*:focus-visible`, so buttons kept
+ * Nextcloud's 2px ring in the main text colour (#1050). The doubled class and
+ * `body` reach 0,3,1. tests/vitest/buttonFocusRing.spec.js holds every system. */
+*:focus-visible,
+body .button-vue.button-vue:focus-visible {
 	--nldesign-focus-ring-color: rgb(var(--nldesign-color-focus-rgb));
 
 	outline: 2px solid var(--nldesign-focus-ring-color) !important;
@@ -398,6 +404,20 @@ body,
 		   and vice versa, otherwise both collapse to the same end of the ramp. */
 		--color-text-light: var(--lasuite-color-gray-050) !important;
 		--color-text-lighter: var(--lasuite-color-gray-300) !important;
+		/* The grounds those texts sit on, with Cunningham's own dark values
+		   (defaults.css `.cunningham-theme--dark`): neutral tertiary, secondary
+		   and primary-hover, and the surface border. Left on the light steps,
+		   an NcActions item hovered to #f0f0f3 under #f0f0f3 text (#1024). */
+		--color-background-hover: var(
+			--lasuite--globals--colors--gray-750
+		) !important;
+		--color-background-dark: var(
+			--lasuite--globals--colors--gray-700
+		) !important;
+		--color-background-darker: var(
+			--lasuite--globals--colors--gray-650
+		) !important;
+		--color-border: var(--lasuite--globals--colors--gray-750) !important;
 	}
 }
 
@@ -407,4 +427,8 @@ body[data-themes*='dark'] {
 	--color-text-maxcontrast: var(--lasuite-color-gray-200) !important;
 	--color-text-light: var(--lasuite-color-gray-050) !important;
 	--color-text-lighter: var(--lasuite-color-gray-300) !important;
+	--color-background-hover: var(--lasuite--globals--colors--gray-750) !important;
+	--color-background-dark: var(--lasuite--globals--colors--gray-700) !important;
+	--color-background-darker: var(--lasuite--globals--colors--gray-650) !important;
+	--color-border: var(--lasuite--globals--colors--gray-750) !important;
 }

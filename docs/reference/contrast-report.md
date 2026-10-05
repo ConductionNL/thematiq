@@ -9,7 +9,13 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 
 - **primary/text** = `--nldesign-color-primary` vs `--nldesign-color-primary-text` (AA text threshold 4.5:1)
 - **primary/bg** = `--nldesign-color-primary` vs the set background (AA UI threshold 3.0:1)
-- `unevaluated` = a pair whose colours are not literal (e.g. `var()`); never treated as passing.
+- The set background is the first of: the set's own `--nldesign-color-background`,
+  `defaults.css`, the manifest `theming.background_color`, then the white page
+  `#ffffff` the public bridge and the converter mapping already assume.
+- A `var(--token)` value is followed through the same cascade a browser would read,
+  up to four hops.
+- `unevaluated` = a pair one of whose colours still is not a colour after that
+  resolution; never treated as passing.
 
 | Token set | primary/text | text ≥ | primary/bg | bg ≥ | Verdict |
 |-----------|-------------:|:------:|-----------:|:----:|:-------:|
@@ -17,7 +23,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | bodegraven-reeuwijk | 5.57:1 | 4.5:1 | 5.57:1 | 3.0:1 | pass |
 | borne | 13.16:1 | 4.5:1 | 13.16:1 | 3.0:1 | pass |
 | buren | 5.35:1 | 4.5:1 | 5.35:1 | 3.0:1 | pass |
-| conduction-new | — | 4.5:1 | — | 3.0:1 | unevaluated |
+| conduction-new | 9.08:1 | 4.5:1 | 9.08:1 | 3.0:1 | pass |
 | cunningham | 7.80:1 | 4.5:1 | 6.02:1 | 3.0:1 | pass |
 | demodam | 4.60:1 | 4.5:1 | 4.56:1 | 3.0:1 | pass |
 | denhaag | 5.39:1 | 4.5:1 | 5.39:1 | 3.0:1 | pass |
@@ -26,7 +32,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | duiven | 7.13:1 | 4.5:1 | 7.13:1 | 3.0:1 | pass |
 | duo | 7.93:1 | 4.5:1 | 7.93:1 | 3.0:1 | pass |
 | enkhuizen | 7.23:1 | 4.5:1 | 7.23:1 | 3.0:1 | pass |
-| enschede | 4.88:1 | 4.5:1 | — | 3.0:1 | unevaluated |
+| enschede | 4.88:1 | 4.5:1 | 4.88:1 | 3.0:1 | pass |
 | epe | 7.60:1 | 4.5:1 | 7.60:1 | 3.0:1 | pass |
 | example-basisschool | 6.07:1 | 4.5:1 | 6.07:1 | 3.0:1 | pass |
 | example-college | 9.34:1 | 4.5:1 | 9.34:1 | 3.0:1 | pass |
@@ -37,38 +43,39 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | groningen | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | haarlem | 7.19:1 | 4.5:1 | 7.19:1 | 3.0:1 | pass |
 | haarlemmermeer | 4.63:1 | 4.5:1 | 4.54:1 | 3.0:1 | pass |
-| hoeksche-waard | 4.56:1 | 4.5:1 | — | 3.0:1 | unevaluated |
+| hoeksche-waard | 4.56:1 | 4.5:1 | 4.56:1 | 3.0:1 | pass |
 | hoog-contrast | 21.00:1 | 7.0:1 | 21.00:1 | 4.5:1 | pass |
 | hoorn | 11.96:1 | 4.5:1 | 11.96:1 | 3.0:1 | pass |
 | horstaandemaas | 6.64:1 | 4.5:1 | 6.64:1 | 3.0:1 | pass |
 | lasuite | 7.76:1 | 4.5:1 | 7.76:1 | 3.0:1 | pass |
 | leiden | 5.10:1 | 4.5:1 | 5.10:1 | 3.0:1 | pass |
 | leidschendam-voorburg | 15.67:1 | 4.5:1 | 15.67:1 | 3.0:1 | pass |
-| losser | 6.07:1 | 4.5:1 | — | 3.0:1 | unevaluated |
+| losser | 6.07:1 | 4.5:1 | 6.07:1 | 3.0:1 | pass |
 | nijmegen | 5.10:1 | 4.5:1 | 5.10:1 | 3.0:1 | pass |
 | noaberkracht | 4.50:1 | 4.5:1 | 4.50:1 | 3.0:1 | pass |
 | noordoostpolder | 4.56:1 | 4.5:1 | 4.61:1 | 3.0:1 | pass |
 | noordwijk | 13.15:1 | 4.5:1 | 12.18:1 | 3.0:1 | pass |
-| nora | 13.86:1 | 4.5:1 | — | 3.0:1 | unevaluated |
+| nora | 13.86:1 | 4.5:1 | 13.86:1 | 3.0:1 | pass |
 | opencatalogi | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |
 | provincie-zuid-holland | 5.82:1 | 4.5:1 | 5.82:1 | 3.0:1 | pass |
-| purmerend | 4.60:1 | 4.5:1 | — | 3.0:1 | unevaluated |
+| purmerend | 4.60:1 | 4.5:1 | 4.60:1 | 3.0:1 | pass |
 | riddeliemers | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | ridderkerk | 4.63:1 | 4.5:1 | 4.53:1 | 3.0:1 | pass |
 | rijkshuisstijl | 10.20:1 | 4.5:1 | 9.43:1 | 3.0:1 | pass |
 | rotterdam | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |
 | stedebroec | 8.45:1 | 4.5:1 | 8.45:1 | 3.0:1 | pass |
-| summer-breeze | 10.20:1 | 4.5:1 | 9.03:1 | 3.0:1 | pass |
+| summer-breeze | 9.08:1 | 4.5:1 | 8.47:1 | 3.0:1 | pass |
 | tilburg | 12.61:1 | 4.5:1 | 12.61:1 | 3.0:1 | pass |
 | tubbergen | 5.91:1 | 4.5:1 | 5.91:1 | 3.0:1 | pass |
 | utrecht | 7.41:1 | 4.5:1 | 7.41:1 | 3.0:1 | pass |
 | venray | 4.94:1 | 4.5:1 | 4.94:1 | 3.0:1 | pass |
-| vng | 11.98:1 | 4.5:1 | 2.50:1 | 3.0:1 | fail |
+| vng | 11.98:1 | 4.5:1 | 11.98:1 | 3.0:1 | pass |
 | vught | 4.62:1 | 4.5:1 | 4.55:1 | 3.0:1 | pass |
 | westervoort | 11.30:1 | 4.5:1 | 11.30:1 | 3.0:1 | pass |
 | xxllnc | 11.24:1 | 4.5:1 | 14.16:1 | 3.0:1 | pass |
-| zaanstad | 5.23:1 | 4.5:1 | — | 3.0:1 | unevaluated |
+| zaanstad | 5.23:1 | 4.5:1 | 5.23:1 | 3.0:1 | pass |
 | zevenaar | 5.70:1 | 4.5:1 | 5.70:1 | 3.0:1 | pass |
+| zuiddrecht | 5.64:1 | 4.5:1 | 5.22:1 | 3.0:1 | pass |
 | zwolle | 5.06:1 | 4.5:1 | 5.06:1 | 3.0:1 | pass |
 
 ## Den Haag component pairs
@@ -139,5 +146,6 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | xxllnc | 15 | 0 | 0 |  |
 | zaanstad | 15 | 0 | 0 |  |
 | zevenaar | 15 | 0 | 0 |  |
+| zuiddrecht | 15 | 0 | 0 |  |
 | zwolle | 15 | 0 | 0 |  |
 

@@ -28,15 +28,26 @@
 
 /* NcButton type="error" and NcChip variant="error" both render
    `background: var(--color-error); color: var(--color-error-text)`.
-   The button reads its own label token first, so an admin who sets one — a
-   dark label on a theme whose error colour is pale — is not overruled here. */
-.button-vue--vue-error,
-.button-vue--error {
-	color: var(--nldesign-component-button-error-color, #fff) !important;
-}
+   Both read one label token first, so an admin who sets one (a dark label on
+   a theme whose error colour is pale) is not overruled here. Every generated
+   dark variant declares it, because white fails on the lighter red a dark
+   variant derives (thematiq#1027); light mode leaves it out and gets white.
 
+   The label itself is a <span> inside the fill, and nldesign's
+   element-overrides.css paints every span with
+   `var(--nldesign-color-on-surface, ...) !important`, so the colour above never
+   reached it. Setting the opt-out property on the fill hands the same label to
+   every descendant (found live on Nextcloud 35: the label read the page text
+   colour, near-white on the dark red and black on the light red). */
+.button-vue--vue-error,
+.button-vue--error,
 .nc-chip--error {
-	color: #fff !important;
+	--nldesign-color-on-surface: var(
+		--nldesign-component-button-error-color,
+		#fff
+	) !important;
+
+	color: var(--nldesign-component-button-error-color, #fff) !important;
 }
 
 /**

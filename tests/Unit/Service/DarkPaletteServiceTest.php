@@ -490,6 +490,30 @@ class DarkPaletteServiceTest extends TestCase {
 	}//end testTheRepairLoopFixesControlLabels()
 
 	/**
+	 * The body text reads on the selected navigation entry's wash (thematiq#1051).
+	 *
+	 * Nextcloud 34+ paints the selected entry as 16% of the primary colour
+	 * over its dark navigation (#171717), 22% hovered, with the label in the
+	 * main text colour. These are conduction-new's dark values: #7499de read
+	 * 6.4:1 on the page but 4.37:1 on the wash, and 3.70:1 hovered.
+	 */
+	public function testTheRepairLoopFixesTheTextOnTheSelectedNavigationWash(): void {
+		$result = $this->service->verifyAndRepair(
+			[
+				'--nldesign-color-background' => '#141414',
+				'--nldesign-color-primary' => '#bcceef',
+				'--nldesign-color-text' => '#7499de',
+			]
+		);
+
+		$this->assertSame([], $result['warnings']);
+		$text = $result['declarations']['--nldesign-color-text'];
+		foreach (['16%' => '#31343a', '22%' => '#3b3f47'] as $share => $wash) {
+			$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $text, background: $wash), $text . ' on the ' . $share . ' wash ' . $wash);
+		}
+	}//end testTheRepairLoopFixesTheTextOnTheSelectedNavigationWash()
+
+	/**
 	 * A mid-tone page background still derives to a dark page (thematiq#952).
 	 *
 	 * vng's theming background_color #0277BD stood in for the page background
@@ -682,6 +706,53 @@ class DarkPaletteServiceTest extends TestCase {
 	}//end testGenerateForSetHandAuthoredOverrideWins()
 
 	/**
+	 * The dark variant gives the error label a colour that reads on the
+	 * derived error fill (thematiq#1027). error-contrast.css paints the error
+	 * chip and button label from `--nldesign-component-button-error-color`,
+	 * falling back to white; white on the lighter red a dark variant derives
+	 * from #d70d0d (#e72e2e) is 4.35:1, and so is near-black #111111.
+	 */
+	public function testGenerateForSetGivesTheErrorLabelAReadableColour(): void {
+		file_put_contents(
+			$this->appDir . '/token-sets.json',
+			json_encode([['id' => 'example', 'design_system' => 'nldesign']])
+		);
+		file_put_contents(
+			$this->appDir . '/css/tokens/example.css',
+			":root {\n\t--nldesign-color-background: #ffffff;\n\t--nldesign-color-error: #d70d0d;\n}\n"
+		);
+
+		$generated = $this->service->generateForSet(setId: 'example');
+
+		$this->assertNotNull($generated);
+		$fill = [];
+		$label = [];
+		$this->assertSame(1, preg_match('/--nldesign-color-error: (#[0-9a-f]{6});/', $generated['css'], $fill));
+		$this->assertSame(1, preg_match('/--nldesign-component-button-error-color: (#[0-9a-f]{6});/', $generated['css'], $label), 'no error label in the dark variant');
+		$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $label[1], background: $fill[1]));
+	}//end testGenerateForSetGivesTheErrorLabelAReadableColour()
+
+	/**
+	 * A label the set chooses itself is kept when it reads, never replaced.
+	 */
+	public function testGenerateForSetKeepsAReadableHandAuthoredErrorLabel(): void {
+		file_put_contents(
+			$this->appDir . '/token-sets.json',
+			json_encode([['id' => 'example', 'design_system' => 'nldesign']])
+		);
+		file_put_contents(
+			$this->appDir . '/css/tokens/example.css',
+			":root {\n\t--nldesign-color-error: #d70d0d;\n}\n\n"
+			. "@media (prefers-color-scheme: dark) {\n\t:root {\n\t\t--nldesign-color-error: #ff9999;\n\t\t--nldesign-component-button-error-color: #1a0000;\n\t}\n}\n"
+		);
+
+		$generated = $this->service->generateForSet(setId: 'example');
+
+		$this->assertNotNull($generated);
+		$this->assertStringContainsString('--nldesign-component-button-error-color: #1a0000;', $generated['css']);
+	}//end testGenerateForSetKeepsAReadableHandAuthoredErrorLabel()
+
+	/**
 	 * `generateForSet()` returns null for an ineligible design system
 	 * (`none`) — no dark output is built at all.
 	 */
@@ -796,6 +867,126 @@ class DarkPaletteServiceTest extends TestCase {
 	}//end testLogoDarkEmitsRelativeLogoUrlOverride()
 
 	/**
+	 * A band that is already dark in light mode is left out of the dark
+	 * variant, surface and text together, so the light values keep applying
+	 * (thematiq#1021). Inverted, La Frankendesk's #1b1b23 footer became
+	 * #cbcbd6 under a #9e9e9e label.
+	 */
+	public function testAnAlreadyDarkFooterKeepsItsLightValues(): void {
+		$derived = $this->service->deriveDarkDeclarations(
+			[
+				'--nldesign-color-background' => '#ffffff',
+				'--nldesign-color-footer-background' => '#1b1b23',
+				'--nldesign-color-footer-text' => '#ffffff',
+				'--frankendesk-footer-link-color' => '#c5c6d5',
+				'--frankendesk-footer-brand-color' => 'rgba(255, 255, 255, 0.75)',
+			]
+		);
+
+		$this->assertArrayHasKey('--nldesign-color-background', $derived);
+		foreach (['--nldesign-color-footer-background', '--nldesign-color-footer-text', '--frankendesk-footer-link-color', '--frankendesk-footer-brand-color'] as $token) {
+			$this->assertArrayNotHasKey($token, $derived, $token . ' belongs to a dark footer and must keep its light value');
+		}
+	}//end testAnAlreadyDarkFooterKeepsItsLightValues()
+
+	/**
+	 * A light footer still derives dark, and an alias to a dark literal
+	 * counts as dark (conduction-new's `var(--c-cobalt-900)`).
+	 */
+	public function testOnlyAnAlreadyDarkFooterIsLeftAlone(): void {
+		$light = $this->service->deriveDarkDeclarations(
+			[
+				'--nldesign-color-footer-background' => '#f3f3f3',
+				'--nldesign-color-footer-text' => '#333333',
+			]
+		);
+		$this->assertArrayHasKey('--nldesign-color-footer-background', $light);
+		$this->assertArrayHasKey('--nldesign-color-footer-text', $light);
+
+		$aliased = $this->service->deriveDarkDeclarations(
+			[
+				'--c-cobalt-900' => '#0a172f',
+				'--nldesign-color-footer-background' => 'var(--c-cobalt-900)',
+				'--nldesign-color-footer-text' => '#ffffff',
+			]
+		);
+		$this->assertArrayNotHasKey('--nldesign-color-footer-background', $aliased);
+		$this->assertArrayNotHasKey('--nldesign-color-footer-text', $aliased);
+	}//end testOnlyAnAlreadyDarkFooterIsLeftAlone()
+
+	/**
+	 * The hero band's foregrounds are repaired against the primary fill they
+	 * sit on, a light footer's text against its derived surface, and the
+	 * semantic link colour and its hover against the page.
+	 */
+	public function testTheRepairLoopFixesTheHeroAndFooterForegrounds(): void {
+		$result = $this->service->verifyAndRepair(
+			[
+				'--nldesign-color-background' => '#141414',
+				'--nldesign-color-primary' => '#9c99d7',
+				'--nldesign-color-primary-text' => '#111111',
+				'--nldesign-hero-title-color' => '#9e9e9e',
+				'--nldesign-hero-body-color' => '#6984d3',
+				'--nldesign-color-footer-background' => '#cbcbd6',
+				'--nldesign-color-footer-text' => '#9e9e9e',
+				'--nldesign-color-link' => '#5956b5',
+				'--nldesign-color-link-hover' => '#460ce1',
+			]
+		);
+
+		$this->assertSame([], $result['warnings']);
+		$d = $result['declarations'];
+		foreach ([
+			['--nldesign-hero-title-color', '--nldesign-color-primary'],
+			['--nldesign-hero-body-color', '--nldesign-color-primary'],
+			['--nldesign-color-footer-text', '--nldesign-color-footer-background'],
+			['--nldesign-color-link', '--nldesign-color-background'],
+			['--nldesign-color-link-hover', '--nldesign-color-background'],
+		] as [$fg, $bg]) {
+			$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]), $fg . ' on ' . $bg);
+		}
+	}//end testTheRepairLoopFixesTheHeroAndFooterForegrounds()
+
+	/**
+	 * La Frankendesk's own bands read in its generated dark variant: the
+	 * footer foregrounds on the footer, the hero foregrounds on the primary
+	 * fill, its links on the page (thematiq#1021). Measured against the real tree, with the light
+	 * declarations underneath for every token the variant leaves out.
+	 *
+	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 */
+	public function testFrankendeskBandsReadInItsGeneratedDarkVariant(): void {
+		$realAppRoot = dirname(__DIR__, 3);
+		$service = $this->makeService(appDir: $realAppRoot);
+		$generated = $service->generateForSet(setId: 'frankendesk');
+		$this->assertNotNull($generated);
+
+		$parser = new CssParserService();
+		$light = ($parser->parseDeclarations(content: (string)file_get_contents($realAppRoot . '/css/tokens/frankendesk.css')) ?? []);
+		$this->assertSame(1, preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\]\s*\{([^}]*)\}/', $generated['css'], $block));
+		$dark = array_merge($light, ($parser->parseDeclarations(content: $block[1]) ?? []));
+
+		$pairs = [
+			['--nldesign-color-footer-text', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-wordmark-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-brand-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-heading-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-link-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-legal-color', '--nldesign-color-footer-background'],
+			['--frankendesk-footer-legal-link-color', '--nldesign-color-footer-background'],
+			['--nldesign-hero-title-color', '--nldesign-color-primary'],
+			['--nldesign-hero-body-color', '--nldesign-color-primary'],
+			['--nldesign-color-link', '--nldesign-color-background'],
+			['--nldesign-color-link-hover', '--nldesign-color-background'],
+		];
+		foreach ($pairs as [$fg, $bg]) {
+			$ratio = $this->contrast->measure(foreground: $dark[$fg], background: $dark[$bg]);
+			$this->assertNotNull($ratio, $fg);
+			$this->assertGreaterThanOrEqual(4.5, $ratio, $fg . ' ' . $dark[$fg] . ' on ' . $bg . ' ' . $dark[$bg]);
+		}
+	}//end testFrankendeskBandsReadInItsGeneratedDarkVariant()
+
+	/**
 	 * Real shipped-set integration: `rijkshuisstijl` and `amsterdam`'s
 	 * generated dark declarations pass every evaluable ContrastService pair
 	 * at its AA threshold — the verification-loop contract, exercised
@@ -833,6 +1024,8 @@ class DarkPaletteServiceTest extends TestCase {
 		return [
 			'rijkshuisstijl' => ['rijkshuisstijl'],
 			'amsterdam' => ['amsterdam'],
+			'frankendesk' => ['frankendesk'],
+			'conduction-new' => ['conduction-new'],
 		];
 	}//end shippedSetProvider()
 }//end class

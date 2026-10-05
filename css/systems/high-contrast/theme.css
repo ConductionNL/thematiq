@@ -5,7 +5,10 @@
  * --nldesign-* values from css/tokens/hoog-contrast.css, so the black-on-white
  * theme cascades through core and every Cn* component without touching source.
  *
- * Load order: fonts -> theme -> element-overrides, then tokens/hoog-contrast.
+ * Load order: fonts -> theme -> element-overrides, then tokens/hoog-contrast,
+ * then tokens/dark/hoog-contrast. The dark variant only redefines --nldesign-*
+ * values on body in the dark scopes, so everything here turns white on black
+ * in Nextcloud's dark and dark-highcontrast themes (thematiq#1023).
  *
  * The @media blocks add EN 301 549 cooperation: prefers-contrast:more strengthens
  * the theme, and forced-colors:active hands control to the OS (Windows High
@@ -41,6 +44,12 @@ body {
 	--color-background-hover: var(--nldesign-color-background-hover) !important;
 	--color-background-dark: var(--nldesign-color-background-dark) !important;
 	--color-background-darker: var(--nldesign-color-background-darker) !important;
+	/* The app shell behind the navigation paints this through a backdrop blur.
+	 * Unmapped it stays Nextcloud's translucent surface over the background
+	 * image (#171717 at 85% in dark), so it is made opaque and the blur is
+	 * dropped, as Nextcloud's own high-contrast themes do (thematiq#1023). */
+	--color-main-background-blur: var(--nldesign-color-background) !important;
+	--filter-background-blur: none !important;
 
 	/* Text — black body text, dark "muted". */
 	--color-main-text: var(--nldesign-color-text) !important;
@@ -103,31 +112,36 @@ body,
 	font-family: var(--nldesign-font-family);
 }
 
-/* Focus — thick black ring. */
-*:focus-visible {
+/* Focus — thick black ring. The `.button-vue` selector beats NcButton's scoped
+ * `!important` ring (0,3,0), which otherwise kept a 2px ring in the border
+ * colour on every button (#1050). */
+*:focus-visible,
+body .button-vue.button-vue:focus-visible {
 	outline: 3px solid var(--nldesign-color-focus) !important;
 	outline-offset: 2px !important;
 }
 
-/* prefers-contrast:more — strengthen focus and borders further. */
+/* prefers-contrast:more: strengthen focus and borders further. Through the
+ * strongest tokens, not literal black, so the dark variant (white on black)
+ * keeps them visible too (thematiq#1023). */
 @media (prefers-contrast: more) {
 	body[data-themes],
 	body {
-		--color-border: #000000 !important;
-		--color-border-dark: #000000 !important;
-		--color-text-maxcontrast: #000000 !important;
+		--color-border: var(--nldesign-color-border-dark) !important;
+		--color-border-dark: var(--nldesign-color-border-dark) !important;
+		--color-text-maxcontrast: var(--nldesign-color-text) !important;
 	}
 
-	*:focus-visible {
-		outline-width: 4px !important;
-	}
+	/* The 4px focus ring lives in element-overrides.css, after the 3px rule it
+	 * has to beat. */
 }
 
 /* forced-colors:active — cooperate with Windows High Contrast Mode. Use CSS
  * system-color keywords and preserve focus/borders/links rather than hardcoding
  * colours the OS overrides. Do NOT set forced-color-adjust:none here. */
 @media (forced-colors: active) {
-	*:focus-visible {
+	*:focus-visible,
+	body .button-vue.button-vue:focus-visible {
 		outline: 3px solid CanvasText !important;
 		outline-offset: 2px !important;
 	}

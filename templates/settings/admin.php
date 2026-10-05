@@ -757,6 +757,50 @@ if ($_['mockUi'] === true) {
 		</label>
 	</div>
 
+	<!-- Workplace layout and brand stripe (openspec/changes/zuiddrecht-workplace-theme).
+	     Each has three states. "Follow the theme" stores nothing: the option then
+	     takes the default the active token set carries in token-sets.json, and a
+	     set that carries none keeps the layout it always had. -->
+	<div class="nldesign-option">
+		<label for="thematiq-workplace-layout">
+			<?php p($l->t('Workplace layout')); ?>
+		</label>
+		<select name="thematiq-workplace-layout" id="thematiq-workplace-layout">
+			<option value="" <?php if (in_array($_['workplaceLayout'], ['default', 'light'], true) === false): ?>selected<?php endif; ?>>
+				<?php p($l->t('Follow the theme')); ?>
+			</option>
+			<option value="default" <?php if ($_['workplaceLayout'] === 'default'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Default')); ?>
+			</option>
+			<option value="light" <?php if ($_['workplaceLayout'] === 'light'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Light top bar')); ?>
+			</option>
+		</select>
+		<p class="settings-hint">
+			<?php p($l->t('The light layout paints the top bar in the main background, with its text color. A theme can turn it on by itself. Your choice here always wins.')); ?>
+		</p>
+	</div>
+
+	<div class="nldesign-option">
+		<label for="thematiq-brand-stripe">
+			<?php p($l->t('Brand stripe under the top bar')); ?>
+		</label>
+		<select name="thematiq-brand-stripe" id="thematiq-brand-stripe">
+			<option value="" <?php if (in_array($_['brandStripe'], ['0', '1'], true) === false): ?>selected<?php endif; ?>>
+				<?php p($l->t('Follow the theme')); ?>
+			</option>
+			<option value="1" <?php if ($_['brandStripe'] === '1'): ?>selected<?php endif; ?>>
+				<?php p($l->t('On')); ?>
+			</option>
+			<option value="0" <?php if ($_['brandStripe'] === '0'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Off')); ?>
+			</option>
+		</select>
+		<p class="settings-hint">
+			<?php p($l->t('Three colors along the bottom edge of the top bar. The theme sets the colors and their ratio.')); ?>
+		</p>
+	</div>
+
 	<!-- Primary drives every component — the deliberate opt-out of per-component
 	     theming (openspec/specs/component-tokens/spec.md). Off by default, and
 	     that is not a behaviour change: with no per-component value stored the

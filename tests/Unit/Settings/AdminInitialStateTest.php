@@ -99,10 +99,13 @@ class AdminInitialStateTest extends TestCase {
 		);
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
-		// getForm() publishes the SELECTABLE list (the narrowed dropdown); the
-		// preview-name lookup still reads the full catalogue.
-		$tokenSetService->method('getSelectableTokenSets')->willReturn(self::TOKEN_SETS);
+		// getForm() publishes the SELECTABLE list, which TokenSetSelectionPolicy
+		// now derives from this catalogue rather than from a second method on the
+		// service — so the real decision runs here instead of being stubbed out.
+		// getAppPath() points at the repository so the policy reads the real
+		// token-sets.json, where both of these ids are named.
 		$tokenSetService->method('getAvailableTokenSets')->willReturn(self::TOKEN_SETS);
+		$tokenSetService->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		$emailThemingService = $this->createMock(EmailThemingService::class);
 		$emailThemingService->method('getState')->willReturn(['state' => 'disabled']);

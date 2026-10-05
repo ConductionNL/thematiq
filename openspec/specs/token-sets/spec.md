@@ -148,7 +148,7 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
 The active token set MUST be stored in Nextcloud's `IConfig` and default to `nextcloud`.
 
 #### Scenario: No token set configured (fresh install)
-@e2e exclude The GIVEN is the app value never having been written. No route clears it (POST /settings/tokenset only writes a valid id), so an instance that has run this suite cannot be put back in that state. tests/Unit/Controller/SettingsControllerEndpointsTest.php::testTheActiveTokenSetDefaultsToStock asserts the default.
+@e2e exclude The GIVEN is the app value never having been written. No route clears it (POST /settings/tokenset only writes a valid id), so an instance that has run this suite cannot be put back in that state. The read route that test covered is gone (#873); the active set is now queried through the public capability. tests/Unit/CapabilitiesTest.php::testDefaultConfigNoTokenSet asserts that with no `token_set` value the capability answers `nextcloud`.
 - GIVEN no value has been set for `nldesign:token_set` in IConfig
 - WHEN the active token set is queried
 - THEN the default value MUST be `'nextcloud'` (stock Nextcloud theming)
@@ -426,18 +426,37 @@ Token set management endpoints MUST be registered in the route configuration.
 - THEN `GET /settings/tokenset-preview/{tokenSetId}` MUST be mapped to `settings#getTokenSetPreview`
 
 ### Requirement: Only Fully Functional Brands Are Selectable
-The admin dropdown MUST offer only the token sets that are fully functional. A set that does not declare the vocabulary the design system reads renders as the `defaults.css` brand rather than its own, and offering it invites an admin to apply a theme that does not do what its name says. Today that leaves `nextcloud` and nothing else: every other shipped brand is still discovered, still served and still in the catalogue, but is not offered for selection until it passes the vocabulary audit.
+The admin dropdown MUST offer every shipped token set that is both NAMED in `token-sets.json` and not reported incomplete by `TokenSetVocabularyAuditService`, plus every admin-imported `custom-*` set. Both conditions MUST be measured at read time rather than held in a hand-written list, so the picker cannot go stale: a set that stops passing the audit stops being offered with no code change, and a set that starts passing is offered with no code change either.
 
-Narrowing a picker MUST NOT be able to change what an instance is doing, so three ids survive the filter whatever the allowlist says.
+A shipped token file with no `token-sets.json` entry MUST NOT be offered. Discovery is filesystem-based, so the shared role layer `css/tokens/conduction.css` is found like any other file, but it has no name, description or theming of its own and is an input to `scripts/generate-brand-set.mjs`, not a theme.
 
-#### Scenario: The allowlist is the only shipped set offered
+The number of `--utrecht-*` component tokens a set declares MUST NOT affect selectability. A set that declares none of them adopts the NL Design System's component geometry and type scale while still branding the component colours from its own semantic layer, which is a working theme rather than a broken one.
+
+Narrowing a picker MUST NOT be able to change what an instance is doing, so three ids survive both conditions.
+
+#### Scenario: Every named shipped set the audit passes is offered
 - GIVEN an instance running the stock set
+- AND `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` reports no incomplete set
 - WHEN the admin panel builds its dropdown
-- THEN the dropdown MUST contain `TokenSetService::SELECTABLE_SHIPPED_SETS` and no other shipped set
-- AND the full catalogue MUST remain unchanged: discovery, the public catalogue and the preview endpoint still answer for every shipped set
+- THEN the dropdown MUST contain every id in `token-sets.json`
+- AND it MUST NOT contain a shipped token file that has no `token-sets.json` entry
+- AND the full catalogue MUST remain unchanged: discovery, the public catalogue and the preview endpoint still answer for every shipped file
+
+#### Scenario: A vocabulary-incomplete set is not offered
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set passes the vocabulary audit and an upload is never vocabulary-audited, so there is no incomplete set to select. tests/Unit/Service/TokenSetServiceSelectableTest.php::testStockInstanceOffersEveryNamedCompleteSet lays down a named nldesign set declaring only a primary and asserts it is absent from the picker and present in the catalogue.
+- GIVEN a named shipped set whose file declares none of the required semantic vocabulary
+- WHEN the dropdown is built
+- THEN that set MUST NOT be offered
+- BECAUSE it renders as the `defaults.css` brand rather than its own, and an admin cannot tell that from a dropdown
+
+#### Scenario: A set that declares no component tokens is still offered
+- GIVEN a named shipped set that declares none of the `--utrecht-*` names `css/systems/nldesign/utrecht-bridge.css` reads
+- WHEN the dropdown is built
+- THEN that set MUST be offered
+- BECAUSE the bridge resolves 42 of its 84 declarations from `--nldesign-*` tokens the set declares, 38 from non-colour literals and 3 from a colour literal, so the set's own brand colours reach its components
 
 #### Scenario: The active set is always selectable
-- GIVEN the instance is running a set that is not on the allowlist
+- GIVEN the instance is running a set the two conditions would otherwise drop
 - WHEN the dropdown is built
 - THEN that set MUST still be offered
 - BECAUSE dropping it would render the panel with no option selected, and the first save would silently re-theme the instance to whatever happened to come first
@@ -454,11 +473,12 @@ Narrowing a picker MUST NOT be able to change what an instance is doing, so thre
 - THEN that set MUST be offered unconditionally
 - BECAUSE the importer tells the admin their upload was added and selectable
 
-#### Scenario: Adding a brand to the allowlist is an audit outcome
-@e2e exclude A rule about editing the TokenSetService::SELECTABLE_SHIPPED_SETS constant, not runtime behaviour. cunningham is on that list while tests/Unit/fixtures/token-set-vocabulary-allowlist.json still records it incomplete; the constant's docblock names it a deliberate exception.
-- GIVEN a shipped brand that the vocabulary audit reports as complete
-- THEN it MAY be added to `SELECTABLE_SHIPPED_SETS`
-- AND a brand the audit still reports as incomplete MUST NOT be
+#### Scenario: The picker cannot be narrowed again without failing
+@e2e exclude A rule about the implementation of getSelectableTokenSets(), asserted against the real css/tokens/ and token-sets.json by tests/Unit/Service/TokenSetServiceSelectableTest.php::testEveryNamedShippedSetTheAuditPassesIsOfferedOnTheRealCatalogue, which names every set a narrowing withheld. A browser cannot see the difference between a deliberate narrowing and a correct one.
+- GIVEN a change that withholds a named shipped set the audit passes
+- WHEN the test suite runs
+- THEN it MUST fail
+- AND the failure MUST name the sets that were withheld
 
 ### Requirement: Shipped Token Set Vocabulary Completeness
 Every shipped `css/tokens/{id}.css` file whose `design_system` reads the `--nldesign-*` vocabulary
@@ -494,6 +514,7 @@ The required semantic tokens are exactly:
 - AND `complete` MUST be true
 
 #### Scenario: Missing required tokens are evaluated against the set file alone
+@e2e exclude The GIVEN cannot be produced on an instance: only shipped sets are audited, and every shipped set declares the full vocabulary since thematiq#1006 (the allow-list is empty). tests/Unit/TokenSetVocabularyTest.php::testAuditDistinguishesCompleteFromIncompleteSets audits a probe nldesign set that declares only a primary next to the real defaults.css and asserts it is incomplete and misses `--nldesign-color-text`.
 - GIVEN `css/tokens/zwolle.css` declares none of the required semantic tokens
 - AND `css/systems/nldesign/defaults.css` declares Rijkshuisstijl values for all of them
 - WHEN the set is audited
@@ -503,6 +524,7 @@ The required semantic tokens are exactly:
 - AND the reason MUST be reported as "the set renders as the defaults.css brand, not its own"
 
 #### Scenario: `--nldesign-*` names nothing reads are reported as foreign
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testANldesignNameNoLayerReadsIsForeign audits an nldesign set declaring `--nldesign-color-blue-40` and asserts it is the one foreign name and the set is incomplete.
 - GIVEN a shipped set declares `--nldesign-color-blue-40` (a raw upstream palette step)
 - AND no `.css` file under `css/` outside `css/tokens/` declares or reads that name
 - WHEN the set is audited
@@ -512,6 +534,7 @@ The required semantic tokens are exactly:
   `--zwolle-color-blue-40`), where it cannot masquerade as app vocabulary
 
 #### Scenario: The accepted vocabulary is every name any non-token-set CSS layer declares or reads
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testTheVocabularyIsEveryNonTokenLayerAndNeverTheRuntimeFiles asserts a name only one layer reads is vocabulary, and names only in css/tokens/ (dark included), custom-overrides.css or custom-css.css are not.
 - GIVEN `css/systems/nldesign/theme.css` reads `--nldesign-logo-url`
 - AND neither `defaults.css` nor `utrecht-bridge.css` mentions that name
 - WHEN a set declaring `--nldesign-logo-url` is audited
@@ -521,6 +544,7 @@ The required semantic tokens are exactly:
   `custom-css.css`, so a value an admin typed into the theme editor can never widen the vocabulary
 
 #### Scenario: Token names are matched case-sensitively but not case-restrictively
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testACamelCaseNameIsRecognisedKeptAsWrittenAndReported audits `--nldesign-tokenSetOrder-0`: parsed as written, foreign while nothing reads it, vocabulary once a layer reads it.
 - GIVEN `css/tokens/nijmegen.css` declares `--nldesign-tokenSetOrder-0` (an upstream generator
   artefact with a camelCase segment)
 - WHEN the set is audited
@@ -530,6 +554,7 @@ The required semantic tokens are exactly:
   can never disagree about whether such a name exists
 
 #### Scenario: A primary colour that disagrees with the manifest is a mismatch
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testAPrimaryThatDisagreesWithTheManifestIsAMismatchComparedNormalised asserts `#000000` against `#333` is a mismatch with both values normalised, and `#ABC` against `#aabbcc` is not.
 - GIVEN `css/tokens/xxllnc.css` declares `--nldesign-color-primary: #000000`
 - AND `token-sets.json`'s entry for `xxllnc` declares `theming.primary_color: "#333333"`
 - WHEN the set is audited
@@ -538,6 +563,7 @@ The required semantic tokens are exactly:
 - AND comparison MUST normalise case and expand 3-digit hex to 6-digit before comparing
 
 #### Scenario: An absent or non-literal primary is not double-reported as a mismatch
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set declares a literal `--nldesign-color-primary` since thematiq#1006 (the allow-list is empty). tests/Unit/Service/TokenSetVocabularyAuditServiceTest.php::testCommentedOutDeclarationsNeverCount audits an nldesign set without a primary and asserts it is reported once, in `missingRequired`, with `primaryMismatch` false.
 - GIVEN a set does not declare `--nldesign-color-primary` at all, or declares a non-hex value
 - WHEN the set is audited
 - THEN the defect MUST be reported once, in `missingRequired`
@@ -545,13 +571,14 @@ The required semantic tokens are exactly:
 - AND a manifest entry with no `theming.primary_color` MUST NOT produce a mismatch either
 
 #### Scenario: A set whose design system reads no `--nldesign-*` name is not auditable
-- GIVEN `design-systems.json` declares the `summer-breeze` system's stylesheets
-- AND none of those stylesheets references any `--nldesign-*` name
-- WHEN `css/tokens/summer-breeze.css` is audited
+- GIVEN a set whose `design_system` is `none` (stock Nextcloud, no stylesheet)
+- WHEN the set is audited
 - THEN `auditable` MUST be false
 - AND `missingRequired` and `foreignNldesignNames` MUST be empty
 - AND `complete` MUST be true, so the set is never counted as failing
-- AND the same MUST hold for a set whose `design_system` is `none` (stock Nextcloud, no stylesheet)
+- AND a system whose stylesheets read a vocabulary of their own (`summer-breeze`, whose stylesheets
+  reference no `--nldesign-*` name) MUST instead be audited against that vocabulary, see
+  "A design system with its own vocabulary is audited against it"
 - AND a system that DOES read the vocabulary through a bridge layer (`high-contrast`, `lasuite`,
   `cunningham`) MUST be audited like any `nldesign` set
 
@@ -589,6 +616,52 @@ The required semantic tokens are exactly:
 - AND the required-token list used by the CLI MUST be asserted equal to the PHP service's constant by
   a test, because the two are duplicated with no build step between them
 
+### Requirement: A design system with its own vocabulary is audited against it
+A design system whose stylesheets read a token vocabulary of their own instead of `--nldesign-*`
+MUST be listed in `TokenSetVocabularyAuditService::OWN_VOCABULARIES` with its prefix and its primary
+token, and every shipped set of that system MUST be audited against that vocabulary with the same
+three rules. Nothing sits under such a set, so every name its stylesheets read is required.
+`summer-breeze` (prefix `--summer-`, primary `--summer-color-primary`) is the shipped example
+(thematiq#1022).
+
+#### Scenario: Every name the Summer Breeze stylesheets read is declared by its token file
+@e2e exclude a static walk of the shipped stylesheets with no page; tests/Unit/TokenSetVocabularyTest.php::testSummerBreezeIsCompleteForItsOwnVocabulary, and the rendered result is covered by tests/e2e/spec-coverage/summer-breeze.spec.ts.
+- GIVEN `css/systems/summer-breeze/theme.css` and `element-overrides.css` read `--summer-*` names
+  through `var()`
+- WHEN `css/tokens/summer-breeze.css` is audited
+- THEN `auditable` MUST be true
+- AND every `--summer-*` name a non-token CSS layer reads, and no such layer declares, MUST be
+  declared by the set file, or be listed in `missingRequired`
+- AND CSS comments MUST be stripped before both the read scan and the declaration parse
+
+#### Scenario: A Summer Breeze token nothing reads is reported
+@e2e exclude a static walk of the shipped stylesheets with no page; tests/Unit/Service/TokenSetVocabularyAuditServiceTest.php::testOwnVocabularySystemIsAuditedAgainstItsOwnNames.
+- GIVEN the set file declares `--summer-gradient-nav`
+- AND no non-token CSS layer declares or reads that name
+- WHEN the set is audited
+- THEN `foreignNldesignNames` MUST contain `--summer-gradient-nav` (the key keeps its name so the admin
+  UI reads one warning shape for every design system)
+- AND `complete` MUST be false
+
+#### Scenario: The Summer Breeze primary agrees with the manifest
+@e2e exclude a comparison of two shipped files; tests/Unit/TokenSetVocabularyTest.php::testSummerBreezeIsCompleteForItsOwnVocabulary.
+- GIVEN `css/tokens/summer-breeze.css` declares `--summer-color-primary: #21468b`
+- WHEN the set is audited
+- THEN `token-sets.json`'s `theming.primary_color` for `summer-breeze` MUST normalise to the same hex,
+  or `primaryMismatch` MUST be true
+
+#### Scenario: The Node mirror audits the same own vocabularies
+@e2e exclude A Node CLI, not a browser surface; tests/Unit/TokenSetVocabularyTest.php::testNodeMirrorKnowsTheSameOwnVocabularies.
+- GIVEN `scripts/audit-token-sets.mjs` declares `OWN_VOCABULARIES`
+- WHEN `npm run audit:token-sets` runs
+- THEN a `summer-breeze` row MUST be audited with the same three rules
+- AND the object MUST be asserted equal to the PHP constant by a test
+
+#### Scenario: A complete Summer Breeze set raises no incomplete warning in the admin dropdown
+- GIVEN the admin opens the theming settings page
+- WHEN the `summer-breeze` entry of the token-set dropdown is read
+- THEN it MUST carry no `kind: 'incomplete'` warning
+
 ### Requirement: Incomplete Sets Are Surfaced In The Admin Dropdown
 An incomplete shipped set MUST be labelled as such in the admin settings UI, at the point of
 selection, with the specific findings available to the admin. The finding MUST travel on the existing
@@ -596,6 +669,7 @@ selection, with the specific findings available to the admin. The finding MUST t
 distinguishable from a contrast warning without inspecting its other fields.
 
 #### Scenario: Selecting an incomplete set shows the "Incomplete set" badge
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/vitest/admin-incomplete-set.spec.js 'shows the badge with its findings for an incomplete set and hides it for a complete one' drives js/admin.js with the warning the audit emits.
 - GIVEN the admin opens the nldesign settings page
 - WHEN they select a token set whose audit reports it incomplete
 - THEN a badge reading "Incomplete set" MUST appear next to the design-system badge
@@ -604,6 +678,7 @@ distinguishable from a contrast warning without inspecting its other fields.
 - AND the badge MUST be hidden entirely for a complete set
 
 #### Scenario: The apply dialog explains the fallback
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/vitest/admin-incomplete-set.spec.js 'explains the fallback in its own banner, apart from the contrast banner, and still applies' drives js/admin.js through the apply dialog to the POST.
 - GIVEN the admin selects an incomplete set and the apply dialog opens
 - WHEN the dialog renders its warnings
 - THEN a non-blocking banner MUST state that the missing tokens fall back to the Rijkshuisstijl
@@ -612,6 +687,7 @@ distinguishable from a contrast warning without inspecting its other fields.
 - AND applying the set MUST NOT be blocked
 
 #### Scenario: The vocabulary finding is distinguishable from a contrast finding
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testTheVocabularyFindingHasItsOwnKindAndShape asserts the exact keys warningsFor() emits and that a ContrastService finding has no kind; tests/vitest/admin-incomplete-set.spec.js holds the contrast banner leaving the vocabulary entry out.
 - GIVEN a set has both a contrast warning and a vocabulary warning
 - WHEN the `warnings` array reaches the admin JS
 - THEN the vocabulary entry MUST carry `kind: 'incomplete'` with `missing[]`, `foreign[]`,
@@ -638,6 +714,150 @@ distinguishable from a contrast warning without inspecting its other fields.
 - WHEN the settings page is rendered
 - THEN no completeness badge MUST be visible for any set
 - AND no vocabulary entry MUST appear in any set's `warnings` array
+
+### Requirement: Shipped Token Set Instance Coverage
+Every selectable shipped token set — one with an entry in `token-sets.json` whose
+`design_system` reads the `--nldesign-*` vocabulary — MUST be measured on four dimensions and
+published. Three of the four are GATED: each MUST either be at its bar or be recorded in
+`tests/Unit/fixtures/token-set-coverage-allowlist.json` with a reason of at least 20
+characters. The fourth is measured and reported and MUST NOT fail anything.
+
+A dimension that is measured but not gated MUST carry a written reason of at least 20
+characters under `$reported` in that same fixture, and a gated dimension MUST NOT carry one.
+Demoting a dimension is the only edit that lowers the allow-list count with no set improving,
+so it MUST be impossible to do silently.
+
+The four dimensions are:
+
+- **bridge** — the number of the `--utrecht-*` custom properties
+  `css/systems/nldesign/utrecht-bridge.css` reads that the set declares. MEASURED AND REPORTED,
+  NOT GATED: of the bridge's 84 declarations, 42 fall back to a `--nldesign-*` token the set
+  itself declares, 38 to a non-colour literal and 3 to a colour literal, so a set that declares
+  none of them adopts the design system's component geometry and type scale while still branding
+  the component colours from its own semantic layer. The denominator MUST be derived from the
+  bridge file with comments stripped, never written as a literal. The dimension does not apply
+  to a set whose design system does not link the bridge.
+- **font** — the first family of the set's `--nldesign-font-family`, with `var()` chains
+  resolved. The bar is that the family has an `@font-face` in a stylesheet the set's own design
+  system LINKS, or is a system family, or is declared undistributable in the set's `font`
+  block.
+- **logo** — the bar is that the set's `theming.logo` names a file.
+- **contrast** — the bar is a verdict of `pass` in `docs/reference/contrast-report.json`, which
+  MUST be generated by the same service that generates the markdown report, so the audit never
+  reimplements the contrast maths in a second runtime.
+
+The audit MUST fail in five distinct cases, and all five MUST be exercised by tests that move
+the real data:
+
+1. a set below the bar on a GATED dimension where it is not allow-listed;
+2. a set that is allow-listed on a gated dimension it now passes, so the entry MUST be deleted;
+3. an allow-list entry whose reason is missing or shorter than 20 characters;
+4. a dimension that is measured but not gated and carries no `$reported` reason;
+5. a `$reported` reason for a dimension that is in fact gated, or an allow-list entry under a
+   dimension nothing gates.
+
+The measurement MUST be published as a generated reference page
+(`docs/reference/token-set-coverage.md`), the page MUST record the counts it was generated
+from, and the page MUST be covered by a staleness check.
+
+A token file with no entry in `token-sets.json` is not selectable and MUST NOT be measured on
+these four dimensions; `css/tokens/conduction.css` is the shared role layer, not a theme.
+
+#### Scenario: A set that declares no component tokens is reported, not failed
+@e2e exclude No browser is involved: the audit is a filesystem measurement over css/tokens/ and css/systems/nldesign/utrecht-bridge.css, and no surface on an instance shows a bridge figure. tests/vitest/tokenSetCoverage.spec.js asserts the figure is published for every bridge-zero set and that none of them is reported as a failure.
+- GIVEN `css/tokens/zwolle.css` declares none of the `--utrecht-*` names the bridge reads
+- WHEN the coverage audit runs
+- THEN its `bridge` figure MUST be `0` of the number the bridge file itself contains
+- AND the published report MUST carry that figure
+- AND the audit MUST NOT report it as a failure, and MUST NOT require an allow-list entry for it
+
+#### Scenario: A dimension cannot leave the gate without a written reason
+@e2e exclude The GIVEN is the state of a test fixture read by a CLI, not of a running Nextcloud. tests/vitest/tokenSetCoverage.spec.js proves both halves with probes: an empty `$reported` is reported as reasonless, and a `$reported` entry for a gated dimension is reported as stale.
+- GIVEN a dimension the audit measures but does not gate
+- WHEN its `$reported` reason is missing or shorter than 20 characters
+- THEN `node scripts/audit-token-sets.mjs --check` MUST exit non-zero
+- AND a `$reported` reason for a dimension that IS gated MUST also fail
+- BECAUSE demoting a dimension lowers the allow-list count with nothing fixed
+
+#### Scenario: An allow-listed set that starts passing fails the gate until the entry is deleted
+@e2e exclude The GIVEN cannot be produced on an instance: it is a state of a test fixture read by a CLI, not of a running Nextcloud. tests/vitest/tokenSetCoverage.spec.js proves it with a probe that raises a listed set above the bar, and the CLI was run with an entry deleted by hand to confirm it exits 1.
+- GIVEN `tests/Unit/fixtures/token-set-coverage-allowlist.json` lists `zwolle` under `logo`
+- WHEN `zwolle` gains a logo and its `logo` dimension starts passing
+- THEN the audit MUST report the entry as one that now passes
+- AND `node scripts/audit-token-sets.mjs --check` MUST exit non-zero
+- AND the gate MUST pass again only once the entry is deleted
+
+#### Scenario: An allow-list entry with no reason is not an allow-list entry
+@e2e exclude The GIVEN is a test fixture value, not instance state. tests/vitest/tokenSetCoverage.spec.js asserts a reason under 20 characters is reported.
+- GIVEN an entry whose value is an empty string or a word such as `todo`
+- WHEN the audit runs
+- THEN it MUST be reported as having no usable reason
+- AND the gate MUST exit non-zero
+
+#### Scenario: The denominator comes from the bridge, not from a constant
+@e2e exclude The GIVEN is the content of a stylesheet in the package, which no instance can change. tests/vitest/tokenSetCoverage.spec.js recomputes the denominator from the file and compares it to the audit's.
+- GIVEN `css/systems/nldesign/utrecht-bridge.css` documents its own pattern in a comment that
+  names `--utrecht-Y`
+- WHEN the audit counts the names the bridge reads
+- THEN comments MUST be stripped first
+- AND the denominator MUST equal the number of distinct `--utrecht-*` names outside comments
+
+### Requirement: A Set Says When Its Typeface Cannot Be Served
+A shipped token set MUST NOT name a typeface that no stylesheet its design system links
+declares without recording, in its `token-sets.json` entry, that the family cannot be
+redistributed. The record MUST carry the family, `selfHosted: false`, a licence position, the
+licence holder where known, the action an administrator takes (`upload` or `acknowledge`), and
+a note stating what was checked.
+
+Thematiq MUST NOT bundle a typeface it may not redistribute, and MUST NOT substitute a
+differently-licensed file under the name of one it may not ship.
+
+The admin UI MUST surface the record on the same `warnings` channel the contrast and
+vocabulary findings already use, naming the family, the licence position and the action, so an
+administrator learns it from the product rather than from a page that renders a substitute in
+silence.
+
+A family the operating system supplies (Arial, the CSS generics) MUST NOT raise a warning:
+there is nothing to self-host and nothing to ask for.
+
+#### Scenario: A licensed family is refused and declared
+@e2e exclude The warning banner IS browser-visible and a Playwright spec for it is owed (tasks.md 5.5): applying vng must show the Avenir upload banner. Until that spec exists, tests/Unit/Service/TokenSetFontAuditTest.php::testAnUndistributableFamilyCarriesItsLicencePositionAndAction asserts the manifest block and the warning shape the banner is rendered from.
+- GIVEN `css/tokens/vng.css` declares `--nldesign-font-family: 'Avenir', ...`
+- AND no stylesheet the `nldesign` design system links declares an `@font-face` for Avenir
+- WHEN the typeface audit runs for `vng`
+- THEN its `token-sets.json` entry MUST carry a `font` block naming Avenir, `selfHosted: false`,
+  a licence position and an action
+- AND `TokenSetFontAuditService::warningsFor()` MUST return exactly one warning of kind `font`
+- AND the admin apply dialog MUST show the family, the licence position and the action
+
+#### Scenario: A family behind a var() chain is resolved before it is judged
+@e2e exclude No surface shows the resolved family name. tests/Unit/Service/TokenSetFontAuditTest.php::testAFamilyBehindAVarChainIsResolved asserts the set still writes a var() and that the audited family is Figtree.
+- GIVEN `css/tokens/conduction-new.css` declares
+  `--nldesign-font-family: var(--conduction-typography-font-family-body)`
+- AND that token resolves through one more indirection to `Figtree`
+- WHEN the typeface audit runs
+- THEN the audited family MUST be `Figtree`, not the literal `var(...)` text
+
+#### Scenario: A face declared in a stylesheet nothing links does not count as served
+@e2e exclude The GIVEN is a packaging state: a CSS file absent from every design system's stylesheets list. tests/Unit/Service/TokenSetFontAuditTest.php::testTheAuditDistinguishesAServedFamilyFromAnUnservedOne judges the same set file against a system that links nothing and gets the unserved verdict.
+- GIVEN an `@font-face` for a family exists only in a CSS file that no design system's
+  `stylesheets` list names
+- WHEN the typeface audit runs for a set naming that family
+- THEN the family MUST NOT be reported as self-hosted
+
+#### Scenario: A system font raises nothing
+@e2e exclude The assertion is the ABSENCE of a banner, which a browser test can only confirm for one set at a time. tests/Unit/Service/TokenSetFontAuditTest.php::testASystemFamilyIsNotReportedAsMissing asserts tilburg's Arial returns no warning at all.
+- GIVEN `css/tokens/tilburg.css` names `Arial`
+- WHEN the typeface audit runs
+- THEN the verdict MUST be `system`
+- AND no warning MUST be returned
+
+#### Scenario: A declared block that has become wrong fails the gate
+@e2e exclude The GIVEN is a drifted repository file, not instance state. tests/Unit/Service/TokenSetFontAuditTest.php::testADeclaredFontBlockMatchesTheSetsOwnCss asserts both halves of the drift.
+- GIVEN a set carries a `font` block for a family it no longer names, or for a family that is
+  now self-hosted
+- WHEN the typeface gate runs
+- THEN it MUST fail and name the drift
 
 ## Current Implementation Status
 

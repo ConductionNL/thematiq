@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
+use OCA\Thematiq\Service\TokenSetSelectionPolicy;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
@@ -176,9 +177,8 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function getForm(): TemplateResponse {
-		// The PICKER, not the catalogue: only stock plus the admin's own
-		// imports. See TokenSetService::SELECTABLE_SHIPPED_SETS.
-		$tokenSets = $this->tokenSetService->getSelectableTokenSets();
+		// The PICKER, not the catalogue. See TokenSetSelectionPolicy.
+		$tokenSets = $this->selectableTokenSets();
 
 		$currentTokenSet = $this->config->getAppValue(
 			Application::APP_ID,
@@ -271,9 +271,31 @@ class Admin implements IDelegatedSettings {
 				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
 				// can be screenshotted from a running instance. Nothing else changes.
 				'mockUi' => ($this->request->getParam('mock') === '1'),
-			] + $this->environmentParams() + $this->documentationParams(designSystem: $currentDesignSystem)
+			] + $this->environmentParams() + $this->layoutParams() + $this->documentationParams(designSystem: $currentDesignSystem)
 		);
 	}//end getForm()
+
+	/**
+	 * The administrator's own layout choices, as stored. An empty value means
+	 * the option follows the active token set.
+	 *
+	 * Read straight from the app config, under the two keys
+	 * `LayoutOptionsService` owns, rather than through that service: this
+	 * class is at PHPMD's coupling limit, and the template needs only the raw
+	 * strings. It selects "Follow the theme" for any value it does not know,
+	 * which is how the service reads one too.
+	 *
+	 * @return array{workplaceLayout: string, brandStripe: string} The template parameters.
+	 *
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 */
+	private function layoutParams(): array {
+		return [
+			'workplaceLayout' => $this->config->getAppValue(Application::APP_ID, 'workplace_layout', ''),
+			'brandStripe' => $this->config->getAppValue(Application::APP_ID, 'brand_stripe', ''),
+		];
+	}//end layoutParams()
 
 	/**
 	 * The environment config.php declares, shown read-only, and the command
@@ -510,6 +532,8 @@ class Admin implements IDelegatedSettings {
 				'/token_set/',
 				'/hide_slogan/',
 				'/show_menu_labels/',
+				'/workplace_layout/',
+				'/brand_stripe/',
 				'/dark_variants/',
 				'/marianne_enabled/',
 				'/disabled_apps/',
@@ -531,4 +555,20 @@ class Admin implements IDelegatedSettings {
 			],
 		];
 	}//end getAuthorizedAppConfig()
+	/**
+	 * The sets the picker offers: every named shipped set the vocabulary audit
+	 * passes, plus the admin's own imports. See {@see TokenSetSelectionPolicy}.
+	 *
+	 * @return array<int, array<string, mixed>> The selectable token sets.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 */
+	private function selectableTokenSets(): array {
+		return (new TokenSetSelectionPolicy())->selectable(
+			tokenSets: $this->tokenSetService,
+			config: $this->config,
+			appPath: $this->tokenSetService->getAppPath()
+		);
+	}//end selectableTokenSets()
+
 }//end class

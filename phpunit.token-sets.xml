@@ -21,8 +21,12 @@
             <file>tests/Unit/TokenSetVocabularyTest.php</file>
             <file>tests/Unit/TokenSetContrastAuditTest.php</file>
             <file>tests/Unit/Service/ShippedDarkContrastTest.php</file>
+            <file>tests/Unit/Service/SummerBreezeContrastTest.php</file>
             <file>tests/Unit/Service/ShippedDarkLogoTest.php</file>
             <file>tests/Unit/Service/DenhaagContrastPairsTest.php</file>
+            <file>tests/Unit/Service/TokenSetFontAuditTest.php</file>
+            <file>tests/Unit/Service/ContrastVerdictDocumentTest.php</file>
+            <file>tests/Unit/Service/TokenSetSelectionPolicyTest.php</file>
             <file>tests/Unit/Service/SetLogoReachTest.php</file>
             <file>tests/Unit/IconAssetsTest.php</file>
             <file>tests/Unit/TokenCssShapeTest.php</file>
@@ -32,6 +36,7 @@
             <file>tests/Unit/ErrorForegroundContrastTest.php</file>
             <file>tests/Unit/NoteCardFillContrastTest.php</file>
             <file>tests/Unit/ClaimAccuracyTest.php</file>
+            <file>tests/Unit/Service/LayoutOptionsServiceTest.php</file>
         </testsuite>
     </testsuites>
     <php>
