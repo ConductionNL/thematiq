@@ -71,11 +71,24 @@ class ContrastVerdictDocument {
 		}
 
 		return json_encode(
+			// `pairs` names what each ratio compared, read straight off the
+			// service that compares them. Without it the column names carry the
+			// whole explanation, and "textRatio" reads as body ink when it is
+			// the primary colour against the colour written on it. The Node
+			// audit takes `parsed.sets`, so this key costs it nothing.
+			//
 			// (object) so an empty audit renders `"sets": {}` and not `"sets": []`.
 			// PHP encodes an empty array as a JSON list, and the Node audit
 			// indexes this by set id, so a list would make an empty catalogue
 			// fail differently from a full one for no reason.
-			['$comment' => self::HEADER, 'sets' => (object)$sets],
+			[
+				'$comment' => self::HEADER,
+				'pairs' => [
+					'textRatio' => ShippedTokenSetAuditService::TEXT_PAIR,
+					'uiRatio' => ShippedTokenSetAuditService::UI_PAIR,
+				],
+				'sets' => (object)$sets,
+			],
 			// PRESERVE_ZERO_FRACTION keeps a threshold of 3.0 as `3.0` rather
 			// than `3`. The file is compared byte for byte by its staleness
 			// check, so a value whose type depends on whether it happens to be
