@@ -101,7 +101,13 @@ function conditionsHold(node, env) {
  * @return {boolean} True when it matches.
  */
 function reachesBody(selector, env) {
-	const s = selector.replace(/\s+/g, '').replace(/['"]/g, '')
+	// A set's overrides file puts `:root` in front of the dark scopes so it
+	// outranks the generated dark file (css/token-overrides/*.css); the
+	// element is still the body.
+	const s = selector
+		.replace(/\s+/g, '')
+		.replace(/['"]/g, '')
+		.replace(/^:root(?=body|\[)/, '')
 	if (['html', ':root', 'body', 'body[data-themes]'].includes(s)) {
 		return true
 	}
@@ -132,9 +138,14 @@ function cascade(files, env, matches) {
 	const won = {}
 	for (const file of files) {
 		postcss.parse(read(file)).walkRules((rule) => {
-			if (!conditionsHold(rule, env) || !rule.selectors.some(matches)) {
+			const matched = rule.selectors.filter(matches)
+			if (!conditionsHold(rule, env) || matched.length === 0) {
 				return
 			}
+			// One step of specificity: a selector with `:root` in front of the
+			// body scope outranks the same scope without it, whatever the order
+			// (css/token-overrides/*.css loads before the generated dark file).
+			const rank = matched.some((sel) => /^\s*:root\s+\S/.test(sel)) ? 1 : 0
 			rule.each((d) => {
 				if (d.type !== 'decl') {
 					return
@@ -143,7 +154,10 @@ function cascade(files, env, matches) {
 				if (prior && prior.important && !d.important) {
 					return
 				}
-				won[d.prop] = { value: d.value.trim(), important: d.important }
+				if (prior && prior.important === d.important && prior.rank > rank) {
+					return
+				}
+				won[d.prop] = { value: d.value.trim(), important: d.important, rank }
 			})
 		})
 	}

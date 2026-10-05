@@ -132,9 +132,9 @@ class LayoutOptionsServiceTest extends TestCase {
 	 */
 	public function testTheSchoolSetsWearTheLightLayout(): void {
 		$expected = [
-			'wilgenboom'         => true,
-			'vaartveld'          => false,
-			'esdoornveen'        => true,
+			'wilgenboom' => true,
+			'vaartveld' => false,
+			'esdoornveen' => true,
 			'warmtepompacademie' => false,
 		];
 		foreach ($expected as $id => $stripe) {
