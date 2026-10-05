@@ -45,7 +45,7 @@ const SETS = {
 		weights: { Lexend: ['400', '500', '600', '700'] },
 		heading: null,
 		website: ['10px', '14px'],
-		stripe: true,
+		stripe: false,
 		stripeHeight: '14px',
 		legacyLabel: '#1A1A1A',
 	},
@@ -364,7 +364,7 @@ for (const [id, want] of Object.entries(SETS)) {
 			}
 		})
 
-		it('wears the light layout, and the stripe where its Nextcloud login carries the motif', () => {
+		it('wears the light layout, and the stripe where the motif fits inside the top bar', () => {
 			const layout = { workplace_layout: 'light' }
 			if (want.stripe === true) {
 				layout.brand_stripe = true

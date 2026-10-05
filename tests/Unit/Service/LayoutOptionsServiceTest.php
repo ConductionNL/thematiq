@@ -124,15 +124,16 @@ class LayoutOptionsServiceTest extends TestCase {
 	}//end testZuiddrechtWearsTheLightLayoutAndTheStripe()
 
 	/**
-	 * The four school sets wear the light layout with nothing stored. The two
-	 * whose designed Nextcloud login carries the motif also turn the stripe
-	 * on; the other two leave it to the administrator.
+	 * The four school sets wear the light layout with nothing stored. Only
+	 * esdoornveen, whose 6px motif fits inside the top bar the way
+	 * zuiddrecht's 5px stripe does, also turns the stripe on; the other three
+	 * leave it to the administrator.
 	 *
 	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-each-school-set-wears-the-light-workplace
 	 */
 	public function testTheSchoolSetsWearTheLightLayout(): void {
 		$expected = [
-			'wilgenboom' => true,
+			'wilgenboom' => false,
 			'vaartveld' => false,
 			'esdoornveen' => true,
 			'warmtepompacademie' => false,

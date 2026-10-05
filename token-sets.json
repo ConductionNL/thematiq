@@ -792,7 +792,7 @@
 	{
 		"id": "wilgenboom",
 		"name": "Basisschool De Wilgenboom",
-		"description": "A primary school in the demo town of Zuiddrecht, which does not exist. Willow green #2F6B4A for actions, sun yellow #F5B82E as the accent, Lexend. A light workplace with the hanging twigs along the top bar and the login card.",
+		"description": "A primary school in the demo town of Zuiddrecht, which does not exist. Willow green #2F6B4A for actions, sun yellow #F5B82E as the accent, Lexend. A light workplace; the hanging twigs are its brand stripe.",
 		"design_system": "nldesign",
 		"theming": {
 			"primary_color": "#2F6B4A",
@@ -801,8 +801,7 @@
 			"logo_dark": "img/logos/wilgenboom-dark.svg"
 		},
 		"layout": {
-			"workplace_layout": "light",
-			"brand_stripe": true
+			"workplace_layout": "light"
 		}
 	},
 	{
@@ -823,7 +822,7 @@
 	{
 		"id": "esdoornveen",
 		"name": "Esdoornveen, mbo college",
-		"description": "A vocational college in the demo town of Zuiddrecht, which does not exist. Plum #5B2E91 for actions, maple rose #C2255C as the accent, IBM Plex Sans with IBM Plex Mono for codes. A light workplace with the slanted cut along the top bar and the login card.",
+		"description": "A vocational college in the demo town of Zuiddrecht, which does not exist. Plum #5B2E91 for actions, maple rose #C2255C as the accent, IBM Plex Sans with IBM Plex Mono for codes. A light workplace with the slanted cut as its brand stripe, along the top bar and the login card.",
 		"design_system": "nldesign",
 		"theming": {
 			"primary_color": "#5B2E91",

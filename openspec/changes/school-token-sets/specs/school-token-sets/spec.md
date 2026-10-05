@@ -51,16 +51,20 @@ by hand for the two dark scopes.
 - THEN the page background and the content surface MUST be #121315, darker than Nextcloud's dark cards
 
 ### Requirement: Each school set wears the light workplace
-Each school set's manifest entry MUST carry `workplace_layout: light`. `wilgenboom` and
-`esdoornveen`, whose designed Nextcloud login shows the motif along the login card, MUST also
-carry `brand_stripe: true`; `vaartveld` and `warmtepompacademie` MUST NOT. The workplace MUST keep
+Each school set's manifest entry MUST carry `workplace_layout: light`. `esdoornveen`, whose
+designed Nextcloud login shows its 6px motif and whose motif fits inside the top bar as
+zuiddrecht's 5px stripe does, MUST also carry `brand_stripe: true`. The other three MUST NOT:
+the designed workplace bar of all four carries no motif, wilgenboom's 14px twigs would cover the
+bottom of the logo and the search field inside the 50px bar, and the designed Nextcloud login of
+vaartveld and warmtepompacademie shows none. Their motifs stay declared, so an administrator who
+turns the stripe on gets them. The workplace MUST keep
 Nextcloud's radius scale: 8px controls, 12px containers.
 
 #### Scenario: The layout follows the set
 @e2e exclude Pure service logic: PHPUnit tests/Unit/Service/LayoutOptionsServiceTest.php resolves each set with nothing stored
 - GIVEN an instance with no stored layout choice
 - WHEN a school set is active
-- THEN the workplace layout MUST be `light`, and the brand stripe MUST be on for `wilgenboom` and `esdoornveen` only
+- THEN the workplace layout MUST be `light`, and the brand stripe MUST be on for `esdoornveen` only
 
 ### Requirement: Each school set ships its logos and a login watermark
 `img/logos/` MUST hold `<set>.svg`, `<set>-dark.svg`, `<set>-emblem.svg` and
