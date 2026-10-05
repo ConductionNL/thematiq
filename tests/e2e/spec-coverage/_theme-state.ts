@@ -18,7 +18,7 @@ import { expect, type Browser, type Page } from '@playwright/test'
 import * as fs from 'fs'
 import * as path from 'path'
 
-import { adminContext } from './_fixtures'
+import { adminContext, E2E_CUSTOM_SET_PREFIX } from './_fixtures'
 import {
 	getOverrides,
 	getTokenSet,
@@ -189,6 +189,77 @@ export async function withThemeState(
 			await fn()
 		} finally {
 			await restoreThemeState(admin, snapshot)
+		}
+	} finally {
+		await ctx.close()
+	}
+}
+
+/**
+ * Upload `css` as a raw custom token set, run `fn` with its id, and always
+ * delete the set again.
+ *
+ * For scenarios about a set that leaves tokens out. Every shipped set is
+ * complete since the token sync (#1006, #1008), so such a set has to be the
+ * test's own; a raw upload is stored as written, without the converter that
+ * would fill in what it leaves out. It has no design_system, so it resolves to
+ * the nldesign bundle. The name starts with "E2E", so the id starts with
+ * E2E_CUSTOM_SET_PREFIX and removeE2eCustomSets() also clears a set that a
+ * dying test left behind.
+ *
+ * Uses its own admin context, like withThemeState(). Nest withThemeState()
+ * inside `fn`, so the previous set is active again before this one is deleted.
+ */
+export async function withUploadedSet(
+	browser: Browser,
+	label: string,
+	css: string,
+	fn: (id: string) => Promise<void>,
+): Promise<void> {
+	const ctx = await adminContext(browser)
+	const admin = await ctx.newPage()
+	try {
+		await ensureOcPage(admin)
+		const token = await requestToken(admin)
+		const call = (method: string, url: string, body?: unknown) =>
+			admin.evaluate(
+				async ({ m, u, b, t }) => {
+					const r = await fetch((window as any).OC.generateUrl(u), {
+						method: m,
+						headers: {
+							'Content-Type': 'application/json',
+							requesttoken: t,
+						},
+						body: b === undefined ? undefined : JSON.stringify(b),
+					})
+					let json: any = null
+					try {
+						json = await r.json()
+					} catch {
+						json = null
+					}
+					return { status: r.status, json }
+				},
+				{ m: method, u: url, b: body, t: token },
+			)
+
+		const res = await call('POST', '/apps/thematiq/settings/tokensets/upload', {
+			name: `E2E ${label} ${Date.now()}`,
+			raw: true,
+			content: css,
+		})
+		expect(res.status, JSON.stringify(res.json)).toBe(200)
+		const id = String(res.json?.id ?? '')
+		expect(id.startsWith(E2E_CUSTOM_SET_PREFIX), `uploaded set id ${id}`).toBe(
+			true,
+		)
+		try {
+			await fn(id)
+		} finally {
+			await call(
+				'DELETE',
+				`/apps/thematiq/settings/tokensets/custom/${encodeURIComponent(id)}`,
+			)
 		}
 	} finally {
 		await ctx.close()

@@ -220,8 +220,14 @@ test.describe('custom-token-set-upload', () => {
 
 		const row = page.locator('.nldesign-custom-set-row', { hasText: setName })
 		await expect(row).toBeVisible({ timeout: 10000 })
-		await expect(row.locator('button:has-text("Download")')).toBeVisible()
-		await expect(row.locator('button:has-text("Delete")')).toBeVisible()
+		// By exact accessible name: the row also carries "Download as design
+		// tokens" (#870), which a text match on "Download" finds as well.
+		await expect(
+			row.getByRole('button', { name: 'Download', exact: true }),
+		).toBeVisible()
+		await expect(
+			row.getByRole('button', { name: 'Delete', exact: true }),
+		).toBeVisible()
 
 		// Delete removes the row. The delete button opens an OC.dialogs.confirm
 		// in-DOM modal (NOT a native browser confirm), so confirm by clicking

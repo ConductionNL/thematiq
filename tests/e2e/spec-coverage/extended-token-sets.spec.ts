@@ -36,6 +36,12 @@ import {
 	servedCss,
 	stripComments,
 } from './_token-css'
+import { adminContext } from './_fixtures'
+import {
+	servedCss as servedLayer,
+	tokenSetManifest,
+	withUploadedSet,
+} from './_theme-state'
 
 const THEMING_URL = '/settings/admin/theming'
 const DEFAULTS = 'systems/nldesign/defaults.css'
@@ -101,7 +107,11 @@ test.describe('extended-token-sets', () => {
 	}) => {
 		await openThemedPage(page)
 		const css = await servedCss(page, 'tokens/groningen.css')
-		expect(css).toContain('Auto-generated from nl-design-system/themes')
+		// TokenSetConverterService records where a generated file came from in
+		// its provenance block; the header text itself is the converter's own.
+		expect(css).toMatch(
+			/source:\s+nl-design-system\/themes proprietary\/groningen-design-tokens/,
+		)
 		const body = stripComments(css)
 		expect(body.match(/:root\b/g) ?? []).toHaveLength(1)
 		expect(body.match(/\{/g) ?? []).toHaveLength(1)
@@ -114,7 +124,9 @@ test.describe('extended-token-sets', () => {
 	}) => {
 		await openThemedPage(page)
 		const css = await servedCss(page, 'tokens/haarlem.css')
-		expect(css).toContain('Auto-generated from nl-design-system/themes')
+		expect(css).toMatch(
+			/source:\s+nl-design-system\/themes proprietary\/haarlem-design-tokens/,
+		)
 		const palette = declarations(css, '--haarlem-color-')
 		expect(palette.get('--haarlem-color-oceaan-10')?.toLowerCase()).toBe(
 			'#e8eef5',
@@ -286,13 +298,102 @@ test.describe('extended-token-sets', () => {
 		})
 	})
 
-	test.describe('with Gemeente Groningen active', () => {
+	test.describe('with a set that leaves tokens out', () => {
+		test.describe.configure({ timeout: 90_000 })
+
+		test(// @e2e openspec/specs/extended-token-sets/spec.md#organization-with-incomplete-token-set
+		'the font weights an incomplete set declares apply and everything it leaves out falls back to defaults.css', async ({
+			browser,
+			page,
+		}) => {
+			// The set is the test's own. The spec's example, Groningen, used to
+			// ship only its font weights; since the token sync (#1006, #1008)
+			// every shipped set is complete, so none is incomplete any more.
+			const css =
+				':root {\n'
+				+ '\t--nldesign-typography-font-weight-normal: 300;\n'
+				+ '\t--nldesign-typography-font-weight-bold: 600;\n'
+				+ '}\n'
+			await withUploadedSet(browser, 'font weights only', css, async (set) => {
+				const restore = await activateTokenSet(browser, set)
+				try {
+					await openThemedPage(page)
+					const file = declarations(
+						await servedLayer(page, `tokens/${set}`),
+						'--nldesign-',
+					)
+					expect([...file.keys()].sort()).toEqual([
+						'--nldesign-typography-font-weight-bold',
+						'--nldesign-typography-font-weight-normal',
+					])
+					const defaults = declarations(
+						await servedCss(page, DEFAULTS),
+						'--nldesign-',
+					)
+					const v = await rootVars(page, [
+						'--nldesign-typography-font-weight-normal',
+						'--nldesign-typography-font-weight-bold',
+						'--nldesign-color-primary',
+						'--nldesign-border-radius',
+					])
+					expect(v['--nldesign-typography-font-weight-normal']).toBe('300')
+					expect(v['--nldesign-typography-font-weight-bold']).toBe('600')
+					expect(v['--nldesign-color-primary'].toLowerCase()).toBe(
+						(
+							defaults.get('--nldesign-color-primary') ?? ''
+						).toLowerCase(),
+					)
+					expect(v['--nldesign-border-radius']).toBe(
+						defaults.get('--nldesign-border-radius'),
+					)
+				} finally {
+					await restore()
+				}
+			})
+		})
+	})
+
+	test.describe('with a withheld set active', () => {
 		test.describe.configure({ mode: 'serial', timeout: 90_000 })
+
+		// A shipped token file with no token-sets.json entry: the picker offers
+		// every named set and withholds this one, so while the instance runs it,
+		// the survival rule is the only thing that can put it in the dropdown.
+		// Read from the data, because which sets are withheld changes as the
+		// token sync names them (groningen, which this test used before, has
+		// been selectable on its own since #1038).
+		const named = new Set(tokenSetManifest().map((s) => s.id))
+		const withheld = fs
+			.readdirSync(TOKENS_DIR)
+			.filter((f) => f.endsWith('.css'))
+			.map((f) => f.slice(0, -'.css'.length))
+			.filter((id) => !named.has(id))
+			.sort()[0]
 
 		let restore: (() => Promise<void>) | null = null
 
 		test.beforeAll(async ({ browser }) => {
-			restore = await activateTokenSet(browser, 'groningen')
+			expect(
+				withheld,
+				'no withheld shipped file to exercise the rule with',
+			).toBeTruthy()
+			const ctx = await adminContext(browser)
+			try {
+				const page = await ctx.newPage()
+				await page.goto(THEMING_URL)
+				await page.waitForLoadState('domcontentloaded')
+				const before = await getJson(
+					page,
+					'/apps/thematiq/settings/tokensets',
+				)
+				expect(
+					before.body.tokenSets.map((s) => s.id),
+					`precondition: ${withheld} is withheld while it is not running`,
+				).not.toContain(withheld)
+			} finally {
+				await ctx.close()
+			}
+			restore = await activateTokenSet(browser, withheld)
 		})
 
 		test.afterAll(async () => {
@@ -300,39 +401,6 @@ test.describe('extended-token-sets', () => {
 				await restore()
 				restore = null
 			}
-		})
-
-		test(// @e2e openspec/specs/extended-token-sets/spec.md#organization-with-incomplete-token-set
-		'Groningen font weights apply and everything it leaves out falls back to defaults.css', async ({
-			page,
-		}) => {
-			await openThemedPage(page)
-			const file = declarations(
-				await servedCss(page, 'tokens/groningen.css'),
-				'--nldesign-',
-			)
-			expect([...file.keys()].sort()).toEqual([
-				'--nldesign-typography-font-weight-bold',
-				'--nldesign-typography-font-weight-normal',
-			])
-			const defaults = declarations(
-				await servedCss(page, DEFAULTS),
-				'--nldesign-',
-			)
-			const v = await rootVars(page, [
-				'--nldesign-typography-font-weight-normal',
-				'--nldesign-typography-font-weight-bold',
-				'--nldesign-color-primary',
-				'--nldesign-border-radius',
-			])
-			expect(v['--nldesign-typography-font-weight-normal']).toBe('400')
-			expect(v['--nldesign-typography-font-weight-bold']).toBe('500')
-			expect(v['--nldesign-color-primary'].toLowerCase()).toBe(
-				(defaults.get('--nldesign-color-primary') ?? '').toLowerCase(),
-			)
-			expect(v['--nldesign-border-radius']).toBe(
-				defaults.get('--nldesign-border-radius'),
-			)
 		})
 
 		test(// @e2e openspec/specs/extended-token-sets/spec.md#settings-page-shows-all-token-sets
@@ -353,13 +421,10 @@ test.describe('extended-token-sets', () => {
 			expect(options).toEqual(
 				listed.body.tokenSets.map((s) => ({ id: s.id, text: s.name })),
 			)
-			// groningen is offered ONLY because the instance is running it: it
-			// is on no allowlist. A hardcoded list could not contain it.
-			expect(options.map((o) => o.id)).toContain('groningen')
-			expect(await select.inputValue()).toBe('groningen')
-			await expect(select.locator('option[value="groningen"]')).toHaveText(
-				'Gemeente Groningen',
-			)
+			// Offered ONLY because the instance is running it (the precondition
+			// above saw it withheld). A hardcoded list could not contain it.
+			expect(options.map((o) => o.id)).toContain(withheld)
+			expect(await select.inputValue()).toBe(withheld)
 		})
 	})
 })
