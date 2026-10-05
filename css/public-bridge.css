@@ -1075,6 +1075,22 @@
 	);
 
 	/*
+	 * A light hero (openspec/changes/brand-motif-on-portals). The vendored hero
+	 * band paints itself in the primary with white type; a set whose website
+	 * hero is a light ground names it, its first button and a watermark
+	 * (--nldesign-hero-decoration-image, usually the emblem the portal names
+	 * in --nldesign-emblem-url). No fallbacks: a set that names none keeps the
+	 * hero it had. The type colours are --nldesign-hero-title-color and
+	 * --nldesign-hero-body-color above, which such a set declares itself.
+	 */
+	--thematiq-hero-background-color: var(--nldesign-hero-background-color);
+	--thematiq-hero-action-background-color: var(
+		--nldesign-hero-action-background-color
+	);
+	--thematiq-hero-action-color: var(--nldesign-hero-action-color);
+	--thematiq-hero-decoration-image: var(--nldesign-hero-decoration-image);
+
+	/*
 	 * THE BRAND STRIPE ON THE PORTAL (openspec/changes/brand-motif-on-portals).
 	 *
 	 * css/brand-stripe.css draws the stripe on Nextcloud's own pages; a portal
