@@ -1,0 +1,510 @@
+{
+	"id": "denhaag",
+	"name": "Gemeente Den Haag",
+	"description": "Gemeente Den Haag's own design tokens: green buttons, blue links, a white page header.",
+	"provenance": "the pinned @gemeente-denhaag token CSS vendored under scripts/sources/denhaag/ (EUPL-1.2, Gemeente Den Haag)",
+	"componentsFile": "denhaag.components.json",
+	"_comment_source": [
+		"WHY THIS SET IS SOURCED AND THE OTHER SEVEN BRIDGE-ZERO SETS ARE NOT.",
+		"",
+		"The coverage audit reported 8 bridged sets declaring none of the 87",
+		"--utrecht-* names css/systems/nldesign/utrecht-bridge.css reads. Seven of",
+		"them have no published token package here, so completing them would mean",
+		"choosing roughly 35 ramp steps for a municipality's house style. Den Haag is",
+		"the exception: scripts/sources/denhaag/ already holds its pinned token CSS,",
+		"vendored for scripts/generate-denhaag-bridge.mjs and annotated EUPL-1.2 in",
+		"REUSE.toml. So every value below is read off that source, and the ones with",
+		"no basis in it are left out rather than chosen.",
+		"",
+		"WHAT IS LEFT OUT, and why, so nobody has to re-derive it:",
+		"  - 35 of the 87 bridge names. The source declares no --utrecht-heading-N-color,",
+		"    no -font-weight for any heading, no --utrecht-heading-6-* at all, no",
+		"    --utrecht-paragraph-color, no --utrecht-textbox-background-color, no",
+		"    --utrecht-form-input-* and no --utrecht-separator-*. They keep the bridge",
+		"    fallback, which is an --nldesign-* token this set declares.",
+		"  - the pink ramp (4 steps), extra-limegreen and extra-purple. Den Haag",
+		"    publishes no magenta, lime or purple family. The role layer keeps its own",
+		"    there and the generator reports it.",
+		"",
+		"COLOURS ARE CONVERTED, NOT CHOSEN. The source states its palette in hsl();",
+		"this file states the same colours as 8-bit sRGB hex, because the contrast",
+		"engine (ContrastService::parseColor) reads hex and rgb() and returns null for",
+		"hsl(). Leaving hsl() in would make every Den Haag pair in the contrast report",
+		"unmeasurable instead of passing. The conversion is round-to-nearest on each",
+		"channel, and here is the whole table so it can be rechecked:",
+		"  --denhaag-color-green-1: hsl(117 28% 87%) = #d5e7d5",
+		"  --denhaag-color-green-2: hsl(118 28% 60%) = #7eb67c",
+		"  --denhaag-color-green-3: hsl(138 58% 33%) = #238541",
+		"  --denhaag-color-green-4: hsl(138 57% 27%) = #1e6c35",
+		"  --denhaag-color-green-5: hsl(139 100% 9%) = #002e0f",
+		"  --denhaag-color-blue-1: hsl(208 76% 92%) = #dbecfa",
+		"  --denhaag-color-blue-2: hsl(210 64% 80%) = #abcced",
+		"  --denhaag-color-blue-3: hsl(207 80% 35%) = #1260a1",
+		"  --denhaag-color-blue-4: hsl(207 87% 27%) = #094b81",
+		"  --denhaag-color-blue-5: hsl(207 93% 16%) = #032d4f",
+		"  --denhaag-color-ocher-1: hsl(50 100% 91%) = #fff7d1",
+		"  --denhaag-color-ocher-2: hsl(50 100% 76%) = #ffeb85",
+		"  --denhaag-color-ocher-3: hsl(50 94% 57%) = #f8d62a",
+		"  --denhaag-color-ocher-4: hsl(47 100% 40%) = #cca000",
+		"  --denhaag-color-ocher-5: hsl(47 100% 25%) = #806400",
+		"  --denhaag-color-red-1: hsl(4 100% 92%) = #ffd9d6",
+		"  --denhaag-color-red-2: hsl(5 75% 72%) = #ed8b82",
+		"  --denhaag-color-red-3: hsl(6 93% 42%) = #cf1b07",
+		"  --denhaag-color-red-4: hsl(2 100% 32%) = #a30500",
+		"  --denhaag-color-red-5: hsl(1 100% 16%) = #520100",
+		"  --denhaag-color-orange-1: hsl(34 100% 84%) = #ffdcad",
+		"  --denhaag-color-orange-2: hsl(34 100% 68%) = #ffb85c",
+		"  --denhaag-color-orange-3: hsl(34 100% 47%) = #f08800",
+		"  --denhaag-color-orange-4: hsl(23 99% 44%) = #df5601",
+		"  --denhaag-color-orange-5: hsl(23 100% 27%) = #8a3500",
+		"  --denhaag-color-grey-1: hsl(0 0% 95%) = #f2f2f2",
+		"  --denhaag-color-grey-2: hsl(0 0% 82%) = #d1d1d1",
+		"  --denhaag-color-grey-3: hsl(0 0% 48%) = #7a7a7a",
+		"  --denhaag-color-grey-4: hsl(0 0% 29%) = #4a4a4a",
+		"  --denhaag-color-grey-5: hsla(0, 0%, 18%, 1) = #2e2e2e",
+		"  --denhaag-color-warmgrey-1: hsl(40 18% 97%) = #f9f8f6",
+		"  --denhaag-color-black: hsl(0 0% 0%) = #000000",
+		"  --denhaag-color-white: hsl(0 0% 100%) = #ffffff"
+	],
+	"palette": {
+		"--denhaag-border-radius": "3px",
+		"--denhaag-focus-border-width": "2px",
+		"--denhaag-focus-border-style": "dashed",
+		"--denhaag-focus-offset": "0",
+		"--denhaag-space-block-3xs": ".125rem",
+		"--denhaag-space-block-2xs": ".25rem",
+		"--denhaag-space-block-xs": ".5rem",
+		"--denhaag-space-block-sm": ".75rem",
+		"--denhaag-space-block-md": "1rem",
+		"--denhaag-space-block-lg": "1.25rem",
+		"--denhaag-space-block-xl": "1.5rem",
+		"--denhaag-space-block-2xl": "2rem",
+		"--denhaag-space-block-3xl": "2.5rem",
+		"--denhaag-space-block-4xl": "3rem",
+		"--denhaag-space-block-5xl": "4rem",
+		"--denhaag-space-inline-3xs": ".125rem",
+		"--denhaag-space-inline-2xs": ".25rem",
+		"--denhaag-space-inline-xs": ".5rem",
+		"--denhaag-space-inline-sm": ".75rem",
+		"--denhaag-space-inline-md": "1rem",
+		"--denhaag-space-inline-lg": "1.25rem",
+		"--denhaag-space-inline-xl": "1.5rem",
+		"--denhaag-space-inline-2xl": "2rem",
+		"--denhaag-space-inline-3xl": "2.5rem",
+		"--denhaag-space-inline-4xl": "3rem",
+		"--denhaag-space-inline-5xl": "4rem",
+		"--denhaag-color-green-1": "#d5e7d5",
+		"--denhaag-color-green-2": "#7eb67c",
+		"--denhaag-color-green-3": "#238541",
+		"--denhaag-color-green-4": "#1e6c35",
+		"--denhaag-color-green-5": "#002e0f",
+		"--denhaag-color-blue-1": "#dbecfa",
+		"--denhaag-color-blue-2": "#abcced",
+		"--denhaag-color-blue-3": "#1260a1",
+		"--denhaag-color-blue-4": "#094b81",
+		"--denhaag-color-blue-5": "#032d4f",
+		"--denhaag-color-ocher-1": "#fff7d1",
+		"--denhaag-color-ocher-2": "#ffeb85",
+		"--denhaag-color-ocher-3": "#f8d62a",
+		"--denhaag-color-ocher-4": "#cca000",
+		"--denhaag-color-ocher-5": "#806400",
+		"--denhaag-color-red-1": "#ffd9d6",
+		"--denhaag-color-red-2": "#ed8b82",
+		"--denhaag-color-red-3": "#cf1b07",
+		"--denhaag-color-red-4": "#a30500",
+		"--denhaag-color-red-5": "#520100",
+		"--denhaag-color-orange-1": "#ffdcad",
+		"--denhaag-color-orange-2": "#ffb85c",
+		"--denhaag-color-orange-3": "#f08800",
+		"--denhaag-color-orange-4": "#df5601",
+		"--denhaag-color-orange-5": "#8a3500",
+		"--denhaag-color-grey-1": "#f2f2f2",
+		"--denhaag-color-grey-2": "#d1d1d1",
+		"--denhaag-color-grey-3": "#7a7a7a",
+		"--denhaag-color-grey-4": "#4a4a4a",
+		"--denhaag-color-grey-5": "#2e2e2e",
+		"--denhaag-color-warmgrey-1": "#f9f8f6",
+		"--denhaag-color-black": "#000000",
+		"--denhaag-color-white": "#ffffff",
+		"--denhaag-size-5xs": "2px",
+		"--denhaag-size-4xs": "4px",
+		"--denhaag-size-3xs": "8px",
+		"--denhaag-size-2xs": "16px",
+		"--denhaag-size-xs": "24px",
+		"--denhaag-size-sm": "32px",
+		"--denhaag-size-md": "48px",
+		"--denhaag-size-lg": "64px",
+		"--denhaag-size-xl": "96px",
+		"--denhaag-size-2xl": "160px",
+		"--denhaag-size-icon-xs": "16px",
+		"--denhaag-size-icon-sm": "20px",
+		"--denhaag-size-icon-md": "24px",
+		"--denhaag-size-icon-lg": "24px",
+		"--denhaag-size-icon-xl": "24px",
+		"--denhaag-size-icon-2xl": "32px",
+		"--denhaag-size-icon-3xl": "40px",
+		"--denhaag-size-icon-4xl": "48px",
+		"--denhaag-typography-weight-regular": "400",
+		"--denhaag-typography-weight-medium": "500",
+		"--denhaag-typography-weight-semibold": "600",
+		"--denhaag-typography-weight-bold": "700",
+		"--denhaag-typography-sans-serif-font-family": "\"TheSans\", sans-serif",
+		"--denhaag-typography-sans-serif-alternate-font-family": "\"TheMix\", sans-serif",
+		"--denhaag-typography-scale-xs-font-size": "0.625rem",
+		"--denhaag-typography-scale-s-font-size": "0.875rem",
+		"--denhaag-typography-scale-s-line-height": "1.3",
+		"--denhaag-typography-scale-base-font-size": "1.125rem",
+		"--denhaag-typography-scale-base-line-height": "1.5",
+		"--denhaag-typography-scale-lg-font-size": "1.25rem",
+		"--denhaag-typography-scale-lg-line-height": "1.3",
+		"--denhaag-typography-scale-xl-font-size": "1.5rem",
+		"--denhaag-typography-scale-xl-line-height": "1.3",
+		"--denhaag-typography-scale-2xl-font-size": "2rem",
+		"--denhaag-typography-scale-2xl-line-height": "1.3",
+		"--denhaag-typography-scale-3xl-font-size": "3rem",
+		"--denhaag-typography-scale-3xl-line-height": "1.3",
+		"--denhaag-typography-mobile-scale-xl-font-size": "1.4375rem",
+		"--denhaag-typography-mobile-scale-2xl-font-size": "1.75rem",
+		"--denhaag-typography-mobile-scale-3xl-font-size": "2.25rem",
+		"--denhaag-focus-border-color": "var(--denhaag-color-ocher-5)",
+		"--denhaag-focus-border": "var(--denhaag-focus-border-width) var(--denhaag-focus-border-style) var(--denhaag-focus-border-color)"
+	},
+	"_comment_ramp": [
+		"The role layer aliases --vng-color-* / --tilburg-color-*, so re-branding it",
+		"means replacing that ramp. Den Haag publishes five steps per hue and the role",
+		"layer wants eleven greys, so the grey rows state the rule they follow:",
+		"take the declared Den Haag neutral whose own hsl lightness is nearest the",
+		"slot's, and never compute a step in between. That lands five Den Haag greys on",
+		"ten slots, two slots each, with warmgrey-1 on gray-50. gray-400 is the one",
+		"close call: 82% against the slot’s 66%, with grey-3 at 48% one point further.",
+		"It is used once, for --utrecht-feedback-neutral-fill-border-color.",
+		"",
+		"The hue ramps map one for one, lightest to darkest, so denhaag blue-1 lands on",
+		"blue-100 and blue-5 on blue-500. Den Haag red-5 and the pink family have no",
+		"slot and no source respectively."
+	],
+	"ramp": {
+		"white": {
+			"value": "#ffffff",
+			"from": "denhaag-color-white"
+		},
+		"black": {
+			"value": "#000000",
+			"from": "denhaag-color-black"
+		},
+		"black-txt": {
+			"value": "#2e2e2e",
+			"from": "denhaag-color-grey-5 (the value Den Haag gives --utrecht-document-color)"
+		},
+		"gray-50": {
+			"value": "#f9f8f6",
+			"from": "denhaag-color-warmgrey-1 (lightness 97% against the slot’s 98%)"
+		},
+		"gray-100": {
+			"value": "#f2f2f2",
+			"from": "denhaag-color-grey-1 (lightness 95% against the slot’s 96%)"
+		},
+		"gray-200": {
+			"value": "#f2f2f2",
+			"from": "denhaag-color-grey-1 (lightness 95% against the slot’s 91%; grey-2 at 82% is further)"
+		},
+		"gray-300": {
+			"value": "#d1d1d1",
+			"from": "denhaag-color-grey-2 (lightness 82% against the slot’s 84%)"
+		},
+		"gray-400": {
+			"value": "#d1d1d1",
+			"from": "denhaag-color-grey-2 (lightness 82% against the slot’s 66%; grey-3 at 48% is one point further)"
+		},
+		"gray-500": {
+			"value": "#7a7a7a",
+			"from": "denhaag-color-grey-3 (lightness 48% against the slot’s 55%)"
+		},
+		"gray-600": {
+			"value": "#7a7a7a",
+			"from": "denhaag-color-grey-3 (lightness 48% against the slot’s 45%)"
+		},
+		"gray-700": {
+			"value": "#4a4a4a",
+			"from": "denhaag-color-grey-4 (lightness 29% against the slot’s 36%)"
+		},
+		"gray-800": {
+			"value": "#4a4a4a",
+			"from": "denhaag-color-grey-4 (lightness 29% against the slot’s 27%)"
+		},
+		"gray-900": {
+			"value": "#2e2e2e",
+			"from": "denhaag-color-grey-5 (lightness 18% against the slot’s 18%)"
+		},
+		"gray-950": {
+			"value": "#2e2e2e",
+			"from": "denhaag-color-grey-5 (lightness 18% against the slot’s 11%; black at 0% is further)"
+		},
+		"blue-100": {
+			"value": "#dbecfa",
+			"from": "denhaag-color-blue-1"
+		},
+		"blue-200": {
+			"value": "#abcced",
+			"from": "denhaag-color-blue-2"
+		},
+		"blue-300": {
+			"value": "#1260a1",
+			"from": "denhaag-color-blue-3"
+		},
+		"blue-400": {
+			"value": "#094b81",
+			"from": "denhaag-color-blue-4"
+		},
+		"blue-500": {
+			"value": "#032d4f",
+			"from": "denhaag-color-blue-5"
+		},
+		"green-100": {
+			"value": "#d5e7d5",
+			"from": "denhaag-color-green-1"
+		},
+		"red-100": {
+			"value": "#ffd9d6",
+			"from": "denhaag-color-red-1"
+		},
+		"orange-100": {
+			"value": "#ffdcad",
+			"from": "denhaag-color-orange-1"
+		},
+		"green-200": {
+			"value": "#7eb67c",
+			"from": "denhaag-color-green-2"
+		},
+		"red-200": {
+			"value": "#ed8b82",
+			"from": "denhaag-color-red-2"
+		},
+		"orange-200": {
+			"value": "#ffb85c",
+			"from": "denhaag-color-orange-2"
+		},
+		"green-300": {
+			"value": "#238541",
+			"from": "denhaag-color-green-3"
+		},
+		"red-300": {
+			"value": "#cf1b07",
+			"from": "denhaag-color-red-3"
+		},
+		"orange-300": {
+			"value": "#f08800",
+			"from": "denhaag-color-orange-3"
+		},
+		"green-400": {
+			"value": "#1e6c35",
+			"from": "denhaag-color-green-4"
+		},
+		"red-400": {
+			"value": "#a30500",
+			"from": "denhaag-color-red-4"
+		},
+		"orange-400": {
+			"value": "#df5601",
+			"from": "denhaag-color-orange-4"
+		},
+		"extra-yellow": {
+			"value": "#f8d62a",
+			"from": "denhaag-color-ocher-3 (ocher is Den Haag’s yellow family, and 3 is its mid step)"
+		},
+		"code-background-color": {
+			"value": "#f2f2f2",
+			"from": "denhaag-color-grey-1 (the lightest declared neutral surface, which is what the role layer used here)"
+		},
+		"dark-alpha-50": {
+			"value": "#0000000d",
+			"from": "role-layer geometry, unbranded"
+		},
+		"dark-alpha-100": {
+			"value": "#0000001a",
+			"from": "role-layer geometry, unbranded"
+		},
+		"light-alpha-50": {
+			"value": "#ffffff0d",
+			"from": "role-layer geometry, unbranded"
+		},
+		"light-alpha-100": {
+			"value": "#ffffff1a",
+			"from": "role-layer geometry, unbranded"
+		}
+	},
+	"_comment_literal_overrides": [
+		"Colours the role layer hard-codes inside a component declaration instead of",
+		"reaching for the ramp. They have no ramp name to key on, so they are named by",
+		"value. Each one is replaced by the Den Haag step that holds the same ROLE",
+		"where Den Haag states one, and the same hue where it does not."
+	],
+	"literalOverrides": {
+		"#004488": {
+			"value": "#238541",
+			"from": "denhaag-color-green-3, the value Den Haag gives --utrecht-button-primary-action-background-color"
+		},
+		"#004589": {
+			"value": "#238541",
+			"from": "denhaag-color-green-3; #004589 is a near-duplicate of #004488 in the role layer"
+		},
+		"#0277bd": {
+			"value": "#1260a1",
+			"from": "denhaag-color-blue-3, the value Den Haag gives --utrecht-link-color"
+		},
+		"#0078c8": {
+			"value": "#1260a1",
+			"from": "denhaag-color-blue-3; the role layer paints its top navigation with this blue"
+		},
+		"#dbebfc": {
+			"value": "#dbecfa",
+			"from": "denhaag-color-blue-1, the value Den Haag gives --utrecht-alert-background-color"
+		},
+		"#75757c": {
+			"value": "#7a7a7a",
+			"from": "denhaag-color-grey-3, the value Den Haag gives --utrecht-form-control-border-color"
+		},
+		"#ffb612": {
+			"value": "#8a3500",
+			"from": "denhaag-color-orange-5, the value Den Haag gives --utrecht-alert-warning-color; the role layer sets the colour and its border to one literal"
+		},
+		"#e11919": {
+			"value": "#520100",
+			"from": "denhaag-color-red-5, the value Den Haag gives --utrecht-alert-error-color; same pairing as the warning above"
+		}
+	},
+	"keepLiterals": {
+		"#000000": "base black, the same colour denhaag-color-black declares"
+	},
+	"_comment_upstream_overrides": [
+		"Four deliberate departures from the source, each with the reason the run",
+		"prints.",
+		"",
+		"The two font families are licensing. TheSans and TheMix are LucasFonts",
+		"retail faces that Den Haag licenses; this repository may not redistribute",
+		"either. The stack keeps the licensed family first, so an instance that has it",
+		"renders in it, and adds the self-hosted Fira Sans behind it. token-sets.json",
+		"carries the licence position an administrator acts on, the same way duo does",
+		"for RijksoverheidSans.",
+		"",
+		"The two tilburg-prefixed tokens are colours the role layer states as literals",
+		"that no ramp entry can reach, because Den Haag publishes no purple and no",
+		"pink. Pointing them at the Den Haag token that holds the same role is better",
+		"than leaving a VNG focus ring and a VNG pink badge in a Den Haag set."
+	],
+	"upstreamOverrides": {
+		"--denhaag-typography-sans-serif-font-family": {
+			"value": "\"TheSans\", \"Fira Sans\", sans-serif",
+			"reason": "TheSans is a licensed LucasFonts face and cannot ship here. Fira Sans follows it as the self-hosted stand-in."
+		},
+		"--denhaag-typography-sans-serif-alternate-font-family": {
+			"value": "\"TheMix\", \"Fira Sans\", sans-serif",
+			"reason": "TheMix is a licensed LucasFonts face and cannot ship here. Fira Sans follows it as the self-hosted stand-in."
+		},
+		"--tilburg-focus-outline-color": {
+			"value": "var(--denhaag-focus-border-color)",
+			"reason": "Den Haag's own focus colour is ocher-5, which it states in --denhaag-focus-border-color. The role layer's purple has no Den Haag counterpart."
+		},
+		"--tilburg-status-badge-background-color": {
+			"value": "var(--denhaag-color-grey-1)",
+			"reason": "Den Haag gives --utrecht-badge-background-color grey-1. The role layer uses a pink Den Haag does not publish."
+		}
+	},
+	"_comment_semantic": [
+		"The --nldesign-* layer Nextcloud chrome and the Portaliq site renderer read.",
+		"Every value names the Den Haag token it came from, and every source is a role",
+		"Den Haag states in its own token CSS:",
+		"",
+		"  primary            green-3   --utrecht-button-primary-action-background-color",
+		"  primary-hover      green-4   --utrecht-button-primary-action-hover-background-color",
+		"  primary-text       white     --utrecht-button-color",
+		"  primary-light      green-1   --utrecht-feedback-safe-background-color",
+		"  text               grey-5    --utrecht-document-color",
+		"  text-muted         grey-4    --utrecht-form-control-placeholder-color",
+		"  link               blue-3    --utrecht-link-color",
+		"  link-hover         blue-4    --utrecht-link-hover-color",
+		"  link-visited       blue-3    --utrecht-link-visited-color",
+		"  border             grey-2    --utrecht-table-border-color",
+		"  border-dark        grey-3    --utrecht-form-control-border-color",
+		"  background-hover   warmgrey-1 --utrecht-form-control-hover-background-color",
+		"  background-dark    grey-1    --utrecht-form-control-disabled-background-color",
+		"  background-darker  grey-2    --utrecht-button-disabled-background-color",
+		"  header-background  white     --denhaag-page-header-background-color",
+		"  nav-background     white     --utrecht-document-background-color",
+		"  error              red-4     --of-color-danger",
+		"  warning            orange-4  --of-color-warning",
+		"  success            green-4   --of-color-success",
+		"  info               blue-4    --of-color-info",
+		"  focus              ocher-5   --denhaag-focus-border-color",
+		"",
+		"THE THREE THAT HAVE NO ROLE IN THE SOURCE, and are the next declared step",
+		"rather than a chosen colour. primary-light-hover is green-2, the only other",
+		"light green Den Haag publishes. error-hover is red-5. button-primary-border is",
+		"green-3, the same value as the fill, because the source declares no",
+		"--utrecht-button-primary-action-border-color.",
+		"",
+		"THE HEADER IS WHITE, which is the one change a reader will notice. Den Haag",
+		"sets --denhaag-page-header-background-color to white and its own side",
+		"navigation to grey-4 on white. The set this replaces painted the Nextcloud",
+		"header green, which no Den Haag token asks for. No headerIconFilter follows,",
+		"because a light header wants the defaults layer’s dark icons."
+	],
+	"semantic": {
+		"primary": "#238541",
+		"primary-hover": "#1e6c35",
+		"primary-text": "#ffffff",
+		"primary-light": "#d5e7d5",
+		"primary-light-hover": "#7eb67c",
+		"text": "#2e2e2e",
+		"text-muted": "#4a4a4a",
+		"text-light": "#ffffff",
+		"link": "#1260a1",
+		"link-hover": "#094b81",
+		"link-visited": "#1260a1",
+		"border": "#d1d1d1",
+		"border-dark": "#7a7a7a",
+		"background-hover": "#f9f8f6",
+		"background-dark": "#f2f2f2",
+		"background-darker": "#d1d1d1",
+		"placeholder-light": "#f2f2f2",
+		"placeholder-dark": "#d1d1d1",
+		"header-background": "#ffffff",
+		"header-text": "#2e2e2e",
+		"nav-background": "#ffffff",
+		"button-primary-background": "#238541",
+		"button-primary-border": "#238541",
+		"button-primary-hover": "#1e6c35",
+		"button-primary-text": "#ffffff",
+		"error": "#a30500",
+		"error-hover": "#520100",
+		"warning": "#df5601",
+		"success": "#1e6c35",
+		"info": "#094b81",
+		"focus": "#806400"
+	},
+	"_comment_typography": [
+		"The family is Den Haag’s own, with the repository’s self-hosted stand-in",
+		"behind it. No scale or weight steps are listed, because the source already",
+		"states both and the generator emits them verbatim in section A as",
+		"--denhaag-typography-scale-* and --denhaag-typography-weight-*. Restating them",
+		"under a second prefix would give one type scale two names."
+	],
+	"typography": {
+		"fontFamily": "\"TheSans\", \"Fira Sans\", sans-serif",
+		"from": "denhaag-typography-sans-serif-font-family"
+	},
+	"logo": "img/logos/denhaag.svg",
+	"borderRadius": {
+		"_comment": [
+			"Den Haag publishes exactly one radius token, --denhaag-border-radius: 3px,",
+			"and gives it to the button, the textbox, the badge and the select. So every",
+			"role below is that one value. pill is the role layer’s own lozenge geometry",
+			"and is not a Den Haag value."
+		],
+		"default": "3px",
+		"small": "3px",
+		"large": "3px",
+		"rounded": "3px",
+		"pill": "100px"
+	}
+}
