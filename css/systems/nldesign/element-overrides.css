@@ -410,6 +410,62 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 }
 
 /* ============================================
+   FILES TABLE HEADER, FOOTER AND README ON THE SURFACE
+   ============================================ */
+
+/*
+ * component-scopes.css gives the app content the set's surface
+ * (`--nldesign-component-content-surface-background-color`) and hands the
+ * main background back to its children, so cards stand out from it. The Files
+ * table header and footer are not cards: Nextcloud paints them with
+ * `--color-main-background` only so the sticky header hides the rows under
+ * it. On a set with a surface of its own they showed as strips: white on
+ * Zuiddrecht's #F5F6F8, and #171717 on its dark #121315 (thematiq#1061).
+ * The README editor above the list does the same, as on La Suite (#1052).
+ *
+ * They now take the surface itself. A set without the token falls back to
+ * the main background, which is what they painted before. The id prefix beats
+ * the scoped `.files-list[data-v-…] .files-list__thead` (0,3,0).
+ * tests/vitest/contentSurfaceTable.spec.js holds every nldesign set.
+ */
+#app-content-vue .files-list__thead,
+#app-content-vue .files-list__tfoot,
+#app-content-vue #rich-workspace .text-editor,
+#app-content-vue #rich-workspace .text-editor__main,
+#app-content-vue #rich-workspace .editor,
+#app-content-vue #rich-workspace .text-menubar,
+#app-content-vue #rich-workspace .ProseMirror,
+#app-content-vue #rich-workspace .heading-anchor {
+	background-color: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-main-background)
+	) !important;
+}
+
+/* Inside the README the Text app paints two more things from
+ * `--color-main-background`: the read-only block and the fade at the bottom
+ * of the collapsed preview. (The heading anchor joins the list above.) Both take the surface as well. The variable itself
+ * is left alone: nldesign never writes it (REQ-CSS-007,
+ * nextcloudVariableInventory.spec.js). */
+#app-content-vue #rich-workspace div[contenteditable='false'] {
+	background-color: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-main-background)
+	) !important;
+}
+
+#app-content-vue #rich-workspace:not(.focus):not(.empty)::after {
+	background-image: linear-gradient(
+		to bottom,
+		transparent,
+		var(
+			--nldesign-component-content-surface-background-color,
+			var(--color-main-background)
+		)
+	) !important;
+}
+
+/* ============================================
    NAVIGATION ENTRIES — chrome, not content links
    ============================================ */
 
