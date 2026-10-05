@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **Four demo schools in Zuiddrecht.** `wilgenboom` (Basisschool De Wilgenboom, willow green
+  `#2F6B4A` and sun yellow, Lexend), `vaartveld` (Vaartveld College, cobalt `#1F4FD8` and aqua,
+  Red Hat Display over Red Hat Text), `esdoornveen` (Esdoornveen, mbo college, plum `#5B2E91`
+  and maple rose, IBM Plex Sans with IBM Plex Mono for codes) and `warmtepompacademie`
+  (Warmtepompacademie, petrol `#0B6E7A` and ember, Barlow Semi Condensed over Barlow). Each is
+  built the way `zuiddrecht` is: a light workplace on Nextcloud's radius scale, a generated
+  dark variant, four logos and a login watermark. Every text pair reaches AA in the light and
+  in both dark scopes, computed by `tests/vitest/schoolTokenSets.spec.js`.
+- **Lexend, Red Hat Display, Red Hat Text, Barlow, Barlow Semi Condensed, IBM Plex Sans 500 and
+  IBM Plex Mono 400 and 500** join the bundled typefaces, all SIL OFL 1.1, from Fontsource 5.3.0.
+- **A brand stripe may draw a motif of its own.** A set names any background image in
+  `--nldesign-brand-stripe-image` and the stripe draws it instead of the three bands. The four
+  schools draw their motifs this way: the hanging twigs, the canal, the slanted cut and the
+  temperature line.
+- **Website corners and heading faces on a portal.** A set may name the website's own radii in
+  `--nldesign-website-border-radius` and `--nldesign-website-border-radius-large`; only the
+  public bridge reads them, so the workplace keeps 8px and 12px. The bridge also hands
+  `--nldesign-component-heading-font-family` to the website's headings.
 - **Gemeente Zuiddrecht, a demo municipality.** The `zuiddrecht` token set is a light
   workplace: blue `#3669A5` for actions, red `#CC0000` as the accent, a white top bar and
   navigation, a grey workspace with white cards, Nextcloud's own radius scale and a

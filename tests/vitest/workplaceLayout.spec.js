@@ -172,7 +172,7 @@ describe('workplace layout: the login watermark', () => {
 		expect(watermark['pointer-events']).toBe('none')
 	})
 
-	it('is named by Zuiddrecht only among the shipped sets', () => {
+	it('is named by Zuiddrecht and its four demo schools only among the shipped sets', () => {
 		const dir = path.join(ROOT, 'css/tokens')
 		const namers = fs
 			.readdirSync(dir)
@@ -182,7 +182,13 @@ describe('workplace layout: the login watermark', () => {
 					.readFileSync(path.join(dir, file), 'utf8')
 					.includes('--nldesign-login-watermark-image'),
 			)
-		expect(namers).toEqual(['zuiddrecht.css'])
+		expect(namers.sort()).toEqual([
+			'esdoornveen.css',
+			'vaartveld.css',
+			'warmtepompacademie.css',
+			'wilgenboom.css',
+			'zuiddrecht.css',
+		])
 	})
 })
 
@@ -372,6 +378,22 @@ describe('brand stripe', () => {
 	})
 })
 
+describe('the brand stripe: a motif of its own', () => {
+	/**
+	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-a-set-may-draw-its-motif-in-the-brand-stripe
+	 */
+	it('draws a set image in place of the three bands, and the bands without one', () => {
+		const sheet = postcss.parse(read('css/brand-stripe.css'))
+		let image = null
+		sheet.walkDecls('background-image', (d) => {
+			image = d.value.replace(/\s+/g, ' ').trim()
+		})
+		expect(
+			image.startsWith('var( --nldesign-brand-stripe-image, linear-gradient('),
+		).toBe(true)
+	})
+})
+
 describe('the layout stylesheets are off unless asked for', () => {
 	it('no design system lists them, so only the option loads them', () => {
 		const systems = JSON.parse(read('design-systems.json'))
@@ -383,10 +405,16 @@ describe('the layout stylesheets are off unless asked for', () => {
 		expect(listed).toEqual([])
 	})
 
-	it('only Zuiddrecht carries layout defaults among the shipped sets', () => {
+	it('only Zuiddrecht and its four demo schools carry layout defaults among the shipped sets', () => {
 		const carriers = JSON.parse(read('token-sets.json'))
 			.filter((entry) => entry.layout !== undefined)
 			.map((entry) => entry.id)
-		expect(carriers).toEqual(['zuiddrecht'])
+		expect(carriers).toEqual([
+			'zuiddrecht',
+			'wilgenboom',
+			'vaartveld',
+			'esdoornveen',
+			'warmtepompacademie',
+		])
 	})
 })

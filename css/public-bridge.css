@@ -23,8 +23,8 @@
  *
  * MEASURED COVERAGE (a test recomputes these from token-sets.json and
  * css/tokens/, and fails when they drift):
- *   coverage: listed=59 roleLayer=26 nldesignOnly=11 denhaagComponents=18
- * Of the listed sets, 26 carry the full `--utrecht-*` role layer, 11 declare
+ *   coverage: listed=63 roleLayer=26 nldesignOnly=15 denhaagComponents=18
+ * Of the listed sets, 26 carry the full `--utrecht-*` role layer, 15 declare
  * only `--nldesign-*`, and 18 declare Den Haag component properties. Two sets
  * declare a case card property of their own, `cunningham` and `denhaag`; the
  * Den Haag section at the end of this block gives every other set one, and
@@ -71,11 +71,15 @@
 	 * reads its OWN token — setting only `--utrecht-heading-color` leaves every
 	 * numbered level unstyled, which is how a page ends up with one styled
 	 * heading and five browser-default ones.
+	 *
+	 * A set with a heading face of its own names it in
+	 * `--nldesign-component-heading-font-family`, the token Nextcloud's
+	 * headings already read (vaartveld: Red Hat Display over Red Hat Text).
+	 * A set that names none keeps its one family for both.
 	 */
 	--utrecht-heading-font-family: var(
-		--nldesign-font-family,
-		system-ui,
-		sans-serif
+		--nldesign-component-heading-font-family,
+		var(--nldesign-font-family, system-ui, sans-serif)
 	);
 	--utrecht-heading-color: var(--nldesign-color-text, #1b1b23);
 	--utrecht-heading-1-color: var(--nldesign-color-text, #1b1b23);
@@ -85,20 +89,44 @@
 	--utrecht-heading-5-color: var(--nldesign-color-text, #1b1b23);
 	--utrecht-heading-6-color: var(--nldesign-color-text, #1b1b23);
 	--utrecht-heading-1-font-family: var(
-		--nldesign-font-family,
-		system-ui,
-		sans-serif
+		--nldesign-component-heading-font-family,
+		var(--nldesign-font-family, system-ui, sans-serif)
 	);
 	--utrecht-heading-2-font-family: var(
-		--nldesign-font-family,
-		system-ui,
-		sans-serif
+		--nldesign-component-heading-font-family,
+		var(--nldesign-font-family, system-ui, sans-serif)
 	);
 	--utrecht-heading-3-font-family: var(
-		--nldesign-font-family,
-		system-ui,
-		sans-serif
+		--nldesign-component-heading-font-family,
+		var(--nldesign-font-family, system-ui, sans-serif)
 	);
+
+	/*
+	 * Website corners (openspec/changes/school-token-sets).
+	 *
+	 * The workplace keeps Nextcloud's radius scale (8px controls, 12px
+	 * cards), so a set's `--nldesign-border-radius` cannot also be the
+	 * website's. A set whose website is rounder or squarer than its workplace
+	 * names the website's two radii here, and only this file reads them: it
+	 * is linked by a public portal and never on an instance page.
+	 *
+	 *   --nldesign-website-border-radius        buttons and form fields
+	 *   --nldesign-website-border-radius-large  cards, dialogs and messages
+	 *
+	 * NO FALLBACK, ON PURPOSE. For a set that names neither, each role below
+	 * resolves to the guaranteed-invalid value, which a consumer's
+	 * `var(--utrecht-button-border-radius, 8px)` treats exactly as an unset
+	 * property, so its own fallback still applies and no existing portal
+	 * changes. A set that declares a role itself loads after this file and
+	 * keeps its value.
+	 */
+	--utrecht-button-border-radius: var(--nldesign-website-border-radius);
+	--utrecht-textbox-border-radius: var(--nldesign-website-border-radius);
+	--utrecht-textarea-border-radius: var(--nldesign-website-border-radius);
+	--utrecht-select-border-radius: var(--nldesign-website-border-radius);
+	--utrecht-form-control-border-radius: var(--nldesign-website-border-radius);
+	--utrecht-border-radius-md: var(--nldesign-website-border-radius-large);
+	--utrecht-alert-border-radius: var(--nldesign-website-border-radius-large);
 
 	/* Links */
 	--utrecht-link-color: var(

@@ -788,5 +788,66 @@
 			"workplace_layout": "light",
 			"brand_stripe": true
 		}
+	},
+	{
+		"id": "wilgenboom",
+		"name": "Basisschool De Wilgenboom",
+		"description": "A primary school in the demo town of Zuiddrecht, which does not exist. Willow green #2F6B4A for actions, sun yellow #F5B82E as the accent, Lexend. A light workplace; the hanging twigs are its brand stripe.",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#2F6B4A",
+			"background_color": "#F5F6F8",
+			"logo": "img/logos/wilgenboom.svg",
+			"logo_dark": "img/logos/wilgenboom-dark.svg"
+		},
+		"layout": {
+			"workplace_layout": "light"
+		}
+	},
+	{
+		"id": "vaartveld",
+		"name": "Vaartveld College",
+		"description": "A secondary school (vmbo-t, havo, vwo) in the demo town of Zuiddrecht, which does not exist. Cobalt #1F4FD8 for actions, aqua #1FB5A8 as the accent, Red Hat Display over Red Hat Text. A light workplace.",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#1F4FD8",
+			"background_color": "#F5F6F8",
+			"logo": "img/logos/vaartveld.svg",
+			"logo_dark": "img/logos/vaartveld-dark.svg"
+		},
+		"layout": {
+			"workplace_layout": "light"
+		}
+	},
+	{
+		"id": "esdoornveen",
+		"name": "Esdoornveen, mbo college",
+		"description": "A vocational college in the demo town of Zuiddrecht, which does not exist. Plum #5B2E91 for actions, maple rose #C2255C as the accent, IBM Plex Sans with IBM Plex Mono for codes. A light workplace with the slanted cut as its brand stripe, along the top bar and the login card.",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#5B2E91",
+			"background_color": "#F5F6F8",
+			"logo": "img/logos/esdoornveen.svg",
+			"logo_dark": "img/logos/esdoornveen-dark.svg"
+		},
+		"layout": {
+			"workplace_layout": "light",
+			"brand_stripe": true
+		}
+	},
+	{
+		"id": "warmtepompacademie",
+		"name": "Warmtepompacademie",
+		"description": "A training agency for heat-pump installers in the demo town of Zuiddrecht, which does not exist. Petrol #0B6E7A for actions, ember #C2410C as the accent, Barlow Semi Condensed over Barlow. A light workplace.",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#0B6E7A",
+			"background_color": "#F5F6F8",
+			"logo": "img/logos/warmtepompacademie.svg",
+			"logo_dark": "img/logos/warmtepompacademie-dark.svg"
+		},
+		"layout": {
+			"workplace_layout": "light"
+		}
 	}
 ]

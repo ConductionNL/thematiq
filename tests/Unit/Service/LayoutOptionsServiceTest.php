@@ -39,6 +39,13 @@ use PHPUnit\Framework\TestCase;
 class LayoutOptionsServiceTest extends TestCase {
 
 	/**
+	 * The shipped sets that carry a layout block, each named on purpose.
+	 *
+	 * @var array<int, string>
+	 */
+	private const SETS_WITH_LAYOUT = ['zuiddrecht', 'wilgenboom', 'vaartveld', 'esdoornveen', 'warmtepompacademie'];
+
+	/**
 	 * The stored app values, by key.
 	 *
 	 * @var array<string, string>
@@ -117,6 +124,27 @@ class LayoutOptionsServiceTest extends TestCase {
 	}//end testZuiddrechtWearsTheLightLayoutAndTheStripe()
 
 	/**
+	 * The four school sets wear the light layout with nothing stored. Only
+	 * esdoornveen, whose 6px motif fits inside the top bar the way
+	 * zuiddrecht's 5px stripe does, also turns the stripe on; the other three
+	 * leave it to the administrator.
+	 *
+	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-each-school-set-wears-the-light-workplace
+	 */
+	public function testTheSchoolSetsWearTheLightLayout(): void {
+		$expected = [
+			'wilgenboom' => false,
+			'vaartveld' => false,
+			'esdoornveen' => true,
+			'warmtepompacademie' => false,
+		];
+		foreach ($expected as $id => $stripe) {
+			$this->assertSame('light', $this->service->workplaceLayout(tokenSet: $id), $id);
+			$this->assertSame($stripe, $this->service->brandStripe(tokenSet: $id), $id);
+		}
+	}//end testTheSchoolSetsWearTheLightLayout()
+
+	/**
 	 * No other shipped set changes: each resolves to the default layout and
 	 * no stripe. Walks the whole manifest, so a set added later with a layout
 	 * block has to be named here on purpose.
@@ -127,7 +155,7 @@ class LayoutOptionsServiceTest extends TestCase {
 		$changed = [];
 		$walked = 0;
 		foreach (array_keys($this->shippedManifest()) as $id) {
-			if ($id === 'zuiddrecht') {
+			if (in_array($id, self::SETS_WITH_LAYOUT, true) === true) {
 				continue;
 			}
 

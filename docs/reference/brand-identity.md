@@ -50,6 +50,10 @@ Colors are sourced from each organization's official NL Design System token set.
 | Gemeente Rotterdam | ![#00811f](https://via.placeholder.com/16/00811f/00811f.png) `#00811f` | `#FFFFFF` | `rotterdam.svg` |
 | xxllnc | ![#333333](https://via.placeholder.com/16/333333/333333.png) `#333333` | `#FFFFFF` | `xxllnc.svg` |
 | `zuiddrecht.svg`, `zuiddrecht-dark.svg`, `zuiddrecht-emblem.svg`, `zuiddrecht-emblem-grey.svg` | Conduction's own design for the demo municipality Zuiddrecht, which does not exist |
+| `wilgenboom.svg`, `wilgenboom-dark.svg`, `wilgenboom-emblem.svg`, `wilgenboom-emblem-grey.svg` | Conduction's own design for Basisschool De Wilgenboom, a demo school in Zuiddrecht, which does not exist |
+| `vaartveld.svg`, `vaartveld-dark.svg`, `vaartveld-emblem.svg`, `vaartveld-emblem-grey.svg` | Conduction's own design for Vaartveld College, a demo school in Zuiddrecht, which does not exist |
+| `esdoornveen.svg`, `esdoornveen-dark.svg`, `esdoornveen-emblem.svg`, `esdoornveen-emblem-grey.svg` | Conduction's own design for Esdoornveen, mbo college, a demo school in Zuiddrecht, which does not exist |
+| `warmtepompacademie.svg`, `warmtepompacademie-dark.svg`, `warmtepompacademie-emblem.svg`, `warmtepompacademie-emblem-grey.svg` | Conduction's own design for Warmtepompacademie, a demo school in Zuiddrecht, which does not exist |
 | Gemeente Zevenaar | ![#596E28](https://via.placeholder.com/16/596E28/596E28.png) `#596E28` | `#FFFFFF` | -- |
 | Gemeente Zwolle | ![#3A4F93](https://via.placeholder.com/16/3A4F93/3A4F93.png) `#3A4F93` | `#FFFFFF` | -- |
 | (EXAMPLE) Basisschool | ![#B03A12](https://via.placeholder.com/16/B03A12/B03A12.png) `#B03A12` | `#FFFFFF` | `example-basisschool.svg` |
@@ -58,6 +62,10 @@ Colors are sourced from each organization's official NL Design System token set.
 | (EXAMPLE) Opleider | ![#0E4D5C](https://via.placeholder.com/16/0E4D5C/0E4D5C.png) `#0E4D5C` | `#FFFFFF` | `example-opleider.svg` |
 | (EXAMPLE) Gemeente | ![#12506B](https://via.placeholder.com/16/12506B/12506B.png) `#12506B` | `#FFFFFF` | `example-gemeente.svg` |
 | Gemeente Zuiddrecht (demo) | ![#3669A5](https://via.placeholder.com/16/3669A5/3669A5.png) `#3669A5` | `#F5F6F8` | `zuiddrecht.svg`, `zuiddrecht-dark.svg` |
+| Basisschool De Wilgenboom (demo) | ![#2F6B4A](https://via.placeholder.com/16/2F6B4A/2F6B4A.png) `#2F6B4A` | `#F5F6F8` | `wilgenboom.svg`, `wilgenboom-dark.svg` |
+| Vaartveld College (demo) | ![#1F4FD8](https://via.placeholder.com/16/1F4FD8/1F4FD8.png) `#1F4FD8` | `#F5F6F8` | `vaartveld.svg`, `vaartveld-dark.svg` |
+| Esdoornveen, mbo college (demo) | ![#5B2E91](https://via.placeholder.com/16/5B2E91/5B2E91.png) `#5B2E91` | `#F5F6F8` | `esdoornveen.svg`, `esdoornveen-dark.svg` |
+| Warmtepompacademie (demo) | ![#0B6E7A](https://via.placeholder.com/16/0B6E7A/0B6E7A.png) `#0B6E7A` | `#F5F6F8` | `warmtepompacademie.svg`, `warmtepompacademie-dark.svg` |
 
 ## Logo Sources
 

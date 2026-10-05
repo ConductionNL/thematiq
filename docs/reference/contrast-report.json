@@ -116,6 +116,13 @@
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
+        "esdoornveen": {
+            "verdict": "pass",
+            "textRatio": 9.36,
+            "uiRatio": 8.65,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
         "example-basisschool": {
             "verdict": "pass",
             "textRatio": 6.07,
@@ -354,6 +361,13 @@
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
+        "vaartveld": {
+            "verdict": "pass",
+            "textRatio": 6.63,
+            "uiRatio": 6.13,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
         "venray": {
             "verdict": "pass",
             "textRatio": 4.94,
@@ -375,10 +389,24 @@
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
+        "warmtepompacademie": {
+            "verdict": "pass",
+            "textRatio": 5.96,
+            "uiRatio": 5.51,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
         "westervoort": {
             "verdict": "pass",
             "textRatio": 11.3,
             "uiRatio": 11.3,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
+        "wilgenboom": {
+            "verdict": "pass",
+            "textRatio": 6.32,
+            "uiRatio": 5.84,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
