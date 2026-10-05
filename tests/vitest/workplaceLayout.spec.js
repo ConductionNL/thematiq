@@ -257,7 +257,16 @@ describe('brand stripe', () => {
 			)
 		}
 		expect(handed['--cn-brand-stripe-height']).toBe(stripe.height)
-		expect(Object.keys(handed).length).toBe(7)
+		// The motif and its dark-band variant, with no fallback, so a set that
+		// names no image keeps the component's three bands
+		// (openspec/changes/brand-motif-on-portals).
+		expect(handed['--cn-brand-stripe-image']).toBe(
+			'var(--nldesign-brand-stripe-image)',
+		)
+		expect(handed['--cn-brand-stripe-image-inverse'].replace(/\s+/g, ' ')).toBe(
+			'var( --nldesign-brand-stripe-image-inverse, var(--nldesign-brand-stripe-image) )',
+		)
+		expect(Object.keys(handed).length).toBe(9)
 	})
 
 	it('is really drawn: content and display are declared, and important', () => {

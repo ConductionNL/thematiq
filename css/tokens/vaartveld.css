@@ -173,4 +173,23 @@
 	--nldesign-brand-stripe-ratio-3: 4;
 	--nldesign-brand-stripe-height: 9px;
 	--nldesign-brand-stripe-image: linear-gradient(to bottom, #1F4FD8 0 4px, transparent 4px 7px, #1FB5A8 7px 9px);
+	/* On the dark footer band the bank between the two lines is drawn white. */
+	--nldesign-brand-stripe-image-inverse: linear-gradient(to bottom, #1F4FD8 0 4px, #ffffff 4px 7px, #1FB5A8 7px 9px);
+
+	/* THE WEBSITE (openspec/changes/brand-motif-on-portals). Read only by
+	 * css/public-bridge.css, which a portal links and an instance page never
+	 * does.
+	 * The accent (aqua): the menu item on screen, count badges and the
+	 * "today first" card. Never a button or a link colour. */
+	--nldesign-color-accent: #1FB5A8;
+	--nldesign-color-accent-light: #DDF5F2;
+	--nldesign-color-accent-text: #0B6259;
+	/* The footer band: the primary's deep step, white text on it. */
+	--nldesign-color-footer-background: #14338F;
+	--nldesign-color-footer-text: #ffffff;
+	/* The logo in the site header and footer, 50px high. It carries the
+	 * name, so the portal keeps its title for screen readers only. */
+	--nldesign-website-logo-height: 50px;
+	--nldesign-website-logo-width: 173px;
+	--nldesign-website-logo-text-size: 0;
 }

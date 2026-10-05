@@ -361,6 +361,739 @@
 	--nldesign-hero-body-color: var(--nldesign-color-primary-light, #eee);
 
 	/*
+	 * THE ROLE LAYER THE PORTAL SITE READS (openspec/changes/brand-motif-on-portals).
+	 *
+	 * A set that declares only `--nldesign-*` (zuiddrecht, the four school
+	 * sets, and every set the coverage line above counts as nldesignOnly) used
+	 * to reach the site with 116 of the 489 component roles it reads, against
+	 * 489 for an `example-*` set that carries its own role layer. Measured on a
+	 * portal with `wilgenboom` in place of `example-basisschool`: no logo, the
+	 * header and the DigiD button in browser defaults, the footer without its
+	 * padding. A portal that moved to a school set looked worse than before.
+	 *
+	 * So the roles the site reads are named here, once, for every set:
+	 *
+	 *   colours  from the set's `--nldesign-*` layer, each with a fallback;
+	 *   logos    from `--nldesign-logo-url`, which the portal resolves to an
+	 *            absolute address, and the set's light logo for the footer;
+	 *   geometry (spacing, sizes, the type scale) as neutral values, the scale
+	 *            of the reference implementation the vendored CSS came from.
+	 *
+	 * A set with a role layer of its own loads after this file and keeps every
+	 * value it declares; tests/vitest/publicBridgeRoleLayer.spec.js holds the
+	 * list to what the site reads and the `example-*` sets to their own values.
+	 */
+
+	/* Logos. The footer band is dark, so it takes the light variant the
+	 * portal names in --nldesign-logo-inverse-url when the set ships one. */
+	--conduction-logo-header-background-image: var(--nldesign-logo-url, none);
+	--conduction-logo-navbar-background-image: var(--nldesign-logo-url, none);
+	--conduction-logo-footer-background-image: var(
+		--nldesign-logo-inverse-url,
+		var(--nldesign-logo-url, none)
+	);
+	--conduction-logo-header-block-size: var(--nldesign-website-logo-height, 50px);
+	--conduction-logo-header-inline-size: var(--nldesign-website-logo-width, 96px);
+	--conduction-logo-navbar-block-size: var(--nldesign-website-logo-height, 50px);
+	--conduction-logo-navbar-inline-size: var(--nldesign-website-logo-width, 96px);
+	--conduction-logo-footer-block-size: var(--nldesign-website-logo-height, 50px);
+	--conduction-logo-footer-inline-size: var(--nldesign-website-logo-width, 96px);
+	/*
+	 * A logo that carries the organisation's name (a wordmark) makes the site
+	 * title beside it a second copy. Such a set says so with
+	 * `--nldesign-website-logo-text-size: 0`; the portal then keeps the title
+	 * for screen readers only. No fallback: unset keeps the portal's size.
+	 */
+	--thematiq-logo-text-font-size: var(--nldesign-website-logo-text-size);
+
+	/* The dropdown under a menu item */
+	--conduction-primary-top-nav-dropdown-background-color: var(
+		--nldesign-color-background,
+		#fff
+	);
+	--conduction-primary-top-nav-dropdown-color: var(--nldesign-color-text, #1b1b23);
+	--conduction-primary-top-nav-dropdown-current-background-color: var(
+		--nldesign-color-primary-light,
+		#eee
+	);
+	--conduction-primary-top-nav-dropdown-current-color: var(
+		--nldesign-color-text,
+		#1b1b23
+	);
+	--conduction-primary-top-nav-dropdown-hover-background-color: var(
+		--nldesign-color-background-hover,
+		#f0f0f3
+	);
+	--conduction-primary-top-nav-dropdown-hover-color: var(
+		--nldesign-color-text,
+		#1b1b23
+	);
+	--conduction-tooltip-background-color: var(--nldesign-color-text, #1b1b23);
+	--conduction-tooltip-color: var(--nldesign-color-background, #fff);
+
+	/* The tilburg roles the site's own components read */
+	--tilburg-color-dark-alpha-50: rgba(0, 0, 0, 0.05);
+	--tilburg-color-extra-purple: var(--nldesign-color-primary, #1b1b23);
+	--tilburg-color-green-100: var(
+		--nldesign-component-status-badge-success-background-color,
+		rgba(var(--nldesign-color-success-rgb, 57, 135, 12), 0.12)
+	);
+	--tilburg-color-green-300: var(--nldesign-color-success, #39870c);
+	--tilburg-color-orange-100: var(
+		--nldesign-component-status-badge-warning-background-color,
+		rgba(var(--nldesign-color-warning-rgb, 225, 112, 0), 0.12)
+	);
+	--tilburg-color-orange-300: var(--nldesign-color-warning, #e17000);
+	--tilburg-color-pink-100: var(--nldesign-color-primary-light, #eee);
+	--tilburg-color-pink-200: var(
+		--nldesign-color-primary-light-hover,
+		var(--nldesign-color-primary-light, #ddd)
+	);
+	--tilburg-color-pink-300: var(--nldesign-color-primary, #1b1b23);
+	--tilburg-color-pink-400: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--tilburg-color-red-100: var(
+		--nldesign-component-status-badge-error-background-color,
+		rgba(var(--nldesign-color-error-rgb, 213, 43, 30), 0.12)
+	);
+	--tilburg-color-red-300: var(--nldesign-color-error, #d52b1e);
+	--tilburg-color-red-400: var(
+		--nldesign-color-error-hover,
+		var(--nldesign-color-error, #d52b1e)
+	);
+	--tilburg-document-color: var(--nldesign-color-text, #1b1b23);
+	--tilburg-document-inverse-color: var(--nldesign-color-primary-text, #fff);
+	--tilburg-document-subtle-color: var(--nldesign-color-text-muted, #75758a);
+	--tilburg-feedback-informative-color: var(
+		--nldesign-color-info,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--tilburg-feedback-negative-color: var(--nldesign-color-error, #d52b1e);
+	--tilburg-feedback-positive-color: var(--nldesign-color-success, #39870c);
+	--tilburg-feedback-warning-border-color: var(--nldesign-color-warning, #e17000);
+	--tilburg-feedback-warning-color: var(--nldesign-color-warning, #e17000);
+	--tilburg-focus-background-color: var(--nldesign-color-primary-light, #eee);
+	--tilburg-focus-color: var(--nldesign-color-text, #1b1b23);
+	--tilburg-form-control-background-color: var(--nldesign-color-background, #fff);
+	--tilburg-form-control-border-color: var(
+		--nldesign-color-border-dark,
+		var(--nldesign-color-background-darker, #8a929e)
+	);
+	--tilburg-form-control-color: var(--nldesign-color-text, #1b1b23);
+	--tilburg-form-control-disabled-color: var(--nldesign-color-text-muted, #75758a);
+	--tilburg-form-control-focus-color: var(--nldesign-color-text, #1b1b23);
+	--tilburg-form-control-hover-color: var(--nldesign-color-text, #1b1b23);
+	--tilburg-form-control-placeholder-color: var(
+		--nldesign-color-text-muted,
+		#75758a
+	);
+	--tilburg-form-control-read-only-color: var(--nldesign-color-text, #1b1b23);
+	--tilburg-heading-color: var(--nldesign-color-text, #1b1b23);
+	--tilburg-interaction-active-color: var(
+		--nldesign-color-link-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--tilburg-interaction-color: var(
+		--nldesign-color-link,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--tilburg-interaction-hover-color: var(
+		--nldesign-color-link-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--tilburg-line-border-color: var(--nldesign-color-border, #e2e2ea);
+	/* The header's account links: a filled button in the primary colour, as
+	 * the vendored header draws them. */
+	--tilburg-navigation-background-color: var(--nldesign-color-primary, #1b1b23);
+	--tilburg-navigation-color: var(--nldesign-color-primary-text, #fff);
+	--tilburg-navigation-hover-background-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--tilburg-navigation-hover-color: var(--nldesign-color-primary-text, #fff);
+	--tilburg-navigation-mobile-background-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--tilburg-navigation-mobile-item-border-bottom-color: var(
+		--nldesign-color-border,
+		#e2e2ea
+	);
+
+	/* Buttons: every state the site draws, from the primary and its tints */
+	--utrecht-button-background-color: transparent;
+	--utrecht-button-border-color: var(--nldesign-color-primary, #1b1b23);
+	--utrecht-button-color: var(--nldesign-color-primary, #1b1b23);
+	--utrecht-button-hover-background-color: var(
+		--nldesign-color-primary-light,
+		#eee
+	);
+	--utrecht-button-hover-border-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-hover-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-active-background-color: var(
+		--nldesign-color-primary-light-hover,
+		var(--nldesign-color-primary-light, #ddd)
+	);
+	--utrecht-button-active-border-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-active-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-focus-background-color: var(
+		--nldesign-color-primary-light,
+		#eee
+	);
+	--utrecht-button-focus-border-color: transparent;
+	--utrecht-button-focus-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-button-disabled-background-color: var(
+		--nldesign-color-background-hover,
+		#f0f0f3
+	);
+	--utrecht-button-disabled-border-color: transparent;
+	--utrecht-button-disabled-color: var(--nldesign-color-text-muted, #75758a);
+	--utrecht-button-primary-action-border-color: var(
+		--nldesign-color-button-primary-border,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-primary-action-hover-border-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-primary-action-hover-color: var(
+		--nldesign-color-primary-text,
+		#fff
+	);
+	--utrecht-button-primary-action-active-background-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-primary-action-active-border-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-primary-action-active-color: var(
+		--nldesign-color-primary-text,
+		#fff
+	);
+	--utrecht-button-primary-action-focus-background-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-primary-action-focus-border-color: transparent;
+	--utrecht-button-primary-action-focus-color: var(
+		--nldesign-color-primary-text,
+		#fff
+	);
+	--utrecht-button-primary-action-disabled-background-color: var(
+		--nldesign-color-background-hover,
+		#f0f0f3
+	);
+	--utrecht-button-primary-action-disabled-border-color: transparent;
+	--utrecht-button-primary-action-disabled-color: var(
+		--nldesign-color-text-muted,
+		#75758a
+	);
+	--utrecht-button-secondary-action-border-color: var(
+		--nldesign-color-primary,
+		#1b1b23
+	);
+	--utrecht-button-secondary-action-hover-background-color: var(
+		--nldesign-color-primary-light,
+		#eee
+	);
+	--utrecht-button-secondary-action-hover-border-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-secondary-action-hover-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-secondary-action-active-background-color: var(
+		--nldesign-color-primary-light-hover,
+		var(--nldesign-color-primary-light, #ddd)
+	);
+	--utrecht-button-secondary-action-active-border-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-secondary-action-active-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-secondary-action-focus-background-color: var(
+		--nldesign-color-primary-light,
+		#eee
+	);
+	--utrecht-button-secondary-action-focus-border-color: var(
+		--nldesign-color-primary,
+		#1b1b23
+	);
+	--utrecht-button-secondary-action-focus-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-secondary-action-disabled-background-color: var(
+		--nldesign-color-background-hover,
+		#f0f0f3
+	);
+	--utrecht-button-secondary-action-disabled-border-color: transparent;
+	--utrecht-button-secondary-action-disabled-color: var(
+		--nldesign-color-text-muted,
+		#75758a
+	);
+	--utrecht-button-subtle-background-color: transparent;
+	--utrecht-button-subtle-border-color: transparent;
+	--utrecht-button-subtle-color: var(
+		--nldesign-color-link,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-subtle-hover-background-color: var(
+		--nldesign-color-background-hover,
+		#f0f0f3
+	);
+	--utrecht-button-subtle-hover-border-color: transparent;
+	--utrecht-button-subtle-hover-color: var(
+		--nldesign-color-link-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-subtle-active-background-color: var(
+		--nldesign-color-background-dark,
+		#e2e2ea
+	);
+	--utrecht-button-subtle-active-border-color: transparent;
+	--utrecht-button-subtle-active-color: var(
+		--nldesign-color-link-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-button-subtle-focus-background-color: var(
+		--nldesign-color-primary-light,
+		#eee
+	);
+	--utrecht-button-subtle-focus-border-color: transparent;
+	--utrecht-button-subtle-focus-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-button-subtle-disabled-background-color: transparent;
+	--utrecht-button-subtle-disabled-border-color: transparent;
+	--utrecht-button-subtle-disabled-color: var(
+		--nldesign-color-text-muted,
+		#75758a
+	);
+
+	/* Links, lists, separators, alerts and the accordion */
+	--utrecht-link-active-color: var(
+		--nldesign-color-link-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-link-focus-background-color: transparent;
+	--utrecht-link-focus-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-link-text-decoration-color: currentcolor;
+	--utrecht-breadcrumb-nav-link-disabled-color: var(
+		--nldesign-color-text-muted,
+		#75758a
+	);
+	--utrecht-document-inverse-color: var(--nldesign-color-primary-text, #fff);
+	--utrecht-paragraph-lead-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-paragraph-small-color: var(--nldesign-color-text-muted, #75758a);
+	--utrecht-unordered-list-marker-color: var(--nldesign-color-primary, #1b1b23);
+	--utrecht-separator-color: var(--nldesign-color-border, #e2e2ea);
+	--utrecht-alert-info-border-color: var(
+		--nldesign-color-info,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--utrecht-alert-info-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-alert-ok-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-alert-warning-color: var(--thematiq-status-warning-text);
+	--utrecht-alert-error-color: var(--thematiq-status-error-text);
+	--utrecht-alert-icon-positive-color: var(--nldesign-color-success, #39870c);
+	--utrecht-alert-icon-warning-color: var(--nldesign-color-warning, #e17000);
+	--utrecht-accordion-button-active-background-color: var(
+		--nldesign-color-background-dark,
+		#e2e2ea
+	);
+	--utrecht-accordion-button-border-color: transparent;
+	--utrecht-accordion-panel-border-color: transparent;
+
+	/* Form controls: every state */
+	--utrecht-form-label-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-form-field-error-message-color: var(--thematiq-status-error-text);
+	--utrecht-textbox-background-color: var(--nldesign-color-background, #fff);
+	--utrecht-textbox-placeholder-color: var(--nldesign-color-text-muted, #75758a);
+	--utrecht-textbox-focus-background-color: var(--nldesign-color-background, #fff);
+	--utrecht-textbox-focus-border-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-textbox-focus-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-textbox-invalid-background-color: var(
+		--nldesign-color-background,
+		#fff
+	);
+	--utrecht-textbox-invalid-border-color: var(--nldesign-color-error, #d52b1e);
+	--utrecht-textbox-invalid-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-textbox-disabled-background-color: var(
+		--nldesign-color-background-hover,
+		#f0f0f3
+	);
+	--utrecht-textbox-disabled-border-color: var(
+		--nldesign-color-border-dark,
+		#8a929e
+	);
+	--utrecht-textbox-disabled-color: var(--nldesign-color-text-muted, #75758a);
+	--utrecht-textbox-read-only-background-color: var(
+		--nldesign-color-background-hover,
+		#f0f0f3
+	);
+	--utrecht-textbox-read-only-border-color: var(
+		--nldesign-color-border-dark,
+		#8a929e
+	);
+	--utrecht-textbox-read-only-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-select-background-color: var(--nldesign-color-background, #fff);
+	--utrecht-select-border-color: var(
+		--nldesign-color-border-dark,
+		var(--nldesign-color-background-darker, #8a929e)
+	);
+	--utrecht-select-color: var(--nldesign-color-text, #1b1b23);
+	--utrecht-select-disabled-background-color: var(
+		--nldesign-color-background-hover,
+		#f0f0f3
+	);
+	--utrecht-select-disabled-border-color: var(
+		--nldesign-color-border-dark,
+		#8a929e
+	);
+	--utrecht-select-disabled-color: var(--nldesign-color-text-muted, #75758a);
+	--utrecht-select-font-family: var(--nldesign-font-family, system-ui, sans-serif);
+	--utrecht-radio-button-label-font-family: var(
+		--nldesign-font-family,
+		system-ui,
+		sans-serif
+	);
+	--utrecht-heading-4-font-family: var(
+		--nldesign-component-heading-font-family,
+		var(--nldesign-font-family, system-ui, sans-serif)
+	);
+	--utrecht-heading-5-font-family: var(
+		--nldesign-component-heading-font-family,
+		var(--nldesign-font-family, system-ui, sans-serif)
+	);
+	--utrecht-heading-6-font-family: var(
+		--nldesign-component-heading-font-family,
+		var(--nldesign-font-family, system-ui, sans-serif)
+	);
+
+	/* Geometry: the spacing, sizes and type scale, brand neutral */
+	--conduction-primary-top-nav-dropdown-hover-text-decoration: underline;
+	--conduction-primary-top-nav-dropdown-text-decoration: none;
+	--conduction-tooltip-border-radius: 0px;
+	--conduction-tooltip-padding-block-end: 8px;
+	--conduction-tooltip-padding-block-start: 8px;
+	--conduction-tooltip-padding-inline-end: 14px;
+	--conduction-tooltip-padding-inline-start: 14px;
+	--tilburg-border-radius-lg: 16px;
+	--tilburg-border-radius-md: 8px;
+	--tilburg-border-radius-round: 999px;
+	--tilburg-border-radius-sm: 4px;
+	--tilburg-border-width-lg: 4px;
+	--tilburg-border-width-md: 2px;
+	--tilburg-border-width-sm: 1px;
+	--tilburg-document-font-size: 16px;
+	--tilburg-document-font-weight: 400;
+	--tilburg-document-line-height: 150%;
+	--tilburg-document-strong-font-weight: 700;
+	--tilburg-erm-font-size: 16px;
+	--tilburg-footer-link-hover-text-decoration: underline;
+	--tilburg-footer-link-text-decoration: none;
+	--tilburg-form-control-border-width: 1px;
+	--tilburg-heading-font-weight: 700;
+	--tilburg-icon-functional-size: 24px;
+	--tilburg-navigation-font-weight: 700;
+	--tilburg-pointer-target-min-size: 48px;
+	--tilburg-size-2xs: 16px;
+	--tilburg-size-4xs: 4px;
+	--tilburg-size-icon-4xl: 48px;
+	--tilburg-size-icon-md: 24px;
+	--tilburg-size-icon-sm: 16px;
+	--tilburg-size-md: 48px;
+	--tilburg-size-xs: 24px;
+	--tilburg-space-block-ant: 4px;
+	--tilburg-space-block-beetle: 8px;
+	--tilburg-space-block-cat: 32px;
+	--tilburg-space-block-dog: 48px;
+	--tilburg-space-block-flea: 2px;
+	--tilburg-space-block-mouse: 16px;
+	--tilburg-space-block-pig: 64px;
+	--tilburg-space-block-rabbit: 24px;
+	--tilburg-space-block-rat: 20px;
+	--tilburg-space-block-snail: 12px;
+	--tilburg-space-column-ant: 2px;
+	--tilburg-space-column-beetle: 4px;
+	--tilburg-space-column-cat: 24px;
+	--tilburg-space-column-dog: 28px;
+	--tilburg-space-column-elephant: 96px;
+	--tilburg-space-column-horse: 64px;
+	--tilburg-space-column-mouse: 12px;
+	--tilburg-space-column-pig: 32px;
+	--tilburg-space-column-rabbit: 20px;
+	--tilburg-space-column-rat: 16px;
+	--tilburg-space-column-snail: 8px;
+	--tilburg-space-column-tiger: 48px;
+	--tilburg-space-inline-ant: 4px;
+	--tilburg-space-inline-beetle: 8px;
+	--tilburg-space-inline-mouse: 16px;
+	--tilburg-space-inline-rabbit: 24px;
+	--tilburg-space-inline-snail: 12px;
+	--tilburg-space-row-cat: 24px;
+	--tilburg-space-row-dog: 28px;
+	--tilburg-space-row-elephant: 96px;
+	--tilburg-space-row-mouse: 12px;
+	--tilburg-space-row-rabbit: 20px;
+	--tilburg-space-row-rat: 16px;
+	--tilburg-space-row-snail: 8px;
+	--tilburg-space-row-tiger: 48px;
+	--tilburg-space-text-beetle: 4px;
+	--tilburg-space-text-mouse: 8px;
+	--tilburg-space-text-snail: 6px;
+	--tilburg-typography-font-size-2xl: 32px;
+	--tilburg-typography-font-size-3xl: 36px;
+	--tilburg-typography-font-size-lg: 20px;
+	--tilburg-typography-font-size-md: 16px;
+	--tilburg-typography-font-size-sm: 14px;
+	--tilburg-typography-font-size-xl: 24px;
+	--tilburg-typography-font-weight-bold: 700;
+	--tilburg-typography-font-weight-normal: 400;
+	--tilburg-typography-line-height-md: 150%;
+	--tilburg-typography-line-height-sm: 125%;
+	--utrecht-accordion-button-border-width: 1px;
+	--utrecht-accordion-button-line-height: 150%;
+	--utrecht-accordion-button-padding-block-end: 12px;
+	--utrecht-accordion-button-padding-block-start: 12px;
+	--utrecht-accordion-button-padding-inline-end: 16px;
+	--utrecht-accordion-button-padding-inline-start: 16px;
+	--utrecht-accordion-panel-border-width: 4px;
+	--utrecht-alert-border-width: 2px;
+	--utrecht-button-border-width: 1px;
+	--utrecht-button-font-size: 16px;
+	--utrecht-button-font-weight: 700;
+	--utrecht-button-icon-size: 24px;
+	--utrecht-button-line-height: 150%;
+	--utrecht-button-min-block-size: 48px;
+	--utrecht-button-min-inline-size: 48px;
+	--utrecht-button-padding-block-end: 12px;
+	--utrecht-button-padding-block-start: 12px;
+	--utrecht-button-padding-inline-end: 16px;
+	--utrecht-button-padding-inline-start: 16px;
+	--utrecht-button-primary-action-font-weight: 700;
+	--utrecht-button-secondary-action-font-weight: 700;
+	--utrecht-button-subtle-font-weight: 700;
+	--utrecht-data-list-item-key-font-weight: 700;
+	--utrecht-document-font-size: 16px;
+	--utrecht-document-line-height: 150%;
+	--utrecht-form-label-checkbox-font-weight: 400;
+	--utrecht-form-label-font-size: 16px;
+	--utrecht-form-label-font-weight: 700;
+	--utrecht-heading-1-font-size: 36px;
+	--utrecht-heading-1-font-weight: 700;
+	--utrecht-heading-1-line-height: 125%;
+	--utrecht-heading-2-font-size: 32px;
+	--utrecht-heading-2-font-weight: 700;
+	--utrecht-heading-2-line-height: 125%;
+	--utrecht-heading-3-font-size: 24px;
+	--utrecht-heading-3-font-weight: 700;
+	--utrecht-heading-3-line-height: 125%;
+	--utrecht-heading-4-font-size: 20px;
+	--utrecht-heading-4-font-weight: 700;
+	--utrecht-heading-4-line-height: 150%;
+	--utrecht-heading-5-font-size: 16px;
+	--utrecht-heading-5-font-weight: 700;
+	--utrecht-heading-5-line-height: 150%;
+	--utrecht-heading-6-font-size: 14px;
+	--utrecht-heading-6-font-weight: 700;
+	--utrecht-heading-6-line-height: 150%;
+	--utrecht-link-focus-text-decoration: none;
+	--utrecht-link-focus-text-decoration-thickness: auto;
+	--utrecht-link-hover-text-decoration: none;
+	--utrecht-link-hover-text-decoration-thickness: auto;
+	--utrecht-link-icon-margin-inline: 4px;
+	--utrecht-link-icon-size: 24px;
+	--utrecht-link-text-decoration: underline;
+	--utrecht-link-text-decoration-thickness: auto;
+	--utrecht-link-text-underline-offset: auto;
+	--utrecht-ordered-list-font-size: 16px;
+	--utrecht-ordered-list-item-margin-block-end: 4px;
+	--utrecht-ordered-list-item-margin-block-start: 4px;
+	--utrecht-ordered-list-padding-inline-start: 24px;
+	--utrecht-paragraph-font-size: 16px;
+	--utrecht-paragraph-font-weight: 400;
+	--utrecht-paragraph-lead-font-size: 20px;
+	--utrecht-paragraph-lead-font-weight: 400;
+	--utrecht-paragraph-lead-line-height: 150%;
+	--utrecht-paragraph-line-height: 150%;
+	--utrecht-paragraph-small-font-size: 14px;
+	--utrecht-paragraph-small-font-weight: 400;
+	--utrecht-paragraph-small-line-height: 150%;
+	--utrecht-radio-button-label-font-size: 16px;
+	--utrecht-radio-button-label-font-weight: 400;
+	--utrecht-radio-button-label-line-height: 150%;
+	--utrecht-radio-button-min-block-size: 16px;
+	--utrecht-radio-button-min-inline-size: 16px;
+	--utrecht-select-border-width: 1px;
+	--utrecht-select-font-size: 16px;
+	--utrecht-select-hover-border-width: 2px;
+	--utrecht-select-max-inline-size: 400px;
+	--utrecht-separator-margin-block-end: 32px;
+	--utrecht-separator-margin-block-start: 32px;
+	--utrecht-skip-link-text-decoration: underline;
+	--utrecht-table-cell-padding-inline-start: 12px;
+	--utrecht-textbox-border-width: 1px;
+	--utrecht-textbox-font-size: 16px;
+	--utrecht-textbox-font-weight: 400;
+	--utrecht-textbox-max-inline-size: 400px;
+	--utrecht-textbox-padding-block-start: 12px;
+	--utrecht-textbox-padding-inline-end: 12px;
+	--utrecht-textbox-padding-inline-start: 12px;
+	--utrecht-unordered-list-font-size: 16px;
+	--utrecht-unordered-list-item-margin-block-end: 4px;
+	--utrecht-unordered-list-item-margin-block-start: 4px;
+	--utrecht-unordered-list-padding-inline-start: 24px;
+
+	--tilburg-box-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+	--tilburg-box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+	--conduction-tooltip-z-index: 9999;
+
+	/* Tabs */
+	--conduction-tabs-scroll-button-background-color: var(
+		--nldesign-color-primary,
+		#1b1b23
+	);
+	--conduction-tabs-scroll-button-color: var(--nldesign-color-primary-text, #fff);
+	--conduction-tabs-scroll-button-hover-background-color: var(
+		--nldesign-color-primary-hover,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--conduction-tabs-scroll-button-hover-color: var(
+		--nldesign-color-primary-text,
+		#fff
+	);
+	--conduction-tabs-tab-background-color: transparent;
+	--conduction-tabs-tab-color: var(--nldesign-color-text, #1b1b23);
+	--conduction-tabs-tab-font-family: var(
+		--nldesign-font-family,
+		system-ui,
+		sans-serif
+	);
+	--conduction-tabs-tab-hover-background-color: transparent;
+	--conduction-tabs-tab-hover-color: var(--nldesign-color-text, #1b1b23);
+	--conduction-tabs-tab-list-border-bottom-color: var(
+		--nldesign-color-border,
+		#e2e2ea
+	);
+	--conduction-tabs-tab-selected-background-color: transparent;
+	--conduction-tabs-tab-selected-border-bottom-color: var(--thematiq-accent-color);
+	--conduction-tabs-tab-selected-color: var(--nldesign-color-text, #1b1b23);
+	--conduction-tabs-tab-selected-hover-color: var(--nldesign-color-text, #1b1b23);
+	--conduction-tabs-tab-bottom: -3px;
+	--conduction-tabs-tab-button-bottom: 0px;
+	--conduction-tabs-tab-font-size: 16px;
+	--conduction-tabs-tab-font-weight: 400;
+	--conduction-tabs-tab-hover-font-weight: 700;
+	--conduction-tabs-tab-letter-spacing: normal;
+	--conduction-tabs-tab-list-border-bottom-style: solid;
+	--conduction-tabs-tab-list-border-bottom-width: 0.3rem;
+	--conduction-tabs-tab-list-margin-block-end: 0px;
+	--conduction-tabs-tab-list-padding-inline-end: 2px;
+	--conduction-tabs-tab-list-padding-inline-start: 2px;
+	--conduction-tabs-tab-min-height: 48px;
+	--conduction-tabs-tab-padding-block-end: 6px;
+	--conduction-tabs-tab-padding-block-start: 6px;
+	--conduction-tabs-tab-padding-inline-end: 12px;
+	--conduction-tabs-tab-padding-inline-start: 12px;
+	--conduction-tabs-tab-panel-padding-block-end: 24px;
+	--conduction-tabs-tab-panel-padding-block-start: 24px;
+	--conduction-tabs-tab-panel-padding-inline-end: 24px;
+	--conduction-tabs-tab-panel-padding-inline-start: 24px;
+	--conduction-tabs-tab-selected-border-bottom-style: solid;
+	--conduction-tabs-tab-selected-border-bottom-width: 0.3rem;
+	--conduction-tabs-tab-selected-font-weight: 700;
+	--conduction-tabs-tab-selected-hover-font-weight: 700;
+
+	/*
+	 * THE ACCENT (openspec/changes/brand-motif-on-portals).
+	 *
+	 * A school set has a second colour besides its interactive primary: sun
+	 * yellow, aqua, maple rose, ember. It marks the menu item on screen, the
+	 * count badges and the "today first" card; it is never the colour of a
+	 * button or a link. A set names it in three vocabulary tokens:
+	 *
+	 *   --nldesign-color-accent        the accent itself (bars, underlines)
+	 *   --nldesign-color-accent-light  its light wash (a card's ground)
+	 *   --nldesign-color-accent-text   text in the accent's hue on that wash
+	 *
+	 * The site reads the three roles below. A set that names no accent gets
+	 * its primary, so the marks still show, in the brand's main colour.
+	 */
+	--thematiq-accent-color: var(
+		--nldesign-color-accent,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	--thematiq-accent-light-color: var(
+		--nldesign-color-accent-light,
+		var(--nldesign-color-primary-light, #eee)
+	);
+	--thematiq-accent-text-color: var(
+		--nldesign-color-accent-text,
+		var(--nldesign-color-primary, #1b1b23)
+	);
+	/* A count badge: the set's own navigation badge, else the accent with the
+	 * primary's text colour on it. */
+	--thematiq-badge-background-color: var(
+		--nldesign-component-navigation-badge-background-color,
+		var(--thematiq-accent-color)
+	);
+	--thematiq-badge-color: var(
+		--nldesign-component-navigation-badge-color,
+		var(--nldesign-color-primary-text, #fff)
+	);
+
+	/*
+	 * THE BRAND STRIPE ON THE PORTAL (openspec/changes/brand-motif-on-portals).
+	 *
+	 * css/brand-stripe.css draws the stripe on Nextcloud's own pages; a portal
+	 * never loads that file, so the same tokens reach the site here, under the
+	 * names the component library's CnBrandStripe reads.
+	 *
+	 * NO FALLBACKS, unlike brand-stripe.css. That file is loaded only while
+	 * the stripe is on; this one is loaded for every set, and a set that
+	 * declares no stripe must not suddenly grow one on its portal. With the
+	 * set silent every name below is the guaranteed-invalid value, the site's
+	 * own `var(--cn-brand-stripe-height, 0)` applies and nothing is drawn.
+	 *
+	 * The image is the motif (the twigs, the canal, the cut, the temperature
+	 * line). The inverse image is the same motif for a dark band such as the
+	 * footer; a set that names none draws its one image there too.
+	 */
+	--cn-brand-stripe-color-1: var(--nldesign-brand-stripe-color-1);
+	--cn-brand-stripe-color-2: var(--nldesign-brand-stripe-color-2);
+	--cn-brand-stripe-color-3: var(--nldesign-brand-stripe-color-3);
+	--cn-brand-stripe-ratio-1: var(--nldesign-brand-stripe-ratio-1);
+	--cn-brand-stripe-ratio-2: var(--nldesign-brand-stripe-ratio-2);
+	--cn-brand-stripe-ratio-3: var(--nldesign-brand-stripe-ratio-3);
+	--cn-brand-stripe-height: var(--nldesign-brand-stripe-height);
+	--cn-brand-stripe-image: var(--nldesign-brand-stripe-image);
+	--cn-brand-stripe-image-inverse: var(
+		--nldesign-brand-stripe-image-inverse,
+		var(--nldesign-brand-stripe-image)
+	);
+
+	/*
 	 * `--navigation-bar-height` IS DELIBERATELY NOT BRIDGED HERE, and the reason
 	 * is worth keeping: it cannot be.
 	 *

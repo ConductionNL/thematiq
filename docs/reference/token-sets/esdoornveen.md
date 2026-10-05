@@ -2,7 +2,7 @@
 
 # Esdoornveen, mbo college
 
-Token set `esdoornveen`: 79 declared by this set, 129 from the defaults layer.
+Token set `esdoornveen`: 88 declared by this set, 129 from the defaults layer.
 
 Contrast: primary text on primary 9.36:1, primary on background 8.65:1 (pass).
 
@@ -278,9 +278,15 @@ Contrast: primary text on primary 9.36:1, primary on background 8.65:1 (pass).
 | `--nldesign-brand-stripe-color-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235B2E91%22%2F%3E%3C%2Fsvg%3E) `#5B2E91` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23966bc9%22%2F%3E%3C%2Fsvg%3E) `#966bc9` | this set | |
 | `--nldesign-brand-stripe-height` | `6px` | | this set | |
 | `--nldesign-brand-stripe-image` | `linear-gradient(122deg, #5B2E91 0 28.73px, #C2255C 28.73px 110.13px, #5B2E91 110.13px)` | | this set | |
+| `--nldesign-brand-stripe-image-inverse` | `linear-gradient(238deg, #5B2E91 0 28.73px, #C2255C 28.73px 110.13px, #5B2E91 110.13px)` | | this set | |
 | `--nldesign-brand-stripe-ratio-1` | `1` | | this set | |
 | `--nldesign-brand-stripe-ratio-2` | `3` | | this set | |
 | `--nldesign-brand-stripe-ratio-3` | `10` | | this set | |
+| `--nldesign-color-accent` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23C2255C%22%2F%3E%3C%2Fsvg%3E) `#C2255C` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d14274%22%2F%3E%3C%2Fsvg%3E) `#d14274` | this set | |
+| `--nldesign-color-accent-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23FBE9F0%22%2F%3E%3C%2Fsvg%3E) `#FBE9F0` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23330c1b%22%2F%3E%3C%2Fsvg%3E) `#330c1b` | this set | |
+| `--nldesign-color-accent-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239C1C49%22%2F%3E%3C%2Fsvg%3E) `#9C1C49` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e36390%22%2F%3E%3C%2Fsvg%3E) `#e36390` | this set | |
+| `--nldesign-color-footer-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2343206E%22%2F%3E%3C%2Fsvg%3E) `#43206E` | | this set | |
+| `--nldesign-color-footer-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | |
 | `--nldesign-component-content-card-shadow-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%2827%2C%2028%2C%2029%2C%200.04%29%22%2F%3E%3C%2Fsvg%3E) `rgba(27, 28, 29, 0.04)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d2d3d40a%22%2F%3E%3C%2Fsvg%3E) `#d2d3d40a` | this set | |
 | `--nldesign-component-content-surface-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23F5F6F8%22%2F%3E%3C%2Fsvg%3E) `#F5F6F8` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23171a20%22%2F%3E%3C%2Fsvg%3E) `#171a20` | this set | |
 | `--nldesign-component-navigation-active-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23C2255C%22%2F%3E%3C%2Fsvg%3E) `#C2255C` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d14274%22%2F%3E%3C%2Fsvg%3E) `#d14274` | this set | |
@@ -300,3 +306,6 @@ Contrast: primary text on primary 9.36:1, primary on background 8.65:1 (pass).
 | `--nldesign-logo-url` | `url('../../img/logos/esdoornveen.svg')` | `url('../../../img/logos/esdoornveen-dark.svg')` | this set | |
 | `--nldesign-website-border-radius` | `4px` | | this set | |
 | `--nldesign-website-border-radius-large` | `8px` | | this set | |
+| `--nldesign-website-logo-height` | `50px` | | this set | |
+| `--nldesign-website-logo-text-size` | `0` | | this set | |
+| `--nldesign-website-logo-width` | `198px` | | this set | |
