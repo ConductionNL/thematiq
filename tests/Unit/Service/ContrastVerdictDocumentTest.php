@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\ContrastVerdictDocument;
+use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -129,4 +130,41 @@ class ContrastVerdictDocumentTest extends TestCase {
 		$this->assertStringContainsString('"sets": {}', $rendered);
 		$this->assertSame([], json_decode($rendered, true)['sets']);
 	}//end testAnEmptyAuditRendersAnObjectNotAList()
+
+	/**
+	 * The document must name the pairs the audit actually compares.
+	 *
+	 * READ OFF THE SERVICE, NOT RETYPED. A label that repeats the token names
+	 * as literals is a second copy that can drift from the pair being measured,
+	 * and a wrong label is worse than none: it reads as fact. Asserting against
+	 * the same constants `ShippedTokenSetAuditService::ratioFor()` passes to
+	 * `pairRatio()` is what makes the published name true rather than hopeful.
+	 *
+	 * @return void
+	 */
+	public function testThePairsNameWhatTheAuditCompared(): void {
+		$pairs = json_decode((new ContrastVerdictDocument())->render([]), true)['pairs'];
+
+		$this->assertSame(ShippedTokenSetAuditService::TEXT_PAIR, $pairs['textRatio']);
+		$this->assertSame(ShippedTokenSetAuditService::UI_PAIR, $pairs['uiRatio']);
+
+		// Named explicitly too, so a change to BOTH the service and the document
+		// still has to be deliberate: the assertion above alone would follow a
+		// renamed constant anywhere it went.
+		$this->assertSame(
+			[
+				'foreground' => '--nldesign-color-primary-text',
+				'background' => '--nldesign-color-primary',
+			],
+			$pairs['textRatio'],
+			'textRatio is primary-text ON primary, not body ink on the page'
+		);
+		$this->assertSame(
+			[
+				'foreground' => '--nldesign-color-primary',
+				'background' => '--nldesign-color-background',
+			],
+			$pairs['uiRatio']
+		);
+	}//end testThePairsNameWhatTheAuditCompared()
 }//end class
