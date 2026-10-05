@@ -2,7 +2,7 @@
 	"id": "denhaag",
 	"name": "Gemeente Den Haag",
 	"description": "Gemeente Den Haag's own design tokens: green buttons, blue links, a white page header.",
-	"provenance": "the pinned @gemeente-denhaag token CSS vendored under scripts/sources/denhaag/ (EUPL-1.2, Gemeente Den Haag)",
+	"provenance": "the pinned @gemeente-denhaag token CSS vendored under scripts/sources/denhaag/, EUPL-1.2, Gemeente Den Haag",
 	"componentsFile": "denhaag.components.json",
 	"_comment_source": [
 		"WHY THIS SET IS SOURCED AND THE OTHER SEVEN BRIDGE-ZERO SETS ARE NOT.",
