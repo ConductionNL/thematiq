@@ -2675,6 +2675,12 @@
 	background: var(--color-main-background);
 	color: var(--color-main-text);
 }
+/* Nextcloud core's reset sets `dialog { display: block }`, which beats the
+   browser's own `dialog:not([open]) { display: none }`, so a closed dialog
+   would render in the page and push the settings layout out of view. */
+.nldesign-own-dialog:not([open]) {
+	display: none;
+}
 .nldesign-own-dialog label {
 	display: block;
 	font-weight: 600;
