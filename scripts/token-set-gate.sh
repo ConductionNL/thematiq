@@ -39,5 +39,6 @@ npx vitest run \
 	tests/vitest/generateTokensManifest.spec.js \
 	tests/vitest/syncUpstreamTokens.spec.js \
 	tests/vitest/zuiddrechtTokenSet.spec.js \
+	tests/vitest/schoolTokenSets.spec.js \
 	tests/vitest/componentScopesGenerator.spec.js \
 	tests/vitest/workplaceLayout.spec.js

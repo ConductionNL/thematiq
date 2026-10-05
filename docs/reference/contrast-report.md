@@ -34,6 +34,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | enkhuizen | 7.23:1 | 4.5:1 | 7.23:1 | 3.0:1 | pass |
 | enschede | 4.88:1 | 4.5:1 | 4.88:1 | 3.0:1 | pass |
 | epe | 7.60:1 | 4.5:1 | 7.60:1 | 3.0:1 | pass |
+| esdoornveen | 9.36:1 | 4.5:1 | 8.65:1 | 3.0:1 | pass |
 | example-basisschool | 6.07:1 | 4.5:1 | 6.07:1 | 3.0:1 | pass |
 | example-college | 9.34:1 | 4.5:1 | 9.34:1 | 3.0:1 | pass |
 | example-gemeente | 8.80:1 | 4.5:1 | 8.80:1 | 3.0:1 | pass |
@@ -68,10 +69,13 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | tilburg | 12.61:1 | 4.5:1 | 12.61:1 | 3.0:1 | pass |
 | tubbergen | 5.91:1 | 4.5:1 | 5.91:1 | 3.0:1 | pass |
 | utrecht | 7.41:1 | 4.5:1 | 7.41:1 | 3.0:1 | pass |
+| vaartveld | 6.63:1 | 4.5:1 | 6.13:1 | 3.0:1 | pass |
 | venray | 4.94:1 | 4.5:1 | 4.94:1 | 3.0:1 | pass |
 | vng | 11.98:1 | 4.5:1 | 11.98:1 | 3.0:1 | pass |
 | vught | 4.62:1 | 4.5:1 | 4.55:1 | 3.0:1 | pass |
+| warmtepompacademie | 5.96:1 | 4.5:1 | 5.51:1 | 3.0:1 | pass |
 | westervoort | 11.30:1 | 4.5:1 | 11.30:1 | 3.0:1 | pass |
+| wilgenboom | 6.32:1 | 4.5:1 | 5.84:1 | 3.0:1 | pass |
 | xxllnc | 11.24:1 | 4.5:1 | 14.16:1 | 3.0:1 | pass |
 | zaanstad | 5.23:1 | 4.5:1 | 5.23:1 | 3.0:1 | pass |
 | zevenaar | 5.70:1 | 4.5:1 | 5.70:1 | 3.0:1 | pass |
@@ -105,6 +109,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | enkhuizen | 15 | 0 | 0 |  |
 | enschede | 15 | 0 | 0 |  |
 | epe | 15 | 0 | 0 |  |
+| esdoornveen | 15 | 0 | 0 |  |
 | example-basisschool | 15 | 0 | 0 |  |
 | example-college | 15 | 0 | 0 |  |
 | example-gemeente | 15 | 0 | 0 |  |
@@ -139,10 +144,13 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | tilburg | 15 | 0 | 0 |  |
 | tubbergen | 15 | 0 | 0 |  |
 | utrecht | 15 | 0 | 0 |  |
+| vaartveld | 15 | 0 | 0 |  |
 | venray | 15 | 0 | 0 |  |
 | vng | 15 | 0 | 0 |  |
 | vught | 15 | 0 | 0 |  |
+| warmtepompacademie | 15 | 0 | 0 |  |
 | westervoort | 15 | 0 | 0 |  |
+| wilgenboom | 15 | 0 | 0 |  |
 | xxllnc | 15 | 0 | 0 |  |
 | zaanstad | 15 | 0 | 0 |  |
 | zevenaar | 15 | 0 | 0 |  |
