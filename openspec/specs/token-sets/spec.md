@@ -514,6 +514,7 @@ The required semantic tokens are exactly:
 - AND `complete` MUST be true
 
 #### Scenario: Missing required tokens are evaluated against the set file alone
+@e2e exclude The GIVEN cannot be produced on an instance: only shipped sets are audited, and every shipped set declares the full vocabulary since thematiq#1006 (the allow-list is empty). tests/Unit/TokenSetVocabularyTest.php::testAuditDistinguishesCompleteFromIncompleteSets audits a probe nldesign set that declares only a primary next to the real defaults.css and asserts it is incomplete and misses `--nldesign-color-text`.
 - GIVEN `css/tokens/zwolle.css` declares none of the required semantic tokens
 - AND `css/systems/nldesign/defaults.css` declares Rijkshuisstijl values for all of them
 - WHEN the set is audited
@@ -558,6 +559,7 @@ The required semantic tokens are exactly:
 - AND comparison MUST normalise case and expand 3-digit hex to 6-digit before comparing
 
 #### Scenario: An absent or non-literal primary is not double-reported as a mismatch
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set declares a literal `--nldesign-color-primary` since thematiq#1006 (the allow-list is empty). tests/Unit/Service/TokenSetVocabularyAuditServiceTest.php::testCommentedOutDeclarationsNeverCount audits an nldesign set without a primary and asserts it is reported once, in `missingRequired`, with `primaryMismatch` false.
 - GIVEN a set does not declare `--nldesign-color-primary` at all, or declares a non-hex value
 - WHEN the set is audited
 - THEN the defect MUST be reported once, in `missingRequired`
