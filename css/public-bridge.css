@@ -23,11 +23,12 @@
  *
  * MEASURED COVERAGE (a test recomputes these from token-sets.json and
  * css/tokens/, and fails when they drift):
- *   coverage: listed=59 roleLayer=25 nldesignOnly=12 denhaagComponents=17
- * Of the listed sets, 25 carry the full `--utrecht-*` role layer, 12 declare
- * only `--nldesign-*`, and 17 declare Den Haag component properties. No set
- * declares a case card property; the Den Haag section at the end of this
- * block gives every set one.
+ *   coverage: listed=59 roleLayer=26 nldesignOnly=11 denhaagComponents=18
+ * Of the listed sets, 26 carry the full `--utrecht-*` role layer, 11 declare
+ * only `--nldesign-*`, and 18 declare Den Haag component properties. Two sets
+ * declare a case card property of their own, `cunningham` and `denhaag`; the
+ * Den Haag section at the end of this block gives every other set one, and
+ * fills the properties those two leave out.
  *
  * WHO LINKS THIS FILE. Portaliq does not link it yet. Its change
  * `site-links-the-theme-bridge` (portaliq, open) adds the link, before the set.

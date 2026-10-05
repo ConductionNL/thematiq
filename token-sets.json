@@ -485,11 +485,19 @@
 	{
 		"id": "denhaag",
 		"name": "Gemeente Den Haag",
-		"description": "Design tokens for Gemeente Den Haag",
+		"description": "Gemeente Den Haag's own design tokens: green buttons, blue links, a white page header.",
 		"theming": {
-			"primary_color": "#1a7a3e",
+			"primary_color": "#238541",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/denhaag.svg"
+		},
+		"font": {
+			"family": "TheSans",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "LucasFonts",
+			"action": "upload",
+			"note": "Den Haag's token CSS names TheSans, a LucasFonts retail face it licenses. No release of it allows redistribution in an app package, so an administrator uploads the licensed webfont under Thematiq's custom fonts. Until then this set renders in the self-hosted Fira Sans behind it in the stack."
 		}
 	},
 	{

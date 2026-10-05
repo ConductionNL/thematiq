@@ -225,3 +225,31 @@ path = "scripts/sources/denhaag/*.css"
 precedence = "override"
 SPDX-FileCopyrightText = "Gemeente Den Haag"
 SPDX-License-Identifier = "EUPL-1.2"
+
+# The Den Haag token set and the brand files it is generated from. These are
+# COMPOSITE: the palette, the component mapping and the ramp are Den Haag's own
+# values, read off the vendored CSS above, while the role layer around them and
+# the --nldesign-* semantic layer are ours. Both halves are EUPL-1.2, so the
+# licence identifier the blanket entry gives them was already right; the
+# copyright line was not, because it named only us. Two holders, one licence.
+#
+# `precedence = "override"` for the same reason the entry above uses it: these
+# files carry no SPDX header of their own (the CSS is written by
+# scripts/generate-brand-set.mjs and an SPDX comment is not valid JSON), so
+# without this they silently inherit a copyright line that leaves Den Haag out.
+#
+# css/tokens/rotterdam.css has the same shape with no entry of its own. That
+# predates this change and is not fixed here.
+[[annotations]]
+path = [
+    "css/tokens/denhaag.css",
+    "css/tokens/dark/denhaag.css",
+    "scripts/brands/denhaag.json",
+    "scripts/brands/denhaag.components.json",
+]
+precedence = "override"
+SPDX-FileCopyrightText = [
+    "2026 Conduction B.V. <info@conduction.nl>",
+    "Gemeente Den Haag",
+]
+SPDX-License-Identifier = "EUPL-1.2"
