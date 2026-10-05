@@ -227,13 +227,31 @@ describe('brand stripe', () => {
 	const LOGIN = "#body-login div[class*='login-box__wrapper']::before"
 
 	it('is one shared rule for the top bar and the login card, plus where each one sits', () => {
-		expect(rules.length).toBe(3)
+		expect(rules.length).toBe(4)
 		expect([...rules[0].selectors].sort()).toEqual([LOGIN, HEADER].sort())
 		expect(rules[1]).toEqual({ selectors: [HEADER], decls: { bottom: '0' } })
 		expect(rules[2]).toEqual({ selectors: [LOGIN], decls: { top: '0' } })
 		expect(stripe['pointer-events']).toBe('none')
 		expect(stripe.position).toBe('absolute')
 		expect(stripe.height).toBe('var(--nldesign-brand-stripe-height, 4px)')
+	})
+
+	it('hands the same tokens to the component library, with the same fallbacks', () => {
+		// CnBrandStripe in nextcloud-vue reads `--cn-brand-stripe-*` and knows
+		// no theme. Without this rule a portal header drew one primary band
+		// next to a top bar in three.
+		expect(rules[3].selectors).toEqual([':root'])
+		const handed = rules[3].decls
+		for (const n of [1, 2, 3]) {
+			expect(handed['--cn-brand-stripe-ratio-' + n]).toBe(
+				'var(--nldesign-brand-stripe-ratio-' + n + ', 1)',
+			)
+			expect(handed['--cn-brand-stripe-color-' + n]).toContain(
+				'--nldesign-brand-stripe-color-' + n,
+			)
+		}
+		expect(handed['--cn-brand-stripe-height']).toBe(stripe.height)
+		expect(Object.keys(handed).length).toBe(7)
 	})
 
 	it('is really drawn: content and display are declared, and important', () => {

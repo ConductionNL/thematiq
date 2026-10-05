@@ -96,3 +96,29 @@
 #body-login div[class*='login-box__wrapper']::before {
 	top: 0;
 }
+
+/*
+ * The same stripe for the shared component library. Its `CnBrandStripe` reads
+ * its own `--cn-brand-stripe-*` properties and knows no theme, so the tokens
+ * are handed over here, with the fallbacks the stripe above uses. While the
+ * stripe is off this sheet is not loaded and the component draws its own
+ * default: one band in the primary colour.
+ */
+:root {
+	--cn-brand-stripe-color-1: var(
+		--nldesign-brand-stripe-color-1,
+		var(--color-primary-element)
+	);
+	--cn-brand-stripe-color-2: var(
+		--nldesign-brand-stripe-color-2,
+		var(--color-primary-element-hover)
+	);
+	--cn-brand-stripe-color-3: var(
+		--nldesign-brand-stripe-color-3,
+		var(--cn-brand-stripe-color-1)
+	);
+	--cn-brand-stripe-ratio-1: var(--nldesign-brand-stripe-ratio-1, 1);
+	--cn-brand-stripe-ratio-2: var(--nldesign-brand-stripe-ratio-2, 1);
+	--cn-brand-stripe-ratio-3: var(--nldesign-brand-stripe-ratio-3, 1);
+	--cn-brand-stripe-height: var(--nldesign-brand-stripe-height, 4px);
+}
