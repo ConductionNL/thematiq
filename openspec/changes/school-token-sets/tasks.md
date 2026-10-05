@@ -23,4 +23,4 @@
 - [x] 5.3 `bash scripts/token-set-gate.sh` runs the new spec.
 
 ## 6. Verify
-- [ ] 6.1 Live check on a running instance (the coordinator does this after merge).
+- [x] 6.1 Live check on Nextcloud 34 (:8091): each set selected, computed values read from the Files app (light and dark), the settings navigation, the login page and the portal site.
