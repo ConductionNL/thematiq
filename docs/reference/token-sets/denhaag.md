@@ -2,151 +2,151 @@
 
 # Gemeente Den Haag
 
-Token set `denhaag`: 47 declared by this set, 130 from the defaults layer.
+Token set `denhaag`: 2883 declared by this set, 129 from the defaults layer.
 
-Contrast: primary text on primary 5.39:1, primary on background 5.39:1 (pass).
+Contrast: primary text on primary 4.66:1, primary on background 4.66:1 (pass).
 
 ## Colours (Kleuren)
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
-| `--nldesign-color-background-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e8e8e8%22%2F%3E%3C%2Fsvg%3E) `#e8e8e8` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23282828%22%2F%3E%3C%2Fsvg%3E) `#282828` | this set | Background dark, Table header background |
-| `--nldesign-color-background-darker` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4d4d4%22%2F%3E%3C%2Fsvg%3E) `#d4d4d4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23393939%22%2F%3E%3C%2Fsvg%3E) `#393939` | this set | Background darker |
-| `--nldesign-color-background-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5f5f5%22%2F%3E%3C%2Fsvg%3E) `#f5f5f5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1d%22%2F%3E%3C%2Fsvg%3E) `#1d1d1d` | this set | Main background color |
-| `--nldesign-color-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233f3f3f%22%2F%3E%3C%2Fsvg%3E) `#3f3f3f` | this set | Border color, Select border, Table row rule, Text input border, `--nldesign-component-separator-border-color` |
-| `--nldesign-color-border-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23999999%22%2F%3E%3C%2Fsvg%3E) `#999999` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236a6a6a%22%2F%3E%3C%2Fsvg%3E) `#6a6a6a` | this set | Border dark, Border max contrast |
-| `--nldesign-color-button-primary-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a7a3e%22%2F%3E%3C%2Fsvg%3E) `#1a7a3e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | this set | |
-| `--nldesign-color-button-primary-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a7a3e%22%2F%3E%3C%2Fsvg%3E) `#1a7a3e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | this set | |
-| `--nldesign-color-button-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23156633%22%2F%3E%3C%2Fsvg%3E) `#156633` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238ce2ac%22%2F%3E%3C%2Fsvg%3E) `#8ce2ac` | this set | |
+| `--nldesign-color-background-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f2f2f2%22%2F%3E%3C%2Fsvg%3E) `#f2f2f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | Background dark, Table header background |
+| `--nldesign-color-background-darker` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | Background darker |
+| `--nldesign-color-background-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f9f8f6%22%2F%3E%3C%2Fsvg%3E) `#f9f8f6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | Main background color |
+| `--nldesign-color-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | Border color, Select border, Table row rule, Text input border, `--nldesign-component-separator-border-color` |
+| `--nldesign-color-border-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237a7a7a%22%2F%3E%3C%2Fsvg%3E) `#7a7a7a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | Border dark, Border max contrast |
+| `--nldesign-color-button-primary-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--nldesign-color-button-primary-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--nldesign-color-button-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231e6c35%22%2F%3E%3C%2Fsvg%3E) `#1e6c35` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
 | `--nldesign-color-button-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | this set | |
-| `--nldesign-color-error` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d52d2d%22%2F%3E%3C%2Fsvg%3E) `#d52d2d` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ca3232%22%2F%3E%3C%2Fsvg%3E) `#ca3232` | this set | Border error, Element error, Error color, Text error, Text input invalid |
-| `--nldesign-color-error-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23aa2424%22%2F%3E%3C%2Fsvg%3E) `#aa2424` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d35555%22%2F%3E%3C%2Fsvg%3E) `#d35555` | this set | Error hover |
-| `--nldesign-color-error-rgb` | `213, 45, 45` | `202, 50, 50` | this set | Error text color |
+| `--nldesign-color-error` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a30500%22%2F%3E%3C%2Fsvg%3E) `#a30500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | Border error, Element error, Error color, Text error, Text input invalid |
+| `--nldesign-color-error-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23520100%22%2F%3E%3C%2Fsvg%3E) `#520100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fa9897%22%2F%3E%3C%2Fsvg%3E) `#fa9897` | this set | Error hover |
+| `--nldesign-color-error-rgb` | `163, 5, 0` | `246, 91, 86` | this set | Error text color |
 | `--nldesign-color-favorite` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e17000%22%2F%3E%3C%2Fsvg%3E) `#e17000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f48c25%22%2F%3E%3C%2Fsvg%3E) `#f48c25` | defaults | Background blur filter |
-| `--nldesign-color-focus` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%2818%2C%2097%2C%20163%2C%200.5%29%22%2F%3E%3C%2Fsvg%3E) `rgba(18, 97, 163, 0.5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2359a5e480%22%2F%3E%3C%2Fsvg%3E) `#59a5e480` | this set | Button focus ring |
-| `--nldesign-color-focus-rgb` | `18, 97, 163` | `89, 165, 228` | this set | |
-| `--nldesign-color-header-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a7a3e%22%2F%3E%3C%2Fsvg%3E) `#1a7a3e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | this set | |
-| `--nldesign-color-header-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
-| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231261a3%22%2F%3E%3C%2Fsvg%3E) `#1261a3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2359a5e4%22%2F%3E%3C%2Fsvg%3E) `#59a5e4` | this set | Info color, Info hover color, Text input focus |
-| `--nldesign-color-info-rgb` | `18, 97, 163` | `89, 165, 228` | this set | |
-| `--nldesign-color-link` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231261a3%22%2F%3E%3C%2Fsvg%3E) `#1261a3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2359a5e4%22%2F%3E%3C%2Fsvg%3E) `#59a5e4` | this set | Link colour |
-| `--nldesign-color-link-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a7a3e%22%2F%3E%3C%2Fsvg%3E) `#1a7a3e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | this set | Link hover colour |
-| `--nldesign-color-link-visited` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236b3fa0%22%2F%3E%3C%2Fsvg%3E) `#6b3fa0` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238960ba%22%2F%3E%3C%2Fsvg%3E) `#8960ba` | this set | `--nldesign-component-link-visited-color` |
+| `--nldesign-color-focus` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23806400%22%2F%3E%3C%2Fsvg%3E) `#806400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | Button focus ring |
+| `--nldesign-color-focus-rgb` | `0, 123, 199` | `248, 218, 114` | defaults | |
+| `--nldesign-color-header-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--nldesign-color-header-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23094b81%22%2F%3E%3C%2Fsvg%3E) `#094b81` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | Info color, Info hover color, Text input focus |
+| `--nldesign-color-info-rgb` | `9, 75, 129` | `115, 183, 238` | this set | |
+| `--nldesign-color-link` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | Link colour |
+| `--nldesign-color-link-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23094b81%22%2F%3E%3C%2Fsvg%3E) `#094b81` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | Link hover colour |
+| `--nldesign-color-link-visited` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | `--nldesign-component-link-visited-color` |
 | `--nldesign-color-logo-background` | `transparent` | | defaults | |
 | `--nldesign-color-nav-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
-| `--nldesign-color-placeholder-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233f3f3f%22%2F%3E%3C%2Fsvg%3E) `#3f3f3f` | defaults | Placeholder dark |
-| `--nldesign-color-placeholder-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | defaults | Placeholder light |
-| `--nldesign-color-primary` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a7a3e%22%2F%3E%3C%2Fsvg%3E) `#1a7a3e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233ed677%22%2F%3E%3C%2Fsvg%3E) `#3ed677` | this set | Badge background, Primary button background, Primary color, Primary element color, Primary element light text and 7 more |
-| `--nldesign-color-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23156633%22%2F%3E%3C%2Fsvg%3E) `#156633` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23156633%22%2F%3E%3C%2Fsvg%3E) `#156633` | this set | Primary button hover, Primary element hover, Primary hover color |
-| `--nldesign-color-primary-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e6f4eb%22%2F%3E%3C%2Fsvg%3E) `#e6f4eb` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23173020%22%2F%3E%3C%2Fsvg%3E) `#173020` | this set | Primary element light, Tertiary button hover, `--color-primary-element-text-dark` |
-| `--nldesign-color-primary-light-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cce9d7%22%2F%3E%3C%2Fsvg%3E) `#cce9d7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2321452f%22%2F%3E%3C%2Fsvg%3E) `#21452f` | this set | Primary element light hover, Primary light hover, Tertiary button pressed |
+| `--nldesign-color-placeholder-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | Placeholder dark |
+| `--nldesign-color-placeholder-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f2f2f2%22%2F%3E%3C%2Fsvg%3E) `#f2f2f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | Placeholder light |
+| `--nldesign-color-primary` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2355d27b%22%2F%3E%3C%2Fsvg%3E) `#55d27b` | this set | Badge background, Primary button background, Primary color, Primary element color, Primary element light text and 7 more |
+| `--nldesign-color-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231e6c35%22%2F%3E%3C%2Fsvg%3E) `#1e6c35` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231e6c35%22%2F%3E%3C%2Fsvg%3E) `#1e6c35` | this set | Primary button hover, Primary element hover, Primary hover color |
+| `--nldesign-color-primary-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d5e7d5%22%2F%3E%3C%2Fsvg%3E) `#d5e7d5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | Primary element light, Tertiary button hover, `--color-primary-element-text-dark` |
+| `--nldesign-color-primary-light-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d5e7d5%22%2F%3E%3C%2Fsvg%3E) `#d5e7d5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | Primary element light hover, Primary light hover, Tertiary button pressed |
 | `--nldesign-color-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | this set | Badge number, Primary button label, Primary element text, Primary text color |
-| `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a7a3e%22%2F%3E%3C%2Fsvg%3E) `#1a7a3e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | this set | Border success, Element success, Success color, Text success |
-| `--nldesign-color-success-rgb` | `26, 122, 62` | `124, 221, 160` | this set | Success hover color |
-| `--nldesign-color-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23333333%22%2F%3E%3C%2Fsvg%3E) `#333333` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | this set | Body text colour, Main text color, Table header label, `--nldesign-component-form-field-label-color`, `--nldesign-component-heading-1-color` and 8 more |
+| `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231e6c35%22%2F%3E%3C%2Fsvg%3E) `#1e6c35` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | Border success, Element success, Success color, Text success |
+| `--nldesign-color-success-rgb` | `30, 108, 53` | `137, 217, 160` | this set | Success hover color |
+| `--nldesign-color-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | Body text colour, Main text color, Table header label, `--nldesign-component-form-field-label-color`, `--nldesign-component-heading-1-color` and 8 more |
 | `--nldesign-color-text-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | Muted text default color |
-| `--nldesign-color-text-muted` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23666666%22%2F%3E%3C%2Fsvg%3E) `#666666` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | Text lighter, Text max contrast |
-| `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ec6d23%22%2F%3E%3C%2Fsvg%3E) `#ec6d23` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4611d%22%2F%3E%3C%2Fsvg%3E) `#d4611d` | this set | Element warning, Text warning, Warning color |
-| `--nldesign-color-warning-rgb` | `236, 109, 35` | `212, 97, 29` | this set | Warning hover color |
+| `--nldesign-color-text-muted` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234a4a4a%22%2F%3E%3C%2Fsvg%3E) `#4a4a4a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | Text lighter, Text max contrast |
+| `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23df5601%22%2F%3E%3C%2Fsvg%3E) `#df5601` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f37526%22%2F%3E%3C%2Fsvg%3E) `#f37526` | this set | Element warning, Text warning, Warning color |
+| `--nldesign-color-warning-rgb` | `223, 86, 1` | `243, 117, 38` | this set | Warning hover color |
 | `--nldesign-component-badge-background-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | defaults | |
 | `--nldesign-component-badge-color` | `var(
 		--nldesign-color-primary-text
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
 | `--nldesign-component-button-active-background-color` | `var(
 		--nldesign-color-primary-light-hover
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2321452f%22%2F%3E%3C%2Fsvg%3E) `#21452f` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | defaults | |
 | `--nldesign-component-button-active-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2385e5a9%22%2F%3E%3C%2Fsvg%3E) `#85e5a9` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | defaults | |
 | `--nldesign-component-button-background-color` | `transparent` | | defaults | |
 | `--nldesign-component-button-border-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | defaults | |
-| `--nldesign-component-button-color` | `var(--nldesign-color-primary)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2385e5a9%22%2F%3E%3C%2Fsvg%3E) `#85e5a9` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | defaults | |
+| `--nldesign-component-button-color` | `var(--nldesign-color-primary)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | defaults | |
 | `--nldesign-component-button-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | defaults | |
 | `--nldesign-component-button-disabled-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b4b4b4%22%2F%3E%3C%2Fsvg%3E) `#b4b4b4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23535353%22%2F%3E%3C%2Fsvg%3E) `#535353` | defaults | |
 | `--nldesign-component-button-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
 | `--nldesign-component-button-focus-border-color` | `var(
 		--nldesign-color-focus
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2359a5e480%22%2F%3E%3C%2Fsvg%3E) `#59a5e480` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | defaults | |
 | `--nldesign-component-button-hover-background-color` | `var(
 		--nldesign-color-primary-light
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23173020%22%2F%3E%3C%2Fsvg%3E) `#173020` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | defaults | |
 | `--nldesign-component-button-hover-border-color` | `var(
 		--nldesign-color-primary-hover
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238ce2ac%22%2F%3E%3C%2Fsvg%3E) `#8ce2ac` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | defaults | |
 | `--nldesign-component-button-hover-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2385e5a9%22%2F%3E%3C%2Fsvg%3E) `#85e5a9` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | defaults | |
 | `--nldesign-component-button-primary-action-background-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | defaults | |
 | `--nldesign-component-button-primary-action-border-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | defaults | |
 | `--nldesign-component-button-primary-action-color` | `var(
 		--nldesign-color-primary-text
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
 | `--nldesign-component-button-primary-action-hover-background-color` | `var(
 		--nldesign-color-primary-hover
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238ce2ac%22%2F%3E%3C%2Fsvg%3E) `#8ce2ac` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | defaults | |
 | `--nldesign-component-button-primary-action-hover-color` | `var(
 		--nldesign-color-primary-text
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233e3e3e%22%2F%3E%3C%2Fsvg%3E) `#3e3e3e` | defaults | |
 | `--nldesign-component-button-secondary-action-background-color` | `transparent` | | defaults | |
 | `--nldesign-component-button-secondary-action-border-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | defaults | |
 | `--nldesign-component-button-secondary-action-color` | `var(
 		--nldesign-color-primary
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2385e5a9%22%2F%3E%3C%2Fsvg%3E) `#85e5a9` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | defaults | |
 | `--nldesign-component-button-secondary-action-hover-background-color` | `var(
 		--nldesign-color-primary-light
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23173020%22%2F%3E%3C%2Fsvg%3E) `#173020` | defaults | |
-| `--nldesign-component-form-field-label-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | defaults | |
+| `--nldesign-component-form-field-label-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
 | `--nldesign-component-form-fieldset-border-color` | `var(
 		--nldesign-color-border
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233f3f3f%22%2F%3E%3C%2Fsvg%3E) `#3f3f3f` | defaults | |
-| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233f3f3f%22%2F%3E%3C%2Fsvg%3E) `#3f3f3f` | defaults | |
-| `--nldesign-component-form-select-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2359a5e4%22%2F%3E%3C%2Fsvg%3E) `#59a5e4` | defaults | |
-| `--nldesign-component-heading-1-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-2-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-3-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-4-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-5-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-6-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-heading-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-link-color` | `var(--nldesign-color-link)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235cabed%22%2F%3E%3C%2Fsvg%3E) `#5cabed` | defaults | |
-| `--nldesign-component-link-hover-color` | `var(--nldesign-color-link-hover)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2385e5a9%22%2F%3E%3C%2Fsvg%3E) `#85e5a9` | defaults | |
-| `--nldesign-component-link-visited-color` | `var(--nldesign-color-link-visited)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239a74c8%22%2F%3E%3C%2Fsvg%3E) `#9a74c8` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | defaults | |
+| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | defaults | |
+| `--nldesign-component-form-select-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | defaults | |
+| `--nldesign-component-heading-1-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
+| `--nldesign-component-heading-2-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
+| `--nldesign-component-heading-3-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
+| `--nldesign-component-heading-4-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
+| `--nldesign-component-heading-5-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
+| `--nldesign-component-heading-6-color` | `var(--nldesign-component-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
+| `--nldesign-component-heading-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
+| `--nldesign-component-link-color` | `var(--nldesign-color-link)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | defaults | |
+| `--nldesign-component-link-hover-color` | `var(--nldesign-color-link-hover)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | defaults | |
+| `--nldesign-component-link-visited-color` | `var(--nldesign-color-link-visited)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | defaults | |
 | `--nldesign-component-ordered-list-color` | `var(
 		--nldesign-color-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-paragraph-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
-| `--nldesign-component-separator-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233f3f3f%22%2F%3E%3C%2Fsvg%3E) `#3f3f3f` | defaults | |
-| `--nldesign-component-table-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233f3f3f%22%2F%3E%3C%2Fsvg%3E) `#3f3f3f` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
+| `--nldesign-component-paragraph-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
+| `--nldesign-component-separator-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | defaults | |
+| `--nldesign-component-table-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | defaults | |
 | `--nldesign-component-table-header-background-color` | `var(
 		--nldesign-color-background-dark
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23282828%22%2F%3E%3C%2Fsvg%3E) `#282828` | defaults | |
-| `--nldesign-component-table-header-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | defaults | |
+| `--nldesign-component-table-header-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
 | `--nldesign-component-table-row-hover-background-color` | `var(
 		--nldesign-color-background-hover
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1d%22%2F%3E%3C%2Fsvg%3E) `#1d1d1d` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | defaults | |
 | `--nldesign-component-textbox-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | defaults | |
-| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237f7f7f%22%2F%3E%3C%2Fsvg%3E) `#7f7f7f` | defaults | |
-| `--nldesign-component-textbox-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237b7b7b%22%2F%3E%3C%2Fsvg%3E) `#7b7b7b` | defaults | |
+| `--nldesign-component-textbox-color` | `var(--nldesign-color-text)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
 | `--nldesign-component-textbox-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | defaults | |
 | `--nldesign-component-textbox-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | defaults | |
-| `--nldesign-component-textbox-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2359a5e4%22%2F%3E%3C%2Fsvg%3E) `#59a5e4` | defaults | |
+| `--nldesign-component-textbox-focus-border-color` | `var(--nldesign-color-info)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | defaults | |
 | `--nldesign-component-textbox-hover-border-color` | `var(
 		--nldesign-color-border-dark
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236a6a6a%22%2F%3E%3C%2Fsvg%3E) `#6a6a6a` | defaults | |
-| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ca3232%22%2F%3E%3C%2Fsvg%3E) `#ca3232` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | defaults | |
+| `--nldesign-component-textbox-invalid-border-color` | `var(--nldesign-color-error)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | defaults | |
 | `--nldesign-component-unordered-list-color` | `var(
 		--nldesign-color-text
-	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cccccc%22%2F%3E%3C%2Fsvg%3E) `#cccccc` | defaults | |
+	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | defaults | |
 
 ## Typography (Typografie)
 
@@ -205,7 +205,7 @@ Contrast: primary text on primary 5.39:1, primary on background 5.39:1 (pass).
 | `--nldesign-component-textbox-font-size` | `1rem` | | defaults | |
 | `--nldesign-component-unordered-list-font-size` | `1rem` | | defaults | |
 | `--nldesign-component-unordered-list-line-height` | `1.5` | | defaults | |
-| `--nldesign-font-family` | `'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif` | | this set | Font family, `--nldesign-component-button-font-family`, `--nldesign-component-textbox-font-family` |
+| `--nldesign-font-family` | `"TheSans", "Fira Sans", sans-serif` | | this set | Font family, `--nldesign-component-button-font-family`, `--nldesign-component-textbox-font-family` |
 | `--nldesign-font-weight-default` | `400` | | defaults | Base font size |
 | `--nldesign-font-weight-element` | `500` | | defaults | Control font weight |
 | `--nldesign-font-weight-heading` | `700` | | defaults | Heading font weight |
@@ -214,11 +214,11 @@ Contrast: primary text on primary 5.39:1, primary on background 5.39:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
-| `--nldesign-border-radius` | `4px` | | this set | Border radius element, Button corner, Input border width, Select corner, Text input corner |
-| `--nldesign-border-radius-large` | `8px` | | this set | Container radius |
+| `--nldesign-border-radius` | `3px` | | this set | Border radius element, Button corner, Input border width, Select corner, Text input corner |
+| `--nldesign-border-radius-large` | `3px` | | this set | Container radius |
 | `--nldesign-border-radius-pill` | `100px` | | this set | Badge shape, Border radius pill |
-| `--nldesign-border-radius-rounded` | `28px` | | this set | Border radius rounded |
-| `--nldesign-border-radius-small` | `2px` | | this set | Border radius small |
+| `--nldesign-border-radius-rounded` | `3px` | | this set | Border radius rounded |
+| `--nldesign-border-radius-small` | `3px` | | this set | Border radius small |
 | `--nldesign-component-badge-border-radius` | `var(
 		--nldesign-border-radius-pill
 	)` | | defaults | |
@@ -262,10 +262,2845 @@ Contrast: primary text on primary 5.39:1, primary on background 5.39:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
-| `--denhaag-color-blue` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231261a3%22%2F%3E%3C%2Fsvg%3E) `#1261a3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2359a5e4%22%2F%3E%3C%2Fsvg%3E) `#59a5e4` | this set | |
-| `--denhaag-color-green` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a7a3e%22%2F%3E%3C%2Fsvg%3E) `#1a7a3e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237cdda0%22%2F%3E%3C%2Fsvg%3E) `#7cdda0` | this set | |
-| `--denhaag-color-green-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23156633%22%2F%3E%3C%2Fsvg%3E) `#156633` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238ce2ac%22%2F%3E%3C%2Fsvg%3E) `#8ce2ac` | this set | |
-| `--denhaag-color-orange` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ec6d23%22%2F%3E%3C%2Fsvg%3E) `#ec6d23` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4611d%22%2F%3E%3C%2Fsvg%3E) `#d4611d` | this set | |
-| `--denhaag-color-red` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d52d2d%22%2F%3E%3C%2Fsvg%3E) `#d52d2d` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ca3232%22%2F%3E%3C%2Fsvg%3E) `#ca3232` | this set | |
-| `--denhaag-color-yellow` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5c917%22%2F%3E%3C%2Fsvg%3E) `#f5c917` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dfb715%22%2F%3E%3C%2Fsvg%3E) `#dfb715` | this set | |
+| `--ams-date-input-background-color` | `var(--utrecht-textbox-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--ams-date-input-border-color` | `var(--utrecht-textbox-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--ams-date-input-border-radius` | `var(--utrecht-textbox-border-radius)` | | this set | |
+| `--ams-date-input-border-style` | `solid` | | this set | |
+| `--ams-date-input-border-width` | `var(--utrecht-textbox-border-width)` | | this set | |
+| `--ams-date-input-box-shadow` | `''` | | this set | |
+| `--ams-date-input-calender-picker-indicator-background-image` | `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJXaW5kb3dUZXh0IiBkPSJNMjAgM2gtMVYxaC0ydjJIN1YxSDV2Mkg0Yy0xLjEgMC0yIC45LTIgMnYxNmMwIDEuMS45IDIgMiAyaDE2YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6bTAgMThINFY4aDE2djEzeiIvPjxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMjR2MjRIMHoiLz48L3N2Zz4=')` | | this set | |
+| `--ams-date-input-color` | `var(--utrecht-textbox-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--ams-date-input-font-family` | `var(--utrecht-textbox-font-family)` | | this set | |
+| `--ams-date-input-font-size` | `var(--utrecht-textbox-font-size)` | | this set | |
+| `--ams-date-input-font-weight` | `var(--utrecht-textbox-font-weight)` | | this set | |
+| `--ams-date-input-hover-calender-picker-indicator-background-image` | `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJXaW5kb3dUZXh0IiBkPSJNMjAgM2gtMVYxaC0ydjJIN1YxSDV2Mkg0Yy0xLjEgMC0yIC45LTIgMnYxNmMwIDEuMS45IDIgMiAyaDE2YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6bTAgMThINFY4aDE2djEzeiIvPjxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMjR2MjRIMHoiLz48L3N2Zz4=')` | | this set | |
+| `--ams-date-input-line-height` | `var(--utrecht-textbox-line-height)` | | this set | |
+| `--ams-date-input-margin-block` | `var(--utrecht-textbox-margin-block)` | | this set | |
+| `--ams-date-input-min-block-size` | `var(--utrecht-textbox-min-block-size)` | | this set | |
+| `--ams-date-input-min-inline-size` | `var(--utrecht-textbox-min-inline-size)` | | this set | |
+| `--ams-date-input-outline-offset` | `var(--utrecht-textbox-outline-offset)` | | this set | |
+| `--ams-date-input-padding-block` | `var(--utrecht-textbox-padding-block-start)` | | this set | |
+| `--ams-date-input-padding-inline` | `var(--utrecht-textbox-padding-inline-start)` | | this set | |
+| `--ams-pagination-button-active-background-color` | `transparent` | | this set | |
+| `--ams-pagination-button-active-border-color` | `transparent` | | this set | |
+| `--ams-pagination-button-active-color` | `var(--tilburg-interaction-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--ams-pagination-button-active-text-decoration` | `underline` | | this set | |
+| `--ams-pagination-button-background-color` | `transparent` | | this set | |
+| `--ams-pagination-button-border-color` | `transparent` | | this set | |
+| `--ams-pagination-button-border-radius` | `0px` | | this set | |
+| `--ams-pagination-button-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--ams-pagination-button-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--ams-pagination-button-current-background-color` | `var(--tilburg-color-gray-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--ams-pagination-button-current-border-color` | `transparent` | | this set | |
+| `--ams-pagination-button-current-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--ams-pagination-button-current-font-weight` | `var( --tilburg-document-strong-font-weight )` | | this set | |
+| `--ams-pagination-button-current-text-decoration` | `none` | | this set | |
+| `--ams-pagination-button-focus-background-color` | `var( --tilburg-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--ams-pagination-button-focus-color` | `var(--tilburg-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--ams-pagination-button-focus-text-decoration` | `none` | | this set | |
+| `--ams-pagination-button-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--ams-pagination-button-hover-background-color` | `transparent` | | this set | |
+| `--ams-pagination-button-hover-border-color` | `transparent` | | this set | |
+| `--ams-pagination-button-hover-color` | `var(--tilburg-interaction-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--ams-pagination-button-hover-text-decoration` | `underline` | | this set | |
+| `--ams-pagination-button-min-block-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--ams-pagination-button-min-inline-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--ams-pagination-button-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-button-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-button-padding-inline` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--ams-pagination-button-padding-inline-end` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--ams-pagination-button-padding-inline-start` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--ams-pagination-button-text-decoration` | `none` | | this set | |
+| `--ams-pagination-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--ams-pagination-description-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--ams-pagination-description-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--ams-pagination-ellipses-color` | `var(--tilburg-document-subtle-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--ams-pagination-ellipses-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--ams-pagination-ellipses-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-ellipses-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-ellipses-padding-inline-end` | `var(--tilburg-space-inline-ant)` | | this set | |
+| `--ams-pagination-ellipses-padding-inline-start` | `var(--tilburg-space-inline-ant)` | | this set | |
+| `--ams-pagination-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--ams-pagination-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--ams-pagination-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--ams-pagination-relative-link-active-background-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-active-border-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-active-color` | `var( --tilburg-interaction-active-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--ams-pagination-relative-link-active-text-decoration` | `underline` | | this set | |
+| `--ams-pagination-relative-link-background-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-border-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-border-radius` | `0px` | | this set | |
+| `--ams-pagination-relative-link-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--ams-pagination-relative-link-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--ams-pagination-relative-link-disabled-background-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-disabled-border-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-disabled-color` | `var(--tilburg-color-gray-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--ams-pagination-relative-link-focus-background-color` | `var( --tilburg-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--ams-pagination-relative-link-focus-color` | `var(--tilburg-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--ams-pagination-relative-link-focus-text-decoration` | `none` | | this set | |
+| `--ams-pagination-relative-link-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--ams-pagination-relative-link-hover-background-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-hover-border-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-hover-color` | `var(--tilburg-interaction-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--ams-pagination-relative-link-hover-text-decoration` | `underline` | | this set | |
+| `--ams-pagination-relative-link-icon-margin-inline` | `var( --tilburg-space-text-beetle )` | | this set | |
+| `--ams-pagination-relative-link-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--ams-pagination-relative-link-min-block-size` | `var( --tilburg-pointer-target-min-size )` | | this set | |
+| `--ams-pagination-relative-link-min-inline-size` | `var( --tilburg-pointer-target-min-size )` | | this set | |
+| `--ams-pagination-relative-link-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-relative-link-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--ams-pagination-relative-link-padding-inline-end` | `0px` | | this set | |
+| `--ams-pagination-relative-link-padding-inline-start` | `0px` | | this set | |
+| `--ams-pagination-relative-link-text-decoration` | `none` | | this set | |
+| `--conduction-logo-footer-background-image` | `url(data:image/png;base64,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YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNC40LjAtRXhpdjIiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iCiAgICB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIgogICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICAgeG1sbnM6R0lNUD0iaHR0cDovL3d3dy5naW1wLm9yZy94bXAvIgogICAgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIgogICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iCiAgIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDphZGFkMjJhMy0zOGE2LWU5NDEtYjUwYi02MDM2MGVkOWMzNDgiCiAgIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6YmUwZmE4ZjktYjUzNy00MjY1LTk1NDAtYWIxYmI5Zjk1NDVjIgogICB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6Mjc5YzZkZGItMjBkZS1jMTQyLWIwZWItMzdlODc2YjIzMzIxIgogICBkYzpmb3JtYXQ9ImltYWdlL3BuZyIKICAgR0lNUDpBUEk9IjIuMCIKICAgR0lNUDpQbGF0Zm9ybT0iV2luZG93cyIKICAgR0lNUDpUaW1lU3RhbXA9IjE3NDEzNTUxMjMxNTc4NDYiCiAgIEdJTVA6VmVyc2lvbj0iMi4xMC4zMiIKICAgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIKICAgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIgogICB0aWZmOk9yaWVudGF0aW9uPSIxIgogICB4bXA6Q3JlYXRlRGF0ZT0iMjAyMC0wMi0yNlQxNToyODo0MCswMTowMCIKICAgeG1wOkNyZWF0b3JUb29sPSJHSU1QIDIuMTAiCiAgIHhtcDpNZXRhZGF0YURhdGU9IjIwMjU6MDM6MDdUMTQ6NDU6MjErMDE6MDAiCiAgIHhtcDpNb2RpZnlEYXRlPSIyMDI1OjAzOjA3VDE0OjQ1OjIxKzAxOjAwIj4KICAgPHhtcE1NOkhpc3Rvcnk+CiAgICA8cmRmOlNlcT4KICAgICA8cmRmOmxpCiAgICAgIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIKICAgICAgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDoyNzljNmRkYi0yMGRlLWMxNDItYjBlYi0zN2U4NzZiMjMzMjEiCiAgICAgIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyMS4xIChXaW5kb3dzKSIKICAgICAgc3RFdnQ6d2hlbj0iMjAyMC0wMi0yNlQxNToyODo0MCswMTowMCIvPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJzYXZlZCIKICAgICAgc3RFdnQ6Y2hhbmdlZD0iLyIKICAgICAgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo5NWM5MThhZS1iOGM3LWE2NDgtOGNjOS05MzJiMDBkYWFmMjgiCiAgICAgIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyMS4xIChXaW5kb3dzKSIKICAgICAgc3RFdnQ6d2hlbj0iMjAyMC0wMi0yNlQxNToyODo0MCswMTowMCIvPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJzYXZlZCIKICAgICAgc3RFdnQ6Y2hhbmdlZD0iLyIKICAgICAgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo1MzIwMTAyMS05ODZmLTQ2YjgtYmU0Mi1jYmY5MGM3NDQ4ZDciCiAgICAgIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkdpbXAgMi4xMCAoV2luZG93cykiCiAgICAgIHN0RXZ0OndoZW49IjIwMjUtMDMtMDdUMTQ6NDU6MjMiLz4KICAgIDwvcmRmOlNlcT4KICAgPC94bXBNTTpIaXN0b3J5PgogIDwvcmRmOkRlc2NyaXB0aW9uPgogPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgIAo8P3hwYWNrZXQgZW5kPSJ3Ij8+4lFtDQAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB+kDBw0tF4zJ7vgAACAASURBVHja7J15nFTF1fd/p+p298zAAAMMMsM67LILAioYVFSSYASjRiSiaEABBaNZnpg8mryaR58sSiIGVFxQUVDxcQsuEZRVBQXZFRRBUUERWWfrvlXn/aNuzwxqItB3mO6Z8/Uz0QlDT/etqvOrc+rUOYAgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCNUIySOonTAzy1MQMt5AEZGsjfR6foIIuiDCLQg1KkiyVkTwRdAFEW9ByGDRYeYSANnyJEXgRdAFEW5ByFCRkbUkAi+CLoiIC4KIuSACn1F48ghExAVBEI7UZom4i4cuC0JEXBCq3SOUdSaeu3jogoi4IAiCeO7ioQsi5IJQ056frDvx3MVDF0TEBUEQqsEeirCLoIuQC4IgiLALIugi5IIgCOlqL0XcRdBFyAVBEMRrF0TQRcgFQRBE2GsnSh7B4U86EXNBEARxlsRDl0kmCIIg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)` | | this set | |
+| `--conduction-logo-footer-block-size` | `50px` | | this set | |
+| `--conduction-logo-footer-inline-size` | `96px` | | this set | |
+| `--conduction-logo-header-background-image` | `url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjE1MCAxNSA5NiA1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01Ny4zOTYuMjExSC4yODF2NDkuNDA1aDU3LjExNVYuMjF6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik01Ny41NjQuMjExSC40NDh2NDkuNDA1aDU3LjExNlYuMjF6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTg3LjkzMSAxNSkiPjxtYXNrIGlkPSJiIiBmaWxsPSIjZmZmIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PC9tYXNrPjxwYXRoIGQ9Ik01Ny4zOTYgMjQuOTEzYzAtMTMuNTczLTExLjAwNC0yNC42MjItMjQuNTYtMjQuNy0uMDI0IDAtLjA0OC0uMDAzLS4wNzMtLjAwM0gyNC43NWEyLjUwNCAyLjUwNCAwIDEgMCAwIDUuMDFoNy45NDVjMTAuODU4IDAgMTkuNjk0IDguODM0IDE5LjY5NCAxOS42OTMgMCAxMC44Ni04LjgzNiAxOS42OTQtMTkuNjk0IDE5LjY5NEg1LjI4OXYtNC41NzhILjI4MXY5LjU4N2gzMi40ODJ2LS4wMDFjMTMuNTktLjA0IDI0LjYzMy0xMS4xMDUgMjQuNjMzLTI0LjcwMiIgZmlsbD0iIzAwOUZFNCIgbWFzaz0idXJsKCNiKSIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMTUpIj48bWFzayBpZD0iZCIgZmlsbD0iI2ZmZiI+PHVzZSB4bGluazpocmVmPSIjYyIvPjwvbWFzaz48cGF0aCBkPSJNLjQ0OCAyNC45MTNjMCAxMy41NzMgMTEuMDA0IDI0LjYyMiAyNC41NiAyNC43LjAyNCAwIC4wNDguMDAzLjA3My4wMDNoOC4wMTRhMi41MDQgMi41MDQgMCAxIDAgMC01LjAwOWgtNy45NDRjLTEwLjg1OSAwLTE5LjY5NC04LjgzNC0xOS42OTQtMTkuNjk0IDAtMTAuODU5IDguODM1LTE5LjY5NCAxOS42OTQtMTkuNjk0aDI3LjQwNHY0LjU3OGg1LjAwOVYuMjFIMjUuMDh2LjAwMUMxMS40OS4yNTEuNDQ4IDExLjMxNi40NDggMjQuOTEzIiBmaWxsPSIjMDA5RkU0IiBtYXNrPSJ1cmwoI2QpIi8+PC9nPjxwYXRoIGZpbGw9IiMwMDQzODgiIGQ9Ik0xNzYuMDE3IDQyLjExNmwtNC42NzgtMTIuNDAxaC01LjY2NGw4LjE0IDIwLjM2NmgzLjkyMWw4LjQwMS0yMC4zNjZoLTUuMzYzem0yNi41NDIuNTU4bC03LjkyOC0xMi45NTloLTYuNDEzdjIwLjM2N2g0Ljk5N1YzNi43ODdsOC4xNSAxMy4yOTVoNi4xOVYyOS43MTVoLTQuOTk2em0xOS4zMjMtNC45NHY0LjY2M2gzLjUzN3YyLjY3N2E5Ljc3MyA5Ljc3MyAwIDAgMS0xLjQxNC41NGMtLjY1Mi4yMDMtMS40NDMuMzA2LTIuMzU0LjMwNi0uODggMC0xLjY4Ni0uMTUtMi4zOTQtLjQ0OGE1LjMzOCA1LjMzOCAwIDAgMS0xLjgyNC0xLjI0NyA1LjUyMiA1LjUyMiAwIDAgMS0xLjE3LTEuODk0Yy0uMjcyLS43MjktLjQxLTEuNTQ5LS40MS0yLjQzMyAwLS44NjcuMTM4LTEuNjgxLjQxLTIuNDJhNS41MDIgNS41MDIgMCAwIDEgMS4xNy0xLjkwOCA1LjM3NCA1LjM3NCAwIDAgMSAxLjgyNC0xLjI0NmMuNzA5LS4yOTggMS41MTQtLjQ0OSAyLjM5NC0uNDQ5IDEuMDY0IDAgMS45NTkuMTUxIDIuNjU3LjQ0OS43LjI5NyAxLjMzOC43NCAxLjg5OCAxLjMxOGwuMjQyLjI0OCAzLjUxNS0zLjgzNS0uMjM3LS4yMjFhOC45MjMgOC45MjMgMCAwIDAtMy42MjctMi4wMzhjLTEuMzUtLjM4Ni0yLjg0Ny0uNTgzLTQuNDQ4LS41ODMtMS41NzIgMC0zLjA0NC4yNS00LjM3My43NDVhMTAuMTM5IDEwLjEzOSAwIDAgMC0zLjQ4MSAyLjE0M2MtLjk3NS45MjgtMS43NDYgMi4wNjYtMi4yOSAzLjM4NC0uNTQzIDEuMzE1LS44MTkgMi44LS44MTkgNC40MTMgMCAxLjYxMy4yNzYgMy4wOTguODIgNC40MTMuNTQ1IDEuMzE5IDEuMzE0IDIuNDU3IDIuMjg5IDMuMzg0Ljk3NC45MjYgMi4xNDYgMS42NDcgMy40OCAyLjE0MyAxLjMzLjQ5NCAyLjgwMi43NDQgNC4zNzQuNzQ0IDEuNDY0IDAgMi45Mi0uMTUyIDQuMzMtLjQ1MmExNi4wNTQgMTYuMDU0IDAgMCAwIDQuMDktMS40NzhsLjE3Ny0uMDlWMzcuNzMzaC04LjM2NnoiLz48L2c+PC9zdmc+')` | | this set | |
+| `--conduction-logo-header-block-size` | `50px` | | this set | |
+| `--conduction-logo-header-inline-size` | `96px` | | this set | |
+| `--conduction-logo-navbar-background-image` | `url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjE1MCAxNSA5NiA1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01Ny4zOTYuMjExSC4yODF2NDkuNDA1aDU3LjExNVYuMjF6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik01Ny41NjQuMjExSC40NDh2NDkuNDA1aDU3LjExNlYuMjF6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTg3LjkzMSAxNSkiPjxtYXNrIGlkPSJiIiBmaWxsPSIjZmZmIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PC9tYXNrPjxwYXRoIGQ9Ik01Ny4zOTYgMjQuOTEzYzAtMTMuNTczLTExLjAwNC0yNC42MjItMjQuNTYtMjQuNy0uMDI0IDAtLjA0OC0uMDAzLS4wNzMtLjAwM0gyNC43NWEyLjUwNCAyLjUwNCAwIDEgMCAwIDUuMDFoNy45NDVjMTAuODU4IDAgMTkuNjk0IDguODM0IDE5LjY5NCAxOS42OTMgMCAxMC44Ni04LjgzNiAxOS42OTQtMTkuNjk0IDE5LjY5NEg1LjI4OXYtNC41NzhILjI4MXY5LjU4N2gzMi40ODJ2LS4wMDFjMTMuNTktLjA0IDI0LjYzMy0xMS4xMDUgMjQuNjMzLTI0LjcwMiIgZmlsbD0iIzAwOUZFNCIgbWFzaz0idXJsKCNiKSIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMTUpIj48bWFzayBpZD0iZCIgZmlsbD0iI2ZmZiI+PHVzZSB4bGluazpocmVmPSIjYyIvPjwvbWFzaz48cGF0aCBkPSJNLjQ0OCAyNC45MTNjMCAxMy41NzMgMTEuMDA0IDI0LjYyMiAyNC41NiAyNC43LjAyNCAwIC4wNDguMDAzLjA3My4wMDNoOC4wMTRhMi41MDQgMi41MDQgMCAxIDAgMC01LjAwOWgtNy45NDRjLTEwLjg1OSAwLTE5LjY5NC04LjgzNC0xOS42OTQtMTkuNjk0IDAtMTAuODU5IDguODM1LTE5LjY5NCAxOS42OTQtMTkuNjk0aDI3LjQwNHY0LjU3OGg1LjAwOVYuMjFIMjUuMDh2LjAwMUMxMS40OS4yNTEuNDQ4IDExLjMxNi40NDggMjQuOTEzIiBmaWxsPSIjMDA5RkU0IiBtYXNrPSJ1cmwoI2QpIi8+PC9nPjxwYXRoIGZpbGw9IiMwMDQzODgiIGQ9Ik0xNzYuMDE3IDQyLjExNmwtNC42NzgtMTIuNDAxaC01LjY2NGw4LjE0IDIwLjM2NmgzLjkyMWw4LjQwMS0yMC4zNjZoLTUuMzYzem0yNi41NDIuNTU4bC03LjkyOC0xMi45NTloLTYuNDEzdjIwLjM2N2g0Ljk5N1YzNi43ODdsOC4xNSAxMy4yOTVoNi4xOVYyOS43MTVoLTQuOTk2em0xOS4zMjMtNC45NHY0LjY2M2gzLjUzN3YyLjY3N2E5Ljc3MyA5Ljc3MyAwIDAgMS0xLjQxNC41NGMtLjY1Mi4yMDMtMS40NDMuMzA2LTIuMzU0LjMwNi0uODggMC0xLjY4Ni0uMTUtMi4zOTQtLjQ0OGE1LjMzOCA1LjMzOCAwIDAgMS0xLjgyNC0xLjI0NyA1LjUyMiA1LjUyMiAwIDAgMS0xLjE3LTEuODk0Yy0uMjcyLS43MjktLjQxLTEuNTQ5LS40MS0yLjQzMyAwLS44NjcuMTM4LTEuNjgxLjQxLTIuNDJhNS41MDIgNS41MDIgMCAwIDEgMS4xNy0xLjkwOCA1LjM3NCA1LjM3NCAwIDAgMSAxLjgyNC0xLjI0NmMuNzA5LS4yOTggMS41MTQtLjQ0OSAyLjM5NC0uNDQ5IDEuMDY0IDAgMS45NTkuMTUxIDIuNjU3LjQ0OS43LjI5NyAxLjMzOC43NCAxLjg5OCAxLjMxOGwuMjQyLjI0OCAzLjUxNS0zLjgzNS0uMjM3LS4yMjFhOC45MjMgOC45MjMgMCAwIDAtMy42MjctMi4wMzhjLTEuMzUtLjM4Ni0yLjg0Ny0uNTgzLTQuNDQ4LS41ODMtMS41NzIgMC0zLjA0NC4yNS00LjM3My43NDVhMTAuMTM5IDEwLjEzOSAwIDAgMC0zLjQ4MSAyLjE0M2MtLjk3NS45MjgtMS43NDYgMi4wNjYtMi4yOSAzLjM4NC0uNTQzIDEuMzE1LS44MTkgMi44LS44MTkgNC40MTMgMCAxLjYxMy4yNzYgMy4wOTguODIgNC40MTMuNTQ1IDEuMzE5IDEuMzE0IDIuNDU3IDIuMjg5IDMuMzg0Ljk3NC45MjYgMi4xNDYgMS42NDcgMy40OCAyLjE0MyAxLjMzLjQ5NCAyLjgwMi43NDQgNC4zNzQuNzQ0IDEuNDY0IDAgMi45Mi0uMTUyIDQuMzMtLjQ1MmExNi4wNTQgMTYuMDU0IDAgMCAwIDQuMDktMS40NzhsLjE3Ny0uMDlWMzcuNzMzaC04LjM2NnoiLz48L2c+PC9zdmc+')` | | this set | |
+| `--conduction-logo-navbar-block-size` | `50px` | | this set | |
+| `--conduction-logo-navbar-inline-size` | `96px` | | this set | |
+| `--conduction-primary-top-nav-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--conduction-primary-top-nav-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-primary-top-nav-current-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--conduction-primary-top-nav-current-box-shadow` | `unset` | | this set | |
+| `--conduction-primary-top-nav-current-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-primary-top-nav-current-mobile-box-shadow` | `unset` | | this set | |
+| `--conduction-primary-top-nav-dropdown-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dbecfa%22%2F%3E%3C%2Fsvg%3E) `#dbecfa` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--conduction-primary-top-nav-dropdown-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--conduction-primary-top-nav-dropdown-current-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dbecfa%22%2F%3E%3C%2Fsvg%3E) `#dbecfa` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--conduction-primary-top-nav-dropdown-current-box-shadow` | `unset` | | this set | |
+| `--conduction-primary-top-nav-dropdown-current-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--conduction-primary-top-nav-dropdown-current-mobile-box-shadow` | `unset` | | this set | |
+| `--conduction-primary-top-nav-dropdown-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dbecfa%22%2F%3E%3C%2Fsvg%3E) `#dbecfa` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--conduction-primary-top-nav-dropdown-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--conduction-primary-top-nav-dropdown-hover-text-decoration` | `underline` | | this set | |
+| `--conduction-primary-top-nav-dropdown-text-decoration` | `none` | | this set | |
+| `--conduction-primary-top-nav-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--conduction-primary-top-nav-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-primary-top-nav-item-padding` | `18px` | | this set | |
+| `--conduction-primary-top-nav-padding-block-end` | `16px` | | this set | |
+| `--conduction-primary-top-nav-padding-block-start` | `16px` | | this set | |
+| `--conduction-primary-top-nav-padding-inline-end` | `16px` | | this set | |
+| `--conduction-primary-top-nav-padding-inline-start` | `16px` | | this set | |
+| `--conduction-tabs-scroll-button-background-color` | `var( --utrecht-button-primary-action-active-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--conduction-tabs-scroll-button-border-color` | `unset` | | this set | |
+| `--conduction-tabs-scroll-button-border-style` | `unset` | | this set | |
+| `--conduction-tabs-scroll-button-border-width` | `unset` | | this set | |
+| `--conduction-tabs-scroll-button-color` | `var(--utrecht-button-primary-action-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-tabs-scroll-button-hover-background-color` | `var( --utrecht-button-primary-action-hover-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--conduction-tabs-scroll-button-hover-color` | `var( --utrecht-button-primary-action-hover-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-tabs-tab-background-color` | `transparent` | | this set | |
+| `--conduction-tabs-tab-border-bottom` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-bottom-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-bottom-style` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-bottom-width` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-style` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-width` | `unset` | | this set | |
+| `--conduction-tabs-tab-bottom` | `-3px` | | this set | |
+| `--conduction-tabs-tab-button-bottom` | `0px` | | this set | |
+| `--conduction-tabs-tab-color` | `var(--utrecht-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--conduction-tabs-tab-font-family` | `var(--utrecht-document-font-family)` | | this set | |
+| `--conduction-tabs-tab-font-size` | `16px` | | this set | |
+| `--conduction-tabs-tab-font-weight` | `400` | | this set | |
+| `--conduction-tabs-tab-hover-background-color` | `transparent` | | this set | |
+| `--conduction-tabs-tab-hover-color` | `var(--utrecht-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--conduction-tabs-tab-hover-font-weight` | `700` | | this set | |
+| `--conduction-tabs-tab-hover-text-decoration` | `unset` | | this set | |
+| `--conduction-tabs-tab-letter-spacing` | `0.02857em` | | this set | |
+| `--conduction-tabs-tab-list-border-bottom-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f2f2f2%22%2F%3E%3C%2Fsvg%3E) `#f2f2f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--conduction-tabs-tab-list-border-bottom-style` | `solid` | | this set | |
+| `--conduction-tabs-tab-list-border-bottom-width` | `0.3rem` | | this set | |
+| `--conduction-tabs-tab-list-margin-block-end` | `0px` | | this set | |
+| `--conduction-tabs-tab-list-padding-inline-end` | `2px` | | this set | |
+| `--conduction-tabs-tab-list-padding-inline-start` | `2px` | | this set | |
+| `--conduction-tabs-tab-margin-inline-end` | `unset` | | this set | |
+| `--conduction-tabs-tab-max-width` | `unset` | | this set | |
+| `--conduction-tabs-tab-min-height` | `48px` | | this set | |
+| `--conduction-tabs-tab-min-width` | `160px` | | this set | |
+| `--conduction-tabs-tab-padding-block-end` | `6px` | | this set | |
+| `--conduction-tabs-tab-padding-block-start` | `6px` | | this set | |
+| `--conduction-tabs-tab-padding-inline-end` | `12px` | | this set | |
+| `--conduction-tabs-tab-padding-inline-start` | `12px` | | this set | |
+| `--conduction-tabs-tab-panel-background-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-panel-border-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-panel-border-style` | `unset` | | this set | |
+| `--conduction-tabs-tab-panel-border-top` | `unset` | | this set | |
+| `--conduction-tabs-tab-panel-border-width` | `unset` | | this set | |
+| `--conduction-tabs-tab-panel-padding-block-end` | `24px` | | this set | |
+| `--conduction-tabs-tab-panel-padding-block-start` | `24px` | | this set | |
+| `--conduction-tabs-tab-panel-padding-inline-end` | `24px` | | this set | |
+| `--conduction-tabs-tab-panel-padding-inline-start` | `24px` | | this set | |
+| `--conduction-tabs-tab-selected-background-color` | `transparent` | | this set | |
+| `--conduction-tabs-tab-selected-border-bottom` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-border-bottom-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--conduction-tabs-tab-selected-border-bottom-style` | `solid` | | this set | |
+| `--conduction-tabs-tab-selected-border-bottom-width` | `0.3rem` | | this set | |
+| `--conduction-tabs-tab-selected-border-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-border-style` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-border-width` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-box-shadow` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-color` | `var(--tilburg-color-blue-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--conduction-tabs-tab-selected-font-family` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-font-weight` | `700` | | this set | |
+| `--conduction-tabs-tab-selected-hover-background-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-hover-color` | `var(--tilburg-color-blue-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--conduction-tabs-tab-selected-hover-font-weight` | `700` | | this set | |
+| `--conduction-tabs-tab-selected-hover-text-decoration` | `unset` | | this set | |
+| `--conduction-tabs-tab-text-transform` | `unset` | | this set | |
+| `--conduction-tooltip-background-color` | `var(--tilburg-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--conduction-tooltip-border-color` | `unset` | | this set | |
+| `--conduction-tooltip-border-radius` | `0px` | | this set | |
+| `--conduction-tooltip-border-style` | `unset` | | this set | |
+| `--conduction-tooltip-border-width` | `0px` | | this set | |
+| `--conduction-tooltip-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-tooltip-padding-block-end` | `8px` | | this set | |
+| `--conduction-tooltip-padding-block-start` | `8px` | | this set | |
+| `--conduction-tooltip-padding-inline-end` | `14px` | | this set | |
+| `--conduction-tooltip-padding-inline-start` | `14px` | | this set | |
+| `--conduction-tooltip-z-index` | `9999` | | this set | |
+| `--denhaag-accordion-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-accordion-margin-block-end` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-accordion-section-border` | `1px solid var(--denhaag-color-grey-3)` | | this set | |
+| `--denhaag-accordion-section-content-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-accordion-section-content-padding-block-end` | `24px` | | this set | |
+| `--denhaag-accordion-section-content-padding-block-start` | `24px` | | this set | |
+| `--denhaag-accordion-section-content-padding-inline-end` | `16px` | | this set | |
+| `--denhaag-accordion-section-content-padding-inline-start` | `16px` | | this set | |
+| `--denhaag-accordion-section-content-transition` | `grid-template-rows 400ms ease-in-out` | | this set | |
+| `--denhaag-accordion-section-description-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-accordion-section-description-font-size` | `inherit` | | this set | |
+| `--denhaag-accordion-section-header-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-accordion-section-header-column-gap` | `8px` | | this set | |
+| `--denhaag-accordion-section-header-cursor` | `pointer` | | this set | |
+| `--denhaag-accordion-section-header-font-size` | `18px` | | this set | |
+| `--denhaag-accordion-section-header-icon-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-accordion-section-header-icon-expanded-transform` | `rotate(180deg)` | | this set | |
+| `--denhaag-accordion-section-header-icon-transform` | `rotate(0deg)` | | this set | |
+| `--denhaag-accordion-section-header-icon-transition` | `transform 400ms ease-in-out` | | this set | |
+| `--denhaag-accordion-section-header-line-height` | `24px` | | this set | |
+| `--denhaag-accordion-section-header-padding-block-end` | `12px` | | this set | |
+| `--denhaag-accordion-section-header-padding-block-start` | `12px` | | this set | |
+| `--denhaag-accordion-section-header-padding-inline-end` | `16px` | | this set | |
+| `--denhaag-accordion-section-header-padding-inline-start` | `16px` | | this set | |
+| `--denhaag-accordion-section-title-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-accordion-section-title-font-size` | `inherit` | | this set | |
+| `--denhaag-action-actions-gap` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-action-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-action-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-action-border-style` | `solid` | | this set | |
+| `--denhaag-action-border-width` | `1px` | | this set | |
+| `--denhaag-action-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-action-content-bold-font-weight` | `var(--denhaag-typography-weight-semibold)` | | this set | |
+| `--denhaag-action-date-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-action-date-font-weight` | `var(--denhaag-typography-weight-medium)` | | this set | |
+| `--denhaag-action-date-warning-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaa75%22%2F%3E%3C%2Fsvg%3E) `#ffaa75` | this set | |
+| `--denhaag-action-date-warning-font-weight` | `var(--denhaag-typography-weight-semibold)` | | this set | |
+| `--denhaag-action-date-warning-gap` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-action-details-gap` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-action-details-lg-gap` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-action-gap` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-action-lg-gap` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-action-lg-padding-block-end` | `var(--denhaag-space-block-sm)` | | this set | |
+| `--denhaag-action-lg-padding-block-start` | `var(--denhaag-space-block-sm)` | | this set | |
+| `--denhaag-action-link-icon-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-action-link-icon-width` | `20px` | | this set | |
+| `--denhaag-action-padding-block-end` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-action-padding-block-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-action-padding-inline-end` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-action-padding-inline-start` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-action-single-details-gap` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-action-single-details-lg-gap` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-action-single-focus-outline-color` | `var(--denhaag-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--denhaag-action-single-focus-outline-style` | `var(--denhaag-focus-border-style)` | | this set | |
+| `--denhaag-action-single-focus-outline-width` | `var(--denhaag-focus-border-width)` | | this set | |
+| `--denhaag-action-single-hover-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-action-single-padding-block-end` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-action-single-padding-block-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-action-single-padding-inline-end` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-action-single-padding-inline-start` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-action-warning-icon-color` | `var(--denhaag-color-orange-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fe883e%22%2F%3E%3C%2Fsvg%3E) `#fe883e` | this set | |
+| `--denhaag-action-warning-icon-width` | `20px` | | this set | |
+| `--denhaag-alert-border-radius` | `1px` | | this set | |
+| `--denhaag-alert-centre-gap` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-alert-close-focus-border-color` | `1px` | | this set | |
+| `--denhaag-alert-close-focus-border-offset` | `3px` | | this set | |
+| `--denhaag-alert-close-focus-border-style` | `1px` | | this set | |
+| `--denhaag-alert-close-focus-border-width` | `1px` | | this set | |
+| `--denhaag-alert-content-gap` | `var(--denhaag-space-block-sm)` | | this set | |
+| `--denhaag-alert-error-action-button-background-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-alert-error-action-button-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-alert-error-action-button-hover-background-color` | `var(--denhaag-color-red-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--denhaag-alert-error-background-color` | `var(--denhaag-color-red-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--denhaag-alert-error-close-icon-color` | `var(--denhaag-color-red-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaead%22%2F%3E%3C%2Fsvg%3E) `#ffaead` | this set | |
+| `--denhaag-alert-error-icon-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--denhaag-alert-error-paragraph-color` | `var(--denhaag-color-red-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaead%22%2F%3E%3C%2Fsvg%3E) `#ffaead` | this set | |
+| `--denhaag-alert-error-title-color` | `var(--denhaag-color-red-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaead%22%2F%3E%3C%2Fsvg%3E) `#ffaead` | this set | |
+| `--denhaag-alert-gap` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-alert-info-action-button-background-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--denhaag-alert-info-action-button-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-alert-info-action-button-hover-background-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--denhaag-alert-info-background-color` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--denhaag-alert-info-close-icon-color` | `var(--denhaag-color-blue-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--denhaag-alert-info-icon-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-alert-info-paragraph-color` | `var(--denhaag-color-blue-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--denhaag-alert-info-title-color` | `var(--denhaag-color-blue-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--denhaag-alert-padding-block-end` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-alert-padding-block-start` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-alert-padding-inline-end` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-alert-padding-inline-start` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-alert-success-action-button-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-alert-success-action-button-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-alert-success-action-button-hover-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-alert-success-background-color` | `var(--denhaag-color-green-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--denhaag-alert-success-close-icon-color` | `var(--denhaag-color-green-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1ffe0%22%2F%3E%3C%2Fsvg%3E) `#d1ffe0` | this set | |
+| `--denhaag-alert-success-icon-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-alert-success-paragraph-color` | `var(--denhaag-color-green-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1ffe0%22%2F%3E%3C%2Fsvg%3E) `#d1ffe0` | this set | |
+| `--denhaag-alert-success-title-color` | `var(--denhaag-color-green-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1ffe0%22%2F%3E%3C%2Fsvg%3E) `#d1ffe0` | this set | |
+| `--denhaag-alert-warning-action-button-background-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f7a06a%22%2F%3E%3C%2Fsvg%3E) `#f7a06a` | this set | |
+| `--denhaag-alert-warning-action-button-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-alert-warning-action-button-hover-background-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f7a06a%22%2F%3E%3C%2Fsvg%3E) `#f7a06a` | this set | |
+| `--denhaag-alert-warning-background-color` | `var(--denhaag-color-orange-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--denhaag-alert-warning-close-icon-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaa75%22%2F%3E%3C%2Fsvg%3E) `#ffaa75` | this set | |
+| `--denhaag-alert-warning-icon-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaa75%22%2F%3E%3C%2Fsvg%3E) `#ffaa75` | this set | |
+| `--denhaag-alert-warning-paragraph-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaa75%22%2F%3E%3C%2Fsvg%3E) `#ffaa75` | this set | |
+| `--denhaag-alert-warning-title-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaa75%22%2F%3E%3C%2Fsvg%3E) `#ffaa75` | this set | |
+| `--denhaag-anchor-collapse-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-anchor-collapse-border-style` | `solid` | | this set | |
+| `--denhaag-anchor-collapse-border-width` | `1px` | | this set | |
+| `--denhaag-anchor-collapse-content-margin-block-start` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-anchor-collapse-content-padding-block-end` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-anchor-collapse-content-padding-block-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-anchor-collapse-content-padding-inline-end` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-anchor-collapse-content-padding-inline-start` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-anchor-collapse-rotate` | `-180deg` | | this set | |
+| `--denhaag-anchor-collapse-summary-active-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-anchor-collapse-summary-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-anchor-collapse-summary-focus-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-anchor-collapse-summary-focus-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-anchor-collapse-summary-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-anchor-collapse-summary-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-anchor-collapse-summary-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-anchor-collapse-summary-hover-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-anchor-collapse-summary-padding-block` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-anchor-collapse-summary-padding-inline` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-anchor-collapse-summary-text-align` | `left` | | this set | |
+| `--denhaag-anchor-navigation-button-margin-block-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-anchor-navigation-link-active-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-anchor-navigation-link-active-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-anchor-navigation-link-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-anchor-navigation-link-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-anchor-navigation-link-focus-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-anchor-navigation-link-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-anchor-navigation-link-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-anchor-navigation-link-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-anchor-navigation-link-hover-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-anchor-navigation-link-line-height` | `1.5` | | this set | |
+| `--denhaag-anchor-navigation-link-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-anchor-navigation-link-padding-block` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-anchor-navigation-link-padding-inline-end` | `0` | | this set | |
+| `--denhaag-anchor-navigation-link-padding-inline-start` | `1.125rem` | | this set | |
+| `--denhaag-anchor-navigation-link-target-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-anchor-navigation-link-text-decoration` | `none` | | this set | |
+| `--denhaag-anchor-navigation-link-width` | `2px` | | this set | |
+| `--denhaag-anchor-navigation-list-list-style` | `none` | | this set | |
+| `--denhaag-article-meta-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-article-meta-border-style` | `solid` | | this set | |
+| `--denhaag-article-meta-border-width` | `1px` | | this set | |
+| `--denhaag-article-meta-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-article-meta-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-article-meta-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-article-meta-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-article-meta-gap` | `0.75rem` | | this set | |
+| `--denhaag-article-meta-horizontal-item-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-article-meta-horizontal-item-border-style` | `solid` | | this set | |
+| `--denhaag-article-meta-horizontal-item-border-width` | `1px` | | this set | |
+| `--denhaag-article-meta-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-article-meta-margin-block-start` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--denhaag-article-meta-padding-block-end` | `var(--denhaag-space-block-5xl)` | | this set | |
+| `--denhaag-article-meta-padding-block-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-blockquote-attribution-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-blockquote-attribution-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-blockquote-attribution-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-blockquote-attribution-font-weight` | `400` | | this set | |
+| `--denhaag-blockquote-attribution-line-height` | `1.5` | | this set | |
+| `--denhaag-blockquote-attribution-margin-block-start` | `1rem` | | this set | |
+| `--denhaag-blockquote-border-color` | `var(--denhaag-color-green-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--denhaag-blockquote-border-style` | `solid` | | this set | |
+| `--denhaag-blockquote-border-width` | `4px` | | this set | |
+| `--denhaag-blockquote-margin-block-end` | `0` | | this set | |
+| `--denhaag-blockquote-margin-block-start` | `0` | | this set | |
+| `--denhaag-blockquote-margin-inline-end` | `0` | | this set | |
+| `--denhaag-blockquote-margin-inline-start` | `0` | | this set | |
+| `--denhaag-blockquote-padding-block-end` | `1rem` | | this set | |
+| `--denhaag-blockquote-padding-block-start` | `1rem` | | this set | |
+| `--denhaag-blockquote-padding-inline-end` | `1rem` | | this set | |
+| `--denhaag-blockquote-padding-inline-start` | `1rem` | | this set | |
+| `--denhaag-blockquote-paragraph-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2393e1aa%22%2F%3E%3C%2Fsvg%3E) `#93e1aa` | this set | |
+| `--denhaag-blockquote-paragraph-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--denhaag-blockquote-paragraph-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-blockquote-paragraph-font-weight` | `700` | | this set | |
+| `--denhaag-blockquote-paragraph-line-height` | `1.3` | | this set | |
+| `--denhaag-border-radius` | `3px` | | this set | |
+| `--denhaag-breadcrumb-background-color` | `var(--denhaag-color-warmgrey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--denhaag-breadcrumb-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-breadcrumb-current-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-breadcrumb-dots-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-breadcrumb-dots-border-radius` | `var(--denhaag-border-radius)` | | this set | |
+| `--denhaag-breadcrumb-dots-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-breadcrumb-dots-hover-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-breadcrumb-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-breadcrumb-link-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-breadcrumb-link-focus-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-breadcrumb-link-focus-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-breadcrumb-link-focus-text-decoration` | `underline` | | this set | |
+| `--denhaag-breadcrumb-link-hover-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-breadcrumb-link-hover-text-decoration` | `underline` | | this set | |
+| `--denhaag-breadcrumb-link-icon-height` | `.875rem` | | this set | |
+| `--denhaag-breadcrumb-link-icon-margin-inline` | `.75rem` | | this set | |
+| `--denhaag-breadcrumb-link-icon-width` | `.875rem` | | this set | |
+| `--denhaag-breadcrumb-link-text-decoration` | `none` | | this set | |
+| `--denhaag-breadcrumb-list-max-width` | `67.5rem` | | this set | |
+| `--denhaag-breadcrumb-padding-block` | `1rem` | | this set | |
+| `--denhaag-breadcrumb-padding-block-md` | `0.25rem` | | this set | |
+| `--denhaag-breadcrumb-spacing` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-button-border-radius` | `var(--denhaag-border-radius)` | | this set | |
+| `--denhaag-button-border-width` | `1px` | | this set | |
+| `--denhaag-button-cursor` | `pointer` | | this set | |
+| `--denhaag-button-focus-border-color` | `var(--denhaag-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--denhaag-button-focus-border-style` | `var(--denhaag-focus-border-style)` | | this set | |
+| `--denhaag-button-focus-border-width` | `var(--denhaag-focus-border-width)` | | this set | |
+| `--denhaag-button-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-button-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-button-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-button-gap` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-button-group-gap` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-button-group-padding` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-button-icon-only-height` | `2.6875rem` | | this set | |
+| `--denhaag-button-icon-only-icon-height` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--denhaag-button-icon-padding-inline-large` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-button-icon-padding-inline-medium` | `var(--denhaag-space-inline-sm)` | | this set | |
+| `--denhaag-button-large-size-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-button-large-size-line-height` | `1.75` | | this set | |
+| `--denhaag-button-large-size-padding-block` | `0.40625rem` | | this set | |
+| `--denhaag-button-large-size-padding-inline` | `var(--denhaag-space-inline-lg)` | | this set | |
+| `--denhaag-button-medium-size-padding-block` | `var(--denhaag-button-padding-block)` | | this set | |
+| `--denhaag-button-medium-size-padding-inline` | `var(--denhaag-button-padding-inline)` | | this set | |
+| `--denhaag-button-padding-block` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-button-padding-inline` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-button-primary-action-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-button-primary-action-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-button-primary-action-disabled-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-button-primary-action-disabled-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-button-primary-action-hover-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-button-primary-action-hover-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-button-secondary-action-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-button-secondary-action-border-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-button-secondary-action-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-button-secondary-action-disabled-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-button-secondary-action-disabled-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-button-secondary-action-disabled-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-button-secondary-action-hover-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-button-secondary-action-hover-border-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-button-secondary-action-hover-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2393e1aa%22%2F%3E%3C%2Fsvg%3E) `#93e1aa` | this set | |
+| `--denhaag-card-authentication-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-card-authentication-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-card-authentication-border-width` | `1px` | | this set | |
+| `--denhaag-card-authentication-footer-margin-block-start` | `8px` | | this set | |
+| `--denhaag-card-authentication-header-margin-block-end` | `0px` | | this set | |
+| `--denhaag-card-authentication-logo-size` | `56px` | | this set | |
+| `--denhaag-card-authentication-padding-block` | `24px` | | this set | |
+| `--denhaag-card-authentication-padding-inline` | `24px` | | this set | |
+| `--denhaag-card-authentication-portrait-footer-margin-block-start` | `16px` | | this set | |
+| `--denhaag-card-authentication-portrait-header-margin-block-end` | `8px` | | this set | |
+| `--denhaag-card-authentication-portrait-logo-margin-block-end` | `24px` | | this set | |
+| `--denhaag-card-authentication-portrait-logo-size` | `80px` | | this set | |
+| `--denhaag-card-authentication-portrait-max-inline-size` | `362px` | | this set | |
+| `--denhaag-card-authentication-portrait-min-block-size` | `415px` | | this set | |
+| `--denhaag-card-authentication-portrait-min-inline-size` | `283px` | | this set | |
+| `--denhaag-card-authentication-title-font-size` | `var(--utrecht-heading-3-font-size)` | | this set | |
+| `--denhaag-card-authentication-title-font-weight` | `var(--utrecht-heading-font-weight)` | | this set | |
+| `--denhaag-card-authentication-title-margin-block-end` | `6px` | | this set | |
+| `--denhaag-card-group-gap` | `32px` | | this set | |
+| `--denhaag-card-group-l-gap` | `32px` | | this set | |
+| `--denhaag-card-group-m-gap` | `24px` | | this set | |
+| `--denhaag-card-group-margin-block` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--denhaag-card-group-s-gap` | `16px` | | this set | |
+| `--denhaag-card-group-xl-gap` | `40px` | | this set | |
+| `--denhaag-card-news-border` | `1px solid var(--denhaag-color-grey-2)` | | this set | |
+| `--denhaag-card-news-box-shadow` | `0 0 0.5rem var(--denhaag-color-grey-2)` | | this set | |
+| `--denhaag-card-news-content-padding` | `0.75rem` | | this set | |
+| `--denhaag-card-news-gap` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-card-news-icon-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-card-news-icon-height` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-card-news-icon-text-align` | `right` | | this set | |
+| `--denhaag-card-news-image-aspect-ratio` | `16 / 9` | | this set | |
+| `--denhaag-card-news-image-height` | `auto` | | this set | |
+| `--denhaag-card-news-image-object-fit` | `cover` | | this set | |
+| `--denhaag-card-news-image-width` | `100%` | | this set | |
+| `--denhaag-card-news-margin` | `0` | | this set | |
+| `--denhaag-card-news-outline` | `var(--denhaag-link-focus-outline)` | | this set | |
+| `--denhaag-card-news-padding` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-card-news-text-decoration` | `none` | | this set | |
+| `--denhaag-card-news-text-margin-block-end` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-case-card-action-active-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-case-card-action-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-case-card-archived-action-active-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-case-card-archived-action-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-case-card-archived-background-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-case-card-archived-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-case-card-archived-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-case-card-archived-context-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-case-card-archived-subtitle-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-case-card-archived-title-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-case-card-background-background-color` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--denhaag-case-card-background-color` | `var(--denhaag-color-blue-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a3f64%22%2F%3E%3C%2Fsvg%3E) `#1a3f64` | this set | |
+| `--denhaag-case-card-border-radius` | `3px` | | this set | |
+| `--denhaag-case-card-context-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-case-card-height` | `240px` | | this set | |
+| `--denhaag-case-card-list-background-hover-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-case-card-list-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-case-card-list-border-style` | `solid` | | this set | |
+| `--denhaag-case-card-list-border-width` | `1px` | | this set | |
+| `--denhaag-case-card-list-context-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-case-card-list-footer-gap` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--denhaag-case-card-list-subtitle-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-case-card-list-subtitle-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-case-card-list-title-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-case-card-list-title-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-case-card-list-wrapper-flex-direction` | `row` | | this set | |
+| `--denhaag-case-card-list-wrapper-gap` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-case-card-list-wrapper-padding-block-end` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-case-card-list-wrapper-padding-block-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-case-card-list-wrapper-padding-inline-end` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-case-card-list-wrapper-padding-inline-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-case-card-padding-block-start` | `20px` | | this set | |
+| `--denhaag-case-card-paper-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-case-card-subtitle-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-case-card-subtitle-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-case-card-subtitle-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-case-card-subtitle-font-weight` | `var(--denhaag-typography-weight-medium)` | | this set | |
+| `--denhaag-case-card-subtitle-line-height` | `1.5` | | this set | |
+| `--denhaag-case-card-subtitle-margin-block-start` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--denhaag-case-card-title-color` | `var(--denhaag-color-blue-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--denhaag-case-card-title-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--denhaag-case-card-title-font-size` | `var(--denhaag-typography-scale-xl-font-size)` | | this set | |
+| `--denhaag-case-card-title-font-weight` | `var(--denhaag-typography-weight-semibold)` | | this set | |
+| `--denhaag-case-card-title-line-height` | `1.5` | | this set | |
+| `--denhaag-case-card-wrapper-padding-block-end` | `24px` | | this set | |
+| `--denhaag-case-card-wrapper-padding-block-start` | `12px` | | this set | |
+| `--denhaag-case-card-wrapper-padding-inline-end` | `24px` | | this set | |
+| `--denhaag-case-card-wrapper-padding-inline-start` | `24px` | | this set | |
+| `--denhaag-checkbox-checked-disabled-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-checkbox-checked-disabled-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-checkbox-checked-invalid-background-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-checkbox-hover-border-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--denhaag-checkbox-hover-border-width` | `1px` | | this set | |
+| `--denhaag-checkbox-hover-checked-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-checkbox-hover-checked-border-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-checkbox-hover-invalid-background-color` | `var(--denhaag-color-red-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--denhaag-checkbox-hover-invalid-border-color` | `var(--denhaag-color-red-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--denhaag-color-black` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--denhaag-color-blue-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dbecfa%22%2F%3E%3C%2Fsvg%3E) `#dbecfa` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--denhaag-color-blue-2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23abcced%22%2F%3E%3C%2Fsvg%3E) `#abcced` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a3f64%22%2F%3E%3C%2Fsvg%3E) `#1a3f64` | this set | |
+| `--denhaag-color-blue-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--denhaag-color-blue-4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23094b81%22%2F%3E%3C%2Fsvg%3E) `#094b81` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--denhaag-color-blue-5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23032d4f%22%2F%3E%3C%2Fsvg%3E) `#032d4f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239acdf6%22%2F%3E%3C%2Fsvg%3E) `#9acdf6` | this set | |
+| `--denhaag-color-green-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d5e7d5%22%2F%3E%3C%2Fsvg%3E) `#d5e7d5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--denhaag-color-green-2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237eb67c%22%2F%3E%3C%2Fsvg%3E) `#7eb67c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2351854f%22%2F%3E%3C%2Fsvg%3E) `#51854f` | this set | |
+| `--denhaag-color-green-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-color-green-4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231e6c35%22%2F%3E%3C%2Fsvg%3E) `#1e6c35` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-color-green-5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23002e0f%22%2F%3E%3C%2Fsvg%3E) `#002e0f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b4fbcb%22%2F%3E%3C%2Fsvg%3E) `#b4fbcb` | this set | |
+| `--denhaag-color-grey-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f2f2f2%22%2F%3E%3C%2Fsvg%3E) `#f2f2f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-color-grey-2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-color-grey-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237a7a7a%22%2F%3E%3C%2Fsvg%3E) `#7a7a7a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--denhaag-color-grey-4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234a4a4a%22%2F%3E%3C%2Fsvg%3E) `#4a4a4a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--denhaag-color-grey-5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--denhaag-color-ocher-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fff7d1%22%2F%3E%3C%2Fsvg%3E) `#fff7d1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234b3f04%22%2F%3E%3C%2Fsvg%3E) `#4b3f04` | this set | |
+| `--denhaag-color-ocher-2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffeb85%22%2F%3E%3C%2Fsvg%3E) `#ffeb85` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23887307%22%2F%3E%3C%2Fsvg%3E) `#887307` | this set | |
+| `--denhaag-color-ocher-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8d62a%22%2F%3E%3C%2Fsvg%3E) `#f8d62a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0b012%22%2F%3E%3C%2Fsvg%3E) `#d0b012` | this set | |
+| `--denhaag-color-ocher-4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cca000%22%2F%3E%3C%2Fsvg%3E) `#cca000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f4cb35%22%2F%3E%3C%2Fsvg%3E) `#f4cb35` | this set | |
+| `--denhaag-color-ocher-5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23806400%22%2F%3E%3C%2Fsvg%3E) `#806400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--denhaag-color-orange-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffdcad%22%2F%3E%3C%2Fsvg%3E) `#ffdcad` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--denhaag-color-orange-2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffb85c%22%2F%3E%3C%2Fsvg%3E) `#ffb85c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a96309%22%2F%3E%3C%2Fsvg%3E) `#a96309` | this set | |
+| `--denhaag-color-orange-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f08800%22%2F%3E%3C%2Fsvg%3E) `#f08800` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f39419%22%2F%3E%3C%2Fsvg%3E) `#f39419` | this set | |
+| `--denhaag-color-orange-4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23df5601%22%2F%3E%3C%2Fsvg%3E) `#df5601` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f37526%22%2F%3E%3C%2Fsvg%3E) `#f37526` | this set | |
+| `--denhaag-color-orange-5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238a3500%22%2F%3E%3C%2Fsvg%3E) `#8a3500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f7a06a%22%2F%3E%3C%2Fsvg%3E) `#f7a06a` | this set | |
+| `--denhaag-color-red-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffd9d6%22%2F%3E%3C%2Fsvg%3E) `#ffd9d6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--denhaag-color-red-2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed8b82%22%2F%3E%3C%2Fsvg%3E) `#ed8b82` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2387231a%22%2F%3E%3C%2Fsvg%3E) `#87231a` | this set | |
+| `--denhaag-color-red-3` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cf1b07%22%2F%3E%3C%2Fsvg%3E) `#cf1b07` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-color-red-4` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a30500%22%2F%3E%3C%2Fsvg%3E) `#a30500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--denhaag-color-red-5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23520100%22%2F%3E%3C%2Fsvg%3E) `#520100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fa9897%22%2F%3E%3C%2Fsvg%3E) `#fa9897` | this set | |
+| `--denhaag-color-warmgrey-1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f9f8f6%22%2F%3E%3C%2Fsvg%3E) `#f9f8f6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--denhaag-color-white` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-contact-timeline-step-details-desktop-margin-inline-start` | `240px` | | this set | |
+| `--denhaag-contact-timeline-step-details-file-margin-block-end` | `24px` | | this set | |
+| `--denhaag-contact-timeline-step-details-file-margin-block-start` | `24px` | | this set | |
+| `--denhaag-contact-timeline-step-details-file-mobile-margin-block-end` | `32px` | | this set | |
+| `--denhaag-contact-timeline-step-details-mobile-margin-inline-start` | `32px` | | this set | |
+| `--denhaag-contact-timeline-step-details-sender-font-size` | `18px` | | this set | |
+| `--denhaag-contact-timeline-step-details-sender-font-weight` | `var(--denhaag-typography-weight-semibold)` | | this set | |
+| `--denhaag-contact-timeline-step-details-sender-margin-block-start` | `16px` | | this set | |
+| `--denhaag-contact-timeline-step-distance` | `0` | | this set | |
+| `--denhaag-contact-timeline-step-header-channel-width` | `80px` | | this set | |
+| `--denhaag-contact-timeline-step-header-date-width` | `96px` | | this set | |
+| `--denhaag-contact-timeline-step-header-font-size` | `20px` | | this set | |
+| `--denhaag-contact-timeline-step-header-line-height` | `27px` | | this set | |
+| `--denhaag-contact-timeline-step-header-toggle-active-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-contact-timeline-step-header-toggle-focus-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-contact-timeline-step-header-toggle-gap` | `4px` | | this set | |
+| `--denhaag-contact-timeline-step-header-toggle-hover-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-contact-timeline-step-marker-align-items` | `flex-start` | | this set | |
+| `--denhaag-contact-timeline-step-marker-connector-bottom` | `0` | | this set | |
+| `--denhaag-contact-timeline-step-marker-connector-desktop-margin-inline-start` | `112px` | | this set | |
+| `--denhaag-contact-timeline-step-marker-connector-mobile-margin-inline-start` | `0` | | this set | |
+| `--denhaag-contact-timeline-step-meta-gap` | `6px` | | this set | |
+| `--denhaag-contact-timeline-step-meta-marker-color` | `var(--denhaag-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--denhaag-contact-timeline-step-meta-marker-size` | `4px` | | this set | |
+| `--denhaag-contact-timeline-step-padding-block-end` | `32px` | | this set | |
+| `--denhaag-cta-download-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-cta-download-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-cta-download-dot-background-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--denhaag-cta-download-dot-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-cta-download-excerpt-gap` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--denhaag-cta-download-focus-dot-background-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--denhaag-cta-download-focus-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-cta-download-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-cta-download-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-cta-download-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-cta-download-gap` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--denhaag-cta-download-hover-dot-background-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--denhaag-cta-download-line-height` | `1.3` | | this set | |
+| `--denhaag-cta-download-padding-block` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-cta-download-padding-inline` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-cta-download-title-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-cta-download-title-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-cta-download-title-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-cta-download-width` | `var(--denhaag-space-block-5xl)` | | this set | |
+| `--denhaag-cta-event-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-cta-event-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-cta-event-date-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-cta-event-date-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-cta-event-date-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-cta-event-date-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-cta-event-date-line-height` | `1.25` | | this set | |
+| `--denhaag-cta-event-day-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-cta-event-dot-background-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--denhaag-cta-event-excerpt-gap` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--denhaag-cta-event-focus-dot-background-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--denhaag-cta-event-focus-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-cta-event-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-cta-event-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-cta-event-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-cta-event-gap` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--denhaag-cta-event-hover-dot-background-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--denhaag-cta-event-line-height` | `1.3` | | this set | |
+| `--denhaag-cta-event-padding-block` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-cta-event-padding-inline` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-cta-event-title-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-cta-event-title-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-cta-event-title-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-cta-event-width` | `var(--denhaag-space-block-5xl)` | | this set | |
+| `--denhaag-cta-image-content-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-cta-image-content-border` | `1px solid var(--denhaag-color-grey-2)` | | this set | |
+| `--denhaag-cta-image-content-button-after-bottom` | `0` | | this set | |
+| `--denhaag-cta-image-content-button-after-content` | `''` | | this set | |
+| `--denhaag-cta-image-content-button-after-left` | `0` | | this set | |
+| `--denhaag-cta-image-content-button-after-position` | `absolute` | | this set | |
+| `--denhaag-cta-image-content-button-after-right` | `0` | | this set | |
+| `--denhaag-cta-image-content-button-after-top` | `0` | | this set | |
+| `--denhaag-cta-image-content-button-margin-block-start` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-cta-image-content-button-position` | `initial` | | this set | |
+| `--denhaag-cta-image-content-content-padding-block` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--denhaag-cta-image-content-content-padding-inline` | `var(--denhaag-space-inline-2xl)` | | this set | |
+| `--denhaag-cta-image-content-content-width` | `calc(50% - (2 * var(--denhaag-space-inline-2xl)))` | | this set | |
+| `--denhaag-cta-image-content-display` | `block` | | this set | |
+| `--denhaag-cta-image-content-filled-background-color` | `var(--denhaag-color-warmgrey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--denhaag-cta-image-content-filled-border` | `0` | | this set | |
+| `--denhaag-cta-image-content-hover-box-shadow` | `0 0.25rem 1rem 0 rgba(0, 0, 0, 0.16)` | | this set | |
+| `--denhaag-cta-image-content-image-object-fit` | `cover` | | this set | |
+| `--denhaag-cta-image-content-image-width` | `100%` | | this set | |
+| `--denhaag-cta-image-content-position` | `relative` | | this set | |
+| `--denhaag-cta-image-content-text-font-size` | `var(--denhaag-typography-scale-xl-font-size)` | | this set | |
+| `--denhaag-cta-image-content-text-line-height` | `1.3` | | this set | |
+| `--denhaag-cta-image-content-text-small-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-cta-image-content-title-margin-block-end` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-cta-image-content-title-margin-block-start` | `initial` | | this set | |
+| `--denhaag-cta-image-content-title-small-font-size` | `var(--denhaag-typography-scale-xl-font-size)` | | this set | |
+| `--denhaag-cta-link-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-cta-link-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-cta-link-dot-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-cta-link-excerpt-line-height` | `1.3` | | this set | |
+| `--denhaag-cta-link-focus-highlight-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-cta-link-focus-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-cta-link-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-cta-link-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-cta-link-gap` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--denhaag-cta-link-highlight-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-cta-link-highlight-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-cta-link-hover-highlight-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-cta-link-icon-size` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--denhaag-cta-link-padding-block` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-cta-link-padding-inline` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-cta-link-text-decoration` | `none` | | this set | |
+| `--denhaag-cta-link-width` | `var(--denhaag-space-block-5xl)` | | this set | |
+| `--denhaag-description-list-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-description-list-caption-color` | `var(--denhaag-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--denhaag-description-list-caption-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--denhaag-description-list-caption-font-size` | `var(--denhaag-typography-scale-xl-font-size)` | | this set | |
+| `--denhaag-description-list-caption-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-description-list-caption-line-height` | `1.3` | | this set | |
+| `--denhaag-description-list-caption-margin-block-end` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-description-list-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-description-list-detail-padding-block-end` | `0.75rem` | | this set | |
+| `--denhaag-description-list-detail-padding-block-start` | `var(--denhaag-space-inline-2xs)` | | this set | |
+| `--denhaag-description-list-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-description-list-font-size` | `1.125rem` | | this set | |
+| `--denhaag-description-list-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-description-list-lg-detail-padding-block-end` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-description-list-lg-detail-padding-block-start` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-description-list-lg-padding-inline-end` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-description-list-lg-padding-inline-start` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-description-list-lg-title-padding-block-end` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-description-list-lg-title-padding-block-start` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-description-list-line-height` | `1.5` | | this set | |
+| `--denhaag-description-list-margin-block-end` | `0` | | this set | |
+| `--denhaag-description-list-margin-block-start` | `0` | | this set | |
+| `--denhaag-description-list-padding-inline-end` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-description-list-padding-inline-start` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-description-list-title-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-description-list-title-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-description-list-title-padding-block-end` | `var(--denhaag-space-inline-2xs)` | | this set | |
+| `--denhaag-description-list-title-padding-block-start` | `0.75rem` | | this set | |
+| `--denhaag-divider-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-divider-border-width` | `1px` | | this set | |
+| `--denhaag-divider-margin-block-end` | `16px` | | this set | |
+| `--denhaag-divider-margin-block-start` | `16px` | | this set | |
+| `--denhaag-divider-margin-inline-end` | `16px` | | this set | |
+| `--denhaag-divider-margin-inline-start` | `16px` | | this set | |
+| `--denhaag-dot-indicator-background-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-dot-indicator-border` | `var(--denhaag-dot-indicator-border-size) solid var(--denhaag-dot-indicator-border-color)` | | this set | |
+| `--denhaag-dot-indicator-border-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-dot-indicator-border-size` | `2px` | | this set | |
+| `--denhaag-dot-indicator-size` | `12px` | | this set | |
+| `--denhaag-dynamic-content-card-caption-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-dynamic-content-card-caption-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-dynamic-content-card-caption-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-dynamic-content-card-content-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-dynamic-content-card-content-gap` | `var(--denhaag-space-inline-lg)` | | this set | |
+| `--denhaag-dynamic-content-card-content-padding` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-dynamic-content-card-gap` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-dynamic-content-card-title-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-dynamic-content-card-title-font-size` | `var(--denhaag-typography-scale-xl-font-size)` | | this set | |
+| `--denhaag-dynamic-content-card-title-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-dynamic-content-card-title-hyphens` | `auto` | | this set | |
+| `--denhaag-dynamic-content-card-title-line-height` | `var(--denhaag-typography-scale-s-line-height)` | | this set | |
+| `--denhaag-dynamic-content-focus-icon-opacity` | `1` | | this set | |
+| `--denhaag-dynamic-content-focus-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-dynamic-content-grid-columns` | `1` | | this set | |
+| `--denhaag-dynamic-content-grid-gap` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-dynamic-content-hover-icon-opacity` | `1` | | this set | |
+| `--denhaag-dynamic-content-icon-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-dynamic-content-icon-opacity` | `0` | | this set | |
+| `--denhaag-dynamic-content-image-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-dynamic-content-image-placeholder-padding-block` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-dynamic-content-image-placeholder-padding-inline` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-dynamic-content-list-gap` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-dynamic-content-m-grid-columns` | `3` | | this set | |
+| `--denhaag-dynamic-content-m-grid-gap` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-dynamic-content-padding-block` | `var(--denhaag-space-inline-2xl)` | | this set | |
+| `--denhaag-dynamic-content-pagination-padding-block` | `var(--denhaag-space-block-5xl)` | | this set | |
+| `--denhaag-dynamic-content-row-gap` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--denhaag-dynamic-content-s-grid-columns` | `2` | | this set | |
+| `--denhaag-dynamic-content-s-grid-gap` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-event-date-icon-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-event-date-icon-margin-inline-end` | `0.5rem` | | this set | |
+| `--denhaag-event-date-text-line-height` | `1.75` | | this set | |
+| `--denhaag-file-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-file-border-style` | `solid` | | this set | |
+| `--denhaag-file-border-width` | `1px` | | this set | |
+| `--denhaag-file-focus-outline-color` | `var(--denhaag-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--denhaag-file-focus-outline-style` | `var(--denhaag-focus-border-style)` | | this set | |
+| `--denhaag-file-focus-outline-width` | `var(--denhaag-focus-border-width)` | | this set | |
+| `--denhaag-file-hover-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-file-left-background-color` | `var(--denhaag-color-warmgrey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--denhaag-file-left-padding-inline-end` | `var(--denhaag-space-inline-sm)` | | this set | |
+| `--denhaag-file-left-padding-inline-start` | `var(--denhaag-space-inline-sm)` | | this set | |
+| `--denhaag-file-link-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-file-link-gap` | `var(--denhaag-space-inline-2xs)` | | this set | |
+| `--denhaag-file-link-icon-width` | `20px` | | this set | |
+| `--denhaag-file-right-gap` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-file-right-padding-block-end` | `var(--denhaag-space-block-sm)` | | this set | |
+| `--denhaag-file-right-padding-block-start` | `var(--denhaag-space-block-sm)` | | this set | |
+| `--denhaag-file-right-padding-inline-end` | `var(--denhaag-space-inline-sm)` | | this set | |
+| `--denhaag-file-right-padding-inline-start` | `var(--denhaag-space-inline-sm)` | | this set | |
+| `--denhaag-floating-contact-active-overlay-display` | `flex` | | this set | |
+| `--denhaag-floating-contact-active-switch-direction` | `row` | | this set | |
+| `--denhaag-floating-contact-active-switch-icons-display` | `flex` | | this set | |
+| `--denhaag-floating-contact-bottom` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-floating-contact-color` | `var(--denhaag-color-green-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1ffe0%22%2F%3E%3C%2Fsvg%3E) `#d1ffe0` | this set | |
+| `--denhaag-floating-contact-gap` | `0.75rem` | | this set | |
+| `--denhaag-floating-contact-heading-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--denhaag-floating-contact-heading-font-size` | `var(--denhaag-typography-scale-2xl-font-size)` | | this set | |
+| `--denhaag-floating-contact-heading-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-floating-contact-heading-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-floating-contact-index` | `9` | | this set | |
+| `--denhaag-floating-contact-item-align-items` | `center` | | this set | |
+| `--denhaag-floating-contact-item-gap` | `var(--denhaag-space-inline-lg)` | | this set | |
+| `--denhaag-floating-contact-item-icon-size` | `1.75rem` | | this set | |
+| `--denhaag-floating-contact-link-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-floating-contact-link-decoration` | `underline` | | this set | |
+| `--denhaag-floating-contact-link-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-floating-contact-link-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-floating-contact-link-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-floating-contact-link-hover-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-floating-contact-link-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-floating-contact-link-outline-color` | `currentColor` | | this set | |
+| `--denhaag-floating-contact-link-outline-style` | `var(--denhaag-focus-border-style)` | | this set | |
+| `--denhaag-floating-contact-link-outline-width` | `var(--denhaag-focus-border-width)` | | this set | |
+| `--denhaag-floating-contact-overlay-align-items` | `flex-start` | | this set | |
+| `--denhaag-floating-contact-overlay-arrow-width` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--denhaag-floating-contact-overlay-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-floating-contact-overlay-border-radius` | `0.25rem` | | this set | |
+| `--denhaag-floating-contact-overlay-color` | `var(--denhaag-color-green-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2384b984%22%2F%3E%3C%2Fsvg%3E) `#84b984` | this set | |
+| `--denhaag-floating-contact-overlay-display` | `none` | | this set | |
+| `--denhaag-floating-contact-overlay-gap` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-floating-contact-overlay-padding-block` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--denhaag-floating-contact-overlay-padding-inline` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-floating-contact-overlay-width` | `17.25rem` | | this set | |
+| `--denhaag-floating-contact-position` | `fixed` | | this set | |
+| `--denhaag-floating-contact-right` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-floating-contact-status-border-width` | `0.0625rem` | | this set | |
+| `--denhaag-floating-contact-status-offline-background-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-floating-contact-status-offline-border-color` | `var(--denhaag-color-red-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--denhaag-floating-contact-status-online-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-floating-contact-status-online-border-color` | `var(--denhaag-color-green-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--denhaag-floating-contact-status-size` | `0.5rem` | | this set | |
+| `--denhaag-floating-contact-switch-align-items` | `center` | | this set | |
+| `--denhaag-floating-contact-switch-align-self` | `flex-end` | | this set | |
+| `--denhaag-floating-contact-switch-background-color` | `var(--denhaag-color-green-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--denhaag-floating-contact-switch-border-color` | `var(--denhaag-color-green-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2351854f%22%2F%3E%3C%2Fsvg%3E) `#51854f` | this set | |
+| `--denhaag-floating-contact-switch-border-radius` | `1.5rem` | | this set | |
+| `--denhaag-floating-contact-switch-border-style` | `solid` | | this set | |
+| `--denhaag-floating-contact-switch-border-width` | `0.0625rem` | | this set | |
+| `--denhaag-floating-contact-switch-direction` | `row-reverse` | | this set | |
+| `--denhaag-floating-contact-switch-focus-icons-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-floating-contact-switch-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-floating-contact-switch-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-floating-contact-switch-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-floating-contact-switch-gap` | `0` | | this set | |
+| `--denhaag-floating-contact-switch-hover-icons-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-floating-contact-switch-icon-size` | `1rem` | | this set | |
+| `--denhaag-floating-contact-switch-icons-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-floating-contact-switch-icons-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-floating-contact-switch-icons-display` | `none` | | this set | |
+| `--denhaag-floating-contact-switch-icons-gap` | `0.75rem` | | this set | |
+| `--denhaag-floating-contact-switch-line-height` | `1` | | this set | |
+| `--denhaag-floating-contact-switch-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-floating-contact-switch-padding-block` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-floating-contact-switch-padding-inline` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-focus-border` | `var(--denhaag-focus-border-width) var(--denhaag-focus-border-style) var(--denhaag-focus-border-color)` | | this set | |
+| `--denhaag-focus-border-color` | `var(--denhaag-color-ocher-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--denhaag-focus-border-style` | `dashed` | | this set | |
+| `--denhaag-focus-border-width` | `2px` | | this set | |
+| `--denhaag-focus-offset` | `0` | | this set | |
+| `--denhaag-footer-background-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--denhaag-footer-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-footer-font-size` | `16px` | | this set | |
+| `--denhaag-footer-group-gap` | `32px` | | this set | |
+| `--denhaag-footer-group-padding-block-end` | `40px` | | this set | |
+| `--denhaag-footer-group-padding-block-start` | `40px` | | this set | |
+| `--denhaag-footer-heading-color` | `var(--denhaag-color-ocher-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f9db43%22%2F%3E%3C%2Fsvg%3E) `#f9db43` | this set | |
+| `--denhaag-footer-legal-links-column-gap` | `32px` | | this set | |
+| `--denhaag-footer-mega-background-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--denhaag-footer-mega-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-footer-paragraph-margin-block-end` | `12px` | | this set | |
+| `--denhaag-footer-paragraph-margin-block-start` | `12px` | | this set | |
+| `--denhaag-form-control-label-input-margin-inline-end` | `8px` | | this set | |
+| `--denhaag-form-control-label-margin-block-end` | `8px` | | this set | |
+| `--denhaag-form-field-description-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-form-field-description-error-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--denhaag-form-field-description-font-family` | `var(--utrecht-document-font-family)` | | this set | |
+| `--denhaag-form-field-description-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-form-field-description-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-form-field-description-line-height` | `var(--denhaag-typography-scale-s-line-height)` | | this set | |
+| `--denhaag-form-field-label-margin-block-end` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--denhaag-form-group-helper-text-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-form-group-helper-text-error-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--denhaag-form-group-helper-text-margin-block-start` | `4px` | | this set | |
+| `--denhaag-form-group-helper-text-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-form-group-label-color` | `var(--denhaag-color-blue-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--denhaag-form-group-margin-block-end` | `8px` | | this set | |
+| `--denhaag-form-group-margin-block-start` | `8px` | | this set | |
+| `--denhaag-form-group-margin-inline-end` | `8px` | | this set | |
+| `--denhaag-form-group-margin-inline-start` | `8px` | | this set | |
+| `--denhaag-form-input-icon-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-form-input-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-form-input-margin-block-end` | `0` | | this set | |
+| `--denhaag-form-input-margin-block-start` | `0` | | this set | |
+| `--denhaag-form-progress-header-margin-block-end` | `20px` | | this set | |
+| `--denhaag-form-progress-label-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-form-progress-label-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-form-progress-label-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-form-progress-label-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-form-progress-progress-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-form-progress-progress-bar-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-form-progress-progress-height` | `2px` | | this set | |
+| `--denhaag-header-actions-desktop-action-margin-inline-start` | `24px` | | this set | |
+| `--denhaag-header-actions-desktop-display` | `flex` | | this set | |
+| `--denhaag-header-actions-display` | `none` | | this set | |
+| `--denhaag-header-border-bottom-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-header-border-bottom-style` | `solid` | | this set | |
+| `--denhaag-header-border-bottom-width` | `1px` | | this set | |
+| `--denhaag-header-content-align-items` | `center` | | this set | |
+| `--denhaag-header-content-display` | `flex` | | this set | |
+| `--denhaag-header-content-flex-direction` | `row` | | this set | |
+| `--denhaag-header-content-justify-content` | `space-between` | | this set | |
+| `--denhaag-header-height` | `4.5rem` | | this set | |
+| `--denhaag-header-md-height` | `7.5rem` | | this set | |
+| `--denhaag-header-mobile-actions-desktop-display` | `none` | | this set | |
+| `--denhaag-header-mobile-actions-display` | `flex` | | this set | |
+| `--denhaag-header-sm-height` | `6rem` | | this set | |
+| `--denhaag-heading-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-heading-line-height` | `var(--denhaag-typography-scale-s-line-height)` | | this set | |
+| `--denhaag-hero-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-hero-color` | `var(--denhaag-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--denhaag-hero-columns` | `12` | | this set | |
+| `--denhaag-hero-container-gutter` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-hero-container-gutter-l` | `var(--denhaag-space-inline-2xl)` | | this set | |
+| `--denhaag-hero-container-gutter-m` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-hero-container-gutter-s` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-hero-container-gutter-xl` | `var(--denhaag-space-inline-3xl)` | | this set | |
+| `--denhaag-hero-container-max-width` | `100%` | | this set | |
+| `--denhaag-hero-container-max-width-l` | `67.5rem` | | this set | |
+| `--denhaag-hero-container-max-width-m` | `56.5rem` | | this set | |
+| `--denhaag-hero-container-max-width-s` | `40.5rem` | | this set | |
+| `--denhaag-hero-container-max-width-xl` | `98rem` | | this set | |
+| `--denhaag-hero-container-max-width-xs` | `20rem` | | this set | |
+| `--denhaag-hero-container-padding` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-hero-container-padding-l` | `0` | | this set | |
+| `--denhaag-hero-home-content-align-self` | `center` | | this set | |
+| `--denhaag-hero-home-content-column-end` | `12` | | this set | |
+| `--denhaag-hero-home-content-column-end-l` | `5` | | this set | |
+| `--denhaag-hero-home-content-column-end-m` | `6` | | this set | |
+| `--denhaag-hero-home-content-column-end-s` | `7` | | this set | |
+| `--denhaag-hero-home-content-column-offset` | `0` | | this set | |
+| `--denhaag-hero-home-content-column-offset-m` | `1` | | this set | |
+| `--denhaag-hero-home-content-column-offset-s` | `2` | | this set | |
+| `--denhaag-hero-home-content-column-start` | `1` | | this set | |
+| `--denhaag-hero-home-content-column-start-xl` | `2` | | this set | |
+| `--denhaag-hero-home-content-padding-block` | `5.75rem` | | this set | |
+| `--denhaag-hero-home-content-padding-block-s` | `var(--denhaag-space-block-3xl)` | | this set | |
+| `--denhaag-hero-home-image-path` | `11.25rem` | | this set | |
+| `--denhaag-hero-home-min-height` | `20rem` | | this set | |
+| `--denhaag-hero-home-min-height-m` | `30rem` | | this set | |
+| `--denhaag-hero-home-min-height-s` | `28rem` | | this set | |
+| `--denhaag-hero-home-title-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-hero-home-title-font-size-xs` | `var(--denhaag-typography-scale-2xl-font-size)` | | this set | |
+| `--denhaag-hero-home-title-line-height` | `var(--denhaag-typography-scale-s-line-height)` | | this set | |
+| `--denhaag-hero-home-title-margin-block-end` | `0` | | this set | |
+| `--denhaag-hero-home-title-margin-block-start` | `0` | | this set | |
+| `--denhaag-hero-home-title-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-hero-routing-background-color` | `var(--denhaag-color-ocher-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0b012%22%2F%3E%3C%2Fsvg%3E) `#d0b012` | this set | |
+| `--denhaag-hero-routing-content-align-self` | `center` | | this set | |
+| `--denhaag-hero-routing-content-column-end` | `12` | | this set | |
+| `--denhaag-hero-routing-content-column-end-s` | `8` | | this set | |
+| `--denhaag-hero-routing-content-column-end-xl` | `6` | | this set | |
+| `--denhaag-hero-routing-content-column-offset` | `0` | | this set | |
+| `--denhaag-hero-routing-content-column-offset-l` | `-0.2` | | this set | |
+| `--denhaag-hero-routing-content-column-offset-xl` | `2` | | this set | |
+| `--denhaag-hero-routing-content-column-start` | `1` | | this set | |
+| `--denhaag-hero-routing-content-column-start-xl` | `3` | | this set | |
+| `--denhaag-hero-routing-content-padding-block` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-hero-routing-content-padding-block-s` | `var(--denhaag-space-block-3xl)` | | this set | |
+| `--denhaag-hero-routing-image-path` | `2.8125rem` | | this set | |
+| `--denhaag-hero-routing-min-height` | `9rem` | | this set | |
+| `--denhaag-hero-routing-min-height-m` | `15rem` | | this set | |
+| `--denhaag-hero-routing-min-height-s` | `12rem` | | this set | |
+| `--denhaag-hero-routing-shape-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23FAE166%22%2F%3E%3C%2Fsvg%3E) `#FAE166` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a0870e%22%2F%3E%3C%2Fsvg%3E) `#a0870e` | this set | |
+| `--denhaag-hero-routing-shape-start` | `1` | | this set | |
+| `--denhaag-hero-routing-shape-start-l` | `0` | | this set | |
+| `--denhaag-hero-routing-shape-start-xl` | `-0.25` | | this set | |
+| `--denhaag-hero-routing-title-font-size-xs` | `var(--denhaag-typography-scale-2xl-font-size)` | | this set | |
+| `--denhaag-hero-routing-title-margin-block-end` | `0` | | this set | |
+| `--denhaag-hero-routing-title-margin-block-start` | `0` | | this set | |
+| `--denhaag-hero-theme-page-container-padding-block-start` | `0` | | this set | |
+| `--denhaag-hero-theme-page-container-padding-block-start-s` | `3.5rem` | | this set | |
+| `--denhaag-hero-theme-page-container-padding-block-start-xl` | `7rem` | | this set | |
+| `--denhaag-hero-theme-page-content-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-hero-theme-page-content-box-shadow` | `0px 1px 0px var(--denhaag-color-grey-2)` | | this set | |
+| `--denhaag-hero-theme-page-content-column-end` | `12` | | this set | |
+| `--denhaag-hero-theme-page-content-column-end-s` | `10` | | this set | |
+| `--denhaag-hero-theme-page-content-column-end-xl` | `8` | | this set | |
+| `--denhaag-hero-theme-page-content-column-start` | `1` | | this set | |
+| `--denhaag-hero-theme-page-content-column-start-s` | `2` | | this set | |
+| `--denhaag-hero-theme-page-content-column-start-xl` | `3` | | this set | |
+| `--denhaag-hero-theme-page-content-padding-block` | `4rem` | | this set | |
+| `--denhaag-hero-theme-page-content-padding-block-s` | `var(--denhaag-space-block-3xl)` | | this set | |
+| `--denhaag-hero-theme-page-content-padding-inline-end` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-hero-theme-page-content-padding-inline-start` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-hero-theme-page-content-text-align` | `center` | | this set | |
+| `--denhaag-hero-theme-page-content-transform` | `2rem` | | this set | |
+| `--denhaag-hero-theme-page-image-path` | `11.25rem` | | this set | |
+| `--denhaag-hero-theme-page-image-pattern-container-overflow` | `hidden` | | this set | |
+| `--denhaag-hero-theme-page-image-pattern-container-position` | `absolute` | | this set | |
+| `--denhaag-hero-theme-page-image-pattern-container-size` | `100%` | | this set | |
+| `--denhaag-hero-theme-page-image-pattern-height` | `auto` | | this set | |
+| `--denhaag-hero-theme-page-image-pattern-width` | `100%` | | this set | |
+| `--denhaag-hero-theme-page-image-start-m` | `5` | | this set | |
+| `--denhaag-hero-theme-page-image-start-s` | `4` | | this set | |
+| `--denhaag-hero-theme-page-min-height` | `0` | | this set | |
+| `--denhaag-hero-theme-page-text-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--denhaag-hero-theme-page-text-font-size-m` | `var(--denhaag-typography-scale-xl-font-size)` | | this set | |
+| `--denhaag-hero-theme-page-text-line-height` | `var(--denhaag-typography-scale-s-line-height)` | | this set | |
+| `--denhaag-hero-theme-page-text-padding-block-end` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--denhaag-hero-theme-page-title-font-size-m` | `var(--denhaag-typography-scale-3xl-font-size)` | | this set | |
+| `--denhaag-hero-theme-page-title-padding-block-end` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-icon-button-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-icon-button-focus-outline-color` | `var(--denhaag-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--denhaag-icon-button-focus-outline-offset` | `0px` | | this set | |
+| `--denhaag-icon-button-focus-outline-style` | `var(--denhaag-focus-border-style)` | | this set | |
+| `--denhaag-icon-button-focus-outline-width` | `var(--denhaag-focus-border-width)` | | this set | |
+| `--denhaag-icon-button-hover-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-icon-button-padding-block-end` | `2px` | | this set | |
+| `--denhaag-icon-button-padding-block-start` | `2px` | | this set | |
+| `--denhaag-icon-button-padding-inline-end` | `2px` | | this set | |
+| `--denhaag-icon-button-padding-inline-start` | `2px` | | this set | |
+| `--denhaag-image-download-text-display-desktop` | `inline` | | this set | |
+| `--denhaag-image-download-text-display-mobile` | `none` | | this set | |
+| `--denhaag-image-download-text-width` | `max-content` | | this set | |
+| `--denhaag-image-figcaption-align-items` | `flex-start` | | this set | |
+| `--denhaag-image-figcaption-display` | `grid` | | this set | |
+| `--denhaag-image-figcaption-download-align-items` | `flex-end` | | this set | |
+| `--denhaag-image-figcaption-download-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-image-figcaption-download-display` | `flex` | | this set | |
+| `--denhaag-image-figcaption-download-font-size` | `1.125rem` | | this set | |
+| `--denhaag-image-figcaption-download-gap` | `0.5rem` | | this set | |
+| `--denhaag-image-figcaption-download-hover-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-image-figcaption-download-line-height` | `1` | | this set | |
+| `--denhaag-image-figcaption-download-margin-inline-start` | `1rem` | | this set | |
+| `--denhaag-image-figcaption-download-only-display` | `inline-flex` | | this set | |
+| `--denhaag-image-figcaption-download-only-justify-content` | `flex-end` | | this set | |
+| `--denhaag-image-figcaption-download-only-vertical-align` | `bottom` | | this set | |
+| `--denhaag-image-figcaption-download-only-width` | `100%` | | this set | |
+| `--denhaag-image-figcaption-download-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-image-figcaption-download-text-decoration` | `none` | | this set | |
+| `--denhaag-image-figcaption-gap` | `1rem` | | this set | |
+| `--denhaag-image-figcaption-justify-content` | `space-between` | | this set | |
+| `--denhaag-image-figcaption-padding-block` | `1rem` | | this set | |
+| `--denhaag-image-figcaption-text-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-image-figcaption-text-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-image-figcaption-text-line-height` | `1.5` | | this set | |
+| `--denhaag-image-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-image-image-display` | `block` | | this set | |
+| `--denhaag-image-image-height` | `auto` | | this set | |
+| `--denhaag-image-image-width` | `100%` | | this set | |
+| `--denhaag-image-margin-block-end-desktop` | `2rem` | | this set | |
+| `--denhaag-image-margin-block-end-mobile` | `1.5rem` | | this set | |
+| `--denhaag-image-margin-inline` | `0` | | this set | |
+| `--denhaag-language-switcher-list-item-button-hover-text-decoration` | `underline` | | this set | |
+| `--denhaag-language-switcher-list-item-button-icon-gap` | `6px` | | this set | |
+| `--denhaag-language-switcher-list-item-button-icon-inset-block-start` | `-1px` | | this set | |
+| `--denhaag-language-switcher-list-item-button-icon-size` | `1rem` | | this set | |
+| `--denhaag-language-switcher-list-item-button-text-decoration` | `none` | | this set | |
+| `--denhaag-language-switcher-list-item-button-text-underline-offset` | `1px` | | this set | |
+| `--denhaag-language-switcher-list-item-link-active-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-language-switcher-list-item-link-active-font-weight` | `var(--utrecht-heading-font-weight)` | | this set | |
+| `--denhaag-language-switcher-list-item-link-active-icon-margin-block-end` | `auto` | | this set | |
+| `--denhaag-language-switcher-list-item-link-active-icon-margin-block-start` | `auto` | | this set | |
+| `--denhaag-language-switcher-list-item-link-active-icon-margin-inline-end` | `auto` | | this set | |
+| `--denhaag-language-switcher-list-item-link-active-icon-margin-inline-start` | `auto` | | this set | |
+| `--denhaag-language-switcher-list-item-link-active-icon-padding-block-start` | `0` | | this set | |
+| `--denhaag-language-switcher-list-item-link-active-icon-padding-inline-start` | `5px` | | this set | |
+| `--denhaag-language-switcher-list-item-list-style` | `none` | | this set | |
+| `--denhaag-language-switcher-list-item-mobile-padding-block-end` | `16px` | | this set | |
+| `--denhaag-language-switcher-list-item-mobile-padding-block-start` | `16px` | | this set | |
+| `--denhaag-language-switcher-list-item-padding-block-end` | `8px` | | this set | |
+| `--denhaag-language-switcher-list-item-padding-block-start` | `8px` | | this set | |
+| `--denhaag-language-switcher-list-item-tablet-padding-block-end` | `12px` | | this set | |
+| `--denhaag-language-switcher-list-item-tablet-padding-block-start` | `12px` | | this set | |
+| `--denhaag-language-switcher-list-margin-block-end` | `16px` | | this set | |
+| `--denhaag-language-switcher-list-margin-block-start` | `0` | | this set | |
+| `--denhaag-language-switcher-list-margin-inline-start` | `0` | | this set | |
+| `--denhaag-language-switcher-list-padding-block-start` | `16px` | | this set | |
+| `--denhaag-language-switcher-list-padding-inline-start` | `0` | | this set | |
+| `--denhaag-language-switcher-mobile-title-display` | `none` | | this set | |
+| `--denhaag-link-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-link-cursor` | `pointer` | | this set | |
+| `--denhaag-link-disabled-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-link-external-icon-align` | `center` | | this set | |
+| `--denhaag-link-focus-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-link-focus-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-link-hover-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--denhaag-link-icon-align` | `flex-start` | | this set | |
+| `--denhaag-link-icon-font-size` | `1em` | | this set | |
+| `--denhaag-link-icon-gap` | `var(--denhaag-space-inline-2xs)` | | this set | |
+| `--denhaag-link-icon-margin-end` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-link-icon-margin-start` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-link-icon-size` | `1.25rem` | | this set | |
+| `--denhaag-link-small-icon-font-size` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-link-small-icon-size` | `0.5rem` | | this set | |
+| `--denhaag-link-text-decoration` | `underline` | | this set | |
+| `--denhaag-link-with-icon-vertical-align` | `bottom` | | this set | |
+| `--denhaag-list-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-list-item-active-border-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--denhaag-list-item-active-border-size` | `2px` | | this set | |
+| `--denhaag-list-item-focus-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-list-item-hover-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-list-item-icon-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-list-item-icon-margin-inline-end` | `24px` | | this set | |
+| `--denhaag-list-item-padding-block` | `12px` | | this set | |
+| `--denhaag-list-item-padding-inline` | `16px` | | this set | |
+| `--denhaag-list-item-secondary-action-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-list-item-secondary-action-margin-inline-start` | `24px` | | this set | |
+| `--denhaag-list-item-secondary-padding-block` | `8px` | | this set | |
+| `--denhaag-list-item-text-multiline-primary-line-height` | `32px` | | this set | |
+| `--denhaag-list-item-text-primary-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-list-item-text-primary-font-size` | `1rem` | | this set | |
+| `--denhaag-list-item-text-primary-font-weight` | `400` | | this set | |
+| `--denhaag-list-item-text-primary-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-list-item-text-secondary-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-list-item-text-secondary-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-list-item-text-secondary-font-weight` | `400` | | this set | |
+| `--denhaag-list-item-text-secondary-line-height` | `16px` | | this set | |
+| `--denhaag-list-item-text-secondary-padding-block-end` | `8px` | | this set | |
+| `--denhaag-list-subheader-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-list-subheader-font-weight` | `700` | | this set | |
+| `--denhaag-list-subheader-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-list-wrapper-margin-block` | `8px` | | this set | |
+| `--denhaag-list-wrapper-padding-block` | `8px` | | this set | |
+| `--denhaag-menu-button-active-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-menu-button-active-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-menu-button-chevron-active-color` | `var(--denhaag-menu-button-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-menu-button-chevron-hover-color` | `var(--denhaag-menu-button-chevron-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-menu-button-chevron-padding-inline-start` | `4px` | | this set | |
+| `--denhaag-menu-button-chevron-size` | `12px` | | this set | |
+| `--denhaag-menu-button-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-menu-button-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-menu-button-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-menu-button-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-menu-button-hover-color` | `var(--denhaag-menu-button-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-menu-button-line-height` | `21px` | | this set | |
+| `--denhaag-menu-group-spacing` | `40px` | | this set | |
+| `--denhaag-mobile-menu-list-expandable-display` | `none` | | this set | |
+| `--denhaag-mobile-menu-list-expandable-item-border-bottom` | `none` | | this set | |
+| `--denhaag-mobile-menu-list-expandable-open-display` | `block` | | this set | |
+| `--denhaag-mobile-menu-list-item-active-icon-transform` | `scaleY(-1)` | | this set | |
+| `--denhaag-mobile-menu-list-item-border-bottom` | `1px solid var(--denhaag-color-grey-1)` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-align-items` | `center` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-appearance` | `none` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-background-color` | `transparent` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-border` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-color` | `auto` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-display` | `flex` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-font-size` | `inherit` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-justify-content` | `space-between` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-label-gap` | `8px` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-large-font-size` | `20px` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-large-font-weight` | `700` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-margin-block` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-margin-inline` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-padding-block` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-padding-inline` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-text-decoration` | `none` | | this set | |
+| `--denhaag-mobile-menu-list-item-button-width` | `100%` | | this set | |
+| `--denhaag-mobile-menu-list-item-display` | `flex` | | this set | |
+| `--denhaag-mobile-menu-list-item-expanded-list-display` | `none` | | this set | |
+| `--denhaag-mobile-menu-list-item-expanded-list-list-style` | `none` | | this set | |
+| `--denhaag-mobile-menu-list-item-expanded-list-open-display` | `block` | | this set | |
+| `--denhaag-mobile-menu-list-item-expanded-list-padding-inline-start` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-item-flex-direction` | `column` | | this set | |
+| `--denhaag-mobile-menu-list-item-min-block-size` | `58px` | | this set | |
+| `--denhaag-mobile-menu-list-item-outline-style` | `none` | | this set | |
+| `--denhaag-mobile-menu-list-padding-inline-start` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-back-button-align-self` | `baseline` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-back-button-background-color` | `transparent` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-back-button-border` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-back-button-icon-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-mobile-menu-list-submenu-back-button-padding-block-end` | `20px` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-back-button-padding-block-start` | `20px` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-back-button-padding-inline-end` | `24px` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-back-button-padding-inline-start` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-display` | `none` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-flex-direction` | `column` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-left` | `100vw` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-open-display` | `flex` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-position` | `absolute` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-title-align-items` | `center` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-title-display` | `flex` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-top` | `0` | | this set | |
+| `--denhaag-mobile-menu-list-submenu-width` | `100%` | | this set | |
+| `--denhaag-mobile-menu-scrolled-transform` | `translateX(-100vw)` | | this set | |
+| `--denhaag-mobile-menu-transition-duration` | `200ms` | | this set | |
+| `--denhaag-mobile-menu-will-change` | `transform` | | this set | |
+| `--denhaag-modal-backdrop-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgb%280%200%200%20%2F%2050%25%29%22%2F%3E%3C%2Fsvg%3E) `rgb(0 0 0 / 50%)` | | this set | |
+| `--denhaag-modal-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-modal-close-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-modal-close-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-modal-close-font-weight` | `var(--denhaag-typography-weight-semibold)` | | this set | |
+| `--denhaag-modal-close-gap` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-modal-close-hover-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2393e1aa%22%2F%3E%3C%2Fsvg%3E) `#93e1aa` | this set | |
+| `--denhaag-modal-close-size` | `14px` | | this set | |
+| `--denhaag-modal-content-padding-block` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-modal-content-padding-inline` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-modal-display` | `none` | | this set | |
+| `--denhaag-modal-footer-justify-content` | `flex-end` | | this set | |
+| `--denhaag-modal-footer-padding-block` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-modal-footer-padding-inline` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-modal-header-border-bottom-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-modal-header-border-bottom-style` | `solid` | | this set | |
+| `--denhaag-modal-header-border-bottom-width` | `1px` | | this set | |
+| `--denhaag-modal-header-padding-block` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-modal-header-padding-inline` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-modal-index` | `12` | | this set | |
+| `--denhaag-modal-offset-y` | `100px` | | this set | |
+| `--denhaag-modal-padding-block` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-modal-padding-inline` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-modal-title-color` | `var(--denhaag-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--denhaag-modal-title-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-modal-title-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-modal-title-font-style` | `normal` | | this set | |
+| `--denhaag-modal-title-font-weight` | `var(--denhaag-typography-weight-semibold)` | | this set | |
+| `--denhaag-modal-title-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-modal-width` | `765px` | | this set | |
+| `--denhaag-note-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-note-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-note-font-size` | `1.125rem` | | this set | |
+| `--denhaag-note-font-weight` | `400` | | this set | |
+| `--denhaag-note-icon-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-note-icon-end-margin-inline-end` | `var(--denhaag-space-inline-2xs)` | | this set | |
+| `--denhaag-note-icon-info-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-note-icon-spacing` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-note-icon-warning-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-note-line-height` | `1.5` | | this set | |
+| `--denhaag-note-padding-block` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--denhaag-page-buttons-icon-margin-inline-end` | `0.75rem` | | this set | |
+| `--denhaag-page-buttons-icon-max-height` | `1.25rem` | | this set | |
+| `--denhaag-page-buttons-icon-max-width` | `1.1875rem` | | this set | |
+| `--denhaag-page-buttons-margin-block-end` | `2rem` | | this set | |
+| `--denhaag-page-buttons-margin-block-start` | `0.75rem` | | this set | |
+| `--denhaag-page-buttons-option-margin-inline-start` | `0.5rem` | | this set | |
+| `--denhaag-page-buttons-option-min-height` | `2.594rem` | | this set | |
+| `--denhaag-page-buttons-option-min-width` | `2.75rem` | | this set | |
+| `--denhaag-page-buttons-outline-dark-action-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-page-buttons-outline-dark-action-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-page-buttons-outline-dark-action-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--denhaag-page-buttons-outline-dark-action-disabled-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-page-buttons-outline-dark-action-disabled-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-page-buttons-outline-dark-action-disabled-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-page-buttons-outline-dark-action-hover-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-page-buttons-outline-dark-action-hover-border-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-page-buttons-outline-dark-action-hover-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-page-buttons-outline-dark-action-margin-block-end` | `0.75rem` | | this set | |
+| `--denhaag-page-buttons-outline-dark-action-margin-inline-end` | `0.75rem` | | this set | |
+| `--denhaag-page-buttons-outline-dark-action-min-width` | `6.25rem` | | this set | |
+| `--denhaag-page-content-main-margin-block-start` | `1rem` | | this set | |
+| `--denhaag-page-content-main-md-margin-block-start` | `4em` | | this set | |
+| `--denhaag-page-content-main-sm-margin-block-start` | `3.5rem` | | this set | |
+| `--denhaag-page-header-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-page-header-index` | `2` | | this set | |
+| `--denhaag-page-index-background-color` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--denhaag-page-index-list-margin-block-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-page-index-padding-block-end` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-page-index-padding-block-start` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-page-index-padding-inline-end` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-page-index-padding-inline-start` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--denhaag-pagination-arrow-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-pagination-arrow-size` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--denhaag-pagination-border-radius` | `var(--denhaag-border-radius)` | | this set | |
+| `--denhaag-pagination-button-background-color` | `transparent` | | this set | |
+| `--denhaag-pagination-button-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-pagination-button-current-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-pagination-button-current-disabled-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-pagination-button-current-disabled-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-pagination-button-current-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-pagination-button-disabled-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-pagination-button-hover-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-pagination-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-pagination-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-pagination-margin-inline` | `0.625rem` | | this set | |
+| `--denhaag-pagination-size` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--denhaag-posttypelabel-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-posttypelabel-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-posttypelabel-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-posttypelabel-font-weight` | `700` | | this set | |
+| `--denhaag-posttypelabel-letter-spacing` | `1px` | | this set | |
+| `--denhaag-posttypelabel-line-height` | `1.5` | | this set | |
+| `--denhaag-posttypelabel-text-transform` | `uppercase` | | this set | |
+| `--denhaag-process-steps-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-process-steps-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-process-steps-line-height` | `24px` | | this set | |
+| `--denhaag-process-steps-step-collapse-icon-padding` | `4px` | | this set | |
+| `--denhaag-process-steps-step-collapse-icon-size` | `16px` | | this set | |
+| `--denhaag-process-steps-step-content-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-process-steps-step-content-margin` | `12px` | | this set | |
+| `--denhaag-process-steps-step-header-align-items` | `center` | | this set | |
+| `--denhaag-process-steps-step-heading-checked-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-process-steps-step-heading-checked-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-process-steps-step-heading-checked-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-process-steps-step-heading-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-process-steps-step-heading-current-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-process-steps-step-heading-current-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-process-steps-step-heading-current-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-process-steps-step-heading-current-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-process-steps-step-heading-error-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--denhaag-process-steps-step-heading-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-process-steps-step-heading-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-process-steps-step-heading-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--denhaag-process-steps-step-heading-warning-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaa75%22%2F%3E%3C%2Fsvg%3E) `#ffaa75` | this set | |
+| `--denhaag-process-steps-step-meta-date-font-size` | `20px` | | this set | |
+| `--denhaag-process-steps-step-meta-font-size` | `16px` | | this set | |
+| `--denhaag-process-steps-step-meta-nested-font-size` | `14px` | | this set | |
+| `--denhaag-process-steps-step-meta-nested-margin-block-start` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--denhaag-process-steps-step-padding-block-end` | `0` | | this set | |
+| `--denhaag-process-steps-step-padding-block-start` | `0` | | this set | |
+| `--denhaag-radio-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-radio-border-color` | `var(--utrecht-checkbox-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--denhaag-radio-border-width` | `var(--utrecht-checkbox-border-width)` | | this set | |
+| `--denhaag-radio-checked-background-color` | `var(--utrecht-checkbox-checked-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-radio-checked-border-color` | `var(--utrecht-checkbox-checked-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-radio-checked-disabled-background-color` | `var(--denhaag-checkbox-checked-disabled-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-radio-checked-disabled-border-color` | `var(--denhaag-checkbox-checked-disabled-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-radio-checked-inner-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-radio-checked-inner-size` | `6px` | | this set | |
+| `--denhaag-radio-checked-invalid-background-color` | `var(--denhaag-checkbox-checked-invalid-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-radio-disabled-background-color` | `var(--utrecht-checkbox-disabled-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-radio-disabled-border-color` | `var(--utrecht-checkbox-disabled-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--denhaag-radio-hover-border-color` | `var(--denhaag-checkbox-hover-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--denhaag-radio-hover-checked-background-color` | `var(--denhaag-checkbox-hover-checked-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-radio-hover-checked-border-color` | `var(--denhaag-checkbox-hover-checked-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--denhaag-radio-hover-invalid-background-color` | `var(--denhaag-checkbox-hover-invalid-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--denhaag-radio-hover-invalid-border-color` | `var(--denhaag-checkbox-hover-invalid-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--denhaag-radio-invalid-border-color` | `var(--utrecht-checkbox-invalid-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-radio-size` | `var(--utrecht-checkbox-size)` | | this set | |
+| `--denhaag-responsive-content-2xs-padding` | `0.75rem` | | this set | |
+| `--denhaag-responsive-content-lg-max-width` | `67.5rem` | | this set | |
+| `--denhaag-responsive-content-md-max-width` | `56.5rem` | | this set | |
+| `--denhaag-responsive-content-sm-max-width` | `40.5rem` | | this set | |
+| `--denhaag-responsive-content-xs-padding` | `1.5rem` | | this set | |
+| `--denhaag-rich-text-acquaintance-margin-block-end` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-rich-text-best-friend-margin-block-end` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-rich-text-confidant-margin-block-end` | `0px` | | this set | |
+| `--denhaag-rich-text-friend-margin-block-end` | `var(--denhaag-space-block-md)` | | this set | |
+| `--denhaag-rich-text-stranger-margin-block-end` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--denhaag-select-box-sizing` | `border-box` | | this set | |
+| `--denhaag-select-focus-border-width` | `var(--utrecht-form-control-focus-border-width)` | | this set | |
+| `--denhaag-select-hover-background-color` | `var(--utrecht-form-control-hover-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--denhaag-select-hover-border-color` | `var(--utrecht-form-control-hover-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--denhaag-select-hover-border-width` | `var(--utrecht-form-control-hover-border-width)` | | this set | |
+| `--denhaag-select-hover-color` | `var(--utrecht-form-control-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-select-max-block-size` | `3rem` | | this set | |
+| `--denhaag-sheet-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-sheet-close-button-float` | `right` | | this set | |
+| `--denhaag-sheet-container-margin-block-end` | `4rem` | | this set | |
+| `--denhaag-sheet-container-menu-display` | `grid` | | this set | |
+| `--denhaag-sheet-desktop-min-height` | `15rem` | | this set | |
+| `--denhaag-sheet-desktop-padding-block-start` | `24px` | | this set | |
+| `--denhaag-sheet-desktop-top` | `7.5rem` | | this set | |
+| `--denhaag-sheet-dialog-backdrop-top` | `0` | | this set | |
+| `--denhaag-sheet-dialog-border` | `none` | | this set | |
+| `--denhaag-sheet-dialog-margin-block-start` | `0` | | this set | |
+| `--denhaag-sheet-dialog-max-height` | `fit-content` | | this set | |
+| `--denhaag-sheet-dialog-max-width` | `100%` | | this set | |
+| `--denhaag-sheet-dialog-overflow-y` | `hidden` | | this set | |
+| `--denhaag-sheet-dialog-padding-block-end` | `0` | | this set | |
+| `--denhaag-sheet-dialog-padding-block-start` | `0` | | this set | |
+| `--denhaag-sheet-dialog-padding-inline-end` | `0` | | this set | |
+| `--denhaag-sheet-dialog-padding-inline-start` | `0` | | this set | |
+| `--denhaag-sheet-dialog-top` | `0` | | this set | |
+| `--denhaag-sheet-left` | `flex0` | | this set | |
+| `--denhaag-sheet-margin-block-start` | `var(--denhaag-header-border-bottom-width)` | | this set | |
+| `--denhaag-sheet-min-height` | `100vh` | | this set | |
+| `--denhaag-sheet-overflow-x` | `hidden` | | this set | |
+| `--denhaag-sheet-overlay-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgb%280%200%200%20%2F%2050%25%29%22%2F%3E%3C%2Fsvg%3E) `rgb(0 0 0 / 50%)` | | this set | |
+| `--denhaag-sheet-overlay-desktop-top` | `7.5rem` | | this set | |
+| `--denhaag-sheet-overlay-height` | `100vh` | | this set | |
+| `--denhaag-sheet-overlay-left` | `0` | | this set | |
+| `--denhaag-sheet-overlay-position` | `fixed` | | this set | |
+| `--denhaag-sheet-overlay-tablet-top` | `6rem` | | this set | |
+| `--denhaag-sheet-overlay-top` | `4.5rem` | | this set | |
+| `--denhaag-sheet-overlay-width` | `100vw` | | this set | |
+| `--denhaag-sheet-overlay-z-index` | `1` | | this set | |
+| `--denhaag-sheet-position` | `absolute` | | this set | |
+| `--denhaag-sheet-title-font-size` | `18px` | | this set | |
+| `--denhaag-sheet-title-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-sheet-title-margin-block-end` | `16px` | | this set | |
+| `--denhaag-sheet-top` | `4.5rem` | | this set | |
+| `--denhaag-sheet-width` | `100%` | | this set | |
+| `--denhaag-sheet-z-index` | `3` | | this set | |
+| `--denhaag-side-navigation-display` | `flex` | | this set | |
+| `--denhaag-side-navigation-flex-direction` | `column` | | this set | |
+| `--denhaag-side-navigation-item-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-side-navigation-item-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-side-navigation-item-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-side-navigation-item-height` | `48px` | | this set | |
+| `--denhaag-side-navigation-item-line-height` | `1.5` | | this set | |
+| `--denhaag-side-navigation-item-margin-block-end` | `0` | | this set | |
+| `--denhaag-side-navigation-item-margin-block-start` | `0` | | this set | |
+| `--denhaag-side-navigation-item-margin-inline-end` | `0` | | this set | |
+| `--denhaag-side-navigation-item-margin-inline-start` | `0` | | this set | |
+| `--denhaag-side-navigation-link-active-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-side-navigation-link-active-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-side-navigation-link-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-side-navigation-link-hover-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-side-navigation-link-label-gap` | `var(--denhaag-space-inline-xs)` | | this set | |
+| `--denhaag-side-navigation-link-padding-block-end` | `12px` | | this set | |
+| `--denhaag-side-navigation-link-padding-block-start` | `12px` | | this set | |
+| `--denhaag-side-navigation-min-width` | `14.5rem` | | this set | |
+| `--denhaag-side-navigation-mobile-display` | `none` | | this set | |
+| `--denhaag-side-navigation-row-gap` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--denhaag-sidenav-display` | `flex` | | this set | |
+| `--denhaag-sidenav-flex-direction` | `column` | | this set | |
+| `--denhaag-sidenav-item-font-family` | `var(--utrecht-document-font-family)` | | this set | |
+| `--denhaag-sidenav-item-font-size` | `16px` | | this set | |
+| `--denhaag-sidenav-item-font-weight` | `400` | | this set | |
+| `--denhaag-sidenav-item-height` | `48px` | | this set | |
+| `--denhaag-sidenav-item-line-height` | `1.5` | | this set | |
+| `--denhaag-sidenav-item-margin-block-end` | `0` | | this set | |
+| `--denhaag-sidenav-item-margin-block-start` | `0` | | this set | |
+| `--denhaag-sidenav-item-margin-inline-end` | `0` | | this set | |
+| `--denhaag-sidenav-item-margin-inline-start` | `0` | | this set | |
+| `--denhaag-sidenav-link-active-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-sidenav-link-active-font-weight` | `700` | | this set | |
+| `--denhaag-sidenav-link-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-sidenav-link-hover-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-sidenav-link-label-gap` | `0.5rem` | | this set | |
+| `--denhaag-sidenav-link-padding-block-end` | `5px` | | this set | |
+| `--denhaag-sidenav-link-padding-block-start` | `5px` | | this set | |
+| `--denhaag-sidenav-min-width` | `14.5rem` | | this set | |
+| `--denhaag-sidenav-mobile-display` | `none` | | this set | |
+| `--denhaag-sidenav-row-gap` | `5px` | | this set | |
+| `--denhaag-size-2xl` | `160px` | | this set | |
+| `--denhaag-size-2xs` | `16px` | | this set | |
+| `--denhaag-size-3xs` | `8px` | | this set | |
+| `--denhaag-size-4xs` | `4px` | | this set | |
+| `--denhaag-size-5xs` | `2px` | | this set | |
+| `--denhaag-size-icon-2xl` | `32px` | | this set | |
+| `--denhaag-size-icon-3xl` | `40px` | | this set | |
+| `--denhaag-size-icon-4xl` | `48px` | | this set | |
+| `--denhaag-size-icon-lg` | `24px` | | this set | |
+| `--denhaag-size-icon-md` | `24px` | | this set | |
+| `--denhaag-size-icon-sm` | `20px` | | this set | |
+| `--denhaag-size-icon-xl` | `24px` | | this set | |
+| `--denhaag-size-icon-xs` | `16px` | | this set | |
+| `--denhaag-size-lg` | `64px` | | this set | |
+| `--denhaag-size-md` | `48px` | | this set | |
+| `--denhaag-size-sm` | `32px` | | this set | |
+| `--denhaag-size-xl` | `96px` | | this set | |
+| `--denhaag-size-xs` | `24px` | | this set | |
+| `--denhaag-space-block-2xl` | `2rem` | | this set | |
+| `--denhaag-space-block-2xs` | `.25rem` | | this set | |
+| `--denhaag-space-block-3xl` | `2.5rem` | | this set | |
+| `--denhaag-space-block-3xs` | `.125rem` | | this set | |
+| `--denhaag-space-block-4xl` | `3rem` | | this set | |
+| `--denhaag-space-block-5xl` | `4rem` | | this set | |
+| `--denhaag-space-block-lg` | `1.25rem` | | this set | |
+| `--denhaag-space-block-md` | `1rem` | | this set | |
+| `--denhaag-space-block-sm` | `.75rem` | | this set | |
+| `--denhaag-space-block-xl` | `1.5rem` | | this set | |
+| `--denhaag-space-block-xs` | `.5rem` | | this set | |
+| `--denhaag-space-inline-2xl` | `2rem` | | this set | |
+| `--denhaag-space-inline-2xs` | `.25rem` | | this set | |
+| `--denhaag-space-inline-3xl` | `2.5rem` | | this set | |
+| `--denhaag-space-inline-3xs` | `.125rem` | | this set | |
+| `--denhaag-space-inline-4xl` | `3rem` | | this set | |
+| `--denhaag-space-inline-5xl` | `4rem` | | this set | |
+| `--denhaag-space-inline-lg` | `1.25rem` | | this set | |
+| `--denhaag-space-inline-md` | `1rem` | | this set | |
+| `--denhaag-space-inline-sm` | `.75rem` | | this set | |
+| `--denhaag-space-inline-xl` | `1.5rem` | | this set | |
+| `--denhaag-space-inline-xs` | `.5rem` | | this set | |
+| `--denhaag-step-marker-border-width` | `2px` | | this set | |
+| `--denhaag-step-marker-checked-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-step-marker-checked-border-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-step-marker-checked-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-step-marker-connector-checked-outline-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-step-marker-connector-default-outline-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-step-marker-connector-error-outline-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-step-marker-connector-not-checked-outline-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-step-marker-connector-outline-width` | `1px` | | this set | |
+| `--denhaag-step-marker-connector-warning-outline-color` | `var(--denhaag-color-orange-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f37526%22%2F%3E%3C%2Fsvg%3E) `#f37526` | this set | |
+| `--denhaag-step-marker-current-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-step-marker-current-border-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-step-marker-current-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-step-marker-current-nested-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-step-marker-default-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-step-marker-default-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-step-marker-default-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-step-marker-default-nested-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-step-marker-disabled-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-step-marker-disabled-border-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--denhaag-step-marker-disabled-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--denhaag-step-marker-error-background-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-step-marker-error-border-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--denhaag-step-marker-error-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-step-marker-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-step-marker-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-step-marker-font-weight` | `400` | | this set | |
+| `--denhaag-step-marker-icon-size` | `20px` | | this set | |
+| `--denhaag-step-marker-margin` | `0` | | this set | |
+| `--denhaag-step-marker-nested-icon-size` | `10px` | | this set | |
+| `--denhaag-step-marker-nested-size` | `16px` | | this set | |
+| `--denhaag-step-marker-not-checked-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-step-marker-not-checked-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-step-marker-not-checked-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--denhaag-step-marker-padding` | `12px` | | this set | |
+| `--denhaag-step-marker-size` | `32px` | | this set | |
+| `--denhaag-step-marker-warning-background-color` | `var(--denhaag-color-orange-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f37526%22%2F%3E%3C%2Fsvg%3E) `#f37526` | this set | |
+| `--denhaag-step-marker-warning-border-color` | `var(--denhaag-color-orange-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f37526%22%2F%3E%3C%2Fsvg%3E) `#f37526` | this set | |
+| `--denhaag-step-marker-warning-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-step-marker-warning-nested-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-step-marker-warning-nested-border-color` | `var(--denhaag-color-orange-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f37526%22%2F%3E%3C%2Fsvg%3E) `#f37526` | this set | |
+| `--denhaag-table-border-spacing` | `0` | | this set | |
+| `--denhaag-table-cell-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-table-cell-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-table-cell-gap` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--denhaag-table-cell-min-width` | `7.5rem` | | this set | |
+| `--denhaag-table-cell-outline-color` | `var(--denhaag-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--denhaag-table-cell-outline-style` | `var(--denhaag-focus-border-style)` | | this set | |
+| `--denhaag-table-cell-outline-width` | `var(--denhaag-focus-border-width)` | | this set | |
+| `--denhaag-table-cell-sm-padding-block-end` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--denhaag-table-cell-sm-padding-block-start` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--denhaag-table-cell-sm-padding-inline-end` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-table-cell-sm-padding-inline-start` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-table-container-overflow-x` | `auto` | | this set | |
+| `--denhaag-table-container-shadow-background` | `linear-gradient(270deg, rgba(0, 0, 0, 0.1) 0%, rgba(255, 255, 255, 0) 76.92%)` | | this set | |
+| `--denhaag-table-container-shadow-bottom` | `0` | | this set | |
+| `--denhaag-table-container-shadow-group-bottom` | `0` | | this set | |
+| `--denhaag-table-container-shadow-group-display` | `contents` | | this set | |
+| `--denhaag-table-container-shadow-group-position` | `absolute` | | this set | |
+| `--denhaag-table-container-shadow-group-width` | `inherit` | | this set | |
+| `--denhaag-table-container-shadow-height` | `inherit` | | this set | |
+| `--denhaag-table-container-shadow-left-left` | `0` | | this set | |
+| `--denhaag-table-container-shadow-left-transform` | `matrix(-1, 0, 0, 1, 0, 0)` | | this set | |
+| `--denhaag-table-container-shadow-position` | `absolute` | | this set | |
+| `--denhaag-table-container-shadow-right-right` | `0` | | this set | |
+| `--denhaag-table-container-shadow-width` | `var(--denhaag-space-inline-5xl)` | | this set | |
+| `--denhaag-table-heading-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--denhaag-table-heading-min-width` | `7.5rem` | | this set | |
+| `--denhaag-table-max-width` | `100%` | | this set | |
+| `--denhaag-table-row-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-table-row-hover-background-color` | `var(--denhaag-color-warmgrey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--denhaag-table-row-padding-block-end` | `.75rem` | | this set | |
+| `--denhaag-table-row-padding-block-start` | `.75rem` | | this set | |
+| `--denhaag-table-scroll-buttons-flex-direction` | `initial` | | this set | |
+| `--denhaag-table-scroll-buttons-justify-content` | `flex-end` | | this set | |
+| `--denhaag-table-width` | `100%` | | this set | |
+| `--denhaag-table-wrapper-position` | `relative` | | this set | |
+| `--denhaag-tabs-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--denhaag-tabs-border-style` | `solid` | | this set | |
+| `--denhaag-tabs-border-width` | `2px` | | this set | |
+| `--denhaag-tabs-tab-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--denhaag-tabs-tab-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-tabs-tab-cursor` | `pointer` | | this set | |
+| `--denhaag-tabs-tab-focus-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-tabs-tab-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-tabs-tab-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-tabs-tab-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-tabs-tab-hover-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-tabs-tab-indicator-border-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--denhaag-tabs-tab-indicator-border-width` | `2px` | | this set | |
+| `--denhaag-tabs-tab-indicator-bottom` | `0` | | this set | |
+| `--denhaag-tabs-tab-line-height` | `1.5` | | this set | |
+| `--denhaag-tabs-tab-outline` | `0` | | this set | |
+| `--denhaag-tabs-tab-padding-block-end` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-tabs-tab-padding-block-start` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--denhaag-tabs-tab-padding-inline-end` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-tabs-tab-padding-inline-start` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--denhaag-tabs-tab-panel-outline` | `0` | | this set | |
+| `--denhaag-tabs-tab-panel-padding-block-end` | `0` | | this set | |
+| `--denhaag-tabs-tab-panel-padding-block-start` | `0` | | this set | |
+| `--denhaag-tabs-tab-panel-padding-inline-end` | `0` | | this set | |
+| `--denhaag-tabs-tab-panel-padding-inline-start` | `0` | | this set | |
+| `--denhaag-tabs-tab-selected-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-tabs-tab-selected-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--denhaag-tabs-width` | `100%` | | this set | |
+| `--denhaag-timeline-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--denhaag-timeline-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--denhaag-timeline-line-height` | `24px` | | this set | |
+| `--denhaag-timeline-step-collapse-icon-padding` | `4px` | | this set | |
+| `--denhaag-timeline-step-collapse-icon-size` | `16px` | | this set | |
+| `--denhaag-timeline-step-content-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-timeline-step-content-margin` | `12px` | | this set | |
+| `--denhaag-timeline-step-icon-active-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-timeline-step-icon-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-timeline-step-icon-completed-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--denhaag-timeline-step-icon-disabled-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-timeline-step-icon-margin` | `auto` | | this set | |
+| `--denhaag-timeline-step-icon-padding` | `12px` | | this set | |
+| `--denhaag-timeline-step-icon-size` | `20px` | | this set | |
+| `--denhaag-timeline-step-icon-text-active-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-timeline-step-icon-text-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--denhaag-timeline-step-label-active-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-timeline-step-label-active-font-weight` | `700` | | this set | |
+| `--denhaag-timeline-step-label-completed-hover-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--denhaag-timeline-step-label-disabled-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--denhaag-timeline-step-outline` | `var(--denhaag-focus-border)` | | this set | |
+| `--denhaag-timeline-step-outline-offset` | `2px` | | this set | |
+| `--denhaag-timeline-step-padding` | `12px` | | this set | |
+| `--denhaag-typography-mobile-scale-2xl-font-size` | `1.75rem` | | this set | |
+| `--denhaag-typography-mobile-scale-3xl-font-size` | `2.25rem` | | this set | |
+| `--denhaag-typography-mobile-scale-xl-font-size` | `1.4375rem` | | this set | |
+| `--denhaag-typography-sans-serif-alternate-font-family` | `"TheMix", "Fira Sans", sans-serif` | | this set | |
+| `--denhaag-typography-sans-serif-font-family` | `"TheSans", "Fira Sans", sans-serif` | | this set | |
+| `--denhaag-typography-scale-2xl-font-size` | `2rem` | | this set | |
+| `--denhaag-typography-scale-2xl-line-height` | `1.3` | | this set | |
+| `--denhaag-typography-scale-3xl-font-size` | `3rem` | | this set | |
+| `--denhaag-typography-scale-3xl-line-height` | `1.3` | | this set | |
+| `--denhaag-typography-scale-base-font-size` | `1.125rem` | | this set | |
+| `--denhaag-typography-scale-base-line-height` | `1.5` | | this set | |
+| `--denhaag-typography-scale-lg-font-size` | `1.25rem` | | this set | |
+| `--denhaag-typography-scale-lg-line-height` | `1.3` | | this set | |
+| `--denhaag-typography-scale-s-font-size` | `0.875rem` | | this set | |
+| `--denhaag-typography-scale-s-line-height` | `1.3` | | this set | |
+| `--denhaag-typography-scale-xl-font-size` | `1.5rem` | | this set | |
+| `--denhaag-typography-scale-xl-line-height` | `1.3` | | this set | |
+| `--denhaag-typography-scale-xs-font-size` | `0.625rem` | | this set | |
+| `--denhaag-typography-weight-bold` | `700` | | this set | |
+| `--denhaag-typography-weight-medium` | `500` | | this set | |
+| `--denhaag-typography-weight-regular` | `400` | | this set | |
+| `--denhaag-typography-weight-semibold` | `600` | | this set | |
+| `--denhaag-unordered-list-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--denhaag-unordered-list-lead-margin-block-start` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--denhaag-unordered-list-list-item-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--denhaag-unordered-list-lower-alpha-list-style-type` | `lower-alpha` | | this set | |
+| `--denhaag-unordered-list-marker-font-size` | `1rem` | | this set | |
+| `--denhaag-unordered-list-paragraph-margin-block-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--nl-data-badge-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--nl-data-badge-border-radius` | `var(--denhaag-border-radius)` | | this set | |
+| `--nl-data-badge-border-width` | `0` | | this set | |
+| `--nl-data-badge-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--nl-data-badge-error-background-color` | `var(--denhaag-color-red-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--nl-data-badge-error-color` | `var(--denhaag-color-red-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ff615c%22%2F%3E%3C%2Fsvg%3E) `#ff615c` | this set | |
+| `--nl-data-badge-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--nl-data-badge-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--nl-data-badge-font-weight` | `var(--denhaag-typography-weight-semibold)` | | this set | |
+| `--nl-data-badge-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--nl-data-badge-neutral-background-color` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--nl-data-badge-neutral-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--nl-data-badge-padding-block` | `2px` | | this set | |
+| `--nl-data-badge-padding-inline` | `8px` | | this set | |
+| `--nl-data-badge-success-background-color` | `var(--denhaag-color-green-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--nl-data-badge-success-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2393e1aa%22%2F%3E%3C%2Fsvg%3E) `#93e1aa` | this set | |
+| `--nl-data-badge-warning-background-color` | `var(--denhaag-color-orange-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--nl-data-badge-warning-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaa75%22%2F%3E%3C%2Fsvg%3E) `#ffaa75` | this set | |
+| `--nl-heading-level-1-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--nl-heading-level-1-font-size` | `var(--denhaag-typography-scale-3xl-font-size)` | | this set | |
+| `--nl-heading-level-1-line-height` | `var(--denhaag-typography-scale-3xl-line-height)` | | this set | |
+| `--nl-heading-level-1-margin-block-end` | `0` | | this set | |
+| `--nl-heading-level-1-margin-block-start` | `0` | | this set | |
+| `--nl-heading-level-2-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--nl-heading-level-2-font-size` | `var(--denhaag-typography-scale-2xl-font-size)` | | this set | |
+| `--nl-heading-level-2-line-height` | `var(--denhaag-typography-scale-2xl-line-height)` | | this set | |
+| `--nl-heading-level-2-margin-block-end` | `0` | | this set | |
+| `--nl-heading-level-2-margin-block-start` | `0` | | this set | |
+| `--nl-heading-level-3-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--nl-heading-level-3-font-size` | `var(--denhaag-typography-scale-xl-font-size)` | | this set | |
+| `--nl-heading-level-3-line-height` | `var(--denhaag-typography-scale-xl-line-height)` | | this set | |
+| `--nl-heading-level-3-margin-block-end` | `0` | | this set | |
+| `--nl-heading-level-3-margin-block-start` | `0` | | this set | |
+| `--nl-heading-level-4-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--nl-heading-level-4-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--nl-heading-level-4-line-height` | `var(--denhaag-typography-scale-lg-line-height)` | | this set | |
+| `--nl-heading-level-4-margin-block-end` | `0` | | this set | |
+| `--nl-heading-level-4-margin-block-start` | `0` | | this set | |
+| `--nl-heading-level-5-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--nl-heading-level-5-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--nl-heading-level-5-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--nl-heading-level-5-margin-block-end` | `0` | | this set | |
+| `--nl-heading-level-5-margin-block-start` | `0` | | this set | |
+| `--nl-heading-level-6-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--nl-heading-level-6-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--nl-heading-level-6-line-height` | `var(--denhaag-typography-scale-s-line-height)` | | this set | |
+| `--nl-heading-level-6-margin-block-end` | `0` | | this set | |
+| `--nl-heading-level-6-margin-block-start` | `0` | | this set | |
+| `--nl-link-active-text-decoration-line` | `underline` | | this set | |
+| `--nl-link-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--nl-link-disabled-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--nl-link-focus-visible-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--nl-link-focus-visible-text-decoration-line` | `underline` | | this set | |
+| `--nl-link-hover-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--nl-link-hover-text-decoration-line` | `underline` | | this set | |
+| `--nl-link-text-decoration-line` | `underline` | | this set | |
+| `--nl-number-badge-background-color` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--nl-number-badge-border-radius` | `50px` | | this set | |
+| `--nl-number-badge-border-width` | `0` | | this set | |
+| `--nl-number-badge-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--nl-number-badge-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--nl-number-badge-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--nl-number-badge-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--nl-number-badge-padding-block` | `5px` | | this set | |
+| `--nl-number-badge-padding-inline` | `6px` | | this set | |
+| `--nl-paragraph-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--nl-paragraph-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--nl-paragraph-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--nl-paragraph-lead-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--nl-paragraph-lead-line-height` | `var(--denhaag-typography-scale-lg-line-height)` | | this set | |
+| `--nl-paragraph-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--nl-paragraph-margin-block-end` | `0` | | this set | |
+| `--nl-paragraph-margin-block-start` | `0` | | this set | |
 | `--nldesign-logo-url` | `url('../../img/logos/denhaag.svg')` | | this set | |
+| `--of-alert-error-bg` | `var(--denhaag-color-red-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--of-alert-info-bg` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--of-alert-warning-bg` | `var(--denhaag-color-orange-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--of-button-anchor-bg` | `transparent` | | this set | |
+| `--of-button-anchor-color-border` | `transparent` | | this set | |
+| `--of-button-anchor-fg` | `var(--denhaag-link-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--of-button-primary-active-bg` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--of-button-primary-active-color-border` | `var(--denhaag-color-ocher-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--of-button-primary-active-fg` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--of-button-primary-bg` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--of-button-primary-fg` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--of-button-primary-hover-bg` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--of-button-primary-hover-color-border` | `var(--denhaag-color-ocher-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--of-checkbox-bg` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--of-color-bg` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--of-color-border` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--of-color-danger` | `var(--denhaag-color-red-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--of-color-fg` | `var(--denhaag-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--of-color-fg-muted` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--of-color-info` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--of-color-primary` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--of-color-secondary` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--of-color-success` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--of-color-warning` | `var(--denhaag-color-orange-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f37526%22%2F%3E%3C%2Fsvg%3E) `#f37526` | this set | |
+| `--of-field-border-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--of-helptext-bg` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--of-layout-background` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--of-layout-bg` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--of-link-color` | `var(--denhaag-link-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--of-page-footer-bg` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--of-page-header-bg` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-border-radius-lg` | `16px` | | this set | |
+| `--tilburg-border-radius-md` | `8px` | | this set | |
+| `--tilburg-border-radius-round` | `999px` | | this set | |
+| `--tilburg-border-radius-sm` | `4px` | | this set | |
+| `--tilburg-border-width-lg` | `4px` | | this set | |
+| `--tilburg-border-width-md` | `2px` | | this set | |
+| `--tilburg-border-width-sm` | `1px` | | this set | |
+| `--tilburg-box-shadow-lg` | `0 1ratpx rgba(0, 0, 0, 0.1)` | | this set | |
+| `--tilburg-box-shadow-md` | `0 4px 12px rgba(0, 0, 0, 0.1)` | | this set | |
+| `--tilburg-box-shadow-sm` | `[object Object]` | | this set | |
+| `--tilburg-color-black` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--tilburg-color-black-txt` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--tilburg-color-blue-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dbecfa%22%2F%3E%3C%2Fsvg%3E) `#dbecfa` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--tilburg-color-blue-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23abcced%22%2F%3E%3C%2Fsvg%3E) `#abcced` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a3f64%22%2F%3E%3C%2Fsvg%3E) `#1a3f64` | this set | |
+| `--tilburg-color-blue-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--tilburg-color-blue-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23094b81%22%2F%3E%3C%2Fsvg%3E) `#094b81` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--tilburg-color-blue-500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23032d4f%22%2F%3E%3C%2Fsvg%3E) `#032d4f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239acdf6%22%2F%3E%3C%2Fsvg%3E) `#9acdf6` | this set | |
+| `--tilburg-color-code-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f2f2f2%22%2F%3E%3C%2Fsvg%3E) `#f2f2f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--tilburg-color-dark-alpha-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230000001a%22%2F%3E%3C%2Fsvg%3E) `#0000001a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb1a%22%2F%3E%3C%2Fsvg%3E) `#ebebeb1a` | this set | |
+| `--tilburg-color-dark-alpha-50` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230000000d%22%2F%3E%3C%2Fsvg%3E) `#0000000d` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb0d%22%2F%3E%3C%2Fsvg%3E) `#ebebeb0d` | this set | |
+| `--tilburg-color-extra-limegreen` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238bc63f%22%2F%3E%3C%2Fsvg%3E) `#8bc63f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2385ba40%22%2F%3E%3C%2Fsvg%3E) `#85ba40` | this set | |
+| `--tilburg-color-extra-purple` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23513090%22%2F%3E%3C%2Fsvg%3E) `#513090` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238c6cc7%22%2F%3E%3C%2Fsvg%3E) `#8c6cc7` | this set | |
+| `--tilburg-color-extra-yellow` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8d62a%22%2F%3E%3C%2Fsvg%3E) `#f8d62a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0b012%22%2F%3E%3C%2Fsvg%3E) `#d0b012` | this set | |
+| `--tilburg-color-gray-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f2f2f2%22%2F%3E%3C%2Fsvg%3E) `#f2f2f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--tilburg-color-gray-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f2f2f2%22%2F%3E%3C%2Fsvg%3E) `#f2f2f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--tilburg-color-gray-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--tilburg-color-gray-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--tilburg-color-gray-50` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f9f8f6%22%2F%3E%3C%2Fsvg%3E) `#f9f8f6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--tilburg-color-gray-500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237a7a7a%22%2F%3E%3C%2Fsvg%3E) `#7a7a7a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--tilburg-color-gray-600` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237a7a7a%22%2F%3E%3C%2Fsvg%3E) `#7a7a7a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--tilburg-color-gray-700` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234a4a4a%22%2F%3E%3C%2Fsvg%3E) `#4a4a4a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--tilburg-color-gray-800` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234a4a4a%22%2F%3E%3C%2Fsvg%3E) `#4a4a4a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--tilburg-color-gray-900` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--tilburg-color-gray-950` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--tilburg-color-green-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d5e7d5%22%2F%3E%3C%2Fsvg%3E) `#d5e7d5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--tilburg-color-green-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237eb67c%22%2F%3E%3C%2Fsvg%3E) `#7eb67c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2351854f%22%2F%3E%3C%2Fsvg%3E) `#51854f` | this set | |
+| `--tilburg-color-green-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--tilburg-color-green-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231e6c35%22%2F%3E%3C%2Fsvg%3E) `#1e6c35` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--tilburg-color-light-alpha-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff1a%22%2F%3E%3C%2Fsvg%3E) `#ffffff1a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231414141a%22%2F%3E%3C%2Fsvg%3E) `#1414141a` | this set | |
+| `--tilburg-color-light-alpha-50` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff0d%22%2F%3E%3C%2Fsvg%3E) `#ffffff0d` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231414140d%22%2F%3E%3C%2Fsvg%3E) `#1414140d` | this set | |
+| `--tilburg-color-orange-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffdcad%22%2F%3E%3C%2Fsvg%3E) `#ffdcad` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--tilburg-color-orange-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffb85c%22%2F%3E%3C%2Fsvg%3E) `#ffb85c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a96309%22%2F%3E%3C%2Fsvg%3E) `#a96309` | this set | |
+| `--tilburg-color-orange-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f08800%22%2F%3E%3C%2Fsvg%3E) `#f08800` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f39419%22%2F%3E%3C%2Fsvg%3E) `#f39419` | this set | |
+| `--tilburg-color-orange-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23df5601%22%2F%3E%3C%2Fsvg%3E) `#df5601` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f37526%22%2F%3E%3C%2Fsvg%3E) `#f37526` | this set | |
+| `--tilburg-color-pink-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffe8f5%22%2F%3E%3C%2Fsvg%3E) `#ffe8f5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23390322%22%2F%3E%3C%2Fsvg%3E) `#390322` | this set | |
+| `--tilburg-color-pink-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5b4d7%22%2F%3E%3C%2Fsvg%3E) `#f5b4d7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235f113b%22%2F%3E%3C%2Fsvg%3E) `#5f113b` | this set | |
+| `--tilburg-color-pink-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8006c%22%2F%3E%3C%2Fsvg%3E) `#c8006c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5399e%22%2F%3E%3C%2Fsvg%3E) `#f5399e` | this set | |
+| `--tilburg-color-pink-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a40058%22%2F%3E%3C%2Fsvg%3E) `#a40058` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f655ac%22%2F%3E%3C%2Fsvg%3E) `#f655ac` | this set | |
+| `--tilburg-color-red-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffd9d6%22%2F%3E%3C%2Fsvg%3E) `#ffd9d6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--tilburg-color-red-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed8b82%22%2F%3E%3C%2Fsvg%3E) `#ed8b82` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2387231a%22%2F%3E%3C%2Fsvg%3E) `#87231a` | this set | |
+| `--tilburg-color-red-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cf1b07%22%2F%3E%3C%2Fsvg%3E) `#cf1b07` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--tilburg-color-red-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a30500%22%2F%3E%3C%2Fsvg%3E) `#a30500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--tilburg-color-white` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-document-background-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-document-color` | `var(--tilburg-color-black-txt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--tilburg-document-font-family` | `var(--tilburg-typography-font-family-secondary)` | | this set | |
+| `--tilburg-document-font-size` | `var(--tilburg-typography-font-size-md)` | | this set | |
+| `--tilburg-document-font-weight` | `var(--tilburg-typography-font-weight-normal)` | | this set | |
+| `--tilburg-document-inverse-background-color` | `var(--tilburg-color-gray-950)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--tilburg-document-inverse-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--tilburg-document-line-height` | `var(--tilburg-typography-line-height-md)` | | this set | |
+| `--tilburg-document-strong-font-weight` | `var(--tilburg-typography-font-weight-bold)` | | this set | |
+| `--tilburg-document-subtle-color` | `var(--tilburg-color-gray-600)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--tilburg-erm-font-size` | `16px` | | this set | |
+| `--tilburg-feedback-informative-background-color` | `var(--tilburg-color-blue-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--tilburg-feedback-informative-border-color` | `var(--tilburg-color-blue-400)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--tilburg-feedback-informative-color` | `var(--tilburg-color-blue-400)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--tilburg-feedback-negative-background-color` | `var(--tilburg-color-red-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--tilburg-feedback-negative-border-color` | `var(--tilburg-color-red-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--tilburg-feedback-negative-color` | `var(--tilburg-color-red-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--tilburg-feedback-positive-background-color` | `var(--tilburg-color-green-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--tilburg-feedback-positive-border-color` | `var(--tilburg-color-green-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--tilburg-feedback-positive-color` | `var(--tilburg-color-green-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--tilburg-feedback-warning-background-color` | `var(--tilburg-color-orange-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--tilburg-feedback-warning-border-color` | `var(--tilburg-color-orange-200)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a96309%22%2F%3E%3C%2Fsvg%3E) `#a96309` | this set | |
+| `--tilburg-feedback-warning-color` | `var(--tilburg-color-orange-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffab3d%22%2F%3E%3C%2Fsvg%3E) `#ffab3d` | this set | |
+| `--tilburg-focus-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--tilburg-focus-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--tilburg-focus-inverse-outline-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-focus-outline-color` | `var(--denhaag-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--tilburg-focus-outline-offset` | `0` | | this set | |
+| `--tilburg-focus-outline-style` | `dotted` | | this set | |
+| `--tilburg-focus-outline-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-footer-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--tilburg-footer-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--tilburg-footer-link-hover-text-decoration` | `underline` | | this set | |
+| `--tilburg-footer-link-text-decoration` | `none` | | this set | |
+| `--tilburg-form-control-accent-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--tilburg-form-control-active-accent-color` | `var( --tilburg-interaction-active-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--tilburg-form-control-active-background-color` | `var(--tilburg-color-gray-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--tilburg-form-control-active-border-color` | `var(--tilburg-color-gray-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--tilburg-form-control-active-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-form-control-active-color` | `var(--tilburg-color-gray-950)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--tilburg-form-control-background-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-form-control-border-color` | `var(--tilburg-color-gray-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--tilburg-form-control-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--tilburg-form-control-color` | `var(--tilburg-color-gray-950)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--tilburg-form-control-disabled-accent-color` | `var(--tilburg-color-gray-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--tilburg-form-control-disabled-background-color` | `var(--tilburg-color-gray-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--tilburg-form-control-disabled-border-color` | `var(--tilburg-color-gray-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--tilburg-form-control-disabled-color` | `var(--tilburg-color-gray-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--tilburg-form-control-focus-background-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-form-control-focus-border-color` | `var(--tilburg-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--tilburg-form-control-focus-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-form-control-focus-color` | `var(--tilburg-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--tilburg-form-control-hover-accent-color` | `var(--tilburg-interaction-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--tilburg-form-control-hover-background-color` | `var(--tilburg-color-gray-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--tilburg-form-control-hover-border-color` | `var(--tilburg-color-gray-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--tilburg-form-control-hover-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-form-control-hover-color` | `var(--tilburg-color-gray-950)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--tilburg-form-control-invalid-background-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-form-control-invalid-border-color` | `var(--tilburg-color-red-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--tilburg-form-control-invalid-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-form-control-invalid-color` | `var(--tilburg-color-red-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--tilburg-form-control-placeholder-color` | `var(--tilburg-color-gray-600)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--tilburg-form-control-read-only-background-color` | `var(--tilburg-color-gray-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--tilburg-form-control-read-only-border-color` | `var(--tilburg-color-gray-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--tilburg-form-control-read-only-color` | `var(--tilburg-color-gray-950)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--tilburg-header-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-heading-color` | `var(--tilburg-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--tilburg-heading-font-family` | `var(--tilburg-typography-font-family-primary)` | | this set | |
+| `--tilburg-heading-font-weight` | `var(--tilburg-typography-font-weight-bold)` | | this set | |
+| `--tilburg-icon-functional-size` | `var(--tilburg-size-icon-md)` | | this set | |
+| `--tilburg-icon-toptask-size` | `var(--tilburg-size-icon-4xl)` | | this set | |
+| `--tilburg-interaction-active-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--tilburg-interaction-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--tilburg-interaction-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--tilburg-line-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237a7a7a%22%2F%3E%3C%2Fsvg%3E) `#7a7a7a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--tilburg-line-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--tilburg-logo-color` | `var(--tilburg-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--tilburg-navigation-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--tilburg-navigation-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--tilburg-navigation-font-family` | `'Montserrat', sans-serif` | | this set | |
+| `--tilburg-navigation-font-weight` | `700` | | this set | |
+| `--tilburg-navigation-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--tilburg-navigation-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--tilburg-navigation-hover-font-weight` | `700` | | this set | |
+| `--tilburg-navigation-mobile-background-color` | `var(--tilburg-color-blue-400)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--tilburg-navigation-mobile-item-border-bottom-color` | `var( --tilburg-color-blue-300 )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--tilburg-pointer-target-min-size` | `var(--tilburg-size-md)` | | this set | |
+| `--tilburg-search-card-border-color` | `var(--tilburg-color-gray-200)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--tilburg-search-card-hover-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--tilburg-size-2xl` | `160px` | | this set | |
+| `--tilburg-size-2xs` | `16px` | | this set | |
+| `--tilburg-size-3xs` | `8px` | | this set | |
+| `--tilburg-size-4xs` | `4px` | | this set | |
+| `--tilburg-size-5xs` | `2px` | | this set | |
+| `--tilburg-size-icon-2xl` | `32px` | | this set | |
+| `--tilburg-size-icon-3xl` | `40px` | | this set | |
+| `--tilburg-size-icon-4xl` | `48px` | | this set | |
+| `--tilburg-size-icon-lg` | `24px` | | this set | |
+| `--tilburg-size-icon-md` | `24px` | | this set | |
+| `--tilburg-size-icon-sm` | `16px` | | this set | |
+| `--tilburg-size-icon-xl` | `24px` | | this set | |
+| `--tilburg-size-lg` | `64px` | | this set | |
+| `--tilburg-size-md` | `48px` | | this set | |
+| `--tilburg-size-sm` | `32px` | | this set | |
+| `--tilburg-size-xl` | `96px` | | this set | |
+| `--tilburg-size-xs` | `24px` | | this set | |
+| `--tilburg-space-block-ant` | `4px` | | this set | |
+| `--tilburg-space-block-beetle` | `8px` | | this set | |
+| `--tilburg-space-block-cat` | `32px` | | this set | |
+| `--tilburg-space-block-dog` | `48px` | | this set | |
+| `--tilburg-space-block-flea` | `2px` | | this set | |
+| `--tilburg-space-block-mouse` | `16px` | | this set | |
+| `--tilburg-space-block-pig` | `64px` | | this set | |
+| `--tilburg-space-block-rabbit` | `24px` | | this set | |
+| `--tilburg-space-block-rat` | `20px` | | this set | |
+| `--tilburg-space-block-snail` | `12px` | | this set | |
+| `--tilburg-space-column-ant` | `2px` | | this set | |
+| `--tilburg-space-column-beetle` | `4px` | | this set | |
+| `--tilburg-space-column-cat` | `24px` | | this set | |
+| `--tilburg-space-column-dog` | `28px` | | this set | |
+| `--tilburg-space-column-elephant` | `96px` | | this set | |
+| `--tilburg-space-column-flea` | `1px` | | this set | |
+| `--tilburg-space-column-giraffe` | `160px` | | this set | |
+| `--tilburg-space-column-horse` | `64px` | | this set | |
+| `--tilburg-space-column-mouse` | `12px` | | this set | |
+| `--tilburg-space-column-pig` | `32px` | | this set | |
+| `--tilburg-space-column-rabbit` | `20px` | | this set | |
+| `--tilburg-space-column-rat` | `16px` | | this set | |
+| `--tilburg-space-column-snail` | `8px` | | this set | |
+| `--tilburg-space-column-tiger` | `48px` | | this set | |
+| `--tilburg-space-inline-ant` | `4px` | | this set | |
+| `--tilburg-space-inline-beetle` | `8px` | | this set | |
+| `--tilburg-space-inline-cat` | `28px` | | this set | |
+| `--tilburg-space-inline-dog` | `32px` | | this set | |
+| `--tilburg-space-inline-flea` | `2px` | | this set | |
+| `--tilburg-space-inline-mouse` | `16px` | | this set | |
+| `--tilburg-space-inline-pig` | `48px` | | this set | |
+| `--tilburg-space-inline-rabbit` | `24px` | | this set | |
+| `--tilburg-space-inline-rat` | `20px` | | this set | |
+| `--tilburg-space-inline-snail` | `12px` | | this set | |
+| `--tilburg-space-row-ant` | `2px` | | this set | |
+| `--tilburg-space-row-beetle` | `4px` | | this set | |
+| `--tilburg-space-row-cat` | `24px` | | this set | |
+| `--tilburg-space-row-dog` | `28px` | | this set | |
+| `--tilburg-space-row-elephant` | `96px` | | this set | |
+| `--tilburg-space-row-flea` | `1px` | | this set | |
+| `--tilburg-space-row-giraffe` | `160px` | | this set | |
+| `--tilburg-space-row-horse` | `64px` | | this set | |
+| `--tilburg-space-row-mouse` | `12px` | | this set | |
+| `--tilburg-space-row-pig` | `32px` | | this set | |
+| `--tilburg-space-row-rabbit` | `20px` | | this set | |
+| `--tilburg-space-row-rat` | `16px` | | this set | |
+| `--tilburg-space-row-snail` | `8px` | | this set | |
+| `--tilburg-space-row-tiger` | `48px` | | this set | |
+| `--tilburg-space-text-ant` | `2px` | | this set | |
+| `--tilburg-space-text-beetle` | `4px` | | this set | |
+| `--tilburg-space-text-cat` | `16px` | | this set | |
+| `--tilburg-space-text-dog` | `24px` | | this set | |
+| `--tilburg-space-text-flea` | `1px` | | this set | |
+| `--tilburg-space-text-mouse` | `8px` | | this set | |
+| `--tilburg-space-text-rabbit` | `14px` | | this set | |
+| `--tilburg-space-text-rat` | `12px` | | this set | |
+| `--tilburg-space-text-snail` | `6px` | | this set | |
+| `--tilburg-status-badge-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--tilburg-status-badge-border-color` | `transparent` | | this set | |
+| `--tilburg-status-badge-border-radius` | `var(--tilburg-border-radius-sm)` | | this set | |
+| `--tilburg-status-badge-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--tilburg-status-badge-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--tilburg-status-badge-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--tilburg-status-badge-font-size` | `var(--tilburg-typography-font-size-sm)` | | this set | |
+| `--tilburg-status-badge-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--tilburg-status-badge-informative-background-color` | `var( --tilburg-feedback-informative-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--tilburg-status-badge-informative-border-color` | `transparent` | | this set | |
+| `--tilburg-status-badge-informative-color` | `var( --tilburg-feedback-informative-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--tilburg-status-badge-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--tilburg-status-badge-negative-background-color` | `var( --tilburg-feedback-negative-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--tilburg-status-badge-negative-border-color` | `transparent` | | this set | |
+| `--tilburg-status-badge-negative-color` | `var(--tilburg-feedback-negative-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--tilburg-status-badge-padding-block` | `var(--tilburg-space-block-flea)` | | this set | |
+| `--tilburg-status-badge-padding-inline` | `var(--tilburg-space-inline-ant)` | | this set | |
+| `--tilburg-status-badge-positive-background-color` | `var( --tilburg-feedback-positive-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--tilburg-status-badge-positive-border-color` | `transparent` | | this set | |
+| `--tilburg-status-badge-positive-color` | `var(--tilburg-feedback-positive-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--tilburg-status-badge-warning-background-color` | `var( --tilburg-feedback-warning-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--tilburg-status-badge-warning-border-color` | `transparent` | | this set | |
+| `--tilburg-status-badge-warning-color` | `var(--tilburg-feedback-warning-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffab3d%22%2F%3E%3C%2Fsvg%3E) `#ffab3d` | this set | |
+| `--tilburg-typography-font-family-primary` | `'Avenir', sans-serif` | | this set | |
+| `--tilburg-typography-font-family-secondary` | `'Avenir', sans-serif` | | this set | |
+| `--tilburg-typography-font-size-2xl` | `32px` | | this set | |
+| `--tilburg-typography-font-size-3xl` | `36px` | | this set | |
+| `--tilburg-typography-font-size-4xl` | `48px` | | this set | |
+| `--tilburg-typography-font-size-lg` | `20px` | | this set | |
+| `--tilburg-typography-font-size-md` | `16px` | | this set | |
+| `--tilburg-typography-font-size-sm` | `14px` | | this set | |
+| `--tilburg-typography-font-size-xl` | `24px` | | this set | |
+| `--tilburg-typography-font-weight-bold` | `700` | | this set | |
+| `--tilburg-typography-font-weight-normal` | `400` | | this set | |
+| `--tilburg-typography-line-height-lg` | `200%` | | this set | |
+| `--tilburg-typography-line-height-md` | `150%` | | this set | |
+| `--tilburg-typography-line-height-sm` | `125%` | | this set | |
+| `--tilburg-typography-line-height-xs` | `100%` | | this set | |
+| `--utrecht-accordion-border-radius` | `0px` | | this set | |
+| `--utrecht-accordion-button-active-background-color` | `var(--tilburg-color-gray-200)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-accordion-button-active-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-active-color` | `var(--tilburg-interaction-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-accordion-button-background-color` | `var(--tilburg-color-gray-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-accordion-button-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-accordion-button-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-accordion-button-expanded-background-color` | `var(--tilburg-color-gray-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-accordion-button-expanded-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-expanded-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-accordion-button-focus-background-color` | `var( --tilburg-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--utrecht-accordion-button-focus-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-focus-color` | `var(--tilburg-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-accordion-button-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-accordion-button-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-accordion-button-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--utrecht-accordion-button-hover-background-color` | `var(--tilburg-color-gray-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-accordion-button-hover-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-hover-color` | `var(--tilburg-interaction-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-accordion-button-icon-margin-inline` | `var(--tilburg-space-text-mouse)` | | this set | |
+| `--utrecht-accordion-button-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-accordion-button-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-accordion-button-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-accordion-button-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-accordion-button-padding-inline-end` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-accordion-button-padding-inline-start` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-accordion-panel-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-panel-border-width` | `var(--tilburg-border-width-lg)` | | this set | |
+| `--utrecht-accordion-panel-padding-block-end` | `var(--tilburg-space-block-rabbit)` | | this set | |
+| `--utrecht-accordion-panel-padding-block-start` | `var(--tilburg-space-block-rabbit)` | | this set | |
+| `--utrecht-accordion-panel-padding-inline-end` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-accordion-panel-padding-inline-start` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-accordion-section-border-block-end-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-accordion-section-border-color` | `var(--tilburg-line-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-accordion-section-border-width` | `auto` | | this set | |
+| `--utrecht-action-activate-cursor` | `pointer` | | this set | |
+| `--utrecht-action-busy-cursor` | `wait` | | this set | |
+| `--utrecht-action-disabled-cursor` | `not-allowed` | | this set | |
+| `--utrecht-action-navigate-cursor` | `pointer` | | this set | |
+| `--utrecht-action-submit-cursor` | `pointer` | | this set | |
+| `--utrecht-alert-background-color` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--utrecht-alert-border-radius` | `var(--tilburg-border-radius-md)` | | this set | |
+| `--utrecht-alert-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--utrecht-alert-color` | `var(--denhaag-color-blue-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--utrecht-alert-column-gap` | `var(--tilburg-space-column-snail)` | | this set | |
+| `--utrecht-alert-content-row-gap` | `var(--tilburg-space-row-snail)` | | this set | |
+| `--utrecht-alert-error-background-color` | `var(--denhaag-color-red-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--utrecht-alert-error-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23520100%22%2F%3E%3C%2Fsvg%3E) `#520100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fa9897%22%2F%3E%3C%2Fsvg%3E) `#fa9897` | this set | |
+| `--utrecht-alert-error-color` | `var(--denhaag-color-red-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaead%22%2F%3E%3C%2Fsvg%3E) `#ffaead` | this set | |
+| `--utrecht-alert-heading-font-family` | `var(--tilburg-heading-font-family)` | | this set | |
+| `--utrecht-alert-heading-font-size` | `var(--tilburg-typography-font-size-xl)` | | this set | |
+| `--utrecht-alert-heading-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-alert-heading-line-height` | `var(--tilburg-typography-line-height-sm)` | | this set | |
+| `--utrecht-alert-icon-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--utrecht-alert-icon-error-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--utrecht-alert-icon-info-color` | `var(--tilburg-color-blue-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--utrecht-alert-icon-informative-color` | `var(--tilburg-feedback-informative-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--utrecht-alert-icon-negative-color` | `var(--tilburg-feedback-negative-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--utrecht-alert-icon-ok-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-alert-icon-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-alert-icon-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-alert-icon-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-alert-icon-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-alert-icon-positive-color` | `var(--tilburg-feedback-positive-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-alert-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-alert-icon-warning-color` | `var(--denhaag-color-orange-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffab3d%22%2F%3E%3C%2Fsvg%3E) `#ffab3d` | this set | |
+| `--utrecht-alert-info-background-color` | `var(--tilburg-color-blue-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--utrecht-alert-info-border-color` | `var(--tilburg-color-blue-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--utrecht-alert-info-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--utrecht-alert-info-color` | `var(--tilburg-color-blue-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--utrecht-alert-informative-background-color` | `var( --tilburg-feedback-informative-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--utrecht-alert-informative-border-color` | `var( --tilburg-feedback-informative-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--utrecht-alert-informative-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-alert-message-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-alert-message-padding-block-start` | `var(--tilburg-space-block-beetle)` | | this set | |
+| `--utrecht-alert-message-row-gap` | `var(--tilburg-space-row-snail)` | | this set | |
+| `--utrecht-alert-negative-background-color` | `var( --tilburg-feedback-negative-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--utrecht-alert-negative-border-color` | `var( --tilburg-feedback-negative-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--utrecht-alert-negative-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-alert-ok-background-color` | `var(--denhaag-color-green-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--utrecht-alert-ok-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237eb67c%22%2F%3E%3C%2Fsvg%3E) `#7eb67c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2351854f%22%2F%3E%3C%2Fsvg%3E) `#51854f` | this set | |
+| `--utrecht-alert-ok-border-width` | `1px` | | this set | |
+| `--utrecht-alert-ok-color` | `var(--denhaag-color-green-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1ffe0%22%2F%3E%3C%2Fsvg%3E) `#d1ffe0` | this set | |
+| `--utrecht-alert-padding-block-end` | `24px` | | this set | |
+| `--utrecht-alert-padding-block-start` | `24px` | | this set | |
+| `--utrecht-alert-padding-inline-end` | `24px` | | this set | |
+| `--utrecht-alert-padding-inline-start` | `24px` | | this set | |
+| `--utrecht-alert-positive-background-color` | `var( --tilburg-feedback-positive-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--utrecht-alert-positive-border-color` | `var( --tilburg-feedback-positive-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-alert-positive-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-alert-warning-background-color` | `var(--denhaag-color-orange-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--utrecht-alert-warning-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238a3500%22%2F%3E%3C%2Fsvg%3E) `#8a3500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f7a06a%22%2F%3E%3C%2Fsvg%3E) `#f7a06a` | this set | |
+| `--utrecht-alert-warning-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaa75%22%2F%3E%3C%2Fsvg%3E) `#ffaa75` | this set | |
+| `--utrecht-article-max-inline-size` | `80ch` | | this set | |
+| `--utrecht-badge-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-badge-border-radius` | `var(--denhaag-border-radius)` | | this set | |
+| `--utrecht-badge-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-badge-counter-background-color` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--utrecht-badge-counter-border-color` | `transparent` | | this set | |
+| `--utrecht-badge-counter-border-radius` | `50px` | | this set | |
+| `--utrecht-badge-counter-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-badge-counter-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--utrecht-badge-counter-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--utrecht-badge-counter-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--utrecht-badge-counter-font-weight` | `700` | | this set | |
+| `--utrecht-badge-counter-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-badge-counter-min-block-size` | `var(--tilburg-size-xs)` | | this set | |
+| `--utrecht-badge-counter-min-inline-size` | `var(--tilburg-size-xs)` | | this set | |
+| `--utrecht-badge-counter-padding-block` | `5px` | | this set | |
+| `--utrecht-badge-counter-padding-inline` | `6px` | | this set | |
+| `--utrecht-badge-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--utrecht-badge-font-size` | `var(--denhaag-typography-scale-s-font-size)` | | this set | |
+| `--utrecht-badge-font-weight` | `var(--denhaag-typography-weight-semibold)` | | this set | |
+| `--utrecht-badge-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--utrecht-badge-padding-block` | `2px` | | this set | |
+| `--utrecht-badge-padding-inline` | `8px` | | this set | |
+| `--utrecht-breadcrumb-nav-divider-color` | `var(--tilburg-document-subtle-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-breadcrumb-nav-divider-size` | `var(--tilburg-size-2xs)` | | this set | |
+| `--utrecht-breadcrumb-nav-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-breadcrumb-nav-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--utrecht-breadcrumb-nav-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-breadcrumb-nav-item-padding-inline-end` | `14px` | | this set | |
+| `--utrecht-breadcrumb-nav-item-padding-inline-start` | `14px` | | this set | |
+| `--utrecht-breadcrumb-nav-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-breadcrumb-nav-link-active-color` | `var( --tilburg-interaction-active-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-breadcrumb-nav-link-active-text-decoration` | `none` | | this set | |
+| `--utrecht-breadcrumb-nav-link-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--utrecht-breadcrumb-nav-link-current-color` | `var(--tilburg-document-subtle-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-breadcrumb-nav-link-disabled-color` | `var(--tilburg-color-gray-700)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-breadcrumb-nav-link-focus-background-color` | `var( --tilburg-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--utrecht-breadcrumb-nav-link-focus-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--utrecht-breadcrumb-nav-link-focus-text-decoration` | `underline` | | this set | |
+| `--utrecht-breadcrumb-nav-link-hover-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--utrecht-breadcrumb-nav-link-hover-text-decoration` | `underline` | | this set | |
+| `--utrecht-breadcrumb-nav-link-icon-margin-inline` | `var(--tilburg-space-text-beetle)` | | this set | |
+| `--utrecht-breadcrumb-nav-link-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-breadcrumb-nav-link-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-breadcrumb-nav-link-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-breadcrumb-nav-link-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-breadcrumb-nav-link-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-breadcrumb-nav-link-text-decoration` | `underline` | | this set | |
+| `--utrecht-breadcrumb-nav-margin-inline` | `var(--tilburg-space-inline-beetle)` | | this set | |
+| `--utrecht-breadcrumb-nav-separator-inline-size` | `24px` | | this set | |
+| `--utrecht-button-active-background-color` | `var(--tilburg-color-gray-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-button-active-border-color` | `var(--tilburg-interaction-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-button-active-color` | `var(--tilburg-interaction-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-button-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-button-border-color` | `var(--tilburg-color-gray-900)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--utrecht-button-border-radius` | `var(--denhaag-border-radius)` | | this set | |
+| `--utrecht-button-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-button-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-button-disabled-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--utrecht-button-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-button-disabled-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-button-focus-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-button-focus-border-color` | `transparent` | | this set | |
+| `--utrecht-button-focus-color` | `var(--tilburg-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-button-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--utrecht-button-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-button-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--utrecht-button-hover-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-button-hover-border-color` | `var(--tilburg-interaction-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-button-hover-color` | `var(--tilburg-interaction-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-button-icon-gap` | `4px` | | this set | |
+| `--utrecht-button-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-button-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-button-min-block-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--utrecht-button-min-inline-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--utrecht-button-padding-block-end` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--utrecht-button-padding-block-start` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--utrecht-button-padding-inline-end` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--utrecht-button-padding-inline-start` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--utrecht-button-primary-action-active-background-color` | `var( --tilburg-interaction-active-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-button-primary-action-active-border-color` | `transparent` | | this set | |
+| `--utrecht-button-primary-action-active-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-button-primary-action-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-button-primary-action-border-color` | `transparent` | | this set | |
+| `--utrecht-button-primary-action-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-button-primary-action-disabled-background-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--utrecht-button-primary-action-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-button-primary-action-disabled-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-button-primary-action-focus-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-button-primary-action-focus-border-color` | `transparent` | | this set | |
+| `--utrecht-button-primary-action-focus-color` | `var(--tilburg-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-button-primary-action-font-weight` | `var( --tilburg-document-strong-font-weight )` | | this set | |
+| `--utrecht-button-primary-action-hover-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-button-primary-action-hover-border-color` | `transparent` | | this set | |
+| `--utrecht-button-primary-action-hover-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-button-secondary-action-active-background-color` | `var( --tilburg-color-gray-100 )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-button-secondary-action-active-border-color` | `var( --tilburg-interaction-active-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-button-secondary-action-active-color` | `var( --tilburg-interaction-active-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-button-secondary-action-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-button-secondary-action-border-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-button-secondary-action-border-width` | `1px` | | this set | |
+| `--utrecht-button-secondary-action-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-button-secondary-action-disabled-background-color` | `var( --tilburg-color-gray-50 )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-button-secondary-action-disabled-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--utrecht-button-secondary-action-disabled-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-button-secondary-action-focus-background-color` | `var( --tilburg-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--utrecht-button-secondary-action-focus-border-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-button-secondary-action-focus-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2393e1aa%22%2F%3E%3C%2Fsvg%3E) `#93e1aa` | this set | |
+| `--utrecht-button-secondary-action-font-weight` | `var( --tilburg-document-strong-font-weight )` | | this set | |
+| `--utrecht-button-secondary-action-hover-background-color` | `var( --tilburg-color-gray-50 )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-button-secondary-action-hover-border-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-button-secondary-action-hover-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2393e1aa%22%2F%3E%3C%2Fsvg%3E) `#93e1aa` | this set | |
+| `--utrecht-button-subtle-active-background-color` | `var( --tilburg-color-dark-alpha-100 )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb1a%22%2F%3E%3C%2Fsvg%3E) `#ebebeb1a` | this set | |
+| `--utrecht-button-subtle-active-border-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-active-color` | `var(--tilburg-interaction-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-button-subtle-background-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-border-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-button-subtle-disabled-background-color` | `var(--tilburg-color-gray-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-button-subtle-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-disabled-color` | `var(--tilburg-color-gray-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-button-subtle-focus-background-color` | `var( --tilburg-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--utrecht-button-subtle-focus-border-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-focus-color` | `var(--tilburg-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-button-subtle-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--utrecht-button-subtle-hover-background-color` | `var(--tilburg-color-dark-alpha-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb0d%22%2F%3E%3C%2Fsvg%3E) `#ebebeb0d` | this set | |
+| `--utrecht-button-subtle-hover-border-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-hover-color` | `var(--tilburg-interaction-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-checkbox-active-background-color` | `var(--utrecht-form-control-active-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-active-border-color` | `var(--utrecht-form-control-active-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-checkbox-active-border-width` | `var(--utrecht-form-control-active-border-width)` | | this set | |
+| `--utrecht-checkbox-active-color` | `var(--utrecht-form-control-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-checkbox-background-color` | `var(--utrecht-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-border-color` | `var(--utrecht-form-control-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-checkbox-border-radius` | `var(--utrecht-form-control-border-radius)` | | this set | |
+| `--utrecht-checkbox-border-width` | `var(--utrecht-form-control-border-width)` | | this set | |
+| `--utrecht-checkbox-checked-active-background-color` | `var( --tilburg-form-control-active-accent-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-checkbox-checked-active-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-checked-active-border-width` | `var( --tilburg-form-control-active-border-width )` | | this set | |
+| `--utrecht-checkbox-checked-active-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-checkbox-checked-background-color` | `var(--utrecht-form-control-checked-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-checkbox-checked-border-color` | `var(--utrecht-form-control-checked-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-checkbox-checked-border-width` | `var(--utrecht-form-control-checked-border-width)` | | this set | |
+| `--utrecht-checkbox-checked-color` | `var(--utrecht-form-control-checked-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-checkbox-checked-disabled-background-color` | `var( --tilburg-form-control-disabled-accent-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-checkbox-checked-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-checked-disabled-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-checkbox-checked-focus-background-color` | `var( --tilburg-form-control-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-checked-focus-border-color` | `var( --tilburg-form-control-focus-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-checkbox-checked-focus-border-width` | `var( --tilburg-form-control-focus-border-width )` | | this set | |
+| `--utrecht-checkbox-checked-focus-color` | `var(--tilburg-form-control-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-checkbox-checked-hover-background-color` | `var( --tilburg-form-control-hover-accent-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-checkbox-checked-hover-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-checked-hover-border-width` | `var( --tilburg-form-control-hover-border-width )` | | this set | |
+| `--utrecht-checkbox-checked-hover-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-checkbox-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-checkbox-disabled-background-color` | `var(--utrecht-form-control-disabled-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-checkbox-disabled-border-color` | `var(--utrecht-form-control-disabled-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-checkbox-disabled-border-width` | `var(--utrecht-form-control-border-width)` | | this set | |
+| `--utrecht-checkbox-disabled-color` | `var(--utrecht-form-control-disabled-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-checkbox-focus-background-color` | `var(--utrecht-form-control-focus-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-focus-border-color` | `var(--utrecht-form-control-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-checkbox-focus-border-width` | `var(--utrecht-form-control-focus-border-width)` | | this set | |
+| `--utrecht-checkbox-focus-color` | `var(--utrecht-form-control-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-checkbox-hover-background-color` | `var(--utrecht-form-control-hover-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-checkbox-hover-border-color` | `var(--utrecht-form-control-hover-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-checkbox-hover-border-width` | `var(--utrecht-form-control-hover-border-width)` | | this set | |
+| `--utrecht-checkbox-hover-color` | `var(--utrecht-form-control-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-checkbox-icon-size` | `var(--denhaag-size-xs)` | | this set | |
+| `--utrecht-checkbox-indeterminate-active-background-color` | `var( --tilburg-form-control-active-accent-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-checkbox-indeterminate-active-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-indeterminate-active-border-width` | `var( --tilburg-form-control-active-border-width )` | | this set | |
+| `--utrecht-checkbox-indeterminate-active-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-checkbox-indeterminate-background-color` | `var( --tilburg-form-control-accent-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-checkbox-indeterminate-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-indeterminate-border-width` | `var( --tilburg-form-control-border-width )` | | this set | |
+| `--utrecht-checkbox-indeterminate-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-checkbox-indeterminate-disabled-background-color` | `var( --tilburg-form-control-disabled-accent-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-checkbox-indeterminate-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-indeterminate-disabled-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-checkbox-indeterminate-focus-background-color` | `var( --tilburg-form-control-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-indeterminate-focus-border-color` | `var( --tilburg-form-control-focus-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-checkbox-indeterminate-focus-border-width` | `var( --tilburg-form-control-focus-border-width )` | | this set | |
+| `--utrecht-checkbox-indeterminate-focus-color` | `var( --tilburg-form-control-focus-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-checkbox-indeterminate-hover-background-color` | `var( --tilburg-form-control-hover-accent-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-checkbox-indeterminate-hover-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-indeterminate-hover-border-width` | `var( --tilburg-form-control-hover-border-width )` | | this set | |
+| `--utrecht-checkbox-indeterminate-hover-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-checkbox-invalid-background-color` | `var(--utrecht-form-control-invalid-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-invalid-border-color` | `var(--utrecht-form-control-invalid-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--utrecht-checkbox-invalid-border-width` | `var(--utrecht-form-control-invalid-border-width)` | | this set | |
+| `--utrecht-checkbox-invalid-color` | `var(--utrecht-form-control-invalid-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--utrecht-checkbox-margin-inline-end` | `var(--denhaag-size-3xs)` | | this set | |
+| `--utrecht-checkbox-size` | `var(--denhaag-size-xs)` | | this set | |
+| `--utrecht-code-background-color` | `var(--tilburg-color-code-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-code-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-code-font-size` | `inherit` | | this set | |
+| `--utrecht-data-list-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-data-list-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-data-list-item-action-padding-block-end` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-action-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-action-padding-inline-end` | `var( --tilburg-space-inline-mouse )` | | this set | |
+| `--utrecht-data-list-item-action-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-item-action-row-padding-block-end` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-action-row-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-action-row-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-data-list-item-action-row-padding-inline-start` | `var( --tilburg-space-inline-mouse )` | | this set | |
+| `--utrecht-data-list-item-border-color` | `var(--tilburg-line-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-data-list-item-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-data-list-item-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-data-list-item-key-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-data-list-item-key-font-weight` | `bold` | | this set | |
+| `--utrecht-data-list-item-key-line-height` | `1.5` | | this set | |
+| `--utrecht-data-list-item-key-padding-block-end` | `var(--tilburg-space-block-ant)` | | this set | |
+| `--utrecht-data-list-item-key-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-data-list-item-key-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-data-list-item-key-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-item-key-row-padding-block-end` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-key-row-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-key-row-padding-inline-end` | `var( --tilburg-space-inline-mouse )` | | this set | |
+| `--utrecht-data-list-item-key-row-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-item-value-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-data-list-item-value-line-height` | `1.5` | | this set | |
+| `--utrecht-data-list-item-value-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-data-list-item-value-padding-block-start` | `var(--tilburg-space-block-ant)` | | this set | |
+| `--utrecht-data-list-item-value-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-data-list-item-value-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-item-value-row-padding-block-end` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-value-row-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-value-row-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-data-list-item-value-row-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-data-list-margin-block-start` | `24px` | | this set | |
+| `--utrecht-data-list-rows-item-margin-block-start` | `16px` | | this set | |
+| `--utrecht-data-list-rows-item-padding-block-end` | `var(--tilburg-space-block-ant)` | | this set | |
+| `--utrecht-data-list-rows-item-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-rows-item-padding-inline-start` | `16px` | | this set | |
+| `--utrecht-data-list-rows-item-value-margin-block-start` | `0` | | this set | |
+| `--utrecht-document-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-document-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-document-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--utrecht-document-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--utrecht-document-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--utrecht-document-inverse-background-color` | `var(--tilburg-color-gray-950)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--utrecht-document-inverse-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-document-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--utrecht-document-strong-font-weight` | `var(--tilburg-typography-font-weight-bold)` | | this set | |
+| `--utrecht-document-subtle-color` | `var(--tilburg-color-gray-600)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-feedback-danger-background-color` | `var(--denhaag-color-red-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--utrecht-feedback-danger-color` | `var(--denhaag-color-red-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ff615c%22%2F%3E%3C%2Fsvg%3E) `#ff615c` | this set | |
+| `--utrecht-feedback-danger-fill-background-color` | `var(--denhaag-color-red-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--utrecht-feedback-danger-fill-border-color` | `var(--tilburg-color-red-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--utrecht-feedback-danger-fill-color` | `var(--denhaag-color-red-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--utrecht-feedback-neutral-background-color` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--utrecht-feedback-neutral-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--utrecht-feedback-neutral-fill-background-color` | `var(--denhaag-color-blue-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--utrecht-feedback-neutral-fill-border-color` | `var(--tilburg-color-gray-400)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--utrecht-feedback-neutral-fill-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--utrecht-feedback-safe-background-color` | `var(--denhaag-color-green-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--utrecht-feedback-safe-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2393e1aa%22%2F%3E%3C%2Fsvg%3E) `#93e1aa` | this set | |
+| `--utrecht-feedback-safe-fill-background-color` | `var(--denhaag-color-green-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--utrecht-feedback-safe-fill-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-feedback-success-fill-background-color` | `var(--tilburg-color-green-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--utrecht-feedback-success-fill-border-color` | `var(--tilburg-color-green-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-feedback-success-fill-color` | `var(--tilburg-color-green-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-feedback-warning-background-color` | `var(--denhaag-color-orange-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--utrecht-feedback-warning-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffaa75%22%2F%3E%3C%2Fsvg%3E) `#ffaa75` | this set | |
+| `--utrecht-feedback-warning-fill-background-color` | `var(--denhaag-color-orange-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--utrecht-feedback-warning-fill-border-color` | `var(--tilburg-color-orange-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f39419%22%2F%3E%3C%2Fsvg%3E) `#f39419` | this set | |
+| `--utrecht-feedback-warning-fill-color` | `var(--denhaag-color-orange-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f7a06a%22%2F%3E%3C%2Fsvg%3E) `#f7a06a` | this set | |
+| `--utrecht-focus-border-color` | `var(--denhaag-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--utrecht-focus-border-style` | `var(--denhaag-focus-border-style)` | | this set | |
+| `--utrecht-focus-outline-color` | `var(--denhaag-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--utrecht-focus-outline-offset` | `var(--denhaag-focus-offset)` | | this set | |
+| `--utrecht-focus-outline-style` | `var(--denhaag-focus-border-style)` | | this set | |
+| `--utrecht-focus-outline-width` | `var(--denhaag-focus-border-width)` | | this set | |
+| `--utrecht-form-control-active-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-form-control-active-border-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-form-control-active-border-width` | `2px` | | this set | |
+| `--utrecht-form-control-active-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-form-control-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-form-control-border-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-form-control-border-radius` | `var(--denhaag-border-radius)` | | this set | |
+| `--utrecht-form-control-border-width` | `1px` | | this set | |
+| `--utrecht-form-control-checked-background-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-form-control-checked-border-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-form-control-checked-border-width` | `2px` | | this set | |
+| `--utrecht-form-control-checked-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-form-control-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-form-control-disabled-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-form-control-disabled-border-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-form-control-disabled-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-form-control-focus-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-form-control-focus-border-color` | `var(--denhaag-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-form-control-focus-border-width` | `2px` | | this set | |
+| `--utrecht-form-control-focus-color` | `var(--denhaag-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-form-control-font-family` | `var(--utrecht-document-font-family)` | | this set | |
+| `--utrecht-form-control-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--utrecht-form-control-hover-background-color` | `var(--denhaag-color-warmgrey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-form-control-hover-border-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-form-control-hover-border-width` | `2px` | | this set | |
+| `--utrecht-form-control-hover-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-form-control-invalid-background-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-form-control-invalid-border-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--utrecht-form-control-invalid-border-width` | `2px` | | this set | |
+| `--utrecht-form-control-invalid-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--utrecht-form-control-padding-block-end` | `12px` | | this set | |
+| `--utrecht-form-control-padding-block-start` | `12px` | | this set | |
+| `--utrecht-form-control-padding-inline-end` | `12px` | | this set | |
+| `--utrecht-form-control-padding-inline-start` | `12px` | | this set | |
+| `--utrecht-form-control-placeholder-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-form-field-description-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-form-field-description-font-family` | `var(--utrecht-document-font-family)` | | this set | |
+| `--utrecht-form-field-description-font-size` | `var(--utrecht-document-font-size)` | | this set | |
+| `--utrecht-form-field-description-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-form-field-description-invalid-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--utrecht-form-field-description-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-form-field-description-margin-block-end` | `var(--denhaag-size-3xs)` | | this set | |
+| `--utrecht-form-field-error-message-color` | `var(--utrecht-form-control-invalid-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--utrecht-form-field-error-message-font-family` | `var(--utrecht-document-font-family)` | | this set | |
+| `--utrecht-form-field-error-message-font-size` | `var(--utrecht-document-font-size)` | | this set | |
+| `--utrecht-form-field-error-message-font-weight` | `var(--utrecht-document-font-weight)` | | this set | |
+| `--utrecht-form-field-error-message-icon-margin-inline-end` | `var( --tilburg-space-text-mouse )` | | this set | |
+| `--utrecht-form-field-error-message-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-form-field-error-message-line-height` | `var( --tilburg-document-line-height )` | | this set | |
+| `--utrecht-form-field-error-message-margin-block-start` | `var(--denhaag-size-3xs)` | | this set | |
+| `--utrecht-form-field-label-margin-block-end` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--utrecht-form-field-margin-block-end` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--utrecht-form-field-margin-block-start` | `var(--denhaag-space-block-lg)` | | this set | |
+| `--utrecht-form-fieldset-legend-color` | `var(--denhaag-color-grey-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-form-fieldset-legend-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--utrecht-form-fieldset-legend-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--utrecht-form-fieldset-legend-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--utrecht-form-fieldset-legend-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--utrecht-form-fieldset-legend-margin-block-end` | `8px` | | this set | |
+| `--utrecht-form-fieldset-margin-block-end` | `12px` | | this set | |
+| `--utrecht-form-fieldset-margin-block-start` | `12px` | | this set | |
+| `--utrecht-form-label-checkbox-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-form-label-checkbox-font-weight` | `400` | | this set | |
+| `--utrecht-form-label-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-form-label-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-form-label-font-size` | `var(--utrecht-document-font-size)` | | this set | |
+| `--utrecht-form-label-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--utrecht-form-label-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-form-label-radio-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-form-label-radio-font-weight` | `400` | | this set | |
+| `--utrecht-form-toggle-accent-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-form-toggle-border-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-form-toggle-border-radius` | `12px` | | this set | |
+| `--utrecht-form-toggle-border-width` | `0` | | this set | |
+| `--utrecht-form-toggle-checked-accent-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-form-toggle-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-form-toggle-focus-border-color` | `var(--denhaag-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8da72%22%2F%3E%3C%2Fsvg%3E) `#f8da72` | this set | |
+| `--utrecht-form-toggle-focus-border-style` | `var(--denhaag-focus-border-style)` | | this set | |
+| `--utrecht-form-toggle-focus-border-width` | `var(--denhaag-focus-border-width)` | | this set | |
+| `--utrecht-form-toggle-thumb-margin-inline-end` | `.2rem` | | this set | |
+| `--utrecht-form-toggle-thumb-margin-inline-start` | `.2rem` | | this set | |
+| `--utrecht-form-toggle-thumb-min-inline-size` | `1em` | | this set | |
+| `--utrecht-heading-1-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-heading-1-font-family` | `var(--utrecht-heading-font-family)` | | this set | |
+| `--utrecht-heading-1-font-size` | `var(--denhaag-typography-scale-3xl-font-size)` | | this set | |
+| `--utrecht-heading-1-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-heading-1-line-height` | `var(--denhaag-typography-scale-3xl-line-height)` | | this set | |
+| `--utrecht-heading-2-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-heading-2-font-family` | `var(--utrecht-heading-font-family)` | | this set | |
+| `--utrecht-heading-2-font-size` | `var(--denhaag-typography-scale-2xl-font-size)` | | this set | |
+| `--utrecht-heading-2-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-heading-2-line-height` | `var(--denhaag-typography-scale-2xl-line-height)` | | this set | |
+| `--utrecht-heading-2-margin-block-end` | `0.5rem` | | this set | |
+| `--utrecht-heading-2-margin-block-start` | `1.775rem` | | this set | |
+| `--utrecht-heading-3-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-heading-3-font-family` | `var(--utrecht-heading-font-family)` | | this set | |
+| `--utrecht-heading-3-font-size` | `var(--denhaag-typography-scale-xl-font-size)` | | this set | |
+| `--utrecht-heading-3-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-heading-3-line-height` | `var(--denhaag-typography-scale-xl-line-height)` | | this set | |
+| `--utrecht-heading-3-margin-block-end` | `0.375rem` | | this set | |
+| `--utrecht-heading-3-margin-block-start` | `1.33125rem` | | this set | |
+| `--utrecht-heading-4-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-heading-4-font-family` | `var(--utrecht-heading-font-family)` | | this set | |
+| `--utrecht-heading-4-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--utrecht-heading-4-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-heading-4-line-height` | `var(--denhaag-typography-scale-lg-line-height)` | | this set | |
+| `--utrecht-heading-4-margin-block-end` | `0.3125rem` | | this set | |
+| `--utrecht-heading-4-margin-block-start` | `1.1125rem` | | this set | |
+| `--utrecht-heading-5-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-heading-5-font-family` | `var(--utrecht-heading-font-family)` | | this set | |
+| `--utrecht-heading-5-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--utrecht-heading-5-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-heading-5-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--utrecht-heading-5-margin-block-end` | `0.28125rem` | | this set | |
+| `--utrecht-heading-5-margin-block-start` | `1rem` | | this set | |
+| `--utrecht-heading-6-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-heading-6-font-family` | `var(--tilburg-heading-font-family)` | | this set | |
+| `--utrecht-heading-6-font-size` | `var(--tilburg-typography-font-size-sm)` | | this set | |
+| `--utrecht-heading-6-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-heading-6-line-height` | `var(--tilburg-typography-line-height-md)` | | this set | |
+| `--utrecht-heading-color` | `var(--denhaag-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-heading-font-family` | `var(--denhaag-typography-sans-serif-alternate-font-family)` | | this set | |
+| `--utrecht-heading-font-weight` | `var(--denhaag-typography-weight-bold)` | | this set | |
+| `--utrecht-icon-baseline-inset-block-start` | `0.125em` | | this set | |
+| `--utrecht-icon-size` | `1.125rem` | | this set | |
+| `--utrecht-link-active-color` | `var(--denhaag-color-blue-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b0dafc%22%2F%3E%3C%2Fsvg%3E) `#b0dafc` | this set | |
+| `--utrecht-link-active-text-decoration` | `none` | | this set | |
+| `--utrecht-link-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--utrecht-link-focus-background-color` | `transparent` | | this set | |
+| `--utrecht-link-focus-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--utrecht-link-focus-text-decoration` | `none` | | this set | |
+| `--utrecht-link-focus-text-decoration-thickness` | `1px` | | this set | |
+| `--utrecht-link-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-link-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-link-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-link-hover-color` | `var(--denhaag-color-blue-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237ec0f6%22%2F%3E%3C%2Fsvg%3E) `#7ec0f6` | this set | |
+| `--utrecht-link-hover-text-decoration` | `none` | | this set | |
+| `--utrecht-link-hover-text-decoration-thickness` | `auto` | | this set | |
+| `--utrecht-link-icon-margin-inline` | `var(--tilburg-space-text-beetle)` | | this set | |
+| `--utrecht-link-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-link-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-link-list-margin-block-end` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--utrecht-link-list-margin-block-start` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--utrecht-link-list-row-gap` | `var(--denhaag-space-block-xs)` | | this set | |
+| `--utrecht-link-social-background-color` | `transparent` | | this set | |
+| `--utrecht-link-social-border-color` | `transparent` | | this set | |
+| `--utrecht-link-social-border-width` | `5px` | | this set | |
+| `--utrecht-link-social-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-link-social-hover-color` | `var(--denhaag-color-ocher-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffdf3d%22%2F%3E%3C%2Fsvg%3E) `#ffdf3d` | this set | |
+| `--utrecht-link-text-decoration` | `underline` | | this set | |
+| `--utrecht-link-text-decoration-color` | `var(--tilburg-interaction-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-link-text-decoration-thickness` | `auto` | | this set | |
+| `--utrecht-link-text-underline-offset` | `auto` | | this set | |
+| `--utrecht-link-visited-color` | `var(--denhaag-color-blue-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235eaced%22%2F%3E%3C%2Fsvg%3E) `#5eaced` | this set | |
+| `--utrecht-list-social-item-margin-inline-end` | `14px` | | this set | |
+| `--utrecht-logo-max-block-size` | `97px` | | this set | |
+| `--utrecht-ordered-list-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-ordered-list-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-ordered-list-font-size` | `var(--utrecht-document-font-size)` | | this set | |
+| `--utrecht-ordered-list-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-ordered-list-item-margin-block-end` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--utrecht-ordered-list-item-margin-block-start` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--utrecht-ordered-list-line-height` | `var(--utrecht-document-line-height)` | | this set | |
+| `--utrecht-ordered-list-padding-inline-start` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--utrecht-page-footer-background-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--utrecht-page-footer-color` | `var(--denhaag-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-page-footer-padding-block-end` | `40px` | | this set | |
+| `--utrecht-page-footer-padding-block-start` | `30px` | | this set | |
+| `--utrecht-page-footer-padding-inline-end` | `30px` | | this set | |
+| `--utrecht-page-footer-padding-inline-start` | `30px` | | this set | |
+| `--utrecht-paragraph-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-paragraph-distanced-margin-block-end` | `0` | | this set | |
+| `--utrecht-paragraph-distanced-margin-block-start` | `0` | | this set | |
+| `--utrecht-paragraph-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--utrecht-paragraph-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--utrecht-paragraph-font-weight` | `var(--denhaag-typography-weight-regular)` | | this set | |
+| `--utrecht-paragraph-lead-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-paragraph-lead-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-paragraph-lead-font-size` | `var(--denhaag-typography-scale-lg-font-size)` | | this set | |
+| `--utrecht-paragraph-lead-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-paragraph-lead-line-height` | `26px` | | this set | |
+| `--utrecht-paragraph-lead-list-margin-block-start` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--utrecht-paragraph-lead-paragraph-margin-block-start` | `var(--denhaag-space-block-2xl)` | | this set | |
+| `--utrecht-paragraph-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--utrecht-paragraph-list-margin-block-start` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--utrecht-paragraph-paragraph-margin-block-start` | `14.24px` | | this set | |
+| `--utrecht-paragraph-small-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-paragraph-small-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-paragraph-small-font-size` | `var(--tilburg-typography-font-size-sm)` | | this set | |
+| `--utrecht-paragraph-small-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-paragraph-small-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-radio-button-active-background-color` | `var(--utrecht-form-control-active-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-radio-button-active-border-color` | `var(--utrecht-form-control-active-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-radio-button-active-border-width` | `var(--utrecht-form-control-active-border-width)` | | this set | |
+| `--utrecht-radio-button-active-color` | `var(--utrecht-form-control-active-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-radio-button-background-color` | `var(--utrecht-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-radio-button-border-color` | `var(--utrecht-form-control-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-radio-button-border-width` | `var(--utrecht-form-control-border-width)` | | this set | |
+| `--utrecht-radio-button-checked-active-background-color` | `var(--denhaag-color-green-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b4fbcb%22%2F%3E%3C%2Fsvg%3E) `#b4fbcb` | this set | |
+| `--utrecht-radio-button-checked-active-border-color` | `var(--denhaag-color-green-5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b4fbcb%22%2F%3E%3C%2Fsvg%3E) `#b4fbcb` | this set | |
+| `--utrecht-radio-button-checked-active-border-width` | `var(--utrecht-form-control-checked-border-width)` | | this set | |
+| `--utrecht-radio-button-checked-active-color` | `var(--utrecht-form-control-checked-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-radio-button-checked-background-color` | `var(--utrecht-form-control-checked-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-radio-button-checked-border-color` | `var(--utrecht-form-control-checked-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-radio-button-checked-border-width` | `var(--utrecht-form-control-checked-border-width)` | | this set | |
+| `--utrecht-radio-button-checked-color` | `var(--utrecht-form-control-checked-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-radio-button-checked-disabled-background-color` | `var( --tilburg-form-control-disabled-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-radio-button-checked-disabled-border-color` | `var( --tilburg-form-control-disabled-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-radio-button-checked-disabled-border-width` | `var( --tilburg-form-control-disabled-border-width )` | | this set | |
+| `--utrecht-radio-button-checked-disabled-color` | `var( --tilburg-form-control-disabled-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-radio-button-checked-focus-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-radio-button-checked-focus-border-color` | `var(--utrecht-form-control-checked-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--utrecht-radio-button-checked-focus-border-width` | `var(--utrecht-form-control-checked-border-width)` | | this set | |
+| `--utrecht-radio-button-checked-focus-color` | `var(--utrecht-form-control-checked-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-radio-button-checked-hover-background-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-radio-button-checked-hover-border-color` | `var(--denhaag-color-green-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--utrecht-radio-button-checked-hover-border-width` | `var(--utrecht-form-control-checked-border-width)` | | this set | |
+| `--utrecht-radio-button-checked-hover-color` | `var(--utrecht-form-control-checked-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-radio-button-disabled-background-color` | `var(--utrecht-form-control-disabled-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-radio-button-disabled-border-color` | `var(--utrecht-form-control-disabled-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-radio-button-disabled-border-width` | `var(--utrecht-form-control-border-width)` | | this set | |
+| `--utrecht-radio-button-disabled-color` | `var(--utrecht-form-control-disabled-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-radio-button-focus-background-color` | `var(--utrecht-form-control-focus-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-radio-button-focus-border-color` | `var(--utrecht-form-control-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-radio-button-focus-border-width` | `var(--utrecht-form-control-focus-border-width)` | | this set | |
+| `--utrecht-radio-button-focus-color` | `var(--utrecht-form-control-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-radio-button-hover-background-color` | `var(--utrecht-form-control-hover-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-radio-button-hover-border-color` | `var(--utrecht-form-control-hover-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-radio-button-hover-border-width` | `var(--utrecht-form-control-hover-border-width)` | | this set | |
+| `--utrecht-radio-button-icon-size` | `35%` | | this set | |
+| `--utrecht-radio-button-invalid-background-color` | `var(--utrecht-form-control-invalid-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-radio-button-invalid-border-color` | `var(--utrecht-form-control-invalid-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--utrecht-radio-button-invalid-border-width` | `var(--utrecht-form-control-invalid-border-width)` | | this set | |
+| `--utrecht-radio-button-invalid-color` | `var(--utrecht-form-control-invalid-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--utrecht-radio-button-label-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-radio-button-label-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-radio-button-label-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-radio-button-label-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-radio-button-min-block-size` | `16px` | | this set | |
+| `--utrecht-radio-button-min-inline-size` | `16px` | | this set | |
+| `--utrecht-radio-button-size` | `22px` | | this set | |
+| `--utrecht-select-background-color` | `var(--utrecht-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-select-background-image` | `url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z' fill='currentColor'/%3E%3C/svg%3E%0A")` | | this set | |
+| `--utrecht-select-border-bottom-width` | `auto` | | this set | |
+| `--utrecht-select-border-color` | `var(--utrecht-form-control-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-select-border-radius` | `var(--denhaag-border-radius)` | | this set | |
+| `--utrecht-select-border-width` | `var(--utrecht-form-control-border-width)` | | this set | |
+| `--utrecht-select-color` | `var(--utrecht-form-control-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-select-disabled-background-color` | `var(--utrecht-form-control-disabled-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-select-disabled-border-color` | `var(--utrecht-form-control-disabled-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-select-disabled-color` | `var(--utrecht-form-control-disabled-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-select-focus-background-color` | `var(--utrecht-form-control-focus-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-select-focus-border-color` | `var(--utrecht-form-control-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-select-focus-border-width` | `var( --tilburg-form-control-focus-border-width )` | | this set | |
+| `--utrecht-select-focus-color` | `var(--utrecht-form-control-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-select-font-family` | `var(--utrecht-document-font-family)` | | this set | |
+| `--utrecht-select-font-size` | `var(--utrecht-document-font-size)` | | this set | |
+| `--utrecht-select-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-select-hover-background-color` | `var( --tilburg-form-control-hover-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-select-hover-border-color` | `var( --tilburg-form-control-hover-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-select-hover-border-width` | `var( --tilburg-form-control-hover-border-width )` | | this set | |
+| `--utrecht-select-hover-color` | `var(--tilburg-form-control-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-select-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-select-invalid-background-color` | `var(--utrecht-form-control-invalid-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-select-invalid-border-color` | `var(--utrecht-form-control-invalid-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--utrecht-select-invalid-border-width` | `var(--utrecht-form-control-invalid-border-width)` | | this set | |
+| `--utrecht-select-invalid-color` | `var(--tilburg-form-control-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-select-max-inline-size` | `400px` | | this set | |
+| `--utrecht-select-min-block-size` | `3rem` | | this set | |
+| `--utrecht-select-padding-block-end` | `var(--denhaag-space-block-sm)` | | this set | |
+| `--utrecht-select-padding-block-start` | `var(--denhaag-space-block-sm)` | | this set | |
+| `--utrecht-select-padding-inline-end` | `var(--denhaag-space-inline-sm)` | | this set | |
+| `--utrecht-select-padding-inline-start` | `var(--denhaag-space-inline-sm)` | | this set | |
+| `--utrecht-separator-block-end` | `0` | | this set | |
+| `--utrecht-separator-block-size` | `1px` | | this set | |
+| `--utrecht-separator-block-start` | `0` | | this set | |
+| `--utrecht-separator-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--utrecht-separator-margin-block-end` | `16px` | | this set | |
+| `--utrecht-separator-margin-block-start` | `16px` | | this set | |
+| `--utrecht-separator-width` | `100%` | | this set | |
+| `--utrecht-skip-link-background-color` | `var( --tilburg-document-inverse-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--utrecht-skip-link-border-color` | `transparent` | | this set | |
+| `--utrecht-skip-link-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-skip-link-box-block-end-shadow` | `var(--tilburg-box-shadow-lg)` | | this set | |
+| `--utrecht-skip-link-color` | `var(--tilburg-document-inverse-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-skip-link-focus-background-color` | `var(--tilburg-focus-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--utrecht-skip-link-focus-border-color` | `transparent` | | this set | |
+| `--utrecht-skip-link-focus-color` | `var(--tilburg-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-skip-link-focus-text-decoration` | `none` | | this set | |
+| `--utrecht-skip-link-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-skip-link-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-skip-link-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--utrecht-skip-link-min-block-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--utrecht-skip-link-min-inline-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--utrecht-skip-link-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-skip-link-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-skip-link-padding-inline-end` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-skip-link-padding-inline-start` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-skip-link-text-decoration` | `underline` | | this set | |
+| `--utrecht-space-block-2xl` | `32px` | | this set | |
+| `--utrecht-space-block-2xs` | `4px` | | this set | |
+| `--utrecht-space-block-3xl` | `48px` | | this set | |
+| `--utrecht-space-block-3xs` | `2px` | | this set | |
+| `--utrecht-space-block-4xl` | `64px` | | this set | |
+| `--utrecht-space-block-5xl` | `80px` | | this set | |
+| `--utrecht-space-block-lg` | `24px` | | this set | |
+| `--utrecht-space-block-md` | `16px` | | this set | |
+| `--utrecht-space-block-sm` | `12px` | | this set | |
+| `--utrecht-space-block-xl` | `28px` | | this set | |
+| `--utrecht-space-block-xs` | `8px` | | this set | |
+| `--utrecht-space-column-2xl` | `32px` | | this set | |
+| `--utrecht-space-column-2xs` | `4px` | | this set | |
+| `--utrecht-space-column-3xl` | `48px` | | this set | |
+| `--utrecht-space-column-3xs` | `2px` | | this set | |
+| `--utrecht-space-column-4xl` | `64px` | | this set | |
+| `--utrecht-space-column-4xs` | `1px` | | this set | |
+| `--utrecht-space-column-5xl` | `80px` | | this set | |
+| `--utrecht-space-column-lg` | `24px` | | this set | |
+| `--utrecht-space-column-md` | `16px` | | this set | |
+| `--utrecht-space-column-sm` | `12px` | | this set | |
+| `--utrecht-space-column-xl` | `28px` | | this set | |
+| `--utrecht-space-column-xs` | `8px` | | this set | |
+| `--utrecht-space-inline-2xl` | `32px` | | this set | |
+| `--utrecht-space-inline-2xs` | `4px` | | this set | |
+| `--utrecht-space-inline-3xl` | `48px` | | this set | |
+| `--utrecht-space-inline-3xs` | `2px` | | this set | |
+| `--utrecht-space-inline-lg` | `24px` | | this set | |
+| `--utrecht-space-inline-md` | `16px` | | this set | |
+| `--utrecht-space-inline-sm` | `12px` | | this set | |
+| `--utrecht-space-inline-xl` | `28px` | | this set | |
+| `--utrecht-space-inline-xs` | `8px` | | this set | |
+| `--utrecht-space-row-2xl` | `32px` | | this set | |
+| `--utrecht-space-row-2xs` | `4px` | | this set | |
+| `--utrecht-space-row-3xl` | `48px` | | this set | |
+| `--utrecht-space-row-3xs` | `2px` | | this set | |
+| `--utrecht-space-row-4xl` | `64px` | | this set | |
+| `--utrecht-space-row-4xs` | `1px` | | this set | |
+| `--utrecht-space-row-5xl` | `80px` | | this set | |
+| `--utrecht-space-row-lg` | `24px` | | this set | |
+| `--utrecht-space-row-md` | `16px` | | this set | |
+| `--utrecht-space-row-sm` | `12px` | | this set | |
+| `--utrecht-space-row-xl` | `28px` | | this set | |
+| `--utrecht-space-row-xs` | `8px` | | this set | |
+| `--utrecht-space-text-2xl` | `32px` | | this set | |
+| `--utrecht-space-text-2xs` | `4px` | | this set | |
+| `--utrecht-space-text-3xl` | `48px` | | this set | |
+| `--utrecht-space-text-3xs` | `2px` | | this set | |
+| `--utrecht-space-text-lg` | `24px` | | this set | |
+| `--utrecht-space-text-md` | `16px` | | this set | |
+| `--utrecht-space-text-sm` | `12px` | | this set | |
+| `--utrecht-space-text-xl` | `28px` | | this set | |
+| `--utrecht-space-text-xs` | `8px` | | this set | |
+| `--utrecht-table-border-color` | `var(--denhaag-color-grey-2)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--utrecht-table-border-width` | `1px` | | this set | |
+| `--utrecht-table-caption-color` | `var(--denhaag-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-table-caption-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--utrecht-table-caption-font-size` | `var(--denhaag-typography-scale-xl-font-size)` | | this set | |
+| `--utrecht-table-caption-font-weight` | `700` | | this set | |
+| `--utrecht-table-caption-line-height` | `var(--denhaag-typography-scale-s-line-height)` | | this set | |
+| `--utrecht-table-caption-margin-block-end` | `var(--denhaag-space-block-xl)` | | this set | |
+| `--utrecht-table-caption-text-align` | `start` | | this set | |
+| `--utrecht-table-cell-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--utrecht-table-cell-padding-block-end` | `var(--denhaag-space-block-md)` | | this set | |
+| `--utrecht-table-cell-padding-block-start` | `var(--denhaag-space-block-md)` | | this set | |
+| `--utrecht-table-cell-padding-inline-end` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--utrecht-table-cell-padding-inline-start` | `var(--denhaag-space-inline-md)` | | this set | |
+| `--utrecht-table-container-box-inline-end-shadow` | `var(--tilburg-box-shadow-lg)` | | this set | |
+| `--utrecht-table-container-box-inline-start-shadow` | `var(--tilburg-box-shadow-lg)` | | this set | |
+| `--utrecht-table-data-cell-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-table-data-cell-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-table-data-cell-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-table-data-cell-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-table-footer-background-color` | `transparent` | | this set | |
+| `--utrecht-table-footer-border-block-end-color` | `var(--tilburg-line-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-table-footer-border-block-end-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-table-footer-cell-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-table-footer-cell-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-table-footer-cell-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-table-footer-cell-font-weight` | `var( --tilburg-document-strong-font-weight )` | | this set | |
+| `--utrecht-table-header-background-color` | `transparent` | | this set | |
+| `--utrecht-table-header-border-block-end-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-table-header-border-block-end-width` | `1px` | | this set | |
+| `--utrecht-table-header-cell-color` | `var(--denhaag-color-green-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237adc98%22%2F%3E%3C%2Fsvg%3E) `#7adc98` | this set | |
+| `--utrecht-table-header-cell-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-table-header-cell-font-size` | `18px` | | this set | |
+| `--utrecht-table-header-cell-font-weight` | `700` | | this set | |
+| `--utrecht-table-row-alternate-even-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgb%28255%2C%20255%2C%20255%29%22%2F%3E%3C%2Fsvg%3E) `rgb(255, 255, 255)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-table-row-alternate-odd-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgb%28250%2C%20250%2C%20250%29%22%2F%3E%3C%2Fsvg%3E) `rgb(250, 250, 250)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23191919%22%2F%3E%3C%2Fsvg%3E) `#191919` | this set | |
+| `--utrecht-table-row-background-color` | `transparent` | | this set | |
+| `--utrecht-table-row-border-block-end-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-table-row-border-block-end-width` | `1px` | | this set | |
+| `--utrecht-table-row-padding-inline-end` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--utrecht-table-row-padding-inline-start` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--utrecht-textarea-background-color` | `var(--tilburg-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textarea-border-block-end-width` | `var(--utrecht-textarea-border-width)` | | this set | |
+| `--utrecht-textarea-border-bottom-width` | `1px` | | this set | |
+| `--utrecht-textarea-border-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-textarea-border-radius` | `3px` | | this set | |
+| `--utrecht-textarea-border-width` | `1px` | | this set | |
+| `--utrecht-textarea-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-textarea-disabled-background-color` | `var(--utrecht-form-control-disabled-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-textarea-disabled-border-color` | `var(--utrecht-form-control-disabled-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-textarea-disabled-color` | `var(--utrecht-form-control-disabled-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-textarea-focus-background-color` | `var(--utrecht-form-control-focus-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textarea-focus-border-color` | `var(--utrecht-form-control-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-textarea-focus-border-width` | `var(--utrecht-form-control-focus-border-width)` | | this set | |
+| `--utrecht-textarea-focus-color` | `var(--utrecht-form-control-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-textarea-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--utrecht-textarea-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--utrecht-textarea-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-textarea-invalid-background-color` | `var(--utrecht-form-control-invalid-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textarea-invalid-border-bottom-width` | `var(--utrecht-form-control-invalid-border-width)` | | this set | |
+| `--utrecht-textarea-invalid-border-color` | `var(--utrecht-form-control-invalid-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--utrecht-textarea-invalid-border-width` | `var(--utrecht-form-control-invalid-border-width)` | | this set | |
+| `--utrecht-textarea-invalid-color` | `var(--utrecht-form-control-invalid-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f95644%22%2F%3E%3C%2Fsvg%3E) `#f95644` | this set | |
+| `--utrecht-textarea-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--utrecht-textarea-max-inline-size` | `400px` | | this set | |
+| `--utrecht-textarea-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-textarea-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-textarea-padding-inline-end` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--utrecht-textarea-padding-inline-start` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--utrecht-textarea-placeholder-color` | `var( --tilburg-form-control-placeholder-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-textbox-background-color` | `var(--tilburg-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textbox-border-block-end-width` | `auto` | | this set | |
+| `--utrecht-textbox-border-bottom-width` | `1px` | | this set | |
+| `--utrecht-textbox-border-color` | `var(--denhaag-color-grey-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-textbox-border-radius` | `3px` | | this set | |
+| `--utrecht-textbox-border-width` | `1px` | | this set | |
+| `--utrecht-textbox-color` | `var(--denhaag-color-grey-4)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--utrecht-textbox-disabled-background-color` | `var(--denhaag-color-grey-1)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--utrecht-textbox-disabled-border-color` | `var( --tilburg-form-control-disabled-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-textbox-disabled-color` | `var(--tilburg-form-control-disabled-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-textbox-focus-background-color` | `var(--utrecht-form-control-focus-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textbox-focus-border-color` | `var(--utrecht-form-control-focus-border-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-textbox-focus-border-width` | `var(--utrecht-form-control-focus-border-width)` | | this set | |
+| `--utrecht-textbox-focus-color` | `var(--utrecht-form-control-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--utrecht-textbox-font-family` | `var(--denhaag-typography-sans-serif-font-family)` | | this set | |
+| `--utrecht-textbox-font-size` | `var(--denhaag-typography-scale-base-font-size)` | | this set | |
+| `--utrecht-textbox-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-textbox-hover-background-color` | `var( --tilburg-form-control-hover-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-textbox-hover-border-color` | `var( --tilburg-form-control-hover-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-textbox-hover-border-width` | `var( --tilburg-form-control-hover-border-width )` | | this set | |
+| `--utrecht-textbox-hover-color` | `var(--tilburg-form-control-hover-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-textbox-invalid-background-color` | `var( --tilburg-form-control-invalid-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textbox-invalid-border-bottom-width` | `var(--utrecht-form-control-invalid-border-width)` | | this set | |
+| `--utrecht-textbox-invalid-border-color` | `var(--denhaag-color-red-3)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--utrecht-textbox-invalid-border-width` | `var(--utrecht-form-control-invalid-border-width)` | | this set | |
+| `--utrecht-textbox-invalid-color` | `var(--tilburg-form-control-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-textbox-line-height` | `var(--denhaag-typography-scale-base-line-height)` | | this set | |
+| `--utrecht-textbox-max-inline-size` | `400px` | | this set | |
+| `--utrecht-textbox-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-textbox-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-textbox-padding-inline-end` | `12px` | | this set | |
+| `--utrecht-textbox-padding-inline-start` | `12px` | | this set | |
+| `--utrecht-textbox-placeholder-color` | `var(--tilburg-form-control-placeholder-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-textbox-read-only-background-color` | `var( --tilburg-form-control-read-only-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--utrecht-textbox-read-only-border-color` | `var( --tilburg-form-control-read-only-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--utrecht-textbox-read-only-color` | `var(--tilburg-form-control-read-only-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-unordered-list-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | this set | |
+| `--utrecht-unordered-list-font-family` | `var(--tilburg-document-font-family)` | | this set | |
+| `--utrecht-unordered-list-font-size` | `var(--utrecht-document-font-size)` | | this set | |
+| `--utrecht-unordered-list-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-unordered-list-item-margin-block-end` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--utrecht-unordered-list-item-margin-block-start` | `var(--denhaag-space-block-2xs)` | | this set | |
+| `--utrecht-unordered-list-item-padding-inline-start` | `var(--denhaag-space-inline-xl)` | | this set | |
+| `--utrecht-unordered-list-line-height` | `var(--utrecht-document-line-height)` | | this set | |
+| `--utrecht-unordered-list-marker-border-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--utrecht-unordered-list-marker-color` | `var(--tilburg-color-blue-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--utrecht-unordered-list-padding-inline-start` | `var(--tilburg-space-inline-rabbit)` | | this set | |
+| `--vng-color-black` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
+| `--vng-color-black-txt` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--vng-color-blue-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dbecfa%22%2F%3E%3C%2Fsvg%3E) `#dbecfa` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230c283f%22%2F%3E%3C%2Fsvg%3E) `#0c283f` | this set | |
+| `--vng-color-blue-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23abcced%22%2F%3E%3C%2Fsvg%3E) `#abcced` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a3f64%22%2F%3E%3C%2Fsvg%3E) `#1a3f64` | this set | |
+| `--vng-color-blue-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231260a1%22%2F%3E%3C%2Fsvg%3E) `#1260a1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235ba6e4%22%2F%3E%3C%2Fsvg%3E) `#5ba6e4` | this set | |
+| `--vng-color-blue-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23094b81%22%2F%3E%3C%2Fsvg%3E) `#094b81` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2373b7ee%22%2F%3E%3C%2Fsvg%3E) `#73b7ee` | this set | |
+| `--vng-color-blue-500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23032d4f%22%2F%3E%3C%2Fsvg%3E) `#032d4f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239acdf6%22%2F%3E%3C%2Fsvg%3E) `#9acdf6` | this set | |
+| `--vng-color-extra-limegreen` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238bc63f%22%2F%3E%3C%2Fsvg%3E) `#8bc63f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2385ba40%22%2F%3E%3C%2Fsvg%3E) `#85ba40` | this set | |
+| `--vng-color-extra-purple` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23513090%22%2F%3E%3C%2Fsvg%3E) `#513090` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238c6cc7%22%2F%3E%3C%2Fsvg%3E) `#8c6cc7` | this set | |
+| `--vng-color-extra-yellow` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8d62a%22%2F%3E%3C%2Fsvg%3E) `#f8d62a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d0b012%22%2F%3E%3C%2Fsvg%3E) `#d0b012` | this set | |
+| `--vng-color-gray-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f2f2f2%22%2F%3E%3C%2Fsvg%3E) `#f2f2f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--vng-color-gray-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f2f2f2%22%2F%3E%3C%2Fsvg%3E) `#f2f2f2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231f1f1f%22%2F%3E%3C%2Fsvg%3E) `#1f1f1f` | this set | |
+| `--vng-color-gray-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--vng-color-gray-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d1d1d1%22%2F%3E%3C%2Fsvg%3E) `#d1d1d1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233b3b3b%22%2F%3E%3C%2Fsvg%3E) `#3b3b3b` | this set | |
+| `--vng-color-gray-50` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f9f8f6%22%2F%3E%3C%2Fsvg%3E) `#f9f8f6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23201c16%22%2F%3E%3C%2Fsvg%3E) `#201c16` | this set | |
+| `--vng-color-gray-500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237a7a7a%22%2F%3E%3C%2Fsvg%3E) `#7a7a7a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--vng-color-gray-600` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237a7a7a%22%2F%3E%3C%2Fsvg%3E) `#7a7a7a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23848484%22%2F%3E%3C%2Fsvg%3E) `#848484` | this set | |
+| `--vng-color-gray-700` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234a4a4a%22%2F%3E%3C%2Fsvg%3E) `#4a4a4a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--vng-color-gray-800` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234a4a4a%22%2F%3E%3C%2Fsvg%3E) `#4a4a4a` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23acacac%22%2F%3E%3C%2Fsvg%3E) `#acacac` | this set | |
+| `--vng-color-gray-900` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--vng-color-gray-950` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c4c4c4%22%2F%3E%3C%2Fsvg%3E) `#c4c4c4` | this set | |
+| `--vng-color-green-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d5e7d5%22%2F%3E%3C%2Fsvg%3E) `#d5e7d5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23243c24%22%2F%3E%3C%2Fsvg%3E) `#243c24` | this set | |
+| `--vng-color-green-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237eb67c%22%2F%3E%3C%2Fsvg%3E) `#7eb67c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2351854f%22%2F%3E%3C%2Fsvg%3E) `#51854f` | this set | |
+| `--vng-color-green-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23238541%22%2F%3E%3C%2Fsvg%3E) `#238541` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2374d492%22%2F%3E%3C%2Fsvg%3E) `#74d492` | this set | |
+| `--vng-color-green-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231e6c35%22%2F%3E%3C%2Fsvg%3E) `#1e6c35` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2389d9a0%22%2F%3E%3C%2Fsvg%3E) `#89d9a0` | this set | |
+| `--vng-color-orange-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffdcad%22%2F%3E%3C%2Fsvg%3E) `#ffdcad` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23683e05%22%2F%3E%3C%2Fsvg%3E) `#683e05` | this set | |
+| `--vng-color-orange-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffb85c%22%2F%3E%3C%2Fsvg%3E) `#ffb85c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a96309%22%2F%3E%3C%2Fsvg%3E) `#a96309` | this set | |
+| `--vng-color-orange-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f08800%22%2F%3E%3C%2Fsvg%3E) `#f08800` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f39419%22%2F%3E%3C%2Fsvg%3E) `#f39419` | this set | |
+| `--vng-color-orange-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23df5601%22%2F%3E%3C%2Fsvg%3E) `#df5601` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f37526%22%2F%3E%3C%2Fsvg%3E) `#f37526` | this set | |
+| `--vng-color-pink-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffe8f5%22%2F%3E%3C%2Fsvg%3E) `#ffe8f5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23390322%22%2F%3E%3C%2Fsvg%3E) `#390322` | this set | |
+| `--vng-color-pink-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5b4d7%22%2F%3E%3C%2Fsvg%3E) `#f5b4d7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235f113b%22%2F%3E%3C%2Fsvg%3E) `#5f113b` | this set | |
+| `--vng-color-pink-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c8006c%22%2F%3E%3C%2Fsvg%3E) `#c8006c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5399e%22%2F%3E%3C%2Fsvg%3E) `#f5399e` | this set | |
+| `--vng-color-pink-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a40058%22%2F%3E%3C%2Fsvg%3E) `#a40058` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f655ac%22%2F%3E%3C%2Fsvg%3E) `#f655ac` | this set | |
+| `--vng-color-red-100` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffd9d6%22%2F%3E%3C%2Fsvg%3E) `#ffd9d6` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23470904%22%2F%3E%3C%2Fsvg%3E) `#470904` | this set | |
+| `--vng-color-red-200` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed8b82%22%2F%3E%3C%2Fsvg%3E) `#ed8b82` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2387231a%22%2F%3E%3C%2Fsvg%3E) `#87231a` | this set | |
+| `--vng-color-red-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cf1b07%22%2F%3E%3C%2Fsvg%3E) `#cf1b07` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ed4734%22%2F%3E%3C%2Fsvg%3E) `#ed4734` | this set | |
+| `--vng-color-red-400` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a30500%22%2F%3E%3C%2Fsvg%3E) `#a30500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f65b56%22%2F%3E%3C%2Fsvg%3E) `#f65b56` | this set | |
+| `--vng-color-white` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |

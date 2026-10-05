@@ -62,8 +62,8 @@
         },
         "denhaag": {
             "verdict": "pass",
-            "textRatio": 5.39,
-            "uiRatio": 5.39,
+            "textRatio": 4.66,
+            "uiRatio": 4.66,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },

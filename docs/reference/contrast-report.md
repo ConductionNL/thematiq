@@ -26,7 +26,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | conduction-new | 9.08:1 | 4.5:1 | 9.08:1 | 3.0:1 | pass |
 | cunningham | 7.80:1 | 4.5:1 | 6.02:1 | 3.0:1 | pass |
 | demodam | 4.60:1 | 4.5:1 | 4.56:1 | 3.0:1 | pass |
-| denhaag | 5.39:1 | 4.5:1 | 5.39:1 | 3.0:1 | pass |
+| denhaag | 4.66:1 | 4.5:1 | 4.66:1 | 3.0:1 | pass |
 | dinkelland | 5.46:1 | 4.5:1 | 5.46:1 | 3.0:1 | pass |
 | drechterland | 5.74:1 | 4.5:1 | 5.74:1 | 3.0:1 | pass |
 | duiven | 7.13:1 | 4.5:1 | 7.13:1 | 3.0:1 | pass |
