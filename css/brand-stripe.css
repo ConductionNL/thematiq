@@ -19,6 +19,18 @@
  * A set that declares none gets three equal bands in its primary colour, the
  * primary hover and the primary again, 4px high.
  *
+ * A MOTIF THAT IS NOT THREE BANDS. A set may name an image of its own in
+ *
+ *   --nldesign-brand-stripe-image               any background-image value
+ *
+ * and the stripe draws that instead of the three bands, in the same box and at
+ * the same height: the hanging twigs of wilgenboom, the canal and its bank of
+ * vaartveld, the slanted cut of esdoornveen, the five steps of the
+ * warmtepompacademie (openspec/changes/school-token-sets). The three colours
+ * stay declared, because the component library's stripe below reads only
+ * those. An image named by url() must be a data: URI: a relative path would
+ * resolve against this stylesheet, not against the token file that names it.
+ *
  * IT SITS INSIDE THE BAR, NOT UNDER IT. Nextcloud places the content exactly
  * one header height from the top, so a stripe hanging below the bar would lie
  * over the first pixels of every app, and raising `--header-height` moves
@@ -78,12 +90,15 @@
 	z-index: 1;
 	height: var(--nldesign-brand-stripe-height, 4px);
 	pointer-events: none;
-	background-image: linear-gradient(
-		to right,
-		var(--thematiq-stripe-color-1) 0 var(--thematiq-stripe-stop-1),
-		var(--thematiq-stripe-color-2) var(--thematiq-stripe-stop-1)
-			var(--thematiq-stripe-stop-2),
-		var(--thematiq-stripe-color-3) var(--thematiq-stripe-stop-2) 100%
+	background-image: var(
+		--nldesign-brand-stripe-image,
+		linear-gradient(
+			to right,
+			var(--thematiq-stripe-color-1) 0 var(--thematiq-stripe-stop-1),
+			var(--thematiq-stripe-color-2) var(--thematiq-stripe-stop-1)
+				var(--thematiq-stripe-stop-2),
+			var(--thematiq-stripe-color-3) var(--thematiq-stripe-stop-2) 100%
+		)
 	);
 }
 
