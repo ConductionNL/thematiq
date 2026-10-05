@@ -1,0 +1,176 @@
+/**
+ * Esdoornveen, mbo college Design Tokens
+ *
+ * Esdoornveen, mbo college is a school in Zuiddrecht, the demo town that does not exist,
+ * so a demonstration never borrows the house style of a real school. The
+ * palette is Conduction's own design for it (openspec/changes/school-token-sets).
+ * Learning that leads to a trade: practical and grown-up, closer to a professional tool than to a school.
+ *
+ * #5B2E91 (plum) is the interactive colour for buttons, links and focus,
+ * #43206E its hover. #C2255C (maple rose) is the accent, NOT the interactive
+ * primary: it marks the selected navigation entry (a soft wash with a
+ * #9C1C49 label) and the count badge in the navigation. Urgency is always the
+ * red status colour with words, never the accent alone.
+ *
+ * THE WORKPLACE LOOK. Like zuiddrecht, this set wears the light workplace
+ * layout: a white top bar with dark text, a white app navigation, a grey
+ * workspace (#F5F6F8) and white cards with a hairline border. token-sets.json
+ * turns the workplace layout on for this set (its `layout` block), and an
+ * administrator can switch it off again.
+ *
+ * Every text pair below reaches WCAG AA (4.5:1), computed, not estimated:
+ * white on #5B2E91 9.36, #5B2E91 on white 9.36 and on the workspace 8.65,
+ * #43206E on #F0EAF7 10.67, #1B1C1D on white 17.07, #5E6168 on white 6.20 and
+ * on the workspace 5.74, #B30000 on white 7.20 and on the workspace
+ * 6.66, #9C1C49 on the selected-entry wash #F5DCE5 6.07,
+ * #ffffff on #C2255C 5.66, #1E6B2A on #E7F3EA 5.77, #7A4F00 on #FFF4DE
+ * 6.53, #A30000 on #FCEDEC 7.22.
+ */
+
+:root {
+	/* Primary interactive colour */
+	--nldesign-color-primary: #5B2E91;
+	--nldesign-color-primary-text: #ffffff;
+	--nldesign-color-primary-hover: #43206E;
+	--nldesign-color-primary-light: #F0EAF7;
+	/* Not in the design: the primary-light tint with 7% of the primary mixed
+	 * in, the step zuiddrecht's #DCE6F2 takes from its #EAF0F7. */
+	--nldesign-color-primary-light-hover: #E6DDF0;
+
+	/* Esdoornveen, mbo college palette */
+	--esdoornveen-color-main: #5B2E91;
+	--esdoornveen-color-main-deep: #43206E;
+	--esdoornveen-color-main-light: #F0EAF7;
+	--esdoornveen-color-accent: #C2255C;
+	--esdoornveen-color-accent-light: #FBE9F0;
+	--esdoornveen-color-accent-text: #9C1C49;
+	--esdoornveen-color-ink: #1B1C1D;
+	--esdoornveen-color-muted: #5E6168;
+	--esdoornveen-color-line: #E4E6EA;
+	--esdoornveen-color-surface: #F5F6F8;
+
+	/* Codes (crebo numbers, exam codes) in IBM Plex Mono. No layer reads a
+	 * code face yet, so it is a palette entry the apps can pick up. */
+	--esdoornveen-font-family-code: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+	/* Logo image */
+	--nldesign-logo-url: url('../../img/logos/esdoornveen.svg');
+	/* The logo is a wordmark, 3.97 times as wide as it is high.
+	 * 127px gives it 32px of height in Nextcloud's header. */
+	--nldesign-logo-width: 127px;
+
+	/* Background colours, for hover states and the darker steps. The main
+	 * background is managed by Nextcloud's theming system. */
+	--nldesign-color-background-hover: #F0F1F3;
+	--nldesign-color-background-dark: #EDEFF2;
+	--nldesign-color-background-darker: #D3D8DF;
+
+	/* Header: white with dark text and a hairline under it (as zuiddrecht) */
+	--nldesign-color-header-background: #ffffff;
+	--nldesign-color-header-text: #1B1C1D;
+	--nldesign-header-border-bottom: 1px solid rgba(138, 146, 158, 0.25);
+
+	/* Navigation */
+	--nldesign-color-nav-background: #ffffff;
+
+	/* Text colours: Cunningham's ink, and #5E6168 for muted text (Cunningham's
+	 * own #74777c is 4.49:1 on white, just under AA). */
+	--nldesign-color-text: #1B1C1D;
+	--nldesign-color-text-muted: #5E6168;
+	--nldesign-color-text-light: #ffffff;
+
+	/* Status colours. Error is the design's #B30000; its hover is the dark red
+	 * of the overdue pill. */
+	--nldesign-color-error: #B30000;
+	--nldesign-color-error-rgb: 179, 0, 0;
+	--nldesign-color-error-hover: #A30000;
+	--nldesign-color-warning: #7A4F00;
+	--nldesign-color-warning-rgb: 122, 79, 0;
+	--nldesign-color-success: #1E6B2A;
+	--nldesign-color-success-rgb: 30, 107, 42;
+	--nldesign-color-info: #5B2E91;
+	--nldesign-color-info-rgb: 91, 46, 145;
+
+	/* Border colours. The hairline is for cards and dividers. The design's
+	 * field border #C4C7CB is 1.7:1 against white, under the 3:1 a control
+	 * border needs, so controls take zuiddrecht's #8A929E (3.14). */
+	--nldesign-color-border: #E4E6EA;
+	--nldesign-color-border-dark: #8A929E;
+
+	/* Focus colour */
+	--nldesign-color-focus: rgba(91, 46, 145, 0.5);
+	--nldesign-color-focus-rgb: 91, 46, 145;
+
+	/* Link colours (the interactive colour, not the accent) */
+	--nldesign-color-link: #5B2E91;
+	--nldesign-color-link-hover: #43206E;
+
+	/* Button colours */
+	--nldesign-color-button-primary-background: #5B2E91;
+	--nldesign-color-button-primary-text: #ffffff;
+	--nldesign-color-button-primary-border: #5B2E91;
+	--nldesign-color-button-primary-hover: #43206E;
+
+	/* Typography: IBM Plex Sans in 400, 500, 600 and 700, and IBM Plex Mono in 400 and 500 for codes such as crebo numbers and exam codes, both bundled by thematiq. */
+	--nldesign-font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+
+	/* Border radius: NEXTCLOUD'S SCALE, NOT THE WEBSITE'S. The workplace keeps
+	 * 8px controls and 12px containers, for the reason zuiddrecht.css and
+	 * cunningham.css give: a near-square or rounder brand radius would reshape
+	 * the Nextcloud chrome. Literals, not var(): overrides.css maps
+	 * Nextcloud's scale FROM these tokens. */
+	--nldesign-border-radius: 8px;
+	--nldesign-border-radius-small: 4px;
+	--nldesign-border-radius-large: 12px;
+	--nldesign-border-radius-rounded: 28px;
+	--nldesign-border-radius-pill: 100px;
+
+	/* The website's own corners: 4px for buttons and fields, 8px for cards.
+	 * Only css/public-bridge.css reads these, on a public portal. */
+	--nldesign-website-border-radius: 4px;
+	--nldesign-website-border-radius-large: 8px;
+
+	/* The selected navigation entry: the accent, where Nextcloud uses the
+	 * primary colour. Nextcloud 34 and later draw it as a 16% wash of this
+	 * colour (#F5DCE5 on white, the design's #FBE9F0) with the
+	 * #9C1C49 label on it at 6.07:1. */
+	--nldesign-component-navigation-active-background-color: #C2255C;
+	--nldesign-component-navigation-active-color: #9C1C49;
+
+	/* The count badge in the navigation: the accent with white on it (5.66:1). */
+	--nldesign-component-navigation-badge-background-color: #C2255C;
+	--nldesign-component-navigation-badge-color: #ffffff;
+
+	/* The workspace: a grey surface that white cards sit on, with a very
+	 * light shadow (4% ink). */
+	--nldesign-component-content-surface-background-color: #F5F6F8;
+	--nldesign-component-content-card-shadow-color: rgba(27, 28, 29, 0.04);
+
+	/* Status pills, fixed for the four school sets: received is the
+	 * primary's own tint. info 10.67:1, success 5.77:1, warning 6.53:1, error 7.22:1. */
+	--nldesign-component-status-badge-info-background-color: #F0EAF7;
+	--nldesign-component-status-badge-info-color: #43206E;
+	--nldesign-component-status-badge-success-background-color: #E7F3EA;
+	--nldesign-component-status-badge-success-color: #1E6B2A;
+	--nldesign-component-status-badge-warning-background-color: #FFF4DE;
+	--nldesign-component-status-badge-warning-color: #7A4F00;
+	--nldesign-component-status-badge-error-background-color: #FCEDEC;
+	--nldesign-component-status-badge-error-color: #A30000;
+
+	/* The login watermark: the emblem in grey, large and faint, in the bottom
+	 * corner of the login page while the workplace layout is light. */
+	--nldesign-login-watermark-image: url('../../img/logos/esdoornveen-emblem-grey.svg');
+	--nldesign-login-watermark-opacity: 0.06;
+
+	/* The motif, "de snede": a slanted cut like the edge of a maple leaf, a 6px plum band with one rose segment whose ends are cut at 32 degrees. Drawn
+	 * along the top bar and the login card while the brand stripe is on.
+	 * The segment is the one on the designed login card: 96px wide, 32px from the start, its ends slanted as skewX(-32deg) draws them. A gradient at 122 degrees has edges 32 degrees off vertical, and along it a point at x and mid-height y = 3 lies at 0.848x + 1.59px, so 32px and 128px become 28.73px and 110.13px. The three colours are for the component library, which draws flat bands only: plum, rose, plum in the ratio 1 : 3 : 10. */
+	--nldesign-brand-stripe-color-1: #5B2E91;
+	--nldesign-brand-stripe-color-2: #C2255C;
+	--nldesign-brand-stripe-color-3: #5B2E91;
+	--nldesign-brand-stripe-ratio-1: 1;
+	--nldesign-brand-stripe-ratio-2: 3;
+	--nldesign-brand-stripe-ratio-3: 10;
+	--nldesign-brand-stripe-height: 6px;
+	--nldesign-brand-stripe-image: linear-gradient(122deg, #5B2E91 0 28.73px, #C2255C 28.73px 110.13px, #5B2E91 110.13px);
+}
