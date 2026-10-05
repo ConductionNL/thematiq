@@ -40,5 +40,6 @@ npx vitest run \
 	tests/vitest/syncUpstreamTokens.spec.js \
 	tests/vitest/zuiddrechtTokenSet.spec.js \
 	tests/vitest/schoolTokenSets.spec.js \
+	tests/vitest/publicBridgeRoleLayer.spec.js \
 	tests/vitest/componentScopesGenerator.spec.js \
 	tests/vitest/workplaceLayout.spec.js

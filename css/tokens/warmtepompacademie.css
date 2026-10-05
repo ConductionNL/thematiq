@@ -173,4 +173,28 @@
 	--nldesign-brand-stripe-ratio-3: 11;
 	--nldesign-brand-stripe-height: 5px;
 	--nldesign-brand-stripe-image: linear-gradient(to right, #0B6E7A 0 33.333%, #5FA3A8 33.333% 45.833%, #E4E6EA 45.833% 54.167%, #EFA06F 54.167% 66.667%, #D9480F 66.667%);
+
+	/* THE WEBSITE (openspec/changes/brand-motif-on-portals). Read only by
+	 * css/public-bridge.css, which a portal links and an instance page never
+	 * does.
+	 * The accent (ember): the menu item on screen, count badges and the
+	 * "today first" card. Never a button or a link colour. */
+	--nldesign-color-accent: #C2410C;
+	--nldesign-color-accent-light: #FCEBDD;
+	--nldesign-color-accent-text: #9A3412;
+	/* The footer band: the primary's deep step, white text on it. */
+	--nldesign-color-footer-background: #084F58;
+	--nldesign-color-footer-text: #ffffff;
+	/* The logo in the site header and footer, 50px high. It carries the
+	 * name, so the portal keeps its title for screen readers only. */
+	--nldesign-website-logo-height: 50px;
+	--nldesign-website-logo-width: 189px;
+	--nldesign-website-logo-text-size: 0;
+	/* The hero on the website: a light ground with dark type, the first
+	 * button in the primary colour. */
+	--nldesign-hero-background-color: #E3F1F3;
+	--nldesign-hero-title-color: #1B1C1D;
+	--nldesign-hero-body-color: #1B1C1D;
+	--nldesign-hero-action-background-color: #0B6E7A;
+	--nldesign-hero-action-color: #ffffff;
 }

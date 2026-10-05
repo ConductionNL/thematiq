@@ -136,4 +136,15 @@
 	--cn-brand-stripe-ratio-2: var(--nldesign-brand-stripe-ratio-2, 1);
 	--cn-brand-stripe-ratio-3: var(--nldesign-brand-stripe-ratio-3, 1);
 	--cn-brand-stripe-height: var(--nldesign-brand-stripe-height, 4px);
+	/*
+	 * The motif, when the set names one, and its variant for a dark band
+	 * (openspec/changes/brand-motif-on-portals). No fallback: with the set
+	 * silent both are the guaranteed-invalid value and the component draws its
+	 * three bands, exactly as before.
+	 */
+	--cn-brand-stripe-image: var(--nldesign-brand-stripe-image);
+	--cn-brand-stripe-image-inverse: var(
+		--nldesign-brand-stripe-image-inverse,
+		var(--nldesign-brand-stripe-image)
+	);
 }

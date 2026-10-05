@@ -46,7 +46,7 @@ const SETS = {
 		heading: null,
 		website: ['10px', '14px'],
 		stripe: false,
-		stripeHeight: '14px',
+		stripeHeight: '17px',
 		legacyLabel: '#1A1A1A',
 	},
 	vaartveld: {
