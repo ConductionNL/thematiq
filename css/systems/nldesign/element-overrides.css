@@ -434,23 +434,35 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 #app-content-vue #rich-workspace .text-editor__main,
 #app-content-vue #rich-workspace .editor,
 #app-content-vue #rich-workspace .text-menubar,
-#app-content-vue #rich-workspace .ProseMirror {
+#app-content-vue #rich-workspace .ProseMirror,
+#app-content-vue #rich-workspace .heading-anchor {
 	background-color: var(
 		--nldesign-component-content-surface-background-color,
 		var(--color-main-background)
 	) !important;
 }
 
-/* Inside the README the Text app paints more from `--color-main-background`:
- * the fade at the bottom of the collapsed preview and the heading gutter. The
- * README takes the surface for that variable the way component-scopes.css
- * gives it to the content: the token, else the captured global, which keeps
- * Nextcloud's own value for a set without a surface. */
-#app-content-vue #rich-workspace {
-	--color-main-background: var(
+/* Inside the README the Text app paints two more things from
+ * `--color-main-background`: the read-only block and the fade at the bottom
+ * of the collapsed preview. (The heading anchor joins the list above.) Both take the surface as well. The variable itself
+ * is left alone: nldesign never writes it (REQ-CSS-007,
+ * nextcloudVariableInventory.spec.js). */
+#app-content-vue #rich-workspace div[contenteditable='false'] {
+	background-color: var(
 		--nldesign-component-content-surface-background-color,
-		var(--thematiq-global-color-main-background)
-	);
+		var(--color-main-background)
+	) !important;
+}
+
+#app-content-vue #rich-workspace:not(.focus):not(.empty)::after {
+	background-image: linear-gradient(
+		to bottom,
+		transparent,
+		var(
+			--nldesign-component-content-surface-background-color,
+			var(--color-main-background)
+		)
+	) !important;
 }
 
 /* ============================================

@@ -60,6 +60,8 @@ const STRIPS = [
 	'#rich-workspace .editor',
 	'#rich-workspace .text-menubar',
 	'#rich-workspace .ProseMirror',
+	'#rich-workspace .heading-anchor',
+	"#rich-workspace div[contenteditable='false']",
 ]
 
 /** Nextcloud's own main background, which nldesign leaves alone. */
@@ -310,15 +312,17 @@ function mismatches(set, env) {
 		),
 	)
 	const out = []
-	// The README hands the surface to everything the Text app paints inside it.
-	const readme = level(
-		child,
-		cascade(files, env, (s) => s.trim() === CONTENT + ' #rich-workspace'),
-	)
-	const inside = resolve('var(--color-main-background)', readme)
-	if (inside.toLowerCase() !== surface.toLowerCase()) {
+	// The collapsed README fades into the surface, not into white.
+	const fade = cascade(
+		files,
+		env,
+		(s) =>
+			s.trim() === CONTENT + ' #rich-workspace:not(.focus):not(.empty)::after',
+	)['background-image']
+	const fadeTo = fade === undefined ? 'var(--color-main-background)' : fade
+	if (!resolve(fadeTo, child).toLowerCase().includes(surface.toLowerCase())) {
 		out.push(
-			`#rich-workspace --color-main-background: ${inside} on the surface ${surface}`,
+			`#rich-workspace fade: ${resolve(fadeTo, child)} on the surface ${surface}`,
 		)
 	}
 	for (const strip of STRIPS) {
