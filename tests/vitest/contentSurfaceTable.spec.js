@@ -310,6 +310,17 @@ function mismatches(set, env) {
 		),
 	)
 	const out = []
+	// The README hands the surface to everything the Text app paints inside it.
+	const readme = level(
+		child,
+		cascade(files, env, (s) => s.trim() === CONTENT + ' #rich-workspace'),
+	)
+	const inside = resolve('var(--color-main-background)', readme)
+	if (inside.toLowerCase() !== surface.toLowerCase()) {
+		out.push(
+			`#rich-workspace --color-main-background: ${inside} on the surface ${surface}`,
+		)
+	}
 	for (const strip of STRIPS) {
 		const own = cascade(files, env, (s) => s.trim() === CONTENT + ' ' + strip)
 		// Without a rule of ours, Nextcloud paints the strip with the main background.

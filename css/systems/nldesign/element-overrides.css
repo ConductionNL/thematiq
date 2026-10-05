@@ -441,6 +441,18 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 	) !important;
 }
 
+/* Inside the README the Text app paints more from `--color-main-background`:
+ * the fade at the bottom of the collapsed preview and the heading gutter. The
+ * README takes the surface for that variable the way component-scopes.css
+ * gives it to the content: the token, else the captured global, which keeps
+ * Nextcloud's own value for a set without a surface. */
+#app-content-vue #rich-workspace {
+	--color-main-background: var(
+		--nldesign-component-content-surface-background-color,
+		var(--thematiq-global-color-main-background)
+	);
+}
+
 /* ============================================
    NAVIGATION ENTRIES — chrome, not content links
    ============================================ */
