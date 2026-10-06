@@ -27,7 +27,15 @@ export default defineConfig({
 	// One worker, in order: parallel runs against one instance interfere with
 	// each other (measured in #181: 64 failures in parallel against 12 serially).
 	// Do not override with --workers.
-	fullyParallel: false,
+	//
+	// `fullyParallel` does not run anything at the same time here (that is
+	// `workers`). What it changes is how CI shards the suite: per test instead
+	// of per file. Per file, the 8 legs of run 37438276176 took 5 to 38+
+	// minutes, because token-sets and theming-sync (over 20 minutes each) could
+	// only land on one leg. A describe block with beforeAll/afterAll, and a
+	// `mode: 'serial'` block, still stays together on one leg and runs its hooks
+	// once there.
+	fullyParallel: true,
 	// 0 in CI, so a flaky test fails the run there. 1 on a developer box
 	// (PW_RETRIES overrides), where the shared instance is busy and a single 503
 	// is the likeliest reason a passing test fails. The list reporter marks a
@@ -42,12 +50,11 @@ export default defineConfig({
 	// means the tally and the artifacts always exist.
 	//
 	// The cap is per Playwright process, so per shard, and every shard leg has
-	// its own 45-minute job. Measured in run 37431331292: 105 tests in 38m,
-	// about 22 s each, so the 424-test suite is roughly 2.5 hours in one
-	// process. CI therefore splits it (`e2e-shards` in code-quality.yml). With
-	// `fullyParallel: false` Playwright shards whole files, so the 8 legs are
-	// uneven: 16 to 92 tests, the heaviest (token-sets, css-architecture) an
-	// estimated 25-30 minutes, which still fits inside 38m.
+	// its own 45-minute job. Measured in run 37438276176: the suite is about
+	// 170 minutes of tests in one process, so CI splits it over 8 legs
+	// (`e2e-shards` in code-quality.yml). Playwright balances the legs by test
+	// COUNT, not duration; with the durations of that run the slowest leg comes
+	// to about 25 minutes, well inside 38m.
 	globalTimeout: 38 * 60_000,
 	reporter: [
 		['list'],

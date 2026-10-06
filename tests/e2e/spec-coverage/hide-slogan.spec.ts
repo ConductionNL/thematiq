@@ -84,7 +84,11 @@ const HIDDEN = { display: 'none', visibility: 'hidden', onScreen: false }
 test.use({ colorScheme: 'light' })
 
 test.describe('hide-slogan', () => {
-	test.describe.configure({ mode: 'serial', timeout: 90_000 })
+	// Not `mode: 'serial'`: every test sets and restores its own state through
+	// withThemeState(), so none depends on the one before it. Serial mode would
+	// skip the rest of the file after one failure, and keep all 20 tests (over
+	// ten minutes) on one CI shard.
+	test.describe.configure({ timeout: 90_000 })
 
 	test(// @e2e openspec/specs/hide-slogan/spec.md#setting-stored-as-enabled
 	// @e2e openspec/specs/hide-slogan/spec.md#true-boolean-converted-to-string-1

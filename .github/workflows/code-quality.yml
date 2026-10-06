@@ -259,11 +259,11 @@ jobs:
       enable-playwright: true
       # Split over 8 legs, the most the shared workflow takes. Each leg has its
       # own Nextcloud and database, so the reason for `workers: 1` above holds
-      # per leg. Measured in run 37431331292: about 22 s per test and 424 tests,
-      # roughly 2.5 hours in one leg against a 45-minute job. Playwright shards
-      # whole files here (`fullyParallel: false`), so the legs are uneven, 16
-      # to 92 tests; the heaviest is estimated at 25-30 minutes, inside the
-      # 38-minute globalTimeout in playwright.config.ts. E2E only runs on the
+      # per leg. Measured in run 37438276176: about 170 minutes of tests, so
+      # close to 3 hours in one leg against a 45-minute job. Playwright shards
+      # per test here (`fullyParallel: true`), about 53 tests a leg; the
+      # slowest leg comes to about 25 minutes, inside the 38-minute
+      # globalTimeout in playwright.config.ts. E2E only runs on the
       # promotion path (pull requests and pushes to beta and main) and on
       # manual runs, so this is 8 runners per release, not per development
       # push.

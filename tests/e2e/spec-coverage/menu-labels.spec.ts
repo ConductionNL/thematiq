@@ -168,7 +168,11 @@ const LABEL =
 test.use({ colorScheme: 'light' })
 
 test.describe('menu-labels', () => {
-	test.describe.configure({ mode: 'serial', timeout: 90_000 })
+	// Not `mode: 'serial'`: every test sets and restores its own state through
+	// withThemeState(), so none depends on the one before it. Serial mode would
+	// skip the rest of the file after one failure (26 tests in run
+	// 37438276176), and keep all 32 tests on one CI shard.
+	test.describe.configure({ timeout: 90_000 })
 
 	test(// @e2e openspec/specs/menu-labels/spec.md#setting-stored-as-enabled
 	// @e2e openspec/specs/menu-labels/spec.md#toggle-menu-labels-on
