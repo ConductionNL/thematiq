@@ -218,10 +218,11 @@ class PlaygroundStateService {
 	 * they take it — and this is the one it opens on, because the version you
 	 * are running is the one you are asking about first.
 	 *
-	 * Resolved through the deprecated array-returning `\OCP\Util::getVersion()`
-	 * for the same reason `ComplianceReportService` does: a type-hinted
-	 * `\OCP\ServerVersion` constructor dependency is a DI problem on older
-	 * servers, and this value is read once to pick a default.
+	 * Resolved lazily through `\OCP\ServerVersion` (public since NC 31, below
+	 * this app's floor of 32) via the server container rather than a
+	 * constructor dependency, for the same reason `ComplianceReportService`
+	 * does: this value is read once to pick a default. Replaces the
+	 * `\OCP\Util::getVersion()` call deprecated since 31.
 	 *
 	 * @return int The major version, or 0 when it cannot be read.
 	 *
@@ -231,7 +232,7 @@ class PlaygroundStateService {
 	 */
 	protected function getServerMajor(): int {
 		try {
-			$version = \OCP\Util::getVersion();
+			$version = \OCP\Server::get(\OCP\ServerVersion::class)->getVersion();
 
 			return (int)($version[0] ?? 0);
 		} catch (Throwable $e) {

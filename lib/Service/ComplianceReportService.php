@@ -725,10 +725,9 @@ class ComplianceReportService {
 	/**
 	 * Resolve the Nextcloud server version string.
 	 *
-	 * Uses the deprecated array-returning \OCP\Util::getVersion() rather than
-	 * the newer \OCP\ServerVersion (NC 31.0.0+) because this app supports NC
-	 * back to 28 (appinfo/info.xml) and a type-hinted ServerVersion
-	 * constructor dependency would break DI autowiring on 28-30. Falls back
+	 * Uses \OCP\ServerVersion (public since NC 31.0.0, below this app's floor
+	 * of 32 in appinfo/info.xml), resolved lazily from the server container,
+	 * instead of the \OCP\Util::getVersion() deprecated since 31. Falls back
 	 * to "unknown" when no live Nextcloud server container is present (e.g. a
 	 * standalone PHPUnit run without a full NC bootstrap) — that never
 	 * happens for the real endpoint/occ command, only in isolated unit tests.
@@ -741,7 +740,7 @@ class ComplianceReportService {
 	 */
 	private function resolveNextcloudVersion(): string {
 		try {
-			return implode('.', \OCP\Util::getVersion());
+			return implode('.', \OCP\Server::get(\OCP\ServerVersion::class)->getVersion());
 		} catch (\Throwable $e) {
 			return 'unknown';
 		}
