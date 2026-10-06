@@ -50,7 +50,7 @@ The `nldesign` capability value MUST be an object with exactly these keys:
   array when no pack is active;
 - `wcagLevel` (string|null) — the audited contrast conformance of the active set per the WCAG
   Audit Level requirement;
-- `logos` (object) — available logo variant web paths for the active set, keyed by variant name;
+- `logos` (object) — available logo variant web paths for the active set, keyed by variant name (`default` from `theming.logo`; `emblem` when the set ships `img/logos/<id>-emblem.svg`, the mark without the wordmark, for an app that draws the set's mark small);
   `default` maps to the web path of the manifest's `theming.logo` asset; an empty object when the
   set declares no logo. Additional variants (e.g. `dark`) are reserved for future changes
   (dark-mode-token-variants) — consumers MUST treat unknown variant keys as additive;
@@ -70,6 +70,15 @@ filesystem paths outside web asset paths.
 - THEN `tokenSet` MUST equal `{ "id": "rijkshuisstijl", "name": "Rijkshuisstijl", "version": null }`
   (no version declared in the manifest today)
 - AND `logos.default` MUST be the web path resolving to `img/logos/rijkshuisstijl.svg`
+- AND `logos` MUST carry no `emblem` key, because no `img/logos/rijkshuisstijl-emblem.svg` is shipped
+
+#### Scenario: A set that ships an emblem exposes it
+@e2e exclude PHPUnit on Capabilities (CapabilitiesTest::testEmblemIsExposedWhenShipped)
+- GIVEN the active token set is `zuiddrecht`, whose manifest entry declares `theming.logo: img/logos/zuiddrecht.svg`
+- AND the app ships `img/logos/zuiddrecht-emblem.svg`
+- WHEN the capability payload is computed
+- THEN `logos.emblem` MUST be the web path resolving to `img/logos/zuiddrecht-emblem.svg`
+- AND `logos.default` MUST still be the web path resolving to `img/logos/zuiddrecht.svg`
 - AND `hideSlogan` MUST be `true` and `showMenuLabels` MUST be `false`
 - AND `iconPacks` MUST equal the resolved pack list for `rijkshuisstijl`'s design system
   (`["rvo", "open-gemeenten", "den-haag"]`)

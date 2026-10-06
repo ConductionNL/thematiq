@@ -375,9 +375,11 @@ describe('zuiddrecht: every text pair reaches AA', () => {
 
 describe('zuiddrecht: the dark workspace', () => {
 	it('sets the dark page and surface in both dark scopes, and no colour in the light', () => {
-		// The one rule outside the dark scopes is the login logo box, which
-		// is geometry and declares no custom property.
-		const outsideDark = []
+		// Outside the dark scopes the file holds geometry and type only (the
+		// login logo box, the workplace boards' measures): every colour there
+		// goes through a token, so no colour literal of its own, and the
+		// generated dark variant keeps up on its own.
+		const literals = []
 		postcss
 			.parse(read('css/token-overrides/zuiddrecht.css'))
 			.walkRules((rule) => {
@@ -385,10 +387,18 @@ describe('zuiddrecht: the dark workspace', () => {
 					rule.parent.type === 'atrule'
 					&& /prefers-color-scheme:\s*dark/.test(rule.parent.params)
 				if (!inMedia && !/data-theme/.test(rule.selector)) {
-					rule.walkDecls((d) => outsideDark.push(d.prop))
+					rule.walkDecls((d) => {
+						// A literal as the last-resort fallback of a token is fine.
+						const own = d.value.replace(/,\s*#[0-9a-f]{3,8}\s*\)/gi, ')')
+						if (/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(own)) {
+							literals.push(
+								rule.selector + ' ' + d.prop + ': ' + d.value,
+							)
+						}
+					})
 				}
 			})
-		expect(outsideDark.sort()).toEqual(['height', 'top', 'width'])
+		expect(literals).toEqual([])
 
 		for (const scope of [OVERRIDES.media, OVERRIDES.explicit]) {
 			expect(Object.keys(scope).sort()).toEqual([
