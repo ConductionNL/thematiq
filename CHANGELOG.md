@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **The site's page title, lead, notice text and surface are vocabulary.** A set may name
+  `--nldesign-website-page-title-size` and `-line-height`, `--nldesign-website-lead-font-size`,
+  `--nldesign-website-notice-color` and `--nldesign-color-surface` for its portal; only the public
+  bridge reads them, and a set that names none keeps every value it had. Zuiddrecht names them:
+  2.75rem on 1.15, 18px, #1A1A1A and #F4F6F9, every pair computed.
+- **An attention strip apart from the plain notice.** `--nldesign-website-attention-background-color`,
+  `-border-color` and `-color` name the "Let op" strip; Zuiddrecht: #FFF4DE, #E8C77D, #1A1A1A.
 - **Four demo schools in Zuiddrecht.** `wilgenboom` (Basisschool De Wilgenboom, willow green
   `#2F6B4A` and sun yellow, Lexend), `vaartveld` (Vaartveld College, cobalt `#1F4FD8` and aqua,
   Red Hat Display over Red Hat Text), `esdoornveen` (Esdoornveen, mbo college, plum `#5B2E91`
