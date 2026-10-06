@@ -2,7 +2,7 @@
 
 # Gemeente Zuiddrecht
 
-Token set `zuiddrecht`: 113 declared by this set, 129 from the defaults layer.
+Token set `zuiddrecht`: 111 declared by this set, 129 from the defaults layer.
 
 Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 
@@ -309,8 +309,6 @@ Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 | `--nldesign-website-logo-height` | `50px` | | this set | |
 | `--nldesign-website-logo-text-size` | `0` | | this set | |
 | `--nldesign-website-logo-width` | `234px` | | this set | |
-| `--nldesign-website-nav-current-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233669A5%22%2F%3E%3C%2Fsvg%3E) `#3669A5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236d9acf%22%2F%3E%3C%2Fsvg%3E) `#6d9acf` | this set | |
-| `--nldesign-website-nav-current-in-line` | `1` | | this set | |
 | `--nldesign-website-notice-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23EAF0F7%22%2F%3E%3C%2Fsvg%3E) `#EAF0F7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2313202e%22%2F%3E%3C%2Fsvg%3E) `#13202e` | this set | |
 | `--nldesign-website-notice-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23B9CBE2%22%2F%3E%3C%2Fsvg%3E) `#B9CBE2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23273b55%22%2F%3E%3C%2Fsvg%3E) `#273b55` | this set | |
 | `--nldesign-website-notice-border-width` | `1px` | | this set | |
