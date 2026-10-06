@@ -718,6 +718,7 @@
 		--nldesign-website-notice-background-color
 	);
 	--utrecht-alert-border-color: var(--nldesign-website-notice-border-color);
+	--utrecht-alert-color: var(--nldesign-website-notice-color);
 	--utrecht-alert-ok-color: var(--nldesign-color-text, #1b1b23);
 	--utrecht-alert-warning-color: var(--thematiq-status-warning-text);
 	--utrecht-alert-error-color: var(--thematiq-status-error-text);
@@ -939,7 +940,7 @@
 	--utrecht-ordered-list-padding-inline-start: 24px;
 	--utrecht-paragraph-font-size: 16px;
 	--utrecht-paragraph-font-weight: 400;
-	--utrecht-paragraph-lead-font-size: 20px;
+	--utrecht-paragraph-lead-font-size: var(--nldesign-website-lead-font-size, 20px);
 	--utrecht-paragraph-lead-font-weight: 400;
 	--utrecht-paragraph-lead-line-height: 150%;
 	--utrecht-paragraph-line-height: 150%;
@@ -1099,19 +1100,41 @@
 	 *   --nldesign-website-tab-line-color                  the line under a tab list
 	 *   --nldesign-website-tab-current-color               the mark under the tab on screen
 	 *
+	 * The public site's own pages add to it
+	 * (openspec/changes/zuiddrecht-site-page-title-notice-surface):
+	 *
+	 *   --nldesign-website-page-title-size                 a content page's title (an h1
+	 *                                                      drawn larger than heading 1)
+	 *   --nldesign-website-page-title-line-height          its line height
+	 *   --nldesign-website-lead-font-size                  the lead paragraph
+	 *   --nldesign-website-notice-color                    the text on a plain notice
+	 *   --nldesign-color-surface                           the site's grey band and a
+	 *                                                      boxed table's header row
+	 *
+	 * The portal reads the page title, the notice text and the surface by
+	 * name (css/site-theme.css in portaliq); the roles below carry them so a
+	 * reader exists in this repository, and the lead size wraps the Utrecht
+	 * literal, which the portal's lead paragraph reads.
+	 *
 	 * EVERY ROLE KEEPS TODAY'S VALUE AS ITS FALLBACK, so a set that names
 	 * none of these changes nothing: the heading sizes, border widths, the
 	 * notice border width and the Den Haag step marker roles fall back to
 	 * what they were (the marker roles are wrapped by
 	 * scripts/generate-denhaag-bridge.mjs from the `website` section of the
-	 * mapping). The notice ground and border, the data badge radius (no
-	 * pinned Den Haag stylesheet reads it; the portal's badge does) and the
-	 * two tab roles below carry no fallback on purpose: unset, a consumer's
-	 * own fallback applies, as with the website radii above.
+	 * mapping). The notice ground, border and text, the data badge radius (no
+	 * pinned Den Haag stylesheet reads it; the portal's badge does), the two
+	 * tab roles, the page title roles and the surface role below carry no
+	 * fallback on purpose: unset, a consumer's own fallback applies, as with
+	 * the website radii above.
 	 */
 	--nl-data-badge-border-radius: var(--nldesign-website-badge-border-radius);
 	--thematiq-tab-line-color: var(--nldesign-website-tab-line-color);
 	--thematiq-tab-current-color: var(--nldesign-website-tab-current-color);
+	--thematiq-page-title-font-size: var(--nldesign-website-page-title-size);
+	--thematiq-page-title-line-height: var(
+		--nldesign-website-page-title-line-height
+	);
+	--thematiq-surface-color: var(--nldesign-color-surface);
 
 	/*
 	 * The footer's bottom band: the footer's own ground one step darker, as

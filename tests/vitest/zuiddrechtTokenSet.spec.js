@@ -253,6 +253,26 @@ function pairs(t, main) {
 			main,
 			3,
 		],
+		// The public site (openspec/changes/zuiddrecht-site-page-title-notice-surface):
+		// the ink on a plain notice, and what the grey band and a boxed
+		// table's header row carry: text, muted text and links.
+		[
+			'notice text on the notice ground',
+			t['--nldesign-website-notice-color'],
+			t['--nldesign-website-notice-background-color'],
+			4.5,
+		],
+		...[
+			['text', '--nldesign-color-text'],
+			['muted text', '--nldesign-color-text-muted'],
+			['link', '--nldesign-color-link'],
+			['link hover', '--nldesign-color-link-hover'],
+		].map(([what, token]) => [
+			what + ' on the site surface',
+			t[token],
+			t['--nldesign-color-surface'],
+			4.5,
+		]),
 	]
 }
 
