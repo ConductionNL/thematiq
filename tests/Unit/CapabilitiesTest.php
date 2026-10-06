@@ -17,7 +17,6 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
-use OCA\Thematiq\Service\TokenSetService;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -55,7 +54,6 @@ class CapabilitiesTest extends TestCase {
 	 * @param IAppManager|\PHPUnit\Framework\MockObject\MockObject $appManager
 	 * @param IURLGenerator|\PHPUnit\Framework\MockObject\MockObject $urlGenerator
 	 * @param DesignSystemService|\PHPUnit\Framework\MockObject\MockObject $designSystemService
-	 * @param TokenSetService|\PHPUnit\Framework\MockObject\MockObject $tokenSetService
 	 * @param ShippedTokenSetAuditService|\PHPUnit\Framework\MockObject\MockObject $auditService
 	 *
 	 * @return Capabilities
@@ -65,7 +63,6 @@ class CapabilitiesTest extends TestCase {
 		IAppManager $appManager,
 		IURLGenerator $urlGenerator,
 		DesignSystemService $designSystemService,
-		TokenSetService $tokenSetService,
 		ShippedTokenSetAuditService $auditService,
 	): Capabilities {
 		$store = [];
@@ -91,7 +88,6 @@ class CapabilitiesTest extends TestCase {
 			$appManager,
 			$urlGenerator,
 			$designSystemService,
-			$tokenSetService,
 			$auditService,
 			$cacheFactory
 		);
@@ -139,6 +135,7 @@ class CapabilitiesTest extends TestCase {
 		$designSystemService->method('getTokenSetMeta')->with('rijkshuisstijl')->willReturn(
 			[
 				'id' => 'rijkshuisstijl',
+				'name' => 'Rijkshuisstijl',
 				'design_system' => 'nldesign',
 				'theming' => ['logo' => 'img/logos/rijkshuisstijl.svg'],
 			]
@@ -147,15 +144,10 @@ class CapabilitiesTest extends TestCase {
 			['rvo', 'open-gemeenten', 'den-haag']
 		);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'rijkshuisstijl', 'name' => 'Rijkshuisstijl', 'description' => '']]
-		);
-
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
 		$payload = $capabilities->getCapabilities();
 
 		$this->assertArrayHasKey('nldesign', $payload);
@@ -237,15 +229,10 @@ class CapabilitiesTest extends TestCase {
 		);
 		$designSystemService->method('resolveActiveIconPacks')->with('nextcloud')->willReturn([]);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'nextcloud', 'name' => 'Nextcloud (default)', 'description' => '']]
-		);
-
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->expects($this->never())->method('auditSet');
 
-		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame('nextcloud', $nldesign['tokenSet']['id']);
@@ -277,15 +264,10 @@ class CapabilitiesTest extends TestCase {
 		);
 		$designSystemService->method('resolveActiveIconPacks')->with('lasuite')->willReturn(['dsfr']);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'lasuite', 'name' => 'La Suite numérique']]
-		);
-
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame('lasuite', $nldesign['designSystem']);
@@ -310,14 +292,10 @@ class CapabilitiesTest extends TestCase {
 		$designSystemService->method('getTokenSetMeta')->with('custom-onbekend')->willReturn([]);
 		$designSystemService->method('resolveActiveIconPacks')->with('custom-onbekend')->willReturn([]);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
-		// Not discovered on disk either — absent from the available-sets list.
-		$tokenSetService->method('getAvailableTokenSets')->willReturn([]);
-
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->expects($this->never())->method('auditSet');
 
-		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame('custom-onbekend', $nldesign['tokenSet']['id']);
@@ -325,6 +303,41 @@ class CapabilitiesTest extends TestCase {
 		$this->assertNull($nldesign['tokenSet']['version']);
 		$this->assertNull($nldesign['wcagLevel']);
 	}//end testCustomOrUnknownTokenSetDegradesButNeverLies()
+
+	/**
+	 * The name and the upstream version come from the active set's own
+	 * manifest entry, the one `getTokenSetMeta()` returns, so building the
+	 * capability never builds (and audits) the whole token-set catalogue.
+	 */
+	public function testTokenSetNameAndVersionComeFromTheActiveSetsManifestEntry(): void {
+		$config = $this->configWith(['token_set' => 'utrecht']);
+
+		$appManager = $this->createMock(IAppManager::class);
+		$appManager->method('getAppVersion')->willReturn('3.4.0');
+		$appManager->method('getAppPath')->willReturn('/app');
+
+		$urlGenerator = $this->createMock(IURLGenerator::class);
+
+		$designSystemService = $this->createMock(DesignSystemService::class);
+		$designSystemService->method('getTokenSetMeta')->with('utrecht')->willReturn(
+			[
+				'id' => 'utrecht',
+				'name' => 'Gemeente Utrecht',
+				'design_system' => 'nldesign',
+				'upstreamVersion' => '1.2.0',
+				'theming' => [],
+			]
+		);
+		$designSystemService->method('resolveActiveIconPacks')->willReturn([]);
+
+		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
+		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
+
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
+		$nldesign = $capabilities->getCapabilities()['nldesign'];
+
+		$this->assertSame(['id' => 'utrecht', 'name' => 'Gemeente Utrecht', 'version' => '1.2.0'], $nldesign['tokenSet']);
+	}//end testTokenSetNameAndVersionComeFromTheActiveSetsManifestEntry()
 
 	/**
 	 * The WCAG level is cached — a second call within the TTL never re-invokes
@@ -345,15 +358,10 @@ class CapabilitiesTest extends TestCase {
 		);
 		$designSystemService->method('resolveActiveIconPacks')->willReturn(['rvo', 'open-gemeenten', 'den-haag']);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'rijkshuisstijl', 'name' => 'Rijkshuisstijl']]
-		);
-
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->expects($this->once())->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
 
 		$first = $capabilities->getCapabilities()['nldesign']['wcagLevel'];
 		$second = $capabilities->getCapabilities()['nldesign']['wcagLevel'];
@@ -381,15 +389,10 @@ class CapabilitiesTest extends TestCase {
 		);
 		$designSystemService->method('resolveActiveIconPacks')->willReturn([]);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'hoog-contrast', 'name' => 'Hoog Contrast']]
-		);
-
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame('AAA', $nldesign['wcagLevel']);
@@ -413,15 +416,10 @@ class CapabilitiesTest extends TestCase {
 		);
 		$designSystemService->method('resolveActiveIconPacks')->willReturn(['rvo', 'open-gemeenten', 'den-haag']);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'noaberkracht', 'name' => 'Noaberkracht']]
-		);
-
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'fail']);
 
-		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame('fail', $nldesign['wcagLevel']);
@@ -442,11 +440,10 @@ class CapabilitiesTest extends TestCase {
 		$designSystemService = $this->createMock(DesignSystemService::class);
 		$designSystemService->method('getTokenSetMeta')->willThrowException(new \RuntimeException('manifest unreadable: /secret/path'));
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->expects($this->never())->method('auditSet');
 
-		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
 
 		$payload = $capabilities->getCapabilities();
 
