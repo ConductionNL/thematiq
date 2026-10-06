@@ -193,13 +193,10 @@ class CapabilitiesTest extends TestCase {
 		);
 		$designSystemService->method('resolveActiveIconPacks')->willReturn([]);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn([]);
-
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $auditService);
 		$logos = $capabilities->getCapabilities()['nldesign']['logos'];
 
 		$this->assertFileExists(dirname(__DIR__, 2) . '/img/logos/zuiddrecht-emblem.svg');
