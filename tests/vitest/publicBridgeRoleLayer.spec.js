@@ -231,6 +231,74 @@ describe('the footer bottom band', () => {
 	})
 })
 
+describe('the website type scale, controls and marks are vocabulary', () => {
+	it('zuiddrecht draws its boards: 44px titles, 2px controls, pill tags, blue and red steps, a light notice, red tabs', () => {
+		expect(token('zuiddrecht', '--utrecht-heading-1-font-size')).toBe('44px')
+		expect(token('zuiddrecht', '--utrecht-heading-2-font-size')).toBe('40px')
+		expect(token('zuiddrecht', '--utrecht-heading-3-font-size')).toBe('26px')
+		expect(token('zuiddrecht', '--utrecht-button-border-width')).toBe('2px')
+		expect(token('zuiddrecht', '--utrecht-textbox-border-width')).toBe('2px')
+		expect(token('zuiddrecht', '--utrecht-button-border-radius')).toBe('4px')
+		expect(token('zuiddrecht', '--utrecht-alert-border-radius')).toBe('6px')
+		expect(token('zuiddrecht', '--nl-data-badge-border-radius')).toBe('14px')
+		expect(token('zuiddrecht', '--denhaag-step-marker-size')).toBe('36px')
+		expect(
+			token('zuiddrecht', '--denhaag-step-marker-checked-background-color'),
+		).toBe('#3669A5')
+		expect(token('zuiddrecht', '--denhaag-step-marker-checked-color')).toBe(
+			'#ffffff',
+		)
+		expect(
+			token(
+				'zuiddrecht',
+				'--denhaag-step-marker-connector-checked-outline-color',
+			),
+		).toBe('#3669A5')
+		expect(
+			token('zuiddrecht', '--denhaag-step-marker-current-border-color'),
+		).toBe('#CC0000')
+		expect(token('zuiddrecht', '--denhaag-step-marker-current-color')).toBe(
+			'#CC0000',
+		)
+		expect(
+			token('zuiddrecht', '--denhaag-step-marker-current-background-color'),
+		).toBe('#ffffff')
+		expect(token('zuiddrecht', '--utrecht-alert-background-color')).toBe(
+			'#EAF0F7',
+		)
+		expect(token('zuiddrecht', '--utrecht-alert-border-color')).toBe('#B9CBE2')
+		expect(token('zuiddrecht', '--utrecht-alert-border-width')).toBe('1px')
+		expect(token('zuiddrecht', '--thematiq-tab-line-color')).toBe('#D3D8DF')
+		expect(token('zuiddrecht', '--thematiq-tab-current-color')).toBe('#CC0000')
+	})
+
+	it.each([...SCHOOLS, 'vng'])(
+		'%s names none of it and keeps every value it had (the control)',
+		(set) => {
+			expect(token(set, '--utrecht-heading-1-font-size')).toBe('36px')
+			expect(token(set, '--utrecht-heading-2-font-size')).toBe('32px')
+			expect(token(set, '--utrecht-heading-3-font-size')).toBe('24px')
+			expect(token(set, '--utrecht-button-border-width')).toBe('1px')
+			expect(token(set, '--utrecht-alert-border-width')).toBe('2px')
+			expect(token(set, '--denhaag-step-marker-size')).toBe('32px')
+			if (SCHOOLS.includes(set)) {
+				// vng carries step marker roles of its own, which it keeps.
+				expect(
+					token(set, '--denhaag-step-marker-checked-background-color'),
+				).toBe('#fff')
+				expect(
+					token(set, '--denhaag-step-marker-current-border-color'),
+				).toBe(token(set, '--nldesign-color-primary'))
+			}
+			// No fallback on purpose: unset, the component's own value applies.
+			expect(token(set, '--utrecht-alert-background-color')).toBeNull()
+			expect(token(set, '--utrecht-alert-border-color')).toBeNull()
+			expect(token(set, '--thematiq-tab-line-color')).toBeNull()
+			expect(token(set, '--thematiq-tab-current-color')).toBeNull()
+		},
+	)
+})
+
 describe('a set with a role layer of its own keeps it', () => {
 	it('example-basisschool still paints its primary button with its own value', () => {
 		const own = rootTokens(read('css/tokens/example-basisschool.css'))

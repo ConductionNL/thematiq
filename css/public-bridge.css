@@ -712,6 +712,12 @@
 		var(--nldesign-color-primary, #1b1b23)
 	);
 	--utrecht-alert-info-color: var(--nldesign-color-text, #1b1b23);
+	/* A plain notice (no type): the set's own notice colours, else the
+	 * component's own (see the website vocabulary below). */
+	--utrecht-alert-background-color: var(
+		--nldesign-website-notice-background-color
+	);
+	--utrecht-alert-border-color: var(--nldesign-website-notice-border-color);
 	--utrecht-alert-ok-color: var(--nldesign-color-text, #1b1b23);
 	--utrecht-alert-warning-color: var(--thematiq-status-warning-text);
 	--utrecht-alert-error-color: var(--thematiq-status-error-text);
@@ -879,8 +885,8 @@
 	--utrecht-accordion-button-padding-inline-end: 16px;
 	--utrecht-accordion-button-padding-inline-start: 16px;
 	--utrecht-accordion-panel-border-width: 4px;
-	--utrecht-alert-border-width: 2px;
-	--utrecht-button-border-width: 1px;
+	--utrecht-alert-border-width: var(--nldesign-website-notice-border-width, 2px);
+	--utrecht-button-border-width: var(--nldesign-website-control-border-width, 1px);
 	--utrecht-button-font-size: 16px;
 	--utrecht-button-font-weight: 700;
 	--utrecht-button-icon-size: 24px;
@@ -900,13 +906,13 @@
 	--utrecht-form-label-checkbox-font-weight: 400;
 	--utrecht-form-label-font-size: 16px;
 	--utrecht-form-label-font-weight: 700;
-	--utrecht-heading-1-font-size: 36px;
+	--utrecht-heading-1-font-size: var(--nldesign-website-heading-1-font-size, 36px);
 	--utrecht-heading-1-font-weight: 700;
 	--utrecht-heading-1-line-height: 125%;
-	--utrecht-heading-2-font-size: 32px;
+	--utrecht-heading-2-font-size: var(--nldesign-website-heading-2-font-size, 32px);
 	--utrecht-heading-2-font-weight: 700;
 	--utrecht-heading-2-line-height: 125%;
-	--utrecht-heading-3-font-size: 24px;
+	--utrecht-heading-3-font-size: var(--nldesign-website-heading-3-font-size, 24px);
 	--utrecht-heading-3-font-weight: 700;
 	--utrecht-heading-3-line-height: 125%;
 	--utrecht-heading-4-font-size: 20px;
@@ -953,7 +959,10 @@
 	--utrecht-separator-margin-block-start: 32px;
 	--utrecht-skip-link-text-decoration: underline;
 	--utrecht-table-cell-padding-inline-start: 12px;
-	--utrecht-textbox-border-width: 1px;
+	--utrecht-textbox-border-width: var(
+		--nldesign-website-control-border-width,
+		1px
+	);
 	--utrecht-textbox-font-size: 16px;
 	--utrecht-textbox-font-weight: 400;
 	--utrecht-textbox-max-inline-size: 400px;
@@ -1064,6 +1073,47 @@
 	);
 
 	/*
+	 * THE WEBSITE'S TYPE SCALE, CONTROLS AND MARKS
+	 * (openspec/changes/zuiddrecht-website-type-and-controls).
+	 *
+	 * A design draws its signed-in pages with a type scale, a control border,
+	 * a tag shape, process step markers, a notice and tabs of its own. The
+	 * Zuiddrecht boards: 44px page titles over a 36px default, 2px outlined
+	 * buttons, pill tags, 36px steps filled blue when done and red-ringed
+	 * when current, a light blue notice with a 1px border, a grey tab line
+	 * with the tab on screen in red. None of that is a colour the
+	 * `--nldesign-color-*` layer names, so a set says it in this vocabulary,
+	 * which only this file reads (an instance page never sees it):
+	 *
+	 *   --nldesign-website-heading-1-font-size, -2-, -3-   the three heading sizes
+	 *   --nldesign-website-control-border-width            buttons and text boxes
+	 *   --nldesign-website-badge-border-radius             a data badge (a status tag)
+	 *   --nldesign-website-step-marker-size                a process step's marker
+	 *   --nldesign-website-step-done-color                 a done step's fill, ring and line
+	 *   --nldesign-website-step-done-mark-color            the tick on that fill
+	 *   --nldesign-website-step-current-color              the current step's ring and number
+	 *   --nldesign-website-step-current-background-color   the current step's fill
+	 *   --nldesign-website-notice-background-color         a plain notice's ground
+	 *   --nldesign-website-notice-border-color             its border
+	 *   --nldesign-website-notice-border-width             its border width
+	 *   --nldesign-website-tab-line-color                  the line under a tab list
+	 *   --nldesign-website-tab-current-color               the mark under the tab on screen
+	 *
+	 * EVERY ROLE KEEPS TODAY'S VALUE AS ITS FALLBACK, so a set that names
+	 * none of these changes nothing: the heading sizes, border widths, the
+	 * notice border width and the Den Haag step marker roles fall back to
+	 * what they were (the marker roles are wrapped by
+	 * scripts/generate-denhaag-bridge.mjs from the `website` section of the
+	 * mapping). The notice ground and border, the data badge radius (no
+	 * pinned Den Haag stylesheet reads it; the portal's badge does) and the
+	 * two tab roles below carry no fallback on purpose: unset, a consumer's
+	 * own fallback applies, as with the website radii above.
+	 */
+	--nl-data-badge-border-radius: var(--nldesign-website-badge-border-radius);
+	--thematiq-tab-line-color: var(--nldesign-website-tab-line-color);
+	--thematiq-tab-current-color: var(--nldesign-website-tab-current-color);
+
+	/*
 	 * The footer's bottom band: the footer's own ground one step darker, as
 	 * the school designs draw it. No fallback: a set that names no footer
 	 * colour keeps the band it had.
@@ -1140,7 +1190,7 @@
 	 * Den Haag component properties for every token set. GENERATED by
 	 * scripts/generate-denhaag-bridge.mjs from scripts/mapping/denhaag-component-tokens.json.
 	 * Do not edit by hand. Colours follow the set; geometry is Den Haag's.
-	 * Mapping sha256: 4c73482f86ef509de822329eecebbb461274a7cde01c5b11f6a947da5b08ff46
+	 * Mapping sha256: b5b633d2a29aa3ea5198cfadf824421dc604f7b5f324db1a8d3522ee352439fe
 	 * Sources: @gemeente-denhaag/action 4.4.2, @gemeente-denhaag/card 5.1.4, @gemeente-denhaag/contact-timeline 4.1.3, @gemeente-denhaag/data-badge 2.2.2, @gemeente-denhaag/file 2.5.3, @gemeente-denhaag/process-steps 4.3.3, @gemeente-denhaag/side-navigation 4.2.4, @gemeente-denhaag/sidenav 2.0.0, @gemeente-denhaag/step-marker 3.1.3, @gemeente-denhaag/design-tokens-components 5.1.0, @gemeente-denhaag/design-tokens-common 4.0.0
 	 */
 	--thematiq-status-warning-text: color-mix(
@@ -1467,14 +1517,17 @@
 	--denhaag-step-marker-border-color: var(--nldesign-color-border-dark, #696969);
 	--denhaag-step-marker-border-width: 2px;
 	--denhaag-step-marker-checked-background-color: var(
-		--nldesign-color-background,
-		#fff
+		--nldesign-website-step-done-color,
+		var(--nldesign-color-background, #fff)
 	);
 	--denhaag-step-marker-checked-border-color: var(
-		--nldesign-color-success,
-		#39870c
+		--nldesign-website-step-done-color,
+		var(--nldesign-color-success, #39870c)
 	);
-	--denhaag-step-marker-checked-color: var(--thematiq-status-success-text);
+	--denhaag-step-marker-checked-color: var(
+		--nldesign-website-step-done-mark-color,
+		var(--thematiq-status-success-text)
+	);
 	--denhaag-step-marker-checked-nested-background-color: var(
 		--nldesign-color-background,
 		#fff
@@ -1486,8 +1539,8 @@
 	--denhaag-step-marker-checked-nested-color: var(--thematiq-status-success-text);
 	--denhaag-step-marker-color: var(--nldesign-color-text, #333333);
 	--denhaag-step-marker-connector-checked-outline-color: var(
-		--nldesign-color-success,
-		#39870c
+		--nldesign-website-step-done-color,
+		var(--nldesign-color-success, #39870c)
 	);
 	--denhaag-step-marker-connector-color: var(
 		--nldesign-color-border-dark,
@@ -1515,14 +1568,17 @@
 		#e17000
 	);
 	--denhaag-step-marker-current-background-color: var(
-		--nldesign-color-primary,
-		#154273
+		--nldesign-website-step-current-background-color,
+		var(--nldesign-color-primary, #154273)
 	);
 	--denhaag-step-marker-current-border-color: var(
-		--nldesign-color-primary,
-		#154273
+		--nldesign-website-step-current-color,
+		var(--nldesign-color-primary, #154273)
 	);
-	--denhaag-step-marker-current-color: var(--nldesign-color-primary-text, #ffffff);
+	--denhaag-step-marker-current-color: var(
+		--nldesign-website-step-current-color,
+		var(--nldesign-color-primary-text, #ffffff)
+	);
 	--denhaag-step-marker-current-nested-background-color: var(
 		--nldesign-color-primary,
 		#154273
@@ -1620,7 +1676,7 @@
 		--nldesign-color-text-muted,
 		#696969
 	);
-	--denhaag-step-marker-size: 32px;
+	--denhaag-step-marker-size: var(--nldesign-website-step-marker-size, 32px);
 	--denhaag-step-marker-warning-background-color: var(
 		--nldesign-color-background,
 		#fff
