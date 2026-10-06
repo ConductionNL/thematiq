@@ -61,3 +61,116 @@ div.guest-box.login-box::after {
 	width: 200px !important;
 	height: 44px !important;
 }
+
+/* THE WORKPLACE BOARDS (DqTokens, DqZijbalk, DqDashboard, DqZaken, DqZaak:
+ * ~/memcap-work/zuiddrecht/project, canvas QaVhkmB26mfFGJs8VWUDRF). What the
+ * tokens cannot say about the shapes the Conduction library draws, for this
+ * set only: the measures of the boards on the library's own class names, and
+ * every colour through a token so the dark variant keeps up on its own.
+ *
+ * Sizes: page title 28, greeting 32, card title 18, attention card title 20,
+ * kicker 13, counter value 34, table 14, navigation caption 12 (DqTokens:
+ * "Paginatitel 30, Kaarttitel 18, Tekst 15, Meta 13"; the page boards draw
+ * their titles at 28). */
+
+/* The navigation: 264px wide (DqZijbalk), the captions small capitals in grey,
+ * the selected entry a flat soft-red wash with a bold label. */
+:root {
+	--nldesign-nc-navigation-width: 264px;
+}
+
+#app-navigation-vue .app-navigation-caption__name,
+.app-navigation .app-navigation-caption__name {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--color-text-maxcontrast);
+}
+
+#app-navigation-vue .app-navigation-entry.active,
+.app-navigation .app-navigation-entry.active {
+	background-color: var(--nldesign-color-accent-light);
+}
+
+#app-navigation-vue .app-navigation-entry.active .app-navigation-entry-link,
+.app-navigation .app-navigation-entry.active .app-navigation-entry-link {
+	font-weight: 600;
+}
+
+/* Page titles (DqZaken, DqZaak, DqWerkbord: 28px) and the greeting (DqDashboard: 32px). */
+.cn-page-header__title,
+.cn-dashboard-page__title,
+.cn-detail-page__title {
+	font-size: 28px;
+	line-height: 1.2;
+}
+
+.cn-header-widget__title {
+	font-size: 32px;
+	letter-spacing: -0.01em;
+}
+
+/* Cards: an 18px title; the attention card a 20px title under a 13px kicker in
+ * the accent's dark step (DqDashboard "Vandaag eerst"). */
+.cn-widget-wrapper__title {
+	font-size: 18px;
+	line-height: 1.3;
+}
+
+.cn-banner-widget__title {
+	font-size: 20px;
+	line-height: 1.3;
+}
+
+.cn-banner-widget__kicker {
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+}
+
+.cn-banner-widget--error .cn-banner-widget__kicker {
+	color: var(--nldesign-color-accent-text);
+}
+
+/* Counters (DqDashboard): a grey 14px label over a 34px number. */
+.cn-kpi-card__title {
+	font-weight: 400;
+	color: var(--color-text-maxcontrast);
+}
+
+.cn-kpi-card__value {
+	font-size: 34px;
+	line-height: 1;
+	letter-spacing: -0.01em;
+}
+
+/* Views on a list (DqZaken): 38px pills, the chosen one ink on white. */
+.cn-quick-filter-bar__tab {
+	min-height: 38px;
+	border-radius: 19px;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.cn-quick-filter-bar__tab--active {
+	background-color: var(--color-main-text);
+	border-color: var(--color-main-text);
+	color: var(--color-main-background);
+}
+
+/* The table (DqZaken): a quiet 14px header in grey on a near-white row, 14px cells. */
+.cn-data-table thead th {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--color-text-maxcontrast);
+	background-color: color-mix(
+		in srgb,
+		var(--color-main-background) 60%,
+		var(--color-background-hover)
+	);
+}
+
+.cn-data-table tbody td {
+	font-size: 14px;
+}
