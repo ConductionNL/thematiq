@@ -17,12 +17,26 @@ import { retriesFor } from './tests/e2e/instance-load'
 export default defineConfig({
 	testDir: './tests/e2e',
 	globalSetup: path.resolve(__dirname, 'tests/e2e/global-setup.ts'),
-	timeout: 30_000,
+	// 60 s per test, not Playwright's 30. Most specs start by loading a
+	// Nextcloud page, and the admin theming page alone takes about 20 s to its
+	// load event on CI; a test that then switches a token set or uploads one
+	// ran past 30 s while working correctly (nine of them in run 37431331292).
+	// A larger budget costs nothing on a passing test, only on a failing one.
+	timeout: 60_000,
 	expect: { timeout: 10_000 },
 	// One worker, in order: parallel runs against one instance interfere with
 	// each other (measured in #181: 64 failures in parallel against 12 serially).
 	// Do not override with --workers.
-	fullyParallel: false,
+	//
+	// `fullyParallel` does not run anything at the same time here (that is
+	// `workers`). What it changes is how CI shards the suite: per test instead
+	// of per file. Per file, the 8 legs of run 37438276176 took 5 to 38+
+	// minutes, because token-sets and theming-sync (over 20 minutes each) could
+	// only land on one leg. A `mode: 'serial'` or `mode: 'default'` block stays
+	// together on one leg. Any other block with beforeAll/afterAll is cut into
+	// groups of ceil(tests / shards), and every leg that gets one runs its
+	// hooks; give a block `mode: 'default'` when its hooks must run once.
+	fullyParallel: true,
 	// 0 in CI, so a flaky test fails the run there. 1 on a developer box
 	// (PW_RETRIES overrides), where the shared instance is busy and a single 503
 	// is the likeliest reason a passing test fails. The list reporter marks a
@@ -34,10 +48,14 @@ export default defineConfig({
 	// its tally, the `if: failure()` trace upload never fires, and the run shows
 	// as "cancelled", which reads like an infrastructure hiccup rather than a
 	// suite that ran out of budget. Exiting on our own clock a few minutes early
-	// means the tally and the artifacts always exist. Measured: the baseline run
-	// (31086399980) executed 100 of 110 tests in 5.9m, so 38m is ~6x headroom
-	// over the full suite and cannot mask a real regression — it can only turn a
-	// silent cancellation into a reported timeout.
+	// means the tally and the artifacts always exist.
+	//
+	// The cap is per Playwright process, so per shard, and every shard leg has
+	// its own 45-minute job. CI splits the suite over 8 legs (`e2e-shards` in
+	// code-quality.yml), and Playwright balances them by test COUNT, not
+	// duration. Measured in run 37453545530: about 47 minutes of tests in all,
+	// the slowest leg 10.9 minutes of tests (13.2 for the whole job), well
+	// inside 38m.
 	globalTimeout: 38 * 60_000,
 	reporter: [
 		['list'],
