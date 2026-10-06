@@ -284,27 +284,27 @@ organisation's own identity on that organisation's own instance. **Not build out
 - denhaag
 - dinkelland
 - drechterland
-- epe
 - epe-dark
+- epe
 - example-basisschool
 - example-college
 - example-gemeente
 - example-opleider
 - example-voortgezet
-- frankendesk
 - frankendesk-dark
+- frankendesk
 - ggd-amsterdam
 - hoorn
 - leiden
 - museum_weesp
-- nijmegen
 - nijmegen-dark
+- nijmegen
 - noaberkracht
-- noordwijk
 - noordwijk-dark
+- noordwijk
 - opencatalogi
-- provincie-zuid-holland
 - provincie-zuid-holland-dark
+- provincie-zuid-holland
 - rijkshuisstijl
 - rotterdam
 - stadsarchief
@@ -313,14 +313,14 @@ organisation's own identity on that organisation's own instance. **Not build out
 - tubbergen
 - utrecht
 - vga-verzekeringen
-- vng
 - vng-dark
-- xxllnc
+- vng
 - xxllnc-dark
-- zuiddrecht
+- xxllnc
 - zuiddrecht-dark
-- zuiddrecht-emblem
 - zuiddrecht-emblem-grey
+- zuiddrecht-emblem
+- zuiddrecht
 
 ## Naming stability (public API)
 
