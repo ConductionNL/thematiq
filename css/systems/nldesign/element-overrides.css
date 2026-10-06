@@ -337,11 +337,19 @@ header nav .icon {
    SOLID BACKGROUNDS
    ============================================ */
 
+/*
+ * A widget gets a solid ground; the parts inside it do not. A BEM element
+ * such as `.cn-stages-widget__bar` also holds "widget" in its class, and
+ * this rule (ID-level specificity through `:not(#header *)`) used to paint
+ * it the page background, so a part that is drawn as a coloured shape, the
+ * stages bars first, disappeared on its card. Skipping `widget__` leaves
+ * every container solid and the parts their own colour.
+ */
 .panel:not(#header *),
 .widget:not(#header *),
 .dashboard-widget:not(#header *),
 [class*='panel']:not(#header *),
-[class*='widget']:not(#header *),
+[class*='widget']:not([class*='widget__']):not(#header *),
 #app-content,
 .app-content {
 	background: var(--color-main-background);
