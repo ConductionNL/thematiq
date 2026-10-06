@@ -65,6 +65,14 @@ use Psr\Log\LoggerInterface;
 class TokenSetService {
 
 	/**
+	 * TTL (seconds) for a shipped set's cached warnings. The key already
+	 * changes with the app version and the set's own CSS; the TTL bounds how
+	 * long an edit to a shared design-system file, which the key does not
+	 * cover, can go unseen on a development checkout.
+	 */
+	private const WARNINGS_CACHE_TTL = 3600;
+
+	/**
 	 * The app manager for resolving paths.
 	 *
 	 * @var IAppManager
@@ -117,13 +125,20 @@ class TokenSetService {
 	private ICache $wcagCache;
 
 	/**
+	 * Local cache for a shipped set's audit warnings (see cachedShippedWarnings()).
+	 *
+	 * @var ICache
+	 */
+	private ICache $warningsCache;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager for resolving paths.
 	 * @param IConfig $config The config service.
 	 * @param LoggerInterface $logger The logger.
 	 * @param ShippedTokenSetAuditService $audit The shipped-set contrast audit service.
-	 * @param ICacheFactory $cacheFactory Creates the distributed WCAG-level cache.
+	 * @param ICacheFactory $cacheFactory Creates the WCAG-level and warnings caches.
 	 * @param TokenSetVocabularyAuditService $vocabularyAudit The vocabulary-completeness audit service.
 	 * @param RuntimeFileStore|null $store Where uploaded sets are kept (app data).
 	 * @param SetFileReader $files Lists and checks a set's file in the release or the store.
@@ -145,6 +160,7 @@ class TokenSetService {
 		$this->logger = $logger;
 		$this->audit = $audit;
 		$this->wcagCache = $cacheFactory->createDistributed(prefix: 'thematiq_wcag_level');
+		$this->warningsCache = $cacheFactory->createLocal(prefix: 'thematiq_set_warnings');
 		$this->vocabularyAudit = $vocabularyAudit;
 	}//end __construct()
 
@@ -386,6 +402,74 @@ class TokenSetService {
 			return $tokenSet;
 		}
 
+		$warnings = $this->cachedShippedWarnings(tokenSet: $tokenSet, meta: $meta, appPath: $appPath, id: $id);
+		if (empty($warnings) === false) {
+			$tokenSet['warnings'] = $warnings;
+		}
+
+		return $tokenSet;
+	}//end applyWarnings()
+
+	/**
+	 * The warnings of a shipped set, from the local cache when its inputs are
+	 * unchanged.
+	 *
+	 * The three audits parse the set's CSS and the design system's own files,
+	 * which for the whole catalogue took seconds on every request that lists
+	 * the sets (the admin page among them). Their result depends only on those
+	 * files and on the entry itself, so the key covers the app version (the
+	 * shipped files), the set's CSS content (a synced or edited set), and the
+	 * entry's design system, theming and metadata (captured branding, manifest
+	 * changes). Local, not distributed: the inputs are this server's files.
+	 *
+	 * @param array<string, mixed> $tokenSet The token set entry being built.
+	 * @param array<string, mixed> $meta The merged manifest metadata for this id.
+	 * @param string $appPath The app directory path.
+	 * @param string $id The token set id.
+	 *
+	 * @return array<int, mixed> The set's warnings, contrast first.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
+	 */
+	private function cachedShippedWarnings(array $tokenSet, array $meta, string $appPath, string $id): array {
+		$css = $this->files->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->store);
+		$key = $id . '-' . md5(
+			(string)json_encode(
+				[
+					$this->appManager->getAppVersion('thematiq'),
+					md5((string)$css),
+					$tokenSet['design_system'],
+					($tokenSet['theming'] ?? []),
+					$meta,
+				]
+			)
+		);
+
+		$cached = $this->warningsCache->get(key: $key);
+		if (is_array($cached) === true) {
+			return $cached;
+		}
+
+		$warnings = $this->auditShippedSet(tokenSet: $tokenSet, meta: $meta, appPath: $appPath, id: $id);
+		$this->warningsCache->set(key: $key, value: $warnings, ttl: self::WARNINGS_CACHE_TTL);
+
+		return $warnings;
+	}//end cachedShippedWarnings()
+
+	/**
+	 * Run the contrast, vocabulary and typeface audits for a shipped set.
+	 *
+	 * @param array<string, mixed> $tokenSet The token set entry being built.
+	 * @param array<string, mixed> $meta The merged manifest metadata for this id.
+	 * @param string $appPath The app directory path.
+	 * @param string $id The token set id.
+	 *
+	 * @return array<int, mixed> The set's warnings, contrast first.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
+	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
+	 */
+	private function auditShippedSet(array $tokenSet, array $meta, string $appPath, string $id): array {
 		// Shipped set: surface the same non-blocking WCAG contrast warning
 		// the apply dialog raises for a custom upload, so a sub-AA or
 		// unevaluated shipped set is not silently applied.
@@ -418,12 +502,8 @@ class TokenSetService {
 			$this->fontAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
 		);
 
-		if (empty($warnings) === false) {
-			$tokenSet['warnings'] = $warnings;
-		}
-
-		return $tokenSet;
-	}//end applyWarnings()
+		return $warnings;
+	}//end auditShippedSet()
 
 	/**
 	 * Check if a token set exists on the filesystem.
