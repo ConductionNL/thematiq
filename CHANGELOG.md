@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **Zuiddrecht wears the workplace boards.** `css/token-overrides/zuiddrecht.css` now carries the
+  measures of the approved workplace boards (DqTokens, DqZijbalk, DqDashboard, DqZaken, DqZaak) on
+  the Conduction library's own class names, for this set only: a 264px navigation
+  (`--nldesign-nc-navigation-width`), small grey capital captions, a flat soft-red selected entry with
+  a bold label, 28px page titles and a 32px greeting, 18px card titles, the attention card's 13px red
+  kicker over a 20px title, 34px counters over grey labels, 38px pill views with the chosen one in ink,
+  and a quiet 14px table. Every colour goes through a token, so the dark variant follows on its own.
 - **The light workplace draws the standard apps as cards.** While the workplace layout is `light`,
   `css/workplace-layout.css` draws the dashboard's panels, the Files list, the settings sections and
   the thematiq panel as cards on the surface (the container radius, a hairline, the cards' shadow
