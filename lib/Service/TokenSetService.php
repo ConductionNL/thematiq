@@ -61,6 +61,10 @@ use Psr\Log\LoggerInterface;
  *
  * @spec openspec/specs/token-sets/spec.md
  * @spec openspec/specs/custom-token-sets/spec.md
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - discovery merges the release, the store,
+ *   three audits and their cache. The cache is already its own class; splitting discovery
+ *   would move the count, not lower it.
  */
 class TokenSetService {
 
@@ -117,6 +121,13 @@ class TokenSetService {
 	private ICache $wcagCache;
 
 	/**
+	 * Keeps shipped-set audit warnings until their inputs change.
+	 *
+	 * @var AuditWarningsCache
+	 */
+	private AuditWarningsCache $warningsCache;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager for resolving paths.
@@ -145,6 +156,7 @@ class TokenSetService {
 		$this->logger = $logger;
 		$this->audit = $audit;
 		$this->wcagCache = $cacheFactory->createDistributed(prefix: 'thematiq_wcag_level');
+		$this->warningsCache = new AuditWarningsCache(cacheFactory: $cacheFactory, appManager: $appManager);
 		$this->vocabularyAudit = $vocabularyAudit;
 	}//end __construct()
 
@@ -386,6 +398,55 @@ class TokenSetService {
 			return $tokenSet;
 		}
 
+		$warnings = $this->cachedShippedWarnings(tokenSet: $tokenSet, meta: $meta, appPath: $appPath, id: $id);
+
+		if (empty($warnings) === false) {
+			$tokenSet['warnings'] = $warnings;
+		}
+
+		return $tokenSet;
+	}//end applyWarnings()
+
+	/**
+	 * A shipped set's audit warnings, from the cache when its inputs are
+	 * unchanged.
+	 *
+	 * The audits are pure functions of the release files, the set's merged
+	 * manifest entry and its theming block (which captured branding can
+	 * replace), so those are the per-set inputs; {@see AuditWarningsCache}
+	 * adds the release files. Custom sets never reach this path: their
+	 * warnings come from the uploader.
+	 *
+	 * @param array<string, mixed> $tokenSet The token set entry being built.
+	 * @param array<string, mixed> $meta The merged manifest metadata for this id.
+	 * @param string $appPath The app directory path.
+	 * @param string $id The token set id.
+	 *
+	 * @return array<int, mixed> The warnings; empty when the set passes every audit.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	private function cachedShippedWarnings(array $tokenSet, array $meta, string $appPath, string $id): array {
+		return $this->warningsCache->remember(
+			appPath: $appPath,
+			inputs: [$id, $tokenSet['design_system'], ($tokenSet['theming'] ?? []), $meta],
+			compute: fn (): array => $this->auditShippedSet(tokenSet: $tokenSet, meta: $meta, appPath: $appPath, id: $id)
+		);
+	}//end cachedShippedWarnings()
+
+	/**
+	 * Run the three audits on a shipped set.
+	 *
+	 * @param array<string, mixed> $tokenSet The token set entry being built.
+	 * @param array<string, mixed> $meta The merged manifest metadata for this id.
+	 * @param string $appPath The app directory path.
+	 * @param string $id The token set id.
+	 *
+	 * @return array<int, mixed> The warnings; empty when the set passes every audit.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	private function auditShippedSet(array $tokenSet, array $meta, string $appPath, string $id): array {
 		// Shipped set: surface the same non-blocking WCAG contrast warning
 		// the apply dialog raises for a custom upload, so a sub-AA or
 		// unevaluated shipped set is not silently applied.
@@ -418,12 +479,46 @@ class TokenSetService {
 			$this->fontAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
 		);
 
-		if (empty($warnings) === false) {
-			$tokenSet['warnings'] = $warnings;
+		return $warnings;
+	}//end auditShippedSet()
+
+	/**
+	 * The name and upstream version of ONE set, without discovering the rest.
+	 *
+	 * For callers on the request path that need only the active set's label,
+	 * chiefly `Capabilities`, which core renders into every page. It resolves
+	 * the same manifest entry {@see self::getAvailableTokenSets()} would, so
+	 * the two agree, but reads no stylesheet and runs no audit.
+	 *
+	 * @param string $tokenSetId The token set id.
+	 *
+	 * @return array{name: string, upstreamVersion: string|null}|null The summary, or null when no such set exists.
+	 *
+	 * @spec openspec/specs/theming-capability/spec.md
+	 */
+	public function getTokenSetSummary(string $tokenSetId): ?array {
+		if ($this->isValidTokenSet(tokenSetId: $tokenSetId) === false) {
+			return null;
 		}
 
-		return $tokenSet;
-	}//end applyWarnings()
+		$metadata = $this->readManifest(manifestPath: $this->getAppPath() . '/token-sets.json');
+		$customMetadata = $this->readCustomManifest();
+		$meta = $this->resolveMeta(
+			id: $tokenSetId,
+			shippedMeta: ($metadata[$tokenSetId] ?? null),
+			customMeta: ($customMetadata[$tokenSetId] ?? null)
+		);
+
+		$upstreamVersion = null;
+		if (isset($meta['upstreamVersion']) === true) {
+			$upstreamVersion = (string)$meta['upstreamVersion'];
+		}
+
+		return [
+			'name' => (string)($meta['name'] ?? $this->formatName(id: $tokenSetId)),
+			'upstreamVersion' => $upstreamVersion,
+		];
+	}//end getTokenSetSummary()
 
 	/**
 	 * Check if a token set exists on the filesystem.

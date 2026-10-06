@@ -146,21 +146,20 @@ class Capabilities implements IPublicCapability {
 	 * @spec openspec/specs/theming-capability/spec.md
 	 */
 	private function buildTokenSet(string $tokenSetId): array {
-		$available = $this->tokenSetService->getAvailableTokenSets();
-		$byId = array_column($available, null, 'id');
-
-		// A discovered entry always carries `name`. The version reported here is
-		// the upstream provenance recorded by the token-sync workflow
-		// (`upstreamVersion`), present only for sets generated from an upstream
-		// release — null for hand-maintained and custom sets.
-		$entry = ($byId[$tokenSetId] ?? null);
+		// ONE set's summary, not the catalogue. Core renders capabilities into
+		// every page, and discovering every set runs three audits per set:
+		// measured 2026-10-06 at ~1.5 s per page for 61 sets.
+		//
+		// The version reported here is the upstream provenance recorded by the
+		// token-sync workflow (`upstreamVersion`), present only for sets
+		// generated from an upstream release; null for hand-maintained and
+		// custom sets.
+		$summary = $this->tokenSetService->getTokenSetSummary(tokenSetId: $tokenSetId);
 		$name = $tokenSetId;
 		$version = null;
-		if (is_array($entry) === true) {
-			$name = (string)$entry['name'];
-			if (isset($entry['upstreamVersion']) === true) {
-				$version = (string)$entry['upstreamVersion'];
-			}
+		if ($summary !== null) {
+			$name = $summary['name'];
+			$version = $summary['upstreamVersion'];
 		}
 
 		return [

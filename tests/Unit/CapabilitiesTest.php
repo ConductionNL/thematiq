@@ -148,9 +148,13 @@ class CapabilitiesTest extends TestCase {
 		);
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'rijkshuisstijl', 'name' => 'Rijkshuisstijl', 'description' => '']]
+		$tokenSetService->method('getTokenSetSummary')->willReturn(
+			['name' => 'Rijkshuisstijl', 'upstreamVersion' => null]
 		);
+		// Core renders capabilities into every page. The full discovery runs
+		// three audits per set (~1.5 s for 61 sets, measured 2026-10-06), so
+		// the capability must never reach it.
+		$tokenSetService->expects($this->never())->method('getAvailableTokenSets');
 
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
@@ -195,8 +199,8 @@ class CapabilitiesTest extends TestCase {
 		$designSystemService->method('resolveActiveIconPacks')->with('nextcloud')->willReturn([]);
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'nextcloud', 'name' => 'Nextcloud (default)', 'description' => '']]
+		$tokenSetService->method('getTokenSetSummary')->willReturn(
+			['name' => 'Nextcloud (default)', 'upstreamVersion' => null]
 		);
 
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
@@ -235,8 +239,8 @@ class CapabilitiesTest extends TestCase {
 		$designSystemService->method('resolveActiveIconPacks')->with('lasuite')->willReturn(['dsfr']);
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'lasuite', 'name' => 'La Suite numérique']]
+		$tokenSetService->method('getTokenSetSummary')->willReturn(
+			['name' => 'La Suite numérique', 'upstreamVersion' => null]
 		);
 
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
@@ -269,7 +273,7 @@ class CapabilitiesTest extends TestCase {
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
 		// Not discovered on disk either — absent from the available-sets list.
-		$tokenSetService->method('getAvailableTokenSets')->willReturn([]);
+		$tokenSetService->method('getTokenSetSummary')->willReturn(null);
 
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
 		$auditService->expects($this->never())->method('auditSet');
@@ -303,8 +307,8 @@ class CapabilitiesTest extends TestCase {
 		$designSystemService->method('resolveActiveIconPacks')->willReturn(['rvo', 'open-gemeenten', 'den-haag']);
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'rijkshuisstijl', 'name' => 'Rijkshuisstijl']]
+		$tokenSetService->method('getTokenSetSummary')->willReturn(
+			['name' => 'Rijkshuisstijl', 'upstreamVersion' => null]
 		);
 
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
@@ -339,8 +343,8 @@ class CapabilitiesTest extends TestCase {
 		$designSystemService->method('resolveActiveIconPacks')->willReturn([]);
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'hoog-contrast', 'name' => 'Hoog Contrast']]
+		$tokenSetService->method('getTokenSetSummary')->willReturn(
+			['name' => 'Hoog Contrast', 'upstreamVersion' => null]
 		);
 
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
@@ -371,8 +375,8 @@ class CapabilitiesTest extends TestCase {
 		$designSystemService->method('resolveActiveIconPacks')->willReturn(['rvo', 'open-gemeenten', 'den-haag']);
 
 		$tokenSetService = $this->createMock(TokenSetService::class);
-		$tokenSetService->method('getAvailableTokenSets')->willReturn(
-			[['id' => 'noaberkracht', 'name' => 'Noaberkracht']]
+		$tokenSetService->method('getTokenSetSummary')->willReturn(
+			['name' => 'Noaberkracht', 'upstreamVersion' => null]
 		);
 
 		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
