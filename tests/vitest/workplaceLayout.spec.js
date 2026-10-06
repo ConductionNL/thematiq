@@ -408,7 +408,9 @@ describe('the layout stylesheets are off unless asked for', () => {
 		const systems = JSON.parse(read('design-systems.json'))
 		const listed = systems.flatMap((system) =>
 			(system.stylesheets || []).filter((sheet) =>
-				/workplace-layout|brand-stripe/.test(sheet),
+				/workplace-layout|brand-stripe|navigation-width|navigation-active-soft|login-watermark-off/.test(
+					sheet,
+				),
 			),
 		)
 		expect(listed).toEqual([])

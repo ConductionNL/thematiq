@@ -1,0 +1,44 @@
+/**
+ * Selected navigation entry: soft tint with a bold label
+ * (openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded only while the selected entry's style resolves to `soft`: an
+ * administrator chose it, or the active token set names it in its `layout`
+ * block and the administrator left the choice to the theme. Off for every
+ * other set, which keeps the entry as Nextcloud draws it.
+ *
+ * The entry you are on becomes a flat wash of the accent's light tint with
+ * the accent's dark text as a bold label, the way the Zuiddrecht workplace
+ * boards draw it (DqZijbalk: #A30000 on #FCEDEC, 600). A set that names no
+ * accent falls back to its primary tint and its primary, the pair every set
+ * already reaches AA on (the primary on the primary-light wash). Every colour
+ * is a token, so the generated dark variant keeps up on its own.
+ *
+ * The selectors carry the navigation id, as element-overrides.css does: the
+ * component's own rules are scoped and injected after this sheet, so a bare
+ * class would lose on specificity and on order.
+ */
+#app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+#app-navigation-vue .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+.app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active {
+	background-color: var(
+		--nldesign-color-accent-light,
+		var(--nldesign-color-primary-light, var(--color-primary-element-light))
+	) !important;
+}
+
+#app-navigation .app-navigation-entry.active .app-navigation-entry-link,
+#app-navigation-vue .app-navigation-entry.active .app-navigation-entry-link,
+.app-navigation .app-navigation-entry.active .app-navigation-entry-link {
+	font-weight: 600;
+	color: var(
+		--nldesign-color-accent-text,
+		var(
+			--nldesign-component-navigation-active-color,
+			var(--nldesign-color-primary, var(--color-primary-element))
+		)
+	) !important;
+}

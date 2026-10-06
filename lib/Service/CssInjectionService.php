@@ -691,7 +691,7 @@ class CssInjectionService {
 	 *     tokenSet: string,
 	 *     designSystem: string,
 	 *     layers: array<int, array{layer: string, kind: string, href?: string, css?: string, id?: string}>,
-	 *     layout: array{workplaceLayout: string, brandStripe: bool}
+	 *     layout: array<string, bool|int|string|null>
 	 * }
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
@@ -828,6 +828,7 @@ class CssInjectionService {
 	 * @spec openspec/specs/component-tokens/spec.md
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 */
 	private function injectConditionalStyles(string $tokenSet): void {
 		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet
@@ -843,10 +844,11 @@ class CssInjectionService {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
-		// The workplace layout and the brand stripe, for the set this page wears.
 		foreach ($this->layoutOptions->stylesheets(tokenSet: $tokenSet) as $file) {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: $file));
 		}
+
+		array_map(fn (array $row) => $this->emitInlineStyle(css: $row['css'], id: $row['id']), $this->layoutOptions->inlineStyles(tokenSet: $tokenSet));
 
 		// A header, so it follows the overrides and custom CSS links: it must
 		// come last, or a stored value would beat the lock.

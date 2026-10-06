@@ -97,18 +97,68 @@ php occ config:app:delete thematiq workplace_layout
 php occ config:app:delete thematiq brand_stripe
 ```
 
+## Where the brand stripe is drawn
+
+**Setting:** `thematiq:brand_stripe_placement` (`header-and-login`, `header`, `login`, or not set)
+
+Only while the brand stripe is on. **Top bar and login card** is how the stripe has always been drawn and what a theme that names nothing gets. **Top bar only** leaves the login card plain; **Login card only** leaves the top bar plain, the way the Zuiddrecht workplace boards draw it (the stripe marks the login screen, the bar carries a hairline).
+
+**How it works:** the stripe keeps its one stylesheet; a placement other than both loads `css/brand-stripe-header-only.css` or `css/brand-stripe-login-only.css` after it, which takes the other copy off again.
+
+## Navigation width
+
+**Setting:** `thematiq:navigation_width` (a whole number of pixels from `200` to `480`, or not set)
+
+The width of the app navigation. Left empty, the width follows the theme; a theme that names none keeps the width Nextcloud gives the panel. Gemeente Zuiddrecht names 264.
+
+**How it works:** while a width resolves, Thematiq loads `css/navigation-width.css` and one inline `:root` variable, `--thematiq-navigation-width`, that the stylesheet reads: Nextcloud's `--navigation-width`, the thematiq global and the `--nldesign-nc-navigation-width` token all take it, and the panel itself is sized outright as well.
+
+## Selected navigation entry
+
+**Setting:** `thematiq:navigation_active_style` (`default`, `soft`, or not set)
+
+**Default** is the entry as Nextcloud draws it. **Soft tint with a bold label** draws the entry you are on as a flat wash of the accent's light tint (`--nldesign-color-accent-light`) with the accent's dark text (`--nldesign-color-accent-text`) as a bold label, the way the Zuiddrecht workplace boards draw it: #A30000 on #FCEDEC, 7.22:1. A theme without an accent uses its primary tint and its primary colour, a pair every shipped set already reaches AA on.
+
+**How it works:** while the style is `soft`, Thematiq loads `css/navigation-active-soft.css`. Every colour is a token, so the generated dark variant keeps up on its own.
+
+## Login watermark
+
+**Setting:** `thematiq:login_watermark` (`1`, `0`, or not set)
+
+With the light top bar, a theme can draw its emblem large and faint on the login page (see the workplace layout above). **Off** hides it whatever the theme says; a theme that names no image shows none either way.
+
+**How it works:** while the layout is light and the watermark is off, Thematiq loads `css/login-watermark-off.css` after the layout stylesheet, which takes the mark off again.
+
+```bash
+# The stripe on the login card only, a 264px navigation, the soft entry, no watermark
+php occ config:app:set thematiq brand_stripe_placement --value=login
+php occ config:app:set thematiq navigation_width --value=264
+php occ config:app:set thematiq navigation_active_style --value=soft
+php occ config:app:set thematiq login_watermark --value=0
+
+# Follow the theme again
+php occ config:app:delete thematiq brand_stripe_placement
+php occ config:app:delete thematiq navigation_width
+php occ config:app:delete thematiq navigation_active_style
+php occ config:app:delete thematiq login_watermark
+```
+
 ### Layout defaults in a token set
 
-A shipped token set can carry defaults for both settings in `token-sets.json`:
+A shipped token set can carry defaults for every layout setting in `token-sets.json`:
 
 ```json
 "layout": {
 	"workplace_layout": "light",
-	"brand_stripe": true
+	"brand_stripe": true,
+	"brand_stripe_placement": "login",
+	"navigation_width": 264,
+	"navigation_active_style": "soft",
+	"login_watermark": false
 }
 ```
 
-They apply only while the administrator has stored no choice.
+They apply only while the administrator has stored no choice. A set that leaves one out gets the behaviour every set had before the setting existed: the stripe in both places, Nextcloud's navigation width, the default entry, the watermark drawn. Every layout choice travels in the configuration bundle as the administrator stored it, "follow the theme" included.
 
 ## Theming per App
 
