@@ -71,14 +71,43 @@ div.guest-box.login-box::after {
  * Sizes: page title 28, greeting 32, card title 18, attention card title 20,
  * kicker 13, counter value 34, table 14, navigation caption 12 (DqTokens:
  * "Paginatitel 30, Kaarttitel 18, Tekst 15, Meta 13"; the page boards draw
- * their titles at 28). */
+ * their titles at 28).
+ *
+ * EVERY SELECTOR CARRIES THE CONTENT OR NAVIGATION ID. The library's own
+ * rules are component-scoped (`.cn-x[data-v-…]`) and injected after this
+ * sheet, so a bare class here loses twice: on specificity and on order.
+ * `#app-content-vue` / `#app-navigation-vue` outrank both, the way
+ * element-overrides.css already addresses the navigation (measured on the
+ * throwaway instance, 6 October 2026: a bare `.cn-kpi-card__value` lost to
+ * the inline rule and the counter stayed 18.75px). */
 
-/* The navigation: 264px wide (DqZijbalk), the captions small capitals in grey,
- * the selected entry a flat soft-red wash with a bold label. */
+/* The navigation: 264px wide (DqZijbalk). Nextcloud sizes the panel from
+ * `--navigation-width`, which theme-scopes.css maps from the thematiq global
+ * and that from `--nldesign-nc-navigation-width`; the three are set together
+ * so the width holds whichever sheet reads it. */
 :root {
 	--nldesign-nc-navigation-width: 264px;
+	--thematiq-global-navigation-width: 264px;
+	--navigation-width: 264px;
+	/* Headings: the NL Design sheet sizes every h2 and h3 from these tokens
+	 * with !important, so a class rule cannot. h2 stays the defaults' 2rem
+	 * (30px: DqTokens "Paginatitel 30"); h3, the card title, is 18px
+	 * ("Kaarttitel 18"). */
+	--nldesign-component-heading-3-font-size: 18px;
 }
 
+/* The panel itself: Nextcloud's component sizes it from its own rule, so the
+ * width is said outright as well. */
+#app-navigation-vue,
+.app-navigation {
+	--navigation-width: 264px;
+	width: 264px !important;
+	min-width: 264px !important;
+	flex: 0 0 264px !important;
+}
+
+/* The captions: small capitals in grey. The selected entry: a flat soft-red
+ * wash with a bold label (DqTokens "Menu-item": rood op zachtrood). */
 #app-navigation-vue .app-navigation-caption__name,
 .app-navigation .app-navigation-caption__name {
 	font-size: 12px;
@@ -88,8 +117,8 @@ div.guest-box.login-box::after {
 	color: var(--color-text-maxcontrast);
 }
 
-#app-navigation-vue .app-navigation-entry.active,
-.app-navigation .app-navigation-entry.active {
+#app-navigation-vue .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+.app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active {
 	background-color: var(--nldesign-color-accent-light);
 }
 
@@ -98,69 +127,64 @@ div.guest-box.login-box::after {
 	font-weight: 600;
 }
 
-/* Page titles (DqZaken, DqZaak, DqWerkbord: 28px) and the greeting (DqDashboard: 32px). */
-.cn-page-header__title,
-.cn-dashboard-page__title,
-.cn-detail-page__title {
-	font-size: 28px;
-	line-height: 1.2;
-}
-
-.cn-header-widget__title {
-	font-size: 32px;
+/* The greeting (DqDashboard: 32px, an h2 the heading token would hold at 30). */
+#app-content-vue .cn-header-widget__title {
+	font-size: 32px !important;
 	letter-spacing: -0.01em;
 }
 
-/* Cards: an 18px title; the attention card a 20px title under a 13px kicker in
- * the accent's dark step (DqDashboard "Vandaag eerst"). */
-.cn-widget-wrapper__title {
-	font-size: 18px;
+/* The attention card: a 20px title (an h3, 18 by the token) under a 13px
+ * kicker in the accent's dark step (DqDashboard "Vandaag eerst"); the
+ * paragraph sheet otherwise sizes the kicker as body text. */
+#app-content-vue .cn-banner-widget__title {
+	font-size: 20px !important;
 	line-height: 1.3;
 }
 
-.cn-banner-widget__title {
-	font-size: 20px;
-	line-height: 1.3;
-}
-
-.cn-banner-widget__kicker {
-	font-size: 13px;
+#app-content-vue .cn-banner-widget__kicker {
+	font-size: 13px !important;
 	font-weight: 700;
 	letter-spacing: 0.06em;
 }
 
-.cn-banner-widget--error .cn-banner-widget__kicker {
-	color: var(--nldesign-color-accent-text);
+#app-content-vue .cn-banner-widget--error .cn-banner-widget__kicker {
+	color: var(--nldesign-color-accent-text) !important;
+}
+
+#app-content-vue .cn-banner-widget__action--primary {
+	border-color: var(--color-primary-element) !important;
+	background: var(--color-primary-element) !important;
+	color: var(--color-primary-element-text) !important;
 }
 
 /* Counters (DqDashboard): a grey 14px label over a 34px number. */
-.cn-kpi-card__title {
+#app-content-vue .cn-kpi-card__title {
 	font-weight: 400;
 	color: var(--color-text-maxcontrast);
 }
 
-.cn-kpi-card__value {
+#app-content-vue .cn-kpi-card__value {
 	font-size: 34px;
 	line-height: 1;
 	letter-spacing: -0.01em;
 }
 
 /* Views on a list (DqZaken): 38px pills, the chosen one ink on white. */
-.cn-quick-filter-bar__tab {
+#app-content-vue .cn-quick-filter-bar__tab {
 	min-height: 38px;
 	border-radius: 19px;
 	font-size: 14px;
 	font-weight: 600;
 }
 
-.cn-quick-filter-bar__tab--active {
+#app-content-vue .cn-quick-filter-bar__tab--active {
 	background-color: var(--color-main-text);
 	border-color: var(--color-main-text);
 	color: var(--color-main-background);
 }
 
 /* The table (DqZaken): a quiet 14px header in grey on a near-white row, 14px cells. */
-.cn-data-table thead th {
+#app-content-vue .cn-data-table thead th {
 	font-size: 14px;
 	font-weight: 600;
 	color: var(--color-text-maxcontrast);
@@ -171,6 +195,6 @@ div.guest-box.login-box::after {
 	);
 }
 
-.cn-data-table tbody td {
+#app-content-vue .cn-data-table tbody td {
 	font-size: 14px;
 }
