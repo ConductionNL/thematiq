@@ -157,7 +157,6 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 			$appManager,
 			$urlGenerator,
 			$designSystemService,
-			$tokenSetService,
 			$auditService,
 			$cacheFactory
 		);

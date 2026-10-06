@@ -168,7 +168,11 @@ const LABEL =
 test.use({ colorScheme: 'light' })
 
 test.describe('menu-labels', () => {
-	test.describe.configure({ mode: 'serial', timeout: 90_000 })
+	// Not `mode: 'serial'`: every test sets and restores its own state through
+	// withThemeState(), so none depends on the one before it. Serial mode would
+	// skip the rest of the file after one failure (26 tests in run
+	// 37438276176), and keep all 32 tests on one CI shard.
+	test.describe.configure({ timeout: 90_000 })
 
 	test(// @e2e openspec/specs/menu-labels/spec.md#setting-stored-as-enabled
 	// @e2e openspec/specs/menu-labels/spec.md#toggle-menu-labels-on
@@ -232,19 +236,31 @@ test.describe('menu-labels', () => {
 		browser,
 		page,
 	}) => {
-		await withThemeState(browser, { showMenuLabels: true }, async () => {
-			await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-			const layers = await thematiqLayers(page)
-			const labels = layers.indexOf('show-menu-labels')
-			expect(labels).toBeGreaterThan(
-				layers.findIndex((l) => l.startsWith('custom-overrides')),
-			)
-			for (const [i, l] of layers.entries()) {
-				if (l.startsWith('systems/') || l.startsWith('tokens/')) {
-					expect(i, l).toBeLessThan(labels)
+		// An empty overrides file of its own, so the custom-overrides layer is
+		// there to load after: without one, findIndex() is -1 and "after it"
+		// holds for any position.
+		await withThemeState(
+			browser,
+			{ showMenuLabels: true, overrides: {} },
+			async () => {
+				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+				const layers = await thematiqLayers(page)
+				const labels = layers.indexOf('show-menu-labels')
+				const overrides = layers.findIndex((l) =>
+					l.startsWith('custom-overrides'),
+				)
+				expect(
+					overrides,
+					'the custom-overrides layer must load',
+				).toBeGreaterThanOrEqual(0)
+				expect(labels).toBeGreaterThan(overrides)
+				for (const [i, l] of layers.entries()) {
+					if (l.startsWith('systems/') || l.startsWith('tokens/')) {
+						expect(i, l).toBeLessThan(labels)
+					}
 				}
-			}
-		})
+			},
+		)
 	})
 
 	test(// @e2e openspec/specs/menu-labels/spec.md#feature-disabled-skips-css
@@ -270,9 +286,12 @@ test.describe('menu-labels', () => {
 		browser,
 		page,
 	}) => {
+		// The custom-overrides layer is only linked while the active set has a
+		// saved overrides file, so the test saves one (empty) itself rather than
+		// rely on an earlier spec having left one behind.
 		await withThemeState(
 			browser,
-			{ hideSlogan: true, showMenuLabels: true },
+			{ hideSlogan: true, showMenuLabels: true, overrides: {} },
 			async () => {
 				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
 				const layers = await thematiqLayers(page)
@@ -281,7 +300,10 @@ test.describe('menu-labels', () => {
 				)
 				const slogan = layers.indexOf('hide-slogan')
 				const labels = layers.indexOf('show-menu-labels')
-				expect(overrides).toBeGreaterThanOrEqual(0)
+				expect(
+					overrides,
+					'the custom-overrides layer must load',
+				).toBeGreaterThanOrEqual(0)
 				expect(slogan).toBeGreaterThan(overrides)
 				expect(labels).toBeGreaterThan(slogan)
 			},

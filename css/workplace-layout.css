@@ -81,3 +81,404 @@ body#body-login::before {
 	background-size: contain;
 	opacity: var(--nldesign-login-watermark-opacity, 0.07);
 }
+
+/*
+ * THE LOGIN PAGE AND THE GUEST PAGES
+ * (openspec/changes/workplace-layout-core-pages/specs/workplace-layout/spec.md).
+ *
+ * The light workplace draws Nextcloud's own login page the way its boards
+ * draw it (NcLogin): the logo ABOVE the card, 56px high, and the card itself
+ * a card of the workplace: 420px wide, a hairline border, the container
+ * radius, the cards' shadow colour, 32px of padding, a 24px title. The in-card
+ * stamp the NL Design sheet draws (40 by 32 pixels, 100px of room above the
+ * form) is retired here: Nextcloud's own `header-guest` logo, which that sheet
+ * hides, is shown again with the set's logo in it, so nothing is duplicated.
+ *
+ * The same holds for the guest pages that share `#body-login` (an error page,
+ * a public share): their title takes the same size and their "Back to …"
+ * action, a link dressed as a button, takes the login button's label colour.
+ * The NL Design link rule paints every `a` outside the header link-blue with
+ * id strength; on the primary blue of that button the label vanished
+ * (measured on Nextcloud 34, 6 October 2026). The selectors here carry one id
+ * and three classes so they outrank it (1,2,4).
+ *
+ * No colour is written: the card reads the scheme's border and the set's
+ * card-shadow token, the footer reads the muted text colour, the logo reads
+ * the set's logo token (and Nextcloud's own when a set names none).
+ */
+body#body-login header,
+body#body-login #header.header-guest {
+	display: block !important;
+	position: static !important;
+	height: auto !important;
+	background: transparent !important;
+	border: 0 !important;
+	box-shadow: none !important;
+}
+
+body#body-login #header.header-guest .logo {
+	display: block !important;
+	position: static !important;
+	width: 100% !important;
+	max-width: 320px !important;
+	height: 56px !important;
+	margin: 0 auto 28px !important;
+	background-image: var(--nldesign-logo-url, var(--image-logo)) !important;
+	background-size: contain !important;
+	background-repeat: no-repeat !important;
+	background-position: center !important;
+	filter: none !important;
+}
+
+body#body-login .guest-box.login-box::after {
+	display: none !important;
+}
+
+body#body-login .guest-box div[class*='login-box__wrapper'] {
+	padding-top: var(--nldesign-brand-stripe-height, 0px) !important;
+}
+
+body#body-login .login-box form,
+body#body-login .guest-box > div:not(#header):not([class*='login-box__wrapper']) {
+	padding: 32px !important;
+}
+
+body#body-login .guest-box.login-box {
+	width: min(420px, 100%) !important;
+	border: 1px solid
+		var(--nldesign-component-login-box-border-color, var(--color-border)) !important;
+	border-radius: var(
+		--nldesign-component-login-box-border-radius,
+		var(--border-radius-container-large)
+	) !important;
+	box-shadow: 0 2px 12px
+		var(--nldesign-component-content-card-shadow-color, transparent) !important;
+}
+
+body#body-login .guest-box h2,
+body#body-login .login-form__headline,
+body#body-login .body-login-container h2 {
+	margin: 0 0 18px !important;
+	font-size: 24px !important;
+	line-height: 1.25 !important;
+}
+
+/* The login title starts at the left edge, as the board draws it; a guest
+ * page keeps its centred title under its icon. */
+body#body-login .login-form__headline {
+	text-align: start !important;
+}
+
+/* The controls on the login page: 44px, as the board draws its fields, and
+ * a 1px edge where the NL Design sheet draws 2px. */
+body#body-login {
+	--default-clickable-area: 44px;
+}
+
+body#body-login .input-field__input,
+body#body-login input:not([type='checkbox']) {
+	border-width: 1px !important;
+}
+
+/* Their colour: the link colour, blue on Zuiddrecht (#3669A5, 5.64:1 on the
+ * white card), as the board draws "Wachtwoord vergeten?". The NL Design text
+ * rule forces every span to the body text with id strength, but it reads
+ * `--nldesign-color-on-surface` first, the opt-out it offers any surface, so
+ * the buttons set that variable instead of fighting the rule. */
+body#body-login .guest-box .login-box__wrapper > .button-vue--vue-tertiary,
+body#body-login .guest-box .login-box__wrapper > div > .button-vue--vue-tertiary {
+	--nldesign-color-on-surface: var(
+		--nldesign-color-link,
+		var(--color-primary-element)
+	);
+
+	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
+}
+
+/* The two text actions under the form (a device login, a forgotten password)
+ * are tertiary buttons: 14px, regular weight, underlined, as the board draws
+ * "Wachtwoord vergeten?". */
+body#body-login
+	.guest-box
+	.login-box__wrapper
+	> .button-vue--vue-tertiary
+	.button-vue__text,
+body#body-login
+	.guest-box
+	.login-box__wrapper
+	> div
+	> .button-vue--vue-tertiary
+	.button-vue__text {
+	font-size: 14px !important;
+	font-weight: 400 !important;
+	text-decoration: underline !important;
+}
+
+/* The footer line under the card: 13px muted text with no plate behind it
+ * (Nextcloud draws a blurred plate for its coloured backgrounds; the light
+ * workplace has none). */
+body#body-login footer.guest-box {
+	padding: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+}
+
+body#body-login footer.guest-box p.info,
+body#body-login footer.guest-box p.info a.entity-name {
+	color: var(--color-text-maxcontrast) !important;
+	font-size: 13px !important;
+	font-weight: 400 !important;
+	text-decoration: none !important;
+}
+
+/* The guest pages' "Back to …" action and their container. */
+body#body-login .body-login-container a.button.primary,
+body#body-login .guest-content a.button.primary,
+body#body-login .guest-box .login-box__wrapper a.button-vue--vue-primary {
+	color: var(
+		--nldesign-component-login-button-color,
+		var(--color-primary-element-text)
+	) !important;
+	text-decoration: none !important;
+}
+
+body#body-login .guest-content .body-login-container {
+	border: 1px solid var(--color-border) !important;
+	border-radius: var(--border-radius-container-large) !important;
+	box-shadow: 0 2px 12px
+		var(--nldesign-component-content-card-shadow-color, transparent) !important;
+}
+
+/*
+ * THE TOP BAR (the DqKop board).
+ *
+ * 68px high: Nextcloud sizes the bar AND the offset of everything under it
+ * from `--header-height`, so the one variable moves both. The app grid
+ * button is a 40px square on the workspace colour with the controls' radius.
+ * The search field is a 44px pill on the workspace colour with a hairline
+ * edge and a regular-weight muted label; Nextcloud draws it as a translucent
+ * dark bar with a bold label, which is the look of its coloured header.
+ *
+ * `--button-size` is the variable the library's icon-only button reads for
+ * its width and minimum width, so the square is said through it, not against it.
+ */
+body:not(#body-login) {
+	--header-height: 68px;
+}
+
+:where(body:not(#body-login)) #header .app-menu__waffle.button-vue {
+	--button-size: 40px;
+	--default-clickable-area: 40px;
+
+	width: 40px !important;
+	min-width: 40px !important;
+	height: 40px !important;
+	min-height: 40px !important;
+	margin-inline: 4px;
+	border-radius: var(--border-radius-element) !important;
+	background-color: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-hover)
+	) !important;
+}
+
+:where(body:not(#body-login)) #header .unified-search-menu .header-menu__trigger,
+:where(body:not(#body-login)) #header .unified-search-menu button,
+:where(body:not(#body-login)) #header .unified-search__button {
+	height: 44px !important;
+	min-height: 44px !important;
+	max-width: 560px !important;
+	border: 1px solid var(--color-border) !important;
+	border-radius: 22px !important;
+	background-color: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-hover)
+	) !important;
+	color: var(--color-text-maxcontrast) !important;
+	font-weight: 400 !important;
+}
+
+:where(body:not(#body-login))
+	#header
+	.unified-search-menu
+	.header-menu__trigger
+	.button-vue__text,
+:where(body:not(#body-login)) #header .unified-search-menu button .button-vue__text {
+	color: var(--color-text-maxcontrast) !important;
+	font-weight: 400 !important;
+}
+
+/* The dashboard's panel row: the NL Design sheet paints every element whose
+ * class contains "panel" with the main background, and that includes the
+ * `.panels` row around the cards, a white band across the grey workspace. */
+:where(body:not(#body-login)) #content.app-dashboard .panels {
+	background: transparent !important;
+}
+
+/*
+ * THE STANDARD APPS: CARDS ON THE SURFACE (the DqTokens board;
+ * openspec/changes/workplace-layout-standard-apps/specs/workplace-layout/spec.md).
+ *
+ * The workplace is a grey surface with white cards on it: the container
+ * radius, a hairline, the cards' shadow colour. The NL Design sheet gives the
+ * dashboard's panels the controls' radius and the page title size; here they
+ * take the container radius and the card title size
+ * (`--nldesign-component-heading-3-font-size`, 18px on Zuiddrecht). The Files
+ * list becomes one card: the shared sheet paints its sticky header and footer
+ * rows and the README block with the SURFACE colour so they do not show as
+ * strips on it (thematiq#1061); inside a card they take the card's own
+ * background again, from selectors that outrank the shared ones by one class.
+ * The settings sections, the personal settings block and the profile section
+ * are cards too. The theme picker's token set select is 44px high, the
+ * height of the workplace's controls.
+ */
+:where(body:not(#body-login)) #content.app-dashboard .panel {
+	border: 1px solid var(--color-border) !important;
+	border-radius: var(--border-radius-container-large) !important;
+	box-shadow: 0 1px 2px
+		var(--nldesign-component-content-card-shadow-color, transparent) !important;
+}
+
+:where(body:not(#body-login)) #content.app-dashboard .panel > .panel--header > h2,
+:where(body:not(#body-login))
+	#content.app-dashboard
+	.panels
+	> div
+	> .panel--header
+	> h2 {
+	font-size: var(--nldesign-component-heading-3-font-size) !important;
+}
+
+:where(body:not(#body-login)) #content.app-dashboard h2 {
+	color: var(--color-main-text) !important;
+}
+
+:where(body:not(#body-login)) #app-content-vue .files-list {
+	margin: 0 24px 24px !important;
+	border: 1px solid var(--color-border) !important;
+	border-radius: var(--border-radius-container-large) !important;
+	background: var(--color-main-background) !important;
+}
+
+:where(body:not(#body-login)) #app-content-vue .files-list .files-list__thead,
+:where(body:not(#body-login)) #app-content-vue .files-list .files-list__tfoot,
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	#rich-workspace
+	.text-editor,
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	#rich-workspace
+	.text-editor__main,
+:where(body:not(#body-login)) #app-content-vue .files-list #rich-workspace .editor,
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	#rich-workspace
+	.text-menubar,
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	#rich-workspace
+	.ProseMirror,
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	#rich-workspace
+	.heading-anchor,
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	#rich-workspace
+	div[contenteditable='false'] {
+	background-color: var(--color-main-background) !important;
+}
+
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	#rich-workspace:not(.focus):not(.empty)::after {
+	background-image: linear-gradient(
+		to bottom,
+		transparent,
+		var(--color-main-background)
+	) !important;
+}
+
+:where(body:not(#body-login)) #app-content-vue .files-list .files-list__thead th,
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	.files-list__thead
+	.files-list__column,
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	.files-list__thead
+	button {
+	color: var(--color-text-maxcontrast) !important;
+	font-size: 14px !important;
+	font-weight: 600 !important;
+}
+
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	.files-list__row-name-link,
+:where(body:not(#body-login))
+	#app-content-vue
+	.files-list
+	.files-list__row-name-text {
+	font-weight: 500 !important;
+}
+
+:where(body:not(#body-login)) #content.app-settings #app-content-vue .section,
+:where(body:not(#body-login))
+	#content.app-settings
+	#app-content-vue
+	#personal-settings,
+:where(body:not(#body-login))
+	#content.app-settings
+	#app-content-vue
+	.personal-settings-section {
+	margin: 16px 24px !important;
+	border: 1px solid var(--color-border) !important;
+	border-radius: var(--border-radius-container-large) !important;
+	background: var(--color-main-background) !important;
+	box-shadow: 0 1px 2px
+		var(--nldesign-component-content-card-shadow-color, transparent) !important;
+}
+
+:where(body:not(#body-login)) #content.app-settings #app-content-vue .section {
+	padding: 28px 32px !important;
+}
+
+:where(body:not(#body-login))
+	#content.app-settings
+	#app-content-vue
+	#personal-settings,
+:where(body:not(#body-login))
+	#content.app-settings
+	#app-content-vue
+	.personal-settings-section {
+	padding: 12px 16px !important;
+}
+
+:where(body:not(#body-login)) #nldesign-settings #nldesign-token-set-select {
+	height: 44px !important;
+	min-height: 44px !important;
+	padding-inline: 12px !important;
+	font-size: 16px !important;
+}
+
+:where(body:not(#body-login))
+	#nldesign-settings
+	.nldesign-token-set-selector
+	> label {
+	font-size: 16px !important;
+	font-weight: 600 !important;
+}

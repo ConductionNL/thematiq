@@ -65,6 +65,10 @@ One limit: the layout cannot redraw a logo. A theme whose logo is white, drawn f
 
 **How it works:** while the layout is `light`, Thematiq loads `css/workplace-layout.css`. It redeclares the variables the header rules already read, so it writes no colour of its own.
 
+**The login page and the top bar.** With the light layout, Nextcloud's own pages follow the workplace boards: the login page shows the theme's logo above the card, 56px high, and the card is a workplace card (420px wide, a hairline, the container radius, 32px of padding, a 24px title, 44px controls). The top bar is 68px high, the app grid button a 40px square on the workspace colour, the search field a 44px pill with a muted label. On a guest page (a 403, a 404) the "Back to …" button keeps a readable label. What Nextcloud's markup draws stays as it is: the title text, the labels inside the fields, "Remember me", the device login link and the current app in the bar.
+
+**The standard apps.** With the light layout, the dashboard's panels, the Files list, the settings sections and the thematiq panel are cards on the grey workspace: the container radius, a hairline and the cards' shadow colour, with 18px card titles and a quiet 14px header row on the Files list. The theme picker's token set select is 44px high.
+
 **Login watermark.** With the light layout, a theme can show its emblem on the login page: large, faint, in the bottom corner behind the login card. The theme names the image in `--nldesign-login-watermark-image` and may set `--nldesign-login-watermark-opacity` (0.07 when unset). A shipped set gets this by adding `img/logos/<set>-emblem-grey.svg`. A theme that names no image shows none.
 
 ## Brand stripe

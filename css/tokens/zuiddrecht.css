@@ -21,7 +21,9 @@
  * #1B1C1D on white 17.07, #5E6168 on white 6.20 and on the workspace 5.74,
  * #A30000 on #FCEDEC 7.22 and on the selected-entry wash #F7D6D6 6.08, white
  * on #CC0000 5.89, #234A78 on #EAF0F7 7.88, #1E6B2A on #E7F3EA 5.77, #7A4F00
- * on #FFF4DE 6.53.
+ * on #FFF4DE 6.53, #1A1A1A on #EAF0F7 15.17 and on #FFF4DE 15.95, and on the
+ * site's surface #F4F6F9: #1A1A1A 16.08, #5E6168 5.73, #3669A5 5.21, #A30000
+ * 7.58.
  */
 
 :root {
@@ -193,4 +195,59 @@
 	--nldesign-hero-title-color: #1B1C1D;
 	--nldesign-hero-body-color: #1B1C1D;
 	--nldesign-hero-decoration-image: var(--nldesign-emblem-grey-url, var(--nldesign-emblem-url));
+	/* THE SIGNED-IN PAGES (openspec/changes/zuiddrecht-website-type-and-controls),
+	 * as the Mijn Zuiddrecht boards draw them. Read by css/public-bridge.css
+	 * only; an instance page never sees these.
+	 * The website's corners: 4px controls, 6px cards. */
+	--nldesign-website-border-radius: 4px;
+	--nldesign-website-border-radius-large: 6px;
+	/* The type scale: 44px page titles, 40px a record's name, 26px sections. */
+	--nldesign-website-heading-1-font-size: 44px;
+	--nldesign-website-heading-2-font-size: 40px;
+	--nldesign-website-heading-3-font-size: 26px;
+	/* Controls carry a 2px border: an outlined button is blue on white (5.64:1). */
+	--nldesign-website-control-border-width: 2px;
+	/* A status tag is a pill. */
+	--nldesign-website-badge-border-radius: 14px;
+	/* Process steps: 36px markers; a done step is filled blue with a white
+	 * tick (5.64:1), the current step white with a red ring and a red
+	 * number (5.89:1); the line after a done step is blue. */
+	--nldesign-website-step-marker-size: 36px;
+	--nldesign-website-step-done-color: #3669A5;
+	--nldesign-website-step-done-mark-color: #ffffff;
+	--nldesign-website-step-current-color: #CC0000;
+	--nldesign-website-step-current-background-color: #ffffff;
+	/* A plain notice (the ask for an e-mail address): the light blue with a
+	 * 1px border; ink on it 12.7:1. */
+	--nldesign-website-notice-background-color: #EAF0F7;
+	--nldesign-website-notice-border-color: #B9CBE2;
+	--nldesign-website-notice-border-width: 1px;
+	/* Tabs: a grey line, the tab on screen marked red. */
+	--nldesign-website-tab-line-color: #D3D8DF;
+	--nldesign-website-tab-current-color: #CC0000;
+
+	/* THE PUBLIC SITE (openspec/changes/zuiddrecht-site-page-title-notice-surface),
+	 * as the Kop, Home and Contentpagina boards draw it. Read by
+	 * css/public-bridge.css and by the portal's own site stylesheet only.
+	 * A content page's title: 44px (2.75rem) on a 1.15 line, said for the h1
+	 * the site draws above the page's own heading scale. The lead paragraph
+	 * under it is 18px. */
+	--nldesign-website-page-title-size: 2.75rem;
+	--nldesign-website-page-title-line-height: 1.15;
+	--nldesign-website-lead-font-size: 18px;
+	/* The text on a plain notice: the site's ink, 15.17:1 on the light blue
+	 * notice ground above and 15.95:1 on the soft yellow attention strip the
+	 * Home board draws (#FFF4DE). */
+	--nldesign-website-notice-color: #1A1A1A;
+	/* The site's grey band ("Bestuur en organisatie" on the Home board) and
+	 * a boxed table's header row: the website's surface, a shade cooler than
+	 * the workplace's #F5F6F8. Ink on it 16.08:1, muted text 5.73:1, the
+	 * link blue 5.21:1 and the dark red 7.58:1. */
+	--nldesign-color-surface: #F4F6F9;
+	/* The attention strip ("Let op" on the Home and MijnOverzicht boards):
+	 * a soft yellow with an amber border and ink on it, 15.95:1. The plain
+	 * notice above stays light blue; the boards draw both. */
+	--nldesign-website-attention-background-color: #FFF4DE;
+	--nldesign-website-attention-border-color: #E8C77D;
+	--nldesign-website-attention-color: #1A1A1A;
 }
