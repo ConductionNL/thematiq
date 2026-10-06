@@ -39,6 +39,8 @@
  */
 import { test, expect, Page } from '@playwright/test'
 
+import { withThemeState } from './_theme-state'
+
 const PROBE_URL = '/settings/user'
 
 /** The nldesign stylesheet hrefs present in the page head, in document order. */
@@ -344,29 +346,35 @@ test.describe('dark-mode scope selectors — dark OS', () => {
 
 	// @e2e dark-mode::dark-stylesheet-loads-in-order
 	test('the dark variant loads after its light layer and before custom overrides', async ({
+		browser,
 		page,
 	}) => {
-		await page.goto(PROBE_URL)
-		const order = await nldesignStyleHrefs(page)
+		// The custom-overrides layer is only linked while the active set has a
+		// saved overrides file, so save one (empty) for the duration of the test
+		// rather than rely on an earlier spec having left one behind.
+		await withThemeState(browser, { overrides: {} }, async () => {
+			await page.goto(PROBE_URL)
+			const order = await nldesignStyleHrefs(page)
 
-		const light = order.findIndex((h) => /\/css\/tokens\/[^/]+\.css/.test(h))
-		const dark = order.findIndex((h) => h.includes('/css/tokens/dark/'))
-		const overrides = order.findIndex((h) => h.includes('custom-overrides'))
+			const light = order.findIndex((h) => /\/css\/tokens\/[^/]+\.css/.test(h))
+			const dark = order.findIndex((h) => h.includes('/css/tokens/dark/'))
+			const overrides = order.findIndex((h) => h.includes('custom-overrides'))
 
-		expect(light, 'a light token layer must load').toBeGreaterThanOrEqual(0)
-		expect(dark, 'a dark variant must load').toBeGreaterThanOrEqual(0)
-		expect(
-			dark,
-			'the dark variant must load AFTER its light layer',
-		).toBeGreaterThan(light)
-		expect(
-			overrides,
-			'the custom-overrides layer must load',
-		).toBeGreaterThanOrEqual(0)
-		expect(
-			dark,
-			'the dark variant must load BEFORE custom-overrides so a site override still wins',
-		).toBeLessThan(overrides)
+			expect(light, 'a light token layer must load').toBeGreaterThanOrEqual(0)
+			expect(dark, 'a dark variant must load').toBeGreaterThanOrEqual(0)
+			expect(
+				dark,
+				'the dark variant must load AFTER its light layer',
+			).toBeGreaterThan(light)
+			expect(
+				overrides,
+				'the custom-overrides layer must load',
+			).toBeGreaterThanOrEqual(0)
+			expect(
+				dark,
+				'the dark variant must load BEFORE custom-overrides so a site override still wins',
+			).toBeLessThan(overrides)
+		})
 	})
 })
 
