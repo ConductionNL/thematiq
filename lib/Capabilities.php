@@ -180,7 +180,7 @@ class Capabilities implements IPublicCapability {
 	 * when the set declares no logo — always an empty object, never `[]`, so
 	 * it serializes as JSON `{}`.
 	 *
-	 * @param string               $tokenSetId   The active token set id.
+	 * @param string $tokenSetId The active token set id.
 	 * @param array<string, mixed> $tokenSetMeta The active set's manifest entry (empty for custom/unknown sets).
 	 *
 	 * @return array<string, string>|stdClass The logo variant map.
