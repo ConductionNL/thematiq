@@ -151,10 +151,14 @@ div.guest-box.login-box::after {
 	color: var(--nldesign-color-accent-text) !important;
 }
 
-#app-content-vue .cn-banner-widget__action--primary {
+/* Two ids: the NL Design link sheet paints every `a:not(#header a)` with an
+ * id-strength !important rule, and this action is a link. */
+#content #app-content-vue .cn-banner-widget__action--primary {
 	border-color: var(--color-primary-element) !important;
 	background: var(--color-primary-element) !important;
-	color: var(--color-primary-element-text) !important;
+	/* The set's own button text token (white, ink in the dark variant): the link sheet otherwise paints the
+	 * label link-blue on the blue button (measured 6 October 2026). */
+	color: var(--nldesign-color-button-primary-text, #fff) !important;
 }
 
 /* Counters (DqDashboard): a grey 14px label over a 34px number. */
