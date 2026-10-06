@@ -24,5 +24,33 @@
         }
       ]
     }
+  },
+  "discovery": {
+    "public": true,
+    "standards": [
+      {
+        "id": "nl-design-system",
+        "name": "NL Design System design tokens (CSS custom properties per token set)",
+        "role": "provides",
+        "access": "public",
+        "specUrl": "https://nldesignsystem.nl/"
+      },
+      {
+        "id": "dtcg",
+        "name": "W3C Design Tokens Format (import and export)",
+        "version": "2025.10",
+        "role": "provides",
+        "access": "authenticated",
+        "specUrl": "https://www.designtokens.org/"
+      },
+      {
+        "id": "wcag",
+        "name": "WCAG contrast evaluation of token pairs",
+        "version": "2.1",
+        "role": "provides",
+        "access": "authenticated",
+        "specUrl": "https://www.w3.org/TR/WCAG21/"
+      }
+    ]
   }
 }

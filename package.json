@@ -21,6 +21,8 @@
 		"url": "https://github.com/ConductionNL/thematiq.git"
 	},
 	"scripts": {
+		"docs:standards": "node scripts/generate-standards-docs.cjs",
+		"check:standards-docs": "node scripts/generate-standards-docs.cjs --check",
 		"test:l10n": "L10N_SRC_DIR=js node tests/l10n/check-l10n.js && node tests/l10n/check-l10n-completeness.js",
 		"test:l10n:write": "L10N_SRC_DIR=js node tests/l10n/check-l10n.js --write",
 		"test:l10n:completeness": "node tests/l10n/check-l10n-completeness.js",

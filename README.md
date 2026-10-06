@@ -348,6 +348,18 @@ This implementation is **fully legal and open-source** for:
 - [NL Design System Community Slack](https://praatmee.codefor.nl/) - Join `#nl-design-system`
 - [GitHub Discussions](https://github.com/nl-design-system/rijkshuisstijl-community/discussions)
 
+<!-- discovery:start -->
+## Standards & federation
+
+| Standard | Role | Access |
+|---|---|---|
+| [NL Design System design tokens (CSS custom properties per token set)](https://nldesignsystem.nl/) | Provides | Public |
+| [W3C Design Tokens Format (import and export)](https://www.designtokens.org/) 2025.10 | Provides | Nextcloud login |
+| [WCAG contrast evaluation of token pairs](https://www.w3.org/TR/WCAG21/) 2.1 | Provides | Nextcloud login |
+
+Other servers can read this list without logging in, from the Nextcloud capabilities endpoint (published by OpenRegister). Details, federation and admin switches: [docs/standards-and-federation.md](docs/standards-and-federation.md).
+<!-- discovery:end -->
+
 ## License
 
 This project is licensed under the [EUPL-1.2](LICENSE).
