@@ -30,10 +30,14 @@ which the bridge pins at 20px for every set.
   dark red 7.58:1; in the dark the generated #e5e5e5 on #13202e 13.09:1 and the text, muted text
   and link on the generated surface #141a23 13.6:1, 6.36:1 and 4.88:1.
 
+- **The attention strip has names of its own**: `--nldesign-website-attention-background-color`,
+  `-border-color` and `-color` (into `--thematiq-attention-*`, no fallback). Zuiddrecht names
+  #FFF4DE, #E8C77D and #1A1A1A (15.95:1; generated dark #e5e5e5 on #412d03, 10.41:1).
+
 **Not changed, on purpose:** `--nldesign-website-notice-background-color` and `-border-color`
 stay the light blue plain notice of `zuiddrecht-website-type-and-controls` (#EAF0F7, #B9CBE2),
-which the signed-in overview board draws next to the yellow "Let op" strip (#FFF4DE, #E8C77D).
-One name cannot carry both; the strip needs a name of its own before a set can declare it.
+which the signed-in overview board draws next to the yellow "Let op" strip. The portal moves its
+strip to the attention names.
 
 ## Capabilities
 

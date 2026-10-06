@@ -257,6 +257,12 @@ function pairs(t, main) {
 		// the ink on a plain notice, and what the grey band and a boxed
 		// table's header row carry: text, muted text and links.
 		[
+			'attention text on the attention ground',
+			t['--nldesign-website-attention-color'],
+			t['--nldesign-website-attention-background-color'],
+			4.5,
+		],
+		[
 			'notice text on the notice ground',
 			t['--nldesign-website-notice-color'],
 			t['--nldesign-website-notice-background-color'],

@@ -249,4 +249,10 @@
 	 * the workplace's #F5F6F8. Ink on it 16.08:1, muted text 5.73:1, the
 	 * link blue 5.21:1 and the dark red 7.58:1. */
 	--nldesign-color-surface: #F4F6F9;
+	/* The attention strip ("Let op" on the Home and MijnOverzicht boards):
+	 * a soft yellow with an amber border and ink on it, 15.95:1. The plain
+	 * notice above stays light blue; the boards draw both. */
+	--nldesign-website-attention-background-color: #FFF4DE;
+	--nldesign-website-attention-border-color: #E8C77D;
+	--nldesign-website-attention-color: #1A1A1A;
 }

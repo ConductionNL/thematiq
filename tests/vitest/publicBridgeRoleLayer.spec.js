@@ -296,6 +296,17 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 			'#1A1A1A',
 		)
 		expect(token('zuiddrecht', '--nldesign-color-surface')).toBe('#F4F6F9')
+		// The attention strip, apart from the blue plain notice.
+		expect(token('zuiddrecht', '--thematiq-attention-background-color')).toBe(
+			'#FFF4DE',
+		)
+		expect(token('zuiddrecht', '--thematiq-attention-border-color')).toBe(
+			'#E8C77D',
+		)
+		expect(token('zuiddrecht', '--thematiq-attention-color')).toBe('#1A1A1A')
+		expect(token('zuiddrecht', '--utrecht-alert-background-color')).toBe(
+			'#EAF0F7',
+		)
 	})
 
 	it.each([...SCHOOLS, 'vng'])(
@@ -327,6 +338,9 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 			expect(token(set, '--thematiq-page-title-font-size')).toBeNull()
 			expect(token(set, '--thematiq-page-title-line-height')).toBeNull()
 			expect(token(set, '--thematiq-surface-color')).toBeNull()
+			expect(token(set, '--thematiq-attention-background-color')).toBeNull()
+			expect(token(set, '--thematiq-attention-border-color')).toBeNull()
+			expect(token(set, '--thematiq-attention-color')).toBeNull()
 		},
 	)
 })

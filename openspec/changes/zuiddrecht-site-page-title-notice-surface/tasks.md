@@ -9,6 +9,7 @@
 ## 3. Token set
 - [x] 3.1 `css/tokens/zuiddrecht.css`: the five names, every pair computed.
 - [x] 3.2 Dark variant and reference page regenerated.
+- [x] 3.3 The attention strip: three names, the bridge roles, zuiddrecht's values.
 
 ## 4. Tests
 - [x] 4.1 `tests/vitest/publicBridgeRoleLayer.spec.js`: zuiddrecht resolves each role; the school sets and vng keep every value (the control).

@@ -1111,6 +1111,17 @@
 	 *   --nldesign-color-surface                           the site's grey band and a
 	 *                                                      boxed table's header row
 	 *
+	 * An attention strip ("Let op": something the resident has to act on) is
+	 * not the plain notice above, which a board draws next to it in its own
+	 * colours, so it has names of its own:
+	 *
+	 *   --nldesign-website-attention-background-color      its ground
+	 *   --nldesign-website-attention-border-color          its border
+	 *   --nldesign-website-attention-color                 its text
+	 *
+	 * The portal reads them by name for its notice banner; the roles below
+	 * carry them, without a fallback.
+	 *
 	 * The portal reads the page title, the notice text and the surface by
 	 * name (css/site-theme.css in portaliq); the roles below carry them so a
 	 * reader exists in this repository, and the lead size wraps the Utrecht
@@ -1123,7 +1134,7 @@
 	 * scripts/generate-denhaag-bridge.mjs from the `website` section of the
 	 * mapping). The notice ground, border and text, the data badge radius (no
 	 * pinned Den Haag stylesheet reads it; the portal's badge does), the two
-	 * tab roles, the page title roles and the surface role below carry no
+	 * tab roles, the page title roles, the surface and the attention roles below carry no
 	 * fallback on purpose: unset, a consumer's own fallback applies, as with
 	 * the website radii above.
 	 */
@@ -1135,6 +1146,13 @@
 		--nldesign-website-page-title-line-height
 	);
 	--thematiq-surface-color: var(--nldesign-color-surface);
+	--thematiq-attention-background-color: var(
+		--nldesign-website-attention-background-color
+	);
+	--thematiq-attention-border-color: var(
+		--nldesign-website-attention-border-color
+	);
+	--thematiq-attention-color: var(--nldesign-website-attention-color);
 
 	/*
 	 * The footer's bottom band: the footer's own ground one step darker, as
