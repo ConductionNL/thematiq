@@ -180,6 +180,21 @@ body#body-login input:not([type='checkbox']) {
 	border-width: 1px !important;
 }
 
+/* Their colour: the link colour, blue on Zuiddrecht (#3669A5, 5.64:1 on the
+ * white card), as the board draws "Wachtwoord vergeten?". The NL Design text
+ * rule forces every span to the body text with id strength, but it reads
+ * `--nldesign-color-on-surface` first, the opt-out it offers any surface, so
+ * the buttons set that variable instead of fighting the rule. */
+body#body-login .guest-box .login-box__wrapper > .button-vue--vue-tertiary,
+body#body-login .guest-box .login-box__wrapper > div > .button-vue--vue-tertiary {
+	--nldesign-color-on-surface: var(
+		--nldesign-color-link,
+		var(--color-primary-element)
+	);
+
+	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
+}
+
 /* The two text actions under the form (a device login, a forgotten password)
  * are tertiary buttons: 14px, regular weight, underlined, as the board draws
  * "Wachtwoord vergeten?". */

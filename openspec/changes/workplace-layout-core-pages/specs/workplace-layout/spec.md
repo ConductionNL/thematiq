@@ -30,7 +30,7 @@ when a set names none), and MUST NOT draw the in-card logo stamp. The card MUST 
 MUST carry a 1px border in the login card edge token (the scheme's border when unset), the login card
 corner token (the container radius when unset), the cards' shadow colour and 32px of padding. The title
 MUST be 24px. The controls MUST be 44px high with a 1px edge. The two text actions under the form MUST be
-14px, regular and underlined. The footer line MUST be muted text without a plate.
+14px, regular, underlined and in the link colour (`--nldesign-color-link`). The footer line MUST be muted text without a plate.
 
 #### Scenario: The logo moves above the card
 @e2e exclude Static file check: tests/vitest/workplaceLayout.spec.js reads the rules
