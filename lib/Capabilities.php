@@ -127,7 +127,7 @@ class Capabilities implements IPublicCapability {
 			'designSystem' => $designSystemId,
 			'iconPacks' => $this->designSystemService->resolveActiveIconPacks(tokenSetId: $tokenSetId),
 			'wcagLevel' => $this->computeWcagLevel(tokenSetId: $tokenSetId, tokenSetMeta: $tokenSetMeta),
-			'logos' => $this->buildLogos(tokenSetMeta: $tokenSetMeta),
+			'logos' => $this->buildLogos(tokenSetId: $tokenSetId, tokenSetMeta: $tokenSetMeta),
 			'hideSlogan' => $hideSlogan,
 			'showMenuLabels' => $showMenuLabels,
 		];
@@ -173,17 +173,21 @@ class Capabilities implements IPublicCapability {
 	/**
 	 * Resolve the available logo variants for the active set.
 	 *
-	 * Today only the `default` variant exists (from `theming.logo` in the set's
-	 * manifest entry). Empty when the set declares no logo — always an empty
-	 * object, never `[]`, so it serializes as JSON `{}`.
+	 * `default` comes from `theming.logo` in the set's manifest entry. `emblem`
+	 * is added when the set ships `img/logos/<id>-emblem.svg` beside it: the
+	 * mark without the wordmark, which an app draws small (the shield at the
+	 * top of the dossiq navigation on the Zuiddrecht workplace boards). Empty
+	 * when the set declares no logo — always an empty object, never `[]`, so
+	 * it serializes as JSON `{}`.
 	 *
+	 * @param string               $tokenSetId   The active token set id.
 	 * @param array<string, mixed> $tokenSetMeta The active set's manifest entry (empty for custom/unknown sets).
 	 *
 	 * @return array<string, string>|stdClass The logo variant map.
 	 *
 	 * @spec openspec/specs/theming-capability/spec.md
 	 */
-	private function buildLogos(array $tokenSetMeta): array|stdClass {
+	private function buildLogos(string $tokenSetId, array $tokenSetMeta): array|stdClass {
 		$logoPath = ($tokenSetMeta['theming']['logo'] ?? null);
 		if (is_string($logoPath) === false || $logoPath === '') {
 			return new stdClass();
@@ -196,7 +200,15 @@ class Capabilities implements IPublicCapability {
 			$relative = substr($relative, 4);
 		}
 
-		return ['default' => $this->urlGenerator->imagePath(appName: Application::APP_ID, file: $relative)];
+		$logos = ['default' => $this->urlGenerator->imagePath(appName: Application::APP_ID, file: $relative)];
+
+		$emblem = 'logos/' . $tokenSetId . '-emblem.svg';
+		$appPath = $this->appManager->getAppPath(appId: Application::APP_ID);
+		if (is_file($appPath . '/img/' . $emblem) === true) {
+			$logos['emblem'] = $this->urlGenerator->imagePath(appName: Application::APP_ID, file: $emblem);
+		}
+
+		return $logos;
 	}//end buildLogos()
 
 	/**

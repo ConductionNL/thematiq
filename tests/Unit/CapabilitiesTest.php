@@ -167,10 +167,53 @@ class CapabilitiesTest extends TestCase {
 		$this->assertSame('nldesign', $nldesign['designSystem']);
 		$this->assertSame(['rvo', 'open-gemeenten', 'den-haag'], $nldesign['iconPacks']);
 		$this->assertSame('https://cloud.example/apps/thematiq/img/logos/rijkshuisstijl.svg', $nldesign['logos']['default']);
+		$this->assertArrayNotHasKey('emblem', $nldesign['logos'], 'No emblem file is shipped for this set.');
 		$this->assertTrue($nldesign['hideSlogan']);
 		$this->assertFalse($nldesign['showMenuLabels']);
 		$this->assertSame('AA', $nldesign['wcagLevel']);
 	}//end testFullPayloadShapeForShippedSet()
+
+	/**
+	 * A set that ships `img/logos/<id>-emblem.svg` exposes it as `logos.emblem`;
+	 * the default logo stays. The Zuiddrecht set in this repository is the fixture.
+	 *
+	 * @spec openspec/specs/theming-capability/spec.md
+	 */
+	public function testEmblemIsExposedWhenShipped(): void {
+		$config = $this->configWith(['token_set' => 'zuiddrecht']);
+
+		$appManager = $this->createMock(IAppManager::class);
+		$appManager->method('getAppVersion')->willReturn('3.4.0');
+		$appManager->method('getAppPath')->willReturn(dirname(__DIR__, 2));
+
+		$urlGenerator = $this->createMock(IURLGenerator::class);
+		$urlGenerator->method('imagePath')->willReturnCallback(
+			static fn (string $appName, string $file): string => 'https://cloud.example/apps/thematiq/img/' . $file
+		);
+
+		$designSystemService = $this->createMock(DesignSystemService::class);
+		$designSystemService->method('getTokenSetMeta')->with('zuiddrecht')->willReturn(
+			[
+				'id' => 'zuiddrecht',
+				'design_system' => 'nldesign',
+				'theming' => ['logo' => 'img/logos/zuiddrecht.svg'],
+			]
+		);
+		$designSystemService->method('resolveActiveIconPacks')->willReturn([]);
+
+		$tokenSetService = $this->createMock(TokenSetService::class);
+		$tokenSetService->method('getAvailableTokenSets')->willReturn([]);
+
+		$auditService = $this->createMock(ShippedTokenSetAuditService::class);
+		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
+
+		$capabilities = $this->buildCapabilities($config, $appManager, $urlGenerator, $designSystemService, $tokenSetService, $auditService);
+		$logos = $capabilities->getCapabilities()['nldesign']['logos'];
+
+		$this->assertFileExists(dirname(__DIR__, 2) . '/img/logos/zuiddrecht-emblem.svg');
+		$this->assertSame('https://cloud.example/apps/thematiq/img/logos/zuiddrecht.svg', $logos['default']);
+		$this->assertSame('https://cloud.example/apps/thematiq/img/logos/zuiddrecht-emblem.svg', $logos['emblem']);
+	}//end testEmblemIsExposedWhenShipped()
 
 	/**
 	 * No `token_set` appconfig value → stock Nextcloud defaults, no audit call.
