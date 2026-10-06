@@ -58,9 +58,25 @@ async function statusOf(
 	return (await api(page, method, path, body)).status
 }
 
+/**
+ * Open a page that carries `OC.requestToken`, which is all `api()` needs.
+ *
+ * Not the admin theming page: that is the heaviest page of the app (about 20 s
+ * to its `load` event on CI), and a test here then makes up to seven calls on
+ * top, which ran past the 30 s a test gets. /settings/user is a light page
+ * every user can open, and `api()` itself waits for the token to appear.
+ */
+async function openForApi(page: Page): Promise<void> {
+	await page.goto('/settings/user', { waitUntil: 'domcontentloaded' })
+}
+
 const APP = '/index.php/apps/thematiq'
 
 test.describe('admin-only enforcement', () => {
+	// Each test makes several server calls as two users; 30 s left no room once
+	// the instance is slow.
+	test.describe.configure({ timeout: 60_000 })
+
 	let nonAdmin: { page: Page; close: () => Promise<void> }
 
 	test.beforeAll(async ({ browser }) => {
@@ -124,7 +140,7 @@ test.describe('admin-only enforcement', () => {
 	test('theme-preview lifecycle endpoints refuse a non-admin and change nothing', async ({
 		page,
 	}) => {
-		await page.goto('/settings/admin/theming')
+		await openForApi(page)
 
 		// The instance-wide active set before the refused calls.
 		const before = JSON.stringify(await activeTokenSet(page))
@@ -151,7 +167,7 @@ test.describe('admin-only enforcement', () => {
 	test('theming-audit endpoints reject a non-admin with no audit content in the response', async ({
 		page,
 	}) => {
-		await page.goto('/settings/admin/theming')
+		await openForApi(page)
 		await expectAdminOnly(page, 'GET', `${APP}/settings/audit`)
 		await expectAdminOnly(page, 'GET', `${APP}/settings/audit/export`)
 
@@ -171,7 +187,7 @@ test.describe('admin-only enforcement', () => {
 
 	// @e2e openspec/specs/config-portability/spec.md#endpoints-are-admin-only
 	test('config bundle export and import refuse a non-admin', async ({ page }) => {
-		await page.goto('/settings/admin/theming')
+		await openForApi(page)
 		await expectAdminOnly(page, 'GET', `${APP}/settings/config/export`)
 		await expectAdminOnly(page, 'POST', `${APP}/settings/config/import`, {})
 	})
@@ -180,7 +196,7 @@ test.describe('admin-only enforcement', () => {
 	test('upstream-freshness read, write and dismiss refuse a non-admin', async ({
 		page,
 	}) => {
-		await page.goto('/settings/admin/theming')
+		await openForApi(page)
 		await expectAdminOnly(page, 'GET', `${APP}/settings/upstream-freshness`)
 		await expectAdminOnly(page, 'POST', `${APP}/settings/upstream-freshness`, {
 			enabled: false,
@@ -195,7 +211,7 @@ test.describe('admin-only enforcement', () => {
 
 	// @e2e openspec/specs/email-theming/spec.md#non-admin-access-denied
 	test('email-theming read and write refuse a non-admin', async ({ page }) => {
-		await page.goto('/settings/admin/theming')
+		await openForApi(page)
 		await expectAdminOnly(page, 'GET', `${APP}/settings/email-theming`)
 		await expectAdminOnly(page, 'POST', `${APP}/settings/email-theming`, {
 			enabled: false,
@@ -204,7 +220,7 @@ test.describe('admin-only enforcement', () => {
 
 	// @e2e openspec/specs/dark-mode/spec.md#non-admin-access-denied
 	test('dark-variants read and write refuse a non-admin', async ({ page }) => {
-		await page.goto('/settings/admin/theming')
+		await openForApi(page)
 		await expectAdminOnly(page, 'GET', `${APP}/settings/dark-variants`)
 		await expectAdminOnly(page, 'POST', `${APP}/settings/dark-variants`, {
 			enabled: true,
@@ -217,7 +233,7 @@ test.describe('admin-only enforcement', () => {
 	}) => {
 		// Produce a real audit entry first, so this cannot pass merely because
 		// the log does not exist yet — the scenario is GIVEN the file exists.
-		await page.goto('/settings/admin/theming')
+		await openForApi(page)
 		const listed = await statusOf(page, 'GET', `${APP}/settings/audit`)
 		expect(
 			listed,
