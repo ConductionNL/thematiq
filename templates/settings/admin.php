@@ -829,12 +829,12 @@ if ($_['mockUi'] === true) {
 	</div>
 
 	<div class="nldesign-option">
-		<label for="thematiq-navigation-width">
+		<label for="thematiq-navigation-width-input">
 			<?php p($l->t('Navigation width in pixels')); ?>
 		</label>
 		<input type="number"
 			   name="thematiq-navigation-width"
-			   id="thematiq-navigation-width"
+			   id="thematiq-navigation-width-input"
 			   min="200"
 			   max="480"
 			   step="1"

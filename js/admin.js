@@ -2513,7 +2513,7 @@
 		var layoutOptionFields = [
 			workplaceLayoutSelect,
 			brandStripeSelect,
-			document.getElementById('thematiq-navigation-width'),
+			document.getElementById('thematiq-navigation-width-input'),
 			document.getElementById('thematiq-navigation-active-style'),
 			document.getElementById('thematiq-brand-stripe-placement'),
 			document.getElementById('thematiq-login-watermark'),

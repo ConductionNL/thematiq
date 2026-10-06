@@ -216,3 +216,26 @@ describe('the newer layout stylesheets are off unless asked for', () => {
 		])
 	})
 })
+
+describe('the settings form and the inline styles share no id', () => {
+	// The admin page carries the inline styles in its head. A form field with
+	// the same id loses to the style: getElementById returns the <style>, the
+	// form reads its value as "undefined", and no layout option saves.
+	it('no id in the admin template is the id of an inline style', () => {
+		const styleIds = [
+			...read('lib/Service/LayoutOptionsService.php').matchAll(
+				/const \w+_STYLE_ID = '([^']+)'/g,
+			),
+			...read('lib/Service/CssInjectionService.php').matchAll(
+				/const \w+_STYLE_ID = '([^']+)'/g,
+			),
+		].map((m) => m[1])
+		expect(styleIds).toContain('thematiq-navigation-width')
+
+		const formIds = [
+			...read('templates/settings/admin.php').matchAll(/\bid="([^"]+)"/g),
+		].map((m) => m[1])
+		expect(formIds.filter((id) => styleIds.includes(id))).toEqual([])
+		expect(formIds).toContain('thematiq-navigation-width-input')
+	})
+})
