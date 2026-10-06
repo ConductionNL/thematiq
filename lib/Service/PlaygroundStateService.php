@@ -25,6 +25,7 @@ use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCP\App\IAppManager;
 use OCP\IL10N;
+use OCP\ServerVersion;
 use Throwable;
 
 /**
@@ -92,6 +93,7 @@ class PlaygroundStateService {
 	 * @param IL10N $l10n The app's translations.
 	 * @param RuntimeFileStore|null $store Where uploaded sets and their dark files live.
 	 * @param SetFileReader $files Reads a set file from the release or the store.
+	 * @param ServerVersion|null $serverVersion The running server's version.
 	 */
 	public function __construct(
 		IAppManager $appManager,
@@ -101,6 +103,7 @@ class PlaygroundStateService {
 		IL10N $l10n,
 		private ?RuntimeFileStore $store = null,
 		private SetFileReader $files = new SetFileReader(),
+		private ?ServerVersion $serverVersion = null,
 	) {
 		$this->appManager = $appManager;
 		$this->previewValues = $previewValues;
@@ -218,29 +221,25 @@ class PlaygroundStateService {
 	 * they take it — and this is the one it opens on, because the version you
 	 * are running is the one you are asking about first.
 	 *
-	 * Resolved lazily through `\OCP\ServerVersion` (public since NC 31, below
-	 * this app's floor of 32) via the server container rather than a
-	 * constructor dependency, for the same reason `ComplianceReportService`
-	 * does: this value is read once to pick a default. Replaces the
-	 * `\OCP\Util::getVersion()` call deprecated since 31.
+	 * Read from the injected `\OCP\ServerVersion` (public since NC 31, below
+	 * this app's floor of 32), replacing the `\OCP\Util::getVersion()` call
+	 * deprecated since 31.
 	 *
 	 * @return int The major version, or 0 when it cannot be read.
-	 *
-	 * @SuppressWarnings(PHPMD.StaticAccess) - see rationale above.
 	 *
 	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
 	 */
 	protected function getServerMajor(): int {
-		try {
-			$version = \OCP\Server::get(\OCP\ServerVersion::class)->getVersion();
+		if ($this->serverVersion === null) {
+			// Only without a full Nextcloud bootstrap, which in practice means
+			// an isolated unit test. Zero is not a version the switch offers,
+			// so the instrument falls back to the newest one it knows.
+			return 0;
+		}
 
-			return (int)($version[0] ?? 0);
+		try {
+			return (int)($this->serverVersion->getVersion()[0] ?? 0);
 		} catch (Throwable $e) {
-			// Only reachable without a full Nextcloud bootstrap, which in
-			// practice means an isolated unit test. Zero is not a version the
-			// switch offers, so the instrument falls back to the newest one it
-			// knows — a working switch either way, and nothing worth a
-			// dependency on a logger to say.
 			return 0;
 		}
 	}//end getServerMajor()
