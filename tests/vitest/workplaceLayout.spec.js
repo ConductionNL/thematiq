@@ -448,8 +448,11 @@ describe('the layout stylesheets are off unless asked for', () => {
  * @return {Array<{selectors: Array<string>, decls: Record<string, string>}>} The matches.
  */
 function withSelector(rules, needle) {
+	// Prettier breaks a long selector over several lines; compare it flat.
 	return rules.filter((rule) =>
-		rule.selectors.some((selector) => selector.includes(needle)),
+		rule.selectors.some((selector) =>
+			selector.replace(/\s+/g, ' ').includes(needle),
+		),
 	)
 }
 
@@ -591,5 +594,80 @@ describe('workplace layout: the top bar', () => {
 	it("keeps the dashboard's panel row transparent on the workspace", () => {
 		const [row] = withSelector(rules, '#content.app-dashboard .panels')
 		expect(row.decls.background).toBe('transparent !important')
+	})
+})
+
+describe('workplace layout: the standard apps as cards on the surface', () => {
+	// @spec openspec/changes/workplace-layout-standard-apps/specs/workplace-layout/spec.md
+	const rules = rulesOf('css/workplace-layout.css')
+
+	it("draws the dashboard's panels as cards with the card title size", () => {
+		const [panel] = rules.filter(
+			(rule) =>
+				rule.selectors.join()
+				=== ':where(body:not(#body-login)) #content.app-dashboard .panel',
+		)
+		expect(panel.decls['border-radius']).toBe(
+			'var(--border-radius-container-large) !important',
+		)
+		expect(panel.decls.border).toBe('1px solid var(--color-border) !important')
+		expect(panel.decls['box-shadow']).toContain(
+			'--nldesign-component-content-card-shadow-color',
+		)
+		const [title] = withSelector(
+			rules,
+			'#content.app-dashboard .panel > .panel--header > h2',
+		)
+		expect(title.decls['font-size']).toBe(
+			'var(--nldesign-component-heading-3-font-size) !important',
+		)
+	})
+
+	it('draws the Files list as one card, its rows and README on the card, its header labels 14px muted', () => {
+		const [list] = rules.filter(
+			(rule) =>
+				rule.selectors.join()
+				=== ':where(body:not(#body-login)) #app-content-vue .files-list',
+		)
+		expect(list.decls.background).toBe('var(--color-main-background) !important')
+		expect(list.decls.border).toBe('1px solid var(--color-border) !important')
+		expect(list.decls['border-radius']).toBe(
+			'var(--border-radius-container-large) !important',
+		)
+		const [rows] = withSelector(rules, '.files-list .files-list__thead')
+		const headRows = withSelector(
+			rules,
+			'#app-content-vue .files-list .files-list__tfoot',
+		)
+		expect(headRows[0].decls['background-color']).toBe(
+			'var(--color-main-background) !important',
+		)
+		const [labels] = withSelector(rules, '.files-list .files-list__thead th')
+		expect(labels.decls['font-size']).toBe('14px !important')
+		expect(labels.decls.color).toBe('var(--color-text-maxcontrast) !important')
+		const [readme] = withSelector(
+			rules,
+			'.files-list #rich-workspace .text-editor__main',
+		)
+		expect(readme.decls['background-color']).toBe(
+			'var(--color-main-background) !important',
+		)
+		expect(rows).toBeDefined()
+	})
+
+	it('draws the settings sections as cards and the theme picker select 44px high', () => {
+		const [section] = withSelector(
+			rules,
+			'#content.app-settings #app-content-vue .section',
+		)
+		expect(section.decls.background).toBe(
+			'var(--color-main-background) !important',
+		)
+		expect(section.decls.border).toBe('1px solid var(--color-border) !important')
+		expect(section.decls['border-radius']).toBe(
+			'var(--border-radius-container-large) !important',
+		)
+		const [select] = withSelector(rules, '#nldesign-token-set-select')
+		expect(select.decls.height).toBe('44px !important')
 	})
 })

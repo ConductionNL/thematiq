@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **The light workplace draws the standard apps as cards.** While the workplace layout is `light`,
+  `css/workplace-layout.css` draws the dashboard's panels, the Files list, the settings sections and
+  the thematiq panel as cards on the surface (the container radius, a hairline, the cards' shadow
+  colour), with the card title size on the dashboard, a quiet 14px header row on the Files list, and
+  a 44px token set select in the theme picker. No colour literal.
 - **The light workplace draws the login page and the top bar.** While the workplace layout is
   `light`, `css/workplace-layout.css` now draws Nextcloud's own pages the way the Zuiddrecht boards
   draw them: the logo above the login card, 56px high, the card 420px wide with a hairline, the
