@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **The light workplace draws the login page and the top bar.** While the workplace layout is
+  `light`, `css/workplace-layout.css` now draws Nextcloud's own pages the way the Zuiddrecht boards
+  draw them: the logo above the login card, 56px high, the card 420px wide with a hairline, the
+  container radius, the cards' shadow colour and a 24px title, 44px controls with a 1px edge, a
+  muted footer line without a plate; a 68px top bar with a 40px app grid square and a 44px search
+  pill on the workspace colour. On a guest page the "Back to …" button's label, which the NL Design
+  link rule painted link-blue on blue, reads again. No colour literal: the sheet still suits any set
+  an administrator turns it on for.
 - **Four demo schools in Zuiddrecht.** `wilgenboom` (Basisschool De Wilgenboom, willow green
   `#2F6B4A` and sun yellow, Lexend), `vaartveld` (Vaartveld College, cobalt `#1F4FD8` and aqua,
   Red Hat Display over Red Hat Text), `esdoornveen` (Esdoornveen, mbo college, plum `#5B2E91`
