@@ -33,7 +33,6 @@ namespace OCA\Thematiq;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
-use OCA\Thematiq\Service\TokenSetService;
 use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\ICache;
@@ -69,7 +68,6 @@ class Capabilities implements IPublicCapability {
 	 * @param IAppManager $appManager Resolves the app version and app path.
 	 * @param IURLGenerator $urlGenerator Resolves logo asset web paths.
 	 * @param DesignSystemService $designSystemService Resolves the active set's design system.
-	 * @param TokenSetService $tokenSetService Resolves the active set's display name/version.
 	 * @param ShippedTokenSetAuditService $auditService Computes the WCAG contrast verdict.
 	 * @param ICacheFactory $cacheFactory Creates the distributed WCAG-level cache.
 	 */
@@ -78,7 +76,6 @@ class Capabilities implements IPublicCapability {
 		private readonly IAppManager $appManager,
 		private readonly IURLGenerator $urlGenerator,
 		private readonly DesignSystemService $designSystemService,
-		private readonly TokenSetService $tokenSetService,
 		private readonly ShippedTokenSetAuditService $auditService,
 		ICacheFactory $cacheFactory,
 	) {
@@ -123,7 +120,7 @@ class Capabilities implements IPublicCapability {
 
 		return [
 			'version' => $this->appManager->getAppVersion(appId: Application::APP_ID),
-			'tokenSet' => $this->buildTokenSet(tokenSetId: $tokenSetId),
+			'tokenSet' => $this->buildTokenSet(tokenSetId: $tokenSetId, tokenSetMeta: $tokenSetMeta),
 			'designSystem' => $designSystemId,
 			'iconPacks' => $this->designSystemService->resolveActiveIconPacks(tokenSetId: $tokenSetId),
 			'wcagLevel' => $this->computeWcagLevel(tokenSetId: $tokenSetId, tokenSetMeta: $tokenSetMeta),
@@ -136,31 +133,33 @@ class Capabilities implements IPublicCapability {
 	/**
 	 * Resolve the active token set's `{ id, name, version }` triple.
 	 *
-	 * `name` falls back to the id and `version` is null when the active set has
-	 * no entry in `TokenSetService::getAvailableTokenSets()` (custom/unknown set).
+	 * Read from the active set's own manifest entry, not from
+	 * `TokenSetService::getAvailableTokenSets()`: that builds the whole
+	 * catalogue and audits every set in it, and Nextcloud renders the
+	 * capabilities into every page, so every page paid for auditing all sets
+	 * to read one name. `name` falls back to the id and `version` is null when
+	 * the active set has no manifest entry (custom/unknown set).
 	 *
-	 * @param string $tokenSetId The active token set id (appconfig `token_set`).
+	 * @param string               $tokenSetId   The active token set id (appconfig `token_set`).
+	 * @param array<string, mixed> $tokenSetMeta The active set's manifest entry (empty for an unknown set).
 	 *
 	 * @return array{id: string, name: string, version: string|null} The token set descriptor.
 	 *
-	 * @spec openspec/specs/theming-capability/spec.md
+	 * @spec openspec/specs/theming-capability/spec.md#requirement-theming-capability-payload
 	 */
-	private function buildTokenSet(string $tokenSetId): array {
-		$available = $this->tokenSetService->getAvailableTokenSets();
-		$byId = array_column($available, null, 'id');
-
-		// A discovered entry always carries `name`. The version reported here is
-		// the upstream provenance recorded by the token-sync workflow
-		// (`upstreamVersion`), present only for sets generated from an upstream
-		// release — null for hand-maintained and custom sets.
-		$entry = ($byId[$tokenSetId] ?? null);
+	private function buildTokenSet(string $tokenSetId, array $tokenSetMeta): array {
+		// The version reported here is the upstream provenance recorded by the
+		// token-sync workflow (`upstreamVersion`), present only for sets
+		// generated from an upstream release — null for hand-maintained and
+		// custom sets.
 		$name = $tokenSetId;
+		if (is_string($tokenSetMeta['name'] ?? null) === true && $tokenSetMeta['name'] !== '') {
+			$name = $tokenSetMeta['name'];
+		}
+
 		$version = null;
-		if (is_array($entry) === true) {
-			$name = (string)$entry['name'];
-			if (isset($entry['upstreamVersion']) === true) {
-				$version = (string)$entry['upstreamVersion'];
-			}
+		if (isset($tokenSetMeta['upstreamVersion']) === true) {
+			$version = (string)$tokenSetMeta['upstreamVersion'];
 		}
 
 		return [

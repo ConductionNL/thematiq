@@ -30,6 +30,34 @@ export async function requestToken(page: Page): Promise<string> {
 	return token
 }
 
+/** The admin password global-setup logs in with. */
+const ADMIN_PASS = process.env.NC_ADMIN_PASS ?? 'admin'
+
+/**
+ * Confirm the admin password for this session, as Nextcloud's own password
+ * dialog does (POST /login/confirm).
+ *
+ * Creating and deleting users and groups through the provisioning API is
+ * behind Nextcloud's password confirmation, which lapses 30 minutes after the
+ * session last confirmed. Every test shares the one session global-setup logs
+ * in, so on a run that takes longer than that every such call answered 403
+ * "Password confirmation is required". Call this right before those calls.
+ */
+export async function confirmAdminPassword(page: Page): Promise<void> {
+	const status = await page.evaluate(async (password) => {
+		const r = await fetch(OC.generateUrl('/login/confirm'), {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				requesttoken: OC.requestToken,
+			},
+			body: JSON.stringify({ password }),
+		})
+		return r.status
+	}, ADMIN_PASS)
+	expect(status, 'confirming the admin password').toBe(200)
+}
+
 /**
  * Open the admin theming page and wait for the token editor to mount.
  *
@@ -323,6 +351,7 @@ export async function offerTokenSets(
 
 	const suffix = Date.now().toString(36)
 	const groups = tokenSets.map((set) => `e2e-offer-${set}-${suffix}`)
+	await confirmAdminPassword(page)
 	for (const group of groups) {
 		const status = await page.evaluate(
 			async ({ t, g }) => {
@@ -357,6 +386,7 @@ export async function withdrawTokenSetOffer(
 	offer: TokenSetOffer,
 ): Promise<void> {
 	await setGroupMapping(page, token, offer.previousMapping)
+	await confirmAdminPassword(page)
 	for (const group of offer.groups) {
 		await page.evaluate(
 			async ({ t, g }) => {
