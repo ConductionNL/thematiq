@@ -193,8 +193,4 @@
 	--nldesign-hero-title-color: #1B1C1D;
 	--nldesign-hero-body-color: #1B1C1D;
 	--nldesign-hero-decoration-image: var(--nldesign-emblem-grey-url, var(--nldesign-emblem-url));
-	/* The menu item you are on is a blue piece of the red line under the
-	 * menu, not a second bar above it. */
-	--nldesign-website-nav-current-in-line: 1;
-	--nldesign-website-nav-current-color: #3669A5;
 }
