@@ -521,6 +521,26 @@ describe('workplace layout: the login page and the guest pages', () => {
 		}
 	})
 
+	it('paints the two text actions under the form in the link colour, through the on-surface opt-out', () => {
+		const [actions] = rules.filter(
+			(rule) =>
+				rule.decls['--nldesign-color-on-surface'] !== undefined
+				&& rule.selectors.some((s) =>
+					s.includes('.button-vue--vue-tertiary'),
+				),
+		)
+		expect(actions.decls['--nldesign-color-on-surface']).toBe(
+			'var( --nldesign-color-link, var(--color-primary-element) )',
+		)
+		expect(actions.decls.color).toBe(
+			'var(--nldesign-color-link, var(--color-primary-element)) !important',
+		)
+		// The control: the NL Design text rule really reads the opt-out.
+		expect(read('css/systems/nldesign/element-overrides.css')).toContain(
+			'var(--nldesign-color-on-surface, var(--nldesign-color-text)) !important',
+		)
+	})
+
 	it('takes the plate from under the footer line and mutes it', () => {
 		const [footer] = withSelector(rules, 'body#body-login footer.guest-box')
 		expect(footer.decls.background).toBe('transparent !important')
