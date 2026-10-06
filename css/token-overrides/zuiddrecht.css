@@ -161,13 +161,16 @@ div.guest-box.login-box::after {
 	color: var(--nldesign-color-button-primary-text, #fff) !important;
 }
 
-/* Counters (DqDashboard): a grey 14px label over a 34px number. */
+/* Counters (DqDashboard): a grey 14px label over a 34px number. The value
+ * rule names the stat widget's own class: the countdown tile in a case's side
+ * column shares `.cn-kpi-card__value`, and at 34px "31 days overdue" no longer
+ * fits its card (DqZaak draws that one at 26px, which it keeps). */
 #app-content-vue .cn-kpi-card__title {
 	font-weight: 400;
 	color: var(--color-text-maxcontrast);
 }
 
-#app-content-vue .cn-kpi-card__value {
+#app-content-vue .cn-stat-widget__value {
 	font-size: 34px;
 	line-height: 1;
 	letter-spacing: -0.01em;
