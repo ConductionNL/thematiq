@@ -272,6 +272,43 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 		expect(token('zuiddrecht', '--thematiq-tab-current-color')).toBe('#CC0000')
 	})
 
+	/**
+	 * The public site's own pages (openspec/changes/zuiddrecht-site-page-title-notice-surface).
+	 */
+	it('zuiddrecht draws its site: a 44px content title on a 1.15 line, an 18px lead, ink on a notice, a cool grey surface', () => {
+		expect(token('zuiddrecht', '--thematiq-page-title-font-size')).toBe(
+			'2.75rem',
+		)
+		expect(token('zuiddrecht', '--thematiq-page-title-line-height')).toBe('1.15')
+		expect(token('zuiddrecht', '--utrecht-paragraph-lead-font-size')).toBe(
+			'18px',
+		)
+		expect(token('zuiddrecht', '--utrecht-alert-color')).toBe('#1A1A1A')
+		expect(token('zuiddrecht', '--thematiq-surface-color')).toBe('#F4F6F9')
+		// The set names them, so the portal can read them by name as well.
+		expect(token('zuiddrecht', '--nldesign-website-page-title-size')).toBe(
+			'2.75rem',
+		)
+		expect(
+			token('zuiddrecht', '--nldesign-website-page-title-line-height'),
+		).toBe('1.15')
+		expect(token('zuiddrecht', '--nldesign-website-notice-color')).toBe(
+			'#1A1A1A',
+		)
+		expect(token('zuiddrecht', '--nldesign-color-surface')).toBe('#F4F6F9')
+		// The attention strip, apart from the blue plain notice.
+		expect(token('zuiddrecht', '--thematiq-attention-background-color')).toBe(
+			'#FFF4DE',
+		)
+		expect(token('zuiddrecht', '--thematiq-attention-border-color')).toBe(
+			'#E8C77D',
+		)
+		expect(token('zuiddrecht', '--thematiq-attention-color')).toBe('#1A1A1A')
+		expect(token('zuiddrecht', '--utrecht-alert-background-color')).toBe(
+			'#EAF0F7',
+		)
+	})
+
 	it.each([...SCHOOLS, 'vng'])(
 		'%s names none of it and keeps every value it had (the control)',
 		(set) => {
@@ -295,6 +332,15 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 			expect(token(set, '--utrecht-alert-border-color')).toBeNull()
 			expect(token(set, '--thematiq-tab-line-color')).toBeNull()
 			expect(token(set, '--thematiq-tab-current-color')).toBeNull()
+			// The site roles: the lead keeps its 20px, the rest resolve to nothing.
+			expect(token(set, '--utrecht-paragraph-lead-font-size')).toBe('20px')
+			expect(token(set, '--utrecht-alert-color')).toBeNull()
+			expect(token(set, '--thematiq-page-title-font-size')).toBeNull()
+			expect(token(set, '--thematiq-page-title-line-height')).toBeNull()
+			expect(token(set, '--thematiq-surface-color')).toBeNull()
+			expect(token(set, '--thematiq-attention-background-color')).toBeNull()
+			expect(token(set, '--thematiq-attention-border-color')).toBeNull()
+			expect(token(set, '--thematiq-attention-color')).toBeNull()
 		},
 	)
 })
