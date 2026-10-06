@@ -1,0 +1,49 @@
+
+ RUN  v5.0.2 /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq
+
+ ❯ tests/vitest/selectedNavText.spec.js (6 tests | 1 failed) 11930ms
+   ❯ the selected navigation entry label (thematiq#1051) (6)
+     × reaches 4.5:1 on the wash for every set in the light 6314ms
+Not implemented: navigation to another Document
+ ❯ tests/vitest/playgroundOwnStage.spec.js (10 tests | 1 failed) 27001ms
+   ❯ playground: your component (10)
+     × reopens a saved card from its link, and ignores a slug that no longer exists 5029ms
+Not implemented: navigation to another Document
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/vitest/playgroundOwnStage.spec.js > playground: your component > reopens a saved card from its link, and ignores a slug that no longer exists
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/playgroundOwnStage.spec.js:300:2
+    298|  })
+    299|
+    300|  it('reopens a saved card from its link, and ignores a slug that no lo…
+       |  ^
+    301|   await boot({ hash: '#preview=content/own-afvalkaart', saved: [SAVED]…
+    302|   expect(document.getElementById('nldesign-own-html').value).toBe(SAVE…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/vitest/selectedNavText.spec.js > the selected navigation entry label (thematiq#1051) > reaches 4.5:1 on the wash for every set in the light
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/selectedNavText.spec.js:362:3
+    360|
+    361|  for (const [envName, env] of Object.entries(ENVIRONMENTS)) {
+    362|   it(`reaches 4.5:1 on the wash for every set in the ${envName}`, () =…
+       |   ^
+    363|    const all = {}
+    364|    for (const set of SETS) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 78 passed (80)
+      Tests  2 failed | 1078 passed (1080)
+   Start at  19:40:18
+   Duration  42.25s (tests 69%, environment 15%, transform 9%, import 6%)
+
+    Isolate  80 workers spawned · ~1.17s startup each (spawn + environment, per file)
+             at least ~6.01s faster with isolate: false — reuses workers across files instead of one per file
+

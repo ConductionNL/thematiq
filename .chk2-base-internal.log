@@ -1,0 +1,43 @@
+PHP Warning:  require(/home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/../../vendor/autoload.php): Failed to open stream: No such file or directory in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php on line 18
+PHP Fatal error:  Uncaught Error: Failed opening required '/home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/../../vendor/autoload.php' (include_path='.:/usr/share/php') in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php on line 18
+node:internal/errors:983
+  const err = new Error(message);
+              ^
+
+Error: Command failed: php /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php {"light":[],"any":[]}
+PHP Warning:  require(/home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/../../vendor/autoload.php): Failed to open stream: No such file or directory in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php on line 18
+PHP Fatal error:  Uncaught Error: Failed opening required '/home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/../../vendor/autoload.php' (include_path='.:/usr/share/php') in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php on line 18
+
+    at genericNodeError (node:internal/errors:983:15)
+    at wrappedFn (node:internal/errors:537:14)
+    at checkExecSyncError (node:child_process:916:11)
+    at execFileSync (node:child_process:952:15)
+    at scopes (file:///home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/check-internal-scopes.mjs:30:2)
+    at file:///home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/check-internal-scopes.mjs:53:22 {
+  status: 255,
+  signal: null,
+  output: [
+    null,
+    '',
+    'PHP Warning:  require(/home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/../../vendor/autoload.php): Failed to open stream: No such file or directory in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php on line 18\n' +
+      "PHP Fatal error:  Uncaught Error: Failed opening required '/home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/../../vendor/autoload.php' (include_path='.:/usr/share/php') in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php:18\n" +
+      'Stack trace:\n' +
+      '#0 {main}\n' +
+      '  thrown in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php on line 18\n'
+  ],
+  pid: 1843215,
+  stdout: '',
+  stderr: 'PHP Warning:  require(/home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/../../vendor/autoload.php): Failed to open stream: No such file or directory in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php on line 18\n' +
+    "PHP Fatal error:  Uncaught Error: Failed opening required '/home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/../../vendor/autoload.php' (include_path='.:/usr/share/php') in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php:18\n" +
+    'Stack trace:\n' +
+    '#0 {main}\n' +
+    '  thrown in /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq/tests/css/internal-scopes.php on line 18\n'
+}
+
+Node.js v22.22.0

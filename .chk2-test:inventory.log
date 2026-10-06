@@ -1,0 +1,11 @@
+
+ RUN  v5.0.2 /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq
+
+
+ Test Files  1 passed (1)
+      Tests  34 passed (34)
+   Start at  19:39:05
+   Duration  2.39s (import 89%, tests 6%, transform 5%)
+
+docs/reference/mappings.md is up to date.
+internal tokens: OK, 453 tokens match the inventory

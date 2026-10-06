@@ -1,0 +1,139 @@
+
+> thematiq@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v5.0.2 /home/rubenlinde/memcap-work/zuiddrecht/build/thematiq
+
+Not implemented: navigation to another Document
+ ❯ tests/vitest/contentSurfaceTable.spec.js (4 tests | 1 failed) 12866ms
+   ❯ the Files table header and footer sit on the content surface (thematiq#1061) (4)
+     × paints them with the surface for every set in the light 6711ms
+ ❯ tests/vitest/errorLabelContrast.spec.js (7 tests | 1 failed) 22498ms
+   ❯ error labels on the error fill (thematiq#1027) (7)
+     × reaches 4.5:1 for every shipped set in the light 6455ms
+ ❯ tests/vitest/playgroundOwnStage.spec.js (10 tests | 6 failed) 41850ms
+   ❯ playground: your component (10)
+     × ends every tab chip row with "Your component" 5033ms
+     × renders the cleaned markup in a sandboxed frame and reports what it removed 5004ms
+     × gives the frame the house style fonts at addresses that load (#940) 5054ms
+     × lists exactly the tokens the code reads, read-only where the editor cannot write 5010ms
+     × repaints the frame when a token is edited, without rebuilding it 5002ms
+     × reopens a saved card from its link, and ignores a slug that no longer exists 5003ms
+Not implemented: navigation to another Document
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/vitest/contentSurfaceTable.spec.js > the Files table header and footer sit on the content surface (thematiq#1061) > paints them with the surface for every set in the light
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/contentSurfaceTable.spec.js:349:3
+    347|
+    348|  for (const [envName, env] of Object.entries(ENVIRONMENTS)) {
+    349|   it(`paints them with the surface for every set in the ${envName}`, (…
+       |   ^
+    350|    const all = {}
+    351|    for (const set of SETS) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/vitest/errorLabelContrast.spec.js > error labels on the error fill (thematiq#1027) > reaches 4.5:1 for every shipped set in the light
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/errorLabelContrast.spec.js:256:3
+    254|
+    255|  for (const [envName, env] of Object.entries(ENVIRONMENTS)) {
+    256|   it(`reaches 4.5:1 for every shipped set in the ${envName}`, () => {
+       |   ^
+    257|    const all = {}
+    258|    for (const set of SETS) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/vitest/playgroundOwnStage.spec.js > playground: your component > ends every tab chip row with "Your component"
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/playgroundOwnStage.spec.js:151:2
+    149|  })
+    150|
+    151|  it('ends every tab chip row with "Your component"', async () => {
+       |  ^
+    152|   await boot()
+    153|   const tabs = [
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/vitest/playgroundOwnStage.spec.js > playground: your component > renders the cleaned markup in a sandboxed frame and reports what it removed
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/playgroundOwnStage.spec.js:163:2
+    161|  })
+    162|
+    163|  it('renders the cleaned markup in a sandboxed frame and reports what …
+       |  ^
+    164|   await boot()
+    165|   chip('Your component').click()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/vitest/playgroundOwnStage.spec.js > playground: your component > gives the frame the house style fonts at addresses that load (#940)
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/playgroundOwnStage.spec.js:187:2
+    185|  })
+    186|
+    187|  it('gives the frame the house style fonts at addresses that load (#94…
+       |  ^
+    188|   const origin = window.location.origin
+    189|   vi.spyOn(document, 'styleSheets', 'get').mockReturnValue([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  tests/vitest/playgroundOwnStage.spec.js > playground: your component > lists exactly the tokens the code reads, read-only where the editor cannot write
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/playgroundOwnStage.spec.js:234:2
+    232|  })
+    233|
+    234|  it('lists exactly the tokens the code reads, read-only where the edit…
+       |  ^
+    235|   await boot()
+    236|   chip('Your component').click()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  tests/vitest/playgroundOwnStage.spec.js > playground: your component > repaints the frame when a token is edited, without rebuilding it
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/playgroundOwnStage.spec.js:252:2
+    250|  })
+    251|
+    252|  it('repaints the frame when a token is edited, without rebuilding it'…
+       |  ^
+    253|   await boot()
+    254|   chip('Your component').click()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  tests/vitest/playgroundOwnStage.spec.js > playground: your component > reopens a saved card from its link, and ignores a slug that no longer exists
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/vitest/playgroundOwnStage.spec.js:300:2
+    298|  })
+    299|
+    300|  it('reopens a saved card from its link, and ignores a slug that no lo…
+       |  ^
+    301|   await boot({ hash: '#preview=content/own-afvalkaart', saved: [SAVED]…
+    302|   expect(document.getElementById('nldesign-own-html').value).toBe(SAVE…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  3 failed | 75 passed (78)
+      Tests  8 failed | 969 passed (977)
+   Start at  07:50:44
+   Duration  60.80s (tests 72%, environment 17%, transform 7%, import 4%)
+
+    Isolate  78 workers spawned · ~1.72s startup each (spawn + environment, per file)
+             at least ~8.58s faster with isolate: false — reuses workers across files instead of one per file
+
