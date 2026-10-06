@@ -15,6 +15,7 @@
  *
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
+ * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -26,7 +27,9 @@ use OCA\Thematiq\AppInfo\Application;
 use OCP\IConfig;
 
 /**
- * Resolves the two layout options: the workplace layout and the brand stripe.
+ * Resolves the layout options: the workplace layout, the brand stripe and its
+ * placement, the navigation width, the selected navigation entry's style and
+ * the login watermark.
  *
  * Each option has three states, and the third is the reason this class exists.
  * An administrator can switch an option on or off, and that choice always
@@ -42,6 +45,10 @@ use OCP\IConfig;
  *
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
+ * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
+ *
+ * @SuppressWarnings(PHPMD.StaticAccess) - LayoutOptionValues holds pure lookups (what each option accepts and
+ *   defaults to) that the controller and the configuration bundle share with this service.
  */
 class LayoutOptionsService {
 
@@ -86,6 +93,13 @@ class LayoutOptionsService {
 	 * @var array<int, string>
 	 */
 	public const LAYOUTS = [self::LAYOUT_DEFAULT, self::LAYOUT_LIGHT];
+
+	/**
+	 * The `id` of the inline style that carries the navigation width.
+	 *
+	 * @var string
+	 */
+	public const NAVIGATION_WIDTH_STYLE_ID = 'thematiq-navigation-width';
 
 	/**
 	 * Constructor.
@@ -136,9 +150,17 @@ class LayoutOptionsService {
 	 *
 	 * @param string $tokenSet The token set id.
 	 *
-	 * @return array{workplaceLayout: string, brandStripe: bool} The set's defaults; `default` and false when it names none.
+	 * @return array{
+	 *     workplaceLayout: string,
+	 *     brandStripe: bool,
+	 *     navigationWidth: string,
+	 *     navigationActiveStyle: string,
+	 *     brandStripePlacement: string,
+	 *     loginWatermark: string
+	 * } The set's defaults; the behaviour every set had when it names none.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 */
 	public function setDefaults(string $tokenSet): array {
 		$meta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
@@ -152,11 +174,121 @@ class LayoutOptionsService {
 			$workplaceLayout = (string)$layout['workplace_layout'];
 		}
 
-		return [
+		$defaults = [
 			'workplaceLayout' => $workplaceLayout,
 			'brandStripe' => (($layout['brand_stripe'] ?? false) === true),
 		];
+		foreach (LayoutOptionValues::DEFAULTS as $key => $builtIn) {
+			$declared = LayoutOptionValues::accepted(key: $key, value: ($layout[$key] ?? null));
+			if ($declared === null || $declared === self::FOLLOW_SET) {
+				$declared = $builtIn;
+			}
+
+			$defaults[self::camel(key: $key)] = $declared;
+		}
+
+		return $defaults;
 	}//end setDefaults()
+
+	/**
+	 * The camel-case name an option goes by in a resolved array and a
+	 * response: `navigation_width` is `navigationWidth`.
+	 *
+	 * @param string $key The app config key.
+	 *
+	 * @return string The camel-case name.
+	 */
+	private static function camel(string $key): string {
+		return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $key))));
+	}//end camel()
+
+	/**
+	 * Whether a value is one the option accepts from an administrator: the
+	 * empty string (follow the set) or one of the option's values. Every
+	 * layout option is known here, the two older ones included.
+	 *
+	 * @param string $key The app config key.
+	 * @param string $value The value offered.
+	 *
+	 * @return bool True when the option accepts it.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 */
+	public function accepts(string $key, string $value): bool {
+		$known = ($key === LayoutOptionValues::NAVIGATION_WIDTH_KEY || array_key_exists($key, LayoutOptionValues::VALUES) === true);
+
+		return ($known === true && LayoutOptionValues::accepted(key: $key, value: $value) !== null);
+	}//end accepts()
+
+	/**
+	 * The administrator's stored choice for one of the four newer options
+	 * (the two older ones have readers of their own).
+	 *
+	 * @param string $key The app config key.
+	 *
+	 * @return string The stored value, or the empty string for "follow the set"
+	 *                (also for a value the option does not accept).
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 */
+	public function setting(string $key): string {
+		$stored = $this->config->getAppValue(Application::APP_ID, $key, self::FOLLOW_SET);
+
+		return (LayoutOptionValues::accepted(key: $key, value: $stored) ?? self::FOLLOW_SET);
+	}//end setting()
+
+	/**
+	 * What one of the four newer options resolves to for a page rendered with
+	 * this token set: the stored choice, else the set's default, else the
+	 * built-in one.
+	 *
+	 * @param string $key The app config key.
+	 * @param string $tokenSet The token set the page renders with.
+	 *
+	 * @return string The resolved value in its string form; the empty string
+	 *                for a navigation width left to Nextcloud.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 */
+	public function resolve(string $key, string $tokenSet): string {
+		$stored = $this->setting(key: $key);
+		if ($stored !== self::FOLLOW_SET) {
+			return $stored;
+		}
+
+		return (string)$this->setDefaults(tokenSet: $tokenSet)[self::camel(key: $key)];
+	}//end resolve()
+
+	/**
+	 * Store a layout option; the two older ones go through their own setters.
+	 *
+	 * @param string $key The app config key.
+	 * @param string $value The value, or the empty string to follow the set again.
+	 *
+	 * @return string The previously stored choice.
+	 *
+	 * @throws InvalidArgumentException When the option does not accept the value.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 */
+	public function setOption(string $key, string $value): string {
+		if ($this->accepts(key: $key, value: $value) === false) {
+			throw new InvalidArgumentException('Unknown layout option value');
+		}
+
+		if ($key === self::WORKPLACE_LAYOUT_KEY) {
+			return $this->setWorkplaceLayout(layout: $value);
+		}
+
+		if ($key === self::BRAND_STRIPE_KEY) {
+			return $this->setBrandStripe(stripe: $value);
+		}
+
+		$previous = $this->setting(key: $key);
+		$this->config->setAppValue(Application::APP_ID, $key, $value);
+
+		return $previous;
+	}//end setOption()
 
 	/**
 	 * The workplace layout a page rendered with this token set wears.
@@ -199,14 +331,32 @@ class LayoutOptionsService {
 	 *
 	 * @param string $tokenSet The token set the page renders with.
 	 *
-	 * @return array{workplaceLayout: string, brandStripe: bool} The resolved layout and stripe.
+	 * @return array{
+	 *     workplaceLayout: string,
+	 *     brandStripe: bool,
+	 *     navigationWidth: int|null,
+	 *     navigationActiveStyle: string,
+	 *     brandStripePlacement: string,
+	 *     loginWatermark: bool
+	 * } The resolved options.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 */
 	public function resolved(string $tokenSet): array {
+		$width = null;
+		$resolvedWidth = $this->resolve(key: LayoutOptionValues::NAVIGATION_WIDTH_KEY, tokenSet: $tokenSet);
+		if ($resolvedWidth !== self::FOLLOW_SET) {
+			$width = (int)$resolvedWidth;
+		}
+
 		return [
 			'workplaceLayout' => $this->workplaceLayout(tokenSet: $tokenSet),
 			'brandStripe' => $this->brandStripe(tokenSet: $tokenSet),
+			'navigationWidth' => $width,
+			'navigationActiveStyle' => $this->resolve(key: LayoutOptionValues::NAVIGATION_ACTIVE_STYLE_KEY, tokenSet: $tokenSet),
+			'brandStripePlacement' => $this->resolve(key: LayoutOptionValues::BRAND_STRIPE_PLACEMENT_KEY, tokenSet: $tokenSet),
+			'loginWatermark' => ($this->resolve(key: LayoutOptionValues::LOGIN_WATERMARK_KEY, tokenSet: $tokenSet) === '1'),
 		];
 	}//end resolved()
 
@@ -216,23 +366,71 @@ class LayoutOptionsService {
 	 *
 	 * @param string $tokenSet The token set the page renders with.
 	 *
-	 * @return array<int, string> Zero, one or both of `workplace-layout` and `brand-stripe`.
+	 * @return array<int, string> `workplace-layout` and, while the layout is light and the watermark is
+	 *                            off, `login-watermark-off`; `brand-stripe` and, for a placement other
+	 *                            than both, `brand-stripe-header-only` or `brand-stripe-login-only`;
+	 *                            `navigation-width` while a width is resolved; `navigation-active-soft`
+	 *                            for the soft style. Empty for a set that names none of it.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 */
 	public function stylesheets(string $tokenSet): array {
+		$resolved = $this->resolved(tokenSet: $tokenSet);
 		$files = [];
-		if ($this->workplaceLayout(tokenSet: $tokenSet) === self::LAYOUT_LIGHT) {
+		if ($resolved['workplaceLayout'] === self::LAYOUT_LIGHT) {
 			$files[] = 'workplace-layout';
+			if ($resolved['loginWatermark'] === false) {
+				$files[] = 'login-watermark-off';
+			}
 		}
 
-		if ($this->brandStripe(tokenSet: $tokenSet) === true) {
+		if ($resolved['brandStripe'] === true) {
 			$files[] = 'brand-stripe';
+			if ($resolved['brandStripePlacement'] === LayoutOptionValues::PLACEMENT_HEADER) {
+				$files[] = 'brand-stripe-header-only';
+			} elseif ($resolved['brandStripePlacement'] === LayoutOptionValues::PLACEMENT_LOGIN) {
+				$files[] = 'brand-stripe-login-only';
+			}
+		}
+
+		if ($resolved['navigationWidth'] !== null) {
+			$files[] = 'navigation-width';
+		}
+
+		if ($resolved['navigationActiveStyle'] === LayoutOptionValues::ACTIVE_STYLE_SOFT) {
+			$files[] = 'navigation-active-soft';
 		}
 
 		return $files;
 	}//end stylesheets()
+
+	/**
+	 * The inline styles a page rendered with this token set carries, after the
+	 * conditional stylesheets: the navigation width as one `:root` variable
+	 * that `css/navigation-width.css` reads. Each has an `id`, so the admin
+	 * page can replace it without a reload.
+	 *
+	 * @param string $tokenSet The token set the page renders with.
+	 *
+	 * @return array<int, array{id: string, css: string}> Zero or one style.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 */
+	public function inlineStyles(string $tokenSet): array {
+		$width = $this->resolve(key: LayoutOptionValues::NAVIGATION_WIDTH_KEY, tokenSet: $tokenSet);
+		if ($width === self::FOLLOW_SET) {
+			return [];
+		}
+
+		return [
+			[
+				'id' => self::NAVIGATION_WIDTH_STYLE_ID,
+				'css' => ':root { --thematiq-navigation-width: ' . $width . 'px; }',
+			],
+		];
+	}//end inlineStyles()
 
 	/**
 	 * Store the workplace layout choice.

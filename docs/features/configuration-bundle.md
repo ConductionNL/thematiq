@@ -14,6 +14,7 @@ This is not the overrides file from [import and export](./import-export.md). Tha
 |---|---|
 | The active token set | Nextcloud's own theming values (logo, background) |
 | Hide slogan, show menu labels, primary colour drives components | The environment marker in `config.php` |
+| The layout choices: workplace layout, brand stripe and where it is drawn, navigation width, selected entry style, login watermark (as stored, so "follow the theme" travels too) | |
 | Per-app exclusions | The `mail_template_class` setting in `config.php` |
 | Your token overrides (`custom-overrides.css`) | Font files |
 | Every custom token set, CSS included | Group mappings |

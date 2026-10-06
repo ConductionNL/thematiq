@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **Four more layout options, each with a per-theme default.** Where the brand stripe is drawn
+  (`brand_stripe_placement`: both places, the top bar only or the login card only), the
+  navigation width (`navigation_width`, 200 to 480 pixels), the selected navigation entry's style
+  (`navigation_active_style`: Nextcloud's or a soft tint of the accent with a bold label) and the
+  login watermark (`login_watermark`). Each follows the active token set's `layout` block until an
+  administrator chooses, and a set that names none keeps what it had. Zuiddrecht names a 264px
+  navigation and the soft entry. All six layout choices now travel in the configuration bundle
+  (`config.layoutOptions`, bundle version 4), which the first Zuiddrecht change left out.
 - **Zuiddrecht wears the workplace boards.** `css/token-overrides/zuiddrecht.css` now carries the
   measures of the approved workplace boards (DqTokens, DqZijbalk, DqDashboard, DqZaken, DqZaak) on
   the Conduction library's own class names, for this set only: a 264px navigation

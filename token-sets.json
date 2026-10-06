@@ -786,7 +786,9 @@
 		},
 		"layout": {
 			"workplace_layout": "light",
-			"brand_stripe": true
+			"brand_stripe": true,
+			"navigation_width": 264,
+			"navigation_active_style": "soft"
 		}
 	},
 	{

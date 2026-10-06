@@ -461,11 +461,64 @@
 			if (layout === undefined || layout === null) {
 				return
 			}
+			var light = layout.workplaceLayout === 'light'
+			var stripe = layout.brandStripe === true
+			setConditionalLayer('workplace-layout', light)
 			setConditionalLayer(
-				'workplace-layout',
-				layout.workplaceLayout === 'light',
+				'login-watermark-off',
+				light && layout.loginWatermark === false,
 			)
-			setConditionalLayer('brand-stripe', layout.brandStripe === true)
+			setConditionalLayer('brand-stripe', stripe)
+			setConditionalLayer(
+				'brand-stripe-header-only',
+				stripe && layout.brandStripePlacement === 'header',
+			)
+			setConditionalLayer(
+				'brand-stripe-login-only',
+				stripe && layout.brandStripePlacement === 'login',
+			)
+			var width =
+				typeof layout.navigationWidth === 'number'
+					? layout.navigationWidth
+					: null
+			setConditionalLayer('navigation-width', width !== null)
+			setInlineLayer(
+				'thematiq-navigation-width',
+				width === null
+					? null
+					: ':root { --thematiq-navigation-width: ' + width + 'px; }',
+			)
+			setConditionalLayer(
+				'navigation-active-soft',
+				layout.navigationActiveStyle === 'soft',
+			)
+		}
+
+		/**
+		 * Put an inline `<style>` with this id on the page with this text, or
+		 * take it off the page when the text is null. The navigation width
+		 * travels this way: one `:root` variable the width stylesheet reads.
+		 *
+		 * @param {string} id The element id.
+		 * @param {string|null} css The stylesheet body, or null for none.
+		 */
+		function setInlineLayer(id, css) {
+			var existing = document.getElementById(id)
+			if (css === null) {
+				if (existing !== null && existing.parentNode) {
+					existing.parentNode.removeChild(existing)
+				}
+				return
+			}
+			if (existing !== null) {
+				existing.textContent = css
+				return
+			}
+			var style = document.createElement('style')
+			style.id = id
+			style.setAttribute('data-nldesign-layer', 'conditional')
+			style.textContent = css
+			document.head.appendChild(style)
 		}
 
 		/**
@@ -2457,15 +2510,33 @@
 			'thematiq-workplace-layout',
 		)
 		var brandStripeSelect = document.getElementById('thematiq-brand-stripe')
+		var layoutOptionFields = [
+			workplaceLayoutSelect,
+			brandStripeSelect,
+			document.getElementById('thematiq-navigation-width-input'),
+			document.getElementById('thematiq-navigation-active-style'),
+			document.getElementById('thematiq-brand-stripe-placement'),
+			document.getElementById('thematiq-login-watermark'),
+		]
 		if (workplaceLayoutSelect && brandStripeSelect) {
 			var onLayoutOptionChange = function () {
-				saveLayoutOptions(
-					workplaceLayoutSelect.value,
-					brandStripeSelect.value,
-				)
+				var valueOf = function (field) {
+					return field === null ? '' : String(field.value).trim()
+				}
+				saveLayoutOptions({
+					workplaceLayout: valueOf(layoutOptionFields[0]),
+					brandStripe: valueOf(layoutOptionFields[1]),
+					navigationWidth: valueOf(layoutOptionFields[2]),
+					navigationActiveStyle: valueOf(layoutOptionFields[3]),
+					brandStripePlacement: valueOf(layoutOptionFields[4]),
+					loginWatermark: valueOf(layoutOptionFields[5]),
+				})
 			}
-			workplaceLayoutSelect.addEventListener('change', onLayoutOptionChange)
-			brandStripeSelect.addEventListener('change', onLayoutOptionChange)
+			layoutOptionFields.forEach(function (field) {
+				if (field !== null) {
+					field.addEventListener('change', onLayoutOptionChange)
+				}
+			})
 		}
 
 		// Handle dark mode variants checkbox — instance-wide toggle only; never
@@ -2679,10 +2750,10 @@
 				})
 		}
 
-		// Save the workplace layout and the brand stripe, then put this page in
-		// the state the server resolved: an empty choice follows the theme, so
-		// only the server knows whether a stylesheet is on or off now.
-		function saveLayoutOptions(workplaceLayout, brandStripe) {
+		// Save the layout options together, then put this page in the state
+		// the server resolved: an empty choice follows the theme, so only the
+		// server knows whether a stylesheet is on or off now.
+		function saveLayoutOptions(options) {
 			var url = OC.generateUrl('/apps/thematiq/settings/layout')
 
 			fetch(url, {
@@ -2691,10 +2762,7 @@
 					'Content-Type': 'application/json',
 					requesttoken: OC.requestToken,
 				},
-				body: JSON.stringify({
-					workplaceLayout: workplaceLayout,
-					brandStripe: brandStripe,
-				}),
+				body: JSON.stringify(options),
 			})
 				.then(function (response) {
 					return response.json()

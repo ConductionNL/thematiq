@@ -1,0 +1,38 @@
+/**
+ * Navigation width
+ * (openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded only while a navigation width resolves: an administrator stored
+ * one, or the active token set names one in its `layout` block and the
+ * administrator left the choice to the theme. Off for every other set, which
+ * keeps the width Nextcloud gives the panel.
+ *
+ * THE WIDTH ITSELF IS NOT IN THIS FILE. The page carries it as one inline
+ * `:root` variable, `--thematiq-navigation-width`, emitted next to this link
+ * (and replaced in place by the admin page when the choice changes), so this
+ * sheet stays static and cacheable.
+ *
+ * Three readers are served. Nextcloud sizes the panel and positions the
+ * content from `--navigation-width`, which theme-scopes.css maps from the
+ * thematiq global; both are set from the inline value. The panel's own
+ * component rule then sizes it again from a literal, so the width is said
+ * outright on the panel as well, with the weight the component rule carries
+ * (measured 6 October 2026: a variable alone left the panel at 300px).
+ */
+:root {
+	--nldesign-nc-navigation-width: var(--thematiq-navigation-width);
+	--thematiq-global-navigation-width: var(--thematiq-navigation-width);
+	--navigation-width: var(--thematiq-navigation-width);
+}
+
+#app-navigation-vue,
+.app-navigation {
+	--navigation-width: var(--thematiq-navigation-width);
+
+	width: var(--thematiq-navigation-width) !important;
+	min-width: var(--thematiq-navigation-width) !important;
+	flex: 0 0 var(--thematiq-navigation-width) !important;
+}
