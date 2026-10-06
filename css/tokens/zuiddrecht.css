@@ -197,4 +197,35 @@
 	 * menu, not a second bar above it. */
 	--nldesign-website-nav-current-in-line: 1;
 	--nldesign-website-nav-current-color: #3669A5;
+
+	/* THE SIGNED-IN PAGES (openspec/changes/zuiddrecht-website-type-and-controls),
+	 * as the Mijn Zuiddrecht boards draw them. Read by css/public-bridge.css
+	 * only; an instance page never sees these.
+	 * The website's corners: 4px controls, 6px cards. */
+	--nldesign-website-border-radius: 4px;
+	--nldesign-website-border-radius-large: 6px;
+	/* The type scale: 44px page titles, 40px a record's name, 26px sections. */
+	--nldesign-website-heading-1-font-size: 44px;
+	--nldesign-website-heading-2-font-size: 40px;
+	--nldesign-website-heading-3-font-size: 26px;
+	/* Controls carry a 2px border: an outlined button is blue on white (5.64:1). */
+	--nldesign-website-control-border-width: 2px;
+	/* A status tag is a pill. */
+	--nldesign-website-badge-border-radius: 14px;
+	/* Process steps: 36px markers; a done step is filled blue with a white
+	 * tick (5.64:1), the current step white with a red ring and a red
+	 * number (5.89:1); the line after a done step is blue. */
+	--nldesign-website-step-marker-size: 36px;
+	--nldesign-website-step-done-color: #3669A5;
+	--nldesign-website-step-done-mark-color: #ffffff;
+	--nldesign-website-step-current-color: #CC0000;
+	--nldesign-website-step-current-background-color: #ffffff;
+	/* A plain notice (the ask for an e-mail address): the light blue with a
+	 * 1px border; ink on it 12.7:1. */
+	--nldesign-website-notice-background-color: #EAF0F7;
+	--nldesign-website-notice-border-color: #B9CBE2;
+	--nldesign-website-notice-border-width: 1px;
+	/* Tabs: a grey line, the tab on screen marked red. */
+	--nldesign-website-tab-line-color: #D3D8DF;
+	--nldesign-website-tab-current-color: #CC0000;
 }
