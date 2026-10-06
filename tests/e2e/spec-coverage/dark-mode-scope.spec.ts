@@ -350,8 +350,9 @@ test.describe('dark-mode scope selectors — dark OS', () => {
 		page,
 	}) => {
 		// The custom-overrides layer is only linked while the active set has a
-		// saved overrides file, so save one (empty) for the duration of the test
-		// rather than rely on an earlier spec having left one behind.
+		// saved overrides file, so save one (empty) rather than rely on an
+		// earlier spec having left one behind. The restore puts the previous
+		// overrides back, but the (empty) file stays afterwards.
 		await withThemeState(browser, { overrides: {} }, async () => {
 			await page.goto(PROBE_URL)
 			const order = await nldesignStyleHrefs(page)

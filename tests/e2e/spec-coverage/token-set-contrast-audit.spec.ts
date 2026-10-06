@@ -11,6 +11,10 @@
  * and the generated report are backend/CI concerns covered by the PHPUnit gate
  * tests/Unit/TokenSetContrastAuditTest.php — excluded below.
  *
+ * The custom-token-sets scenario for an uploaded set's stored warning is
+ * asserted here too: it is the same dialog warning, and the one of the two that
+ * every run can reach.
+ *
  * The two backend-only scenarios in the spec carry their @e2e exclude inline in
  * openspec/specs/token-set-contrast-audit/spec.md.
  */
@@ -110,8 +114,7 @@ test.describe('token-set-contrast-audit', () => {
 	// -----------------------------------------------------------------------
 
 	test(// @e2e openspec/specs/token-set-contrast-audit/spec.md#applying-a-sub-aa-shipped-set-shows-a-warning-but-still-applies
-	'Applying a sub-AA set shows a non-blocking contrast warning', async ({
-		browser,
+	'Applying a sub-AA shipped set shows a non-blocking contrast warning', async ({
 		page,
 	}) => {
 		await openTheming(page)
@@ -127,17 +130,30 @@ test.describe('token-set-contrast-audit', () => {
 				break
 			}
 		}
-		if (shipped !== '') {
-			await expectNonBlockingContrastWarning(page, shipped)
-			return
-		}
+		// Only a shipped set reaches the shipped audit (an uploaded one carries
+		// the warnings stored at upload), so an uploaded stand-in would not test
+		// this scenario. Since the token sync every shipped set passes; until one
+		// fails again, the shipped warnings path is covered by PHPUnit
+		// (TokenSetServiceWarningsCacheTest) and the banner itself by the test
+		// below. This test re-arms by itself when the report records a failure.
+		test.skip(
+			shipped === '',
+			'no shipped set fails the contrast audit (docs/reference/contrast-report.json) '
+				+ 'and is selectable on this instance',
+		)
 
-		// Otherwise a set of the test's own, never a skip: since the token sync
-		// every shipped set passes, and a skipped test would leave the warning
-		// unchecked exactly while nothing ships that raises it. The banner is
-		// built from the catalogue entry's `warnings` (buildContrastWarningHtml),
-		// whichever audit filled them in, so an uploaded sub-AA set takes the
-		// same path to the dialog: here white text on a white primary, 1:1.
+		await expectNonBlockingContrastWarning(page, shipped)
+	})
+
+	test(// @e2e openspec/specs/custom-token-sets/spec.md#contrast-warning-resurfaces-when-applying-the-set
+	'Applying a sub-AA uploaded set shows its stored contrast warning, non-blocking', async ({
+		browser,
+		page,
+	}) => {
+		// Runs on every run, whatever the shipped sets do: the set is the test's
+		// own, white text on a white primary on a white page (1:1). Its warning
+		// is computed and stored at upload, and the dialog must show it again
+		// when the set is chosen after a page load.
 		await withUploadedSet(
 			browser,
 			'Low contrast',

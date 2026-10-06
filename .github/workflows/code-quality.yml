@@ -253,17 +253,16 @@ jobs:
       #
       # workers stays at 1 deliberately. These specs mutate GLOBAL admin
       # theming state — active token set, dark mode, hidden slogan, custom CSS.
-      # Two workers racing on one Nextcloud would cross-contaminate, so this
-      # suite is not a candidate for the `fullyParallel` treatment used
-      # elsewhere in the fleet.
+      # Two workers racing on one Nextcloud would cross-contaminate, so the
+      # suite stays at one worker per leg; `fullyParallel: true` in
+      # playwright.config.ts only changes how the suite is sharded.
       enable-playwright: true
       # Split over 8 legs, the most the shared workflow takes. Each leg has its
       # own Nextcloud and database, so the reason for `workers: 1` above holds
-      # per leg. Measured in run 37438276176: about 170 minutes of tests, so
-      # close to 3 hours in one leg against a 45-minute job. Playwright shards
-      # per test here (`fullyParallel: true`), about 53 tests a leg; the
-      # slowest leg comes to about 25 minutes, inside the 38-minute
-      # globalTimeout in playwright.config.ts. E2E only runs on the
+      # per leg. Playwright shards per test here (`fullyParallel: true`), about
+      # 53 tests a leg. Measured in run 37453545530: about 47 minutes of tests
+      # in all, the slowest leg 13.2 minutes for the whole job, inside the
+      # 38-minute globalTimeout in playwright.config.ts. E2E only runs on the
       # promotion path (pull requests and pushes to beta and main) and on
       # manual runs, so this is 8 runners per release, not per development
       # push.

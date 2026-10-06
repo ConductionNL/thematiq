@@ -23,6 +23,13 @@ test.describe('admin-settings', () => {
 	// page load is the most expensive step of this suite (about 20 s on CI),
 	// so loading it once per test spent minutes on one page. A test that
 	// changes the page, such as the preview test opening a tab, keeps its own.
+	//
+	// `mode: 'default'` keeps the block on one CI shard, so the page loads once
+	// per run. Under `fullyParallel` a block with a beforeAll is otherwise cut
+	// into groups across shards, each loading the page again. Unlike 'serial',
+	// a failure does not skip the tests after it.
+	test.describe.configure({ mode: 'default' })
+
 	let page: Page
 
 	test.beforeAll(async ({ browser }) => {

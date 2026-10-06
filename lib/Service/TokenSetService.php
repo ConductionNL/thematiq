@@ -421,6 +421,8 @@ class TokenSetService {
 	 * shipped files), the set's CSS content (a synced or edited set), and the
 	 * entry's design system, theming and metadata (captured branding, manifest
 	 * changes). Local, not distributed: the inputs are this server's files.
+	 * Without a `memcache.local` Nextcloud hands out a NullCache, and the
+	 * audits then run on every read, as they did before this cache.
 	 *
 	 * @param array<string, mixed> $tokenSet The token set entry being built.
 	 * @param array<string, mixed> $meta The merged manifest metadata for this id.

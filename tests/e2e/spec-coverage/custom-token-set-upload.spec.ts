@@ -171,12 +171,8 @@ test.describe('custom-token-set-upload', () => {
 	})
 
 	// Scenario: Contrast warning resurfaces when applying the set
-	// @e2e exclude openspec/specs/custom-token-sets/spec.md#contrast-warning-resurfaces-when-applying-the-set
-	// The apply-dialog banner is built from the persisted warning on the
-	// dropdown payload (buildContrastWarningHtml). Verifying it requires a full
-	// page reload after upload so the server re-renders the dropdown data; that
-	// reload-and-reopen flow mutates shared env state and is covered by the
-	// PHPUnit manifest-round-trip + the unit-level warning persistence test.
+	// Covered in token-set-contrast-audit.spec.ts, next to the shipped-set
+	// variant of the same dialog warning.
 
 	// Scenario: Compliant upload produces no warnings
 	// @e2e exclude openspec/specs/custom-token-sets/spec.md#compliant-upload-produces-no-warnings
