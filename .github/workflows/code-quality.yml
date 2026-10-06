@@ -257,6 +257,17 @@ jobs:
       # suite is not a candidate for the `fullyParallel` treatment used
       # elsewhere in the fleet.
       enable-playwright: true
+      # Split over 8 legs, the most the shared workflow takes. Each leg has its
+      # own Nextcloud and database, so the reason for `workers: 1` above holds
+      # per leg. Measured in run 37431331292: about 22 s per test and 424 tests,
+      # roughly 2.5 hours in one leg against a 45-minute job. Playwright shards
+      # whole files here (`fullyParallel: false`), so the legs are uneven, 16
+      # to 92 tests; the heaviest is estimated at 25-30 minutes, inside the
+      # 38-minute globalTimeout in playwright.config.ts. E2E only runs on the
+      # promotion path (pull requests and pushes to beta and main) and on
+      # manual runs, so this is 8 runners per release, not per development
+      # push.
+      e2e-shards: 8
       # A fresh Nextcloud has thematiq's `token_set` unset, which resolves to
       # the `nextcloud` set, whose design_system is `none` — and `none` means
       # CssInjectionService emits NO design-system layer and NO token layer at

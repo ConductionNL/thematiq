@@ -17,7 +17,12 @@ import { retriesFor } from './tests/e2e/instance-load'
 export default defineConfig({
 	testDir: './tests/e2e',
 	globalSetup: path.resolve(__dirname, 'tests/e2e/global-setup.ts'),
-	timeout: 30_000,
+	// 60 s per test, not Playwright's 30. Most specs start by loading a
+	// Nextcloud page, and the admin theming page alone takes about 20 s to its
+	// load event on CI; a test that then switches a token set or uploads one
+	// ran past 30 s while working correctly (nine of them in run 37431331292).
+	// A larger budget costs nothing on a passing test, only on a failing one.
+	timeout: 60_000,
 	expect: { timeout: 10_000 },
 	// One worker, in order: parallel runs against one instance interfere with
 	// each other (measured in #181: 64 failures in parallel against 12 serially).
@@ -34,10 +39,15 @@ export default defineConfig({
 	// its tally, the `if: failure()` trace upload never fires, and the run shows
 	// as "cancelled", which reads like an infrastructure hiccup rather than a
 	// suite that ran out of budget. Exiting on our own clock a few minutes early
-	// means the tally and the artifacts always exist. Measured: the baseline run
-	// (31086399980) executed 100 of 110 tests in 5.9m, so 38m is ~6x headroom
-	// over the full suite and cannot mask a real regression — it can only turn a
-	// silent cancellation into a reported timeout.
+	// means the tally and the artifacts always exist.
+	//
+	// The cap is per Playwright process, so per shard, and every shard leg has
+	// its own 45-minute job. Measured in run 37431331292: 105 tests in 38m,
+	// about 22 s each, so the 424-test suite is roughly 2.5 hours in one
+	// process. CI therefore splits it (`e2e-shards` in code-quality.yml). With
+	// `fullyParallel: false` Playwright shards whole files, so the 8 legs are
+	// uneven: 16 to 92 tests, the heaviest (token-sets, css-architecture) an
+	// estimated 25-30 minutes, which still fits inside 38m.
 	globalTimeout: 38 * 60_000,
 	reporter: [
 		['list'],

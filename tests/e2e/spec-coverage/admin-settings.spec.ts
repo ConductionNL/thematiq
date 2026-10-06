@@ -23,8 +23,6 @@ test.describe('admin-settings', () => {
 	// page load is the most expensive step of this suite (about 20 s on CI),
 	// so loading it once per test spent minutes on one page. A test that
 	// changes the page, such as the preview test opening a tab, keeps its own.
-	test.describe.configure({ timeout: 60_000 })
-
 	let page: Page
 
 	test.beforeAll(async ({ browser }) => {

@@ -49,8 +49,6 @@ test.describe('admin panels for the market-gap wave features', () => {
 	// One page load serves every test below. Each only reads the rendered
 	// panels or GETs a settings endpoint, and an admin page load is the most
 	// expensive step of this suite (about 20 s on CI).
-	test.describe.configure({ timeout: 60_000 })
-
 	let page: Page
 
 	test.beforeAll(async ({ browser }) => {

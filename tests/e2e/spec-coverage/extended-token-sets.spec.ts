@@ -373,15 +373,23 @@ test.describe('extended-token-sets', () => {
 		let restore: (() => Promise<void>) | null = null
 
 		test.beforeAll(async ({ browser }) => {
+			// A hook's own budget: `describe.configure({ timeout })` does not
+			// reach `beforeAll`, and this one loads a page, then switches the
+			// instance's set through the admin page (activateTokenSet).
+			test.setTimeout(120_000)
 			expect(
 				withheld,
 				'no withheld shipped file to exercise the rule with',
 			).toBeTruthy()
 			const ctx = await adminContext(browser)
 			try {
+				// Any page with OC.requestToken serves getJson(); the admin
+				// theming page is not needed for one GET.
 				const page = await ctx.newPage()
-				await page.goto(THEMING_URL)
-				await page.waitForLoadState('domcontentloaded')
+				await page.goto('/settings/user', { waitUntil: 'domcontentloaded' })
+				await page.waitForFunction(
+					() => typeof (window as any).OC?.requestToken === 'string',
+				)
 				const before = await getJson(
 					page,
 					'/apps/thematiq/settings/tokensets',

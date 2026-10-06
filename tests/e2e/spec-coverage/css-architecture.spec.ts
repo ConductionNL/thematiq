@@ -369,10 +369,12 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 				})
 		})
 		expect(faces, 'systems/nldesign/fonts.css must be loaded').not.toBeNull()
-		// The Fira Sans faces, as the requirement names them. Source Sans 3
-		// (#899, the (EXAMPLE) Gemeente set) ships woff2 only.
+		// Every Fira Sans face: at least the four the requirement names, plus
+		// the 500 and 600 weights #1049 added, and each must follow the rule
+		// below. Source Sans 3 (#899, the (EXAMPLE) Gemeente set) ships woff2
+		// only, so the rule is checked for Fira Sans alone.
 		const fira = (faces ?? []).filter((f) => f.family === 'Fira Sans')
-		expect(fira.length).toBe(4)
+		expect(fira.length).toBeGreaterThanOrEqual(4)
 		for (const face of fira) {
 			expect(face.src.trim().startsWith('local(')).toBe(true)
 			expect(face.urls.map((u) => u.format)).toEqual(['woff2', 'woff'])

@@ -73,10 +73,6 @@ async function openForApi(page: Page): Promise<void> {
 const APP = '/index.php/apps/thematiq'
 
 test.describe('admin-only enforcement', () => {
-	// Each test makes several server calls as two users; 30 s left no room once
-	// the instance is slow.
-	test.describe.configure({ timeout: 60_000 })
-
 	let nonAdmin: { page: Page; close: () => Promise<void> }
 
 	test.beforeAll(async ({ browser }) => {
