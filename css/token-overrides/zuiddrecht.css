@@ -81,14 +81,14 @@ div.guest-box.login-box::after {
  * throwaway instance, 6 October 2026: a bare `.cn-kpi-card__value` lost to
  * the inline rule and the counter stayed 18.75px). */
 
-/* The navigation: 264px wide (DqZijbalk). Nextcloud sizes the panel from
- * `--navigation-width`, which theme-scopes.css maps from the thematiq global
- * and that from `--nldesign-nc-navigation-width`; the three are set together
- * so the width holds whichever sheet reads it. */
+/* THE NAVIGATION'S WIDTH AND ITS SELECTED ENTRY ARE NOT IN THIS FILE. The
+ * set's `layout` block in token-sets.json names a 264px navigation (DqZijbalk)
+ * and the soft selected entry, so with nothing stored the page loads
+ * css/navigation-width.css with an inline 264px and
+ * css/navigation-active-soft.css (LayoutOptionsService::stylesheets(), after
+ * this sheet). A literal here would only overrule an administrator who picks
+ * another width or the plain entry. */
 :root {
-	--nldesign-nc-navigation-width: 264px;
-	--thematiq-global-navigation-width: 264px;
-	--navigation-width: 264px;
 	/* Headings: the NL Design sheet sizes every h2 and h3 from these tokens
 	 * with !important, so a class rule cannot. h2 stays the defaults' 2rem
 	 * (30px: DqTokens "Paginatitel 30"); h3, the card title, is 18px
@@ -96,18 +96,7 @@ div.guest-box.login-box::after {
 	--nldesign-component-heading-3-font-size: 18px;
 }
 
-/* The panel itself: Nextcloud's component sizes it from its own rule, so the
- * width is said outright as well. */
-#app-navigation-vue,
-.app-navigation {
-	--navigation-width: 264px;
-	width: 264px !important;
-	min-width: 264px !important;
-	flex: 0 0 264px !important;
-}
-
-/* The captions: small capitals in grey. The selected entry: a flat soft-red
- * wash with a bold label (DqTokens "Menu-item": rood op zachtrood). */
+/* The captions: small capitals in grey. */
 #app-navigation-vue .app-navigation-caption__name,
 .app-navigation .app-navigation-caption__name {
 	font-size: 12px;
@@ -117,14 +106,20 @@ div.guest-box.login-box::after {
 	color: var(--color-text-maxcontrast);
 }
 
-#app-navigation-vue .app-navigation-entry:not(.app-navigation-entry--legacy).active,
-.app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active {
-	background-color: var(--nldesign-color-accent-light);
+/* The card at the foot of the navigation (DqZijbalk "Dag afsluiten"): its
+ * link reads as a link, 14px, 600, in the link colour and underlined. Two
+ * ids: the NL Design link sheet paints every `a:not(#header a)` in the
+ * surface text colour with an id-strength !important rule, and the
+ * navigation sheet takes the underline off every link in the panel. */
+#content #app-navigation-vue .cn-app-nav__card-link {
+	color: var(--nldesign-color-link) !important;
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: underline !important;
 }
 
-#app-navigation-vue .app-navigation-entry.active .app-navigation-entry-link,
-.app-navigation .app-navigation-entry.active .app-navigation-entry-link {
-	font-weight: 600;
+#content #app-navigation-vue .cn-app-nav__card-link:hover {
+	color: var(--nldesign-color-link-hover) !important;
 }
 
 /* The greeting (DqDashboard: 32px, an h2 the heading token would hold at 30). */
@@ -227,4 +222,30 @@ div.guest-box.login-box::after {
 
 #app-content-vue .cn-data-table tbody td {
 	font-size: 14px;
+}
+
+/* My tasks as a checkbox list (DqDashboard "Mijn taken"; dossiq's opt-in
+ * `variant: list`, which the simple profile declares): the task in the text
+ * colour, its case and its date in grey, a date due today or past in the
+ * accent's dark step, bold. The NL Design element sheet paints every `a`,
+ * `span` and `div` outside the header with an !important rule of up to two
+ * ids, so these carry three: `:not(#header *)` adds the third and matches
+ * everything in the content. */
+#content #app-content-vue .dossiq-task-list__title:not(#header *) {
+	color: var(--color-main-text) !important;
+	text-decoration: none !important;
+}
+
+#content #app-content-vue .dossiq-task-list__title:not(#header *):hover,
+#content #app-content-vue .dossiq-task-list__title:not(#header *):focus-visible {
+	text-decoration: underline !important;
+}
+
+#content #app-content-vue .dossiq-task-list__case:not(#header *),
+#content #app-content-vue .dossiq-task-list__due:not(#header *) {
+	color: var(--color-text-maxcontrast) !important;
+}
+
+#content #app-content-vue .dossiq-task-list__due--urgent:not(#header *) {
+	color: var(--nldesign-color-accent-text) !important;
 }

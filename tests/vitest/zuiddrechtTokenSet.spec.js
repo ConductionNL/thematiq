@@ -535,3 +535,43 @@ describe('zuiddrecht: the font', () => {
 		expect(LIGHT['--nldesign-font-family'].startsWith("'Fira Sans'")).toBe(true)
 	})
 })
+
+describe('zuiddrecht: what the layout options carry, and the day-close link', () => {
+	const override = read('css/token-overrides/zuiddrecht.css')
+	const declarations = []
+	postcss.parse(override).walkDecls((d) => {
+		declarations.push({
+			selector: d.parent.selector || '',
+			prop: d.prop,
+			value: d.value + (d.important ? ' !important' : ''),
+		})
+	})
+
+	it('leaves the 264px navigation and the soft entry to the layout options', () => {
+		// The set's `layout` block names both, so with nothing stored the page
+		// loads navigation-width.css and navigation-active-soft.css
+		// (LayoutOptionsServiceTest::testZuiddrechtWearsTheNewerDefaults). A
+		// literal here would overrule an administrator who picks another.
+		expect(declarations.filter((d) => /\b264px\b/.test(d.value))).toEqual([])
+		expect(declarations.filter((d) => /navigation-width/.test(d.prop))).toEqual(
+			[],
+		)
+		expect(
+			declarations.filter((d) =>
+				/app-navigation-entry[^,]*\.active/.test(d.selector),
+			),
+		).toEqual([])
+	})
+
+	it('draws the navigation card link as a link: link colour, underlined', () => {
+		const rule = (prop) =>
+			declarations.find(
+				(d) =>
+					/#content #app-navigation-vue \.cn-app-nav__card-link$/.test(
+						d.selector.replace(/\s+/g, ' ').trim(),
+					) && d.prop === prop,
+			)?.value
+		expect(rule('color')).toBe('var(--nldesign-color-link) !important')
+		expect(rule('text-decoration')).toBe('underline !important')
+	})
+})
