@@ -1,0 +1,280 @@
+/**
+ * Header style: workplace
+ * (openspec/changes/header-style-workplace/specs/workplace-layout/spec.md).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded only while the header style resolves to `workplace`: an
+ * administrator chose it, or the active token set names it in its `layout`
+ * block and the administrator left the choice to the theme. A set that names
+ * nothing never loads it, so its top bar is Nextcloud's own.
+ *
+ * WHAT IT DRAWS (the DqKop board). The bar of a workplace whose app
+ * navigation carries the brand: no wordmark and no current-app name in the
+ * bar, the app grid button at the start, the search field right beside it,
+ * and at the end the bell, a thin divider and the person who is signed in:
+ * an initials avatar, the name in bold, the role in grey and a chevron.
+ *
+ * The bar's height, colours and the look of the grid button and the search
+ * field come from the workplace layout (css/workplace-layout.css); this sheet
+ * only places them. No colour is written: every value reads a token, with
+ * Nextcloud's own variable behind it.
+ *
+ * THE NAME AND THE ROLE. Nextcloud's account menu shows only an avatar. The
+ * small script js/header-user.js, loaded with this sheet, adds a label inside
+ * that menu with the name and the profile's role, and marks the bar with
+ * `data-thematiq-user-chip`. Only then is Nextcloud's own avatar hidden and
+ * its button stretched over the label, so the label opens the real menu with
+ * its real name for assistive technology. Without the script (or before it
+ * ran) the bar shows Nextcloud's avatar as always.
+ */
+
+body:not(#body-login) #header {
+	gap: 16px;
+	padding-inline: 28px;
+}
+
+/* No wordmark and no current-app name: the app navigation carries the brand. */
+body:not(#body-login) #header #nextcloud,
+body:not(#body-login) #header .app-menu__current-app {
+	display: none !important;
+}
+
+body:not(#body-login) #header .header-start {
+	flex: 0 0 auto;
+}
+
+body:not(#body-login) #header .app-menu,
+body:not(#body-login) #header .app-menu > div {
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+body:not(#body-login) #header .app-menu__waffle.button-vue {
+	margin-inline: 0 !important;
+}
+
+body:not(#body-login) #header .header-end {
+	flex: 1 1 auto;
+	gap: 12px;
+	align-items: center;
+	padding: 0 !important;
+}
+
+/* The search field right after the grid button, as wide as the board draws
+ * it, instead of centred over the whole bar. */
+body:not(#body-login) #header .unified-search-menu {
+	flex: 1 1 360px;
+	max-width: 560px;
+	margin-inline-end: auto;
+}
+
+body:not(#body-login) #header .unified-search-input {
+	position: static !important;
+	flex: 1 1 auto;
+	max-width: none !important;
+	padding: 0 !important;
+	width: 100% !important;
+	margin: 0 !important;
+}
+
+body:not(#body-login) #header .unified-search-input__button {
+	width: 100% !important;
+	margin: 0 !important;
+	padding: 0 14px !important;
+	justify-content: flex-start !important;
+	gap: 10px !important;
+}
+
+/* The board's line icons: the magnifier and the bell are drawn as outlines
+ * (a mask in the text colour), where Nextcloud draws filled ones. The mask
+ * carries only a shape; its colour is the element's own. */
+body:not(#body-login) #header .unified-search-input__icon {
+	width: 18px !important;
+	height: 18px !important;
+	background-color: var(--color-text-maxcontrast) !important;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") center / contain no-repeat !important;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") center / contain no-repeat !important;
+}
+
+body:not(#body-login) #header .unified-search-input__icon svg,
+body:not(#body-login) #header .notifications-button__icon svg {
+	visibility: hidden;
+}
+
+body:not(#body-login) #header .unified-search-input__label {
+	font-size: 15px !important;
+	font-weight: 400 !important;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+/* The bell: a 40px round button with a 22px icon, the unread dot in the
+ * accent. */
+body:not(#body-login) #header .header-end > #notifications {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: auto !important;
+	height: var(--header-height);
+}
+
+body:not(#body-login) #header .header-end > #notifications > .header-menu {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: auto !important;
+	height: 100%;
+}
+
+body:not(#body-login) #header #notifications .header-menu__trigger {
+	--button-size: 40px;
+
+	width: 40px !important;
+	min-width: 40px !important;
+	height: 40px !important;
+	min-height: 40px !important;
+	inset-inline-start: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border-radius: 20px !important;
+}
+
+body:not(#body-login) #header .notifications-button__icon {
+	display: block;
+	width: 22px !important;
+	height: 22px !important;
+	background-color: currentColor !important;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0'/%3E%3C/svg%3E") center / contain no-repeat !important;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0'/%3E%3C/svg%3E") center / contain no-repeat !important;
+}
+
+body:not(#body-login) #header .notifications-button__icon svg {
+	width: 22px !important;
+	height: 22px !important;
+}
+
+/* The unread dot: Nextcloud draws its bell with a dot only while there is
+ * something new; then the board's dot sits on the bell's shoulder, the
+ * accent with a ring of the bar's own colour. */
+body:not(#body-login) #header #notifications .header-menu__trigger {
+	position: relative !important;
+}
+
+body:not(#body-login) #header #notifications .header-menu__trigger:has(.notification__dot)::after {
+	content: '';
+	position: absolute;
+	top: 7px;
+	right: 8px;
+	width: 9px;
+	height: 9px;
+	border: 2px solid var(--color-main-background);
+	border-radius: 50%;
+	background-color: var(--nldesign-color-accent, var(--color-error));
+	pointer-events: none;
+}
+
+/* The thin divider between the bell and the person. */
+body:not(#body-login) #header .header-end > #notifications::after {
+	content: '';
+	flex: none;
+	width: 1px;
+	height: 28px;
+	background-color: var(--color-border);
+}
+
+/* The board's bar has no contacts menu. */
+body:not(#body-login) #header #contactsmenu {
+	display: none !important;
+}
+
+/* The person: only once the script has added the label. */
+body:not(#body-login) #header[data-thematiq-user-chip] #user-menu {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: auto !important;
+	height: var(--header-height);
+	margin-inline-end: 0;
+}
+
+body:not(#body-login) #header[data-thematiq-user-chip] #user-menu > .header-menu__trigger {
+	position: absolute !important;
+	inset: calc((var(--header-height) - 48px) / 2) 0 auto 0;
+	width: 100% !important;
+	height: 48px !important;
+	min-height: 48px !important;
+	margin: 0 !important;
+	border-radius: 24px !important;
+	opacity: 1;
+	z-index: 1;
+}
+
+body:not(#body-login) #header[data-thematiq-user-chip] #user-menu > .header-menu__trigger .account-menu__avatar {
+	visibility: hidden !important;
+	opacity: 0 !important;
+}
+
+#header .thematiq-user-chip {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	height: 48px;
+	padding: 0 8px 0 4px;
+	color: var(--color-main-text) !important;
+	font-size: 15px;
+	line-height: 1.2;
+	white-space: nowrap;
+	pointer-events: none;
+}
+
+#header .thematiq-user-chip__avatar {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border-radius: 19px;
+	background-color: var(--nldesign-color-primary-light, var(--color-primary-element-light));
+	color: var(--nldesign-color-primary-hover, var(--color-primary-element-light-text)) !important;
+	font-size: 14px;
+	font-weight: 700;
+}
+
+#header .thematiq-user-chip__text {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+#header .thematiq-user-chip__name {
+	color: var(--color-main-text) !important;
+	font-size: 15px;
+	font-weight: 700;
+}
+
+#header .thematiq-user-chip__role {
+	color: var(--color-text-maxcontrast) !important;
+	font-size: 13px;
+}
+
+#header .thematiq-user-chip__chevron {
+	flex: none;
+	width: 16px;
+	height: 16px;
+	fill: none !important;
+	stroke: currentColor;
+}
+
+/* A narrow screen keeps the avatar and drops the words. */
+@media (max-width: 1024px) {
+	#header .thematiq-user-chip__text {
+		display: none;
+	}
+}
+
+body:not(#body-login) #header .thematiq-user-chip__chevron path {
+	fill: none !important;
+	stroke: currentColor !important;
+}

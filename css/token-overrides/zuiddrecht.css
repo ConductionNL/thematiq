@@ -94,6 +94,11 @@ div.guest-box.login-box::after {
 	 * (30px: DqTokens "Paginatitel 30"); h3, the card title, is 18px
 	 * ("Kaarttitel 18"). */
 	--nldesign-component-heading-3-font-size: 18px;
+
+	/* Cards: 12px (DqTokens "12 kaart"), the radius the library's widgets
+	 * already draw; Nextcloud's own cards (the dashboard panels, the Files
+	 * list, the settings sections) read this one and were 16. */
+	--nldesign-nc-border-radius-container-large: 12px;
 }
 
 /* The captions: small capitals in grey. */
@@ -248,4 +253,255 @@ div.guest-box.login-box::after {
 
 #content #app-content-vue .dossiq-task-list__due--urgent:not(#header *) {
 	color: var(--nldesign-color-accent-text) !important;
+}
+
+/* THE APP NAVIGATION (DqZijbalk, AppZijbalk): the measures of the boards on
+ * Nextcloud's navigation and the library's brand block, card and button, for
+ * this set only. Every colour through a token.
+ *
+ * The workplace has no floating page: the navigation runs from the top bar
+ * to the bottom of the window along the left edge, with a hairline on its
+ * right, and the workspace fills the rest. Nextcloud draws the page as a
+ * card 8px in from the window with rounded corners; here that margin and
+ * that radius are 0. */
+body:not(#body-login) {
+	--body-container-margin: 0px;
+	--body-container-radius: 0px;
+	--body-height: calc(100% - env(safe-area-inset-bottom) - var(--header-height) - var(--body-container-margin));
+}
+
+:is(#content, #content-vue) .app-navigation {
+	border-inline-end: 1px solid var(--color-border);
+}
+
+/* The column: 20px from the top and the bottom, 14px from the sides, 20px
+ * between the brand, the button, the groups, the card and the footer. The
+ * lists inside lose their own inset, so the column says it once. */
+:is(#content, #content-vue) #app-navigation-vue {
+	--app-navigation-padding: 0px;
+
+	box-sizing: border-box;
+	gap: 20px;
+	padding: 20px 14px;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .app-navigation__search,
+:is(#content, #content-vue) #app-navigation-vue .app-navigation__body,
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-list {
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-list {
+	gap: 2px;
+}
+
+/* A navigation without a brand block or a primary button keeps no empty
+ * room for them. */
+:is(#content, #content-vue) #app-navigation-vue .app-navigation__search:empty,
+:is(#content, #content-vue) #app-navigation-vue .app-navigation__body:empty {
+	display: none;
+}
+
+/* The brand block: the emblem 34px high, 10px to the name; the name 19px
+ * bold, the municipality 13px in grey under it. */
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__brand {
+	gap: 10px;
+	padding: 0 8px;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__brand-name:not(#header *) {
+	color: var(--color-main-text) !important;
+	font-size: 19px;
+	font-weight: 700;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__brand-caption:not(#header *) {
+	color: var(--nldesign-color-text-muted, var(--color-text-maxcontrast)) !important;
+	font-size: 13px;
+}
+
+/* The primary button: 42px, the controls' radius, 15px semibold. */
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__primary-action {
+	padding: 0;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__primary-action .button-vue {
+	height: 42px;
+	min-height: 42px;
+	border-radius: var(--border-radius-element, 8px);
+	font-size: 15px;
+	font-weight: 600;
+}
+
+/* A group caption: 12px small capitals in grey, 6px above its first entry
+ * and 20px under the group before it. */
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-caption {
+	display: block !important;
+	flex-shrink: 0;
+	height: auto !important;
+	margin-top: 18px;
+	padding: 0 10px 4px;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-caption:first-child,
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-list__highlight + .app-navigation-caption {
+	margin-top: 0;
+}
+
+/* A caption drawn as a heading (Settings: "Personal", "Administration") is
+ * an h2, which the NL Design heading sheet sizes with !important. */
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-caption__name {
+	overflow: hidden;
+	color: var(--nldesign-color-text-muted, var(--color-text-maxcontrast)) !important;
+	font-size: 12px !important;
+	font-weight: 600 !important;
+	letter-spacing: 0.06em !important;
+	text-overflow: ellipsis;
+	text-transform: uppercase;
+	white-space: nowrap;
+	display: block !important;
+	height: auto !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	line-height: 16px !important;
+}
+
+/* An entry: 42px, 10px in from its edge, a 20px icon 12px from the label,
+ * 15px medium; the selected one is the soft style's (navigation-active-soft.css). */
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry {
+	min-height: 42px;
+	border-radius: var(--border-radius-element, 8px);
+}
+
+/* An entry under the pointer: the workspace grey (DqTokens "Bij aanwijzen:
+ * grijs vlak"). */
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry:not(.active):hover {
+	background-color: var(--nldesign-component-content-surface-background-color) !important;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry-link {
+	gap: 12px;
+	min-height: 42px;
+	padding-inline: 10px 0 !important;
+	font-size: 15px;
+	font-weight: 500;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry-icon {
+	flex: 0 0 20px;
+	width: 20px !important;
+	min-width: 20px !important;
+	height: auto;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry-icon svg {
+	width: 20px;
+	height: 20px;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry__name {
+	padding: 0;
+	font-size: 15px;
+	font-weight: inherit;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry__utils {
+	margin: 0 !important;
+	padding: 0 10px 0 0 !important;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry__counter-wrapper {
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+/* The count: a 22px red circle with white 12px bold figures (it grows into
+ * a pill past two figures). The NL Design element sheet paints every `div`
+ * outside the header with an id-strength rule, so this carries three. */
+:is(#content, #content-vue) #app-navigation-vue .counter-bubble__counter:not(#header *) {
+	box-sizing: border-box;
+	min-width: 22px;
+	height: 22px;
+	padding: 0 6px;
+	border-radius: 11px;
+	background-color: var(--nldesign-component-navigation-badge-background-color) !important;
+	color: var(--nldesign-component-navigation-badge-color) !important;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 22px;
+}
+
+/* The card ("Dag afsluiten") sits at the foot of the column, on the
+ * workspace grey with the cards' radius. */
+:is(#content, #content-vue) #app-navigation-vue {
+	--cn-nav-card-background: var(--nldesign-component-content-surface-background-color);
+	--cn-nav-card-radius: 12px;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__card {
+	margin: auto 0 0;
+	padding: 16px;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__card-title:not(#header *) {
+	color: var(--color-main-text) !important;
+	font-size: 15px;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__card-text:not(#header *) {
+	color: var(--nldesign-color-text-muted, var(--color-text-maxcontrast)) !important;
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+/* The footer entries (Instellingen, Hulp en uitleg): 40px, regular weight. */
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__footer-list .app-navigation-entry,
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__footer-list .app-navigation-entry-link {
+	min-height: 40px;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__footer-list .app-navigation-entry-link {
+	font-weight: 400;
+}
+
+/* The settings foldout the library puts above the footer entries
+ * (`nav.footer: ["settings", …]`): drawn as one of those entries, 40px,
+ * regular weight, its icon where the entries carry theirs, 2px above the
+ * next entry as in one list. */
+:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'],
+:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div:first-child {
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div > .button-vue {
+	height: 40px !important;
+	min-height: 40px;
+	border: 0 !important;
+	padding: 0 10px !important;
+	border-radius: var(--border-radius-element, 8px);
+	color: var(--color-main-text) !important;
+}
+
+:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div > .button-vue .button-vue__wrapper {
+	gap: 12px;
+	justify-content: flex-start;
+}
+
+:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div > .button-vue .button-vue__icon {
+	width: 20px;
+	min-width: 20px;
+	height: 40px;
+}
+
+:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div > .button-vue .button-vue__text {
+	margin: 0;
+	padding: 0;
+	font-size: 15px;
+	font-weight: 400 !important;
+}
+
+:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__footer-list--after-settings {
+	margin-top: -18px;
 }

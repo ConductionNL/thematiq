@@ -160,6 +160,9 @@ class CssInjectionService {
 	/** @var LayoutOptionsService Resolves the workplace layout and the brand stripe for a token set. */
 	private LayoutOptionsService $layoutOptions;
 
+	/** @var HeaderUserService|null The name and role in the workplace top bar; null leaves the bar's avatar alone. */
+	private ?HeaderUserService $headerUser;
+
 	/**
 	 * Constructor.
 	 *
@@ -177,6 +180,7 @@ class CssInjectionService {
 	 * @param AppBrandService $appBrands The brand per app.
 	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
 	 * @param LayoutOptionsService|null $layoutOptions Resolves the workplace layout and the brand stripe; defaults to one reading $config.
+	 * @param HeaderUserService|null $headerUser The name and role in the workplace top bar.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -196,6 +200,7 @@ class CssInjectionService {
 		AppBrandService $appBrands,
 		?InternalScopesService $internalScopes = null,
 		?LayoutOptionsService $layoutOptions = null,
+		?HeaderUserService $headerUser = null,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
@@ -210,6 +215,7 @@ class CssInjectionService {
 		$this->appBrands = $appBrands;
 		$this->internalScopes = ($internalScopes ?? new InternalScopesService(files: $runtimeFiles));
 		$this->layoutOptions = ($layoutOptions ?? new LayoutOptionsService(config: $config, designSystemService: $designSystemService));
+		$this->headerUser = $headerUser;
 	}//end __construct()
 
 	/**
@@ -829,6 +835,7 @@ class CssInjectionService {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 */
 	private function injectConditionalStyles(string $tokenSet): void {
 		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet
@@ -844,8 +851,15 @@ class CssInjectionService {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
-		foreach ($this->layoutOptions->stylesheets(tokenSet: $tokenSet) as $file) {
+		$layoutSheets = $this->layoutOptions->stylesheets(tokenSet: $tokenSet);
+		foreach ($layoutSheets as $file) {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: $file));
+		}
+
+		// The workplace header style draws the signed-in person's name and
+		// role beside the avatar; its script comes with its stylesheet.
+		if (in_array(LayoutOptionsService::HEADER_WORKPLACE_STYLESHEET, $layoutSheets, true) === true) {
+			$this->headerUser?->inject();
 		}
 
 		array_map(fn (array $row) => $this->emitInlineStyle(css: $row['css'], id: $row['id']), $this->layoutOptions->inlineStyles(tokenSet: $tokenSet));

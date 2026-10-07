@@ -180,6 +180,76 @@ body#body-login input:not([type='checkbox']) {
 	border-width: 1px !important;
 }
 
+/* The fields as the board draws them: the label above the field, 14px
+ * semibold, and the field 44px with a 1px edge in the darker border colour
+ * (3:1 against white on Zuiddrecht, #8A929E, where the light border is not),
+ * the controls' radius. Nextcloud floats its label inside the field's edge;
+ * the NL Design sheet draws the edge around the field's wrapper, so the edge
+ * moves to the field itself and the wrapper keeps room for the label above.
+ * The login button is 46px, as the board's. */
+body#body-login .login-form .input-field {
+	margin-block: 0 !important;
+	border: 0 !important;
+	box-shadow: none !important;
+}
+
+body#body-login .login-form .input-field__main-wrapper {
+	padding: 26px 0 0 !important;
+}
+
+body#body-login .login-form .input-field__label {
+	position: absolute !important;
+	top: 0 !important;
+	inset-inline-start: 0 !important;
+	max-width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	transform: none !important;
+	background: none !important;
+	color: var(--color-main-text) !important;
+	font-size: 14px !important;
+	font-weight: 600 !important;
+	line-height: 20px !important;
+	transition: none !important;
+}
+
+body#body-login .login-form .input-field__input {
+	width: 100% !important;
+	height: 44px !important;
+	margin: 0 !important;
+	padding: 0 12px !important;
+	border: 1px solid var(--nldesign-color-border-dark, var(--color-border-maxcontrast)) !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	box-shadow: none !important;
+	font-size: 15px !important;
+}
+
+body#body-login .login-form .input-field--trailing-icon .input-field__input {
+	padding-inline-end: 44px !important;
+}
+
+body#body-login .login-form .input-field__trailing-button {
+	top: 26px !important;
+	height: 44px !important;
+	min-height: 44px !important;
+}
+
+body#body-login .login-form__fieldset {
+	gap: 18px !important;
+}
+
+body#body-login .login-form button[type='submit'] {
+	height: 46px !important;
+	min-height: 46px !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	font-size: 15px !important;
+	font-weight: 600 !important;
+}
+
+body#body-login footer.guest-box {
+	margin-top: 28px !important;
+}
+
 /* Their colour: the link colour, blue on Zuiddrecht (#3669A5, 5.64:1 on the
  * white card), as the board draws "Wachtwoord vergeten?". The NL Design text
  * rule forces every span to the body text with id strength, but it reads
@@ -266,6 +336,12 @@ body#body-login .guest-content .body-login-container {
  */
 body:not(#body-login) {
 	--header-height: 68px;
+	/* Nextcloud works out the page height once, at the root, from its own
+	 * 50px bar; with the taller bar the page would run 18px past the window. */
+	--body-height: calc(
+		100% - env(safe-area-inset-bottom) - var(--header-height) -
+			var(--body-container-margin)
+	);
 }
 
 :where(body:not(#body-login)) #header .app-menu__waffle.button-vue {

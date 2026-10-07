@@ -468,6 +468,10 @@
 				'login-watermark-off',
 				light && layout.loginWatermark === false,
 			)
+			setConditionalLayer(
+				'header-workplace',
+				light && layout.headerStyle === 'workplace',
+			)
 			setConditionalLayer('brand-stripe', stripe)
 			setConditionalLayer(
 				'brand-stripe-header-only',
@@ -2517,6 +2521,7 @@
 			document.getElementById('thematiq-navigation-active-style'),
 			document.getElementById('thematiq-brand-stripe-placement'),
 			document.getElementById('thematiq-login-watermark'),
+			document.getElementById('thematiq-header-style'),
 		]
 		if (workplaceLayoutSelect && brandStripeSelect) {
 			var onLayoutOptionChange = function () {
@@ -2530,6 +2535,7 @@
 					navigationActiveStyle: valueOf(layoutOptionFields[3]),
 					brandStripePlacement: valueOf(layoutOptionFields[4]),
 					loginWatermark: valueOf(layoutOptionFields[5]),
+					headerStyle: valueOf(layoutOptionFields[6]),
 				})
 			}
 			layoutOptionFields.forEach(function (field) {

@@ -581,6 +581,7 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->appConfig['navigation_active_style'] = 'soft';
 		$this->appConfig['brand_stripe_placement'] = 'login';
 		$this->appConfig['login_watermark'] = '';
+		$this->appConfig['header_style'] = 'workplace';
 
 		$bundle = $this->service->export();
 		$this->assertSame(
@@ -591,11 +592,12 @@ class ConfigBundleServiceTest extends TestCase {
 				'navigationActiveStyle' => 'soft',
 				'brandStripePlacement' => 'login',
 				'loginWatermark' => '',
+				'headerStyle' => 'workplace',
 			],
 			$bundle['config']['layoutOptions']
 		);
 
-		foreach (['workplace_layout', 'brand_stripe', 'navigation_width', 'navigation_active_style', 'brand_stripe_placement'] as $key) {
+		foreach (['workplace_layout', 'brand_stripe', 'navigation_width', 'navigation_active_style', 'brand_stripe_placement', 'header_style'] as $key) {
 			$this->appConfig[$key] = '';
 		}
 
@@ -608,6 +610,7 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertSame('264', $this->appConfig['navigation_width']);
 		$this->assertSame('soft', $this->appConfig['navigation_active_style']);
 		$this->assertSame('login', $this->appConfig['brand_stripe_placement']);
+		$this->assertSame('workplace', $this->appConfig['header_style']);
 		$this->assertSame('', $this->appConfig['login_watermark'], 'The empty choice travels too: the target follows its theme again.');
 	}//end testTheLayoutOptionsSurviveExportAndImport()
 

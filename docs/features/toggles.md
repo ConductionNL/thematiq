@@ -133,18 +133,30 @@ With the light top bar, a theme can draw its emblem large and faint on the login
 
 **How it works:** while the layout is light and the watermark is off, Thematiq loads `css/login-watermark-off.css` after the layout stylesheet, which takes the mark off again.
 
+## Top bar style
+
+**Setting:** `thematiq:header_style` (`default`, `workplace`, or not set)
+
+**Default** is the top bar as Nextcloud draws it. **Workplace** draws the bar of the Zuiddrecht workplace boards (DqKop), and only with the light workplace layout. It drops the logo and the current app's name, since the app navigation carries the brand. The search field sits right beside the app grid button. At the end you see the bell, a thin divider and your own initials, name and role.
+
+**Where the role comes from:** the Role field on your personal profile (Personal info, Role). Without a role you see your name only.
+
+**How it works:** while the layout is light and the style is `workplace`, Thematiq loads `css/header-workplace.css` and the small script `js/header-user.js`. The page hands the script your display name and role as initial state. The script puts them in Nextcloud's account menu, so a click on them opens that menu. Without the script, or before it runs, the bar shows Nextcloud's own avatar.
+
 ```bash
 # The stripe on the login card only, a 264px navigation, the soft entry, no watermark
 php occ config:app:set thematiq brand_stripe_placement --value=login
 php occ config:app:set thematiq navigation_width --value=264
 php occ config:app:set thematiq navigation_active_style --value=soft
 php occ config:app:set thematiq login_watermark --value=0
+php occ config:app:set thematiq header_style --value=workplace
 
 # Follow the theme again
 php occ config:app:delete thematiq brand_stripe_placement
 php occ config:app:delete thematiq navigation_width
 php occ config:app:delete thematiq navigation_active_style
 php occ config:app:delete thematiq login_watermark
+php occ config:app:delete thematiq header_style
 ```
 
 ### Layout defaults in a token set
@@ -158,11 +170,12 @@ A shipped token set can carry defaults for every layout setting in `token-sets.j
 	"brand_stripe_placement": "login",
 	"navigation_width": 264,
 	"navigation_active_style": "soft",
-	"login_watermark": false
+	"login_watermark": false,
+	"header_style": "workplace"
 }
 ```
 
-They apply only while the administrator has stored no choice. A set that leaves one out gets the behaviour every set had before the setting existed: the stripe in both places, Nextcloud's navigation width, the default entry, the watermark drawn. Every layout choice travels in the configuration bundle as the administrator stored it, "follow the theme" included.
+They apply only while the administrator has stored no choice. A set that leaves one out gets the behaviour every set had before the setting existed: the stripe in both places, Nextcloud's navigation width, the default entry, the watermark drawn, Nextcloud's own top bar. Every layout choice travels in the configuration bundle as the administrator stored it, "follow the theme" included.
 
 ## Theming per App
 

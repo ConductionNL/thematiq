@@ -788,7 +788,9 @@
 			"workplace_layout": "light",
 			"brand_stripe": true,
 			"navigation_width": 264,
-			"navigation_active_style": "soft"
+			"navigation_active_style": "soft",
+			"brand_stripe_placement": "login",
+			"header_style": "workplace"
 		}
 	},
 	{

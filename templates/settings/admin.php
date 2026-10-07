@@ -885,7 +885,30 @@ if ($_['mockUi'] === true) {
 		</p>
 	</div>
 
-	<!-- Primary drives every component — the deliberate opt-out of per-component
+	<!-- The header style (openspec/changes/header-style-workplace): the
+	     workplace top bar of the DqKop board, with the light workplace layout
+	     only. Same three states: an empty value follows the theme. -->
+	<div class="nldesign-option">
+		<label for="thematiq-header-style">
+			<?php p($l->t('Top bar style')); ?>
+		</label>
+		<select name="thematiq-header-style" id="thematiq-header-style">
+			<option value="" <?php if (in_array($_['headerStyle'], ['default', 'workplace'], true) === false): ?>selected<?php endif; ?>>
+				<?php p($l->t('Follow the theme')); ?>
+			</option>
+			<option value="default" <?php if ($_['headerStyle'] === 'default'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Default')); ?>
+			</option>
+			<option value="workplace" <?php if ($_['headerStyle'] === 'workplace'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Workplace, with your name and role')); ?>
+			</option>
+		</select>
+		<p class="settings-hint">
+			<?php p($l->t('Only with the light workplace layout. The workplace bar drops the logo and the app name. It shows your name and the role from your profile.')); ?>
+		</p>
+	</div>
+
+ — the deliberate opt-out of per-component
 	     theming (openspec/specs/component-tokens/spec.md). Off by default, and
 	     that is not a behaviour change: with no per-component value stored the
 	     component tokens already resolve to the brand primary. Turning it on

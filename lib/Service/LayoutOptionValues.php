@@ -60,6 +60,13 @@ final class LayoutOptionValues {
 	public const LOGIN_WATERMARK_KEY = 'login_watermark';
 
 	/**
+	 * The app config key holding the top bar's style.
+	 *
+	 * @var string
+	 */
+	public const HEADER_STYLE_KEY = 'header_style';
+
+	/**
 	 * The narrowest navigation an administrator may ask for, in pixels.
 	 *
 	 * @var int
@@ -111,6 +118,24 @@ final class LayoutOptionValues {
 	public const PLACEMENT_LOGIN = 'login';
 
 	/**
+	 * The top bar as Nextcloud draws it: its logo, the current app's name,
+	 * its own avatar.
+	 *
+	 * @var string
+	 */
+	public const HEADER_STYLE_DEFAULT = 'default';
+
+	/**
+	 * The workplace top bar (the DqKop board): no logo and no app name, the
+	 * search beside the grid button, and the bell, a divider and the name
+	 * and role of the signed-in person at the end. Only drawn with the light
+	 * workplace layout.
+	 *
+	 * @var string
+	 */
+	public const HEADER_STYLE_WORKPLACE = 'workplace';
+
+	/**
 	 * The values each option may hold, by app config key, the two older
 	 * options included. The navigation width is a whole number of pixels in
 	 * its range instead, and is not listed.
@@ -123,10 +148,11 @@ final class LayoutOptionValues {
 		self::NAVIGATION_ACTIVE_STYLE_KEY => [self::ACTIVE_STYLE_DEFAULT, self::ACTIVE_STYLE_SOFT],
 		self::BRAND_STRIPE_PLACEMENT_KEY => [self::PLACEMENT_HEADER_AND_LOGIN, self::PLACEMENT_HEADER, self::PLACEMENT_LOGIN],
 		self::LOGIN_WATERMARK_KEY => ['1', '0'],
+		self::HEADER_STYLE_KEY => [self::HEADER_STYLE_DEFAULT, self::HEADER_STYLE_WORKPLACE],
 	];
 
 	/**
-	 * What each of the four newer options resolves to when neither the
+	 * What each of the newer options resolves to when neither the
 	 * administrator nor the set says anything: the behaviour every set had
 	 * before the option existed. The navigation width is Nextcloud's own.
 	 *
@@ -137,10 +163,11 @@ final class LayoutOptionValues {
 		self::NAVIGATION_ACTIVE_STYLE_KEY => self::ACTIVE_STYLE_DEFAULT,
 		self::BRAND_STRIPE_PLACEMENT_KEY => self::PLACEMENT_HEADER_AND_LOGIN,
 		self::LOGIN_WATERMARK_KEY => '1',
+		self::HEADER_STYLE_KEY => self::HEADER_STYLE_DEFAULT,
 	];
 
 	/**
-	 * The six layout options as the configuration bundle names them under
+	 * The seven layout options as the configuration bundle names them under
 	 * `config.layoutOptions`, with the app config key each is stored under.
 	 *
 	 * @var array<string, string>
@@ -152,6 +179,7 @@ final class LayoutOptionValues {
 		'navigationActiveStyle' => self::NAVIGATION_ACTIVE_STYLE_KEY,
 		'brandStripePlacement' => self::BRAND_STRIPE_PLACEMENT_KEY,
 		'loginWatermark' => self::LOGIN_WATERMARK_KEY,
+		'headerStyle' => self::HEADER_STYLE_KEY,
 	];
 
 	/**
