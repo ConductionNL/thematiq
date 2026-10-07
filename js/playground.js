@@ -1627,11 +1627,7 @@
 			filtered.appendChild(row)
 		})
 
-		if (state.saveBar) {
-			state.editor.insertBefore(filtered, state.saveBar)
-		} else {
-			state.editor.appendChild(filtered)
-		}
+		placePanel(state, filtered, panel)
 	}
 
 	/**
@@ -1760,7 +1756,122 @@
 			})
 		})
 
-		if (state.saveBar !== null) {
+		var related = relatedInternal(state)
+		if (related.length > 0) {
+			filtered.appendChild(advancedGroup(state, related))
+		}
+
+		placePanel(state, filtered, panel)
+	}
+
+	/**
+	 * Whether a selector an internal token is declared on matches an element in
+	 * the stage. Vue scope attributes and pseudo-classes are dropped first, since
+	 * a specimen carries neither. `body`, `html` and `:root` reach every
+	 * component, so they say nothing about this one.
+	 *
+	 * @param {Element} root The stage.
+	 * @param {string} selector The selector.
+	 * @return {boolean}
+	 */
+	function reaches(root, selector) {
+		var plain = String(selector)
+			.replace(/\[data-v-[a-z0-9]+\]/gi, '')
+			.replace(/::?[a-z-]+(\([^)]*\))?/gi, '')
+			.trim()
+		if (plain === '' || /^(body|html)$/i.test(plain)) {
+			return false
+		}
+		try {
+			return root.querySelector(plain) !== null
+		} catch (error) {
+			return false
+		}
+	}
+
+	/**
+	 * The component variables that reach the open component: the internal tokens
+	 * declared on an element its stage draws.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @return {Array<string>} The token names, sorted.
+	 */
+	function relatedInternal(state) {
+		var groups = window.NldesignTokenGroups
+		if (!groups || typeof groups.internal !== 'function') {
+			return []
+		}
+		var internal = groups.internal() || {}
+		return Object.keys(internal)
+			.filter(function (name) {
+				return (internal[name].selectors || []).some(function (selector) {
+					return reaches(state.stage, selector)
+				})
+			})
+			.sort()
+	}
+
+	/**
+	 * A collapsed "Advanced" group under a component's rows, holding the
+	 * component variables that reach it. Its rows are built the first time it
+	 * opens, as the editor's own groups are.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Array<string>} names The token names.
+	 * @return {Element} The group.
+	 */
+	function advancedGroup(state, names) {
+		var group = el('div', 'nldesign-pg-advanced')
+		var heading = el('h4', 'nldesign-token-group-heading')
+		var toggle = el(
+			'button',
+			'nldesign-token-group-toggle',
+			t('thematiq', 'Advanced') + ' ',
+		)
+		toggle.type = 'button'
+		toggle.setAttribute('aria-expanded', 'false')
+		toggle.setAttribute('aria-controls', 'nldesign-pg-advanced-panel')
+		toggle.appendChild(
+			el('span', 'nldesign-token-group-count', '(' + names.length + ')'),
+		)
+		var panel = el('div', 'nldesign-pg-advanced-panel')
+		panel.id = 'nldesign-pg-advanced-panel'
+		panel.hidden = true
+
+		toggle.addEventListener('click', function () {
+			var open = toggle.getAttribute('aria-expanded') !== 'true'
+			if (open === true && panel.childNodes.length === 0) {
+				names.forEach(function (name) {
+					window.NldesignTokenGroups.ensureRow(name)
+					panel.appendChild(cloneRow(state, { name: name, paints: '' }))
+				})
+			}
+			toggle.setAttribute('aria-expanded', open === true ? 'true' : 'false')
+			panel.hidden = open !== true
+		})
+
+		heading.appendChild(toggle)
+		group.appendChild(heading)
+		group.appendChild(panel)
+		return group
+	}
+
+	/**
+	 * Put a component's rows where the tab's own list was, so they come
+	 * before the editor's component-variable groups rather than after them.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Element} filtered The component's rows.
+	 * @param {?Element} panel The tab panel they stand in for.
+	 * @return {void}
+	 */
+	function placePanel(state, filtered, panel) {
+		// The editor's component-variable groups belong to no one component, so
+		// they leave while one is open; css/playground.css hides them.
+		state.editor.classList.add('nldesign-pg-in-component')
+		if (panel !== null) {
+			panel.after(filtered)
+		} else if (state.saveBar !== null) {
 			state.editor.insertBefore(filtered, state.saveBar)
 		} else {
 			state.editor.appendChild(filtered)
@@ -1816,6 +1927,7 @@
 		if (open !== null) {
 			open.remove()
 		}
+		state.editor.classList.remove('nldesign-pg-in-component')
 		state.editor
 			.querySelectorAll('.nldesign-tab-panel.nldesign-pg-hidden')
 			.forEach(function (panel) {

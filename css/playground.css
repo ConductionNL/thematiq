@@ -361,6 +361,16 @@
 	display: none !important;
 }
 
+/* While a component is open, only its own rows are offered: the editor's
+   component-variable groups belong to no one component. */
+.nldesign-pg-in-component .nldesign-token-groups {
+	display: none;
+}
+
+.nldesign-pg-advanced {
+	margin-top: 12px;
+}
+
 .nldesign-pg-panel-head {
 	display: flex;
 	align-items: center;

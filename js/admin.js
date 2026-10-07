@@ -3478,6 +3478,27 @@
 			refreshTokenEditorLocks()
 		}
 
+		// What the playground needs from the component-variable groups: the
+		// selectors each internal token is declared on, so it can tell which ones
+		// reach the component that is open, and that token's row, built on
+		// demand, so its rows can be copied the way the tab rows are.
+		window.NldesignTokenGroups = {
+			internal: function () {
+				return tokenInternal
+			},
+			ensureRow: function (name) {
+				var meta = tokenInternal[name]
+				var group = document.querySelector(
+					'.nldesign-token-group[data-group="'
+						+ ((meta && meta.group) || 'other')
+						+ '"]',
+				)
+				if (group !== null) {
+					ensureTokenGroupBuilt(group)
+				}
+			},
+		}
+
 		/**
 		 * Open or close a group.
 		 *

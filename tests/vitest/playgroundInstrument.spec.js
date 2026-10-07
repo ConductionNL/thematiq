@@ -69,8 +69,12 @@ async function flush(rounds = 10) {
  * @param {object} [options] Fixture options.
  * @param {object} [options.state] Extra initial-state keys.
  * @param {object} [options.overrides] The saved overrides the server answers with.
+ * @param {object} [options.internal] The component variables the server answers with.
  */
-async function boot(version, { state: extra = {}, overrides = {} } = {}) {
+async function boot(
+	version,
+	{ state: extra = {}, overrides = {}, internal = {} } = {},
+) {
 	const state = {
 		tokenSets: [],
 		currentTokenSet: 'rijkshuisstijl',
@@ -111,7 +115,7 @@ async function boot(version, { state: extra = {}, overrides = {} } = {}) {
 			json: () =>
 				Promise.resolve(
 					url.indexOf('/settings/overrides') !== -1
-						? { overrides, registry: REGISTRY, tabs: {} }
+						? { overrides, registry: REGISTRY, tabs: {}, internal }
 						: {},
 				),
 		})
@@ -187,7 +191,9 @@ function type(input, value) {
 	input.dispatchEvent(new window.Event('input', { bubbles: true }))
 }
 
-describe('the component instrument in the browser', () => {
+// Every test boots admin.js and playground.js afresh, which outruns the 5 s
+// default when the whole suite runs in parallel.
+describe('the component instrument in the browser', { timeout: 20000 }, () => {
 	beforeEach(() => {
 		if (typeof global.requestAnimationFrame !== 'function') {
 			global.requestAnimationFrame = (cb) => setTimeout(cb, 0)
@@ -208,6 +214,55 @@ describe('the component instrument in the browser', () => {
 		expect(
 			document.getElementById('nldesign-preview').getAttribute('data-pg-tab'),
 		).toBe('status')
+	})
+
+	it('hides the component variables while a component is open, and offers the ones that reach it', async () => {
+		await boot(35, {
+			internal: {
+				'--nldesign-nc-sidebar-gap': {
+					variable: '--app-sidebar-gap',
+					group: 'components',
+					type: 'text',
+					mode: 'selectors',
+					selectors: ['.app-sidebar[data-v-1a2b3c4d]:hover'],
+					stock: '8px',
+				},
+				'--nldesign-nc-picker-gap': {
+					variable: '--mx-gap',
+					group: 'date-picker',
+					type: 'text',
+					mode: 'selectors',
+					selectors: ['.mx-datepicker'],
+					stock: '4px',
+				},
+				'--nldesign-nc-everywhere': {
+					variable: '--everywhere',
+					group: 'other',
+					type: 'text',
+					mode: 'selectors',
+					selectors: ['body'],
+					stock: '0',
+				},
+			},
+		})
+		const editor = document.querySelector('.nldesign-token-editor')
+
+		openTab('content')
+		openComponent('Sidebar')
+
+		expect(editor.classList.contains('nldesign-pg-in-component')).toBe(true)
+		const toggle = document.querySelector(
+			'.nldesign-pg-advanced .nldesign-token-group-toggle',
+		)
+		expect(toggle.textContent).toBe('Advanced (1)')
+		toggle.click()
+		expect(toggle.getAttribute('aria-expanded')).toBe('true')
+		expect(panelTokens()).toContain('--nldesign-nc-sidebar-gap')
+		expect(panelTokens()).not.toContain('--nldesign-nc-picker-gap')
+		expect(panelTokens()).not.toContain('--nldesign-nc-everywhere')
+
+		openComponent('Full view')
+		expect(editor.classList.contains('nldesign-pg-in-component')).toBe(false)
 	})
 
 	it('keeps links in the app mock and on the stage from navigating', async () => {
