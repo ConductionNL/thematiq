@@ -40,7 +40,12 @@ async function flush(rounds = 12) {
 	}
 }
 
-async function boot({ hash = '#', withModules = true, saved = [] } = {}) {
+async function boot({
+	hash = '#',
+	withModules = true,
+	saved = [],
+	ownTokens = [],
+} = {}) {
 	const state = {
 		tokenSets: [],
 		currentTokenSet: 'amsterdam',
@@ -82,6 +87,15 @@ async function boot({ hash = '#', withModules = true, saved = [] } = {}) {
 			body = {
 				results: [{ name: 'x', ratio: 2.1, threshold: 4.5, pass: false }],
 			}
+		} else if (url.indexOf('/settings/tokens/own') !== -1) {
+			const sent = options.body ? JSON.parse(options.body) : {}
+			body =
+				(options.method || 'GET') === 'GET'
+					? { tokens: ownTokens }
+					: {
+							status: 'ok',
+							token: { name: '--nldesign-org-' + sent.slug, ...sent },
+						}
 		} else if (url.indexOf('/settings/playground/components') !== -1) {
 			body =
 				(options.method || 'GET') === 'GET'
@@ -248,17 +262,110 @@ describe('playground: your component', { timeout: 20000 }, () => {
 		openOwn()
 		type(
 			document.getElementById('nldesign-own-css'),
-			'.a { color: var(--nldesign-color-primary); border-color: var(--nldesign-org-brand-accent) }',
+			'.a { color: var(--nldesign-color-primary); background: var(--nldesign-color-text); border-color: var(--nldesign-org-brand-accent, #e17000) }',
 		)
 
 		const panel = document.querySelector('.nldesign-own-panel')
 		const rows = [...panel.querySelectorAll('.nldesign-pg-row')]
-		expect(rows).toHaveLength(2)
+		expect(rows).toHaveLength(3)
 		expect(rows[0].querySelector('[data-token]')).not.toBeNull()
-		expect(rows[1].textContent).toContain('--nldesign-org-brand-accent')
+		expect(rows[1].textContent).toContain('--nldesign-color-text')
 		expect(rows[1].textContent).toContain(
 			'Read-only here: this comes from the token set',
 		)
+		expect(rows[2].textContent).toContain('--nldesign-org-brand-accent')
+		expect(rows[2].textContent).toContain('Starts as #e17000')
+		expect(rows[2].querySelector('button').textContent).toBe('Add as own token')
+	})
+
+	it('adds a token the code reads as an own token, starting at its fallback', async () => {
+		await boot()
+		openOwn()
+		type(
+			document.getElementById('nldesign-own-css'),
+			'.a { border-color: var(--nldesign-org-brand-accent, #e17000) }',
+		)
+		const swatch = document.querySelector(
+			'.nldesign-own-org .nldesign-color-swatch-fill',
+		)
+		expect(swatch.style.background).not.toBe('')
+		const add = document.querySelector('.nldesign-own-org button')
+		add.click()
+		expect(add.disabled).toBe(true)
+		expect(add.getAttribute('aria-busy')).toBe('true')
+		expect(add.textContent).toBe('Adding…')
+		expect(document.querySelector('.nldesign-own-org').textContent).toContain(
+			'Adding --nldesign-org-brand-accent to your own tokens, starting as #e17000…',
+		)
+		await flush()
+
+		const post = requests.find(
+			(r) =>
+				r.method === 'POST' && r.url.indexOf('/settings/tokens/own') !== -1,
+		)
+		expect(JSON.parse(post.body)).toEqual({
+			slug: 'brand-accent',
+			label: 'brand accent',
+			type: 'color',
+			value: '#e17000',
+		})
+		expect(
+			document.querySelector('.nldesign-own-org .nldesign-color-text').value,
+		).toBe('#e17000')
+	})
+
+	it('edits an own token live and stores it when the edit is done', async () => {
+		await boot({
+			ownTokens: [
+				{
+					name: '--nldesign-org-brand-accent',
+					label: 'Brand accent',
+					type: 'color',
+					value: '#e17000',
+				},
+			],
+		})
+		openOwn()
+		type(
+			document.getElementById('nldesign-own-css'),
+			'.a { border-color: var(--nldesign-org-brand-accent, #000000) }',
+		)
+		const text = document.querySelector('.nldesign-own-org .nldesign-color-text')
+		expect(text.value).toBe('#e17000')
+
+		type(text, '#00aa00')
+		expect(
+			document
+				.getElementById('nldesign-preview')
+				.style.getPropertyValue('--nldesign-org-brand-accent'),
+		).toBe('#00aa00')
+		text.dispatchEvent(new window.Event('change', { bubbles: true }))
+		await flush()
+
+		const put = requests.find((r) => r.method === 'PUT')
+		expect(put.url).toBe(
+			'/apps/thematiq/settings/tokens/own/--nldesign-org-brand-accent',
+		)
+		expect(JSON.parse(put.body)).toMatchObject({
+			slug: 'brand-accent',
+			label: 'Brand accent',
+			type: 'color',
+			value: '#00aa00',
+		})
+
+		// Opacity and reset, as on every editor colour row.
+		const row = document.querySelector('.nldesign-own-org')
+		const percent = row.querySelector('.nldesign-color-alpha-number')
+		expect(row.querySelector('.nldesign-color-alpha')).not.toBeNull()
+		type(percent, '50')
+		expect(text.value).toBe('#00aa0080')
+		expect(row.querySelector('.nldesign-color-alpha').value).toBe('50')
+
+		row.querySelector('.nldesign-reset-btn').click()
+		await flush()
+		expect(text.value).toBe('#000000')
+		const puts = requests.filter((r) => r.method === 'PUT')
+		expect(JSON.parse(puts[puts.length - 1].body).value).toBe('#000000')
 	})
 
 	it('repaints the frame when a token is edited, without rebuilding it', async () => {

@@ -2548,6 +2548,15 @@
 .nldesign-own-report {
 	color: var(--color-text-maxcontrast);
 }
+.nldesign-own-org-start {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--color-text-maxcontrast);
+}
+.nldesign-own-org .nldesign-reset-btn[aria-busy='true'] {
+	cursor: progress;
+}
 .nldesign-own-contrast {
 	margin: 0;
 	padding-left: 18px;

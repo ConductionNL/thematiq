@@ -82,8 +82,11 @@ For every `var(--name)` the builder's CSS or `style` attributes read, the frame'
 value the playground's preview container has for that name at that moment, unsaved edits included.
 Editing a token in the playground MUST repaint the frame without rebuilding it. The house style
 fonts MUST load in the frame. The token list beside the stage MUST filter to the names the code
-reads. A name the editor can write MUST show its editor row. Any other name MUST show its value
-and the note "Read-only here: this comes from the token set".
+reads. A name the editor can write MUST show its editor row. An administrator's own token
+(`--nldesign-org-*`, openspec/specs/own-tokens) MUST show a row that edits it live and stores the
+value when an edit is done; a `--nldesign-org-*` name that is not one yet MUST offer to add it,
+starting at the value its fallback in the code comes to. Any other name MUST show its value and
+the note "Read-only here: this comes from the token set".
 
 #### Scenario: An unsaved colour edit repaints the frame
 - GIVEN the card from the first scenario is in the frame
@@ -92,10 +95,12 @@ and the note "Read-only here: this comes from the token set".
 - AND no other user MUST see the change
 
 #### Scenario: The token list follows the pasted code
-- GIVEN the pasted CSS reads `--nldesign-color-primary` and `--nldesign-org-brand-accent`
+- GIVEN the pasted CSS reads `--nldesign-color-primary`, `--nldesign-color-text` and
+  `var(--nldesign-org-brand-accent, #e17000)`, and no own token `--nldesign-org-brand-accent` exists
 - WHEN the stage renders
-- THEN the token list MUST show exactly those two names
-- AND a name the editor cannot write MUST carry the read-only note
+- THEN the token list MUST show exactly those three names
+- AND `--nldesign-color-text`, which the editor cannot write, MUST carry the read-only note
+- AND `--nldesign-org-brand-accent` MUST offer to be added as an own token starting at `#e17000`
 
 ### Requirement: The frame can show the dark theme
 

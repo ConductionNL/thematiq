@@ -1100,7 +1100,13 @@ OC.L10N.register(
         "Choose image": "Choose image",
         "Opacity": "Opacity",
         "New component": "New component",
-        "Your components": "Your components"
+        "Your components": "Your components",
+        "Add as own token": "Add as own token",
+        "Not one of your own tokens yet": "Not one of your own tokens yet",
+        "Starts as {value}": "Starts as {value}",
+        "Your own token": "Your own token",
+        "Adding {name} to your own tokens, starting as {value}…": "Adding {name} to your own tokens, starting as {value}…",
+        "Adding…": "Adding…"
     },
     "nplurals=2; plural=(n != 1);"
 )

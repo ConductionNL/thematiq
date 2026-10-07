@@ -656,6 +656,9 @@
 		module.exports = { init: init, severityLabel: severityLabel }
 	}
 
+	// The playground adds and edits own tokens too; it asks this list to redraw.
+	window.NldesignOwnTokens = { reload: load }
+
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', init)
 	} else {
