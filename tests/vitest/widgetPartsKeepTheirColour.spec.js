@@ -84,3 +84,111 @@ describe('the nldesign solid-background rule', () => {
 		expect(painted('bar')).toBe(false)
 	})
 })
+
+/**
+ * The selectors of every rule that makes a ground transparent, with the
+ * position of the rule in the sheet.
+ *
+ * @return {Array<{selector: string, index: number}>} The selectors.
+ */
+function clearSelectors() {
+	const css = postcss.parse(fs.readFileSync(path.join(root, FILE), 'utf8'))
+	const out = []
+	let index = 0
+	css.walkRules((rule) => {
+		index++
+		let clears = false
+		rule.walkDecls(/^background(-color)?$/, (d) => {
+			if (d.value === 'transparent') {
+				clears = true
+			}
+		})
+		if (clears) {
+			out.push(...rule.selectors.map((s) => ({ selector: s.trim(), index })))
+		}
+	})
+	return out
+}
+
+const grounds = new JSDOM(`<body><div id="content">
+	<div id="ground-wrapper" class="cn-widget-wrapper cn-widget-wrapper--borderless">
+		<div id="ground-content" class="cn-widget-wrapper__content">
+			<div id="greeting" class="cn-header-widget cn-header-widget--plain cn-header-widget--ground"></div>
+		</div>
+	</div>
+	<div id="banner-wrapper" class="cn-widget-wrapper cn-widget-wrapper--borderless">
+		<div id="banner-content" class="cn-widget-wrapper__content">
+			<section id="banner" class="cn-banner-widget cn-banner-widget--attention"></section>
+		</div>
+	</div>
+	<div id="tile-wrapper" class="cn-widget-wrapper cn-widget-wrapper--borderless">
+		<div id="tile-content" class="cn-widget-wrapper__content">
+			<div id="tile" class="cn-stat-widget"></div>
+		</div>
+	</div>
+	<div id="card-wrapper" class="cn-widget-wrapper">
+		<div id="card-content" class="cn-widget-wrapper__content">
+			<div id="plain-greeting" class="cn-header-widget cn-header-widget--plain"></div>
+		</div>
+	</div>
+</div></body>`).window.document
+
+/**
+ * Whether a transparent rule matches the element.
+ *
+ * @param {string} id The element id.
+ * @return {boolean} Matched.
+ */
+function cleared(id) {
+	const el = grounds.getElementById(id)
+	return clearSelectors().some(({ selector }) => el.matches(selector))
+}
+
+describe('a widget that asks for no ground', () => {
+	it('draws a greeting on the page ground without a white box around it', () => {
+		for (const id of ['ground-wrapper', 'ground-content', 'greeting']) {
+			expect(cleared(id), id).toBe(true)
+		}
+	})
+
+	it('draws a borderless attention banner as its own card, with no second card under it', () => {
+		expect(cleared('banner-wrapper')).toBe(true)
+		expect(cleared('banner-content')).toBe(true)
+		// The banner keeps its own card.
+		expect(cleared('banner')).toBe(false)
+	})
+
+	it('leaves every other widget the ground it has today', () => {
+		for (const id of [
+			'tile-wrapper',
+			'tile-content',
+			'tile',
+			'card-wrapper',
+			'card-content',
+			'plain-greeting',
+		]) {
+			expect(cleared(id), id).toBe(false)
+		}
+	})
+
+	it('comes after the solid rule, which it must beat at the same weight', () => {
+		const css = postcss.parse(fs.readFileSync(path.join(root, FILE), 'utf8'))
+		let solid = 0
+		let index = 0
+		css.walkRules((rule) => {
+			index++
+			if (
+				rule.selectors.some((s) => s.startsWith("[class*='widget']:not("))
+				&& rule.toString().includes('--color-main-background')
+			) {
+				solid = index
+			}
+		})
+		expect(solid).toBeGreaterThan(0)
+		for (const { index: at } of clearSelectors().filter(({ selector }) =>
+			selector.includes('cn-widget-wrapper--borderless'),
+		)) {
+			expect(at).toBeGreaterThan(solid)
+		}
+	})
+})
