@@ -6210,8 +6210,8 @@
 				"evidence": "thematiq half built and its change archived (2026-10-02-surfaces-document-house-style, all tasks ticked): lib/Service/DocumentStyleService.php:94 forUser() builds the document profile (organisation, logo or print logo, cover, colours from the user's resolved set, heading and body fonts, footer lines); GET /api/document-style and /api/document-style/{kind} (appinfo/routes.php:31-32, lib/Controller/DocumentStyleController.php:76,93); the Documents block on Settings > Administration > Theming (templates/settings/admin.php:1026-1029, js/admin-documents.js, uploads checked in lib/Service/DocumentAssetService.php). No generated document reads the profile yet: docudesk origin/development d03efa888 has only the open change templates-house-style-from-thematiq, openregister origin/development 8ff5ba173b only the open change export-pdf-house-style (issues ConductionNL/filinq#1340 and ConductionNL/openregister#4255, both open)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "surfaces-document-house-style",
-				"note": "Missing, and owed by siblings (sibling-needs): a letter or PDF export that actually carries the profile. Filinq builds the letters (filinq#1340, change templates-house-style-from-thematiq), OpenRegister the PDF exports (openregister#4255, change export-pdf-house-style). Until one lands, a user sees the house style only in the admin form.",
+				"change": "filinq/templates-house-style-from-thematiq",
+				"note": "Missing, and owed by siblings (sibling-needs): a letter or PDF export that actually carries the profile. Filinq builds the letters (filinq#1340, change templates-house-style-from-thematiq), OpenRegister the PDF exports (openregister#4255, change export-pdf-house-style). Until one lands, a user sees the house style only in the admin form. Missing half specified in filinq/templates-house-style-from-thematiq (spec round part 3, 2026-10-07); delivered half: surfaces-document-house-style.",
 				"readOn": "2026-10-07"
 			},
 			"reachedOn": "Settings > Administration > Theming, Documents; GET /apps/thematiq/api/document-style; OCA\\Thematiq\\Service\\DocumentStyleService",
@@ -6642,8 +6642,8 @@
 				"evidence": "thematiq half built and its change archived (2026-10-02-surfaces-assistant-approved-mark, all tasks ticked): lib/Service/AssistantMarkService.php:146 forUser() returns the mark (off by default, organisation name, logo, translated label); GET /api/assistant-mark (appinfo/routes.php:30, lib/Controller/AssistantMarkController.php:71, #[NoAdminRequired]); the AI assistant block on Settings > Administration > Theming (templates/settings/admin.php:1109-1116, js/admin-assistant-mark.js). Nothing draws it in the assistant: git grep 'assistant-mark' in nextcloud-vue origin/development 3eefb4f00 src/ finds no caller, and ConductionNL/nextcloud-vue#1298 is open",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "surfaces-assistant-approved-mark",
-				"note": "Missing, and owed by nextcloud-vue (sibling-needs): CnAiChatPanel drawing the mark (nextcloud-vue#1298, no change written there yet). Until it lands, a user sees the mark only in the admin preview.",
+				"change": "nextcloud-vue/ai-panel-approved-mark",
+				"note": "Missing, and owed by nextcloud-vue (sibling-needs): CnAiChatPanel drawing the mark (nextcloud-vue#1298, no change written there yet). Until it lands, a user sees the mark only in the admin preview. Missing half specified in nextcloud-vue/ai-panel-approved-mark (spec round part 3, 2026-10-07); delivered half: surfaces-assistant-approved-mark.",
 				"readOn": "2026-10-07"
 			},
 			"reachedOn": "Settings > Administration > Theming, AI assistant; GET /apps/thematiq/api/assistant-mark",
