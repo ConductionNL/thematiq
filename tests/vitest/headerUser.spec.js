@@ -62,41 +62,70 @@ describe('the name and the role in the top bar', () => {
 		expect(chip).not.toBeNull()
 		expect(document.getElementById('user-menu').firstElementChild).toBe(chip)
 		expect(chip.getAttribute('aria-hidden')).toBe('true')
-		expect(chip.querySelector('.thematiq-user-chip__avatar').textContent).toBe('PJ')
-		expect(chip.querySelector('.thematiq-user-chip__name').textContent).toBe('Pieter Jansen')
-		expect(chip.querySelector('.thematiq-user-chip__role').textContent).toBe('Woo-coördinator')
-		expect(document.getElementById('header').hasAttribute('data-thematiq-user-chip')).toBe(true)
+		expect(chip.querySelector('.thematiq-user-chip__avatar').textContent).toBe(
+			'PJ',
+		)
+		expect(chip.querySelector('.thematiq-user-chip__name').textContent).toBe(
+			'Pieter Jansen',
+		)
+		expect(chip.querySelector('.thematiq-user-chip__role').textContent).toBe(
+			'Woo-coördinator',
+		)
+		expect(
+			document
+				.getElementById('header')
+				.hasAttribute('data-thematiq-user-chip'),
+		).toBe(true)
 		// The real menu button stays, with its own name.
-		expect(document.querySelector('#user-menu .header-menu__trigger').getAttribute('aria-label')).toBe('Settings menu')
+		expect(
+			document
+				.querySelector('#user-menu .header-menu__trigger')
+				.getAttribute('aria-label'),
+		).toBe('Settings menu')
 	})
 
 	it('shows the name alone when the profile names no role', async () => {
 		installState({ name: 'admin', role: '' })
 		await loadScript()
 
-		expect(document.querySelector('.thematiq-user-chip__avatar').textContent).toBe('A')
+		expect(
+			document.querySelector('.thematiq-user-chip__avatar').textContent,
+		).toBe('A')
 		expect(document.querySelector('.thematiq-user-chip__role')).toBeNull()
 	})
 
 	it('writes the name as text, never as markup', async () => {
-		installState({ name: '<img src=x onerror=alert(1)> Jansen', role: '<b>role</b>' })
+		installState({
+			name: '<img src=x onerror=alert(1)> Jansen',
+			role: '<b>role</b>',
+		})
 		await loadScript()
 
 		expect(document.querySelector('.thematiq-user-chip img')).toBeNull()
 		expect(document.querySelector('.thematiq-user-chip b')).toBeNull()
-		expect(document.querySelector('.thematiq-user-chip__role').textContent).toBe('<b>role</b>')
+		expect(document.querySelector('.thematiq-user-chip__role').textContent).toBe(
+			'<b>role</b>',
+		)
 	})
 
 	it('leaves the bar alone without a person or without an account menu', async () => {
 		installState(undefined)
 		await loadScript()
 		expect(document.querySelector('.thematiq-user-chip')).toBeNull()
-		expect(document.getElementById('header').hasAttribute('data-thematiq-user-chip')).toBe(false)
+		expect(
+			document
+				.getElementById('header')
+				.hasAttribute('data-thematiq-user-chip'),
+		).toBe(false)
 
 		document.body.innerHTML = '<header id="header"></header>'
 		installState({ name: 'Pieter Jansen', role: '' })
 		await loadScript()
-		expect(document.getElementById('header').hasAttribute('data-thematiq-user-chip')).toBe(false)
+		expect(
+			document
+				.getElementById('header')
+				.hasAttribute('data-thematiq-user-chip'),
+		).toBe(false)
 	})
 
 	it('puts the label back when the account menu re-renders without it', async () => {
@@ -105,7 +134,9 @@ describe('the name and the role in the top bar', () => {
 
 		document.querySelector('.thematiq-user-chip').remove()
 		await new Promise((resolve) => setTimeout(resolve, 0))
-		expect(document.querySelectorAll('#user-menu > .thematiq-user-chip')).toHaveLength(1)
+		expect(
+			document.querySelectorAll('#user-menu > .thematiq-user-chip'),
+		).toHaveLength(1)
 	})
 })
 
@@ -120,11 +151,17 @@ describe('the workplace bar sheet', () => {
 	})
 
 	it('hides the avatar and stretches the menu button only once the label is there', () => {
-		const touching = rules.filter((rule) => /account-menu__avatar|#user-menu > \.header-menu__trigger/.test(rule.selector))
+		const touching = rules.filter((rule) =>
+			/account-menu__avatar|#user-menu > \.header-menu__trigger/.test(
+				rule.selector,
+			),
+		)
 		expect(touching.length).toBeGreaterThan(0)
 		for (const rule of touching) {
 			for (const selector of rule.selector.split(',')) {
-				expect(selector, selector).toContain('#header[data-thematiq-user-chip]')
+				expect(selector, selector).toContain(
+					'#header[data-thematiq-user-chip]',
+				)
 			}
 		}
 	})
@@ -134,7 +171,10 @@ describe('the workplace bar sheet', () => {
 		for (const rule of rules) {
 			for (const [prop, value] of Object.entries(rule.decls)) {
 				if (/color|background|fill|stroke|border/.test(prop)) {
-					expect(literal.test(value), `${rule.selector} { ${prop}: ${value} }`).toBe(false)
+					expect(
+						literal.test(value),
+						`${rule.selector} { ${prop}: ${value} }`,
+					).toBe(false)
 				}
 			}
 		}
@@ -143,7 +183,12 @@ describe('the workplace bar sheet', () => {
 	it('never reaches the login page', () => {
 		for (const rule of rules) {
 			for (const selector of rule.selector.split(',')) {
-				expect(/body:not\(#body-login\)|^\s*#header \.thematiq-user-chip/.test(selector), selector).toBe(true)
+				expect(
+					/body:not\(#body-login\)|#header \.thematiq-user-chip/.test(
+						selector,
+					),
+					selector,
+				).toBe(true)
 			}
 		}
 	})

@@ -34,8 +34,8 @@ use Throwable;
  * header style (the DqKop board) shows the name beside it and, under the
  * name, the role the person filled in on their profile (the account's `role`
  * property). This service hands those two to js/header-user.js as initial
- * state and loads that script; it runs only on a page whose header style
- * resolves to `workplace` ({@see LayoutOptionsService::stylesheets()}).
+ * state and loads that script, only on a page whose header style resolves to
+ * `workplace` ({@see LayoutOptionsService::stylesheets()}).
  *
  * The person sees only their own name and role, both of which they can see
  * and change on their own profile page, whatever the scope of the property.
@@ -101,14 +101,24 @@ class HeaderUserService {
 	}//end person()
 
 	/**
-	 * Provide the person and load the script, for this render. Fails open.
+	 * Provide the person and load the script, for a page whose header style
+	 * resolves to `workplace` with the light layout (the page then also loads
+	 * `css/header-workplace.css`). Fails open.
+	 *
+	 * @param string $tokenSet The token set the page renders with.
+	 * @param LayoutOptionsService $layoutOptions Resolves the page's layout stylesheets.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 */
-	public function inject(): void {
+	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
+			$sheets = $layoutOptions->stylesheets(tokenSet: $tokenSet);
+			if (in_array(LayoutOptionsService::HEADER_WORKPLACE_STYLESHEET, $sheets, true) === false) {
+				return;
+			}
+
 			$person = $this->person();
 			if ($person === null || $person['name'] === '') {
 				return;

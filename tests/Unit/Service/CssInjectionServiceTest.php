@@ -20,6 +20,7 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\HeaderUserService;
+use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\LogoLayerService;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
@@ -1773,10 +1774,10 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testTheNewerLayoutStylesheetsAreAbsentByDefault()
 
 	/**
-	 * The workplace header style loads its stylesheet and hands the person to
-	 * its script, for a light set that names it; a set that names it on the
-	 * default layout, and a set that names nothing, load neither (the
-	 * controls).
+	 * The workplace header style loads its stylesheet for a light set that
+	 * names it; a set that names it on the default layout, and a set that
+	 * names nothing, do not (the controls). The person's layer is asked every
+	 * time, with the page's set, and decides from the same stylesheets.
 	 *
 	 * @param array<string, mixed> $layout The set's layout block.
 	 * @param bool $expected Whether the header sheet and the person are emitted.
@@ -1791,7 +1792,7 @@ class CssInjectionServiceTest extends TestCase {
 		$this->configureLayoutSet(meta: ['layout' => $layout]);
 
 		$headerUser = $this->createMock(HeaderUserService::class);
-		$headerUser->expects($expected === true ? $this->once() : $this->never())->method('inject');
+		$headerUser->expects($this->once())->method('inject')->with('zuiddrecht', $this->isInstanceOf(LayoutOptionsService::class));
 
 		$links = [];
 		$service = $this->getMockBuilder(CssInjectionService::class)

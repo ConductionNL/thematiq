@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\HeaderUserService;
+use OCA\Thematiq\Service\LayoutOptionsService;
 use OCP\Accounts\IAccount;
 use OCP\Accounts\IAccountManager;
 use OCP\Accounts\IAccountProperty;
@@ -118,6 +119,20 @@ class HeaderUserServiceTest extends TestCase {
 	}//end signIn()
 
 	/**
+	 * Layout options that resolve the page's stylesheets to the given list.
+	 *
+	 * @param array<int, string> $sheets The stylesheets.
+	 *
+	 * @return LayoutOptionsService
+	 */
+	private function layout(array $sheets = ['workplace-layout', 'header-workplace']): LayoutOptionsService {
+		$layout = $this->createMock(LayoutOptionsService::class);
+		$layout->method('stylesheets')->willReturn($sheets);
+
+		return $layout;
+	}//end layout()
+
+	/**
 	 * The board's person: the name and the role, handed over once with the script.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
@@ -127,7 +142,7 @@ class HeaderUserServiceTest extends TestCase {
 		$this->initialState->expects($this->once())->method('provideInitialState')
 			->with('header-user', ['name' => 'Pieter Jansen', 'role' => 'Woo-coördinator']);
 
-		$this->service()->inject();
+		$this->service()->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout());
 
 		$this->assertSame(1, $this->scripts);
 	}//end testTheNameAndTheRoleAreHandedToTheScript()
@@ -154,10 +169,25 @@ class HeaderUserServiceTest extends TestCase {
 		$this->userSession->method('getUser')->willReturn(null);
 		$this->initialState->expects($this->never())->method('provideInitialState');
 
-		$this->service()->inject();
+		$this->service()->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout());
 
 		$this->assertSame(0, $this->scripts);
 	}//end testNobodySignedInLoadsNothing()
+
+	/**
+	 * A page without the workplace bar (another header style, or the default
+	 * layout) gets no state and no script, even with somebody signed in.
+	 *
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 */
+	public function testWithoutTheWorkplaceBarNothingLoads(): void {
+		$this->signIn(name: 'Pieter Jansen', role: 'Woo-coördinator');
+		$this->initialState->expects($this->never())->method('provideInitialState');
+
+		$this->service()->inject(tokenSet: 'utrecht', layoutOptions: $this->layout(sheets: ['workplace-layout']));
+
+		$this->assertSame(0, $this->scripts);
+	}//end testWithoutTheWorkplaceBarNothingLoads()
 
 	/**
 	 * A failure is logged and leaves the page with Nextcloud's own avatar:
@@ -173,7 +203,7 @@ class HeaderUserServiceTest extends TestCase {
 		$this->initialState->expects($this->never())->method('provideInitialState');
 		$this->logger->expects($this->once())->method('warning');
 
-		$this->service()->inject();
+		$this->service()->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout());
 
 		$this->assertSame(0, $this->scripts);
 	}//end testAFailureIsLoggedAndLeavesTheAvatar()

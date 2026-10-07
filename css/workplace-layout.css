@@ -218,7 +218,8 @@ body#body-login .login-form .input-field__input {
 	height: 44px !important;
 	margin: 0 !important;
 	padding: 0 12px !important;
-	border: 1px solid var(--nldesign-color-border-dark, var(--color-border-maxcontrast)) !important;
+	border: 1px solid
+		var(--nldesign-color-border-dark, var(--color-border-maxcontrast)) !important;
 	border-radius: var(--border-radius-element, 8px) !important;
 	box-shadow: none !important;
 	font-size: 15px !important;
@@ -244,10 +245,6 @@ body#body-login .login-form button[type='submit'] {
 	border-radius: var(--border-radius-element, 8px) !important;
 	font-size: 15px !important;
 	font-weight: 600 !important;
-}
-
-body#body-login footer.guest-box {
-	margin-top: 28px !important;
 }
 
 /* Their colour: the link colour, blue on Zuiddrecht (#3669A5, 5.64:1 on the
@@ -288,6 +285,7 @@ body#body-login
  * (Nextcloud draws a blurred plate for its coloured backgrounds; the light
  * workplace has none). */
 body#body-login footer.guest-box {
+	margin-top: 28px !important;
 	padding: 0 !important;
 	background: transparent !important;
 	box-shadow: none !important;

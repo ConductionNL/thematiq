@@ -267,7 +267,10 @@ div.guest-box.login-box::after {
 body:not(#body-login) {
 	--body-container-margin: 0px;
 	--body-container-radius: 0px;
-	--body-height: calc(100% - env(safe-area-inset-bottom) - var(--header-height) - var(--body-container-margin));
+	--body-height: calc(
+		100% - env(safe-area-inset-bottom) - var(--header-height) -
+			var(--body-container-margin)
+	);
 }
 
 :is(#content, #content-vue) .app-navigation {
@@ -279,6 +282,10 @@ body:not(#body-login) {
  * lists inside lose their own inset, so the column says it once. */
 :is(#content, #content-vue) #app-navigation-vue {
 	--app-navigation-padding: 0px;
+	--cn-nav-card-background: var(
+		--nldesign-component-content-surface-background-color
+	);
+	--cn-nav-card-radius: 12px;
 
 	box-sizing: border-box;
 	gap: 20px;
@@ -309,14 +316,21 @@ body:not(#body-login) {
 	padding: 0 8px;
 }
 
-:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__brand-name:not(#header *) {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__brand-name:not(#header *) {
 	color: var(--color-main-text) !important;
 	font-size: 19px;
 	font-weight: 700;
 }
 
-:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__brand-caption:not(#header *) {
-	color: var(--nldesign-color-text-muted, var(--color-text-maxcontrast)) !important;
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__brand-caption:not(#header *) {
+	color: var(
+		--nldesign-color-text-muted,
+		var(--color-text-maxcontrast)
+	) !important;
 	font-size: 13px;
 }
 
@@ -325,7 +339,10 @@ body:not(#body-login) {
 	padding: 0;
 }
 
-:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__primary-action .button-vue {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__primary-action
+	.button-vue {
 	height: 42px;
 	min-height: 42px;
 	border-radius: var(--border-radius-element, 8px);
@@ -344,15 +361,28 @@ body:not(#body-login) {
 }
 
 :is(#content, #content-vue) #app-navigation-vue .app-navigation-caption:first-child,
-:is(#content, #content-vue) #app-navigation-vue .app-navigation-list__highlight + .app-navigation-caption {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-list__highlight
+	+ .app-navigation-caption {
 	margin-top: 0;
 }
 
 /* A caption drawn as a heading (Settings: "Personal", "Administration") is
  * an h2, which the NL Design heading sheet sizes with !important. */
 :is(#content, #content-vue) #app-navigation-vue .app-navigation-caption__name {
+	/* The NL Design text sheet paints every span the surface text with an
+	 * id-strength !important rule; it reads this variable first. */
+	--nldesign-color-on-surface: var(
+		--nldesign-color-text-muted,
+		var(--color-text-maxcontrast)
+	);
+
 	overflow: hidden;
-	color: var(--nldesign-color-text-muted, var(--color-text-maxcontrast)) !important;
+	color: var(
+		--nldesign-color-text-muted,
+		var(--color-text-maxcontrast)
+	) !important;
 	font-size: 12px !important;
 	font-weight: 600 !important;
 	letter-spacing: 0.06em !important;
@@ -376,8 +406,12 @@ body:not(#body-login) {
 
 /* An entry under the pointer: the workspace grey (DqTokens "Bij aanwijzen:
  * grijs vlak"). */
-:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry:not(.active):hover {
-	background-color: var(--nldesign-component-content-surface-background-color) !important;
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-entry:not(.active):hover {
+	background-color: var(
+		--nldesign-component-content-surface-background-color
+	) !important;
 }
 
 :is(#content, #content-vue) #app-navigation-vue .app-navigation-entry-link {
@@ -404,6 +438,14 @@ body:not(#body-login) {
 	padding: 0;
 	font-size: 15px;
 	font-weight: inherit;
+	line-height: 42px;
+}
+
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__footer-list
+	.app-navigation-entry__name {
+	line-height: 40px;
 }
 
 :is(#content, #content-vue) #app-navigation-vue .app-navigation-entry__utils {
@@ -411,7 +453,9 @@ body:not(#body-login) {
 	padding: 0 10px 0 0 !important;
 }
 
-:is(#content, #content-vue) #app-navigation-vue .app-navigation-entry__counter-wrapper {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-entry__counter-wrapper {
 	margin: 0 !important;
 	padding: 0 !important;
 }
@@ -419,13 +463,17 @@ body:not(#body-login) {
 /* The count: a 22px red circle with white 12px bold figures (it grows into
  * a pill past two figures). The NL Design element sheet paints every `div`
  * outside the header with an id-strength rule, so this carries three. */
-:is(#content, #content-vue) #app-navigation-vue .counter-bubble__counter:not(#header *) {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.counter-bubble__counter:not(#header *) {
 	box-sizing: border-box;
 	min-width: 22px;
 	height: 22px;
 	padding: 0 6px;
 	border-radius: 11px;
-	background-color: var(--nldesign-component-navigation-badge-background-color) !important;
+	background-color: var(
+		--nldesign-component-navigation-badge-background-color
+	) !important;
 	color: var(--nldesign-component-navigation-badge-color) !important;
 	font-size: 12px;
 	font-weight: 700;
@@ -434,34 +482,45 @@ body:not(#body-login) {
 
 /* The card ("Dag afsluiten") sits at the foot of the column, on the
  * workspace grey with the cards' radius. */
-:is(#content, #content-vue) #app-navigation-vue {
-	--cn-nav-card-background: var(--nldesign-component-content-surface-background-color);
-	--cn-nav-card-radius: 12px;
-}
-
 :is(#content, #content-vue) #app-navigation-vue .cn-app-nav__card {
 	margin: auto 0 0;
 	padding: 16px;
 }
 
-:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__card-title:not(#header *) {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__card-title:not(#header *) {
 	color: var(--color-main-text) !important;
 	font-size: 15px;
 }
 
-:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__card-text:not(#header *) {
-	color: var(--nldesign-color-text-muted, var(--color-text-maxcontrast)) !important;
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__card-text:not(#header *) {
+	color: var(
+		--nldesign-color-text-muted,
+		var(--color-text-maxcontrast)
+	) !important;
 	font-size: 14px;
 	line-height: 1.4;
 }
 
 /* The footer entries (Instellingen, Hulp en uitleg): 40px, regular weight. */
-:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__footer-list .app-navigation-entry,
-:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__footer-list .app-navigation-entry-link {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__footer-list
+	.app-navigation-entry,
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__footer-list
+	.app-navigation-entry-link {
 	min-height: 40px;
 }
 
-:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__footer-list .app-navigation-entry-link {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__footer-list
+	.app-navigation-entry-link {
 	font-weight: 400;
 }
 
@@ -470,12 +529,19 @@ body:not(#body-login) {
  * regular weight, its icon where the entries carry theirs, 2px above the
  * next entry as in one list. */
 :is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'],
-:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div:first-child {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	[data-testid='cn-nav-settings']
+	> div:first-child {
 	margin: 0 !important;
 	padding: 0 !important;
 }
 
-:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div > .button-vue {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	[data-testid='cn-nav-settings']
+	> div
+	> .button-vue {
 	height: 40px !important;
 	min-height: 40px;
 	border: 0 !important;
@@ -484,24 +550,52 @@ body:not(#body-login) {
 	color: var(--color-main-text) !important;
 }
 
-:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div > .button-vue .button-vue__wrapper {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	[data-testid='cn-nav-settings']
+	> div
+	> .button-vue
+	.button-vue__wrapper {
 	gap: 12px;
 	justify-content: flex-start;
 }
 
-:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div > .button-vue .button-vue__icon {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	[data-testid='cn-nav-settings']
+	> div
+	> .button-vue
+	.button-vue__icon {
 	width: 20px;
 	min-width: 20px;
 	height: 40px;
 }
 
-:is(#content, #content-vue) #app-navigation-vue [data-testid='cn-nav-settings'] > div > .button-vue .button-vue__text {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	[data-testid='cn-nav-settings']
+	> div
+	> .button-vue
+	.button-vue__text {
 	margin: 0;
 	padding: 0;
 	font-size: 15px;
 	font-weight: 400 !important;
 }
 
-:is(#content, #content-vue) #app-navigation-vue .cn-app-nav__footer-list--after-settings {
+:is(#content, #content-vue)
+	#app-navigation-vue
+	.cn-app-nav__footer-list--after-settings {
 	margin-top: -18px;
+}
+
+/* The button that folds the navigation away sits over the top left corner
+ * of the page (it covered the "T" of the Theming title). The boards draw no
+ * such button: on a wide screen the navigation stays. Below 1024px, where
+ * Nextcloud slides the navigation in and out, the button stays. */
+@media (min-width: 1024px) {
+	:is(#content, #content-vue) .app-navigation-toggle-wrapper,
+	:is(#content, #content-vue) .app-navigation .app-navigation-toggle {
+		display: none !important;
+	}
 }

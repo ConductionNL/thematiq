@@ -560,7 +560,8 @@ describe('zuiddrecht: what the layout options carry, and the day-close link', ()
 		)
 		expect(
 			declarations.filter((d) =>
-				/app-navigation-entry[^,]*\.active/.test(d.selector),
+				// An entry that is NOT selected (the hover wash) is not the selected style.
+				/app-navigation-entry[^,]*(?<!:not\()\.active/.test(d.selector),
 			),
 		).toEqual([])
 	})

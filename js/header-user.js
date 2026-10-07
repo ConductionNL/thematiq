@@ -44,7 +44,8 @@
 			return ''
 		}
 		var first = Array.from(words[0])[0] || ''
-		var last = words.length > 1 ? Array.from(words[words.length - 1])[0] || '' : ''
+		var last =
+			words.length > 1 ? Array.from(words[words.length - 1])[0] || '' : ''
 		return (first + last).toLocaleUpperCase()
 	}
 
@@ -114,7 +115,11 @@
 		} catch (e) {
 			return
 		}
-		if (!person || typeof person.name !== 'string' || person.name.trim() === '') {
+		if (
+			!person
+			|| typeof person.name !== 'string'
+			|| person.name.trim() === ''
+		) {
 			return
 		}
 		person = {
