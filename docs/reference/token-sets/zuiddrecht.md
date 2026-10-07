@@ -2,7 +2,7 @@
 
 # Gemeente Zuiddrecht
 
-Token set `zuiddrecht`: 111 declared by this set, 129 from the defaults layer.
+Token set `zuiddrecht`: 122 declared by this set, 129 from the defaults layer.
 
 Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 
@@ -299,22 +299,33 @@ Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 | `--nldesign-website-attention-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23E8C77D%22%2F%3E%3C%2Fsvg%3E) `#E8C77D` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%238a691f%22%2F%3E%3C%2Fsvg%3E) `#8a691f` | this set | |
 | `--nldesign-website-attention-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231A1A1A%22%2F%3E%3C%2Fsvg%3E) `#1A1A1A` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | this set | |
 | `--nldesign-website-badge-border-radius` | `14px` | | this set | |
+| `--nldesign-website-band-max-width` | `1280px` | | this set | |
 | `--nldesign-website-border-radius` | `4px` | | this set | |
 | `--nldesign-website-border-radius-large` | `6px` | | this set | |
+| `--nldesign-website-button-font-weight` | `600` | | this set | |
+| `--nldesign-website-color-text-muted` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234A4A4A%22%2F%3E%3C%2Fsvg%3E) `#4A4A4A` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b5b5b5%22%2F%3E%3C%2Fsvg%3E) `#b5b5b5` | this set | |
+| `--nldesign-website-content-font-size` | `17px` | | this set | |
 | `--nldesign-website-control-border-width` | `2px` | | this set | |
+| `--nldesign-website-header-gutter` | `0px` | | this set | |
+| `--nldesign-website-header-max-width` | `1280px` | | this set | |
 | `--nldesign-website-heading-1-font-size` | `44px` | | this set | |
 | `--nldesign-website-heading-2-font-size` | `40px` | | this set | |
 | `--nldesign-website-heading-3-font-size` | `26px` | | this set | |
-| `--nldesign-website-lead-font-size` | `18px` | | this set | |
+| `--nldesign-website-lead-font-size` | `21px` | | this set | |
 | `--nldesign-website-logo-height` | `50px` | | this set | |
 | `--nldesign-website-logo-text-size` | `0` | | this set | |
 | `--nldesign-website-logo-width` | `234px` | | this set | |
+| `--nldesign-website-nav-current-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233669A5%22%2F%3E%3C%2Fsvg%3E) `#3669A5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236d9acf%22%2F%3E%3C%2Fsvg%3E) `#6d9acf` | this set | |
+| `--nldesign-website-nav-current-in-line` | `1` | | this set | |
 | `--nldesign-website-notice-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23EAF0F7%22%2F%3E%3C%2Fsvg%3E) `#EAF0F7` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2313202e%22%2F%3E%3C%2Fsvg%3E) `#13202e` | this set | |
 | `--nldesign-website-notice-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23B9CBE2%22%2F%3E%3C%2Fsvg%3E) `#B9CBE2` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23273b55%22%2F%3E%3C%2Fsvg%3E) `#273b55` | this set | |
 | `--nldesign-website-notice-border-width` | `1px` | | this set | |
 | `--nldesign-website-notice-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231A1A1A%22%2F%3E%3C%2Fsvg%3E) `#1A1A1A` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | this set | |
+| `--nldesign-website-page-gutter` | `24px` | | this set | |
+| `--nldesign-website-page-max-width` | `1328px` | | this set | |
 | `--nldesign-website-page-title-line-height` | `1.15` | | this set | |
 | `--nldesign-website-page-title-size` | `2.75rem` | | this set | |
+| `--nldesign-website-placeholder-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23D9E3EF%22%2F%3E%3C%2Fsvg%3E) `#D9E3EF` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231b2a3b%22%2F%3E%3C%2Fsvg%3E) `#1b2a3b` | this set | |
 | `--nldesign-website-step-current-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--nldesign-website-step-current-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23CC0000%22%2F%3E%3C%2Fsvg%3E) `#CC0000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ff3d3d%22%2F%3E%3C%2Fsvg%3E) `#ff3d3d` | this set | |
 | `--nldesign-website-step-done-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233669A5%22%2F%3E%3C%2Fsvg%3E) `#3669A5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236d9acf%22%2F%3E%3C%2Fsvg%3E) `#6d9acf` | this set | |
