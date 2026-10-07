@@ -275,13 +275,13 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 	/**
 	 * The public site's own pages (openspec/changes/zuiddrecht-site-page-title-notice-surface).
 	 */
-	it('zuiddrecht draws its site: a 44px content title on a 1.15 line, an 18px lead, ink on a notice, a cool grey surface', () => {
+	it('zuiddrecht draws its site: a 44px content title on a 1.15 line, a 21px lead, ink on a notice, a cool grey surface', () => {
 		expect(token('zuiddrecht', '--thematiq-page-title-font-size')).toBe(
 			'2.75rem',
 		)
 		expect(token('zuiddrecht', '--thematiq-page-title-line-height')).toBe('1.15')
 		expect(token('zuiddrecht', '--utrecht-paragraph-lead-font-size')).toBe(
-			'18px',
+			'21px',
 		)
 		expect(token('zuiddrecht', '--utrecht-alert-color')).toBe('#1A1A1A')
 		expect(token('zuiddrecht', '--thematiq-surface-color')).toBe('#F4F6F9')
@@ -307,6 +307,43 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 		expect(token('zuiddrecht', '--utrecht-alert-background-color')).toBe(
 			'#EAF0F7',
 		)
+	})
+
+	it('zuiddrecht: semibold buttons, the menu mark in the red line, its columns, its own grey and the photo ground', () => {
+		for (const role of [
+			'--utrecht-button-font-weight',
+			'--utrecht-button-primary-action-font-weight',
+			'--utrecht-button-secondary-action-font-weight',
+			'--utrecht-button-subtle-font-weight',
+		]) {
+			expect(token('zuiddrecht', role), role).toBe('600')
+		}
+		expect(token('zuiddrecht', '--thematiq-website-nav-current-in-line')).toBe(
+			'1',
+		)
+		expect(token('zuiddrecht', '--thematiq-website-nav-current-color')).toBe(
+			'#3669A5',
+		)
+		expect(token('zuiddrecht', '--thematiq-website-page-max-width')).toBe(
+			'1328px',
+		)
+		expect(token('zuiddrecht', '--thematiq-website-page-gutter')).toBe('24px')
+		expect(token('zuiddrecht', '--thematiq-website-band-max-width')).toBe(
+			'1280px',
+		)
+		expect(token('zuiddrecht', '--thematiq-website-header-max-width')).toBe(
+			'1280px',
+		)
+		expect(token('zuiddrecht', '--thematiq-website-header-gutter')).toBe('0px')
+		expect(token('zuiddrecht', '--thematiq-website-content-font-size')).toBe(
+			'17px',
+		)
+		expect(token('zuiddrecht', '--thematiq-website-text-muted')).toBe('#4A4A4A')
+		expect(token('zuiddrecht', '--thematiq-placeholder-background-color')).toBe(
+			'#D9E3EF',
+		)
+		// The workplace keeps its own grey.
+		expect(token('zuiddrecht', '--nldesign-color-text-muted')).toBe('#5E6168')
 	})
 
 	it.each([...SCHOOLS, 'vng'])(
@@ -341,6 +378,29 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 			expect(token(set, '--thematiq-attention-background-color')).toBeNull()
 			expect(token(set, '--thematiq-attention-border-color')).toBeNull()
 			expect(token(set, '--thematiq-attention-color')).toBeNull()
+			// Buttons keep their 700, the portal's own names resolve to nothing,
+			// and the site's grey is the set's one grey.
+			for (const role of [
+				'--utrecht-button-font-weight',
+				'--utrecht-button-primary-action-font-weight',
+				'--utrecht-button-secondary-action-font-weight',
+				'--utrecht-button-subtle-font-weight',
+			]) {
+				expect(token(set, role), role).toBe('700')
+			}
+			for (const role of [
+				'--thematiq-website-nav-current-in-line',
+				'--thematiq-website-nav-current-color',
+				'--thematiq-website-page-max-width',
+				'--thematiq-website-band-max-width',
+				'--thematiq-website-content-font-size',
+				'--thematiq-placeholder-background-color',
+			]) {
+				expect(token(set, role), role).toBeNull()
+			}
+			expect(token(set, '--thematiq-website-text-muted')).toBe(
+				token(set, '--nldesign-color-text-muted'),
+			)
 		},
 	)
 })

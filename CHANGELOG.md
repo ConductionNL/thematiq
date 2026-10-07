@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **Zuiddrecht's website measures and type.** The site's columns (1328px page with a 24px gutter,
+  1280px header row and opening band), 17px running text, a 21px lead (Contentpagina; it was 18),
+  semibold buttons (`--nldesign-website-button-font-weight`, read by the public bridge's four
+  button weights, 700 for every other set), the site's own grey `#4A4A4A` (8.86:1 on white) beside
+  the workplace's `#5E6168`, and a light blue ground for a missing picture (`#D9E3EF`).
+
+### Fixed
+- **The blue mark under the menu item on screen is back on the Zuiddrecht site.** #1105 removed
+  `--nldesign-website-nav-current-in-line` and `--nldesign-website-nav-current-color` as unread,
+  because only the portal read them. Every `--nldesign-*` name the portal reads now has a role in
+  `css/public-bridge.css`, and `tests/vitest/portalReaders.spec.js` checks a measured list of them,
+  so the vocabulary test no longer calls such a name unread.
+
 - **The workplace top bar, as an option.** A seventh layout option, `header_style` (`default` or
   `workplace`), draws the DqKop board's bar with the light layout: no logo and no app name, the
   search beside the app grid button, an outline bell with a red dot, a divider, and your initials,

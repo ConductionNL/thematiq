@@ -889,7 +889,7 @@
 	--utrecht-alert-border-width: var(--nldesign-website-notice-border-width, 2px);
 	--utrecht-button-border-width: var(--nldesign-website-control-border-width, 1px);
 	--utrecht-button-font-size: 16px;
-	--utrecht-button-font-weight: 700;
+	--utrecht-button-font-weight: var(--nldesign-website-button-font-weight, 700);
 	--utrecht-button-icon-size: 24px;
 	--utrecht-button-line-height: 150%;
 	--utrecht-button-min-block-size: 48px;
@@ -898,9 +898,18 @@
 	--utrecht-button-padding-block-start: 12px;
 	--utrecht-button-padding-inline-end: 16px;
 	--utrecht-button-padding-inline-start: 16px;
-	--utrecht-button-primary-action-font-weight: 700;
-	--utrecht-button-secondary-action-font-weight: 700;
-	--utrecht-button-subtle-font-weight: 700;
+	--utrecht-button-primary-action-font-weight: var(
+		--nldesign-website-button-font-weight,
+		700
+	);
+	--utrecht-button-secondary-action-font-weight: var(
+		--nldesign-website-button-font-weight,
+		700
+	);
+	--utrecht-button-subtle-font-weight: var(
+		--nldesign-website-button-font-weight,
+		700
+	);
 	--utrecht-data-list-item-key-font-weight: 700;
 	--utrecht-document-font-size: 16px;
 	--utrecht-document-line-height: 150%;
@@ -1180,6 +1189,49 @@
 	);
 	--thematiq-hero-action-color: var(--nldesign-hero-action-color);
 	--thematiq-hero-decoration-image: var(--nldesign-hero-decoration-image);
+
+	/*
+	 * THE NAMES THE PORTAL READS BY ITSELF (portaliq css/site-theme.css; the
+	 * full list is tests/vitest/fixtures/portal-site-nldesign-readers.json).
+	 * A set may only declare a `--nldesign-*` name something reads
+	 * (TokenSetVocabularyTest), and that test looks inside this repository.
+	 * The portal read these names and nothing here did, so #1105 took two of
+	 * them out of Zuiddrecht as unread, and the blue mark under the menu item
+	 * on screen went with them. Each gets a role here, so the vocabulary
+	 * knows the portal reads it. No fallbacks: a set that names none of them
+	 * leaves the portal's own fallback in force.
+	 */
+	--thematiq-website-page-max-width: var(--nldesign-website-page-max-width);
+	--thematiq-website-page-gutter: var(--nldesign-website-page-gutter);
+	--thematiq-website-band-max-width: var(--nldesign-website-band-max-width);
+	--thematiq-website-header-max-width: var(--nldesign-website-header-max-width);
+	--thematiq-website-header-gutter: var(--nldesign-website-header-gutter);
+	--thematiq-website-content-font-size: var(--nldesign-website-content-font-size);
+	--thematiq-website-nav-current-in-line: var(
+		--nldesign-website-nav-current-in-line
+	);
+	--thematiq-website-nav-current-color: var(--nldesign-website-nav-current-color);
+	--thematiq-website-hero-title-size: var(--nldesign-website-hero-title-size);
+	--thematiq-website-hero-decoration-opacity: var(
+		--nldesign-website-hero-decoration-opacity
+	);
+	--thematiq-color-border-strong: var(--nldesign-color-border-strong);
+	--thematiq-emblem-url: var(--nldesign-emblem-url);
+
+	/*
+	 * The site's own grey text and the ground of a missing picture. The site
+	 * reads --nldesign-color-text-muted, which is the workplace's grey too,
+	 * and this file loads before the set, so it cannot change that name; it
+	 * offers the website's grey under its own role, falling back to the
+	 * shared one. The placeholder ground has no fallback.
+	 */
+	--thematiq-website-text-muted: var(
+		--nldesign-website-color-text-muted,
+		var(--nldesign-color-text-muted)
+	);
+	--thematiq-placeholder-background-color: var(
+		--nldesign-website-placeholder-background-color
+	);
 
 	/*
 	 * THE BRAND STRIPE ON THE PORTAL (openspec/changes/brand-motif-on-portals).
