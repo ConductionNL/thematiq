@@ -1,5 +1,7 @@
 # Tasks: The light workplace on Nextcloud's own pages
 
+> Archive pass 2026-10-07: code done, not archived. Its MODIFIED requirement "The Light Layout Is One Conditional Stylesheet" is added by `zuiddrecht-workplace-theme`, which is still open (task 7.1, live check); archive this change right after that one.
+
 ## 1. Spec
 - [x] 1.1 Proposal and the workplace-layout delta.
 
