@@ -524,7 +524,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTheming",
+					"NcThema"
+				]
+			}
 		},
 		{
 			"id": "cat-municipal-sets",
@@ -554,7 +561,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTheming",
+					"NcThema"
+				]
+			}
 		},
 		{
 			"id": "cat-bigcity-systems",
@@ -585,7 +599,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
 			"featureConfidence": "high",
-			"note": "info.xml description explicitly names these four as 'full design systems of the large cities'."
+			"note": "info.xml description explicitly names these four as 'full design systems of the large cities'.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-vng",
@@ -615,7 +633,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "vng-token-set",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-lasuite",
@@ -645,7 +667,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "lasuite-stack",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTheming",
+					"TqLettertypen"
+				]
+			}
 		},
 		{
 			"id": "cat-searchable-picker",
@@ -676,7 +705,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-set-dropdown",
 			"featureConfidence": "medium",
-			"note": "You can pick from a list of 47 sets and jump to one by typing its first letters via the browser's own select behaviour, but there is no purpose-built search/filter box the way there is for the app-exclusion list. At 47 entries it is usable; it does not obviously scale to 'hundreds'."
+			"note": "You can pick from a list of 47 sets and jump to one by typing its first letters via the browser's own select behaviour, but there is no purpose-built search/filter box the way there is for the app-exclusion list. At 47 entries it is usable; it does not obviously scale to 'hundreds'.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-swatch-preview",
@@ -707,7 +740,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-set-apply-dialog",
 			"featureConfidence": "high",
-			"note": "Swatch appears once you have selected the set in the dropdown but before you confirm applying it, not while merely browsing the closed list."
+			"note": "Swatch appears once you have selected the set in the dropdown but before you confirm applying it, not while merely browsing the closed list.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-stock-option",
@@ -737,7 +774,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTerugNaarNextcloud"
+			}
 		},
 		{
 			"id": "cat-completeness-badge",
@@ -767,7 +808,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTheming",
+					"TqSetUploaden"
+				]
+			}
 		},
 		{
 			"id": "cat-design-system-choice",
@@ -797,7 +845,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "high-contrast-token-set",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-design-system-docs",
@@ -828,7 +880,11 @@
 			"providerHow": "read-from-code",
 			"feature": "nl-design",
 			"featureConfidence": "medium",
-			"note": "The link is real and reachable, but it always points at nldesign.app regardless of the design system actually selected (La Suite, high contrast, Cunningham all get the NL Design System link, not their own)."
+			"note": "The link is real and reachable, but it always points at nldesign.app regardless of the design system actually selected (La Suite, high contrast, Cunningham all get the NL Design System link, not their own).",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-community-sets",
@@ -858,7 +914,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "extended-token-sets",
-			"featureConfidence": "medium"
+			"featureConfidence": "medium",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-starter-templates",
@@ -889,7 +949,14 @@
 			"providerHow": "read-from-code",
 			"feature": "token-editor-ui",
 			"featureConfidence": "medium",
-			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it."
+			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTheming",
+					"TqNieuwThema"
+				]
+			}
 		},
 		{
 			"id": "cat-marketplace",
@@ -920,7 +987,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "The only outbound network call this app makes at all is the opt-in upstream-freshness check against api.github.com (templates/settings/admin.php:527); there is no marketplace/gallery browse-and-download feature."
+			"note": "The only outbound network call this app makes at all is the opt-in upstream-freshness check against api.github.com (templates/settings/admin.php:527); there is no marketplace/gallery browse-and-download feature.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqGalerij"
+			}
 		},
 		{
 			"id": "cat-provincial-sets",
@@ -951,7 +1022,11 @@
 			"providerHow": "read-from-code",
 			"feature": "extended-token-sets",
 			"featureConfidence": "high",
-			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue."
+			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "app-one-click",
@@ -981,7 +1056,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-set-apply-dialog",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTheming",
+					"TqTokensetToepassen"
+				]
+			}
 		},
 		{
 			"id": "app-diff-dialog",
@@ -1011,7 +1093,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-set-apply-dialog",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTokensetToepassen"
+			}
 		},
 		{
 			"id": "app-choose-what-changes",
@@ -1042,7 +1128,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-set-apply-dialog",
 			"featureConfidence": "high",
-			"note": "Nextcloud core theming (primary/background colour, logo) inside the same dialog is one bulk 'also update Nextcloud theming' checkbox (js/admin.js:3095-3097), not per-field."
+			"note": "Nextcloud core theming (primary/background colour, logo) inside the same dialog is one bulk 'also update Nextcloud theming' checkbox (js/admin.js:3095-3097), not per-field.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTokensetToepassen"
+			}
 		},
 		{
 			"id": "app-no-reload",
@@ -1072,7 +1162,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTokensetToepassen"
+			}
 		},
 		{
 			"id": "app-live-preview-shell",
@@ -1102,7 +1196,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-editor-ui",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "app-login-preview",
@@ -1133,7 +1231,11 @@
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
 			"featureConfidence": "high",
-			"note": "This previews a mock login card inside the playground stage, not the real public /login page in an iframe; it repaints live as you edit tokens."
+			"note": "This previews a mock login card inside the playground stage, not the real public /login page in an iframe; it repaints live as you edit tokens.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "app-trial-session",
@@ -1163,7 +1265,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theme-preview",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqVoorbeeldSessie"
+			}
 		},
 		{
 			"id": "app-trial-banner",
@@ -1193,7 +1299,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theme-preview",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqVoorbeeldSessie"
+			}
 		},
 		{
 			"id": "app-trial-publish",
@@ -1223,7 +1333,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theme-preview",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqVoorbeeldSessie",
+					"TqTokensetToepassen"
+				]
+			}
 		},
 		{
 			"id": "app-trial-discard",
@@ -1253,7 +1370,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theme-preview",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqVoorbeeldSessie"
+			}
 		},
 		{
 			"id": "app-component-playground",
@@ -1283,7 +1404,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "app-primary-lock",
@@ -1313,7 +1438,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLayout"
+			}
 		},
 		{
 			"id": "app-runtime-no-deploy",
@@ -1343,7 +1472,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-capability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "app-scheduled-switch",
@@ -1373,7 +1506,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-capability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqWissels"
+			}
 		},
 		{
 			"id": "app-rollback-history",
@@ -1404,7 +1541,14 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-audit",
 			"featureConfidence": "high",
-			"note": "The audit log (theming-audit) is read-only evidence for compliance, not an undo mechanism."
+			"note": "The audit log (theming-audit) is read-only evidence for compliance, not an undo mechanism.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqLogboek",
+					"TqVersieHerstellen"
+				]
+			}
 		},
 		{
 			"id": "app-reset-core",
@@ -1434,7 +1578,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTerugNaarNextcloud"
+			}
 		},
 		{
 			"id": "app-simple-theme-switch",
@@ -1467,7 +1615,14 @@
 			"featureConfidence": "high",
 			"origin": "featureRequest",
 			"originUrl": "https://feedback.tokens.studio/p/theme-switcher-for-non-ds-designers",
-			"note": "brand managers in a municipality are not token engineers"
+			"note": "brand managers in a municipality are not token engineers",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTheming",
+					"NcThema"
+				]
+			}
 		},
 		{
 			"id": "aut-upload-css",
@@ -1497,7 +1652,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqEigenSets",
+					"TqSetUploaden"
+				]
+			}
 		},
 		{
 			"id": "aut-upload-dtcg",
@@ -1528,7 +1690,14 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Corrections round 8 (2026-09-28): the import writes the wrong colour for srgb-linear colour objects and drops alpha, thematiq#695; rating kept because the upload and mapping still work for srgb hex and component colours and every other token type, the defect is on those two colour shapes only."
+			"note": "Corrections round 8 (2026-09-28): the import writes the wrong colour for srgb-linear colour objects and drops alpha, thematiq#695; rating kept because the upload and mapping still work for srgb hex and component colours and every other token type, the defect is on those two colour shapes only.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqEigenSets",
+					"TqSetUploaden"
+				]
+			}
 		},
 		{
 			"id": "aut-upload-validate",
@@ -1558,7 +1727,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "aut-upload-security",
@@ -1589,7 +1762,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Fail-closed reject, not silent stripping: the whole declaration is refused rather than laundered."
+			"note": "Fail-closed reject, not silent stripping: the whole declaration is refused rather than laundered.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "aut-custom-list-delete",
@@ -1619,7 +1796,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqEigenSets"
+			}
 		},
 		{
 			"id": "aut-custom-export",
@@ -1649,7 +1830,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqEigenSets"
+			}
 		},
 		{
 			"id": "aut-convert-nlds-theme",
@@ -1679,7 +1864,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "nlds-theme-converter",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqEigenSets",
+					"TqSetUploaden"
+				]
+			}
 		},
 		{
 			"id": "aut-token-editor",
@@ -1709,7 +1901,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-token-editor-tabs",
@@ -1739,7 +1935,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-token-reset",
@@ -1769,7 +1969,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-token-live",
@@ -1799,7 +2003,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-overrides-persist",
@@ -1830,7 +2038,14 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
 			"featureConfidence": "high",
-			"note": "Own rating yes to partial (corrections round 8, 2026-09-28): the edits persist, but colour edits do not apply to users who chose the dark theme in their personal settings, so they do not reach everyone, thematiq#698."
+			"note": "Own rating yes to partial (corrections round 8, 2026-09-28): the edits persist, but colour edits do not apply to users who chose the dark theme in their personal settings, so they do not reach everyone, thematiq#698.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqComponenten",
+					"TqOverridesOpslaan"
+				]
+			}
 		},
 		{
 			"id": "aut-overrides-import-export",
@@ -1860,7 +2075,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqComponenten",
+					"TqOverridesUploaden"
+				]
+			}
 		},
 		{
 			"id": "aut-custom-css",
@@ -1890,7 +2112,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-css-freeform",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqEigenCss"
+			}
 		},
 		{
 			"id": "aut-custom-css-sanitise",
@@ -1921,7 +2147,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-css-freeform",
 			"featureConfidence": "high",
-			"note": "It is fail-closed reject-all-or-nothing, documented in the class docblock as deliberately not stripping the offending fragment (would silently mutate CSS the admin never reviewed); the row's 'cleaned' is satisfied by rejection with reasons, not by silent stripping."
+			"note": "It is fail-closed reject-all-or-nothing, documented in the class docblock as deliberately not stripping the offending fragment (would silently mutate CSS the admin never reviewed); the row's 'cleaned' is satisfied by rejection with reasons, not by silent stripping.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqEigenCss"
+			}
 		},
 		{
 			"id": "aut-component-scoped",
@@ -1951,7 +2181,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
-			"featureConfidence": "medium"
+			"featureConfidence": "medium",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-dark-variant-auto",
@@ -1982,7 +2216,11 @@
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
 			"featureConfidence": "high",
-			"note": "Corrections round 8 (2026-09-28): translucent colours lose their alpha in the derived dark palette and 8-digit hex tokens are not darkened, thematiq#696; rating kept because the dark variant is still derived automatically for every opaque colour token, the defect is on translucent tokens only."
+			"note": "Corrections round 8 (2026-09-28): translucent colours lose their alpha in the derived dark palette and 8-digit hex tokens are not darkened, thematiq#696; rating kept because the dark variant is still derived automatically for every opaque colour token, the defect is on translucent tokens only.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqDonker"
+			}
 		},
 		{
 			"id": "aut-semantic-aliases",
@@ -2013,7 +2251,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "medium",
-			"note": "Reads a semantic layer on import but does not keep it live afterward, so a later edit does not flow through anything."
+			"note": "Reads a semantic layer on import but does not keep it live afterward, so a later edit does not flow through anything.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "aut-token-math",
@@ -2074,7 +2316,14 @@
 			"providerHow": "read-from-code",
 			"feature": "per-group-theming",
 			"featureConfidence": "medium",
-			"note": "Achieves the practical outcome (several themes, switchable) via independent sets + a group map, not via one multi-brand token source."
+			"note": "Achieves the practical outcome (several themes, switchable) via independent sets + a group map, not via one multi-brand token source.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqMerkenKiezen",
+					"TqEigenSets"
+				]
+			}
 		},
 		{
 			"id": "aut-figma-sync",
@@ -2134,7 +2383,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqBundel"
+			}
 		},
 		{
 			"id": "aut-multi-platform-export",
@@ -2194,7 +2447,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "medium"
+			"featureConfidence": "medium",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqEigenSets"
+			}
 		},
 		{
 			"id": "typ-bundled-open-fonts",
@@ -2224,7 +2481,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "typography",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-air-gapped",
@@ -2254,7 +2515,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "typography",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: fonts are served from the instance itself; nothing to operate"
+			}
 		},
 		{
 			"id": "typ-upload-font",
@@ -2284,7 +2549,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-font-validate",
@@ -2314,7 +2583,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-font-list-delete",
@@ -2344,7 +2617,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-font-login",
@@ -2374,7 +2651,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: the login page is styled by injected CSS; the login look itself is previewed on TqTheming"
+			}
 		},
 		{
 			"id": "typ-marianne-gated",
@@ -2404,7 +2685,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "marianne-font",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-font-tokens",
@@ -2435,7 +2720,11 @@
 			"providerHow": "read-from-code",
 			"feature": "typography",
 			"featureConfidence": "medium",
-			"note": "Family is user-editable via the override editor; size/weight exist as house-style tokens but are not exposed there, so the fuller claim is partly a code-reading inference."
+			"note": "Family is user-editable via the override editor; size/weight exist as house-style tokens but are not exposed there, so the fuller claim is partly a code-reading inference.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "typ-dyslexia-font",
@@ -2496,7 +2785,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
 			"featureConfidence": "medium",
-			"note": "Functions as a de facto library of the instance's own uploads, not a curated organisation-wide catalogue independent of upload."
+			"note": "Functions as a de facto library of the instance's own uploads, not a curated organisation-wide catalogue independent of upload.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "ast-logo-sync",
@@ -2527,7 +2820,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "high",
-			"note": "Sync is opt-in per switch: the admin sees a diff dialog and confirms before the logo actually changes, it is not silent."
+			"note": "Sync is opt-in per switch: the admin sees a diff dialog and confirms before the logo actually changes, it is not silent.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "ast-background-sync",
@@ -2557,7 +2854,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "ast-upload-logo",
@@ -2588,7 +2889,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "thematiq does not implement the upload itself; it defers to and honours core's existing upload rather than overriding it."
+			"note": "thematiq does not implement the upload itself; it defers to and honours core's existing upload rather than overriding it.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: logo upload lives on the core Theming page, not a thematiq screen"
+			}
 		},
 		{
 			"id": "ast-upload-background",
@@ -2619,7 +2924,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "Same as ast-upload-logo: core's feature, thematiq only reads/resets the resulting value."
+			"note": "Same as ast-upload-logo: core's feature, thematiq only reads/resets the resulting value.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: background upload lives on the core Theming page, not a thematiq screen"
+			}
 		},
 		{
 			"id": "ast-favicon",
@@ -2650,7 +2959,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "Entirely a core Nextcloud feature; thematiq neither syncs a favicon per token set nor blocks the core one."
+			"note": "Entirely a core Nextcloud feature; thematiq neither syncs a favicon per token set nor blocks the core one.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "ast-icon-library",
@@ -2681,7 +2994,11 @@
 			"providerHow": "read-from-code",
 			"feature": "icon-assets",
 			"featureConfidence": "high",
-			"note": "A consumer must already know which pack+name it wants (hardcode 'rvo/house.svg' etc). The one helper meant to auto-pick the icon from whichever pack the ACTIVE design system uses, DesignSystemService::resolveIconPath() (lib/Service/DesignSystemService.php:252-265), has no caller anywhere in lib/ or js/, and no sibling repo (nextcloud-vue, openregister) references it either -- so automatic active-pack resolution is unreachable even though static-by-name reuse works."
+			"note": "A consumer must already know which pack+name it wants (hardcode 'rvo/house.svg' etc). The one helper meant to auto-pick the icon from whichever pack the ACTIVE design system uses, DesignSystemService::resolveIconPath() (lib/Service/DesignSystemService.php:252-265), has no caller anywhere in lib/ or js/, and no sibling repo (nextcloud-vue, openregister) references it either -- so automatic active-pack resolution is unreachable even though static-by-name reuse works.",
+			"screen": {
+				"board": null,
+				"reason": "backend: icon files for other apps by image path, no screen"
+			}
 		},
 		{
 			"id": "ast-org-logos",
@@ -2711,7 +3028,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: logo files for other apps by image path, no screen"
+			}
 		},
 		{
 			"id": "ast-icon-pack",
@@ -2771,7 +3092,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "icon-packs",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTheming",
+					"TqLayout"
+				]
+			}
 		},
 		{
 			"id": "ast-icon-contrast",
@@ -2802,7 +3130,11 @@
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
 			"featureConfidence": "medium",
-			"note": "This is one specific, narrow fix (white-fill SVG icons vanishing in the NC 34+ app-management list), not a general icon-legibility system across every icon or every government icon pack; the capability as a government-wide guarantee is not what ships."
+			"note": "This is one specific, narrow fix (white-fill SVG icons vanishing in the NC 34+ app-management list), not a general icon-legibility system across every icon or every government icon pack; the capability as a government-wide guarantee is not what ships.",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS layer injected on every page, no screen"
+			}
 		},
 		{
 			"id": "ast-dark-logo",
@@ -2833,7 +3165,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "high",
-			"note": "Decided no 2026-09-28: Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. Nextcloud core also has only a single logo slot (nextcloud/server#47357, cited in the code's own comment), which is why this needed its own CSS-based path in the first place; that path is real code with no data ever flowing through it."
+			"note": "Decided no 2026-09-28: Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. Nextcloud core also has only a single logo slot (nextcloud/server#47357, cited in the code's own comment), which is why this needed its own CSS-based path in the first place; that path is real code with no data ever flowing through it.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqDonker"
+			}
 		},
 		{
 			"id": "ast-brand-images",
@@ -2893,7 +3229,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS injected on every page render, no screen"
+			}
 		},
 		{
 			"id": "sur-conduction-apps",
@@ -2924,7 +3264,11 @@
 			"providerHow": "read-from-code",
 			"feature": "app-token-set-selection",
 			"featureConfidence": "high",
-			"note": "thematiq supplies the two read-only APIs (/api/token-sets, /api/contrast/evaluate); the consuming wiring itself lives in nextcloud-vue."
+			"note": "thematiq supplies the two read-only APIs (/api/token-sets, /api/contrast/evaluate); the consuming wiring itself lives in nextcloud-vue.",
+			"screen": {
+				"board": null,
+				"reason": "backend: shared tokens read by nextcloud-vue, no thematiq screen"
+			}
 		},
 		{
 			"id": "sur-login-page",
@@ -2954,7 +3298,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS injected on the login page; the login look is previewed on TqTheming"
+			}
 		},
 		{
 			"id": "sur-header-nav",
@@ -2984,7 +3332,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLayout"
+			}
 		},
 		{
 			"id": "sur-menu-labels",
@@ -3014,7 +3366,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "menu-labels",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLayout"
+			}
 		},
 		{
 			"id": "sur-hide-slogan",
@@ -3044,7 +3400,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "hide-slogan",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLayout"
+			}
 		},
 		{
 			"id": "sur-public-pages",
@@ -3074,7 +3434,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS injected on public pages, no screen"
+			}
 		},
 		{
 			"id": "sur-email",
@@ -3105,7 +3469,11 @@
 			"providerHow": "read-from-code",
 			"feature": "email-theming",
 			"featureConfidence": "high",
-			"note": "A documented past defect (now fixed) is preserved in the code's own comment: a stale namespace in the occ command silently disabled branded email until OC\\Mail\\Mailer's class_exists() guard was traced (lib/Service/EmailThemingService.php:53-64)."
+			"note": "A documented past defect (now fixed) is preserved in the code's own comment: a stale namespace in the occ command silently disabled branded email until OC\\Mail\\Mailer's class_exists() guard was traced (lib/Service/EmailThemingService.php:53-64).",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqEmailDocumenten"
+			}
 		},
 		{
 			"id": "sur-email-footer",
@@ -3135,7 +3503,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "email-theming",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqEmailDocumenten"
+			}
 		},
 		{
 			"id": "sur-component-bridge",
@@ -3165,7 +3537,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: Utrecht bridge stylesheet, no screen"
+			}
 		},
 		{
 			"id": "sur-nc-variable-mapping",
@@ -3195,7 +3571,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "nextcloud-variable-mapping",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqBasistokens"
+			}
 		},
 		{
 			"id": "sur-error-contrast",
@@ -3226,7 +3606,11 @@
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
 			"featureConfidence": "medium",
-			"note": "Verified the file exists and is unconditionally injected; did not diff its exact selectors against every design system's error-state components."
+			"note": "Verified the file exists and is unconditionally injected; did not diff its exact selectors against every design system's error-state components.",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS layer injected on every page, no screen"
+			}
 		},
 		{
 			"id": "sur-status-tokens",
@@ -3257,7 +3641,11 @@
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
 			"featureConfidence": "high",
-			"note": "The status token list lives once, in lib/Service/TokenRegistry.php getStatusTokens(). The orphaned duplicate lib/Service/StatusTokens.php, and its Login/Content/Typography siblings, were removed for #665."
+			"note": "The status token list lives once, in lib/Service/TokenRegistry.php getStatusTokens(). The orphaned duplicate lib/Service/StatusTokens.php, and its Login/Content/Typography siblings, were removed for #665.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "sur-mobile-desktop-clients",
@@ -3349,7 +3737,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "low",
-			"note": "This is an inherent property of self-hosting, not a feature thematiq or Nextcloud's Theming app implements; included for completeness since the capability is trivially true for a self-hosted product."
+			"note": "This is an inherent property of self-hosting, not a feature thematiq or Nextcloud's Theming app implements; included for completeness since the capability is trivially true for a self-hosted product.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud server and hosting: config.php, no thematiq screen"
+			}
 		},
 		{
 			"id": "sur-footer-links",
@@ -3380,7 +3772,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "No accessibility-statement field exists in core or thematiq specifically; only imprint/privacy are supported."
+			"note": "No accessibility-statement field exists in core or thematiq specifically; only imprint/privacy are supported.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: legal links are core Theming fields, no thematiq screen"
+			}
 		},
 		{
 			"id": "sur-web-app-name",
@@ -3411,7 +3807,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "Entirely core Nextcloud; thematiq is silent on name/slogan/url."
+			"note": "Entirely core Nextcloud; thematiq is silent on name/slogan/url.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: name, slogan and URL are core Theming fields, no thematiq screen"
+			}
 		},
 		{
 			"id": "sco-per-app-exclude",
@@ -3441,7 +3841,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "per-app-theming",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqMerkPerApp"
+			}
 		},
 		{
 			"id": "sco-per-group",
@@ -3472,7 +3876,11 @@
 			"providerHow": "read-from-code",
 			"feature": "per-group-theming",
 			"featureConfidence": "high",
-			"note": "Per-group theming covers only which token-set CSS stack is injected; core theming values (logo/primary/background) stay instance-global by design (GroupThemingService.php:51-55 docblock)."
+			"note": "Per-group theming covers only which token-set CSS stack is injected; core theming values (logo/primary/background) stay instance-global by design (GroupThemingService.php:51-55 docblock).",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqGroepen"
+			}
 		},
 		{
 			"id": "sco-group-priority",
@@ -3502,7 +3910,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "per-group-theming",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqGroepen"
+			}
 		},
 		{
 			"id": "sco-login-unaffected",
@@ -3532,7 +3944,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "per-group-theming",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: resolution rule with no setting of its own"
+			}
 		},
 		{
 			"id": "sco-user-choice",
@@ -3563,7 +3979,11 @@
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
 			"featureConfidence": "high",
-			"note": "The picker itself is core Nextcloud, present with or without thematiq; thematiq's value-add is that its dark-mode token variants genuinely respond to that per-user choice rather than only to the OS media query."
+			"note": "The picker itself is core Nextcloud, present with or without thematiq; thematiq's value-add is that its dark-mode token variants genuinely respond to that per-user choice rather than only to the OS media query.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: personal Appearance settings, no thematiq screen"
+			}
 		},
 		{
 			"id": "sco-user-follow-os",
@@ -3594,7 +4014,11 @@
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
 			"featureConfidence": "high",
-			"note": "OS-driven dark mode works across every generated municipal/organisation token set; OS-driven high-contrast cooperation is scoped to the dedicated 'high-contrast' design system rather than layered onto every house style."
+			"note": "OS-driven dark mode works across every generated municipal/organisation token set; OS-driven high-contrast cooperation is scoped to the dedicated 'high-contrast' design system rather than layered onto every house style.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqDonker"
+			}
 		},
 		{
 			"id": "sco-per-site",
@@ -3715,7 +4139,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "app-token-set-selection",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: API for the picker in other apps, no thematiq screen"
+			}
 		},
 		{
 			"id": "acc-contrast-on-upload",
@@ -3746,7 +4174,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "warning only, upload always succeeds regardless of contrast result (see acc-block-inaccessible)."
+			"note": "warning only, upload always succeeds regardless of contrast result (see acc-block-inaccessible).",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "acc-contrast-evaluate",
@@ -3777,7 +4209,11 @@
 			"providerHow": "read-from-code",
 			"feature": "app-token-set-selection",
 			"featureConfidence": "high",
-			"note": "verified two hops: route exists, composable calls it, and three sibling apps actually call the composable's evaluateContrast (not just define it)."
+			"note": "verified two hops: route exists, composable calls it, and three sibling apps actually call the composable's evaluateContrast (not just define it).",
+			"screen": {
+				"board": null,
+				"reason": "backend: API used by other apps, no thematiq screen"
+			}
 		},
 		{
 			"id": "acc-shipped-audit",
@@ -3808,7 +4244,11 @@
 			"providerHow": "read-from-code",
 			"feature": "shipped-token-set-contrast-audit",
 			"featureConfidence": "high",
-			"note": "gate is real: it fails if a documented-AA set stops meeting AA or the generated report drifts from committed docs/reference/contrast-report.md."
+			"note": "gate is real: it fails if a documented-AA set stops meeting AA or the generated report drifts from committed docs/reference/contrast-report.md.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTokensetToepassen"
+			}
 		},
 		{
 			"id": "acc-contrast-report-doc",
@@ -3838,7 +4278,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "shipped-token-set-contrast-audit",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "documentation site page, no screen in the app"
+			}
 		},
 		{
 			"id": "acc-compliance-report",
@@ -3869,7 +4313,11 @@
 			"providerHow": "read-from-code",
 			"feature": "compliance-evidence",
 			"featureConfidence": "high",
-			"note": "Decided no 2026-09-28: No competitor rated yes, no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. the capability exists end-to-end via occ (see acc-compliance-cli, same ComplianceReportService, byte-identical output per the command's own docblock) but the admin panel has no download button for it, so as a UI feature it is unreached."
+			"note": "Decided no 2026-09-28: No competitor rated yes, no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. the capability exists end-to-end via occ (see acc-compliance-cli, same ComplianceReportService, byte-identical output per the command's own docblock) but the admin panel has no download button for it, so as a UI feature it is unreached.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqContrastrapport"
+			}
 		},
 		{
 			"id": "acc-compliance-cli",
@@ -3899,7 +4347,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "compliance-evidence",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "occ command, no screen"
+			}
 		},
 		{
 			"id": "acc-high-contrast-set",
@@ -3929,7 +4381,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "acc-forced-colors",
@@ -3960,7 +4416,11 @@
 			"providerHow": "read-from-code",
 			"feature": "high-contrast",
 			"featureConfidence": "high",
-			"note": "cooperates with OS forced-colors mode, but only for the one opt-in high-contrast design system, not instance-wide for whichever theme is active."
+			"note": "cooperates with OS forced-colors mode, but only for the one opt-in high-contrast design system, not instance-wide for whichever theme is active.",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS media query inside the high-contrast set, no screen"
+			}
 		},
 		{
 			"id": "acc-dark-mode",
@@ -3991,7 +4451,14 @@
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
 			"featureConfidence": "high",
-			"note": "this toggle follows Nextcloud's own dark/light/system choice; it is not a nldesign-controlled dark-mode switch by itself."
+			"note": "this toggle follows Nextcloud's own dark/light/system choice; it is not a nldesign-controlled dark-mode switch by itself.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqDonker",
+					"TqLayout"
+				]
+			}
 		},
 		{
 			"id": "acc-dark-generate-cli",
@@ -4021,7 +4488,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "occ command, no screen"
+			}
 		},
 		{
 			"id": "acc-focus-indicators",
@@ -4051,7 +4522,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: focus outline in the injected theme CSS, no screen"
+			}
 		},
 		{
 			"id": "acc-reduced-motion",
@@ -4082,7 +4557,11 @@
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
 			"featureConfidence": "high",
-			"note": "origin:competitor row, answered yes: real, working, three separate stylesheets covering login/app chrome, the settings page and the preview widgets."
+			"note": "origin:competitor row, answered yes: real, working, three separate stylesheets covering login/app chrome, the settings page and the preview widgets.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqBeweging"
+			}
 		},
 		{
 			"id": "acc-keyboard-admin",
@@ -4113,7 +4592,11 @@
 			"providerHow": "read-from-code",
 			"feature": "admin-settings",
 			"featureConfidence": "medium",
-			"note": "code reading only, not a live tab-through; confidence is medium because full-page keyboard operability was not walked end to end in a browser."
+			"note": "code reading only, not a live tab-through; confidence is medium because full-page keyboard operability was not walked end to end in a browser.",
+			"screen": {
+				"board": null,
+				"reason": "behaviour of every dialog and tab on the theming page, no screen of its own"
+			}
 		},
 		{
 			"id": "acc-vocabulary-audit",
@@ -4143,7 +4626,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqSetUploaden",
+					"TqTheming"
+				]
+			}
 		},
 		{
 			"id": "acc-block-inaccessible",
@@ -4265,7 +4755,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "admin-settings",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "access rule on every admin endpoint, no screen of its own"
+			}
 		},
 		{
 			"id": "gov-delegated-role",
@@ -4296,7 +4790,11 @@
 			"providerHow": "read-from-code",
 			"feature": "admin-settings",
 			"featureConfidence": "high",
-			"note": "the delegation mechanism and its UI are Nextcloud core; thematiq's contribution is implementing IDelegatedSettings so its section can be delegated to a non-full-admin group ('brand manager')."
+			"note": "the delegation mechanism and its UI are Nextcloud core; thematiq's contribution is implementing IDelegatedSettings so its section can be delegated to a non-full-admin group ('brand manager').",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: admin delegation settings, no thematiq screen"
+			}
 		},
 		{
 			"id": "gov-audit-log",
@@ -4326,7 +4824,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-audit",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLogboek"
+			}
 		},
 		{
 			"id": "gov-audit-export",
@@ -4356,7 +4858,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-audit",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLogboek"
+			}
 		},
 		{
 			"id": "gov-audit-append-only",
@@ -4387,7 +4893,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-audit",
 			"featureConfidence": "medium",
-			"note": "no API/UI path in this app can edit or delete an entry once written. Caveat: the log is a flat JSONL file in Nextcloud appdata, not a cryptographically tamper-evident or hash-chained log, so it relies on filesystem access control, not its own immutability proof."
+			"note": "no API/UI path in this app can edit or delete an entry once written. Caveat: the log is a flat JSONL file in Nextcloud appdata, not a cryptographically tamper-evident or hash-chained log, so it relies on filesystem access control, not its own immutability proof.",
+			"screen": {
+				"board": null,
+				"reason": "backend: storage rule of the audit log, no screen"
+			}
 		},
 		{
 			"id": "gov-otap-bundle",
@@ -4417,7 +4927,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "config-portability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqBundel"
+			}
 		},
 		{
 			"id": "gov-otap-cli",
@@ -4447,7 +4961,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "config-portability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "occ command, no screen"
+			}
 		},
 		{
 			"id": "gov-federated-share",
@@ -4479,7 +4997,11 @@
 			"providerHow": "read-from-code",
 			"feature": "federated-config-sharing",
 			"featureConfidence": "high",
-			"note": "not marked pending because I could check the sibling repo directly rather than merely being unable to see it: OpenRegister's federated-config engine exists in lib/ but has no UI caller either, so this is a real gap, not an unknown. Lane decision: the sharing engine and any screen that drives it belong to openregister; its federatedConfig routes (appinfo/routes.php:2193-2202 at 94e8c29) have no Vue caller, so no page drives a federated theme share."
+			"note": "not marked pending because I could check the sibling repo directly rather than merely being unable to see it: OpenRegister's federated-config engine exists in lib/ but has no UI caller either, so this is a real gap, not an unknown. Lane decision: the sharing engine and any screen that drives it belong to openregister; its federatedConfig routes (appinfo/routes.php:2193-2202 at 94e8c29) have no Vue caller, so no page drives a federated theme share.",
+			"screen": {
+				"board": null,
+				"reason": "sharing runs in OpenRegister; the canvas has no thematiq board for it"
+			}
 		},
 		{
 			"id": "gov-config-as-code",
@@ -4510,7 +5032,11 @@
 			"providerHow": "read-from-code",
 			"feature": "config-portability",
 			"featureConfidence": "high",
-			"note": "origin:competitor row, answered no as a normal finding. The closest thing is occ config:export/import (see gov-otap-cli), which is a file, not deployment-config-as-code (e.g. Helm values)."
+			"note": "origin:competitor row, answered no as a normal finding. The closest thing is occ config:export/import (see gov-otap-cli), which is a file, not deployment-config-as-code (e.g. Helm values).",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqBundel"
+			}
 		},
 		{
 			"id": "gov-approval-workflow",
@@ -4571,7 +5097,11 @@
 			"providerHow": "read-from-code",
 			"feature": "app-store",
 			"featureConfidence": "medium",
-			"note": "the app-store install/update mechanism itself is Nextcloud core; thematiq's own release pipeline is what publishes new versions to it."
+			"note": "the app-store install/update mechanism itself is Nextcloud core; thematiq's own release pipeline is what publishes new versions to it.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud app store, no thematiq screen"
+			}
 		},
 		{
 			"id": "gov-open-source",
@@ -4601,7 +5131,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "licensing",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "licence in the repository and manifest, no screen"
+			}
 		},
 		{
 			"id": "gov-licence-clarity",
@@ -4632,7 +5166,11 @@
 			"providerHow": "read-from-code",
 			"feature": "compliance-evidence",
 			"featureConfidence": "medium",
-			"note": "the information is real and reasonably complete for the bundled fonts (Fira Sans, Inter, Marianne) and the two logo/icon families, but it is spread across three separate docs pages rather than a single consolidated 'licences' page in the product."
+			"note": "the information is real and reasonably complete for the bundled fonts (Fira Sans, Inter, Marianne) and the two logo/icon families, but it is spread across three separate docs pages rather than a single consolidated 'licences' page in the product.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "syn-upstream-generated",
@@ -4663,7 +5201,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sync-workflow",
 			"featureConfidence": "high",
-			"note": "This benefits the people who maintain thematiq's shipped token sets, not a live admin using the app; there is no UI surface for it, which is expected for a build-time/CI capability."
+			"note": "This benefits the people who maintain thematiq's shipped token sets, not a live admin using the app; there is no UI surface for it, which is expected for a build-time/CI capability.",
+			"screen": {
+				"board": null,
+				"reason": "CI: GitHub Actions workflow, no screen"
+			}
 		},
 		{
 			"id": "syn-nightly-pr",
@@ -4694,7 +5236,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sync-workflow",
 			"featureConfidence": "high",
-			"note": "Same caveat as syn-upstream-generated: reaches the repo's maintainers as a PR, not a running-instance admin. Lane decision: the nightly sync opens pull requests on the thematiq repository for the maintainer; an instance admin receives the changes only through an app release, not as proposed updates on the instance, so partial for the admin this row addresses."
+			"note": "Same caveat as syn-upstream-generated: reaches the repo's maintainers as a PR, not a running-instance admin. Lane decision: the nightly sync opens pull requests on the thematiq repository for the maintainer; an instance admin receives the changes only through an app release, not as proposed updates on the instance, so partial for the admin this row addresses.",
+			"screen": {
+				"board": null,
+				"reason": "CI: GitHub Actions workflow, no screen"
+			}
 		},
 		{
 			"id": "syn-freshness-check",
@@ -4724,7 +5270,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "upstream-freshness",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqGalerij"
+			}
 		},
 		{
 			"id": "syn-freshness-dismiss",
@@ -4754,7 +5304,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "upstream-freshness",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqGalerij"
+			}
 		},
 		{
 			"id": "syn-freshness-status",
@@ -4785,7 +5339,11 @@
 			"providerHow": "read-from-code",
 			"feature": "upstream-freshness",
 			"featureConfidence": "high",
-			"note": "Minor: one notify() call at js/admin.js:5282-5284 uses the l10n domain 'nldesign' instead of 'thematiq' for the enabled-confirmation toast, so that one string will not be translated (falls back to the raw English key); does not affect the feature's function."
+			"note": "Minor: one notify() call at js/admin.js:5282-5284 uses the l10n domain 'nldesign' instead of 'thematiq' for the enabled-confirmation toast, so that one string will not be translated (falls back to the raw English key); does not affect the feature's function.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqGalerij"
+			}
 		},
 		{
 			"id": "syn-nc-theming-sync",
@@ -4816,7 +5374,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "high",
-			"note": "Owner is thematiq's ThemingService, but the values it writes are consumed by Nextcloud core's own theming (OCA\\Theming), so provider is recorded as nextcloud for the sink; thematiq is the driver."
+			"note": "Owner is thematiq's ThemingService, but the values it writes are consumed by Nextcloud core's own theming (OCA\\Theming), so provider is recorded as nextcloud for the sink; thematiq is the driver.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "syn-nc-theming-edit",
@@ -4847,7 +5409,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync-dialog",
 			"featureConfidence": "medium",
-			"note": "This is editing in the sense of accepting or rejecting the proposed sync as a whole (one bulk checkbox, js/admin.js:3097), driven by picking a token set; there is no free-text field to type an arbitrary custom primary colour independent of any token set."
+			"note": "This is editing in the sense of accepting or rejecting the proposed sync as a whole (one bulk checkbox, js/admin.js:3097), driven by picking a token set; there is no free-text field to type an arbitrary custom primary colour independent of any token set.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "syn-upgrade-migration",
@@ -4877,7 +5443,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-capability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: repair steps on upgrade, no screen"
+			}
 		},
 		{
 			"id": "int-capability-api",
@@ -4907,7 +5477,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-capability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: capabilities API, no screen"
+			}
 		},
 		{
 			"id": "int-token-set-api",
@@ -4938,7 +5512,11 @@
 			"providerHow": "read-from-code",
 			"feature": "app-token-set-selection",
 			"featureConfidence": "high",
-			"note": "verified the full chain: route exists in thematiq, composable calls it, composable is wired into CnAppRoot, and CnAppRoot is actually imported by other apps, so this is a reached capability, not just a declared one. Lane decision: the endpoint logic is thematiq's; nextcloud-vue useScopedTheme is the consumer, not the owner. Real call sites: buildiq (openbuild) src/dialogs/ThemePickerDialog.vue and the bq-audit clones."
+			"note": "verified the full chain: route exists in thematiq, composable calls it, composable is wired into CnAppRoot, and CnAppRoot is actually imported by other apps, so this is a reached capability, not just a declared one. Lane decision: the endpoint logic is thematiq's; nextcloud-vue useScopedTheme is the consumer, not the owner. Real call sites: buildiq (openbuild) src/dialogs/ThemePickerDialog.vue and the bq-audit clones.",
+			"screen": {
+				"board": null,
+				"reason": "backend: API for other apps, no screen"
+			}
 		},
 		{
 			"id": "int-stylesheet-manifest",
@@ -4969,7 +5547,11 @@
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
 			"featureConfidence": "high",
-			"note": "the only known consumer of this route is thematiq's own admin page, not a third-party app."
+			"note": "the only known consumer of this route is thematiq's own admin page, not a third-party app.",
+			"screen": {
+				"board": null,
+				"reason": "backend: stylesheet manifest endpoint, no screen"
+			}
 		},
 		{
 			"id": "int-metrics",
@@ -4999,7 +5581,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "observability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: monitoring API, no screen"
+			}
 		},
 		{
 			"id": "int-health",
@@ -5029,7 +5615,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "observability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: monitoring API, no screen"
+			}
 		},
 		{
 			"id": "int-tokens-for-other-apps",
@@ -5059,7 +5649,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS variables injected on every page, no screen"
+			}
 		},
 		{
 			"id": "int-no-js-overhead",
@@ -5089,7 +5683,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS-only injection, no screen"
+			}
 		},
 		{
 			"id": "int-rest-api-theme",
@@ -5150,7 +5748,11 @@
 			"providerHow": "read-from-code",
 			"feature": "config-portability",
 			"featureConfidence": "high",
-			"note": "origin:competitor row: you can set the active theme from the CLI, but only as a side effect of importing a whole configuration bundle (which must first be constructed/exported with the desired token set), not via a dedicated 'set theme' command."
+			"note": "origin:competitor row: you can set the active theme from the CLI, but only as a side effect of importing a whole configuration bundle (which must first be constructed/exported with the desired token set), not via a dedicated 'set theme' command.",
+			"screen": {
+				"board": null,
+				"reason": "occ command, no screen"
+			}
 		},
 		{
 			"id": "int-docs-site",
@@ -5180,7 +5782,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "documentation",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "documentation site, no screen in the app"
+			}
 		},
 		{
 			"id": "int-sovereign-bundle",
@@ -5211,7 +5817,11 @@
 			"providerHow": "read-from-code",
 			"feature": "lasuite-stack",
 			"featureConfidence": "high",
-			"note": "origin:competitor row: thematiq makes Nextcloud's own chrome match a sovereign-workplace bundle's brand, which is what a Nextcloud-only app can do; it does not itself assemble or ship the multi-component bundle (Docs/Meet/Chat + Nextcloud) that answer, that packaging is MijnBureau/EDIC's job."
+			"note": "origin:competitor row: thematiq makes Nextcloud's own chrome match a sovereign-workplace bundle's brand, which is what a Nextcloud-only app can do; it does not itself assemble or ship the multi-component bundle (Docs/Meet/Chat + Nextcloud) that answer, that packaging is MijnBureau/EDIC's job.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "sur-help-links",
@@ -5442,7 +6052,11 @@
 			"featureConfidence": "high",
 			"origin": "changelog",
 			"originUrl": "https://github.com/nextcloud/server/pull/58834",
-			"note": "Small but visible: text selection in the house colour is one more place where the brand shows without breaking contrast."
+			"note": "Small but visible: text selection in the house colour is one more place where the brand shows without breaking contrast.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "sur-coverage-report",
@@ -5572,7 +6186,11 @@
 			"featureConfidence": "high",
 			"origin": "tender",
 			"originUrl": "https://www.tenderned.nl/aankondigingen/overzicht/407031",
-			"note": "TenderNed 407031 (Gemeente Gulpen-Wittem, Zaaksysteem, 2026-01-06) requires one look-and-feel in the house style for all users with a clear difference between test and production; requirement 23655 in the intelligence database."
+			"note": "TenderNed 407031 (Gemeente Gulpen-Wittem, Zaaksysteem, 2026-01-06) requires one look-and-feel in the house style for all users with a clear difference between test and production; requirement 23655 in the intelligence database.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqOmgevingsmarkering"
+			}
 		},
 		{
 			"id": "sur-generated-documents",
@@ -5605,7 +6223,11 @@
 			"featureConfidence": "high",
 			"origin": "tender",
 			"originUrl": "https://www.tenderned.nl/aankondigingen/overzicht/404703",
-			"note": "Demand from tenders: TenderNed 404703 (Hilversum VTH, 2025-12-12), 415897 (FUMO, 2026-03-13) and 298070 (BUCH, several house styles per municipality) require generated documents in the house style. openDesk added OpenProject PDF export branding in 1.18.0."
+			"note": "Demand from tenders: TenderNed 404703 (Hilversum VTH, 2025-12-12), 415897 (FUMO, 2026-03-13) and 298070 (BUCH, several house styles per municipality) require generated documents in the house style. openDesk added OpenProject PDF export branding in 1.18.0.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqEmailDocumenten"
+			}
 		},
 		{
 			"id": "gov-token-deprecation",
@@ -5638,7 +6260,14 @@
 			"featureConfidence": "high",
 			"origin": "changelog",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/releases/tag/2.12.1",
-			"note": "a government house style changes under many consuming apps; a deprecation with a replacement and a date lets suppliers migrate before a token is removed"
+			"note": "a government house style changes under many consuming apps; a deprecation with a replacement and a date lets suppliers migrate before a token is removed",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTokenUitfaseren",
+					"TqEigenTokens"
+				]
+			}
 		},
 		{
 			"id": "syn-push-to-platform",
@@ -5735,7 +6364,11 @@
 			"featureConfidence": "high",
 			"origin": "changelog",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/releases/tag/2.12.1",
-			"note": "motion tokens are what a theme needs to honour reduced-motion preferences consistently across apps Corrections round 8 (2026-09-28): the two editor duration tokens do not reach the theme transitions, thematiq#697; rating kept because partial already reflects two untyped duration tokens and no easing token, and those tokens still reach Nextcloud components."
+			"note": "motion tokens are what a theme needs to honour reduced-motion preferences consistently across apps Corrections round 8 (2026-09-28): the two editor duration tokens do not reach the theme transitions, thematiq#697; rating kept because partial already reflects two untyped duration tokens and no easing token, and those tokens still reach Nextcloud components.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqBeweging"
+			}
 		},
 		{
 			"id": "typ-theme-base-size",
@@ -5800,7 +6433,14 @@
 			"featureConfidence": "high",
 			"origin": "featureRequest",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/issues/3236",
-			"note": "interchange with other government token tools depends on the stable DTCG colour format"
+			"note": "interchange with other government token tools depends on the stable DTCG colour format",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTheming",
+					"TqEigenSets"
+				]
+			}
 		},
 		{
 			"id": "aut-broken-reference-list",
@@ -5833,7 +6473,11 @@
 			"featureConfidence": "high",
 			"origin": "featureRequest",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/issues/3397",
-			"note": "a broken alias falls back to an unreadable default in every app that consumes the style"
+			"note": "a broken alias falls back to an unreadable default in every app that consumes the style",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "cat-living-token-docs",
@@ -5866,7 +6510,11 @@
 			"featureConfidence": "high",
 			"origin": "featureRequest",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/issues/3355",
-			"note": "suppliers building for a municipality need a readable reference of the tokens they must use"
+			"note": "suppliers building for a municipality need a readable reference of the tokens they must use",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqTokenSet"
+			}
 		},
 		{
 			"id": "int-brand-kit-in-editor",
@@ -5965,7 +6613,14 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=526794",
-			"note": "A government brand owner needs to stop departmental sites drifting from the Rijkshuisstijl without locking down the whole instance."
+			"note": "A government brand owner needs to stop departmental sites drifting from the Rijkshuisstijl without locking down the whole instance.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqGroepen",
+					"TqPersoonlijk"
+				]
+			}
 		},
 		{
 			"id": "sur-assistant-logo",
@@ -5998,7 +6653,11 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=555852",
-			"note": "Public servants must be able to tell a sanctioned assistant from a look-alike; a brand mark in the assistant is a trust signal."
+			"note": "Public servants must be able to tell a sanctioned assistant from a look-alike; a brand mark in the assistant is a trust signal.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqAiAssistent"
+			}
 		},
 		{
 			"id": "gov-no-public-cdn",
@@ -6031,7 +6690,11 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=571391",
-			"note": "Sovereignty and data-location rules make a mandatory public CDN a blocker for Dutch government tenants; thematiq serves everything from the instance."
+			"note": "Sovereignty and data-location rules make a mandatory public CDN a blocker for Dutch government tenants; thematiq serves everything from the instance.",
+			"screen": {
+				"board": null,
+				"reason": "backend: assets served from the instance, no screen"
+			}
 		},
 		{
 			"id": "ast-branded-reactions",
@@ -6130,7 +6793,11 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=568364",
-			"note": "Shows branding spreading per app with its own brand center, the fragmentation a single instance-wide theme avoids."
+			"note": "Shows branding spreading per app with its own brand center, the fragmentation a single instance-wide theme avoids.",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqMerkPerApp"
+			}
 		},
 		{
 			"id": "gov-central-brand-library",
@@ -6163,7 +6830,11 @@
 			"featureConfidence": "medium",
 			"origin": "changelog",
 			"originUrl": "https://liferay.dev/b/liferay-dxp-2026-q3-release-webinar-replay",
-			"note": "a ministry or shared service can own one brand for many sites without giving each site admin edit rights"
+			"note": "a ministry or shared service can own one brand for many sites without giving each site admin edit rights",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqGroepen"
+			}
 		},
 		{
 			"id": "app-branding-package",
@@ -6196,7 +6867,11 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-91941",
-			"note": "moving a full house style between environments or tenants in one unit is what OTAP governance needs"
+			"note": "moving a full house style between environments or tenants in one unit is what OTAP governance needs",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqBundel"
+			}
 		},
 		{
 			"id": "acc-high-contrast-tokens",
@@ -6261,7 +6936,14 @@
 			"featureConfidence": "medium",
 			"origin": "changelog",
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-96942",
-			"note": "lets a brand define its own dark palette instead of an automatic inversion"
+			"note": "lets a brand define its own dark palette instead of an automatic inversion",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqComponenten",
+					"TqDonker"
+				]
+			}
 		},
 		{
 			"id": "aut-add-token",
@@ -6294,7 +6976,14 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-80283",
-			"note": "organisations can extend a shared token vocabulary without a developer release"
+			"note": "organisations can extend a shared token vocabulary without a developer release",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": [
+					"TqTokenToevoegen",
+					"TqEigenTokens"
+				]
+			}
 		},
 		{
 			"id": "aut-alpha-hex",
@@ -6327,7 +7016,11 @@
 			"featureConfidence": "medium",
 			"origin": "changelog",
 			"originUrl": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance",
-			"note": "brand overlays and translucent surfaces can stay inside the token set; origin is the style book documentation because no Liferay release-notes page naming this change was found"
+			"note": "brand overlays and translucent surfaces can stay inside the token set; origin is the style book documentation because no Liferay release-notes page naming this change was found",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-component-preview",
@@ -6360,7 +7053,11 @@
 			"featureConfidence": "medium",
 			"origin": "featureRequest",
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-88654",
-			"note": "component builders for a municipal design system need to see the real brand while building"
+			"note": "component builders for a municipal design system need to see the real brand while building",
+			"screen": {
+				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"board": "TqEigenComponent"
+			}
 		}
 	],
 	"pending": []
