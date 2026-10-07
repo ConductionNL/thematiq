@@ -1425,7 +1425,8 @@
 				"evidence": "templates/settings/admin.php:426-430 checkbox id='nldesign-primary-drives-components'; js/admin.js:2069-2073 change handler -> savePrimaryDrivesComponentsSetting() POSTs /settings/primary-drives-components; js/admin.js:2568-2578 isTokenLocked(name) disables a component's own colour row (with an explanatory title) while this setting is on, letting it flow from the primary colour instead",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"spec": "none"
+				"spec": "openspec/specs/component-tokens",
+				"readOn": "2026-10-07"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Let the primary colour drive every component' checkbox",
 			"evidence": {
@@ -4979,13 +4980,15 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "building",
-				"evidence": "lib/Listener/ShareableConfigTypeListener.php + lib/Service/Config/NlDesignThemeShareableConfigType.php contribute a real OCA\\OpenRegister\\Service\\Config\\IShareableConfigType (id nldesign.theme) whose serialise() wraps ConfigBundleService::export() (openspec/specs/federated-config-sharing/spec.md); checked the consuming side in ~/nextcloud-docker-dev/workspace/server/apps-extra/openregister (origin/development 94e8c29e42): real routes exist (appinfo/routes.php:2193-2202 federatedConfig#types/bundle/install/publish/discover/fetch/trust) and lib/Controller/FederatedConfigController.php + lib/Service/Config/FederatedConfigService.php exist, but grep -rln FederatedConfig/shareable openregister/src/ found no Vue page or component calling any of those routes",
+				"evidence": "thematiq half built: lib/Listener/ShareableConfigTypeListener.php:63-68 registers lib/Service/Config/NlDesignThemeShareableConfigType.php (id nldesign.theme, line 81), whose serialise() wraps ConfigBundleService::export() (openspec/specs/federated-config-sharing). OpenRegister origin/development 8ff5ba173b has the engine (lib/Service/Config/FederatedConfigService.php, ShareableConfigTypeRegistry.php) and a Store page (src/manifest.json:36 type store), but that store declares only openregister.configset and openregister.flows (src/manifest.json:458-461), so no screen offers nldesign.theme. The OpenRegister change federated-config-sharing (open) ticks 'nc-vue CnConfigurationStore (nc-vue #242)' at tasks.md:52, yet git grep CnConfigurationStore finds nothing in nextcloud-vue origin/main 0f1c0ffbb or origin/development 3eefb4f00; the shared store page is CnStorePage, which only lists declared types",
 				"owner": "ConductionNL/openregister",
 				"origin": "own",
 				"change": "openregister/federated-config-sharing",
-				"spec": "openspec/specs/federated-config-sharing"
+				"spec": "openspec/specs/federated-config-sharing",
+				"note": "Re-rated from code on 7 Oct: stays building and partial. thematiq's contract is done; what is missing is OpenRegister's (sibling-needs): a store that declares nldesign.theme, or a configuration-set type that carries it, plus correcting the ticked CnConfigurationStore task in openregister/openspec/changes/federated-config-sharing/tasks.md:52, which nextcloud-vue never shipped.",
+				"readOn": "2026-10-07"
 			},
-			"reachedOn": "nothing reaches it: thematiq's contract is real and OpenRegister's engine/routes are real, but neither repo has a UI screen that drives a federated share end to end",
+			"reachedOn": "nothing reaches it: thematiq's type and OpenRegister's engine are real, and OpenRegister has a Store page, but that page offers only configuration sets and flows, never nldesign.theme",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 no federation code in apps/theming/lib; theming values are local app config",
 				"m365-branding": "https://support.microsoft.com/en-us/sharepoint/sites-in-sharepoint/site-branding: branding can be copied from another site, but 'Searching and copying site branding across sites in different geographies is not currently supported', so sharing stops inside one tenant and geography; no cross-tenant sharing is documented",
@@ -6203,11 +6206,13 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "building",
-				"evidence": "thematiq half built: lib/Service/DocumentStyleService.php publishes the document profile (organisation, logo or uploaded print logo, cover, colours from the user's resolved set incl. group mapping, heading and body fonts with font URLs, footer lines, contrast warning), readable in-process and at GET /api/document-style (#[NoAdminRequired]); Documents block on Settings > Administration > Theming (lib/Service/DocumentAssetService.php, type and size checks, SVG script refused); the documents themselves are the siblings' halves, ConductionNL/filinq#1340 and ConductionNL/openregister#4255, not built yet",
+				"state": "specified",
+				"evidence": "thematiq half built and its change archived (2026-10-02-surfaces-document-house-style, all tasks ticked): lib/Service/DocumentStyleService.php:94 forUser() builds the document profile (organisation, logo or print logo, cover, colours from the user's resolved set, heading and body fonts, footer lines); GET /api/document-style and /api/document-style/{kind} (appinfo/routes.php:31-32, lib/Controller/DocumentStyleController.php:76,93); the Documents block on Settings > Administration > Theming (templates/settings/admin.php:1026-1029, js/admin-documents.js, uploads checked in lib/Service/DocumentAssetService.php). No generated document reads the profile yet: docudesk origin/development d03efa888 has only the open change templates-house-style-from-thematiq, openregister origin/development 8ff5ba173b only the open change export-pdf-house-style (issues ConductionNL/filinq#1340 and ConductionNL/openregister#4255, both open)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "surfaces-document-house-style"
+				"change": "surfaces-document-house-style",
+				"note": "Missing, and owed by siblings (sibling-needs): a letter or PDF export that actually carries the profile. Filinq builds the letters (filinq#1340, change templates-house-style-from-thematiq), OpenRegister the PDF exports (openregister#4255, change export-pdf-house-style). Until one lands, a user sees the house style only in the admin form.",
+				"readOn": "2026-10-07"
 			},
 			"reachedOn": "Settings > Administration > Theming, Documents; GET /apps/thematiq/api/document-style; OCA\\Thematiq\\Service\\DocumentStyleService",
 			"evidence": {
@@ -6633,11 +6638,13 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "building",
-				"evidence": "thematiq half built: lib/Service/AssistantMarkService.php (off by default, organisation name defaulting to the email footer, logo defaulting to logos.default of the active set, in the configuration bundle) and GET /api/assistant-mark (lib/Controller/AssistantMarkController.php, #[NoAdminRequired], label translated per user) with the AI assistant block on Settings > Administration > Theming; the panel that draws it is the nextcloud-vue half, ConductionNL/nextcloud-vue#1298, not built yet",
+				"state": "specified",
+				"evidence": "thematiq half built and its change archived (2026-10-02-surfaces-assistant-approved-mark, all tasks ticked): lib/Service/AssistantMarkService.php:146 forUser() returns the mark (off by default, organisation name, logo, translated label); GET /api/assistant-mark (appinfo/routes.php:30, lib/Controller/AssistantMarkController.php:71, #[NoAdminRequired]); the AI assistant block on Settings > Administration > Theming (templates/settings/admin.php:1109-1116, js/admin-assistant-mark.js). Nothing draws it in the assistant: git grep 'assistant-mark' in nextcloud-vue origin/development 3eefb4f00 src/ finds no caller, and ConductionNL/nextcloud-vue#1298 is open",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "surfaces-assistant-approved-mark"
+				"change": "surfaces-assistant-approved-mark",
+				"note": "Missing, and owed by nextcloud-vue (sibling-needs): CnAiChatPanel drawing the mark (nextcloud-vue#1298, no change written there yet). Until it lands, a user sees the mark only in the admin preview.",
+				"readOn": "2026-10-07"
 			},
 			"reachedOn": "Settings > Administration > Theming, AI assistant; GET /apps/thematiq/api/assistant-mark",
 			"evidence": {
