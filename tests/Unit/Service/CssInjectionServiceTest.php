@@ -19,6 +19,8 @@ use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\HeaderUserService;
+use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\LogoLayerService;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
@@ -1669,6 +1671,7 @@ class CssInjectionServiceTest extends TestCase {
 				'navigationActiveStyle' => 'default',
 				'brandStripePlacement' => 'header-and-login',
 				'loginWatermark' => true,
+				'headerStyle' => 'default',
 			],
 			$manifest['layout']
 		);
@@ -1769,4 +1772,72 @@ class CssInjectionServiceTest extends TestCase {
 			$this->assertFalse($this->linksStylesheet($linkLog, $file), $file);
 		}
 	}//end testTheNewerLayoutStylesheetsAreAbsentByDefault()
+
+	/**
+	 * The workplace header style loads its stylesheet for a light set that
+	 * names it; a set that names it on the default layout, and a set that
+	 * names nothing, do not (the controls). The person's layer is asked every
+	 * time, with the page's set, and decides from the same stylesheets.
+	 *
+	 * @param array<string, mixed> $layout The set's layout block.
+	 * @param bool $expected Whether the header sheet and the person are emitted.
+	 *
+	 * @dataProvider headerStyleProvider
+	 *
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 */
+	public function testTheWorkplaceHeaderStyleLoadsItsSheetAndItsPerson(array $layout, bool $expected): void {
+		$this->configureAppValues(['token_set' => 'zuiddrecht']);
+		$this->configureLayoutSet(meta: ['layout' => $layout]);
+
+		$headerUser = $this->createMock(HeaderUserService::class);
+		$headerUser->expects($this->once())->method('inject')->with('zuiddrecht', $this->isInstanceOf(LayoutOptionsService::class));
+
+		$links = [];
+		$service = $this->getMockBuilder(CssInjectionService::class)
+			->setConstructorArgs(
+				[
+					$this->config,
+					$this->designSystemService,
+					$this->customCssService,
+					$this->fontService,
+					$this->urlGenerator,
+					$this->groupThemingService,
+					$this->previewBannerService,
+					$this->logger,
+					$this->stockTokens,
+					$this->runtimeFiles,
+					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
+					null,
+					null,
+					$headerUser,
+				]
+			)
+			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
+			->getMock();
+		$service->method('emitStylesheetLink')->willReturnCallback(
+			function (string $url) use (&$links) {
+				$links[] = $url;
+			}
+		);
+
+		$service->inject('user');
+
+		$this->assertSame($expected, $this->linksStylesheet($links, 'header-workplace'));
+	}//end testTheWorkplaceHeaderStyleLoadsItsSheetAndItsPerson()
+
+	/**
+	 * The header style on and off the light layout.
+	 *
+	 * @return array<string, array{0: array<string, mixed>, 1: bool}>
+	 */
+	public static function headerStyleProvider(): array {
+		return [
+			'a light set that names the workplace bar' => [['workplace_layout' => 'light', 'header_style' => 'workplace'], true],
+			'the workplace bar named on the default layout' => [['header_style' => 'workplace'], false],
+			'a light set that names no header style' => [['workplace_layout' => 'light'], false],
+		];
+	}//end headerStyleProvider()
 }//end class

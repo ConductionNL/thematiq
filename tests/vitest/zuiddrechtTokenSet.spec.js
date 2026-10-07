@@ -307,12 +307,14 @@ describe('zuiddrecht: the manifest entry', () => {
 		}
 	})
 
-	it('carries the light layout, the stripe, a 264px navigation and the soft entry as its layout defaults', () => {
+	it('carries the light layout, the stripe on the login card, a 264px navigation, the soft entry and the workplace bar as its layout defaults', () => {
 		expect(ENTRY.layout).toEqual({
 			workplace_layout: 'light',
 			brand_stripe: true,
 			navigation_width: 264,
 			navigation_active_style: 'soft',
+			brand_stripe_placement: 'login',
+			header_style: 'workplace',
 		})
 	})
 })
@@ -558,7 +560,8 @@ describe('zuiddrecht: what the layout options carry, and the day-close link', ()
 		)
 		expect(
 			declarations.filter((d) =>
-				/app-navigation-entry[^,]*\.active/.test(d.selector),
+				// An entry that is NOT selected (the hover wash) is not the selected style.
+				/app-navigation-entry[^,]*(?<!:not\()\.active/.test(d.selector),
 			),
 		).toEqual([])
 	})

@@ -42,3 +42,12 @@
 		)
 	) !important;
 }
+
+/* The soft entry is a wash and a label, nothing more: the 3px bar Nextcloud
+ * 34 draws on the selected entry's leading edge (`::before`) is not part of
+ * it (DqZijbalk draws none). */
+#app-navigation .app-navigation-entry.active::before,
+#app-navigation-vue .app-navigation-entry.active::before,
+.app-navigation .app-navigation-entry.active::before {
+	display: none !important;
+}

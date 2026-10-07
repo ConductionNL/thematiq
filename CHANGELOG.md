@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **The workplace top bar, as an option.** A seventh layout option, `header_style` (`default` or
+  `workplace`), draws the DqKop board's bar with the light layout: no logo and no app name, the
+  search beside the app grid button, an outline bell with a red dot, a divider, and your initials,
+  name and profile role. The name and role reach the bar through initial state and the small
+  script `js/header-user.js`; without it the bar keeps Nextcloud's avatar. Zuiddrecht names it,
+  and puts its brand stripe on the login card only (`brand_stripe_placement: login`). Every other
+  set keeps Nextcloud's bar. The option travels in the configuration bundle.
+- **Zuiddrecht's navigation, measured on the boards (DqZijbalk, AppZijbalk).** The column runs
+  along the window's left edge with a hairline, 20px by 14px of padding and 20px between its
+  blocks: the brand block (a 19px name over a 13px grey line), the 42px primary button, 12px grey
+  captions, 42px entries with a 20px icon and a 15px label, a grey wash under the pointer, red
+  count circles with white 12px figures, the day-close card on the workspace grey at the foot, and
+  40px footer entries with the settings foldout drawn as one of them. Nextcloud's cards take the
+  boards' 12px radius.
+- **The light workplace login fields, as the board draws them.** The label sits above the field,
+  the field is 44px with a 1px edge in the darker border colour (3:1 on white), and the login
+  button is 46px.
+
+### Fixed
+- **The light layout's page no longer runs past the window.** Nextcloud works out the page height
+  once, from its own 50px bar; with the 68px bar the page ended 18px below the window.
+- **The soft selected entry has no leading bar.** Nextcloud 34 draws a 3px bar on the selected
+  entry's edge; the soft style is the wash and the bold label only.
+
 - **Four more layout options, each with a per-theme default.** Where the brand stripe is drawn
   (`brand_stripe_placement`: both places, the top bar only or the login card only), the
   navigation width (`navigation_width`, 200 to 480 pixels), the selected navigation entry's style

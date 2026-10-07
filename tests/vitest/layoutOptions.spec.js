@@ -183,7 +183,7 @@ describe('the newer layout stylesheets are off unless asked for', () => {
 		const systems = JSON.parse(read('design-systems.json'))
 		const listed = systems.flatMap((system) =>
 			(system.stylesheets || []).filter((sheet) =>
-				/navigation-width|navigation-active-soft|brand-stripe-(header|login)-only|login-watermark-off/.test(
+				/navigation-width|navigation-active-soft|brand-stripe-(header|login)-only|login-watermark-off|header-workplace/.test(
 					sheet,
 				),
 			),
@@ -191,7 +191,7 @@ describe('the newer layout stylesheets are off unless asked for', () => {
 		expect(listed).toEqual([])
 	})
 
-	it('only Zuiddrecht names a navigation width and the soft entry among the shipped sets', () => {
+	it('only Zuiddrecht names a navigation width, the soft entry, a stripe placement and the workplace bar among the shipped sets', () => {
 		const sets = JSON.parse(read('token-sets.json'))
 		const naming = sets
 			.filter(
@@ -200,7 +200,8 @@ describe('the newer layout stylesheets are off unless asked for', () => {
 					&& (entry.layout.navigation_width !== undefined
 						|| entry.layout.navigation_active_style !== undefined
 						|| entry.layout.brand_stripe_placement !== undefined
-						|| entry.layout.login_watermark !== undefined),
+						|| entry.layout.login_watermark !== undefined
+						|| entry.layout.header_style !== undefined),
 			)
 			.map((entry) => [entry.id, entry.layout])
 		expect(naming).toEqual([
@@ -211,6 +212,8 @@ describe('the newer layout stylesheets are off unless asked for', () => {
 					brand_stripe: true,
 					navigation_width: 264,
 					navigation_active_style: 'soft',
+					brand_stripe_placement: 'login',
+					header_style: 'workplace',
 				},
 			],
 		])

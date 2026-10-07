@@ -16,6 +16,7 @@
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
  * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
+ * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -102,6 +103,14 @@ class LayoutOptionsService {
 	public const NAVIGATION_WIDTH_STYLE_ID = 'thematiq-navigation-width';
 
 	/**
+	 * The stylesheet of the workplace header style, under `css/`. The page
+	 * loads the header's script with it ({@see HeaderUserService}).
+	 *
+	 * @var string
+	 */
+	public const HEADER_WORKPLACE_STYLESHEET = 'header-workplace';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -156,7 +165,8 @@ class LayoutOptionsService {
 	 *     navigationWidth: string,
 	 *     navigationActiveStyle: string,
 	 *     brandStripePlacement: string,
-	 *     loginWatermark: string
+	 *     loginWatermark: string,
+	 *     headerStyle: string
 	 * } The set's defaults; the behaviour every set had when it names none.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
@@ -221,7 +231,7 @@ class LayoutOptionsService {
 	}//end accepts()
 
 	/**
-	 * The administrator's stored choice for one of the four newer options
+	 * The administrator's stored choice for one of the newer options
 	 * (the two older ones have readers of their own).
 	 *
 	 * @param string $key The app config key.
@@ -238,7 +248,7 @@ class LayoutOptionsService {
 	}//end setting()
 
 	/**
-	 * What one of the four newer options resolves to for a page rendered with
+	 * What one of the newer options resolves to for a page rendered with
 	 * this token set: the stored choice, else the set's default, else the
 	 * built-in one.
 	 *
@@ -337,7 +347,8 @@ class LayoutOptionsService {
 	 *     navigationWidth: int|null,
 	 *     navigationActiveStyle: string,
 	 *     brandStripePlacement: string,
-	 *     loginWatermark: bool
+	 *     loginWatermark: bool,
+	 *     headerStyle: string
 	 * } The resolved options.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
@@ -357,6 +368,7 @@ class LayoutOptionsService {
 			'navigationActiveStyle' => $this->resolve(key: LayoutOptionValues::NAVIGATION_ACTIVE_STYLE_KEY, tokenSet: $tokenSet),
 			'brandStripePlacement' => $this->resolve(key: LayoutOptionValues::BRAND_STRIPE_PLACEMENT_KEY, tokenSet: $tokenSet),
 			'loginWatermark' => ($this->resolve(key: LayoutOptionValues::LOGIN_WATERMARK_KEY, tokenSet: $tokenSet) === '1'),
+			'headerStyle' => $this->resolve(key: LayoutOptionValues::HEADER_STYLE_KEY, tokenSet: $tokenSet),
 		];
 	}//end resolved()
 
@@ -366,8 +378,9 @@ class LayoutOptionsService {
 	 *
 	 * @param string $tokenSet The token set the page renders with.
 	 *
-	 * @return array<int, string> `workplace-layout` and, while the layout is light and the watermark is
-	 *                            off, `login-watermark-off`; `brand-stripe` and, for a placement other
+	 * @return array<int, string> `workplace-layout` and, while the layout is light, `login-watermark-off`
+	 *                            when the watermark is off and `header-workplace` for the workplace header
+	 *                            style; `brand-stripe` and, for a placement other
 	 *                            than both, `brand-stripe-header-only` or `brand-stripe-login-only`;
 	 *                            `navigation-width` while a width is resolved; `navigation-active-soft`
 	 *                            for the soft style. Empty for a set that names none of it.
@@ -375,6 +388,7 @@ class LayoutOptionsService {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
 	 */
 	public function stylesheets(string $tokenSet): array {
 		$resolved = $this->resolved(tokenSet: $tokenSet);
@@ -383,6 +397,10 @@ class LayoutOptionsService {
 			$files[] = 'workplace-layout';
 			if ($resolved['loginWatermark'] === false) {
 				$files[] = 'login-watermark-off';
+			}
+
+			if ($resolved['headerStyle'] === LayoutOptionValues::HEADER_STYLE_WORKPLACE) {
+				$files[] = self::HEADER_WORKPLACE_STYLESHEET;
 			}
 		}
 

@@ -2,7 +2,8 @@
 
 /**
  * The layout options: workplace layout, brand stripe and its placement,
- * navigation width, the selected navigation entry's style, login watermark.
+ * navigation width, the selected navigation entry's style, login watermark,
+ * header style.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
@@ -81,12 +82,14 @@ class LayoutController extends Controller {
 	 * @param string $navigationActiveStyle `default`, `soft`, or empty to follow the theme.
 	 * @param string $brandStripePlacement `header-and-login`, `header`, `login`, or empty to follow the theme.
 	 * @param string $loginWatermark `1`, `0`, or empty to follow the theme.
+	 * @param string $headerStyle `default`, `workplace`, or empty to follow the theme.
 	 *
 	 * @return JSONResponse The stored and the resolved state, or HTTP 400 on an unknown value.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
 	 *
 	 * @SuppressWarnings(PHPMD.LongVariable) - the parameter names ARE the wire contract: Nextcloud binds each from the JSON body
 	 *   key the admin page sends, the app config key in camel case.
@@ -99,6 +102,7 @@ class LayoutController extends Controller {
 		string $navigationActiveStyle = '',
 		string $brandStripePlacement = '',
 		string $loginWatermark = '',
+		string $headerStyle = '',
 	): JSONResponse {
 		$values = [
 			LayoutOptionsService::WORKPLACE_LAYOUT_KEY => $workplaceLayout,
@@ -107,6 +111,7 @@ class LayoutController extends Controller {
 			LayoutOptionValues::NAVIGATION_ACTIVE_STYLE_KEY => $navigationActiveStyle,
 			LayoutOptionValues::BRAND_STRIPE_PLACEMENT_KEY => $brandStripePlacement,
 			LayoutOptionValues::LOGIN_WATERMARK_KEY => $loginWatermark,
+			LayoutOptionValues::HEADER_STYLE_KEY => $headerStyle,
 		];
 		foreach ($values as $key => $value) {
 			if ($this->layoutOptions->accepts(key: $key, value: $value) === false) {
@@ -130,6 +135,7 @@ class LayoutController extends Controller {
 				'navigationActiveStyle' => $navigationActiveStyle,
 				'brandStripePlacement' => $brandStripePlacement,
 				'loginWatermark' => $loginWatermark,
+				'headerStyle' => $headerStyle,
 				'resolved' => $this->layoutOptions->resolved(tokenSet: $tokenSet),
 			]
 		);

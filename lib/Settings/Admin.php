@@ -291,7 +291,8 @@ class Admin implements IDelegatedSettings {
 	 *     navigationWidth: string,
 	 *     navigationActiveStyle: string,
 	 *     brandStripePlacement: string,
-	 *     loginWatermark: string
+	 *     loginWatermark: string,
+	 *     headerStyle: string
 	 * } The template parameters.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
@@ -306,6 +307,7 @@ class Admin implements IDelegatedSettings {
 			'navigationActiveStyle' => $this->config->getAppValue(Application::APP_ID, 'navigation_active_style', ''),
 			'brandStripePlacement' => $this->config->getAppValue(Application::APP_ID, 'brand_stripe_placement', ''),
 			'loginWatermark' => $this->config->getAppValue(Application::APP_ID, 'login_watermark', ''),
+			'headerStyle' => $this->config->getAppValue(Application::APP_ID, 'header_style', ''),
 		];
 	}//end layoutParams()
 
@@ -550,6 +552,7 @@ class Admin implements IDelegatedSettings {
 				'/navigation_active_style/',
 				'/brand_stripe_placement/',
 				'/login_watermark/',
+				'/header_style/',
 				'/dark_variants/',
 				'/marianne_enabled/',
 				'/disabled_apps/',

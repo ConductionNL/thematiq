@@ -185,14 +185,16 @@ class LayoutOptionsServiceTest extends TestCase {
 				'navigationActiveStyle' => 'default',
 				'brandStripePlacement' => 'header-and-login',
 				'loginWatermark' => '1',
+				'headerStyle' => 'default',
 			],
 			$this->service->setDefaults(tokenSet: 'custom-does-not-exist')
 		);
 	}//end testAnUnknownSetResolvesToTheDefaults()
 
 	/**
-	 * Zuiddrecht names a 264px navigation and the soft selected entry; it
-	 * leaves the stripe placement and the watermark to the built-in defaults.
+	 * Zuiddrecht names a 264px navigation, the soft selected entry, the
+	 * stripe on the login card only and the workplace top bar; it leaves the
+	 * watermark to the built-in default.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 */
@@ -203,13 +205,14 @@ class LayoutOptionsServiceTest extends TestCase {
 				'brandStripe' => true,
 				'navigationWidth' => 264,
 				'navigationActiveStyle' => 'soft',
-				'brandStripePlacement' => 'header-and-login',
+				'brandStripePlacement' => 'login',
 				'loginWatermark' => true,
+				'headerStyle' => 'workplace',
 			],
 			$this->service->resolved(tokenSet: 'zuiddrecht')
 		);
 		$this->assertSame(
-			['workplace-layout', 'brand-stripe', 'navigation-width', 'navigation-active-soft'],
+			['workplace-layout', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'navigation-active-soft'],
 			$this->service->stylesheets(tokenSet: 'zuiddrecht')
 		);
 		$this->assertSame(
@@ -219,9 +222,10 @@ class LayoutOptionsServiceTest extends TestCase {
 	}//end testZuiddrechtWearsTheNewerDefaults()
 
 	/**
-	 * Every shipped set but zuiddrecht resolves the four newer options to what
+	 * Every shipped set but zuiddrecht resolves the newer options to what
 	 * it had before they existed: Nextcloud's navigation width, the default
-	 * selected entry, the stripe in both places and the watermark drawn.
+	 * selected entry, the stripe in both places, the watermark drawn and
+	 * Nextcloud's own top bar.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 */
@@ -241,6 +245,7 @@ class LayoutOptionsServiceTest extends TestCase {
 				'navigationActiveStyle' => 'default',
 				'brandStripePlacement' => 'header-and-login',
 				'loginWatermark' => true,
+				'headerStyle' => 'default',
 			];
 			if ($newer !== $expected) {
 				$changed[] = $id;
@@ -276,7 +281,7 @@ class LayoutOptionsServiceTest extends TestCase {
 		$this->assertSame('login', $resolved['brandStripePlacement']);
 		$this->assertFalse($resolved['loginWatermark']);
 		$this->assertSame(
-			['workplace-layout', 'login-watermark-off', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width'],
+			['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width'],
 			$this->service->stylesheets(tokenSet: 'zuiddrecht')
 		);
 		$this->assertSame(':root { --thematiq-navigation-width: 320px; }', $this->service->inlineStyles(tokenSet: 'zuiddrecht')[0]['css']);
@@ -285,7 +290,7 @@ class LayoutOptionsServiceTest extends TestCase {
 		$this->assertSame('login', $this->service->setOption(key: 'brand_stripe_placement', value: 'header'));
 		$this->assertSame(264, $this->service->resolved(tokenSet: 'zuiddrecht')['navigationWidth']);
 		$this->assertSame(
-			['workplace-layout', 'login-watermark-off', 'brand-stripe', 'brand-stripe-header-only', 'navigation-width'],
+			['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-header-only', 'navigation-width'],
 			$this->service->stylesheets(tokenSet: 'zuiddrecht')
 		);
 	}//end testAStoredNewerChoiceWinsOverTheSet()
@@ -349,12 +354,12 @@ class LayoutOptionsServiceTest extends TestCase {
 
 		$designSystems = $this->createMock(DesignSystemService::class);
 		$designSystems->method('getTokenSetMeta')->willReturn(
-			['layout' => ['navigation_width' => 900, 'navigation_active_style' => 7, 'brand_stripe_placement' => 'roof', 'login_watermark' => 'no']]
+			['layout' => ['navigation_width' => 900, 'navigation_active_style' => 7, 'brand_stripe_placement' => 'roof', 'login_watermark' => 'no', 'header_style' => 'dark']]
 		);
 		$service = new LayoutOptionsService(config: $this->config, designSystemService: $designSystems);
 		$this->stored = [];
 		$this->assertSame(
-			['navigationWidth' => '', 'navigationActiveStyle' => 'default', 'brandStripePlacement' => 'header-and-login', 'loginWatermark' => '1'],
+			['navigationWidth' => '', 'navigationActiveStyle' => 'default', 'brandStripePlacement' => 'header-and-login', 'loginWatermark' => '1', 'headerStyle' => 'default'],
 			array_diff_key($service->setDefaults(tokenSet: 'odd'), ['workplaceLayout' => 1, 'brandStripe' => 1])
 		);
 	}//end testAnUnreadableNewerValueFollowsTheBuiltInDefault()
@@ -376,6 +381,7 @@ class LayoutOptionsServiceTest extends TestCase {
 					'navigation_active_style' => 'soft',
 					'brand_stripe_placement' => 'login',
 					'login_watermark' => false,
+					'header_style' => 'workplace',
 				],
 			]
 		);
@@ -389,11 +395,12 @@ class LayoutOptionsServiceTest extends TestCase {
 				'navigationActiveStyle' => 'soft',
 				'brandStripePlacement' => 'login',
 				'loginWatermark' => false,
+				'headerStyle' => 'workplace',
 			],
 			$service->resolved(tokenSet: 'declares-all')
 		);
 		$this->assertSame(
-			['workplace-layout', 'login-watermark-off', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'navigation-active-soft'],
+			['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'navigation-active-soft'],
 			$service->stylesheets(tokenSet: 'declares-all')
 		);
 	}//end testASetMayDeclareEveryNewerDefault()
@@ -461,4 +468,26 @@ class LayoutOptionsServiceTest extends TestCase {
 		$this->assertSame('light', $this->service->workplaceLayout(tokenSet: 'zuiddrecht'));
 		$this->assertFalse($this->service->brandStripe(tokenSet: 'utrecht'));
 	}//end testAnUnreadableStoredValueFollowsTheSet()
+
+	/**
+	 * The workplace top bar loads only with the light layout: a set or an
+	 * administrator that asks for it on Nextcloud's own coloured bar gets
+	 * nothing, since the bar it places is the light one.
+	 *
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 */
+	public function testTheWorkplaceHeaderNeedsTheLightLayout(): void {
+		$this->assertSame('', $this->service->setOption(key: 'header_style', value: 'workplace'));
+		$this->assertContains('header-workplace', $this->service->stylesheets(tokenSet: 'zuiddrecht'));
+		$this->assertNotContains('header-workplace', $this->service->stylesheets(tokenSet: 'utrecht'));
+		$this->assertSame('workplace', $this->service->resolved(tokenSet: 'utrecht')['headerStyle']);
+
+		$this->assertSame('', $this->service->setOption(key: 'workplace_layout', value: 'default'));
+		$this->assertNotContains('header-workplace', $this->service->stylesheets(tokenSet: 'zuiddrecht'));
+
+		$this->assertSame('workplace', $this->service->setOption(key: 'header_style', value: 'default'));
+		$this->assertSame('default', $this->service->setOption(key: 'workplace_layout', value: ''));
+		$this->assertNotContains('header-workplace', $this->service->stylesheets(tokenSet: 'zuiddrecht'));
+		$this->assertFalse($this->service->accepts(key: 'header_style', value: 'dark'));
+	}//end testTheWorkplaceHeaderNeedsTheLightLayout()
 }//end class

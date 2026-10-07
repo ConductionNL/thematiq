@@ -132,6 +132,7 @@ class LayoutControllerTest extends TestCase {
 				'navigationActiveStyle' => '',
 				'brandStripePlacement' => '',
 				'loginWatermark' => '',
+				'headerStyle' => '',
 				'resolved' => [
 					'workplaceLayout' => 'default',
 					'brandStripe' => false,
@@ -139,6 +140,7 @@ class LayoutControllerTest extends TestCase {
 					'navigationActiveStyle' => 'default',
 					'brandStripePlacement' => 'header-and-login',
 					'loginWatermark' => true,
+					'headerStyle' => 'default',
 				],
 			],
 			$response->getData()
@@ -168,6 +170,7 @@ class LayoutControllerTest extends TestCase {
 				'navigationActiveStyle' => 'default',
 				'brandStripePlacement' => 'header-and-login',
 				'loginWatermark' => true,
+				'headerStyle' => 'default',
 			],
 			$response->getData()['resolved']
 		);
@@ -175,7 +178,7 @@ class LayoutControllerTest extends TestCase {
 	}//end testTheEmptyChoiceAnswersWithTheSetsDefaults()
 
 	/**
-	 * The four newer options are stored and audited with the two older ones,
+	 * The newer options are stored and audited with the two older ones,
 	 * and the answer resolves them for the active set.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
@@ -187,7 +190,8 @@ class LayoutControllerTest extends TestCase {
 			navigationWidth: '300',
 			navigationActiveStyle: 'soft',
 			brandStripePlacement: 'login',
-			loginWatermark: '0'
+			loginWatermark: '0',
+			headerStyle: 'workplace'
 		);
 
 		$this->assertSame(200, $response->getStatus());
@@ -195,6 +199,7 @@ class LayoutControllerTest extends TestCase {
 		$this->assertSame('soft', $this->stored['navigation_active_style']);
 		$this->assertSame('login', $this->stored['brand_stripe_placement']);
 		$this->assertSame('0', $this->stored['login_watermark']);
+		$this->assertSame('workplace', $this->stored['header_style']);
 		$this->assertSame(
 			[
 				'workplaceLayout' => 'light',
@@ -203,6 +208,7 @@ class LayoutControllerTest extends TestCase {
 				'navigationActiveStyle' => 'soft',
 				'brandStripePlacement' => 'login',
 				'loginWatermark' => false,
+				'headerStyle' => 'workplace',
 			],
 			$response->getData()['resolved']
 		);
@@ -212,6 +218,7 @@ class LayoutControllerTest extends TestCase {
 				['action' => 'toggle_changed', 'context' => ['key' => 'navigation_active_style', 'old' => '', 'new' => 'soft']],
 				['action' => 'toggle_changed', 'context' => ['key' => 'brand_stripe_placement', 'old' => '', 'new' => 'login']],
 				['action' => 'toggle_changed', 'context' => ['key' => 'login_watermark', 'old' => '', 'new' => '0']],
+				['action' => 'toggle_changed', 'context' => ['key' => 'header_style', 'old' => '', 'new' => 'workplace']],
 			],
 			$this->audit
 		);
@@ -251,6 +258,7 @@ class LayoutControllerTest extends TestCase {
 			'an unknown entry style' => ['', '', ['navigationActiveStyle' => 'bold']],
 			'an unknown placement' => ['', '', ['brandStripePlacement' => 'footer']],
 			'a watermark that is not a flag' => ['', '', ['loginWatermark' => 'yes']],
+			'an unknown header style' => ['', '', ['headerStyle' => 'dark']],
 		];
 	}//end unknownValueProvider()
 
