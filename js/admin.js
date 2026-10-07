@@ -3730,8 +3730,17 @@
 						: null
 				var pickerVal =
 					parts !== null ? parts.hex : normaliseColorForPicker(displayVal)
+				// One swatch, and it is the picker: the colour input lies over the
+				// checkerboard, invisible, so the square shows what the token
+				// really paints — opacity included, which a native picker cannot.
 				inputHtml =
 					'<div class="nldesign-color-input-wrap">'
+					+ '<span class="nldesign-color-swatch" data-token="'
+					+ escapeHtml(name)
+					+ '">'
+					+ '<span class="nldesign-color-swatch-fill" style="background:'
+					+ escapeHtml(swatchColor(displayVal, meta.type === 'rgb'))
+					+ '"></span>'
 					+ '<input type="color" class="nldesign-color-picker" aria-label="'
 					+ pickerLabel
 					+ '"'
@@ -3743,6 +3752,7 @@
 					+ '"'
 					+ lockedAttr
 					+ '>'
+					+ '</span>'
 					+ '<input type="text" class="nldesign-color-text" aria-label="'
 					+ inputLabel
 					+ '"'
@@ -3816,7 +3826,43 @@
 		}
 
 		/**
-		 * The opacity controls of a colour row: a checkerboard swatch, a range and a number field.
+		 * The CSS colour a swatch paints for a token value.
+		 *
+		 * @param {string} value The token value.
+		 * @param {boolean} triplet Whether the token holds a bare `r, g, b` triplet.
+		 * @return {string} The colour.
+		 */
+		function swatchColor(value, triplet) {
+			var shown = String(value || '').trim()
+			return triplet === true && shown !== '' ? 'rgb(' + shown + ')' : shown
+		}
+
+		/**
+		 * Repaint every swatch of a token, in the editor and in the playground's copies of its row.
+		 *
+		 * @param {string} name The token.
+		 * @param {string} value The value it now holds.
+		 * @return {void}
+		 */
+		function paintSwatches(name, value) {
+			document
+				.querySelectorAll(
+					'.nldesign-color-swatch[data-token="' + name + '"]',
+				)
+				.forEach(function (swatch) {
+					var fill = swatch.querySelector('.nldesign-color-swatch-fill')
+					var picker = swatch.querySelector('.nldesign-color-picker')
+					if (fill !== null) {
+						fill.style.background = swatchColor(
+							value,
+							picker !== null && picker.dataset.format === 'rgb',
+						)
+					}
+				})
+		}
+
+		/**
+		 * The opacity controls of a colour row: a range and a number field in percent, under a visible label.
 		 *
 		 * @param {string} name The token.
 		 * @param {object} meta Its registry entry.
@@ -3829,9 +3875,10 @@
 			var alpha = parts !== null ? parts.alpha : 100
 			var label = meta.label || name
 			return (
-				'<span class="nldesign-color-swatch" aria-hidden="true"><span style="background:'
-				+ escapeHtml(value)
-				+ '"></span></span>'
+				'<span class="nldesign-color-opacity">'
+				+ '<span class="nldesign-color-opacity-label" aria-hidden="true">'
+				+ escapeHtml(t('thematiq', 'Opacity'))
+				+ '</span>'
 				+ '<input type="range" class="nldesign-color-alpha" min="0" max="100" step="1" data-token="'
 				+ escapeHtml(name)
 				+ '" value="'
@@ -3852,6 +3899,8 @@
 				+ '"'
 				+ lockedAttr
 				+ '>'
+				+ '<span class="nldesign-color-opacity-unit" aria-hidden="true">%</span>'
+				+ '</span>'
 			)
 		}
 
@@ -4394,6 +4443,7 @@
 						if (picker !== null) {
 							picker.value = normaliseColorForPicker(defaultVal)
 						}
+						paintSwatches(name, defaultVal)
 						var row = container.querySelector(
 							'[data-token-row="' + name + '"]',
 						)
@@ -4560,6 +4610,7 @@
 			}
 			tokenEditorState[name].current = value
 			tokenEditorState[name].isDirty = true
+			paintSwatches(name, value)
 
 			var row = container.querySelector('[data-token-row="' + name + '"]')
 			var label =

@@ -1096,7 +1096,8 @@ OC.L10N.register(
         "The light tint of the success pill": "The light tint of the success pill",
         "The light tint of the warning pill": "The light tint of the warning pill",
         "The light tint of the error pill": "The light tint of the error pill",
-        "status pills": "status pills"
+        "status pills": "status pills",
+        "Opacity": "Opacity"
     },
     "nplurals=2; plural=(n != 1);"
 )

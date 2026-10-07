@@ -379,9 +379,21 @@
 	text-decoration: underline;
 }
 
+/* A component's row has a fourth column, what the token paints, between the
+   label and the controls of the editor's own grid (css/admin.css). */
+@media (min-width: 769px) {
+	.nldesign-token-row.nldesign-pg-row {
+		grid-template-columns: minmax(0, 1fr) 190px auto auto;
+	}
+	/* A row with no token is a label and the reason. Across the content-sized
+	   columns above, the long reason took them over and squeezed the label to a
+	   word a line, under the text; two shared columns keep both readable. */
+	.nldesign-token-row.nldesign-pg-row.nldesign-pg-row-fixed {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+	}
+}
+
 .nldesign-pg-paints {
-	flex: none;
-	width: 190px;
 	color: var(--color-text-maxcontrast);
 	font-size: 14px;
 }
@@ -390,8 +402,9 @@
 	color: var(--color-text-maxcontrast);
 }
 
+/* A row with no token explains why, across every column after the label. */
 .nldesign-pg-why {
-	flex: 1;
+	grid-column: 2 / -1;
 	color: var(--color-text-maxcontrast);
 	font-size: 14px;
 }
@@ -2514,6 +2527,8 @@
 	margin: 0;
 	padding-left: 18px;
 }
+/* The stage's footer: the name with Save on the left, Remove on its own on the
+   right, apart from it, under a rule. */
 .nldesign-own-save {
 	display: flex;
 	flex-wrap: wrap;
