@@ -360,31 +360,32 @@ header nav .icon {
 }
 
 /*
- * Two widgets ask for no ground of their own, and the rule above gave them
- * one: a greeting on the page ground (nextcloud-vue `content.ground`) and an
- * attention banner placed borderless, which draws its own card. The
- * library leaves both wrappers transparent; the solid rule painted the
- * wrapper and its content white, so the greeting sat in a white box and the
- * attention card had a second, taller white card under it (dossiq simple
- * dashboard, DqDashboard). Only a borderless wrapper that HOLDS one of those
- * two goes transparent, so every other borderless widget keeps the ground
- * it has today. Same ID-level weight as the rule above, and later.
+ * A borderless widget asks for no ground of its own: it sits on the page
+ * ground (nextcloud-vue draws `.cn-widget-wrapper--borderless` transparent).
+ * The rule above painted the wrapper and the widget inside it white, so a
+ * greeting on the ground sat in a white box, a borderless attention banner
+ * had a second, taller white card under it (dossiq, DqDashboard) and the
+ * borderless rows of the pipelinq and decidiq dashboards showed white bands
+ * on the grey workspace.
+ *
+ * So every borderless wrapper, its content and the widget directly in it
+ * stay transparent, and so does a greeting on the ground anywhere. A widget
+ * that draws its own card keeps it: the attention banner, the calendar and
+ * the tiles paint their own ground, which this rule leaves alone.
+ *
+ * WEIGHT. The solid rule above scores (1,2,0): two attribute selectors and
+ * the ID inside `:not(#header *)`. A selector here that scores less loses,
+ * whatever its place, so each one carries at least two classes besides the
+ * `:not(#header *)`, and the block comes after the solid rule.
  */
-.cn-header-widget--ground:not(#header *),
-.cn-widget-wrapper--borderless:has(
-		> .cn-widget-wrapper__content > .cn-header-widget--ground
-	):not(#header *),
-.cn-widget-wrapper--borderless:has(
-		> .cn-widget-wrapper__content > .cn-banner-widget--attention
-	):not(#header *),
-.cn-widget-wrapper--borderless:has(
-		> .cn-widget-wrapper__content > .cn-header-widget--ground
-	)
-	> .cn-widget-wrapper__content:not(#header *),
-.cn-widget-wrapper--borderless:has(
-		> .cn-widget-wrapper__content > .cn-banner-widget--attention
-	)
-	> .cn-widget-wrapper__content:not(#header *) {
+.cn-widget-wrapper.cn-widget-wrapper--borderless:not(#header *),
+.cn-widget-wrapper--borderless > .cn-widget-wrapper__content:not(#header *),
+.cn-widget-wrapper--borderless
+	> .cn-widget-wrapper__content
+	> [class*='widget']:not([class*='widget__']):not(
+		.cn-banner-widget--attention
+	):not(.cn-calendar-widget):not([class*='tile-widget']):not(#header *),
+.cn-header-widget.cn-header-widget--ground:not(#header *) {
 	background: transparent;
 	background-color: transparent;
 }
