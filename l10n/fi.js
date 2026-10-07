@@ -1097,6 +1097,7 @@ OC.L10N.register(
         "The light tint of the warning pill": "The light tint of the warning pill",
         "The light tint of the error pill": "The light tint of the error pill",
         "status pills": "status pills",
+        "Choose image": "Choose image",
         "Opacity": "Opacity"
     },
     "nplurals=2; plural=(n != 1);"

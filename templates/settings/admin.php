@@ -1025,16 +1025,28 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint">
 			<?php p($l->t('Apps that generate letters and PDF exports use these values, so documents follow the house style. Without uploads they use the house style logo and the email footer.')); ?>
 		</p>
-		<p>
-			<label for="nldesign-documents-logo"><?php p($l->t('Document logo (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label><br>
-			<input type="file" id="nldesign-documents-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
-			<button type="button" class="button" id="nldesign-documents-logo-remove"><?php p($l->t('Remove document logo')); ?></button>
-		</p>
-		<p>
-			<label for="nldesign-documents-cover"><?php p($l->t('Cover image (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label><br>
-			<input type="file" id="nldesign-documents-cover" accept="image/png,image/jpeg,image/webp,image/svg+xml">
-			<button type="button" class="button" id="nldesign-documents-cover-remove"><?php p($l->t('Remove cover image')); ?></button>
-		</p>
+		<!-- Nextcloud's own button instead of the browser's file control, which
+		     draws in the browser's language and style; see the brand logo above. -->
+		<div class="nldesign-documents-upload">
+			<label id="nldesign-documents-logo-label" for="nldesign-documents-logo"><?php p($l->t('Document logo (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label>
+			<div class="nldesign-file-pick">
+				<input type="file" id="nldesign-documents-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+				<button type="button" class="button" id="nldesign-documents-logo-btn"
+						aria-labelledby="nldesign-documents-logo-label nldesign-documents-logo-btn"><?php p($l->t('Choose image')); ?></button>
+				<span class="nldesign-file-pick__name" id="nldesign-documents-logo-name"><?php p($l->t('No file chosen')); ?></span>
+				<button type="button" class="button" id="nldesign-documents-logo-remove"><?php p($l->t('Remove document logo')); ?></button>
+			</div>
+		</div>
+		<div class="nldesign-documents-upload">
+			<label id="nldesign-documents-cover-label" for="nldesign-documents-cover"><?php p($l->t('Cover image (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label>
+			<div class="nldesign-file-pick">
+				<input type="file" id="nldesign-documents-cover" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+				<button type="button" class="button" id="nldesign-documents-cover-btn"
+						aria-labelledby="nldesign-documents-cover-label nldesign-documents-cover-btn"><?php p($l->t('Choose image')); ?></button>
+				<span class="nldesign-file-pick__name" id="nldesign-documents-cover-name"><?php p($l->t('No file chosen')); ?></span>
+				<button type="button" class="button" id="nldesign-documents-cover-remove"><?php p($l->t('Remove cover image')); ?></button>
+			</div>
+		</div>
 		<p>
 			<label for="nldesign-documents-footer-line"><?php p($l->t('Extra footer line')); ?></label><br>
 			<input type="text" id="nldesign-documents-footer-line" maxlength="200">

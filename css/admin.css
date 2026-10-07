@@ -2645,6 +2645,14 @@
 	margin: 0;
 }
 
+.nldesign-documents-upload {
+	margin: 12px 0;
+}
+
+.nldesign-documents-upload > label {
+	display: block;
+}
+
 .nldesign-file-pick__name {
 	max-width: 220px;
 	overflow: hidden;

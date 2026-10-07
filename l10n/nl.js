@@ -1097,6 +1097,7 @@ OC.L10N.register(
         "The light tint of the warning pill": "De lichte tint van het waarschuwingslabel",
         "The light tint of the error pill": "De lichte tint van het foutlabel",
         "status pills": "statuslabels",
+        "Choose image": "Afbeelding kiezen",
         "Opacity": "Dekkracht"
     },
     "nplurals=2; plural=(n != 1);"

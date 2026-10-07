@@ -127,8 +127,23 @@
 			var remove = document.getElementById(
 				'nldesign-documents-' + kind + '-remove',
 			)
+			var pick = document.getElementById('nldesign-documents-' + kind + '-btn')
+			var name = document.getElementById(
+				'nldesign-documents-' + kind + '-name',
+			)
+			if (input && pick) {
+				pick.addEventListener('click', function () {
+					input.click()
+				})
+			}
 			if (input) {
 				input.addEventListener('change', function () {
+					if (name) {
+						name.textContent =
+							input.files && input.files[0]
+								? input.files[0].name
+								: t('thematiq', 'No file chosen')
+					}
 					if (!input.files || input.files.length === 0) {
 						return
 					}
