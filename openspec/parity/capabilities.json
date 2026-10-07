@@ -4355,7 +4355,8 @@
 				"state": "building",
 				"evidence": "lib/Listener/ShareableConfigTypeListener.php + lib/Service/Config/NlDesignThemeShareableConfigType.php contribute a real OCA\\OpenRegister\\Service\\Config\\IShareableConfigType (id nldesign.theme) whose serialise() wraps ConfigBundleService::export() (openspec/specs/federated-config-sharing/spec.md); checked the consuming side in ~/nextcloud-docker-dev/workspace/server/apps-extra/openregister (origin/development 94e8c29e42): real routes exist (appinfo/routes.php:2193-2202 federatedConfig#types/bundle/install/publish/discover/fetch/trust) and lib/Controller/FederatedConfigController.php + lib/Service/Config/FederatedConfigService.php exist, but grep -rln FederatedConfig/shareable openregister/src/ found no Vue page or component calling any of those routes",
 				"owner": "ConductionNL/openregister",
-				"origin": "own"
+				"origin": "own",
+				"change": "openregister/federated-config-sharing"
 			},
 			"reachedOn": "nothing reaches it: thematiq's contract is real and OpenRegister's engine/routes are real, but neither repo has a UI screen that drives a federated share end to end",
 			"evidence": {
