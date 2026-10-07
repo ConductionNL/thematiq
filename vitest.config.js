@@ -23,6 +23,15 @@ module.exports = {
 		globals: false,
 		include: ['tests/vitest/**/*.spec.{js,ts}'],
 		exclude: ['tests/e2e/**', 'tests/integration/**', 'node_modules/**'],
+		// The playground's code editor (src/codeEditor.js) imports
+		// @conduction/nextcloud-vue, whose components import their own .css
+		// files. Node cannot load those; processed by Vitest instead, the imports
+		// resolve, and a test can mock what the component imports in turn.
+		server: {
+			deps: {
+				inline: [/@conduction\/nextcloud-vue/],
+			},
+		},
 	},
 	resolve: {
 		alias: [{ find: '@', replacement: path.resolve(__dirname, 'js') }],

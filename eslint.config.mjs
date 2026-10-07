@@ -60,6 +60,16 @@ export default [
 		rules: relaxed,
 	},
 	{
+		// Bundled by webpack (webpack.code-editor.config.js), so modules.
+		files: ['src/**/*.js'],
+		languageOptions: {
+			ecmaVersion: 2022,
+			sourceType: 'module',
+			globals: globals.browser,
+		},
+		rules: relaxed,
+	},
+	{
 		files: ['tests/vitest/**/*.js'],
 		languageOptions: {
 			ecmaVersion: 2022,

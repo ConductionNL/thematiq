@@ -50,6 +50,12 @@ script('thematiq', 'ownTokens');
 // The sanitiser and the sandboxed frame of the playground's "Your component" stage.
 script('thematiq', 'lib/markupSanitizer');
 script('thematiq', 'lib/ownComponentFrame');
+// The code editor of that stage, bundled by `npm run build:code-editor`. A
+// checkout that has not run the build has no such file, and the stage then keeps
+// its plain text areas; asking for a missing script would fail the page.
+if (file_exists(__DIR__ . '/../../js/vendor/codeEditor.js') === true) {
+	script('thematiq', 'vendor/codeEditor');
+}
 script('thematiq', 'playground');
 style('thematiq', 'playground');
 // Nextcloud's own login-page stylesheet, scoped to the playground's login card.

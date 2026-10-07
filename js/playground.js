@@ -1317,7 +1317,44 @@
 	function ownLabel(id, text) {
 		var label = el('label', 'nldesign-own-label', text)
 		label.setAttribute('for', id)
+		// Also by id, for a code editor standing in for the field.
+		label.id = id + '-label'
 		return label
+	}
+
+	/**
+	 * Put code editors over the HTML and CSS fields, when js/vendor/codeEditor.js
+	 * is loaded (src/codeEditor.js). The fields stay in the page and keep their
+	 * value, so everything that reads them works the same; without the editor, or
+	 * when it fails, they stay plain text areas.
+	 *
+	 * @param {Element} html The HTML field.
+	 * @param {Element} css The CSS field.
+	 * @return {Array<{unmount: Function}>} The mounted editors.
+	 */
+	function mountCodeEditors(html, css) {
+		var editors = window.NldesignCodeEditor
+		if (!editors || typeof editors.mount !== 'function') {
+			return []
+		}
+		var mounted = []
+		try {
+			mounted.push(
+				editors.mount(html, {
+					language: 'html',
+					labelledBy: html.id + '-label',
+				}),
+			)
+			mounted.push(
+				editors.mount(css, {
+					language: 'css',
+					labelledBy: css.id + '-label',
+				}),
+			)
+		} catch (error) {
+			console.error('[thematiq] the code editor could not be mounted:', error)
+		}
+		return mounted
 	}
 
 	/**
@@ -1381,6 +1418,7 @@
 		fields.appendChild(ownLabel('nldesign-own-css', t('thematiq', 'CSS')))
 		fields.appendChild(css)
 		stage.appendChild(fields)
+		var codeEditors = mountCodeEditors(html, css)
 
 		var dark = el(
 			'button',
@@ -1531,6 +1569,9 @@
 		state.editor.addEventListener('input', onEdit)
 		state.ownCleanup = function () {
 			state.editor.removeEventListener('input', onEdit)
+			codeEditors.forEach(function (editor) {
+				editor.unmount()
+			})
 		}
 
 		render()

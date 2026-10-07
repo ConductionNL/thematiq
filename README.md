@@ -55,10 +55,11 @@ Icon and logo filenames are a public API: other apps reference them by name (e.g
    git clone https://github.com/ConductionNL/thematiq.git
    ```
 
-2. Install npm dependencies (for fonts and icons):
+2. Install the npm dependencies and build the fonts, the icons and the playground's
+   code editor (Node.js 20 or later, see [Development](#development)):
    ```bash
    cd thematiq
-   npm install
+   npm ci
    npm run build
    ```
 
@@ -254,15 +255,23 @@ nldesign/
 
 ### Prerequisites
 
-- Node.js 18+
-- npm
+- Node.js 20 or later, with npm, for `npm ci` and `npm run build`
+- Node.js 22.14 or later, or 24, for the test and lint tooling (Vitest, ESLint) —
+  the versions `package.json` declares under `engines`
 
 ### Setup
 
 ```bash
-cd nldesign
-npm install
+cd thematiq
+npm ci
+npm run build
 ```
+
+`npm run build` also bundles the code editor of the playground's "Your components"
+tab into `js/vendor/codeEditor.js` (gitignored). Without that file the tab still
+works, with plain text fields. The
+[developer guide](docs/reference/development.md#the-code-editor-bundle) explains why
+this one file is built.
 
 ### Updating Fonts
 

@@ -453,6 +453,37 @@ describe('playground: your component', { timeout: 20000 }, () => {
 		expect(edit.getAttribute('aria-expanded')).toBe('true')
 	})
 
+	it('puts the code editor over both fields when it is loaded, and takes it away again', async () => {
+		await boot()
+		const unmount = vi.fn()
+		window.NldesignCodeEditor = { mount: vi.fn(() => ({ unmount })) }
+		try {
+			openOwn()
+			expect(
+				window.NldesignCodeEditor.mount.mock.calls.map(
+					([field, options]) => [
+						field.id,
+						options.language,
+						options.labelledBy,
+					],
+				),
+			).toEqual([
+				['nldesign-own-html', 'html', 'nldesign-own-html-label'],
+				['nldesign-own-css', 'css', 'nldesign-own-css-label'],
+			])
+			expect(document.getElementById('nldesign-own-html-label')).not.toBeNull()
+
+			document
+				.querySelector(
+					'.nldesign-pg-selector .nldesign-tab-btn[data-tab="content"]',
+				)
+				.click()
+			expect(unmount).toHaveBeenCalledTimes(2)
+		} finally {
+			delete window.NldesignCodeEditor
+		}
+	})
+
 	it('opens a new component with its code fields and no Edit button', async () => {
 		await boot()
 		openOwn()

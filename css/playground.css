@@ -2534,6 +2534,37 @@
 .nldesign-own-label {
 	font-weight: 600;
 }
+/* The code editor (src/codeEditor.js) over a field. CodeMirror brings its own
+   styles; nextcloud-vue's stylesheet is not on this page, so the border that
+   makes it read as a field is drawn here, the way the text area's is. */
+.nldesign-code-editor {
+	overflow: hidden;
+	border: 2px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-large);
+}
+.nldesign-code-editor:focus-within {
+	border-color: var(--color-main-text);
+}
+/* The editor takes the height CnJsonViewer gives its wrapper and scrolls inside
+   it; nextcloud-vue's stylesheet, which normally says so, is not on this page. */
+#nldesign-settings .nldesign-code-editor .cm-editor {
+	height: 100%;
+}
+#nldesign-settings .nldesign-code-editor .cm-scroller {
+	overflow: auto;
+}
+/* Nextcloud draws every editable div as a text field. CodeMirror's editing area
+   is one, so without this it is a small bordered box on the first line instead
+   of the whole editor, and a click below the last line misses it. */
+#nldesign-settings .nldesign-code-editor .cm-content {
+	min-height: 100%;
+	margin: 0;
+	padding: 4px 0;
+	border: 0;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+}
 .nldesign-own-frame {
 	display: block;
 	width: 100%;

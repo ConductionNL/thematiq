@@ -13,8 +13,11 @@ tabs of the shipped components MUST NOT offer own components. Opening the tab, o
 component", MUST open a stage with an HTML field, a CSS field, a light and dark switch and a
 preview frame. A saved component MUST open the way a shipped one does: its name, the frame and
 the rows of the tokens it reads, with the HTML and CSS fields, the name and saving behind an
-"Edit" button. The playground MUST keep working when this stage cannot build, as the playground's
-own spec requires for the rest of the instrument.
+"Edit" button. The HTML and CSS fields MUST be code editors, the shared CodeMirror editor of
+`@conduction/nextcloud-vue` (`CnJsonViewer`), highlighting each language the installed package
+supports; when the bundled editor is not loaded they MUST stay plain text fields. The playground
+MUST keep working when this stage cannot build, as the playground's own spec requires for the
+rest of the instrument.
 
 #### Scenario: An administrator previews a card they are building
 - GIVEN an administrator on Settings > Administration > Theming, in the component playground
