@@ -712,6 +712,13 @@
 		var(--nldesign-color-primary, #1b1b23)
 	);
 	--utrecht-alert-info-color: var(--nldesign-color-text, #1b1b23);
+	/* A plain notice (no type): the set's own notice colours, else the
+	 * component's own (see the website vocabulary below). */
+	--utrecht-alert-background-color: var(
+		--nldesign-website-notice-background-color
+	);
+	--utrecht-alert-border-color: var(--nldesign-website-notice-border-color);
+	--utrecht-alert-color: var(--nldesign-website-notice-color);
 	--utrecht-alert-ok-color: var(--nldesign-color-text, #1b1b23);
 	--utrecht-alert-warning-color: var(--thematiq-status-warning-text);
 	--utrecht-alert-error-color: var(--thematiq-status-error-text);
@@ -879,10 +886,10 @@
 	--utrecht-accordion-button-padding-inline-end: 16px;
 	--utrecht-accordion-button-padding-inline-start: 16px;
 	--utrecht-accordion-panel-border-width: 4px;
-	--utrecht-alert-border-width: 2px;
-	--utrecht-button-border-width: 1px;
+	--utrecht-alert-border-width: var(--nldesign-website-notice-border-width, 2px);
+	--utrecht-button-border-width: var(--nldesign-website-control-border-width, 1px);
 	--utrecht-button-font-size: 16px;
-	--utrecht-button-font-weight: 700;
+	--utrecht-button-font-weight: var(--nldesign-website-button-font-weight, 700);
 	--utrecht-button-icon-size: 24px;
 	--utrecht-button-line-height: 150%;
 	--utrecht-button-min-block-size: 48px;
@@ -891,22 +898,31 @@
 	--utrecht-button-padding-block-start: 12px;
 	--utrecht-button-padding-inline-end: 16px;
 	--utrecht-button-padding-inline-start: 16px;
-	--utrecht-button-primary-action-font-weight: 700;
-	--utrecht-button-secondary-action-font-weight: 700;
-	--utrecht-button-subtle-font-weight: 700;
+	--utrecht-button-primary-action-font-weight: var(
+		--nldesign-website-button-font-weight,
+		700
+	);
+	--utrecht-button-secondary-action-font-weight: var(
+		--nldesign-website-button-font-weight,
+		700
+	);
+	--utrecht-button-subtle-font-weight: var(
+		--nldesign-website-button-font-weight,
+		700
+	);
 	--utrecht-data-list-item-key-font-weight: 700;
 	--utrecht-document-font-size: 16px;
 	--utrecht-document-line-height: 150%;
 	--utrecht-form-label-checkbox-font-weight: 400;
 	--utrecht-form-label-font-size: 16px;
 	--utrecht-form-label-font-weight: 700;
-	--utrecht-heading-1-font-size: 36px;
+	--utrecht-heading-1-font-size: var(--nldesign-website-heading-1-font-size, 36px);
 	--utrecht-heading-1-font-weight: 700;
 	--utrecht-heading-1-line-height: 125%;
-	--utrecht-heading-2-font-size: 32px;
+	--utrecht-heading-2-font-size: var(--nldesign-website-heading-2-font-size, 32px);
 	--utrecht-heading-2-font-weight: 700;
 	--utrecht-heading-2-line-height: 125%;
-	--utrecht-heading-3-font-size: 24px;
+	--utrecht-heading-3-font-size: var(--nldesign-website-heading-3-font-size, 24px);
 	--utrecht-heading-3-font-weight: 700;
 	--utrecht-heading-3-line-height: 125%;
 	--utrecht-heading-4-font-size: 20px;
@@ -933,7 +949,7 @@
 	--utrecht-ordered-list-padding-inline-start: 24px;
 	--utrecht-paragraph-font-size: 16px;
 	--utrecht-paragraph-font-weight: 400;
-	--utrecht-paragraph-lead-font-size: 20px;
+	--utrecht-paragraph-lead-font-size: var(--nldesign-website-lead-font-size, 20px);
 	--utrecht-paragraph-lead-font-weight: 400;
 	--utrecht-paragraph-lead-line-height: 150%;
 	--utrecht-paragraph-line-height: 150%;
@@ -953,7 +969,10 @@
 	--utrecht-separator-margin-block-start: 32px;
 	--utrecht-skip-link-text-decoration: underline;
 	--utrecht-table-cell-padding-inline-start: 12px;
-	--utrecht-textbox-border-width: 1px;
+	--utrecht-textbox-border-width: var(
+		--nldesign-website-control-border-width,
+		1px
+	);
 	--utrecht-textbox-font-size: 16px;
 	--utrecht-textbox-font-weight: 400;
 	--utrecht-textbox-max-inline-size: 400px;
@@ -1064,6 +1083,87 @@
 	);
 
 	/*
+	 * THE WEBSITE'S TYPE SCALE, CONTROLS AND MARKS
+	 * (openspec/changes/zuiddrecht-website-type-and-controls).
+	 *
+	 * A design draws its signed-in pages with a type scale, a control border,
+	 * a tag shape, process step markers, a notice and tabs of its own. The
+	 * Zuiddrecht boards: 44px page titles over a 36px default, 2px outlined
+	 * buttons, pill tags, 36px steps filled blue when done and red-ringed
+	 * when current, a light blue notice with a 1px border, a grey tab line
+	 * with the tab on screen in red. None of that is a colour the
+	 * `--nldesign-color-*` layer names, so a set says it in this vocabulary,
+	 * which only this file reads (an instance page never sees it):
+	 *
+	 *   --nldesign-website-heading-1-font-size, -2-, -3-   the three heading sizes
+	 *   --nldesign-website-control-border-width            buttons and text boxes
+	 *   --nldesign-website-badge-border-radius             a data badge (a status tag)
+	 *   --nldesign-website-step-marker-size                a process step's marker
+	 *   --nldesign-website-step-done-color                 a done step's fill, ring and line
+	 *   --nldesign-website-step-done-mark-color            the tick on that fill
+	 *   --nldesign-website-step-current-color              the current step's ring and number
+	 *   --nldesign-website-step-current-background-color   the current step's fill
+	 *   --nldesign-website-notice-background-color         a plain notice's ground
+	 *   --nldesign-website-notice-border-color             its border
+	 *   --nldesign-website-notice-border-width             its border width
+	 *   --nldesign-website-tab-line-color                  the line under a tab list
+	 *   --nldesign-website-tab-current-color               the mark under the tab on screen
+	 *
+	 * The public site's own pages add to it
+	 * (openspec/changes/zuiddrecht-site-page-title-notice-surface):
+	 *
+	 *   --nldesign-website-page-title-size                 a content page's title (an h1
+	 *                                                      drawn larger than heading 1)
+	 *   --nldesign-website-page-title-line-height          its line height
+	 *   --nldesign-website-lead-font-size                  the lead paragraph
+	 *   --nldesign-website-notice-color                    the text on a plain notice
+	 *   --nldesign-color-surface                           the site's grey band and a
+	 *                                                      boxed table's header row
+	 *
+	 * An attention strip ("Let op": something the resident has to act on) is
+	 * not the plain notice above, which a board draws next to it in its own
+	 * colours, so it has names of its own:
+	 *
+	 *   --nldesign-website-attention-background-color      its ground
+	 *   --nldesign-website-attention-border-color          its border
+	 *   --nldesign-website-attention-color                 its text
+	 *
+	 * The portal reads them by name for its notice banner; the roles below
+	 * carry them, without a fallback.
+	 *
+	 * The portal reads the page title, the notice text and the surface by
+	 * name (css/site-theme.css in portaliq); the roles below carry them so a
+	 * reader exists in this repository, and the lead size wraps the Utrecht
+	 * literal, which the portal's lead paragraph reads.
+	 *
+	 * EVERY ROLE KEEPS TODAY'S VALUE AS ITS FALLBACK, so a set that names
+	 * none of these changes nothing: the heading sizes, border widths, the
+	 * notice border width and the Den Haag step marker roles fall back to
+	 * what they were (the marker roles are wrapped by
+	 * scripts/generate-denhaag-bridge.mjs from the `website` section of the
+	 * mapping). The notice ground, border and text, the data badge radius (no
+	 * pinned Den Haag stylesheet reads it; the portal's badge does), the two
+	 * tab roles, the page title roles, the surface and the attention roles below carry no
+	 * fallback on purpose: unset, a consumer's own fallback applies, as with
+	 * the website radii above.
+	 */
+	--nl-data-badge-border-radius: var(--nldesign-website-badge-border-radius);
+	--thematiq-tab-line-color: var(--nldesign-website-tab-line-color);
+	--thematiq-tab-current-color: var(--nldesign-website-tab-current-color);
+	--thematiq-page-title-font-size: var(--nldesign-website-page-title-size);
+	--thematiq-page-title-line-height: var(
+		--nldesign-website-page-title-line-height
+	);
+	--thematiq-surface-color: var(--nldesign-color-surface);
+	--thematiq-attention-background-color: var(
+		--nldesign-website-attention-background-color
+	);
+	--thematiq-attention-border-color: var(
+		--nldesign-website-attention-border-color
+	);
+	--thematiq-attention-color: var(--nldesign-website-attention-color);
+
+	/*
 	 * The footer's bottom band: the footer's own ground one step darker, as
 	 * the school designs draw it. No fallback: a set that names no footer
 	 * colour keeps the band it had.
@@ -1089,6 +1189,49 @@
 	);
 	--thematiq-hero-action-color: var(--nldesign-hero-action-color);
 	--thematiq-hero-decoration-image: var(--nldesign-hero-decoration-image);
+
+	/*
+	 * THE NAMES THE PORTAL READS BY ITSELF (portaliq css/site-theme.css; the
+	 * full list is tests/vitest/fixtures/portal-site-nldesign-readers.json).
+	 * A set may only declare a `--nldesign-*` name something reads
+	 * (TokenSetVocabularyTest), and that test looks inside this repository.
+	 * The portal read these names and nothing here did, so #1105 took two of
+	 * them out of Zuiddrecht as unread, and the blue mark under the menu item
+	 * on screen went with them. Each gets a role here, so the vocabulary
+	 * knows the portal reads it. No fallbacks: a set that names none of them
+	 * leaves the portal's own fallback in force.
+	 */
+	--thematiq-website-page-max-width: var(--nldesign-website-page-max-width);
+	--thematiq-website-page-gutter: var(--nldesign-website-page-gutter);
+	--thematiq-website-band-max-width: var(--nldesign-website-band-max-width);
+	--thematiq-website-header-max-width: var(--nldesign-website-header-max-width);
+	--thematiq-website-header-gutter: var(--nldesign-website-header-gutter);
+	--thematiq-website-content-font-size: var(--nldesign-website-content-font-size);
+	--thematiq-website-nav-current-in-line: var(
+		--nldesign-website-nav-current-in-line
+	);
+	--thematiq-website-nav-current-color: var(--nldesign-website-nav-current-color);
+	--thematiq-website-hero-title-size: var(--nldesign-website-hero-title-size);
+	--thematiq-website-hero-decoration-opacity: var(
+		--nldesign-website-hero-decoration-opacity
+	);
+	--thematiq-color-border-strong: var(--nldesign-color-border-strong);
+	--thematiq-emblem-url: var(--nldesign-emblem-url);
+
+	/*
+	 * The site's own grey text and the ground of a missing picture. The site
+	 * reads --nldesign-color-text-muted, which is the workplace's grey too,
+	 * and this file loads before the set, so it cannot change that name; it
+	 * offers the website's grey under its own role, falling back to the
+	 * shared one. The placeholder ground has no fallback.
+	 */
+	--thematiq-website-text-muted: var(
+		--nldesign-website-color-text-muted,
+		var(--nldesign-color-text-muted)
+	);
+	--thematiq-placeholder-background-color: var(
+		--nldesign-website-placeholder-background-color
+	);
 
 	/*
 	 * THE BRAND STRIPE ON THE PORTAL (openspec/changes/brand-motif-on-portals).
@@ -1140,7 +1283,7 @@
 	 * Den Haag component properties for every token set. GENERATED by
 	 * scripts/generate-denhaag-bridge.mjs from scripts/mapping/denhaag-component-tokens.json.
 	 * Do not edit by hand. Colours follow the set; geometry is Den Haag's.
-	 * Mapping sha256: 4c73482f86ef509de822329eecebbb461274a7cde01c5b11f6a947da5b08ff46
+	 * Mapping sha256: b5b633d2a29aa3ea5198cfadf824421dc604f7b5f324db1a8d3522ee352439fe
 	 * Sources: @gemeente-denhaag/action 4.4.2, @gemeente-denhaag/card 5.1.4, @gemeente-denhaag/contact-timeline 4.1.3, @gemeente-denhaag/data-badge 2.2.2, @gemeente-denhaag/file 2.5.3, @gemeente-denhaag/process-steps 4.3.3, @gemeente-denhaag/side-navigation 4.2.4, @gemeente-denhaag/sidenav 2.0.0, @gemeente-denhaag/step-marker 3.1.3, @gemeente-denhaag/design-tokens-components 5.1.0, @gemeente-denhaag/design-tokens-common 4.0.0
 	 */
 	--thematiq-status-warning-text: color-mix(
@@ -1467,14 +1610,17 @@
 	--denhaag-step-marker-border-color: var(--nldesign-color-border-dark, #696969);
 	--denhaag-step-marker-border-width: 2px;
 	--denhaag-step-marker-checked-background-color: var(
-		--nldesign-color-background,
-		#fff
+		--nldesign-website-step-done-color,
+		var(--nldesign-color-background, #fff)
 	);
 	--denhaag-step-marker-checked-border-color: var(
-		--nldesign-color-success,
-		#39870c
+		--nldesign-website-step-done-color,
+		var(--nldesign-color-success, #39870c)
 	);
-	--denhaag-step-marker-checked-color: var(--thematiq-status-success-text);
+	--denhaag-step-marker-checked-color: var(
+		--nldesign-website-step-done-mark-color,
+		var(--thematiq-status-success-text)
+	);
 	--denhaag-step-marker-checked-nested-background-color: var(
 		--nldesign-color-background,
 		#fff
@@ -1486,8 +1632,8 @@
 	--denhaag-step-marker-checked-nested-color: var(--thematiq-status-success-text);
 	--denhaag-step-marker-color: var(--nldesign-color-text, #333333);
 	--denhaag-step-marker-connector-checked-outline-color: var(
-		--nldesign-color-success,
-		#39870c
+		--nldesign-website-step-done-color,
+		var(--nldesign-color-success, #39870c)
 	);
 	--denhaag-step-marker-connector-color: var(
 		--nldesign-color-border-dark,
@@ -1515,14 +1661,17 @@
 		#e17000
 	);
 	--denhaag-step-marker-current-background-color: var(
-		--nldesign-color-primary,
-		#154273
+		--nldesign-website-step-current-background-color,
+		var(--nldesign-color-primary, #154273)
 	);
 	--denhaag-step-marker-current-border-color: var(
-		--nldesign-color-primary,
-		#154273
+		--nldesign-website-step-current-color,
+		var(--nldesign-color-primary, #154273)
 	);
-	--denhaag-step-marker-current-color: var(--nldesign-color-primary-text, #ffffff);
+	--denhaag-step-marker-current-color: var(
+		--nldesign-website-step-current-color,
+		var(--nldesign-color-primary-text, #ffffff)
+	);
 	--denhaag-step-marker-current-nested-background-color: var(
 		--nldesign-color-primary,
 		#154273
@@ -1620,7 +1769,7 @@
 		--nldesign-color-text-muted,
 		#696969
 	);
-	--denhaag-step-marker-size: 32px;
+	--denhaag-step-marker-size: var(--nldesign-website-step-marker-size, 32px);
 	--denhaag-step-marker-warning-background-color: var(
 		--nldesign-color-background,
 		#fff

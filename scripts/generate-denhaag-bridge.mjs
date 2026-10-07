@@ -218,12 +218,31 @@ export function buildSection(mapping, mappingText, readSource, defaults) {
 			// An empty token value means "unset" upstream; leave the component's own behaviour.
 			continue
 		}
+		// A website vocabulary token refines the role: a set that names it wins,
+		// every other set keeps the value above as the fallback
+		// (openspec/changes/zuiddrecht-website-type-and-controls).
+		const website = mapping.website?.[name]
+		if (website !== undefined) {
+			value = `var(${website.token}, ${value})`
+		}
 		lines.push(`\t${name}: ${value};`)
 	}
 
 	for (const name of Object.keys(mapping.colours)) {
 		if (needAll.has(name) === false) {
 			problems.push(`${name}: in the mapping, but no pinned component reads it`)
+		}
+	}
+	for (const [name, rule] of Object.entries(mapping.website ?? {})) {
+		if (name.startsWith('_') === true) {
+			// The section's own comment.
+			continue
+		}
+		if (needAll.has(name) === false) {
+			problems.push(`${name}: under "website", but no pinned component reads it`)
+		}
+		if (/^--nldesign-website-[a-z0-9-]+$/.test(rule.token ?? '') === false) {
+			problems.push(`${name}: a "website" rule must name a --nldesign-website-* token`)
 		}
 	}
 	for (const alias of Object.values(mapping.aliases)) {

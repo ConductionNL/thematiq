@@ -89,13 +89,25 @@ function percentage(expression) {
 describe('workplace layout: the light top bar', () => {
 	const rules = rulesOf('css/workplace-layout.css')
 
-	it('is one rule on the top bar, which leaves the login page alone, and one for the login watermark', () => {
-		expect(rules.length).toBe(2)
+	it('starts with the rule on the top bar, which leaves the login page alone, then the login watermark', () => {
 		expect(rules[1].selectors).toEqual(['body#body-login::before'])
 		for (const selector of rules[0].selectors) {
 			expect(selector).toMatch(
 				/^:where\(body:not\(#body-login\)\) (header)?#header$/,
 			)
+		}
+	})
+
+	it('writes no colour literal anywhere in the sheet', () => {
+		// The sheet may be turned on for any set, in the light and in the dark,
+		// so every colour comes from the scheme or from a token.
+		for (const rule of rules) {
+			for (const [prop, value] of Object.entries(rule.decls)) {
+				expect(
+					/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i.test(value),
+					rule.selectors.join(', ') + ' { ' + prop + ': ' + value + ' }',
+				).toBe(false)
+			}
 		}
 	})
 
@@ -408,7 +420,9 @@ describe('the layout stylesheets are off unless asked for', () => {
 		const systems = JSON.parse(read('design-systems.json'))
 		const listed = systems.flatMap((system) =>
 			(system.stylesheets || []).filter((sheet) =>
-				/workplace-layout|brand-stripe/.test(sheet),
+				/workplace-layout|brand-stripe|navigation-width|navigation-active-soft|login-watermark-off/.test(
+					sheet,
+				),
 			),
 		)
 		expect(listed).toEqual([])
@@ -425,5 +439,237 @@ describe('the layout stylesheets are off unless asked for', () => {
 			'esdoornveen',
 			'warmtepompacademie',
 		])
+	})
+})
+
+/**
+ * The rules of a sheet whose selector list contains `needle`.
+ *
+ * @param {Array<{selectors: Array<string>, decls: Record<string, string>}>} rules The sheet.
+ * @param {string} needle Part of a selector.
+ * @return {Array<{selectors: Array<string>, decls: Record<string, string>}>} The matches.
+ */
+function withSelector(rules, needle) {
+	// Prettier breaks a long selector over several lines; compare it flat.
+	return rules.filter((rule) =>
+		rule.selectors.some((selector) =>
+			selector.replace(/\s+/g, ' ').includes(needle),
+		),
+	)
+}
+
+describe('workplace layout: the login page and the guest pages', () => {
+	// @spec openspec/changes/workplace-layout-core-pages/specs/workplace-layout/spec.md
+	const rules = rulesOf('css/workplace-layout.css')
+
+	it("shows Nextcloud's own guest logo above the card, 56px high, with the set's logo in it", () => {
+		const [logo] = withSelector(rules, '#header.header-guest .logo')
+		expect(logo.decls.display).toBe('block !important')
+		expect(logo.decls.height).toBe('56px !important')
+		expect(logo.decls['background-image']).toBe(
+			'var(--nldesign-logo-url, var(--image-logo)) !important',
+		)
+		const [header] = withSelector(rules, 'body#body-login #header.header-guest')
+		expect(header.decls.display).toBe('block !important')
+	})
+
+	it('retires the in-card stamp and the room the NL Design sheet keeps for it', () => {
+		const [stamp] = withSelector(rules, '.guest-box.login-box::after')
+		expect(stamp.decls.display).toBe('none !important')
+		const [wrapper] = withSelector(rules, "div[class*='login-box__wrapper']")
+		expect(wrapper.decls['padding-top']).toBe(
+			'var(--nldesign-brand-stripe-height, 0px) !important',
+		)
+	})
+
+	it('draws the card 420px wide with a hairline, the container radius and the card shadow colour', () => {
+		const [card] = rules.filter(
+			(rule) =>
+				rule.selectors.join() === 'body#body-login .guest-box.login-box',
+		)
+		expect(card.decls.width).toBe('min(420px, 100%) !important')
+		expect(card.decls.border).toBe(
+			'1px solid var(--nldesign-component-login-box-border-color, var(--color-border)) !important',
+		)
+		expect(card.decls['border-radius']).toBe(
+			'var( --nldesign-component-login-box-border-radius, var(--border-radius-container-large) ) !important',
+		)
+		expect(card.decls['box-shadow']).toBe(
+			'0 2px 12px var(--nldesign-component-content-card-shadow-color, transparent) !important',
+		)
+	})
+
+	it('titles the card at 24px and sizes the controls at 44px with a 1px edge', () => {
+		const [title] = withSelector(rules, '.login-form__headline')
+		expect(title.decls['font-size']).toBe('24px !important')
+		const [body] = rules.filter(
+			(rule) => rule.selectors.join() === 'body#body-login',
+		)
+		expect(body.decls['--default-clickable-area']).toBe('44px')
+		const [input] = withSelector(rules, '.input-field__input')
+		expect(input.decls['border-width']).toBe('1px !important')
+	})
+
+	it('paints the guest action button label with the login button label colour', () => {
+		// The NL Design link rule `a:not(#header a)…` scores (1,2,4); these
+		// selectors must outrank it or the label stays link-blue on blue.
+		const [action] = withSelector(
+			rules,
+			'.body-login-container a.button.primary',
+		)
+		expect(action.decls.color).toBe(
+			'var( --nldesign-component-login-button-color, var(--color-primary-element-text) ) !important',
+		)
+		for (const selector of action.selectors) {
+			const [ids, classes] = specificity(selector)
+			expect(ids >= 1 && classes >= 3, selector).toBe(true)
+		}
+	})
+
+	it('paints the two text actions under the form in the link colour, through the on-surface opt-out', () => {
+		const [actions] = rules.filter(
+			(rule) =>
+				rule.decls['--nldesign-color-on-surface'] !== undefined
+				&& rule.selectors.some((s) =>
+					s.includes('.button-vue--vue-tertiary'),
+				),
+		)
+		expect(actions.decls['--nldesign-color-on-surface']).toBe(
+			'var( --nldesign-color-link, var(--color-primary-element) )',
+		)
+		expect(actions.decls.color).toBe(
+			'var(--nldesign-color-link, var(--color-primary-element)) !important',
+		)
+		// The control: the NL Design text rule really reads the opt-out.
+		expect(read('css/systems/nldesign/element-overrides.css')).toContain(
+			'var(--nldesign-color-on-surface, var(--nldesign-color-text)) !important',
+		)
+	})
+
+	it('takes the plate from under the footer line and mutes it', () => {
+		const [footer] = withSelector(rules, 'body#body-login footer.guest-box')
+		expect(footer.decls.background).toBe('transparent !important')
+		const [line] = withSelector(rules, 'footer.guest-box p.info a.entity-name')
+		expect(line.decls.color).toBe('var(--color-text-maxcontrast) !important')
+		for (const selector of line.selectors.filter((s) =>
+			s.endsWith(' a.entity-name'),
+		)) {
+			const [ids, classes] = specificity(selector)
+			expect(ids >= 1 && classes >= 3, selector).toBe(true)
+		}
+	})
+})
+
+describe('workplace layout: the top bar', () => {
+	// @spec openspec/changes/workplace-layout-core-pages/specs/workplace-layout/spec.md
+	const rules = rulesOf('css/workplace-layout.css')
+
+	it('is 68px high through the variable Nextcloud lays the page out from', () => {
+		const [body] = rules.filter(
+			(rule) => rule.selectors.join() === 'body:not(#body-login)',
+		)
+		expect(body.decls['--header-height']).toBe('68px')
+	})
+
+	it('draws the app grid button as a 40px square on the workspace colour', () => {
+		const [waffle] = withSelector(rules, '.app-menu__waffle')
+		expect(waffle.decls['--button-size']).toBe('40px')
+		expect(waffle.decls.width).toBe('40px !important')
+		expect(waffle.decls.height).toBe('40px !important')
+		expect(waffle.decls['border-radius']).toBe(
+			'var(--border-radius-element) !important',
+		)
+		expect(waffle.decls['background-color']).toContain(
+			'--nldesign-component-content-surface-background-color',
+		)
+	})
+
+	it('draws the search field as a 44px pill on the workspace colour with a muted regular label', () => {
+		const [search] = withSelector(rules, '.unified-search__button')
+		expect(search.decls.height).toBe('44px !important')
+		expect(search.decls['border-radius']).toBe('22px !important')
+		expect(search.decls.border).toBe('1px solid var(--color-border) !important')
+		expect(search.decls['font-weight']).toBe('400 !important')
+		expect(search.decls.color).toBe('var(--color-text-maxcontrast) !important')
+	})
+
+	it("keeps the dashboard's panel row transparent on the workspace", () => {
+		const [row] = withSelector(rules, '#content.app-dashboard .panels')
+		expect(row.decls.background).toBe('transparent !important')
+	})
+})
+
+describe('workplace layout: the standard apps as cards on the surface', () => {
+	// @spec openspec/changes/workplace-layout-standard-apps/specs/workplace-layout/spec.md
+	const rules = rulesOf('css/workplace-layout.css')
+
+	it("draws the dashboard's panels as cards with the card title size", () => {
+		const [panel] = rules.filter(
+			(rule) =>
+				rule.selectors.join()
+				=== ':where(body:not(#body-login)) #content.app-dashboard .panel',
+		)
+		expect(panel.decls['border-radius']).toBe(
+			'var(--border-radius-container-large) !important',
+		)
+		expect(panel.decls.border).toBe('1px solid var(--color-border) !important')
+		expect(panel.decls['box-shadow']).toContain(
+			'--nldesign-component-content-card-shadow-color',
+		)
+		const [title] = withSelector(
+			rules,
+			'#content.app-dashboard .panel > .panel--header > h2',
+		)
+		expect(title.decls['font-size']).toBe(
+			'var(--nldesign-component-heading-3-font-size) !important',
+		)
+	})
+
+	it('draws the Files list as one card, its rows and README on the card, its header labels 14px muted', () => {
+		const [list] = rules.filter(
+			(rule) =>
+				rule.selectors.join()
+				=== ':where(body:not(#body-login)) #app-content-vue .files-list',
+		)
+		expect(list.decls.background).toBe('var(--color-main-background) !important')
+		expect(list.decls.border).toBe('1px solid var(--color-border) !important')
+		expect(list.decls['border-radius']).toBe(
+			'var(--border-radius-container-large) !important',
+		)
+		const [rows] = withSelector(rules, '.files-list .files-list__thead')
+		const headRows = withSelector(
+			rules,
+			'#app-content-vue .files-list .files-list__tfoot',
+		)
+		expect(headRows[0].decls['background-color']).toBe(
+			'var(--color-main-background) !important',
+		)
+		const [labels] = withSelector(rules, '.files-list .files-list__thead th')
+		expect(labels.decls['font-size']).toBe('14px !important')
+		expect(labels.decls.color).toBe('var(--color-text-maxcontrast) !important')
+		const [readme] = withSelector(
+			rules,
+			'.files-list #rich-workspace .text-editor__main',
+		)
+		expect(readme.decls['background-color']).toBe(
+			'var(--color-main-background) !important',
+		)
+		expect(rows).toBeDefined()
+	})
+
+	it('draws the settings sections as cards and the theme picker select 44px high', () => {
+		const [section] = withSelector(
+			rules,
+			'#content.app-settings #app-content-vue .section',
+		)
+		expect(section.decls.background).toBe(
+			'var(--color-main-background) !important',
+		)
+		expect(section.decls.border).toBe('1px solid var(--color-border) !important')
+		expect(section.decls['border-radius']).toBe(
+			'var(--border-radius-container-large) !important',
+		)
+		const [select] = withSelector(rules, '#nldesign-token-set-select')
+		expect(select.decls.height).toBe('44px !important')
 	})
 })

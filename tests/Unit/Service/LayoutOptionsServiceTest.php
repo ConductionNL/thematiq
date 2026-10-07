@@ -15,6 +15,7 @@
  *
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
+ * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -176,8 +177,233 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function testAnUnknownSetResolvesToTheDefaults(): void {
-		$this->assertSame(['workplaceLayout' => 'default', 'brandStripe' => false], $this->service->setDefaults(tokenSet: 'custom-does-not-exist'));
+		$this->assertSame(
+			[
+				'workplaceLayout' => 'default',
+				'brandStripe' => false,
+				'navigationWidth' => '',
+				'navigationActiveStyle' => 'default',
+				'brandStripePlacement' => 'header-and-login',
+				'loginWatermark' => '1',
+				'headerStyle' => 'default',
+			],
+			$this->service->setDefaults(tokenSet: 'custom-does-not-exist')
+		);
 	}//end testAnUnknownSetResolvesToTheDefaults()
+
+	/**
+	 * Zuiddrecht names a 264px navigation, the soft selected entry, the
+	 * stripe on the login card only and the workplace top bar; it leaves the
+	 * watermark to the built-in default.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 */
+	public function testZuiddrechtWearsTheNewerDefaults(): void {
+		$this->assertSame(
+			[
+				'workplaceLayout' => 'light',
+				'brandStripe' => true,
+				'navigationWidth' => 264,
+				'navigationActiveStyle' => 'soft',
+				'brandStripePlacement' => 'login',
+				'loginWatermark' => true,
+				'headerStyle' => 'workplace',
+			],
+			$this->service->resolved(tokenSet: 'zuiddrecht')
+		);
+		$this->assertSame(
+			['workplace-layout', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'navigation-active-soft'],
+			$this->service->stylesheets(tokenSet: 'zuiddrecht')
+		);
+		$this->assertSame(
+			[['id' => 'thematiq-navigation-width', 'css' => ':root { --thematiq-navigation-width: 264px; }']],
+			$this->service->inlineStyles(tokenSet: 'zuiddrecht')
+		);
+	}//end testZuiddrechtWearsTheNewerDefaults()
+
+	/**
+	 * Every shipped set but zuiddrecht resolves the newer options to what
+	 * it had before they existed: Nextcloud's navigation width, the default
+	 * selected entry, the stripe in both places, the watermark drawn and
+	 * Nextcloud's own top bar.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 */
+	public function testEveryOtherShippedSetKeepsTheNewerDefaults(): void {
+		$changed = [];
+		$walked = 0;
+		foreach (array_keys($this->shippedManifest()) as $id) {
+			if ($id === 'zuiddrecht') {
+				continue;
+			}
+
+			$walked++;
+			$resolved = $this->service->resolved(tokenSet: $id);
+			$newer = array_diff_key($resolved, ['workplaceLayout' => 1, 'brandStripe' => 1]);
+			$expected = [
+				'navigationWidth' => null,
+				'navigationActiveStyle' => 'default',
+				'brandStripePlacement' => 'header-and-login',
+				'loginWatermark' => true,
+				'headerStyle' => 'default',
+			];
+			if ($newer !== $expected) {
+				$changed[] = $id;
+			}
+
+			$sheets = array_diff($this->service->stylesheets(tokenSet: $id), ['workplace-layout', 'brand-stripe']);
+			if ($sheets !== [] || $this->service->inlineStyles(tokenSet: $id) !== []) {
+				$changed[] = $id . ' (stylesheets)';
+			}
+		}
+
+		$this->assertGreaterThan(60, $walked, 'The walk must cover the shipped sets, not an empty list.');
+		$this->assertSame([], $changed);
+	}//end testEveryOtherShippedSetKeepsTheNewerDefaults()
+
+	/**
+	 * A stored choice wins over the set for each newer option, and the empty
+	 * choice follows the set again.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 */
+	public function testAStoredNewerChoiceWinsOverTheSet(): void {
+		$this->assertSame('', $this->service->setOption(key: 'workplace_layout', value: 'light'));
+		$this->assertSame('', $this->service->setOption(key: 'brand_stripe', value: '1'));
+		$this->assertSame('', $this->service->setOption(key: 'navigation_width', value: '320'));
+		$this->assertSame('', $this->service->setOption(key: 'navigation_active_style', value: 'default'));
+		$this->assertSame('', $this->service->setOption(key: 'brand_stripe_placement', value: 'login'));
+		$this->assertSame('', $this->service->setOption(key: 'login_watermark', value: '0'));
+
+		$resolved = $this->service->resolved(tokenSet: 'zuiddrecht');
+		$this->assertSame(320, $resolved['navigationWidth']);
+		$this->assertSame('default', $resolved['navigationActiveStyle']);
+		$this->assertSame('login', $resolved['brandStripePlacement']);
+		$this->assertFalse($resolved['loginWatermark']);
+		$this->assertSame(
+			['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width'],
+			$this->service->stylesheets(tokenSet: 'zuiddrecht')
+		);
+		$this->assertSame(':root { --thematiq-navigation-width: 320px; }', $this->service->inlineStyles(tokenSet: 'zuiddrecht')[0]['css']);
+
+		$this->assertSame('320', $this->service->setOption(key: 'navigation_width', value: ''));
+		$this->assertSame('login', $this->service->setOption(key: 'brand_stripe_placement', value: 'header'));
+		$this->assertSame(264, $this->service->resolved(tokenSet: 'zuiddrecht')['navigationWidth']);
+		$this->assertSame(
+			['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-header-only', 'navigation-width'],
+			$this->service->stylesheets(tokenSet: 'zuiddrecht')
+		);
+	}//end testAStoredNewerChoiceWinsOverTheSet()
+
+	/**
+	 * A value an option does not accept is refused and nothing is stored: a
+	 * width outside 200 to 480 or not a whole number, an unknown style, an
+	 * unknown placement, a watermark that is not 1 or 0, an unknown layout
+	 * for an older option, an unknown key.
+	 *
+	 * @param string $key The app config key.
+	 * @param string $value The value offered.
+	 *
+	 * @return void
+	 *
+	 * @dataProvider refusedNewerValueProvider
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 */
+	public function testAValueAnOptionDoesNotAcceptIsRefused(string $key, string $value): void {
+		$this->assertFalse($this->service->accepts(key: $key, value: $value));
+		try {
+			$this->service->setOption(key: $key, value: $value);
+			$this->fail('Expected an InvalidArgumentException.');
+		} catch (InvalidArgumentException $e) {
+			$this->assertSame([], $this->stored);
+		}
+	}//end testAValueAnOptionDoesNotAcceptIsRefused()
+
+	/**
+	 * Values each option refuses.
+	 *
+	 * @return array<string, array{0: string, 1: string}>
+	 */
+	public static function refusedNewerValueProvider(): array {
+		return [
+			'width below the range' => ['navigation_width', '199'],
+			'width above the range' => ['navigation_width', '481'],
+			'width with a unit' => ['navigation_width', '264px'],
+			'width that is not a number' => ['navigation_width', 'wide'],
+			'unknown style' => ['navigation_active_style', 'bold'],
+			'unknown placement' => ['brand_stripe_placement', 'footer'],
+			'watermark that is not a flag' => ['login_watermark', 'yes'],
+			'an older option refuses an unknown value too' => ['workplace_layout', 'wide'],
+			'unknown key' => ['navigation_colour', 'red'],
+		];
+	}//end refusedNewerValueProvider()
+
+	/**
+	 * A stored value the option no longer accepts, and a manifest default the
+	 * option does not accept, both read as "follow": the page still renders.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 */
+	public function testAnUnreadableNewerValueFollowsTheBuiltInDefault(): void {
+		$this->stored['navigation_width'] = '12';
+		$this->stored['navigation_active_style'] = 'bold';
+		$this->assertSame('', $this->service->setting(key: 'navigation_width'));
+		$this->assertSame('', $this->service->setting(key: 'navigation_active_style'));
+		$this->assertSame(264, $this->service->resolved(tokenSet: 'zuiddrecht')['navigationWidth']);
+
+		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems->method('getTokenSetMeta')->willReturn(
+			['layout' => ['navigation_width' => 900, 'navigation_active_style' => 7, 'brand_stripe_placement' => 'roof', 'login_watermark' => 'no', 'header_style' => 'dark']]
+		);
+		$service = new LayoutOptionsService(config: $this->config, designSystemService: $designSystems);
+		$this->stored = [];
+		$this->assertSame(
+			['navigationWidth' => '', 'navigationActiveStyle' => 'default', 'brandStripePlacement' => 'header-and-login', 'loginWatermark' => '1', 'headerStyle' => 'default'],
+			array_diff_key($service->setDefaults(tokenSet: 'odd'), ['workplaceLayout' => 1, 'brandStripe' => 1])
+		);
+	}//end testAnUnreadableNewerValueFollowsTheBuiltInDefault()
+
+	/**
+	 * A set may declare the width as a number or as a string, and may say
+	 * the watermark is off and the stripe is on the login card only.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 */
+	public function testASetMayDeclareEveryNewerDefault(): void {
+		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems->method('getTokenSetMeta')->willReturn(
+			[
+				'layout' => [
+					'workplace_layout' => 'light',
+					'brand_stripe' => true,
+					'navigation_width' => '240',
+					'navigation_active_style' => 'soft',
+					'brand_stripe_placement' => 'login',
+					'login_watermark' => false,
+					'header_style' => 'workplace',
+				],
+			]
+		);
+		$service = new LayoutOptionsService(config: $this->config, designSystemService: $designSystems);
+
+		$this->assertSame(
+			[
+				'workplaceLayout' => 'light',
+				'brandStripe' => true,
+				'navigationWidth' => 240,
+				'navigationActiveStyle' => 'soft',
+				'brandStripePlacement' => 'login',
+				'loginWatermark' => false,
+				'headerStyle' => 'workplace',
+			],
+			$service->resolved(tokenSet: 'declares-all')
+		);
+		$this->assertSame(
+			['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'navigation-active-soft'],
+			$service->stylesheets(tokenSet: 'declares-all')
+		);
+	}//end testASetMayDeclareEveryNewerDefault()
 
 	/**
 	 * The administrator's choice always wins, in both directions.
@@ -242,4 +468,26 @@ class LayoutOptionsServiceTest extends TestCase {
 		$this->assertSame('light', $this->service->workplaceLayout(tokenSet: 'zuiddrecht'));
 		$this->assertFalse($this->service->brandStripe(tokenSet: 'utrecht'));
 	}//end testAnUnreadableStoredValueFollowsTheSet()
+
+	/**
+	 * The workplace top bar loads only with the light layout: a set or an
+	 * administrator that asks for it on Nextcloud's own coloured bar gets
+	 * nothing, since the bar it places is the light one.
+	 *
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 */
+	public function testTheWorkplaceHeaderNeedsTheLightLayout(): void {
+		$this->assertSame('', $this->service->setOption(key: 'header_style', value: 'workplace'));
+		$this->assertContains('header-workplace', $this->service->stylesheets(tokenSet: 'zuiddrecht'));
+		$this->assertNotContains('header-workplace', $this->service->stylesheets(tokenSet: 'utrecht'));
+		$this->assertSame('workplace', $this->service->resolved(tokenSet: 'utrecht')['headerStyle']);
+
+		$this->assertSame('', $this->service->setOption(key: 'workplace_layout', value: 'default'));
+		$this->assertNotContains('header-workplace', $this->service->stylesheets(tokenSet: 'zuiddrecht'));
+
+		$this->assertSame('workplace', $this->service->setOption(key: 'header_style', value: 'default'));
+		$this->assertSame('default', $this->service->setOption(key: 'workplace_layout', value: ''));
+		$this->assertNotContains('header-workplace', $this->service->stylesheets(tokenSet: 'zuiddrecht'));
+		$this->assertFalse($this->service->accepts(key: 'header_style', value: 'dark'));
+	}//end testTheWorkplaceHeaderNeedsTheLightLayout()
 }//end class

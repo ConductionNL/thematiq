@@ -15,6 +15,7 @@
  *
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
+ * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -127,7 +128,20 @@ class LayoutControllerTest extends TestCase {
 				'status' => 'ok',
 				'workplaceLayout' => 'default',
 				'brandStripe' => '0',
-				'resolved' => ['workplaceLayout' => 'default', 'brandStripe' => false],
+				'navigationWidth' => '',
+				'navigationActiveStyle' => '',
+				'brandStripePlacement' => '',
+				'loginWatermark' => '',
+				'headerStyle' => '',
+				'resolved' => [
+					'workplaceLayout' => 'default',
+					'brandStripe' => false,
+					'navigationWidth' => null,
+					'navigationActiveStyle' => 'default',
+					'brandStripePlacement' => 'header-and-login',
+					'loginWatermark' => true,
+					'headerStyle' => 'default',
+				],
 			],
 			$response->getData()
 		);
@@ -148,9 +162,67 @@ class LayoutControllerTest extends TestCase {
 	public function testTheEmptyChoiceAnswersWithTheSetsDefaults(): void {
 		$response = $this->controller->save(workplaceLayout: '', brandStripe: '');
 
-		$this->assertSame(['workplaceLayout' => 'light', 'brandStripe' => true], $response->getData()['resolved']);
+		$this->assertSame(
+			[
+				'workplaceLayout' => 'light',
+				'brandStripe' => true,
+				'navigationWidth' => null,
+				'navigationActiveStyle' => 'default',
+				'brandStripePlacement' => 'header-and-login',
+				'loginWatermark' => true,
+				'headerStyle' => 'default',
+			],
+			$response->getData()['resolved']
+		);
 		$this->assertSame([], $this->audit, 'Storing what was already stored is not a change.');
 	}//end testTheEmptyChoiceAnswersWithTheSetsDefaults()
+
+	/**
+	 * The newer options are stored and audited with the two older ones,
+	 * and the answer resolves them for the active set.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 */
+	public function testTheNewerChoicesAreStoredAndAudited(): void {
+		$response = $this->controller->save(
+			workplaceLayout: '',
+			brandStripe: '',
+			navigationWidth: '300',
+			navigationActiveStyle: 'soft',
+			brandStripePlacement: 'login',
+			loginWatermark: '0',
+			headerStyle: 'workplace'
+		);
+
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame('300', $this->stored['navigation_width']);
+		$this->assertSame('soft', $this->stored['navigation_active_style']);
+		$this->assertSame('login', $this->stored['brand_stripe_placement']);
+		$this->assertSame('0', $this->stored['login_watermark']);
+		$this->assertSame('workplace', $this->stored['header_style']);
+		$this->assertSame(
+			[
+				'workplaceLayout' => 'light',
+				'brandStripe' => true,
+				'navigationWidth' => 300,
+				'navigationActiveStyle' => 'soft',
+				'brandStripePlacement' => 'login',
+				'loginWatermark' => false,
+				'headerStyle' => 'workplace',
+			],
+			$response->getData()['resolved']
+		);
+		$this->assertSame(
+			[
+				['action' => 'toggle_changed', 'context' => ['key' => 'navigation_width', 'old' => '', 'new' => '300']],
+				['action' => 'toggle_changed', 'context' => ['key' => 'navigation_active_style', 'old' => '', 'new' => 'soft']],
+				['action' => 'toggle_changed', 'context' => ['key' => 'brand_stripe_placement', 'old' => '', 'new' => 'login']],
+				['action' => 'toggle_changed', 'context' => ['key' => 'login_watermark', 'old' => '', 'new' => '0']],
+				['action' => 'toggle_changed', 'context' => ['key' => 'header_style', 'old' => '', 'new' => 'workplace']],
+			],
+			$this->audit
+		);
+	}//end testTheNewerChoicesAreStoredAndAudited()
 
 	/**
 	 * One unknown value refuses the whole request: nothing is stored, nothing
@@ -165,8 +237,8 @@ class LayoutControllerTest extends TestCase {
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 */
-	public function testAnUnknownValueStoresNothing(string $layout, string $stripe): void {
-		$response = $this->controller->save(workplaceLayout: $layout, brandStripe: $stripe);
+	public function testAnUnknownValueStoresNothing(string $layout, string $stripe, array $newer = []): void {
+		$response = $this->controller->save(...(['workplaceLayout' => $layout, 'brandStripe' => $stripe] + $newer));
 
 		$this->assertSame(400, $response->getStatus());
 		$this->assertSame([], $this->stored);
@@ -176,12 +248,17 @@ class LayoutControllerTest extends TestCase {
 	/**
 	 * Requests with one value outside the allowed three.
 	 *
-	 * @return array<string, array{0: string, 1: string}>
+	 * @return array<string, array{0: string, 1: string, 2?: array<string, string>}>
 	 */
 	public static function unknownValueProvider(): array {
 		return [
 			'unknown layout' => ['wide', '1'],
 			'unknown stripe beside a good layout' => ['light', 'true'],
+			'a width outside the range beside good values' => ['light', '1', ['navigationWidth' => '50']],
+			'an unknown entry style' => ['', '', ['navigationActiveStyle' => 'bold']],
+			'an unknown placement' => ['', '', ['brandStripePlacement' => 'footer']],
+			'a watermark that is not a flag' => ['', '', ['loginWatermark' => 'yes']],
+			'an unknown header style' => ['', '', ['headerStyle' => 'dark']],
 		];
 	}//end unknownValueProvider()
 

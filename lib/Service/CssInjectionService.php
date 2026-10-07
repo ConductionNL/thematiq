@@ -177,6 +177,7 @@ class CssInjectionService {
 	 * @param AppBrandService $appBrands The brand per app.
 	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
 	 * @param LayoutOptionsService|null $layoutOptions Resolves the workplace layout and the brand stripe; defaults to one reading $config.
+	 * @param HeaderUserService|null $headerUser The name and role in the workplace top bar; null leaves the avatar alone.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -196,6 +197,7 @@ class CssInjectionService {
 		AppBrandService $appBrands,
 		?InternalScopesService $internalScopes = null,
 		?LayoutOptionsService $layoutOptions = null,
+		private readonly ?HeaderUserService $headerUser = null,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
@@ -318,13 +320,11 @@ class CssInjectionService {
 		);
 
 		// 4.5. Custom fonts.
-		$this->runLayer(
-			layer: 'custom-font-link',
-			work: fn () => $this->injectCustomFontLink(designSystemId: $designSystemId)
-		);
+		$this->runLayer(layer: 'custom-font-link', work: fn () => $this->injectCustomFontLink(designSystemId: $designSystemId));
 
-		// 5. Conditional stylesheets.
+		// 5. Conditional stylesheets, and the person the workplace top bar names.
 		$this->runLayer(layer: 'conditional-styles', work: fn () => $this->injectConditionalStyles(tokenSet: $tokenSet));
+		$this->runLayer(layer: 'header-user', work: fn () => $this->headerUser?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
 
 		// 6. Preview banner — ONLY when a theme preview is active for this
 		// request's user. Every other user (and every anonymous render) pays
@@ -691,7 +691,7 @@ class CssInjectionService {
 	 *     tokenSet: string,
 	 *     designSystem: string,
 	 *     layers: array<int, array{layer: string, kind: string, href?: string, css?: string, id?: string}>,
-	 *     layout: array{workplaceLayout: string, brandStripe: bool}
+	 *     layout: array<string, bool|int|string|null>
 	 * }
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
@@ -828,6 +828,7 @@ class CssInjectionService {
 	 * @spec openspec/specs/component-tokens/spec.md
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 */
 	private function injectConditionalStyles(string $tokenSet): void {
 		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet
@@ -843,10 +844,11 @@ class CssInjectionService {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
-		// The workplace layout and the brand stripe, for the set this page wears.
 		foreach ($this->layoutOptions->stylesheets(tokenSet: $tokenSet) as $file) {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: $file));
 		}
+
+		array_map(fn (array $row) => $this->emitInlineStyle(css: $row['css'], id: $row['id']), $this->layoutOptions->inlineStyles(tokenSet: $tokenSet));
 
 		// A header, so it follows the overrides and custom CSS links: it must
 		// come last, or a stored value would beat the lock.

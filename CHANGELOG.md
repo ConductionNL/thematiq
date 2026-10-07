@@ -5,6 +5,78 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **Zuiddrecht's website measures and type.** The site's columns (1328px page with a 24px gutter,
+  1280px header row and opening band), 17px running text, a 21px lead (Contentpagina; it was 18),
+  semibold buttons (`--nldesign-website-button-font-weight`, read by the public bridge's four
+  button weights, 700 for every other set), the site's own grey `#4A4A4A` (8.86:1 on white) beside
+  the workplace's `#5E6168`, and a light blue ground for a missing picture (`#D9E3EF`).
+
+### Fixed
+- **The blue mark under the menu item on screen is back on the Zuiddrecht site.** #1105 removed
+  `--nldesign-website-nav-current-in-line` and `--nldesign-website-nav-current-color` as unread,
+  because only the portal read them. Every `--nldesign-*` name the portal reads now has a role in
+  `css/public-bridge.css`, and `tests/vitest/portalReaders.spec.js` checks a measured list of them,
+  so the vocabulary test no longer calls such a name unread.
+
+- **The workplace top bar, as an option.** A seventh layout option, `header_style` (`default` or
+  `workplace`), draws the DqKop board's bar with the light layout: no logo and no app name, the
+  search beside the app grid button, an outline bell with a red dot, a divider, and your initials,
+  name and profile role. The name and role reach the bar through initial state and the small
+  script `js/header-user.js`; without it the bar keeps Nextcloud's avatar. Zuiddrecht names it,
+  and puts its brand stripe on the login card only (`brand_stripe_placement: login`). Every other
+  set keeps Nextcloud's bar. The option travels in the configuration bundle.
+- **Zuiddrecht's navigation, measured on the boards (DqZijbalk, AppZijbalk).** The column runs
+  along the window's left edge with a hairline, 20px by 14px of padding and 20px between its
+  blocks: the brand block (a 19px name over a 13px grey line), the 42px primary button, 12px grey
+  captions, 42px entries with a 20px icon and a 15px label, a grey wash under the pointer, red
+  count circles with white 12px figures, the day-close card on the workspace grey at the foot, and
+  40px footer entries with the settings foldout drawn as one of them. Nextcloud's cards take the
+  boards' 12px radius.
+- **The light workplace login fields, as the board draws them.** The label sits above the field,
+  the field is 44px with a 1px edge in the darker border colour (3:1 on white), and the login
+  button is 46px.
+
+### Fixed
+- **The light layout's page no longer runs past the window.** Nextcloud works out the page height
+  once, from its own 50px bar; with the 68px bar the page ended 18px below the window.
+- **The soft selected entry has no leading bar.** Nextcloud 34 draws a 3px bar on the selected
+  entry's edge; the soft style is the wash and the bold label only.
+
+- **Four more layout options, each with a per-theme default.** Where the brand stripe is drawn
+  (`brand_stripe_placement`: both places, the top bar only or the login card only), the
+  navigation width (`navigation_width`, 200 to 480 pixels), the selected navigation entry's style
+  (`navigation_active_style`: Nextcloud's or a soft tint of the accent with a bold label) and the
+  login watermark (`login_watermark`). Each follows the active token set's `layout` block until an
+  administrator chooses, and a set that names none keeps what it had. Zuiddrecht names a 264px
+  navigation and the soft entry. All six layout choices now travel in the configuration bundle
+  (`config.layoutOptions`, bundle version 4), which the first Zuiddrecht change left out.
+- **Zuiddrecht wears the workplace boards.** `css/token-overrides/zuiddrecht.css` now carries the
+  measures of the approved workplace boards (DqTokens, DqZijbalk, DqDashboard, DqZaken, DqZaak) on
+  the Conduction library's own class names, for this set only: a 264px navigation
+  (`--nldesign-nc-navigation-width`), small grey capital captions, a flat soft-red selected entry with
+  a bold label, 28px page titles and a 32px greeting, 18px card titles, the attention card's 13px red
+  kicker over a 20px title, 34px counters over grey labels, 38px pill views with the chosen one in ink,
+  and a quiet 14px table. Every colour goes through a token, so the dark variant follows on its own.
+- **The light workplace draws the standard apps as cards.** While the workplace layout is `light`,
+  `css/workplace-layout.css` draws the dashboard's panels, the Files list, the settings sections and
+  the thematiq panel as cards on the surface (the container radius, a hairline, the cards' shadow
+  colour), with the card title size on the dashboard, a quiet 14px header row on the Files list, and
+  a 44px token set select in the theme picker. No colour literal.
+- **The light workplace draws the login page and the top bar.** While the workplace layout is
+  `light`, `css/workplace-layout.css` now draws Nextcloud's own pages the way the Zuiddrecht boards
+  draw them: the logo above the login card, 56px high, the card 420px wide with a hairline, the
+  container radius, the cards' shadow colour and a 24px title, 44px controls with a 1px edge, a
+  muted footer line without a plate; a 68px top bar with a 40px app grid square and a 44px search
+  pill on the workspace colour. On a guest page the "Back to …" button's label, which the NL Design
+  link rule painted link-blue on blue, reads again. No colour literal: the sheet still suits any set
+  an administrator turns it on for.
+- **The site's page title, lead, notice text and surface are vocabulary.** A set may name
+  `--nldesign-website-page-title-size` and `-line-height`, `--nldesign-website-lead-font-size`,
+  `--nldesign-website-notice-color` and `--nldesign-color-surface` for its portal; only the public
+  bridge reads them, and a set that names none keeps every value it had. Zuiddrecht names them:
+  2.75rem on 1.15, 18px, #1A1A1A and #F4F6F9, every pair computed.
+- **An attention strip apart from the plain notice.** `--nldesign-website-attention-background-color`,
+  `-border-color` and `-color` name the "Let op" strip; Zuiddrecht: #FFF4DE, #E8C77D, #1A1A1A.
 - **Four demo schools in Zuiddrecht.** `wilgenboom` (Basisschool De Wilgenboom, willow green
   `#2F6B4A` and sun yellow, Lexend), `vaartveld` (Vaartveld College, cobalt `#1F4FD8` and aqua,
   Red Hat Display over Red Hat Text), `esdoornveen` (Esdoornveen, mbo college, plum `#5B2E91`

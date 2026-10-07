@@ -801,7 +801,114 @@ if ($_['mockUi'] === true) {
 		</p>
 	</div>
 
-	<!-- Primary drives every component — the deliberate opt-out of per-component
+	<!-- The newer layout options (openspec/changes/layout-options-navigation-stripe-watermark):
+	     where the stripe is drawn, the navigation width, the selected entry's
+	     style and the login watermark. Same three states as the two above:
+	     an empty value follows the theme. -->
+	<div class="nldesign-option">
+		<label for="thematiq-brand-stripe-placement">
+			<?php p($l->t('Where the brand stripe is drawn')); ?>
+		</label>
+		<select name="thematiq-brand-stripe-placement" id="thematiq-brand-stripe-placement">
+			<option value="" <?php if (in_array($_['brandStripePlacement'], ['header-and-login', 'header', 'login'], true) === false): ?>selected<?php endif; ?>>
+				<?php p($l->t('Follow the theme')); ?>
+			</option>
+			<option value="header-and-login" <?php if ($_['brandStripePlacement'] === 'header-and-login'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Top bar and login card')); ?>
+			</option>
+			<option value="header" <?php if ($_['brandStripePlacement'] === 'header'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Top bar only')); ?>
+			</option>
+			<option value="login" <?php if ($_['brandStripePlacement'] === 'login'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Login card only')); ?>
+			</option>
+		</select>
+		<p class="settings-hint">
+			<?php p($l->t('Only while the brand stripe is on. A theme that names nothing draws it in both places.')); ?>
+		</p>
+	</div>
+
+	<div class="nldesign-option">
+		<label for="thematiq-navigation-width-input">
+			<?php p($l->t('Navigation width in pixels')); ?>
+		</label>
+		<input type="number"
+			   name="thematiq-navigation-width"
+			   id="thematiq-navigation-width-input"
+			   min="200"
+			   max="480"
+			   step="1"
+			   placeholder="<?php p($l->t('Follow the theme')); ?>"
+			   value="<?php p($_['navigationWidth']); ?>">
+		<p class="settings-hint">
+			<?php p($l->t('The width of the app navigation, from 200 to 480. Leave it empty to follow the theme; a theme that names none keeps the width Nextcloud gives it.')); ?>
+		</p>
+	</div>
+
+	<div class="nldesign-option">
+		<label for="thematiq-navigation-active-style">
+			<?php p($l->t('Selected navigation entry')); ?>
+		</label>
+		<select name="thematiq-navigation-active-style" id="thematiq-navigation-active-style">
+			<option value="" <?php if (in_array($_['navigationActiveStyle'], ['default', 'soft'], true) === false): ?>selected<?php endif; ?>>
+				<?php p($l->t('Follow the theme')); ?>
+			</option>
+			<option value="default" <?php if ($_['navigationActiveStyle'] === 'default'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Default')); ?>
+			</option>
+			<option value="soft" <?php if ($_['navigationActiveStyle'] === 'soft'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Soft tint with a bold label')); ?>
+			</option>
+		</select>
+		<p class="settings-hint">
+			<?php p($l->t('The soft style draws the entry you are on as a light tint of the accent color, with the accent as its label. A theme without an accent uses its primary color.')); ?>
+		</p>
+	</div>
+
+	<div class="nldesign-option">
+		<label for="thematiq-login-watermark">
+			<?php p($l->t('Login watermark')); ?>
+		</label>
+		<select name="thematiq-login-watermark" id="thematiq-login-watermark">
+			<option value="" <?php if (in_array($_['loginWatermark'], ['0', '1'], true) === false): ?>selected<?php endif; ?>>
+				<?php p($l->t('Follow the theme')); ?>
+			</option>
+			<option value="1" <?php if ($_['loginWatermark'] === '1'): ?>selected<?php endif; ?>>
+				<?php p($l->t('On')); ?>
+			</option>
+			<option value="0" <?php if ($_['loginWatermark'] === '0'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Off')); ?>
+			</option>
+		</select>
+		<p class="settings-hint">
+			<?php p($l->t('The emblem a theme draws large and faint on the login page, with the light top bar. Off hides it; a theme that names no image shows none either way.')); ?>
+		</p>
+	</div>
+
+	<!-- The header style (openspec/changes/header-style-workplace): the
+	     workplace top bar of the DqKop board, with the light workplace layout
+	     only. Same three states: an empty value follows the theme. -->
+	<div class="nldesign-option">
+		<label for="thematiq-header-style">
+			<?php p($l->t('Top bar style')); ?>
+		</label>
+		<select name="thematiq-header-style" id="thematiq-header-style">
+			<option value="" <?php if (in_array($_['headerStyle'], ['default', 'workplace'], true) === false): ?>selected<?php endif; ?>>
+				<?php p($l->t('Follow the theme')); ?>
+			</option>
+			<option value="default" <?php if ($_['headerStyle'] === 'default'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Default')); ?>
+			</option>
+			<option value="workplace" <?php if ($_['headerStyle'] === 'workplace'): ?>selected<?php endif; ?>>
+				<?php p($l->t('Workplace, with your name and role')); ?>
+			</option>
+		</select>
+		<p class="settings-hint">
+			<?php p($l->t('Only with the light workplace layout. The workplace bar drops the logo and the app name. It shows your name and the role from your profile.')); ?>
+		</p>
+	</div>
+
+ — the deliberate opt-out of per-component
 	     theming (openspec/specs/component-tokens/spec.md). Off by default, and
 	     that is not a behaviour change: with no per-component value stored the
 	     component tokens already resolve to the brand primary. Turning it on

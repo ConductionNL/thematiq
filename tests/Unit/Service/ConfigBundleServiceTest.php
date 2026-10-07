@@ -319,7 +319,7 @@ class ConfigBundleServiceTest extends TestCase {
 		$bundle = $this->service->export();
 
 		$this->assertSame('nldesign-config-bundle', $bundle['format']);
-		$this->assertSame(3, $bundle['bundleVersion']);
+		$this->assertSame(4, $bundle['bundleVersion']);
 		$this->assertSame('utrecht', $bundle['config']['tokenSet']);
 		$this->assertTrue($bundle['config']['hideSlogan']);
 		$this->assertTrue($bundle['config']['showMenuLabels']);
@@ -568,6 +568,94 @@ class ConfigBundleServiceTest extends TestCase {
 	}//end testANonBooleanPrimaryDrivesComponentsIsRejected()
 
 	/**
+	 * The six layout choices travel as the administrator stored them, the
+	 * empty string ("follow the theme") included, and come back the same.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 */
+	public function testTheLayoutOptionsSurviveExportAndImport(): void {
+		$this->seedConfig();
+		$this->appConfig['workplace_layout'] = 'light';
+		$this->appConfig['brand_stripe'] = '0';
+		$this->appConfig['navigation_width'] = '264';
+		$this->appConfig['navigation_active_style'] = 'soft';
+		$this->appConfig['brand_stripe_placement'] = 'login';
+		$this->appConfig['login_watermark'] = '';
+		$this->appConfig['header_style'] = 'workplace';
+
+		$bundle = $this->service->export();
+		$this->assertSame(
+			[
+				'workplaceLayout' => 'light',
+				'brandStripe' => '0',
+				'navigationWidth' => '264',
+				'navigationActiveStyle' => 'soft',
+				'brandStripePlacement' => 'login',
+				'loginWatermark' => '',
+				'headerStyle' => 'workplace',
+			],
+			$bundle['config']['layoutOptions']
+		);
+
+		foreach (['workplace_layout', 'brand_stripe', 'navigation_width', 'navigation_active_style', 'brand_stripe_placement', 'header_style'] as $key) {
+			$this->appConfig[$key] = '';
+		}
+
+		$this->appConfig['login_watermark'] = '0';
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertTrue($result['valid'], json_encode($result['errors'] ?? []));
+		$this->assertSame('light', $this->appConfig['workplace_layout']);
+		$this->assertSame('0', $this->appConfig['brand_stripe']);
+		$this->assertSame('264', $this->appConfig['navigation_width']);
+		$this->assertSame('soft', $this->appConfig['navigation_active_style']);
+		$this->assertSame('login', $this->appConfig['brand_stripe_placement']);
+		$this->assertSame('workplace', $this->appConfig['header_style']);
+		$this->assertSame('', $this->appConfig['login_watermark'], 'The empty choice travels too: the target follows its theme again.');
+	}//end testTheLayoutOptionsSurviveExportAndImport()
+
+	/**
+	 * A bundle from before the options travelled has no `layoutOptions`: each
+	 * imports as "follow the theme", which is what such an instance stored.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 */
+	public function testAnAbsentLayoutOptionsSectionImportsAsFollowTheTheme(): void {
+		$this->appConfig['workplace_layout'] = 'light';
+		$this->appConfig['navigation_width'] = '264';
+
+		$result = $this->service->import(bundle: $this->baseBundle(['bundleVersion' => 3]), dryRun: false);
+
+		$this->assertTrue($result['valid']);
+		$this->assertSame('', $this->appConfig['workplace_layout']);
+		$this->assertSame('', $this->appConfig['navigation_width']);
+	}//end testAnAbsentLayoutOptionsSectionImportsAsFollowTheTheme()
+
+	/**
+	 * A layout value the option refuses is a hard error naming the key, and
+	 * nothing is written.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 */
+	public function testALayoutValueTheOptionRefusesIsRejected(): void {
+		$this->appConfig['navigation_width'] = '264';
+		$bundle = $this->baseBundle(['config' => ['layoutOptions' => ['navigationWidth' => '9000', 'workplaceLayout' => 'light']]]);
+
+		$result = $this->service->import(bundle: $bundle, dryRun: false);
+
+		$this->assertFalse($result['valid']);
+		$this->assertNotEmpty(
+			array_filter(
+				$result['errors'],
+				static fn (array $error): bool => str_contains($error['message'], 'config.layoutOptions.navigationWidth')
+			),
+			'the error names the offending key'
+		);
+		$this->assertSame('264', $this->appConfig['navigation_width']);
+		$this->assertArrayNotHasKey('workplace_layout', $this->appConfig);
+	}//end testALayoutValueTheOptionRefusesIsRejected()
+
+	/**
 	 * A dry-run of a valid bundle reports the would-be sections and writes
 	 * nothing at all.
 	 */
@@ -718,7 +806,7 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->appConfig['app_brands'] = json_encode(['collectives' => ['tokenSet' => 'utrecht', 'logoLarge' => ['mime' => 'image/png', 'size' => 9, 'uploadedAt' => 1], 'logoSmall' => null]]);
 
 		$bundle = json_decode((string)json_encode($this->service->export()), true);
-		$this->assertSame(3, $bundle['bundleVersion']);
+		$this->assertSame(4, $bundle['bundleVersion']);
 		$this->assertSame('utrecht', $bundle['appBrands']['collectives']['tokenSet']);
 
 		$this->appConfig['app_brands'] = '{}';

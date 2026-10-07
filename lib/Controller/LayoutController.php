@@ -1,7 +1,9 @@
 <?php
 
 /**
- * The layout options: workplace layout and brand stripe.
+ * The layout options: workplace layout, brand stripe and its placement,
+ * navigation width, the selected navigation entry's style, login watermark,
+ * header style.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
@@ -15,15 +17,16 @@
  *
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
  * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
+ * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
-use InvalidArgumentException;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\LayoutOptionsService;
+use OCA\Thematiq\Service\LayoutOptionValues;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
@@ -64,39 +67,62 @@ class LayoutController extends Controller {
 	}//end __construct()
 
 	/**
-	 * Store the workplace layout and the brand stripe.
+	 * Store the layout options: the workplace layout, the brand stripe and
+	 * its placement, the navigation width, the selected navigation entry's
+	 * style and the login watermark.
 	 *
-	 * Both values are validated before either is written, so a request with
-	 * one bad value changes nothing. The answer carries the stored choices and
+	 * Every value is validated before any is written, so a request with one
+	 * bad value changes nothing. The answer carries the stored choices and
 	 * what the instance-wide token set now resolves to, which is what the
-	 * admin panel needs to add or drop the two stylesheets on the open page.
+	 * admin panel needs to add or drop the stylesheets on the open page.
 	 *
 	 * @param string $workplaceLayout `default`, `light`, or empty to follow the theme.
 	 * @param string $brandStripe `1`, `0`, or empty to follow the theme.
+	 * @param string $navigationWidth A whole number of pixels, 200 to 480, or empty to follow the theme.
+	 * @param string $navigationActiveStyle `default`, `soft`, or empty to follow the theme.
+	 * @param string $brandStripePlacement `header-and-login`, `header`, `login`, or empty to follow the theme.
+	 * @param string $loginWatermark `1`, `0`, or empty to follow the theme.
+	 * @param string $headerStyle `default`, `workplace`, or empty to follow the theme.
 	 *
 	 * @return JSONResponse The stored and the resolved state, or HTTP 400 on an unknown value.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 *
+	 * @SuppressWarnings(PHPMD.LongVariable) - the parameter names ARE the wire contract: Nextcloud binds each from the JSON body
+	 *   key the admin page sends, the app config key in camel case.
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
-	public function save(string $workplaceLayout = '', string $brandStripe = ''): JSONResponse {
-		$layoutKnown = ($workplaceLayout === LayoutOptionsService::FOLLOW_SET
-			|| in_array($workplaceLayout, LayoutOptionsService::LAYOUTS, true) === true);
-		$stripeKnown = in_array($brandStripe, [LayoutOptionsService::FOLLOW_SET, '0', '1'], true);
-		if ($layoutKnown === false || $stripeKnown === false) {
-			return new JSONResponse(['error' => 'Unknown layout option'], 400);
+	public function save(
+		string $workplaceLayout = '',
+		string $brandStripe = '',
+		string $navigationWidth = '',
+		string $navigationActiveStyle = '',
+		string $brandStripePlacement = '',
+		string $loginWatermark = '',
+		string $headerStyle = '',
+	): JSONResponse {
+		$values = [
+			LayoutOptionsService::WORKPLACE_LAYOUT_KEY => $workplaceLayout,
+			LayoutOptionsService::BRAND_STRIPE_KEY => $brandStripe,
+			LayoutOptionValues::NAVIGATION_WIDTH_KEY => $navigationWidth,
+			LayoutOptionValues::NAVIGATION_ACTIVE_STYLE_KEY => $navigationActiveStyle,
+			LayoutOptionValues::BRAND_STRIPE_PLACEMENT_KEY => $brandStripePlacement,
+			LayoutOptionValues::LOGIN_WATERMARK_KEY => $loginWatermark,
+			LayoutOptionValues::HEADER_STYLE_KEY => $headerStyle,
+		];
+		foreach ($values as $key => $value) {
+			if ($this->layoutOptions->accepts(key: $key, value: $value) === false) {
+				return new JSONResponse(['error' => 'Unknown layout option'], 400);
+			}
 		}
 
-		try {
-			$previousLayout = $this->layoutOptions->setWorkplaceLayout(layout: $workplaceLayout);
-			$previousStripe = $this->layoutOptions->setBrandStripe(stripe: $brandStripe);
-		} catch (InvalidArgumentException $e) {
-			return new JSONResponse(['error' => 'Unknown layout option'], 400);
+		foreach ($values as $key => $value) {
+			$previous = $this->layoutOptions->setOption(key: $key, value: $value);
+			$this->logChange(key: $key, old: $previous, new: $value);
 		}
-
-		$this->logChange(key: LayoutOptionsService::WORKPLACE_LAYOUT_KEY, old: $previousLayout, new: $workplaceLayout);
-		$this->logChange(key: LayoutOptionsService::BRAND_STRIPE_KEY, old: $previousStripe, new: $brandStripe);
 
 		$tokenSet = $this->activeTokenSet->getActive();
 
@@ -105,6 +131,11 @@ class LayoutController extends Controller {
 				'status' => 'ok',
 				'workplaceLayout' => $workplaceLayout,
 				'brandStripe' => $brandStripe,
+				'navigationWidth' => $navigationWidth,
+				'navigationActiveStyle' => $navigationActiveStyle,
+				'brandStripePlacement' => $brandStripePlacement,
+				'loginWatermark' => $loginWatermark,
+				'headerStyle' => $headerStyle,
 				'resolved' => $this->layoutOptions->resolved(tokenSet: $tokenSet),
 			]
 		);
