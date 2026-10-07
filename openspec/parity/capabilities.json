@@ -1425,7 +1425,8 @@
 				"evidence": "templates/settings/admin.php:426-430 checkbox id='nldesign-primary-drives-components'; js/admin.js:2069-2073 change handler -> savePrimaryDrivesComponentsSetting() POSTs /settings/primary-drives-components; js/admin.js:2568-2578 isTokenLocked(name) disables a component's own colour row (with an explanatory title) while this setting is on, letting it flow from the primary colour instead",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"spec": "none"
+				"spec": "openspec/specs/component-tokens",
+				"readOn": "2026-10-07"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Let the primary colour drive every component' checkbox",
 			"evidence": {
