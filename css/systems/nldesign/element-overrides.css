@@ -359,6 +359,36 @@ header nav .icon {
 	-webkit-backdrop-filter: none;
 }
 
+/*
+ * Two widgets ask for no ground of their own, and the rule above gave them
+ * one: a greeting on the page ground (nextcloud-vue `content.ground`) and an
+ * attention banner placed borderless, which draws its own card. The
+ * library leaves both wrappers transparent; the solid rule painted the
+ * wrapper and its content white, so the greeting sat in a white box and the
+ * attention card had a second, taller white card under it (dossiq simple
+ * dashboard, DqDashboard). Only a borderless wrapper that HOLDS one of those
+ * two goes transparent, so every other borderless widget keeps the ground
+ * it has today. Same ID-level weight as the rule above, and later.
+ */
+.cn-header-widget--ground:not(#header *),
+.cn-widget-wrapper--borderless:has(
+		> .cn-widget-wrapper__content > .cn-header-widget--ground
+	):not(#header *),
+.cn-widget-wrapper--borderless:has(
+		> .cn-widget-wrapper__content > .cn-banner-widget--attention
+	):not(#header *),
+.cn-widget-wrapper--borderless:has(
+		> .cn-widget-wrapper__content > .cn-header-widget--ground
+	)
+	> .cn-widget-wrapper__content:not(#header *),
+.cn-widget-wrapper--borderless:has(
+		> .cn-widget-wrapper__content > .cn-banner-widget--attention
+	)
+	> .cn-widget-wrapper__content:not(#header *) {
+	background: transparent;
+	background-color: transparent;
+}
+
 /* ============================================
    TEXT COLOR FIXES
    ============================================ */
