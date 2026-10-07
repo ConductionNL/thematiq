@@ -2506,6 +2506,21 @@
 }
 
 /* Your component (authoring-own-markup-preview): two fields, the frame, the reports. */
+/* The name on the left, "Edit" on the right, as a shipped component's title. */
+.nldesign-own-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+.nldesign-own-edit[aria-expanded='true'] {
+	background-color: var(--color-primary-element-light);
+}
+/* Both carry a display of their own, which beats the hidden attribute. */
+.nldesign-own-fields[hidden],
+.nldesign-own-save[hidden] {
+	display: none;
+}
 .nldesign-own-fields {
 	display: grid;
 	gap: 4px;
@@ -2544,6 +2559,32 @@
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 8px;
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--color-border);
+}
+.nldesign-own-save .nldesign-own-name {
+	margin: 0;
+}
+/* Saving is the primary action, in the primary colour (which follows a live
+   edit of it, see js/admin.js writeLiveToken()); removing is the destructive one,
+   in Nextcloud's error red. Under the settings id, to beat core's button rule. */
+#nldesign-settings .nldesign-own-save-btn {
+	background-color: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+}
+#nldesign-settings .nldesign-own-save-btn:hover,
+#nldesign-settings .nldesign-own-save-btn:focus-visible {
+	background-color: var(--color-primary-element-hover);
+}
+#nldesign-settings .nldesign-own-remove {
+	margin-left: auto;
+	background-color: var(--color-error);
+	color: #ffffff;
+}
+#nldesign-settings .nldesign-own-remove:hover,
+#nldesign-settings .nldesign-own-remove:focus-visible {
+	background-color: var(--color-error-hover, var(--color-error));
 }
 .nldesign-own-error {
 	color: var(--color-text-error, var(--color-error));

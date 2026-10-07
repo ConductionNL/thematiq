@@ -1098,7 +1098,9 @@ OC.L10N.register(
         "The light tint of the error pill": "De lichte tint van het foutlabel",
         "status pills": "statuslabels",
         "Choose image": "Afbeelding kiezen",
-        "Opacity": "Dekkracht"
+        "Opacity": "Dekkracht",
+        "New component": "Nieuw component",
+        "Your components": "Uw componenten"
     },
     "nplurals=2; plural=(n != 1);"
 )

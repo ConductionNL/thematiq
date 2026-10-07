@@ -1097,7 +1097,9 @@
         "The light tint of the error pill": "The light tint of the error pill",
         "status pills": "status pills",
         "Choose image": "Choose image",
-        "Opacity": "Opacity"
+        "Opacity": "Opacity",
+        "New component": "New component",
+        "Your components": "Your components"
     },
     "plurals": {}
 }

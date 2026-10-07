@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  *
- * js/playground.js, "Your component": the chip in every tab, the cleaned markup in a
+ * js/playground.js, "Your components": a tab of their own, the cleaned markup in a
  * sandboxed frame, the token list that follows the code, a live repaint, the dark switch,
  * the saved component reopened from its link, and a stage that cannot build.
  *
@@ -137,32 +137,44 @@ function chip(title) {
 	)
 }
 
+function openOwn() {
+	document
+		.querySelector('.nldesign-pg-selector .nldesign-tab-btn[data-tab="own"]')
+		.click()
+}
+
 function type(field, value) {
 	field.value = value
 	field.dispatchEvent(new window.Event('input', { bubbles: true }))
 }
 
-describe('playground: your component', () => {
+// Every test boots admin.js and playground.js afresh, which outruns the 5 s
+// default when the whole suite runs in parallel.
+describe('playground: your component', { timeout: 20000 }, () => {
 	afterEach(() => {
 		document.body.innerHTML = ''
 		vi.restoreAllMocks()
 	})
 
-	it('ends every tab chip row with "Your component"', async () => {
-		await boot()
+	it('keeps your components in a tab of their own', async () => {
+		await boot({ saved: [SAVED] })
 		const tabs = [
 			...document.querySelectorAll('.nldesign-pg-selector .nldesign-tab-btn'),
 		]
-		expect(tabs.length).toBeGreaterThan(0)
+		expect(tabs.pop().dataset.tab).toBe('own')
 		for (const button of tabs) {
 			button.click()
-			expect(chips().pop(), button.dataset.tab).toBe('Your component')
+			expect(chips(), button.dataset.tab).not.toContain('New component')
+			expect(chips(), button.dataset.tab).not.toContain('Afvalkaart')
 		}
+		openOwn()
+		expect(chips()).toEqual(['New component', 'Afvalkaart'])
+		expect(document.getElementById('nldesign-own-html')).not.toBeNull()
 	})
 
 	it('renders the cleaned markup in a sandboxed frame and reports what it removed', async () => {
 		await boot()
-		chip('Your component').click()
+		openOwn()
 		type(
 			document.getElementById('nldesign-own-html'),
 			'<button onclick="alert(1)">Test</button><script>alert(2)</script>',
@@ -210,7 +222,7 @@ describe('playground: your component', () => {
 			},
 		])
 		await boot()
-		chip('Your component').click()
+		openOwn()
 		type(document.getElementById('nldesign-own-html'), '<p>Tekst</p>')
 
 		const srcdoc = document
@@ -233,7 +245,7 @@ describe('playground: your component', () => {
 
 	it('lists exactly the tokens the code reads, read-only where the editor cannot write', async () => {
 		await boot()
-		chip('Your component').click()
+		openOwn()
 		type(
 			document.getElementById('nldesign-own-css'),
 			'.a { color: var(--nldesign-color-primary); border-color: var(--nldesign-org-brand-accent) }',
@@ -251,7 +263,7 @@ describe('playground: your component', () => {
 
 	it('repaints the frame when a token is edited, without rebuilding it', async () => {
 		await boot()
-		chip('Your component').click()
+		openOwn()
 		type(
 			document.getElementById('nldesign-own-css'),
 			'.a { color: var(--nldesign-color-primary) }',
@@ -280,7 +292,7 @@ describe('playground: your component', () => {
 
 	it('switches the frame to the set dark values and says Nextcloud keeps its theme', async () => {
 		await boot()
-		chip('Your component').click()
+		openOwn()
 		type(
 			document.getElementById('nldesign-own-css'),
 			'.a { color: var(--nldesign-color-primary) }',
@@ -298,18 +310,52 @@ describe('playground: your component', () => {
 	})
 
 	it('reopens a saved card from its link, and ignores a slug that no longer exists', async () => {
+		await boot({ hash: '#preview=own/own-afvalkaart', saved: [SAVED] })
+		expect(document.getElementById('nldesign-own-html').value).toBe(SAVED.html)
+		expect(window.location.hash).toBe('#preview=own/own-afvalkaart')
+		expect(chips()).toContain('Afvalkaart')
+
+		// A link from before the tab existed opens it there too.
 		await boot({ hash: '#preview=content/own-afvalkaart', saved: [SAVED] })
 		expect(document.getElementById('nldesign-own-html').value).toBe(SAVED.html)
-		expect(window.location.hash).toBe('#preview=content/own-afvalkaart')
+		expect(window.location.hash).toBe('#preview=own/own-afvalkaart')
 		expect(chips()).toContain('Afvalkaart')
 
 		await boot({ hash: '#preview=content/own-weg', saved: [SAVED] })
 		expect(document.getElementById('nldesign-own-html')).toBeNull()
 	})
 
+	it('shows a saved component as a component, with its code one Edit away', async () => {
+		await boot({ hash: '#preview=own/own-afvalkaart', saved: [SAVED] })
+		const fields = document.getElementById('nldesign-own-fields')
+		const save = document.getElementById('nldesign-own-save')
+		const edit = document.querySelector('.nldesign-own-edit')
+
+		expect(document.querySelector('.nldesign-pg-stage-title').textContent).toBe(
+			'Afvalkaart · Your component',
+		)
+		expect(document.querySelector('.nldesign-pg-stage iframe')).not.toBeNull()
+		expect(document.querySelector('.nldesign-own-panel')).not.toBeNull()
+		expect(fields.hidden).toBe(true)
+		expect(save.hidden).toBe(true)
+		expect(edit.getAttribute('aria-expanded')).toBe('false')
+
+		edit.click()
+		expect(fields.hidden).toBe(false)
+		expect(save.hidden).toBe(false)
+		expect(edit.getAttribute('aria-expanded')).toBe('true')
+	})
+
+	it('opens a new component with its code fields and no Edit button', async () => {
+		await boot()
+		openOwn()
+		expect(document.getElementById('nldesign-own-fields').hidden).toBe(false)
+		expect(document.querySelector('.nldesign-own-edit')).toBeNull()
+	})
+
 	it('shows the contrast of a text on its base, measured by the server', async () => {
 		await boot()
-		chip('Your component').click()
+		openOwn()
 		type(
 			document.getElementById('nldesign-own-css'),
 			'.a { background: var(--nldesign-color-primary); color: var(--nldesign-color-primary-text) }',
@@ -330,7 +376,7 @@ describe('playground: your component', () => {
 
 	it('saves the stage by name', async () => {
 		await boot()
-		chip('Your component').click()
+		openOwn()
 		document.getElementById('nldesign-own-name').value = 'Afvalkaart'
 		type(document.getElementById('nldesign-own-html'), SAVED.html)
 		;[...document.querySelectorAll('.nldesign-own-save button')]
@@ -348,18 +394,23 @@ describe('playground: your component', () => {
 			html: SAVED.html,
 			css: '',
 		})
-		expect(window.location.hash).toBe('#preview=content/own-afvalkaart')
+		expect(window.location.hash).toBe('#preview=own/own-afvalkaart')
 	})
 
 	it('keeps the playground working when the stage cannot build', async () => {
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		await boot({ withModules: false })
-		chip('Your component').click()
+		openOwn()
 		expect(document.querySelector('.nldesign-own-error').textContent).toBe(
 			'Your component could not be shown.',
 		)
 
 		const shipped = inventory.components.find((c) => c.tab === 'content')
+		document
+			.querySelector(
+				'.nldesign-pg-selector .nldesign-tab-btn[data-tab="content"]',
+			)
+			.click()
 		chip(shipped.title).click()
 		expect(document.querySelector('.nldesign-own-error')).toBeNull()
 		expect(

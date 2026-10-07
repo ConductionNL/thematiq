@@ -787,6 +787,18 @@
 		// which tab is open would be worse than none.
 		var selector = el('div', 'nldesign-pg-selector')
 		selector.appendChild(tabs)
+		// "Your components": a tab of their own after the shipped ones, so what
+		// a builder makes never sits among the components Nextcloud ships.
+		if (tabs.querySelector('[data-tab="' + OWN_TAB + '"]') === null) {
+			var ownTab = el(
+				'button',
+				'nldesign-tab-btn',
+				t('thematiq', 'Your components'),
+			)
+			ownTab.type = 'button'
+			ownTab.setAttribute('data-tab', OWN_TAB)
+			tabs.appendChild(ownTab)
+		}
 		state.chips = el('div', 'nldesign-pg-chips')
 		// A plain group of toggle buttons, NOT a radiogroup. The semantics of a
 		// radiogroup are right — one of N, exactly one on — but announcing one
@@ -960,6 +972,11 @@
 		// for each tab (css/admin.css keys on this), so a tab's full view shows
 		// that tab's components rather than one picture shared by all of them.
 		state.preview.setAttribute('data-pg-tab', tab)
+		// The own tab opens on an empty component to build.
+		if (tab === OWN_TAB) {
+			select(state, OWN)
+			return
+		}
 		showView(state, tab === 'login' ? 'login' : 'app')
 		renderChips(state)
 		updateCrumb(state)
@@ -1027,9 +1044,12 @@
 	function renderChips(state) {
 		state.chips.innerHTML = ''
 
-		var entries = [{ id: FULL_VIEW, title: t('thematiq', 'Full view') }]
-			.concat(componentsFor(state.inventory, state.tab))
-			.concat(ownEntries(state))
+		var entries =
+			state.tab === OWN_TAB
+				? ownEntries(state)
+				: [{ id: FULL_VIEW, title: t('thematiq', 'Full view') }].concat(
+						componentsFor(state.inventory, state.tab),
+					)
 
 		entries.forEach(function (entry) {
 			var chip = el('button', 'nldesign-pg-chip', entry.title)
@@ -1056,6 +1076,10 @@
 	 * @return {void}
 	 */
 	function select(state, id) {
+		// The own tab has no full view and no shipped components.
+		if (state.tab === OWN_TAB && isOwnId(id) === false) {
+			id = OWN
+		}
 		if (isOwnId(id) === true) {
 			state.component = id
 			enterOwn(state, id)
@@ -1085,8 +1109,11 @@
 	/* Your component (authoring-own-markup-preview)                     */
 	/* ---------------------------------------------------------------- */
 
-	/** The chip id of an empty "Your component" stage; a saved one is `own-{slug}`. */
+	/** The chip id of an empty "New component" stage; a saved one is `own-{slug}`. */
 	var OWN = 'own'
+
+	/** The tab that holds the builder's own components, apart from the shipped ones. */
+	var OWN_TAB = 'own'
 
 	/**
 	 * Whether a selection id is the own component stage.
@@ -1124,17 +1151,17 @@
 	 */
 	function ownTitle(state, id) {
 		var saved = ownById(state, id)
-		return saved !== null ? saved.name : t('thematiq', 'Your component')
+		return saved !== null ? saved.name : t('thematiq', 'New component')
 	}
 
 	/**
-	 * The own chips at the end of every tab's row: "Your component", then each saved one.
+	 * The chips of the "Your components" tab: "New component", then each saved one.
 	 *
 	 * @param {Object} state The instrument state.
 	 * @return {Array<{id: string, title: string}>}
 	 */
 	function ownEntries(state) {
-		return [{ id: OWN, title: t('thematiq', 'Your component') }].concat(
+		return [{ id: OWN, title: t('thematiq', 'New component') }].concat(
 			(state.ownComponents || []).map(function (component) {
 				return { id: 'own-' + component.slug, title: component.name }
 			}),
@@ -1174,13 +1201,15 @@
 				if (match[2] !== OWN && ownById(state, match[2]) === null) {
 					return
 				}
+				// Always in their own tab, also from a link written as
+				// `#preview={tab}/own-{slug}` before they had one.
 				var tabButton = state.tabs.querySelector(
-					'.nldesign-tab-btn[data-tab="' + match[1] + '"]',
+					'.nldesign-tab-btn[data-tab="' + OWN_TAB + '"]',
 				)
 				if (tabButton === null) {
 					return
 				}
-				if (match[1] !== state.tab) {
+				if (state.tab !== OWN_TAB) {
 					tabButton.click()
 				}
 				select(state, match[2])
@@ -1303,15 +1332,37 @@
 		}
 
 		var stage = state.stage
-		stage.appendChild(
-			el(
-				'div',
-				'nldesign-pg-stage-title',
-				saved !== null ? saved.name : t('thematiq', 'Your component'),
-			),
+		// A saved component opens the way a shipped one does: its name, its
+		// drawing and, under the stage, its rows. "Edit" brings the code back;
+		// a new component has nothing to show yet, so it starts there.
+		var head = el('div', 'nldesign-own-head')
+		var title = el(
+			'div',
+			'nldesign-pg-stage-title',
+			(saved !== null ? saved.name : t('thematiq', 'New component')) + ' ',
 		)
+		title.appendChild(
+			el('span', 'nldesign-pg-dim', '· ' + t('thematiq', 'Your component')),
+		)
+		head.appendChild(title)
+		var edit = null
+		if (saved !== null) {
+			edit = el(
+				'button',
+				'nldesign-btn nldesign-btn--small nldesign-own-edit',
+				t('thematiq', 'Edit'),
+			)
+			edit.type = 'button'
+			edit.setAttribute(
+				'aria-controls',
+				'nldesign-own-fields nldesign-own-save',
+			)
+			head.appendChild(edit)
+		}
+		stage.appendChild(head)
 
 		var fields = el('div', 'nldesign-own-fields')
+		fields.id = 'nldesign-own-fields'
 		var html = el('textarea', 'nldesign-own-html')
 		html.id = 'nldesign-own-html'
 		html.rows = 6
@@ -1352,16 +1403,15 @@
 		)
 		stage.appendChild(frame)
 
-		stage.appendChild(
-			el(
-				'p',
-				'nldesign-own-note',
-				t(
-					'thematiq',
-					'Scripts do not run here, and nothing loads from outside this server.',
-				),
+		var note = el(
+			'p',
+			'nldesign-own-note',
+			t(
+				'thematiq',
+				'Scripts do not run here, and nothing loads from outside this server.',
 			),
 		)
+		stage.appendChild(note)
 		var report = el('p', 'nldesign-own-report')
 		report.setAttribute('role', 'status')
 		stage.appendChild(report)
@@ -1373,13 +1423,15 @@
 		stage.appendChild(contrast)
 
 		var save = el('div', 'nldesign-own-save')
+		save.id = 'nldesign-own-save'
 		var name = el('input', 'nldesign-own-name')
 		name.id = 'nldesign-own-name'
 		name.type = 'text'
 		name.value = saved !== null ? saved.name : ''
+		// Saving is the stage's primary action, removing its destructive one.
 		var saveButton = el(
 			'button',
-			'nldesign-btn nldesign-btn--small',
+			'nldesign-btn nldesign-btn--small nldesign-own-save-btn',
 			t('thematiq', 'Save component'),
 		)
 		saveButton.type = 'button'
@@ -1389,7 +1441,7 @@
 		if (saved !== null) {
 			var remove = el(
 				'button',
-				'nldesign-btn nldesign-btn--small',
+				'nldesign-btn nldesign-btn--small nldesign-own-remove',
 				t('thematiq', 'Remove component'),
 			)
 			remove.type = 'button'
@@ -1399,6 +1451,21 @@
 			save.appendChild(remove)
 		}
 		stage.appendChild(save)
+
+		var setEditing = function (on) {
+			fields.hidden = on !== true
+			note.hidden = on !== true
+			save.hidden = on !== true
+			if (edit !== null) {
+				edit.setAttribute('aria-expanded', on === true ? 'true' : 'false')
+			}
+		}
+		setEditing(saved === null)
+		if (edit !== null) {
+			edit.addEventListener('click', function () {
+				setEditing(edit.getAttribute('aria-expanded') !== 'true')
+			})
+		}
 
 		var names = []
 		var fonts = fontFaces()
