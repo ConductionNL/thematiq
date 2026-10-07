@@ -126,6 +126,12 @@ const grounds = new JSDOM(`<body><div id="content">
 			<div id="tile" class="cn-stat-widget"></div>
 		</div>
 	</div>
+	<div id="cal-wrapper" class="cn-widget-wrapper cn-widget-wrapper--borderless">
+		<div id="cal-content" class="cn-widget-wrapper__content">
+			<div id="cal" class="cn-calendar-widget"></div>
+			<div id="dash-tile" class="cn-dash-tile-widget"></div>
+		</div>
+	</div>
 	<div id="card-wrapper" class="cn-widget-wrapper">
 		<div id="card-content" class="cn-widget-wrapper__content">
 			<div id="plain-greeting" class="cn-header-widget cn-header-widget--plain"></div>
@@ -158,15 +164,26 @@ describe('a widget that asks for no ground', () => {
 		expect(cleared('banner')).toBe(false)
 	})
 
-	it('leaves every other widget the ground it has today', () => {
+	it('draws any borderless widget on the page ground: its wrapper, content and the widget in it', () => {
 		for (const id of [
 			'tile-wrapper',
 			'tile-content',
 			'tile',
-			'card-wrapper',
-			'card-content',
-			'plain-greeting',
+			'cal-wrapper',
+			'cal-content',
 		]) {
+			expect(cleared(id), id).toBe(true)
+		}
+	})
+
+	it('leaves a widget that draws its own card its card', () => {
+		for (const id of ['banner', 'cal', 'dash-tile']) {
+			expect(cleared(id), id).toBe(false)
+		}
+	})
+
+	it('leaves a widget in a bordered card the ground it has today', () => {
+		for (const id of ['card-wrapper', 'card-content', 'plain-greeting']) {
 			expect(cleared(id), id).toBe(false)
 		}
 	})
@@ -189,6 +206,66 @@ describe('a widget that asks for no ground', () => {
 			selector.includes('cn-widget-wrapper--borderless'),
 		)) {
 			expect(at).toBeGreaterThan(solid)
+		}
+	})
+})
+
+/**
+ * The specificity of one selector as [ids, classes, elements], with
+ * `:not()`, `:is()` and `:has()` counting their most specific argument.
+ * Enough for the selectors in this sheet; not a general parser.
+ *
+ * @param {string} selector The selector.
+ * @return {number[]} The three counts.
+ */
+function specificity(selector) {
+	let rest = selector
+	const total = [0, 0, 0]
+	const add = (t) => t.forEach((v, i) => (total[i] += v))
+	const fn = /:(not|is|has)\(/
+	let m
+	while ((m = fn.exec(rest)) !== null) {
+		let depth = 1
+		let i = m.index + m[0].length
+		const begin = i
+		while (depth > 0) {
+			if (rest[i] === '(') depth++
+			if (rest[i] === ')') depth--
+			i++
+		}
+		const args = rest.slice(begin, i - 1).split(/,(?![^(]*\))/)
+		const best = args
+			.map((a) => specificity(a.trim()))
+			.sort((a, b) => b[0] - a[0] || b[1] - a[1] || b[2] - a[2])[0]
+		add(best)
+		rest = rest.slice(0, m.index) + ' ' + rest.slice(i)
+	}
+	rest = rest.replace(/\[[^\]]*\]/g, () => {
+		total[1]++
+		return ' '
+	})
+	total[0] += (rest.match(/#[\w-]+/g) || []).length
+	total[1] += (rest.match(/\.[\w-]+/g) || []).length
+	total[1] += (rest.match(/:(?!:)[\w-]+/g) || []).length
+	total[2] += (
+		rest.replace(/[#.:][\w-]+/g, ' ').match(/(^|[\s>+~])[a-z][\w-]*/gi) || []
+	).length
+	return total
+}
+
+describe('a transparent ground beats the solid rule', () => {
+	it('outweighs it wherever both match', () => {
+		const solid = specificity(
+			"[class*='widget']:not([class*='widget__']):not(#header *)",
+		)
+		expect(solid).toEqual([1, 2, 0])
+		for (const { selector } of clearSelectors().filter(({ selector }) =>
+			selector.includes('cn-'),
+		)) {
+			const own = specificity(selector)
+			const beats =
+				own[0] > solid[0] || (own[0] === solid[0] && own[1] >= solid[1])
+			expect(beats, `${selector} scores ${own}`).toBe(true)
 		}
 	})
 })
