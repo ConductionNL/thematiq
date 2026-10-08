@@ -353,7 +353,11 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 			expect(token(set, '--utrecht-heading-2-font-size')).toBe('32px')
 			expect(token(set, '--utrecht-heading-3-font-size')).toBe('24px')
 			expect(token(set, '--utrecht-button-border-width')).toBe('1px')
-			expect(token(set, '--utrecht-alert-border-width')).toBe('2px')
+			// The schools draw a hairline on a notice and a melding
+			// (school-sets-follow-their-boards); vng keeps the 2px.
+			expect(token(set, '--utrecht-alert-border-width')).toBe(
+				SCHOOLS.includes(set) ? '1px' : '2px',
+			)
 			expect(token(set, '--denhaag-step-marker-size')).toBe('32px')
 			if (SCHOOLS.includes(set)) {
 				// vng carries step marker roles of its own, which it keeps.
@@ -375,9 +379,20 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 			expect(token(set, '--thematiq-page-title-font-size')).toBeNull()
 			expect(token(set, '--thematiq-page-title-line-height')).toBeNull()
 			expect(token(set, '--thematiq-surface-color')).toBeNull()
-			expect(token(set, '--thematiq-attention-background-color')).toBeNull()
-			expect(token(set, '--thematiq-attention-border-color')).toBeNull()
-			expect(token(set, '--thematiq-attention-color')).toBeNull()
+			// The notice strip: wilgenboom, vaartveld and esdoornveen name it
+			// from their boards (school-sets-follow-their-boards); the
+			// academy and vng name none.
+			if (['wilgenboom', 'vaartveld', 'esdoornveen'].includes(set)) {
+				expect(
+					token(set, '--thematiq-attention-background-color'),
+				).not.toBeNull()
+			} else {
+				expect(
+					token(set, '--thematiq-attention-background-color'),
+				).toBeNull()
+				expect(token(set, '--thematiq-attention-border-color')).toBeNull()
+				expect(token(set, '--thematiq-attention-color')).toBeNull()
+			}
 			// Buttons keep their 700, the portal's own names resolve to nothing,
 			// and the site's grey is the set's one grey.
 			for (const role of [
@@ -430,7 +445,7 @@ describe('an info melding may be a tinted card without a line', () => {
 	it('the four schools draw the info melding without a line, the other kinds keep theirs', () => {
 		for (const set of SCHOOLS) {
 			expect(token(set, '--utrecht-alert-info-border-width')).toBe('0')
-			expect(token(set, '--utrecht-alert-border-width')).toBe('2px')
+			expect(token(set, '--utrecht-alert-border-width')).toBe('1px')
 		}
 	})
 
@@ -442,7 +457,35 @@ describe('an info melding may be a tinted card without a line', () => {
 		expect(resolve(tokens, tokens['--utrecht-alert-info-border-width'])).toBe(
 			'0',
 		)
-		// The other kinds keep theirs.
-		expect(resolve(tokens, tokens['--utrecht-alert-border-width'])).toBe('2px')
+		// The other kinds keep theirs (wilgenboom's hairline).
+		expect(resolve(tokens, tokens['--utrecht-alert-border-width'])).toBe('1px')
+	})
+})
+
+describe('the school sets follow their boards (school-sets-follow-their-boards)', () => {
+	it('three schools tint their notice strip; the academy draws none', () => {
+		expect(token('wilgenboom', '--thematiq-attention-background-color')).toBe(
+			'#FDF3D7',
+		)
+		expect(token('vaartveld', '--thematiq-attention-background-color')).toBe(
+			'#FFF4DE',
+		)
+		expect(token('esdoornveen', '--thematiq-attention-background-color')).toBe(
+			'#F0EAF7',
+		)
+		expect(token('esdoornveen', '--thematiq-attention-border-color')).toBe(
+			'#D2C2E6',
+		)
+	})
+
+	it('esdoornveen and the academy draw the hero search label semibold', () => {
+		for (const set of ['esdoornveen', 'warmtepompacademie']) {
+			expect(
+				token(set, '--nldesign-website-hero-search-label-font-weight'),
+			).toBe('600')
+		}
+		expect(token('esdoornveen', '--nldesign-hero-image-clip-path')).toMatch(
+			/^polygon\(/,
+		)
 	})
 })
