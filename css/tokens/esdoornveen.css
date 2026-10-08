@@ -203,4 +203,8 @@
 	--nldesign-hero-body-color: #1B1C1D;
 	--nldesign-hero-action-background-color: #5B2E91;
 	--nldesign-hero-action-color: #ffffff;
+	/* The photo beside the hero text has a slanted lower right corner
+	 * (school-design esdoornveen, Home); portaliq hero-aside reads it
+	 * (openspec/changes/esdoornveen-hero-image-corner). */
+	--nldesign-hero-image-clip-path: polygon(0 0, 100% 0, 100% calc(100% - 120px), calc(100% - 75px) 100%, 0 100%);
 }
