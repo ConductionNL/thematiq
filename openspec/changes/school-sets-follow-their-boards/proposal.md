@@ -17,8 +17,8 @@ The four school token sets name, from their boards:
 - `--nldesign-website-notice-border-width: 1px` (all four).
 - `--nldesign-website-hero-search-label-font-weight: 600` and `-font-size: 1.0625rem`
   (esdoornveen, academy), read by portaliq #1402.
-- `--nldesign-hero-image-clip-path` with the board's polygon (esdoornveen), read by portaliq's
-  hero aside photo.
+- (`--nldesign-hero-image-clip-path` for Esdoornveen's slanted photo corner was already named by
+  thematiq #1171.)
 
 `tests/vitest/publicBridgeRoleLayer.spec.js` expects the schools' 1px line and the new values.
 
