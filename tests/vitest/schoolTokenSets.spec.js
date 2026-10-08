@@ -622,3 +622,24 @@ describe('the public bridge hands the website its own corners and heading face',
 		}
 	})
 })
+
+describe('esdoornveen: the photo beside the hero', () => {
+	it("cuts the board's slanted lower right corner, and only Esdoornveen does", () => {
+		// school-design esdoornveen, Home: the photo plane beside the hero text.
+		expect(
+			rootTokens(read('css/tokens/esdoornveen.css'))[
+				'--nldesign-hero-image-clip-path'
+			],
+		).toBe(
+			'polygon(0 0, 100% 0, 100% calc(100% - 120px), calc(100% - 75px) 100%, 0 100%)',
+		)
+		for (const id of ['wilgenboom', 'vaartveld', 'warmtepompacademie']) {
+			expect(
+				rootTokens(read('css/tokens/' + id + '.css'))[
+					'--nldesign-hero-image-clip-path'
+				],
+				id,
+			).toBeUndefined()
+		}
+	})
+})
