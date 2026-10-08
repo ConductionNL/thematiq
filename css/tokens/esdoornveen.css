@@ -133,6 +133,21 @@
 	/* An info melding is a tinted card without a line, as the school boards
 	 * draw "Online melden" (bridge-info-melding-border). */
 	--nldesign-website-alert-info-border-width: 0;
+	/* A notice and a melding have a hairline, as on the boards. */
+	--nldesign-website-notice-border-width: 1px;
+
+	/* The notice strip over the home page ("Let op", "Open dag",
+	 * "Herfstvakantie"), as the board draws it (school-sets-follow-their-boards). */
+	--nldesign-website-attention-background-color: #F0EAF7;
+	--nldesign-website-attention-border-color: #D2C2E6;
+	--nldesign-website-attention-color: var(--nldesign-color-text);
+
+	/* The hero's search label: semibold, 17px, as the board draws it. */
+	--nldesign-website-hero-search-label-font-weight: 600;
+	--nldesign-website-hero-search-label-font-size: 1.0625rem;
+
+	/* The hero photo's slanted corner, bottom right (plan deviation D-3). */
+	--nldesign-hero-image-clip-path: polygon(0 0, 100% 0, 100% calc(100% - 120px), calc(100% - 75px) 100%, 0 100%);
 
 	/* The selected navigation entry: the accent, where Nextcloud uses the
 	 * primary colour. Nextcloud 34 and later draw it as a 16% wash of this
