@@ -481,7 +481,12 @@
 				"token-set-dropdown",
 				"token-set-vocabulary-audit",
 				"css-architecture",
-				"admin-settings"
+				"admin-settings",
+				"frankendesk-token-set",
+				"school-token-sets",
+				"theme-gallery",
+				"token-reference",
+				"vng-token-set"
 			]
 		},
 		{
@@ -490,7 +495,11 @@
 			"title_nl": "De look van La Suite numerique",
 			"area": "catalogue",
 			"overlay": null,
-			"specs": []
+			"specs": [
+				"lasuite-parity",
+				"lasuite-stack",
+				"marianne-font"
+			]
 		},
 		{
 			"slug": "token-set-apply-dialog",
@@ -502,7 +511,8 @@
 				"token-set-apply-dialog",
 				"theming-sync",
 				"apply-without-reload",
-				"admin-settings"
+				"admin-settings",
+				"scheduled-switch"
 			]
 		},
 		{
@@ -512,7 +522,8 @@
 			"area": "apply",
 			"overlay": null,
 			"specs": [
-				"admin-settings"
+				"admin-settings",
+				"theme-preview"
 			]
 		},
 		{
@@ -532,7 +543,12 @@
 			"title_nl": "Design tokens opstellen",
 			"area": "authoring",
 			"overlay": null,
-			"specs": []
+			"specs": [
+				"multi-brand-token-sources",
+				"own-tokens",
+				"token-deprecations",
+				"token-set-dtcg-export"
+			]
 		},
 		{
 			"slug": "upload-contrast-check",
@@ -554,7 +570,9 @@
 			"specs": [
 				"token-editor-ui",
 				"admin-settings",
-				"custom-css-overrides"
+				"custom-css-overrides",
+				"own-component-preview",
+				"simple-brand-form"
 			]
 		},
 		{
@@ -575,7 +593,11 @@
 			"overlay": "token-import-export",
 			"specs": [
 				"token-import-export",
-				"federated-config-sharing"
+				"federated-config-sharing",
+				"config-portability",
+				"environment-marker",
+				"theme-as-code",
+				"theme-cli"
 			]
 		},
 		{
@@ -585,7 +607,8 @@
 			"area": "sync",
 			"overlay": "theming-sync",
 			"specs": [
-				"theming-sync"
+				"theming-sync",
+				"theming-sync-dialog"
 			]
 		},
 		{
@@ -625,7 +648,9 @@
 			"title_nl": "Donkere modus",
 			"area": "scoping",
 			"overlay": null,
-			"specs": []
+			"specs": [
+				"dark-mode"
+			]
 		},
 		{
 			"slug": "high-contrast-mode",
@@ -645,7 +670,8 @@
 			"overlay": "accessibility-friendly-tokens",
 			"specs": [
 				"nl-design",
-				"css-architecture"
+				"css-architecture",
+				"admin-panel-accessibility"
 			]
 		},
 		{
@@ -654,7 +680,10 @@
 			"title_nl": "Toegankelijkheidsbewijs voor audits",
 			"area": "accessibility",
 			"overlay": null,
-			"specs": []
+			"specs": [
+				"compliance-evidence",
+				"token-set-contrast-audit"
+			]
 		},
 		{
 			"slug": "component-tokens",
@@ -676,7 +705,8 @@
 			"area": "assets",
 			"overlay": "icon-assets",
 			"specs": [
-				"icon-assets"
+				"icon-assets",
+				"icon-packs"
 			]
 		},
 		{
@@ -698,7 +728,8 @@
 			"area": "sync",
 			"overlay": "token-sync-workflow",
 			"specs": [
-				"token-sync-workflow"
+				"token-sync-workflow",
+				"upstream-freshness"
 			]
 		},
 		{
@@ -717,7 +748,10 @@
 			"title_nl": "Wijzigingsgeschiedenis en auditlog van het thema",
 			"area": "governance",
 			"overlay": null,
-			"specs": []
+			"specs": [
+				"theme-versions",
+				"theming-audit"
+			]
 		},
 		{
 			"slug": "every-page-styled",
@@ -728,7 +762,10 @@
 			"specs": [
 				"css-architecture",
 				"nextcloud-variable-mapping",
-				"token-editor-ui"
+				"token-editor-ui",
+				"assistant-approved-mark",
+				"document-house-style",
+				"workplace-layout"
 			]
 		},
 		{
@@ -737,7 +774,9 @@
 			"title_nl": "E-mails in de huisstijl",
 			"area": "surfaces",
 			"overlay": null,
-			"specs": []
+			"specs": [
+				"email-theming"
+			]
 		},
 		{
 			"slug": "app-token-api",
@@ -747,7 +786,9 @@
 			"overlay": null,
 			"specs": [
 				"app-token-set-selection",
-				"css-architecture"
+				"css-architecture",
+				"brand-motif-on-portals",
+				"theming-capability"
 			]
 		},
 		{
@@ -767,10 +808,90 @@
 			"area": "governance",
 			"overlay": null,
 			"specs": [
-				"claim-accuracy"
+				"claim-accuracy",
+				"beta-alignment",
+				"docs-content"
 			]
 		}
 	],
+	"internalSpecs": [
+		"admin-js-test-coverage",
+		"app-identity",
+		"l10n-completeness",
+		"nextcloud-variable-inventory",
+		"runtime-file-storage"
+	],
+	"specScreens": {
+		"school-token-sets": {
+			"board": [
+				"TqTheming"
+			]
+		},
+		"vng-token-set": {
+			"board": [
+				"TqTheming"
+			]
+		},
+		"frankendesk-token-set": {
+			"board": [
+				"TqTheming"
+			]
+		},
+		"lasuite-parity": {
+			"board": [
+				"TqTheming",
+				"TqLettertypen"
+			]
+		},
+		"workplace-layout": {
+			"board": [
+				"TqLayout",
+				"TqTheming"
+			]
+		},
+		"brand-motif-on-portals": {
+			"board": [
+				"TqTheming",
+				"TqLayout"
+			]
+		},
+		"admin-panel-accessibility": {
+			"board": null,
+			"reason": "behaviour of every dialog and tab on the theming page, no screen of its own"
+		},
+		"beta-alignment": {
+			"board": null,
+			"reason": "app store listing, product page and documentation, no screen in the app"
+		},
+		"docs-content": {
+			"board": null,
+			"reason": "documentation site, no screen in the app"
+		},
+		"theming-capability": {
+			"board": null,
+			"reason": "backend: capabilities API, no screen"
+		},
+		"admin-js-test-coverage": {
+			"board": null,
+			"reason": "internal: unit tests of the admin page, no screen"
+		},
+		"app-identity": {
+			"board": null,
+			"reason": "internal: app id rename and migration, no screen"
+		},
+		"l10n-completeness": {
+			"board": null,
+			"reason": "internal: translation completeness check in CI, no screen"
+		},
+		"nextcloud-variable-inventory": {
+			"board": null,
+			"reason": "internal: inventory of CSS variables for the mapping, no screen"
+		},
+		"runtime-file-storage": {
+			"board": null,
+			"reason": "backend: where runtime files are stored, no screen"
+		}
+	},
 	"providers": [
 		{
 			"key": "thematiq",
