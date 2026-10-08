@@ -890,6 +890,12 @@
 		"runtime-file-storage": {
 			"board": null,
 			"reason": "backend: where runtime files are stored, no screen"
+		},
+		"nl-design": {
+			"board": [
+				"TqTheming",
+				"TqComponenten"
+			]
 		}
 	},
 	"providers": [
