@@ -148,7 +148,15 @@ permissions:
 
 jobs:
   quality:
-    if: (github.event_name != 'pull_request' || github.head_ref != 'development')
+    # The pull_request run of a PR whose head is `development` is skipped
+    # because the `development` push run already decided that commit — EXCEPT
+    # the promotion into `beta`. The shared workflow runs E2E on the promotion
+    # path only (`e2e-promotion-only`), never on a `development` push, so for
+    # `development -> beta` this run is not a duplicate: it is the only run
+    # that executes E2E for the commits being promoted. Without this clause
+    # every `development -> beta` PR (#1080) reported E2E as skipped, while a
+    # hotfix branch into `beta` (#1102) ran all eight shards.
+    if: (github.event_name != 'pull_request' || github.head_ref != 'development' || github.base_ref == 'beta')
     uses: ConductionNL/.github/.github/workflows/quality.yml@main
     with:
       app-name: thematiq
