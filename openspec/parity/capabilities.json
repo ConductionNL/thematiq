@@ -526,7 +526,7 @@
 			"feature": "token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
 					"NcThema"
@@ -563,7 +563,7 @@
 			"feature": "token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
 					"NcThema"
@@ -601,7 +601,7 @@
 			"featureConfidence": "high",
 			"note": "info.xml description explicitly names these four as 'full design systems of the large cities'.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -635,7 +635,7 @@
 			"feature": "vng-token-set",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -669,7 +669,7 @@
 			"feature": "lasuite-stack",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
 					"TqLettertypen"
@@ -707,7 +707,7 @@
 			"featureConfidence": "medium",
 			"note": "You can pick from a list of 47 sets and jump to one by typing its first letters via the browser's own select behaviour, but there is no purpose-built search/filter box the way there is for the app-exclusion list. At 47 entries it is usable; it does not obviously scale to 'hundreds'.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -742,7 +742,7 @@
 			"featureConfidence": "high",
 			"note": "Swatch appears once you have selected the set in the dropdown but before you confirm applying it, not while merely browsing the closed list.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -776,7 +776,7 @@
 			"feature": "css-architecture",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTerugNaarNextcloud"
 			}
 		},
@@ -810,7 +810,7 @@
 			"feature": "token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
 					"TqSetUploaden"
@@ -847,7 +847,7 @@
 			"feature": "high-contrast-token-set",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -882,7 +882,7 @@
 			"featureConfidence": "medium",
 			"note": "The link is real and reachable, but it always points at nldesign.app regardless of the design system actually selected (La Suite, high contrast, Cunningham all get the NL Design System link, not their own).",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -916,7 +916,7 @@
 			"feature": "extended-token-sets",
 			"featureConfidence": "medium",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -951,7 +951,7 @@
 			"featureConfidence": "medium",
 			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
 					"TqNieuwThema"
@@ -989,7 +989,7 @@
 			"featureConfidence": "high",
 			"note": "The only outbound network call this app makes at all is the opt-in upstream-freshness check against api.github.com (templates/settings/admin.php:527); there is no marketplace/gallery browse-and-download feature.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqGalerij"
 			}
 		},
@@ -1024,7 +1024,7 @@
 			"featureConfidence": "high",
 			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -1058,7 +1058,7 @@
 			"feature": "token-set-apply-dialog",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
 					"TqTokensetToepassen"
@@ -1095,7 +1095,7 @@
 			"feature": "token-set-apply-dialog",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTokensetToepassen"
 			}
 		},
@@ -1130,7 +1130,7 @@
 			"featureConfidence": "high",
 			"note": "Nextcloud core theming (primary/background colour, logo) inside the same dialog is one bulk 'also update Nextcloud theming' checkbox (js/admin.js:3095-3097), not per-field.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTokensetToepassen"
 			}
 		},
@@ -1164,7 +1164,7 @@
 			"feature": "css-architecture",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTokensetToepassen"
 			}
 		},
@@ -1198,7 +1198,7 @@
 			"feature": "token-editor-ui",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -1233,7 +1233,7 @@
 			"featureConfidence": "high",
 			"note": "This previews a mock login card inside the playground stage, not the real public /login page in an iframe; it repaints live as you edit tokens.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -1267,7 +1267,7 @@
 			"feature": "theme-preview",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqVoorbeeldSessie"
 			}
 		},
@@ -1301,7 +1301,7 @@
 			"feature": "theme-preview",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqVoorbeeldSessie"
 			}
 		},
@@ -1335,7 +1335,7 @@
 			"feature": "theme-preview",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqVoorbeeldSessie",
 					"TqTokensetToepassen"
@@ -1372,7 +1372,7 @@
 			"feature": "theme-preview",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqVoorbeeldSessie"
 			}
 		},
@@ -1406,7 +1406,7 @@
 			"feature": "component-tokens",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -1441,7 +1441,7 @@
 			"feature": "component-tokens",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLayout"
 			}
 		},
@@ -1475,7 +1475,7 @@
 			"feature": "theming-capability",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -1509,7 +1509,7 @@
 			"feature": "theming-capability",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqWissels"
 			}
 		},
@@ -1544,7 +1544,7 @@
 			"featureConfidence": "high",
 			"note": "The audit log (theming-audit) is read-only evidence for compliance, not an undo mechanism.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqLogboek",
 					"TqVersieHerstellen"
@@ -1581,7 +1581,7 @@
 			"feature": "theming-sync",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTerugNaarNextcloud"
 			}
 		},
@@ -1618,7 +1618,7 @@
 			"originUrl": "https://feedback.tokens.studio/p/theme-switcher-for-non-ds-designers",
 			"note": "brand managers in a municipality are not token engineers",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
 					"NcThema"
@@ -1655,7 +1655,7 @@
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqEigenSets",
 					"TqSetUploaden"
@@ -1693,7 +1693,7 @@
 			"featureConfidence": "high",
 			"note": "Corrections round 8 (2026-09-28): the import writes the wrong colour for srgb-linear colour objects and drops alpha, thematiq#695; rating kept because the upload and mapping still work for srgb hex and component colours and every other token type, the defect is on those two colour shapes only.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqEigenSets",
 					"TqSetUploaden"
@@ -1730,7 +1730,7 @@
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqSetUploaden"
 			}
 		},
@@ -1765,7 +1765,7 @@
 			"featureConfidence": "high",
 			"note": "Fail-closed reject, not silent stripping: the whole declaration is refused rather than laundered.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqSetUploaden"
 			}
 		},
@@ -1799,7 +1799,7 @@
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEigenSets"
 			}
 		},
@@ -1833,7 +1833,7 @@
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEigenSets"
 			}
 		},
@@ -1867,7 +1867,7 @@
 			"feature": "nlds-theme-converter",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqEigenSets",
 					"TqSetUploaden"
@@ -1904,7 +1904,7 @@
 			"feature": "custom-overrides",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -1938,7 +1938,7 @@
 			"feature": "custom-overrides",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -1972,7 +1972,7 @@
 			"feature": "custom-overrides",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -2006,7 +2006,7 @@
 			"feature": "custom-overrides",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -2041,7 +2041,7 @@
 			"featureConfidence": "high",
 			"note": "Own rating yes to partial (corrections round 8, 2026-09-28): the edits persist, but colour edits do not apply to users who chose the dark theme in their personal settings, so they do not reach everyone, thematiq#698.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqComponenten",
 					"TqOverridesOpslaan"
@@ -2078,7 +2078,7 @@
 			"feature": "custom-overrides",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqComponenten",
 					"TqOverridesUploaden"
@@ -2115,7 +2115,7 @@
 			"feature": "custom-css-freeform",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEigenCss"
 			}
 		},
@@ -2150,7 +2150,7 @@
 			"featureConfidence": "high",
 			"note": "It is fail-closed reject-all-or-nothing, documented in the class docblock as deliberately not stripping the offending fragment (would silently mutate CSS the admin never reviewed); the row's 'cleaned' is satisfied by rejection with reasons, not by silent stripping.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEigenCss"
 			}
 		},
@@ -2184,7 +2184,7 @@
 			"feature": "component-tokens",
 			"featureConfidence": "medium",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -2219,7 +2219,7 @@
 			"featureConfidence": "high",
 			"note": "Corrections round 8 (2026-09-28): translucent colours lose their alpha in the derived dark palette and 8-digit hex tokens are not darkened, thematiq#696; rating kept because the dark variant is still derived automatically for every opaque colour token, the defect is on translucent tokens only.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqDonker"
 			}
 		},
@@ -2254,7 +2254,7 @@
 			"featureConfidence": "medium",
 			"note": "Reads a semantic layer on import but does not keep it live afterward, so a later edit does not flow through anything.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqSetUploaden"
 			}
 		},
@@ -2319,7 +2319,7 @@
 			"featureConfidence": "medium",
 			"note": "Achieves the practical outcome (several themes, switchable) via independent sets + a group map, not via one multi-brand token source.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqMerkenKiezen",
 					"TqEigenSets"
@@ -2386,7 +2386,7 @@
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqBundel"
 			}
 		},
@@ -2450,7 +2450,7 @@
 			"feature": "custom-overrides",
 			"featureConfidence": "medium",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEigenSets"
 			}
 		},
@@ -2484,7 +2484,7 @@
 			"feature": "typography",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
 			}
 		},
@@ -2552,7 +2552,7 @@
 			"feature": "custom-fonts",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
 			}
 		},
@@ -2586,7 +2586,7 @@
 			"feature": "custom-fonts",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
 			}
 		},
@@ -2620,7 +2620,7 @@
 			"feature": "custom-fonts",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
 			}
 		},
@@ -2688,7 +2688,7 @@
 			"feature": "marianne-font",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
 			}
 		},
@@ -2723,7 +2723,7 @@
 			"featureConfidence": "medium",
 			"note": "Family is user-editable via the override editor; size/weight exist as house-style tokens but are not exposed there, so the fuller claim is partly a code-reading inference.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -2788,7 +2788,7 @@
 			"featureConfidence": "medium",
 			"note": "Functions as a de facto library of the instance's own uploads, not a curated organisation-wide catalogue independent of upload.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
 			}
 		},
@@ -2823,7 +2823,7 @@
 			"featureConfidence": "high",
 			"note": "Sync is opt-in per switch: the admin sees a diff dialog and confirms before the logo actually changes, it is not silent.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqThemingBijwerken"
 			}
 		},
@@ -2857,7 +2857,7 @@
 			"feature": "theming-sync",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqThemingBijwerken"
 			}
 		},
@@ -2962,7 +2962,7 @@
 			"featureConfidence": "medium",
 			"note": "Entirely a core Nextcloud feature; thematiq neither syncs a favicon per token set nor blocks the core one.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqThemingBijwerken"
 			}
 		},
@@ -3095,7 +3095,7 @@
 			"feature": "icon-packs",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
 					"TqLayout"
@@ -3168,7 +3168,7 @@
 			"featureConfidence": "high",
 			"note": "Decided no 2026-09-28: Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. Nextcloud core also has only a single logo slot (nextcloud/server#47357, cited in the code's own comment), which is why this needed its own CSS-based path in the first place; that path is real code with no data ever flowing through it.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqDonker"
 			}
 		},
@@ -3335,7 +3335,7 @@
 			"feature": "css-architecture",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLayout"
 			}
 		},
@@ -3369,7 +3369,7 @@
 			"feature": "menu-labels",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLayout"
 			}
 		},
@@ -3403,7 +3403,7 @@
 			"feature": "hide-slogan",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLayout"
 			}
 		},
@@ -3472,7 +3472,7 @@
 			"featureConfidence": "high",
 			"note": "A documented past defect (now fixed) is preserved in the code's own comment: a stale namespace in the occ command silently disabled branded email until OC\\Mail\\Mailer's class_exists() guard was traced (lib/Service/EmailThemingService.php:53-64).",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEmailDocumenten"
 			}
 		},
@@ -3506,7 +3506,7 @@
 			"feature": "email-theming",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEmailDocumenten"
 			}
 		},
@@ -3574,7 +3574,7 @@
 			"feature": "nextcloud-variable-mapping",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqBasistokens"
 			}
 		},
@@ -3644,7 +3644,7 @@
 			"featureConfidence": "high",
 			"note": "The status token list lives once, in lib/Service/TokenRegistry.php getStatusTokens(). The orphaned duplicate lib/Service/StatusTokens.php, and its Login/Content/Typography siblings, were removed for #665.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -3844,7 +3844,7 @@
 			"feature": "per-app-theming",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqMerkPerApp"
 			}
 		},
@@ -3879,7 +3879,7 @@
 			"featureConfidence": "high",
 			"note": "Per-group theming covers only which token-set CSS stack is injected; core theming values (logo/primary/background) stay instance-global by design (GroupThemingService.php:51-55 docblock).",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqGroepen"
 			}
 		},
@@ -3913,7 +3913,7 @@
 			"feature": "per-group-theming",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqGroepen"
 			}
 		},
@@ -4017,7 +4017,7 @@
 			"featureConfidence": "high",
 			"note": "OS-driven dark mode works across every generated municipal/organisation token set; OS-driven high-contrast cooperation is scoped to the dedicated 'high-contrast' design system rather than layered onto every house style.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqDonker"
 			}
 		},
@@ -4177,7 +4177,7 @@
 			"featureConfidence": "high",
 			"note": "warning only, upload always succeeds regardless of contrast result (see acc-block-inaccessible).",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqSetUploaden"
 			}
 		},
@@ -4247,7 +4247,7 @@
 			"featureConfidence": "high",
 			"note": "gate is real: it fails if a documented-AA set stops meeting AA or the generated report drifts from committed docs/reference/contrast-report.md.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTokensetToepassen"
 			}
 		},
@@ -4316,7 +4316,7 @@
 			"featureConfidence": "high",
 			"note": "Decided no 2026-09-28: No competitor rated yes, no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. the capability exists end-to-end via occ (see acc-compliance-cli, same ComplianceReportService, byte-identical output per the command's own docblock) but the admin panel has no download button for it, so as a UI feature it is unreached.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqContrastrapport"
 			}
 		},
@@ -4384,7 +4384,7 @@
 			"feature": "token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -4454,7 +4454,7 @@
 			"featureConfidence": "high",
 			"note": "this toggle follows Nextcloud's own dark/light/system choice; it is not a nldesign-controlled dark-mode switch by itself.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqDonker",
 					"TqLayout"
@@ -4560,7 +4560,7 @@
 			"featureConfidence": "high",
 			"note": "origin:competitor row, answered yes: real, working, three separate stylesheets covering login/app chrome, the settings page and the preview widgets.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqBeweging"
 			}
 		},
@@ -4629,7 +4629,7 @@
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqSetUploaden",
 					"TqTheming"
@@ -4827,7 +4827,7 @@
 			"feature": "theming-audit",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLogboek"
 			}
 		},
@@ -4861,7 +4861,7 @@
 			"feature": "theming-audit",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLogboek"
 			}
 		},
@@ -4930,7 +4930,7 @@
 			"feature": "config-portability",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqBundel"
 			}
 		},
@@ -5037,7 +5037,7 @@
 			"featureConfidence": "high",
 			"note": "origin:competitor row, answered no as a normal finding. The closest thing is occ config:export/import (see gov-otap-cli), which is a file, not deployment-config-as-code (e.g. Helm values).",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqBundel"
 			}
 		},
@@ -5171,7 +5171,7 @@
 			"featureConfidence": "medium",
 			"note": "the information is real and reasonably complete for the bundled fonts (Fira Sans, Inter, Marianne) and the two logo/icon families, but it is spread across three separate docs pages rather than a single consolidated 'licences' page in the product.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
 			}
 		},
@@ -5275,7 +5275,7 @@
 			"feature": "upstream-freshness",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqGalerij"
 			}
 		},
@@ -5309,7 +5309,7 @@
 			"feature": "upstream-freshness",
 			"featureConfidence": "high",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqGalerij"
 			}
 		},
@@ -5344,7 +5344,7 @@
 			"featureConfidence": "high",
 			"note": "Minor: one notify() call at js/admin.js:5282-5284 uses the l10n domain 'nldesign' instead of 'thematiq' for the enabled-confirmation toast, so that one string will not be translated (falls back to the raw English key); does not affect the feature's function.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqGalerij"
 			}
 		},
@@ -5379,7 +5379,7 @@
 			"featureConfidence": "high",
 			"note": "Owner is thematiq's ThemingService, but the values it writes are consumed by Nextcloud core's own theming (OCA\\Theming), so provider is recorded as nextcloud for the sink; thematiq is the driver.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqThemingBijwerken"
 			}
 		},
@@ -5414,7 +5414,7 @@
 			"featureConfidence": "medium",
 			"note": "This is editing in the sense of accepting or rejecting the proposed sync as a whole (one bulk checkbox, js/admin.js:3097), driven by picking a token set; there is no free-text field to type an arbitrary custom primary colour independent of any token set.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqThemingBijwerken"
 			}
 		},
@@ -5822,7 +5822,7 @@
 			"featureConfidence": "high",
 			"note": "origin:competitor row: thematiq makes Nextcloud's own chrome match a sovereign-workplace bundle's brand, which is what a Nextcloud-only app can do; it does not itself assemble or ship the multi-component bundle (Docs/Meet/Chat + Nextcloud) that answer, that packaging is MijnBureau/EDIC's job.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			}
 		},
@@ -6057,7 +6057,7 @@
 			"originUrl": "https://github.com/nextcloud/server/pull/58834",
 			"note": "Small but visible: text selection in the house colour is one more place where the brand shows without breaking contrast.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -6191,7 +6191,7 @@
 			"originUrl": "https://www.tenderned.nl/aankondigingen/overzicht/407031",
 			"note": "TenderNed 407031 (Gemeente Gulpen-Wittem, Zaaksysteem, 2026-01-06) requires one look-and-feel in the house style for all users with a clear difference between test and production; requirement 23655 in the intelligence database.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqOmgevingsmarkering"
 			}
 		},
@@ -6230,7 +6230,7 @@
 			"originUrl": "https://www.tenderned.nl/aankondigingen/overzicht/404703",
 			"note": "Demand from tenders: TenderNed 404703 (Hilversum VTH, 2025-12-12), 415897 (FUMO, 2026-03-13) and 298070 (BUCH, several house styles per municipality) require generated documents in the house style. openDesk added OpenProject PDF export branding in 1.18.0.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEmailDocumenten"
 			}
 		},
@@ -6267,7 +6267,7 @@
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/releases/tag/2.12.1",
 			"note": "a government house style changes under many consuming apps; a deprecation with a replacement and a date lets suppliers migrate before a token is removed",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTokenUitfaseren",
 					"TqEigenTokens"
@@ -6371,7 +6371,7 @@
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/releases/tag/2.12.1",
 			"note": "motion tokens are what a theme needs to honour reduced-motion preferences consistently across apps Corrections round 8 (2026-09-28): the two editor duration tokens do not reach the theme transitions, thematiq#697; rating kept because partial already reflects two untyped duration tokens and no easing token, and those tokens still reach Nextcloud components.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqBeweging"
 			}
 		},
@@ -6440,7 +6440,7 @@
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/issues/3236",
 			"note": "interchange with other government token tools depends on the stable DTCG colour format",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
 					"TqEigenSets"
@@ -6480,7 +6480,7 @@
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/issues/3397",
 			"note": "a broken alias falls back to an unreadable default in every app that consumes the style",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqSetUploaden"
 			}
 		},
@@ -6517,7 +6517,7 @@
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/issues/3355",
 			"note": "suppliers building for a municipality need a readable reference of the tokens they must use",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTokenSet"
 			}
 		},
@@ -6620,7 +6620,7 @@
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=526794",
 			"note": "A government brand owner needs to stop departmental sites drifting from the Rijkshuisstijl without locking down the whole instance.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqGroepen",
 					"TqPersoonlijk"
@@ -6662,7 +6662,7 @@
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=555852",
 			"note": "Public servants must be able to tell a sanctioned assistant from a look-alike; a brand mark in the assistant is a trust signal.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqAiAssistent"
 			}
 		},
@@ -6802,7 +6802,7 @@
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=568364",
 			"note": "Shows branding spreading per app with its own brand center, the fragmentation a single instance-wide theme avoids.",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqMerkPerApp"
 			}
 		},
@@ -6839,7 +6839,7 @@
 			"originUrl": "https://liferay.dev/b/liferay-dxp-2026-q3-release-webinar-replay",
 			"note": "a ministry or shared service can own one brand for many sites without giving each site admin edit rights",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqGroepen"
 			}
 		},
@@ -6876,7 +6876,7 @@
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-91941",
 			"note": "moving a full house style between environments or tenants in one unit is what OTAP governance needs",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqBundel"
 			}
 		},
@@ -6945,7 +6945,7 @@
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-96942",
 			"note": "lets a brand define its own dark palette instead of an automatic inversion",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqComponenten",
 					"TqDonker"
@@ -6985,7 +6985,7 @@
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-80283",
 			"note": "organisations can extend a shared token vocabulary without a developer release",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTokenToevoegen",
 					"TqEigenTokens"
@@ -7025,7 +7025,7 @@
 			"originUrl": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance",
 			"note": "brand overlays and translucent surfaces can stay inside the token set; origin is the style book documentation because no Liferay release-notes page naming this change was found",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
 			}
 		},
@@ -7062,7 +7062,7 @@
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-88654",
 			"note": "component builders for a municipal design system need to see the real brand while building",
 			"screen": {
-				"canvas": "5NkFW28vZUUij43xzxHg5a",
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEigenComponent"
 			}
 		}
