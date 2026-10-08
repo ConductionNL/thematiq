@@ -779,6 +779,8 @@
 			darkTokens: loadState('playgroundDarkTokens', {}),
 			ownComponents: [],
 			ownCleanup: null,
+			// The administrator's own --nldesign-org-* tokens by name, once loaded.
+			orgTokens: null,
 		}
 
 		// The selector: the editor's own tab strip, moved above the preview, with
@@ -787,6 +789,18 @@
 		// which tab is open would be worse than none.
 		var selector = el('div', 'nldesign-pg-selector')
 		selector.appendChild(tabs)
+		// "Your components": a tab of their own after the shipped ones, so what
+		// a builder makes never sits among the components Nextcloud ships.
+		if (tabs.querySelector('[data-tab="' + OWN_TAB + '"]') === null) {
+			var ownTab = el(
+				'button',
+				'nldesign-tab-btn',
+				t('thematiq', 'Your components'),
+			)
+			ownTab.type = 'button'
+			ownTab.setAttribute('data-tab', OWN_TAB)
+			tabs.appendChild(ownTab)
+		}
 		state.chips = el('div', 'nldesign-pg-chips')
 		// A plain group of toggle buttons, NOT a radiogroup. The semantics of a
 		// radiogroup are right — one of N, exactly one on — but announcing one
@@ -894,6 +908,7 @@
 		}
 
 		loadOwnComponents(state, bootHash)
+		loadOrgTokens(state)
 	}
 
 	/**
@@ -960,6 +975,11 @@
 		// for each tab (css/admin.css keys on this), so a tab's full view shows
 		// that tab's components rather than one picture shared by all of them.
 		state.preview.setAttribute('data-pg-tab', tab)
+		// The own tab opens on an empty component to build.
+		if (tab === OWN_TAB) {
+			select(state, OWN)
+			return
+		}
 		showView(state, tab === 'login' ? 'login' : 'app')
 		renderChips(state)
 		updateCrumb(state)
@@ -1027,9 +1047,12 @@
 	function renderChips(state) {
 		state.chips.innerHTML = ''
 
-		var entries = [{ id: FULL_VIEW, title: t('thematiq', 'Full view') }]
-			.concat(componentsFor(state.inventory, state.tab))
-			.concat(ownEntries(state))
+		var entries =
+			state.tab === OWN_TAB
+				? ownEntries(state)
+				: [{ id: FULL_VIEW, title: t('thematiq', 'Full view') }].concat(
+						componentsFor(state.inventory, state.tab),
+					)
 
 		entries.forEach(function (entry) {
 			var chip = el('button', 'nldesign-pg-chip', entry.title)
@@ -1056,6 +1079,10 @@
 	 * @return {void}
 	 */
 	function select(state, id) {
+		// The own tab has no full view and no shipped components.
+		if (state.tab === OWN_TAB && isOwnId(id) === false) {
+			id = OWN
+		}
 		if (isOwnId(id) === true) {
 			state.component = id
 			enterOwn(state, id)
@@ -1085,8 +1112,11 @@
 	/* Your component (authoring-own-markup-preview)                     */
 	/* ---------------------------------------------------------------- */
 
-	/** The chip id of an empty "Your component" stage; a saved one is `own-{slug}`. */
+	/** The chip id of an empty "New component" stage; a saved one is `own-{slug}`. */
 	var OWN = 'own'
+
+	/** The tab that holds the builder's own components, apart from the shipped ones. */
+	var OWN_TAB = 'own'
 
 	/**
 	 * Whether a selection id is the own component stage.
@@ -1124,17 +1154,17 @@
 	 */
 	function ownTitle(state, id) {
 		var saved = ownById(state, id)
-		return saved !== null ? saved.name : t('thematiq', 'Your component')
+		return saved !== null ? saved.name : t('thematiq', 'New component')
 	}
 
 	/**
-	 * The own chips at the end of every tab's row: "Your component", then each saved one.
+	 * The chips of the "Your components" tab: "New component", then each saved one.
 	 *
 	 * @param {Object} state The instrument state.
 	 * @return {Array<{id: string, title: string}>}
 	 */
 	function ownEntries(state) {
-		return [{ id: OWN, title: t('thematiq', 'Your component') }].concat(
+		return [{ id: OWN, title: t('thematiq', 'New component') }].concat(
 			(state.ownComponents || []).map(function (component) {
 				return { id: 'own-' + component.slug, title: component.name }
 			}),
@@ -1174,13 +1204,15 @@
 				if (match[2] !== OWN && ownById(state, match[2]) === null) {
 					return
 				}
+				// Always in their own tab, also from a link written as
+				// `#preview={tab}/own-{slug}` before they had one.
 				var tabButton = state.tabs.querySelector(
-					'.nldesign-tab-btn[data-tab="' + match[1] + '"]',
+					'.nldesign-tab-btn[data-tab="' + OWN_TAB + '"]',
 				)
 				if (tabButton === null) {
 					return
 				}
-				if (match[1] !== state.tab) {
+				if (state.tab !== OWN_TAB) {
 					tabButton.click()
 				}
 				select(state, match[2])
@@ -1285,7 +1317,44 @@
 	function ownLabel(id, text) {
 		var label = el('label', 'nldesign-own-label', text)
 		label.setAttribute('for', id)
+		// Also by id, for a code editor standing in for the field.
+		label.id = id + '-label'
 		return label
+	}
+
+	/**
+	 * Put code editors over the HTML and CSS fields, when js/vendor/codeEditor.js
+	 * is loaded (src/codeEditor.js). The fields stay in the page and keep their
+	 * value, so everything that reads them works the same; without the editor, or
+	 * when it fails, they stay plain text areas.
+	 *
+	 * @param {Element} html The HTML field.
+	 * @param {Element} css The CSS field.
+	 * @return {Array<{unmount: Function}>} The mounted editors.
+	 */
+	function mountCodeEditors(html, css) {
+		var editors = window.NldesignCodeEditor
+		if (!editors || typeof editors.mount !== 'function') {
+			return []
+		}
+		var mounted = []
+		try {
+			mounted.push(
+				editors.mount(html, {
+					language: 'html',
+					labelledBy: html.id + '-label',
+				}),
+			)
+			mounted.push(
+				editors.mount(css, {
+					language: 'css',
+					labelledBy: css.id + '-label',
+				}),
+			)
+		} catch (error) {
+			console.error('[thematiq] the code editor could not be mounted:', error)
+		}
+		return mounted
 	}
 
 	/**
@@ -1303,15 +1372,37 @@
 		}
 
 		var stage = state.stage
-		stage.appendChild(
-			el(
-				'div',
-				'nldesign-pg-stage-title',
-				saved !== null ? saved.name : t('thematiq', 'Your component'),
-			),
+		// A saved component opens the way a shipped one does: its name, its
+		// drawing and, under the stage, its rows. "Edit" brings the code back;
+		// a new component has nothing to show yet, so it starts there.
+		var head = el('div', 'nldesign-own-head')
+		var title = el(
+			'div',
+			'nldesign-pg-stage-title',
+			(saved !== null ? saved.name : t('thematiq', 'New component')) + ' ',
 		)
+		title.appendChild(
+			el('span', 'nldesign-pg-dim', '· ' + t('thematiq', 'Your component')),
+		)
+		head.appendChild(title)
+		var edit = null
+		if (saved !== null) {
+			edit = el(
+				'button',
+				'nldesign-btn nldesign-btn--small nldesign-own-edit',
+				t('thematiq', 'Edit'),
+			)
+			edit.type = 'button'
+			edit.setAttribute(
+				'aria-controls',
+				'nldesign-own-fields nldesign-own-save',
+			)
+			head.appendChild(edit)
+		}
+		stage.appendChild(head)
 
 		var fields = el('div', 'nldesign-own-fields')
+		fields.id = 'nldesign-own-fields'
 		var html = el('textarea', 'nldesign-own-html')
 		html.id = 'nldesign-own-html'
 		html.rows = 6
@@ -1327,6 +1418,7 @@
 		fields.appendChild(ownLabel('nldesign-own-css', t('thematiq', 'CSS')))
 		fields.appendChild(css)
 		stage.appendChild(fields)
+		var codeEditors = mountCodeEditors(html, css)
 
 		var dark = el(
 			'button',
@@ -1352,16 +1444,15 @@
 		)
 		stage.appendChild(frame)
 
-		stage.appendChild(
-			el(
-				'p',
-				'nldesign-own-note',
-				t(
-					'thematiq',
-					'Scripts do not run here, and nothing loads from outside this server.',
-				),
+		var note = el(
+			'p',
+			'nldesign-own-note',
+			t(
+				'thematiq',
+				'Scripts do not run here, and nothing loads from outside this server.',
 			),
 		)
+		stage.appendChild(note)
 		var report = el('p', 'nldesign-own-report')
 		report.setAttribute('role', 'status')
 		stage.appendChild(report)
@@ -1373,13 +1464,15 @@
 		stage.appendChild(contrast)
 
 		var save = el('div', 'nldesign-own-save')
+		save.id = 'nldesign-own-save'
 		var name = el('input', 'nldesign-own-name')
 		name.id = 'nldesign-own-name'
 		name.type = 'text'
 		name.value = saved !== null ? saved.name : ''
+		// Saving is the stage's primary action, removing its destructive one.
 		var saveButton = el(
 			'button',
-			'nldesign-btn nldesign-btn--small',
+			'nldesign-btn nldesign-btn--small nldesign-own-save-btn',
 			t('thematiq', 'Save component'),
 		)
 		saveButton.type = 'button'
@@ -1389,7 +1482,7 @@
 		if (saved !== null) {
 			var remove = el(
 				'button',
-				'nldesign-btn nldesign-btn--small',
+				'nldesign-btn nldesign-btn--small nldesign-own-remove',
 				t('thematiq', 'Remove component'),
 			)
 			remove.type = 'button'
@@ -1399,6 +1492,21 @@
 			save.appendChild(remove)
 		}
 		stage.appendChild(save)
+
+		var setEditing = function (on) {
+			fields.hidden = on !== true
+			note.hidden = on !== true
+			save.hidden = on !== true
+			if (edit !== null) {
+				edit.setAttribute('aria-expanded', on === true ? 'true' : 'false')
+			}
+		}
+		setEditing(saved === null)
+		if (edit !== null) {
+			edit.addEventListener('click', function () {
+				setEditing(edit.getAttribute('aria-expanded') !== 'true')
+			})
+		}
 
 		var names = []
 		var fonts = fontFaces()
@@ -1437,7 +1545,7 @@
 			report.textContent = removalText(
 				sanitizer.merge(cleanHtml.removed, cleanCss.removed),
 			)
-			ownPanel(state, names)
+			ownPanel(state, names, cleanCss.css + '\n' + cleanHtml.html)
 			paint()
 		}
 
@@ -1461,6 +1569,9 @@
 		state.editor.addEventListener('input', onEdit)
 		state.ownCleanup = function () {
 			state.editor.removeEventListener('input', onEdit)
+			codeEditors.forEach(function (editor) {
+				editor.unmount()
+			})
 		}
 
 		render()
@@ -1559,15 +1670,497 @@
 			: t('thematiq', 'Removed: {list}', { list: parts.join(', ') })
 	}
 
+	/** The prefix of an administrator's own tokens (openspec/specs/own-tokens). */
+	var ORG_PREFIX = '--nldesign-org-'
+
+	/**
+	 * The fallback the code gives a variable: the text after the comma in its
+	 * first `var(--name, …)`, or '' when it has none.
+	 *
+	 * @param {string} source The cleaned CSS and HTML.
+	 * @param {string} name The variable.
+	 * @return {string} The fallback, as written.
+	 */
+	function fallbackOf(source, name) {
+		var escaped = name.replace(/[-]/g, '\\-')
+		var match = new RegExp('var\\(\\s*' + escaped + '\\s*,').exec(source)
+		if (match === null) {
+			return ''
+		}
+		var depth = 1
+		var start = match.index + match[0].length
+		for (var i = start; i < source.length; i++) {
+			if (source[i] === '(') {
+				depth++
+			} else if (source[i] === ')') {
+				depth--
+				if (depth === 0) {
+					return source.slice(start, i).trim()
+				}
+			}
+		}
+		return ''
+	}
+
+	/**
+	 * What a CSS value comes to on the preview: `var()` references in it are
+	 * resolved, so `var(--nldesign-color-primary)` becomes the set's colour.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} text The value as written.
+	 * @return {string} The resolved value, or the text when it cannot be resolved.
+	 */
+	function resolveValue(state, text) {
+		if (text === '') {
+			return ''
+		}
+		var probe = el('span')
+		probe.hidden = true
+		state.preview.appendChild(probe)
+		probe.style.setProperty('--thematiq-probe', text)
+		var value = readVar(probe, '--thematiq-probe', '')
+		probe.remove()
+		return value !== '' ? value : text
+	}
+
+	/**
+	 * Whether a value is a colour the picker can show.
+	 *
+	 * @param {string} value The value.
+	 * @return {boolean}
+	 */
+	function isColour(value) {
+		var transforms = window.NldesignTokenTransforms || {}
+		return (
+			typeof transforms.normaliseColorForPicker === 'function'
+			&& transforms.normaliseColorForPicker(value) !== null
+		)
+	}
+
+	/**
+	 * A request to the own-token endpoints.
+	 *
+	 * @param {string} method The HTTP method.
+	 * @param {string} path The path under /settings/tokens/own.
+	 * @param {Object} [body] The JSON body.
+	 * @return {Promise<{ok: boolean, data: Object}>}
+	 */
+	function orgRequest(method, path, body) {
+		var options = { method: method, headers: { requesttoken: OC.requestToken } }
+		if (body !== undefined) {
+			options.headers['Content-Type'] = 'application/json'
+			options.body = JSON.stringify(body)
+		}
+		return fetch(
+			OC.generateUrl('/apps/thematiq/settings/tokens/own' + path),
+			options,
+		).then(function (response) {
+			return response.json().then(function (data) {
+				return { ok: response.ok, data: data || {} }
+			})
+		})
+	}
+
+	/**
+	 * Load the administrator's own tokens, then redraw an open own panel with them.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @return {Promise<void>}
+	 */
+	function loadOrgTokens(state) {
+		if (typeof fetch !== 'function' || typeof OC === 'undefined') {
+			return Promise.resolve()
+		}
+		return orgRequest('GET', '')
+			.then(function (answer) {
+				state.orgTokens = {}
+				;((answer.ok && answer.data.tokens) || []).forEach(function (token) {
+					state.orgTokens[token.name] = token
+				})
+				if (
+					isOwnId(state.component) === true
+					&& state.ownNames !== undefined
+				) {
+					ownPanel(state, state.ownNames, state.ownSource)
+				}
+			})
+			.catch(function (error) {
+				console.error('[thematiq] own tokens could not be loaded:', error)
+			})
+	}
+
+	/**
+	 * After an own token changed here: the "Your own tokens" list redraws too.
+	 *
+	 * @return {void}
+	 */
+	function refreshOwnTokenList() {
+		var list = window.NldesignOwnTokens
+		if (list && typeof list.reload === 'function') {
+			list.reload()
+		}
+	}
+
+	/**
+	 * Make a token the code reads one of the administrator's own, starting at
+	 * the value its fallback comes to.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} name The variable, `--nldesign-org-…`.
+	 * @param {string} value The starting value.
+	 * @return {Promise<boolean>} Whether it was added.
+	 */
+	function createOrgToken(state, name, value) {
+		var slug = name.slice(ORG_PREFIX.length)
+		return orgRequest('POST', '', {
+			slug: slug,
+			label: slug.replace(/-/g, ' '),
+			type: isColour(value) ? 'color' : 'text',
+			value: value,
+		})
+			.then(function (answer) {
+				if (!answer.ok) {
+					notify(
+						answer.data.error
+							|| t('thematiq', 'The token was not saved.'),
+					)
+					return false
+				}
+				state.orgTokens[name] = answer.data.token || {
+					name: name,
+					value: value,
+				}
+				notify(t('thematiq', 'Token saved.'))
+				refreshOwnTokenList()
+				ownPanel(state, state.ownNames, state.ownSource)
+				return true
+			})
+			.catch(function () {
+				notify(t('thematiq', 'The token was not saved.'))
+				return false
+			})
+	}
+
+	/**
+	 * Store a new value for an own token, keeping everything else it has.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Object} token The stored token.
+	 * @param {string} value The new value.
+	 * @return {Promise<void>}
+	 */
+	function saveOrgToken(state, token, value) {
+		if (value === token.value) {
+			return Promise.resolve()
+		}
+		return orgRequest('PUT', '/' + encodeURIComponent(token.name), {
+			slug: token.name.slice(ORG_PREFIX.length),
+			label: token.label,
+			type: token.type,
+			value: value,
+			darkValue: token.darkValue || '',
+			description: token.description || '',
+		})
+			.then(function (answer) {
+				if (!answer.ok) {
+					notify(
+						answer.data.error
+							|| t('thematiq', 'The token was not saved.'),
+					)
+					return
+				}
+				state.orgTokens[token.name] = answer.data.token || token
+				notify(t('thematiq', 'Token saved.'))
+				refreshOwnTokenList()
+			})
+			.catch(function () {
+				notify(t('thematiq', 'The token was not saved.'))
+			})
+	}
+
+	/**
+	 * The row of a `--nldesign-org-*` token the code reads. One of the
+	 * administrator's own tokens can be edited here, live, and is stored when
+	 * an edit is done; any other gets a button that makes it one, starting at
+	 * the value of the fallback the code gives it.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {string} name The variable.
+	 * @param {string} fallback Its fallback, as written.
+	 * @return {Element} The row.
+	 */
+	function orgRow(state, name, fallback) {
+		var token = (state.orgTokens || {})[name] || null
+		var row = el('div', 'nldesign-token-row nldesign-pg-row nldesign-own-org')
+		var wrap = el('div', 'nldesign-token-label-wrap')
+		wrap.appendChild(
+			el('span', 'nldesign-token-label', token !== null ? token.label : name),
+		)
+		wrap.appendChild(
+			el(
+				'span',
+				'nldesign-token-name',
+				token !== null
+					? name
+					: t('thematiq', 'Not one of your own tokens yet'),
+			),
+		)
+		row.appendChild(wrap)
+		row.appendChild(
+			el('span', 'nldesign-pg-paints', t('thematiq', 'Your own token')),
+		)
+
+		if (token === null) {
+			var start = resolveValue(state, fallback)
+			var value = start !== '' ? start : '#000000'
+			// The colour it will be, before it is added, on the same
+			// checkerboard as every other colour row.
+			var startWrap = el('span', 'nldesign-own-org-start')
+			if (isColour(value) === true) {
+				var preview = el('span', 'nldesign-color-swatch')
+				preview.setAttribute('aria-hidden', 'true')
+				var previewFill = el('span', 'nldesign-color-swatch-fill')
+				previewFill.style.background = value
+				preview.appendChild(previewFill)
+				startWrap.appendChild(preview)
+			}
+			var startText = el(
+				'span',
+				'',
+				start !== ''
+					? t('thematiq', 'Starts as {value}', { value: start })
+					: '',
+			)
+			startText.setAttribute('role', 'status')
+			startWrap.appendChild(startText)
+			row.appendChild(startWrap)
+
+			var add = el(
+				'button',
+				'nldesign-btn nldesign-btn--small nldesign-reset-btn',
+				t('thematiq', 'Add as own token'),
+			)
+			add.type = 'button'
+			add.disabled = state.orgTokens === undefined || state.orgTokens === null
+			add.addEventListener('click', function () {
+				// Say what is happening while the server stores it: a click
+				// that only greys a button out reads as nothing at all.
+				add.disabled = true
+				add.setAttribute('aria-busy', 'true')
+				add.textContent = t('thematiq', 'Adding…')
+				startText.textContent = t(
+					'thematiq',
+					'Adding {name} to your own tokens, starting as {value}…',
+					{ name: name, value: value },
+				)
+				createOrgToken(state, name, value).then(function (added) {
+					if (added === true) {
+						return
+					}
+					add.disabled = false
+					add.removeAttribute('aria-busy')
+					add.textContent = t('thematiq', 'Add as own token')
+					startText.textContent =
+						start !== ''
+							? t('thematiq', 'Starts as {value}', { value: start })
+							: ''
+				})
+			})
+			row.appendChild(add)
+			return row
+		}
+
+		orgControls(state, row, token, resolveValue(state, fallback))
+		return row
+	}
+
+	/**
+	 * The opacity controls of an own colour row, as the editor draws them: a
+	 * visible label, a range and a number field in percent.
+	 *
+	 * @param {string} label The token's label.
+	 * @param {number} alpha The opacity in percent.
+	 * @return {{wrap: Element, range: Element, number: Element}}
+	 */
+	function orgOpacity(label, alpha) {
+		var wrap = el('span', 'nldesign-color-opacity')
+		var caption = el(
+			'span',
+			'nldesign-color-opacity-label',
+			t('thematiq', 'Opacity'),
+		)
+		caption.setAttribute('aria-hidden', 'true')
+		var range = el('input', 'nldesign-color-alpha')
+		range.type = 'range'
+		var number = el('input', 'nldesign-color-alpha-number')
+		number.type = 'number'
+		;[range, number].forEach(function (field) {
+			field.min = '0'
+			field.max = '100'
+			field.step = '1'
+			field.value = String(alpha)
+		})
+		range.setAttribute(
+			'aria-label',
+			t('thematiq', 'Opacity of {label}', { label: label }),
+		)
+		number.setAttribute(
+			'aria-label',
+			t('thematiq', 'Opacity of {label} in percent', { label: label }),
+		)
+		var unit = el('span', 'nldesign-color-opacity-unit', '%')
+		unit.setAttribute('aria-hidden', 'true')
+		wrap.appendChild(caption)
+		wrap.appendChild(range)
+		wrap.appendChild(number)
+		wrap.appendChild(unit)
+		return { wrap: wrap, range: range, number: number }
+	}
+
+	/**
+	 * The controls of an own token's row, the same as an editor row's: for a
+	 * colour the swatch that is its picker, the text field and the opacity; for
+	 * any other type the text field; and the reset button, which puts back the
+	 * value the code's fallback comes to. Every edit shows live on the preview
+	 * the frame reads, and is stored once it is done.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Element} row The row to fill.
+	 * @param {Object} token The stored token.
+	 * @param {string} fallbackValue What the code's fallback comes to.
+	 * @return {void}
+	 */
+	function orgControls(state, row, token, fallbackValue) {
+		var transforms = window.NldesignTokenTransforms || {}
+		var name = token.name
+		var colour = token.type === 'color'
+		var controls = el('div', 'nldesign-color-input-wrap')
+		var text = el(
+			'input',
+			colour ? 'nldesign-color-text' : 'nldesign-text-input',
+		)
+		text.type = 'text'
+		text.value = token.value
+		text.setAttribute('aria-label', token.label)
+		var fill = null
+		var picker = null
+		var opacity = null
+		var parts =
+			colour && typeof transforms.splitAlpha === 'function'
+				? transforms.splitAlpha(token.value)
+				: null
+
+		if (colour) {
+			var swatch = el('span', 'nldesign-color-swatch')
+			fill = el('span', 'nldesign-color-swatch-fill')
+			fill.style.background = token.value
+			picker = el('input', 'nldesign-color-picker')
+			picker.type = 'color'
+			picker.setAttribute(
+				'aria-label',
+				t('thematiq', 'Color picker for {label}', { label: token.label }),
+			)
+			picker.value = parts !== null ? parts.hex : '#000000'
+			swatch.appendChild(fill)
+			swatch.appendChild(picker)
+			controls.appendChild(swatch)
+		}
+		controls.appendChild(text)
+		if (colour && typeof transforms.joinAlpha === 'function') {
+			opacity = orgOpacity(token.label, parts !== null ? parts.alpha : 100)
+			controls.appendChild(opacity.wrap)
+		}
+		row.appendChild(controls)
+
+		var reset = el(
+			'button',
+			'nldesign-btn nldesign-btn--small nldesign-reset-btn',
+			'↺',
+		)
+		reset.type = 'button'
+		// Without a fallback in the code there is no value to go back to.
+		reset.disabled = fallbackValue === ''
+		reset.title = t('thematiq', 'Reset to default')
+		reset.setAttribute(
+			'aria-label',
+			t('thematiq', 'Reset {label} to default', { label: token.label }),
+		)
+		row.appendChild(reset)
+
+		var show = function (value) {
+			state.preview.style.setProperty(name, value)
+			if (fill !== null) {
+				fill.style.background = value
+			}
+		}
+		var store = function () {
+			saveOrgToken(state, state.orgTokens[name], text.value.trim())
+		}
+		// The picker and the opacity follow a typed value they can show.
+		var follow = function (value) {
+			var split =
+				colour && typeof transforms.splitAlpha === 'function'
+					? transforms.splitAlpha(value)
+					: null
+			if (split === null) {
+				return
+			}
+			picker.value = split.hex
+			if (opacity !== null) {
+				opacity.range.value = String(split.alpha)
+				opacity.number.value = String(split.alpha)
+			}
+		}
+		var joined = function (alpha) {
+			return opacity !== null
+				? transforms.joinAlpha(picker.value, alpha)
+				: picker.value
+		}
+
+		text.addEventListener('input', function () {
+			show(text.value.trim())
+			follow(text.value.trim())
+		})
+		text.addEventListener('change', store)
+		if (picker !== null) {
+			picker.addEventListener('input', function () {
+				text.value = joined(opacity !== null ? opacity.range.value : 100)
+				show(text.value)
+			})
+			picker.addEventListener('change', store)
+		}
+		if (opacity !== null) {
+			;[opacity.range, opacity.number].forEach(function (field) {
+				field.addEventListener('input', function () {
+					opacity.range.value = field.value
+					opacity.number.value = field.value
+					text.value = joined(field.value)
+					show(text.value)
+				})
+				field.addEventListener('change', store)
+			})
+		}
+		reset.addEventListener('click', function () {
+			text.value = fallbackValue
+			show(fallbackValue)
+			follow(fallbackValue)
+			store()
+		})
+	}
+
 	/**
 	 * The token list beside the own stage: the names the code reads. An editor token
-	 * gets its editor row; any other name its value and a read-only note.
+	 * gets its editor row, an own `--nldesign-org-*` token a row of its own, and any
+	 * other name its value and a read-only note.
 	 *
 	 * @param {Object} state The instrument state.
 	 * @param {Array<string>} names The scanned names.
+	 * @param {string} source The cleaned CSS and HTML, for the fallbacks they give.
 	 * @return {void}
 	 */
-	function ownPanel(state, names) {
+	function ownPanel(state, names, source) {
+		state.ownNames = names
+		state.ownSource = source
 		var open = state.editor.querySelector('.nldesign-pg-panel')
 		if (open !== null) {
 			open.remove()
@@ -1605,6 +2198,12 @@
 				)
 				return
 			}
+			if (name.indexOf(ORG_PREFIX) === 0) {
+				filtered.appendChild(
+					orgRow(state, name, fallbackOf(source || '', name)),
+				)
+				return
+			}
 			var row = el(
 				'div',
 				'nldesign-token-row nldesign-pg-row nldesign-own-readonly',
@@ -1627,11 +2226,7 @@
 			filtered.appendChild(row)
 		})
 
-		if (state.saveBar) {
-			state.editor.insertBefore(filtered, state.saveBar)
-		} else {
-			state.editor.appendChild(filtered)
-		}
+		placePanel(state, filtered, panel)
 	}
 
 	/**
@@ -1760,7 +2355,122 @@
 			})
 		})
 
-		if (state.saveBar !== null) {
+		var related = relatedInternal(state)
+		if (related.length > 0) {
+			filtered.appendChild(advancedGroup(state, related))
+		}
+
+		placePanel(state, filtered, panel)
+	}
+
+	/**
+	 * Whether a selector an internal token is declared on matches an element in
+	 * the stage. Vue scope attributes and pseudo-classes are dropped first, since
+	 * a specimen carries neither. `body`, `html` and `:root` reach every
+	 * component, so they say nothing about this one.
+	 *
+	 * @param {Element} root The stage.
+	 * @param {string} selector The selector.
+	 * @return {boolean}
+	 */
+	function reaches(root, selector) {
+		var plain = String(selector)
+			.replace(/\[data-v-[a-z0-9]+\]/gi, '')
+			.replace(/::?[a-z-]+(\([^)]*\))?/gi, '')
+			.trim()
+		if (plain === '' || /^(body|html)$/i.test(plain)) {
+			return false
+		}
+		try {
+			return root.querySelector(plain) !== null
+		} catch (error) {
+			return false
+		}
+	}
+
+	/**
+	 * The component variables that reach the open component: the internal tokens
+	 * declared on an element its stage draws.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @return {Array<string>} The token names, sorted.
+	 */
+	function relatedInternal(state) {
+		var groups = window.NldesignTokenGroups
+		if (!groups || typeof groups.internal !== 'function') {
+			return []
+		}
+		var internal = groups.internal() || {}
+		return Object.keys(internal)
+			.filter(function (name) {
+				return (internal[name].selectors || []).some(function (selector) {
+					return reaches(state.stage, selector)
+				})
+			})
+			.sort()
+	}
+
+	/**
+	 * A collapsed "Advanced" group under a component's rows, holding the
+	 * component variables that reach it. Its rows are built the first time it
+	 * opens, as the editor's own groups are.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Array<string>} names The token names.
+	 * @return {Element} The group.
+	 */
+	function advancedGroup(state, names) {
+		var group = el('div', 'nldesign-pg-advanced')
+		var heading = el('h4', 'nldesign-token-group-heading')
+		var toggle = el(
+			'button',
+			'nldesign-token-group-toggle',
+			t('thematiq', 'Advanced') + ' ',
+		)
+		toggle.type = 'button'
+		toggle.setAttribute('aria-expanded', 'false')
+		toggle.setAttribute('aria-controls', 'nldesign-pg-advanced-panel')
+		toggle.appendChild(
+			el('span', 'nldesign-token-group-count', '(' + names.length + ')'),
+		)
+		var panel = el('div', 'nldesign-pg-advanced-panel')
+		panel.id = 'nldesign-pg-advanced-panel'
+		panel.hidden = true
+
+		toggle.addEventListener('click', function () {
+			var open = toggle.getAttribute('aria-expanded') !== 'true'
+			if (open === true && panel.childNodes.length === 0) {
+				names.forEach(function (name) {
+					window.NldesignTokenGroups.ensureRow(name)
+					panel.appendChild(cloneRow(state, { name: name, paints: '' }))
+				})
+			}
+			toggle.setAttribute('aria-expanded', open === true ? 'true' : 'false')
+			panel.hidden = open !== true
+		})
+
+		heading.appendChild(toggle)
+		group.appendChild(heading)
+		group.appendChild(panel)
+		return group
+	}
+
+	/**
+	 * Put a component's rows where the tab's own list was, so they come
+	 * before the editor's component-variable groups rather than after them.
+	 *
+	 * @param {Object} state The instrument state.
+	 * @param {Element} filtered The component's rows.
+	 * @param {?Element} panel The tab panel they stand in for.
+	 * @return {void}
+	 */
+	function placePanel(state, filtered, panel) {
+		// The editor's component-variable groups belong to no one component, so
+		// they leave while one is open; css/playground.css hides them.
+		state.editor.classList.add('nldesign-pg-in-component')
+		if (panel !== null) {
+			panel.after(filtered)
+		} else if (state.saveBar !== null) {
 			state.editor.insertBefore(filtered, state.saveBar)
 		} else {
 			state.editor.appendChild(filtered)
@@ -1816,6 +2526,7 @@
 		if (open !== null) {
 			open.remove()
 		}
+		state.editor.classList.remove('nldesign-pg-in-component')
 		state.editor
 			.querySelectorAll('.nldesign-tab-panel.nldesign-pg-hidden')
 			.forEach(function (panel) {

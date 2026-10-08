@@ -8,7 +8,7 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
 
 ## Features
 
-- **59 token sets**: Choose from Dutch government design systems, including:
+- **63 token sets**: Choose from Dutch government design systems, including:
   - Rijkshuisstijl (Dutch national government)
   - Gemeente Utrecht
   - Gemeente Amsterdam
@@ -27,13 +27,13 @@ Apply Dutch government design tokens (NL Design System) to your Nextcloud instan
 
 - **No Build Required**: Tokens are pre-compiled CSS and fonts are bundled and self-hosted (no external CDN)
 
-- **NL-Government and French-Government Icons**: Includes 1488 SVG icons sourced from `@conduction/nextcloud-vue`'s EUPL-compatible NL-government packs (RVO, OpenGemeenten, Gemeente Den Haag) plus 1038 SVG icons from the French-government DSFR pack (`@gouvfr/dsfr`, Etalab-2.0) — 2526 icons total — plus 41 organization and example logos, for use across all Nextcloud apps
+- **NL-Government and French-Government Icons**: Includes 1488 SVG icons sourced from `@conduction/nextcloud-vue`'s EUPL-compatible NL-government packs (RVO, OpenGemeenten, Gemeente Den Haag) plus 1038 SVG icons from the French-government DSFR pack (`@gouvfr/dsfr`, Etalab-2.0) — 2526 icons total — plus 57 organization and example logos, for use across all Nextcloud apps
 
 - **Theme-switchable iconography**: The icon pack an app resolves through nldesign travels with the active design system — a French-government (`lasuite`) theme serves the DSFR pack, a Dutch-government theme serves the RVO/OpenGemeenten/Den Haag packs — resolved via `DesignSystemService` and advertised on the public capability (`iconPacks`). See `img/ICONS.md`.
 
 ## Icons
 
-The app includes **2526 icons** across four government icon sets and **41 logos**:
+The app includes **2526 icons** across four government icon sets and **57 logos**:
 
 - RVO, OpenGemeenten, Gemeente Den Haag — **1488 icons** (CC0-1.0 / CC0-1.0 / EUPL-1.2), materialized from `@conduction/nextcloud-vue`
 - DSFR (Système de Design de l'État) — **1038 icons** (**Etalab-2.0**), materialized from `@gouvfr/dsfr`
@@ -55,10 +55,11 @@ Icon and logo filenames are a public API: other apps reference them by name (e.g
    git clone https://github.com/ConductionNL/thematiq.git
    ```
 
-2. Install npm dependencies (for fonts and icons):
+2. Install the npm dependencies and build the fonts, the icons and the playground's
+   code editor (Node.js 20 or later, see [Development](#development)):
    ```bash
    cd thematiq
-   npm install
+   npm ci
    npm run build
    ```
 
@@ -254,15 +255,23 @@ nldesign/
 
 ### Prerequisites
 
-- Node.js 18+
-- npm
+- Node.js 20 or later, with npm, for `npm ci` and `npm run build`
+- Node.js 22.14 or later, or 24, for the test and lint tooling (Vitest, ESLint) —
+  the versions `package.json` declares under `engines`
 
 ### Setup
 
 ```bash
-cd nldesign
-npm install
+cd thematiq
+npm ci
+npm run build
 ```
+
+`npm run build` also bundles the code editor of the playground's "Your components"
+tab into `js/vendor/codeEditor.js` (gitignored). Without that file the tab still
+works, with plain text fields. The
+[developer guide](docs/reference/development.md#the-code-editor-bundle) explains why
+this one file is built.
 
 ### Updating Fonts
 
@@ -385,6 +394,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Add to admin UI
 5. Test in Nextcloud
 6. Submit PR with documentation
+
 
 ## Authors
 

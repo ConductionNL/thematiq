@@ -285,15 +285,29 @@ class Admin implements IDelegatedSettings {
 	 * strings. It selects "Follow the theme" for any value it does not know,
 	 * which is how the service reads one too.
 	 *
-	 * @return array{workplaceLayout: string, brandStripe: string} The template parameters.
+	 * @return array{
+	 *     workplaceLayout: string,
+	 *     brandStripe: string,
+	 *     navigationWidth: string,
+	 *     navigationActiveStyle: string,
+	 *     brandStripePlacement: string,
+	 *     loginWatermark: string,
+	 *     headerStyle: string
+	 * } The template parameters.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	private function layoutParams(): array {
 		return [
 			'workplaceLayout' => $this->config->getAppValue(Application::APP_ID, 'workplace_layout', ''),
 			'brandStripe' => $this->config->getAppValue(Application::APP_ID, 'brand_stripe', ''),
+			'navigationWidth' => $this->config->getAppValue(Application::APP_ID, 'navigation_width', ''),
+			'navigationActiveStyle' => $this->config->getAppValue(Application::APP_ID, 'navigation_active_style', ''),
+			'brandStripePlacement' => $this->config->getAppValue(Application::APP_ID, 'brand_stripe_placement', ''),
+			'loginWatermark' => $this->config->getAppValue(Application::APP_ID, 'login_watermark', ''),
+			'headerStyle' => $this->config->getAppValue(Application::APP_ID, 'header_style', ''),
 		];
 	}//end layoutParams()
 
@@ -534,6 +548,11 @@ class Admin implements IDelegatedSettings {
 				'/show_menu_labels/',
 				'/workplace_layout/',
 				'/brand_stripe/',
+				'/navigation_width/',
+				'/navigation_active_style/',
+				'/brand_stripe_placement/',
+				'/login_watermark/',
+				'/header_style/',
 				'/dark_variants/',
 				'/marianne_enabled/',
 				'/disabled_apps/',

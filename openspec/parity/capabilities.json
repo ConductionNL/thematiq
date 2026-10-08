@@ -510,7 +510,8 @@
 				"state": "built",
 				"evidence": "token-sets.json id=rijkshuisstijl; templates/settings/admin.php:66-76 renders it as an <option> in the token-set select; SettingsController::setTokenSet applies it via /settings/tokenset",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-sets"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (templates/settings/admin.php:68)",
 			"evidence": {
@@ -523,7 +524,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTheming",
+					"NcThema"
+				]
+			}
 		},
 		{
 			"id": "cat-municipal-sets",
@@ -539,7 +547,8 @@
 				"state": "built",
 				"evidence": "token-sets.json lists ~30 municipality sets (amsterdam, utrecht, leiden, nijmegen, tilburg, zwolle, etc); admin.php:66-76 dropdown, alphabetically sorted (js/admin.js:531-561 upsertTokenSetOption)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/extended-token-sets"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -552,7 +561,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTheming",
+					"NcThema"
+				]
+			}
 		},
 		{
 			"id": "cat-bigcity-systems",
@@ -568,7 +584,8 @@
 				"state": "built",
 				"evidence": "token-sets.json has utrecht, amsterdam, denhaag, rotterdam entries; each has its own theming/design_system block; reachable from the same dropdown",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/extended-token-sets"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -582,7 +599,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
 			"featureConfidence": "high",
-			"note": "info.xml description explicitly names these four as 'full design systems of the large cities'."
+			"note": "info.xml description explicitly names these four as 'full design systems of the large cities'.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-vng",
@@ -598,7 +619,8 @@
 				"state": "built",
 				"evidence": "token-sets.json id=vng name='VNG Vereniging Nederlandse Gemeenten'; openspec/specs/vng-token-set/ exists; reachable from the same dropdown",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "add-vng-token-set"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -611,7 +633,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "vng-token-set",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-lasuite",
@@ -627,7 +653,8 @@
 				"state": "built",
 				"evidence": "token-sets.json id=lasuite (design_system=lasuite) and id=frankendesk; design-systems.json id=lasuite 'La Suite numerique'; openspec/specs/lasuite-parity, lasuite-stack exist",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "lasuite-design-stack"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -640,7 +667,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "lasuite-stack",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTheming",
+					"TqLettertypen"
+				]
+			}
 		},
 		{
 			"id": "cat-searchable-picker",
@@ -656,7 +690,8 @@
 				"state": "built",
 				"evidence": "templates/settings/admin.php:66-76 is a plain native <select> with 47 <option> entries, alphabetically sorted (js/admin.js:540-558); no filter/search input for it. Compare js/admin.js:3480-3609 which DOES build a dedicated '<input type=search>' with live filtering for the (separate) per-app theming exclusion list.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-set-dropdown"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (browser-native type-ahead only)",
 			"evidence": {
@@ -670,7 +705,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-set-dropdown",
 			"featureConfidence": "medium",
-			"note": "You can pick from a list of 47 sets and jump to one by typing its first letters via the browser's own select behaviour, but there is no purpose-built search/filter box the way there is for the app-exclusion list. At 47 entries it is usable; it does not obviously scale to 'hundreds'."
+			"note": "You can pick from a list of 47 sets and jump to one by typing its first letters via the browser's own select behaviour, but there is no purpose-built search/filter box the way there is for the app-exclusion list. At 47 entries it is usable; it does not obviously scale to 'hundreds'.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-swatch-preview",
@@ -686,7 +725,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:964-994 dropdown 'change' handler calls updatePreview() (js/admin.js:676-745, reads theming.primary_color via getPreviewColors at :600-615) which repaints the live-preview shell BEFORE the apply dialog opens; the apply dialog itself (js/admin.js:3019-3025 '.nldesign-apply-swatch') and the core-theming diff dialog (js/admin.js:1685-1693 '.nldesign-dialog-swatch') both render colour swatches for current vs proposed primary/background colour",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-set-dropdown"
 			},
 			"reachedOn": "Settings > Administration > Theming: select a set in the dropdown (live preview shell repaints immediately), then the apply dialog shows swatches before you confirm",
 			"evidence": {
@@ -700,7 +740,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-set-apply-dialog",
 			"featureConfidence": "high",
-			"note": "Swatch appears once you have selected the set in the dropdown but before you confirm applying it, not while merely browsing the closed list."
+			"note": "Swatch appears once you have selected the set in the dropdown but before you confirm applying it, not while merely browsing the closed list.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-stock-option",
@@ -716,7 +760,8 @@
 				"state": "built",
 				"evidence": "token-sets.json id=nextcloud 'Nextcloud (default)' design_system=none; selecting it triggers reset mode (js/admin.js:1270-1275 buildThemingPlan -> mode 'reset'); js/lib/layerSwap.js swaps the injected <link>/<style> run for the new set's manifest with no reload (GET /settings/tokenset-stylesheets/{id}); dialog text at js/admin.js:1608 'Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.'",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/theming-sync"
 			},
 			"reachedOn": "Settings > Administration > Theming, select 'Nextcloud (default)' in the dropdown",
 			"evidence": {
@@ -729,7 +774,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTerugNaarNextcloud"
+			}
 		},
 		{
 			"id": "cat-completeness-badge",
@@ -745,7 +794,8 @@
 				"state": "built",
 				"evidence": "templates/settings/admin.php:84 '#nldesign-token-set-completeness-badge' (hidden by default); js/admin.js:813-824 incompleteWarningFor() reads ts.warnings (kind=='incomplete') from the initial-state tokenSets payload; js/admin.js:887-905 updateCompletenessBadge() shows 'Incomplete set' with a title tooltip listing missing tokens, called on every selection change (js/admin.js:979,588)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "token-set-vocabulary-audit"
 			},
 			"reachedOn": "Settings > Administration > Theming, badge next to the token set dropdown",
 			"evidence": {
@@ -758,7 +808,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTheming",
+					"TqSetUploaden"
+				]
+			}
 		},
 		{
 			"id": "cat-design-system-choice",
@@ -774,7 +831,8 @@
 				"state": "built",
 				"evidence": "design-systems.json lists none, nldesign, summer-breeze, high-contrast, lasuite, cunningham; token-sets.json 'hoog-contrast' (design_system=high-contrast) and 'summer-breeze' cover a soft/light theme and WCAG AAA contrast set",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/css-architecture"
 			},
 			"reachedOn": "Settings > Administration > Theming, dropdown option carries data-design-system, badge shown via js/admin.js updateDesignSystemBadge()",
 			"evidence": {
@@ -787,7 +845,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "high-contrast-token-set",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-design-system-docs",
@@ -803,7 +865,8 @@
 				"state": "built",
 				"evidence": "templates/settings/admin.php:57-60 renders a single static link '<a href=\"https://nldesign.app\">Documentation</a>' in the section header; js/admin.js has no code that swaps this href when a different design system (lasuite, high-contrast, cunningham) is selected -- grep -F 'nldesign-doc-link' js/admin.js found no writer, only the static PHP-rendered anchor",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/admin-settings"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Documentation' link in the section header",
 			"evidence": {
@@ -817,7 +880,11 @@
 			"providerHow": "read-from-code",
 			"feature": "nl-design",
 			"featureConfidence": "medium",
-			"note": "The link is real and reachable, but it always points at nldesign.app regardless of the design system actually selected (La Suite, high contrast, Cunningham all get the NL Design System link, not their own)."
+			"note": "The link is real and reachable, but it always points at nldesign.app regardless of the design system actually selected (La Suite, high contrast, Cunningham all get the NL Design System link, not their own).",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-community-sets",
@@ -833,7 +900,8 @@
 				"state": "built",
 				"evidence": "token-sets.json includes non-municipal community sets: duo, opencatalogi, xxllnc, conduction-new, demodam, noaberkracht, riddeliemers -- none of these are a municipality/province/VNG",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/extended-token-sets"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -846,7 +914,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "extended-token-sets",
-			"featureConfidence": "medium"
+			"featureConfidence": "medium",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "cat-starter-templates",
@@ -862,7 +934,8 @@
 				"state": "built",
 				"evidence": "templates/settings/admin.php:63 hint text: 'Select a Dutch government design token set as a base, or customize individual Nextcloud CSS tokens below'; overrides editor persists per-token customisations on top of the selected base via POST /settings/overrides",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "openspec/specs/admin-settings"
 			},
 			"reachedOn": "Settings > Administration > Theming: pick a shipped set as a base, then the token editor below it",
 			"evidence": {
@@ -876,7 +949,14 @@
 			"providerHow": "read-from-code",
 			"feature": "token-editor-ui",
 			"featureConfidence": "medium",
-			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it."
+			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTheming",
+					"TqNieuwThema"
+				]
+			}
 		},
 		{
 			"id": "cat-marketplace",
@@ -907,7 +987,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "The only outbound network call this app makes at all is the opt-in upstream-freshness check against api.github.com (templates/settings/admin.php:527); there is no marketplace/gallery browse-and-download feature."
+			"note": "The only outbound network call this app makes at all is the opt-in upstream-freshness check against api.github.com (templates/settings/admin.php:527); there is no marketplace/gallery browse-and-download feature.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqGalerij"
+			}
 		},
 		{
 			"id": "cat-provincial-sets",
@@ -923,7 +1007,8 @@
 				"state": "built",
 				"evidence": "token-sets.json id=provincie-zuid-holland 'Provincie Zuid-Holland' exists; grep -rniF 'waterschap|water board|hoogheemraad' across token-sets.json, lib/, scripts/, docs/, openspec/ found nothing",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "openspec/specs/extended-token-sets"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (province only)",
 			"evidence": {
@@ -937,7 +1022,11 @@
 			"providerHow": "read-from-code",
 			"feature": "extended-token-sets",
 			"featureConfidence": "high",
-			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue."
+			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "app-one-click",
@@ -953,7 +1042,8 @@
 				"state": "built",
 				"evidence": "lib/Listener/ThemeInjectionListener.php:26-46 registers for both BeforeTemplateRenderedEvent (workspace + apps) and BeforeLoginTemplateRenderedEvent (login page), calling CssInjectionService::inject() for either; js/admin.js:2930-2996 openTokenSetApplyDialog -> js/admin.js:3121-3127 'Apply selected' button is the single confirm that both saves the token set and (checkbox-gated) syncs core theming (colours/logo used on login + emails)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "render-event-injection"
 			},
 			"reachedOn": "Settings > Administration > Theming, dropdown selection then 'Apply selected' in the apply dialog",
 			"evidence": {
@@ -966,7 +1056,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-set-apply-dialog",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTheming",
+					"TqTokensetToepassen"
+				]
+			}
 		},
 		{
 			"id": "app-diff-dialog",
@@ -982,7 +1079,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:2998-3130 showApplyDialog() renders a table (Token | Current | New) per changed CSS variable, with swatches for colour tokens (js/admin.js:3019-3025), before any save happens; opened from the dropdown 'change' handler (js/admin.js:984) via openTokenSetApplyDialog",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-set-apply-dialog"
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog shown after selecting a token set",
 			"evidence": {
@@ -995,7 +1093,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-set-apply-dialog",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTokensetToepassen"
+			}
 		},
 		{
 			"id": "app-choose-what-changes",
@@ -1011,7 +1113,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:3032 '<input type=\"checkbox\" class=\"nldesign-apply-check\" data-token=...' per row in the apply dialog table, plus 'Select all'/'Deselect all' toggles (js/admin.js:3164-3180); only checked rows are sent (js/admin.js:3142-3160 reads .nldesign-apply-check state before POST)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-set-apply-dialog"
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog: per-row checkboxes",
 			"evidence": {
@@ -1025,7 +1128,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-set-apply-dialog",
 			"featureConfidence": "high",
-			"note": "Nextcloud core theming (primary/background colour, logo) inside the same dialog is one bulk 'also update Nextcloud theming' checkbox (js/admin.js:3095-3097), not per-field."
+			"note": "Nextcloud core theming (primary/background colour, logo) inside the same dialog is one bulk 'also update Nextcloud theming' checkbox (js/admin.js:3095-3097), not per-field.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTokensetToepassen"
+			}
 		},
 		{
 			"id": "app-no-reload",
@@ -1041,7 +1148,8 @@
 				"state": "built",
 				"evidence": "js/lib/layerSwap.js:1-40 documents and implements swapping the injected <link>/<style> run for the page you are on, fetching the new manifest from GET /settings/tokenset-stylesheets/{id} (lib/Controller/LayerController.php) and inserting the new elements before removing the old ones (no flash of unstyled chrome); admin.php:25 loads lib/layerSwap before admin.js",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "apply-without-reload"
 			},
 			"reachedOn": "Settings > Administration > Theming, applying any token set repaints the settings page itself with no reload",
 			"evidence": {
@@ -1054,7 +1162,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTokensetToepassen"
+			}
 		},
 		{
 			"id": "app-live-preview-shell",
@@ -1070,7 +1182,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:676-745 updatePreview() writes --prev-* CSS custom properties (primary, surface, bg, text, border, header-bg, radius, etc) consumed by a mock app-shell region on the settings page, updated on every dropdown selection (js/admin.js:977) before any apply/publish",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/admin-settings"
 			},
 			"reachedOn": "Settings > Administration > Theming, mock app-shell preview region",
 			"evidence": {
@@ -1083,7 +1196,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-editor-ui",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "app-login-preview",
@@ -1099,7 +1216,8 @@
 				"state": "built",
 				"evidence": "js/playground/components.json tabs[0] id='login' label='Login page & Branding'; js/playground.js:2083-2103 'login-card' renders a real <form class=\"guest-box login-box nldesign-pg-logincard\">; templates/settings/admin.php:37-42 loads Nextcloud's own login-page stylesheet 'playground-guest', scoped so only the login card in the playground gets a copy, and reads the token editor's live values",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/admin-settings"
 			},
 			"reachedOn": "Settings > Administration > Theming, component playground, 'Login page & Branding' tab",
 			"evidence": {
@@ -1113,7 +1231,11 @@
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
 			"featureConfidence": "high",
-			"note": "This previews a mock login card inside the playground stage, not the real public /login page in an iframe; it repaints live as you edit tokens."
+			"note": "This previews a mock login card inside the playground stage, not the real public /login page in an iframe; it repaints live as you edit tokens.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "app-trial-session",
@@ -1129,7 +1251,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/PreviewController.php start()/discard()/publish() behind POST/DELETE /settings/preview and POST /settings/preview/publish; js/admin.js:1044-1078 'Preview in my session' button POSTs to start a session-only preview, applies the new stylesheet layer on this page only (applyLayersFor), and leaves the instance-wide token_set untouched",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theme-preview-workflow"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Preview in my session' button next to the dropdown",
 			"evidence": {
@@ -1142,7 +1265,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theme-preview",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqVoorbeeldSessie"
+			}
 		},
 		{
 			"id": "app-trial-banner",
@@ -1158,7 +1285,8 @@
 				"state": "built",
 				"evidence": "js/preview-banner.js:10-30 reads OCP.InitialState.loadState('thematiq','preview',null) and renders a persistent role=status banner with Publish/Discard controls; lib/Service/CssInjectionService.php:299 injects layer 'preview-banner' via ThemeInjectionListener on every BeforeTemplateRenderedEvent page, not only the settings page",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theme-preview-workflow"
 			},
 			"reachedOn": "Any page while a session preview is active (banner injected app-wide), and the active-preview panel on Settings > Administration > Theming (templates/settings/admin.php:142-153)",
 			"evidence": {
@@ -1171,7 +1299,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theme-preview",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqVoorbeeldSessie"
+			}
 		},
 		{
 			"id": "app-trial-publish",
@@ -1187,7 +1319,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:1123-1132 previewPublishBtn click -> openTokenSetApplyDialog(activePreview.tokenSet, currentTokenSetId, true); on confirm, commitTokenSetChange() POSTs /settings/preview/publish (js/admin.js:1142ish), which PreviewController::publish() promotes the session preview to the instance-wide token set in one step",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theme-preview-workflow"
 			},
 			"reachedOn": "Settings > Administration > Theming, active-preview panel 'Publish' button, then confirm in the apply dialog",
 			"evidence": {
@@ -1200,7 +1333,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theme-preview",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqVoorbeeldSessie",
+					"TqTokensetToepassen"
+				]
+			}
 		},
 		{
 			"id": "app-trial-discard",
@@ -1216,7 +1356,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:1086-1110 previewDiscardBtn click -> DELETE /settings/preview (PreviewController::discard()), then applyLayersFor(currentTokenSetId) reverts the page's stylesheets to the instance-wide set and endPreviewOnPage() hides the active-preview panel",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theme-preview-workflow"
 			},
 			"reachedOn": "Settings > Administration > Theming, active-preview panel 'Discard' button",
 			"evidence": {
@@ -1229,7 +1370,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theme-preview",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqVoorbeeldSessie"
+			}
 		},
 		{
 			"id": "app-component-playground",
@@ -1245,7 +1390,8 @@
 				"state": "built",
 				"evidence": "js/playground/components.json tabs: login, content, status (buttons & status), typography; js/playground.js (loaded at admin.php:35-36, after admin.js, attaches to the token editor); component tokens are scoped per component (css/component-scopes.css, scripts/mapping/component-tokens.json) so a chip edits only that component per the file's own header comment",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "component-playground"
 			},
 			"reachedOn": "Settings > Administration > Theming, component playground below the token editor",
 			"evidence": {
@@ -1258,7 +1404,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "app-primary-lock",
@@ -1274,7 +1424,9 @@
 				"state": "built",
 				"evidence": "templates/settings/admin.php:426-430 checkbox id='nldesign-primary-drives-components'; js/admin.js:2069-2073 change handler -> savePrimaryDrivesComponentsSetting() POSTs /settings/primary-drives-components; js/admin.js:2568-2578 isTokenLocked(name) disables a component's own colour row (with an explanatory title) while this setting is on, letting it flow from the primary colour instead",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/component-tokens",
+				"readOn": "2026-10-07"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Let the primary colour drive every component' checkbox",
 			"evidence": {
@@ -1287,7 +1439,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLayout"
+			}
 		},
 		{
 			"id": "app-runtime-no-deploy",
@@ -1303,7 +1459,8 @@
 				"state": "built",
 				"evidence": "the entire apply path (dropdown -> apply dialog -> POST /settings/tokenset, SettingsController::setTokenSet) runs from the admin settings page at request time, writing IAppConfig/IConfig values that ThemeInjectionListener reads on the next render; no build step, redeploy or occ command is required for the base flow",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "openspec/specs/admin-settings"
 			},
 			"reachedOn": "Settings > Administration > Theming, dropdown + apply dialog",
 			"evidence": {
@@ -1316,7 +1473,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-capability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "app-scheduled-switch",
@@ -1346,7 +1507,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-capability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqWissels"
+			}
 		},
 		{
 			"id": "app-rollback-history",
@@ -1377,7 +1542,14 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-audit",
 			"featureConfidence": "high",
-			"note": "The audit log (theming-audit) is read-only evidence for compliance, not an undo mechanism."
+			"note": "The audit log (theming-audit) is read-only evidence for compliance, not an undo mechanism.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqLogboek",
+					"TqVersieHerstellen"
+				]
+			}
 		},
 		{
 			"id": "app-reset-core",
@@ -1393,7 +1565,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/SettingsController.php:406-408 updateThemingValues() checks params['reset']==1 and calls resetThemingValues(); js/admin.js:1640-1664 confirm dialog 'Reset theming' -> applyThemingPlan({mode:'reset',...}) -> POST /settings/theming with reset=1, undoing everything Thematiq synced into core theming (colours, logo) via ThemingService (uses OCA\\Theming\\ThemingDefaults::undo())",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/theming-sync"
 			},
 			"reachedOn": "Settings > Administration > Theming: selecting 'Nextcloud (default)' opens a confirm dialog with a 'Reset theming' button",
 			"evidence": {
@@ -1406,7 +1579,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTerugNaarNextcloud"
+			}
 		},
 		{
 			"id": "app-simple-theme-switch",
@@ -1422,7 +1599,8 @@
 				"state": "built",
 				"evidence": "templates/settings/admin.php:66-76 renders one 'Design token set' dropdown of every shipped and uploaded set; choosing one POSTs to settings#setTokenSet (appinfo/routes.php:31) and applies the whole house style, so switching brands needs no token editing (the token editor is a separate section)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "openspec/specs/token-set-dropdown"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (templates/settings/admin.php:68)",
 			"evidence": {
@@ -1438,7 +1616,14 @@
 			"featureConfidence": "high",
 			"origin": "featureRequest",
 			"originUrl": "https://feedback.tokens.studio/p/theme-switcher-for-non-ds-designers",
-			"note": "brand managers in a municipality are not token engineers"
+			"note": "brand managers in a municipality are not token engineers",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTheming",
+					"NcThema"
+				]
+			}
 		},
 		{
 			"id": "aut-upload-css",
@@ -1454,7 +1639,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/CustomTokenSetController.php:203 upload(); lib/Service/TokenSetConverterService.php:246 convert() detects input kind A (NL Design CSS); templates/settings/admin.php:176 file input accept=\".css,.json,.tokens.json\"; js/admin.js:4206 POST /settings/tokensets/upload",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-token-set-upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets, 'Choose file and upload' (templates/settings/admin.php:179)",
 			"evidence": {
@@ -1467,7 +1653,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqEigenSets",
+					"TqSetUploaden"
+				]
+			}
 		},
 		{
 			"id": "aut-upload-dtcg",
@@ -1483,7 +1676,8 @@
 				"state": "built",
 				"evidence": "lib/Service/TokenSetConverterService.php:257 detectInput() classifies input kind B (W3C DTCG JSON, $value/$type, {a.b.c} aliases) and routes to DesignTokensMapper; same upload endpoint/UI as CSS (CustomTokenSetController.php:203; admin.php:176 accepts .json/.tokens.json) Corrections round 8 (2026-09-28), thematiq#695: a DTCG colour object in srgb-linear is scaled to hex without the sRGB transfer function and its alpha is dropped, both without a report, lib/Service/DesignTokensMapper.php:57 and :644-652 at fd992ea.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-token-set-upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets upload form (same control as CSS upload)",
 			"evidence": {
@@ -1497,7 +1691,14 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Corrections round 8 (2026-09-28): the import writes the wrong colour for srgb-linear colour objects and drops alpha, thematiq#695; rating kept because the upload and mapping still work for srgb hex and component colours and every other token type, the defect is on those two colour shapes only."
+			"note": "Corrections round 8 (2026-09-28): the import writes the wrong colour for srgb-linear colour objects and drops alpha, thematiq#695; rating kept because the upload and mapping still work for srgb hex and component colours and every other token type, the defect is on those two colour shapes only.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqEigenSets",
+					"TqSetUploaden"
+				]
+			}
 		},
 		{
 			"id": "aut-upload-validate",
@@ -1513,7 +1714,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/CustomTokenSetController.php:242-289 returns 422 with imported/skipped/errors when zero tokens map; lib/Service/CustomTokenSetValidator.php:78 validateDeclarations() rejects unknown/forbidden declarations with a message; js/admin.js:4206-4269 renders 'X tokens imported, Y skipped' plus a diagnostics fragment (buildDiagnosticsFragment) in #nldesign-upload-result",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-token-set-upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, upload result panel under the upload form (#nldesign-upload-result, admin.php:183)",
 			"evidence": {
@@ -1526,7 +1728,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "aut-upload-security",
@@ -1542,7 +1748,8 @@
 				"state": "built",
 				"evidence": "lib/Service/CustomTokenSetValidator.php:78-131 isForbiddenValue() rejects @import, expression(), javascript:, external url() and markup in every declaration value BEFORE the name split (comment at lines 100-118 explains why the value gate must run first); rejects on upload with a 422 (CustomTokenSetController.php:203)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "harden-custom-token-set-value-validation"
 			},
 			"reachedOn": "Server-side gate on the same upload path as aut-upload-css/aut-upload-dtcg; surfaced to the admin as an upload error",
 			"evidence": {
@@ -1556,7 +1763,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Fail-closed reject, not silent stripping: the whole declaration is refused rather than laundered."
+			"note": "Fail-closed reject, not silent stripping: the whole declaration is refused rather than laundered.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "aut-custom-list-delete",
@@ -1572,7 +1783,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/CustomTokenSetController.php:547 list(), :585 delete(); js/admin.js:4303 GET /settings/tokensets/custom (loadCustomTokenSets), :4396 DELETE .../custom/{id} (deleteCustomSet); activation is the existing token-set dropdown (#nldesign-token-set-select, admin.php:68) which lists custom sets alongside shipped ones via refreshTokenSetCatalogue()",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-token-set-upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets list (#nldesign-custom-set-list, admin.php:184) with Download/Delete buttons per row; activation via the main token-set dropdown",
 			"evidence": {
@@ -1585,7 +1797,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqEigenSets"
+			}
 		},
 		{
 			"id": "aut-custom-export",
@@ -1601,7 +1817,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/CustomTokenSetController.php:561 export(); js/admin.js:4387 'Download' button per row builds GET /settings/tokensets/custom/{id}/export via window.location",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-token-set-upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets list, 'Download' button per row",
 			"evidence": {
@@ -1614,7 +1831,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqEigenSets"
+			}
 		},
 		{
 			"id": "aut-convert-nlds-theme",
@@ -1630,7 +1851,8 @@
 				"state": "built",
 				"evidence": "lib/Service/TokenSetConverterService.php:73-400 convert() maps upstream NL Design tokens (utrecht/ams/denhaag/DTCG) onto the app's --nldesign-* vocabulary via the mapping table and DesignTokensMapper, emits a complete CSS file and a report of imported/skipped tokens; reached through the same upload form as aut-upload-css/aut-upload-dtcg (this IS the upload conversion step, not a separate control)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "nlds-theme-converter"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets upload form (conversion runs server-side on upload, no separate UI)",
 			"evidence": {
@@ -1643,7 +1865,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "nlds-theme-converter",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqEigenSets",
+					"TqSetUploaden"
+				]
+			}
 		},
 		{
 			"id": "aut-token-editor",
@@ -1659,7 +1888,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:2371 mountTokenEditor()/2415 renderTokenEditor() builds a colour-picker + text input per token (buildTokenRow, ~2600); templates/settings/admin.php:291 #nldesign-token-editor is the mount point; save goes to POST /settings/overrides (js/admin.js:2823 saveOverrides)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "nextcloud-theme-editor"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Custom token overrides' panel (#nldesign-token-editor, admin.php:291)",
 			"evidence": {
@@ -1672,7 +1902,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-token-editor-tabs",
@@ -1688,7 +1922,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:2429 tabOrder = ['login','content','status','typography'] groups tokenRegistry entries by meta.tab and renders one .nldesign-tab-btn / .nldesign-tab-panel per group (2415-2510); click handler at 2489-2508 switches the active panel",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-editor-ui"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor tab bar (.nldesign-tabs inside #nldesign-token-editor)",
 			"evidence": {
@@ -1701,7 +1936,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-token-reset",
@@ -1717,7 +1956,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:2701-2739 wireTokenRows() reset-button handler reads tokenEditorState[name].resolved (the house-style default), writes it back into the text/colour inputs, removes the custom badge, calls document.documentElement.style.removeProperty(name) and marks only that token dirty for save",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-editor-ui"
 			},
 			"reachedOn": "Settings > Administration > Theming, per-token reset button in the token editor rows (.nldesign-reset-btn)",
 			"evidence": {
@@ -1730,7 +1970,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-token-live",
@@ -1746,7 +1990,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:2771 applyLivePreview() writes document.documentElement.style.setProperty(name, value) synchronously on every input event (wireTokenRows ~2664/2684/2695), and schedulePreviewRepaint() (2745) coalesces the rich preview repaint to one per animation frame",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-editor-ui"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor color pickers/text inputs; effect visible immediately on the settings page itself",
 			"evidence": {
@@ -1759,7 +2004,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-overrides-persist",
@@ -1775,7 +2024,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:2823 saveOverrides() POSTs to /apps/thematiq/settings/overrides; lib/Controller/OverridesController.php:138 setOverrides(); lib/Service/CustomOverridesService.php writes a single instance-wide custom-overrides.css file (validated against TokenRegistry) that is re-read on every request, not per-user session state, so it survives a restart and applies to every user Corrections round 8 (2026-09-28), thematiq#698: the overrides are written as one :root block with !important, while core declares the chosen theme colours on body[data-theme-dark], so a user who picked the dark theme never inherits an edited colour, lib/Service/CustomOverridesService.php:232-237 and :249-278 at fd992ea.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/custom-css-overrides"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Save overrides' button in the token editor (#nldesign-save-btn)",
 			"evidence": {
@@ -1789,7 +2039,14 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
 			"featureConfidence": "high",
-			"note": "Own rating yes to partial (corrections round 8, 2026-09-28): the edits persist, but colour edits do not apply to users who chose the dark theme in their personal settings, so they do not reach everyone, thematiq#698."
+			"note": "Own rating yes to partial (corrections round 8, 2026-09-28): the edits persist, but colour edits do not apply to users who chose the dark theme in their personal settings, so they do not reach everyone, thematiq#698.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqComponenten",
+					"TqOverridesOpslaan"
+				]
+			}
 		},
 		{
 			"id": "aut-overrides-import-export",
@@ -1805,7 +2062,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:2875 exportOverrides() downloads GET /settings/overrides/export as custom-overrides.css; js/admin.js:2884 importOverrides() POSTs a chosen file to /settings/overrides/import via the token editor's Upload label/input; lib/Controller/OverridesController.php exportOverrides()/importOverrides() (routes.php lines for overrides/export, overrides/import)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-import-export"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor header 'Download'/'Upload' controls (#nldesign-export-btn, #nldesign-import-input)",
 			"evidence": {
@@ -1818,7 +2076,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqComponenten",
+					"TqOverridesUploaden"
+				]
+			}
 		},
 		{
 			"id": "aut-custom-css",
@@ -1834,7 +2099,8 @@
 				"state": "built",
 				"evidence": "templates/settings/admin.php:297-317 #nldesign-custom-css panel (enable checkbox, textarea, save button, feedback span); js/admin.js:5314 initCustomCss() loads/saves via GET/POST /apps/thematiq/settings/custom-css; lib/Controller/CustomCssController.php getCustomCss()/setCustomCss(); lib/Service/CustomCssService.php persists it and CssInjectionService emits it 'after every other theming layer'",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-css-freeform"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Custom CSS' section (#nldesign-custom-css, admin.php:297)",
 			"evidence": {
@@ -1847,7 +2113,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-css-freeform",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqEigenCss"
+			}
 		},
 		{
 			"id": "aut-custom-css-sanitise",
@@ -1863,7 +2133,8 @@
 				"state": "built",
 				"evidence": "lib/Service/CustomCssValidator.php:87 validate() rejects @import/@charset, external url() schemes, expression()/behavior:/-moz-binding:, </style>/<script>, and the Nextcloud dark-mode reserved variables, returning every violation; js/admin.js:5345-5365 saveCustomCss handler renders a 422's errors array into the feedback span and writes nothing on failure",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-css-freeform"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom CSS save button (#nldesign-custom-css-save) surfaces validator errors in #nldesign-custom-css-feedback",
 			"evidence": {
@@ -1877,7 +2148,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-css-freeform",
 			"featureConfidence": "high",
-			"note": "It is fail-closed reject-all-or-nothing, documented in the class docblock as deliberately not stripping the offending fragment (would silently mutate CSS the admin never reviewed); the row's 'cleaned' is satisfied by rejection with reasons, not by silent stripping."
+			"note": "It is fail-closed reject-all-or-nothing, documented in the class docblock as deliberately not stripping the offending fragment (would silently mutate CSS the admin never reviewed); the row's 'cleaned' is satisfied by rejection with reasons, not by silent stripping.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqEigenCss"
+			}
 		},
 		{
 			"id": "aut-component-scoped",
@@ -1893,7 +2168,8 @@
 				"state": "built",
 				"evidence": "lib/Service/TokenRegistry.php:125-180 getComponentTokens() reads scripts/mapping/component-tokens.json and exposes each component's tokens grouped by component id/tab; these render as normal rows in the same token editor (js/admin.js:2415 renderTokenEditor groups by meta.tab, meta.group=componentId); a 'primary_drives_components' instance setting (admin.php:427 #nldesign-primary-drives-components) locks component rows to the primary colour when ON, and unlocking it lets an admin set e.g. button tokens independently of the global palette",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "component-scoped-tokens"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor rows for component tokens (visible once 'Let the primary colour drive every component' is switched off)",
 			"evidence": {
@@ -1906,7 +2182,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
-			"featureConfidence": "medium"
+			"featureConfidence": "medium",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-dark-variant-auto",
@@ -1922,7 +2202,8 @@
 				"state": "built",
 				"evidence": "lib/Service/DarkPaletteService.php derives a dark palette algorithmically (preserve hue, invert lightness) and verifies WCAG AA via ContrastService; lib/Service/CustomTokenSetService.php:89 generates css/tokens/dark/custom-{slug}.css automatically AT UPLOAD TIME for a custom set (not only via the occ command); the instance-wide dark-variants toggle is wired at admin.php:445 (#nldesign-dark-variants) to GET/POST /settings/dark-variants (settings#getDarkVariants/setDarkVariants) Corrections round 8 (2026-09-28), thematiq#696: ContrastService::parseColor() reads only #rgb, #rrggbb and the rgb part of rgba(), so a translucent colour is derived as an opaque hex and an 8-digit hex is skipped, lib/Service/ContrastService.php:245-263 and lib/Service/DarkPaletteService.php:314-321 at fd992ea.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "dark-mode-token-variants"
 			},
 			"reachedOn": "Automatic on upload (Settings > Administration > Theming, Custom token sets upload); instance-wide on/off toggle at #nldesign-dark-variants",
 			"evidence": {
@@ -1936,7 +2217,11 @@
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
 			"featureConfidence": "high",
-			"note": "Corrections round 8 (2026-09-28): translucent colours lose their alpha in the derived dark palette and 8-digit hex tokens are not darkened, thematiq#696; rating kept because the dark variant is still derived automatically for every opaque colour token, the defect is on translucent tokens only."
+			"note": "Corrections round 8 (2026-09-28): translucent colours lose their alpha in the derived dark palette and 8-digit hex tokens are not darkened, thematiq#696; rating kept because the dark variant is still derived automatically for every opaque colour token, the defect is on translucent tokens only.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqDonker"
+			}
 		},
 		{
 			"id": "aut-semantic-aliases",
@@ -1952,7 +2237,8 @@
 				"state": "built",
 				"evidence": "lib/Service/DesignTokensAliasResolver.php resolves W3C DTCG {token.path} aliases transitively (max 10 hops, cycle/missing-target detection) but ONLY during DTCG import: DesignTokensMapper.php:300-301 calls resolve() and writes the RESOLVED concrete value into the emitted CSS. Once stored, the app's own token editor and custom-overrides layer are flat --nldesign-*/--color-* custom properties with no alias graph, so editing one token afterwards does not cascade to anything that referenced it in the source document.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"change": "dtcg-ingestion-hardening"
 			},
 			"reachedOn": "Settings > Administration > Theming, DTCG upload only (aliases are read and flattened, not preserved as an editable semantic layer)",
 			"evidence": {
@@ -1966,7 +2252,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "medium",
-			"note": "Reads a semantic layer on import but does not keep it live afterward, so a later edit does not flow through anything."
+			"note": "Reads a semantic layer on import but does not keep it live afterward, so a later edit does not flow through anything.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "aut-token-math",
@@ -2027,7 +2317,14 @@
 			"providerHow": "read-from-code",
 			"feature": "per-group-theming",
 			"featureConfidence": "medium",
-			"note": "Achieves the practical outcome (several themes, switchable) via independent sets + a group map, not via one multi-brand token source."
+			"note": "Achieves the practical outcome (several themes, switchable) via independent sets + a group map, not via one multi-brand token source.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqMerkenKiezen",
+					"TqEigenSets"
+				]
+			}
 		},
 		{
 			"id": "aut-figma-sync",
@@ -2087,7 +2384,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqBundel"
+			}
 		},
 		{
 			"id": "aut-multi-platform-export",
@@ -2147,7 +2448,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-overrides",
-			"featureConfidence": "medium"
+			"featureConfidence": "medium",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqEigenSets"
+			}
 		},
 		{
 			"id": "typ-bundled-open-fonts",
@@ -2163,7 +2468,8 @@
 				"state": "built",
 				"evidence": "css/fonts/fira-sans-latin-*.woff2 and css/systems/*/fonts/inter-latin-*.woff2 are shipped in the app itself; css/fonts.css / css/systems/nldesign/fonts.css declare @font-face rules pointing at these local files, so the house style's fonts are served from the instance with no external font service (no fonts.googleapis.com or similar reference found)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/css-architecture"
 			},
 			"reachedOn": "Applied automatically whenever a house style using these fonts is active; not a distinct admin control",
 			"evidence": {
@@ -2176,7 +2482,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "typography",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-air-gapped",
@@ -2192,7 +2502,8 @@
 				"state": "built",
 				"evidence": "lib/Service/FontService.php:40 storage is self-hosted, no external CDN, CSP-clean per its own docblock; lib/Controller/FontController.php:199 serve()/:234 css() are same-origin routes (#[PublicPage]); no ContentSecurityPolicy grep hits in lib/AppInfo/Application.php because none is needed: every font byte and stylesheet is served from the app's own /fonts/* routes under the default 'self' CSP",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-font-upload"
 			},
 			"reachedOn": "Works automatically under Nextcloud's default CSP; no admin control needed",
 			"evidence": {
@@ -2205,7 +2516,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "typography",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: fonts are served from the instance itself; nothing to operate"
+			}
 		},
 		{
 			"id": "typ-upload-font",
@@ -2221,7 +2536,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/FontController.php:105 upload(); templates/settings/admin.php:361-386 #nldesign-custom-fonts form (name, role select body/heading, .woff2 file input, upload button); js/admin.js:4544 POST /settings/fonts/upload",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-font-upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts, 'Choose font and upload' (admin.php:382)",
 			"evidence": {
@@ -2234,7 +2550,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-font-validate",
@@ -2250,7 +2570,8 @@
 				"state": "built",
 				"evidence": "lib/Service/FontValidator.php enforces WOFF2 format and a size cap; admin.php:366 states 'max 2 MB, 20 fonts max'; FontController.php:105 upload() returns validator errors as a JSON error rather than accepting a bad file",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-font-upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts upload result (#nldesign-font-upload-result, admin.php:386)",
 			"evidence": {
@@ -2263,7 +2584,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-font-list-delete",
@@ -2279,7 +2604,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/FontController.php:150 list(), :164 delete(); js/admin.js:4592 GET /settings/fonts, :4667 DELETE /settings/fonts/{id}; rendered into #nldesign-font-list (admin.php:387)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-font-upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts list (#nldesign-font-list)",
 			"evidence": {
@@ -2292,7 +2618,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-font-login",
@@ -2308,7 +2638,8 @@
 				"state": "built",
 				"evidence": "lib/Listener/ThemeInjectionListener.php:116-119 handle() injects CSS with context 'login' on BeforeLoginTemplateRenderedEvent (comment: 'login is never an app page, the per-app guard never runs'); lib/Controller/FontController.php:230-234 css()/:199 serve() are #[PublicPage] #[NoCSRFRequired] specifically so the font stylesheet and bytes resolve before any session exists",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/custom-fonts"
 			},
 			"reachedOn": "The Nextcloud login page (font loads via the publicly-served /fonts/css and /fonts/{id}.woff2 routes)",
 			"evidence": {
@@ -2321,7 +2652,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: the login page is styled by injected CSS; the login look itself is previewed on TqTheming"
+			}
 		},
 		{
 			"id": "typ-marianne-gated",
@@ -2337,7 +2672,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/SettingsController.php:861 getMarianneEnabled(), :883 setMarianneEnabled(bool); templates/settings/admin.php:122-141 #nldesign-marianne-gate with a license notice (#nldesign-marianne-notice) and an off-by-default checkbox (#nldesign-marianne-enabled); js/admin.js:2149 GET/POST /settings/marianne; lib/Service/CssInjectionService.php:866 only emits the self-hosted Marianne @font-face layer while the flag is '1'",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "marianne-font-restricted"
 			},
 			"reachedOn": "Settings > Administration > Theming, Marianne licence gate (#nldesign-marianne-gate)",
 			"evidence": {
@@ -2350,7 +2686,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "marianne-font",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "typ-font-tokens",
@@ -2366,7 +2706,8 @@
 				"state": "built",
 				"evidence": "lib/Service/TokenRegistry.php getTypographyTokens() exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-editor-ui"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor 'Typography' tab (font family); size/weight are per-house-style tokens, not user-editable overrides",
 			"evidence": {
@@ -2380,7 +2721,11 @@
 			"providerHow": "read-from-code",
 			"feature": "typography",
 			"featureConfidence": "medium",
-			"note": "Family is user-editable via the override editor; size/weight exist as house-style tokens but are not exposed there, so the fuller claim is partly a code-reading inference."
+			"note": "Family is user-editable via the override editor; size/weight exist as house-style tokens but are not exposed there, so the fuller claim is partly a code-reading inference.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "typ-dyslexia-font",
@@ -2426,7 +2771,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/FontController.php:150 list() and lib/Service/FontService.php maintain a per-instance manifest of up to 20 uploaded fonts, each assignable to a role (body/heading) via the font-role select (admin.php:375); this gives a single instance's admins a shared, central list of self-hosted fonts to assign roles from. It is not a curated catalogue of pre-approved fonts to pick without uploading, and 'site owners' (plural, e.g. multiple tenants) has no meaning here: thematiq themes one Nextcloud instance, admin-only.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "openspec/specs/custom-fonts"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts list + role select (#nldesign-font-list, #nldesign-font-role)",
 			"evidence": {
@@ -2440,7 +2786,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-fonts",
 			"featureConfidence": "medium",
-			"note": "Functions as a de facto library of the instance's own uploads, not a curated organisation-wide catalogue independent of upload."
+			"note": "Functions as a de facto library of the instance's own uploads, not a curated organisation-wide catalogue independent of upload.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "ast-logo-sync",
@@ -2456,7 +2806,8 @@
 				"state": "built",
 				"evidence": "lib/Service/ThemingService.php:233-247 applyImages() writes the token set's logo file into NC core's ImageManager+ThemingDefaults; js/admin.js:1223-1366 computeThemingPlan() reads the token set's manifest theming.logo and diffs it against the current NC logo; js/admin.js:1367-1402 applyThemingPlan() POSTs the diff to /apps/thematiq/settings/theming; lib/Controller/SettingsController.php:399-465 updateThemingValues() calls applyColors/applyImages.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "sync-theming-on-token-change"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (templates/settings/admin.php:68); picking a set opens an apply dialog (js/admin.js:965-982 change handler -> checkAndShowThemingDialog) that offers the sync",
 			"evidence": {
@@ -2470,7 +2821,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "high",
-			"note": "Sync is opt-in per switch: the admin sees a diff dialog and confirms before the logo actually changes, it is not silent."
+			"note": "Sync is opt-in per switch: the admin sees a diff dialog and confirms before the logo actually changes, it is not silent.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "ast-background-sync",
@@ -2486,7 +2841,8 @@
 				"state": "built",
 				"evidence": "lib/Service/ThemingService.php:189-247 applyColors()/applyImages() include background_color and background image; js/admin.js:1300-1358 computeThemingPlan() diffs background_color and background image the same way as logo.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "sync-theming-on-token-change"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown, same apply dialog as ast-logo-sync",
 			"evidence": {
@@ -2499,7 +2855,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "ast-upload-logo",
@@ -2515,7 +2875,8 @@
 				"state": "built",
 				"evidence": "Upload happens on Nextcloud core's own Theming admin page, not a thematiq page: apps/theming/src/components/AdminSectionThemingAdvanced.vue and apps/theming/lib/ImageManager.php:25 SUPPORTED_IMAGE_KEYS=['background','logo','logoheader','favicon']. thematiq composes with it: lib/Service/CssInjectionService.php:673-681,730-735 checks theming.logoheaderMime/logoMime and, when an admin uploaded a logo through core, shows it as-is instead of the token set's own logo.",
 				"owner": "nextcloud/server",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "none"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core's own panel, separate from thematiq's Theming section)",
 			"evidence": {
@@ -2529,7 +2890,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "thematiq does not implement the upload itself; it defers to and honours core's existing upload rather than overriding it."
+			"note": "thematiq does not implement the upload itself; it defers to and honours core's existing upload rather than overriding it.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: logo upload lives on the core Theming page, not a thematiq screen"
+			}
 		},
 		{
 			"id": "ast-upload-background",
@@ -2545,7 +2910,8 @@
 				"state": "built",
 				"evidence": "Same core Theming panel and ImageManager as ast-upload-logo (apps/theming/lib/ImageManager.php:25 includes 'background'); thematiq's own resetToDefaults()/RESETTABLE (lib/Service/ThemingService.php:255-277) treats 'background' as one of the settings it can undo, confirming it shares the same core slot.",
 				"owner": "nextcloud/server",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "none"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel)",
 			"evidence": {
@@ -2559,7 +2925,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "Same as ast-upload-logo: core's feature, thematiq only reads/resets the resulting value."
+			"note": "Same as ast-upload-logo: core's feature, thematiq only reads/resets the resulting value.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: background upload lives on the core Theming page, not a thematiq screen"
+			}
 		},
 		{
 			"id": "ast-favicon",
@@ -2575,7 +2945,8 @@
 				"state": "built",
 				"evidence": "apps/theming/lib/ImageManager.php:25,57,332-345 and apps/theming/src/components/AdminSectionThemingAdvanced.vue:107 ('favicon' field) implement favicon upload/generation in Nextcloud core. thematiq does not sync or touch the favicon key at all: lib/Service/ThemingService.php only ever touches 'logo'/'background'/'primary_color'/'background_color' (grep -F 'favicon' lib js/admin.js templates/settings/admin.php found nothing in thematiq's own code).",
 				"owner": "nextcloud/server",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "none"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Advanced theming settings')",
 			"evidence": {
@@ -2589,7 +2960,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "Entirely a core Nextcloud feature; thematiq neither syncs a favicon per token set nor blocks the core one."
+			"note": "Entirely a core Nextcloud feature; thematiq neither syncs a favicon per token set nor blocks the core one.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "ast-icon-library",
@@ -2605,7 +2980,8 @@
 				"state": "built",
 				"evidence": "img/icons/{rvo,open-gemeenten,den-haag,dsfr}/*.svg bundle ~2500 government icons (img/ICONS.md); openspec/specs/icon-assets/spec.md Requirement 'Consumption Contract via Nextcloud Image Path' documents the standard IURLGenerator::imagePath('nldesign'|'thematiq', 'icons/{set}/{name}.svg') contract with no thematiq bootstrap required; tests/e2e/spec-coverage/icon-assets-ncvue.spec.ts:1-60 fetches representative icons from all packs via OC.filePath('thematiq','img','icons') and asserts HTTP 200; tests/Unit/IconAssetsTest.php checks the img/ICONS.md inventory matches the filesystem.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/icon-assets"
 			},
 			"reachedOn": "machine: any Nextcloud app, via the standard static app-asset path (imagePath()/OC.filePath()), verified by the e2e test above",
 			"evidence": {
@@ -2619,7 +2995,11 @@
 			"providerHow": "read-from-code",
 			"feature": "icon-assets",
 			"featureConfidence": "high",
-			"note": "A consumer must already know which pack+name it wants (hardcode 'rvo/house.svg' etc). The one helper meant to auto-pick the icon from whichever pack the ACTIVE design system uses, DesignSystemService::resolveIconPath() (lib/Service/DesignSystemService.php:252-265), has no caller anywhere in lib/ or js/, and no sibling repo (nextcloud-vue, openregister) references it either -- so automatic active-pack resolution is unreachable even though static-by-name reuse works."
+			"note": "A consumer must already know which pack+name it wants (hardcode 'rvo/house.svg' etc). The one helper meant to auto-pick the icon from whichever pack the ACTIVE design system uses, DesignSystemService::resolveIconPath() (lib/Service/DesignSystemService.php:252-265), has no caller anywhere in lib/ or js/, and no sibling repo (nextcloud-vue, openregister) references it either -- so automatic active-pack resolution is unreachable even though static-by-name reuse works.",
+			"screen": {
+				"board": null,
+				"reason": "backend: icon files for other apps by image path, no screen"
+			}
 		},
 		{
 			"id": "ast-org-logos",
@@ -2635,7 +3015,8 @@
 				"state": "built",
 				"evidence": "img/logos/*.svg bundles 25 organisation logos (amsterdam.svg, utrecht.svg, rijkshuisstijl.svg, vng.svg, etc, per openspec/specs/icon-assets/spec.md); each municipality/organisation token set's manifest entry names its own logo file, applied via the same theming-sync path as ast-logo-sync (lib/Service/ThemingService.php:233-247, js/admin.js:1223-1366).",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/icon-assets"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown -> apply dialog (same as ast-logo-sync)",
 			"evidence": {
@@ -2648,7 +3029,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: logo files for other apps by image path, no screen"
+			}
 		},
 		{
 			"id": "ast-icon-pack",
@@ -2694,7 +3079,8 @@
 				"state": "built",
 				"evidence": "templates/settings/admin.php:94-103 renders #nldesign-icon-pack-indicator/#nldesign-icon-pack-value/#nldesign-icon-pack-source; js/admin.js:909-937 updateIconPackIndicator() fills it in and updates it on token-set change; lib/Settings/Admin.php:360 getActiveIconPackIndicator()-equivalent (resolveActiveIconPacks call) supplies the initial-state value server-side.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theme-switchable-iconography"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Active icon pack' block under the token-set dropdown (templates/settings/admin.php:94)",
 			"evidence": {
@@ -2707,7 +3093,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "icon-packs",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTheming",
+					"TqLayout"
+				]
+			}
 		},
 		{
 			"id": "ast-icon-contrast",
@@ -2723,7 +3116,8 @@
 				"state": "built",
 				"evidence": "css/icon-contrast.css forces 'fill:currentColor!important' on '[class*=_appIcon_] svg' (and its children), always injected: lib/Service/CssInjectionService.php:433-436 adds the 'icon-contrast' layer unconditionally for every design system (comment: 'loaded for every design system (not none)'). currentColor adapts to both light and dark surfaces automatically since it inherits the surrounding text colour.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "render-event-injection"
 			},
 			"reachedOn": "Every page (the fix is scoped to Nextcloud's own app-management/appstore icon list, class selector '[class*=_appIcon_]')",
 			"evidence": {
@@ -2737,7 +3131,11 @@
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
 			"featureConfidence": "medium",
-			"note": "This is one specific, narrow fix (white-fill SVG icons vanishing in the NC 34+ app-management list), not a general icon-legibility system across every icon or every government icon pack; the capability as a government-wide guarantee is not what ships."
+			"note": "This is one specific, narrow fix (white-fill SVG icons vanishing in the NC 34+ app-management list), not a general icon-legibility system across every icon or every government icon pack; the capability as a government-wide guarantee is not what ships.",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS layer injected on every page, no screen"
+			}
 		},
 		{
 			"id": "ast-dark-logo",
@@ -2768,7 +3166,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "high",
-			"note": "Decided no 2026-09-28: Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. Nextcloud core also has only a single logo slot (nextcloud/server#47357, cited in the code's own comment), which is why this needed its own CSS-based path in the first place; that path is real code with no data ever flowing through it."
+			"note": "Decided no 2026-09-28: Single competitor rated yes (Microsoft 365 branding), no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. Nextcloud core also has only a single logo slot (nextcloud/server#47357, cited in the code's own comment), which is why this needed its own CSS-based path in the first place; that path is real code with no data ever flowing through it.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqDonker"
+			}
 		},
 		{
 			"id": "ast-brand-images",
@@ -2814,7 +3216,8 @@
 				"state": "built",
 				"evidence": "lib/Listener/ThemeInjectionListener.php:100-146 handle() listens to BeforeTemplateRenderedEvent for every renderAs (user/guest/public/error) and BeforeLoginTemplateRenderedEvent, injecting CssInjectionService::inject() for the resolved context on every page render; the per-app exclusion guard (AppThemingService) is opt-out, not opt-in, so an app is themed unless explicitly excluded.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "render-event-injection"
 			},
 			"reachedOn": "every Nextcloud page (any app), unless that app id is on the admin's exclusion list (Settings > Administration > Theming > 'Theming per app')",
 			"evidence": {
@@ -2827,7 +3230,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS injected on every page render, no screen"
+			}
 		},
 		{
 			"id": "sur-conduction-apps",
@@ -2843,7 +3250,8 @@
 				"state": "built",
 				"evidence": "@conduction/nextcloud-vue src/composables/useScopedTheme.js (origin/development) calls GET /apps/{nldesign|thematiq}/api/token-sets and POST /api/contrast/evaluate (catalog#tokenSets, contrast#evaluate in appinfo/routes.php); CnAppRoot.vue:649,1568 (nextcloud-vue origin/development) imports and instantiates useScopedTheme() unconditionally in the shared app-root component every Conduction Vue app mounts, so the wiring is default, not opt-in per app.",
 				"owner": "ConductionNL/nextcloud-vue",
-				"origin": "own"
+				"origin": "own",
+				"change": "app-token-set-selection"
 			},
 			"reachedOn": "machine: every Conduction app built on CnAppRoot, automatically at app mount (no admin action)",
 			"evidence": {
@@ -2857,7 +3265,11 @@
 			"providerHow": "read-from-code",
 			"feature": "app-token-set-selection",
 			"featureConfidence": "high",
-			"note": "thematiq supplies the two read-only APIs (/api/token-sets, /api/contrast/evaluate); the consuming wiring itself lives in nextcloud-vue."
+			"note": "thematiq supplies the two read-only APIs (/api/token-sets, /api/contrast/evaluate); the consuming wiring itself lives in nextcloud-vue.",
+			"screen": {
+				"board": null,
+				"reason": "backend: shared tokens read by nextcloud-vue, no thematiq screen"
+			}
 		},
 		{
 			"id": "sur-login-page",
@@ -2873,7 +3285,8 @@
 				"state": "built",
 				"evidence": "lib/Listener/ThemeInjectionListener.php:113-117 handles BeforeLoginTemplateRenderedEvent by calling cssInjectionService->inject(context: 'login') unconditionally (no per-app guard, since login is never an app page); templates/settings/admin.php:279 '.nl-login__logo' preview element shows the effect is authored for the login screen specifically.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "render-event-injection"
 			},
 			"reachedOn": "the Nextcloud login page, before any session exists",
 			"evidence": {
@@ -2886,7 +3299,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS injected on the login page; the login look is previewed on TqTheming"
+			}
 		},
 		{
 			"id": "sur-header-nav",
@@ -2902,7 +3319,8 @@
 				"state": "built",
 				"evidence": "css/systems/nldesign/element-overrides.css:148-169,185-221,293-305 target '#header', '#appmenu', '.app-menu', 'header nav' selectors to recolor/refilter the header and app-navigation icons and bars per the active token set; this file is in nldesign's stylesheets list (design-systems.json) and injected for the 'user' render context.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/css-architecture"
 			},
 			"reachedOn": "every logged-in page's header and app-navigation bar",
 			"evidence": {
@@ -2915,7 +3333,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLayout"
+			}
 		},
 		{
 			"id": "sur-menu-labels",
@@ -2931,7 +3353,8 @@
 				"state": "built",
 				"evidence": "css/show-menu-labels.css exists and is added/removed as a conditional layer by js/admin.js:284-311 setConditionalLayer(); templates/settings/admin.php:409 '#nldesign-show-menu-labels' checkbox; js/admin.js:2080-2090 change handler POSTs to /apps/thematiq/settings/menulabels (settings#setMenuLabelsSetting, appinfo/routes.php:34).",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/menu-labels"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Show text labels in app menu' checkbox (templates/settings/admin.php:409)",
 			"evidence": {
@@ -2944,7 +3367,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "menu-labels",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLayout"
+			}
 		},
 		{
 			"id": "sur-hide-slogan",
@@ -2960,7 +3387,8 @@
 				"state": "built",
 				"evidence": "css/hide-slogan.css exists, added/removed via the same setConditionalLayer() mechanism as menu-labels; templates/settings/admin.php:397 '#nldesign-hide-slogan' checkbox; js/admin.js:2062-2070 posts to /apps/thematiq/settings/slogan (settings#setSloganSetting, appinfo/routes.php:33).",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/hide-slogan"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Hide slogan' checkbox (templates/settings/admin.php:397)",
 			"evidence": {
@@ -2973,7 +3401,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "hide-slogan",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLayout"
+			}
 		},
 		{
 			"id": "sur-public-pages",
@@ -2989,7 +3421,8 @@
 				"state": "built",
 				"evidence": "lib/Listener/ThemeInjectionListener.php:166-171 resolveContext() maps TemplateResponse::RENDER_AS_PUBLIC to context 'public', one of CssInjectionService::VALID_CONTEXTS (CssInjectionService.php:74), and inject() runs for it the same as any other context.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "render-event-injection"
 			},
 			"reachedOn": "public share/link pages (RENDER_AS_PUBLIC responses)",
 			"evidence": {
@@ -3002,7 +3435,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS injected on public pages, no screen"
+			}
 		},
 		{
 			"id": "sur-email",
@@ -3018,7 +3455,8 @@
 				"state": "built",
 				"evidence": "lib/Mail/NLDesignEMailTemplate.php implements Nextcloud's mail template contract and is wired via the system config key 'mail_template_class' (lib/Service/EmailThemingService.php:41-68, OCC_ENABLE_COMMAND); templates/settings/admin.php:457-517 renders the 'Email template' section with an enable checkbox (#nldesign-email-theming-enabled) posting to /settings/email-theming (settings#setEmailTheming, appinfo/routes.php:91); resolves the active token set's primary color/text color/logo for the email.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "email-template-theming"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Email template' section (templates/settings/admin.php:461)",
 			"evidence": {
@@ -3032,7 +3470,11 @@
 			"providerHow": "read-from-code",
 			"feature": "email-theming",
 			"featureConfidence": "high",
-			"note": "A documented past defect (now fixed) is preserved in the code's own comment: a stale namespace in the occ command silently disabled branded email until OC\\Mail\\Mailer's class_exists() guard was traced (lib/Service/EmailThemingService.php:53-64)."
+			"note": "A documented past defect (now fixed) is preserved in the code's own comment: a stale namespace in the occ command silently disabled branded email until OC\\Mail\\Mailer's class_exists() guard was traced (lib/Service/EmailThemingService.php:53-64).",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqEmailDocumenten"
+			}
 		},
 		{
 			"id": "sur-email-footer",
@@ -3048,7 +3490,8 @@
 				"state": "built",
 				"evidence": "lib/Service/EmailThemingService.php:79-100 FOOTER_ORG_NAME_KEY/FOOTER_ACCESSIBILITY_URL_KEY/FOOTER_PRIVACY_URL_KEY; lib/Mail/NLDesignEMailTemplate.php:107-139,303-329 addFooter() appends the configured org name + accessibility/privacy URLs to every sent email when at least one value is set; templates/settings/admin.php:496-513 org name/accessibility URL/privacy URL input fields.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "email-template-theming"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Email template' section, footer fields (templates/settings/admin.php:496)",
 			"evidence": {
@@ -3061,7 +3504,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "email-theming",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqEmailDocumenten"
+			}
 		},
 		{
 			"id": "sur-component-bridge",
@@ -3077,7 +3524,8 @@
 				"state": "built",
 				"evidence": "css/systems/nldesign/utrecht-bridge.css (86 '--nldesign-component-*' mappings) and css/systems/lasuite/bridge.css are both listed in design-systems.json's stylesheets arrays for 'nldesign'/'lasuite'/'cunningham' and injected via CssInjectionService's per-design-system layer stack; openspec/specs/component-tokens/spec.md documents the '--utrecht-*' -> '--nldesign-component-*' contract with a fallback-to-defaults requirement.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/component-tokens"
 			},
 			"reachedOn": "every themed page (part of the always-loaded design-system stylesheet stack)",
 			"evidence": {
@@ -3090,7 +3538,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: Utrecht bridge stylesheet, no screen"
+			}
 		},
 		{
 			"id": "sur-nc-variable-mapping",
@@ -3106,7 +3558,8 @@
 				"state": "built",
 				"evidence": "css/systems/nldesign/overrides.css (283 lines) maps Nextcloud CSS custom properties to '--nldesign-*' tokens with '!important', e.g. lines 80-114 for text/error/warning/success colors; listed in design-systems.json's nldesign stylesheets array; openspec/specs/nextcloud-variable-mapping/spec.md requires every NC variable be either mapped or commented out with a reason, and unmapped ones are indeed left as explanatory comments (e.g. overrides.css:90 '--color-error-text: unmapped').",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/nextcloud-variable-mapping"
 			},
 			"reachedOn": "every themed page (part of the always-loaded nldesign stylesheet stack)",
 			"evidence": {
@@ -3119,7 +3572,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "nextcloud-variable-mapping",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqBasistokens"
+			}
 		},
 		{
 			"id": "sur-error-contrast",
@@ -3135,7 +3592,8 @@
 				"state": "built",
 				"evidence": "css/error-contrast.css exists and is injected unconditionally for every design system (lib/Service/CssInjectionService.php:437-441, right after icon-contrast, same 'loaded for every design system' comment pattern).",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "render-event-injection"
 			},
 			"reachedOn": "every themed page",
 			"evidence": {
@@ -3149,7 +3607,11 @@
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
 			"featureConfidence": "medium",
-			"note": "Verified the file exists and is unconditionally injected; did not diff its exact selectors against every design system's error-state components."
+			"note": "Verified the file exists and is unconditionally injected; did not diff its exact selectors against every design system's error-state components.",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS layer injected on every page, no screen"
+			}
 		},
 		{
 			"id": "sur-status-tokens",
@@ -3165,7 +3627,8 @@
 				"state": "built",
 				"evidence": "css/systems/nldesign/overrides.css:88-114 maps '--color-error'/'--color-warning'/'--color-success' (and their -rgb/-element/-border variants) to '--nldesign-color-error/warning/success', which default in css/systems/nldesign/defaults.css:42-50 to token values; always injected as part of the nldesign stylesheet stack.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/css-architecture"
 			},
 			"reachedOn": "every themed page's success/warning/error UI elements",
 			"evidence": {
@@ -3179,7 +3642,11 @@
 			"providerHow": "read-from-code",
 			"feature": "component-tokens",
 			"featureConfidence": "high",
-			"note": "The status token list lives once, in lib/Service/TokenRegistry.php getStatusTokens(). The orphaned duplicate lib/Service/StatusTokens.php, and its Login/Content/Typography siblings, were removed for #665."
+			"note": "The status token list lives once, in lib/Service/TokenRegistry.php getStatusTokens(). The orphaned duplicate lib/Service/StatusTokens.php, and its Login/Content/Typography siblings, were removed for #665.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "sur-mobile-desktop-clients",
@@ -3256,7 +3723,8 @@
 				"state": "built",
 				"evidence": "Serving on a custom domain is a Nextcloud server/hosting property (config.php trusted_domains / overwrite.cli.url), independent of any app; a self-hosted instance running thematiq can be reached on any domain the operator points at it. No thematiq or core-Theming code participates.",
 				"owner": "nextcloud/server",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "none"
 			},
 			"reachedOn": "machine: the web server / reverse proxy in front of the self-hosted instance",
 			"evidence": {
@@ -3270,7 +3738,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "low",
-			"note": "This is an inherent property of self-hosting, not a feature thematiq or Nextcloud's Theming app implements; included for completeness since the capability is trivially true for a self-hosted product."
+			"note": "This is an inherent property of self-hosting, not a feature thematiq or Nextcloud's Theming app implements; included for completeness since the capability is trivially true for a self-hosted product.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud server and hosting: config.php, no thematiq screen"
+			}
 		},
 		{
 			"id": "sur-footer-links",
@@ -3286,7 +3758,8 @@
 				"state": "built",
 				"evidence": "apps/theming/lib/ThemingDefaults.php:162-177 builds 'legalLinks' (Imprint/Privacy, from 'imprintUrl'/'privacyUrl') into getFooter(), which core renders both in the app footer and on the login page. thematiq does not add, remove or touch these fields (grep -niF 'legal notice|privacy|imprint|accessibility statement' in lib/, templates/settings/admin.php, js/admin.js found nothing).",
 				"owner": "nextcloud/server",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "none"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Legal notice URL' / 'Privacy policy URL' fields), rendered in every page footer and the login page",
 			"evidence": {
@@ -3300,7 +3773,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "No accessibility-statement field exists in core or thematiq specifically; only imprint/privacy are supported."
+			"note": "No accessibility-statement field exists in core or thematiq specifically; only imprint/privacy are supported.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: legal links are core Theming fields, no thematiq screen"
+			}
 		},
 		{
 			"id": "sur-web-app-name",
@@ -3316,7 +3793,8 @@
 				"state": "built",
 				"evidence": "apps/theming/lib/Capabilities.php:47-51 (name, productName, url, slogan) are standard core Theming admin-settings fields. thematiq's own sync never touches them (lib/Service/ThemingService.php only handles primary_color/background_color/logo/background).",
 				"owner": "nextcloud/server",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "none"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, basic settings)",
 			"evidence": {
@@ -3330,7 +3808,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "medium",
-			"note": "Entirely core Nextcloud; thematiq is silent on name/slogan/url."
+			"note": "Entirely core Nextcloud; thematiq is silent on name/slogan/url.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: name, slogan and URL are core Theming fields, no thematiq screen"
+			}
 		},
 		{
 			"id": "sco-per-app-exclude",
@@ -3346,7 +3828,8 @@
 				"state": "built",
 				"evidence": "lib/Service/AppThemingService.php:29-34 stores an exclusion list in appconfig 'disabled_apps' (nldesign/settings/theming protected from exclusion); lib/Listener/ThemeInjectionListener.php:175-195 isThemingDisabledForResponse() consults it on every render; templates/settings/admin.php:320-332 'Theming per app' section with #nldesign-app-theming-list checkboxes and #nldesign-app-theming-save, posting to /settings/app-theming (settings#setAppTheming, appinfo/routes.php:47).",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "per-app-theming-toggle"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Theming per app' section (templates/settings/admin.php:320)",
 			"evidence": {
@@ -3359,7 +3842,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "per-app-theming",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqMerkPerApp"
+			}
 		},
 		{
 			"id": "sco-per-group",
@@ -3375,7 +3862,8 @@
 				"state": "built",
 				"evidence": "lib/Service/GroupThemingService.php:30-50,306-345 stores an ordered '{group, tokenSet}' mapping in appconfig 'group_token_sets' and resolves it per logged-in user in resolveTokenSetForRequestUnsafe(); templates/settings/admin.php:339-357 'Group theming' section with #nldesign-group-theming-list/#nldesign-group-theming-add/#nldesign-group-theming-save, posting to /settings/group-theming (settings#setGroupTheming, appinfo/routes.php:112).",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "per-group-theming"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Group theming' section (templates/settings/admin.php:339)",
 			"evidence": {
@@ -3389,7 +3877,11 @@
 			"providerHow": "read-from-code",
 			"feature": "per-group-theming",
 			"featureConfidence": "high",
-			"note": "Per-group theming covers only which token-set CSS stack is injected; core theming values (logo/primary/background) stay instance-global by design (GroupThemingService.php:51-55 docblock)."
+			"note": "Per-group theming covers only which token-set CSS stack is injected; core theming values (logo/primary/background) stay instance-global by design (GroupThemingService.php:51-55 docblock).",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqGroepen"
+			}
 		},
 		{
 			"id": "sco-group-priority",
@@ -3405,7 +3897,8 @@
 				"state": "built",
 				"evidence": "lib/Service/GroupThemingService.php:33-38 docblock: 'array order IS priority order (index 0 wins first), so there is no separate priority field that could drift out of sync'; matchFirstEntry() (called from resolveTokenSetForRequestUnsafe(), line ~335) returns the first mapping entry whose group contains the user.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "per-group-theming"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Group theming' section (the list order set there is the priority order)",
 			"evidence": {
@@ -3418,7 +3911,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "per-group-theming",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqGroepen"
+			}
 		},
 		{
 			"id": "sco-login-unaffected",
@@ -3434,7 +3931,8 @@
 				"state": "built",
 				"evidence": "lib/Service/GroupThemingService.php:316-322: explicit branch '2. No session (login/public/error pages, occ/cron): explicit branch to the instance default ... and it MUST NOT touch IGroupManager' when userSession->getUser() is null.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "per-group-theming"
 			},
 			"reachedOn": "the login page and any unauthenticated request, which always render the instance-default token set regardless of any group mapping",
 			"evidence": {
@@ -3447,7 +3945,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "per-group-theming",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: resolution rule with no setting of its own"
+			}
 		},
 		{
 			"id": "sco-user-choice",
@@ -3463,7 +3965,8 @@
 				"state": "built",
 				"evidence": "Nextcloud core's personal Appearance settings let a user pick light/dark/high-contrast, which core marks on the page as 'body[data-theme-dark]'/'body[data-theme-light-highcontrast]' etc. thematiq's own generated dark stylesheets explicitly target those same attributes: css/tokens/dark/amsterdam.css:2-3,105-106 'body:not([data-theme-light]):not([data-theme-dark])...' for auto and 'body[data-theme-dark], body[data-themes*=dark]' for the explicit choice.",
 				"owner": "nextcloud/server",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "none"
 			},
 			"reachedOn": "Settings > Personal > Appearance and accessibility (core Nextcloud), which thematiq's per-house-style dark/high-contrast CSS then honours",
 			"evidence": {
@@ -3477,7 +3980,11 @@
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
 			"featureConfidence": "high",
-			"note": "The picker itself is core Nextcloud, present with or without thematiq; thematiq's value-add is that its dark-mode token variants genuinely respond to that per-user choice rather than only to the OS media query."
+			"note": "The picker itself is core Nextcloud, present with or without thematiq; thematiq's value-add is that its dark-mode token variants genuinely respond to that per-user choice rather than only to the OS media query.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: personal Appearance settings, no thematiq screen"
+			}
 		},
 		{
 			"id": "sco-user-follow-os",
@@ -3493,7 +4000,8 @@
 				"state": "built",
 				"evidence": "css/tokens/dark/amsterdam.css:2 '@media (prefers-color-scheme: dark)' generated for every municipality/organisation token set with a dark variant, gated by an instance toggle (lib/Service/CssInjectionService.php:856-863 hasDarkVariantLayer(), appconfig 'dark_variants'); css/systems/high-contrast/theme.css:112-129 and element-overrides.css:69-70 add '@media (prefers-contrast: more)' and '@media (forced-colors: active)' cooperation for the dedicated high-contrast design system.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "dark-mode-token-variants"
 			},
 			"reachedOn": "any page, automatically, when the OS/browser reports prefers-color-scheme:dark, prefers-contrast:more or forced-colors:active and no explicit user theme choice overrides it",
 			"evidence": {
@@ -3507,7 +4015,11 @@
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
 			"featureConfidence": "high",
-			"note": "OS-driven dark mode works across every generated municipal/organisation token set; OS-driven high-contrast cooperation is scoped to the dedicated 'high-contrast' design system rather than layered onto every house style."
+			"note": "OS-driven dark mode works across every generated municipal/organisation token set; OS-driven high-contrast cooperation is scoped to the dedicated 'high-contrast' design system rather than layered onto every house style.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqDonker"
+			}
 		},
 		{
 			"id": "sco-per-site",
@@ -3614,7 +4126,8 @@
 				"state": "built",
 				"evidence": "appinfo/routes.php:27 'catalog#tokenSets' -> GET /api/token-sets is #[NoAdminRequired] (per the route comment at routes.php:22-27); consumed by @conduction/nextcloud-vue's useScopedTheme.js listTokenSets() (origin/development, calls '/apps/{slug}/api/token-sets'), which CnAppRoot.vue mounts by default for every Conduction app.",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "app-token-set-selection"
 			},
 			"reachedOn": "machine: any Conduction app's own token-set picker, via useScopedTheme(), with only a logged-in (non-admin) session required",
 			"evidence": {
@@ -3627,7 +4140,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "app-token-set-selection",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: API for the picker in other apps, no thematiq screen"
+			}
 		},
 		{
 			"id": "acc-contrast-on-upload",
@@ -3643,7 +4160,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/CustomTokenSetController.php:230-268 persist() calls CustomTokenSetService::store(); lib/Service/CustomTokenSetService.php:230 $warnings = $this->contrast->check(declarations: $declarations); js/admin.js:4015 buildContrastWarningHtml() renders it as a role=alert banner in the upload result block (#nldesign-upload-result, templates/settings/admin.php:183)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "custom-token-set-upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload panel (#nldesign-custom-token-sets), warning banner appears after upload",
 			"evidence": {
@@ -3657,7 +4175,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "warning only, upload always succeeds regardless of contrast result (see acc-block-inaccessible)."
+			"note": "warning only, upload always succeeds regardless of contrast result (see acc-block-inaccessible).",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "acc-contrast-evaluate",
@@ -3673,7 +4195,8 @@
 				"state": "built",
 				"evidence": "appinfo/routes.php: POST /api/contrast/evaluate -> contrast#evaluate, NoAdminRequired; lib/Controller/ContrastController.php; consumed by @conduction/nextcloud-vue src/composables/useScopedTheme.js:315 evaluateContrast(), which is called from real call sites: apps-extra/bq-audit/src/dialogs/ThemePickerDialog.vue, apps-extra/bq-audit2/src/dialogs/ThemePickerDialog.vue and apps-extra/openbuild/src/dialogs/ThemePickerDialog.vue",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "app-token-set-selection"
 			},
 			"reachedOn": "machine: other apps' theme-picker dialogs (bq-audit, bq-audit2, openbuild ThemePickerDialog.vue) via nextcloud-vue's useScopedTheme().evaluateContrast()",
 			"evidence": {
@@ -3687,7 +4210,11 @@
 			"providerHow": "read-from-code",
 			"feature": "app-token-set-selection",
 			"featureConfidence": "high",
-			"note": "verified two hops: route exists, composable calls it, and three sibling apps actually call the composable's evaluateContrast (not just define it)."
+			"note": "verified two hops: route exists, composable calls it, and three sibling apps actually call the composable's evaluateContrast (not just define it).",
+			"screen": {
+				"board": null,
+				"reason": "backend: API used by other apps, no thematiq screen"
+			}
 		},
 		{
 			"id": "acc-shipped-audit",
@@ -3703,7 +4230,8 @@
 				"state": "built",
 				"evidence": "lib/Service/ShippedTokenSetAuditService.php auditSet()/renderReport(); tests/Unit/TokenSetContrastAuditTest.php runs ContrastService over every manifest entry in token-sets.json (auditableManifest()) and asserts DOCUMENTED_AA_SETS actually meet AA; this is a normal PHPUnit test so it runs in CI (.github/workflows/code-quality.yml runs the PHPUnit suite) on every push",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "shipped-token-set-contrast-audit"
 			},
 			"reachedOn": "machine: CI (PHPUnit suite run by code-quality.yml on every push/PR)",
 			"evidence": {
@@ -3717,7 +4245,11 @@
 			"providerHow": "read-from-code",
 			"feature": "shipped-token-set-contrast-audit",
 			"featureConfidence": "high",
-			"note": "gate is real: it fails if a documented-AA set stops meeting AA or the generated report drifts from committed docs/reference/contrast-report.md."
+			"note": "gate is real: it fails if a documented-AA set stops meeting AA or the generated report drifts from committed docs/reference/contrast-report.md.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTokensetToepassen"
+			}
 		},
 		{
 			"id": "acc-contrast-report-doc",
@@ -3733,7 +4265,8 @@
 				"state": "built",
 				"evidence": "docs/reference/contrast-report.md generated by ShippedTokenSetAuditService::renderReport(), lists every shipped set's primary/text and primary/bg ratios and verdict; docs/ is a Docusaurus site published by .github/workflows/documentation.yml on push to development to https://thematiq.conduction.nl",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "shipped-token-set-contrast-audit"
 			},
 			"reachedOn": "https://thematiq.conduction.nl/reference/contrast-report (published docs site)",
 			"evidence": {
@@ -3746,7 +4279,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "shipped-token-set-contrast-audit",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "documentation site page, no screen in the app"
+			}
 		},
 		{
 			"id": "acc-compliance-report",
@@ -3777,7 +4314,11 @@
 			"providerHow": "read-from-code",
 			"feature": "compliance-evidence",
 			"featureConfidence": "high",
-			"note": "Decided no 2026-09-28: No competitor rated yes, no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. the capability exists end-to-end via occ (see acc-compliance-cli, same ComplianceReportService, byte-identical output per the command's own docblock) but the admin panel has no download button for it, so as a UI feature it is unreached."
+			"note": "Decided no 2026-09-28: No competitor rated yes, no demand row, outside the core area (catalogue and apply). The half-built plumbing stays as it is; finishing it is a small change if Ruben overrules. the capability exists end-to-end via occ (see acc-compliance-cli, same ComplianceReportService, byte-identical output per the command's own docblock) but the admin panel has no download button for it, so as a UI feature it is unreached.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqContrastrapport"
+			}
 		},
 		{
 			"id": "acc-compliance-cli",
@@ -3793,7 +4334,8 @@
 				"state": "built",
 				"evidence": "lib/Command/ComplianceReport.php registered in appinfo/info.xml:235 as OCA\\Thematiq\\Command\\ComplianceReport; occ thematiq:compliance-report --format=json|markdown [--output=path]; reuses ComplianceReportService exclusively so output is byte-identical to the HTTP endpoint per the command's own docblock",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "compliance-evidence-report"
 			},
 			"reachedOn": "occ thematiq:compliance-report",
 			"evidence": {
@@ -3806,7 +4348,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "compliance-evidence",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "occ command, no screen"
+			}
 		},
 		{
 			"id": "acc-high-contrast-set",
@@ -3822,7 +4368,8 @@
 				"state": "built",
 				"evidence": "token-sets.json:403-412 'hoog-contrast' set, design_system 'high-contrast', description states WCAG 2.2 AAA (>=7:1); css/tokens/hoog-contrast.css; selectable via #nldesign-token-set-select (templates/settings/admin.php:68) -> POST /apps/thematiq/settings/tokenset (js/admin.js:1143), applied instance-wide through ThemeInjectionListener on every subsequent page",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "high-contrast-token-set"
 			},
 			"reachedOn": "Settings > Administration > Theming, house style dropdown, select 'Hoog contrast (WCAG AAA)'",
 			"evidence": {
@@ -3835,7 +4382,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "acc-forced-colors",
@@ -3851,7 +4402,8 @@
 				"state": "built",
 				"evidence": "css/systems/high-contrast/theme.css:129 @media (forced-colors: active) and css/systems/high-contrast/element-overrides.css:70 same query, both loaded only when the 'hoog-contrast' design system is active; grep -n 'forced-colors' across css/systems/nldesign/*.css and css/admin.css returned nothing, so the default/other design systems carry no forced-colors cooperation",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "high-contrast-token-set"
 			},
 			"reachedOn": "any page, but only once the admin has selected the 'Hoog contrast' token set; not present for the default nldesign/rijkshuisstijl theme or any other set",
 			"evidence": {
@@ -3865,7 +4417,11 @@
 			"providerHow": "read-from-code",
 			"feature": "high-contrast",
 			"featureConfidence": "high",
-			"note": "cooperates with OS forced-colors mode, but only for the one opt-in high-contrast design system, not instance-wide for whichever theme is active."
+			"note": "cooperates with OS forced-colors mode, but only for the one opt-in high-contrast design system, not instance-wide for whichever theme is active.",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS media query inside the high-contrast set, no screen"
+			}
 		},
 		{
 			"id": "acc-dark-mode",
@@ -3881,7 +4437,8 @@
 				"state": "built",
 				"evidence": "openspec/specs/dark-mode/spec.md; route GET/POST /settings/dark-variants -> settings#getDarkVariants/setDarkVariants; templates/settings/admin.php:441-449 #nldesign-dark-variants checkbox; js/admin.js:2097 saveDarkVariantsSetting() posts to /apps/thematiq/settings/dark-variants; css/tokens/dark/*.css are the generated variants DarkPaletteService/ThemeInjectionListener swap in",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "dark-mode-token-variants"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Enable dark mode variants for the active token set' checkbox",
 			"evidence": {
@@ -3895,7 +4452,14 @@
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
 			"featureConfidence": "high",
-			"note": "this toggle follows Nextcloud's own dark/light/system choice; it is not a nldesign-controlled dark-mode switch by itself."
+			"note": "this toggle follows Nextcloud's own dark/light/system choice; it is not a nldesign-controlled dark-mode switch by itself.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqDonker",
+					"TqLayout"
+				]
+			}
 		},
 		{
 			"id": "acc-dark-generate-cli",
@@ -3911,7 +4475,8 @@
 				"state": "built",
 				"evidence": "lib/Command/GenerateDarkVariants.php registered in appinfo/info.xml:236; occ thematiq:generate-dark-variants uses DarkPaletteService to write css/tokens/dark/{id}.css for eligible sets at build/install time (never per-request per the command's docblock)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "dark-mode-token-variants"
 			},
 			"reachedOn": "occ thematiq:generate-dark-variants",
 			"evidence": {
@@ -3924,7 +4489,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "occ command, no screen"
+			}
 		},
 		{
 			"id": "acc-focus-indicators",
@@ -3940,7 +4509,8 @@
 				"state": "built",
 				"evidence": "css/systems/nldesign/theme.css:637 '*:focus-visible { outline: 2px solid var(--nldesign-color-focus) !important; outline-offset: 2px !important; }', a per-token-set colour; theme.css is injected on every page via lib/Listener/ThemeInjectionListener.php",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/css-architecture"
 			},
 			"reachedOn": "every page, once a token set with design_system nldesign is active (the default)",
 			"evidence": {
@@ -3953,7 +4523,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: focus outline in the injected theme CSS, no screen"
+			}
 		},
 		{
 			"id": "acc-reduced-motion",
@@ -3969,7 +4543,8 @@
 				"state": "built",
 				"evidence": "css/systems/nldesign/theme.css:1139 @media (prefers-reduced-motion: reduce) removes button/login transitions; css/admin.css:1318 same for the settings page's own controls; css/playground.css:1875 same for the token-set preview widgets, all with transition:none!important; animation:none!important",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"change": "authoring-token-value-types"
 			},
 			"reachedOn": "any page (login and app pages) and the theming settings page itself, automatically when the OS/browser reports prefers-reduced-motion",
 			"evidence": {
@@ -3983,7 +4558,11 @@
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
 			"featureConfidence": "high",
-			"note": "origin:competitor row, answered yes: real, working, three separate stylesheets covering login/app chrome, the settings page and the preview widgets."
+			"note": "origin:competitor row, answered yes: real, working, three separate stylesheets covering login/app chrome, the settings page and the preview widgets.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqBeweging"
+			}
 		},
 		{
 			"id": "acc-keyboard-admin",
@@ -3999,7 +4578,8 @@
 				"state": "built",
 				"evidence": "tests/vitest/admin-a11y.spec.js: dedicated keyboard-accessibility suite for the hand-rolled dialog (focus trap, Tab wrap, Escape-closes-and-returns-focus, WCAG 2.4.3/2.1.1 cited in comments at js/admin.js:1943-1945,3597,3842); the one other hand-rolled widget, the per-app theming dropdown (js/admin.js:3491-3600), has its own keydown handler with Escape support (comment at js/admin.js:3597); all other controls on the page are native <select>/<input>/<button>/<textarea> elements",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "admin-panel-keyboard-accessibility"
 			},
 			"reachedOn": "Settings > Administration > Theming, the whole page",
 			"evidence": {
@@ -4013,7 +4593,11 @@
 			"providerHow": "read-from-code",
 			"feature": "admin-settings",
 			"featureConfidence": "medium",
-			"note": "code reading only, not a live tab-through; confidence is medium because full-page keyboard operability was not walked end to end in a browser."
+			"note": "code reading only, not a live tab-through; confidence is medium because full-page keyboard operability was not walked end to end in a browser.",
+			"screen": {
+				"board": null,
+				"reason": "behaviour of every dialog and tab on the theming page, no screen of its own"
+			}
 		},
 		{
 			"id": "acc-vocabulary-audit",
@@ -4029,7 +4613,8 @@
 				"state": "built",
 				"evidence": "lib/Service/TokenSetVocabularyAuditService.php audits whether a set defines the full token vocabulary the design system reads; js/admin.js:3981 buildIncompleteWarningHtml() renders an 'Incomplete set' banner (kind==='incomplete') listing the tokens that fall back to Rijkshuisstijl defaults, shown alongside the contrast warnings in #nldesign-upload-result",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "token-set-vocabulary-audit"
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload/list panel, 'Incomplete set' warning banner",
 			"evidence": {
@@ -4042,7 +4627,14 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqSetUploaden",
+					"TqTheming"
+				]
+			}
 		},
 		{
 			"id": "acc-block-inaccessible",
@@ -4150,7 +4742,8 @@
 				"state": "built",
 				"evidence": "9 controller classes use #[AuthorizedAdminSetting] (grep -rln AuthorizedAdminSetting lib/Controller/ -> 9 files: Audit, ConfigBundle, CustomTokenSet, Font, Overrides, CustomCss, Settings, Preview controllers); lib/Settings/Admin.php implements IDelegatedSettings so the whole /settings/* surface requires an admin session (or a group the instance owner has delegated, see gov-delegated-role)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/admin-settings"
 			},
 			"reachedOn": "Settings > Administration > Theming, the section is only listed/reachable for admins (and delegated groups)",
 			"evidence": {
@@ -4163,7 +4756,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "admin-settings",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "access rule on every admin endpoint, no screen of its own"
+			}
 		},
 		{
 			"id": "gov-delegated-role",
@@ -4179,7 +4776,8 @@
 				"state": "built",
 				"evidence": "lib/Settings/Admin.php:38 'class Admin implements IDelegatedSettings' with docblock 'Implements IDelegatedSettings so AuthorizedAdminSetting can reference this class'; this is Nextcloud core's settings-admin-delegation mechanism (Settings > Administration > Security, 'Administration privileges' per group)",
 				"owner": "nextcloud/server",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "none"
 			},
 			"reachedOn": "Settings > Administration > Security > Administration privileges (core), grant a group access to the Theming settings section",
 			"evidence": {
@@ -4193,7 +4791,11 @@
 			"providerHow": "read-from-code",
 			"feature": "admin-settings",
 			"featureConfidence": "high",
-			"note": "the delegation mechanism and its UI are Nextcloud core; thematiq's contribution is implementing IDelegatedSettings so its section can be delegated to a non-full-admin group ('brand manager')."
+			"note": "the delegation mechanism and its UI are Nextcloud core; thematiq's contribution is implementing IDelegatedSettings so its section can be delegated to a non-full-admin group ('brand manager').",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud core: admin delegation settings, no thematiq screen"
+			}
 		},
 		{
 			"id": "gov-audit-log",
@@ -4209,7 +4811,8 @@
 				"state": "built",
 				"evidence": "lib/Service/ThemingAuditService.php:189 log()/285 buildEntry() records {ts, actor, action, old, new, changed}; route GET /settings/audit -> audit#list (lib/Controller/AuditController.php); js/admin.js:4720 fetches it and renders into templates/settings/admin.php:553-573 #nldesign-audit-table with Timestamp/User/Action/From/To/Changed columns",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theming-audit-log"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Theming audit log' table",
 			"evidence": {
@@ -4222,7 +4825,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-audit",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLogboek"
+			}
 		},
 		{
 			"id": "gov-audit-export",
@@ -4238,7 +4845,8 @@
 				"state": "built",
 				"evidence": "lib/Service/ThemingAuditService.php:266 exportAll(); route GET /settings/audit/export -> audit#export; templates/settings/admin.php:576 #nldesign-audit-download-btn 'Download full log'; js/admin.js:4740 wires the click to that route",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theming-audit-log"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Download full log' button",
 			"evidence": {
@@ -4251,7 +4859,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-audit",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLogboek"
+			}
 		},
 		{
 			"id": "gov-audit-append-only",
@@ -4267,7 +4879,8 @@
 				"state": "built",
 				"evidence": "lib/Service/ThemingAuditService.php only exposes log() (append), getRecent() and exportAll() (both read-only); appendLine() (line 471) only ever concatenates onto the stored file ($current . $line) and rotates on size cap, it never truncates/edits an existing entry; grep -n 'function ' on the file shows no update/delete method; no route in appinfo/routes.php targets audit#update or audit#delete",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theming-audit-log"
 			},
 			"reachedOn": "n/a (a guarantee about the absence of an edit path, not a screen)",
 			"evidence": {
@@ -4281,7 +4894,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-audit",
 			"featureConfidence": "medium",
-			"note": "no API/UI path in this app can edit or delete an entry once written. Caveat: the log is a flat JSONL file in Nextcloud appdata, not a cryptographically tamper-evident or hash-chained log, so it relies on filesystem access control, not its own immutability proof."
+			"note": "no API/UI path in this app can edit or delete an entry once written. Caveat: the log is a flat JSONL file in Nextcloud appdata, not a cryptographically tamper-evident or hash-chained log, so it relies on filesystem access control, not its own immutability proof.",
+			"screen": {
+				"board": null,
+				"reason": "backend: storage rule of the audit log, no screen"
+			}
 		},
 		{
 			"id": "gov-otap-bundle",
@@ -4297,7 +4914,8 @@
 				"state": "built",
 				"evidence": "lib/Service/ConfigBundleService.php export()/import of the complete config; routes GET/POST /settings/config/export, /settings/config/import -> configBundle#export/import; templates/settings/admin.php:586-602 #nldesign-config-bundle-download-btn and #nldesign-config-bundle-upload-btn; js/admin.js:4840/4856 wire the download/upload",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theme-config-portability"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Complete configuration bundle' panel, download/upload buttons",
 			"evidence": {
@@ -4310,7 +4928,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "config-portability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqBundel"
+			}
 		},
 		{
 			"id": "gov-otap-cli",
@@ -4326,7 +4948,8 @@
 				"state": "built",
 				"evidence": "lib/Command/ConfigExport.php and lib/Command/ConfigImport.php registered in appinfo/info.xml:237-238; occ thematiq:config:export [file] / thematiq:config:import [file]; ConfigExport's docblock states it reuses ConfigBundleService::export() exclusively so output is byte-identical to the HTTP endpoint",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theme-config-portability"
 			},
 			"reachedOn": "occ thematiq:config:export / occ thematiq:config:import",
 			"evidence": {
@@ -4339,7 +4962,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "config-portability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "occ command, no screen"
+			}
 		},
 		{
 			"id": "gov-federated-share",
@@ -4353,11 +4980,15 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "building",
-				"evidence": "lib/Listener/ShareableConfigTypeListener.php + lib/Service/Config/NlDesignThemeShareableConfigType.php contribute a real OCA\\OpenRegister\\Service\\Config\\IShareableConfigType (id nldesign.theme) whose serialise() wraps ConfigBundleService::export() (openspec/specs/federated-config-sharing/spec.md); checked the consuming side in ~/nextcloud-docker-dev/workspace/server/apps-extra/openregister (origin/development 94e8c29e42): real routes exist (appinfo/routes.php:2193-2202 federatedConfig#types/bundle/install/publish/discover/fetch/trust) and lib/Controller/FederatedConfigController.php + lib/Service/Config/FederatedConfigService.php exist, but grep -rln FederatedConfig/shareable openregister/src/ found no Vue page or component calling any of those routes",
+				"evidence": "thematiq half built: lib/Listener/ShareableConfigTypeListener.php:63-68 registers lib/Service/Config/NlDesignThemeShareableConfigType.php (id nldesign.theme, line 81), whose serialise() wraps ConfigBundleService::export() (openspec/specs/federated-config-sharing). OpenRegister origin/development 8ff5ba173b has the engine (lib/Service/Config/FederatedConfigService.php, ShareableConfigTypeRegistry.php) and a Store page (src/manifest.json:36 type store), but that store declares only openregister.configset and openregister.flows (src/manifest.json:458-461), so no screen offers nldesign.theme. The OpenRegister change federated-config-sharing (open) ticks 'nc-vue CnConfigurationStore (nc-vue #242)' at tasks.md:52, yet git grep CnConfigurationStore finds nothing in nextcloud-vue origin/main 0f1c0ffbb or origin/development 3eefb4f00; the shared store page is CnStorePage, which only lists declared types",
 				"owner": "ConductionNL/openregister",
-				"origin": "own"
+				"origin": "own",
+				"change": "openregister/federated-config-sharing",
+				"spec": "openspec/specs/federated-config-sharing",
+				"note": "Re-rated from code on 7 Oct: stays building and partial. thematiq's contract is done; what is missing is OpenRegister's (sibling-needs): a store that declares nldesign.theme, or a configuration-set type that carries it, plus correcting the ticked CnConfigurationStore task in openregister/openspec/changes/federated-config-sharing/tasks.md:52, which nextcloud-vue never shipped.",
+				"readOn": "2026-10-07"
 			},
-			"reachedOn": "nothing reaches it: thematiq's contract is real and OpenRegister's engine/routes are real, but neither repo has a UI screen that drives a federated share end to end",
+			"reachedOn": "nothing reaches it: thematiq's type and OpenRegister's engine are real, and OpenRegister has a Store page, but that page offers only configuration sets and flows, never nldesign.theme",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 no federation code in apps/theming/lib; theming values are local app config",
 				"m365-branding": "https://support.microsoft.com/en-us/sharepoint/sites-in-sharepoint/site-branding: branding can be copied from another site, but 'Searching and copying site branding across sites in different geographies is not currently supported', so sharing stops inside one tenant and geography; no cross-tenant sharing is documented",
@@ -4369,7 +5000,11 @@
 			"providerHow": "read-from-code",
 			"feature": "federated-config-sharing",
 			"featureConfidence": "high",
-			"note": "not marked pending because I could check the sibling repo directly rather than merely being unable to see it: OpenRegister's federated-config engine exists in lib/ but has no UI caller either, so this is a real gap, not an unknown. Lane decision: the sharing engine and any screen that drives it belong to openregister; its federatedConfig routes (appinfo/routes.php:2193-2202 at 94e8c29) have no Vue caller, so no page drives a federated theme share."
+			"note": "not marked pending because I could check the sibling repo directly rather than merely being unable to see it: OpenRegister's federated-config engine exists in lib/ but has no UI caller either, so this is a real gap, not an unknown. Lane decision: the sharing engine and any screen that drives it belong to openregister; its federatedConfig routes (appinfo/routes.php:2193-2202 at 94e8c29) have no Vue caller, so no page drives a federated theme share.",
+			"screen": {
+				"board": null,
+				"reason": "sharing runs in OpenRegister; the canvas has no thematiq board for it"
+			}
 		},
 		{
 			"id": "gov-config-as-code",
@@ -4400,7 +5035,11 @@
 			"providerHow": "read-from-code",
 			"feature": "config-portability",
 			"featureConfidence": "high",
-			"note": "origin:competitor row, answered no as a normal finding. The closest thing is occ config:export/import (see gov-otap-cli), which is a file, not deployment-config-as-code (e.g. Helm values)."
+			"note": "origin:competitor row, answered no as a normal finding. The closest thing is occ config:export/import (see gov-otap-cli), which is a file, not deployment-config-as-code (e.g. Helm values).",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqBundel"
+			}
 		},
 		{
 			"id": "gov-approval-workflow",
@@ -4446,7 +5085,8 @@
 				"state": "built",
 				"evidence": "appinfo/info.xml:71 <category>customization</category>, three <screenshot> URLs; .github/workflows/release.yml calls the org's reusable ConductionNL/.github/.github/workflows/release.yml@main which publishes releases to the Nextcloud App Store (per this repo's own comments about 'the store accepts' releases at line ~90)",
 				"owner": "nextcloud/server",
-				"origin": "own"
+				"origin": "own",
+				"spec": "none"
 			},
 			"reachedOn": "Nextcloud instance's Apps admin page, App Store listing for thematiq (formerly nldesign)",
 			"evidence": {
@@ -4460,7 +5100,11 @@
 			"providerHow": "read-from-code",
 			"feature": "app-store",
 			"featureConfidence": "medium",
-			"note": "the app-store install/update mechanism itself is Nextcloud core; thematiq's own release pipeline is what publishes new versions to it."
+			"note": "the app-store install/update mechanism itself is Nextcloud core; thematiq's own release pipeline is what publishes new versions to it.",
+			"screen": {
+				"board": null,
+				"reason": "Nextcloud app store, no thematiq screen"
+			}
 		},
 		{
 			"id": "gov-open-source",
@@ -4476,7 +5120,8 @@
 				"state": "built",
 				"evidence": "appinfo/info.xml:68 <licence>EUPL-1.2</licence>; repository root LICENSE file (EUPL v1.2 full text); LICENSES/ directory (REUSE-style per-license texts: AGPL-3.0-or-later, EUPL-1.2, MIT, etalab-2.0); public repository github.com/ConductionNL/thematiq",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/claim-accuracy"
 			},
 			"reachedOn": "the public GitHub repository and the app's own LICENSE/info.xml metadata",
 			"evidence": {
@@ -4489,7 +5134,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "licensing",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "licence in the repository and manifest, no screen"
+			}
 		},
 		{
 			"id": "gov-licence-clarity",
@@ -4505,7 +5154,8 @@
 				"state": "built",
 				"evidence": "docs/reference/assets.md documents Fira Sans (open, no permission needed), the official proprietary RijksoverheidSansWebText font (requires permission), the official Rijkslogo (copyright, strict use) and Tabler Icons (MIT); docs/reference/compliance.md:295-317 documents the bundled Marianne font (Etalab-2.0, off by default) and Inter (SIL OFL 1.1, the actual fallback shipped); MARIANNE-LICENCE.md and AGREEMENT-MARIANNE.md carry the Marianne licence text verbatim; templates/settings/admin.php:363-364 carries an explicit disclaimer for admin-uploaded custom fonts",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/claim-accuracy"
 			},
 			"reachedOn": "https://thematiq.conduction.nl/reference/assets and /reference/compliance (published docs site)",
 			"evidence": {
@@ -4519,7 +5169,11 @@
 			"providerHow": "read-from-code",
 			"feature": "compliance-evidence",
 			"featureConfidence": "medium",
-			"note": "the information is real and reasonably complete for the bundled fonts (Fira Sans, Inter, Marianne) and the two logo/icon families, but it is spread across three separate docs pages rather than a single consolidated 'licences' page in the product."
+			"note": "the information is real and reasonably complete for the bundled fonts (Fira Sans, Inter, Marianne) and the two logo/icon families, but it is spread across three separate docs pages rather than a single consolidated 'licences' page in the product.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqLettertypen"
+			}
 		},
 		{
 			"id": "syn-upstream-generated",
@@ -4535,7 +5189,8 @@
 				"state": "built",
 				"evidence": ".github/workflows/sync-tokens.yml clones nl-design-system/themes and runs 'node scripts/generate-tokens.mjs /tmp/themes <sha>' to regenerate css/tokens/ and token-sets.json entries from the official upstream source, not hand-copied values",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-sync-workflow"
 			},
 			"reachedOn": "machine: GitHub Actions (repo maintainer facing, not an admin-facing UI feature)",
 			"evidence": {
@@ -4549,7 +5204,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sync-workflow",
 			"featureConfidence": "high",
-			"note": "This benefits the people who maintain thematiq's shipped token sets, not a live admin using the app; there is no UI surface for it, which is expected for a build-time/CI capability."
+			"note": "This benefits the people who maintain thematiq's shipped token sets, not a live admin using the app; there is no UI surface for it, which is expected for a build-time/CI capability.",
+			"screen": {
+				"board": null,
+				"reason": "CI: GitHub Actions workflow, no screen"
+			}
 		},
 		{
 			"id": "syn-nightly-pr",
@@ -4565,7 +5224,8 @@
 				"state": "built",
 				"evidence": ".github/workflows/sync-tokens.yml: 'on: schedule: cron: 0 3 * * *'; after generation it diffs css/tokens*, token-sets.json, opens or updates a PR (chore/sync-nldesign-tokens) against the repo via 'gh pr create'/'gh pr comment'",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/token-sync-workflow"
 			},
 			"reachedOn": "machine: GitHub Actions nightly cron, opens a PR on ConductionNL/thematiq",
 			"evidence": {
@@ -4579,7 +5239,11 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sync-workflow",
 			"featureConfidence": "high",
-			"note": "Same caveat as syn-upstream-generated: reaches the repo's maintainers as a PR, not a running-instance admin. Lane decision: the nightly sync opens pull requests on the thematiq repository for the maintainer; an instance admin receives the changes only through an app release, not as proposed updates on the instance, so partial for the admin this row addresses."
+			"note": "Same caveat as syn-upstream-generated: reaches the repo's maintainers as a PR, not a running-instance admin. Lane decision: the nightly sync opens pull requests on the thematiq repository for the maintainer; an instance admin receives the changes only through an app release, not as proposed updates on the instance, so partial for the admin this row addresses.",
+			"screen": {
+				"board": null,
+				"reason": "CI: GitHub Actions workflow, no screen"
+			}
 		},
 		{
 			"id": "syn-freshness-check",
@@ -4595,7 +5259,8 @@
 				"state": "built",
 				"evidence": "appinfo/info.xml registers OCA\\Thematiq\\BackgroundJob\\UpstreamFreshnessJob (daily); templates/settings/admin.php:524-544 checkbox id='nldesign-upstream-freshness-toggle' 'Check daily for upstream token updates (contacts api.github.com)'; js/admin.js:5257-5290 initUpstreamFreshness() POSTs {enabled} to /settings/upstream-freshness on toggle",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "upstream-token-freshness"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Upstream token updates' checkbox",
 			"evidence": {
@@ -4608,7 +5273,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "upstream-freshness",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqGalerij"
+			}
 		},
 		{
 			"id": "syn-freshness-dismiss",
@@ -4624,7 +5293,8 @@
 				"state": "built",
 				"evidence": "js/admin.js:5197-5218 renders one 'Dismiss' button per upstream notice; js/admin.js:5234-5255 dismissUpstreamNotice() POSTs {setId, version} to /settings/upstream-freshness/dismiss (SettingsController::dismissUpstreamNotice), then reloads the freshness panel",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "upstream-token-freshness"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Dismiss' button on an upstream-update notice",
 			"evidence": {
@@ -4637,7 +5307,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "upstream-freshness",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqGalerij"
+			}
 		},
 		{
 			"id": "syn-freshness-status",
@@ -4653,7 +5327,8 @@
 				"state": "built",
 				"evidence": "templates/settings/admin.php:539 '<p ... id=\"nldesign-upstream-freshness-lastchecked\">'; js/admin.js:5221-5232 loadUpstreamFreshness() GETs /settings/upstream-freshness and renders it via renderUpstreamFreshness(), showing last-checked time and the notices list",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "upstream-token-freshness"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'last checked' text and notices list under the upstream-freshness toggle",
 			"evidence": {
@@ -4667,7 +5342,11 @@
 			"providerHow": "read-from-code",
 			"feature": "upstream-freshness",
 			"featureConfidence": "high",
-			"note": "Minor: one notify() call at js/admin.js:5282-5284 uses the l10n domain 'nldesign' instead of 'thematiq' for the enabled-confirmation toast, so that one string will not be translated (falls back to the raw English key); does not affect the feature's function."
+			"note": "Minor: one notify() call at js/admin.js:5282-5284 uses the l10n domain 'nldesign' instead of 'thematiq' for the enabled-confirmation toast, so that one string will not be translated (falls back to the raw English key); does not affect the feature's function.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqGalerij"
+			}
 		},
 		{
 			"id": "syn-nc-theming-sync",
@@ -4683,7 +5362,8 @@
 				"state": "built",
 				"evidence": "lib/Service/ThemingService.php:26-28 imports OCA\\Theming\\ImageManager, BackgroundService, ThemingDefaults; applies logo/background/logo_dark and primary_color/background_color (lib/Service/ThemingService.php:127-260) into Nextcloud's own theming app config when a token set is applied and the sync checkbox is on",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "sync-theming-on-token-change"
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog's 'Also update Nextcloud theming' section",
 			"evidence": {
@@ -4697,7 +5377,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync",
 			"featureConfidence": "high",
-			"note": "Owner is thematiq's ThemingService, but the values it writes are consumed by Nextcloud core's own theming (OCA\\Theming), so provider is recorded as nextcloud for the sink; thematiq is the driver."
+			"note": "Owner is thematiq's ThemingService, but the values it writes are consumed by Nextcloud core's own theming (OCA\\Theming), so provider is recorded as nextcloud for the sink; thematiq is the driver.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "syn-nc-theming-edit",
@@ -4713,7 +5397,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/SettingsController.php:399-424 updateThemingValues() accepts primary_color/background_color/logo/background params, validates them (themingService->validateColors/validateImagePaths), and writes them; reached from the apply dialog's core-theming section (js/admin.js:3092-3120), which lets the admin accept/reject the proposed colours before POSTing",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/theming-sync"
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog's 'Also update Nextcloud theming' section",
 			"evidence": {
@@ -4727,7 +5412,11 @@
 			"providerHow": "read-from-code",
 			"feature": "theming-sync-dialog",
 			"featureConfidence": "medium",
-			"note": "This is editing in the sense of accepting or rejecting the proposed sync as a whole (one bulk checkbox, js/admin.js:3097), driven by picking a token set; there is no free-text field to type an arbitrary custom primary colour independent of any token set."
+			"note": "This is editing in the sense of accepting or rejecting the proposed sync as a whole (one bulk checkbox, js/admin.js:3097), driven by picking a token set; there is no free-text field to type an arbitrary custom primary colour independent of any token set.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqThemingBijwerken"
+			}
 		},
 		{
 			"id": "syn-upgrade-migration",
@@ -4743,7 +5432,8 @@
 				"state": "built",
 				"evidence": "appinfo/info.xml <repair-steps>: MigrateAppConfigKeys, MigrateUserPreferences, MigrateStoredClassNames, MigrateSchemaApplicationId, GenerateDarkVariantsRepairStep, registered under BOTH <post-migration> and <install> (an app-id rename presents to Nextcloud as a fresh install, so <install> is what actually fires); lib/Repair/MigrateAppConfigKeys.php copies nldesign-keyed oc_appconfig rows to thematiq only when thematiq has no value yet, so a real admin's settings are not stranded under the old app id",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "rename-nldesign-to-themiq"
 			},
 			"reachedOn": "machine: Nextcloud's own repair-step runner (occ upgrade / app enable), no admin UI action needed",
 			"evidence": {
@@ -4756,7 +5446,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-capability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: repair steps on upgrade, no screen"
+			}
 		},
 		{
 			"id": "int-capability-api",
@@ -4772,7 +5466,8 @@
 				"state": "built",
 				"evidence": "lib/Capabilities.php implements OCP\\Capabilities\\IPublicCapability, docblock states it contributes an 'nldesign' entry to /ocs/v2.php/cloud/capabilities describing active token set, resolved design system, icon pack, WCAG contrast level, logo variants and slogan/menu-label toggles; IPublicCapability (not ICapability) so unauthenticated clients can read it too",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "theming-capability-api"
 			},
 			"reachedOn": "machine: any OCS capabilities consumer (mobile/desktop clients, other apps' JS, login page) via GET /ocs/v2.php/cloud/capabilities",
 			"evidence": {
@@ -4785,7 +5480,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "theming-capability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: capabilities API, no screen"
+			}
 		},
 		{
 			"id": "int-token-set-api",
@@ -4801,7 +5500,8 @@
 				"state": "built",
 				"evidence": "appinfo/routes.php GET /api/token-sets -> catalog#tokenSets, NoAdminRequired; @conduction/nextcloud-vue src/composables/useScopedTheme.js:297-311 listTokenSets() calls it; that composable is used by src/components/CnAppRoot/CnAppRoot.vue:1559 (const scopedTheme = useScopedTheme()), and CnAppRoot is imported by real apps, e.g. apps-extra/bq-audit/src/App.vue and others (grep -rln CnAppRoot */src across apps-extra returned bq-audit, bq-audit2, openbuild and more)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "app-token-set-selection"
 			},
 			"reachedOn": "machine: sibling apps' theme-picker dialogs (e.g. bq-audit/bq-audit2/openbuild ThemePickerDialog.vue) mounted inside CnAppRoot",
 			"evidence": {
@@ -4815,7 +5515,11 @@
 			"providerHow": "read-from-code",
 			"feature": "app-token-set-selection",
 			"featureConfidence": "high",
-			"note": "verified the full chain: route exists in thematiq, composable calls it, composable is wired into CnAppRoot, and CnAppRoot is actually imported by other apps, so this is a reached capability, not just a declared one. Lane decision: the endpoint logic is thematiq's; nextcloud-vue useScopedTheme is the consumer, not the owner. Real call sites: buildiq (openbuild) src/dialogs/ThemePickerDialog.vue and the bq-audit clones."
+			"note": "verified the full chain: route exists in thematiq, composable calls it, composable is wired into CnAppRoot, and CnAppRoot is actually imported by other apps, so this is a reached capability, not just a declared one. Lane decision: the endpoint logic is thematiq's; nextcloud-vue useScopedTheme is the consumer, not the owner. Real call sites: buildiq (openbuild) src/dialogs/ThemePickerDialog.vue and the bq-audit clones.",
+			"screen": {
+				"board": null,
+				"reason": "backend: API for other apps, no screen"
+			}
 		},
 		{
 			"id": "int-stylesheet-manifest",
@@ -4831,7 +5535,8 @@
 				"state": "built",
 				"evidence": "route GET /settings/tokenset-stylesheets/{tokenSetId} -> layer#getStylesheets (lib/Controller/LayerController.php); js/admin.js:203-214 fetchLayerManifest() calls it and uses the manifest to swap the page's own <link>/<style> elements in cascade order when previewing a different token set without a reload",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/css-architecture"
 			},
 			"reachedOn": "Settings > Administration > Theming, token set preview/apply dialog (apply-without-reload)",
 			"evidence": {
@@ -4845,7 +5550,11 @@
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
 			"featureConfidence": "high",
-			"note": "the only known consumer of this route is thematiq's own admin page, not a third-party app."
+			"note": "the only known consumer of this route is thematiq's own admin page, not a third-party app.",
+			"screen": {
+				"board": null,
+				"reason": "backend: stylesheet manifest endpoint, no screen"
+			}
 		},
 		{
 			"id": "int-metrics",
@@ -4861,7 +5570,8 @@
 				"state": "built",
 				"evidence": "lib/Controller/MetricsController.php GET /api/metrics (admin-auth, no NoAdminRequired/PublicPage so a Prometheus scraper must authenticate); emits nldesign_info, nldesign_up, nldesign_theming_syncs_total, nldesign_audit_entries_total, nldesign_token_sets_total and a custom-overrides-total gauge, in Prometheus text exposition format",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/prometheus-metrics"
 			},
 			"reachedOn": "machine: Prometheus scraper hitting GET /api/metrics with an admin app-password",
 			"evidence": {
@@ -4874,7 +5584,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "observability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: monitoring API, no screen"
+			}
 		},
 		{
 			"id": "int-health",
@@ -4890,7 +5604,8 @@
 				"state": "built",
 				"evidence": "route GET /api/health -> health#index; lib/AppInfo/Application.php:50-60 docblock: HealthController adopts the OpenRegister AppHost observability engine by composition (ADR-040), resolved by FQCN at dispatch time so OpenRegister stays optional; #[PublicPage]+#[NoCSRFRequired] per the route comment in appinfo/routes.php, contract is {status, app, version, checks}",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "adopt-apphost"
 			},
 			"reachedOn": "machine: any monitoring system hitting GET /api/health (public, no auth required)",
 			"evidence": {
@@ -4903,7 +5618,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "observability",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: monitoring API, no screen"
+			}
 		},
 		{
 			"id": "int-tokens-for-other-apps",
@@ -4919,7 +5638,8 @@
 				"state": "built",
 				"evidence": "lib/Listener/ThemeInjectionListener.php registers on BeforeTemplateRenderedEvent and BeforeLoginTemplateRenderedEvent and calls CssInjectionService::inject() on every page render, adding the --nldesign-* custom properties as plain <link>/<style> stylesheets; any app's own CSS can read var(--nldesign-color-primary) etc without any build step or JS dependency",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"spec": "openspec/specs/css-architecture"
 			},
 			"reachedOn": "any page in the instance, automatically, for any app that writes plain CSS against the --nldesign-* variables",
 			"evidence": {
@@ -4932,7 +5652,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS variables injected on every page, no screen"
+			}
 		},
 		{
 			"id": "int-no-js-overhead",
@@ -4948,7 +5672,8 @@
 				"state": "built",
 				"evidence": "lib/Listener/ThemeInjectionListener.php injects CSS via OCP\\Util::addStyle()-style stylesheet links on the two render events, not by shipping a JS runtime; the docblock states any listener failure is caught so 'theming is presentation, never a hard dependency'; the only JS in this app (js/admin.js, js/playground.js, js/preview-banner.js) is scoped to the admin settings page and the session preview banner, never loaded on an ordinary page",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "render-event-injection"
 			},
 			"reachedOn": "every ordinary page in the instance (no admin.js/playground.js loaded there)",
 			"evidence": {
@@ -4961,7 +5686,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "css-architecture",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "backend: CSS-only injection, no screen"
+			}
 		},
 		{
 			"id": "int-rest-api-theme",
@@ -5022,7 +5751,11 @@
 			"providerHow": "read-from-code",
 			"feature": "config-portability",
 			"featureConfidence": "high",
-			"note": "origin:competitor row: you can set the active theme from the CLI, but only as a side effect of importing a whole configuration bundle (which must first be constructed/exported with the desired token set), not via a dedicated 'set theme' command."
+			"note": "origin:competitor row: you can set the active theme from the CLI, but only as a side effect of importing a whole configuration bundle (which must first be constructed/exported with the desired token set), not via a dedicated 'set theme' command.",
+			"screen": {
+				"board": null,
+				"reason": "occ command, no screen"
+			}
 		},
 		{
 			"id": "int-docs-site",
@@ -5038,7 +5771,8 @@
 				"state": "built",
 				"evidence": "docs/ is a Docusaurus site (docusaurus.config.js url thematiq.conduction.nl) with feature pages under docs/features/*.md and reference pages under docs/reference/*.md (assets, compliance, contrast-report, tokens, mappings, icons, brand-identity, token-audit, development, app-token-scope-contract); .github/workflows/documentation.yml publishes it to a Cloudflare Worker on every push to development, with both thematiq.conduction.nl and the retired nldesign.conduction.nl hostname (301 to the canonical one)",
 				"owner": "ConductionNL/thematiq",
-				"origin": "own"
+				"origin": "own",
+				"change": "enhance-docs-website"
 			},
 			"reachedOn": "https://thematiq.conduction.nl",
 			"evidence": {
@@ -5051,7 +5785,11 @@
 			"provider": "thematiq",
 			"providerHow": "read-from-code",
 			"feature": "documentation",
-			"featureConfidence": "high"
+			"featureConfidence": "high",
+			"screen": {
+				"board": null,
+				"reason": "documentation site, no screen in the app"
+			}
 		},
 		{
 			"id": "int-sovereign-bundle",
@@ -5067,7 +5805,8 @@
 				"state": "built",
 				"evidence": "openspec/specs/lasuite-stack/spec.md:6-16 the app ships a 'lasuite' design system (5 stylesheets: fonts, defaults, brand-override, bridge, element-overrides) whose stated goal is 'a Nextcloud core inside a MijnBureau/EDIC sovereign-workplace bundle shows no visual seam against the surrounding La Suite apps'; token-sets.json has a 'lasuite' entry; openspec/specs/lasuite-parity/spec.md has a visual-regression e2e suite for it",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"change": "lasuite-design-stack"
 			},
 			"reachedOn": "Settings > Administration > Theming, select the 'La Suite numérique' token set, so this Nextcloud instance visually matches a surrounding La Suite (MijnBureau/EDIC) bundle",
 			"evidence": {
@@ -5081,7 +5820,11 @@
 			"providerHow": "read-from-code",
 			"feature": "lasuite-stack",
 			"featureConfidence": "high",
-			"note": "origin:competitor row: thematiq makes Nextcloud's own chrome match a sovereign-workplace bundle's brand, which is what a Nextcloud-only app can do; it does not itself assemble or ship the multi-component bundle (Docs/Meet/Chat + Nextcloud) that answer, that packaging is MijnBureau/EDIC's job."
+			"note": "origin:competitor row: thematiq makes Nextcloud's own chrome match a sovereign-workplace bundle's brand, which is what a Nextcloud-only app can do; it does not itself assemble or ship the multi-component bundle (Docs/Meet/Chat + Nextcloud) that answer, that packaging is MijnBureau/EDIC's job.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTheming"
+			}
 		},
 		{
 			"id": "sur-help-links",
@@ -5295,7 +6038,8 @@
 				"state": "built",
 				"evidence": "css/systems/nldesign/overrides.css:220-225 deliberately leaves --color-background-selection to core, which derives it from --color-primary-element, mapped to the brand primary at the top of that file, so the selection wash follows the house style",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "openspec/specs/token-editor-ui"
 			},
 			"reachedOn": "any page: selected text takes the brand primary at 20 percent",
 			"evidence": {
@@ -5311,7 +6055,11 @@
 			"featureConfidence": "high",
 			"origin": "changelog",
 			"originUrl": "https://github.com/nextcloud/server/pull/58834",
-			"note": "Small but visible: text selection in the house colour is one more place where the brand shows without breaking contrast."
+			"note": "Small but visible: text selection in the house colour is one more place where the brand shows without breaking contrast.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "sur-coverage-report",
@@ -5441,7 +6189,11 @@
 			"featureConfidence": "high",
 			"origin": "tender",
 			"originUrl": "https://www.tenderned.nl/aankondigingen/overzicht/407031",
-			"note": "TenderNed 407031 (Gemeente Gulpen-Wittem, Zaaksysteem, 2026-01-06) requires one look-and-feel in the house style for all users with a clear difference between test and production; requirement 23655 in the intelligence database."
+			"note": "TenderNed 407031 (Gemeente Gulpen-Wittem, Zaaksysteem, 2026-01-06) requires one look-and-feel in the house style for all users with a clear difference between test and production; requirement 23655 in the intelligence database.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqOmgevingsmarkering"
+			}
 		},
 		{
 			"id": "sur-generated-documents",
@@ -5454,11 +6206,13 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "building",
-				"evidence": "thematiq half built: lib/Service/DocumentStyleService.php publishes the document profile (organisation, logo or uploaded print logo, cover, colours from the user's resolved set incl. group mapping, heading and body fonts with font URLs, footer lines, contrast warning), readable in-process and at GET /api/document-style (#[NoAdminRequired]); Documents block on Settings > Administration > Theming (lib/Service/DocumentAssetService.php, type and size checks, SVG script refused); the documents themselves are the siblings' halves, ConductionNL/filinq#1340 and ConductionNL/openregister#4255, not built yet",
+				"state": "specified",
+				"evidence": "thematiq half built and its change archived (2026-10-02-surfaces-document-house-style, all tasks ticked): lib/Service/DocumentStyleService.php:94 forUser() builds the document profile (organisation, logo or print logo, cover, colours from the user's resolved set, heading and body fonts, footer lines); GET /api/document-style and /api/document-style/{kind} (appinfo/routes.php:31-32, lib/Controller/DocumentStyleController.php:76,93); the Documents block on Settings > Administration > Theming (templates/settings/admin.php:1026-1029, js/admin-documents.js, uploads checked in lib/Service/DocumentAssetService.php). No generated document reads the profile yet: docudesk origin/development d03efa888 has only the open change templates-house-style-from-thematiq, openregister origin/development 8ff5ba173b only the open change export-pdf-house-style (issues ConductionNL/filinq#1340 and ConductionNL/openregister#4255, both open)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "surfaces-document-house-style"
+				"change": "filinq/templates-house-style-from-thematiq",
+				"note": "Missing, and owed by siblings (sibling-needs): a letter or PDF export that actually carries the profile. Filinq builds the letters (filinq#1340, change templates-house-style-from-thematiq), OpenRegister the PDF exports (openregister#4255, change export-pdf-house-style). Until one lands, a user sees the house style only in the admin form. Missing half specified in filinq/templates-house-style-from-thematiq (spec round part 3, 2026-10-07); delivered half: surfaces-document-house-style.",
+				"readOn": "2026-10-07"
 			},
 			"reachedOn": "Settings > Administration > Theming, Documents; GET /apps/thematiq/api/document-style; OCA\\Thematiq\\Service\\DocumentStyleService",
 			"evidence": {
@@ -5474,7 +6228,11 @@
 			"featureConfidence": "high",
 			"origin": "tender",
 			"originUrl": "https://www.tenderned.nl/aankondigingen/overzicht/404703",
-			"note": "Demand from tenders: TenderNed 404703 (Hilversum VTH, 2025-12-12), 415897 (FUMO, 2026-03-13) and 298070 (BUCH, several house styles per municipality) require generated documents in the house style. openDesk added OpenProject PDF export branding in 1.18.0."
+			"note": "Demand from tenders: TenderNed 404703 (Hilversum VTH, 2025-12-12), 415897 (FUMO, 2026-03-13) and 298070 (BUCH, several house styles per municipality) require generated documents in the house style. openDesk added OpenProject PDF export branding in 1.18.0.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqEmailDocumenten"
+			}
 		},
 		{
 			"id": "gov-token-deprecation",
@@ -5507,7 +6265,14 @@
 			"featureConfidence": "high",
 			"origin": "changelog",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/releases/tag/2.12.1",
-			"note": "a government house style changes under many consuming apps; a deprecation with a replacement and a date lets suppliers migrate before a token is removed"
+			"note": "a government house style changes under many consuming apps; a deprecation with a replacement and a date lets suppliers migrate before a token is removed",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTokenUitfaseren",
+					"TqEigenTokens"
+				]
+			}
 		},
 		{
 			"id": "syn-push-to-platform",
@@ -5604,7 +6369,11 @@
 			"featureConfidence": "high",
 			"origin": "changelog",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/releases/tag/2.12.1",
-			"note": "motion tokens are what a theme needs to honour reduced-motion preferences consistently across apps Corrections round 8 (2026-09-28): the two editor duration tokens do not reach the theme transitions, thematiq#697; rating kept because partial already reflects two untyped duration tokens and no easing token, and those tokens still reach Nextcloud components."
+			"note": "motion tokens are what a theme needs to honour reduced-motion preferences consistently across apps Corrections round 8 (2026-09-28): the two editor duration tokens do not reach the theme transitions, thematiq#697; rating kept because partial already reflects two untyped duration tokens and no easing token, and those tokens still reach Nextcloud components.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqBeweging"
+			}
 		},
 		{
 			"id": "typ-theme-base-size",
@@ -5669,7 +6438,14 @@
 			"featureConfidence": "high",
 			"origin": "featureRequest",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/issues/3236",
-			"note": "interchange with other government token tools depends on the stable DTCG colour format"
+			"note": "interchange with other government token tools depends on the stable DTCG colour format",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTheming",
+					"TqEigenSets"
+				]
+			}
 		},
 		{
 			"id": "aut-broken-reference-list",
@@ -5685,7 +6461,8 @@
 				"state": "built",
 				"evidence": "lib/Service/DesignTokensAliasResolver.php:58-102 reports every alias-cycle and alias-target-missing on upload, and js/admin.js:4114 lists them to the admin before the set is accepted",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"change": "dtcg-ingestion-hardening"
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload, validation errors list",
 			"evidence": {
@@ -5701,7 +6478,11 @@
 			"featureConfidence": "high",
 			"origin": "featureRequest",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/issues/3397",
-			"note": "a broken alias falls back to an unreadable default in every app that consumes the style"
+			"note": "a broken alias falls back to an unreadable default in every app that consumes the style",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqSetUploaden"
+			}
 		},
 		{
 			"id": "cat-living-token-docs",
@@ -5734,7 +6515,11 @@
 			"featureConfidence": "high",
 			"origin": "featureRequest",
 			"originUrl": "https://github.com/tokens-studio/figma-plugin/issues/3355",
-			"note": "suppliers building for a municipality need a readable reference of the tokens they must use"
+			"note": "suppliers building for a municipality need a readable reference of the tokens they must use",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqTokenSet"
+			}
 		},
 		{
 			"id": "int-brand-kit-in-editor",
@@ -5833,7 +6618,14 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=526794",
-			"note": "A government brand owner needs to stop departmental sites drifting from the Rijkshuisstijl without locking down the whole instance."
+			"note": "A government brand owner needs to stop departmental sites drifting from the Rijkshuisstijl without locking down the whole instance.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqGroepen",
+					"TqPersoonlijk"
+				]
+			}
 		},
 		{
 			"id": "sur-assistant-logo",
@@ -5846,11 +6638,13 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "building",
-				"evidence": "thematiq half built: lib/Service/AssistantMarkService.php (off by default, organisation name defaulting to the email footer, logo defaulting to logos.default of the active set, in the configuration bundle) and GET /api/assistant-mark (lib/Controller/AssistantMarkController.php, #[NoAdminRequired], label translated per user) with the AI assistant block on Settings > Administration > Theming; the panel that draws it is the nextcloud-vue half, ConductionNL/nextcloud-vue#1298, not built yet",
+				"state": "specified",
+				"evidence": "thematiq half built and its change archived (2026-10-02-surfaces-assistant-approved-mark, all tasks ticked): lib/Service/AssistantMarkService.php:146 forUser() returns the mark (off by default, organisation name, logo, translated label); GET /api/assistant-mark (appinfo/routes.php:30, lib/Controller/AssistantMarkController.php:71, #[NoAdminRequired]); the AI assistant block on Settings > Administration > Theming (templates/settings/admin.php:1109-1116, js/admin-assistant-mark.js). Nothing draws it in the assistant: git grep 'assistant-mark' in nextcloud-vue origin/development 3eefb4f00 src/ finds no caller, and ConductionNL/nextcloud-vue#1298 is open",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "surfaces-assistant-approved-mark"
+				"change": "nextcloud-vue/ai-panel-approved-mark",
+				"note": "Missing, and owed by nextcloud-vue (sibling-needs): CnAiChatPanel drawing the mark (nextcloud-vue#1298, no change written there yet). Until it lands, a user sees the mark only in the admin preview. Missing half specified in nextcloud-vue/ai-panel-approved-mark (spec round part 3, 2026-10-07); delivered half: surfaces-assistant-approved-mark.",
+				"readOn": "2026-10-07"
 			},
 			"reachedOn": "Settings > Administration > Theming, AI assistant; GET /apps/thematiq/api/assistant-mark",
 			"evidence": {
@@ -5866,7 +6660,11 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=555852",
-			"note": "Public servants must be able to tell a sanctioned assistant from a look-alike; a brand mark in the assistant is a trust signal."
+			"note": "Public servants must be able to tell a sanctioned assistant from a look-alike; a brand mark in the assistant is a trust signal.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqAiAssistent"
+			}
 		},
 		{
 			"id": "gov-no-public-cdn",
@@ -5882,7 +6680,8 @@
 				"state": "built",
 				"evidence": "every asset is served from the instance: uploaded fonts through font#serve (appinfo/routes.php:83, lib/Service/FontService.php:447-448 builds the @font-face URL with linkToRoute), bundled fonts self-hosted (css/fonts-conduction.css:11-14 states 'self-hosted, not linked to Google', :25 and :37 load local woff2 files), logos and icons from img/ in the app",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"spec": "openspec/specs/custom-fonts"
 			},
 			"reachedOn": "every page, no external host is contacted for theme assets",
 			"evidence": {
@@ -5898,7 +6697,11 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=571391",
-			"note": "Sovereignty and data-location rules make a mandatory public CDN a blocker for Dutch government tenants; thematiq serves everything from the instance."
+			"note": "Sovereignty and data-location rules make a mandatory public CDN a blocker for Dutch government tenants; thematiq serves everything from the instance.",
+			"screen": {
+				"board": null,
+				"reason": "backend: assets served from the instance, no screen"
+			}
 		},
 		{
 			"id": "ast-branded-reactions",
@@ -5997,7 +6800,11 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://www.microsoft.com/microsoft-365/roadmap?id=568364",
-			"note": "Shows branding spreading per app with its own brand center, the fragmentation a single instance-wide theme avoids."
+			"note": "Shows branding spreading per app with its own brand center, the fragmentation a single instance-wide theme avoids.",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqMerkPerApp"
+			}
 		},
 		{
 			"id": "gov-central-brand-library",
@@ -6013,7 +6820,8 @@
 				"state": "built",
 				"evidence": "one house style is held centrally for the whole instance and every app follows it; departments get their own only by mapping a group to another centrally held set (lib/Service/GroupThemingService.php:66 group_token_sets); every setter is admin or delegated only (lib/Controller/SettingsController.php:225-226 #[AuthorizedAdminSetting(Admin::class)] on setTokenSet), so only the brand team edits it",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "competitor",
+				"change": "per-group-theming"
 			},
 			"reachedOn": "Settings > Administration > Theming",
 			"evidence": {
@@ -6029,7 +6837,11 @@
 			"featureConfidence": "medium",
 			"origin": "changelog",
 			"originUrl": "https://liferay.dev/b/liferay-dxp-2026-q3-release-webinar-replay",
-			"note": "a ministry or shared service can own one brand for many sites without giving each site admin edit rights"
+			"note": "a ministry or shared service can own one brand for many sites without giving each site admin edit rights",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqGroepen"
+			}
 		},
 		{
 			"id": "app-branding-package",
@@ -6062,7 +6874,11 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-91941",
-			"note": "moving a full house style between environments or tenants in one unit is what OTAP governance needs"
+			"note": "moving a full house style between environments or tenants in one unit is what OTAP governance needs",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqBundel"
+			}
 		},
 		{
 			"id": "acc-high-contrast-tokens",
@@ -6127,7 +6943,14 @@
 			"featureConfidence": "medium",
 			"origin": "changelog",
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-96942",
-			"note": "lets a brand define its own dark palette instead of an automatic inversion"
+			"note": "lets a brand define its own dark palette instead of an automatic inversion",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqComponenten",
+					"TqDonker"
+				]
+			}
 		},
 		{
 			"id": "aut-add-token",
@@ -6160,7 +6983,14 @@
 			"featureConfidence": "medium",
 			"origin": "roadmap",
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-80283",
-			"note": "organisations can extend a shared token vocabulary without a developer release"
+			"note": "organisations can extend a shared token vocabulary without a developer release",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": [
+					"TqTokenToevoegen",
+					"TqEigenTokens"
+				]
+			}
 		},
 		{
 			"id": "aut-alpha-hex",
@@ -6193,7 +7023,11 @@
 			"featureConfidence": "medium",
 			"origin": "changelog",
 			"originUrl": "https://learn.liferay.com/w/dxp/sites/site-appearance/style-books/using-a-style-book-to-standardize-site-appearance",
-			"note": "brand overlays and translucent surfaces can stay inside the token set; origin is the style book documentation because no Liferay release-notes page naming this change was found"
+			"note": "brand overlays and translucent surfaces can stay inside the token set; origin is the style book documentation because no Liferay release-notes page naming this change was found",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqComponenten"
+			}
 		},
 		{
 			"id": "aut-component-preview",
@@ -6226,7 +7060,11 @@
 			"featureConfidence": "medium",
 			"origin": "featureRequest",
 			"originUrl": "https://liferay.atlassian.net/browse/LPD-88654",
-			"note": "component builders for a municipal design system need to see the real brand while building"
+			"note": "component builders for a municipal design system need to see the real brand while building",
+			"screen": {
+				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
+				"board": "TqEigenComponent"
+			}
 		}
 	],
 	"pending": []

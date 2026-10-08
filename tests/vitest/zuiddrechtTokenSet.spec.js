@@ -253,6 +253,32 @@ function pairs(t, main) {
 			main,
 			3,
 		],
+		// The public site (openspec/changes/zuiddrecht-site-page-title-notice-surface):
+		// the ink on a plain notice, and what the grey band and a boxed
+		// table's header row carry: text, muted text and links.
+		[
+			'attention text on the attention ground',
+			t['--nldesign-website-attention-color'],
+			t['--nldesign-website-attention-background-color'],
+			4.5,
+		],
+		[
+			'notice text on the notice ground',
+			t['--nldesign-website-notice-color'],
+			t['--nldesign-website-notice-background-color'],
+			4.5,
+		],
+		...[
+			['text', '--nldesign-color-text'],
+			['muted text', '--nldesign-color-text-muted'],
+			['link', '--nldesign-color-link'],
+			['link hover', '--nldesign-color-link-hover'],
+		].map(([what, token]) => [
+			what + ' on the site surface',
+			t[token],
+			t['--nldesign-color-surface'],
+			4.5,
+		]),
 	]
 }
 
@@ -281,10 +307,14 @@ describe('zuiddrecht: the manifest entry', () => {
 		}
 	})
 
-	it('carries the light layout and the stripe as its layout defaults', () => {
+	it('carries the light layout, the stripe on the login card, a 264px navigation, the soft entry and the workplace bar as its layout defaults', () => {
 		expect(ENTRY.layout).toEqual({
 			workplace_layout: 'light',
 			brand_stripe: true,
+			navigation_width: 264,
+			navigation_active_style: 'soft',
+			brand_stripe_placement: 'login',
+			header_style: 'workplace',
 		})
 	})
 })
@@ -347,9 +377,11 @@ describe('zuiddrecht: every text pair reaches AA', () => {
 
 describe('zuiddrecht: the dark workspace', () => {
 	it('sets the dark page and surface in both dark scopes, and no colour in the light', () => {
-		// The one rule outside the dark scopes is the login logo box, which
-		// is geometry and declares no custom property.
-		const outsideDark = []
+		// Outside the dark scopes the file holds geometry and type only (the
+		// login logo box, the workplace boards' measures): every colour there
+		// goes through a token, so no colour literal of its own, and the
+		// generated dark variant keeps up on its own.
+		const literals = []
 		postcss
 			.parse(read('css/token-overrides/zuiddrecht.css'))
 			.walkRules((rule) => {
@@ -357,10 +389,18 @@ describe('zuiddrecht: the dark workspace', () => {
 					rule.parent.type === 'atrule'
 					&& /prefers-color-scheme:\s*dark/.test(rule.parent.params)
 				if (!inMedia && !/data-theme/.test(rule.selector)) {
-					rule.walkDecls((d) => outsideDark.push(d.prop))
+					rule.walkDecls((d) => {
+						// A literal as the last-resort fallback of a token is fine.
+						const own = d.value.replace(/,\s*#[0-9a-f]{3,8}\s*\)/gi, ')')
+						if (/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(own)) {
+							literals.push(
+								rule.selector + ' ' + d.prop + ': ' + d.value,
+							)
+						}
+					})
 				}
 			})
-		expect(outsideDark.sort()).toEqual(['height', 'top', 'width'])
+		expect(literals).toEqual([])
 
 		for (const scope of [OVERRIDES.media, OVERRIDES.explicit]) {
 			expect(Object.keys(scope).sort()).toEqual([
@@ -495,5 +535,46 @@ describe('zuiddrecht: the font', () => {
 
 	it('is the family the set names first', () => {
 		expect(LIGHT['--nldesign-font-family'].startsWith("'Fira Sans'")).toBe(true)
+	})
+})
+
+describe('zuiddrecht: what the layout options carry, and the day-close link', () => {
+	const override = read('css/token-overrides/zuiddrecht.css')
+	const declarations = []
+	postcss.parse(override).walkDecls((d) => {
+		declarations.push({
+			selector: d.parent.selector || '',
+			prop: d.prop,
+			value: d.value + (d.important ? ' !important' : ''),
+		})
+	})
+
+	it('leaves the 264px navigation and the soft entry to the layout options', () => {
+		// The set's `layout` block names both, so with nothing stored the page
+		// loads navigation-width.css and navigation-active-soft.css
+		// (LayoutOptionsServiceTest::testZuiddrechtWearsTheNewerDefaults). A
+		// literal here would overrule an administrator who picks another.
+		expect(declarations.filter((d) => /\b264px\b/.test(d.value))).toEqual([])
+		expect(declarations.filter((d) => /navigation-width/.test(d.prop))).toEqual(
+			[],
+		)
+		expect(
+			declarations.filter((d) =>
+				// An entry that is NOT selected (the hover wash) is not the selected style.
+				/app-navigation-entry[^,]*(?<!:not\()\.active/.test(d.selector),
+			),
+		).toEqual([])
+	})
+
+	it('draws the navigation card link as a link: link colour, underlined', () => {
+		const rule = (prop) =>
+			declarations.find(
+				(d) =>
+					/#content #app-navigation-vue \.cn-app-nav__card-link$/.test(
+						d.selector.replace(/\s+/g, ' ').trim(),
+					) && d.prop === prop,
+			)?.value
+		expect(rule('color')).toBe('var(--nldesign-color-link) !important')
+		expect(rule('text-decoration')).toBe('underline !important')
 	})
 })

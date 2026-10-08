@@ -27,7 +27,9 @@ login views. The panel MUST keep working when the playground does not build.
 ### Requirement: A Component Names The Tokens It Reads
 Choosing a component MUST replace the tab's full token list with the tokens that component
 reads, each row carrying what it paints and a number tying it to the state on the stage that
-it paints. The full list MUST remain one click away.
+it paints. The full list MUST remain one click away. While a component is open the editor's
+component-variable groups MUST be hidden; the component variables declared on an element its
+stage draws MUST be offered instead, in a collapsed "Advanced" group under its own rows.
 
 The listing MUST come from data (`js/playground/components.json`), every token it names MUST
 exist in the token registry, and the components MUST between them reach every token the

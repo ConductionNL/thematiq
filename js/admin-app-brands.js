@@ -78,8 +78,12 @@
 
 		function logoInput(appId, size) {
 			var id = 'nldesign-app-brands-' + appId + '-' + size
+			// Nextcloud's own button instead of the browser's file control,
+			// which draws in the browser's language and style.
 			var wrap = document.createElement('span')
+			wrap.className = 'nldesign-file-pick'
 			var label = document.createElement('label')
+			label.id = id + '-label'
 			label.setAttribute('for', id)
 			label.textContent =
 				size === 'large'
@@ -88,8 +92,25 @@
 			var input = document.createElement('input')
 			input.type = 'file'
 			input.id = id
+			input.hidden = true
 			input.accept = 'image/png,image/jpeg,image/webp,image/svg+xml'
+			var pick = document.createElement('button')
+			pick.type = 'button'
+			pick.className = 'button'
+			pick.id = id + '-btn'
+			pick.setAttribute('aria-labelledby', label.id + ' ' + pick.id)
+			pick.textContent = t('thematiq', 'Choose image')
+			pick.addEventListener('click', function () {
+				input.click()
+			})
+			var name = document.createElement('span')
+			name.className = 'nldesign-file-pick__name'
+			name.textContent = t('thematiq', 'No file chosen')
 			input.addEventListener('change', function () {
+				name.textContent =
+					input.files && input.files[0]
+						? input.files[0].name
+						: t('thematiq', 'No file chosen')
 				if (!input.files || input.files.length === 0) {
 					return
 				}
@@ -107,6 +128,8 @@
 			})
 			wrap.appendChild(label)
 			wrap.appendChild(input)
+			wrap.appendChild(pick)
+			wrap.appendChild(name)
 			return wrap
 		}
 

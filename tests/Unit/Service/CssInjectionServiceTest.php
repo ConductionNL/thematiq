@@ -19,6 +19,8 @@ use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\HeaderUserService;
+use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\LogoLayerService;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
@@ -1661,6 +1663,181 @@ class CssInjectionServiceTest extends TestCase {
 		$linkLog = [];
 		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $linkLog)->getStylesheetManifest('zuiddrecht');
 
-		$this->assertSame(['workplaceLayout' => 'light', 'brandStripe' => true], $manifest['layout']);
+		$this->assertSame(
+			[
+				'workplaceLayout' => 'light',
+				'brandStripe' => true,
+				'navigationWidth' => null,
+				'navigationActiveStyle' => 'default',
+				'brandStripePlacement' => 'header-and-login',
+				'loginWatermark' => true,
+				'headerStyle' => 'default',
+			],
+			$manifest['layout']
+		);
 	}//end testTheManifestCarriesTheResolvedLayout()
+
+	/**
+	 * A set that carries every newer layout default gets each conditional
+	 * stylesheet, in cascade order after the two older ones, and the
+	 * navigation width as one inline `:root` variable after the links. A set
+	 * that carries none gets none of them (the control).
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 */
+	public function testTheNewerLayoutDefaultsEmitTheirStylesheetsAndTheInlineWidth(): void {
+		$this->configureAppValues(['token_set' => 'zuiddrecht']);
+		$this->configureLayoutSet(
+			meta: [
+				'layout' => [
+					'workplace_layout' => 'light',
+					'brand_stripe' => true,
+					'navigation_width' => 264,
+					'navigation_active_style' => 'soft',
+					'brand_stripe_placement' => 'login',
+					'login_watermark' => false,
+				],
+			]
+		);
+
+		$log = [];
+		$service = $this->getMockBuilder(CssInjectionService::class)
+			->setConstructorArgs(
+				[
+					$this->config,
+					$this->designSystemService,
+					$this->customCssService,
+					$this->fontService,
+					$this->urlGenerator,
+					$this->groupThemingService,
+					$this->previewBannerService,
+					$this->logger,
+					$this->stockTokens,
+					$this->runtimeFiles,
+					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
+				]
+			)
+			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
+			->getMock();
+		$service->method('emitStylesheetLink')->willReturnCallback(
+			function (string $url) use (&$log) {
+				$log[] = 'link:' . $url;
+			}
+		);
+		$service->method('emitInlineStyle')->willReturnCallback(
+			function (string $css, ?string $id = null) use (&$log) {
+				$log[] = 'inline:' . (string)$id . ':' . $css;
+			}
+		);
+
+		$service->inject('user');
+
+		$conditional = array_values(
+			array_filter(
+				$log,
+				static fn (string $entry): bool => str_starts_with($entry, 'inline:thematiq-navigation-width')
+					|| preg_match('#/css/(workplace-layout|login-watermark-off|brand-stripe|brand-stripe-login-only|brand-stripe-header-only|navigation-width|navigation-active-soft)\.css#', $entry) === 1
+			)
+		);
+		$this->assertSame(
+			[
+				'link:/custom_apps/thematiq/css/workplace-layout.css?v=0',
+				'link:/custom_apps/thematiq/css/login-watermark-off.css?v=0',
+				'link:/custom_apps/thematiq/css/brand-stripe.css?v=0',
+				'link:/custom_apps/thematiq/css/brand-stripe-login-only.css?v=0',
+				'link:/custom_apps/thematiq/css/navigation-width.css?v=0',
+				'link:/custom_apps/thematiq/css/navigation-active-soft.css?v=0',
+				'inline:thematiq-navigation-width::root { --thematiq-navigation-width: 264px; }',
+			],
+			$conditional
+		);
+	}//end testTheNewerLayoutDefaultsEmitTheirStylesheetsAndTheInlineWidth()
+
+	/**
+	 * The control for the test above: a set without a layout block and no
+	 * stored choice loads none of the newer stylesheets and no inline width.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 */
+	public function testTheNewerLayoutStylesheetsAreAbsentByDefault(): void {
+		$this->configureAppValues(['token_set' => 'rijkshuisstijl']);
+		$this->configureLayoutSet(meta: []);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject('user');
+
+		foreach (['login-watermark-off', 'brand-stripe-login-only', 'brand-stripe-header-only', 'navigation-width', 'navigation-active-soft'] as $file) {
+			$this->assertFalse($this->linksStylesheet($linkLog, $file), $file);
+		}
+	}//end testTheNewerLayoutStylesheetsAreAbsentByDefault()
+
+	/**
+	 * The workplace header style loads its stylesheet for a light set that
+	 * names it; a set that names it on the default layout, and a set that
+	 * names nothing, do not (the controls). The person's layer is asked every
+	 * time, with the page's set, and decides from the same stylesheets.
+	 *
+	 * @param array<string, mixed> $layout The set's layout block.
+	 * @param bool $expected Whether the header sheet and the person are emitted.
+	 *
+	 * @dataProvider headerStyleProvider
+	 *
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 */
+	public function testTheWorkplaceHeaderStyleLoadsItsSheetAndItsPerson(array $layout, bool $expected): void {
+		$this->configureAppValues(['token_set' => 'zuiddrecht']);
+		$this->configureLayoutSet(meta: ['layout' => $layout]);
+
+		$headerUser = $this->createMock(HeaderUserService::class);
+		$headerUser->expects($this->once())->method('inject')->with('zuiddrecht', $this->isInstanceOf(LayoutOptionsService::class));
+
+		$links = [];
+		$service = $this->getMockBuilder(CssInjectionService::class)
+			->setConstructorArgs(
+				[
+					$this->config,
+					$this->designSystemService,
+					$this->customCssService,
+					$this->fontService,
+					$this->urlGenerator,
+					$this->groupThemingService,
+					$this->previewBannerService,
+					$this->logger,
+					$this->stockTokens,
+					$this->runtimeFiles,
+					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
+					null,
+					null,
+					$headerUser,
+				]
+			)
+			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
+			->getMock();
+		$service->method('emitStylesheetLink')->willReturnCallback(
+			function (string $url) use (&$links) {
+				$links[] = $url;
+			}
+		);
+
+		$service->inject('user');
+
+		$this->assertSame($expected, $this->linksStylesheet($links, 'header-workplace'));
+	}//end testTheWorkplaceHeaderStyleLoadsItsSheetAndItsPerson()
+
+	/**
+	 * The header style on and off the light layout.
+	 *
+	 * @return array<string, array{0: array<string, mixed>, 1: bool}>
+	 */
+	public static function headerStyleProvider(): array {
+		return [
+			'a light set that names the workplace bar' => [['workplace_layout' => 'light', 'header_style' => 'workplace'], true],
+			'the workplace bar named on the default layout' => [['header_style' => 'workplace'], false],
+			'a light set that names no header style' => [['workplace_layout' => 'light'], false],
+		];
+	}//end headerStyleProvider()
 }//end class

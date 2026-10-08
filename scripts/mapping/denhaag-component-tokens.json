@@ -34,6 +34,41 @@
 		"from": "Den Haag names TheSans, which this app does not ship; the set font wins"
 	},
 	"radiusToken": "--nldesign-border-radius",
+	"website": {
+		"_comment": "A --nldesign-website-* vocabulary token a set MAY name to refine one Den Haag role on its portal; the role's value from the rules below stays as the fallback (openspec/changes/zuiddrecht-website-type-and-controls).",
+		"--denhaag-step-marker-size": {
+			"token": "--nldesign-website-step-marker-size",
+			"from": "the marker's size; Zuiddrecht draws 36px over Den Haag's 32px"
+		},
+		"--denhaag-step-marker-checked-background-color": {
+			"token": "--nldesign-website-step-done-color",
+			"from": "a done step filled in the set's own colour"
+		},
+		"--denhaag-step-marker-checked-border-color": {
+			"token": "--nldesign-website-step-done-color",
+			"from": "a done step's ring, the same colour as its fill"
+		},
+		"--denhaag-step-marker-checked-color": {
+			"token": "--nldesign-website-step-done-mark-color",
+			"from": "the tick on a filled done step"
+		},
+		"--denhaag-step-marker-connector-checked-outline-color": {
+			"token": "--nldesign-website-step-done-color",
+			"from": "the line after a done step"
+		},
+		"--denhaag-step-marker-current-background-color": {
+			"token": "--nldesign-website-step-current-background-color",
+			"from": "the current step's fill; Zuiddrecht keeps it white under a red ring"
+		},
+		"--denhaag-step-marker-current-border-color": {
+			"token": "--nldesign-website-step-current-color",
+			"from": "the current step's ring"
+		},
+		"--denhaag-step-marker-current-color": {
+			"token": "--nldesign-website-step-current-color",
+			"from": "the current step's number"
+		}
+	},
 	"colours": {
 		"--denhaag-action-background-color": {
 			"token": "--nldesign-color-background",

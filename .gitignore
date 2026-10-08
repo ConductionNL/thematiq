@@ -76,6 +76,7 @@
 !/js/lib/
 !/js/preview-banner.js
 !/js/environment-marker.js
+!/js/header-user.js
 !/js/playground.js
 !/js/playground/
 !/js/ownTokens.js

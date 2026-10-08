@@ -461,11 +461,68 @@
 			if (layout === undefined || layout === null) {
 				return
 			}
+			var light = layout.workplaceLayout === 'light'
+			var stripe = layout.brandStripe === true
+			setConditionalLayer('workplace-layout', light)
 			setConditionalLayer(
-				'workplace-layout',
-				layout.workplaceLayout === 'light',
+				'login-watermark-off',
+				light && layout.loginWatermark === false,
 			)
-			setConditionalLayer('brand-stripe', layout.brandStripe === true)
+			setConditionalLayer(
+				'header-workplace',
+				light && layout.headerStyle === 'workplace',
+			)
+			setConditionalLayer('brand-stripe', stripe)
+			setConditionalLayer(
+				'brand-stripe-header-only',
+				stripe && layout.brandStripePlacement === 'header',
+			)
+			setConditionalLayer(
+				'brand-stripe-login-only',
+				stripe && layout.brandStripePlacement === 'login',
+			)
+			var width =
+				typeof layout.navigationWidth === 'number'
+					? layout.navigationWidth
+					: null
+			setConditionalLayer('navigation-width', width !== null)
+			setInlineLayer(
+				'thematiq-navigation-width',
+				width === null
+					? null
+					: ':root { --thematiq-navigation-width: ' + width + 'px; }',
+			)
+			setConditionalLayer(
+				'navigation-active-soft',
+				layout.navigationActiveStyle === 'soft',
+			)
+		}
+
+		/**
+		 * Put an inline `<style>` with this id on the page with this text, or
+		 * take it off the page when the text is null. The navigation width
+		 * travels this way: one `:root` variable the width stylesheet reads.
+		 *
+		 * @param {string} id The element id.
+		 * @param {string|null} css The stylesheet body, or null for none.
+		 */
+		function setInlineLayer(id, css) {
+			var existing = document.getElementById(id)
+			if (css === null) {
+				if (existing !== null && existing.parentNode) {
+					existing.parentNode.removeChild(existing)
+				}
+				return
+			}
+			if (existing !== null) {
+				existing.textContent = css
+				return
+			}
+			var style = document.createElement('style')
+			style.id = id
+			style.setAttribute('data-nldesign-layer', 'conditional')
+			style.textContent = css
+			document.head.appendChild(style)
 		}
 
 		/**
@@ -2457,15 +2514,35 @@
 			'thematiq-workplace-layout',
 		)
 		var brandStripeSelect = document.getElementById('thematiq-brand-stripe')
+		var layoutOptionFields = [
+			workplaceLayoutSelect,
+			brandStripeSelect,
+			document.getElementById('thematiq-navigation-width-input'),
+			document.getElementById('thematiq-navigation-active-style'),
+			document.getElementById('thematiq-brand-stripe-placement'),
+			document.getElementById('thematiq-login-watermark'),
+			document.getElementById('thematiq-header-style'),
+		]
 		if (workplaceLayoutSelect && brandStripeSelect) {
 			var onLayoutOptionChange = function () {
-				saveLayoutOptions(
-					workplaceLayoutSelect.value,
-					brandStripeSelect.value,
-				)
+				var valueOf = function (field) {
+					return field === null ? '' : String(field.value).trim()
+				}
+				saveLayoutOptions({
+					workplaceLayout: valueOf(layoutOptionFields[0]),
+					brandStripe: valueOf(layoutOptionFields[1]),
+					navigationWidth: valueOf(layoutOptionFields[2]),
+					navigationActiveStyle: valueOf(layoutOptionFields[3]),
+					brandStripePlacement: valueOf(layoutOptionFields[4]),
+					loginWatermark: valueOf(layoutOptionFields[5]),
+					headerStyle: valueOf(layoutOptionFields[6]),
+				})
 			}
-			workplaceLayoutSelect.addEventListener('change', onLayoutOptionChange)
-			brandStripeSelect.addEventListener('change', onLayoutOptionChange)
+			layoutOptionFields.forEach(function (field) {
+				if (field !== null) {
+					field.addEventListener('change', onLayoutOptionChange)
+				}
+			})
 		}
 
 		// Handle dark mode variants checkbox — instance-wide toggle only; never
@@ -2679,10 +2756,10 @@
 				})
 		}
 
-		// Save the workplace layout and the brand stripe, then put this page in
-		// the state the server resolved: an empty choice follows the theme, so
-		// only the server knows whether a stylesheet is on or off now.
-		function saveLayoutOptions(workplaceLayout, brandStripe) {
+		// Save the layout options together, then put this page in the state
+		// the server resolved: an empty choice follows the theme, so only the
+		// server knows whether a stylesheet is on or off now.
+		function saveLayoutOptions(options) {
 			var url = OC.generateUrl('/apps/thematiq/settings/layout')
 
 			fetch(url, {
@@ -2691,10 +2768,7 @@
 					'Content-Type': 'application/json',
 					requesttoken: OC.requestToken,
 				},
-				body: JSON.stringify({
-					workplaceLayout: workplaceLayout,
-					brandStripe: brandStripe,
-				}),
+				body: JSON.stringify(options),
 			})
 				.then(function (response) {
 					return response.json()
@@ -3404,6 +3478,27 @@
 			refreshTokenEditorLocks()
 		}
 
+		// What the playground needs from the component-variable groups: the
+		// selectors each internal token is declared on, so it can tell which ones
+		// reach the component that is open, and that token's row, built on
+		// demand, so its rows can be copied the way the tab rows are.
+		window.NldesignTokenGroups = {
+			internal: function () {
+				return tokenInternal
+			},
+			ensureRow: function (name) {
+				var meta = tokenInternal[name]
+				var group = document.querySelector(
+					'.nldesign-token-group[data-group="'
+						+ ((meta && meta.group) || 'other')
+						+ '"]',
+				)
+				if (group !== null) {
+					ensureTokenGroupBuilt(group)
+				}
+			},
+		}
+
 		/**
 		 * Open or close a group.
 		 *
@@ -3656,8 +3751,17 @@
 						: null
 				var pickerVal =
 					parts !== null ? parts.hex : normaliseColorForPicker(displayVal)
+				// One swatch, and it is the picker: the colour input lies over the
+				// checkerboard, invisible, so the square shows what the token
+				// really paints — opacity included, which a native picker cannot.
 				inputHtml =
 					'<div class="nldesign-color-input-wrap">'
+					+ '<span class="nldesign-color-swatch" data-token="'
+					+ escapeHtml(name)
+					+ '">'
+					+ '<span class="nldesign-color-swatch-fill" style="background:'
+					+ escapeHtml(swatchColor(displayVal, meta.type === 'rgb'))
+					+ '"></span>'
 					+ '<input type="color" class="nldesign-color-picker" aria-label="'
 					+ pickerLabel
 					+ '"'
@@ -3669,6 +3773,7 @@
 					+ '"'
 					+ lockedAttr
 					+ '>'
+					+ '</span>'
 					+ '<input type="text" class="nldesign-color-text" aria-label="'
 					+ inputLabel
 					+ '"'
@@ -3742,7 +3847,43 @@
 		}
 
 		/**
-		 * The opacity controls of a colour row: a checkerboard swatch, a range and a number field.
+		 * The CSS colour a swatch paints for a token value.
+		 *
+		 * @param {string} value The token value.
+		 * @param {boolean} triplet Whether the token holds a bare `r, g, b` triplet.
+		 * @return {string} The colour.
+		 */
+		function swatchColor(value, triplet) {
+			var shown = String(value || '').trim()
+			return triplet === true && shown !== '' ? 'rgb(' + shown + ')' : shown
+		}
+
+		/**
+		 * Repaint every swatch of a token, in the editor and in the playground's copies of its row.
+		 *
+		 * @param {string} name The token.
+		 * @param {string} value The value it now holds.
+		 * @return {void}
+		 */
+		function paintSwatches(name, value) {
+			document
+				.querySelectorAll(
+					'.nldesign-color-swatch[data-token="' + name + '"]',
+				)
+				.forEach(function (swatch) {
+					var fill = swatch.querySelector('.nldesign-color-swatch-fill')
+					var picker = swatch.querySelector('.nldesign-color-picker')
+					if (fill !== null) {
+						fill.style.background = swatchColor(
+							value,
+							picker !== null && picker.dataset.format === 'rgb',
+						)
+					}
+				})
+		}
+
+		/**
+		 * The opacity controls of a colour row: a range and a number field in percent, under a visible label.
 		 *
 		 * @param {string} name The token.
 		 * @param {object} meta Its registry entry.
@@ -3755,9 +3896,10 @@
 			var alpha = parts !== null ? parts.alpha : 100
 			var label = meta.label || name
 			return (
-				'<span class="nldesign-color-swatch" aria-hidden="true"><span style="background:'
-				+ escapeHtml(value)
-				+ '"></span></span>'
+				'<span class="nldesign-color-opacity">'
+				+ '<span class="nldesign-color-opacity-label" aria-hidden="true">'
+				+ escapeHtml(t('thematiq', 'Opacity'))
+				+ '</span>'
 				+ '<input type="range" class="nldesign-color-alpha" min="0" max="100" step="1" data-token="'
 				+ escapeHtml(name)
 				+ '" value="'
@@ -3778,6 +3920,8 @@
 				+ '"'
 				+ lockedAttr
 				+ '>'
+				+ '<span class="nldesign-color-opacity-unit" aria-hidden="true">%</span>'
+				+ '</span>'
 			)
 		}
 
@@ -4320,6 +4464,7 @@
 						if (picker !== null) {
 							picker.value = normaliseColorForPicker(defaultVal)
 						}
+						paintSwatches(name, defaultVal)
 						var row = container.querySelector(
 							'[data-token-row="' + name + '"]',
 						)
@@ -4486,6 +4631,7 @@
 			}
 			tokenEditorState[name].current = value
 			tokenEditorState[name].isDirty = true
+			paintSwatches(name, value)
 
 			var row = container.querySelector('[data-token-row="' + name + '"]')
 			var label =

@@ -42,6 +42,34 @@ use OCP\ICache;
 class ShippedTokenSetAuditService {
 
 	/**
+	 * The token pair `textRatio` compares, foreground first.
+	 *
+	 * NAMED RATHER THAN DESCRIBED, because a column called "text" invites the
+	 * reader to assume body ink. It is not: it is the primary colour against
+	 * the colour written ON the primary colour. A reviewer who read vng's
+	 * 11.98 as `--nldesign-color-text` on white recomputed 12.63, decided the
+	 * report disagreed with itself, and spent the difference finding out it
+	 * did not. `ContrastVerdictDocument` publishes these two constants, so the
+	 * document says which pair it measured instead of leaving it to the name.
+	 *
+	 * @var array{foreground: string, background: string}
+	 */
+	public const TEXT_PAIR = [
+		'foreground' => '--nldesign-color-primary-text',
+		'background' => '--nldesign-color-primary',
+	];
+
+	/**
+	 * The token pair `uiRatio` compares, foreground first.
+	 *
+	 * @var array{foreground: string, background: string}
+	 */
+	public const UI_PAIR = [
+		'foreground' => '--nldesign-color-primary',
+		'background' => '--nldesign-color-background',
+	];
+
+	/**
 	 * WCAG AA text-contrast threshold (primary vs primary-text).
 	 */
 	public const AA_TEXT = 4.5;
@@ -224,15 +252,17 @@ class ShippedTokenSetAuditService {
 			$uiThreshold = self::AAA_UI;
 		}
 
+		// The constants, not literals: the document publishes the same two, so
+		// the pair it names and the pair measured here cannot drift apart.
 		$textRatio = $this->pairRatio(
 			declarations: $declarations,
-			foreground: '--nldesign-color-primary-text',
-			background: '--nldesign-color-primary'
+			foreground: self::TEXT_PAIR['foreground'],
+			background: self::TEXT_PAIR['background']
 		);
 		$uiRatio = $this->pairRatio(
 			declarations: $declarations,
-			foreground: '--nldesign-color-primary',
-			background: '--nldesign-color-background'
+			foreground: self::UI_PAIR['foreground'],
+			background: self::UI_PAIR['background']
 		);
 
 		$verdict = $this->classify(

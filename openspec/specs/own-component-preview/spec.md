@@ -7,14 +7,21 @@ TBD - created by archiving change authoring-own-markup-preview. Update Purpose a
 
 ### Requirement: The playground previews a builder's own component
 
-Every tab's chip row in the component playground MUST end with a chip "Your component". Choosing it
-MUST open a stage with an HTML field, a CSS field, a light and dark switch and a preview frame. The
-playground MUST keep working when this stage cannot build, as the playground's own spec requires
-for the rest of the instrument.
+The component playground MUST end its tab strip with a tab "Your components", whose chip row holds
+a chip "New component" followed by one chip per saved component, and no shipped component. The
+tabs of the shipped components MUST NOT offer own components. Opening the tab, or choosing "New
+component", MUST open a stage with an HTML field, a CSS field, a light and dark switch and a
+preview frame. A saved component MUST open the way a shipped one does: its name, the frame and
+the rows of the tokens it reads, with the HTML and CSS fields, the name and saving behind an
+"Edit" button. The HTML and CSS fields MUST be code editors, the shared CodeMirror editor of
+`@conduction/nextcloud-vue` (`CnJsonViewer`), highlighting each language the installed package
+supports; when the bundled editor is not loaded they MUST stay plain text fields. The playground
+MUST keep working when this stage cannot build, as the playground's own spec requires for the
+rest of the instrument.
 
 #### Scenario: An administrator previews a card they are building
 - GIVEN an administrator on Settings > Administration > Theming, in the component playground
-- WHEN the administrator chooses "Your component" and pastes
+- WHEN the administrator opens "Your components" and pastes
   `<div class="card"><h2>Afval</h2><p>Ophaaldagen</p></div>` as HTML and
   `.card { background: var(--nldesign-color-primary); color: var(--nldesign-color-primary-text); padding: 16px; }` as CSS
 - THEN the frame MUST show the card with the active set's primary colour and primary text colour
@@ -78,8 +85,11 @@ For every `var(--name)` the builder's CSS or `style` attributes read, the frame'
 value the playground's preview container has for that name at that moment, unsaved edits included.
 Editing a token in the playground MUST repaint the frame without rebuilding it. The house style
 fonts MUST load in the frame. The token list beside the stage MUST filter to the names the code
-reads. A name the editor can write MUST show its editor row. Any other name MUST show its value
-and the note "Read-only here: this comes from the token set".
+reads. A name the editor can write MUST show its editor row. An administrator's own token
+(`--nldesign-org-*`, openspec/specs/own-tokens) MUST show a row that edits it live and stores the
+value when an edit is done; a `--nldesign-org-*` name that is not one yet MUST offer to add it,
+starting at the value its fallback in the code comes to. Any other name MUST show its value and
+the note "Read-only here: this comes from the token set".
 
 #### Scenario: An unsaved colour edit repaints the frame
 - GIVEN the card from the first scenario is in the frame
@@ -88,10 +98,12 @@ and the note "Read-only here: this comes from the token set".
 - AND no other user MUST see the change
 
 #### Scenario: The token list follows the pasted code
-- GIVEN the pasted CSS reads `--nldesign-color-primary` and `--nldesign-org-brand-accent`
+- GIVEN the pasted CSS reads `--nldesign-color-primary`, `--nldesign-color-text` and
+  `var(--nldesign-org-brand-accent, #e17000)`, and no own token `--nldesign-org-brand-accent` exists
 - WHEN the stage renders
-- THEN the token list MUST show exactly those two names
-- AND a name the editor cannot write MUST carry the read-only note
+- THEN the token list MUST show exactly those three names
+- AND `--nldesign-color-text`, which the editor cannot write, MUST carry the read-only note
+- AND `--nldesign-org-brand-accent` MUST offer to be added as an own token starting at `#e17000`
 
 ### Requirement: The frame can show the dark theme
 
@@ -111,13 +123,14 @@ Nextcloud's own variables keep the administrator's current theme.
 data folder, at most 20 components and at most 64 KB of HTML and CSS together per component, and
 MUST refuse more with 400. `GET` MUST list them and `DELETE /apps/thematiq/settings/playground/components/{slug}`
 MUST remove one. All three MUST be admin-only. A saved component MUST be addressable as
-`#preview={tab}/own-{slug}`, and a slug that no longer exists MUST be ignored. Saving MUST NOT
+`#preview=own/own-{slug}`; a link that names another tab, `#preview={tab}/own-{slug}`, MUST open it
+in "Your components" as well, and a slug that no longer exists MUST be ignored. Saving MUST NOT
 change what any user sees and MUST NOT write an audit entry.
 
 #### Scenario: An administrator reopens a saved card from a link
 - GIVEN the administrator saved the card as "Afvalkaart"
-- WHEN the administrator opens `/settings/admin/theming#preview=content/own-afvalkaart`
-- THEN the own component stage MUST open with the saved HTML and CSS
+- WHEN the administrator opens `/settings/admin/theming#preview=own/own-afvalkaart`
+- THEN the own component stage MUST open with the saved HTML and CSS, in "Your components"
 
 #### Scenario: A component over the size limit is refused
 @e2e exclude API validation branch, covered by PHPUnit on OwnComponentController and the Newman collection

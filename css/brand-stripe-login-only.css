@@ -1,0 +1,18 @@
+/**
+ * Brand stripe placement: the login card only
+ * (openspec/changes/layout-options-navigation-stripe-watermark/specs/brand-stripe/spec.md).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded after css/brand-stripe.css, only while the stripe is on and its
+ * placement resolves to `login`. The stripe keeps its one shared rule for
+ * the colours, the stops and the height; this sheet takes the top bar's
+ * copy off again, at the weight and the selector the shared rule uses, so
+ * the later sheet wins. The `--cn-brand-stripe-*` hand-over to the component
+ * library stays, so a portal header still draws the same bands.
+ */
+:where(body:not(#body-login)) #header::after {
+	content: none !important;
+	display: none !important;
+}

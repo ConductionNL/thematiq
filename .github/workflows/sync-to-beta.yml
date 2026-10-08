@@ -1,10 +1,53 @@
 name: Sync to Beta
 
+# WEEKLY, NOT PER PUSH. This used to run on every push to `development`, so the
+# `development -> beta` promotion PR was open permanently: the push after a
+# promotion was merged (usually the beta -> development back-sync itself)
+# opened the next one straight away. Since the promotion PR is where E2E runs,
+# a permanently open promotion PR meant the full E2E suite ran on every
+# `development` push after all.
+#
+# Opening it once a week makes the promotion a deliberate weekly event: the
+# PR appears on Friday morning, carries one E2E verdict for the week's work,
+# and closes when it is merged. A PR that is left open still picks up every
+# `development` push (its head IS `development`) and re-runs E2E each time, so
+# merge it — or close it — the same day.
+#
+# Scheduled runs read this file from the DEFAULT branch (`main`), so the
+# schedule takes effect once this change has been promoted to `main`.
 on:
-  push:
-    branches: [development]
+  schedule:
+    # Friday 06:00 UTC: 08:00 Amsterdam in summer time, 07:00 in winter time.
+    - cron: "0 6 * * 5"
+  workflow_dispatch:
 
 jobs:
   sync-to-beta:
     uses: ConductionNL/.github/.github/workflows/sync-to-beta.yml@main
     secrets: inherit
+
+  # A PR opened with `github.token` starts no workflows — GitHub suppresses
+  # events created by that token — so the Friday PR would sit there with no
+  # Code Quality run, and E2E would first run on whatever `development` push
+  # happens to come next. `workflow_dispatch` is the one event that token MAY
+  # trigger, and the shared quality workflow treats a manual run on a branch
+  # with an open PR into `beta` as the promotion path, so it runs E2E.
+  promotion-e2e:
+    needs: sync-to-beta
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      pull-requests: read
+    steps:
+      - name: Run Code Quality for the open promotion PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR=$(gh pr list --repo "$GITHUB_REPOSITORY" --base beta --head development --state open --json number --jq '.[0].number // empty')
+          if [ -z "$PR" ]; then
+            echo "No open development -> beta PR, so there is nothing to verify."
+            exit 0
+          fi
+          gh workflow run code-quality.yml --repo "$GITHUB_REPOSITORY" --ref development
+          echo "Started Code Quality on development for #${PR}."

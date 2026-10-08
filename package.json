@@ -31,13 +31,14 @@
 		"test:lasuite-override": "node scripts/generate-lasuite-tokens.mjs --override --check",
 		"test:lasuite-bridge-coverage": "node tests/css/check-lasuite-bridge-coverage.js",
 		"test:lasuite-dark-ramp": "node tests/css/check-lasuite-dark-ramp.js",
-		"build": "npm run build:fonts && npm run build:fonts:marianne && npm run build:icons",
+		"build": "npm run build:fonts && npm run build:fonts:marianne && npm run build:icons && npm run build:code-editor",
 		"build:fonts": "node scripts/build-fonts.js",
 		"test:fonts": "node scripts/build-fonts.js --check",
 		"build:fonts:marianne": "node scripts/build-fonts-marianne.js",
 		"build:icons": "node scripts/build-icons.js",
-		"lint": "eslint js tests/vitest tests/css tests/l10n",
-		"lint:fix": "eslint --fix js tests/vitest tests/css tests/l10n",
+		"build:code-editor": "webpack --config webpack.code-editor.config.js",
+		"lint": "eslint js src tests/vitest tests/css tests/l10n",
+		"lint:fix": "eslint --fix js src tests/vitest tests/css tests/l10n",
 		"stylelint": "stylelint \"css/**/*.{css,scss}\"",
 		"stylelint:fix": "stylelint \"css/**/*.{css,scss}\" --fix",
 		"test": "echo 'No tests yet'",
@@ -91,7 +92,9 @@
 		"ts-node": "^10.9.2",
 		"typescript": "^7.0.2",
 		"vite": "^8.3.1",
-		"vitest": "^5.0.1"
+		"vitest": "^5.0.1",
+		"webpack": "5.110.1",
+		"webpack-cli": "6.0.1"
 	},
 	"prettier": "@nextcloud/prettier-config"
 }

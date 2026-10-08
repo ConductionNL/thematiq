@@ -40,7 +40,34 @@
  */
 
 const fs = require('fs')
+const os = require('os')
 const path = require('path')
+const { pathToFileURL } = require('url')
+
+/**
+ * Import one of nextcloud-vue's icon modules.
+ *
+ * They are ES modules (`export const rvoIcons = [...]`) in a package that does
+ * not declare `"type": "module"`, and a Node older than 20.19 reads such a `.js`
+ * file as CommonJS and stops at `export`. A `.mjs` copy is an ES module on every
+ * Node; the files import nothing, so the copy can live anywhere.
+ *
+ * @param {string} specifier The module, e.g. `@conduction/nextcloud-vue/src/icons/rvo.js`.
+ * @return {Promise<object>} The module's exports.
+ */
+async function importIconModule(specifier) {
+	const source = path.join(__dirname, '..', 'node_modules', specifier)
+	const copy = path.join(
+		os.tmpdir(),
+		`thematiq-${process.pid}-${path.basename(source, '.js')}.mjs`,
+	)
+	fs.copyFileSync(source, copy)
+	try {
+		return await import(pathToFileURL(copy).href)
+	} finally {
+		fs.rmSync(copy, { force: true })
+	}
+}
 
 const iconsDestPath = path.join(__dirname, '..', 'img', 'icons')
 const logosDestPath = path.join(__dirname, '..', 'img', 'logos')
@@ -196,6 +223,15 @@ async function main() {
 		)
 	}
 
+	// Load every data-URI pack BEFORE the wipe as well: an import that fails
+	// (an old Node, a package that moved) must stop the build with img/icons/
+	// untouched, not after it has been emptied.
+	/** @type {Map<string, object>} */
+	const loadedPacks = new Map()
+	for (const pack of DATA_URI_PACKS) {
+		loadedPacks.set(pack.set, await importIconModule(pack.specifier))
+	}
+
 	resetDir(iconsDestPath)
 
 	/** @type {Map<string, { icons: Array<{id: string, label?: string, url?: string}>, upstream: string, licence: string }>} */
@@ -204,7 +240,7 @@ async function main() {
 	const svgByPath = new Map()
 
 	for (const pack of DATA_URI_PACKS) {
-		const mod = await import(pack.specifier)
+		const mod = loadedPacks.get(pack.set)
 		const icons = mod[pack.exportName]
 		if (!Array.isArray(icons) || icons.length === 0) {
 			console.error(

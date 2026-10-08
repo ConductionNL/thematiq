@@ -116,8 +116,9 @@ composer cs:fix         # Auto-fix what PHPCBF can handle (~60% of issues)
 
 - PHP 8.1+
 - Composer 2.x
-- Node.js 20+
-- npm
+- Node.js 20 or later, with npm, for `npm ci` and `npm run build`
+- Node.js 22.14 or later, or 24, for the test and lint tooling (Vitest, ESLint) —
+  the versions `package.json` declares under `engines`
 
 ### Setup
 
@@ -128,9 +129,28 @@ composer install
 # Install frontend dependencies
 npm ci
 
-# Run the app in development mode
-npm run dev
+# Build the fonts, the icons and the code editor
+npm run build
 ```
+
+### The code editor bundle
+
+Almost everything under `js/` is hand-written and served as it is, without a build
+step. The one exception is the code editor of the playground's "Your components"
+tab: the HTML and CSS fields are `CnJsonViewer`, the CodeMirror editor from
+`@conduction/nextcloud-vue`. A browser cannot load that Vue component from
+`node_modules`, so `npm run build:code-editor` (part of `npm run build`) bundles
+`src/codeEditor.js` with webpack, as the other Conduction apps build, into
+`js/vendor/codeEditor.js`.
+
+- The release workflow runs `npm ci` and `npm run build`, so every release and App
+  Store package contains the bundle.
+- `js/vendor/` is gitignored. In a git checkout the bundle exists only after you
+  built it. Without it the admin page still works: the two fields are plain text
+  areas.
+- Run `npm run build:code-editor` again after updating `@conduction/nextcloud-vue`.
+  A language the installed `CnJsonViewer` supports is highlighted from then on;
+  one it does not support yet is shown as plain text.
 
 ### Creating a New Feature
 

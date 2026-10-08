@@ -96,7 +96,7 @@ class ConfigBundleService {
 	 *
 	 * @var int
 	 */
-	public const BUNDLE_VERSION = 3;
+	public const BUNDLE_VERSION = 4;
 
 	/**
 	 * The bundle versions import accepts. Version 1 predates planned switches
@@ -107,7 +107,7 @@ class ConfigBundleService {
 	 *
 	 * @var array<int, int>
 	 */
-	public const SUPPORTED_VERSIONS = [1, 2, 3];
+	public const SUPPORTED_VERSIONS = [1, 2, 3, 4];
 
 	/**
 	 * The application configuration service.
@@ -285,6 +285,7 @@ class ConfigBundleService {
 				'hideSlogan' => ($this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1'),
 				'showMenuLabels' => ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1'),
 				'primaryDrivesComponents' => ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1'),
+				'layoutOptions' => $this->exportLayoutOptions(),
 				'disabledApps' => $this->appThemingService->getDisabledApps(),
 				'upstreamFreshnessEnabled' => $this->freshnessService->isEnabled(),
 				'scheduledSwitches' => $this->scheduledSwitches->exportable(),
@@ -300,6 +301,24 @@ class ConfigBundleService {
 			],
 		] + $this->extraSections->export() + ($this->lifecycle?->export() ?? []);
 	}//end export()
+
+	/**
+	 * The stored layout choices, each as the administrator stored it: the
+	 * empty string means "follow the theme" and travels as such, so the target
+	 * follows its own set the way the source did.
+	 *
+	 * @return array<string, string> Camel-case option name to stored value.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 */
+	private function exportLayoutOptions(): array {
+		$export = [];
+		foreach (LayoutOptionValues::BUNDLE_KEYS as $name => $key) {
+			$export[$name] = $this->config->getAppValue(Application::APP_ID, $key, '');
+		}
+
+		return $export;
+	}//end exportLayoutOptions()
 
 	/**
 	 * Build the `customTokenSets` export list.
@@ -462,6 +481,8 @@ class ConfigBundleService {
 	 * @return array<string, mixed> The normalised config values.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - LayoutOptionValues::fromBundle() is a pure lookup
 	 */
 	private function validateConfigSection(array $bundle, array &$errors): array {
 		$config = $bundle['config'] ?? [];
@@ -492,6 +513,8 @@ class ConfigBundleService {
 			$errors[] = ['section' => 'config', 'message' => '"config.primaryDrivesComponents" must be a boolean.'];
 		}
 
+		$layoutOptions = LayoutOptionValues::fromBundle(options: ($config['layoutOptions'] ?? null), errors: $errors);
+
 		$disabledApps = $this->validateDisabledApps(config: $config, errors: $errors);
 
 		$upstreamFreshnessEnabled = ($config['upstreamFreshnessEnabled'] ?? false);
@@ -504,6 +527,7 @@ class ConfigBundleService {
 			'hideSlogan' => ($hideSlogan === true),
 			'showMenuLabels' => ($showMenuLabels === true),
 			'primaryDrivesComponents' => ($primaryDrivesComponents === true),
+			'layoutOptions' => $layoutOptions,
 			'disabledApps' => $disabledApps,
 			'upstreamFreshnessEnabled' => ($upstreamFreshnessEnabled === true),
 		];
@@ -1023,6 +1047,10 @@ class ConfigBundleService {
 		$this->config->setAppValue(Application::APP_ID, 'hide_slogan', $hideSloganValue);
 		$this->config->setAppValue(Application::APP_ID, 'show_menu_labels', $showMenuLabelsValue);
 		$this->config->setAppValue(Application::APP_ID, 'primary_drives_components', $primaryDrivesComponentsValue);
+		foreach ($config['layoutOptions'] as $key => $value) {
+			$this->config->setAppValue(Application::APP_ID, $key, $value);
+		}
+
 		$this->appThemingService->setDisabledApps(appIds: $config['disabledApps']);
 		$this->freshnessService->setEnabled(enabled: $config['upstreamFreshnessEnabled']);
 

@@ -83,7 +83,10 @@ SPDX-FileCopyrightText = "2022 The Figtree Project Authors (https://github.com/e
 SPDX-License-Identifier = "OFL-1.1"
 
 [[annotations]]
-path = "css/fonts/ibm-plex-mono-*"
+path = [
+    "css/fonts/ibm-plex-mono-*",
+    "css/systems/nldesign/fonts/ibm-plex-mono-*",
+]
 precedence = "override"
 SPDX-FileCopyrightText = "2017 IBM Corp. with Reserved Font Name \"Plex\" (https://github.com/IBM/plex)"
 SPDX-License-Identifier = "OFL-1.1"
@@ -134,6 +137,36 @@ precedence = "override"
 SPDX-FileCopyrightText = "2017 IBM Corp. with Reserved Font Name \"Plex\" (https://github.com/IBM/plex)"
 SPDX-License-Identifier = "OFL-1.1"
 
+# The typefaces of the four school sets (openspec/changes/school-token-sets).
+[[annotations]]
+path = [
+    "css/fonts/lexend-*",
+    "css/systems/nldesign/fonts/lexend-*",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2019 The Lexend Project Authors (https://github.com/googlefonts/lexend)"
+SPDX-License-Identifier = "OFL-1.1"
+
+[[annotations]]
+path = [
+    "css/fonts/red-hat-display-*",
+    "css/systems/nldesign/fonts/red-hat-display-*",
+    "css/fonts/red-hat-text-*",
+    "css/systems/nldesign/fonts/red-hat-text-*",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2024 The Red Hat Project Authors (https://github.com/RedHatOfficial/RedHatFont)"
+SPDX-License-Identifier = "OFL-1.1"
+
+[[annotations]]
+path = [
+    "css/fonts/barlow-*",
+    "css/systems/nldesign/fonts/barlow-*",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2017 The Barlow Project Authors (https://github.com/jpt/barlow)"
+SPDX-License-Identifier = "OFL-1.1"
+
 # Intel Clear Sans is Apache-2.0, not OFL, so it travels with
 # LICENSES/Apache-2.0.txt and its own APACHE-2.0.txt beside the binaries.
 [[annotations]]
@@ -163,6 +196,9 @@ SPDX-FileCopyrightText = [
     "2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic)",
     "2017 IBM Corp. with Reserved Font Name \"Plex\" (https://github.com/IBM/plex)",
     "2022 The Figtree Project Authors (https://github.com/erikdkennedy/figtree)",
+    "2019 The Lexend Project Authors (https://github.com/googlefonts/lexend)",
+    "2024 The Red Hat Project Authors (https://github.com/RedHatOfficial/RedHatFont)",
+    "2017 The Barlow Project Authors (https://github.com/jpt/barlow)",
 ]
 SPDX-License-Identifier = "OFL-1.1"
 
@@ -224,4 +260,32 @@ SPDX-License-Identifier = "OFL-1.1"
 path = "scripts/sources/denhaag/*.css"
 precedence = "override"
 SPDX-FileCopyrightText = "Gemeente Den Haag"
+SPDX-License-Identifier = "EUPL-1.2"
+
+# The Den Haag token set and the brand files it is generated from. These are
+# COMPOSITE: the palette, the component mapping and the ramp are Den Haag's own
+# values, read off the vendored CSS above, while the role layer around them and
+# the --nldesign-* semantic layer are ours. Both halves are EUPL-1.2, so the
+# licence identifier the blanket entry gives them was already right; the
+# copyright line was not, because it named only us. Two holders, one licence.
+#
+# `precedence = "override"` for the same reason the entry above uses it: these
+# files carry no SPDX header of their own (the CSS is written by
+# scripts/generate-brand-set.mjs and an SPDX comment is not valid JSON), so
+# without this they silently inherit a copyright line that leaves Den Haag out.
+#
+# css/tokens/rotterdam.css has the same shape with no entry of its own. That
+# predates this change and is not fixed here.
+[[annotations]]
+path = [
+    "css/tokens/denhaag.css",
+    "css/tokens/dark/denhaag.css",
+    "scripts/brands/denhaag.json",
+    "scripts/brands/denhaag.components.json",
+]
+precedence = "override"
+SPDX-FileCopyrightText = [
+    "2026 Conduction B.V. <info@conduction.nl>",
+    "Gemeente Den Haag",
+]
 SPDX-License-Identifier = "EUPL-1.2"

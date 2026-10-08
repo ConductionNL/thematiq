@@ -361,6 +361,16 @@
 	display: none !important;
 }
 
+/* While a component is open, only its own rows are offered: the editor's
+   component-variable groups belong to no one component. */
+.nldesign-pg-in-component .nldesign-token-groups {
+	display: none;
+}
+
+.nldesign-pg-advanced {
+	margin-top: 12px;
+}
+
 .nldesign-pg-panel-head {
 	display: flex;
 	align-items: center;
@@ -379,9 +389,21 @@
 	text-decoration: underline;
 }
 
+/* A component's row has a fourth column, what the token paints, between the
+   label and the controls of the editor's own grid (css/admin.css). */
+@media (min-width: 769px) {
+	.nldesign-token-row.nldesign-pg-row {
+		grid-template-columns: minmax(0, 1fr) 190px auto auto;
+	}
+	/* A row with no token is a label and the reason. Across the content-sized
+	   columns above, the long reason took them over and squeezed the label to a
+	   word a line, under the text; two shared columns keep both readable. */
+	.nldesign-token-row.nldesign-pg-row.nldesign-pg-row-fixed {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+	}
+}
+
 .nldesign-pg-paints {
-	flex: none;
-	width: 190px;
 	color: var(--color-text-maxcontrast);
 	font-size: 14px;
 }
@@ -390,8 +412,9 @@
 	color: var(--color-text-maxcontrast);
 }
 
+/* A row with no token explains why, across every column after the label. */
 .nldesign-pg-why {
-	flex: 1;
+	grid-column: 2 / -1;
 	color: var(--color-text-maxcontrast);
 	font-size: 14px;
 }
@@ -2483,6 +2506,21 @@
 }
 
 /* Your component (authoring-own-markup-preview): two fields, the frame, the reports. */
+/* The name on the left, "Edit" on the right, as a shipped component's title. */
+.nldesign-own-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+.nldesign-own-edit[aria-expanded='true'] {
+	background-color: var(--color-primary-element-light);
+}
+/* Both carry a display of their own, which beats the hidden attribute. */
+.nldesign-own-fields[hidden],
+.nldesign-own-save[hidden] {
+	display: none;
+}
 .nldesign-own-fields {
 	display: grid;
 	gap: 4px;
@@ -2495,6 +2533,37 @@
 }
 .nldesign-own-label {
 	font-weight: 600;
+}
+/* The code editor (src/codeEditor.js) over a field. CodeMirror brings its own
+   styles; nextcloud-vue's stylesheet is not on this page, so the border that
+   makes it read as a field is drawn here, the way the text area's is. */
+.nldesign-code-editor {
+	overflow: hidden;
+	border: 2px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-large);
+}
+.nldesign-code-editor:focus-within {
+	border-color: var(--color-main-text);
+}
+/* The editor takes the height CnJsonViewer gives its wrapper and scrolls inside
+   it; nextcloud-vue's stylesheet, which normally says so, is not on this page. */
+#nldesign-settings .nldesign-code-editor .cm-editor {
+	height: 100%;
+}
+#nldesign-settings .nldesign-code-editor .cm-scroller {
+	overflow: auto;
+}
+/* Nextcloud draws every editable div as a text field. CodeMirror's editing area
+   is one, so without this it is a small bordered box on the first line instead
+   of the whole editor, and a click below the last line misses it. */
+#nldesign-settings .nldesign-code-editor .cm-content {
+	min-height: 100%;
+	margin: 0;
+	padding: 4px 0;
+	border: 0;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
 }
 .nldesign-own-frame {
 	display: block;
@@ -2510,15 +2579,52 @@
 .nldesign-own-report {
 	color: var(--color-text-maxcontrast);
 }
+.nldesign-own-org-start {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--color-text-maxcontrast);
+}
+.nldesign-own-org .nldesign-reset-btn[aria-busy='true'] {
+	cursor: progress;
+}
 .nldesign-own-contrast {
 	margin: 0;
 	padding-left: 18px;
 }
+/* The stage's footer: the name with Save on the left, Remove on its own on the
+   right, apart from it, under a rule. */
 .nldesign-own-save {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 8px;
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--color-border);
+}
+.nldesign-own-save .nldesign-own-name {
+	margin: 0;
+}
+/* Saving is the primary action, in the primary colour (which follows a live
+   edit of it, see js/admin.js writeLiveToken()); removing is the destructive one,
+   in Nextcloud's error red. Under the settings id, to beat core's button rule. */
+#nldesign-settings .nldesign-own-save-btn {
+	background-color: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+}
+#nldesign-settings .nldesign-own-save-btn:hover,
+#nldesign-settings .nldesign-own-save-btn:focus-visible {
+	background-color: var(--color-primary-element-hover);
+}
+#nldesign-settings .nldesign-own-remove {
+	margin-left: auto;
+	background-color: var(--color-error);
+	color: #ffffff;
+}
+#nldesign-settings .nldesign-own-remove:hover,
+#nldesign-settings .nldesign-own-remove:focus-visible {
+	background-color: var(--color-error-hover, var(--color-error));
 }
 .nldesign-own-error {
 	color: var(--color-text-error, var(--color-error));
