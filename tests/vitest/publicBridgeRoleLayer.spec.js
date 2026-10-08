@@ -379,9 +379,20 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 			expect(token(set, '--thematiq-page-title-font-size')).toBeNull()
 			expect(token(set, '--thematiq-page-title-line-height')).toBeNull()
 			expect(token(set, '--thematiq-surface-color')).toBeNull()
-			expect(token(set, '--thematiq-attention-background-color')).toBeNull()
-			expect(token(set, '--thematiq-attention-border-color')).toBeNull()
-			expect(token(set, '--thematiq-attention-color')).toBeNull()
+			// The notice strip: wilgenboom, vaartveld and esdoornveen name it
+			// from their boards (school-sets-follow-their-boards); the
+			// academy and vng name none.
+			if (['wilgenboom', 'vaartveld', 'esdoornveen'].includes(set)) {
+				expect(
+					token(set, '--thematiq-attention-background-color'),
+				).not.toBeNull()
+			} else {
+				expect(
+					token(set, '--thematiq-attention-background-color'),
+				).toBeNull()
+				expect(token(set, '--thematiq-attention-border-color')).toBeNull()
+				expect(token(set, '--thematiq-attention-color')).toBeNull()
+			}
 			// Buttons keep their 700, the portal's own names resolve to nothing,
 			// and the site's grey is the set's one grey.
 			for (const role of [

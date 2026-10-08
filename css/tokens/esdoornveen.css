@@ -146,9 +146,6 @@
 	--nldesign-website-hero-search-label-font-weight: 600;
 	--nldesign-website-hero-search-label-font-size: 1.0625rem;
 
-	/* The hero photo's slanted corner, bottom right (plan deviation D-3). */
-	--nldesign-hero-image-clip-path: polygon(0 0, 100% 0, 100% calc(100% - 120px), calc(100% - 75px) 100%, 0 100%);
-
 	/* The selected navigation entry: the accent, where Nextcloud uses the
 	 * primary colour. Nextcloud 34 and later draw it as a 16% wash of this
 	 * colour (#F5DCE5 on white, the design's #FBE9F0) with the
