@@ -887,6 +887,13 @@
 	--utrecht-accordion-button-padding-inline-start: 16px;
 	--utrecht-accordion-panel-border-width: 4px;
 	--utrecht-alert-border-width: var(--nldesign-website-notice-border-width, 2px);
+	/* An info melding drawn as a tinted card (the school boards' "Online
+	 * melden") has no line; a set says so with one vocabulary token. Unset,
+	 * it keeps the width every melding has. */
+	--utrecht-alert-info-border-width: var(
+		--nldesign-website-alert-info-border-width,
+		var(--utrecht-alert-border-width)
+	);
 	--utrecht-button-border-width: var(--nldesign-website-control-border-width, 1px);
 	--utrecht-button-font-size: 16px;
 	--utrecht-button-font-weight: var(--nldesign-website-button-font-weight, 700);
@@ -1106,6 +1113,8 @@
 	 *   --nldesign-website-notice-background-color         a plain notice's ground
 	 *   --nldesign-website-notice-border-color             its border
 	 *   --nldesign-website-notice-border-width             its border width
+	 *   --nldesign-website-alert-info-border-width         an info melding's border
+	 *                                                      width (0: a tinted card)
 	 *   --nldesign-website-tab-line-color                  the line under a tab list
 	 *   --nldesign-website-tab-current-color               the mark under the tab on screen
 	 *
