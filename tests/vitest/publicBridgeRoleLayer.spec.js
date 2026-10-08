@@ -419,3 +419,30 @@ describe('a set with a role layer of its own keeps it', () => {
 		)
 	})
 })
+
+describe('an info melding may be a tinted card without a line', () => {
+	it('keeps the width every melding has when the set names nothing', () => {
+		expect(token('zuiddrecht', '--utrecht-alert-info-border-width')).toBe(
+			token('zuiddrecht', '--utrecht-alert-border-width'),
+		)
+	})
+
+	it('the four schools draw the info melding without a line, the other kinds keep theirs', () => {
+		for (const set of SCHOOLS) {
+			expect(token(set, '--utrecht-alert-info-border-width')).toBe('0')
+			expect(token(set, '--utrecht-alert-border-width')).toBe('2px')
+		}
+	})
+
+	it('drops the line when the set names the vocabulary token', () => {
+		const tokens = {
+			...pageTokens('wilgenboom'),
+			'--nldesign-website-alert-info-border-width': '0',
+		}
+		expect(resolve(tokens, tokens['--utrecht-alert-info-border-width'])).toBe(
+			'0',
+		)
+		// The other kinds keep theirs.
+		expect(resolve(tokens, tokens['--utrecht-alert-border-width'])).toBe('2px')
+	})
+})
