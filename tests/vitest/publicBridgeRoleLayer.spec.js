@@ -422,10 +422,15 @@ describe('a set with a role layer of its own keeps it', () => {
 
 describe('an info melding may be a tinted card without a line', () => {
 	it('keeps the width every melding has when the set names nothing', () => {
-		for (const set of [...SCHOOLS, 'zuiddrecht']) {
-			expect(token(set, '--utrecht-alert-info-border-width')).toBe(
-				token(set, '--utrecht-alert-border-width'),
-			)
+		expect(token('zuiddrecht', '--utrecht-alert-info-border-width')).toBe(
+			token('zuiddrecht', '--utrecht-alert-border-width'),
+		)
+	})
+
+	it('the four schools draw the info melding without a line, the other kinds keep theirs', () => {
+		for (const set of SCHOOLS) {
+			expect(token(set, '--utrecht-alert-info-border-width')).toBe('0')
+			expect(token(set, '--utrecht-alert-border-width')).toBe('2px')
 		}
 	})
 

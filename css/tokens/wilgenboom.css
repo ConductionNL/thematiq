@@ -126,6 +126,10 @@
 	--nldesign-website-border-radius: 10px;
 	--nldesign-website-border-radius-large: 14px;
 
+	/* An info melding is a tinted card without a line, as the school boards
+	 * draw "Online melden" (bridge-info-melding-border). */
+	--nldesign-website-alert-info-border-width: 0;
+
 	/* The selected navigation entry: the accent, where Nextcloud uses the
 	 * primary colour. Nextcloud 34 and later draw it as a 16% wash of this
 	 * colour (#FDF4DE on white, the design's #FDF3D7) with the

@@ -13,16 +13,14 @@ melding its tint and padding.)
 - `css/public-bridge.css`: a new vocabulary token `--nldesign-website-alert-info-border-width`,
   carried by `--utrecht-alert-info-border-width`. Unset, the role falls back to
   `--utrecht-alert-border-width`, so every portal looks exactly as before.
-- `tests/vitest/publicBridgeRoleLayer.spec.js`: the role equals the general width for the four
-  schools and Zuiddrecht, and becomes 0 when a set names the token while the other kinds keep
-  their width.
+- `tests/vitest/publicBridgeRoleLayer.spec.js`: the role equals the general width for Zuiddrecht,
+  is 0 for the four schools while their other kinds keep 2px, and becomes 0 when a set names the
+  token.
 
-## Not in this change
-
-The four school token files (`css/tokens/<school>.css`) belong to the theme lane. To match the
-boards each sets `--nldesign-website-alert-info-border-width: 0`.
+- `css/tokens/{wilgenboom,vaartveld,esdoornveen,warmtepompacademie}.css` name the token with `0`,
+  so their info melding is the boards' tinted card. Zuiddrecht and every other set name nothing.
 
 ## Impact
 
 Portal roles only (`css/public-bridge.css` is linked by the portal site, never by an instance
-page). No visible change until a set names the token.
+page). Only the four school sets change: their info melding loses its line.
