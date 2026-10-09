@@ -1230,6 +1230,13 @@
 	--thematiq-website-hero-decoration-opacity: var(
 		--nldesign-website-hero-decoration-opacity
 	);
+	--thematiq-website-hero-search-label-font-size: var(
+		--nldesign-website-hero-search-label-font-size
+	);
+	--thematiq-website-hero-search-label-font-weight: var(
+		--nldesign-website-hero-search-label-font-weight
+	);
+	--thematiq-hero-image-clip-path: var(--nldesign-hero-image-clip-path);
 	--thematiq-color-border-strong: var(--nldesign-color-border-strong);
 	--thematiq-emblem-url: var(--nldesign-emblem-url);
 

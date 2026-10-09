@@ -83,9 +83,19 @@ describe("the website tokens are Zuiddrecht's alone (the control)", () => {
 		'--nldesign-website-color-text-muted',
 		'--nldesign-website-placeholder-background-color',
 	]
+	// The four school sets follow their own portal boards and name the content
+	// size those boards draw (openspec change school-sets-type-scale, #1187),
+	// so the control holds for every OTHER shipped set.
+	const PORTAL_SETS = [
+		'zuiddrecht.css',
+		'esdoornveen.css',
+		'vaartveld.css',
+		'warmtepompacademie.css',
+		'wilgenboom.css',
+	]
 	const sets = fs
 		.readdirSync(path.join(ROOT, 'css/tokens'))
-		.filter((f) => f.endsWith('.css') && f !== 'zuiddrecht.css')
+		.filter((f) => f.endsWith('.css') && PORTAL_SETS.includes(f) === false)
 
 	it('walks the shipped sets', () => {
 		expect(sets.length).toBeGreaterThan(50)
