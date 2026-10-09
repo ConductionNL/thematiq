@@ -196,6 +196,12 @@
 	--nldesign-color-accent: #1FB5A8;
 	--nldesign-color-accent-light: #DDF5F2;
 	--nldesign-color-accent-text: #0B6259;
+	/* The resident menu as the MijnMenu board draws it
+	 * (openspec/changes/school-menus-follow-their-boards): 44px rows, no bar
+	 * beside the page on screen, its label in the accent text. */
+	--nldesign-website-menu-item-min-block-size: 44px;
+	--nldesign-website-menu-current-bar-width: 0;
+	--nldesign-website-menu-current-color: var(--nldesign-color-accent-text);
 	/* The footer band: the primary's deep step, white text on it. */
 	--nldesign-color-footer-background: #14338F;
 	--nldesign-color-footer-text: #ffffff;

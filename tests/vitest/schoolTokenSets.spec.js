@@ -643,3 +643,30 @@ describe('esdoornveen: the photo beside the hero', () => {
 		}
 	})
 })
+
+describe('the resident menu as the MijnMenu boards draw it', () => {
+	// school-design <set>/project/MijnMenu.dc.html: the row height, no bar
+	// beside the page on screen, and its label colour
+	// (openspec/changes/school-menus-follow-their-boards). The site theme
+	// reads the three with the Zuiddrecht values as defaults.
+	const MENU = {
+		wilgenboom: ['46px', 'var(--nldesign-color-text)'],
+		vaartveld: ['44px', 'var(--nldesign-color-accent-text)'],
+		esdoornveen: ['44px', 'var(--nldesign-color-accent-text)'],
+		warmtepompacademie: ['48px', 'var(--nldesign-color-accent-text)'],
+	}
+	for (const [id, [height, color]] of Object.entries(MENU)) {
+		it(`${id}: ${height} rows, no bar, its own label colour`, () => {
+			const tokens = rootTokens(read('css/tokens/' + id + '.css'))
+			expect(tokens['--nldesign-website-menu-item-min-block-size']).toBe(height)
+			expect(tokens['--nldesign-website-menu-current-bar-width']).toBe('0')
+			expect(tokens['--nldesign-website-menu-current-color']).toBe(color)
+		})
+	}
+
+	it('leaves Zuiddrecht on the site theme defaults', () => {
+		const tokens = rootTokens(read('css/tokens/zuiddrecht.css'))
+		expect(tokens['--nldesign-website-menu-item-min-block-size']).toBeUndefined()
+		expect(tokens['--nldesign-website-menu-current-bar-width']).toBeUndefined()
+	})
+})
