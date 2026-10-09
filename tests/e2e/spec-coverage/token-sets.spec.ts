@@ -1546,6 +1546,24 @@ test.describe('token-sets', () => {
 		})
 	})
 
+	// @e2e openspec/specs/token-sets/spec.md#a-complete-catalogue-stays-quiet
+	test('with every shipped set complete, no set carries a vocabulary finding and no badge shows', async ({
+		page,
+	}) => {
+		// The GIVEN holds since #1006 / #1008: the allow-list is empty.
+		expect(ALLOWLIST).toEqual([])
+		await openSettings(page)
+		const list = await adminList(page)
+		expect(list.length).toBeGreaterThan(20)
+		for (const entry of list) {
+			expect(
+				incompleteWarning(entry),
+				`${entry.id} carries no vocabulary entry`,
+			).toBeUndefined()
+		}
+		await expect(page.getByText('Incomplete set', { exact: true })).toBeHidden()
+	})
+
 	// @e2e openspec/specs/token-sets/spec.md#a-set-whose-design-system-reads-no-nldesign-name-is-not-auditable
 	test('sets of systems that read no --nldesign-* name are not audited; bridged systems are', async ({
 		page,

@@ -108,8 +108,9 @@ Task numbering (1.1–1.7) follows the planning notes this change was written fr
       `vendor/`, so PHPUnit cannot be invoked locally.** The audit rules themselves were verified by
       running the PHP service directly against all 48 sets and diffing the result against the Node
       CLI.
-- [ ] 7.6 Add or extend a Playwright spec-coverage test for the "Incomplete set" badge and tooltip,
+- [x] 7.6 Add or extend a Playwright spec-coverage test for the "Incomplete set" badge and tooltip,
       or apply a reason-bearing `@e2e exclude` to the backend-only scenarios.
+      Done 2026-10-09 (build/openspecs-1): the badge scenarios whose GIVEN an instance cannot produce carry reason-bearing `@e2e exclude` in openspec/specs/token-sets/spec.md with vitest `admin-incomplete-set.spec.js` behind them; the badge ranking is browser-tested in tests/e2e/spec-coverage/token-sets.spec.ts; "A complete catalogue stays quiet" lost its stale exclude (the allow-list is empty now) and has its own Playwright test there.
 - [x] 7.7 Add the `CHANGELOG.md` "Unreleased" entries (Added: the audit, the npm CLI, the badge;
       Changed: the `css/custom-css.css` gitignore). `appinfo/info.xml` `<version>` is deliberately
       NOT bumped by hand — every commit that has ever touched it is a `chore(release)` from the
