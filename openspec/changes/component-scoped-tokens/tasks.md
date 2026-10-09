@@ -148,13 +148,14 @@ each fix keeps the previous token as the fallback so no shipped token set change
       Done 2026-10-09 (build/openspecs-1): checkpoint run: psalm, phpstan and phpcs (lib) clean; phpmd clean on the touched classes; php-cs-fixer red only on three files this branch did not touch (inherited); the PHPUnit failures that remain (13 errors, 12 failures, all needing a Nextcloud server tree or the stale token reference page) are the same on origin/development.
 - [x] 8.6 `npx vitest run tests/vitest/componentTokenReach.spec.js` — no chip row is painted
       over by a shipped rule.
-- [ ] 8.7 FOUR PROPERTIES STILL HAVE NO ROW, recorded in the guard's `NO_ROW_YET`. Each needs
+- [x] 8.7 FOUR PROPERTIES STILL HAVE NO ROW, recorded in the guard's `NO_ROW_YET`. Each needs
       a token added rather than a rule fixed, which is a separate decision:
       the navigation panel's own background (its variable is `--color-main-background`, which
       overrides.css deliberately leaves alone, so it needs a token the nav rule reads
       directly rather than a re-scope); the text colour inside a text input and inside a
       textarea; and the primary button's border colour, which tracks its background in every
       shipped set but is a separate token.
+      Done 2026-10-09 (build/openspecs-2, decision 126 / Q-thematiq-3: all five, the avatar initials included): `NO_ROW_YET` in `tests/vitest/componentTokenReach.spec.js` is empty. Rows added in `scripts/mapping/component-tokens.json` and `js/playground/components.json`: `--nldesign-component-textbox-color` (Text input text), the textarea's existing `--nldesign-component-textarea-color` row now reaches through an alias of `--nldesign-component-textbox-color`, `--nldesign-component-button-primary-action-border-color` (Primary button border, a paint on the NcButton primary with Nextcloud's own hover colour as fallback, locked with the primary), and two new tokens: `--nldesign-component-navigation-background-color` (the nldesign nav rule reads it first, the scope re-scopes `--color-main-background-blur`, never `--color-main-background`, held by the new "navigation background leaves the main background alone" tests) and `--nldesign-component-avatar-initials-color` (the header avatar rule reads it first). Red first: the reach guard listed all five once the list was emptied.
 - [ ] 8.8 Confirm in a browser that moving `Login button` leaves `Primary button` alone, that
       the Corner rows now move their component, and that turning the toggle on greys the
       colour rows out and repaints them to the brand primary.

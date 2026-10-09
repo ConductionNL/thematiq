@@ -722,8 +722,8 @@
         "Nextcloud mixes the primary element colour into the background instead of reading a colour token: 8%% hovered, 16%% selected, 22%% both. The browser computes the shade, so the only thing to edit is the colour it is mixed from.": "Nextcloud mixes the primary element colour into the background instead of reading a colour token: 8%% hovered, 16%% selected, 22%% both. The browser computes the shade, so the only thing to edit is the colour it is mixed from.",
         "The selected entry marker": "The selected entry marker",
         "NcAppNavigationItem draws a fixed 3px stripe in ::before; its width and its radius are the component's geometry, not a theme value.": "NcAppNavigationItem draws a fixed 3px stripe in ::before; its width and its radius are the component's geometry, not a theme value.",
-        "Navigation and page surface": "Navigation and page surface",
-        "The column takes Nextcloud's own main background and sits on its plain page background; Nextcloud theming owns both, so dark mode keeps working.": "The column takes Nextcloud's own main background and sits on its plain page background; Nextcloud theming owns both, so dark mode keeps working.",
+        "Page surface": "Page surface",
+        "The column sits on Nextcloud's own plain page background. Nextcloud theming owns it, so dark mode keeps working.": "The column sits on Nextcloud's own plain page background. Nextcloud theming owns it, so dark mode keeps working.",
         "parts of the navigation use fully rounded (pill) corners where 33 and later use the element corner.": "parts of the navigation use fully rounded (pill) corners where 33 and later use the element corner.",
         "entries animate their hover and active change.": "entries animate their hover and active change.",
         "Container corner": "Container corner",
@@ -763,8 +763,8 @@
         "Panel surface": "Panel surface",
         "The popover takes Nextcloud's own main background, which Nextcloud theming owns.": "The popover takes Nextcloud's own main background, which Nextcloud theming owns.",
         "The online status dot": "The online status dot",
-        "The disc and its initials": "The disc and its initials",
-        "Nextcloud renders an avatar as an image, uploaded or generated from the account name, so no token paints it. An opaque image covers whatever colour the cascade puts behind it.": "Nextcloud renders an avatar as an image, uploaded or generated from the account name, so no token paints it. An opaque image covers whatever colour the cascade puts behind it.",
+        "The disc": "The disc",
+        "Nextcloud renders an avatar as an image, uploaded or generated from the account name, so no token paints the disc. An opaque image covers whatever colour the cascade puts behind it.": "Nextcloud renders an avatar as an image, uploaded or generated from the account name, so no token paints the disc. An opaque image covers whatever colour the cascade puts behind it.",
         "A crumb that is a link": "A crumb that is a link",
         "The separators": "The separators",
         "The hovered crumb": "The hovered crumb",
@@ -1110,7 +1110,9 @@
         "A design-tokens.css, a W3C Design Tokens JSON or a Style Dictionary tokens.json. You see what was used and what was left out.": "A design-tokens.css, a W3C Design Tokens JSON or a Style Dictionary tokens.json. You see what was used and what was left out.",
         "Convert": "Convert",
         "Paste the contents of a theme file first.": "Paste the contents of a theme file first.",
-        "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped."
+        "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.",
+        "The navigation column's own surface": "The navigation column's own surface",
+        "The initials of an avatar without a picture": "The initials of an avatar without a picture"
     },
     "plurals": {}
 }

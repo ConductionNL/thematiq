@@ -10,7 +10,7 @@ The **Custom Token Overrides** section in the admin settings lets you fine-tune 
 
 The token editor is located in the **Thematiq** section of the Appearance admin settings. It consists of:
 
-- **A count** of the editable tokens: <!-- editable-count -->709<!-- /editable-count --> on this release
+- **A count** of the editable tokens: <!-- editable-count -->713<!-- /editable-count --> on this release
 - **A search field** that finds any token by its label, its CSS name or its component
 - **4 category tabs** grouping Nextcloud's theme tokens by area
 - **Component groups** for the variables inside Nextcloud's components and the Conduction apps, collapsed until you open one

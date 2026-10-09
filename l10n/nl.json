@@ -722,8 +722,8 @@
         "Nextcloud mixes the primary element colour into the background instead of reading a colour token: 8%% hovered, 16%% selected, 22%% both. The browser computes the shade, so the only thing to edit is the colour it is mixed from.": "Nextcloud mengt de primaire elementkleur door de achtergrond in plaats van een kleurtoken te lezen: 8%% bij aanwijzen, 16%% geselecteerd, 22%% allebei. De browser berekent de tint, dus het enige wat je kunt aanpassen is de kleur waaruit gemengd wordt.",
         "The selected entry marker": "De markering van het geselecteerde item",
         "NcAppNavigationItem draws a fixed 3px stripe in ::before; its width and its radius are the component's geometry, not a theme value.": "NcAppNavigationItem tekent een vaste streep van 3px in ::before; de breedte en de radius zijn de geometrie van het onderdeel, geen themawaarde.",
-        "Navigation and page surface": "Oppervlak van navigatie en pagina",
-        "The column takes Nextcloud's own main background and sits on its plain page background; Nextcloud theming owns both, so dark mode keeps working.": "De kolom krijgt de eigen hoofdachtergrond van Nextcloud en staat op de gewone pagina-achtergrond; de thema-instellingen van Nextcloud beheren beide, zodat de donkere modus blijft werken.",
+        "Page surface": "Oppervlak van de pagina",
+        "The column sits on Nextcloud's own plain page background. Nextcloud theming owns it, so dark mode keeps working.": "De kolom staat op de gewone pagina-achtergrond van Nextcloud. De thema-instellingen van Nextcloud beheren die, zodat de donkere modus blijft werken.",
         "parts of the navigation use fully rounded (pill) corners where 33 and later use the element corner.": "delen van de navigatie hebben volledig ronde (pil)hoeken waar 33 en later de elementhoek gebruiken.",
         "entries animate their hover and active change.": "items animeren de overgang bij aanwijzen en activeren.",
         "Container corner": "Hoek van de container",
@@ -763,8 +763,8 @@
         "Panel surface": "Oppervlak van het paneel",
         "The popover takes Nextcloud's own main background, which Nextcloud theming owns.": "De popover krijgt de eigen hoofdachtergrond van Nextcloud, en die beheren de thema-instellingen van Nextcloud.",
         "The online status dot": "De stip voor de onlinestatus",
-        "The disc and its initials": "De schijf en de initialen",
-        "Nextcloud renders an avatar as an image, uploaded or generated from the account name, so no token paints it. An opaque image covers whatever colour the cascade puts behind it.": "Nextcloud toont een avatar als afbeelding, geüpload of gemaakt uit de accountnaam, dus geen token kleurt hem. Een ondoorzichtige afbeelding bedekt elke kleur die de cascade erachter zet.",
+        "The disc": "De schijf",
+        "Nextcloud renders an avatar as an image, uploaded or generated from the account name, so no token paints the disc. An opaque image covers whatever colour the cascade puts behind it.": "Nextcloud toont een avatar als afbeelding, geüpload of gemaakt uit de accountnaam, dus geen token kleurt de schijf. Een ondoorzichtige afbeelding bedekt elke kleur die de cascade erachter zet.",
         "A crumb that is a link": "Een kruimel die een link is",
         "The separators": "De scheidingstekens",
         "The hovered crumb": "De kruimel onder de muis",
@@ -1110,7 +1110,9 @@
         "A design-tokens.css, a W3C Design Tokens JSON or a Style Dictionary tokens.json. You see what was used and what was left out.": "Een design-tokens.css, een W3C Design Tokens JSON of een Style Dictionary tokens.json. U ziet wat is overgenomen en wat is weggelaten.",
         "Convert": "Omzetten",
         "Paste the contents of a theme file first.": "Plak eerst de inhoud van een themabestand.",
-        "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} overgenomen, {adapted} aangepast, {kept} behouden, {skipped} overgeslagen."
+        "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} overgenomen, {adapted} aangepast, {kept} behouden, {skipped} overgeslagen.",
+        "The navigation column's own surface": "Het eigen oppervlak van de navigatiekolom",
+        "The initials of an avatar without a picture": "De initialen van een avatar zonder foto"
     },
     "plurals": {}
 }
