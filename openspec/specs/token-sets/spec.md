@@ -709,7 +709,6 @@ distinguishable from a contrast warning without inspecting its other fields.
   the ranking is specified now so the two paths cannot disagree later
 
 #### Scenario: A complete catalogue stays quiet
-@e2e exclude The GIVEN is false on development: tests/Unit/fixtures/token-set-vocabulary-allowlist.json lists 39 incomplete shipped sets. The per-set half (a complete set shows no badge and carries no vocabulary entry) is browser-tested under selecting-an-incomplete-set-shows-the-incomplete-set-badge and a-set-that-declares-the-full-required-vocabulary-is-complete.
 - GIVEN every shipped set passes the vocabulary audit
 - WHEN the settings page is rendered
 - THEN no completeness badge MUST be visible for any set

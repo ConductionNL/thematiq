@@ -1,0 +1,14 @@
+{
+	"$comment": [
+		"Converter parity fixtures (nlds-theme-converter tasks 3.9 and 5.4). Each <name>.expected.json is",
+		"what js/lib/tokenConverter.js emits for the input; tests/vitest/tokenConverter.spec.js and",
+		"TokenSetConverterParityTest hold both runtimes to it. Refresh with",
+		"`npm run convert:theme:check -- --write`; `npm run convert:theme:check` fails when one is stale.",
+		"Inputs are local on purpose (design decision 3): nothing is fetched or vendored."
+	],
+	"fixtures": [
+		{ "name": "theme-css", "input": "tests/Unit/fixtures/converter/theme-css.input.css", "slug": "parity", "displayName": "Parity", "sourceName": "theme-css.input.css" },
+		{ "name": "raw-dump", "input": "tests/Unit/fixtures/converter/raw-dump.input.css", "slug": "parity", "displayName": "Parity", "sourceName": "raw-dump.input.css" },
+		{ "name": "style-dictionary", "input": "tests/Unit/fixtures/converter/style-dictionary.input.json", "slug": "parity", "displayName": "Parity", "sourceName": "style-dictionary.input.json" }
+	]
+}

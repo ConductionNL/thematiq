@@ -19,9 +19,12 @@
  *   --slug             Token set id and brand prefix. Required.
  *   --name             Display name for the manifest entry. Defaults to the slug.
  *   --source           Provenance label. Defaults to the input's file name.
- *   --write            Write css/tokens/<slug>.css, img/logos/<slug>.<ext> when
- *                      the theme carries its logo inline, and update
- *                      token-sets.json. Without it nothing is touched and the
+ *   --write            Write css/tokens/<slug>.css, css/tokens/<slug>.report.json,
+ *                      img/logos/<slug>.<ext> when the theme carries its logo
+ *                      inline, update token-sets.json, and regenerate the set's
+ *                      dark variant (`php scripts/generate-dark-variants.php
+ *                      --force --only <slug>`; skipped with a note when PHP is
+ *                      not installed). Without it nothing is touched and the
  *                      report is printed.
  *   --report <path>    Also write the full report as JSON.
  *   --quiet            Only print the summary line.
@@ -32,14 +35,14 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
-import { createHash } from 'node:crypto'
+import { spawnSync } from 'node:child_process'
 import { dirname, join, basename, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { createRequire } from 'node:module'
 
-const require = createRequire(import.meta.url)
-const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const converter = require(join(repoRoot, 'js/lib/tokenConverter.js'))
+import {
+	converter,
+	loadConverterContext,
+	repoRoot,
+} from './lib/converter-context.mjs'
 
 const LABEL = 'convert:theme'
 
@@ -50,7 +53,15 @@ const LABEL = 'convert:theme'
  * @return {Object} The parsed options.
  */
 function parseArgs(argv) {
-	const options = { input: null, slug: null, name: null, source: null, write: false, report: null, quiet: false }
+	const options = {
+		input: null,
+		slug: null,
+		name: null,
+		source: null,
+		write: false,
+		report: null,
+		quiet: false,
+	}
 
 	for (let index = 0; index < argv.length; index++) {
 		const arg = argv[index]
@@ -65,7 +76,12 @@ function parseArgs(argv) {
 			continue
 		}
 
-		if (arg === '--slug' || arg === '--name' || arg === '--report' || arg === '--source') {
+		if (
+			arg === '--slug'
+			|| arg === '--name'
+			|| arg === '--report'
+			|| arg === '--source'
+		) {
 			const value = argv[index + 1]
 			if (value === undefined || value.startsWith('--')) {
 				throw new Error(`${arg} needs a value.`)
@@ -88,29 +104,6 @@ function parseArgs(argv) {
 	}
 
 	return options
-}
-
-/**
- * Load the mapping table, its SHA-256 and the app's own token vocabulary.
- *
- * The hash is computed over the raw file bytes, which is exactly what
- * `TokenSetConverterService::table()` does, so a set converted by either
- * runtime carries the same provenance line.
- *
- * @return {Object} `{table, tableHash, vocabulary}`.
- */
-function loadContext() {
-	const tablePath = join(repoRoot, 'scripts/mapping/nlds-to-nextcloud.json')
-	const raw = readFileSync(tablePath, 'utf8')
-
-	return {
-		table: JSON.parse(raw),
-		tableHash: createHash('sha256').update(raw).digest('hex'),
-		vocabulary: converter.vocabularyFrom([
-			readFileSync(join(repoRoot, 'css/systems/nldesign/defaults.css'), 'utf8'),
-			readFileSync(join(repoRoot, 'css/systems/nldesign/utrecht-bridge.css'), 'utf8'),
-		]),
-	}
 }
 
 /**
@@ -158,8 +151,10 @@ function printReport(report) {
 	for (const [reason, entries] of [...groups.entries()].sort()) {
 		console.log(`\n[${LABEL}] ${reason} (${entries.length})`)
 		for (const entry of entries.slice(0, 12)) {
-			const target = (entry.target === '' ? '(not emitted)' : entry.target)
-			console.log(`    ${entry.action.padEnd(8)} ${String(entry.source).padEnd(46)} ${target}`)
+			const target = entry.target === '' ? '(not emitted)' : entry.target
+			console.log(
+				`    ${entry.action.padEnd(8)} ${String(entry.source).padEnd(46)} ${target}`,
+			)
 		}
 
 		if (entries.length > 12) {
@@ -179,13 +174,21 @@ function printReport(report) {
  * @param {string} css The emitted CSS.
  * @param {Object} manifestEntry The manifest entry.
  * @param {Object|null} logoAsset The decoded logo, when the theme carried one inline.
+ * @param {Array<Object>} report The conversion report.
  * @return {Array<string>} The paths written.
  */
-function writeOutputs(slug, css, manifestEntry, logoAsset) {
+function writeOutputs(slug, css, manifestEntry, logoAsset, report) {
 	const written = []
 	const cssPath = join(repoRoot, 'css/tokens', `${slug}.css`)
 	writeFileSync(cssPath, css, 'utf8')
 	written.push(cssPath)
+
+	// The report next to the set (design decision 11): committed for a shipped
+	// set, so a later reader sees what the theme asked for and what was refused
+	// without re-running the conversion.
+	const reportPath = join(repoRoot, 'css/tokens', `${slug}.report.json`)
+	writeFileSync(reportPath, `${JSON.stringify(report, null, '\t')}\n`, 'utf8')
+	written.push(reportPath)
 
 	// The logo the converter lifted out of the theme. Written before the
 	// manifest entry that names it, because theming sync validates the file
@@ -204,12 +207,18 @@ function writeOutputs(slug, css, manifestEntry, logoAsset) {
 
 	if (index === -1) {
 		manifest.push(manifestEntry)
-		manifest.sort((left, right) => String(left.id).localeCompare(String(right.id)))
+		manifest.sort((left, right) =>
+			String(left.id).localeCompare(String(right.id)),
+		)
 	} else {
 		// Preserve anything the committed entry carries that the converter does
 		// not produce — a hand-picked logo, an upstreamRef from the sync — and
 		// let the converted values win where they overlap.
-		manifest[index] = { ...manifest[index], ...manifestEntry, theming: { ...manifest[index].theming, ...manifestEntry.theming } }
+		manifest[index] = {
+			...manifest[index],
+			...manifestEntry,
+			theming: { ...manifest[index].theming, ...manifestEntry.theming },
+		}
 	}
 
 	writeFileSync(manifestPath, `${JSON.stringify(manifest, null, '\t')}\n`, 'utf8')
@@ -234,7 +243,9 @@ function main() {
 	}
 
 	if (options.input === null || options.slug === null) {
-		console.error(`[${LABEL}] usage: node scripts/convert-nlds-theme.mjs <input> --slug <slug> [--name "Name"] [--write] [--report out.json]`)
+		console.error(
+			`[${LABEL}] usage: node scripts/convert-nlds-theme.mjs <input> --slug <slug> [--name "Name"] [--write] [--report out.json]`,
+		)
 		process.exit(1)
 	}
 
@@ -244,14 +255,15 @@ function main() {
 		process.exit(1)
 	}
 
-	const context = loadContext()
+	const context = loadConverterContext()
 	let result
 
 	try {
 		result = converter.convert(readFileSync(inputPath, 'utf8'), {
 			slug: options.slug,
-			displayName: (options.name === null ? options.slug : options.name),
-			sourceName: (options.source === null ? basename(inputPath) : options.source),
+			displayName: options.name === null ? options.slug : options.name,
+			sourceName:
+				options.source === null ? basename(inputPath) : options.source,
 			table: context.table,
 			tableHash: context.tableHash,
 			vocabulary: context.vocabulary,
@@ -270,30 +282,72 @@ function main() {
 
 	console.log(
 		`\n[${LABEL}] ${options.slug}: input ${result.inputKind}, `
-		+ `${counts.applied} applied, ${counts.adapted} adapted, `
-		+ `${counts.kept} kept, ${counts.skipped} skipped.`
+			+ `${counts.applied} applied, ${counts.adapted} adapted, `
+			+ `${counts.kept} kept, ${counts.skipped} skipped.`,
 	)
 
 	if (options.report !== null) {
-		writeFileSync(resolve(options.report), `${JSON.stringify(result.report, null, '\t')}\n`, 'utf8')
+		writeFileSync(
+			resolve(options.report),
+			`${JSON.stringify(result.report, null, '\t')}\n`,
+			'utf8',
+		)
 		console.log(`[${LABEL}] report written to ${resolve(options.report)}`)
 	}
 
 	if (options.write === false) {
-		console.log(`[${LABEL}] dry run — nothing written. Pass --write to update css/tokens/ and token-sets.json.`)
+		console.log(
+			`[${LABEL}] dry run — nothing written. Pass --write to update css/tokens/ and token-sets.json.`,
+		)
 
 		return
 	}
 
-	const written = writeOutputs(options.slug, result.css, result.manifestEntry, result.logoAsset)
+	const written = writeOutputs(
+		options.slug,
+		result.css,
+		result.manifestEntry,
+		result.logoAsset,
+		result.report,
+	)
 	for (const path of written) {
 		console.log(`[${LABEL}] wrote ${path}`)
 	}
 
-	console.log(
-		`[${LABEL}] dark variant NOT regenerated — run`
-		+ ' `php scripts/generate-dark-variants.php --force` (needs PHP).'
+	process.exitCode = regenerateDarkVariant(options.slug)
+}
+
+/**
+ * Regenerate the dark variant of the set just written, and only that one.
+ *
+ * @param {string} slug The set slug.
+ * @return {number} 0 when written or when PHP is absent (with a note), 1 when the generator failed.
+ */
+function regenerateDarkVariant(slug) {
+	const run = spawnSync(
+		'php',
+		[
+			join(repoRoot, 'scripts/generate-dark-variants.php'),
+			'--force',
+			'--only',
+			slug,
+		],
+		{ encoding: 'utf8' },
 	)
+
+	if (run.error !== undefined && run.error.code === 'ENOENT') {
+		console.log(
+			`[${LABEL}] dark variant NOT regenerated: no php on PATH. Run`
+				+ ` \`php scripts/generate-dark-variants.php --force --only ${slug}\`.`,
+		)
+
+		return 0
+	}
+
+	process.stdout.write(run.stdout || '')
+	process.stderr.write(run.stderr || '')
+
+	return run.status === 0 ? 0 : 1
 }
 
 main()

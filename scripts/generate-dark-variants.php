@@ -14,7 +14,10 @@
  * updates regenerate their dark variants in the same PR (see
  * openspec/specs/dark-mode/spec.md, tasks.md#task-2.4).
  *
- * Usage: php scripts/generate-dark-variants.php [--force]
+ * Usage: php scripts/generate-dark-variants.php [--force] [--only <set-id>]
+ *
+ * --only regenerates one set, which is what `convert-nlds-theme.mjs --write` calls after it
+ * writes a light file, so a conversion never rewrites the dark files of other sets.
  * Exit codes: 0 on success (including per-set skips), 1 on any write failure.
  */
 
@@ -283,7 +286,14 @@ $service = new DarkPaletteService(
     new CiStderrLogger()
 );
 
-$results = $service->generateAll(force: $force);
+$onlyIndex = array_search('--only', $argv, true);
+$only      = ($onlyIndex === false) ? null : ($argv[($onlyIndex + 1)] ?? '');
+if ($only === '' || ($only !== null && preg_match('/^[a-z0-9][a-z0-9-]*$/', $only) !== 1)) {
+    fwrite(STDERR, "--only needs a token set id\n");
+    exit(1);
+}
+
+$results = ($only === null) ? $service->generateAll(force: $force) : [$only => $service->generateAndWrite(setId: $only, force: $force)];
 
 $written = 0;
 $failed  = false;

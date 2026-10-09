@@ -142,3 +142,6 @@ tests/e2e/.auth/
 # regenerated them"), or cite the openspec change the plan produced.
 /MAKEOVER-PLAN.md
 /.inventory-sources/
+
+# Conversion reports of admin-uploaded sets; the reports of shipped sets are committed.
+/css/tokens/custom-*.report.json

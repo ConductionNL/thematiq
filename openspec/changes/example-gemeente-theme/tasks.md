@@ -5,8 +5,9 @@ merged to `development`.
 
 ## 0. Decision for Ruben
 
-- [ ] 0.1 Font: bundle Source Sans 3 as the mockups name it (design D3), or keep Fira Sans
+- [x] 0.1 Font: bundle Source Sans 3 as the mockups name it (design D3), or keep Fira Sans
       like the school sets. The tasks below assume Source Sans 3.
+      Decided 2026-10-09 (Ruben, decision 126, Q-thematiq-4): keep Source Sans 3, as shipped.
 
 ## 1. The set
 

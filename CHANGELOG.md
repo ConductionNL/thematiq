@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **Paste a theme instead of uploading a file.** The Custom token sets panel has a paste box
+  beside the file picker. Paste a `design-tokens.css`, a W3C Design Tokens JSON or a Style
+  Dictionary `tokens.json`, convert it, and the result lists the counts and every token that was
+  not taken over as-is, grouped under the reason in the mapping table's own words.
+- **`npm run convert:theme` and `npm run convert:theme:check`.** The first runs the converter
+  from the command line; with `--write` it also writes the set's `<slug>.report.json` and
+  regenerates only that set's dark variant. The second converts the parity fixtures under
+  `tests/Unit/fixtures/converter/` and fails when the output moved without the fixtures.
+
 - **Zuiddrecht's website measures and type.** The site's columns (1328px page with a 24px gutter,
   1280px header row and opening band), 17px running text, a 21px lead (Contentpagina; it was 18),
   semibold buttons (`--nldesign-website-button-font-weight`, read by the public bridge's four
@@ -12,6 +21,16 @@ All notable changes to this project will be documented in this file.
   the workplace's `#5E6168`, and a light blue ground for a missing picture (`#D9E3EF`).
 
 ### Fixed
+- **A theme converts to the same token set on the server and in the command line.** The PHP
+  service and `js/lib/tokenConverter.js` had drifted; `TokenSetConverterParityTest` now holds them
+  byte-equal. Style Dictionary aliases are resolved instead of written out as `{a.b.c}`, numeric
+  palette steps (`500`) survive on the server, the contrast guard measures the primary against the
+  text colour the theme declares, and re-converting a set keeps every app token it names
+  (`--nldesign-color-background` was moved to the brand palette).
+- **The hero search label and photo corner of the school sets count as read.** Only the portal
+  reads them, so the vocabulary test called them unread; they now have a role in
+  `css/public-bridge.css`.
+- **The school sets' dark variants carry their notice colours.**
 - **The blue mark under the menu item on screen is back on the Zuiddrecht site.** #1105 removed
   `--nldesign-website-nav-current-in-line` and `--nldesign-website-nav-current-color` as unread,
   because only the portal read them. Every `--nldesign-*` name the portal reads now has a role in

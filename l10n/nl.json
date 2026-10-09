@@ -1105,7 +1105,12 @@
         "Starts as {value}": "Begint als {value}",
         "Your own token": "Eigen token",
         "Adding {name} to your own tokens, starting as {value}…": "{name} wordt toegevoegd aan uw eigen tokens, beginnend als {value}…",
-        "Adding…": "Toevoegen…"
+        "Adding…": "Toevoegen…",
+        "Or paste the contents of a theme file": "Of plak de inhoud van een themabestand",
+        "A design-tokens.css, a W3C Design Tokens JSON or a Style Dictionary tokens.json. You see what was used and what was left out.": "Een design-tokens.css, een W3C Design Tokens JSON of een Style Dictionary tokens.json. U ziet wat is overgenomen en wat is weggelaten.",
+        "Convert": "Omzetten",
+        "Paste the contents of a theme file first.": "Plak eerst de inhoud van een themabestand.",
+        "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} overgenomen, {adapted} aangepast, {kept} behouden, {skipped} overgeslagen."
     },
     "plurals": {}
 }

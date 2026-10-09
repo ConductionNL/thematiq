@@ -20,6 +20,7 @@ filesystem paths, and MUST persist the mime type `ImageManager::updateImage()` r
 Nextcloud reads the image through the `{key}Mime` app value rather than through the file's presence.
 
 #### Scenario: Logo image applied
+@e2e exclude Service call contract: PHPUnit ThemingServiceTest
 - GIVEN a valid request with `logo: "img/logos/amsterdam.svg"`
 - AND the file exists at `{appPath}/img/logos/amsterdam.svg`
 - WHEN `applyImages()` is called
@@ -29,6 +30,7 @@ Nextcloud reads the image through the `{key}Mime` app value rather than through 
 - AND `"logo"` MUST appear in the list of updated fields
 
 #### Scenario: Background image applied
+@e2e exclude Service call contract: PHPUnit ThemingServiceTest
 - GIVEN a valid request with `background: "img/backgrounds/default.jpg"`
 - AND the file exists
 - WHEN `applyImages()` is called
@@ -37,6 +39,7 @@ Nextcloud reads the image through the `{key}Mime` app value rather than through 
 - AND `"background"` MUST appear in the list of updated fields
 
 #### Scenario: The synced logo is the one Nextcloud serves
+@e2e exclude Covered by tests/e2e/spec-coverage/theming-sync.spec.ts (logo_url points at /apps/theming/image/logo) and PHPUnit SetLogoReachTest
 - GIVEN a token set whose `theming.logo` names a file in the app's `img/logos/`
 - WHEN the theming sync is confirmed
 - THEN `GET /apps/theming/image/logo` MUST return that file's bytes and its mime type
@@ -44,12 +47,14 @@ Nextcloud reads the image through the `{key}Mime` app value rather than through 
   `core/img/logo/logo.png`
 
 #### Scenario: Empty image path ignored
+@e2e exclude Service call contract: PHPUnit ThemingServiceTest
 - GIVEN a request where `logo` is empty or not set
 - WHEN `applyImages()` is called
 - THEN `ImageManager::updateImage()` MUST NOT be called for `logo`
 - AND no `{key}Mime` app value MUST be written
 
 #### Scenario: App path resolved via IAppManager
+@e2e exclude Service call contract: PHPUnit ThemingServiceTest
 - GIVEN images need to be applied
 - WHEN the full path is constructed
 - THEN `IAppManager::getAppPath('thematiq')` MUST be used to resolve the base directory

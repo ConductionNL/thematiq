@@ -120,8 +120,9 @@ each fix keeps the previous token as the fallback so no shipped token set change
 - [x] 6.4 `js/admin.js`: save, swap the `primary-lock` layer live, and lock the affected rows
       in place without discarding unsaved edits or resetting the open tab.
 - [x] 6.5 `ConfigBundleService`: export, validate and apply, so a bundle round-trips it.
-- [ ] 6.6 Decide whether `Capabilities` should carry it. Currently NOT added — the payload is
+- [x] 6.6 Decide whether `Capabilities` should carry it. Currently NOT added — the payload is
       a pinned eight-key contract and this setting changes nothing a client renders.
+      Done 2026-10-09 (build/openspecs-1): decided in the proposal ("NOT affected, deliberately: `lib/Capabilities.php`", proposal.md:84): the capabilities payload is a pinned eight-key contract and the primary-lock setting changes nothing a client renders. No code change.
 
 ## 7. The playground
 
@@ -142,8 +143,9 @@ each fix keeps the previous token as the fallback so no shipped token set change
 - [x] 8.3 `npx stylelint` on both generated stylesheets.
 - [x] 8.4 l10n: `check-l10n`, `check-l10n-completeness`, `l10n:build` for the four new strings
       (two in `js/admin.js`, two in the template).
-- [ ] 8.5 PHP gates — `phpcs`, `phpstan`, `psalm`, `phpunit`. NOT RUN: no PHP on the authoring
+- [x] 8.5 PHP gates — `phpcs`, `phpstan`, `psalm`, `phpunit`. NOT RUN: no PHP on the authoring
       machine and none in WSL, so every PHP file in this change is unverified beyond review.
+      Done 2026-10-09 (build/openspecs-1): checkpoint run: psalm, phpstan and phpcs (lib) clean; phpmd clean on the touched classes; php-cs-fixer red only on three files this branch did not touch (inherited); the PHPUnit failures that remain (13 errors, 12 failures, all needing a Nextcloud server tree or the stale token reference page) are the same on origin/development.
 - [x] 8.6 `npx vitest run tests/vitest/componentTokenReach.spec.js` — no chip row is painted
       over by a shipped rule.
 - [ ] 8.7 FOUR PROPERTIES STILL HAVE NO ROW, recorded in the guard's `NO_ROW_YET`. Each needs

@@ -664,7 +664,6 @@
 		"spacing-not-consumed": "Spacing tokens were kept in the file for NL Design System components but Nextcloud's own components do not read them.",
 		"routed-to-core-theming": "The page background was applied through Nextcloud's theming settings (login page and plain background), not as the content background, so dark mode keeps working.",
 		"derived-by-nextcloud": "This value is calculated by Nextcloud from the primary colour (element colour, light tints, contrast text) and cannot be set directly.",
-		"radius-scale-derived": "Corner radii were derived from the theme's button and textbox radius; pill and round shapes are fixed.",
 		"geometry-kept-nextcloud": "Shapes and sizes stay Nextcloud's: a token set is a reskin, so it carries the design system's COLOURS and leaves corner radii, border widths and table-header styling to Nextcloud. The theme's own values are kept in the file for NL Design System components.",
 		"font-not-bundled": "The theme's font is referenced but not installed. Upload it under Custom fonts or the next font in the stack is used.",
 		"contrast-separator-added": "A 1px header border was added because the theme's header and content are both the same colour.",

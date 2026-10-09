@@ -817,8 +817,78 @@ class TokenSetConverterService {
 		$declarations = [];
 		$this->collectStyleDictionaryLeaves(node: $decoded, path: [], slug: $slug, declarations: $declarations);
 
-		return $declarations;
+		return $this->resolveStyleDictionaryAliases(declarations: $declarations, slug: $slug);
 	}//end declarationsFromJson()
+
+	/**
+	 * The custom property a Style Dictionary leaf path becomes.
+	 *
+	 * The path is joined with hyphens under the brand prefix, or kept bare when it
+	 * already starts with a component vocabulary. Mirrors `styleDictionaryName()` in
+	 * js/lib/tokenConverter.js; only empty segments are dropped, so a `0` step survives.
+	 *
+	 * @param array<int, string> $path The leaf's key path.
+	 * @param string $slug The brand prefix.
+	 *
+	 * @return string|null The property name, or null for an empty path.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-accepted-conversion-inputs
+	 */
+	private function styleDictionaryName(array $path, string $slug): ?string {
+		$segments = array_map(
+			static fn (string $segment): string => strtolower((string)preg_replace('/[^A-Za-z0-9]+/', '-', $segment)),
+			$path
+		);
+		$joined = trim(implode('-', array_filter($segments, static fn (string $segment): bool => $segment !== '')), '-');
+		if ($joined === '') {
+			return null;
+		}
+
+		foreach (self::COMPONENT_PREFIXES as $prefix) {
+			$bare = trim($prefix, '-');
+			if (str_starts_with($joined, $bare . '-') === true) {
+				return '--' . $joined;
+			}
+		}
+
+		return '--' . $slug . '-' . $joined;
+	}//end styleDictionaryName()
+
+	/**
+	 * Turn every Style Dictionary alias into the `var()` of the leaf it names.
+	 *
+	 * `{color.brand.500}` becomes `var(--{slug}-color-brand-500)`, so the ordinary chain
+	 * resolution resolves it, and an alias to a leaf the document lacks is reported as
+	 * `unresolved-var` instead of being emitted as literal braces. Mirrors
+	 * `resolveStyleDictionaryAliases()` in js/lib/tokenConverter.js.
+	 *
+	 * @param array<string, string> $declarations The collected leaves.
+	 * @param string $slug The brand prefix.
+	 *
+	 * @return array<string, string> The leaves with aliases rewritten.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-accepted-conversion-inputs
+	 */
+	private function resolveStyleDictionaryAliases(array $declarations, string $slug): array {
+		$resolved = [];
+		foreach ($declarations as $name => $value) {
+			$resolved[$name] = (string)preg_replace_callback(
+				'/\{([^{}]+)\}/',
+				function (array $match) use ($slug): string {
+					$target = $this->styleDictionaryName(path: explode('.', trim($match[1])), slug: $slug);
+
+					if ($target === null) {
+						return $match[0];
+					}
+
+					return 'var(' . $target . ')';
+				},
+				$value
+			);
+		}
+
+		return $resolved;
+	}//end resolveStyleDictionaryAliases()
 
 	/**
 	 * Flatten a Style Dictionary tree into custom-property declarations.
@@ -837,7 +907,6 @@ class TokenSetConverterService {
 	 *
 	 * @return void
 	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - Style Dictionary leaves are recognised by shape, and each accepted shape is one branch.
 	 */
 	private function collectStyleDictionaryLeaves(mixed $node, array $path, string $slug, array &$declarations, int $depth = 0): void {
 		if (is_array($node) === false || $depth > 12) {
@@ -850,22 +919,9 @@ class TokenSetConverterService {
 				return;
 			}
 
-			$segments = array_map(
-				static fn (string $segment): string => strtolower((string)preg_replace('/[^A-Za-z0-9]+/', '-', $segment)),
-				$path
-			);
-			$joined = trim(implode('-', array_filter($segments)), '-');
-			if ($joined === '') {
+			$prefixed = $this->styleDictionaryName(path: $path, slug: $slug);
+			if ($prefixed === null) {
 				return;
-			}
-
-			$prefixed = '--' . $slug . '-' . $joined;
-			foreach (self::COMPONENT_PREFIXES as $prefix) {
-				$bare = trim($prefix, '-');
-				if (str_starts_with($joined, $bare . '-') === true) {
-					$prefixed = '--' . $joined;
-					break;
-				}
 			}
 
 			$declarations[$prefixed] = trim((string)$node['value']);
@@ -874,7 +930,9 @@ class TokenSetConverterService {
 		}
 
 		foreach ($node as $key => $child) {
-			if (is_string($key) === false || str_starts_with($key, '$') === true) {
+			// PHP turns a numeric key such as a palette step ("500") into an int; it is still a path segment.
+			$key = (string)$key;
+			if (str_starts_with($key, '$') === true) {
 				continue;
 			}
 
@@ -1301,6 +1359,25 @@ class TokenSetConverterService {
 				continue;
 			}
 
+			// A real semantic token: input D's hand-authored value, which add-only
+			// re-conversion must not overwrite. Checked before the role, because an
+			// app name such as `--nldesign-animation-quick` or
+			// `--nldesign-header-border-bottom` has a component-shaped role too, and
+			// moving it under the brand prefix changed a value the set had chosen.
+			if (str_starts_with($name, '--nldesign-') === true
+				&& (isset($this->vocabulary()[$name]) === true || isset($ruleTargets['targets'][$name]) === true)
+			) {
+				$semantic[$name] = $value;
+				$report[] = [
+					'source' => $name,
+					'target' => $name,
+					'action' => 'kept',
+					'reason' => 'kept-existing-value',
+					'value' => $value,
+				];
+				continue;
+			}
+
 			// Component or palette is decided by the ROLE, not the prefix: a
 			// theme using an unknown namespace still names the job in the name,
 			// and everything that is not one of the value scales is a component
@@ -1362,20 +1439,6 @@ class TokenSetConverterService {
 			}//end if
 
 			if (str_starts_with($name, '--nldesign-') === true) {
-				// A real semantic token: input D's hand-authored value, which
-				// add-only re-conversion must not overwrite.
-				if (isset($this->vocabulary()[$name]) === true || isset($ruleTargets['targets'][$name]) === true) {
-					$semantic[$name] = $value;
-					$report[] = [
-						'source' => $name,
-						'target' => $name,
-						'action' => 'kept',
-						'reason' => 'kept-existing-value',
-						'value' => $value,
-					];
-					continue;
-				}
-
 				// A raw upstream palette step dumped under the app's prefix,
 				// where it masquerades as app vocabulary while nothing can read
 				// it. Moved to the brand prefix, where the semantic layer can.
@@ -1465,27 +1528,25 @@ class TokenSetConverterService {
 	/**
 	 * The `--nldesign-*` names the app declares a default for or reads.
 	 *
-	 * Read from the two stylesheets that define the vocabulary, so this service
-	 * and `TokenSetVocabularyAuditService` agree on what "app vocabulary" means
-	 * without either hard-coding a list that can rot.
+	 * Read from every stylesheet under css/ except the token sets themselves and the two
+	 * runtime files an admin writes, which is exactly the walk `TokenSetVocabularyAuditService`
+	 * makes, so a name the audit counts as app vocabulary (`--nldesign-color-background`, read by
+	 * public-bridge.css and the contrast audit) is kept by a re-conversion instead of being moved
+	 * to the brand palette. Comments are stripped, as the audit strips them. Mirrors
+	 * `vocabularyStylesheets()` in scripts/lib/converter-context.mjs.
 	 *
 	 * @return array<string, bool> Name => true.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-re-conversion-never-overwrites-a-chosen-value
 	 */
 	private function vocabulary(): array {
 		if ($this->knownVocabulary !== null) {
 			return $this->knownVocabulary;
 		}
 
-		$appPath = $this->appManager->getAppPath('thematiq');
 		$names = [];
-
-		foreach (['/css/systems/nldesign/defaults.css', '/css/systems/nldesign/utrecht-bridge.css'] as $relative) {
-			$path = $appPath . $relative;
-			if (is_file($path) === false) {
-				continue;
-			}
-
-			$css = (string)file_get_contents($path);
+		foreach ($this->vocabularyFiles(directory: $this->appManager->getAppPath('thematiq') . '/css') as $path) {
+			$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)file_get_contents($path));
 			if (preg_match_all('/(--nldesign-[\w-]+)/', $css, $matches) > 0) {
 				foreach ($matches[1] as $name) {
 					$names[$name] = true;
@@ -1497,6 +1558,51 @@ class TokenSetConverterService {
 
 		return $this->knownVocabulary;
 	}//end vocabulary()
+
+	/**
+	 * Every stylesheet under a directory, skipping `tokens/` and the runtime files, sorted.
+	 *
+	 * @param string $directory The directory to walk.
+	 *
+	 * @return array<int, string> Absolute paths.
+	 */
+	private function vocabularyFiles(string $directory): array {
+		if (is_dir($directory) === false) {
+			return [];
+		}
+
+		$entries = scandir($directory);
+		if ($entries === false) {
+			return [];
+		}
+
+		$files = [];
+		foreach (array_diff($entries, ['.', '..', 'tokens']) as $entry) {
+			$path = $directory . '/' . $entry;
+			if (is_dir($path) === true) {
+				$files = array_merge($files, $this->vocabularyFiles(directory: $path));
+				continue;
+			}
+
+			if ($this->isVocabularyStylesheet(entry: $entry) === true) {
+				$files[] = $path;
+			}
+		}
+
+		return $files;
+	}//end vocabularyFiles()
+
+	/**
+	 * Whether a file name is a stylesheet the vocabulary is read from: any `.css` but the two runtime files.
+	 *
+	 * @param string $entry The file name.
+	 *
+	 * @return bool
+	 */
+	private function isVocabularyStylesheet(string $entry): bool {
+		return str_ends_with($entry, '.css') === true
+			&& in_array($entry, ['custom-overrides.css', 'custom-css.css'], true) === false;
+	}//end isVocabularyStylesheet()
 
 	/**
 	 * The ROLE of a token name: everything after its vendor prefix.
@@ -1697,28 +1803,11 @@ class TokenSetConverterService {
 			$sourceName = '';
 
 			$byRole = $this->indexByRole(declarations: $declarations);
-
-			foreach (($rule['sources'] ?? []) as $candidate) {
-				$concrete = $this->withSlug(name: (string)$candidate, slug: $slug);
-
-				if (array_key_exists($concrete, $declarations) === true) {
-					$value = $declarations[$concrete];
-					$sourceName = $concrete;
-					break;
-				}
-
-				// The table names its sources with the prefixes the reference
-				// design systems use, but the ROLE is what identifies the token.
-				// A theme that calls its primary action background
-				// `--brand-button-primary-action-background-color` still matches
-				// the `--utrecht-…` source, because the role is identical.
-				$role = $this->roleOf(name: $concrete);
-				if ($role !== '' && array_key_exists($role, $byRole) === true) {
-					$value = $byRole[$role];
-					$sourceName = $role . ' (by role)';
-					break;
-				}
-			}//end foreach
+			$declared = $this->firstDeclaredSource(rule: $rule, declarations: $declarations, byRole: $byRole, slug: $slug);
+			if ($declared !== null) {
+				$value = $declared['value'];
+				$sourceName = $declared['source'];
+			}
 
 			if ($value === null) {
 				$derived = $this->applyFallback(
@@ -1757,7 +1846,11 @@ class TokenSetConverterService {
 			];
 
 			if (isset($rule['guard']) === true) {
-				$guarded = $this->applyGuard(guard: $rule['guard'], value: $value, semantic: $semantic);
+				$guarded = $this->applyGuard(
+					guard: $rule['guard'],
+					value: $value,
+					semantic: $this->guardSemantic(guard: $rule['guard'], semantic: $semantic, declarations: $declarations, byRole: $byRole, slug: $slug)
+				);
 				if ($guarded['value'] !== $value) {
 					$entry['original'] = $value;
 					$entry['action'] = 'adapted';
@@ -1783,6 +1876,81 @@ class TokenSetConverterService {
 
 		return $semantic;
 	}//end runRules()
+
+	/**
+	 * The first of a rule's sources the input declares, by name or by role.
+	 *
+	 * The table names its sources with the prefixes the reference design systems use, but the
+	 * ROLE is what identifies the token: a theme that calls its primary action background
+	 * `--brand-button-primary-action-background-color` still matches the `--utrecht-…` source.
+	 * Mirrors `firstDeclaredSource()` in js/lib/tokenConverter.js.
+	 *
+	 * @param array<string, mixed> $rule The table rule.
+	 * @param array<string, string> $declarations The resolved input.
+	 * @param array<string, string> $byRole The input indexed by role.
+	 * @param string $slug The brand slug.
+	 *
+	 * @return array{value: string, source: string}|null The value and where it came from, or null.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
+	 */
+	private function firstDeclaredSource(array $rule, array $declarations, array $byRole, string $slug): ?array {
+		foreach (($rule['sources'] ?? []) as $candidate) {
+			$concrete = $this->withSlug(name: (string)$candidate, slug: $slug);
+
+			if (array_key_exists($concrete, $declarations) === true) {
+				return ['value' => $declarations[$concrete], 'source' => $concrete];
+			}
+
+			$role = $this->roleOf(name: $concrete);
+			if ($role !== '' && array_key_exists($role, $byRole) === true) {
+				return ['value' => $byRole[$role], 'source' => $role . ' (by role)'];
+			}
+		}
+
+		return null;
+	}//end firstDeclaredSource()
+
+	/**
+	 * The semantic layer a contrast guard measures against.
+	 *
+	 * Rules run in order, so the primary is guarded before its text colour has a rule of its
+	 * own. When the guard's partner is not resolved yet but the theme DECLARES it, that declared
+	 * value is what the pair will be, so the guard measures against it; a partner the theme does
+	 * not declare is derived from this value later (`onColor`) and passes by construction.
+	 * Mirrors `guardSemantic()` in js/lib/tokenConverter.js.
+	 *
+	 * @param array<string, mixed> $guard The rule's guard.
+	 * @param array<string, string> $semantic The semantic layer so far.
+	 * @param array<string, string> $declarations The resolved input.
+	 * @param array<string, string> $byRole The input indexed by role.
+	 * @param string $slug The brand slug.
+	 *
+	 * @return array<string, string> The semantic layer, with the partner filled in when the theme declares it.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
+	 */
+	private function guardSemantic(array $guard, array $semantic, array $declarations, array $byRole, string $slug): array {
+		$against = (string)($guard['against'] ?? '');
+		if (($guard['kind'] ?? '') !== 'contrast' || $against === '' || array_key_exists($against, $semantic) === true) {
+			return $semantic;
+		}
+
+		foreach ($this->table()['rules'] as $partner) {
+			if (($partner['target'] ?? '') !== $against) {
+				continue;
+			}
+
+			$declared = $this->firstDeclaredSource(rule: $partner, declarations: $declarations, byRole: $byRole, slug: $slug);
+			if ($declared !== null) {
+				$semantic[$against] = $declared['value'];
+			}
+
+			break;
+		}
+
+		return $semantic;
+	}//end guardSemantic()
 
 	/**
 	 * Evaluate a rule's `when` condition.

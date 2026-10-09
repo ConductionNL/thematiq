@@ -536,4 +536,95 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		);
 		$this->assertNotEmpty($derived);
 	}//end testAHandAuthoredUploadIsStoredBackfilledButNeverOverwritten()
+	/**
+	 * Submit pasted content instead of a file.
+	 *
+	 * @param string $content The pasted text.
+	 * @param string $name The set name.
+	 * @param string $sourceName The provenance label.
+	 *
+	 * @return mixed The response.
+	 */
+	private function paste(string $content, string $name = 'Gemeente Voorbeeld', string $sourceName = '') {
+		$params = ['name' => $name, 'content' => $content, 'sourceName' => $sourceName];
+		$this->request->method('getParam')->willReturnCallback(
+			fn (string $key, $default = null) => ($params[$key] ?? $default)
+		);
+		$this->request->method('getUploadedFile')->willReturn(null);
+
+		return $this->controller->upload();
+	}//end paste()
+
+	/**
+	 * Pasting a theme stores exactly what uploading the same bytes as a file stores.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
+	 *
+	 * @return void
+	 */
+	public function testAPasteStoresWhatTheSameFileStores(): void {
+		$theme = '.openwoo-theme { --utrecht-button-primary-action-background-color: #23845c; --utrecht-page-max-inline-size: 1200px; }';
+
+		$this->assertSame(200, $this->upload($theme, 'OpenWOO', 'design-tokens.css')->getStatus());
+		$uploaded = (string)$this->service->getRawContent(id: 'custom-openwoo');
+
+		// A clean instance: same bytes, other way in.
+		$this->tearDown();
+		$this->appConfig = [];
+		$this->setUp();
+
+		$response = $this->paste($theme, 'OpenWOO', 'design-tokens.css');
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame($uploaded, (string)$this->service->getRawContent(id: 'custom-openwoo'));
+		$this->assertSame('A', $response->getData()['inputKind']);
+		$this->assertArrayHasKey('layout-fixed-by-nextcloud', $response->getData()['reasons']);
+	}//end testAPasteStoresWhatTheSameFileStores()
+
+	/**
+	 * No file and an empty paste is a 400 that stores nothing.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
+	 *
+	 * @return void
+	 */
+	public function testAnEmptyPasteIsRefusedAndStoresNothing(): void {
+		$response = $this->paste("  \n ");
+
+		$this->assertSame(400, $response->getStatus());
+		$this->assertStringContainsString('paste', $response->getData()['error']);
+		$this->assertSame([], $this->writtenFiles());
+	}//end testAnEmptyPasteIsRefusedAndStoresNothing()
+
+	/**
+	 * A paste over the validator's size limit is refused like an oversized file.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
+	 *
+	 * @return void
+	 */
+	public function testAnOversizedPasteIsRefused(): void {
+		$response = $this->paste(':root { --nldesign-color-primary: #154273; }' . str_repeat(' ', CustomTokenSetValidator::MAX_SIZE));
+
+		$this->assertSame(413, $response->getStatus());
+		$this->assertSame([], $this->writtenFiles());
+	}//end testAnOversizedPasteIsRefused()
+
+	/**
+	 * A file named tokens.json whose content is CSS is converted as CSS.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md#requirement-theme-sources-are-accepted-not-only-token-sets
+	 *
+	 * @return void
+	 */
+	public function testAFileIsReadByItsContentNotItsExtension(): void {
+		$response = $this->upload(
+			'.openwoo-theme { --utrecht-button-primary-action-background-color: #23845c; }',
+			'OpenWOO',
+			'tokens.json'
+		);
+
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame('A', $response->getData()['inputKind']);
+		$this->assertStringContainsString('--nldesign-color-primary: #23845c', $this->liveCssOf('custom-openwoo'));
+	}//end testAFileIsReadByItsContentNotItsExtension()
 }//end class
