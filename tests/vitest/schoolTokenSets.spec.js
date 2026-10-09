@@ -664,6 +664,18 @@ describe('the resident menu as the MijnMenu boards draw it', () => {
 		})
 	}
 
+	it('writes the academy date tile month in bold capitals, and only the academy', () => {
+		const academy = rootTokens(read('css/tokens/warmtepompacademie.css'))
+		expect(academy['--nldesign-website-date-tile-month-text-transform']).toBe('uppercase')
+		expect(academy['--nldesign-website-date-tile-month-font-weight']).toBe('700')
+		for (const id of ['wilgenboom', 'vaartveld', 'esdoornveen']) {
+			expect(
+				rootTokens(read('css/tokens/' + id + '.css'))['--nldesign-website-date-tile-month-text-transform'],
+				id,
+			).toBeUndefined()
+		}
+	})
+
 	it('leaves Zuiddrecht on the site theme defaults', () => {
 		const tokens = rootTokens(read('css/tokens/zuiddrecht.css'))
 		expect(tokens['--nldesign-website-menu-item-min-block-size']).toBeUndefined()

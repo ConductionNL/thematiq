@@ -198,6 +198,9 @@
 	--nldesign-website-menu-item-min-block-size: 48px;
 	--nldesign-website-menu-current-bar-width: 0;
 	--nldesign-website-menu-current-color: var(--nldesign-color-accent-text);
+	/* The date tile's month in bold capitals, "OKT", as the board writes it. */
+	--nldesign-website-date-tile-month-font-weight: 700;
+	--nldesign-website-date-tile-month-text-transform: uppercase;
 	/* The footer band: the primary's deep step, white text on it. */
 	--nldesign-color-footer-background: #084F58;
 	--nldesign-color-footer-text: #ffffff;

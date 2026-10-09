@@ -15,6 +15,10 @@ The four school sets name, in their website section:
 - `--nldesign-website-menu-current-bar-width`: 0;
 - `--nldesign-website-menu-current-color`: the accent's text colour, Wilgenboom the text colour.
 
+The academy also names `--nldesign-website-date-tile-month-font-weight: 700` and
+`--nldesign-website-date-tile-month-text-transform: uppercase`: its boards write the date tile's month as
+"OKT" (portaliq `mijn-lists-follow-the-boards`, PR #1429).
+
 ## Impact
 
 Read only by portaliq's site theme. Zuiddrecht and every other set keep the defaults. No colour value is
