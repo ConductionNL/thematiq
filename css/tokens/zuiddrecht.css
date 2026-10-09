@@ -161,6 +161,10 @@
 	 * corner of the login page while the workplace layout is light. */
 	--nldesign-login-watermark-image: url('../../img/logos/zuiddrecht-emblem-grey.svg');
 
+	/* The login card's shadow is 6% ink on the NcLogin board (the dashboard
+	 * cards keep 4%). */
+	--nldesign-login-card-shadow-color: rgba(27, 28, 29, 0.06);
+
 	/* The brand stripe, "de drie banen": red, blue, red in the ratio 6 : 3 : 1,
 	 * 5px high. Drawn under the header while the brand stripe option is on. */
 	--nldesign-brand-stripe-color-1: #CC0000;

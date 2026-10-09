@@ -69,11 +69,18 @@
 body#body-login::before {
 	content: '';
 	position: fixed;
-	inset-inline-end: -4vmin;
-	bottom: -6vmin;
+	/* NcLogin: 720px high, 90px past the right edge, 120px past the bottom,
+	 * on a 1440 by 900 window; a smaller window scales it by its short side. */
+	--thematiq-watermark-height: var(
+		--nldesign-login-watermark-height,
+		min(720px, 80vmin)
+	);
+
+	inset-inline-end: calc(var(--thematiq-watermark-height) * -0.125);
+	bottom: calc(var(--thematiq-watermark-height) * -0.1667);
 	z-index: 0;
-	width: 62vmin;
-	height: 78vmin;
+	width: calc(var(--thematiq-watermark-height) * 0.795);
+	height: var(--thematiq-watermark-height);
 	pointer-events: none;
 	background-image: var(--nldesign-login-watermark-image, none);
 	background-repeat: no-repeat;
@@ -152,7 +159,10 @@ body#body-login .guest-box.login-box {
 		var(--border-radius-container-large)
 	) !important;
 	box-shadow: 0 2px 12px
-		var(--nldesign-component-content-card-shadow-color, transparent) !important;
+		var(
+			--nldesign-login-card-shadow-color,
+			var(--nldesign-component-content-card-shadow-color, transparent)
+		) !important;
 }
 
 body#body-login .guest-box h2,
