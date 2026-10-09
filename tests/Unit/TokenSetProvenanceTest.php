@@ -18,7 +18,7 @@
  *
  * No Nextcloud runtime required: pure filesystem work over `css/tokens/`.
  *
- * @spec openspec/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+ * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
  */
 
 declare(strict_types=1);
@@ -106,7 +106,7 @@ class TokenSetProvenanceTest extends TestCase {
 	 * Every set the converter wrote names its input, source, converter
 	 * version, mapping table hash and counts.
 	 *
-	 * @spec openspec/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
 	 */
 	public function testEveryConvertedSetCarriesACompleteProvenanceBlock(): void {
 		$converted = $this->convertedSetIds();
@@ -134,7 +134,7 @@ class TokenSetProvenanceTest extends TestCase {
 	 * A set built from a brand file names its generator and carries no
 	 * converter provenance, so the sync treats it as not its own.
 	 *
-	 * @spec openspec/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
 	 */
 	public function testBrandFileSetsNameTheirGeneratorNotTheConverter(): void {
 		$this->assertFileExists($this->repoRoot() . '/scripts/generate-brand-set.mjs', 'The brand-file entry point must stay.');
@@ -159,7 +159,7 @@ class TokenSetProvenanceTest extends TestCase {
 	 * Summer Breeze keeps its own vocabulary: no `--nldesign-*` layer, no
 	 * converter provenance.
 	 *
-	 * @spec openspec/specs/token-sets/spec.md#requirement-summer-breeze-keeps-its-own-vocabulary
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-summer-breeze-keeps-its-own-vocabulary
 	 */
 	public function testSummerBreezeDeclaresNoNldesignLayer(): void {
 		$css = ($this->shippedSets()['summer-breeze'] ?? null);

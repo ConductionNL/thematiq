@@ -247,6 +247,20 @@ function ratio(a, b) {
 }
 
 /**
+ * Nextcloud core variables no thematiq stylesheet declares, so the walk over
+ * the bundle cannot see them. The navigation scope re-scopes
+ * `--color-main-background-blur` (the legacy column's surface) and falls back
+ * to core's own value; core declares it on `:root`. Its value plays no part in
+ * the label contrast measured here, so the page colour stands in.
+ *
+ * @param {object} env The environment.
+ * @return {Record<string, string>} Core's declarations.
+ */
+function CORE_ONLY(env) {
+	return { '--color-main-background-blur': env.page }
+}
+
+/**
  * The stylesheets a set loads, in order (CssInjectionService::layers).
  *
  * @param {object} set The token-sets.json entry.
@@ -329,7 +343,10 @@ function entryVars(files, env, vars) {
  */
 function failures(set, env) {
 	const files = bundle(set)
-	const vars = cascade(files, env, (s) => reachesBody(s, env))
+	const vars = {
+		...CORE_ONLY(env),
+		...cascade(files, env, (s) => reachesBody(s, env)),
+	}
 	const entry = entryVars(files, env, vars)
 	// The label reads `--nldesign-color-on-surface` where nldesign sets it,
 	// else Nextcloud's `--color-main-text`.
@@ -382,7 +399,10 @@ describe('the selected navigation entry label (thematiq#1051)', () => {
 		expect(set).toBeDefined()
 		const files = bundle(set)
 		const env = ENVIRONMENTS.light
-		const vars = cascade(files, env, (s) => reachesBody(s, env))
+		const vars = {
+			...CORE_ONLY(env),
+			...cascade(files, env, (s) => reachesBody(s, env)),
+		}
 		const entry = entryVars(files, env, vars)
 		expect(
 			resolve(entry['--nldesign-color-on-surface'], entry).toLowerCase(),
