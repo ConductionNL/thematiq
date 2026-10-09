@@ -85,3 +85,33 @@ MUST map them onto the logo roles and `--thematiq-logo-text-font-size`, and MUST
 - GIVEN a school set
 - WHEN the logo roles are resolved
 - THEN the header logo MUST be 50px high and `--thematiq-logo-text-font-size` MUST be 0
+
+### Requirement: A set may draw an info melding without a line
+
+The public bridge MUST carry `--nldesign-website-alert-info-border-width` into
+`--utrecht-alert-info-border-width`. When a set does not name it, the info border width MUST equal
+the width every melding has.
+
+#### Scenario: A school set
+@e2e exclude Token resolution checked in vitest: tests/vitest/publicBridgeRoleLayer.spec.js
+- GIVEN the wilgenboom set, which names `--nldesign-website-alert-info-border-width: 0`
+- WHEN a portal renders an info melding
+- THEN it has no line, and a warning melding keeps its line
+
+#### Scenario: A set names nothing
+@e2e exclude Token resolution checked in vitest: tests/vitest/publicBridgeRoleLayer.spec.js
+- GIVEN the zuiddrecht set
+- WHEN a portal renders an info melding
+- THEN its line is 1px, as every melding on that set
+
+### Requirement: The school sets name what their boards draw
+
+The wilgenboom, vaartveld and esdoornveen sets MUST name the attention strip's background and
+border from their boards, and every school set a 1px notice line. The esdoornveen and academy sets
+MUST name a semibold hero search label, and the esdoornveen set the hero photo's clip path.
+
+#### Scenario: Wilgenboom's "Let op"
+@e2e exclude Token resolution in vitest: tests/vitest/publicBridgeRoleLayer.spec.js; measured on :8092
+- GIVEN the wilgenboom set
+- WHEN the home page renders its notice strip
+- THEN it is `#FDF3D7` with a 1px `#ECD391` line under it
