@@ -2573,6 +2573,10 @@
 		var row = original.cloneNode(true)
 		row.classList.add('nldesign-pg-row')
 		row.removeAttribute('data-token-row')
+		// The token stays named on the clone, under another attribute: the
+		// original keeps `data-token-row` to itself (markDirty finds rows by
+		// it), but admin.js's lock refresh needs the name to lock this row too.
+		row.setAttribute('data-pg-token', spec.name)
 
 		var labelWrap = row.querySelector('.nldesign-token-label-wrap')
 		if (labelWrap !== null) {

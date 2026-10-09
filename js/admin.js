@@ -2736,8 +2736,16 @@
 			container
 				.querySelectorAll('.nldesign-token-row')
 				.forEach(function (row) {
-					var locked = isTokenLocked(row.dataset.tokenRow)
-					var reason = lockReason(row.dataset.tokenRow)
+					// A playground clone names its token in `data-pg-token`. A
+					// row naming no token (a fact with no token, a missing
+					// one) is left as it is: asking for `undefined` answered
+					// "not locked" and unlocked the clones (live check, 9 Oct).
+					var name = row.dataset.tokenRow || row.dataset.pgToken
+					if (name === undefined) {
+						return
+					}
+					var locked = isTokenLocked(name)
+					var reason = lockReason(name)
 					row.classList.toggle('nldesign-token-row--locked', locked)
 					// Every control, not only inputs: easing and duration units are selects (#936).
 					row.querySelectorAll('input, select').forEach(function (input) {
