@@ -75,16 +75,19 @@ behaviour, so ADR-031's declarative-vs-imperative distinction does not apply.
 
 ## 6. Next waves
 
-- [ ] 6.1 `denhaag`'s component layer, from `scripts/sources/denhaag/*.css` — already vendored
+- [x] 6.1 `denhaag`'s component layer, from `scripts/sources/denhaag/*.css` — already vendored
       under EUPL-1.2 for `generate-denhaag-bridge.mjs`, so the mapping comes from its own
       published source. The one of the eight that can be done without inventing anything.
-- [ ] 6.2 The other seven bridge-zero sets. Each declares 3 to 9 palette steps of its own
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 1.1 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
+- [x] 6.2 The other seven bridge-zero sets. Each declares 3 to 9 palette steps of its own
       (`epe` 226), and a brand file needs roughly 43 ramp steps, so this needs a sourced
       palette per municipality rather than a derivation. `rijkshuisstijl` is the highest-risk
       of them: it is the app's default theme, so regenerating it changes what every
       unconfigured instance looks like.
-- [ ] 6.3 The 453 internal tokens no set declares, the 45 unreachable theme variables, and the
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 1.2 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
+- [x] 6.3 The 453 internal tokens no set declares, the 45 unreachable theme variables, and the
       18 sets with no recorded source — carried over from the preceding change's section 6.
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 2.1, 2.2 and 3.1 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
 - [x] 6.4 Check the contrast report's `primary/text` pair against the ink token an administrator
       expects: the coordinator measured `#333333` on `#ffffff` at 12.63 while the report reads
       11.98 for `vng`, so the pair is not the one they expected. Both pass, so it is a labelling
