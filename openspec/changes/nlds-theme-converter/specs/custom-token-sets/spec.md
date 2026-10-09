@@ -21,6 +21,7 @@ to a token set before validation and storage. It MUST NOT require the admin to p
 - AND the response MUST confirm the set was added and is selectable
 
 #### Scenario: A file whose content contradicts its extension is handled by content
+@e2e exclude Server-side detection by content: PHPUnit CustomTokenSetUploadWritesTest and TokenSetConverterServiceTest
 - GIVEN a file named `tokens.json` whose content is CSS
 - WHEN the upload is submitted
 - THEN the input MUST be detected as CSS from the content
@@ -46,6 +47,7 @@ identical for both paths.
 - AND no set MUST be created
 
 #### Scenario: Pasted content over the size limit is refused
+@e2e exclude Size limit enforced server-side: PHPUnit CustomTokenSetControllerTest
 - GIVEN pasted content larger than `CustomTokenSetValidator::MAX_SIZE`
 - WHEN Convert is submitted
 - THEN the response MUST refuse it with the same 512 KB limit the file path enforces
@@ -74,16 +76,19 @@ asked for that Nextcloud will not do.
 `utrecht-bridge.css` and Conduction's own apps read. The value rules MUST NOT be relaxed.
 
 #### Scenario: A component-prefix declaration is stored
+@e2e exclude Validator rule: PHPUnit CustomTokenSetValidatorTest::testTheConvertersComponentPrefixesAreAccepted
 - GIVEN a converted set declaring `--utrecht-button-border-radius: 3px`
 - WHEN it is validated
 - THEN the declaration MUST be accepted and stored
 
 #### Scenario: The value gate is unchanged for the widened vocabulary
+@e2e exclude Validator rule: PHPUnit CustomTokenSetValidatorTest::testAComponentPrefixDoesNotLoosenTheValueGate
 - GIVEN a declaration `--utrecht-button-border-radius: 3px; background: url(x)`
 - WHEN it is validated
 - THEN it MUST be rejected by `isForbiddenValue()` exactly as a `--nldesign-*` declaration would be
 
 #### Scenario: An external url() never reaches the validator
+@e2e exclude Security path: PHPUnit TokenSetConverterServiceTest::testAnExternalUrlIsDroppedBeforeTheValidator
 - GIVEN a theme declaring a logo token pointing at a remote host
 - WHEN it is converted and validated
 - THEN the converter MUST have dropped the declaration with reason `external-url-blocked`

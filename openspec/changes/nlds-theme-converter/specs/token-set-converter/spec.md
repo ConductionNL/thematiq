@@ -41,6 +41,7 @@ properties, (B) a W3C DTCG document, (C) a Style Dictionary `tokens.json` tree, 
 - AND the conversion MUST run in add-only mode
 
 #### Scenario: Unrecognised content is refused
+@e2e exclude Pure conversion: vitest tokenConverter.spec.js and PHPUnit TokenSetConverterServiceTest::testUnrecognisedContentIsRefused
 - GIVEN pasted content that is neither parseable JSON nor contains a selector block with custom
   properties
 - WHEN the conversion is requested
