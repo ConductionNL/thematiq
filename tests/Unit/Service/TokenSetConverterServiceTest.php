@@ -72,7 +72,7 @@ class TokenSetConverterServiceTest extends TestCase {
 	 *
 	 * @return array<string, mixed> The result plus `decl`, the emitted declarations.
 	 */
-	private function convert(string $content, string $slug='demo'): array {
+	private function convert(string $content, string $slug = 'demo'): array {
 		$result = $this->converter->convert(content: $content, slug: $slug, displayName: 'Demo');
 		$css = (string)preg_replace('#/\*.*?\*/#s', '', $result['css']);
 		preg_match_all('/(--[\w-]+)\s*:\s*([^;]+);/', $css, $matches, PREG_SET_ORDER);

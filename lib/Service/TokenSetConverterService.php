@@ -1577,24 +1577,32 @@ class TokenSetConverterService {
 		}
 
 		$files = [];
-		foreach ($entries as $entry) {
+		foreach (array_diff($entries, ['.', '..', 'tokens']) as $entry) {
 			$path = $directory . '/' . $entry;
-			if ($entry === '.' || $entry === '..' || $entry === 'tokens') {
-				continue;
-			}
-
 			if (is_dir($path) === true) {
 				$files = array_merge($files, $this->vocabularyFiles(directory: $path));
 				continue;
 			}
 
-			if (str_ends_with($entry, '.css') === true && in_array($entry, ['custom-overrides.css', 'custom-css.css'], true) === false) {
+			if ($this->isVocabularyStylesheet(entry: $entry) === true) {
 				$files[] = $path;
 			}
 		}
 
 		return $files;
 	}//end vocabularyFiles()
+
+	/**
+	 * Whether a file name is a stylesheet the vocabulary is read from: any `.css` but the two runtime files.
+	 *
+	 * @param string $entry The file name.
+	 *
+	 * @return bool
+	 */
+	private function isVocabularyStylesheet(string $entry): bool {
+		return str_ends_with($entry, '.css') === true
+			&& in_array($entry, ['custom-overrides.css', 'custom-css.css'], true) === false;
+	}//end isVocabularyStylesheet()
 
 	/**
 	 * The ROLE of a token name: everything after its vendor prefix.

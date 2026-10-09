@@ -545,7 +545,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @return mixed The response.
 	 */
-	private function paste(string $content, string $name='Gemeente Voorbeeld', string $sourceName='') {
+	private function paste(string $content, string $name = 'Gemeente Voorbeeld', string $sourceName = '') {
 		$params = ['name' => $name, 'content' => $content, 'sourceName' => $sourceName];
 		$this->request->method('getParam')->willReturnCallback(
 			fn (string $key, $default = null) => ($params[$key] ?? $default)
