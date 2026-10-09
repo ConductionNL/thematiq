@@ -126,6 +126,18 @@
 	--nldesign-border-radius-rounded: 28px;
 	--nldesign-border-radius-pill: 100px;
 
+	/* The website's type, as the boards draw it (school-sets-type-scale):
+	 * a 48px page title on the content, article, search and sign-in pages
+	 * and over the own area, 17px text and a 21px lead. Only
+	 * css/public-bridge.css reads these, on a public portal. */
+	--nldesign-website-heading-1-font-size: 48px;
+	--nldesign-website-page-title-size: 3rem;
+	--nldesign-website-content-font-size: 17px;
+	--nldesign-website-lead-font-size: 21px;
+	/* The month under a date tile in capitals ("OKT"), as the academy's
+	 * home and course boards draw it. */
+	--nldesign-website-date-month-text-transform: uppercase;
+
 	/* The website's own corners: 3px for buttons and fields, 6px for cards.
 	 * Only css/public-bridge.css reads these, on a public portal. */
 	--nldesign-website-border-radius: 3px;
