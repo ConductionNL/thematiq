@@ -2,7 +2,7 @@
 
 # Gemeente Zuiddrecht
 
-Token set `zuiddrecht`: 122 declared by this set, 129 from the defaults layer.
+Token set `zuiddrecht`: 123 declared by this set, 129 from the defaults layer.
 
 Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 
@@ -293,6 +293,7 @@ Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 | `--nldesign-hero-body-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231B1C1D%22%2F%3E%3C%2Fsvg%3E) `#1B1C1D` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | this set | |
 | `--nldesign-hero-decoration-image` | `var(--nldesign-emblem-grey-url, var(--nldesign-emblem-url))` | | this set | |
 | `--nldesign-hero-title-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231B1C1D%22%2F%3E%3C%2Fsvg%3E) `#1B1C1D` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | this set | |
+| `--nldesign-login-card-shadow-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%2827%2C%2028%2C%2029%2C%200.06%29%22%2F%3E%3C%2Fsvg%3E) `rgba(27, 28, 29, 0.06)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d2d3d40f%22%2F%3E%3C%2Fsvg%3E) `#d2d3d40f` | this set | |
 | `--nldesign-login-watermark-image` | `url('../../img/logos/zuiddrecht-emblem-grey.svg')` | | this set | |
 | `--nldesign-logo-url` | `url('../../img/logos/zuiddrecht.svg')` | `url('../../../img/logos/zuiddrecht-dark.svg')` | this set | |
 | `--nldesign-website-attention-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23FFF4DE%22%2F%3E%3C%2Fsvg%3E) `#FFF4DE` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23412d03%22%2F%3E%3C%2Fsvg%3E) `#412d03` | this set | |
