@@ -19,9 +19,12 @@
  *   --slug             Token set id and brand prefix. Required.
  *   --name             Display name for the manifest entry. Defaults to the slug.
  *   --source           Provenance label. Defaults to the input's file name.
- *   --write            Write css/tokens/<slug>.css, img/logos/<slug>.<ext> when
- *                      the theme carries its logo inline, and update
- *                      token-sets.json. Without it nothing is touched and the
+ *   --write            Write css/tokens/<slug>.css, css/tokens/<slug>.report.json,
+ *                      img/logos/<slug>.<ext> when the theme carries its logo
+ *                      inline, update token-sets.json, and regenerate the set's
+ *                      dark variant (`php scripts/generate-dark-variants.php
+ *                      --force --only <slug>`; skipped with a note when PHP is
+ *                      not installed). Without it nothing is touched and the
  *                      report is printed.
  *   --report <path>    Also write the full report as JSON.
  *   --quiet            Only print the summary line.
@@ -32,6 +35,7 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
 import { dirname, join, basename, resolve } from 'node:path'
 
 import { converter, loadConverterContext, repoRoot } from './lib/converter-context.mjs'
@@ -151,13 +155,21 @@ function printReport(report) {
  * @param {string} css The emitted CSS.
  * @param {Object} manifestEntry The manifest entry.
  * @param {Object|null} logoAsset The decoded logo, when the theme carried one inline.
+ * @param {Array<Object>} report The conversion report.
  * @return {Array<string>} The paths written.
  */
-function writeOutputs(slug, css, manifestEntry, logoAsset) {
+function writeOutputs(slug, css, manifestEntry, logoAsset, report) {
 	const written = []
 	const cssPath = join(repoRoot, 'css/tokens', `${slug}.css`)
 	writeFileSync(cssPath, css, 'utf8')
 	written.push(cssPath)
+
+	// The report next to the set (design decision 11): committed for a shipped
+	// set, so a later reader sees what the theme asked for and what was refused
+	// without re-running the conversion.
+	const reportPath = join(repoRoot, 'css/tokens', `${slug}.report.json`)
+	writeFileSync(reportPath, `${JSON.stringify(report, null, '\t')}\n`, 'utf8')
+	written.push(reportPath)
 
 	// The logo the converter lifted out of the theme. Written before the
 	// manifest entry that names it, because theming sync validates the file
@@ -257,15 +269,36 @@ function main() {
 		return
 	}
 
-	const written = writeOutputs(options.slug, result.css, result.manifestEntry, result.logoAsset)
+	const written = writeOutputs(options.slug, result.css, result.manifestEntry, result.logoAsset, result.report)
 	for (const path of written) {
 		console.log(`[${LABEL}] wrote ${path}`)
 	}
 
-	console.log(
-		`[${LABEL}] dark variant NOT regenerated — run`
-		+ ' `php scripts/generate-dark-variants.php --force` (needs PHP).'
-	)
+	process.exitCode = regenerateDarkVariant(options.slug)
+}
+
+/**
+ * Regenerate the dark variant of the set just written, and only that one.
+ *
+ * @param {string} slug The set slug.
+ * @return {number} 0 when written or when PHP is absent (with a note), 1 when the generator failed.
+ */
+function regenerateDarkVariant(slug) {
+	const run = spawnSync('php', [join(repoRoot, 'scripts/generate-dark-variants.php'), '--force', '--only', slug], { encoding: 'utf8' })
+
+	if (run.error !== undefined && run.error.code === 'ENOENT') {
+		console.log(
+			`[${LABEL}] dark variant NOT regenerated: no php on PATH. Run`
+			+ ` \`php scripts/generate-dark-variants.php --force --only ${slug}\`.`
+		)
+
+		return 0
+	}
+
+	process.stdout.write(run.stdout || '')
+	process.stderr.write(run.stderr || '')
+
+	return run.status === 0 ? 0 : 1
 }
 
 main()
