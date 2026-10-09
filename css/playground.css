@@ -1264,7 +1264,11 @@
    `!important`) paints every span outside `#header` instead; three ids and
    `!important` are what it takes to outrank that (live check, 9 Oct 2026). Unset, it keeps
    the plate's own dark initials. */
-#body-settings #nldesign-settings #nldesign-preview .nldesign-pg-ground--header .nldesign-pg-avatar {
+#body-settings
+	#nldesign-settings
+	#nldesign-preview
+	.nldesign-pg-ground--header
+	.nldesign-pg-avatar {
 	color: var(
 		--nldesign-component-avatar-initials-color,
 		var(--color-main-text)

@@ -490,12 +490,24 @@ describe('component tokens: every rule that paints the navigation column reads i
 					m[1]
 						.split(',')
 						.map((s) => s.trim())
-						.some((s) => ['#app-navigation', '.app-navigation', '#app-navigation-vue'].includes(s)),
+						.some((s) =>
+							[
+								'#app-navigation',
+								'.app-navigation',
+								'#app-navigation-vue',
+							].includes(s),
+						),
 				)
 				.flatMap((m) =>
-					[...m[2].matchAll(/(background(?:-color)?)\s*:\s*([^;]+!important)/g)].map(
-						(d) => ({ file, property: d[1], value: d[2].replace(/\s+/g, ' ') }),
-					),
+					[
+						...m[2].matchAll(
+							/(background(?:-color)?)\s*:\s*([^;]+!important)/g,
+						),
+					].map((d) => ({
+						file,
+						property: d[1],
+						value: d[2].replace(/\s+/g, ' '),
+					})),
 				)
 		})
 
@@ -520,13 +532,16 @@ describe('component tokens: the avatar specimen reads the initials row', () => {
 		const css = fs
 			.readFileSync(path.join(ROOT, 'css/playground.css'), 'utf8')
 			.replace(/\/\*[\s\S]*?\*\//g, '')
+			.replace(/\s+/g, ' ')
 		const rule = css.match(
 			/#body-settings #nldesign-settings #nldesign-preview \.nldesign-pg-ground--header \.nldesign-pg-avatar\s*\{([^}]*)\}/,
 		)
 
 		expect(rule).not.toBeNull()
 		const body = rule[1].replace(/\s+/g, ' ')
-		expect(body).toContain('color: var( --nldesign-component-avatar-initials-color,')
+		expect(body).toContain(
+			'color: var( --nldesign-component-avatar-initials-color,',
+		)
 		// element-overrides.css paints every span outside #header with two ids, six classes
 		// and !important; anything less loses to it.
 		expect(body).toContain('!important')

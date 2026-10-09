@@ -21,15 +21,15 @@ const ROOT = path.resolve(__dirname, '../..')
 
 /** Every .php file under templates/, relative to the repository root. */
 function templates(dir = 'templates') {
-	return fs.readdirSync(path.join(ROOT, dir), { withFileTypes: true }).flatMap(
-		(entry) => {
+	return fs
+		.readdirSync(path.join(ROOT, dir), { withFileTypes: true })
+		.flatMap((entry) => {
 			const rel = path.join(dir, entry.name)
 			if (entry.isDirectory()) {
 				return templates(rel)
 			}
 			return entry.name.endsWith('.php') ? [rel] : []
-		},
-	)
+		})
 }
 
 /**
@@ -64,7 +64,9 @@ function strayMarkers(source) {
 
 describe('template comments', () => {
 	it('finds the templates', () => {
-		expect(templates()).toContain(path.join('templates', 'settings', 'admin.php'))
+		expect(templates()).toContain(
+			path.join('templates', 'settings', 'admin.php'),
+		)
 	})
 
 	it.each(templates())('%s opens every comment it closes', (file) => {
