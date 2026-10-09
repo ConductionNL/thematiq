@@ -182,7 +182,8 @@ even for the code that is in.
 - [ ] 9.2 `npm run test:unit` (vitest) and the full `phpunit` suite green, in particular
       `TokenSetVocabularyTest`, `TokenCssShapeTest`, `TokenSetContrastAuditTest` and the two new
       converter tests.
-- [ ] 9.3 `composer check:strict` (PHPCS, PHPMD, Psalm, PHPStan) over the new/changed PHP files.
+- [x] 9.3 `composer check:strict` (PHPCS, PHPMD, Psalm, PHPStan) over the new/changed PHP files.
+      Done 2026-10-09 (build/openspecs-1): checkpoint run: psalm, phpstan and phpcs (lib) clean; phpmd clean on the touched classes; php-cs-fixer red only on three files this branch did not touch (inherited); the PHPUnit failures that remain (13 errors, 12 failures, all needing a Nextcloud server tree or the stale token reference page) are the same on origin/development.
 - [x] 9.4 `npm run audit:token-sets:check` green against the emptied allow-list.
       Done 2026-10-09: exit 0, 0 of 61 sets fail contrast, allow-list empty.
 - [x] 9.5 Playwright spec-coverage for the paste path and the report block.

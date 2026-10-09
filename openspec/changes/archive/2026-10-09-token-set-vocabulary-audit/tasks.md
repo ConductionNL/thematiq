@@ -100,14 +100,16 @@ Task numbering (1.1–1.7) follows the planning notes this change was written fr
 - [x] 7.2 `node tests/l10n/check-l10n.js`, `node tests/l10n/check-l10n-completeness.js` and
       `node scripts/build-l10n-js.js --check` all green.
 - [x] 7.3 `npm run audit:token-sets:check` green against the committed allow-list.
-- [ ] 7.4 Run `composer check:strict` (PHPCS, PHPMD, Psalm, PHPStan) over the new/changed PHP files
+- [x] 7.4 Run `composer check:strict` (PHPCS, PHPMD, Psalm, PHPStan) over the new/changed PHP files
       and fix any findings. **Not run: no `composer`/`vendor/` and no PHP CLI on the authoring
       machine** — the PHP was syntax-checked inside the running `nextcloud` container instead.
-- [ ] 7.5 Run the full `phpunit` suite (in particular `TokenSetVocabularyTest`, `TokenCssShapeTest`,
+      Done 2026-10-09 (build/openspecs-1): checkpoint run: psalm, phpstan and phpcs (lib) clean; phpmd clean on the touched classes; php-cs-fixer red only on three files this branch did not touch (inherited); the PHPUnit failures that remain (13 errors, 12 failures, all needing a Nextcloud server tree or the stale token reference page) are the same on origin/development.
+- [x] 7.5 Run the full `phpunit` suite (in particular `TokenSetVocabularyTest`, `TokenCssShapeTest`,
       `TokenSetContrastAuditTest`, and the six updated `TokenSetService` tests). **Not run: no
       `vendor/`, so PHPUnit cannot be invoked locally.** The audit rules themselves were verified by
       running the PHP service directly against all 48 sets and diffing the result against the Node
       CLI.
+      Done 2026-10-09 (build/openspecs-1): full PHPUnit run at the checkpoint: TokenSetVocabularyTest, TokenCssShapeTest, TokenSetContrastAuditTest and the TokenSetService tests green; the remaining failures are the same on origin/development.
 - [x] 7.6 Add or extend a Playwright spec-coverage test for the "Incomplete set" badge and tooltip,
       or apply a reason-bearing `@e2e exclude` to the backend-only scenarios.
       Done 2026-10-09 (build/openspecs-1): the badge scenarios whose GIVEN an instance cannot produce carry reason-bearing `@e2e exclude` in openspec/specs/token-sets/spec.md with vitest `admin-incomplete-set.spec.js` behind them; the badge ranking is browser-tested in tests/e2e/spec-coverage/token-sets.spec.ts; "A complete catalogue stays quiet" lost its stale exclude (the allow-list is empty now) and has its own Playwright test there.

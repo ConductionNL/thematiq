@@ -1225,7 +1225,7 @@
 				"evidence": "templates/settings/admin.php:84 '#nldesign-token-set-completeness-badge' (hidden by default); js/admin.js:813-824 incompleteWarningFor() reads ts.warnings (kind=='incomplete') from the initial-state tokenSets payload; js/admin.js:887-905 updateCompletenessBadge() shows 'Incomplete set' with a title tooltip listing missing tokens, called on every selection change (js/admin.js:979,588)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "token-set-vocabulary-audit"
+				"change": "2026-10-09-token-set-vocabulary-audit"
 			},
 			"reachedOn": "Settings > Administration > Theming, badge next to the token set dropdown",
 			"evidence": {
@@ -5044,7 +5044,7 @@
 				"evidence": "lib/Service/TokenSetVocabularyAuditService.php audits whether a set defines the full token vocabulary the design system reads; js/admin.js:3981 buildIncompleteWarningHtml() renders an 'Incomplete set' banner (kind==='incomplete') listing the tokens that fall back to Rijkshuisstijl defaults, shown alongside the contrast warnings in #nldesign-upload-result",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "token-set-vocabulary-audit"
+				"change": "2026-10-09-token-set-vocabulary-audit"
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload/list panel, 'Incomplete set' warning banner",
 			"evidence": {
