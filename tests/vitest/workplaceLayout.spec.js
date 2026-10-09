@@ -184,6 +184,19 @@ describe('workplace layout: the login watermark', () => {
 		expect(watermark['pointer-events']).toBe('none')
 	})
 
+	it('is drawn as NcLogin draws it: 720px high, 90px and 120px past the corner', () => {
+		// 720 / 90 / 120 on a 1440 by 900 window: the height is min(720px, 80vmin),
+		// the offsets are 12.5% and 16.67% of it.
+		expect(watermark['--thematiq-watermark-height']).toContain('min(720px, 80vmin)')
+		expect(watermark.height).toBe('var(--thematiq-watermark-height)')
+		expect(watermark['inset-inline-end']).toBe(
+			'calc(var(--thematiq-watermark-height) * -0.125)',
+		)
+		expect(watermark.bottom).toBe(
+			'calc(var(--thematiq-watermark-height) * -0.1667)',
+		)
+	})
+
 	it('is named by Zuiddrecht and its four demo schools only among the shipped sets', () => {
 		const dir = path.join(ROOT, 'css/tokens')
 		const namers = fs
@@ -495,7 +508,7 @@ describe('workplace layout: the login page and the guest pages', () => {
 			'var( --nldesign-component-login-box-border-radius, var(--border-radius-container-large) ) !important',
 		)
 		expect(card.decls['box-shadow']).toBe(
-			'0 2px 12px var(--nldesign-component-content-card-shadow-color, transparent) !important',
+			'0 2px 12px var( --nldesign-login-card-shadow-color, var(--nldesign-component-content-card-shadow-color, transparent) ) !important',
 		)
 	})
 
