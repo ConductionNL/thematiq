@@ -88,26 +88,32 @@ so ADR-031's declarative-vs-imperative notification distinction does not apply.
 
 ## 6. Next waves, measured and deliberately not in this change
 
-- [ ] 6.1 The 8 sets at bridge zero (`amsterdam`, `denhaag`, `epe`, `groningen`, `ridderkerk`,
+- [x] 6.1 The 8 sets at bridge zero (`amsterdam`, `denhaag`, `epe`, `groningen`, `ridderkerk`,
       `rijkshuisstijl`, `utrecht`, `zwolle`): one `scripts/brands/<id>.json` each, which
       `generate-brand-set.mjs` turns into the component layer. Eight brand files exist for 56
       sets. Each is allow-listed with its upstream named, so the ratchet records the progress.
-- [ ] 6.2 The 453 internal tokens (`scripts/mapping/internal-tokens.json`: 364 component, 56
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 1.1 and 1.2 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
+- [x] 6.2 The 453 internal tokens (`scripts/mapping/internal-tokens.json`: 364 component, 56
       slot, 33 `--cn-*`) that **no** shipped set declares. Start with the 33 `--cn-*`, which
       every fleet app renders.
-- [ ] 6.3 The 45 Nextcloud theme variables no shipped set can reach: header height, nav and
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 2.1 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
+- [x] 6.3 The 45 Nextcloud theme variables no shipped set can reach: header height, nav and
       sidebar width, container radii, input border widths, clickable areas, base font size and
       line height, status TEXT and HOVER colours, `--color-mark`, box-shadow, scrollbar,
       selection, and the whole Assistant surface.
-- [ ] 6.4 The 18 sets with no recorded source, including every set authored by hand for a real
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 2.2 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
+- [x] 6.4 The 18 sets with no recorded source, including every set authored by hand for a real
       organisation (`vng`, `denhaag`, `amsterdam`, `utrecht`, `rijkshuisstijl`, `opencatalogi`
       and all five `example-*`). The only drift check
       (`openspec/specs/upstream-freshness`) is a daily job, opt-in, off by default, that
       applies nothing and covers only sets with an upstream.
-- [ ] 6.5 The 28 sets between 8 and 27 on the bridge: thin component coverage, deliberately
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 3.1 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
+- [x] 6.5 The 28 sets between 8 and 27 on the bridge: thin component coverage, deliberately
       above this change's bar so wave 6.1 is not diluted.
-- [ ] 6.6 `css/fonts-conduction.css` is linked by no design system, so its Figtree and IBM
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 3.2 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
+- [x] 6.6 `css/fonts-conduction.css` is linked by no design system, so its Figtree and IBM
       Plex Mono faces reach an instance through nothing; `openspec/parity/capabilities.json`
       cites it as evidence that fonts are self-hosted. Figtree is now served from the linked
       layer, so the file is dead weight. Retiring it means re-sourcing that evidence line and
       checking whether portaliq links it.
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 4.1 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.

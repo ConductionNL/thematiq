@@ -13,6 +13,10 @@ All notable changes to this project will be documented in this file.
   from the command line; with `--write` it also writes the set's `<slug>.report.json` and
   regenerates only that set's dark variant. The second converts the parity fixtures under
   `tests/Unit/fixtures/converter/` and fails when the output moved without the fixtures.
+- **Five more playground rows.** You can now set the typed text of a text input, the primary
+  button's border, the navigation column's background and the initials of an avatar without a
+  picture. The textarea's text row now reaches the textarea. The navigation row leaves
+  Nextcloud's main background alone, so dark mode keeps working.
 
 - **Zuiddrecht's website measures and type.** The site's columns (1328px page with a 24px gutter,
   1280px header row and opening band), 17px running text, a 21px lead (Contentpagina; it was 18),

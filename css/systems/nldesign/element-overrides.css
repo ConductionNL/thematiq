@@ -239,7 +239,10 @@ header#header .header-menu__trigger {
 #header
 	[class*='avatar' i]
 	*:not([class*='user-status' i]):not([class*='user-status' i] *) {
-	color: var(--nldesign-color-text-light) !important;
+	color: var(
+		--nldesign-component-avatar-initials-color,
+		var(--nldesign-color-text-light)
+	) !important;
 }
 
 /* ============================================

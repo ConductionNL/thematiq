@@ -64,21 +64,9 @@ const BY_DESIGN = new Set(['--nldesign-color-on-surface'])
  * cannot reach, and it must not grow silently.
  */
 const NO_ROW_YET = new Set([
-	// The navigation panel's own surface. Its Nextcloud variable is
-	// `--color-main-background`, which overrides.css deliberately leaves alone
-	// because overriding it breaks dark mode — so a row here needs a token the
-	// nav rule reads directly, not a re-scope.
-	'app-navigation: background-color <- --nldesign-color-nav-background',
-	// Text colour inside a field. The chips offer border, placeholder, corner,
-	// focus and invalid, but not the typed text itself.
-	'text-input: color <- --nldesign-component-textbox-color',
-	'textarea: color <- --nldesign-component-textbox-color',
-	// The primary button's border. It tracks the background in every shipped
-	// set, so it reads as one edge — but it is a separate token with no row.
-	'primary-button: border-color <- --nldesign-component-button-primary-action-border-color',
-	// The initials on the avatar plate (#769 took them from #ffffff to the
-	// light-text token). The avatar chip has a row for the status badge only.
-	'avatar: color <- --nldesign-color-text-light',
+	// Empty since component-scoped-tokens 8.7 (decision 126): the navigation
+	// background, the typed text of a text input and a textarea, the primary
+	// button's border and the avatar initials each got a row.
 ])
 
 /**
@@ -89,7 +77,7 @@ const NO_ROW_YET = new Set([
 const NESTED = new Set([
 	'header-bar: background-color <- --nldesign-color-primary',
 	'avatar: color <- --nldesign-component-header-color',
-	'header-bar: color <- --nldesign-color-text-light',
+	'header-bar: color <- --nldesign-component-avatar-initials-color',
 	'content-card: color <- --nldesign-component-button-primary-action-color',
 	'link: color <- --nldesign-component-header-color',
 	'link: color <- --nldesign-color-primary',
@@ -428,5 +416,51 @@ describe('component tokens: header-bar leaves the login page alone', () => {
 
 		expect(bare).toEqual([])
 		expect(css).toContain(LOGGED_IN + ' {')
+	})
+})
+
+/**
+ * The navigation column's own background (component-scoped-tokens 8.7,
+ * decision 126). Its Nextcloud variable is `--color-main-background`, which
+ * nothing in this layer may redeclare: dark mode depends on it. So the row
+ * re-scopes the blur variable the legacy column reads, and the nldesign rule
+ * reads the token directly.
+ */
+describe('component tokens: the navigation background leaves the main background alone', () => {
+	const NAV = '--nldesign-component-navigation-background-color'
+	const scopes = fs.readFileSync(
+		path.join(ROOT, 'css/component-scopes.css'),
+		'utf8',
+	)
+
+	it('maps the row onto a variable other than --color-main-background', () => {
+		const entry = mapping.components['app-navigation'].tokens[NAV]
+
+		expect(entry).toBeDefined()
+		expect(entry.global).not.toBe('--color-main-background')
+		expect(entry.alsoGlobals).toBeUndefined()
+	})
+
+	it('redeclares no --color-main-background in the navigation scope', () => {
+		const open = scopes.indexOf("[data-thematiq-component='app-navigation'] {")
+		expect(open).toBeGreaterThan(-1)
+		const body = scopes.slice(open, scopes.indexOf('}', open))
+
+		expect(body).toContain(NAV)
+		expect(body).not.toMatch(/--color-main-background\s*:/)
+	})
+
+	it("reads the row first in the nldesign column rule, the set's nav colour second", () => {
+		const theme = fs
+			.readFileSync(path.join(ROOT, 'css/systems/nldesign/theme.css'), 'utf8')
+			.replace(/\/\*[\s\S]*?\*\//g, '')
+		const rule = theme.match(/#app-navigation,\s*\.app-navigation\s*\{([^}]*)\}/)
+
+		expect(rule).not.toBeNull()
+		expect(rule[1].replace(/\s+/g, ' ')).toContain(
+			'background-color: var( '
+				+ NAV
+				+ ', var(--nldesign-color-nav-background) ) !important',
+		)
 	})
 })

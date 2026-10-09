@@ -62,6 +62,7 @@ body {
 	--nldesign-component-button-primary-action-background-color: var(--thematiq-global-color-primary-element) !important;
 	--nldesign-component-button-primary-action-color: var(--thematiq-global-color-primary-element-text) !important;
 	--nldesign-component-button-primary-action-hover-background-color: var(--thematiq-global-color-primary-element-hover) !important;
+	--nldesign-component-button-primary-action-border-color: var(--thematiq-global-color-primary-element-hover) !important;
 	/* tertiary-button */
 	--nldesign-component-button-color: var(--thematiq-global-color-main-text) !important;
 	--nldesign-component-button-hover-background-color: var(--thematiq-global-color-primary-element-light) !important;

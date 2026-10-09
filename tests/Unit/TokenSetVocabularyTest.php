@@ -125,6 +125,20 @@ class TokenSetVocabularyTest extends TestCase {
 	}//end testEveryShippedSetIsCompleteOrAllowListed()
 
 	/**
+	 * The allow-list is closed: every shipped set is complete, so adding a
+	 * new incomplete set to the list cannot silence the gate.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-the-known-incomplete-allow-list-is-empty
+	 */
+	public function testAllowlistIsEmpty(): void {
+		$this->assertSame(
+			[],
+			$this->allowlist(),
+			'tests/Unit/fixtures/token-set-vocabulary-allowlist.json must stay empty: fix the set instead of listing it.'
+		);
+	}//end testAllowlistIsEmpty()
+
+	/**
 	 * The allow-list can only shrink: an id that has started passing MUST be
 	 * deleted from it, so progress is recorded rather than hidden.
 	 *

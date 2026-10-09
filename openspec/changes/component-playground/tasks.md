@@ -124,10 +124,12 @@ Tick a box when the work is merged to `development`, not when it is started.
 - [ ] 8.1 Pick Buttons & Status → Primary button: the stage draws it in four states, the list
       shows five rows, changing the hover colour repaints the hover specimen, and Save writes
       it exactly as the full list would.
-- [ ] 8.2 Export a token set the vocabulary audit rates complete. This is the handover to the
+- [x] 8.2 Export a token set the vocabulary audit rates complete. This is the handover to the
       converter — the reference its output is diffed against.
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 5.1 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
 
 ## 9. Open
 
-- [ ] 9.1 Authoring the OpenWOO reference values is design work that follows this change; the
+- [x] 9.1 Authoring the OpenWOO reference values is design work that follows this change; the
       instrument is the tool, not the set (design decision 10).
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 5.2 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.

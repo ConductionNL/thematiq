@@ -618,7 +618,13 @@ button.secondary:hover {
 /* Left sidebar navigation */
 #app-navigation,
 .app-navigation {
-	background-color: var(--nldesign-color-nav-background) !important;
+	/* The column's own token first (its playground row), then the set's nav
+	 * colour. Nextcloud's `--color-main-background` stays untouched, because
+	 * overriding it breaks dark mode. */
+	background-color: var(
+		--nldesign-component-navigation-background-color,
+		var(--nldesign-color-nav-background)
+	) !important;
 }
 
 /* The ACTIVE navigation entry is deliberately not repainted here.

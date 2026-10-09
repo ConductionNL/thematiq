@@ -299,3 +299,19 @@ through to the next family — the theme is not rewritten to a font the instance
 - **PHP/JS parity is a promise, not a mechanism.** Mitigated by the shared table (decision 1) and the
   parity test (decision 2), which is the same arrangement stage 1 used for the audit and which caught
   drift there.
+
+## Decision 13 (9 Oct 2026): later merged work wins over decisions 3 and 10
+
+Ruben's answer to Q-thematiq-1 (fleet decision 126). Work merged after this change was written
+went the other way on three points, and that work stays:
+
+- `scripts/generate-brand-set.mjs` stays the entry point for brand files. The example-gemeente,
+  Den Haag and school sets are built by it and their own specs name it. It is not folded into the
+  converter.
+- "Reproducible converter output" applies to the 38 sets that carry a converter provenance block.
+  The nightly sync re-converts those from their recorded upstream source and leaves brand-file and
+  hand-authored sets alone.
+- `summer-breeze` keeps its own `--summer-*` vocabulary and is audited against it (#1035). It gets
+  no `--nldesign-*` layer.
+
+The token-sets delta is rewritten to match, and `tests/Unit/TokenSetProvenanceTest.php` holds it.

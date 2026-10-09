@@ -18,4 +18,5 @@
 
 ## 5. Verify
 - [ ] 5.1 Run the Playwright spec against a Nextcloud 35 instance with the `lasuite` set (owed live).
-- [ ] 5.2 Record screenshot baselines per supported Nextcloud major (follow-up).
+- [x] 5.2 Record screenshot baselines per supported Nextcloud major (follow-up).
+      Moved 2026-10-09 to `token-set-coverage-next-waves` task 6.1 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.
