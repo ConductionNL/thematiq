@@ -43,7 +43,10 @@ own, with a delta spec, when it is picked up.
 - [ ] 5.1 Export a token set from the component playground that the vocabulary audit rates
       complete: the reference the converter's output is diffed against.
 - [ ] 5.2 Author the OpenWOO reference values (design work; the playground is the tool, not the
-      set).
+      set), commit them as `css/tokens/openwoo.css`, and diff the converter's output for the OpenWOO
+      theme against it. Moved here from nlds-theme-converter 9.7 (Q-thematiq-6, decision 137): that
+      change closed on the Utrecht paste, because the reference file was never committed and
+      `@conduction/theme` 2.1.0 ships OpenWOO only as Style Dictionary sources.
 
 ## 6. Shell geometry baselines (from lasuite-shell-geometry 5.2)
 
