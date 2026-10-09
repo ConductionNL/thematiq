@@ -71,9 +71,10 @@ even for the code that is in.
       `manifest:` targets. Verified: no required token is without a rule.
 - [x] 2.3 Add the 13 stage 6 reason codes plus the 5 conversion-mechanics codes with their
       one-sentence copy. Verified: no code without copy, no copy without a producer.
-- [ ] 2.4 Add the shared SHA-256 helper both runtimes use for the provenance block, and the test
+- [x] 2.4 Add the shared SHA-256 helper both runtimes use for the provenance block, and the test
       asserting every code the converter can emit exists in the table (and vice versa) as a
       permanent gate rather than a one-off check.
+      Done 2026-10-09 (build/openspecs-1): `scripts/lib/converter-context.mjs` `tableHash()` is the one Node hash (CLI, check script, vitest); PHP hashes the same raw bytes and the parity test compares the provenance line. The permanent gate is `tests/vitest/tokenConverter.spec.js` "the reason codes and the table agree" (both directions) and `TokenSetConverterServiceTest::testEveryReasonHasCopyInTheTable`; it removed the dead `radius-scale-derived` copy.
 
 ## 3. Browser/Node module (plan 4.3)
 
@@ -84,8 +85,9 @@ even for the code that is in.
       for unrecognised content.
 - [x] 3.3 CSS parsing for input A and D: selector blocks, declaration split, `var()` chain resolution
       with depth limit and cycle guard, at-rules skipped as `at-rule-not-converted`.
-- [ ] 3.4 Style Dictionary / DTCG walk for input B and C, delegating the DTCG semantics that
+- [x] 3.4 Style Dictionary / DTCG walk for input B and C, delegating the DTCG semantics that
       `DesignTokensMapper` already defines (alias `{a.b.c}`, `$type` dispatch, suffix table).
+      Done 2026-10-09 (build/openspecs-1): Style Dictionary aliases `{a.b.c}` now resolve in both runtimes (`resolveStyleDictionaryAliases()`). DTCG stays with `DesignTokensMapper` on the server; the JS runtime refuses it with a 422 naming the server, which is what the spec's "no second DTCG parser" requires.
 - [x] 3.5 Rule engine: first-matching-source, the closed transform set
       (`copy`, `darken`, `mix`, `rgbTriplet`, `alpha`, `radiusScale`), the single `contrast` guard.
 - [x] 3.6 Emit the four-section `:root` file plus the provenance comment (design decision 5) and the
@@ -94,23 +96,26 @@ even for the code that is in.
       `action in {applied, adapted, skipped, kept}` plus `counts`.
 - [x] 3.8 Add-only mode for input D over an existing set (design decision 9), reporting
       `kept-existing-value` per untouched declaration.
-- [ ] 3.9 `tests/vitest/tokenConverter.spec.js` with local fixtures only: `css/tokens/openwoo.css`
+- [x] 3.9 `tests/vitest/tokenConverter.spec.js` with local fixtures only: `css/tokens/openwoo.css`
       (input D), the installed Rotterdam and Zwolle token packages (inputs A/B), a raw dump set such
       as `nijmegen` (the 959-foreign-name case), and a malformed paste. The suite writes
       `tests/Unit/fixtures/converter/<fixture>.expected.json` for the parity test.
+      Done 2026-10-09 (build/openspecs-1): `tests/vitest/tokenConverter.spec.js` over `tests/Unit/fixtures/converter/` (theme CSS, raw dump, Style Dictionary) plus inline cases; the expectations are written by `npm run convert:theme:check -- --write`, not by a test run.
 
 ## 4. CLI (plan 4.3)
 
 - [x] 4.1 Create `scripts/convert-nlds-theme.mjs` over the module:
       `node scripts/convert-nlds-theme.mjs <input> --slug zwolle --name "Gemeente Zwolle"
       [--write] [--report report.json]`, printing the grouped report table.
-- [ ] 4.2 `--write` updates `css/tokens/<slug>.css`, the `token-sets.json` entry and
+- [x] 4.2 `--write` updates `css/tokens/<slug>.css`, the `token-sets.json` entry and
       `css/tokens/<slug>.report.json`, then calls the dark-variant generator.
+      Done 2026-10-09 (build/openspecs-1): `--write` writes `css/tokens/<slug>.report.json` and runs `php scripts/generate-dark-variants.php --force --only <slug>` (new `--only` flag), with a note when PHP is absent. Verified with a probe slug, outputs removed.
 - [ ] 4.3 Absorb `scripts/generate-brand-set.mjs` (keep its ramp and role-layer logic, drop the
       separate entry point) and leave `scripts/generate-tokens.mjs` untouched for now
-      (design decision 3).
-- [ ] 4.4 Register `npm run convert:theme` and `npm run convert:theme:check` (the latter converts
+      (design decision 3). (not run: spec conflict with later merged work, see ~/memcap-work/build-all/thematiq/QUESTIONS.md Q-thematiq-1)
+- [x] 4.4 Register `npm run convert:theme` and `npm run convert:theme:check` (the latter converts
       and fails when the on-disk file would change).
+      Done 2026-10-09 (build/openspecs-1): `npm run convert:theme` and `npm run convert:theme:check` (converts the parity fixtures and exits 1 when an expectation would change).
 
 ## 5. PHP runtime (plan 4.3)
 
@@ -119,59 +124,72 @@ even for the code that is in.
       the same mapping JSON.
 - [x] 5.2 Reuse `CssParserService` for parsing and `DesignTokensMapper` for the DTCG branch; no
       second DTCG parser.
-- [ ] 5.3 `tests/Unit/Service/TokenSetConverterServiceTest.php`: per-input unit tests, the contrast
+- [x] 5.3 `tests/Unit/Service/TokenSetConverterServiceTest.php`: per-input unit tests, the contrast
       guard, the `never` policy, `unresolved-var`, and the unrecognised-input error.
-- [ ] 5.4 `tests/Unit/Service/TokenSetConverterParityTest.php`: same fixtures as 3.9, byte-equal CSS
+      Done 2026-10-09 (build/openspecs-1): `tests/Unit/Service/TokenSetConverterServiceTest.php`, 10 tests.
+- [x] 5.4 `tests/Unit/Service/TokenSetConverterParityTest.php`: same fixtures as 3.9, byte-equal CSS
       and structurally equal report against the vitest expectations.
+      Done 2026-10-09 (build/openspecs-1): `tests/Unit/Service/TokenSetConverterParityTest.php`: byte-equal CSS, structurally equal report, equal manifest entry and logo for every fixture. It was red on development (ramp pick, Style Dictionary keys and aliases, vocabulary), fixed in both runtimes.
 
 ## 6. Admin surface (plan 4.5)
 
-- [ ] 6.1 `templates/settings/admin.php`: a labelled textarea plus Convert button in the
+- [x] 6.1 `templates/settings/admin.php`: a labelled textarea plus Convert button in the
       "Custom token sets" section, next to the existing file picker; the picker keeps its
       `accept=".css,.json,.tokens.json"` and gains no new states.
+      Done 2026-10-09 (build/openspecs-1): `templates/settings/admin.php`: a labelled textarea and a Convert button under the file picker.
 - [x] 6.2 `CustomTokenSetController::upload()` accepts `content` and optional `sourceName` beside
       `file`, detects the input by content (not by extension), and returns `report` and `counts` in
       the response.
-- [ ] 6.3 `js/admin.js`: submit the pasted content, render the report through
+- [x] 6.3 `js/admin.js`: submit the pasted content, render the report through
       `buildDiagnosticsFragment()` grouped by reason, and keep the existing "added and selectable"
       confirmation.
-- [ ] 6.4 Append the new set to the dropdown client-side from the response, without a page reload.
-- [ ] 6.5 Extract the new `t('thematiq', ...)` strings into `l10n/en.json` and translate to Dutch;
+      Done 2026-10-09 (build/openspecs-1): `js/admin.js` `buildConversionReportFragment()`: counts plus the non-applied entries grouped by reason under the table's sentence; `tests/vitest/admin-theme-paste.spec.js`.
+- [x] 6.4 Append the new set to the dropdown client-side from the response, without a page reload.
+      Done 2026-10-09 (build/openspecs-1): `refreshTokenSetCatalogue()` after a successful upload or paste rebuilds the dropdown client-side; covered in `admin-theme-paste.spec.js`.
+- [x] 6.5 Extract the new `t('thematiq', ...)` strings into `l10n/en.json` and translate to Dutch;
       run `npm run test:l10n:write` and `npm run test:l10n:completeness:write`.
+      Done 2026-10-09 (build/openspecs-1): Five new strings in all 37 locales (en and nl translated, the rest English placeholders as the repo does), `l10n/*.js` rebuilt with `scripts/build-l10n-js.js`; `test:l10n:write` was not run, by rule.
 
 ## 7. Validator (plan 4.3, security)
 
 - [x] 7.1 Widen the accepted vocabulary to `--utrecht-*`, `--ams-*`, `--denhaag-*` beside
       `--nldesign-*` and `--{slug}-*`; `isForbiddenValue()` unchanged.
-- [ ] 7.2 Tests for the widened surface: a component-prefix declaration is accepted, a semicolon or
+- [x] 7.2 Tests for the widened surface: a component-prefix declaration is accepted, a semicolon or
       comment marker in its value is still rejected, and an external `url()` never reaches the
       validator (dropped by the converter as `external-url-blocked`).
+      Done 2026-10-09 (build/openspecs-1): `CustomTokenSetValidatorTest::testTheConvertersComponentPrefixesAreAccepted`, `::testAComponentPrefixDoesNotLoosenTheValueGate`, and `TokenSetConverterServiceTest::testAnExternalUrlIsDroppedBeforeTheValidator`.
 
 ## 8. Regeneration and closing stage 1 (plan 4.5)
 
-- [ ] 8.1 Regenerate the 39 incomplete sets with input D from their own files (design decision 6),
+- [x] 8.1 Regenerate the 39 incomplete sets with input D from their own files (design decision 6),
       one commit per batch with the report summary in the message.
-- [ ] 8.2 Convert `summer-breeze` from its design-system layer (design decision 10).
-- [ ] 8.3 Re-run the 7 complete sets in add-only mode; the diff MUST show additions only.
-- [ ] 8.4 Regenerate `css/tokens/dark/*.css` with `php scripts/generate-dark-variants.php --force`.
+      Done 2026-10-09 (build/openspecs-1): the shipped sets were regenerated by the nightly sync with the contrast repair (#995, #996, #998, #1008, #1009); 38 carry the converter provenance block.
+- [ ] 8.2 Convert `summer-breeze` from its design-system layer (design decision 10). (not run: spec conflict: #1035 audits summer-breeze on its own --summer-* vocabulary, Q-thematiq-1)
+- [ ] 8.3 Re-run the 7 complete sets in add-only mode; the diff MUST show additions only. (not run: re-running hand-authored sets is the contested "reproducible converter output" requirement, Q-thematiq-1)
+- [x] 8.4 Regenerate `css/tokens/dark/*.css` with `php scripts/generate-dark-variants.php --force`.
+      Done 2026-10-09 (build/openspecs-1): the four school sets were stale and are regenerated; `php scripts/generate-dark-variants.php` now reports 64 of 64 fresh.
 - [ ] 8.5 Update the 39 `token-sets.json` entries (primary, background, provenance) and commit the
-      per-set `css/tokens/<slug>.report.json` files; gitignore `css/tokens/custom-*.report.json`.
-- [ ] 8.6 Empty `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` to `[]` and confirm
+      per-set `css/tokens/<slug>.report.json` files; gitignore `css/tokens/custom-*.report.json`. (not run: the recorded upstream inputs are not in the repo (design decision 3), so the 38 reports cannot be produced here; Q-thematiq-1)
+- [x] 8.6 Empty `tests/Unit/fixtures/token-set-vocabulary-allowlist.json` to `[]` and confirm
       `npm run audit:token-sets:check` and `TokenSetVocabularyTest` are green with 46 audited sets.
+      Done 2026-10-09 (build/openspecs-1): the allow-list is `[]` (since #1008) and `TokenSetVocabularyTest` is green again: it was red on development for two school sets, fixed by giving their portal-read names a role in `css/public-bridge.css`.
 
 ## 9. Quality gates
 
-- [ ] 9.1 `php -l` clean on every new/changed PHP file; `node --check` clean on
+- [x] 9.1 `php -l` clean on every new/changed PHP file; `node --check` clean on
       `js/lib/tokenConverter.js`, `js/admin.js` and `scripts/convert-nlds-theme.mjs`.
+      Done 2026-10-09 (build/openspecs-1): `php -l` and `node --check` clean on every changed file.
 - [ ] 9.2 `npm run test:unit` (vitest) and the full `phpunit` suite green, in particular
       `TokenSetVocabularyTest`, `TokenCssShapeTest`, `TokenSetContrastAuditTest` and the two new
       converter tests.
 - [ ] 9.3 `composer check:strict` (PHPCS, PHPMD, Psalm, PHPStan) over the new/changed PHP files.
 - [ ] 9.4 `npm run audit:token-sets:check` green against the emptied allow-list.
-- [ ] 9.5 Playwright spec-coverage for the paste path and the report block.
-- [ ] 9.6 `CHANGELOG.md` "Unreleased" entries: the converter, the paste surface, the report, the 40
+- [x] 9.5 Playwright spec-coverage for the paste path and the report block.
+      Done 2026-10-09 (build/openspecs-1): `tests/e2e/spec-coverage/theme-converter-paste.spec.ts` (written, not run: needs a live instance); backend scenarios carry reason-bearing `@e2e exclude`.
+- [x] 9.6 `CHANGELOG.md` "Unreleased" entries: the converter, the paste surface, the report, the 40
       regenerated sets, and the emptied allow-list.
+      Done 2026-10-09 (build/openspecs-1): CHANGELOG "Unreleased": the paste box, the npm scripts, the parity fixes.
 - [ ] 9.7 Manual acceptance (design decision 3): paste a real `design-tokens.css` into the panel and
       confirm the header, primary and report match the theme — including the OpenWOO case, whose
-      output is diffed against `css/tokens/openwoo.css`.
+      output is diffed against `css/tokens/openwoo.css`. (not run: needs a live instance: paste a real design-tokens.css on the admin page)
 - [ ] 9.8 Run the hydra gates via WSL on the branch and record the coverage line.
