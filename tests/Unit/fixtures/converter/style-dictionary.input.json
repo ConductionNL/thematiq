@@ -1,0 +1,15 @@
+{
+	"parity": {
+		"color": {
+			"red": { "500": { "value": "#c8102e" }, "700": { "value": "#8f0b21" } },
+			"grey": { "100": { "value": "#f4f4f4" }, "900": { "value": "#202020" } },
+			"white": { "value": "#ffffff" }
+		}
+	},
+	"utrecht": {
+		"button": { "primary-action": { "background-color": { "value": "{parity.color.red.500}" }, "color": { "value": "{parity.color.white}" } } },
+		"document": { "color": { "value": "{parity.color.grey.900}" } },
+		"link": { "color": { "value": "{parity.color.red.700}" } },
+		"page": { "background-color": { "value": "{parity.color.grey.100}" } }
+	}
+}

@@ -32,14 +32,9 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
-import { createHash } from 'node:crypto'
 import { dirname, join, basename, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { createRequire } from 'node:module'
 
-const require = createRequire(import.meta.url)
-const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const converter = require(join(repoRoot, 'js/lib/tokenConverter.js'))
+import { converter, loadConverterContext, repoRoot } from './lib/converter-context.mjs'
 
 const LABEL = 'convert:theme'
 
@@ -88,29 +83,6 @@ function parseArgs(argv) {
 	}
 
 	return options
-}
-
-/**
- * Load the mapping table, its SHA-256 and the app's own token vocabulary.
- *
- * The hash is computed over the raw file bytes, which is exactly what
- * `TokenSetConverterService::table()` does, so a set converted by either
- * runtime carries the same provenance line.
- *
- * @return {Object} `{table, tableHash, vocabulary}`.
- */
-function loadContext() {
-	const tablePath = join(repoRoot, 'scripts/mapping/nlds-to-nextcloud.json')
-	const raw = readFileSync(tablePath, 'utf8')
-
-	return {
-		table: JSON.parse(raw),
-		tableHash: createHash('sha256').update(raw).digest('hex'),
-		vocabulary: converter.vocabularyFrom([
-			readFileSync(join(repoRoot, 'css/systems/nldesign/defaults.css'), 'utf8'),
-			readFileSync(join(repoRoot, 'css/systems/nldesign/utrecht-bridge.css'), 'utf8'),
-		]),
-	}
 }
 
 /**
@@ -244,7 +216,7 @@ function main() {
 		process.exit(1)
 	}
 
-	const context = loadContext()
+	const context = loadConverterContext()
 	let result
 
 	try {

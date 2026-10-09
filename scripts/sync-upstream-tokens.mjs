@@ -60,6 +60,7 @@ import { spawnSync } from 'node:child_process'
 import { join, dirname, resolve, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
+import { vocabularyStylesheets } from './lib/converter-context.mjs'
 import {
 	extractOrgId,
 	findTokenFiles,
@@ -853,16 +854,7 @@ function main() {
 		converter,
 		table: JSON.parse(tableRaw),
 		tableHash: createHash('sha256').update(tableRaw).digest('hex'),
-		vocabulary: converter.vocabularyFrom([
-			readFileSync(
-				join(REPO_ROOT, 'css/systems/nldesign/defaults.css'),
-				'utf8',
-			),
-			readFileSync(
-				join(REPO_ROOT, 'css/systems/nldesign/utrecht-bridge.css'),
-				'utf8',
-			),
-		]),
+		vocabulary: converter.vocabularyFrom(vocabularyStylesheets()),
 	}
 
 	const baseline = {

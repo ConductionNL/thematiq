@@ -1,0 +1,39 @@
+/*
+ * Converter parity fixture, input A: a built theme stylesheet with one
+ * class-scoped block, var() chains, an inline logo, layout tokens Nextcloud
+ * refuses, component tokens it keeps, an external url() and a dangling var().
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ */
+.parity-theme {
+	--parity-color-green-500: #23845c;
+	--parity-color-green-700: #1a6646;
+	--parity-color-grey-100: #f5f5f5;
+	--parity-color-grey-500: #757575;
+	--parity-color-grey-900: #1a1a1a;
+	--parity-color-white: #ffffff;
+	--utrecht-button-primary-action-background-color: var(--parity-color-green-500);
+	--utrecht-button-primary-action-color: var(--parity-color-white);
+	--utrecht-page-background-color: var(--parity-color-grey-100);
+	--utrecht-document-background-color: var(--parity-color-white);
+	--utrecht-document-color: var(--parity-color-grey-900);
+	--utrecht-link-color: var(--parity-color-green-700);
+	--utrecht-page-max-inline-size: 1200px;
+	--utrecht-document-font-size: 18px;
+	--utrecht-button-padding-block-start: 12px;
+	--utrecht-accordion-button-background-color: #eeeeee;
+	--utrecht-breadcrumb-nav-link-color: var(--parity-color-green-700);
+	--utrecht-skip-link-background-color: var(--parity-color-white);
+	--utrecht-document-font-family: "Fira Sans", Arial, sans-serif;
+	--parity-logo-header-background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMzIiPjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMzIiIGZpbGw9IiMyMzg0NWMiLz48L3N2Zz4=");
+	--parity-logo-footer-background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMzIiPjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMzIiIGZpbGw9IiMyMzg0NWMiLz48L3N2Zz4=");
+	--utrecht-page-header-background-image: url("https://example.com/header.png");
+	--utrecht-heading-color: var(--parity-undefined-token);
+}
+
+@media (min-width: 600px) {
+	.parity-theme {
+		--utrecht-page-max-inline-size: 1400px;
+	}
+}

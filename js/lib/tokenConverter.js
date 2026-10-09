@@ -1293,10 +1293,30 @@
 
 		var criterion = String(spec.criterion || 'darkest')
 
+		// The page background the picked grey has to stand apart from. A ramp
+		// of one grey still has a "darkest" and a "nearest" member, and when
+		// that grey is the background itself every role came out white on
+		// white (#933). No readable candidate means no pick: the role then
+		// falls back to the defaults, like a set that declares no greys.
+		var backgroundValue =
+			semantic[String(spec.background || '--nldesign-color-nav-background')]
+		var background = parseColor(
+			backgroundValue === undefined ? '#ffffff' : backgroundValue,
+		)
+		if (background === null) {
+			background = [255, 255, 255]
+		}
+
+		var backgroundSum = background[0] + background[1] + background[2]
+
 		if (criterion === 'darkest') {
-			return ramp.slice().sort(function (a, b) {
+			var darkest = ramp.slice().sort(function (a, b) {
 				return a.sum - b.sum
-			})[0].hex
+			})[0]
+
+			return ratio(darkest.rgb, background) < numberOr(spec.min, 4.5)
+				? null
+				: darkest.hex
 		}
 
 		if (criterion === 'nearestLuminance') {
@@ -1310,6 +1330,13 @@
 			var bestDistance = null
 			ramp.forEach(function (step) {
 				var distance = Math.abs(step.sum - targetSum)
+
+				// A grey nearer the background than the target reads as the
+				// background: a border or hover in that colour is invisible.
+				if (distance >= Math.abs(step.sum - backgroundSum)) {
+					return
+				}
+
 				if (bestDistance === null || distance < bestDistance) {
 					bestDistance = distance
 					best = step.hex
@@ -1755,28 +1782,9 @@
 			Object.prototype.hasOwnProperty.call(node, 'value')
 			&& (node.value === null || typeof node.value !== 'object')
 		) {
-			var segments = path
-				.map(function (segment) {
-					return String(segment)
-						.replace(/[^A-Za-z0-9]+/g, '-')
-						.toLowerCase()
-				})
-				.filter(function (segment) {
-					return segment !== ''
-				})
-
-			var joined = segments.join('-').replace(/^-+|-+$/g, '')
-			if (joined === '') {
+			var prefixed = styleDictionaryName(path, slug)
+			if (prefixed === null) {
 				return
-			}
-
-			var prefixed = '--' + slug + '-' + joined
-			for (var i = 0; i < COMPONENT_PREFIXES.length; i++) {
-				var bare = COMPONENT_PREFIXES[i].replace(/^-+|-+$/g, '')
-				if (joined.indexOf(bare + '-') === 0) {
-					prefixed = '--' + joined
-					break
-				}
 			}
 
 			declarations[prefixed] = String(node.value).trim()
@@ -1797,6 +1805,70 @@
 				depth + 1,
 			)
 		})
+	}
+
+	/**
+	 * The custom property a Style Dictionary leaf path becomes: the path joined
+	 * with hyphens under the brand prefix, or bare when it already starts with
+	 * a component vocabulary. Mirrors `TokenSetConverterService::styleDictionaryName()`.
+	 *
+	 * @param {Array<string>} path The leaf's key path.
+	 * @param {string} slug The brand prefix.
+	 * @return {string|null} The property name, or null for an empty path.
+	 */
+	function styleDictionaryName(path, slug) {
+		var joined = path
+			.map(function (segment) {
+				return String(segment)
+					.replace(/[^A-Za-z0-9]+/g, '-')
+					.toLowerCase()
+			})
+			.filter(function (segment) {
+				return segment !== ''
+			})
+			.join('-')
+			.replace(/^-+|-+$/g, '')
+
+		if (joined === '') {
+			return null
+		}
+
+		for (var i = 0; i < COMPONENT_PREFIXES.length; i++) {
+			var bare = COMPONENT_PREFIXES[i].replace(/^-+|-+$/g, '')
+			if (joined.indexOf(bare + '-') === 0) {
+				return '--' + joined
+			}
+		}
+
+		return '--' + slug + '-' + joined
+	}
+
+	/**
+	 * Turn every Style Dictionary alias (`{color.brand.500}`) into the `var()`
+	 * of the leaf it names, so the ordinary chain resolution resolves it and
+	 * an alias to a leaf the document lacks is reported `unresolved-var`
+	 * instead of being emitted as literal braces. Mirrors
+	 * `TokenSetConverterService::resolveStyleDictionaryAliases()`.
+	 *
+	 * @param {Object<string,string>} declarations The collected leaves.
+	 * @param {string} slug The brand prefix.
+	 * @return {Object<string,string>} The leaves with aliases rewritten.
+	 */
+	function resolveStyleDictionaryAliases(declarations, slug) {
+		var out = {}
+
+		Object.keys(declarations).forEach(function (name) {
+			out[name] = declarations[name].replace(
+				/\{([^{}]+)\}/g,
+				function (match, alias) {
+					var target = styleDictionaryName(alias.trim().split('.'), slug)
+
+					return target === null ? match : 'var(' + target + ')'
+				},
+			)
+		})
+
+		return out
 	}
 
 	/**
@@ -2202,6 +2274,25 @@
 				return
 			}
 
+			// A real semantic token: input D's hand-authored value. Checked before
+			// the role, because an app name such as `--nldesign-animation-quick`
+			// has a component-shaped role too. Mirrors classify() in PHP.
+			if (
+				name.indexOf('--nldesign-') === 0
+				&& (vocabulary[name] === true || lookup.targets[name] === true)
+			) {
+				semantic[name] = value
+				report.push({
+					source: name,
+					target: name,
+					action: 'kept',
+					reason: 'kept-existing-value',
+					value: value,
+				})
+
+				return
+			}
+
 			var role = roleOf(name)
 			var isComponent = role !== '' && isPaletteRole(role) === false
 
@@ -2236,19 +2327,6 @@
 			}
 
 			if (name.indexOf('--nldesign-') === 0) {
-				if (vocabulary[name] === true || lookup.targets[name] === true) {
-					semantic[name] = value
-					report.push({
-						source: name,
-						target: name,
-						action: 'kept',
-						reason: 'kept-existing-value',
-						value: value,
-					})
-
-					return
-				}
-
 				var reprefixed = '--' + slug + '-' + name.slice('--nldesign-'.length)
 				palette[reprefixed] = value
 				report.push({
@@ -2295,6 +2373,78 @@
 	}
 
 	/**
+	 * The first of a rule's sources the input declares, by name or by role.
+	 * Mirrors `TokenSetConverterService::firstDeclaredSource()`.
+	 *
+	 * @param {Object} rule The table rule.
+	 * @param {Object<string,string>} declarations The resolved input.
+	 * @param {Object<string,string>} byRole The input indexed by role.
+	 * @param {string} slug The brand slug.
+	 * @return {Object|null} `{value, source}` or null.
+	 */
+	function firstDeclaredSource(rule, declarations, byRole, slug) {
+		var sources = rule.sources || []
+
+		for (var i = 0; i < sources.length; i++) {
+			var concrete = withSlug(String(sources[i]), slug)
+
+			if (Object.prototype.hasOwnProperty.call(declarations, concrete)) {
+				return { value: declarations[concrete], source: concrete }
+			}
+
+			var role = roleOf(concrete)
+			if (role !== '' && Object.prototype.hasOwnProperty.call(byRole, role)) {
+				return { value: byRole[role], source: role + ' (by role)' }
+			}
+		}
+
+		return null
+	}
+
+	/**
+	 * The semantic layer a contrast guard measures against: when the guard's
+	 * partner has no value yet but the theme declares it, that declared value.
+	 * Mirrors `TokenSetConverterService::guardSemantic()`.
+	 *
+	 * @param {Object} guard The rule's guard.
+	 * @param {Object<string,string>} semantic The semantic layer so far.
+	 * @param {Object<string,string>} declarations The resolved input.
+	 * @param {Object<string,string>} byRole The input indexed by role.
+	 * @param {string} slug The brand slug.
+	 * @param {Object} table The mapping table.
+	 * @return {Object<string,string>} The semantic layer to measure against.
+	 */
+	function guardSemantic(guard, semantic, declarations, byRole, slug, table) {
+		var against = String(guard.against || '')
+		if (
+			guard.kind !== 'contrast'
+			|| against === ''
+			|| Object.prototype.hasOwnProperty.call(semantic, against)
+		) {
+			return semantic
+		}
+
+		var rules = table.rules || []
+		for (var i = 0; i < rules.length; i++) {
+			if (rules[i].target !== against) {
+				continue
+			}
+
+			var declared = firstDeclaredSource(rules[i], declarations, byRole, slug)
+			if (declared === null) {
+				return semantic
+			}
+
+			var widened = Object.assign({}, semantic)
+			widened[against] = declared.value
+
+			return widened
+		}
+
+		return semantic
+	}
+
+	/**
 	 * Produce the semantic layer from the table. Mirrors `runRules()`.
 	 *
 	 * @param {Object<string,string>} declarations Resolved input.
@@ -2336,26 +2486,10 @@
 			var action = 'applied'
 			var reason = rule.reason === undefined ? null : rule.reason
 			var sourceName = ''
-			var sources = rule.sources || []
-
-			for (var i = 0; i < sources.length; i++) {
-				var concrete = withSlug(String(sources[i]), slug)
-
-				if (Object.prototype.hasOwnProperty.call(declarations, concrete)) {
-					value = declarations[concrete]
-					sourceName = concrete
-					break
-				}
-
-				var role = roleOf(concrete)
-				if (
-					role !== ''
-					&& Object.prototype.hasOwnProperty.call(byRole, role)
-				) {
-					value = byRole[role]
-					sourceName = role + ' (by role)'
-					break
-				}
+			var declared = firstDeclaredSource(rule, declarations, byRole, slug)
+			if (declared !== null) {
+				value = declared.value
+				sourceName = declared.source
 			}
 
 			if (value === null) {
@@ -2394,7 +2528,12 @@
 			}
 
 			if (rule.guard !== undefined) {
-				var guarded = applyGuard(rule.guard, value, semantic, fonts)
+				var guarded = applyGuard(
+					rule.guard,
+					value,
+					guardSemantic(rule.guard, semantic, declarations, byRole, slug, table),
+					fonts,
+				)
 				if (guarded.value !== value) {
 					entry.original = value
 					entry.action = 'adapted'
@@ -2673,6 +2812,7 @@
 				declarations,
 				0,
 			)
+			declarations = resolveStyleDictionaryAliases(declarations, slug)
 		} else if (inputKind === 'B') {
 			// DTCG belongs to DesignTokensMapper on the PHP side; this runtime
 			// has no equivalent, so the caller must pre-map a DTCG document.
@@ -2813,8 +2953,8 @@
 	}
 
 	/**
-	 * Extract the app's `--nldesign-*` vocabulary from the two stylesheets that
-	 * declare it, so the caller can hand it to `convert()`. Mirrors
+	 * Extract the app's `--nldesign-*` vocabulary from the stylesheets that
+	 * declare or read it (comments stripped), so the caller can hand it to `convert()`. Mirrors
 	 * `TokenSetConverterService::vocabulary()`.
 	 *
 	 * @param {Array<string>} stylesheets Contents of defaults.css and utrecht-bridge.css.
@@ -2824,7 +2964,9 @@
 		var names = {}
 
 		;(stylesheets || []).forEach(function (css) {
-			var matches = String(css).match(/--nldesign-[\w-]+/g)
+			var matches = String(css)
+				.replace(/\/\*[\s\S]*?\*\//g, '')
+				.match(/--nldesign-[\w-]+/g)
 			if (matches === null) {
 				return
 			}

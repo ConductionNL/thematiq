@@ -62,6 +62,8 @@
 		"test:component-scopes": "node scripts/generate-component-scopes.mjs --check",
 		"generate:denhaag-bridge": "node scripts/generate-denhaag-bridge.mjs",
 		"test:denhaag-bridge": "node scripts/generate-denhaag-bridge.mjs --check",
+		"convert:theme": "node scripts/convert-nlds-theme.mjs",
+		"convert:theme:check": "node scripts/check-converter-fixtures.mjs",
 		"test:theme-scopes": "node tests/css/check-theme-scopes-cascade.mjs",
 		"test:internal-scopes": "node tests/css/check-internal-scopes.mjs",
 		"generate:internal-tokens": "node scripts/inventory/generate-internal-tokens.mjs",
