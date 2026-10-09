@@ -1171,6 +1171,12 @@
 		--nldesign-website-attention-border-color
 	);
 	--thematiq-attention-color: var(--nldesign-website-attention-color);
+	/* The month of a date tile: as typed, or in capitals for a set that says
+	   so (school-sets-type-scale). No fallback: unset, the tile's own case
+	   applies. */
+	--thematiq-date-month-text-transform: var(
+		--nldesign-website-date-month-text-transform
+	);
 
 	/*
 	 * The footer's bottom band: the footer's own ground one step darker, as
