@@ -71,7 +71,10 @@ body#body-login::before {
 	position: fixed;
 	/* NcLogin: 720px high, 90px past the right edge, 120px past the bottom,
 	 * on a 1440 by 900 window; a smaller window scales it by its short side. */
-	--thematiq-watermark-height: var(--nldesign-login-watermark-height, min(720px, 80vmin));
+	--thematiq-watermark-height: var(
+		--nldesign-login-watermark-height,
+		min(720px, 80vmin)
+	);
 
 	inset-inline-end: calc(var(--thematiq-watermark-height) * -0.125);
 	bottom: calc(var(--thematiq-watermark-height) * -0.1667);

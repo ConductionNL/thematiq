@@ -187,7 +187,9 @@ describe('workplace layout: the login watermark', () => {
 	it('is drawn as NcLogin draws it: 720px high, 90px and 120px past the corner', () => {
 		// 720 / 90 / 120 on a 1440 by 900 window: the height is min(720px, 80vmin),
 		// the offsets are 12.5% and 16.67% of it.
-		expect(watermark['--thematiq-watermark-height']).toContain('min(720px, 80vmin)')
+		expect(watermark['--thematiq-watermark-height']).toContain(
+			'min(720px, 80vmin)',
+		)
 		expect(watermark.height).toBe('var(--thematiq-watermark-height)')
 		expect(watermark['inset-inline-end']).toBe(
 			'calc(var(--thematiq-watermark-height) * -0.125)',
