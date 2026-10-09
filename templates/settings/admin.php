@@ -932,7 +932,7 @@ if ($_['mockUi'] === true) {
 		</p>
 	</div>
 
- — the deliberate opt-out of per-component
+	<!-- Primary drives every component — the deliberate opt-out of per-component
 	     theming (openspec/specs/component-tokens/spec.md). Off by default, and
 	     that is not a behaviour change: with no per-component value stored the
 	     component tokens already resolve to the brand primary. Turning it on
