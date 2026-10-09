@@ -58,8 +58,18 @@ label {
 #app-navigation,
 .app-navigation,
 #app-navigation-vue {
-	background: var(--color-main-background) !important;
-	background-color: var(--color-main-background) !important;
+	/* The column's own row first (component-scoped-tokens 8.7). Unset, it is
+	   the main background as before, so dark mode keeps a dark column. This
+	   rule loads after theme.css and outranks it on `#app-navigation-vue`, so
+	   reading the row only there painted nothing (live check, 9 Oct 2026). */
+	background: var(
+		--nldesign-component-navigation-background-color,
+		var(--color-main-background)
+	) !important;
+	background-color: var(
+		--nldesign-component-navigation-background-color,
+		var(--color-main-background)
+	) !important;
 
 	/* Navigation entries are chrome, not content links: they take the body text
 	 * colour, and a solid (legacy) selected entry takes the primary colour's
