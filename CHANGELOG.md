@@ -25,6 +25,15 @@ All notable changes to this project will be documented in this file.
   the workplace's `#5E6168`, and a light blue ground for a missing picture (`#D9E3EF`).
 
 ### Fixed
+- **The navigation background row paints the navigation.** A stored value showed nowhere, in
+  Files or in the playground, because a later rule forced the column back to the main
+  background. Unset, the column is the main background as before, so dark mode is unchanged.
+- **The playground follows "Let the primary color drive every component".** Switching it while a
+  component was open left that component's colour rows editable, or unlocked them.
+- **The playground's avatar takes the initials row**, and the 32 to 35 version switch above a
+  component no longer takes that component's colours.
+- **No stray text above "Let the primary color drive every component".** A note meant for
+  developers showed on the admin page.
 - **A theme converts to the same token set on the server and in the command line.** The PHP
   service and `js/lib/tokenConverter.js` had drifted; `TokenSetConverterParityTest` now holds them
   byte-equal. Style Dictionary aliases are resolved instead of written out as `{a.b.c}`, numeric

@@ -29,6 +29,19 @@ saved, whichever path saved it: the apply dialog's confirm (token diffs present)
 - THEN a dialog SHALL appear showing the current and proposed theming values
 - AND only fields that differ between current and proposed SHALL be displayed
 
+#### Scenario: Dialog not shown for token set without theming metadata
+@e2e exclude Requires selecting a token set AND verifying dialog absence — selection mutates IConfig token_set; non-appearance of dialog cannot be safely verified without saving.
+- GIVEN the admin selects a token set without a `theming` object
+- WHEN the token set is saved successfully
+- THEN no dialog SHALL appear
+- AND the token set change SHALL complete normally
+
+#### Scenario: Dialog not shown when values already match
+@e2e exclude Requires specific IConfig state where token-set theming already matches NC theming — not deterministic in shared env.
+- GIVEN the admin selects a token set whose theming values already match Nextcloud's current values
+- WHEN the token set is saved successfully
+- THEN no dialog SHALL appear
+
 ### Requirement: Dialog User Actions
 The dialog MUST provide Cancel and Update actions. Confirming MUST refresh the page's styles in
 place rather than reloading.
@@ -157,3 +170,10 @@ perceived-brightness rule core uses, so a light colour does not leave white text
 The `Current` and `Proposed` preview images MUST be constrained to their preview box
 (`max-height` and `max-width`, aspect preserved), so an SVG with a large intrinsic size cannot
 fill the dialog.
+
+#### Scenario: A wide wordmark stays inside its preview box
+@e2e exclude A rule on one class in css/admin.css (`.nldesign-dialog-preview-logo`: max-width 70%, max-height 56px, object-fit contain); no assertion can tell a fitted logo from a cropped one without a visual baseline. Seen live on 9 Oct 2026 on a throwaway instance: switching from vng to leiden, the dialog drew the VNG logo inside its 56px box.
+- GIVEN the current logo is an SVG with a 1369 by 436 viewBox
+- WHEN the sync dialog shows it as `Current`
+- THEN the image MUST be no taller than its box and no wider than 70% of it
+- AND its aspect ratio MUST be kept

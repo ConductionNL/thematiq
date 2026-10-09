@@ -121,9 +121,10 @@ Tick a box when the work is merged to `development`, not when it is started.
 
 ## 8. Acceptance
 
-- [ ] 8.1 Pick Buttons & Status → Primary button: the stage draws it in four states, the list
+- [x] 8.1 Pick Buttons & Status → Primary button: the stage draws it in four states, the list
       shows five rows, changing the hover colour repaints the hover specimen, and Save writes
       it exactly as the full list would.
+      Live 2026-10-09 on the throwaway NC 34 instance (:8098, leiden): Buttons & Status > Primary button draws the real button in its default and disabled specimens, with hover and focus on the live component (the stage drawn this way since 33156872); the list shows the button's seven token rows plus the fixed disabled row (rows added since by component-scoped-tokens and decision 126). Hover colour #00AA55 repainted the hovered specimen (rgb(0, 170, 85)) and not the page; Save wrote `--nldesign-component-button-primary-action-hover-background-color: #00AA55 !important;` on line 41 of custom-overrides.css, the same line the full list writes for the same row (#00AA56). Shots ~/memcap-work/build-all/thematiq/live-pass/playground-8.1-hover.png.
 - [x] 8.2 Export a token set the vocabulary audit rates complete. This is the handover to the
       converter — the reference its output is diffed against.
       Moved 2026-10-09 to `token-set-coverage-next-waves` task 5.1 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.

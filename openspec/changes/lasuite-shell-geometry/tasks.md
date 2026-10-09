@@ -18,5 +18,6 @@
 
 ## 5. Verify
 - [ ] 5.1 Run the Playwright spec against a Nextcloud 35 instance with the `lasuite` set (owed live).
+      Ran 2026-10-09 on a throwaway NC 34 instance (:8098): 6 of 6 pass, which on 34 proves the shell layer stays off and the header keeps its stock height. (not run: on Nextcloud 35; no 35 image on this machine)
 - [x] 5.2 Record screenshot baselines per supported Nextcloud major (follow-up).
       Moved 2026-10-09 to `token-set-coverage-next-waves` task 6.1 (decision 126, Q-thematiq-2): follow-up work this change called out of scope.

@@ -26,4 +26,5 @@
 - [x] 6.3 `docs/features/toggles.md`, `docs/features/configuration-bundle.md`, CHANGELOG.
 
 ## 7. Verify
-- [ ] 7.1 Live check on :8080 with the zuiddrecht set: the navigation 264px and the soft entry with nothing stored; each option flipped on the admin page and seen on the open page without a reload.
+- [x] 7.1 Live check on :8080 with the zuiddrecht set: the navigation 264px and the soft entry with nothing stored; each option flipped on the admin page and seen on the open page without a reload.
+      Live 2026-10-09 on the throwaway NC 34 instance (:8098, not :8080: decision 135) with zuiddrecht and nothing stored: navigation 264px, soft active entry rgb(252, 237, 236). Flipped on the admin page with no navigation of the page: workplace layout default (workplace-layout.css and header-workplace.css unlinked), stripe placement header (brand-stripe-header-only.css, gradient under #header), stripe off (no gradient), width 320 (column 320px), active style default (solid entry), login watermark off (login page links login-watermark-off.css and drops the body watermark) and back on. Shots ~/memcap-work/build-all/thematiq/live-pass/layout-options-flipped.png, layout-login-*.png.

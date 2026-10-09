@@ -81,10 +81,11 @@ so ADR-031's declarative-vs-imperative notification distinction does not apply.
 - [x] 5.4 Prove each new gate can fail, by moving the real data: a hand edit to a generated
       font stylesheet, a deleted woff2, a REUSE holder renamed, a deleted allow-list entry, a
       probe set whose colours pass.
-- [ ] 5.5 Live check on a running instance, owed to the coordinator: apply `vng` and confirm
+- [x] 5.5 Live check on a running instance, owed to the coordinator: apply `vng` and confirm
       the admin dialog shows the Avenir upload banner; apply `leiden` and confirm Open Sans
       loads (`document.fonts.check("1em 'Open Sans'")`); confirm `vng`'s login background is
       still #0277BD. Lanes do not touch a running instance.
+      Live 2026-10-09 on the throwaway NC 34 instance (:8098): `vng` shows the "Typeface needs an upload" banner for Avenir in the apply dialog; after applying, the login page background is rgb(2, 119, 189) = #0277BD. `leiden`: `document.fonts.check("1em 'Open Sans'")` is true, Open Sans 400 and 700 loaded, body font "Open Sans". Shots ~/memcap-work/build-all/thematiq/live-pass/every-honest-vng-dialog.png, honest-vng-login.png, every-honest-leiden-files.png.
 
 ## 6. Next waves, measured and deliberately not in this change
 

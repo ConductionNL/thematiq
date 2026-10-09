@@ -18,7 +18,7 @@ request carries a `background` image (whose mime `applyImages()` writes afterwar
 - THEN `ThemingDefaults::set('primary_color', '#004699')` MUST be called
 - AND `"primary_color"` MUST appear in the list of updated fields
 
-#### Scenario: Background color applied clears the default background image
+#### Scenario: Background color applied
 - GIVEN a valid request with `background_color: "#FFFFFF"` and no `background`
 - WHEN `applyColors()` is called
 - THEN `ThemingDefaults::set('background_color', '#FFFFFF')` MUST be called

@@ -133,6 +133,7 @@ deferred (design decision 7).
 
 ## 5. Open
 
-- [ ] 5.1 Run PHPUnit and Playwright on a machine that has them; run the hydra gates via WSL and
+- [x] 5.1 Run PHPUnit and Playwright on a machine that has them; run the hydra gates via WSL and
       record the coverage line.
-      PHPUnit and the hydra gates: CI run 37898303114 on #1191 (@5e4fab6a), Hydra Gates green, PHPUnit red only on the inherited `TokenReferenceDocsTest::testTheCommittedPagesAreCurrent`. (not run: Playwright `tests/e2e/workflows/apply-without-reload.workflow.spec.ts` needs a live instance)
+      PHPUnit and the hydra gates: CI run 37898303114 on #1191 (@5e4fab6a), Hydra Gates green, PHPUnit red only on the inherited `TokenReferenceDocsTest::testTheCommittedPagesAreCurrent`.
+      Playwright done 2026-10-09 on a throwaway NC 34 instance (thematiq-live, :8098, build/openspecs-live): `tests/e2e/workflows/apply-without-reload.workflow.spec.ts` "select, confirm, sync and switch back on one page load" passed (log ~/memcap-work/build-all/thematiq/live-pass/playwright-1.log).

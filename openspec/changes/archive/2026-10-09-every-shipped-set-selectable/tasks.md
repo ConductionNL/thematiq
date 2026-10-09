@@ -69,9 +69,10 @@ behaviour, so ADR-031's declarative-vs-imperative distinction does not apply.
       `check:l10n-js`, `check:manifest`, `test:fonts`, `audit:token-sets:check`,
       `test:token-set-coverage`.
 - [x] 5.4 `openspec validate every-shipped-set-selectable --strict`.
-- [ ] 5.5 Live check, owed to the coordinator: the admin dropdown offers 58 sets; applying
+- [x] 5.5 Live check, owed to the coordinator: the admin dropdown offers 58 sets; applying
       `leiden` and `vng` works; `conduction` is absent from the dropdown and present in the
       public catalogue. Lanes do not touch a running instance.
+      Live 2026-10-09 on the throwaway NC 34 instance (:8098): the dropdown offers every named shipped set, 63 today (58 when this change was written; the school and Zuiddrecht sets came after), plus custom sets; `conduction` is absent from the dropdown and present in the public catalogue `/api/token-sets` (65 entries). `leiden` and `vng` applied through the dialog. Shots ~/memcap-work/build-all/thematiq/live-pass/every-honest-*.png.
 
 ## 6. Next waves
 

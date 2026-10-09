@@ -198,6 +198,6 @@ even for the code that is in.
       Done 2026-10-09 (build/openspecs-1): CHANGELOG "Unreleased": the paste box, the npm scripts, the parity fixes.
 - [ ] 9.7 Manual acceptance (design decision 3): paste a real `design-tokens.css` into the panel and
       confirm the header, primary and report match the theme — including the OpenWOO case, whose
-      output is diffed against `css/tokens/openwoo.css`. (not run: needs a live instance: paste a real design-tokens.css on the admin page)
+      output is diffed against `css/tokens/openwoo.css`. Live 2026-10-09 on a throwaway NC 34 instance (:8098): `tests/e2e/spec-coverage/theme-converter-paste.spec.ts` 5 of 5 pass; the published `@utrecht/design-tokens` 7.0.0 `dist/index.css` (198 KB) pasted on the admin page converted to a set (1335 imported, 43 skipped, the report grouped by reason with counts); applied, the header and the primary are #24578F, the theme's `hsl(211 60% 35%)`. (not run: the OpenWOO half. `css/tokens/openwoo.css`, the reference design.md names, was never committed, and `@conduction/theme` 2.1.0 ships the OpenWOO tokens as Style Dictionary sources, not a built design-tokens.css; Q-thematiq-6)
 - [x] 9.8 Run the hydra gates via WSL on the branch and record the coverage line.
       Done 2026-10-09: CI run 37898303114 on #1191 (@5e4fab6a): Hydra Gates green.
