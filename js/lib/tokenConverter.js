@@ -2531,7 +2531,14 @@
 				var guarded = applyGuard(
 					rule.guard,
 					value,
-					guardSemantic(rule.guard, semantic, declarations, byRole, slug, table),
+					guardSemantic(
+						rule.guard,
+						semantic,
+						declarations,
+						byRole,
+						slug,
+						table,
+					),
 					fonts,
 				)
 				if (guarded.value !== value) {

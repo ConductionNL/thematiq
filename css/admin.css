@@ -790,7 +790,24 @@
 	font-family: monospace;
 }
 
+/* The paste box for a theme file (nlds-theme-converter): full width, code font. */
+.nldesign-paste-field {
+	margin-top: 16px;
+}
+
+.nldesign-paste-field textarea {
+	width: 100%;
+	max-width: 720px;
+	margin: 0;
+	font-family: var(--font-face-monospace, monospace);
+}
+
+.nldesign-conversion-counts {
+	margin: 8px 0 0;
+}
+
 .nldesign-diagnostics-list,
+.nldesign-conversion-report,
 .nldesign-deprecation-list {
 	margin: 8px 0 0;
 	padding-left: 20px;

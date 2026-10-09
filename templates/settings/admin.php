@@ -304,6 +304,24 @@ if ($_['mockUi'] === true) {
 						<?php p($l->t('Choose file and upload')); ?>
 					</button>
 				</div>
+				<!-- A theme mostly arrives as text in a clipboard, not as a file
+				     (nlds-theme-converter, openspec/changes/nlds-theme-converter).
+				     The server converts it exactly as it converts an uploaded
+				     file; admin.js sends it as `content`. -->
+				<div class="nldesign-field nldesign-paste-field">
+					<label for="nldesign-upload-content"><?php p($l->t('Or paste the contents of a theme file')); ?></label>
+					<textarea id="nldesign-upload-content" rows="8" spellcheck="false"
+							  aria-describedby="nldesign-upload-content-hint"
+							  placeholder=".gemeente-theme { --gemeente-color-primary: #154273; }"></textarea>
+					<p class="settings-hint" id="nldesign-upload-content-hint">
+						<?php p($l->t('A design-tokens.css, a W3C Design Tokens JSON or a Style Dictionary tokens.json. You see what was used and what was left out.')); ?>
+					</p>
+				</div>
+				<div class="nldesign-form-actions">
+					<button type="button" id="nldesign-convert-btn" class="button">
+						<?php p($l->t('Convert')); ?>
+					</button>
+				</div>
 				<div id="nldesign-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
 			</div>
 			<!-- The simple brand form (openspec/specs/simple-brand-form/spec.md): a complete set from two colours and a logo. -->

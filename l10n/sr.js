@@ -1106,7 +1106,12 @@ OC.L10N.register(
         "Starts as {value}": "Starts as {value}",
         "Your own token": "Your own token",
         "Adding {name} to your own tokens, starting as {value}…": "Adding {name} to your own tokens, starting as {value}…",
-        "Adding…": "Adding…"
+        "Adding…": "Adding…",
+        "Or paste the contents of a theme file": "Or paste the contents of a theme file",
+        "A design-tokens.css, a W3C Design Tokens JSON or a Style Dictionary tokens.json. You see what was used and what was left out.": "A design-tokens.css, a W3C Design Tokens JSON or a Style Dictionary tokens.json. You see what was used and what was left out.",
+        "Convert": "Convert",
+        "Paste the contents of a theme file first.": "Paste the contents of a theme file first.",
+        "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped."
     },
     "nplurals=2; plural=(n != 1);"
 )

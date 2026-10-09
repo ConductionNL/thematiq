@@ -18,7 +18,12 @@
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { FIXTURE_DIR, convertFixture, converterFixtures, loadConverterContext } from './lib/converter-context.mjs'
+import {
+	FIXTURE_DIR,
+	convertFixture,
+	converterFixtures,
+	loadConverterContext,
+} from './lib/converter-context.mjs'
 
 const LABEL = 'convert:theme:check'
 const write = process.argv.includes('--write')
@@ -42,7 +47,9 @@ for (const fixture of converterFixtures()) {
 	}
 
 	stale++
-	console.error(`[${LABEL}] ${fixture.name}: STALE, the converter now emits something else. Run \`npm run convert:theme:check -- --write\` and review the diff.`)
+	console.error(
+		`[${LABEL}] ${fixture.name}: STALE, the converter now emits something else. Run \`npm run convert:theme:check -- --write\` and review the diff.`,
+	)
 }
 
 process.exit(stale === 0 ? 0 : 1)

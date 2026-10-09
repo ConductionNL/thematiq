@@ -7228,7 +7228,99 @@
 				fileInput.value = ''
 			})
 
+			// A pasted theme goes up as `content`; the server converts it the
+			// same way as a file (nlds-theme-converter 6.1).
+			var convertBtn = document.getElementById('nldesign-convert-btn')
+			var contentInput = document.getElementById('nldesign-upload-content')
+			if (convertBtn !== null && contentInput !== null) {
+				convertBtn.addEventListener('click', function () {
+					if (nameInput.value.trim() === '') {
+						notify(t('thematiq', 'Enter a token set name first.'))
+						nameInput.focus()
+						return
+					}
+					if (contentInput.value.trim() === '') {
+						notify(
+							t(
+								'thematiq',
+								'Paste the contents of a theme file first.',
+							),
+						)
+						contentInput.focus()
+						return
+					}
+					uploadCustomTokenSet(nameInput.value.trim(), {
+						content: contentInput.value,
+					})
+				})
+			}
+
 			loadCustomTokenSets()
+		}
+
+		/**
+		 * The conversion report of an upload: everything the converter did not
+		 * take over as-is, grouped by reason under the table's own sentence, and
+		 * the counts (nlds-theme-converter 6.3). Empty when the response has no
+		 * report, so a plain token-set upload shows nothing extra.
+		 *
+		 * @param {object} data The upload response.
+		 * @return {DocumentFragment} The report.
+		 */
+		function buildConversionReportFragment(data) {
+			var fragment = document.createDocumentFragment()
+			var reasons = data.reasons || {}
+			var entries = (data.report || []).filter(function (entry) {
+				// Colours moved into sRGB are listed by the diagnostics block.
+				return (
+					entry.action !== 'applied'
+					&& entry.reason
+					&& !/^out-of-gamut-/.test(entry.reason)
+				)
+			})
+			var groups =
+				typeof TT.groupDiagnosticsByReason === 'function'
+					? TT.groupDiagnosticsByReason(entries)
+					: groupDiagnosticsByReasonFallback(entries)
+
+			if (data.counts) {
+				var counts = document.createElement('p')
+				counts.className = 'nldesign-conversion-counts'
+				counts.textContent = t(
+					'thematiq',
+					'{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.',
+					{
+						applied: data.counts.applied || 0,
+						adapted: data.counts.adapted || 0,
+						kept: data.counts.kept || 0,
+						skipped: data.counts.skipped || 0,
+					},
+				)
+				fragment.appendChild(counts)
+			}
+
+			if (groups.length > 0) {
+				var list = document.createElement('ul')
+				list.className = 'nldesign-conversion-report'
+				groups.forEach(function (group) {
+					var item = document.createElement('li')
+					var sources = group.items
+						.map(function (entry) {
+							return entry.source
+						})
+						.join(', ')
+					item.textContent =
+						(reasons[group.reason] || group.reason)
+						+ ' ('
+						+ group.items.length
+						+ '): '
+						+ sources
+					list.appendChild(item)
+				})
+				fragment.appendChild(list)
+			}
+
+			return fragment
 		}
 
 		// Localised label for a DTCG import diagnostic `reason` code. Falls back to
@@ -7616,7 +7708,12 @@
 			var resultEl = document.getElementById('nldesign-upload-result')
 			var formData = new FormData()
 			formData.append('name', name)
-			formData.append('file', file)
+			// `file` is a File from the picker, or `{content}` from the paste box.
+			if (file instanceof Blob) {
+				formData.append('file', file)
+			} else {
+				formData.append('content', file.content)
+			}
 			;(brands || []).forEach(function (key) {
 				formData.append('brands[]', key)
 			})
@@ -7709,6 +7806,7 @@
 					if (resultEl !== null) {
 						resultEl.appendChild(document.createTextNode(msg))
 						resultEl.appendChild(buildDiagnosticsFragment(res.data))
+						resultEl.appendChild(buildConversionReportFragment(res.data))
 					}
 					loadCustomTokenSets()
 					// The dropdown and tokenSetsData were built from initial state

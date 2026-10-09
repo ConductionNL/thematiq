@@ -43,7 +43,10 @@ export function tableHash(raw) {
  * @return {{table: Object, tableHash: string, vocabulary: Object<string, boolean>}} The context.
  */
 export function loadConverterContext() {
-	const raw = readFileSync(join(repoRoot, 'scripts/mapping/nlds-to-nextcloud.json'), 'utf8')
+	const raw = readFileSync(
+		join(repoRoot, 'scripts/mapping/nlds-to-nextcloud.json'),
+		'utf8',
+	)
 
 	return {
 		table: JSON.parse(raw),
@@ -73,7 +76,11 @@ export function vocabularyStylesheets(directory = join(repoRoot, 'css')) {
 			out.push(...vocabularyStylesheets(path))
 			continue
 		}
-		if (entry.endsWith('.css') && entry !== 'custom-overrides.css' && entry !== 'custom-css.css') {
+		if (
+			entry.endsWith('.css')
+			&& entry !== 'custom-overrides.css'
+			&& entry !== 'custom-css.css'
+		) {
 			out.push(readFileSync(path, 'utf8'))
 		}
 	}
@@ -88,7 +95,8 @@ export function vocabularyStylesheets(directory = join(repoRoot, 'css')) {
  * @return {Array<{name: string, input: string, slug: string, displayName: string, sourceName: string}>} The fixtures.
  */
 export function converterFixtures() {
-	return JSON.parse(readFileSync(join(FIXTURE_DIR, 'fixtures.json'), 'utf8')).fixtures
+	return JSON.parse(readFileSync(join(FIXTURE_DIR, 'fixtures.json'), 'utf8'))
+		.fixtures
 }
 
 /**
@@ -116,8 +124,15 @@ export function convertFixture(fixture, context) {
 		manifestEntry: result.manifestEntry,
 		report: result.report,
 		counts: result.counts,
-		logoAsset: result.logoAsset === null
-			? null
-			: { path: result.logoAsset.path, base64: Buffer.from(result.logoAsset.contents, 'latin1').toString('base64') },
+		logoAsset:
+			result.logoAsset === null
+				? null
+				: {
+						path: result.logoAsset.path,
+						base64: Buffer.from(
+							result.logoAsset.contents,
+							'latin1',
+						).toString('base64'),
+					},
 	}
 }

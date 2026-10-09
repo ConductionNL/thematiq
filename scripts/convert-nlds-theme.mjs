@@ -38,7 +38,11 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { dirname, join, basename, resolve } from 'node:path'
 
-import { converter, loadConverterContext, repoRoot } from './lib/converter-context.mjs'
+import {
+	converter,
+	loadConverterContext,
+	repoRoot,
+} from './lib/converter-context.mjs'
 
 const LABEL = 'convert:theme'
 
@@ -49,7 +53,15 @@ const LABEL = 'convert:theme'
  * @return {Object} The parsed options.
  */
 function parseArgs(argv) {
-	const options = { input: null, slug: null, name: null, source: null, write: false, report: null, quiet: false }
+	const options = {
+		input: null,
+		slug: null,
+		name: null,
+		source: null,
+		write: false,
+		report: null,
+		quiet: false,
+	}
 
 	for (let index = 0; index < argv.length; index++) {
 		const arg = argv[index]
@@ -64,7 +76,12 @@ function parseArgs(argv) {
 			continue
 		}
 
-		if (arg === '--slug' || arg === '--name' || arg === '--report' || arg === '--source') {
+		if (
+			arg === '--slug'
+			|| arg === '--name'
+			|| arg === '--report'
+			|| arg === '--source'
+		) {
 			const value = argv[index + 1]
 			if (value === undefined || value.startsWith('--')) {
 				throw new Error(`${arg} needs a value.`)
@@ -134,8 +151,10 @@ function printReport(report) {
 	for (const [reason, entries] of [...groups.entries()].sort()) {
 		console.log(`\n[${LABEL}] ${reason} (${entries.length})`)
 		for (const entry of entries.slice(0, 12)) {
-			const target = (entry.target === '' ? '(not emitted)' : entry.target)
-			console.log(`    ${entry.action.padEnd(8)} ${String(entry.source).padEnd(46)} ${target}`)
+			const target = entry.target === '' ? '(not emitted)' : entry.target
+			console.log(
+				`    ${entry.action.padEnd(8)} ${String(entry.source).padEnd(46)} ${target}`,
+			)
 		}
 
 		if (entries.length > 12) {
@@ -188,12 +207,18 @@ function writeOutputs(slug, css, manifestEntry, logoAsset, report) {
 
 	if (index === -1) {
 		manifest.push(manifestEntry)
-		manifest.sort((left, right) => String(left.id).localeCompare(String(right.id)))
+		manifest.sort((left, right) =>
+			String(left.id).localeCompare(String(right.id)),
+		)
 	} else {
 		// Preserve anything the committed entry carries that the converter does
 		// not produce — a hand-picked logo, an upstreamRef from the sync — and
 		// let the converted values win where they overlap.
-		manifest[index] = { ...manifest[index], ...manifestEntry, theming: { ...manifest[index].theming, ...manifestEntry.theming } }
+		manifest[index] = {
+			...manifest[index],
+			...manifestEntry,
+			theming: { ...manifest[index].theming, ...manifestEntry.theming },
+		}
 	}
 
 	writeFileSync(manifestPath, `${JSON.stringify(manifest, null, '\t')}\n`, 'utf8')
@@ -218,7 +243,9 @@ function main() {
 	}
 
 	if (options.input === null || options.slug === null) {
-		console.error(`[${LABEL}] usage: node scripts/convert-nlds-theme.mjs <input> --slug <slug> [--name "Name"] [--write] [--report out.json]`)
+		console.error(
+			`[${LABEL}] usage: node scripts/convert-nlds-theme.mjs <input> --slug <slug> [--name "Name"] [--write] [--report out.json]`,
+		)
 		process.exit(1)
 	}
 
@@ -234,8 +261,9 @@ function main() {
 	try {
 		result = converter.convert(readFileSync(inputPath, 'utf8'), {
 			slug: options.slug,
-			displayName: (options.name === null ? options.slug : options.name),
-			sourceName: (options.source === null ? basename(inputPath) : options.source),
+			displayName: options.name === null ? options.slug : options.name,
+			sourceName:
+				options.source === null ? basename(inputPath) : options.source,
 			table: context.table,
 			tableHash: context.tableHash,
 			vocabulary: context.vocabulary,
@@ -254,22 +282,34 @@ function main() {
 
 	console.log(
 		`\n[${LABEL}] ${options.slug}: input ${result.inputKind}, `
-		+ `${counts.applied} applied, ${counts.adapted} adapted, `
-		+ `${counts.kept} kept, ${counts.skipped} skipped.`
+			+ `${counts.applied} applied, ${counts.adapted} adapted, `
+			+ `${counts.kept} kept, ${counts.skipped} skipped.`,
 	)
 
 	if (options.report !== null) {
-		writeFileSync(resolve(options.report), `${JSON.stringify(result.report, null, '\t')}\n`, 'utf8')
+		writeFileSync(
+			resolve(options.report),
+			`${JSON.stringify(result.report, null, '\t')}\n`,
+			'utf8',
+		)
 		console.log(`[${LABEL}] report written to ${resolve(options.report)}`)
 	}
 
 	if (options.write === false) {
-		console.log(`[${LABEL}] dry run — nothing written. Pass --write to update css/tokens/ and token-sets.json.`)
+		console.log(
+			`[${LABEL}] dry run — nothing written. Pass --write to update css/tokens/ and token-sets.json.`,
+		)
 
 		return
 	}
 
-	const written = writeOutputs(options.slug, result.css, result.manifestEntry, result.logoAsset, result.report)
+	const written = writeOutputs(
+		options.slug,
+		result.css,
+		result.manifestEntry,
+		result.logoAsset,
+		result.report,
+	)
 	for (const path of written) {
 		console.log(`[${LABEL}] wrote ${path}`)
 	}
@@ -284,12 +324,21 @@ function main() {
  * @return {number} 0 when written or when PHP is absent (with a note), 1 when the generator failed.
  */
 function regenerateDarkVariant(slug) {
-	const run = spawnSync('php', [join(repoRoot, 'scripts/generate-dark-variants.php'), '--force', '--only', slug], { encoding: 'utf8' })
+	const run = spawnSync(
+		'php',
+		[
+			join(repoRoot, 'scripts/generate-dark-variants.php'),
+			'--force',
+			'--only',
+			slug,
+		],
+		{ encoding: 'utf8' },
+	)
 
 	if (run.error !== undefined && run.error.code === 'ENOENT') {
 		console.log(
 			`[${LABEL}] dark variant NOT regenerated: no php on PATH. Run`
-			+ ` \`php scripts/generate-dark-variants.php --force --only ${slug}\`.`
+				+ ` \`php scripts/generate-dark-variants.php --force --only ${slug}\`.`,
 		)
 
 		return 0
