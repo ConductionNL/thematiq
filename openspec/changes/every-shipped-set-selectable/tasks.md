@@ -85,7 +85,8 @@ behaviour, so ADR-031's declarative-vs-imperative distinction does not apply.
       unconfigured instance looks like.
 - [ ] 6.3 The 453 internal tokens no set declares, the 45 unreachable theme variables, and the
       18 sets with no recorded source — carried over from the preceding change's section 6.
-- [ ] 6.4 Check the contrast report's `primary/text` pair against the ink token an administrator
+- [x] 6.4 Check the contrast report's `primary/text` pair against the ink token an administrator
       expects: the coordinator measured `#333333` on `#ffffff` at 12.63 while the report reads
       11.98 for `vng`, so the pair is not the one they expected. Both pass, so it is a labelling
       question rather than a defect, but the report should say which tokens it compared.
+      Done 2026-10-09 (build/openspecs-1): the report already names the tokens it compared: docs/reference/contrast-report.json `pairs` maps `textRatio` to `--nldesign-color-primary-text` on `--nldesign-color-primary` and `uiRatio` to `--nldesign-color-primary` on `--nldesign-color-background`. vng's 11.98 is white on #003865, not body text on white, so the 12.63 measured on #333333/#ffffff is a different pair. No defect.

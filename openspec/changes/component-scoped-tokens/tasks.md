@@ -120,8 +120,9 @@ each fix keeps the previous token as the fallback so no shipped token set change
 - [x] 6.4 `js/admin.js`: save, swap the `primary-lock` layer live, and lock the affected rows
       in place without discarding unsaved edits or resetting the open tab.
 - [x] 6.5 `ConfigBundleService`: export, validate and apply, so a bundle round-trips it.
-- [ ] 6.6 Decide whether `Capabilities` should carry it. Currently NOT added — the payload is
+- [x] 6.6 Decide whether `Capabilities` should carry it. Currently NOT added — the payload is
       a pinned eight-key contract and this setting changes nothing a client renders.
+      Done 2026-10-09 (build/openspecs-1): decided in the proposal ("NOT affected, deliberately: `lib/Capabilities.php`", proposal.md:84): the capabilities payload is a pinned eight-key contract and the primary-lock setting changes nothing a client renders. No code change.
 
 ## 7. The playground
 
