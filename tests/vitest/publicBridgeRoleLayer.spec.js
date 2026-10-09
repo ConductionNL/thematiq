@@ -25,6 +25,13 @@ const SITE_ROLES = JSON.parse(
 	read('tests/vitest/fixtures/portal-site-roles.json'),
 ).roles
 const SCHOOLS = ['wilgenboom', 'vaartveld', 'esdoornveen', 'warmtepompacademie']
+/** The page title each school board draws (school-sets-type-scale). */
+const SCHOOL_TITLES = {
+	wilgenboom: '44px',
+	vaartveld: '48px',
+	esdoornveen: '44px',
+	warmtepompacademie: '48px',
+}
 
 /**
  * Custom properties declared on a stylesheet's top-level `:root` rules.
@@ -349,7 +356,11 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 	it.each([...SCHOOLS, 'vng'])(
 		'%s names none of it and keeps every value it had (the control)',
 		(set) => {
-			expect(token(set, '--utrecht-heading-1-font-size')).toBe('36px')
+			// The schools name their page title from their boards
+			// (school-sets-type-scale); vng keeps the 36px.
+			expect(token(set, '--utrecht-heading-1-font-size')).toBe(
+				SCHOOL_TITLES[set] || '36px',
+			)
 			expect(token(set, '--utrecht-heading-2-font-size')).toBe('32px')
 			expect(token(set, '--utrecht-heading-3-font-size')).toBe('24px')
 			expect(token(set, '--utrecht-button-border-width')).toBe('1px')
@@ -373,10 +384,15 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 			expect(token(set, '--utrecht-alert-border-color')).toBeNull()
 			expect(token(set, '--thematiq-tab-line-color')).toBeNull()
 			expect(token(set, '--thematiq-tab-current-color')).toBeNull()
-			// The site roles: the lead keeps its 20px, the rest resolve to nothing.
-			expect(token(set, '--utrecht-paragraph-lead-font-size')).toBe('20px')
+			// The site roles: vng keeps the 20px lead; the schools draw 21px
+			// (school-sets-type-scale). The rest resolve to nothing.
+			expect(token(set, '--utrecht-paragraph-lead-font-size')).toBe(
+				SCHOOLS.includes(set) ? '21px' : '20px',
+			)
 			expect(token(set, '--utrecht-alert-color')).toBeNull()
-			expect(token(set, '--thematiq-page-title-font-size')).toBeNull()
+			if (!SCHOOLS.includes(set)) {
+				expect(token(set, '--thematiq-page-title-font-size')).toBeNull()
+			}
 			expect(token(set, '--thematiq-page-title-line-height')).toBeNull()
 			expect(token(set, '--thematiq-surface-color')).toBeNull()
 			// The notice strip: wilgenboom, vaartveld and esdoornveen name it
@@ -408,10 +424,13 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 				'--thematiq-website-nav-current-color',
 				'--thematiq-website-page-max-width',
 				'--thematiq-website-band-max-width',
-				'--thematiq-website-content-font-size',
 				'--thematiq-placeholder-background-color',
 			]) {
 				expect(token(set, role), role).toBeNull()
+			}
+			// The schools draw 17px text (school-sets-type-scale); vng names none.
+			if (!SCHOOLS.includes(set)) {
+				expect(token(set, '--thematiq-website-content-font-size')).toBeNull()
 			}
 			expect(token(set, '--thematiq-website-text-muted')).toBe(
 				token(set, '--nldesign-color-text-muted'),
@@ -476,6 +495,28 @@ describe('the school sets follow their boards (school-sets-follow-their-boards)'
 		expect(token('esdoornveen', '--thematiq-attention-border-color')).toBe(
 			'#D2C2E6',
 		)
+	})
+
+	it('each school draws its page title, 17px text and a 21px lead (school-sets-type-scale)', () => {
+		for (const set of SCHOOLS) {
+			expect(token(set, '--utrecht-heading-1-font-size')).toBe(
+				SCHOOL_TITLES[set],
+			)
+			expect(token(set, '--thematiq-page-title-font-size')).toBe(
+				SCHOOL_TITLES[set] === '48px' ? '3rem' : '2.75rem',
+			)
+			expect(token(set, '--thematiq-website-content-font-size')).toBe('17px')
+			expect(token(set, '--utrecht-paragraph-lead-font-size')).toBe('21px')
+		}
+	})
+
+	it('only the academy writes the month of a date tile in capitals', () => {
+		expect(
+			token('warmtepompacademie', '--thematiq-date-month-text-transform'),
+		).toBe('uppercase')
+		for (const set of ['wilgenboom', 'vaartveld', 'esdoornveen', 'zuiddrecht']) {
+			expect(token(set, '--thematiq-date-month-text-transform')).toBeNull()
+		}
 	})
 
 	it('esdoornveen and the academy draw the hero search label semibold', () => {
