@@ -183,7 +183,8 @@ even for the code that is in.
       `TokenSetVocabularyTest`, `TokenCssShapeTest`, `TokenSetContrastAuditTest` and the two new
       converter tests.
 - [ ] 9.3 `composer check:strict` (PHPCS, PHPMD, Psalm, PHPStan) over the new/changed PHP files.
-- [ ] 9.4 `npm run audit:token-sets:check` green against the emptied allow-list.
+- [x] 9.4 `npm run audit:token-sets:check` green against the emptied allow-list.
+      Done 2026-10-09: exit 0, 0 of 61 sets fail contrast, allow-list empty.
 - [x] 9.5 Playwright spec-coverage for the paste path and the report block.
       Done 2026-10-09 (build/openspecs-1): `tests/e2e/spec-coverage/theme-converter-paste.spec.ts` (written, not run: needs a live instance); backend scenarios carry reason-bearing `@e2e exclude`.
 - [x] 9.6 `CHANGELOG.md` "Unreleased" entries: the converter, the paste surface, the report, the 40
