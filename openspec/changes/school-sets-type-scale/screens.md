@@ -1,3 +1,3 @@
 # Screens
 
-- No board found yet (decision 150)
+- No screen: token set CSS values that restyle boards other apps own, no thematiq screen
