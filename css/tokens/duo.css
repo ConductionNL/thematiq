@@ -134,7 +134,7 @@
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: #e0e1e2;
 	--nldesign-color-background-darker: #e6e6e6;
-	--nldesign-color-background-hover: #ffffff;
+	--nldesign-color-background-hover: #e6e6e6;
 	--nldesign-color-border: #e6e6e6;
 	--nldesign-color-border-dark: #2b2b2b;
 	--nldesign-color-error: #d70d0d;
@@ -177,7 +177,7 @@
 	 *    source version:  1.0.0
 	 *    slug:            duo
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         7
 	 *    adapted:         39
 	 *    kept:            132

@@ -195,28 +195,28 @@
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: #757575;
 	--nldesign-color-background-darker: #e6e6e6;
-	--nldesign-color-background-hover: #ffffff;
+	--nldesign-color-background-hover: #e6e6e6;
 	--nldesign-color-border: #c4c4c4;
 	--nldesign-color-border-dark: #666666;
 	--nldesign-color-error: #d70d0d;
 	--nldesign-color-error-hover: #c20c0c;
 	--nldesign-color-error-rgb: 215, 13, 13;
 	--nldesign-color-favorite: #f9cf00;
-	--nldesign-color-focus: rgba(240, 111, 5, 0.5);
-	--nldesign-color-focus-rgb: 240, 111, 5;
-	--nldesign-color-header-background: #f06f05;
-	--nldesign-color-header-text: #590032;
-	--nldesign-color-info: #f06f05;
-	--nldesign-color-info-rgb: 240, 111, 5;
+	--nldesign-color-focus: rgba(175, 81, 5, 0.5);
+	--nldesign-color-focus-rgb: 175, 81, 5;
+	--nldesign-color-header-background: #af5105;
+	--nldesign-color-header-text: #ffffff;
+	--nldesign-color-info: #af5105;
+	--nldesign-color-info-rgb: 175, 81, 5;
 	--nldesign-color-link: #e6007e;
 	--nldesign-color-link-hover: #007eb0;
 	--nldesign-color-link-visited: #e6007e;
 	--nldesign-color-nav-background: #ffffff;
 	--nldesign-color-placeholder-dark: #e6e6e6;
 	--nldesign-color-placeholder-light: #e6e6e6;
-	--nldesign-color-primary-hover: #d86405;
-	--nldesign-color-primary-light: #fef1e6;
-	--nldesign-color-primary-light-hover: #fce2cd;
+	--nldesign-color-primary-hover: #9e4905;
+	--nldesign-color-primary-light: #f7eee6;
+	--nldesign-color-primary-light-hover: #efdccd;
 	--nldesign-color-primary-text: #ffffff;
 	--nldesign-color-success: #39870c;
 	--nldesign-color-success-rgb: 57, 135, 12;
@@ -237,9 +237,9 @@
 	 *    source version:  1.0.0
 	 *    slug:            tilburg
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
-	 *    applied:         9
-	 *    adapted:         37
+	 *    mapping table:   v1 sha256:883c92216a2862cf
+	 *    applied:         8
+	 *    adapted:         39
 	 *    kept:            216
 	 *    skipped:         21
 	 */

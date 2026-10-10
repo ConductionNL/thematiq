@@ -90,9 +90,9 @@
 	--nldesign-border-radius-pill: 100px;
 	--nldesign-border-radius-rounded: 28px;
 	--nldesign-border-radius-small: 4px;
-	--nldesign-color-background-dark: #ffffff;
+	--nldesign-color-background-dark: #dddddd;
 	--nldesign-color-background-darker: #dddddd;
-	--nldesign-color-background-hover: #ffffff;
+	--nldesign-color-background-hover: #dddddd;
 	--nldesign-color-border: #dddddd;
 	--nldesign-color-border-dark: #17252A;
 	--nldesign-color-error: #d70d0d;
@@ -110,7 +110,7 @@
 	--nldesign-color-link-visited: #17252A;
 	--nldesign-color-nav-background: #ffffff;
 	--nldesign-color-placeholder-dark: #dddddd;
-	--nldesign-color-placeholder-light: #ffffff;
+	--nldesign-color-placeholder-light: #dddddd;
 	--nldesign-color-primary: #027db5;
 	--nldesign-color-primary-hover: #0398dc;
 	--nldesign-color-primary-light: #e6f6fe;
@@ -134,7 +134,7 @@
 	 *    source version:  1.0.0
 	 *    slug:            demodam
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         9
 	 *    adapted:         37
 	 *    kept:            68

@@ -191,7 +191,7 @@
 	--nldesign-color-link-visited: #03813c;
 	--nldesign-color-nav-background: #ffffff;
 	--nldesign-color-placeholder-dark: #e6e6e6;
-	--nldesign-color-placeholder-light: #fafafa;
+	--nldesign-color-placeholder-light: #e8e8e8;
 	--nldesign-color-primary: #035935;
 	--nldesign-color-primary-hover: #035030;
 	--nldesign-color-primary-light: #e6eeeb;
@@ -216,7 +216,7 @@
 	 *    source version:  1.0.0
 	 *    slug:            stedebroec
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         9
 	 *    adapted:         36
 	 *    kept:            181

@@ -182,9 +182,9 @@
 	--nldesign-border-radius-pill: 100px;
 	--nldesign-border-radius-rounded: 28px;
 	--nldesign-border-radius-small: 4px;
-	--nldesign-color-background-dark: #ffffff;
-	--nldesign-color-background-darker: #ffffff;
-	--nldesign-color-background-hover: #ffffff;
+	--nldesign-color-background-dark: #858585;
+	--nldesign-color-background-darker: #333333;
+	--nldesign-color-background-hover: #333333;
 	--nldesign-color-border: #0066cc;
 	--nldesign-color-border-dark: #0066cc;
 	--nldesign-color-error: #d70d0d;
@@ -201,8 +201,8 @@
 	--nldesign-color-link-hover: #2d2e86;
 	--nldesign-color-link-visited: #0066cc;
 	--nldesign-color-nav-background: #ffffff;
-	--nldesign-color-placeholder-dark: #ffffff;
-	--nldesign-color-placeholder-light: #ffffff;
+	--nldesign-color-placeholder-dark: #333333;
+	--nldesign-color-placeholder-light: #333333;
 	--nldesign-color-primary: #0066cc;
 	--nldesign-color-primary-hover: #005cb8;
 	--nldesign-color-primary-light: #e6f0fa;
@@ -227,9 +227,9 @@
 	 *    source version:  1.0.0
 	 *    slug:            bodegraven-reeuwijk
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         9
-	 *    adapted:         35
+	 *    adapted:         36
 	 *    kept:            196
 	 *    skipped:         14
 	 */
