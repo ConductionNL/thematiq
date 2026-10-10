@@ -55,6 +55,7 @@ Nothing here waits on them; the components only show the result once both land.
 
 - [x] 4.1 `openspec validate denhaag-component-tokens --strict`, `npm run lint`,
       `npm run test:unit`, `composer check:strict` once before push.
-- [ ] 4.2 Live, after the portaliq link lands: `/site` with the `denhaag` set shows a case
+- [x] 4.2 Live, after the portaliq link lands: `/site` with the `denhaag` set shows a case
       card, process steps and a badge in Den Haag's colours, and with `example-gemeente` in
       `#12506B`.
+      Live 2026-10-10 on the throwaway thematiq-live2 (:8093, NC 34; thematiq build/openspecs-live2, openregister 2.1.38, portaliq 0.2.10, dossiq 0.4.50, learniq 0.3.13 unstable development builds; `portaliq:example-site:install zuiddrecht` + `portaliq:example-resident:install zuiddrecht`, `learniq:example-set:load mbo` and `training`): the Zuiddrecht portal switched to `denhaag` loads `css/tokens/denhaag.css`; on Mijn Zuiddrecht the case cards draw on #ABCCED (blue-2), the status badges #238541 on #D5E7D5 (green-3), the links #1260A1 (blue-3), and on the case page the checked and current step markers wear #238541. Switched to `example-gemeente`: the menu band, the header buttons, the case links and the badges wear #12506B.
