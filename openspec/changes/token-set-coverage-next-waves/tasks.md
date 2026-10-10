@@ -52,3 +52,12 @@ own, with a delta spec, when it is picked up.
 
 - [ ] 6.1 Record screenshot baselines for `tests/e2e/spec-coverage/lasuite-shell-geometry.spec.ts`
       per supported Nextcloud major.
+
+## 7. Generated sets whose buttons wear the hover step (from example-gemeente-theme 4.2)
+
+- [ ] 7.1 `example-basisschool`, `example-college`, `example-opleider` and `example-voortgezet` map the
+      role layer's link blue `#034591` to brand-400, their hover step, so `--tilburg-interaction-color`
+      and with it the Utrecht primary and secondary buttons (and, where the semantic link is the
+      primary, the links) wear the hover colour. example-gemeente was fixed on 10 Oct with an
+      `upstreamOverrides` entry (370d0b2b). Apply the same per set, keeping example-basisschool's
+      deliberately darker link, extend the `publicBridgeRoleLayer.spec.js` block, and check each live.
