@@ -193,7 +193,7 @@
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: #ebebeb;
 	--nldesign-color-background-darker: #e6e6e6;
-	--nldesign-color-background-hover: #ffffff;
+	--nldesign-color-background-hover: #ebebeb;
 	--nldesign-color-border: #000000;
 	--nldesign-color-border-dark: #000000;
 	--nldesign-color-error: #d70d0d;
@@ -236,7 +236,7 @@
 	 *    source version:  1.0.0
 	 *    slug:            vught
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         8
 	 *    adapted:         38
 	 *    kept:            210

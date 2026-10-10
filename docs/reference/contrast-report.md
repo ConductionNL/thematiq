@@ -44,7 +44,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | groningen | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | haarlem | 7.19:1 | 4.5:1 | 7.19:1 | 3.0:1 | pass |
 | haarlemmermeer | 4.63:1 | 4.5:1 | 4.54:1 | 3.0:1 | pass |
-| hoeksche-waard | 4.56:1 | 4.5:1 | 4.56:1 | 3.0:1 | pass |
+| hoeksche-waard | 5.11:1 | 4.5:1 | 5.11:1 | 3.0:1 | pass |
 | hoog-contrast | 21.00:1 | 7.0:1 | 21.00:1 | 4.5:1 | pass |
 | hoorn | 11.96:1 | 4.5:1 | 11.96:1 | 3.0:1 | pass |
 | horstaandemaas | 6.64:1 | 4.5:1 | 6.64:1 | 3.0:1 | pass |

@@ -47,7 +47,7 @@
 			"primary_color": "#0066cc",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -58,7 +58,7 @@
 			"primary_color": "#003352",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "Droid Sans W01",
@@ -77,7 +77,7 @@
 			"primary_color": "#d41422",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -88,7 +88,7 @@
 			"primary_color": "#027db5",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -99,7 +99,7 @@
 			"primary_color": "#006cb9",
 			"background_color": "#ffffff"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -111,7 +111,7 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/drechterland.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -122,7 +122,7 @@
 			"primary_color": "#1d5b8f",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -133,7 +133,7 @@
 			"primary_color": "#004fa3",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "RijksoverheidSans",
@@ -152,7 +152,7 @@
 			"primary_color": "#0055ad",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -165,7 +165,7 @@
 			"logo": "img/logos/epe.svg",
 			"logo_dark": "img/logos/epe-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.3"
 	},
 	{
@@ -176,8 +176,8 @@
 			"primary_color": "#154273",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "4.0.0"
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
+		"upstreamVersion": "5.1.0"
 	},
 	{
 		"id": "haarlem",
@@ -187,7 +187,7 @@
 			"primary_color": "#1457a3",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "Sofia Pro",
@@ -206,7 +206,7 @@
 			"primary_color": "#068482",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "Calibri",
@@ -226,7 +226,7 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/hoorn.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -237,7 +237,7 @@
 			"primary_color": "#125ea4",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "DIN",
@@ -257,8 +257,8 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/leiden.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "3.0.0"
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
+		"upstreamVersion": "3.1.1"
 	},
 	{
 		"id": "leidschendam-voorburg",
@@ -268,7 +268,7 @@
 			"primary_color": "#1e1b54",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -281,7 +281,7 @@
 			"logo": "img/logos/nijmegen.svg",
 			"logo_dark": "img/logos/nijmegen-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -312,7 +312,7 @@
 			"primary_color": "#348603",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -325,7 +325,7 @@
 			"logo": "img/logos/noordwijk.svg",
 			"logo_dark": "img/logos/noordwijk-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -338,7 +338,7 @@
 			"logo": "img/logos/provincie-zuid-holland.svg",
 			"logo_dark": "img/logos/provincie-zuid-holland-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "Karbon",
@@ -357,7 +357,7 @@
 			"primary_color": "#154273",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09"
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676"
 	},
 	{
 		"id": "ridderkerk",
@@ -367,7 +367,7 @@
 			"primary_color": "#008937",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -378,7 +378,7 @@
 			"primary_color": "#035935",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -390,7 +390,7 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/tilburg.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -401,7 +401,7 @@
 			"primary_color": "#067432",
 			"background_color": "#ffffff"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -412,7 +412,7 @@
 			"primary_color": "#2a8113",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "DIN",
@@ -431,7 +431,7 @@
 			"primary_color": "#0080a3",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "DIN",
@@ -469,7 +469,7 @@
 			"primary_color": "#003c6b",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -548,7 +548,7 @@
 			"logo": "img/logos/xxllnc.svg",
 			"logo_dark": "img/logos/xxllnc-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "neue-haas-grotesk-text",
@@ -567,7 +567,7 @@
 			"primary_color": "#596e28",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -713,9 +713,9 @@
 		"description": "Design tokens for Gemeente Hoeksche Waard, converted from nl-design-system/themes",
 		"design_system": "nldesign",
 		"theming": {
-			"primary_color": "#2e8721"
+			"primary_color": "#2b7e1f"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.1.0"
 	},
 	{
@@ -726,7 +726,7 @@
 		"theming": {
 			"primary_color": "#00856A"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.2.3"
 	},
 	{
@@ -737,7 +737,7 @@
 		"theming": {
 			"primary_color": "#e20d18"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.0"
 	},
 	{
@@ -748,7 +748,7 @@
 		"theming": {
 			"primary_color": "#2065A4"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.0.1"
 	},
 	{
@@ -759,7 +759,7 @@
 		"theming": {
 			"primary_color": "#007694"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.1.0"
 	},
 	{
@@ -770,7 +770,7 @@
 		"theming": {
 			"primary_color": "#431560"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "71e282c7104b28f63cd4bc4db85d8a3e31055676",
 		"upstreamVersion": "1.7.2"
 	},
 	{
