@@ -470,7 +470,9 @@ describe('example-gemeente draws its buttons and links in its primary (example-g
 	})
 
 	it('paints the primary button, the secondary button and the link in the primary', () => {
-		expect(token(set, '--utrecht-button-primary-action-background-color')).toBe(primary)
+		expect(token(set, '--utrecht-button-primary-action-background-color')).toBe(
+			primary,
+		)
 		expect(token(set, '--utrecht-button-secondary-action-color')).toBe(primary)
 		expect(token(set, '--utrecht-link-color')).toBe(primary)
 	})
