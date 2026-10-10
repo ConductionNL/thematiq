@@ -629,3 +629,27 @@ describe('the 35 header draws what 35 changed, not 34 again', () => {
 		expect(classesOf(header(0)).has('unified-search-input__field')).toBe(true)
 	})
 })
+
+/**
+ * Live check 2026-10-09: with Text input open, the "Text input text" row
+ * recoloured the 32/33/34/35 switch above the specimen. The stage element
+ * carries `data-thematiq-component`, so every component scope re-scopes the
+ * Nextcloud variables the switch read. The switch is chrome, not a specimen:
+ * it reads only the values pinned on the preview, above any scope.
+ */
+describe('the version switch is not painted by the component on the stage', () => {
+	const css = fs
+		.readFileSync(path.join(ROOT, 'css/playground.css'), 'utf8')
+		.replace(/\/\*[\s\S]*?\*\//g, '')
+
+	it('reads no Nextcloud variable a component scope can re-scope', () => {
+		const rules = [
+			...css.matchAll(/([^{}]*\.nldesign-pg-version[^{}]*)\{([^}]*)\}/g),
+		]
+
+		expect(rules.length).toBeGreaterThan(0)
+		for (const rule of rules) {
+			expect(rule[2], rule[1].trim()).not.toMatch(/var\(--color-/)
+		}
+	})
+})

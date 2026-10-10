@@ -30,4 +30,5 @@
 - [x] 6.2 vitest: `zuiddrechtTokenSet.spec.js`, `componentScopesGenerator.spec.js`, `workplaceLayout.spec.js`.
 
 ## 7. Verify
-- [ ] 7.1 Live check on a running instance (the coordinator does this).
+- [x] 7.1 Live check on a running instance (the coordinator does this).
+      Live 2026-10-09 on the throwaway NC 34 instance (:8098): with zuiddrecht applied, Files shows the white top bar with dark text (#1B1C1D), the 264px white navigation, the grey workspace with a white card, the soft red active entry (label rgb(163, 0, 0)), blue #3669A5 actions and Fira Sans (loaded). Dark mode: header and navigation rgb(23, 23, 23), workspace rgb(18, 19, 21). Shots ~/memcap-work/build-all/thematiq/live-pass/zuiddrecht-files-light.png, zuiddrecht-files-dark.png.

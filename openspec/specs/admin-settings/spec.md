@@ -8,7 +8,9 @@ enriched_date: 2026-03-20
 
 ## Purpose
 Defines the admin settings panel for the NL Design app. The settings panel is located in Nextcloud's administration area under the Theming section. It provides controls for selecting the active token set, toggling the hide slogan feature, toggling show menu labels, and previewing the selected theme. The UI is built with vanilla PHP templates and vanilla JavaScript (no Vue or webpack). Additionally, the panel hosts the token editor for customizing individual Nextcloud CSS tokens, and triggers the theming sync dialog when a token set with theming metadata is selected.
+
 ## Requirements
+
 ### Requirement: Settings Panel Registration
 The admin settings panel MUST be registered in the Nextcloud Theming section with a defined priority.
 
@@ -548,6 +550,39 @@ path and covers the complete configuration, unlike the overrides-only download.
 - WHEN the admin uploads it
 - THEN the panel MUST show the complete per-section error listing (HTTP 400 body)
 - AND every control MUST still show the pre-upload configuration
+
+### Requirement: The Panel Publishes What The Instrument Reads
+The settings section MUST publish the component inventory, the conversion reason vocabulary,
+the active set's resolved `--nldesign-*` values and the variable-to-token map over the
+initial-state channel, for the set the page is WEARING — a session preview wins over the
+instance-wide set, exactly as the render does.
+
+#### Scenario: The instrument describes the set on the page
+- GIVEN an active session preview of a set other than the instance-wide one
+- WHEN the admin opens the settings section
+- THEN the published token values MUST be the previewed set's
+
+#### Scenario: A missing key is not a crash
+- GIVEN the component inventory cannot be read
+- WHEN the settings section renders
+- THEN it MUST render its token editor unchanged
+- AND the instrument MUST simply not build
+
+### Requirement: The Token Editor Remains The Full View
+The tabbed token editor MUST remain, and MUST keep writing through the overrides endpoint.
+The instrument MUST NOT replace it: "full view" MUST be the first chip of every tab and MUST
+restore the complete list, so an admin who knows the variable's name is never forced through
+a component to set it.
+
+#### Scenario: The token editor still saves
+- GIVEN an edit made in the settings section's token editor
+- WHEN the admin saves
+- THEN it MUST be written through the overrides endpoint exactly as before this change
+
+#### Scenario: The full list is one click away
+- GIVEN a component selected in the instrument
+- WHEN the admin returns to the full view
+- THEN every token of the open tab MUST be listed again, unchanged
 
 ## Current Implementation Status
 

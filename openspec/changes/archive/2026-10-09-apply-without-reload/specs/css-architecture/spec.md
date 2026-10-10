@@ -57,6 +57,13 @@ style has nothing else to be found by. The logo layer MUST accept `img/logos/<se
 `svg`, `png`, `jpg`, `gif` and `webp`, first match wins, so a converter-extracted raster logo is
 served the same way as a shipped SVG.
 
+#### Scenario: The logo style is found by its id, and a raster logo is served like an SVG
+@e2e exclude Asserted on the injected manifest, not in a browser: tests/Unit/Service/CssInjectionServiceTest.php asserts the inline logo layer carries CssInjectionService::LOGO_STYLE_ID, tests/vitest/layerSwap.spec.js keys it as inline:nldesign-logo-url, and tests/Unit/Service/CustomTokenSetLogoAssetTest.php::testAcceptedExtensionsAreWrittenUnderTheirOwnName covers the five extensions. Seen live on 9 Oct 2026: the swap kept the header logo across a set change.
+- GIVEN a set whose logo is `img/logos/<set>.png`
+- WHEN the stylesheet manifest for that set is built
+- THEN the inline layer that declares `--nldesign-logo-url` MUST carry `id="nldesign-logo-url"`
+- AND it MUST point at the `.png` file, exactly as it would at an `.svg`
+
 ### Requirement: Client Swaps The Run, Never Rewrites Variables
 The admin panel MUST apply a set to the current page by inserting the new manifest's elements at
 the place the current set's run occupies, waiting for each `<link>` to load, and then removing the

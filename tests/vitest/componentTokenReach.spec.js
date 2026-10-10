@@ -464,3 +464,86 @@ describe('component tokens: the navigation background leaves the main background
 		)
 	})
 })
+
+/**
+ * Live check 2026-10-09 (component-scoped-tokens 8.7): a stored navigation
+ * background painted nothing, in the Files app or on the playground's column.
+ * The test above read theme.css's rule, but element-overrides.css loads after
+ * it and forces the same column to `--color-main-background` with
+ * `!important`, and on Nextcloud's `#app-navigation-vue` its id selector
+ * outranks theme.css anyway. Every rule that paints the column opaque must
+ * read the row first, or the row is a control that does nothing.
+ */
+describe('component tokens: every rule that paints the navigation column reads its row', () => {
+	const NAV = '--nldesign-component-navigation-background-color'
+	const DIR = path.join(ROOT, 'css/systems/nldesign')
+
+	const columnRules = fs
+		.readdirSync(DIR)
+		.filter((file) => file.endsWith('.css'))
+		.flatMap((file) => {
+			const css = fs
+				.readFileSync(path.join(DIR, file), 'utf8')
+				.replace(/\/\*[\s\S]*?\*\//g, '')
+			return [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)]
+				.filter((m) =>
+					m[1]
+						.split(',')
+						.map((s) => s.trim())
+						.some((s) =>
+							[
+								'#app-navigation',
+								'.app-navigation',
+								'#app-navigation-vue',
+							].includes(s),
+						),
+				)
+				.flatMap((m) =>
+					[
+						...m[2].matchAll(
+							/(background(?:-color)?)\s*:\s*([^;]+!important)/g,
+						),
+					].map((d) => ({
+						file,
+						property: d[1],
+						value: d[2].replace(/\s+/g, ' '),
+					})),
+				)
+		})
+
+	it('finds the column rules', () => {
+		expect(columnRules.length).toBeGreaterThan(0)
+	})
+
+	it.each(columnRules.map((r) => [r.file + ' ' + r.property, r]))(
+		'%s reads the row first',
+		(_label, rule) => {
+			expect(rule.value).toMatch(new RegExp('^var\\( ?' + NAV + ','))
+		},
+	)
+})
+
+/**
+ * The same live check: the playground drew the avatar on a header ground but
+ * outside `#header`, so the initials row moved nothing on its own stage.
+ */
+describe('component tokens: the avatar specimen reads the initials row', () => {
+	it('colours the header avatar specimen from the row', () => {
+		const css = fs
+			.readFileSync(path.join(ROOT, 'css/playground.css'), 'utf8')
+			.replace(/\/\*[\s\S]*?\*\//g, '')
+			.replace(/\s+/g, ' ')
+		const rule = css.match(
+			/#body-settings #nldesign-settings #nldesign-preview \.nldesign-pg-ground--header \.nldesign-pg-avatar\s*\{([^}]*)\}/,
+		)
+
+		expect(rule).not.toBeNull()
+		const body = rule[1].replace(/\s+/g, ' ')
+		expect(body).toContain(
+			'color: var( --nldesign-component-avatar-initials-color,',
+		)
+		// element-overrides.css paints every span outside #header with two ids, six classes
+		// and !important; anything less loses to it.
+		expect(body).toContain('!important')
+	})
+})
