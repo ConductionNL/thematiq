@@ -817,6 +817,33 @@
 				"nl": "Gemeente Zuiddrecht · werkplek op Nextcloud",
 				"en": "Gemeente Zuiddrecht · workplace on Nextcloud"
 			}
+		},
+		"not_found": {
+			"eyebrow": {
+				"nl": "Foutcode 404",
+				"en": "Error code 404"
+			},
+			"title": {
+				"nl": "Pagina niet gevonden",
+				"en": "Page not found"
+			},
+			"text": {
+				"nl": "Deze pagina bestaat niet (meer). Misschien is het adres verkeerd getypt, of hebben wij de pagina verplaatst.",
+				"en": "This page does not exist (any more). Perhaps the address was mistyped, or we moved the page."
+			},
+			"links_heading": {
+				"nl": "Of ga verder naar",
+				"en": "Or continue to"
+			},
+			"links": [
+				{
+					"label": {
+						"nl": "De homepage",
+						"en": "The home page"
+					},
+					"url": "/"
+				}
+			]
 		}
 	},
 	{
