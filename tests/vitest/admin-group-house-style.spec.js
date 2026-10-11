@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  *
- * Unit tests for js/personal-group-house-style.js: a subadmin sees each
+ * Unit tests for js/admin-group-house-style.js: a subadmin sees each
  * delegated group with its allowed sets and contrast, and a choice is saved
  * for that group only.
  *
@@ -18,7 +18,7 @@ let postAnswer
 
 async function loadScript() {
 	vi.resetModules()
-	await import('../../js/personal-group-house-style.js?t=' + Math.random())
+	await import('../../js/admin-group-house-style.js?t=' + Math.random())
 	for (let i = 0; i < 4; i++) {
 		await new Promise((resolve) => setTimeout(resolve, 0))
 	}

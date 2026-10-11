@@ -39,7 +39,8 @@ use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
-use OCA\Thematiq\Settings\Personal;
+use OCA\Thematiq\Settings\GroupHouseStyle;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\Group\ISubAdmin;
 use OCP\ICache;
@@ -450,8 +451,13 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testSubadminEndpoints(): void {
+		// The endpoints need the delegated setting, not just a session.
 		foreach (['index', 'update'] as $method) {
-			$this->assertCount(1, (new ReflectionMethod(MyGroupsController::class, $method))->getAttributes(NoAdminRequired::class));
+			$reflection = new ReflectionMethod(MyGroupsController::class, $method);
+			$this->assertCount(0, $reflection->getAttributes(NoAdminRequired::class));
+			$granted = $reflection->getAttributes(AuthorizedAdminSetting::class);
+			$this->assertCount(1, $granted);
+			$this->assertSame(GroupHouseStyle::class, $granted[0]->getArguments()['settings']);
 		}
 
 		$controller = new MyGroupsController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->session(), $this->l10n());
@@ -468,17 +474,22 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 	}//end testSubadminEndpoints()
 
 	/**
-	 * The personal block shows only for a subadmin of a delegated group.
+	 * The delegated admin block shows only for a subadmin of a delegated
+	 * group, and tells Administration privileges its name.
 	 *
 	 * @return void
 	 */
-	public function testPersonalSectionOnlyForSubadminsOfDelegatedGroups(): void {
-		$this->assertSame(Personal::SECTION, (new Personal($this->service(), $this->session()))->getSection());
+	public function testGroupHouseStyleBlockOnlyForSubadminsOfDelegatedGroups(): void {
+		$block = new GroupHouseStyle($this->service(), $this->session(), $this->l10n());
+		$this->assertSame(GroupHouseStyle::SECTION, $block->getSection());
+		$this->assertSame('House style of my groups', $block->getName());
+		$this->assertSame([], $block->getAuthorizedAppConfig());
+		$this->assertSame('settings/group-house-style', $block->getForm()->getTemplateName());
 
 		$this->sessionUid = 'bob';
-		$this->assertNull((new Personal($this->service(), $this->session()))->getSection());
+		$this->assertNull((new GroupHouseStyle($this->service(), $this->session(), $this->l10n()))->getSection());
 
 		$this->sessionUid = null;
-		$this->assertNull((new Personal($this->service(), $this->session()))->getSection());
-	}//end testPersonalSectionOnlyForSubadminsOfDelegatedGroups()
+		$this->assertNull((new GroupHouseStyle($this->service(), $this->session(), $this->l10n()))->getSection());
+	}//end testGroupHouseStyleBlockOnlyForSubadminsOfDelegatedGroups()
 }//end class
