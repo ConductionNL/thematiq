@@ -580,7 +580,7 @@ body#body-login
 	flex-direction: column !important;
 	gap: 24px !important;
 	box-sizing: border-box !important;
-	width: 760px !important;
+	width: 840px !important;
 	max-width: 100% !important;
 	margin-inline: auto !important;
 	padding: 40px !important;
@@ -617,22 +617,24 @@ body#body-login .thematiq-not-found__hint {
 	color: var(--color-text-maxcontrast) !important;
 }
 
-/* Nextcloud keeps the guest column at 500px; the board's column is 760px. */
+/* Nextcloud keeps the guest column at 500px; the board's text column is
+ * 760px, so the card is 840px with its 40px padding. */
 body#body-login .wrapper:has(.body-login-container[data-thematiq-not-found]) {
-	width: 760px !important;
+	width: 840px !important;
 	max-width: 100% !important;
 }
 
 body#body-login .guest-content p.thematiq-not-found__eyebrow {
 	font-size: 18px !important;
 	font-weight: 600 !important;
+	line-height: normal !important;
 }
 
 body#body-login .guest-content h3.thematiq-not-found__heading {
 	margin-top: 8px !important;
 	font-size: 26px !important;
 	font-weight: 700 !important;
-	line-height: 1.25 !important;
+	line-height: normal !important;
 }
 
 body#body-login .thematiq-not-found__links {
