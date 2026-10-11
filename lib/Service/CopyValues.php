@@ -92,6 +92,8 @@ class CopyValues {
 	 * @param string $key The key, as written in token-sets.json.
 	 *
 	 * @return string The camel-case name.
+	 *
+	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
 	 */
 	public static function camel(string $key): string {
 		return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $key))));

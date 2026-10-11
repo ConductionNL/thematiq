@@ -156,6 +156,8 @@ class LoginCopyService {
 	 *
 	 * @return array<string, string> The resolved copy, keyed in camel case (`ssoLabel`).
 	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - CopyValues holds the pure value rules shared with the not-found page.
+	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 */
 	public function resolveCopy(string $tokenSet, string $language): array {

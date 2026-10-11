@@ -165,13 +165,7 @@ class ThemeInjectionListener implements IEventListener {
 					appId: $this->resolveAppId(response: $response)
 				);
 
-				// Nextcloud's own "page not found" page, drawn as the board
-				// draws it (openspec/changes/not-found-page-board).
-				if ($response->getApp() === 'core' && $response->getTemplateName() === '404'
-					&& $this->cssInjectionService->isContextThemed(context: $this->resolveContext(response: $response)) === true
-				) {
-					$this->notFoundCopy?->inject();
-				}
+				$this->injectNotFoundCopy(response: $response);
 			}
 		} catch (Throwable $e) {
 			// Fail open: a listener failure must never break page rendering
@@ -189,6 +183,26 @@ class ThemeInjectionListener implements IEventListener {
 		}//end try
 
 	}//end handle()
+
+	/**
+	 * Nextcloud's own "page not found" page, drawn as the NietGevonden board
+	 * draws it, when its context is themed.
+	 *
+	 * @param TemplateResponse $response The response being rendered.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 */
+	private function injectNotFoundCopy(TemplateResponse $response): void {
+		if ($response->getApp() !== 'core' || $response->getTemplateName() !== '404') {
+			return;
+		}
+
+		if ($this->cssInjectionService->isContextThemed(context: $this->resolveContext(response: $response)) === true) {
+			$this->notFoundCopy?->inject();
+		}
+	}//end injectNotFoundCopy()
 
 	/**
 	 * Map a `TemplateResponse`'s `renderAs` to a render context.
